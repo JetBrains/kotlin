@@ -35,16 +35,63 @@ import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.utils.ifEmpty
 
 fun resolveKDocLink(context: BindingContext,
                     resolutionFacade: ResolutionFacade,
                     fromDescriptor: DeclarationDescriptor,
                     fromSubjectOfTag: KDocTag?,
-                    qualifiedName: List<String>): Collection<DeclarationDescriptor> {
+                    qualifiedName: List<String>): Collection<DeclarationDescriptor> =
+        when (fromSubjectOfTag?.knownTag) {
+            KDocKnownTag.PARAM -> resolveParamLink(fromDescriptor, qualifiedName)
+            KDocKnownTag.SAMPLE -> resolveKDocSampleLink(context, resolutionFacade, fromDescriptor, qualifiedName)
+            else -> resolveDefaultKDocLink(context, resolutionFacade, fromDescriptor, qualifiedName)
+        }
 
-    if (fromSubjectOfTag?.knownTag == KDocKnownTag.PARAM) {
-        return resolveParamLink(fromDescriptor, qualifiedName)
+
+fun getParamDescriptors(fromDescriptor: DeclarationDescriptor): List<DeclarationDescriptor> {
+    // TODO resolve parameters of functions passed as parameters
+    when (fromDescriptor) {
+        is CallableDescriptor ->
+            return fromDescriptor.valueParameters + fromDescriptor.typeParameters
+        is ClassifierDescriptor -> {
+            val typeParams = fromDescriptor.typeConstructor.parameters
+            if (fromDescriptor is ClassDescriptor) {
+                val constructorDescriptor = fromDescriptor.unsubstitutedPrimaryConstructor
+                if (constructorDescriptor != null) {
+                    return typeParams + constructorDescriptor.valueParameters
+                }
+            }
+            return typeParams
+        }
     }
+
+    return listOf()
+}
+
+private fun resolveParamLink(fromDescriptor: DeclarationDescriptor, qualifiedName: List<String>): List<DeclarationDescriptor> {
+    val name = qualifiedName.singleOrNull() ?: return listOf()
+    return getParamDescriptors(fromDescriptor).filter { it.name.asString() == name }
+}
+
+fun resolveKDocSampleLink(context: BindingContext,
+                          resolutionFacade: ResolutionFacade,
+                          fromDescriptor: DeclarationDescriptor,
+                          qualifiedName: List<String>): Collection<DeclarationDescriptor> {
+
+    val resolvedViaService = SampleResolutionService.resolveSample(context, fromDescriptor, resolutionFacade, qualifiedName)
+    if (resolvedViaService.isNotEmpty()) return resolvedViaService
+
+    return resolveDefaultKDocLink(context, resolutionFacade, fromDescriptor, qualifiedName)
+}
+
+
+
+
+private fun resolveDefaultKDocLink(context: BindingContext,
+                                   resolutionFacade: ResolutionFacade,
+                                   fromDescriptor: DeclarationDescriptor,
+                                   qualifiedName: List<String>): Collection<DeclarationDescriptor> {
 
     val scope = getKDocLinkResolutionScope(resolutionFacade, fromDescriptor)
 
@@ -80,31 +127,6 @@ fun resolveKDocLink(context: BindingContext,
         return memberScope.collectDescriptorsFiltered(nameFilter = { it == memberName })
     }
     return listOf(descriptor)
-}
-
-fun getParamDescriptors(fromDescriptor: DeclarationDescriptor): List<DeclarationDescriptor> {
-    // TODO resolve parameters of functions passed as parameters
-    when (fromDescriptor) {
-        is CallableDescriptor ->
-            return fromDescriptor.valueParameters + fromDescriptor.typeParameters
-        is ClassifierDescriptor -> {
-            val typeParams = fromDescriptor.typeConstructor.parameters
-            if (fromDescriptor is ClassDescriptor) {
-                val constructorDescriptor = fromDescriptor.unsubstitutedPrimaryConstructor
-                if (constructorDescriptor != null) {
-                    return typeParams + constructorDescriptor.valueParameters
-                }
-            }
-            return typeParams
-        }
-    }
-
-    return listOf()
-}
-
-private fun resolveParamLink(fromDescriptor: DeclarationDescriptor, qualifiedName: List<String>): List<DeclarationDescriptor> {
-    val name = qualifiedName.singleOrNull() ?: return listOf()
-    return getParamDescriptors(fromDescriptor).filter { it.name.asString() == name }
 }
 
 private fun getPackageInnerScope(descriptor: PackageFragmentDescriptor): MemberScope {

@@ -314,6 +314,9 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.core.NotPropertiesService"
                     serviceImplementation="org.jetbrains.kotlin.idea.intentions.NotPropertiesServiceImpl"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.kdoc.SampleResolutionService"
+                    serviceImplementation="org.jetbrains.kotlin.idea.kdoc.IdeSampleResolutionService"/>
+
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
     <internalFileTemplate name="Kotlin File"/>

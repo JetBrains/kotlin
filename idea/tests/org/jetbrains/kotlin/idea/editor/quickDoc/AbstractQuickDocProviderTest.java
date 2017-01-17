@@ -81,7 +81,7 @@ public abstract class AbstractQuickDocProviderTest extends KotlinLightCodeInsigh
         }
     }
 
-    private static void wrapToFileComparisonFailure(String info, String filePath, String fileData) {
+    public static void wrapToFileComparisonFailure(String info, String filePath, String fileData) {
         List<String> infoLines = StringUtil.split(info, "\n");
         StringBuilder infoBuilder = new StringBuilder();
         for (String line : infoLines) {
