@@ -333,6 +333,8 @@ open class JvmBuiltInsSettings(
 
     override fun isFunctionAvailable(classDescriptor: DeserializedClassDescriptor, functionDescriptor: SimpleFunctionDescriptor): Boolean {
         if (!functionDescriptor.annotations.hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)) return true
+        if (!isAdditionalBuiltInsFeatureSupported) return false
+
         val javaAnalogueClassDescriptor = classDescriptor.getJavaAnalogue() ?: return true
 
         val jvmDescriptor = functionDescriptor.computeJvmDescriptor()
