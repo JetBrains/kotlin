@@ -413,6 +413,7 @@ fun ImportableFqNameClassifier.isImportableDescriptorImported(descriptor: Declar
 
 fun OffsetMap.tryGetOffset(key: OffsetKey): Int? {
     try {
+        if (!containsOffset(key)) return null
         return getOffset(key).check { it != -1 } // prior to IDEA 2016.3 getOffset() returned -1 if not found, now it throws exception
     }
     catch(e: Exception) {
