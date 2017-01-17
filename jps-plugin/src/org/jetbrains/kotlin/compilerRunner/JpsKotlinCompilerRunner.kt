@@ -107,7 +107,6 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
         val targetPlatform = when (compilerClassName) {
             K2JVM_COMPILER -> CompileService.TargetPlatform.JVM
             K2JS_COMPILER -> CompileService.TargetPlatform.JS
-            K2METADATA_COMPILER -> CompileService.TargetPlatform.METADATA
             else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
         }
 
