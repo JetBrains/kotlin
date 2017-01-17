@@ -42,7 +42,7 @@
 
     <property name="gradle.libs.repo" value="http://repo.gradle.org/gradle/libs-releases-local"/>
 
-    <property name="native-platform-lib-version" value="0.11"/>
+    <property name="native-platform-lib-version" value="0.10"/>
 
     <property file="${dependencies.info.file}" prefix="dependencies.info.prev"/>
 
@@ -130,15 +130,7 @@
         </sequential>
     </macrodef>
 
-    <target name="fetch-jarjar" depends="make-dependency-dirs">
-        <antcall target="override-version"/>
-
-        <!-- JarJar -->
-        <get src="http://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/jarjar/jarjar-1.4.jar" dest="${dependencies}/download/jarjar-1.4.jar" usetimestamp="true"/>
-        <copy file="${dependencies}/download/jarjar-1.4.jar" tofile="${dependencies}/jarjar.jar" overwrite="true"/>
-    </target>
-
-    <target name="make-native-platform-uberjar" depends="fetch-jarjar">
+    <target name="make-native-platform-uberjar">
         <property name="dependencies" value="${dependencies}"/>
         <property name="download" value="${dependencies}/download"/>
         <property name="server" value="${gradle.libs.repo}"/>
@@ -166,8 +158,7 @@
         <get-lib suffix="-freebsd-amd64"/>
         <get-lib suffix="-freebsd-i386"/>
 
-        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="${dependencies}/jarjar.jar"/>
-        <jarjar jarfile="${dependencies}/${common.name}-uberjar.jar">
+        <jar destfile="${dependencies}/${common.name}-uberjar.jar">
             <zipfileset src="${download}/${common.name}.jar" includes="**" />
             <zipfileset src="${download}/${common.name}-windows-amd64.jar" includes="**" />
             <zipfileset src="${download}/${common.name}-windows-i386.jar" includes="**" />
@@ -177,17 +168,19 @@
             <zipfileset src="${download}/${common.name}-linux-i386.jar" includes="**" />
             <zipfileset src="${download}/${common.name}-freebsd-amd64.jar" includes="**" />
             <zipfileset src="${download}/${common.name}-freebsd-i386.jar" includes="**" />
-            <rule pattern="net.rubygrapefruit.platform.*" result="org.jetbrains.kotlin.net.rubygrapefruit.platform.@1"/>
-            <rule pattern="net.rubygrapefruit.platform.internal.*" result="org.jetbrains.kotlin.net.rubygrapefruit.platform.internal.@1"/>
-        </jarjar>
+        </jar>
     </target>
 
-    <target name="fetch-third-party" depends="make-dependency-dirs, fetch-jarjar, make-native-platform-uberjar, fetch-idea-artifacts-for-compiler-tests">
+    <target name="fetch-third-party" depends="make-dependency-dirs, make-native-platform-uberjar, fetch-idea-artifacts-for-compiler-tests">
         <antcall target="override-version"/>
 
         <!-- ProGuard -->
         <get-maven-library prefix="net/sf/proguard" lib="proguard-base" version="5.3" target.jar.name.base="proguard" src="false"/>
         <get-maven-library prefix="net/sf/proguard" lib="proguard-anttask" version="5.3" target.jar.name.base="proguard-anttask" src="false"/>
+
+        <!-- JarJar -->
+        <get src="http://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/jarjar/jarjar-1.4.jar" dest="${dependencies}/download/jarjar-1.4.jar" usetimestamp="true"/>
+        <copy file="${dependencies}/download/jarjar-1.4.jar" tofile="${dependencies}/jarjar.jar" overwrite="true"/>
 
         <!-- ant 1.8.2 -->
         <get-ant-library version="1.8.2" folderName="ant-1.8"/>
