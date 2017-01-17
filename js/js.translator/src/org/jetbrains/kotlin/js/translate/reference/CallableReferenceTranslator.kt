@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.js.translate.reference
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
 import org.jetbrains.kotlin.js.backend.ast.metadata.isCallableReference
@@ -207,14 +204,14 @@ object CallableReferenceTranslator {
             getter: JsExpression,
             setter: JsExpression?
     ): JsExpression {
-        var argCount = if (descriptor.dispatchReceiverParameter != null || descriptor.extensionReceiverParameter != null) 1 else 0
+        var argCount = if (descriptor.containingDeclaration is ClassDescriptor || descriptor.extensionReceiverParameter != null) 1 else 0
         if (receiver != null) {
             argCount--
         }
         val nameLiteral = context.program().getStringLiteral(name)
-        val invokeName = if (argCount == 0) Namer.PROPERTY_CALLABLE_REF_ZERO_ARG else Namer.PROPERTY_CALLABLE_REF_ONE_ARG
-        val invokeFun = JsNameRef(invokeName, Namer.kotlinObject())
-        val invocation = JsInvocation(invokeFun, nameLiteral, getter)
+        val argCountLiteral = context.program().getNumberLiteral(argCount)
+        val invokeFun = JsNameRef(Namer.PROPERTY_CALLABLE_REF, Namer.kotlinObject())
+        val invocation = JsInvocation(invokeFun, nameLiteral, argCountLiteral, getter)
         if (setter != null) {
             invocation.arguments += setter
         }

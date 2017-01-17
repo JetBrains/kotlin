@@ -192,9 +192,7 @@ public final class Namer {
     @NotNull
     public static final String FUNCTION_CALLABLE_REF = "getCallableRef";
     @NotNull
-    public static final String PROPERTY_CALLABLE_REF_ZERO_ARG = "getCallableRefZeroArg";
-    @NotNull
-    public static final String PROPERTY_CALLABLE_REF_ONE_ARG = "getCallableRefOneArg";
+    public static final String PROPERTY_CALLABLE_REF = "getPropertyCallableRef";
     @NotNull
     private final JsExpression callGetProperty;
     @NotNull

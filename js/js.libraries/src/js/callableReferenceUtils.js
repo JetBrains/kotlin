@@ -19,18 +19,11 @@ Kotlin.getCallableRef = function(name, f) {
     return f;
 };
 
-Kotlin.getCallableRefZeroArg = function(name, getter, setter) {
+Kotlin.getPropertyCallableRef = function(name, paramCount, getter, setter) {
     getter.get = getter;
     getter.set = setter;
     getter.callableName = name;
-    return getPropertyRefClass(getter, setter, propertyRefClassMetadataCache.zeroArg);
-};
-
-Kotlin.getCallableRefOneArg = function(name, getter, setter) {
-    getter.get = getter;
-    getter.set = setter;
-    getter.callableName = name;
-    return getPropertyRefClass(getter, setter, propertyRefClassMetadataCache.oneArg);
+    return getPropertyRefClass(getter, setter, propertyRefClassMetadataCache[paramCount]);
 };
 
 function getPropertyRefClass(obj, setter, cache) {
@@ -39,8 +32,8 @@ function getPropertyRefClass(obj, setter, cache) {
     return obj;
 }
 
-var propertyRefClassMetadataCache = {
-    zeroArg: {
+var propertyRefClassMetadataCache = [
+    {
         mutable: { value: null, implementedInterface: function () {
             return Kotlin.kotlin.reflect.KMutableProperty0 }
         },
@@ -48,7 +41,7 @@ var propertyRefClassMetadataCache = {
             return Kotlin.kotlin.reflect.KProperty0 }
         }
     },
-    oneArg: {
+    {
         mutable: { value: null, implementedInterface: function () {
             return Kotlin.kotlin.reflect.KMutableProperty1 }
         },
@@ -56,7 +49,7 @@ var propertyRefClassMetadataCache = {
             return Kotlin.kotlin.reflect.KProperty1 }
         }
     }
-};
+];
 
 function getPropertyRefMetadata(cache) {
     if (cache.value === null) {
