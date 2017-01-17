@@ -38,10 +38,7 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
-import org.jetbrains.kotlin.idea.facet.KotlinFacet
-import org.jetbrains.kotlin.idea.facet.configureFacet
-import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
-import org.jetbrains.kotlin.idea.facet.mavenLibraryId
+import org.jetbrains.kotlin.idea.facet.*
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import java.io.File
 import java.util.*
@@ -105,6 +102,15 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         configureFacet(mavenProject, modifiableModelsProvider, module)
     }
 
+    private fun getCompilerArgumentsByConfigurationElement(configuration: Element) =
+            configuration.getChild("args")?.getChildren("arg")?.map { it.text } ?: emptyList()
+
+    private val compilationGoals = listOf(PomFile.KotlinGoals.Compile,
+                                          PomFile.KotlinGoals.TestCompile,
+                                          PomFile.KotlinGoals.Js,
+                                          PomFile.KotlinGoals.TestJs,
+                                          PomFile.KotlinGoals.MetaData)
+
     private fun configureFacet(mavenProject: MavenProject, modifiableModelsProvider: IdeModifiableModelsProvider, module: Module) {
         val mavenPlugin = mavenProject.findPlugin(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID)
         val compilerVersion = mavenPlugin?.version ?: return
@@ -113,7 +119,16 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
 
         kotlinFacet.configureFacet(compilerVersion, CoroutineSupport.DEFAULT, platform, modifiableModelsProvider)
         val apiVersion = mavenPlugin.configurationElement?.getChild("apiVersion")?.text?.let { LanguageVersion.fromFullVersionString(it) }
-        kotlinFacet.configuration.settings.versionInfo.apiLevel = apiVersion
+        val sharedArguments = mavenPlugin.configurationElement?.let { getCompilerArgumentsByConfigurationElement(it) } ?: emptyList()
+        val executionArguments = mavenPlugin.executions?.filter { it.goals.any { it in compilationGoals } }
+                                         ?.firstOrNull()
+                                         ?.configurationElement?.let { getCompilerArgumentsByConfigurationElement(it) }
+                                 ?: emptyList()
+        with(kotlinFacet.configuration.settings) {
+            versionInfo.apiLevel = apiVersion
+        }
+        parseCompilerArgumentsToFacet(sharedArguments, kotlinFacet)
+        parseCompilerArgumentsToFacet(executionArguments, kotlinFacet)
         MavenProjectImportHandler.getInstances(module.project).forEach { it(kotlinFacet, mavenProject) }
     }
 
