@@ -82,8 +82,6 @@ object TopDownAnalyzerFacadeForJVM {
                 project, files, trace, configuration, packagePartProvider, declarationProviderFactory, sourceModuleSearchScope
         )
 
-        StorageComponentContainerContributor.getInstances(project).forEach { it.onContainerComposed(container, null) }
-
         val module = container.get<ModuleDescriptor>()
         val moduleContext = container.get<ModuleContext>()
 
@@ -162,6 +160,8 @@ object TopDownAnalyzerFacadeForJVM {
                     packagePartProvider(dependencyScope), languageVersionSettings, moduleClassResolver
             )
 
+            StorageComponentContainerContributor.getInstances(project).forEach { it.onContainerComposed(dependenciesContainer, null) }
+
             moduleClassResolver.compiledCodeResolver = dependenciesContainer.get<JavaDescriptorResolver>()
 
             dependenciesContext.setDependencies(listOfNotNull(dependenciesContext.module, optionalBuiltInsModule))
@@ -185,6 +185,7 @@ object TopDownAnalyzerFacadeForJVM {
                 languageVersionSettings, moduleClassResolver
         ).apply {
             initJvmBuiltInsForTopDownAnalysis(module, languageVersionSettings)
+            StorageComponentContainerContributor.getInstances(project).forEach { it.onContainerComposed(this, null) }
         }
 
         moduleClassResolver.sourceCodeResolver = container.get<JavaDescriptorResolver>()
