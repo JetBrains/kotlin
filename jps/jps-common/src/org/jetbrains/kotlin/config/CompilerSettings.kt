@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.config
 
 class CompilerSettings {
-    var additionalArguments: String = DEFAULT_ADDITIONAL_ARGUMENTS
-    var scriptTemplates: String = ""
-    var scriptTemplatesClasspath: String = ""
-    var copyJsLibraryFiles: Boolean = true
-    var outputDirectoryForJsLibraryFiles: String = DEFAULT_OUTPUT_DIRECTORY
+    @JvmField var additionalArguments: String = DEFAULT_ADDITIONAL_ARGUMENTS
+    @JvmField var scriptTemplates: String = ""
+    @JvmField var scriptTemplatesClasspath: String = ""
+    @JvmField var copyJsLibraryFiles: Boolean = true
+    @JvmField var outputDirectoryForJsLibraryFiles: String = DEFAULT_OUTPUT_DIRECTORY
 
     companion object {
         private val DEFAULT_ADDITIONAL_ARGUMENTS = "-version"
