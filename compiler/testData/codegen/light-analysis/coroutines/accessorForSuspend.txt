@@ -1,0 +1,37 @@
+@kotlin.Metadata
+public final class A {
+    public method <init>(): void
+    private final method a(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method myfun(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class AccessorForSuspendKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
+}
+
+@kotlin.Metadata
+public final class CoroutineUtilKt {
+    public final static @org.jetbrains.annotations.NotNull method handleExceptionContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
+    public final static @org.jetbrains.annotations.NotNull method handleResultContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
+}
+
+@kotlin.Metadata
+public class EmptyContinuation {
+    public final static field Companion: EmptyContinuation.Companion
+    private final @org.jetbrains.annotations.NotNull field context: kotlin.coroutines.CoroutineContext
+    inner class EmptyContinuation/Companion
+    public @synthetic.kotlin.jvm.GeneratedByJvmOverloads method <init>(): void
+    public method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.CoroutineContext): void
+    public synthetic method <init>(p0: kotlin.coroutines.CoroutineContext, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public @org.jetbrains.annotations.NotNull method getContext(): kotlin.coroutines.CoroutineContext
+    public method resume(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
+    public method resumeWithException(@org.jetbrains.annotations.NotNull p0: java.lang.Throwable): void
+}
+
+@kotlin.Metadata
+public final static class EmptyContinuation/Companion {
+    inner class EmptyContinuation/Companion
+    private method <init>(): void
+}

@@ -60,7 +60,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     @Nullable
     private FunctionDescriptor initialSignatureDescriptor = null;
 
-    private Map<UserDataKey<?>, Object> userDataMap = null;
+    protected Map<UserDataKey<?>, Object> userDataMap = null;
 
     protected FunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
