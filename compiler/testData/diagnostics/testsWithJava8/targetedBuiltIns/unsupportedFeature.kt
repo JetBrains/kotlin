@@ -20,6 +20,8 @@ fun foo(x: List<String>, y: Throwable) {
 
     y.fillInStackTrace() checkType { _<Int>() }
 
+    HashMap<String, Int>().getOrDefault(Any(), null)
+
     // Falls back to extension in stdlib
     y.printStackTrace()
 }
