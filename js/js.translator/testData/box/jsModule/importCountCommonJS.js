@@ -1,4 +1,4 @@
-__beginModule__();
+$kotlin_test_internal$.beginModule();
 module.exports = function(param) {
     switch (typeof param) {
         case "number":
@@ -9,4 +9,4 @@ module.exports = function(param) {
             return "c";
     }
 };
-__endModule__("lib");
+$kotlin_test_internal$.endModule("lib");

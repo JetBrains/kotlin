@@ -228,9 +228,9 @@ abstract class BasicBoxTest(
 
         if (config.moduleKind == ModuleKind.COMMON_JS) {
             val content = FileUtil.loadFile(outputFile, true)
-            val wrappedContent = "__beginModule__();\n" +
+            val wrappedContent = "$KOTLIN_TEST_INTERNAL.beginModule();\n" +
                                  "$content\n" +
-                                 "__endModule__(\"${StringUtil.escapeStringCharacters(config.moduleId)}\");"
+                                 "$KOTLIN_TEST_INTERNAL.endModule(\"${StringUtil.escapeStringCharacters(config.moduleId)}\");"
             FileUtil.writeToFile(outputFile, wrappedContent)
         }
 
@@ -337,5 +337,7 @@ abstract class BasicBoxTest(
         private val NO_MODULE_SYSTEM_PATTERN = Pattern.compile("^// *NO_JS_MODULE_SYSTEM", Pattern.MULTILINE)
         private val NO_INLINE_PATTERN = Pattern.compile("^// *NO_INLINE *$", Pattern.MULTILINE)
         private val SKIP_NODE_JS = Pattern.compile("^// *SKIP_NODE_JS *$", Pattern.MULTILINE)
+
+        const val KOTLIN_TEST_INTERNAL = "\$kotlin_test_internal\$"
     }
 }

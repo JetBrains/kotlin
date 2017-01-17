@@ -22,5 +22,7 @@
     }
 
     global.define = define;
-    global.require = require;
+    global.$kotlin_test_internal$ = {
+        require : require
+    };
 })(this);

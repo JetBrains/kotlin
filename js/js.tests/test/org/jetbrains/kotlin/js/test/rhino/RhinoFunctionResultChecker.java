@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.test.rhino;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.js.test.BasicBoxTest;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
@@ -70,7 +71,7 @@ public class RhinoFunctionResultChecker implements RhinoResultChecker {
         StringBuilder sb = new StringBuilder();
 
         if (withModuleSystem) {
-            sb.append("require('").append(moduleId).append("')");
+            sb.append(BasicBoxTest.KOTLIN_TEST_INTERNAL).append(".require('").append(moduleId).append("')");
         }
         else if (moduleId.contains(".")) {
             sb.append("this['").append(moduleId).append("']");
