@@ -1,10 +1,10 @@
 buildscript {
-    repositories {
-        mavenLocal()
-    }
-    dependencies {
-        classpath fileTree(dir: '../../dokka').matching { include 'dokka-gradle-plugin-*.jar' }
-    }
+  repositories {
+    mavenLocal()
+  }
+  dependencies {
+    classpath fileTree(dir: '../../dokka').matching { include 'dokka-gradle-plugin-*.jar' }
+  }
 }
 
 apply plugin: 'java'
@@ -13,25 +13,30 @@ apply plugin: 'org.jetbrains.dokka'
 
 
 task stdlib_docs(type: org.jetbrains.dokka.gradle.DokkaTask) {
-    moduleName = 'stdlib'
-    outputDirectory = "$buildDir/stdlib-docs"
-    outputFormat = experimental_samples == "true" ? 'kotlin-website-samples' : 'kotlin-website'
-    processConfigurations = ['compile']
-    includes = ['src/Module.md']
-    samples = ['test/']
-    linkMapping {
-        dir = "."
-        url = "https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib"
-        suffix = "#L"
-    }
-    sourceDirs = files('../../core/builtins', 'src', '../../core/reflection.jvm')
-    dokkaFatJar = fileTree(dir: '../../dokka').matching { include 'dokka-fatjar-*.jar' }.getSingleFile()
-    skipDeprecated = true
+  moduleName = 'stdlib'
+  outputDirectory = "$buildDir/stdlib-docs"
+  outputFormat = experimental_samples == "true" ? 'kotlin-website-samples' : 'kotlin-website'
+  processConfigurations = ['compile']
+  includes = ['src/Module.md']
+  samples = ['test/']
+  linkMapping {
+    dir = "."
+    url = "https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib"
+    suffix = "#L"
+  }
+  sourceDirs = files('src',
+                     '../../core/builtins',
+                     '../../core/reflection.jvm',
+                     '../../core/runtime.jvm/src/kotlin/jvm/annotations',
+                     '../../core/runtime.jvm/src/kotlin/jvm/JvmClassMapping.kt')
+
+  dokkaFatJar = fileTree(dir: '../../dokka').matching { include 'dokka-fatjar-*.jar' }.getSingleFile()
+  skipDeprecated = true
 }
 
 task stdlib_docs_zip(type: Zip) {
-    from "$buildDir/stdlib-docs/stdlib"
-    baseName = 'stdlib-docs'
+  from "$buildDir/stdlib-docs/stdlib"
+  baseName = 'stdlib-docs'
 }
 
 stdlib_docs_zip.dependsOn stdlib_docs
