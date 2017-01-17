@@ -3611,6 +3611,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("propertyInitializationOrder.kt")
+        public void testPropertyInitializationOrder() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/initialize/propertyInitializationOrder.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("rootPackageValInit.kt")
         public void testRootPackageValInit() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/initialize/rootPackageValInit.kt");

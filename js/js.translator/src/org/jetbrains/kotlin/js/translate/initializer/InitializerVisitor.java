@@ -16,16 +16,21 @@
 
 package org.jetbrains.kotlin.js.translate.initializer;
 
-import org.jetbrains.kotlin.js.backend.ast.JsExpression;
-import org.jetbrains.kotlin.js.backend.ast.JsStatement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
+import org.jetbrains.kotlin.js.backend.ast.*;
+import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.declaration.PropertyTranslatorKt;
 import org.jetbrains.kotlin.js.translate.general.TranslatorVisitor;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
+import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils;
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.types.KotlinType;
 
 import static org.jetbrains.kotlin.js.translate.general.Translation.translateAsStatementAndMergeInBlockIfNeeded;
 import static org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.generateInitializerForDelegate;
@@ -49,9 +54,18 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
             assert value != null;
             statement = generateInitializerForProperty(context, descriptor, value);
         }
-        if (delegate != null) {
+        else if (delegate != null) {
             assert value != null;
             statement = generateInitializerForDelegate(descriptor, value);
+        }
+        else if (Boolean.TRUE.equals(context.bindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, descriptor))) {
+            JsExpression defaultValue = generateDefaultValue(descriptor, context);
+            statement = TranslationUtils.assignmentToBackingField(context, descriptor, defaultValue).makeStmt();
+        }
+        else if (JsDescriptorUtils.isSimpleFinalProperty(descriptor)) {
+            JsExpression defaultValue = generateDefaultValue(descriptor, context);
+            JsName propertyName = context.getNameForDescriptor(descriptor);
+            statement = JsAstUtils.assignment(new JsNameRef(propertyName, JsLiteral.THIS), defaultValue).makeStmt();
         }
 
         if (statement != null && !JsAstUtils.isEmptyStatement(statement)) {
@@ -59,6 +73,24 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
         }
 
         return null;
+    }
+
+    @NotNull
+    private static JsExpression generateDefaultValue(@NotNull PropertyDescriptor property, @NotNull TranslationContext context) {
+        if (property.isLateInit()) return Namer.getUndefinedExpression();
+
+        KotlinType type = property.getType();
+        if (KotlinBuiltIns.isInt(type) || KotlinBuiltIns.isFloat(type) || KotlinBuiltIns.isDouble(type) ||
+            KotlinBuiltIns.isByte(type) || KotlinBuiltIns.isShort(type)
+        ) {
+            return context.program().getNumberLiteral(0);
+        }
+        else if (KotlinBuiltIns.isBoolean(type)) {
+            return JsLiteral.FALSE;
+        }
+        else {
+            return JsLiteral.NULL;
+        }
     }
 
     @Override
