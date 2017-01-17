@@ -431,7 +431,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
         if (functionDescriptor instanceof SimpleFunctionDescriptor && functionDescriptor.isSuspend()) {
             SimpleFunctionDescriptor jvmSuspendFunctionView =
-                    CoroutineCodegenUtilKt.createJvmSuspendFunctionView(
+                    CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(
                             (SimpleFunctionDescriptor) functionDescriptor
                     );
 

@@ -93,9 +93,7 @@ fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(
     val function = candidateDescriptor as? SimpleFunctionDescriptor ?: return null
     if (!function.isSuspend || function.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) != null) return null
 
-    val newCandidateDescriptor =
-            bindingContext.get(CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW, function)
-            ?: createJvmSuspendFunctionView(function)
+    val newCandidateDescriptor = getOrCreateJvmSuspendFunctionView(function, bindingContext)
 
     val newCall = ResolvedCallImpl(
             call,
@@ -137,10 +135,24 @@ fun FunctionDescriptor.isStateMachineNeeded(bindingContext: BindingContext) =
 
 fun FunctionDescriptor.containsNonTailSuspensionCalls(bindingContext: BindingContext) =
         bindingContext[BindingContext.CONTAINS_NON_TAIL_SUSPEND_CALLS, original] == true
+
+fun CallableDescriptor.isSuspendFunctionNotSuspensionView(): Boolean {
+    if (this !is FunctionDescriptor) return false
+    return this.isSuspend && this.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) == null
+}
+
 // Suspend functions have irregular signatures on JVM, containing an additional last parameter with type `Continuation<return-type>`,
 // and return type Any?
 // This function returns a function descriptor reflecting how the suspend function looks from point of view of JVM
-fun <D : FunctionDescriptor> createJvmSuspendFunctionView(function: D): D {
+@JvmOverloads
+fun <D : FunctionDescriptor> getOrCreateJvmSuspendFunctionView(function: D, bindingContext: BindingContext? = null): D {
+    assert(function.isSuspend) {
+        "Suspended function is expected, but $function was found"
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    bindingContext?.get(CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW, function)?.let { return it as D }
+
     val continuationParameter = ValueParameterDescriptorImpl(
             function, null, function.valueParameters.size, Annotations.EMPTY, Name.identifier("\$continuation"),
             // Add j.l.Object to invoke(), because that is the type of parameters we have in FunctionN+1

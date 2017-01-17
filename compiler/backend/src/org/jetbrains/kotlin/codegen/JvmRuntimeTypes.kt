@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.builtins.createFunctionType
-import org.jetbrains.kotlin.codegen.coroutines.createJvmSuspendFunctionView
+import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -69,7 +69,7 @@ class JvmRuntimeTypes(module: ModuleDescriptor) {
 
         val actualFunctionDescriptor =
                 if (descriptor.isSuspend)
-                    createJvmSuspendFunctionView(descriptor)
+                    getOrCreateJvmSuspendFunctionView(descriptor)
                 else
                     descriptor
 

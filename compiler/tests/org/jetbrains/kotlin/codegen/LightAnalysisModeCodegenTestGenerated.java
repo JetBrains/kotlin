@@ -4799,6 +4799,12 @@ public class LightAnalysisModeCodegenTestGenerated extends AbstractLightAnalysis
             doTest(fileName);
         }
 
+        @TestMetadata("suspendDefaultImpl.kt")
+        public void testSuspendDefaultImpl() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendDefaultImpl.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("suspendDelegation.kt")
         public void testSuspendDelegation() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendDelegation.kt");

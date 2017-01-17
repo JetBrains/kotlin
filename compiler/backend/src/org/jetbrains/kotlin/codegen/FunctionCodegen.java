@@ -167,6 +167,11 @@ public class FunctionCodegen {
             @NotNull FunctionDescriptor descriptor,
             @NotNull FunctionGenerationStrategy strategy
     ) {
+        if (CoroutineCodegenUtilKt.isSuspendFunctionNotSuspensionView(descriptor)) {
+            generateMethod(origin, CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(descriptor, bindingContext), strategy);
+            return;
+        }
+
         generateMethod(origin, descriptor, owner.intoFunction(descriptor), strategy);
     }
 

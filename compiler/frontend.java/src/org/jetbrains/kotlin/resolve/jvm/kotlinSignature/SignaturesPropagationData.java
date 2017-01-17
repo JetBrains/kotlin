@@ -212,6 +212,10 @@ public class SignaturesPropagationData {
             }
 
             for (FunctionDescriptor candidate : superFunctionCandidates) {
+                // Skip suspend super functions, because we doesn't process them correctly by now
+                // Moreover, we fail with exception sometimes
+                // TODO: remove this continue when KT-15747 is fixed
+                if (candidate.isSuspend()) continue;
                 Method candidateSignature = SIGNATURE_MAPPER.mapToJvmMethodSignature(candidate);
                 if (KotlinToJvmSignatureMapperKt.erasedSignaturesEqualIgnoringReturnTypes(autoSignature, candidateSignature)) {
                     superFunctions.add(candidate);

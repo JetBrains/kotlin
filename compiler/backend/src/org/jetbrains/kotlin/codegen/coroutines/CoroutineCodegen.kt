@@ -330,7 +330,7 @@ class CoroutineCodegen(
                     expressionCodegen,
                     declaration,
                     expressionCodegen.context.intoCoroutineClosure(
-                            createJvmSuspendFunctionView(originalCoroutineLambdaDescriptor),
+                            getOrCreateJvmSuspendFunctionView(originalCoroutineLambdaDescriptor, expressionCodegen.state.bindingContext),
                             originalCoroutineLambdaDescriptor, expressionCodegen, expressionCodegen.state.typeMapper
                     ),
                     classBuilder,

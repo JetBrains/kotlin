@@ -378,10 +378,8 @@ public class KotlinTypeMapper {
             return Type.VOID_TYPE;
         }
 
-        if (descriptor instanceof SimpleFunctionDescriptor && ((SimpleFunctionDescriptor) descriptor).isSuspend() &&
-            ((SimpleFunctionDescriptor) descriptor).getUserData(
-                    CoroutineCodegenUtilKt.INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) == null) {
-            return mapReturnType(CoroutineCodegenUtilKt.createJvmSuspendFunctionView((SimpleFunctionDescriptor) descriptor), sw);
+        if (CoroutineCodegenUtilKt.isSuspendFunctionNotSuspensionView(descriptor)) {
+            return mapReturnType(CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView((SimpleFunctionDescriptor) descriptor), sw);
         }
 
         if (TypeSignatureMappingKt.hasVoidReturnType(descriptor)) {
@@ -1027,6 +1025,10 @@ public class KotlinTypeMapper {
                 f.getContainingDeclaration().getOriginal() instanceof JavaClassDescriptor) {
                 return mapSignature(f.getInitialSignatureDescriptor(), kind, skipGenericSignature);
             }
+        }
+
+        if (CoroutineCodegenUtilKt.isSuspendFunctionNotSuspensionView(f)) {
+            return mapSignature(CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(f), kind, skipGenericSignature);
         }
 
         if (f instanceof ConstructorDescriptor) {
