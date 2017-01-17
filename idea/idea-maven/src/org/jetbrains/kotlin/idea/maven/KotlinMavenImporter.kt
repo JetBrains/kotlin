@@ -35,6 +35,7 @@ import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
@@ -105,12 +106,14 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
     }
 
     private fun configureFacet(mavenProject: MavenProject, modifiableModelsProvider: IdeModifiableModelsProvider, module: Module) {
-        val compilerVersion = mavenProject.findPlugin(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID)?.version
-                              ?: return
+        val mavenPlugin = mavenProject.findPlugin(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID)
+        val compilerVersion = mavenPlugin?.version ?: return
         val kotlinFacet = module.getOrCreateFacet(modifiableModelsProvider, false)
         val platform = detectPlatformByExecutions(mavenProject) ?: detectPlatformByLibraries(mavenProject)
 
         kotlinFacet.configureFacet(compilerVersion, CoroutineSupport.DEFAULT, platform, modifiableModelsProvider)
+        val apiVersion = mavenPlugin.configurationElement?.getChild("apiVersion")?.text?.let { LanguageVersion.fromFullVersionString(it) }
+        kotlinFacet.configuration.settings.versionInfo.apiLevel = apiVersion
         MavenProjectImportHandler.getInstances(module.project).forEach { it(kotlinFacet, mavenProject) }
     }
 
