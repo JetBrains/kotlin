@@ -52,7 +52,7 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
     private val nativePattern: RegExp = RegExp(pattern, options.map { it.value }.joinToString(separator = "") + "g")
 
     /** Indicates whether the regular expression matches the entire [input]. */
-    public fun matches(input: CharSequence): Boolean {
+    public infix fun matches(input: CharSequence): Boolean {
         nativePattern.reset()
         val match = nativePattern.exec(input.toString())
         return match != null && match.index == 0 && nativePattern.lastIndex == input.length

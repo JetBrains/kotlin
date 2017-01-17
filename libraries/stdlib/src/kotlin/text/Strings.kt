@@ -677,7 +677,7 @@ public inline fun CharSequence.replaceFirst(regex: Regex, replacement: String): 
  * Returns `true` if this char sequence matches the given regular expression.
  */
 @kotlin.internal.InlineOnly
-public inline fun CharSequence.matches(regex: Regex): Boolean = regex.matches(this)
+public inline infix fun CharSequence.matches(regex: Regex): Boolean = regex.matches(this)
 
 /**
  * Implementation of [regionMatches] for CharSequences.

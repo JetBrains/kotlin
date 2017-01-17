@@ -116,7 +116,7 @@ internal constructor(private val nativePattern: Pattern) {
     public val options: Set<RegexOption> = fromInt(nativePattern.flags())
 
     /** Indicates whether the regular expression matches the entire [input]. */
-    public fun matches(input: CharSequence): Boolean = nativePattern.matcher(input).matches()
+    public infix fun matches(input: CharSequence): Boolean = nativePattern.matcher(input).matches()
 
     /** Indicates whether the regular expression can find at least one match in the specified [input]. */
     public fun containsMatchIn(input: CharSequence): Boolean = nativePattern.matcher(input).find()

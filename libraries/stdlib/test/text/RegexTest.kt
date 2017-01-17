@@ -11,8 +11,8 @@ class RegexTest {
         val p = "\\d+".toRegex()
         val input = "123 456 789"
 
-        assertFalse(input.matches(p))
-        assertFalse(p.matches(input))
+        assertFalse(input matches p)
+        assertFalse(p matches input)
 
         assertTrue(p in input)
 

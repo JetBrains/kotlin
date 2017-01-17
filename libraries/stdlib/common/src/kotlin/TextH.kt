@@ -44,7 +44,7 @@ header class Regex {
     constructor(pattern: String, options: Set<RegexOption>)
 
     fun matchEntire(input: CharSequence): MatchResult?
-    fun matches(input: CharSequence): Boolean
+    infix fun matches(input: CharSequence): Boolean
     fun containsMatchIn(input: CharSequence): Boolean
     fun replace(input: CharSequence, replacement: String): String
     fun replace(input: CharSequence, transform: (MatchResult) -> CharSequence): String
