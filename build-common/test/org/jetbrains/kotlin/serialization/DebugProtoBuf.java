@@ -20013,6 +20013,8 @@ public final class DebugProtoBuf {
      *isConst
      *lateinit
      *hasConstant
+     *isExternal
+     *isDelegated
      * </pre>
      */
     boolean hasFlags();
@@ -20030,6 +20032,8 @@ public final class DebugProtoBuf {
      *isConst
      *lateinit
      *hasConstant
+     *isExternal
+     *isDelegated
      * </pre>
      */
     int getFlags();
@@ -20385,6 +20389,8 @@ public final class DebugProtoBuf {
      *isConst
      *lateinit
      *hasConstant
+     *isExternal
+     *isDelegated
      * </pre>
      */
     public boolean hasFlags() {
@@ -20404,6 +20410,8 @@ public final class DebugProtoBuf {
      *isConst
      *lateinit
      *hasConstant
+     *isExternal
+     *isDelegated
      * </pre>
      */
     public int getFlags() {
@@ -21201,6 +21209,8 @@ public final class DebugProtoBuf {
        *isConst
        *lateinit
        *hasConstant
+       *isExternal
+       *isDelegated
        * </pre>
        */
       public boolean hasFlags() {
@@ -21220,6 +21230,8 @@ public final class DebugProtoBuf {
        *isConst
        *lateinit
        *hasConstant
+       *isExternal
+       *isDelegated
        * </pre>
        */
       public int getFlags() {
@@ -21239,6 +21251,8 @@ public final class DebugProtoBuf {
        *isConst
        *lateinit
        *hasConstant
+       *isExternal
+       *isDelegated
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -21261,6 +21275,8 @@ public final class DebugProtoBuf {
        *isConst
        *lateinit
        *hasConstant
+       *isExternal
+       *isDelegated
        * </pre>
        */
       public Builder clearFlags() {

@@ -54,7 +54,7 @@ class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesM
                         refClass, Annotations.EMPTY, Modality.FINAL, Visibilities.PUBLIC, true,
                         Name.identifier("element"), CallableMemberDescriptor.Kind.DECLARATION, SourceElement.NO_SOURCE,
                         /* lateInit = */ false, /* isConst = */ false, /* isHeader = */ false, /* isImpl = */ false,
-                        /* isExternal = */ false
+                        /* isExternal = */ false, /* isDelegated = */ false
                 ).initialize(type, dispatchReceiverParameter = refClass.thisAsReceiverParameter)
     }
 
@@ -95,7 +95,7 @@ class JvmSharedVariablesManager(val builtIns: KotlinBuiltIns) : SharedVariablesM
                         genericRefClass, Annotations.EMPTY, Modality.FINAL, Visibilities.PUBLIC, true,
                         Name.identifier("element"), CallableMemberDescriptor.Kind.DECLARATION, SourceElement.NO_SOURCE,
                         /* lateInit = */ false, /* isConst = */ false, /* isHeader = */ false, /* isImpl = */ false,
-                        /* isExternal = */ false
+                        /* isExternal = */ false, /* isDelegated = */ false
                 ).initialize(
                         type = builtIns.anyType,
                         dispatchReceiverParameter = genericRefClass.thisAsReceiverParameter

@@ -27,7 +27,7 @@ interface JvmDescriptorWithExtraFlags {
     val extraFlags: Int
 }
 
-class JvmPropertyDescriptorImpl(
+class JvmPropertyDescriptorImpl private constructor(
         containingDeclaration: DeclarationDescriptor,
         original: PropertyDescriptor?,
         annotations: Annotations,
@@ -44,7 +44,7 @@ class JvmPropertyDescriptorImpl(
         isImpl: Boolean
 ) : JvmDescriptorWithExtraFlags, PropertyDescriptorImpl(
         containingDeclaration, original, annotations, modality, visibility, isVar,
-        name, kind, source, isLateInit, isConst, isHeader, isImpl, /* isExternal = */ false
+        name, kind, source, isLateInit, isConst, isHeader, isImpl, /* isExternal = */ false, false
 ) {
     override fun createSubstitutedCopy(
             newOwner: DeclarationDescriptor,

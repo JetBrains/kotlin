@@ -833,7 +833,8 @@ public class DescriptorResolver {
                 modifierList != null && modifierList.hasModifier(KtTokens.HEADER_KEYWORD) ||
                 containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).isHeader(),
                 modifierList != null && modifierList.hasModifier(KtTokens.IMPL_KEYWORD),
-                modifierList != null && modifierList.hasModifier(KtTokens.EXTERNAL_KEYWORD)
+                modifierList != null && modifierList.hasModifier(KtTokens.EXTERNAL_KEYWORD),
+                property.hasDelegate()
         );
         wrapper.setDescriptor(propertyDescriptor);
 
@@ -1161,11 +1162,12 @@ public class DescriptorResolver {
                 name,
                 CallableMemberDescriptor.Kind.DECLARATION,
                 KotlinSourceElementKt.toSourceElement(parameter),
-                /* lateInit = */ false,
-                /* isConst = */ false,
-                /* isHeader = */ classDescriptor.isHeader(),
-                /* isImpl = */ modifierList != null && modifierList.hasModifier(KtTokens.IMPL_KEYWORD),
-                /* isExternal = */ false
+                false,
+                false,
+                classDescriptor.isHeader(),
+                modifierList != null && modifierList.hasModifier(KtTokens.IMPL_KEYWORD),
+                false,
+                false
         );
         propertyWrapper.setDescriptor(propertyDescriptor);
         propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(),

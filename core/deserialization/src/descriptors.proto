@@ -301,6 +301,8 @@ message Property {
     isConst
     lateinit
     hasConstant
+    isExternal
+    isDelegated
   */
   optional int32 flags = 11 [default = 518 /* public (6) final property with getter (512) */];
   optional int32 old_flags = 1 [default = 2054];

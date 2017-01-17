@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -51,6 +53,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
                             descriptor: VariableDescriptor,
                             typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
                             origin: IrStatementOrigin? = null) =
+            @Suppress("DEPRECATION")
             if (descriptor is LocalVariableDescriptor && descriptor.isDelegated)
                 IrCallImpl(startOffset, endOffset, descriptor.type, descriptor.getter!!, typeArguments, origin ?: IrStatementOrigin.GET_LOCAL_PROPERTY)
             else

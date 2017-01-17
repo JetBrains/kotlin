@@ -148,7 +148,8 @@ class LocalVariableResolver(
                     /* isConst = */ false,
                     /* isHeader = */ false,
                     /* isImpl = */ false,
-                    /* isExternal = */ false
+                    /* isExternal = */ false,
+                    variable is KtProperty && variable.hasDelegate()
             )
             // For a local variable the type must not be deferred
             type = variableTypeAndInitializerResolver.resolveType(propertyDescriptor, scope, variable, dataFlowInfo, trace, local = true)

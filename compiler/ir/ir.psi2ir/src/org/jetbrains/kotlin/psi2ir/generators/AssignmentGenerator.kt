@@ -116,6 +116,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
 
             }
             is LocalVariableDescriptor ->
+                @Suppress("DEPRECATION")
                 if (descriptor.isDelegated)
                     DelegatedLocalPropertyLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor, origin)
                 else

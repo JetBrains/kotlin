@@ -188,7 +188,8 @@ class DescriptorSerializer private constructor(
 
         val flags = Flags.getPropertyFlags(
                 hasAnnotations, descriptor.visibility, descriptor.modality, descriptor.kind, descriptor.isVar,
-                hasGetter, hasSetter, hasConstant, isConst, lateInit, descriptor.isExternal
+                hasGetter, hasSetter, hasConstant, isConst, lateInit, descriptor.isExternal,
+                @Suppress("DEPRECATION") descriptor.isDelegated
         )
         if (flags != builder.flags) {
             builder.flags = flags

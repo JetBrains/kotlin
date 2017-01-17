@@ -100,7 +100,8 @@ class DynamicCallableDescriptors(storageManager: StorageManager, builtIns: Kotli
                 /* isConst = */ false,
                 /* isHeader = */ false,
                 /* isImpl = */ false,
-                /* isExternal = */ false
+                /* isExternal = */ false,
+                /* isDelegated = */ false
         )
         propertyDescriptor.setType(
                 dynamicType,
@@ -230,4 +231,3 @@ fun DeclarationDescriptor.isDynamic(): Boolean {
     val dispatchReceiverParameter = dispatchReceiverParameter
     return dispatchReceiverParameter != null && dispatchReceiverParameter.type.isDynamic()
 }
-

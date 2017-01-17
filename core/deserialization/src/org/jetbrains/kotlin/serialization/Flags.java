@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.protobuf.Internal;
-import org.jetbrains.kotlin.types.KotlinType;
 
 public class Flags {
     private Flags() {}
@@ -67,6 +66,7 @@ public class Flags {
     public static final BooleanFlagField IS_LATEINIT = FlagField.booleanAfter(IS_CONST);
     public static final BooleanFlagField HAS_CONSTANT = FlagField.booleanAfter(IS_LATEINIT);
     public static final BooleanFlagField IS_EXTERNAL_PROPERTY = FlagField.booleanAfter(HAS_CONSTANT);
+    public static final BooleanFlagField IS_DELEGATED = FlagField.booleanAfter(IS_EXTERNAL_PROPERTY);
 
     // Parameters
 
@@ -173,7 +173,8 @@ public class Flags {
             boolean hasConstant,
             boolean isConst,
             boolean lateInit,
-            boolean isExternal
+            boolean isExternal,
+            boolean isDelegated
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | VISIBILITY.toFlags(visibility(visibility))
@@ -186,6 +187,7 @@ public class Flags {
                | IS_LATEINIT.toFlags(lateInit)
                | HAS_CONSTANT.toFlags(hasConstant)
                | IS_EXTERNAL_PROPERTY.toFlags(isExternal)
+               | IS_DELEGATED.toFlags(isDelegated)
                 ;
     }
 

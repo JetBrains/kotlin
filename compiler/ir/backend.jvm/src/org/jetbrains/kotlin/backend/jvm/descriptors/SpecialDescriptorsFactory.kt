@@ -129,7 +129,7 @@ class SpecialDescriptorsFactory(
                 Annotations.EMPTY, Modality.FINAL, Visibilities.PUBLIC, false,
                 Name.identifier("INSTANCE"),
                 CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE, /* lateInit = */ false, /* isConst = */ false,
-                /* isHeader = */ false, /* isImpl = */ false, /* isExternal = */ false
+                /* isHeader = */ false, /* isImpl = */ false, /* isExternal = */ false, /* isDelegated = */ false
         ).initialize(objectDescriptor.defaultType)
 
         return instanceFieldDescriptor

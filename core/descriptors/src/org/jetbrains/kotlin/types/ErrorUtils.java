@@ -379,11 +379,7 @@ public class ErrorUtils {
                 Name.special("<ERROR PROPERTY>"),
                 CallableMemberDescriptor.Kind.DECLARATION,
                 SourceElement.NO_SOURCE,
-                /* lateInit = */ false,
-                /* isConst = */ false,
-                /* isHeader = */ false,
-                /* isImpl = */ false,
-                /* isExternal = */ false
+                false, false, false, false, false, false
         );
         descriptor.setType(ERROR_PROPERTY_TYPE,
                            Collections.<TypeParameterDescriptor>emptyList(),

@@ -33,7 +33,7 @@ import java.util.List;
 public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements JavaCallableMemberDescriptor {
     private final boolean isStaticFinal;
 
-    protected JavaPropertyDescriptor(
+    private JavaPropertyDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             @NotNull Modality modality,
@@ -46,7 +46,7 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
             boolean isStaticFinal
     ) {
         super(containingDeclaration, original, annotations, modality, visibility, isVar, name, kind, source,
-              /* lateInit = */ false, /* isConst = */ false, /* isHeader = */ false, /* isImpl = */ false, /* isExternal = */ false);
+              false, false, false, false, false, false);
 
         this.isStaticFinal = isStaticFinal;
     }

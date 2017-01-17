@@ -105,7 +105,8 @@ private fun genProperty(
             /* isConst = */ false,
             /* isHeader = */ false,
             /* isImpl = */ false,
-            /* isExternal = */ false
+            /* isExternal = */ false,
+            /* isDelegated = */ false
     ) {
         override val errorType = errorType
         override val cacheView = cacheView
