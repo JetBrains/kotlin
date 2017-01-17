@@ -413,6 +413,41 @@ class MapTest {
     }
 
 
+    fun testMinus(doMinus: (Map<String, Int>) -> Map<String, Int>) {
+        val original = mapOf("A" to 1, "B" to 2)
+        val shortened = doMinus(original)
+        assertEquals("A" to 1, shortened.entries.single().toPair())
+    }
+
+    @Test fun minus() = testMinus { it - "B" - "C" }
+
+    @Test fun minusList() = testMinus { it - listOf("B", "C") }
+
+    @Test fun minusArray() = testMinus { it - arrayOf("B", "C") }
+
+    @Test fun minusSequence() = testMinus { it - sequenceOf("B", "C") }
+
+    @Test fun minusSet() = testMinus { it - setOf("B", "C") }
+
+
+
+    fun testMinusAssign(doMinusAssign: (MutableMap<String, Int>) -> Unit) {
+        val original = hashMapOf("A" to 1, "B" to 2)
+        doMinusAssign(original)
+        assertEquals("A" to 1, original.entries.single().toPair())
+    }
+
+    @Test fun minusAssign() = testMinusAssign {
+        it -= "B"
+        it -= "C"
+    }
+
+    @Test fun minusAssignList() = testMinusAssign { it -= listOf("B", "C") }
+
+    @Test fun minusAssignArray() = testMinusAssign { it -= arrayOf("B", "C") }
+
+    @Test fun minusAssignSequence() = testMinusAssign { it -= sequenceOf("B", "C") }
+
 
     fun testIdempotent(operation: (Map<String, Int>) -> Map<String, Int>) {
         val original = mapOf("A" to 1, "B" to 2)
