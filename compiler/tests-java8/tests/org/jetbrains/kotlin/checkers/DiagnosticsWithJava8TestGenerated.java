@@ -36,9 +36,27 @@ public class DiagnosticsWithJava8TestGenerated extends AbstractDiagnosticsWithFu
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava8"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("defaultMethods.kt")
+    public void testDefaultMethods() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/defaultMethods.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("defaultMethodsIndirectInheritance.kt")
+    public void testDefaultMethodsIndirectInheritance() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/defaultMethodsIndirectInheritance.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("samWithConsumer.kt")
     public void testSamWithConsumer() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/samWithConsumer.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("staticMethodInClass.kt")
+    public void testStaticMethodInClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/staticMethodInClass.kt");
         doTest(fileName);
     }
 

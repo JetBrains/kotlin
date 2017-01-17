@@ -393,6 +393,12 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/interfaceFlag/superCall.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("superCallIndirect.kt")
+            public void testSuperCallIndirect() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/interfaceFlag/superCallIndirect.kt");
+                doTest(fileName);
+            }
         }
     }
 

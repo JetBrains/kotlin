@@ -1,6 +1,6 @@
 abstract class A : MutableList<String> {
     override fun sort(/*0*/ p0: java.util.Comparator<in String>) {
-        super.sort(p0)
+        super.<!DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET!>sort<!>(p0)
     }
 }
 

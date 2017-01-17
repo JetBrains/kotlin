@@ -89,6 +89,9 @@ public interface ErrorsJvm {
 
     DiagnosticFactory3<PsiElement, DeclarationDescriptor, DeclarationDescriptor, String> TARGET6_INTERFACE_INHERITANCE = DiagnosticFactory3.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET = DiagnosticFactory0.create(WARNING);
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {
