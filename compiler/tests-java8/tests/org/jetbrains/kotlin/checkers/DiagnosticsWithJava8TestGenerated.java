@@ -48,6 +48,12 @@ public class DiagnosticsWithJava8TestGenerated extends AbstractDiagnosticsWithFu
         doTest(fileName);
     }
 
+    @TestMetadata("nullForOptionalOrElse.kt")
+    public void testNullForOptionalOrElse() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/nullForOptionalOrElse.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("samWithConsumer.kt")
     public void testSamWithConsumer() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/samWithConsumer.kt");
