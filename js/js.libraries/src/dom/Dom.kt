@@ -34,16 +34,16 @@ fun Element?.childElements(): List<Element> = this?.childNodes?.filterElements()
 fun Element?.childElements(name: String): List<Element> = this?.childNodes?.filterElements()?.filter { it.nodeName == name } ?: emptyList()
 
 /** The descendant elements of this document */
-@Deprecated("Use elements() function instead", ReplaceWith("this.elements()"))
+@Deprecated("Use elements() function instead", ReplaceWith("this.elements()"), level = DeprecationLevel.ERROR)
 val Document?.elements: List<Element>
     get() = this.elements()
 
 /** The descendant elements of this elements */
-@Deprecated("Use elements() function instead", ReplaceWith("this?.elements() ?: emptyList()"))
+@Deprecated("Use elements() function instead", ReplaceWith("this?.elements() ?: emptyList()"), level = DeprecationLevel.ERROR)
 val Element?.elements: List<Element>
     get() = this?.elements() ?: emptyList()
 
-@Deprecated("Use non-nullable receiver version elements()", ReplaceWith("this?.elements(localName) ?: emptyList()"))
+@Deprecated("Use non-nullable receiver version elements()", ReplaceWith("this?.elements(localName) ?: emptyList()"), level = DeprecationLevel.ERROR)
 @JsName("deprecated_elements")
 fun Element?.elements(localName: String): List<Element> = this?.elements(localName) ?: emptyList()
 
@@ -58,7 +58,7 @@ fun Document?.elements(localName: String = "*"): List<Element> {
     return this?.getElementsByTagName(localName)?.asElementList() ?: emptyList()
 }
 
-@Deprecated("Use non-nullable elements function instead", ReplaceWith("this?.elements(namespaceUri, localName) ?: emptyList()"))
+@Deprecated("Use non-nullable elements function instead", ReplaceWith("this?.elements(namespaceUri, localName) ?: emptyList()"), level = DeprecationLevel.ERROR)
 @JsName("deprecated_elements_2")
 fun Element?.elements(namespaceUri: String, localName: String): List<Element> = this?.elements(namespaceUri, localName) ?: emptyList()
 
@@ -72,13 +72,13 @@ fun Document?.elements(namespaceUri: String, localName: String): List<Element> {
     return this?.getElementsByTagNameNS(namespaceUri, localName)?.asElementList() ?: emptyList()
 }
 
-@Deprecated("Use non-null function instead with elvis", ReplaceWith("this?.asList() ?: emptyList()"))
+@Deprecated("Use non-null function instead with elvis", ReplaceWith("this?.asList() ?: emptyList()"), level = DeprecationLevel.ERROR)
 @JsName("deprecated_asList")
 fun NodeList?.asList(): List<Node> = this?.asList() ?: emptyList()
 
 fun NodeList.asList(): List<Node> = NodeListAsList(this)
 
-@Deprecated("Use asElementList() instead", ReplaceWith("this?.asElementList() ?: emptyList()"))
+@Deprecated("Use asElementList() instead", ReplaceWith("this?.asElementList() ?: emptyList()"), level = DeprecationLevel.ERROR)
 fun NodeList?.toElementList(): List<Element> = this?.asElementList() ?: emptyList()
 
 /**
@@ -164,23 +164,23 @@ val Node.isElement: Boolean
     get() = nodeType == Node.ELEMENT_NODE
 
 /** Returns the attribute value or empty string if its not present */
-@Deprecated("Use getAttribute with elvis operator", ReplaceWith("this.getAttribute(name) ?: \"\""))
+@Deprecated("Use getAttribute with elvis operator", ReplaceWith("this.getAttribute(name) ?: \"\""), level = DeprecationLevel.ERROR)
 fun Element.attribute(name: String): String {
     return this.getAttribute(name) ?: ""
 }
 
-@Deprecated("Use asList().firstOrNull() instead", ReplaceWith("this?.asList()?.firstOrNull()"))
+@Deprecated("Use asList().firstOrNull() instead", ReplaceWith("this?.asList()?.firstOrNull()"), level = DeprecationLevel.ERROR)
 val NodeList?.head: Node?
     get() = this?.asList()?.firstOrNull()
 
-@Deprecated("Use asList().firstOrNull() instead", ReplaceWith("this?.asList()?.firstOrNull()"))
+@Deprecated("Use asList().firstOrNull() instead", ReplaceWith("this?.asList()?.firstOrNull()"), level = DeprecationLevel.ERROR)
 val NodeList?.first: Node?
     get() = this?.asList()?.firstOrNull()
 
-@Deprecated("Use asList().lastOrNull() instead", ReplaceWith("this?.asList()?.lastOrNull()"))
+@Deprecated("Use asList().lastOrNull() instead", ReplaceWith("this?.asList()?.lastOrNull()"), level = DeprecationLevel.ERROR)
 val NodeList?.last: Node?
     get() = this?.asList()?.lastOrNull()
 
-@Deprecated("Use asList().lastOrNull() instead instead", ReplaceWith("last"))
+@Deprecated("Use asList().lastOrNull() instead instead", ReplaceWith("last"), level = DeprecationLevel.ERROR)
 val NodeList?.tail: Node?
     get() = this?.asList()?.lastOrNull()

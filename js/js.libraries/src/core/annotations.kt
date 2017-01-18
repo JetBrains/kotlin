@@ -19,25 +19,25 @@ package kotlin.js
 import kotlin.annotation.AnnotationTarget.*
 
 @Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, VALUE_PARAMETER, PROPERTY_GETTER, PROPERTY_SETTER)
-@Deprecated("Use `external` modifier instead")
+@Deprecated("Use `external` modifier instead", level = DeprecationLevel.ERROR)
 public annotation class native(@Deprecated public val name: String = "")
 
 @Target(FUNCTION)
-@Deprecated("Use inline extension function with body using dynamic")
+@Deprecated("Use inline extension function with body using dynamic", level = DeprecationLevel.ERROR)
 public annotation class nativeGetter
 
 @Target(FUNCTION)
-@Deprecated("Use inline extension function with body using dynamic")
+@Deprecated("Use inline extension function with body using dynamic", level = DeprecationLevel.ERROR)
 public annotation class nativeSetter
 
 @Target(FUNCTION)
-@Deprecated("Use inline extension function with body using dynamic")
+@Deprecated("Use inline extension function with body using dynamic", level = DeprecationLevel.ERROR)
 public annotation class nativeInvoke
 
 @Target(CLASS, FUNCTION, PROPERTY)
 internal annotation class library(public val name: String = "")
 
-@Deprecated("It is no longer has any effect and will be dropped in a future version")
+@Deprecated("It is no longer has any effect and will be dropped in a future version", level = DeprecationLevel.ERROR)
 @Target(PROPERTY)
 public annotation class enumerable()
 
