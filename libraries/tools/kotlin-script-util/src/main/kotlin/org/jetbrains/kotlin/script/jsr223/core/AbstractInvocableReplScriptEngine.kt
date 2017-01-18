@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.common.repl
+package org.jetbrains.kotlin.script.jsr223.core
 
+import com.google.common.base.Throwables
+import org.jetbrains.kotlin.cli.common.repl.EvalClassWithInstanceAndLoader
+import org.jetbrains.kotlin.script.util.assertNotEmpty
 import org.jetbrains.kotlin.utils.tryCreateCallableMapping
 import java.lang.reflect.Proxy
 import javax.script.Invocable
+import javax.script.ScriptEngineFactory
 import javax.script.ScriptException
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -26,24 +30,9 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.safeCast
 
-@Suppress("unused") // used externally (kotlin.script.utils)
-interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
-
-    val replScriptEvaluator: ReplEvaluatorExposedInternalHistory
-
-    private fun prioritizedHistory(receiverClass: KClass<*>?, receiverInstance: Any?): List<EvalClassWithInstanceAndLoader> {
-        return replScriptEvaluator.lastEvaluatedScripts.map { it.second }.filter { it.instance != null }.reversed().assertNotEmpty("no script ").let { history ->
-            if (receiverInstance != null) {
-                val receiverKlass = receiverClass ?: receiverInstance.javaClass.kotlin
-                val receiverInHistory = history.find { it.instance == receiverInstance } ?:
-                                        EvalClassWithInstanceAndLoader(receiverKlass, receiverInstance, receiverKlass.java.classLoader, history.first().invokeWrapper)
-                listOf(receiverInHistory) + history.filterNot { it == receiverInHistory }
-            }
-            else {
-                history
-            }
-        }
-    }
+abstract class AbstractInvocableReplScriptEngine(factory: ScriptEngineFactory,
+                                                 defaultImports: List<String>)
+    : AbstractReplScriptEngine(factory, defaultImports), Invocable {
 
     override fun invokeFunction(name: String?, vararg args: Any?): Any? {
         if (name == null) throw java.lang.NullPointerException("function name cannot be null")
@@ -94,7 +83,7 @@ interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
     }
 
     private fun <T : Any> proxyInterface(thiz: Any?, clasz: Class<T>?): T? {
-        replScriptEvaluator.lastEvaluatedScripts.assertNotEmpty("no script")
+        engine.lastEvaluatedScripts.assertNotEmpty("no script ")
         val priority = prioritizedHistory(thiz?.javaClass?.kotlin, thiz)
 
         if (clasz == null) throw IllegalArgumentException("class object cannot be null")
@@ -107,39 +96,46 @@ interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
         }
         return clasz.kotlin.safeCast(proxy)
     }
-}
 
-private fun invokeImpl(prioritizedCallOrder: List<EvalClassWithInstanceAndLoader>, name: String, args: Array<out Any?>): Any? {
-    // TODO: cache the method lookups?
-
-    val (fn, mapping, invokeWrapper) = prioritizedCallOrder.asSequence().map { attempt ->
-        val candidates = attempt.klass.functions.filter { it.name == name }
-        candidates.findMapping(listOf<Any?>(attempt.instance) + args)?.let {
-            Triple(it.first, it.second, attempt.invokeWrapper)
-        }
-    }.filterNotNull().firstOrNull() ?: throw NoSuchMethodException("no suitable function '$name' found")
-
-    val res = try {
-        if (invokeWrapper != null) {
-            invokeWrapper.invoke {
-                fn.callBy(mapping)
+    private fun prioritizedHistory(receiverClass: KClass<*>?, receiverInstance: Any?): List<EvalClassWithInstanceAndLoader> {
+        return engine.lastEvaluatedScripts.map { it.second }.filter { it.instance != null }.reversed().assertNotEmpty("no script ").let { history ->
+            if (receiverInstance != null) {
+                val receiverKlass = receiverClass ?: receiverInstance.javaClass.kotlin
+                val receiverInHistory = history.find { it.instance == receiverInstance } ?:
+                                        EvalClassWithInstanceAndLoader(receiverKlass, receiverInstance, receiverKlass.java.classLoader, history.first().invokeWrapper)
+                listOf(receiverInHistory) + history.filterNot { it == receiverInHistory }
+            }
+            else {
+                history
             }
         }
-        else {
-            fn.callBy(mapping)
-        }
     }
-    catch (e: Throwable) {
-        // ignore everything in the stack trace until this constructor call
-        throw ScriptException(renderReplStackTrace(e.cause!!, startFromMethodName = fn.name))
-    }
-    return if (fn.returnType.classifier == Unit::class) Unit else res
-}
 
-private fun Iterable<KFunction<*>>.findMapping(args: List<Any?>): Pair<KFunction<*>, Map<KParameter, Any?>>? {
-    for (fn in this) {
-        val mapping = tryCreateCallableMapping(fn, args)
-        if (mapping != null) return fn to mapping
+    private fun Iterable<KFunction<*>>.findMapping(args: List<Any?>): Pair<KFunction<*>, Map<KParameter, Any?>>? {
+        for (fn in this) {
+            val mapping = tryCreateCallableMapping(fn, args)
+            if (mapping != null) return fn to mapping
+        }
+        return null
     }
-    return null
+
+    protected fun renderReplStackTrace(cause: Throwable, startFromMethodName: String): String {
+        val newTrace = arrayListOf<StackTraceElement>()
+        var skip = true
+        for ((_, element) in cause.stackTrace.withIndex().reversed()) {
+            if ("${element.className}.${element.methodName}" == startFromMethodName) {
+                skip = false
+            }
+            if (!skip) {
+                newTrace.add(element)
+            }
+        }
+
+        val resultingTrace = newTrace.reversed().dropLast(1)
+
+        @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN", "UsePropertyAccessSyntax")
+        (cause as java.lang.Throwable).setStackTrace(resultingTrace.toTypedArray())
+
+        return Throwables.getStackTraceAsString(cause)
+    }
 }

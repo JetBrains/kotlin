@@ -18,25 +18,27 @@ package org.jetbrains.kotlin.cli.common.repl
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import java.io.Reader
+import java.util.concurrent.atomic.AtomicInteger
 import javax.script.*
 
 val KOTLIN_SCRIPT_HISTORY_BINDINGS_KEY = "kotlin.script.history"
 
+
 // TODO consider additional error handling
+@Suppress("UNCHECKED_CAST")
 val Bindings.kotlinScriptHistory: MutableList<ReplCodeLine>
     get() = getOrPut(KOTLIN_SCRIPT_HISTORY_BINDINGS_KEY, { arrayListOf<ReplCodeLine>() }) as MutableList<ReplCodeLine>
 
 abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEngineFactory) : AbstractScriptEngine(), ScriptEngine, Compilable {
 
-    private var lineCount = 0
+    protected var codeLineNumber = AtomicInteger(0)
 
-    protected abstract val replCompiler: ReplCompiler
+    protected abstract val replCompiler: ReplCompileAction
+    protected abstract val replScriptEvaluator: ReplFullEvaluator
 
-    protected abstract val replEvaluator: ReplCompiledEvaluator
+    override fun eval(script: String, context: ScriptContext): Any? = compileAndEval(script, context)
 
-    override fun eval(script: String, context: ScriptContext): Any? = compile(script, context).eval(context)
-
-    override fun eval(script: Reader, context: ScriptContext): Any? = compile(script.readText(), context).eval()
+    override fun eval(script: Reader, context: ScriptContext): Any? = compileAndEval(script.readText(), context)
 
     override fun compile(script: String): CompiledScript = compile(script, getContext())
 
@@ -46,52 +48,66 @@ abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEn
 
     override fun getFactory(): ScriptEngineFactory = myFactory
 
-    open fun compile(script: String, context: ScriptContext): CompiledScript {
-        lineCount += 1
+    fun nextCodeLine(code: String) = ReplCodeLine(codeLineNumber.incrementAndGet(), code)
 
-        val codeLine = ReplCodeLine(lineCount, script)
+    open fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? = null
+
+    open fun compileAndEval(script: String, context: ScriptContext): Any? {
+        val codeLine = nextCodeLine(script)
+        val history = context.getBindings(ScriptContext.ENGINE_SCOPE).kotlinScriptHistory
+        val result = replScriptEvaluator.compileAndEval(codeLine, scriptArgs = overrideScriptArgs(context), verifyHistory = history)
+        val ret = when (result) {
+            is ReplEvalResponse.ValueResult -> result.value
+            is ReplEvalResponse.UnitResult -> null
+            is ReplEvalResponse.Error -> throw ScriptException(result.message)
+            is ReplEvalResponse.Incomplete -> throw ScriptException("error: incomplete code")
+            is ReplEvalResponse.HistoryMismatch -> throw ScriptException("Repl history mismatch at line: ${result.lineNo}")
+        }
+        context.getBindings(ScriptContext.ENGINE_SCOPE).put(KOTLIN_SCRIPT_HISTORY_BINDINGS_KEY, ArrayList(result.completedEvalHistory))
+        return ret
+    }
+
+    open fun compile(script: String, context: ScriptContext): CompiledScript {
+        val codeLine = nextCodeLine(script)
         val history = context.getBindings(ScriptContext.ENGINE_SCOPE).kotlinScriptHistory
 
-        val compileResult = replCompiler.compile(codeLine, history)
-
-        val compiled = when (compileResult) {
-            is ReplCompileResult.Error -> throw ScriptException("Error${compileResult.locationString()}: ${compileResult.message}")
-            is ReplCompileResult.Incomplete -> throw ScriptException("error: incomplete code")
-            is ReplCompileResult.HistoryMismatch -> throw ScriptException("Repl history mismatch at line: ${compileResult.lineNo}")
-            is ReplCompileResult.CompiledClasses -> compileResult
+        val result = replCompiler.compile(codeLine, history)
+        val compiled = when (result) {
+            is ReplCompileResponse.Error -> throw ScriptException("Error${result.locationString()}: ${result.message}")
+            is ReplCompileResponse.Incomplete -> throw ScriptException("error: incomplete code")
+            is ReplCompileResponse.HistoryMismatch -> throw ScriptException("Repl history mismatch at line: ${result.lineNo}")
+            is ReplCompileResponse.CompiledClasses -> result
         }
-
+        context.getBindings(ScriptContext.ENGINE_SCOPE).put(KOTLIN_SCRIPT_HISTORY_BINDINGS_KEY, ArrayList(result.compiledHistory))
         return CompiledKotlinScript(this, codeLine, compiled)
     }
 
     open fun eval(compiledScript: CompiledKotlinScript, context: ScriptContext): Any? {
-        val history = context.getBindings(ScriptContext.ENGINE_SCOPE).kotlinScriptHistory
-
-        val evalResult = try {
-            replEvaluator.eval(compiledScript.codeLine, history, compiledScript.compiledData.classes, compiledScript.compiledData.hasResult, compiledScript.compiledData.classpathAddendum)
+        val result = try {
+            replScriptEvaluator.eval(compiledScript.compiledData, scriptArgs = overrideScriptArgs(context))
         }
         catch (e: Exception) {
             throw ScriptException(e)
         }
 
-        val ret = when (evalResult) {
-            is ReplEvalResult.ValueResult -> evalResult.value
-            is ReplEvalResult.UnitResult -> null
-            is ReplEvalResult.Error -> throw ScriptException(evalResult.message)
-            is ReplEvalResult.Incomplete -> throw ScriptException("error: incomplete code")
-            is ReplEvalResult.HistoryMismatch -> throw ScriptException("Repl history mismatch at line: ${evalResult.lineNo}")
+        val ret = when (result) {
+            is ReplEvalResponse.ValueResult -> result.value
+            is ReplEvalResponse.UnitResult -> null
+            is ReplEvalResponse.Error -> throw ScriptException(result.message)
+            is ReplEvalResponse.Incomplete -> throw ScriptException("error: incomplete code")
+            is ReplEvalResponse.HistoryMismatch -> throw ScriptException("Repl history mismatch at line: ${result.lineNo}")
         }
-        history.add(compiledScript.codeLine)
+        context.getBindings(ScriptContext.ENGINE_SCOPE).put(KOTLIN_SCRIPT_HISTORY_BINDINGS_KEY, ArrayList(result.completedEvalHistory))
         return ret
     }
 
-    class CompiledKotlinScript(val engine: KotlinJsr223JvmScriptEngineBase, val codeLine: ReplCodeLine, val compiledData: ReplCompileResult.CompiledClasses) : CompiledScript() {
+    class CompiledKotlinScript(val engine: KotlinJsr223JvmScriptEngineBase, val codeLine: ReplCodeLine, val compiledData: ReplCompileResponse.CompiledClasses) : CompiledScript() {
         override fun eval(context: ScriptContext): Any? = engine.eval(this, context)
         override fun getEngine(): ScriptEngine = engine
     }
 }
 
-private fun ReplCompileResult.Error.locationString() =
+private fun ReplCompileResponse.Error.locationString() =
         if (location == CompilerMessageLocation.NO_LOCATION) ""
         else " at ${location.line}:${location.column}"
 

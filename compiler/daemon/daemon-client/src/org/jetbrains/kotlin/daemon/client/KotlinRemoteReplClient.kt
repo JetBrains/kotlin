@@ -35,15 +35,15 @@ open class KotlinRemoteReplClientBase(
         targetPlatform: CompileService.TargetPlatform,
         templateClasspath: List<File>,
         templateClassName: String,
-        scriptArgs: Array<Any?>? = null,
-        scriptArgsTypes: Array<Class<*>>? = null,
+        scriptArgs: Array<out Any?>? = null,
+        scriptArgsTypes: Array<out Class<out Any>>? = null,
         compilerMessagesOutputStream: OutputStream = System.err,
         evalOutputStream: OutputStream? = null,
         evalErrorStream: OutputStream? = null,
         evalInputStream: InputStream? = null,
         port: Int = SOCKET_ANY_FREE_PORT,
         operationsTracer: RemoteOperationsTracer? = null
-) : ReplChecker {
+) {
 
     val sessionId = compileService.leaseReplSession(
             clientAliveFlagFile?.absolutePath,
@@ -70,10 +70,6 @@ open class KotlinRemoteReplClientBase(
             }
         })
     }
-
-    override fun check(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplCheckResult {
-        return compileService.remoteReplLineCheck(sessionId, codeLine, history).get()
-    }
 }
 
 class KotlinRemoteReplCompiler(
@@ -99,10 +95,20 @@ class KotlinRemoteReplCompiler(
         evalInputStream = null,
         port = port,
         operationsTracer = operationsTracer
-), ReplCompiler {
+), ReplCompiler, ReplCheckAction {
+    override fun resetToLine(lineNumber: Int): List<ReplCodeLine> {
+        return emptyList() // TODO: not implemented, no current need
+    }
 
-    override fun compile(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplCompileResult {
-        return compileService.remoteReplLineCompile(sessionId, codeLine, history).get()
+    override val history: List<ReplCodeLine>
+        get() = emptyList() // TODO: not implemented, no current need
+
+    override fun check(codeLine: ReplCodeLine): ReplCheckResponse {
+        return compileService.remoteReplLineCheck(sessionId, codeLine).get()
+    }
+
+    override fun compile(codeLine: ReplCodeLine, verifyHistory: List<ReplCodeLine>?): ReplCompileResponse {
+        return compileService.remoteReplLineCompile(sessionId, codeLine, verifyHistory).get()
     }
 }
 
@@ -114,8 +120,8 @@ class KotlinRemoteReplEvaluator(
         targetPlatform: CompileService.TargetPlatform,
         templateClasspath: List<File>,
         templateClassName: String,
-        scriptArgs: Array<Any?>?,
-        scriptArgsTypes: Array<Class<*>>?,
+        scriptArgs: Array<out Any?>? = null,
+        scriptArgsTypes: Array<out Class<out Any>>? = null,
         compilerMessagesOutputStream: OutputStream,
         evalOutputStream: OutputStream?,
         evalErrorStream: OutputStream?,
@@ -137,12 +143,20 @@ class KotlinRemoteReplEvaluator(
         evalInputStream = evalInputStream,
         port = port,
         operationsTracer = operationsTracer
-), ReplEvaluator {
+), ReplAtomicEvalAction, ReplEvaluatorExposedInternalHistory, ReplCheckAction {
 
-    override val lastEvaluatedScript: ClassWithInstance? = null // not implemented, no need so far
+    override val lastEvaluatedScripts: List<EvalHistoryType> = emptyList() // not implemented, no need so far
 
     // TODO: invokeWrapper is ignored here, and in the daemon the session wrapper is used instead; So consider to make it per call (avoid performance penalties though)
-    override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>, invokeWrapper: InvokeWrapper?): ReplEvalResult {
-        return compileService.remoteReplLineEval(sessionId, codeLine, history).get()
+    // TODO: scriptArgs are ignored here, they should be passed through
+    override fun compileAndEval(codeLine: ReplCodeLine,
+                                scriptArgs: ScriptArgsWithTypes?,
+                                verifyHistory: List<ReplCodeLine>?,
+                                invokeWrapper: InvokeWrapper?): ReplEvalResponse {
+        return compileService.remoteReplLineEval(sessionId, codeLine, verifyHistory).get()
+    }
+
+    override fun check(codeLine: ReplCodeLine): ReplCheckResponse {
+        return compileService.remoteReplLineCheck(sessionId, codeLine).get()
     }
 }

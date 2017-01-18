@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
+@file:Suppress("UNUSED_PARAMETER")
+
 package org.jetbrains.kotlin.cli.jvm.repl
 
-import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.cli.common.repl.CompiledReplCodeLine
+import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
+import org.jetbrains.kotlin.cli.common.repl.ReplHistory
+import org.jetbrains.kotlin.cli.common.repl.ReplResettableCodeLine
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -30,25 +35,36 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.*
-import org.jetbrains.kotlin.resolve.repl.ReplState
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
+import org.jetbrains.kotlin.resolve.scopes.ImportingScope
+import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
+import org.jetbrains.kotlin.resolve.scopes.utils.replaceImportingScopes
 import org.jetbrains.kotlin.script.ScriptPriorities
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
-class CliReplAnalyzerEngine(environment: KotlinCoreEnvironment) {
+class GenericReplAnalyzer(environment: KotlinCoreEnvironment,
+                          protected val stateLock: ReentrantReadWriteLock = ReentrantReadWriteLock()) : ReplResettableCodeLine {
     private val topDownAnalysisContext: TopDownAnalysisContext
     private val topDownAnalyzer: LazyTopDownAnalyzer
     private val resolveSession: ResolveSession
     private val scriptDeclarationFactory: ScriptMutableDeclarationProviderFactory
+    private val replState = ResetableReplState()
+
     val module: ModuleDescriptorImpl
-    private val replState = ReplState()
+        get() = stateLock.read { field }
+
     val trace: BindingTraceContext = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
+        get() = stateLock.read { field }
 
     init {
         // Module source scope is empty because all binary classes are in the dependency module, and all source classes are guaranteed
-        // to be found via ResolveSession. The latter is true as long as light classes are not needed in REPL (which is currently true
-        // because no symbol declared in the REPL session can be used from Java)
+        // to be found via ResolveSession. The latter is true as long as light classes are not needed in NONE (which is currently true
+        // because no symbol declared in the NONE session can be used from Java)
         val container = TopDownAnalyzerFacadeForJVM.createContainer(
                 environment.project,
                 emptyList(),
@@ -78,18 +94,26 @@ class CliReplAnalyzerEngine(environment: KotlinCoreEnvironment) {
         }
     }
 
-    fun analyzeReplLine(psiFile: KtFile, priority: Int): ReplLineAnalysisResult {
-        topDownAnalysisContext.scripts.clear()
-        trace.clearDiagnostics()
-
-        psiFile.script!!.putUserData(ScriptPriorities.PRIORITY_KEY, priority)
-
-        return doAnalyze(psiFile)
+    override fun resetToLine(lineNumber: Int): List<ReplCodeLine> {
+        return stateLock.write { replState.resetToLine(lineNumber) }
     }
 
-    private fun doAnalyze(linePsi: KtFile): ReplLineAnalysisResult {
+    override fun resetToLine(line: ReplCodeLine): List<ReplCodeLine> = resetToLine(line.no)
+
+    fun analyzeReplLine(psiFile: KtFile, codeLine: ReplCodeLine): ReplLineAnalysisResult {
+        return stateLock.write {
+            topDownAnalysisContext.scripts.clear()
+            trace.clearDiagnostics()
+
+            psiFile.script!!.putUserData(ScriptPriorities.PRIORITY_KEY, codeLine.no)
+
+            doAnalyze(psiFile, codeLine)
+        }
+    }
+
+    private fun doAnalyze(linePsi: KtFile, codeLine: ReplCodeLine): ReplLineAnalysisResult {
         scriptDeclarationFactory.setDelegateFactory(FileBasedDeclarationProviderFactory(resolveSession.storageManager, listOf(linePsi)))
-        replState.submitLine(linePsi)
+        replState.submitLine(linePsi, codeLine)
 
         val context = topDownAnalyzer.analyzeDeclarations(topDownAnalysisContext.topDownAnalysisMode, listOf(linePsi))
 
@@ -100,12 +124,12 @@ class CliReplAnalyzerEngine(environment: KotlinCoreEnvironment) {
         val diagnostics = trace.bindingContext.diagnostics
         val hasErrors = diagnostics.any { it.severity == Severity.ERROR }
         if (hasErrors) {
-            replState.lineFailure(linePsi)
+            replState.lineFailure(linePsi, codeLine)
             return ReplLineAnalysisResult.WithErrors(diagnostics)
         }
         else {
             val scriptDescriptor = context.scripts[linePsi.script]!!
-            replState.lineSuccess(linePsi, scriptDescriptor)
+            replState.lineSuccess(linePsi, codeLine, scriptDescriptor)
             return ReplLineAnalysisResult.Successful(scriptDescriptor, diagnostics)
         }
 
@@ -153,4 +177,60 @@ class CliReplAnalyzerEngine(environment: KotlinCoreEnvironment) {
             }
         }
     }
+
+    class ResetableReplState() {
+        private val successfulLines = ReplHistory<LineInfo.SuccessfulLine>()
+        private val submittedLines = hashMapOf<KtFile, LineInfo>()
+
+        fun resetToLine(lineNumber: Int): List<ReplCodeLine> {
+            val removed = successfulLines.resetToLine(lineNumber)
+            removed.forEach { submittedLines.remove(it.second.linePsi) }
+            return removed.map { it.first }
+        }
+
+        fun resetToLine(line: ReplCodeLine): List<ReplCodeLine> = resetToLine(line.no)
+
+        fun submitLine(ktFile: KtFile, codeLine: ReplCodeLine) {
+            val line = LineInfo.SubmittedLine(ktFile, successfulLines.lastValue())
+            submittedLines[ktFile] = line
+            ktFile.fileScopesCustomizer = object : FileScopesCustomizer {
+                override fun createFileScopes(fileScopeFactory: FileScopeFactory): FileScopes {
+                    return lineInfo(ktFile)?.let { computeFileScopes(it, fileScopeFactory) } ?: fileScopeFactory.createScopesForFile(ktFile)
+                }
+            }
+        }
+
+        fun lineSuccess(ktFile: KtFile, codeLine: ReplCodeLine, scriptDescriptor: LazyScriptDescriptor) {
+            val successfulLine = LineInfo.SuccessfulLine(ktFile, successfulLines.lastValue(), scriptDescriptor)
+            submittedLines[ktFile] = successfulLine
+            successfulLines.add(CompiledReplCodeLine(ktFile.name, codeLine), successfulLine)
+        }
+
+        fun lineFailure(ktFile: KtFile, codeLine: ReplCodeLine) {
+            submittedLines[ktFile] = LineInfo.FailedLine(ktFile, successfulLines.lastValue())
+        }
+
+        private fun lineInfo(ktFile: KtFile) = submittedLines[ktFile]
+
+        // use sealed?
+        private sealed class LineInfo {
+            abstract val linePsi: KtFile
+            abstract val parentLine: SuccessfulLine?
+
+            class SubmittedLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?) : LineInfo()
+            class SuccessfulLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?, val lineDescriptor: LazyScriptDescriptor) : LineInfo()
+            class FailedLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?) : LineInfo()
+        }
+
+        private fun computeFileScopes(lineInfo: LineInfo, fileScopeFactory: FileScopeFactory): FileScopes? {
+            // create scope that wraps previous line lexical scope and adds imports from this line
+            val lexicalScopeAfterLastLine = lineInfo.parentLine?.lineDescriptor?.scopeForInitializerResolution ?: return null
+            val lastLineImports = lexicalScopeAfterLastLine.parentsWithSelf.first { it is ImportingScope } as ImportingScope
+            val scopesForThisLine = fileScopeFactory.createScopesForFile(lineInfo.linePsi, lastLineImports)
+            val combinedLexicalScopes = lexicalScopeAfterLastLine.replaceImportingScopes(scopesForThisLine.importingScope)
+            return FileScopes(combinedLexicalScopes, scopesForThisLine.importingScope, scopesForThisLine.importResolver)
+        }
+    }
 }
+
+

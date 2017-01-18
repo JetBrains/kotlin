@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.daemon.common
 
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.repl.*
+import org.jetbrains.kotlin.cli.common.repl.ReplCheckResponse
+import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
+import org.jetbrains.kotlin.cli.common.repl.ReplCompileResponse
+import org.jetbrains.kotlin.cli.common.repl.ReplEvalResponse
 import java.io.File
 import java.io.Serializable
 import java.rmi.Remote
@@ -148,8 +150,8 @@ interface CompileService : Remote {
             servicesFacade: CompilerCallbackServicesFacade,
             templateClasspath: List<File>,
             templateClassName: String,
-            scriptArgs: Array<Any?>?,
-            scriptArgsTypes: Array<Class<*>>?,
+            scriptArgs: Array<out Any?>?,
+            scriptArgsTypes: Array<out Class<out Any>>?,
             compilerMessagesOutputStream: RemoteOutputStream,
             evalOutputStream: RemoteOutputStream?,
             evalErrorStream: RemoteOutputStream?,
@@ -163,21 +165,20 @@ interface CompileService : Remote {
     @Throws(RemoteException::class)
     fun remoteReplLineCheck(
             sessionId: Int,
-            codeLine: ReplCodeLine,
-            history: List<ReplCodeLine>
-    ): CallResult<ReplCheckResult>
+            codeLine: ReplCodeLine
+    ): CallResult<ReplCheckResponse>
 
     @Throws(RemoteException::class)
     fun remoteReplLineCompile(
             sessionId: Int,
             codeLine: ReplCodeLine,
-            history: List<ReplCodeLine>
-    ): CallResult<ReplCompileResult>
+            history: List<ReplCodeLine>?
+    ): CallResult<ReplCompileResponse>
 
     @Throws(RemoteException::class)
     fun remoteReplLineEval(
             sessionId: Int,
             codeLine: ReplCodeLine,
-            history: List<ReplCodeLine>
-    ): CallResult<ReplEvalResult>
+            history: List<ReplCodeLine>?
+    ): CallResult<ReplEvalResponse>
 }
