@@ -1,5 +1,6 @@
 package
 
+public fun bar(/*0*/ x: kotlin.collections.MutableList<kotlin.String>, /*1*/ y: java.util.ArrayList<kotlin.String>, /*2*/ z: A): kotlin.Unit
 public fun foo(/*0*/ x: kotlin.collections.MutableList<kotlin.String>, /*1*/ y: java.util.ArrayList<kotlin.String>, /*2*/ z: A, /*3*/ p: java.util.Comparator<in kotlin.String>): kotlin.Unit
 
 public abstract class A : kotlin.collections.MutableList<kotlin.String> {

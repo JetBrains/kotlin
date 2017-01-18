@@ -45,6 +45,16 @@ public inline fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.r
 @kotlin.internal.InlineOnly
 public inline fun <T> MutableList<T>.remove(index: Int): T = removeAt(index)
 
+@Deprecated("Use sortWith(comparator) instead.", ReplaceWith("this.sortWith(comparator)"), level = DeprecationLevel.ERROR)
+@JvmVersion
+@kotlin.internal.InlineOnly
+public inline fun <T> MutableList<T>.sort(comparator: Comparator<in T>): Unit = throw NotImplementedError()
+
+@Deprecated("Use sortWith(Comparator(comparison)) instead.", ReplaceWith("this.sortWith(Comparator(comparison))"), level = DeprecationLevel.ERROR)
+@JvmVersion
+@kotlin.internal.InlineOnly
+public inline fun <T> MutableList<T>.sort(comparison: (T, T) -> Int): Unit = throw NotImplementedError()
+
 /**
  * Adds the specified [element] to this mutable collection.
  */
