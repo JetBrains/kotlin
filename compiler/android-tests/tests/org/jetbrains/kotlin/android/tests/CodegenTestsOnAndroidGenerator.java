@@ -244,6 +244,11 @@ public class CodegenTestsOnAndroidGenerator extends KtUsefulTestCase {
                     continue;
                 }
 
+                //TODO: support LANGUAGE_VERSION
+                if (InTextDirectivesUtils.isDirectiveDefined(fullFileText, "LANGUAGE_VERSION:")) {
+                    continue;
+                }
+
                 //TODO: support multifile facades
                 //TODO: support multifile facades hierarchies
                 if (hasBoxMethod(fullFileText)) {
