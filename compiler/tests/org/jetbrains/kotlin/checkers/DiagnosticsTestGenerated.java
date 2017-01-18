@@ -20652,6 +20652,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("boundInitializerWrong.kt")
+                public void testBoundInitializerWrong() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/boundInitializerWrong.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("doWhileWithBreak.kt")
                 public void testDoWhileWithBreak() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/doWhileWithBreak.kt");

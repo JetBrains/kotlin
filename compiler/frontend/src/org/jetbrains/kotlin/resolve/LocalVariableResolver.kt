@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
@@ -98,7 +99,7 @@ class LocalVariableResolver(
             val type = typeInfo.type
             if (type != null) {
                 val initializerDataFlowValue = DataFlowValueFactory.createDataFlowValue(initializer, type, context)
-                if (!propertyDescriptor.isVar) {
+                if (!propertyDescriptor.isVar && initializerDataFlowValue.canBeBound) {
                     context.trace.record(BindingContext.BOUND_INITIALIZER_VALUE, propertyDescriptor, initializerDataFlowValue)
                 }
                 // At this moment we do not take initializer value into account if type is given for a property

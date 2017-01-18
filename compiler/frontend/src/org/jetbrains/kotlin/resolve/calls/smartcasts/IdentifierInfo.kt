@@ -27,6 +27,8 @@ interface IdentifierInfo {
 
     val kind: DataFlowValue.Kind get() = OTHER
 
+    val canBeBound get() = false
+
     object NO : IdentifierInfo {
         override fun toString() = "NO_IDENTIFIER_INFO"
     }
@@ -44,6 +46,9 @@ interface IdentifierInfo {
             override val kind: DataFlowValue.Kind,
             val bound: DataFlowValue?
     ) : IdentifierInfo {
+
+        override val canBeBound
+            get() = kind == STABLE_VALUE
 
         override fun equals(other: Any?) = other is Variable && variable == other.variable
 
@@ -73,6 +78,9 @@ interface IdentifierInfo {
             val receiverType: KotlinType?
     ) : IdentifierInfo {
         override val kind: DataFlowValue.Kind get() = if (receiverInfo.kind == STABLE_VALUE) selectorInfo.kind else OTHER
+
+        override val canBeBound
+            get() = receiverInfo.canBeBound
 
         override fun equals(other: Any?) = other is Qualified && receiverInfo == other.receiverInfo && selectorInfo == other.selectorInfo
 

@@ -69,6 +69,8 @@ class DataFlowValue(val identifierInfo: IdentifierInfo,
      */
     val isStable = (kind == Kind.STABLE_VALUE || kind == Kind.STABLE_VARIABLE || kind == Kind.STABLE_COMPLEX_EXPRESSION)
 
+    val canBeBound get() = identifierInfo.canBeBound
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is DataFlowValue) return false
