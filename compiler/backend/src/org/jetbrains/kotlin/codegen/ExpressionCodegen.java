@@ -4358,6 +4358,9 @@ The "returned" value of try expression with no finally is either the last expres
                     int index = lookupLocalIndex(descriptor);
                     v.store(index, descriptorType);
 
+                    Label catchVariableStart = new Label();
+                    v.mark(catchVariableStart);
+
                     gen(catchBody, expectedAsmType);
 
                     if (!isStatement) {
@@ -4369,8 +4372,8 @@ The "returned" value of try expression with no finally is either the last expres
                     Label clauseEnd = new Label();
                     v.mark(clauseEnd);
 
-                    v.visitLocalVariable(descriptor.getName().asString(), descriptorType.getDescriptor(), null, clauseStart, clauseEnd,
-                                         index);
+                    v.visitLocalVariable(descriptor.getName().asString(), descriptorType.getDescriptor(), null,
+                                         catchVariableStart, clauseEnd, index);
 
                     genFinallyBlockOrGoto(finallyBlockStackElement, i != size - 1 || finallyBlock != null ? end : null, null);
 
