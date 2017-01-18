@@ -14613,6 +14613,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("kt13355.kt")
+                public void testKt13355() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/clashesOnInheritance/kt13355.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt13355viaJava.kt")
+                public void testKt13355viaJava() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/clashesOnInheritance/kt13355viaJava.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("kt9550.kt")
                 public void testKt9550() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/clashesOnInheritance/kt9550.kt");

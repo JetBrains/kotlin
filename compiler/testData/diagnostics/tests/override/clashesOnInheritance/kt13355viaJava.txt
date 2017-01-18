@@ -1,0 +1,106 @@
+package
+
+public abstract class ATest1 : TestNN.JNullVsNotNull {
+    public constructor ATest1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun foo(): kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class ATest2 : TestNN.JUnknownImpl, TestNN.JNotNull {
+    public constructor ATest2()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @org.jetbrains.annotations.NotNull public open override /*2*/ /*fake_override*/ fun foo(): kotlin.Any
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class ATest3 : TestNN.JUnknownVsNotNull {
+    public constructor ATest3()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @org.jetbrains.annotations.NotNull public open override /*1*/ /*fake_override*/ fun foo(): kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class CTest1 : TestNN.JNullVsNotNull {
+    public constructor CTest1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun foo(): kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class CTest2 : TestNN.JUnknownImpl, TestNN.JNotNull {
+    public constructor CTest2()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @org.jetbrains.annotations.NotNull public open override /*2*/ /*fake_override*/ fun foo(): kotlin.Any
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class CTest3 : TestNN.JUnknownVsNotNull {
+    public constructor CTest3()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @org.jetbrains.annotations.NotNull public open override /*1*/ /*fake_override*/ fun foo(): kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class TestNN {
+    public constructor TestNN()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public interface JNotNull {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        @org.jetbrains.annotations.NotNull public abstract fun foo(): kotlin.Any
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface JNull {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        @org.jetbrains.annotations.Nullable public abstract fun foo(): kotlin.Any?
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open class JNullBase {
+        public constructor JNullBase()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        @org.jetbrains.annotations.Nullable public open fun foo(): kotlin.Any?
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open class JNullVsNotNull : TestNN.JNull, TestNN.JNotNull {
+        public constructor JNullVsNotNull()
+        public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*2*/ fun foo(): kotlin.Any
+        public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open class JUnknownImpl : TestNN.JNullBase {
+        public constructor JUnknownImpl()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ fun foo(): kotlin.Any?
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open class JUnknownVsNotNull : TestNN.JUnknownImpl, TestNN.JNotNull {
+        public constructor JUnknownVsNotNull()
+        public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        @org.jetbrains.annotations.NotNull public open override /*2*/ /*fake_override*/ fun foo(): kotlin.Any
+        public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    // Static members
+    public final /*synthesized*/ fun JNotNull(/*0*/ function: () -> kotlin.Any): TestNN.JNotNull
+    public final /*synthesized*/ fun JNull(/*0*/ function: () -> kotlin.Any?): TestNN.JNull
+}
