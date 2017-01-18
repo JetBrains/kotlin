@@ -149,6 +149,12 @@ task objectInitialization(type: RunKonanTest) {
     source = "codegen/object/initialization.kt"
 }
 
+task objectInitialization1(type: RunKonanTest) {
+    disabled = true
+    goldValue = "init\nfield\nconstructor1\ninit\nfield\nconstructor1\nconstructor2\n"
+    source = "codegen/object/initialization1.kt"
+}
+
 task check_type(type: RunKonanTest) {
     goldValue = "true\nfalse\ntrue\ntrue\ntrue\ntrue\n"
     source = "codegen/basics/check_type.kt"
