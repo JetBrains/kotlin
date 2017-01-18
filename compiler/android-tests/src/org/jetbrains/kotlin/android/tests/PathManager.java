@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.android.tests;
 
+import org.jetbrains.kotlin.android.tests.download.SDKDownloader;
+
 import java.io.File;
 
 public class PathManager {
@@ -75,7 +77,7 @@ public class PathManager {
     }
 
     public String getGradleBinFolder() {
-        return getDependenciesRoot() + "/gradle-2.12/bin";
+        return getDependenciesRoot() + "/gradle-" + SDKDownloader.GRADLE_VERSION + "/bin";
     }
 
     public String getRootForDownload() {

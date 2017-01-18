@@ -43,6 +43,7 @@ public class SDKDownloader {
     private static final String SDK_TOOLS = "25.1.1";
     public static final String BUILD_TOOLS = "23.0.3";
     private static final int ANDROID_VERSION = 19;
+    public static final String GRADLE_VERSION = "2.14.1";
 
 
     public SDKDownloader(PathManager pathManager) {
@@ -78,7 +79,7 @@ public class SDKDownloader {
     }
 
     public void downloadGradle() {
-        download("https://services.gradle.org/distributions/gradle-2.12-bin.zip", gradleZipPath);
+        download("https://services.gradle.org/distributions/gradle-" + GRADLE_VERSION + "-bin.zip", gradleZipPath);
     }
 
     private static String getDownloadUrl(String prefix) {
