@@ -14,7 +14,6 @@
     <orderEntry type="module" module-name="cli" scope="TEST" />
     <orderEntry type="module" module-name="descriptor.loader.java" scope="TEST" />
     <orderEntry type="module" module-name="descriptors.runtime" scope="TEST" />
-    <orderEntry type="module" module-name="js.tests" scope="TEST" />
     <orderEntry type="module" module-name="jps-tests" scope="TEST" />
     <orderEntry type="module" module-name="j2k" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="jps-test" level="project" />
