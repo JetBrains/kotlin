@@ -5,7 +5,7 @@
 // CHECK_NOT_CALLED_IN_SCOPE: function=set_vux9f0$ scope=box
 // CHECK_NOT_CALLED_IN_SCOPE: function=dec scope=box
 // CHECK_NOT_CALLED_IN_SCOPE: function=minus_za3lpa$ scope=box
-// CHECK_NOT_CALLED_IN_SCOPE: function=invoke_rksjo2$ scope=test
+// CHECK_NOT_CALLED_IN_SCOPE: function=invoke_dqglrj$ scope=test
 
 class A {
     inline operator fun plus(a: Int) = a + 10

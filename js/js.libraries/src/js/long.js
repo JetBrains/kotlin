@@ -814,7 +814,7 @@ Kotlin.Long.prototype.equals = function (other) {
     return other instanceof Kotlin.Long && this.equalsLong(other);
 };
 
-Kotlin.Long.prototype.compareTo_za3rmp$ = Kotlin.Long.prototype.compare;
+Kotlin.Long.prototype.compareTo_11rb$ = Kotlin.Long.prototype.compare;
 
 Kotlin.Long.prototype.inc = function() {
     return this.add(Kotlin.Long.ONE);

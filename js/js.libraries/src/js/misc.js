@@ -26,7 +26,7 @@ Kotlin.compareTo = function (a, b) {
     if (typeA == "number" || typeA == "string") {
         return a < b ? -1 : a > b ? 1 : 0;
     }
-    return a.compareTo_za3rmp$(b);
+    return a.compareTo_11rb$(b);
 };
 
 Kotlin.primitiveCompareTo = function (a, b) {

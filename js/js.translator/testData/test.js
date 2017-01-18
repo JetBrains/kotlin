@@ -70,16 +70,16 @@ function generateModel(path) {
 function supplyAsserter(kotlin) {
     function AsserterClass() {
     }
-    AsserterClass.prototype.assertTrue_tup0fe$ = function(lazyMessage, actual) {
-        kotlin.kotlin.test.assertTrue_8kj6y5$(actual, lazyMessage());
+    AsserterClass.prototype.assertTrue_o10pc4$ = function(lazyMessage, actual) {
+        kotlin.kotlin.test.assertTrue_ifx8ge$(actual, lazyMessage());
     };
-    AsserterClass.prototype.assertTrue_ivxn3r$ = function(message, actual) {
+    AsserterClass.prototype.assertTrue_4mavae$ = function(message, actual) {
         if (!actual) {
             this.failWithMessage(message);
         }
     };
-    AsserterClass.prototype.assertEquals_a59ba6$ = kotlin.kotlin.test.Asserter.prototype.assertEquals_a59ba6$;
-    AsserterClass.prototype.fail_61zpoe$ = function(message) {
+    AsserterClass.prototype.assertEquals_lzc6tz$ = kotlin.kotlin.test.Asserter.prototype.assertEquals_lzc6tz$;
+    AsserterClass.prototype.fail_pdl1vj$ = function(message) {
         this.failWithMessage(message);
     };
     AsserterClass.prototype.failWithMessage = function(message) {
@@ -90,8 +90,7 @@ function supplyAsserter(kotlin) {
         }
     };
     AsserterClass.$metadata$ = {
-        type: kotlin.TYPE.CLASS,
-        classIndex: kotlin.newClassIndex(),
+        type: kotlin.Kind.CLASS,
         baseClasses: [kotlin.kotlin.test.Asserter]
     };
     kotlin.kotlin.test.asserter = new AsserterClass();
