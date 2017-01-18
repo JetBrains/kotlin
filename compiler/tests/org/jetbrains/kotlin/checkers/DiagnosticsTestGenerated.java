@@ -20424,6 +20424,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("ifNullAssignment.kt")
+                public void testIfNullAssignment() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/variables/ifNullAssignment.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("ifVarIs.kt")
                 public void testIfVarIs() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/variables/ifVarIs.kt");
