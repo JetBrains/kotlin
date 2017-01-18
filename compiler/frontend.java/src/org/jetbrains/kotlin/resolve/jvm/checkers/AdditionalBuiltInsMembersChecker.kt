@@ -28,8 +28,21 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
+import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
-import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeUniqueAsSequence
+
+object AdditionalBuiltInsMembersCallChecker : CallChecker {
+    override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.AdditionalBuiltInsMembers)) return
+        val resultingDescriptor = resolvedCall.resultingDescriptor as? CallableMemberDescriptor ?: return
+
+        if (resultingDescriptor.isAdditionalBuiltInMember()) {
+            context.trace.report(Errors.UNSUPPORTED_FEATURE.on(reportOn, LanguageFeature.AdditionalBuiltInsMembers))
+        }
+    }
+}
 
 object AdditionalBuiltInsMemberOverrideDeclarationChecker : DeclarationChecker {
     override fun check(
@@ -43,19 +56,11 @@ object AdditionalBuiltInsMemberOverrideDeclarationChecker : DeclarationChecker {
         val resultingDescriptor = descriptor as? CallableMemberDescriptor ?: return
         val overrideKeyword = declaration.modifierList?.getModifier(KtTokens.OVERRIDE_KEYWORD) ?: return
 
-        // TODO: allow to omit 'override' on additional built-ins members
-        reportErrorIfAdditionalBuiltinDescriptor(resultingDescriptor, diagnosticHolder, overrideKeyword)
+        if (resultingDescriptor.original.overriddenDescriptors.all { it.isAdditionalBuiltInMember() }) {
+            diagnosticHolder.report(Errors.UNSUPPORTED_FEATURE.on(overrideKeyword, LanguageFeature.AdditionalBuiltInsMembers))
+        }
     }
 }
 
-private fun reportErrorIfAdditionalBuiltinDescriptor(
-        descriptor: CallableMemberDescriptor,
-        diagnosticHolder: DiagnosticSink,
-        reportOn: PsiElement
-) {
-    val overriddenTree = descriptor.overriddenTreeUniqueAsSequence(useOriginal = true)
-
-    if (overriddenTree.any { KotlinBuiltIns.isBuiltIn(it) && it is JavaCallableMemberDescriptor }) {
-        diagnosticHolder.report(Errors.UNSUPPORTED_FEATURE.on(reportOn, LanguageFeature.AdditionalBuiltInsMembers))
-    }
-}
+private fun CallableMemberDescriptor.isAdditionalBuiltInMember() =
+        KotlinBuiltIns.isBuiltIn(this) && this is JavaCallableMemberDescriptor

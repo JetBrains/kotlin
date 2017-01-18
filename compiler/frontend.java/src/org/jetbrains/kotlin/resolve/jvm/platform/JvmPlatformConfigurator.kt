@@ -22,11 +22,10 @@ import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.calls.checkers.ReifiedTypeParameterSubstitutionChecker
-import org.jetbrains.kotlin.resolve.checkers.MissingDependencyClassChecker
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.MissingDependencyClassChecker
 import org.jetbrains.kotlin.resolve.jvm.*
 import org.jetbrains.kotlin.resolve.jvm.checkers.*
-import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.synthetic.JavaSyntheticConstructorsProvider
 import org.jetbrains.kotlin.synthetic.JavaSyntheticScopes
 import org.jetbrains.kotlin.types.DynamicTypesSettings
@@ -58,7 +57,8 @@ object JvmPlatformConfigurator : PlatformConfigurator(
                 SuperCallWithDefaultArgumentsChecker(),
                 MissingDependencyClassChecker,
                 ProtectedSyntheticExtensionCallChecker,
-                ReifiedTypeParameterSubstitutionChecker()
+                ReifiedTypeParameterSubstitutionChecker(),
+                AdditionalBuiltInsMembersCallChecker
         ),
 
         additionalTypeCheckers = listOf(
