@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.containers.isNullOrEmpty
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -208,7 +207,7 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
                     if (correspondingParameterDescriptor != null
                         && correspondingParameterDescriptor.varargElementType != null
                         && KotlinBuiltIns.isArray(valueArgumentType)
-                        && !expressionType.arguments.isNullOrEmpty()
+                        && expressionType.arguments.isNotEmpty()
                         && expressionType.arguments[0].type.constructor == expectedType.constructor) {
                         actions.add(ChangeToUseSpreadOperatorFix(diagnosticElement))
                     }
