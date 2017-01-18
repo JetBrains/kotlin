@@ -19453,6 +19453,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("level_1_0.kt")
+            public void testLevel_1_0() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/level_1_0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("localClassChanges.kt")
             public void testLocalClassChanges() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/localClassChanges.kt");

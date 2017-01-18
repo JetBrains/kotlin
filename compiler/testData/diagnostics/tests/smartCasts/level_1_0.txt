@@ -1,0 +1,8 @@
+package
+
+public fun foo(/*0*/ arg: kotlin.Int?): kotlin.Unit
+public fun kt1635(/*0*/ s: kotlin.String?): kotlin.Unit
+public fun kt2127(): kotlin.Unit
+public fun kt3356(/*0*/ s: kotlin.String?): kotlin.Int
+public fun kt6840_1(/*0*/ s: kotlin.String?): kotlin.Unit
+public fun kt6840_2(/*0*/ s: kotlin.String?): kotlin.Unit

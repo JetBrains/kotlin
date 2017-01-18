@@ -155,9 +155,9 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             if (resultType != null && thenType != null && elseType != null) {
                 DataFlowValue resultValue = DataFlowValueFactory.createDataFlowValue(ifExpression, resultType, context);
                 DataFlowValue thenValue = DataFlowValueFactory.createDataFlowValue(thenBranch, thenType, context);
-                thenDataFlowInfo = thenDataFlowInfo.assign(resultValue, thenValue);
+                thenDataFlowInfo = thenDataFlowInfo.assign(resultValue, thenValue, components.languageVersionSettings);
                 DataFlowValue elseValue = DataFlowValueFactory.createDataFlowValue(elseBranch, elseType, context);
-                elseDataFlowInfo = elseDataFlowInfo.assign(resultValue, elseValue);
+                elseDataFlowInfo = elseDataFlowInfo.assign(resultValue, elseValue, components.languageVersionSettings);
             }
 
             loopBreakContinuePossible |= thenTypeInfo.getJumpOutPossible() || elseTypeInfo.getJumpOutPossible();
@@ -229,7 +229,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         // Preliminary analysis
         PreliminaryLoopVisitor loopVisitor = PreliminaryLoopVisitor.visitLoop(expression);
         context = context.replaceDataFlowInfo(
-                loopVisitor.clearDataFlowInfoForAssignedLocalVariables(context.dataFlowInfo)
+                loopVisitor.clearDataFlowInfoForAssignedLocalVariables(context.dataFlowInfo, components.languageVersionSettings)
         );
 
         KtExpression condition = expression.getCondition();
@@ -261,7 +261,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         if (body != null && KtPsiUtil.isTrueConstant(condition)) {
             // We should take data flow info from the first jump point,
             // but without affecting changing variables
-            dataFlowInfo = dataFlowInfo.and(loopVisitor.clearDataFlowInfoForAssignedLocalVariables(bodyTypeInfo.getJumpFlowInfo()));
+            dataFlowInfo = dataFlowInfo.and(loopVisitor.clearDataFlowInfoForAssignedLocalVariables(bodyTypeInfo.getJumpFlowInfo(),
+                                                                                                   components.languageVersionSettings));
         }
         return components.dataFlowAnalyzer
                 .checkType(bodyTypeInfo.replaceType(components.builtIns.getUnitType()), expression, contextWithExpectedType)
@@ -325,7 +326,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         // Preliminary analysis
         PreliminaryLoopVisitor loopVisitor = PreliminaryLoopVisitor.visitLoop(expression);
         context = context.replaceDataFlowInfo(
-                loopVisitor.clearDataFlowInfoForAssignedLocalVariables(context.dataFlowInfo)
+                loopVisitor.clearDataFlowInfoForAssignedLocalVariables(context.dataFlowInfo, components.languageVersionSettings)
         );
         // Here we must record data flow information at the end of the body (or at the first jump, to be precise) and
         // .and it with entrance data flow information, because do-while body is executed at least once
@@ -369,7 +370,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         if (body != null) {
             // We should take data flow info from the first jump point,
             // but without affecting changing variables
-            dataFlowInfo = dataFlowInfo.and(loopVisitor.clearDataFlowInfoForAssignedLocalVariables(bodyTypeInfo.getJumpFlowInfo()));
+            dataFlowInfo = dataFlowInfo.and(loopVisitor.clearDataFlowInfoForAssignedLocalVariables(bodyTypeInfo.getJumpFlowInfo(),
+                                                                                                   components.languageVersionSettings));
         }
         return components.dataFlowAnalyzer
                 .checkType(bodyTypeInfo.replaceType(components.builtIns.getUnitType()), expression, contextWithExpectedType)
@@ -388,7 +390,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
         // Preliminary analysis
         PreliminaryLoopVisitor loopVisitor = PreliminaryLoopVisitor.visitLoop(expression);
-        context = context.replaceDataFlowInfo(loopVisitor.clearDataFlowInfoForAssignedLocalVariables(context.dataFlowInfo));
+        context = context.replaceDataFlowInfo(loopVisitor.clearDataFlowInfoForAssignedLocalVariables(context.dataFlowInfo,
+                                                                                                     components.languageVersionSettings));
 
         KtExpression loopRange = expression.getLoopRange();
         KotlinType expectedParameterType = null;

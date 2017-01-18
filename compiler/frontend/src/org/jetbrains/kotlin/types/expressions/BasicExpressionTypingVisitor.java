@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.config.LanguageFeature;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.Errors;
@@ -182,7 +183,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (resultType != null) {
             DataFlowValue innerValue = DataFlowValueFactory.createDataFlowValue(innerExpression, resultType, context);
             DataFlowValue resultValue = DataFlowValueFactory.createDataFlowValue(expression, resultType, context);
-            result = result.replaceDataFlowInfo(result.getDataFlowInfo().assign(resultValue, innerValue));
+            result = result.replaceDataFlowInfo(result.getDataFlowInfo().assign(resultValue, innerValue,
+                                                                                components.languageVersionSettings));
         }
         return result;
     }
@@ -316,7 +318,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             DataFlowInfo dataFlowInfo = typeInfo.getDataFlowInfo();
             if (operationType == AS_KEYWORD) {
                 DataFlowValue value = createDataFlowValue(left, subjectType, context);
-                typeInfo = typeInfo.replaceDataFlowInfo(dataFlowInfo.establishSubtyping(value, targetType));
+                typeInfo = typeInfo.replaceDataFlowInfo(dataFlowInfo.establishSubtyping(value, targetType,
+                                                                                        components.languageVersionSettings));
             }
         }
 
@@ -859,7 +862,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     result = receiverType;
                     // Also record data flow information for x++ value (= x)
                     DataFlowValue returnValue = DataFlowValueFactory.createDataFlowValue(expression, receiverType, contextWithExpectedType);
-                    typeInfo = typeInfo.replaceDataFlowInfo(typeInfo.getDataFlowInfo().assign(returnValue, receiverValue));
+                    typeInfo = typeInfo.replaceDataFlowInfo(typeInfo.getDataFlowInfo().assign(returnValue, receiverValue,
+                                                                                              components.languageVersionSettings));
                 }
             }
         }
@@ -911,7 +915,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         else {
             DataFlowValue value = createDataFlowValue(baseExpression, baseType, context);
-            baseTypeInfo = baseTypeInfo.replaceDataFlowInfo(dataFlowInfo.disequate(value, DataFlowValue.nullValue(components.builtIns)));
+            baseTypeInfo = baseTypeInfo.replaceDataFlowInfo(dataFlowInfo.disequate(value, DataFlowValue.nullValue(components.builtIns),
+                                                                                   components.languageVersionSettings));
         }
         KotlinType resultingType = TypeUtils.makeNotNullable(baseType);
         if (context.contextDependency == DEPENDENT) {
@@ -1320,16 +1325,19 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             DataFlowValue nullValue = DataFlowValue.nullValue(components.builtIns);
             // left argument is considered not-null if it's not-null also in right part or if we have jump in right part
             if (jumpInRight || !rightDataFlowInfo.getStableNullability(leftValue).canBeNull()) {
-                dataFlowInfo = dataFlowInfo.disequate(leftValue, nullValue);
+                dataFlowInfo = dataFlowInfo.disequate(leftValue, nullValue, components.languageVersionSettings);
                 if (left instanceof KtBinaryExpressionWithTypeRHS) {
-                    dataFlowInfo = establishSubtypingForTypeRHS((KtBinaryExpressionWithTypeRHS) left, dataFlowInfo, context);
+                    dataFlowInfo = establishSubtypingForTypeRHS((KtBinaryExpressionWithTypeRHS) left, dataFlowInfo, context,
+                                                                components.languageVersionSettings);
                 }
             }
             DataFlowValue resultValue = DataFlowValueFactory.createDataFlowValue(expression, type, context);
-            dataFlowInfo = dataFlowInfo.assign(resultValue, leftValue).disequate(resultValue, nullValue);
+            dataFlowInfo =
+                    dataFlowInfo.assign(resultValue, leftValue, components.languageVersionSettings)
+                    .disequate(resultValue, nullValue, components.languageVersionSettings);
             if (!jumpInRight) {
                 DataFlowValue rightValue = DataFlowValueFactory.createDataFlowValue(right, rightType, context);
-                rightDataFlowInfo = rightDataFlowInfo.assign(resultValue, rightValue);
+                rightDataFlowInfo = rightDataFlowInfo.assign(resultValue, rightValue, components.languageVersionSettings);
                 dataFlowInfo = dataFlowInfo.or(rightDataFlowInfo);
             }
         }
@@ -1354,7 +1362,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     private static DataFlowInfo establishSubtypingForTypeRHS(
             @NotNull KtBinaryExpressionWithTypeRHS left,
             @NotNull DataFlowInfo dataFlowInfo,
-            @NotNull ExpressionTypingContext context
+            @NotNull ExpressionTypingContext context,
+            @NotNull LanguageVersionSettings languageVersionSettings
     ) {
         IElementType operationType = left.getOperationReference().getReferencedNameElementType();
         if (operationType == AS_SAFE) {
@@ -1364,7 +1373,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 DataFlowValue underSafeAsValue = createDataFlowValue(underSafeAs, underSafeAsType, context);
                 KotlinType targetType = context.trace.get(BindingContext.TYPE, left.getRight());
                 if (targetType != null) {
-                    return dataFlowInfo.establishSubtyping(underSafeAsValue, targetType);
+                    return dataFlowInfo.establishSubtyping(underSafeAsValue, targetType, languageVersionSettings);
                 }
             }
         }

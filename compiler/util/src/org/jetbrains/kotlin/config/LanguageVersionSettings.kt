@@ -39,6 +39,7 @@ enum class LanguageFeature(val sinceVersion: LanguageVersion?) {
     OperatorProvideDelegate(KOTLIN_1_1),
     ShortSyntaxForPropertyGetters(KOTLIN_1_1),
     RefinedSamAdaptersPriority(KOTLIN_1_1),
+    SafeCallBoundSmartCasts(KOTLIN_1_1),
 
     // Experimental features
     MultiPlatformProjects(null),

@@ -274,7 +274,8 @@ public class ExpressionTypingServices {
                             statementExpression, result.getType(), context);
                     DataFlowValue blockExpressionValue = DataFlowValueFactory.createDataFlowValue(
                             (KtBlockExpression) statementExpression.getParent(), result.getType(), context);
-                    result = result.replaceDataFlowInfo(result.getDataFlowInfo().assign(blockExpressionValue, lastExpressionValue));
+                    result = result.replaceDataFlowInfo(result.getDataFlowInfo().assign(blockExpressionValue, lastExpressionValue,
+                                                                                        expressionTypingComponents.languageVersionSettings));
                 }
             }
             else {

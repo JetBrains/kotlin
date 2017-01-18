@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.types.expressions
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.psi.KtLoopExpression
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -29,7 +30,8 @@ import java.util.*
  */
 class PreliminaryLoopVisitor private constructor() : AssignedVariablesSearcher() {
 
-    fun clearDataFlowInfoForAssignedLocalVariables(dataFlowInfo: DataFlowInfo): DataFlowInfo {
+    fun clearDataFlowInfoForAssignedLocalVariables(dataFlowInfo: DataFlowInfo,
+                                                   languageVersionSettings: LanguageVersionSettings): DataFlowInfo {
         var resultFlowInfo = dataFlowInfo
         val nullabilityMap = resultFlowInfo.completeNullabilityInfo
         val valueSetToClear = LinkedHashSet<DataFlowValue>()
@@ -44,7 +46,7 @@ class PreliminaryLoopVisitor private constructor() : AssignedVariablesSearcher()
             }
         }
         for (valueToClear in valueSetToClear) {
-            resultFlowInfo = resultFlowInfo.clearValueInfo(valueToClear)
+            resultFlowInfo = resultFlowInfo.clearValueInfo(valueToClear, languageVersionSettings)
         }
         return resultFlowInfo
     }

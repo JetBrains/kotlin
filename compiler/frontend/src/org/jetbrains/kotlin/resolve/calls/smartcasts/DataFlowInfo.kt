@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.smartcasts
 
 import com.google.common.collect.SetMultimap
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.types.KotlinType
 
 /**
@@ -61,25 +62,25 @@ interface DataFlowInfo {
      * Call this function to clear all data flow information about
      * the given data flow value. Useful when we are not sure how this value can be changed, e.g. in a loop.
      */
-    fun clearValueInfo(value: DataFlowValue): DataFlowInfo
+    fun clearValueInfo(value: DataFlowValue, languageVersionSettings: LanguageVersionSettings): DataFlowInfo
 
     /**
      * Call this function when b is assigned to a
      */
-    fun assign(a: DataFlowValue, b: DataFlowValue): DataFlowInfo
+    fun assign(a: DataFlowValue, b: DataFlowValue, languageVersionSettings: LanguageVersionSettings): DataFlowInfo
 
     /**
      * Call this function when it's known than a == b.
      * sameTypes should be true iff we have guarantee that a and b have the same type
      */
-    fun equate(a: DataFlowValue, b: DataFlowValue, sameTypes: Boolean): DataFlowInfo
+    fun equate(a: DataFlowValue, b: DataFlowValue, sameTypes: Boolean, languageVersionSettings: LanguageVersionSettings): DataFlowInfo
 
     /**
      * Call this function when it's known than a != b
      */
-    fun disequate(a: DataFlowValue, b: DataFlowValue): DataFlowInfo
+    fun disequate(a: DataFlowValue, b: DataFlowValue, languageVersionSettings: LanguageVersionSettings): DataFlowInfo
 
-    fun establishSubtyping(value: DataFlowValue, type: KotlinType): DataFlowInfo
+    fun establishSubtyping(value: DataFlowValue, type: KotlinType, languageVersionSettings: LanguageVersionSettings): DataFlowInfo
 
     /**
      * Call this function to add data flow information from other to this and return sum as the result

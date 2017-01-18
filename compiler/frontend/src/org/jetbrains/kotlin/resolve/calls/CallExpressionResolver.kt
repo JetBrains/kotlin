@@ -20,6 +20,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -70,7 +71,8 @@ class CallExpressionResolver(
         private val argumentTypeResolver: ArgumentTypeResolver,
         private val dataFlowAnalyzer: DataFlowAnalyzer,
         private val builtIns: KotlinBuiltIns,
-        private val qualifiedExpressionResolver: QualifiedExpressionResolver
+        private val qualifiedExpressionResolver: QualifiedExpressionResolver,
+        private val languageVersionSettings: LanguageVersionSettings
 ) {
     private lateinit var expressionTypingServices: ExpressionTypingServices
 
@@ -323,7 +325,7 @@ class CallExpressionResolver(
             // Additional "receiver != null" information should be applied if we consider a safe call
             if (receiverCanBeNull) {
                 initialDataFlowInfoForArguments = initialDataFlowInfoForArguments.disequate(
-                        receiverDataFlowValue, DataFlowValue.nullValue(builtIns))
+                        receiverDataFlowValue, DataFlowValue.nullValue(builtIns), languageVersionSettings)
             }
             else if (receiver is ReceiverValue) {
                 reportUnnecessarySafeCall(context.trace, receiver.type, element.node, receiver)

@@ -22,6 +22,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtilsKt;
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation;
@@ -55,19 +56,22 @@ public class DataFlowAnalyzer {
     private final KotlinBuiltIns builtIns;
     private final SmartCastManager smartCastManager;
     private final ExpressionTypingFacade facade;
+    private final LanguageVersionSettings languageVersionSettings;
 
     public DataFlowAnalyzer(
             @NotNull Iterable<AdditionalTypeChecker> additionalTypeCheckers,
             @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
             @NotNull KotlinBuiltIns builtIns,
             @NotNull SmartCastManager smartCastManager,
-            @NotNull ExpressionTypingFacade facade
+            @NotNull ExpressionTypingFacade facade,
+            @NotNull LanguageVersionSettings languageVersionSettings
     ) {
         this.additionalTypeCheckers = additionalTypeCheckers;
         this.constantExpressionEvaluator = constantExpressionEvaluator;
         this.builtIns = builtIns;
         this.smartCastManager = smartCastManager;
         this.facade = facade;
+        this.languageVersionSettings = languageVersionSettings;
     }
 
     // NB: use this method only for functions from 'Any'
@@ -176,10 +180,14 @@ public class DataFlowAnalyzer {
                         if (equals == conditionValue) { // this means: equals && conditionValue || !equals && !conditionValue
                             boolean byIdentity = operationToken == KtTokens.EQEQEQ || operationToken == KtTokens.EXCLEQEQEQ ||
                                                  typeHasEqualsFromAny(lhsType, condition);
-                            result.set(context.dataFlowInfo.equate(leftValue, rightValue, byIdentity).and(expressionFlowInfo));
+                            result.set(context.dataFlowInfo
+                                               .equate(leftValue, rightValue, byIdentity, languageVersionSettings)
+                                               .and(expressionFlowInfo));
                         }
                         else {
-                            result.set(context.dataFlowInfo.disequate(leftValue, rightValue).and(expressionFlowInfo));
+                            result.set(context.dataFlowInfo
+                                               .disequate(leftValue, rightValue, languageVersionSettings)
+                                               .and(expressionFlowInfo));
                         }
                     }
                     else {

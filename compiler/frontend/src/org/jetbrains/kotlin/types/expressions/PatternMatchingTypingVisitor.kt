@@ -214,7 +214,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             val entryDataFlowInfo =
                     if (whenResultValue != null && entryType != null) {
                         val entryValue = DataFlowValueFactory.createDataFlowValue(entryExpression, entryType, contextAfterSubject)
-                        entryTypeInfo.dataFlowInfo.assign(whenResultValue, entryValue)
+                        entryTypeInfo.dataFlowInfo.assign(whenResultValue, entryValue, components.languageVersionSettings)
                     }
                     else {
                         entryTypeInfo.dataFlowInfo
@@ -407,8 +407,12 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         val result = noChange(newContext)
         return ConditionalDataFlowInfo(
                 result.thenInfo.equate(subjectDataFlowValue, expressionDataFlowValue,
-                                       DataFlowAnalyzer.typeHasEqualsFromAny(subjectType, expression)),
-                result.elseInfo.disequate(subjectDataFlowValue, expressionDataFlowValue))
+                                       DataFlowAnalyzer.typeHasEqualsFromAny(subjectType, expression),
+                                       components.languageVersionSettings),
+                result.elseInfo.disequate(subjectDataFlowValue,
+                                          expressionDataFlowValue,
+                                          components.languageVersionSettings)
+        )
     }
 
     private fun checkTypeForIs(
@@ -438,7 +442,9 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         if (CastDiagnosticsUtil.isCastErased(subjectType, targetType, KotlinTypeChecker.DEFAULT)) {
             context.trace.report(Errors.CANNOT_CHECK_FOR_ERASED.on(typeReferenceAfterIs, targetType))
         }
-        return ConditionalDataFlowInfo(context.dataFlowInfo.establishSubtyping(subjectDataFlowValue, targetType), context.dataFlowInfo)
+        return context.dataFlowInfo.let {
+            ConditionalDataFlowInfo(it.establishSubtyping(subjectDataFlowValue, targetType, components.languageVersionSettings), it)
+        }
     }
 
     private fun noChange(context: ExpressionTypingContext) = ConditionalDataFlowInfo(context.dataFlowInfo)
