@@ -64,7 +64,7 @@ fun generateCollectionsJsAPI(outDir: File) {
 }
 
 fun generateCommonAPI(outDir: File) {
-    (commonGenerators + ::specialJVM + ::specialJS).flatMap { it().sortedBy { it.signature }.asSequence() }
+    (commonGenerators + ::specialJVM).flatMap { it().sortedBy { it.signature }.asSequence() }
             .groupByFileAndWrite(outDir, platform = Platform.Common)
 }
 
