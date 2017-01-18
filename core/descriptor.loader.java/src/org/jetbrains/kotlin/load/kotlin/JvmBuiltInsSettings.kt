@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.builtins.JvmBuiltInClassDescriptorFactory
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.annotations.createDeprecatedAnnotation
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
@@ -81,10 +82,9 @@ open class JvmBuiltInsSettings(
         ).let { AnnotationsImpl(listOf(it)) }
     }
 
-    private val notSupportedDeprecation by storageManager.createLazyValue {
-        // We use both LowPriorityInOverloadResolution to achieve the following goals:
-        // - If there is something to resolve to beside an additional built-in member, it's *almost* always will win
-        // - Otherwise error will be reported because of Deprecated annotation with Error level
+    private val lowPriorityAnnotation: Annotations by storageManager.createLazyValue {
+        // We use both LowPriorityInOverloadResolution to achieve the following goal:
+        // If there is something to resolve to beside an additional built-in member, it's *almost* always will win
         val lowPriorityAnnotation =
                 ClassDescriptorImpl(
                         moduleDescriptor.getPackage(LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_FQ_NAME.parent()), LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_FQ_NAME.shortName(),
@@ -95,12 +95,7 @@ open class JvmBuiltInsSettings(
                     AnnotationDescriptorImpl(defaultType, emptyMap(), SourceElement.NO_SOURCE)
                 }
 
-        val errorDeprecation = moduleDescriptor.builtIns.createDeprecatedAnnotation(
-                "This member is not supported by Kotlin compiler on this language level",
-                level = DeprecationLevel.ERROR.name
-        )
-
-        AnnotationsImpl(listOf(lowPriorityAnnotation, errorDeprecation))
+        AnnotationsImpl(listOf(lowPriorityAnnotation))
     }
 
     private fun StorageManager.createMockJavaIoSerializableType(): KotlinType {
@@ -162,7 +157,7 @@ open class JvmBuiltInsSettings(
 
                     JDKMemberStatus.NOT_CONSIDERED -> {
                         if (!isAdditionalBuiltInsFeatureSupported) {
-                            setAdditionalAnnotations(notSupportedDeprecation)
+                            setAdditionalAnnotations(lowPriorityAnnotation)
                         }
                         else {
                             setAdditionalAnnotations(notConsideredDeprecation)
@@ -173,7 +168,7 @@ open class JvmBuiltInsSettings(
 
                     JDKMemberStatus.WHITE_LIST -> {
                         if (!isAdditionalBuiltInsFeatureSupported) {
-                            setAdditionalAnnotations(notSupportedDeprecation)
+                            setAdditionalAnnotations(lowPriorityAnnotation)
                         }
                     }
                 }
@@ -321,7 +316,7 @@ open class JvmBuiltInsSettings(
                 setSubstitution(substitutor.substitution)
 
                 if (!isAdditionalBuiltInsFeatureSupported) {
-                    setAdditionalAnnotations(notSupportedDeprecation)
+                    setAdditionalAnnotations(lowPriorityAnnotation)
                 }
                 else if (SignatureBuildingComponents.signature(javaAnalogueDescriptor, javaConstructor.computeJvmDescriptor()) !in WHITE_LIST_CONSTRUCTOR_SIGNATURES) {
                     setAdditionalAnnotations(notConsideredDeprecation)

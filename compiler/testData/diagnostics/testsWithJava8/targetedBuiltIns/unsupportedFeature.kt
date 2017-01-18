@@ -3,20 +3,24 @@
 // SKIP_TXT
 
 class A : java.util.ArrayList<String>() {
-    <!UNSUPPORTED_FEATURE!>override<!> fun stream(): java.util.stream.Stream<String> = super.<!DEPRECATION_ERROR!>stream<!>()
+    override fun stream(): java.util.stream.Stream<String> = super.stream()
 }
 
 class A1 : java.util.ArrayList<String>() {
-    fun stream(): java.util.stream.Stream<String> = super.<!DEPRECATION_ERROR!>stream<!>()
+    fun stream(): java.util.stream.Stream<String> = super.stream()
 }
 
-class B : <!DEPRECATION_ERROR!>Throwable<!>("", null, false, false)
+interface A2 : List<String> {
+    <!UNSUPPORTED_FEATURE!>override<!> fun stream(): java.util.stream.Stream<String> = null!!
+}
+
+class B : <!UNSUPPORTED_FEATURE!>Throwable<!>("", null, false, false)
 
 fun Throwable.fillInStackTrace() = 1
 
 fun foo(x: List<String>, y: Throwable) {
-    x.<!DEPRECATION_ERROR!>stream<!>()
-    java.util.ArrayList<String>().<!DEPRECATION_ERROR!>stream<!>()
+    x.<!UNSUPPORTED_FEATURE!>stream<!>()
+    java.util.ArrayList<String>().stream()
 
     y.fillInStackTrace() checkType { _<Int>() }
 
