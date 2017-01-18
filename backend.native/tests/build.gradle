@@ -177,19 +177,16 @@ task defaults3(type: RunKonanTest) {
 }
 
 task defaults4(type: RunKonanTest) {
-    disabled = true
     goldValue = "43\n"
     source = "codegen/function/defaults4.kt"
 }
 
 task defaults5(type: RunKonanTest) {
-    disabled = true
     goldValue = "5\n6\n"
     source = "codegen/function/defaults5.kt"
 }
 
 task defaults6(type: RunKonanTest) {
-    disabled = true
     goldValue = "42\n"
     source = "codegen/function/defaults6.kt"
 }
