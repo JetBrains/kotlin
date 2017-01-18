@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.repl
 
+
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.PsiFileFactory
@@ -25,8 +26,8 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
-import org.jetbrains.kotlin.cli.common.repl.ReplChecker
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
+import org.jetbrains.kotlin.cli.common.repl.makeSriptBaseName
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.repl.messages.DiagnosticMessageHolder
@@ -37,14 +38,18 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 open class GenericReplChecker(
         disposable: Disposable,
         val scriptDefinition: KotlinScriptDefinition,
         val compilerConfiguration: CompilerConfiguration,
-        messageCollector: MessageCollector
-) : ReplChecker {
-    protected val environment = run {
+        messageCollector: MessageCollector,
+        protected val stateLock: ReentrantReadWriteLock = ReentrantReadWriteLock()
+) {
+    internal val environment = run {
         compilerConfiguration.apply {
             add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
             put<MessageCollector>(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
@@ -53,41 +58,43 @@ open class GenericReplChecker(
         KotlinCoreEnvironment.createForProduction(disposable, compilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
-    protected val psiFileFactory: PsiFileFactoryImpl = PsiFileFactory.getInstance(environment.project) as PsiFileFactoryImpl
+    private val psiFileFactory: PsiFileFactoryImpl = PsiFileFactory.getInstance(environment.project) as PsiFileFactoryImpl
 
     // "line" - is the unit of evaluation here, could in fact consists of several character lines
-    protected class LineState(
+    internal class LineState(
             val codeLine: ReplCodeLine,
             val psiFile: KtFile,
             val errorHolder: DiagnosticMessageHolder)
 
-    protected var lineState: LineState? = null
+    private var _lineState: LineState? = null
+
+    internal val lineState: LineState? get() = stateLock.read { _lineState }
 
     fun createDiagnosticHolder() = ReplTerminalDiagnosticMessageHolder()
 
-    @Synchronized
-    override fun check(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplCheckResult {
-        val virtualFile =
-                LightVirtualFile("line${codeLine.no}${KotlinParserDefinition.STD_SCRIPT_EXT}", KotlinLanguage.INSTANCE, codeLine.code).apply {
-                    charset = CharsetToolkit.UTF8_CHARSET
-                }
-        val psiFile: KtFile = psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile?
-                              ?: error("Script file not analyzed at line ${codeLine.no}: ${codeLine.code}")
+    fun check(codeLine: ReplCodeLine, generation: Long): ReplCheckResult {
+        stateLock.write {
+            val scriptFileName = makeSriptBaseName(codeLine, generation)
+            val virtualFile =
+                    LightVirtualFile("${scriptFileName}${KotlinParserDefinition.STD_SCRIPT_EXT}", KotlinLanguage.INSTANCE, codeLine.code).apply {
+                        charset = CharsetToolkit.UTF8_CHARSET
+                    }
+            val psiFile: KtFile = psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile?
+                                  ?: error("Script file not analyzed at line ${codeLine.no}: ${codeLine.code}")
 
-        val errorHolder = createDiagnosticHolder()
+            val errorHolder = createDiagnosticHolder()
 
-        val syntaxErrorReport = AnalyzerWithCompilerReport.Companion.reportSyntaxErrors(psiFile, errorHolder)
+            val syntaxErrorReport = AnalyzerWithCompilerReport.reportSyntaxErrors(psiFile, errorHolder)
 
-        if (!syntaxErrorReport.isHasErrors) {
-            lineState = LineState(codeLine, psiFile, errorHolder)
-        }
+            if (!syntaxErrorReport.isHasErrors) {
+                _lineState = LineState(codeLine, psiFile, errorHolder)
+            }
 
-        return when {
-            syntaxErrorReport.isHasErrors && syntaxErrorReport.isAllErrorsAtEof -> ReplCheckResult.Incomplete(history)
-            syntaxErrorReport.isHasErrors -> ReplCheckResult.Error(history, errorHolder.renderedDiagnostics)
-            else -> ReplCheckResult.Ok(history)
+            return when {
+                syntaxErrorReport.isHasErrors && syntaxErrorReport.isAllErrorsAtEof -> ReplCheckResult.Incomplete()
+                syntaxErrorReport.isHasErrors -> ReplCheckResult.Error(errorHolder.renderedDiagnostics)
+                else -> ReplCheckResult.Ok()
+            }
         }
     }
 }
-
-

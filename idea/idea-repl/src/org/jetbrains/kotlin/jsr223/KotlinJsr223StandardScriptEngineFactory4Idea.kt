@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.jsr223
 
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineFactoryBase
+import org.jetbrains.kotlin.cli.common.repl.ScriptArgsWithTypes
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_JAVA_RUNTIME_JAR
 import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR
@@ -37,8 +38,8 @@ class KotlinJsr223StandardScriptEngineFactory4Idea : KotlinJsr223JvmScriptEngine
                     this,
                     scriptCompilationClasspathFromContext(Thread.currentThread().contextClassLoader),
                     "kotlin.script.templates.standard.ScriptTemplateWithBindings",
-                    { ctx -> arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)) },
-                    arrayOf(Map::class.java)
+                    { ctx, argTypes -> ScriptArgsWithTypes(arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)), argTypes ?: emptyArray()) },
+                    arrayOf(Map::class)
             )
 }
 

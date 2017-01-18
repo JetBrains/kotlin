@@ -17,60 +17,117 @@
 package org.jetbrains.kotlin.cli.common.repl
 
 import org.jetbrains.kotlin.utils.tryCreateCallableMapping
+import java.lang.reflect.Proxy
 import javax.script.Invocable
 import javax.script.ScriptException
-import kotlin.reflect.*
+import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
+import kotlin.reflect.KParameter
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.safeCast
 
 @Suppress("unused") // used externally (kotlin.script.utils)
 interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
 
-    val replScriptEvaluator: ReplEvaluatorBase
+    val replScriptEvaluator: ReplEvaluatorExposedInternalHistory
 
-    fun <T: Any> getInterface(klass: KClass<T>): Any? {
-        val (_, instance) = replScriptEvaluator.lastEvaluatedScript ?: throw IllegalArgumentException("no script ")
-        return getInterface(instance, klass)
-    }
-
-    fun <T: Any> getInterface(receiver: Any, klass: KClass<T>): Any? {
-        return klass.safeCast(receiver)
+    private fun prioritizedHistory(receiverClass: KClass<*>?, receiverInstance: Any?): List<EvalClassWithInstanceAndLoader> {
+        return replScriptEvaluator.lastEvaluatedScripts.map { it.second }.filter { it.instance != null }.reversed().assertNotEmpty("no script ").let { history ->
+            if (receiverInstance != null) {
+                val receiverKlass = receiverClass ?: receiverInstance.javaClass.kotlin
+                val receiverInHistory = history.find { it.instance == receiverInstance } ?:
+                                        EvalClassWithInstanceAndLoader(receiverKlass, receiverInstance, receiverKlass.java.classLoader, history.first().invokeWrapper)
+                listOf(receiverInHistory) + history.filterNot { it == receiverInHistory }
+            }
+            else {
+                history
+            }
+        }
     }
 
     override fun invokeFunction(name: String?, vararg args: Any?): Any? {
         if (name == null) throw java.lang.NullPointerException("function name cannot be null")
-        val (klass, instance) = replScriptEvaluator.lastEvaluatedScript ?: throw IllegalArgumentException("no script ")
-        return invokeImpl(klass, instance, name, args, invokeWrapper = null)
+        return invokeImpl(prioritizedHistory(null, null), name, args)
     }
 
     override fun invokeMethod(thiz: Any?, name: String?, vararg args: Any?): Any? {
         if (name == null) throw java.lang.NullPointerException("method name cannot be null")
         if (thiz == null) throw IllegalArgumentException("cannot invoke method on the null object")
-        return invokeImpl(thiz.javaClass.kotlin, thiz, name, args, invokeWrapper = null)
+        return invokeImpl(prioritizedHistory(thiz.javaClass.kotlin, thiz), name, args)
     }
 
+    private fun invokeImpl(prioritizedCallOrder: List<EvalClassWithInstanceAndLoader>, name: String, args: Array<out Any?>): Any? {
+        // TODO: cache the method lookups?
+
+        val (fn, mapping, invokeWrapper) = prioritizedCallOrder.asSequence().map { attempt ->
+            val candidates = attempt.klass.functions.filter { it.name == name }
+            candidates.findMapping(listOf<Any?>(attempt.instance) + args)?.let {
+                Triple(it.first, it.second, attempt.invokeWrapper)
+            }
+        }.filterNotNull().firstOrNull() ?: throw NoSuchMethodException("no suitable function '$name' found")
+
+        val res = try {
+            if (invokeWrapper != null) {
+                invokeWrapper.invoke {
+                    fn.callBy(mapping)
+                }
+            }
+            else {
+                fn.callBy(mapping)
+            }
+        }
+        catch (e: Throwable) {
+            // ignore everything in the stack trace until this constructor call
+            throw ScriptException(renderReplStackTrace(e.cause!!, startFromMethodName = fn.name))
+        }
+        return if (fn.returnType.classifier == Unit::class) Unit else res
+    }
+
+
     override fun <T : Any> getInterface(clasz: Class<T>?): T? {
-        val (_, instance) = replScriptEvaluator.lastEvaluatedScript ?: throw IllegalArgumentException("no script ")
-        return getInterface(instance, clasz)
+        return proxyInterface(null, clasz)
     }
 
     override fun <T : Any> getInterface(thiz: Any?, clasz: Class<T>?): T? {
         if (thiz == null) throw IllegalArgumentException("object cannot be null")
+        return proxyInterface(thiz, clasz)
+    }
+
+    private fun <T : Any> proxyInterface(thiz: Any?, clasz: Class<T>?): T? {
+        replScriptEvaluator.lastEvaluatedScripts.assertNotEmpty("no script")
+        val priority = prioritizedHistory(thiz?.javaClass?.kotlin, thiz)
+
         if (clasz == null) throw IllegalArgumentException("class object cannot be null")
         if (!clasz.isInterface) throw IllegalArgumentException("expecting interface")
-        return clasz.kotlin.safeCast(thiz)
+
+        // TODO: cache the method lookups?
+
+        val proxy = Proxy.newProxyInstance(Thread.currentThread().contextClassLoader, arrayOf(clasz)) { _, method, args ->
+            invokeImpl(priority, method.name, args ?: emptyArray())
+        }
+        return clasz.kotlin.safeCast(proxy)
     }
 }
 
-private fun invokeImpl(receiverClass: KClass<*>, receiverInstance: Any, name: String, args: Array<out Any?>, invokeWrapper: InvokeWrapper?): Any? {
+private fun invokeImpl(prioritizedCallOrder: List<EvalClassWithInstanceAndLoader>, name: String, args: Array<out Any?>): Any? {
+    // TODO: cache the method lookups?
 
-    val candidates = receiverClass.functions.filter { it.name == name }
-    val (fn, mapping) = candidates.findMapping(listOf<Any?>(receiverInstance) + args) ?:
-                        throw NoSuchMethodException("no suitable function '$name' found")
+    val (fn, mapping, invokeWrapper) = prioritizedCallOrder.asSequence().map { attempt ->
+        val candidates = attempt.klass.functions.filter { it.name == name }
+        candidates.findMapping(listOf<Any?>(attempt.instance) + args)?.let {
+            Triple(it.first, it.second, attempt.invokeWrapper)
+        }
+    }.filterNotNull().firstOrNull() ?: throw NoSuchMethodException("no suitable function '$name' found")
+
     val res = try {
-        invokeWrapper?.invoke {
+        if (invokeWrapper != null) {
+            invokeWrapper.invoke {
+                fn.callBy(mapping)
+            }
+        }
+        else {
             fn.callBy(mapping)
-        } ?: fn.callBy(mapping)
+        }
     }
     catch (e: Throwable) {
         // ignore everything in the stack trace until this constructor call

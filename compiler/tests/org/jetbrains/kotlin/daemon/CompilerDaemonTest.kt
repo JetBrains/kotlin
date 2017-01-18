@@ -486,7 +486,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                                                     ScriptWithNoParam::class.qualifiedName!!,
                                                     System.err)
 
-                val localEvaluator = GenericReplCompiledEvaluator(emptyList(), Thread.currentThread().contextClassLoader)
+                val localEvaluator = GenericReplEvaluator(emptyList(), Thread.currentThread().contextClassLoader)
 
                 doReplTestWithLocalEval(repl, localEvaluator)
             }
@@ -501,17 +501,16 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                                                     "kotlin.script.templates.standard.ScriptTemplateWithArgs",
                                                     System.err)
 
-                val localEvaluator = GenericReplCompiledEvaluator(emptyList(),
-                                                                  Thread.currentThread().contextClassLoader,
-                                                                  arrayOf(emptyArray<String>()))
+                val localEvaluator = GenericReplEvaluator(emptyList(), Thread.currentThread().contextClassLoader,
+                                                          ScriptArgsWithTypes(arrayOf(emptyArray<String>()), arrayOf(Array<String>::class)))
 
                 doReplTestWithLocalEval(repl, localEvaluator)
             }
         }
     }
 
-    private fun doReplTestWithLocalEval(repl: KotlinRemoteReplCompiler, localEvaluator: GenericReplCompiledEvaluator) {
-        val res0 = repl.check(ReplCodeLine(0, "val x ="), emptyList())
+    private fun doReplTestWithLocalEval(repl: KotlinRemoteReplCompiler, localEvaluator: ReplEvaluator) {
+        val res0 = repl.check(ReplCodeLine(0, "val x ="))
         TestCase.assertTrue("Unexpected check results: $res0", res0 is ReplCheckResult.Incomplete)
 
         val codeLine1 = ReplCodeLine(1, "val lst = listOf(1)\nval x = 5")
@@ -519,7 +518,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val res1c = res1 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res1", res1c)
 
-        val res11 = localEvaluator.eval(codeLine1, emptyList(), res1c!!.classes, res1c.hasResult, res1c.classpathAddendum)
+        val res11 = localEvaluator.eval(res1c!!)
         val res11e = res11 as? ReplEvalResult.UnitResult
         TestCase.assertNotNull("Unexpected eval result: $res11", res11e)
 
@@ -531,7 +530,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val res2c = res2 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res2", res2c)
 
-        val res21 = localEvaluator.eval(codeLine2, listOf(codeLine1), res2c!!.classes, res2c.hasResult, res2c.classpathAddendum)
+        val res21 = localEvaluator.eval(res2c!!)
         val res21e = res21 as? ReplEvalResult.ValueResult
         TestCase.assertNotNull("Unexpected eval result: $res21", res21e)
         TestCase.assertEquals(7, res21e!!.value)
@@ -548,22 +547,23 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 val repl = KotlinRemoteReplEvaluator(disposable, daemon!!, null, CompileService.TargetPlatform.JVM,
                                                      listOf(File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-runtime.jar")),
                                                      "kotlin.script.templates.standard.ScriptTemplateWithArgs",
-                                                     arrayOf(emptyArray<String>()), null,
+                                                     arrayOf(emptyArray<String>()),
+                                                     arrayOf(Array<String>::class.java),
                                                      System.err, evalOut, evalErr, evalIn)
 
-                val res0 = repl.check(ReplCodeLine(0, "val x ="), emptyList())
+                val res0 = repl.check(ReplCodeLine(0, "val x ="))
                 TestCase.assertTrue("Unexpected check results: $res0", res0 is ReplCheckResult.Incomplete)
 
                 val codeLine1 = ReplCodeLine(1, "val x = 5")
-                val res1 = repl.eval(codeLine1, emptyList())
+                val res1 = repl.compileAndEval(codeLine1, verifyHistory = emptyList())
                 val res1e = res1 as? ReplEvalResult.UnitResult
                 TestCase.assertNotNull("Unexpected eval result: $res1", res1e)
 
                 val codeLine2 = ReplCodeLine(2, "x + 2")
-                val res2x = repl.eval(codeLine2, listOf(codeLine2))
+                val res2x = repl.compileAndEval(codeLine2, verifyHistory = listOf(codeLine2))
                 TestCase.assertNotNull("Unexpected compile result: $res2x", res2x as? ReplEvalResult.HistoryMismatch)
 
-                val res2 = repl.eval(codeLine2, listOf(codeLine1))
+                val res2 = repl.compileAndEval(codeLine2, verifyHistory = listOf(codeLine1))
                 val res2e = res2 as? ReplEvalResult.ValueResult
                 TestCase.assertNotNull("Unexpected eval result: $res2", res2e)
                 TestCase.assertEquals(7, res2e!!.value)
@@ -592,8 +592,8 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             // use repl compiler for >> 1s, making sure that idle/unused timeouts are not firing
             for (attempts in 1..10) {
-                val codeLine1 = ReplCodeLine(1, "3 + 5")
-                val res1 = repl.compile(codeLine1, emptyList())
+                val codeLine1 = ReplCodeLine(attempts, "3 + 5")
+                val res1 = repl.compile(codeLine1)
                 val res1c = res1 as? ReplCompileResult.CompiledClasses
                 TestCase.assertNotNull("Unexpected compile result: $res1", res1c)
                 Thread.sleep(200)

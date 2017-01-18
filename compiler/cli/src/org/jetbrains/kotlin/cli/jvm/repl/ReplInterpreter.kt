@@ -24,11 +24,10 @@ import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.repl.ReplClassLoader
+import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
-import org.jetbrains.kotlin.cli.jvm.repl.CliReplAnalyzerEngine.ReplLineAnalysisResult.Successful
-import org.jetbrains.kotlin.cli.jvm.repl.CliReplAnalyzerEngine.ReplLineAnalysisResult.WithErrors
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
@@ -65,7 +64,7 @@ class ReplInterpreter(
     }
 
     private val psiFileFactory: PsiFileFactoryImpl = PsiFileFactory.getInstance(environment.project) as PsiFileFactoryImpl
-    private val analyzerEngine = CliReplAnalyzerEngine(environment)
+    private val analyzerEngine = GenericReplAnalyzer(environment)
 
     fun eval(line: String): LineResult {
         ++lineNumber
@@ -99,11 +98,11 @@ class ReplInterpreter(
             return LineResult.Error.CompileTime(errorHolder.renderedDiagnostics)
         }
 
-        val analysisResult = analyzerEngine.analyzeReplLine(psiFile, lineNumber)
+        val analysisResult = analyzerEngine.analyzeReplLine(psiFile, ReplCodeLine(lineNumber, "fake line"))
         AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder)
         val scriptDescriptor = when (analysisResult) {
-            is WithErrors -> return LineResult.Error.CompileTime(errorHolder.renderedDiagnostics)
-            is Successful -> analysisResult.scriptDescriptor
+            is GenericReplAnalyzer.ReplLineAnalysisResult.WithErrors -> return LineResult.Error.CompileTime(errorHolder.renderedDiagnostics)
+            is GenericReplAnalyzer.ReplLineAnalysisResult.Successful -> analysisResult.scriptDescriptor
             else -> error("Unexpected result ${analysisResult.javaClass}")
         }
 

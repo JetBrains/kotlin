@@ -35,7 +35,6 @@ import java.io.File
 import java.net.URLClassLoader
 
 class GenericReplTest : TestCase() {
-
     @Test
     fun testReplBasics() {
 
@@ -45,7 +44,7 @@ class GenericReplTest : TestCase() {
                             listOf(File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-runtime.jar")),
                             "kotlin.script.templates.standard.ScriptTemplateWithArgs")
 
-        val res1 = repl.replCompiler?.check(ReplCodeLine(0, "val x ="), emptyList())
+        val res1 = repl.replCompiler?.check(ReplCodeLine(0, "val x ="))
         TestCase.assertTrue("Unexpected check results: $res1", res1 is ReplCheckResult.Incomplete)
 
         val codeLine0 = ReplCodeLine(0, "val l1 = listOf(1 + 2)\nl1.first()")
@@ -53,7 +52,7 @@ class GenericReplTest : TestCase() {
         val res2c = res2 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res2", res2c)
 
-        val res21 = repl.compiledEvaluator.eval(codeLine0, emptyList(), res2c!!.classes, res2c.hasResult, res2c.classpathAddendum)
+        val res21 = repl.compiledEvaluator.eval(res2c!!)
         val res21e = res21 as? ReplEvalResult.ValueResult
         TestCase.assertNotNull("Unexpected eval result: $res21", res21e)
         TestCase.assertEquals(3, res21e!!.value)
@@ -63,7 +62,7 @@ class GenericReplTest : TestCase() {
         val res3c = res3 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res3", res3c)
 
-        val res31 = repl.compiledEvaluator.eval(codeLine1, listOf(codeLine0), res3c!!.classes, res3c.hasResult, res3c.classpathAddendum)
+        val res31 = repl.compiledEvaluator.eval(res3c!!)
         val res31e = res31 as? ReplEvalResult.UnitResult
         TestCase.assertNotNull("Unexpected eval result: $res31", res31e)
 
@@ -75,7 +74,7 @@ class GenericReplTest : TestCase() {
         val res4c = res4 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res4", res4c)
 
-        val res41 = repl.compiledEvaluator.eval(codeLine2, emptyList(), res4c!!.classes, res4c.hasResult, res4c.classpathAddendum)
+        val res41 = repl.compiledEvaluator.eval(res4c!!)
         val res41e = res41 as? ReplEvalResult.ValueResult
         TestCase.assertNotNull("Unexpected eval result: $res41", res41e)
         TestCase.assertEquals(7, res41e!!.value)
@@ -97,7 +96,7 @@ class GenericReplTest : TestCase() {
         val res1c = res1 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res1", res1c)
 
-        val res11 = repl.compiledEvaluator.eval(codeLine1, emptyList(), res1c!!.classes, res1c.hasResult, res1c.classpathAddendum)
+        val res11 = repl.compiledEvaluator.eval(res1c!!)
         val res11e = res11 as? ReplEvalResult.ValueResult
         TestCase.assertNotNull("Unexpected eval result: $res11", res11e)
         TestCase.assertEquals(3, res11e!!.value)
@@ -107,7 +106,7 @@ class GenericReplTest : TestCase() {
         val res2c = res2 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res2", res2c)
 
-        val res21 = repl.compiledEvaluator.eval(codeLine2, listOf(codeLine1), res2c!!.classes, res2c.hasResult, res2c.classpathAddendum)
+        val res21 = repl.compiledEvaluator.eval(res2c!!)
         val res21e = res21 as? ReplEvalResult.ValueResult
         TestCase.assertNotNull("Unexpected eval result: $res21", res21e)
         TestCase.assertEquals(5, res21e!!.value)
@@ -121,6 +120,8 @@ internal class TestRepl(
         templateClasspath: List<File>,
         templateClassName: String
 ) {
+    val emptyScriptArgs = ScriptArgsWithTypes(arrayOf(emptyArray<String>()), arrayOf(Array<String>::class))
+
     private val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, *templateClasspath.toTypedArray()).apply {
         put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script")
     }
@@ -137,8 +138,8 @@ internal class TestRepl(
         GenericReplCompiler(disposable, scriptDef, configuration, PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false))
     }
 
-    val compiledEvaluator : GenericReplCompiledEvaluator by lazy {
-        GenericReplCompiledEvaluator(configuration.jvmClasspathRoots, null, arrayOf(emptyArray<String>()))
+    val compiledEvaluator: ReplEvaluator by lazy {
+        GenericReplEvaluator(configuration.jvmClasspathRoots, null, emptyScriptArgs, ReplRepeatingMode.NONE)
     }
 }
 

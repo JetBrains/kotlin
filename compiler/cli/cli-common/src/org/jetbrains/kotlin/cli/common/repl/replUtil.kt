@@ -17,44 +17,11 @@
 package org.jetbrains.kotlin.cli.common.repl
 
 import com.google.common.base.Throwables
-import java.io.Serializable
+import java.io.File
+import java.net.URLClassLoader
 
-// TODO: thread safety!!
-data class ReplHistory<T>(
-        val lines: MutableList<ReplCodeLine> = arrayListOf(),
-        val values: MutableList<T> = arrayListOf()
-) : Serializable
-{
-    init { assert(isValid()) }
-    fun isValid() = lines.size == values.size
-
-    fun add(line: ReplCodeLine, value: T) {
-        lines.add(line)
-        values.add(value)
-    }
-
-    fun trimAt(idx: Int) {
-        lines.dropLast(lines.size - idx)
-        values.dropLast(lines.size - idx)
-    }
-
-    companion object {
-        private val serialVersionUID: Long = 8228357578L
-    }
-}
-
-fun <T> checkAndUpdateReplHistoryCollection(history: ReplHistory<T>, linesHistory: Iterable<ReplCodeLine>): Int? {
-    assert(history.isValid())
-    val linesHistoryIt = linesHistory.iterator()
-    var idx = 0
-    while (linesHistoryIt.hasNext()) {
-        val curLine = linesHistoryIt.next()
-        if (history.lines[idx] != curLine) return curLine.no
-        idx += 1
-    }
-    history.trimAt(idx)
-    return null
-}
+fun makeSriptBaseName(codeLine: ReplCodeLine, generation: Long) =
+        "Line_${codeLine.no}" + if (generation > 1) "_gen_${generation}" else ""
 
 fun renderReplStackTrace(cause: Throwable, startFromMethodName: String): String {
     val newTrace = arrayListOf<StackTraceElement>()
@@ -76,3 +43,22 @@ fun renderReplStackTrace(cause: Throwable, startFromMethodName: String): String 
     return Throwables.getStackTraceAsString(cause)
 }
 
+fun NO_ACTION(): Unit = Unit
+fun <T> NO_ACTION_THAT_RETURNS(v: T): T = v
+
+
+internal fun ClassLoader.listAllUrlsAsFiles(): List<File> {
+    val parents = generateSequence(this) { loader -> loader.parent }.filterIsInstance(URLClassLoader::class.java)
+    return parents.fold(emptyList<File>()) { accum, loader ->
+        loader.listLocalUrlsAsFiles() + accum
+    }.distinct()
+}
+
+internal fun URLClassLoader.listLocalUrlsAsFiles(): List<File> {
+    return this.urLs.map { it.toString().removePrefix("file:") }.filterNotNull().map { File(it) }
+}
+
+internal fun <T : Any> List<T>.assertNotEmpty(error: String): List<T> {
+    if (this.isEmpty()) throw IllegalStateException(error)
+    return this
+}
