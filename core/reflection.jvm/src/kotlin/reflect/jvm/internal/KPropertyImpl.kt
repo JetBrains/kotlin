@@ -87,6 +87,12 @@ internal abstract class KPropertyImpl<out R> private constructor(
 
     protected fun getDelegate(field: Field?, receiver: Any?): Any? =
             try {
+                if (receiver === EXTENSION_PROPERTY_DELEGATE) {
+                    if (descriptor.extensionReceiverParameter == null) {
+                        throw RuntimeException("'$this' is not an extension property and thus getExtensionDelegate() " +
+                                               "is not going to work, use getDelegate() instead")
+                    }
+                }
                 field?.get(receiver)
             }
             catch (e: IllegalAccessException) {
@@ -163,6 +169,10 @@ internal abstract class KPropertyImpl<out R> private constructor(
         override val caller: FunctionCaller<*> by ReflectProperties.lazySoft {
             computeCallerForAccessor(isGetter = false)
         }
+    }
+
+    companion object {
+        val EXTENSION_PROPERTY_DELEGATE = Any()
     }
 }
 

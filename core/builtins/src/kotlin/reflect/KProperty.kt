@@ -145,6 +145,8 @@ public interface KProperty1<T, out R> : KProperty<R>, (T) -> R {
      * @param receiver the receiver which is used to obtain the value of the property delegate.
      *                 For example, it should be a class instance if this is a member property of that class,
      *                 or an extension receiver if this is a top level extension property.
+     *
+     * @see [KProperty1.getExtensionDelegate]
      */
     @SinceKotlin("1.1")
     public fun getDelegate(receiver: T): Any?
@@ -204,6 +206,8 @@ public interface KProperty2<D, E, out R> : KProperty<R>, (D, E) -> R {
      *
      * @param receiver1 the instance of the first receiver.
      * @param receiver2 the instance of the second receiver.
+     *
+     * @see [KProperty2.getExtensionDelegate]
      */
     @SinceKotlin("1.1")
     public fun getDelegate(receiver1: D, receiver2: E): Any?
