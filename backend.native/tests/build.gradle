@@ -836,3 +836,13 @@ task inline1(type: RunKonanTest) {
     goldValue = "Hello world\n"
     source = "codegen/inline/inline1.kt"
 }
+
+task inline2(type: RunKonanTest) {
+    goldValue = "hello 1 8\n"
+    source = "codegen/inline/inline2.kt"
+}
+
+task inline3(type: RunKonanTest) {
+    goldValue = "5\n"
+    source = "codegen/inline/inline3.kt"
+}
