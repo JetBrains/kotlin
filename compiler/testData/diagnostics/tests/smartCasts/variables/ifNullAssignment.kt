@@ -3,7 +3,7 @@
 fun basic(): String {
     var current: String? = null
     current = if (current == null) "bar" else current
-    return <!TYPE_MISMATCH!>current<!>
+    return <!DEBUG_INFO_SMARTCAST!>current<!>
 }
 
 fun foo(flag: Boolean) {
@@ -13,7 +13,7 @@ fun foo(flag: Boolean) {
         x = if (flag) "34" else "12"
     }
 
-    x<!UNSAFE_CALL!>.<!>hashCode()
+    <!DEBUG_INFO_SMARTCAST!>x<!>.hashCode()
 }
 
 fun bar(flag: Boolean) {
@@ -26,7 +26,7 @@ fun bar(flag: Boolean) {
         }
     }
 
-    x<!UNSAFE_CALL!>.<!>hashCode()
+    <!DEBUG_INFO_SMARTCAST!>x<!>.hashCode()
 }
 
 fun baz(flag: Boolean) {
@@ -40,7 +40,7 @@ fun baz(flag: Boolean) {
         }
     }
 
-    x<!UNSAFE_CALL!>.<!>hashCode()
+    <!DEBUG_INFO_SMARTCAST!>x<!>.hashCode()
 }
 
 fun gav(flag: Boolean, arg: String?) {

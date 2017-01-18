@@ -39,6 +39,8 @@ class DataFlowValue(val identifierInfo: IdentifierInfo,
         // or protected / public member value from the same module without open / custom getter
         // Smart casts are completely safe
         STABLE_VALUE("stable val"),
+        // Block, or if / else, or when
+        STABLE_COMPLEX_EXPRESSION("complex expression", ""),
         // Member value with open / custom getter
         // Smart casts are not safe
         PROPERTY_WITH_GETTER("custom getter", "property that has open or custom getter"),
@@ -65,7 +67,7 @@ class DataFlowValue(val identifierInfo: IdentifierInfo,
      * Stable means here we do not expect some sudden change of their values,
      * like accessing mutable properties in another thread, so smart casts can be used safely.
      */
-    val isStable = (kind == Kind.STABLE_VALUE || kind == Kind.STABLE_VARIABLE)
+    val isStable = (kind == Kind.STABLE_VALUE || kind == Kind.STABLE_VARIABLE || kind == Kind.STABLE_COMPLEX_EXPRESSION)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

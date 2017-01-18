@@ -57,6 +57,16 @@ object DataFlowValueFactory {
             resolutionContext: ResolutionContext<*>
     ) = createDataFlowValue(expression, type, resolutionContext.trace.bindingContext, resolutionContext.scope.ownerDescriptor)
 
+    private fun isComplexExpression(expression: KtExpression): Boolean = when(expression) {
+        is KtBlockExpression, is KtIfExpression, is KtWhenExpression -> true
+        is KtBinaryExpression -> expression.operationToken === KtTokens.ELVIS
+        is KtParenthesizedExpression -> {
+            val deparenthesized = KtPsiUtil.deparenthesize(expression)
+            deparenthesized != null && isComplexExpression(deparenthesized)
+        }
+        else -> false
+    }
+
     @JvmStatic
     fun createDataFlowValue(
             expression: KtExpression,
@@ -83,6 +93,10 @@ object DataFlowValueFactory {
             return DataFlowValue(ExpressionIdentifierInfo(expression),
                                  type,
                                  Nullability.NOT_NULL)
+        }
+
+        if (isComplexExpression(expression)) {
+            return createDataFlowValueForComplexExpression(expression, type)
         }
 
         val result = getIdForStableIdentifier(expression, bindingContext, containingDeclarationOrModule)
@@ -124,6 +138,11 @@ object DataFlowValueFactory {
                                               bindingContext[BOUND_INITIALIZER_VALUE, variableDescriptor]),
                                      variableDescriptor.type)
 
+    private fun createDataFlowValueForComplexExpression(
+            expression: KtExpression,
+            type: KotlinType
+    ) = DataFlowValue(ExpressionIdentifierInfo(expression, stableComplex = true), type)
+
     // For only ++ and -- postfix operations
     private data class PostfixIdentifierInfo(val argumentInfo: IdentifierInfo, val op: KtToken) : IdentifierInfo {
         override val kind: DataFlowValue.Kind get() = argumentInfo.kind
@@ -131,8 +150,13 @@ object DataFlowValueFactory {
         override fun toString() = "$argumentInfo($op)"
     }
 
-    data class ExpressionIdentifierInfo(val expression: KtExpression) : IdentifierInfo {
-        override val kind = OTHER
+    class ExpressionIdentifierInfo(val expression: KtExpression, stableComplex: Boolean = false) : IdentifierInfo {
+
+        override val kind = if (stableComplex) STABLE_COMPLEX_EXPRESSION else OTHER
+        
+        override fun equals(other: Any?) = other is ExpressionIdentifierInfo && expression == other.expression
+
+        override fun hashCode() = expression.hashCode()
 
         override fun toString() = expression.text ?: "(empty expression)"
     }

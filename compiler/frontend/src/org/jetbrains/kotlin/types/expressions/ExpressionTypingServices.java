@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
@@ -267,6 +269,13 @@ public class ExpressionTypingServices {
                 result = getTypeOfLastExpressionInBlock(
                         statementExpression, newContext.replaceExpectedType(context.expectedType), coercionStrategyForLastExpression,
                         blockLevelVisitor);
+                if (result.getType() != null && statementExpression.getParent() instanceof KtBlockExpression) {
+                    DataFlowValue lastExpressionValue = DataFlowValueFactory.createDataFlowValue(
+                            statementExpression, result.getType(), context);
+                    DataFlowValue blockExpressionValue = DataFlowValueFactory.createDataFlowValue(
+                            (KtBlockExpression) statementExpression.getParent(), result.getType(), context);
+                    result = result.replaceDataFlowInfo(result.getDataFlowInfo().assign(blockExpressionValue, lastExpressionValue));
+                }
             }
             else {
                 result = blockLevelVisitor
