@@ -185,12 +185,14 @@ class RunExternalTest extends RunKonanTest {
     }
 }
 
+@ParallelizableTask
 class RunExternalTestGroup extends RunExternalTest {
     def groupDirectory = "."
     def logFileName = "test-result.md"
-    String filter = project.property("filter")
+    String filter = project.findProperty("filter")
 
     @TaskAction
+    @Override
     void executeTest() {
         def logFile = project.file(logFileName)
         logFile.write("|Test|Status|Comment|\n|----|------|-------|")
@@ -211,7 +213,7 @@ class RunExternalTestGroup extends RunExternalTest {
         def total = ktFiles.size()
         ktFiles.each {
             source = project.relativePath(it)
-            println("TEST: ${++current}/$total (passed: $passed)")
+            println("TEST: $it.name (${++current}/$total, passed: $passed)")
             try {
                 super.executeTest()
                 logFile.append("\n|$it.name|PASSED||")
@@ -222,6 +224,7 @@ class RunExternalTestGroup extends RunExternalTest {
                 logFile.append("\n|$it.name|FAILED|${ex.getMessage()}. Cause: ${ex.getCause()?.getMessage()}|")
             }
         }
+        print("TOTAL PASSED: $passed/$total")
     }
 }
 

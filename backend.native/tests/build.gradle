@@ -19,7 +19,8 @@ task regenerate_external_tests() {
         def gradleGenerated = externalTestsProject.file("build.gradle")
         def externalTestsDir = externalTestsProject.file("codegen/blackbox")
         gradleGenerated.write("import org.jetbrains.kotlin.*\n\n")
-        gradleGenerated.append("configurations {\n" +
+        gradleGenerated.append(
+                "configurations {\n" +
                 "    cli_bc\n" +
                 "}\n" +
                 "\n" +
@@ -28,22 +29,19 @@ task regenerate_external_tests() {
                 "}\n\n")
 
         externalTestsDir.eachDirRecurse {
-            if (it.name == "build") {
+            // Skip build directory and directories without *.kt files
+            if (it.name == "build" || it.listFiles().findAll { it.name.endsWith(".kt") }.isEmpty()) {
                 return
             }
 
-            def directoryGradleGenerated = project.file("$it.absolutePath/build-generated.gradle")
-            directoryGradleGenerated.write("import org.jetbrains.kotlin.*\n\n")
-            gradleGenerated.append("\napply from: \"${externalTestsProject.relativePath(directoryGradleGenerated)}\"")
+            def taskDirectory = externalTestsProject.relativePath(it)
+            def taskName = taskDirectory.replace('/', '_').replace('-', '_')
 
-            it.eachFile(FileType.FILES) {
-                if (it.name.endsWith(".kt")) {
-                    def taskSourcePath = externalTestsProject.relativePath(it)
-                    //remove filename extension. TODO make better replacement
-                    def taskName = taskSourcePath.replace('/', '_').replace('-', '_').replaceFirst(~/\.[^\.]+$/, '')
-                    directoryGradleGenerated.append("task $taskName (type: RunExternalTest) {\n    source = \"$taskSourcePath\"\n}\n\n")
-                }
-            }
+            gradleGenerated.append(
+                    "task $taskName (type: RunExternalTestGroup) {\n" +
+                    "    groupDirectory = \"$taskDirectory\"\n" +
+                    "    logFileName = \"$taskDirectory/test-result.md\"\n" +
+                    "}\n\n")
         }
     }
 }
@@ -54,33 +52,9 @@ task run() {
 }
 
 task run_external () {
-    doLast {
-        //TODO make better output / make as dependencies
-        def externalTestsProject = project.childProjects["external"]
-        def logFile = externalTestsProject.file("test-result.md")
-        logFile.write("|Test|Status|Comment|\n|----|------|-------|")
-        def current = 1
-        def passed = 0
-        def total = externalTestsProject.tasks.size()
-        externalTestsProject.tasks.each {
-            println("TEST: $current/$total (passed: $passed)")
-            try {
-                (it as RunExternalTest).executeTest()
-                logFile.append("\n|$it.name|PASSED||")
-                println("TEST PASSED")
-                passed++
-            } catch (Exception ex) {
-                println("TEST FAILED")
-                logFile.append("\n|$it.name|FAILED|${ex.getMessage()}. Cause: ${ex.getCause()?.getMessage()}|")
-            }
-            current++
-        }
-        logFile.append("\nPASSED: $passed/$total")
+    project.subprojects {
+        dependsOn(it.tasks.withType(RunExternalTestGroup).matching { it.enabled })
     }
-}
-
-task run_external_group (type: RunExternalTestGroup) {
-    groupDirectory = "external/codegen/blackbox/binaryOp"
 }
 
 task sum (type:RunKonanTest) {
