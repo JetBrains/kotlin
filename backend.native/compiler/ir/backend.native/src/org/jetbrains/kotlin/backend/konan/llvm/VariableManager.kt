@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.*
 
 
@@ -19,20 +20,20 @@ internal class VariableManager(val codegen: CodeGenerator) {
         override fun toString() = (if (refSlot) "refslot" else "slot") + " for ${address}"
     }
 
-    class ValueRecord(val value: LLVMValueRef, val descriptor: ValueDescriptor) : Record {
+    class ValueRecord(val value: LLVMValueRef, val name: Name) : Record {
         override fun load() : LLVMValueRef = value
-        override fun store(value: LLVMValueRef) = throw Error("writing to immutable: ${descriptor}")
-        override fun address() : LLVMValueRef = throw Error("no address for: ${descriptor}")
-        override fun toString() = "value of ${value} from ${descriptor}"
+        override fun store(value: LLVMValueRef) = throw Error("writing to immutable: ${name}")
+        override fun address() : LLVMValueRef = throw Error("no address for: ${name}")
+        override fun toString() = "value of ${value} from ${name}"
     }
 
     val variables: ArrayList<Record> = arrayListOf()
-    val descriptors: HashMap<Pair<ValueDescriptor, CodeContext>, Int> = hashMapOf()
+    val contextVariablesToIndex: HashMap<Pair<Name, CodeContext>, Int> = hashMapOf()
 
     // Clears inner state of variable manager.
     fun clear() {
         variables.clear()
-        descriptors.clear()
+        contextVariablesToIndex.clear()
     }
 
     fun createVariable(scoped: Pair<VariableDescriptor, CodeContext>, value: LLVMValueRef? = null) : Int {
@@ -51,14 +52,15 @@ internal class VariableManager(val codegen: CodeGenerator) {
     fun createMutable(scoped: Pair<VariableDescriptor, CodeContext>,
                       isVar: Boolean, value: LLVMValueRef? = null) : Int {
         val descriptor = scoped.first
-        assert(descriptors.get(scoped) == null)
+        val scopedVariable = scoped.first.name to scoped.second
+        assert(!contextVariablesToIndex.contains(scopedVariable))
         val index = variables.size
         val type = codegen.getLLVMType(descriptor.type)
         val slot = codegen.alloca(type, descriptor.name.asString())
         if (value != null)
             codegen.storeAnyLocal(value, slot)
         variables.add(SlotRecord(slot, codegen.isObjectType(type), isVar))
-        descriptors[scoped] = index
+        contextVariablesToIndex[scopedVariable] = index
         return index
     }
 
@@ -84,15 +86,20 @@ internal class VariableManager(val codegen: CodeGenerator) {
 
     fun createImmutable(scoped: Pair<ValueDescriptor, CodeContext>, value: LLVMValueRef) : Int {
         val descriptor = scoped.first
-        assert(descriptors.get(scoped) == null)
+        val scopedVariable = scoped.first.name to scoped.second
+        assert(!contextVariablesToIndex.containsKey(scopedVariable))
         val index = variables.size
-        variables.add(ValueRecord(value, descriptor))
-        descriptors[scoped] = index
+        variables.add(ValueRecord(value, descriptor.name))
+        contextVariablesToIndex[scopedVariable] = index
         return index
     }
 
     fun indexOf(scoped: Pair<ValueDescriptor, CodeContext>) : Int {
-        return descriptors.getOrElse(scoped) { -1 }
+        return indexOfNamed(scoped.first.name to scoped.second)
+    }
+
+    private fun indexOfNamed(scoped: Pair<Name, CodeContext>) : Int {
+        return contextVariablesToIndex.getOrElse(scoped) { -1 }
     }
 
     fun addressOf(index: Int): LLVMValueRef {
