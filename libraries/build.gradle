@@ -2,6 +2,7 @@
 buildscript {
     ext.kotlin_version = "1.1-SNAPSHOT"
     repositories {
+        mavenCentral()
         maven { url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1' }
     }
     dependencies {
@@ -19,6 +20,10 @@ allprojects  {
 subprojects {
     apply plugin: 'kotlin'
     apply plugin: 'signing'
+
+    repositories {
+        mavenCentral()
+    }
 
     jar {
         baseName = project.name
