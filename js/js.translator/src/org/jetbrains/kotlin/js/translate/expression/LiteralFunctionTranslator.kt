@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js.translate.expression
 
-import org.jetbrains.kotlin.backend.common.SUSPENDED_MARKER_NAME
 import org.jetbrains.kotlin.builtins.isBuiltinExtensionFunctionalType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
@@ -24,10 +23,10 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.js.descriptorUtils.isCoroutineLambda
 import org.jetbrains.kotlin.js.inline.util.getInnerFunction
+import org.jetbrains.kotlin.js.inline.util.rewriters.NameReplacingVisitor
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.context.getNameForCapturedDescriptor
 import org.jetbrains.kotlin.js.translate.context.hasCapturedExceptContaining
-import org.jetbrains.kotlin.js.translate.context.isCaptured
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getFunctionDescriptor
 import org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.setDefaultValueForArguments
@@ -73,26 +72,25 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
 
         val tracker = functionContext.usageTracker()!!
 
-        val isRecursive = tracker.isCaptured(descriptor)
-
-        lambda.name = if (isRecursive) {
-            tracker.getNameForCapturedDescriptor(descriptor)
-        }
-        else {
-            invokingContext.getInnerNameForDescriptor(descriptor)
-        }
-
         if (tracker.hasCapturedExceptContaining()) {
             val lambdaCreator = simpleReturnFunction(invokingContext.scope(), lambda)
             lambdaCreator.name = invokingContext.getInnerNameForDescriptor(descriptor)
             lambdaCreator.isLocal = true
-            if (!isRecursive || descriptor.isCoroutineLambda) {
-                lambda.name = null
+            if (descriptor in tracker.capturedDescriptors && !descriptor.isCoroutineLambda) {
+                lambda.name = tracker.getNameForCapturedDescriptor(descriptor)
             }
             lambdaCreator.name.staticRef = lambdaCreator
             lambdaCreator.fillCoroutineMetadata(invokingContext, descriptor, continuationType)
             return lambdaCreator.withCapturedParameters(descriptor, descriptor.wrapContextForCoroutineIfNecessary(functionContext),
                                                         invokingContext)
+        }
+
+        lambda.name = invokingContext.getInnerNameForDescriptor(descriptor)
+        if (descriptor in tracker.capturedDescriptors) {
+            val capturedName = tracker.getNameForCapturedDescriptor(descriptor)!!
+            val globalName = invokingContext.getInnerNameForDescriptor(descriptor)
+            val replacingVisitor = NameReplacingVisitor(mapOf(capturedName to JsAstUtils.pureFqn(globalName, null)))
+            replacingVisitor.accept(lambda)
         }
 
         lambda.isLocal = true

@@ -5678,6 +5678,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("localFunctions.kt")
+        public void testLocalFunctions() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/nameClashes/localFunctions.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("methodAndPrivateProperty.kt")
         public void testMethodAndPrivateProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/nameClashes/methodAndPrivateProperty.kt");
