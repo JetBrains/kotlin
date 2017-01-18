@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -34,7 +35,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
-import org.jetbrains.kotlin.resolve.descriptorUtil.computeSealedSubclasses
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import java.util.*
@@ -144,6 +144,36 @@ internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChe
                 else -> null
             }
 
+    protected val ClassDescriptor.deepSealedSubclasses: List<ClassDescriptor>
+        get() = this.sealedSubclasses.flatMap {
+            if (it.modality == Modality.SEALED) it.deepSealedSubclasses
+            else setOf(it)
+        }
+
+    private val KtWhenCondition.negated
+        get() = (this as? KtWhenConditionIsPattern)?.isNegated ?: false
+
+    private fun KtWhenCondition.isRelevant(checkedDescriptor: ClassDescriptor) =
+            this !is KtWhenConditionWithExpression ||
+            DescriptorUtils.isObject(checkedDescriptor) ||
+            DescriptorUtils.isEnumEntry(checkedDescriptor)
+
+    private fun KtWhenCondition.getCheckedDescriptor(context: BindingContext): ClassDescriptor? {
+        return when (this) {
+            is KtWhenConditionIsPattern -> {
+                val checkedType = context.get(BindingContext.TYPE, typeReference) ?: return null
+                TypeUtils.getClassDescriptor(checkedType)
+            }
+            is KtWhenConditionWithExpression -> {
+                val reference = expression?.let { getReference(it) } ?: return null
+                context.get(BindingContext.REFERENCE_TARGET, reference) as? ClassDescriptor
+            }
+            else -> {
+                null
+            }
+        }
+    }
+
     protected fun getMissingClassCases(
             whenExpression: KtWhenExpression,
             subclasses: Set<ClassDescriptor>,
@@ -152,50 +182,32 @@ internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChe
         // when on empty enum / sealed is considered non-exhaustive, see test whenOnEmptySealed
         if (subclasses.isEmpty()) return listOf(UnknownMissingCase)
 
-        val checkedDescriptors = LinkedHashSet<ClassDescriptor>()
+        val checkedDescriptors = linkedSetOf<ClassDescriptor>()
         for (whenEntry in whenExpression.entries) {
             for (condition in whenEntry.conditions) {
-                var negated = false
-                var checkedDescriptor: ClassDescriptor? = null
-                if (condition is KtWhenConditionIsPattern) {
-                    val checkedType = context.get(BindingContext.TYPE, condition.typeReference)
-                    if (checkedType != null) {
-                        checkedDescriptor = TypeUtils.getClassDescriptor(checkedType)
-                    }
-                    negated = condition.isNegated
-                }
-                else if (condition is KtWhenConditionWithExpression) {
-                    if (condition.expression != null) {
-                        val reference = getReference(condition.expression)
-                        if (reference != null) {
-                            val target = context.get(BindingContext.REFERENCE_TARGET, reference)
-                            if (target is ClassDescriptor) {
-                                checkedDescriptor = target
-                            }
-                        }
-                    }
-                }
+                val negated = condition.negated
+                val checkedDescriptor = condition.getCheckedDescriptor(context) ?: continue
+                val checkedDescriptorSubclasses =
+                        if (checkedDescriptor.modality == Modality.SEALED) checkedDescriptor.deepSealedSubclasses
+                        else listOf(checkedDescriptor)
 
                 // Checks are important only for nested subclasses of the sealed class
                 // In additional, check without "is" is important only for objects
-                if (checkedDescriptor == null ||
-                    !subclasses.contains(checkedDescriptor) ||
-                    (condition is KtWhenConditionWithExpression &&
-                     !DescriptorUtils.isObject(checkedDescriptor) &&
-                     !DescriptorUtils.isEnumEntry(checkedDescriptor))) {
+                if (checkedDescriptorSubclasses.none { subclasses.contains(it) } ||
+                    !condition.isRelevant(checkedDescriptor)) {
                     continue
                 }
                 if (negated) {
-                    if (checkedDescriptors.contains(checkedDescriptor)) return listOf() // all members are already there
+                    if (checkedDescriptors.containsAll(checkedDescriptorSubclasses)) return listOf()
                     checkedDescriptors.addAll(subclasses)
-                    checkedDescriptors.remove(checkedDescriptor)
+                    checkedDescriptors.removeAll(checkedDescriptorSubclasses)
                 }
                 else {
-                    checkedDescriptors.add(checkedDescriptor)
+                    checkedDescriptors.addAll(checkedDescriptorSubclasses)
                 }
             }
         }
-        return (subclasses - checkedDescriptors).toList().map { ClassMissingCase(it) }
+        return (subclasses - checkedDescriptors).map(::ClassMissingCase)
     }
 }
 
@@ -209,7 +221,7 @@ private object WhenOnEnumExhaustivenessChecker : WhenOnClassExhaustivenessChecke
         assert(isEnumClass(subjectDescriptor)) { "isWhenOnEnumExhaustive should be called with an enum class descriptor" }
         val entryDescriptors =
                 DescriptorUtils.getAllDescriptors(subjectDescriptor!!.unsubstitutedInnerClassesScope)
-                        .filter { isEnumEntry(it) }
+                        .filter(::isEnumEntry)
                         .filterIsInstance<ClassDescriptor>()
                         .toSet()
         return getMissingClassCases(expression, entryDescriptors, context) +
@@ -222,6 +234,7 @@ private object WhenOnEnumExhaustivenessChecker : WhenOnClassExhaustivenessChecke
 }
 
 internal object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChecker() {
+
     override fun getMissingCases(
             expression: KtWhenExpression,
             context: BindingContext,
@@ -231,9 +244,9 @@ internal object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChe
         assert(DescriptorUtils.isSealedClass(subjectDescriptor)) {
             "isWhenOnSealedClassExhaustive should be called with a sealed class descriptor: $subjectDescriptor"
         }
-        val subclasses = subjectDescriptor!!.sealedSubclasses
-        // When on a sealed class without derived members is considered non-exhaustive (see test WhenOnEmptySealed)
-        return getMissingClassCases(expression, subclasses.toSet(), context) +
+
+        val allSubclasses = subjectDescriptor!!.deepSealedSubclasses
+        return getMissingClassCases(expression, allSubclasses.toSet(), context) +
                WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, nullable)
     }
 
@@ -268,7 +281,7 @@ object WhenChecker {
     }
 
     private fun whenSubjectType(expression: KtWhenExpression, context: BindingContext) =
-            expression.subjectExpression?.let { context.get(SMARTCAST, it)?.defaultType ?: context.getType(it) } ?: null
+            expression.subjectExpression?.let { context.get(SMARTCAST, it)?.defaultType ?: context.getType(it) }
 
     @JvmStatic
     fun getEnumMissingCases(

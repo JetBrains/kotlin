@@ -18334,6 +18334,24 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ExhaustiveOnRoot.kt")
+            public void testExhaustiveOnRoot() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/ExhaustiveOnRoot.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ExhaustiveOnTree.kt")
+            public void testExhaustiveOnTree() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/ExhaustiveOnTree.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ExhaustiveOnTriangleStar.kt")
+            public void testExhaustiveOnTriangleStar() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/ExhaustiveOnTriangleStar.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ExhaustiveWhen.kt")
             public void testExhaustiveWhen() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/ExhaustiveWhen.kt");
