@@ -79,6 +79,10 @@ task run_external () {
     }
 }
 
+task run_external_group (type: RunExternalTestGroup) {
+    groupDirectory = "external/codegen/blackbox/binaryOp"
+}
+
 task sum (type:RunKonanTest) {
     source = "codegen/function/sum.kt"
 }

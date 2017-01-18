@@ -1,7 +1,11 @@
 package org.jetbrains.kotlin
 
+import groovy.io.FileType
 import org.gradle.api.DefaultTask
+import org.gradle.api.internal.tasks.testing.detection.DefaultTestExecuter
+import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.testing.Test
 
 abstract class KonanTest extends DefaultTask {
     protected String source
@@ -157,7 +161,7 @@ class RunExternalTest extends RunKonanTest {
                 def nextFileExists = matcher.find()
                 def end = nextFileExists ? matcher.start() : srcText.length()
                 def fileText = srcText.substring(start, end)
-                processedChars = end;
+                processedChars = end
                 createFile(filePath, fileText)
                 if (fileText =~ boxPattern && fileText =~ packagePattern){
                     boxPackage = (fileText =~ packagePattern)[0][1]
@@ -178,6 +182,46 @@ class RunExternalTest extends RunKonanTest {
 
     void createFile(String file, String text) {
         project.file(file).write(text)
+    }
+}
+
+class RunExternalTestGroup extends RunExternalTest {
+    def groupDirectory = "."
+    def logFileName = "test-result.md"
+    String filter = project.property("filter")
+
+    @TaskAction
+    void executeTest() {
+        def logFile = project.file(logFileName)
+        logFile.write("|Test|Status|Comment|\n|----|------|-------|")
+        def ktFiles = project.file(groupDirectory).listFiles(new FileFilter() {
+            @Override
+            boolean accept(File pathname) {
+                pathname.isFile() && pathname.name.endsWith(".kt")
+            }
+        })
+        if (filter != null) {
+            def pattern = ~filter
+            ktFiles = ktFiles.findAll {
+                it.name =~ pattern
+            }
+        }
+        def current = 0
+        def passed = 0
+        def total = ktFiles.size()
+        ktFiles.each {
+            source = project.relativePath(it)
+            println("TEST: ${++current}/$total (passed: $passed)")
+            try {
+                super.executeTest()
+                logFile.append("\n|$it.name|PASSED||")
+                println("TEST PASSED\n")
+                passed++
+            } catch (Exception ex) {
+                println("TEST FAILED\n")
+                logFile.append("\n|$it.name|FAILED|${ex.getMessage()}. Cause: ${ex.getCause()?.getMessage()}|")
+            }
+        }
     }
 }
 
