@@ -16,17 +16,17 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories;
 
-import kotlin.collections.CollectionsKt;
-import org.jetbrains.kotlin.js.backend.ast.JsExpression;
-import org.jetbrains.kotlin.js.backend.ast.JsInvocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.js.backend.ast.JsExpression;
+import org.jetbrains.kotlin.js.backend.ast.JsInvocation;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class KotlinFunctionIntrinsic extends FunctionIntrinsic {
@@ -48,7 +48,11 @@ public class KotlinFunctionIntrinsic extends FunctionIntrinsic {
     ) {
         JsExpression function = JsAstUtils.pureFqn(functionName, Namer.kotlinObject());
         if (additionalArguments.length > 0) {
-            arguments = CollectionsKt.plus(arguments, additionalArguments);
+            List<JsExpression> newArguments = new ArrayList<JsExpression>(arguments);
+            for (JsExpression e : additionalArguments) {
+                newArguments.add(e.deepCopy());
+            }
+            arguments = newArguments;
         }
         return new JsInvocation(function, receiver == null ? arguments : TranslationUtils.generateInvocationArguments(receiver, arguments));
     }
