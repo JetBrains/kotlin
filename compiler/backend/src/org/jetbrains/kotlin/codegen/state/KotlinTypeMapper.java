@@ -608,7 +608,7 @@ public class KotlinTypeMapper {
 
                 mapType(argument.getType(), signatureVisitor,
                         argumentMode.toGenericArgumentMode(
-                                TypeMappingUtil.getEffectiveVariance(parameter.getVariance(), argument.getProjectionKind())));
+                                UtilsKt.getEffectiveVariance(parameter.getVariance(), argument.getProjectionKind())));
 
                 signatureVisitor.writeTypeArgumentEnd();
             }

@@ -18,7 +18,6 @@
 package org.jetbrains.kotlin.codegen.state
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES as BUILTIN_NAMES
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
@@ -30,6 +29,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.getEffectiveVariance
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES as BUILTIN_NAMES
 
 fun KotlinType.isMostPreciseContravariantArgument(parameter: TypeParameterDescriptor): Boolean =
         // TODO: probably class upper bound should be used
@@ -57,22 +58,6 @@ private fun KotlinType.canHaveSubtypesIgnoringNullability(): Boolean {
     }
 
     return false
-}
-
-fun getEffectiveVariance(parameterVariance: Variance, projectionKind: Variance): Variance {
-    if (parameterVariance === Variance.INVARIANT) {
-        return projectionKind
-    }
-    if (projectionKind === Variance.INVARIANT) {
-        return parameterVariance
-    }
-    if (parameterVariance === projectionKind) {
-        return parameterVariance
-    }
-
-    // In<out X> = In<*>
-    // Out<in X> = Out<*>
-    return Variance.OUT_VARIANCE
 }
 
 val CallableDescriptor?.isMethodWithDeclarationSiteWildcards: Boolean
