@@ -14,496 +14,670 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve;
+package org.jetbrains.kotlin.resolve
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.SmartHashSet;
-import kotlin.Unit;
-import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2;
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactoryWithPsiElement;
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
-import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import com.google.common.collect.Maps
+import com.google.common.collect.Sets
+import com.intellij.psi.PsiElement
+import com.intellij.util.SmartList
+import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.containers.SmartHashSet
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactoryWithPsiElement
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.*
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
-import java.util.*;
+import java.util.*
 
-import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION;
-import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
-import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers;
-import static org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE;
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers
+import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
 
-public class OverrideResolver {
-    private final BindingTrace trace;
-    private final OverridesBackwardCompatibilityHelper overridesBackwardCompatibilityHelper;
+class OverrideResolver(
+        private val trace: BindingTrace,
+        private val overridesBackwardCompatibilityHelper: OverridesBackwardCompatibilityHelper
+) {
 
-    public OverrideResolver(
-            @NotNull BindingTrace trace,
-            @NotNull OverridesBackwardCompatibilityHelper overridesBackwardCompatibilityHelper
-    ) {
-        this.trace = trace;
-        this.overridesBackwardCompatibilityHelper = overridesBackwardCompatibilityHelper;
+    fun check(c: TopDownAnalysisContext) {
+        checkVisibility(c)
+        checkOverrides(c)
+        checkParameterOverridesForAllClasses(c)
     }
 
-    public void check(@NotNull TopDownAnalysisContext c) {
-        checkVisibility(c);
-        checkOverrides(c);
-        checkParameterOverridesForAllClasses(c);
-    }
 
-    public static void resolveUnknownVisibilities(
-            @NotNull Collection<? extends CallableMemberDescriptor> descriptors,
-            @NotNull BindingTrace trace
-    ) {
-        for (CallableMemberDescriptor descriptor : descriptors) {
-            OverridingUtil.resolveUnknownVisibilityForMember(descriptor, createCannotInferVisibilityReporter(trace));
+    private fun checkOverrides(c: TopDownAnalysisContext) {
+        for ((key, value) in c.declaredClasses) {
+            checkOverridesInAClass(value, key)
         }
     }
 
-    @NotNull
-    public static Function1<CallableMemberDescriptor, Unit> createCannotInferVisibilityReporter(@NotNull final BindingTrace trace) {
-        return new Function1<CallableMemberDescriptor, Unit>() {
-            @Override
-            public Unit invoke(@NotNull CallableMemberDescriptor descriptor) {
-                DeclarationDescriptor reportOn;
-                if (descriptor.getKind() == FAKE_OVERRIDE || descriptor.getKind() == DELEGATION) {
-                    reportOn = DescriptorUtils.getParentOfType(descriptor, ClassDescriptor.class);
-                }
-                else if (descriptor instanceof PropertyAccessorDescriptor && ((PropertyAccessorDescriptor) descriptor).isDefault()) {
-                    reportOn = ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty();
-                }
-                else {
-                    reportOn = descriptor;
-                }
-                //noinspection ConstantConditions
-                PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(reportOn);
-                if (element instanceof KtDeclaration) {
-                    trace.report(CANNOT_INFER_VISIBILITY.on((KtDeclaration) element, descriptor));
-                }
-                return Unit.INSTANCE;
-            }
-        };
-    }
-
-
-    private void checkOverrides(@NotNull TopDownAnalysisContext c) {
-        for (Map.Entry<KtClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
-            checkOverridesInAClass(entry.getValue(), entry.getKey());
-        }
-    }
-
-    private void checkOverridesInAClass(@NotNull ClassDescriptorWithResolutionScopes classDescriptor, @NotNull KtClassOrObject klass) {
+    private fun checkOverridesInAClass(classDescriptor: ClassDescriptorWithResolutionScopes, klass: KtClassOrObject) {
         // Check overrides for internal consistency
-        for (CallableMemberDescriptor member : classDescriptor.getDeclaredCallableMembers()) {
-            checkOverrideForMember(member);
+        for (member in classDescriptor.declaredCallableMembers) {
+            checkOverrideForMember(member)
         }
 
-        CollectErrorInformationForInheritedMembersStrategy inheritedMemberErrors =
-                new CollectErrorInformationForInheritedMembersStrategy(klass, classDescriptor);
+        val inheritedMemberErrors = CollectErrorInformationForInheritedMembersStrategy(klass, classDescriptor)
 
-        checkInheritedAndDelegatedSignatures(classDescriptor, inheritedMemberErrors, inheritedMemberErrors);
-        inheritedMemberErrors.doReportErrors();
-    }
-
-    @NotNull
-    public static Set<CallableMemberDescriptor> getMissingImplementations(@NotNull ClassDescriptor classDescriptor) {
-        CollectMissingImplementationsStrategy collector = new CollectMissingImplementationsStrategy();
-        checkInheritedAndDelegatedSignatures(classDescriptor, collector, null);
-        return collector.shouldImplement;
+        checkInheritedAndDelegatedSignatures(classDescriptor, inheritedMemberErrors, inheritedMemberErrors)
+        inheritedMemberErrors.doReportErrors()
     }
 
     private interface CheckInheritedSignaturesReportStrategy {
-        void abstractMemberNotImplemented(CallableMemberDescriptor descriptor);
-        void abstractBaseClassMemberNotImplemented(CallableMemberDescriptor descriptor);
-        void multipleImplementationsMemberNotImplemented(CallableMemberDescriptor descriptor);
-        void conflictingInterfaceMemberNotImplemented(CallableMemberDescriptor descriptor);
-        void returnTypeMismatchOnInheritance(CallableMemberDescriptor descriptor1, CallableMemberDescriptor descriptor2);
-        void propertyTypeMismatchOnInheritance(PropertyDescriptor descriptor1, PropertyDescriptor descriptor2);
+        fun abstractMemberNotImplemented(descriptor: CallableMemberDescriptor)
+        fun abstractBaseClassMemberNotImplemented(descriptor: CallableMemberDescriptor)
+        fun multipleImplementationsMemberNotImplemented(descriptor: CallableMemberDescriptor)
+        fun conflictingInterfaceMemberNotImplemented(descriptor: CallableMemberDescriptor)
+        fun returnTypeMismatchOnInheritance(descriptor1: CallableMemberDescriptor, descriptor2: CallableMemberDescriptor)
+        fun propertyTypeMismatchOnInheritance(descriptor1: PropertyDescriptor, descriptor2: PropertyDescriptor)
     }
 
-    private static class CollectMissingImplementationsStrategy implements CheckInheritedSignaturesReportStrategy {
-        private final Set<CallableMemberDescriptor> shouldImplement = new LinkedHashSet<CallableMemberDescriptor>();
+    private class CollectMissingImplementationsStrategy : CheckInheritedSignaturesReportStrategy {
+        val shouldImplement = LinkedHashSet<CallableMemberDescriptor>()
 
-        @Override
-        public void abstractMemberNotImplemented(CallableMemberDescriptor descriptor) {
-            shouldImplement.add(descriptor);
+        override fun abstractMemberNotImplemented(descriptor: CallableMemberDescriptor) {
+            shouldImplement.add(descriptor)
         }
 
-        @Override
-        public void abstractBaseClassMemberNotImplemented(CallableMemberDescriptor descriptor) {
+        override fun abstractBaseClassMemberNotImplemented(descriptor: CallableMemberDescriptor) {
             // don't care
         }
 
-        @Override
-        public void multipleImplementationsMemberNotImplemented(CallableMemberDescriptor descriptor) {
-            shouldImplement.add(descriptor);
+        override fun multipleImplementationsMemberNotImplemented(descriptor: CallableMemberDescriptor) {
+            shouldImplement.add(descriptor)
         }
 
-        @Override
-        public void conflictingInterfaceMemberNotImplemented(CallableMemberDescriptor descriptor) {
-            if (descriptor.getModality() == Modality.ABSTRACT) {
-                shouldImplement.add(descriptor);
+        override fun conflictingInterfaceMemberNotImplemented(descriptor: CallableMemberDescriptor) {
+            if (descriptor.modality === Modality.ABSTRACT) {
+                shouldImplement.add(descriptor)
             }
         }
 
-        @Override
-        public void returnTypeMismatchOnInheritance(CallableMemberDescriptor descriptor1, CallableMemberDescriptor descriptor2) {
+        override fun returnTypeMismatchOnInheritance(descriptor1: CallableMemberDescriptor, descriptor2: CallableMemberDescriptor) {
             // don't care
         }
 
-        @Override
-        public void propertyTypeMismatchOnInheritance(PropertyDescriptor descriptor1, PropertyDescriptor descriptor2) {
+        override fun propertyTypeMismatchOnInheritance(descriptor1: PropertyDescriptor, descriptor2: PropertyDescriptor) {
             // don't care
         }
     }
 
-    private class CollectErrorInformationForInheritedMembersStrategy
-            implements CheckInheritedSignaturesReportStrategy, CheckOverrideReportStrategy {
-        private final KtClassOrObject klass;
-        private final ClassDescriptor classDescriptor;
+    private inner class CollectErrorInformationForInheritedMembersStrategy(
+            private val klass: KtClassOrObject,
+            private val classDescriptor: ClassDescriptor
+    ) : CheckInheritedSignaturesReportStrategy, CheckOverrideReportStrategy {
 
-        private final Set<CallableMemberDescriptor> abstractNoImpl = Sets.newLinkedHashSet();
-        private final Set<CallableMemberDescriptor> multipleImplementations = Sets.newLinkedHashSet();
-        private final Set<CallableMemberDescriptor> abstractInBaseClassNoImpl = Sets.newLinkedHashSet();
-        private final Set<CallableMemberDescriptor> conflictingInterfaceMembers = Sets.newLinkedHashSet();
-        private final Set<CallableMemberDescriptor> conflictingReturnTypes = Sets.newHashSet();
+        private val abstractNoImpl = Sets.newLinkedHashSet<CallableMemberDescriptor>()
+        private val multipleImplementations = Sets.newLinkedHashSet<CallableMemberDescriptor>()
+        private val abstractInBaseClassNoImpl = Sets.newLinkedHashSet<CallableMemberDescriptor>()
+        private val conflictingInterfaceMembers = Sets.newLinkedHashSet<CallableMemberDescriptor>()
+        private val conflictingReturnTypes = Sets.newHashSet<CallableMemberDescriptor>()
 
-        private final Set<DiagnosticFactoryWithPsiElement> onceErrorsReported = new SmartHashSet<DiagnosticFactoryWithPsiElement>();
+        private val onceErrorsReported = SmartHashSet<DiagnosticFactoryWithPsiElement<*, *>>()
 
-        public CollectErrorInformationForInheritedMembersStrategy(
-                @NotNull KtClassOrObject klass,
-                @NotNull ClassDescriptor classDescriptor
-        ) {
-            this.klass = klass;
-            this.classDescriptor = classDescriptor;
+        override fun abstractMemberNotImplemented(descriptor: CallableMemberDescriptor) {
+            abstractNoImpl.add(descriptor)
         }
 
-        @Override
-        public void abstractMemberNotImplemented(CallableMemberDescriptor descriptor) {
-            abstractNoImpl.add(descriptor);
+        override fun abstractBaseClassMemberNotImplemented(descriptor: CallableMemberDescriptor) {
+            abstractInBaseClassNoImpl.add(descriptor)
         }
 
-        @Override
-        public void abstractBaseClassMemberNotImplemented(CallableMemberDescriptor descriptor) {
-            abstractInBaseClassNoImpl.add(descriptor);
+        override fun multipleImplementationsMemberNotImplemented(descriptor: CallableMemberDescriptor) {
+            multipleImplementations.add(descriptor)
         }
 
-        @Override
-        public void multipleImplementationsMemberNotImplemented(CallableMemberDescriptor descriptor) {
-            multipleImplementations.add(descriptor);
+        override fun conflictingInterfaceMemberNotImplemented(descriptor: CallableMemberDescriptor) {
+            conflictingInterfaceMembers.add(descriptor)
         }
 
-        @Override
-        public void conflictingInterfaceMemberNotImplemented(CallableMemberDescriptor descriptor) {
-            conflictingInterfaceMembers.add(descriptor);
+        override fun returnTypeMismatchOnInheritance(descriptor1: CallableMemberDescriptor, descriptor2: CallableMemberDescriptor) {
+            conflictingReturnTypes.add(descriptor1)
+            conflictingReturnTypes.add(descriptor2)
+
+            reportInheritanceConflictIfRequired(RETURN_TYPE_MISMATCH_ON_INHERITANCE, descriptor1, descriptor2)
         }
 
-        @Override
-        public void returnTypeMismatchOnInheritance(CallableMemberDescriptor descriptor1, CallableMemberDescriptor descriptor2) {
-            conflictingReturnTypes.add(descriptor1);
-            conflictingReturnTypes.add(descriptor2);
+        override fun propertyTypeMismatchOnInheritance(descriptor1: PropertyDescriptor, descriptor2: PropertyDescriptor) {
+            conflictingReturnTypes.add(descriptor1)
+            conflictingReturnTypes.add(descriptor2)
 
-            reportInheritanceConflictIfRequired(RETURN_TYPE_MISMATCH_ON_INHERITANCE, descriptor1, descriptor2);
-        }
-
-        @Override
-        public void propertyTypeMismatchOnInheritance(PropertyDescriptor descriptor1, PropertyDescriptor descriptor2) {
-            conflictingReturnTypes.add(descriptor1);
-            conflictingReturnTypes.add(descriptor2);
-
-            if (descriptor1.isVar() || descriptor2.isVar()) {
-                reportInheritanceConflictIfRequired(VAR_TYPE_MISMATCH_ON_INHERITANCE, descriptor1, descriptor2);
+            if (descriptor1.isVar || descriptor2.isVar) {
+                reportInheritanceConflictIfRequired(VAR_TYPE_MISMATCH_ON_INHERITANCE, descriptor1, descriptor2)
             }
             else {
-                reportInheritanceConflictIfRequired(PROPERTY_TYPE_MISMATCH_ON_INHERITANCE, descriptor1, descriptor2);
+                reportInheritanceConflictIfRequired(PROPERTY_TYPE_MISMATCH_ON_INHERITANCE, descriptor1, descriptor2)
             }
         }
 
-        private void reportInheritanceConflictIfRequired(
-                @NotNull DiagnosticFactory2<KtClassOrObject, CallableMemberDescriptor, CallableMemberDescriptor> diagnosticFactory,
-                @NotNull CallableMemberDescriptor descriptor1,
-                @NotNull CallableMemberDescriptor descriptor2
+        private fun reportInheritanceConflictIfRequired(
+                diagnosticFactory: DiagnosticFactory2<KtClassOrObject, CallableMemberDescriptor, CallableMemberDescriptor>,
+                descriptor1: CallableMemberDescriptor,
+                descriptor2: CallableMemberDescriptor
         ) {
             if (!onceErrorsReported.contains(diagnosticFactory)) {
-                onceErrorsReported.add(diagnosticFactory);
-                trace.report(diagnosticFactory.on(klass, descriptor1, descriptor2));
+                onceErrorsReported.add(diagnosticFactory)
+                trace.report(diagnosticFactory.on(klass, descriptor1, descriptor2))
             }
         }
 
-        @Override
-        public void overridingFinalMember(@NotNull CallableMemberDescriptor overriding, @NotNull CallableMemberDescriptor overridden) {
-            reportDelegationProblemIfRequired(OVERRIDING_FINAL_MEMBER_BY_DELEGATION, null, overriding, overridden);
+        override fun overridingFinalMember(overriding: CallableMemberDescriptor, overridden: CallableMemberDescriptor) {
+            reportDelegationProblemIfRequired(OVERRIDING_FINAL_MEMBER_BY_DELEGATION, null, overriding, overridden)
         }
 
-        @Override
-        public void returnTypeMismatchOnOverride(
-                @NotNull CallableMemberDescriptor overriding,
-                @NotNull CallableMemberDescriptor overridden
+        override fun returnTypeMismatchOnOverride(
+                overriding: CallableMemberDescriptor,
+                overridden: CallableMemberDescriptor
         ) {
             reportDelegationProblemIfRequired(
-                    RETURN_TYPE_MISMATCH_BY_DELEGATION, RETURN_TYPE_MISMATCH_ON_INHERITANCE, overriding, overridden);
+                    RETURN_TYPE_MISMATCH_BY_DELEGATION, RETURN_TYPE_MISMATCH_ON_INHERITANCE, overriding, overridden)
         }
 
-        @Override
-        public void propertyTypeMismatchOnOverride(
-                @NotNull PropertyDescriptor overriding,
-                @NotNull PropertyDescriptor overridden
+        override fun propertyTypeMismatchOnOverride(
+                overriding: PropertyDescriptor,
+                overridden: PropertyDescriptor
         ) {
             reportDelegationProblemIfRequired(
-                    PROPERTY_TYPE_MISMATCH_BY_DELEGATION, PROPERTY_TYPE_MISMATCH_ON_INHERITANCE, overriding, overridden);
+                    PROPERTY_TYPE_MISMATCH_BY_DELEGATION, PROPERTY_TYPE_MISMATCH_ON_INHERITANCE, overriding, overridden)
         }
 
-        @Override
-        public void varOverriddenByVal(@NotNull CallableMemberDescriptor overriding, @NotNull CallableMemberDescriptor overridden) {
-            reportDelegationProblemIfRequired(VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION, null, overriding, overridden);
+        override fun varOverriddenByVal(overriding: CallableMemberDescriptor, overridden: CallableMemberDescriptor) {
+            reportDelegationProblemIfRequired(VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION, null, overriding, overridden)
         }
 
-        private void reportDelegationProblemIfRequired(
-                @NotNull DiagnosticFactory2<KtClassOrObject, CallableMemberDescriptor, CallableMemberDescriptor> diagnosticFactory,
-                @Nullable DiagnosticFactoryWithPsiElement<?, ?> relevantDiagnosticFromInheritance,
-                @NotNull CallableMemberDescriptor delegate,
-                @NotNull CallableMemberDescriptor overridden
+        private fun reportDelegationProblemIfRequired(
+                diagnosticFactory: DiagnosticFactory2<KtClassOrObject, CallableMemberDescriptor, CallableMemberDescriptor>,
+                relevantDiagnosticFromInheritance: DiagnosticFactoryWithPsiElement<*, *>?,
+                delegate: CallableMemberDescriptor,
+                overridden: CallableMemberDescriptor
         ) {
-            assert delegate.getKind() == DELEGATION : "Delegate expected, got " + delegate + " of kind " + delegate.getKind();
+            assert(delegate.kind == DELEGATION) { "Delegate expected, got " + delegate + " of kind " + delegate.kind }
 
-            if (!onceErrorsReported.contains(diagnosticFactory) &&
-                    (relevantDiagnosticFromInheritance == null || !onceErrorsReported.contains(relevantDiagnosticFromInheritance))) {
-                onceErrorsReported.add(diagnosticFactory);
-                trace.report(diagnosticFactory.on(klass, delegate, overridden));
+            if (!onceErrorsReported.contains(diagnosticFactory) && (relevantDiagnosticFromInheritance == null || !onceErrorsReported.contains(relevantDiagnosticFromInheritance))) {
+                onceErrorsReported.add(diagnosticFactory)
+                trace.report(diagnosticFactory.on(klass, delegate, overridden))
             }
         }
 
-        void doReportErrors() {
+        internal fun doReportErrors() {
             if (!classCanHaveAbstractMembers(classDescriptor)) {
                 if (!abstractInBaseClassNoImpl.isEmpty()) {
-                    trace.report(ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED.on(klass, klass, abstractInBaseClassNoImpl.iterator().next()));
+                    trace.report(ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED.on(klass, klass, abstractInBaseClassNoImpl.iterator().next()))
                 }
                 else if (!abstractNoImpl.isEmpty()) {
-                    trace.report(ABSTRACT_MEMBER_NOT_IMPLEMENTED.on(klass, klass, abstractNoImpl.iterator().next()));
+                    trace.report(ABSTRACT_MEMBER_NOT_IMPLEMENTED.on(klass, klass, abstractNoImpl.iterator().next()))
                 }
             }
 
-            conflictingInterfaceMembers.removeAll(conflictingReturnTypes);
-            multipleImplementations.removeAll(conflictingReturnTypes);
+            conflictingInterfaceMembers.removeAll(conflictingReturnTypes)
+            multipleImplementations.removeAll(conflictingReturnTypes)
             if (!conflictingInterfaceMembers.isEmpty()) {
-                trace.report(MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED.on(klass, klass, conflictingInterfaceMembers.iterator().next()));
+                trace.report(MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED.on(klass, klass, conflictingInterfaceMembers.iterator().next()))
             }
             else if (!multipleImplementations.isEmpty()) {
-                trace.report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(klass, klass, multipleImplementations.iterator().next()));
+                trace.report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(klass, klass, multipleImplementations.iterator().next()))
             }
         }
     }
 
-    private static void checkInheritedAndDelegatedSignatures(
-            @NotNull ClassDescriptor classDescriptor,
-            @NotNull CheckInheritedSignaturesReportStrategy inheritedReportStrategy,
-            @Nullable CheckOverrideReportStrategy overrideReportStrategyForDelegates
-    ) {
-        for (DeclarationDescriptor member : DescriptorUtils.getAllDescriptors(classDescriptor.getDefaultType().getMemberScope())) {
-            if (member instanceof CallableMemberDescriptor) {
-                checkInheritedAndDelegatedSignatures((CallableMemberDescriptor) member, inheritedReportStrategy, overrideReportStrategyForDelegates);
-            }
-        }
+    private interface CheckOverrideReportStrategy {
+        fun overridingFinalMember(overriding: CallableMemberDescriptor, overridden: CallableMemberDescriptor)
+        fun returnTypeMismatchOnOverride(overriding: CallableMemberDescriptor, overridden: CallableMemberDescriptor)
+        fun propertyTypeMismatchOnOverride(overriding: PropertyDescriptor, overridden: PropertyDescriptor)
+        fun varOverriddenByVal(overriding: CallableMemberDescriptor, overridden: CallableMemberDescriptor)
     }
 
-    private static void checkInheritedAndDelegatedSignatures(
-            @NotNull CallableMemberDescriptor descriptor,
-            @NotNull CheckInheritedSignaturesReportStrategy reportingStrategy,
-            @Nullable CheckOverrideReportStrategy overrideReportStrategyForDelegates
-    ) {
-        CallableMemberDescriptor.Kind kind = descriptor.getKind();
-        if (kind != FAKE_OVERRIDE && kind != DELEGATION) return;
-        if (descriptor.getVisibility() == Visibilities.INVISIBLE_FAKE) return;
-
-        Collection<? extends CallableMemberDescriptor> directOverridden = descriptor.getOverriddenDescriptors();
-        assert !directOverridden.isEmpty() : kind + " " + descriptor.getName().asString() + " must override something";
-
-        // collects map from the directly overridden descriptor to the set of declarations:
-        // -- if directly overridden is not fake, the set consists of one element: this directly overridden
-        // -- if it's fake, overridden declarations (non-fake) of this descriptor are collected
-        Map<CallableMemberDescriptor, Set<CallableMemberDescriptor>> overriddenDeclarationsByDirectParent = collectOverriddenDeclarations(directOverridden);
-
-        List<CallableMemberDescriptor> allOverriddenDeclarations = ContainerUtil.flatten(overriddenDeclarationsByDirectParent.values());
-        Set<CallableMemberDescriptor> allFilteredOverriddenDeclarations = OverridingUtil.filterOutOverridden(
-                Sets.newLinkedHashSet(allOverriddenDeclarations));
-
-        Set<CallableMemberDescriptor> relevantDirectlyOverridden =
-                getRelevantDirectlyOverridden(overriddenDeclarationsByDirectParent, allFilteredOverriddenDeclarations);
-
-        checkInheritedDescriptorsGroup(relevantDirectlyOverridden, descriptor, reportingStrategy);
-
-        if (kind == DELEGATION && overrideReportStrategyForDelegates != null) {
-            checkOverridesForMember(descriptor, relevantDirectlyOverridden, overrideReportStrategyForDelegates);
-        }
-
-        if (kind != DELEGATION) {
-            checkMissingOverridesByJava8Restrictions(relevantDirectlyOverridden, reportingStrategy);
-        }
-
-        List<CallableMemberDescriptor> implementations = collectImplementations(relevantDirectlyOverridden);
-
-        int numImplementations = implementations.size();
-
-        // The most common case: there's one implementation in the supertypes with the matching return type
-        if (numImplementations == 1 && isReturnTypeOkForOverride(descriptor, implementations.get(0))) return;
-
-        List<CallableMemberDescriptor> abstractOverridden = new ArrayList<CallableMemberDescriptor>(allFilteredOverriddenDeclarations.size());
-        List<CallableMemberDescriptor> concreteOverridden = new ArrayList<CallableMemberDescriptor>(allFilteredOverriddenDeclarations.size());
-        filterNotSynthesizedDescriptorsByModality(allFilteredOverriddenDeclarations, abstractOverridden, concreteOverridden);
-
-        if (numImplementations == 0) {
-            if (kind != DELEGATION) {
-                for (CallableMemberDescriptor member : abstractOverridden) {
-                    reportingStrategy.abstractMemberNotImplemented(member);
-                }
-            }
-        }
-        else if (numImplementations > 1) {
-            for (CallableMemberDescriptor member : concreteOverridden) {
-                reportingStrategy.multipleImplementationsMemberNotImplemented(member);
-            }
-        }
-        else {
-            if (kind != DELEGATION) {
-                List<CallableMemberDescriptor> membersWithMoreSpecificReturnType =
-                        collectAbstractMethodsWithMoreSpecificReturnType(abstractOverridden, implementations.get(0));
-                for (CallableMemberDescriptor member : membersWithMoreSpecificReturnType) {
-                    reportingStrategy.abstractMemberNotImplemented(member);
-                }
-            }
-        }
+    private interface CheckOverrideReportForDeclaredMemberStrategy : CheckOverrideReportStrategy {
+        fun nothingToOverride(overriding: CallableMemberDescriptor)
+        fun cannotOverrideInvisibleMember(overriding: CallableMemberDescriptor, invisibleOverridden: CallableMemberDescriptor)
     }
 
-    private static void checkMissingOverridesByJava8Restrictions(
-            @NotNull Set<CallableMemberDescriptor> relevantDirectlyOverridden,
-            @NotNull CheckInheritedSignaturesReportStrategy reportingStrategy
-    ) {
-        // Java 8:
-        // -- class should implement an abstract member of a super-class,
-        //    even if relevant default implementation is provided in one of the super-interfaces;
-        // -- inheriting multiple override equivalent methods from an interface is a conflict
-        //    regardless of 'default' vs 'abstract'.
+    private fun checkOverrideForMember(declared: CallableMemberDescriptor) {
+        if (declared.kind == CallableMemberDescriptor.Kind.SYNTHESIZED) {
+            if (DataClassDescriptorResolver.isComponentLike(declared.name)) {
+                checkOverrideForComponentFunction(declared)
+            }
+            return
+        }
 
-        boolean overridesClassMember = false;
-        boolean overridesNonAbstractInterfaceMember = false;
-        CallableMemberDescriptor overridesAbstractInBaseClass = null;
-        List<CallableMemberDescriptor> overriddenInterfaceMembers = new SmartList<CallableMemberDescriptor>();
-        for (CallableMemberDescriptor overridden : relevantDirectlyOverridden) {
-            DeclarationDescriptor containingDeclaration = overridden.getContainingDeclaration();
-            if (containingDeclaration instanceof ClassDescriptor) {
-                ClassDescriptor baseClassOrInterface = (ClassDescriptor) containingDeclaration;
-                if (baseClassOrInterface.getKind() == ClassKind.CLASS) {
-                    overridesClassMember = true;
-                    if (overridden.getModality() == Modality.ABSTRACT) {
-                        overridesAbstractInBaseClass = overridden;
+        if (declared.kind != CallableMemberDescriptor.Kind.DECLARATION) {
+            return
+        }
+
+        val member = DescriptorToSourceUtils.descriptorToDeclaration(declared) as KtNamedDeclaration? ?: throw IllegalStateException("declared descriptor is not resolved to declaration: " + declared)
+
+        val modifierList = member.modifierList
+        val hasOverrideNode = modifierList != null && modifierList.hasModifier(KtTokens.OVERRIDE_KEYWORD)
+        val overriddenDescriptors = declared.overriddenDescriptors
+
+        if (hasOverrideNode) {
+            checkOverridesForMemberMarkedOverride(declared, object : CheckOverrideReportForDeclaredMemberStrategy {
+                private var finalOverriddenError = false
+                private var typeMismatchError = false
+                private var kindMismatchError = false
+
+                override fun overridingFinalMember(overriding: CallableMemberDescriptor, overridden: CallableMemberDescriptor) {
+                    if (!finalOverriddenError) {
+                        finalOverriddenError = true
+                        trace.report(OVERRIDING_FINAL_MEMBER.on(member, overridden, overridden.containingDeclaration))
                     }
                 }
-                else if (baseClassOrInterface.getKind() == ClassKind.INTERFACE) {
-                    overriddenInterfaceMembers.add(overridden);
-                    if (overridden.getModality() != Modality.ABSTRACT) {
-                        overridesNonAbstractInterfaceMember = true;
+
+                override fun returnTypeMismatchOnOverride(overriding: CallableMemberDescriptor, overridden: CallableMemberDescriptor) {
+                    if (!typeMismatchError) {
+                        typeMismatchError = true
+                        trace.report(RETURN_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden))
+                    }
+                }
+
+                override fun propertyTypeMismatchOnOverride(overriding: PropertyDescriptor, overridden: PropertyDescriptor) {
+                    if (!typeMismatchError) {
+                        typeMismatchError = true
+                        if (overridden.isVar) {
+                            trace.report(VAR_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden))
+                        }
+                        else {
+                            trace.report(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden))
+                        }
+                    }
+                }
+
+                override fun varOverriddenByVal(overriding: CallableMemberDescriptor, overridden: CallableMemberDescriptor) {
+                    if (!kindMismatchError) {
+                        kindMismatchError = true
+                        trace.report(VAR_OVERRIDDEN_BY_VAL.on(member, declared as PropertyDescriptor, overridden as PropertyDescriptor))
+                    }
+                }
+
+                override fun cannotOverrideInvisibleMember(overriding: CallableMemberDescriptor, invisibleOverridden: CallableMemberDescriptor) {
+                    trace.report(CANNOT_OVERRIDE_INVISIBLE_MEMBER.on(member, declared, invisibleOverridden))
+                }
+
+                override fun nothingToOverride(overriding: CallableMemberDescriptor) {
+                    trace.report(NOTHING_TO_OVERRIDE.on(member, declared))
+                }
+            })
+        }
+        else if (!overriddenDescriptors.isEmpty() && !overridesBackwardCompatibilityHelper.overrideCanBeOmitted(declared)) {
+            val overridden = overriddenDescriptors.iterator().next()
+            trace.report(VIRTUAL_MEMBER_HIDDEN.on(member, declared, overridden, overridden.containingDeclaration))
+        }
+    }
+
+    private fun checkOverrideForComponentFunction(componentFunction: CallableMemberDescriptor) {
+        val dataModifier = findDataModifierForDataClass(componentFunction.containingDeclaration)
+
+        checkOverridesForMember(componentFunction, componentFunction.overriddenDescriptors, object : CheckOverrideReportStrategy {
+            private var overrideConflict = false
+
+            override fun overridingFinalMember(overriding: CallableMemberDescriptor, overridden: CallableMemberDescriptor) {
+                if (!overrideConflict) {
+                    overrideConflict = true
+                    trace.report(DATA_CLASS_OVERRIDE_CONFLICT.on(dataModifier, componentFunction, overridden.containingDeclaration))
+                }
+            }
+
+            override fun returnTypeMismatchOnOverride(overriding: CallableMemberDescriptor, overridden: CallableMemberDescriptor) {
+                if (!overrideConflict) {
+                    overrideConflict = true
+                    trace.report(DATA_CLASS_OVERRIDE_CONFLICT.on(dataModifier, componentFunction, overridden.containingDeclaration))
+                }
+            }
+
+            override fun propertyTypeMismatchOnOverride(overriding: PropertyDescriptor, overridden: PropertyDescriptor) {
+                throw IllegalStateException("Component functions are not properties")
+            }
+
+            override fun varOverriddenByVal(overriding: CallableMemberDescriptor, overridden: CallableMemberDescriptor) {
+                throw IllegalStateException("Component functions are not properties")
+            }
+        })
+    }
+
+    private fun checkParameterOverridesForAllClasses(c: TopDownAnalysisContext) {
+        for (classDescriptor in c.declaredClasses.values) {
+            for (member in DescriptorUtils.getAllDescriptors(classDescriptor.defaultType.memberScope)) {
+                if (member is CallableMemberDescriptor) {
+                    checkOverridesForParameters(member)
+                }
+            }
+        }
+    }
+
+    private fun checkOverridesForParameters(declared: CallableMemberDescriptor) {
+        val isDeclaration = declared.kind == CallableMemberDescriptor.Kind.DECLARATION
+        if (isDeclaration) {
+            // No check if the function is not marked as 'override'
+            val declaration = DescriptorToSourceUtils.descriptorToDeclaration(declared) as KtModifierListOwner?
+            if (declaration != null && !declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
+                return
+            }
+        }
+
+        // Let p1 be a parameter of the overriding function
+        // Let p2 be a parameter of the function being overridden
+        // Then
+        //  a) p1 is not allowed to have a default value declared
+        //  b) p1 must have the same name as p2
+        for (parameterFromSubclass in declared.valueParameters) {
+            var defaultsInSuper = 0
+            for (parameterFromSuperclass in parameterFromSubclass.overriddenDescriptors) {
+                if (parameterFromSuperclass.declaresDefaultValue()) {
+                    defaultsInSuper++
+                }
+            }
+            val multipleDefaultsInSuper = defaultsInSuper > 1
+
+            if (isDeclaration) {
+                checkNameAndDefaultForDeclaredParameter(parameterFromSubclass, multipleDefaultsInSuper)
+            }
+            else {
+                checkNameAndDefaultForFakeOverrideParameter(declared, parameterFromSubclass, multipleDefaultsInSuper)
+            }
+        }
+    }
+
+    private fun checkNameAndDefaultForDeclaredParameter(descriptor: ValueParameterDescriptor, multipleDefaultsInSuper: Boolean) {
+        val parameter = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as KtParameter? ?: error("Declaration not found for parameter: " + descriptor)
+
+        if (descriptor.declaresDefaultValue()) {
+            trace.report(DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE.on(parameter))
+        }
+
+        if (multipleDefaultsInSuper) {
+            trace.report(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES.on(parameter, descriptor))
+        }
+
+        for (parameterFromSuperclass in descriptor.overriddenDescriptors) {
+            if (shouldReportParameterNameOverrideWarning(descriptor, parameterFromSuperclass)) {
+
+                trace.report(PARAMETER_NAME_CHANGED_ON_OVERRIDE.on(
+                        parameter,
+                        parameterFromSuperclass.containingDeclaration.containingDeclaration as ClassDescriptor,
+                        parameterFromSuperclass)
+                )
+            }
+        }
+    }
+
+    private fun checkNameAndDefaultForFakeOverrideParameter(
+            containingFunction: CallableMemberDescriptor,
+            descriptor: ValueParameterDescriptor,
+            multipleDefaultsInSuper: Boolean
+    ) {
+        val containingClass = containingFunction.containingDeclaration
+        val classElement = DescriptorToSourceUtils.descriptorToDeclaration(containingClass) as KtClassOrObject? ?: error("Declaration not found for class: " + containingClass)
+
+        if (multipleDefaultsInSuper) {
+            trace.report(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE.on(classElement, descriptor))
+        }
+
+        for (parameterFromSuperclass in descriptor.overriddenDescriptors) {
+            if (shouldReportParameterNameOverrideWarning(descriptor, parameterFromSuperclass)) {
+                trace.report(DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES.on(
+                        classElement,
+                        containingFunction.overriddenDescriptors,
+                        parameterFromSuperclass.index + 1)
+                )
+            }
+        }
+    }
+
+    private fun checkVisibility(c: TopDownAnalysisContext) {
+        for ((key, value) in c.members) {
+            checkVisibilityForMember(key, value)
+            if (key is KtProperty && value is PropertyDescriptor) {
+                val setter = key.setter
+                val setterDescriptor = value.setter
+                if (setter != null && setterDescriptor != null) {
+                    checkVisibilityForMember(setter, setterDescriptor)
+                }
+            }
+        }
+    }
+
+    private fun checkVisibilityForMember(declaration: KtDeclaration, memberDescriptor: CallableMemberDescriptor) {
+        val visibility = memberDescriptor.visibility
+        for (descriptor in memberDescriptor.overriddenDescriptors) {
+            val compare = Visibilities.compare(visibility, descriptor.visibility)
+            if (compare == null) {
+                trace.report(CANNOT_CHANGE_ACCESS_PRIVILEGE.on(declaration, descriptor.visibility, descriptor, descriptor.containingDeclaration))
+                return
+            }
+            else if (compare < 0) {
+                trace.report(CANNOT_WEAKEN_ACCESS_PRIVILEGE.on(declaration, descriptor.visibility, descriptor, descriptor.containingDeclaration))
+                return
+            }
+        }
+    }
+
+    companion object {
+
+        fun resolveUnknownVisibilities(
+                descriptors: Collection<CallableMemberDescriptor>,
+                trace: BindingTrace
+        ) {
+            for (descriptor in descriptors) {
+                OverridingUtil.resolveUnknownVisibilityForMember(descriptor, createCannotInferVisibilityReporter(trace))
+            }
+        }
+
+        fun createCannotInferVisibilityReporter(trace: BindingTrace): Function1<CallableMemberDescriptor, Unit> {
+            return fun(descriptor: CallableMemberDescriptor): Unit {
+                val reportOn: DeclarationDescriptor = when {
+                    descriptor.kind == FAKE_OVERRIDE || descriptor.kind == DELEGATION ->
+                        DescriptorUtils.getContainingClass(descriptor) ?: throw AssertionError("Class member expected: $descriptor")
+                    descriptor is PropertyAccessorDescriptor && descriptor.isDefault ->
+                        descriptor.correspondingProperty
+                    else ->
+                        descriptor
+                }
+
+                val element = DescriptorToSourceUtils.descriptorToDeclaration(reportOn)
+                if (element is KtDeclaration) {
+                    trace.report(CANNOT_INFER_VISIBILITY.on(element, descriptor))
+                }
+                return Unit
+            }
+        }
+
+        fun getMissingImplementations(classDescriptor: ClassDescriptor): Set<CallableMemberDescriptor> {
+            val collector = CollectMissingImplementationsStrategy()
+            checkInheritedAndDelegatedSignatures(classDescriptor, collector, null)
+            return collector.shouldImplement
+        }
+
+        private fun checkInheritedAndDelegatedSignatures(
+                classDescriptor: ClassDescriptor,
+                inheritedReportStrategy: CheckInheritedSignaturesReportStrategy,
+                overrideReportStrategyForDelegates: CheckOverrideReportStrategy?
+        ) {
+            for (member in DescriptorUtils.getAllDescriptors(classDescriptor.defaultType.memberScope)) {
+                if (member is CallableMemberDescriptor) {
+                    checkInheritedAndDelegatedSignatures(member, inheritedReportStrategy, overrideReportStrategyForDelegates)
+                }
+            }
+        }
+
+        private fun checkInheritedAndDelegatedSignatures(
+                descriptor: CallableMemberDescriptor,
+                reportingStrategy: CheckInheritedSignaturesReportStrategy,
+                overrideReportStrategyForDelegates: CheckOverrideReportStrategy?
+        ) {
+            val kind = descriptor.kind
+            if (kind != FAKE_OVERRIDE && kind != DELEGATION) return
+            if (descriptor.visibility === Visibilities.INVISIBLE_FAKE) return
+
+            val directOverridden = descriptor.overriddenDescriptors
+            assert(!directOverridden.isEmpty()) { kind.toString() + " " + descriptor.name.asString() + " must override something" }
+
+            // collects map from the directly overridden descriptor to the set of declarations:
+            // -- if directly overridden is not fake, the set consists of one element: this directly overridden
+            // -- if it's fake, overridden declarations (non-fake) of this descriptor are collected
+            val overriddenDeclarationsByDirectParent = collectOverriddenDeclarations(directOverridden)
+
+            val allOverriddenDeclarations = ContainerUtil.flatten(overriddenDeclarationsByDirectParent.values)
+            val allFilteredOverriddenDeclarations = OverridingUtil.filterOutOverridden(
+                    Sets.newLinkedHashSet(allOverriddenDeclarations))
+
+            val relevantDirectlyOverridden = getRelevantDirectlyOverridden(overriddenDeclarationsByDirectParent, allFilteredOverriddenDeclarations)
+
+            checkInheritedDescriptorsGroup(relevantDirectlyOverridden, descriptor, reportingStrategy)
+
+            if (kind == DELEGATION && overrideReportStrategyForDelegates != null) {
+                checkOverridesForMember(descriptor, relevantDirectlyOverridden, overrideReportStrategyForDelegates)
+            }
+
+            if (kind != DELEGATION) {
+                checkMissingOverridesByJava8Restrictions(relevantDirectlyOverridden, reportingStrategy)
+            }
+
+            val implementations = collectImplementations(relevantDirectlyOverridden)
+
+            val numImplementations = implementations.size
+
+            // The most common case: there's one implementation in the supertypes with the matching return type
+            if (numImplementations == 1 && isReturnTypeOkForOverride(descriptor, implementations[0])) return
+
+            val abstractOverridden = ArrayList<CallableMemberDescriptor>(allFilteredOverriddenDeclarations.size)
+            val concreteOverridden = ArrayList<CallableMemberDescriptor>(allFilteredOverriddenDeclarations.size)
+            filterNotSynthesizedDescriptorsByModality(allFilteredOverriddenDeclarations, abstractOverridden, concreteOverridden)
+
+            if (numImplementations == 0) {
+                if (kind != DELEGATION) {
+                    for (member in abstractOverridden) {
+                        reportingStrategy.abstractMemberNotImplemented(member)
+                    }
+                }
+            }
+            else if (numImplementations > 1) {
+                for (member in concreteOverridden) {
+                    reportingStrategy.multipleImplementationsMemberNotImplemented(member)
+                }
+            }
+            else {
+                if (kind != DELEGATION) {
+                    val membersWithMoreSpecificReturnType = collectAbstractMethodsWithMoreSpecificReturnType(abstractOverridden, implementations[0])
+                    for (member in membersWithMoreSpecificReturnType) {
+                        reportingStrategy.abstractMemberNotImplemented(member)
                     }
                 }
             }
         }
 
-        if (overridesAbstractInBaseClass != null) {
-            reportingStrategy.abstractBaseClassMemberNotImplemented(overridesAbstractInBaseClass);
-        }
-        if (!overridesClassMember && overridesNonAbstractInterfaceMember && overriddenInterfaceMembers.size() > 1) {
-            for (CallableMemberDescriptor member : overriddenInterfaceMembers) {
-                reportingStrategy.conflictingInterfaceMemberNotImplemented(member);
-            }
-        }
-    }
+        private fun checkMissingOverridesByJava8Restrictions(
+                relevantDirectlyOverridden: Set<CallableMemberDescriptor>,
+                reportingStrategy: CheckInheritedSignaturesReportStrategy
+        ) {
+            // Java 8:
+            // -- class should implement an abstract member of a super-class,
+            //    even if relevant default implementation is provided in one of the super-interfaces;
+            // -- inheriting multiple override equivalent methods from an interface is a conflict
+            //    regardless of 'default' vs 'abstract'.
 
-    @NotNull
-    private static List<CallableMemberDescriptor> collectImplementations(@NotNull Set<CallableMemberDescriptor> relevantDirectlyOverridden) {
-        List<CallableMemberDescriptor> result = new ArrayList<CallableMemberDescriptor>(relevantDirectlyOverridden.size());
-        for (CallableMemberDescriptor overriddenDescriptor : relevantDirectlyOverridden) {
-            if (isImplementation(overriddenDescriptor)) {
-                result.add(overriddenDescriptor);
-            }
-        }
-        return result;
-    }
-
-    private static boolean isImplementation(@NotNull CallableMemberDescriptor callableMemberDescriptor) {
-        // An abstract member is not an implementation.
-        if (callableMemberDescriptor.getModality() == Modality.ABSTRACT) return false;
-
-        // Interfaces contain fake overrides for 'toString', 'hashCode', 'equals'.
-        // They are not considered implementations if their dispatch receiver type is 'Any'.
-        DeclarationDescriptor containingDeclaration = callableMemberDescriptor.getContainingDeclaration();
-        assert containingDeclaration instanceof ClassDescriptor :
-                "ClassDescriptor expected, got " + containingDeclaration + " for " + callableMemberDescriptor;
-        ClassDescriptor containingClassDescriptor = (ClassDescriptor) containingDeclaration;
-        if (containingClassDescriptor.getKind() == ClassKind.INTERFACE && callableMemberDescriptor.getKind() == FAKE_OVERRIDE) {
-            ReceiverParameterDescriptor dispatchReceiverParameter = callableMemberDescriptor.getDispatchReceiverParameter();
-            if (dispatchReceiverParameter == null) return false;
-            if (KotlinBuiltIns.isAny(dispatchReceiverParameter.getType())) return false;
-        }
-
-        // A FAKE_OVERRIDE is an implementation iff it overrides an implementation.
-        if (callableMemberDescriptor.getKind() == FAKE_OVERRIDE) {
-            for (CallableMemberDescriptor overriddenDescriptor : callableMemberDescriptor.getOverriddenDescriptors()) {
-                if (isImplementation(overriddenDescriptor)) return true;
-            }
-            return false;
-        }
-
-        return true;
-    }
-
-    private static void filterNotSynthesizedDescriptorsByModality(
-            @NotNull Set<CallableMemberDescriptor> allOverriddenDeclarations,
-            @NotNull List<CallableMemberDescriptor> abstractOverridden,
-            @NotNull List<CallableMemberDescriptor> concreteOverridden
-    ) {
-        for (CallableMemberDescriptor overridden : allOverriddenDeclarations) {
-            if (!CallResolverUtilKt.isOrOverridesSynthesized(overridden)) {
-                if (overridden.getModality() == Modality.ABSTRACT) {
-                    abstractOverridden.add(overridden);
+            var overridesClassMember = false
+            var overridesNonAbstractInterfaceMember = false
+            var overridesAbstractInBaseClass: CallableMemberDescriptor? = null
+            val overriddenInterfaceMembers = SmartList<CallableMemberDescriptor>()
+            for (overridden in relevantDirectlyOverridden) {
+                val containingDeclaration = overridden.containingDeclaration
+                if (containingDeclaration is ClassDescriptor) {
+                    if (containingDeclaration.kind == ClassKind.CLASS) {
+                        overridesClassMember = true
+                        if (overridden.modality === Modality.ABSTRACT) {
+                            overridesAbstractInBaseClass = overridden
+                        }
+                    }
+                    else if (containingDeclaration.kind == ClassKind.INTERFACE) {
+                        overriddenInterfaceMembers.add(overridden)
+                        if (overridden.modality !== Modality.ABSTRACT) {
+                            overridesNonAbstractInterfaceMember = true
+                        }
+                    }
                 }
-                else {
-                    concreteOverridden.add(overridden);
+            }
+
+            if (overridesAbstractInBaseClass != null) {
+                reportingStrategy.abstractBaseClassMemberNotImplemented(overridesAbstractInBaseClass)
+            }
+            if (!overridesClassMember && overridesNonAbstractInterfaceMember && overriddenInterfaceMembers.size > 1) {
+                for (member in overriddenInterfaceMembers) {
+                    reportingStrategy.conflictingInterfaceMemberNotImplemented(member)
                 }
             }
         }
-    }
 
-    @NotNull
-    private static List<CallableMemberDescriptor> collectAbstractMethodsWithMoreSpecificReturnType(
-            @NotNull List<CallableMemberDescriptor> abstractOverridden,
-            @NotNull final CallableMemberDescriptor implementation
-    ) {
-        return CollectionsKt.filter(abstractOverridden, new Function1<CallableMemberDescriptor, Boolean>() {
-            @Override
-            public Boolean invoke(@NotNull CallableMemberDescriptor abstractMember) {
-                return !isReturnTypeOkForOverride(abstractMember, implementation);
+        private fun collectImplementations(relevantDirectlyOverridden: Set<CallableMemberDescriptor>): List<CallableMemberDescriptor> {
+            val result = ArrayList<CallableMemberDescriptor>(relevantDirectlyOverridden.size)
+            for (overriddenDescriptor in relevantDirectlyOverridden) {
+                if (isImplementation(overriddenDescriptor)) {
+                    result.add(overriddenDescriptor)
+                }
             }
-        });
-    }
+            return result
+        }
 
-    @NotNull
-    private static Set<CallableMemberDescriptor> getRelevantDirectlyOverridden(
-            @NotNull Map<CallableMemberDescriptor, Set<CallableMemberDescriptor>> overriddenByParent,
-            @NotNull Set<CallableMemberDescriptor> allFilteredOverriddenDeclarations
-    ) {
-        /* Let the following class hierarchy is declared:
+        private fun isImplementation(callableMemberDescriptor: CallableMemberDescriptor): Boolean {
+            // An abstract member is not an implementation.
+            if (callableMemberDescriptor.modality === Modality.ABSTRACT) return false
+
+            // Interfaces contain fake overrides for 'toString', 'hashCode', 'equals'.
+            // They are not considered implementations if their dispatch receiver type is 'Any'.
+            val containingDeclaration = callableMemberDescriptor.containingDeclaration
+            assert(containingDeclaration is ClassDescriptor) { "ClassDescriptor expected, got $containingDeclaration for $callableMemberDescriptor" }
+            val containingClassDescriptor = containingDeclaration as ClassDescriptor
+            if (containingClassDescriptor.kind == ClassKind.INTERFACE && callableMemberDescriptor.kind == FAKE_OVERRIDE) {
+                val dispatchReceiverParameter = callableMemberDescriptor.dispatchReceiverParameter ?: return false
+                if (KotlinBuiltIns.isAny(dispatchReceiverParameter.type)) return false
+            }
+
+            // A FAKE_OVERRIDE is an implementation iff it overrides an implementation.
+            if (callableMemberDescriptor.kind == FAKE_OVERRIDE) {
+                for (overriddenDescriptor in callableMemberDescriptor.overriddenDescriptors) {
+                    if (isImplementation(overriddenDescriptor)) return true
+                }
+                return false
+            }
+
+            return true
+        }
+
+        private fun filterNotSynthesizedDescriptorsByModality(
+                allOverriddenDeclarations: Set<CallableMemberDescriptor>,
+                abstractOverridden: MutableList<CallableMemberDescriptor>,
+                concreteOverridden: MutableList<CallableMemberDescriptor>
+        ) {
+            for (overridden in allOverriddenDeclarations) {
+                if (!isOrOverridesSynthesized(overridden)) {
+                    if (overridden.modality === Modality.ABSTRACT) {
+                        abstractOverridden.add(overridden)
+                    }
+                    else {
+                        concreteOverridden.add(overridden)
+                    }
+                }
+            }
+        }
+
+        private fun collectAbstractMethodsWithMoreSpecificReturnType(
+                abstractOverridden: List<CallableMemberDescriptor>,
+                implementation: CallableMemberDescriptor
+        ): List<CallableMemberDescriptor> =
+                abstractOverridden.filter { abstractMember -> !isReturnTypeOkForOverride(abstractMember, implementation) }
+
+        private fun getRelevantDirectlyOverridden(
+                overriddenByParent: MutableMap<CallableMemberDescriptor, Set<CallableMemberDescriptor>>,
+                allFilteredOverriddenDeclarations: Set<CallableMemberDescriptor>
+        ): Set<CallableMemberDescriptor> {
+            /* Let the following class hierarchy is declared:
 
         trait A { fun foo() = 1 }
         trait B : A
@@ -533,467 +707,209 @@ public class OverrideResolver {
         are overridden by some other function and corresponding directly overridden descriptor is not relevant.
         */
 
-        for (Iterator<Map.Entry<CallableMemberDescriptor, Set<CallableMemberDescriptor>>> iterator =
-                     overriddenByParent.entrySet().iterator(); iterator.hasNext(); ) {
-            if (!isRelevant(iterator.next().getValue(), overriddenByParent.values(), allFilteredOverriddenDeclarations)) {
-                iterator.remove();
-            }
-        }
-        return overriddenByParent.keySet();
-    }
-
-    private static boolean isRelevant(
-            @NotNull Set<CallableMemberDescriptor> declarationSet,
-            @NotNull Collection<Set<CallableMemberDescriptor>> allDeclarationSets,
-            @NotNull Set<CallableMemberDescriptor> allFilteredOverriddenDeclarations
-    ) {
-        for (Set<CallableMemberDescriptor> otherSet : allDeclarationSets) {
-            if (otherSet == declarationSet) continue;
-            if (otherSet.containsAll(declarationSet)) return false;
-            if (Collections.disjoint(allFilteredOverriddenDeclarations, declarationSet)) return false;
-        }
-        return true;
-    }
-
-    @NotNull
-    private static Map<CallableMemberDescriptor, Set<CallableMemberDescriptor>> collectOverriddenDeclarations(
-            @NotNull Collection<? extends CallableMemberDescriptor> directOverriddenDescriptors
-    ) {
-        Map<CallableMemberDescriptor, Set<CallableMemberDescriptor>> overriddenDeclarationsByDirectParent = Maps.newLinkedHashMap();
-        for (CallableMemberDescriptor descriptor : directOverriddenDescriptors) {
-            Set<CallableMemberDescriptor> overriddenDeclarations = OverridingUtil.getOverriddenDeclarations(descriptor);
-            Set<CallableMemberDescriptor> filteredOverrides = OverridingUtil.filterOutOverridden(overriddenDeclarations);
-            overriddenDeclarationsByDirectParent.put(descriptor, new LinkedHashSet<CallableMemberDescriptor>(filteredOverrides));
-        }
-        return overriddenDeclarationsByDirectParent;
-    }
-
-    private interface CheckOverrideReportStrategy {
-        void overridingFinalMember(@NotNull CallableMemberDescriptor overriding, @NotNull CallableMemberDescriptor overridden);
-        void returnTypeMismatchOnOverride(@NotNull CallableMemberDescriptor overriding, @NotNull CallableMemberDescriptor overridden);
-        void propertyTypeMismatchOnOverride(@NotNull PropertyDescriptor overriding, @NotNull PropertyDescriptor overridden);
-        void varOverriddenByVal(@NotNull CallableMemberDescriptor overriding, @NotNull CallableMemberDescriptor overridden);
-    }
-
-    private interface CheckOverrideReportForDeclaredMemberStrategy extends CheckOverrideReportStrategy {
-        void nothingToOverride(@NotNull CallableMemberDescriptor overriding);
-        void cannotOverrideInvisibleMember(@NotNull CallableMemberDescriptor overriding, @NotNull CallableMemberDescriptor invisibleOverridden);
-    }
-
-    private void checkOverrideForMember(@NotNull final CallableMemberDescriptor declared) {
-        if (declared.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED) {
-            if (DataClassDescriptorResolver.INSTANCE.isComponentLike(declared.getName())) {
-                checkOverrideForComponentFunction(declared);
-            }
-            return;
-        }
-
-        if (declared.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
-            return;
-        }
-
-        final KtNamedDeclaration member = (KtNamedDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(declared);
-        if (member == null) {
-            throw new IllegalStateException("declared descriptor is not resolved to declaration: " + declared);
-        }
-
-        KtModifierList modifierList = member.getModifierList();
-        boolean hasOverrideNode = modifierList != null && modifierList.hasModifier(KtTokens.OVERRIDE_KEYWORD);
-        Collection<? extends CallableMemberDescriptor> overriddenDescriptors = declared.getOverriddenDescriptors();
-
-        if (hasOverrideNode) {
-            checkOverridesForMemberMarkedOverride(declared, new CheckOverrideReportForDeclaredMemberStrategy() {
-                private boolean finalOverriddenError = false;
-                private boolean typeMismatchError = false;
-                private boolean kindMismatchError = false;
-
-                @Override
-                public void overridingFinalMember(@NotNull CallableMemberDescriptor overriding, @NotNull CallableMemberDescriptor overridden) {
-                    if (!finalOverriddenError) {
-                        finalOverriddenError = true;
-                        trace.report(OVERRIDING_FINAL_MEMBER.on(member, overridden, overridden.getContainingDeclaration()));
-                    }
+            val iterator = overriddenByParent.entries.iterator()
+            while (iterator.hasNext()) {
+                if (!isRelevant(iterator.next().value, overriddenByParent.values, allFilteredOverriddenDeclarations)) {
+                    iterator.remove()
                 }
+            }
+            return overriddenByParent.keys
+        }
 
-                @Override
-                public void returnTypeMismatchOnOverride(@NotNull CallableMemberDescriptor overriding, @NotNull CallableMemberDescriptor overridden) {
-                    if (!typeMismatchError) {
-                        typeMismatchError = true;
-                        trace.report(RETURN_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden));
-                    }
-                }
+        private fun isRelevant(
+                declarationSet: Set<CallableMemberDescriptor>,
+                allDeclarationSets: Collection<Set<CallableMemberDescriptor>>,
+                allFilteredOverriddenDeclarations: Set<CallableMemberDescriptor>
+        ): Boolean {
+            for (otherSet in allDeclarationSets) {
+                if (otherSet === declarationSet) continue
+                if (otherSet.containsAll(declarationSet)) return false
+                if (Collections.disjoint(allFilteredOverriddenDeclarations, declarationSet)) return false
+            }
+            return true
+        }
 
-                @Override
-                public void propertyTypeMismatchOnOverride(@NotNull PropertyDescriptor overriding, @NotNull PropertyDescriptor overridden) {
-                    if (!typeMismatchError) {
-                        typeMismatchError = true;
-                        if (overridden.isVar()) {
-                            trace.report(VAR_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden));
-                        }
-                        else {
-                            trace.report(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden));
+        private fun collectOverriddenDeclarations(
+                directOverriddenDescriptors: Collection<CallableMemberDescriptor>
+        ): MutableMap<CallableMemberDescriptor, Set<CallableMemberDescriptor>> {
+            val overriddenDeclarationsByDirectParent = Maps.newLinkedHashMap<CallableMemberDescriptor, Set<CallableMemberDescriptor>>()
+            for (descriptor in directOverriddenDescriptors) {
+                val overriddenDeclarations = OverridingUtil.getOverriddenDeclarations(descriptor)
+                val filteredOverrides = OverridingUtil.filterOutOverridden(overriddenDeclarations)
+                overriddenDeclarationsByDirectParent.put(descriptor, LinkedHashSet(filteredOverrides))
+            }
+            return overriddenDeclarationsByDirectParent
+        }
+
+        private fun checkInheritedDescriptorsGroup(
+                inheritedDescriptors: Collection<CallableMemberDescriptor>,
+                mostSpecific: CallableMemberDescriptor,
+                reportingStrategy: CheckInheritedSignaturesReportStrategy
+        ) {
+            if (inheritedDescriptors.size > 1) {
+                val mostSpecificProperty = if (mostSpecific is PropertyDescriptor) mostSpecific else null
+
+                for (inheritedDescriptor in inheritedDescriptors) {
+                    if (mostSpecificProperty != null) {
+                        assert(inheritedDescriptor is PropertyDescriptor) { inheritedDescriptor.toString() + " inherited from " + mostSpecificProperty + " is not a property" }
+                        val inheritedPropertyDescriptor = inheritedDescriptor as PropertyDescriptor
+
+                        if (!isPropertyTypeOkForOverride(inheritedPropertyDescriptor, mostSpecificProperty)) {
+                            reportingStrategy.propertyTypeMismatchOnInheritance(mostSpecificProperty, inheritedPropertyDescriptor)
                         }
                     }
-                }
-
-                @Override
-                public void varOverriddenByVal(@NotNull CallableMemberDescriptor overriding, @NotNull CallableMemberDescriptor overridden) {
-                    if (!kindMismatchError) {
-                        kindMismatchError = true;
-                        trace.report(VAR_OVERRIDDEN_BY_VAL.on(member, (PropertyDescriptor) declared, (PropertyDescriptor) overridden));
+                    else if (!isReturnTypeOkForOverride(inheritedDescriptor, mostSpecific)) {
+                        reportingStrategy.returnTypeMismatchOnInheritance(mostSpecific, inheritedDescriptor)
                     }
-                }
-
-                @Override
-                public void cannotOverrideInvisibleMember(@NotNull CallableMemberDescriptor overriding, @NotNull CallableMemberDescriptor invisibleOverridden) {
-                    trace.report(CANNOT_OVERRIDE_INVISIBLE_MEMBER.on(member, declared, invisibleOverridden));
-                }
-
-                @Override
-                public void nothingToOverride(@NotNull CallableMemberDescriptor overriding) {
-                    trace.report(NOTHING_TO_OVERRIDE.on(member, declared));
-                }
-            });
-        }
-        else if (!overriddenDescriptors.isEmpty() && !overridesBackwardCompatibilityHelper.overrideCanBeOmitted(declared)) {
-            CallableMemberDescriptor overridden = overriddenDescriptors.iterator().next();
-            trace.report(VIRTUAL_MEMBER_HIDDEN.on(member, declared, overridden, overridden.getContainingDeclaration()));
-        }
-    }
-
-    private static void checkInheritedDescriptorsGroup(
-            @NotNull Collection<CallableMemberDescriptor> inheritedDescriptors,
-            @NotNull CallableMemberDescriptor mostSpecific,
-            @NotNull CheckInheritedSignaturesReportStrategy reportingStrategy
-    ) {
-        if (inheritedDescriptors.size() > 1) {
-            PropertyDescriptor mostSpecificProperty = mostSpecific instanceof PropertyDescriptor ? (PropertyDescriptor) mostSpecific : null;
-
-            for (CallableMemberDescriptor inheritedDescriptor : inheritedDescriptors) {
-                if (mostSpecificProperty != null) {
-                    assert inheritedDescriptor instanceof PropertyDescriptor
-                            : inheritedDescriptor + " inherited from " + mostSpecificProperty + " is not a property";
-                    PropertyDescriptor inheritedPropertyDescriptor = (PropertyDescriptor) inheritedDescriptor;
-
-                    if (!isPropertyTypeOkForOverride(inheritedPropertyDescriptor, mostSpecificProperty)) {
-                        reportingStrategy.propertyTypeMismatchOnInheritance(mostSpecificProperty, inheritedPropertyDescriptor);
-                    }
-                }
-                else if (!isReturnTypeOkForOverride(inheritedDescriptor, mostSpecific)) {
-                    reportingStrategy.returnTypeMismatchOnInheritance(mostSpecific, inheritedDescriptor);
                 }
             }
         }
-    }
 
-    private static void checkOverridesForMemberMarkedOverride(
-            @NotNull CallableMemberDescriptor declared,
-            @NotNull CheckOverrideReportForDeclaredMemberStrategy reportError
-    ) {
-        Collection<? extends CallableMemberDescriptor> overriddenDescriptors = declared.getOverriddenDescriptors();
+        private fun checkOverridesForMemberMarkedOverride(
+                declared: CallableMemberDescriptor,
+                reportError: CheckOverrideReportForDeclaredMemberStrategy
+        ) {
+            val overriddenDescriptors = declared.overriddenDescriptors
 
-        checkOverridesForMember(declared, overriddenDescriptors, reportError);
+            checkOverridesForMember(declared, overriddenDescriptors, reportError)
 
-        if (overriddenDescriptors.isEmpty()) {
-            DeclarationDescriptor containingDeclaration = declared.getContainingDeclaration();
-            assert containingDeclaration instanceof ClassDescriptor : "Overrides may only be resolved in a class, but " + declared + " comes from " + containingDeclaration;
-            ClassDescriptor declaringClass = (ClassDescriptor) containingDeclaration;
+            if (overriddenDescriptors.isEmpty()) {
+                val containingDeclaration = declared.containingDeclaration
+                assert(containingDeclaration is ClassDescriptor) { "Overrides may only be resolved in a class, but $declared comes from $containingDeclaration" }
+                val declaringClass = containingDeclaration as ClassDescriptor
 
-            CallableMemberDescriptor invisibleOverriddenDescriptor = findInvisibleOverriddenDescriptor(declared, declaringClass);
-            if (invisibleOverriddenDescriptor != null) {
-                reportError.cannotOverrideInvisibleMember(declared, invisibleOverriddenDescriptor);
+                val invisibleOverriddenDescriptor = findInvisibleOverriddenDescriptor(declared, declaringClass)
+                if (invisibleOverriddenDescriptor != null) {
+                    reportError.cannotOverrideInvisibleMember(declared, invisibleOverriddenDescriptor)
+                }
+                else {
+                    reportError.nothingToOverride(declared)
+                }
+            }
+        }
+
+        private fun checkOverridesForMember(
+                memberDescriptor: CallableMemberDescriptor,
+                overriddenDescriptors: Collection<CallableMemberDescriptor>,
+                reportError: CheckOverrideReportStrategy
+        ) {
+            val propertyMemberDescriptor = if (memberDescriptor is PropertyDescriptor) memberDescriptor else null
+
+            for (overridden in overriddenDescriptors) {
+//                if (overridden == null) continue
+
+                if (!overridden.isOverridable) {
+                    reportError.overridingFinalMember(memberDescriptor, overridden)
+                }
+
+                if (propertyMemberDescriptor != null) {
+                    assert(overridden is PropertyDescriptor) { overridden.toString() + " is overridden by property " + propertyMemberDescriptor }
+                    val overriddenProperty = overridden as PropertyDescriptor
+                    if (!isPropertyTypeOkForOverride(overriddenProperty, propertyMemberDescriptor)) {
+                        reportError.propertyTypeMismatchOnOverride(propertyMemberDescriptor, overriddenProperty)
+                    }
+                }
+                else if (!isReturnTypeOkForOverride(overridden, memberDescriptor)) {
+                    reportError.returnTypeMismatchOnOverride(memberDescriptor, overridden)
+                }
+
+                if (checkPropertyKind(overridden, true) && checkPropertyKind(memberDescriptor, false)) {
+                    reportError.varOverriddenByVal(memberDescriptor, overridden)
+                }
+            }
+        }
+
+        private fun isReturnTypeOkForOverride(
+                superDescriptor: CallableDescriptor,
+                subDescriptor: CallableDescriptor
+        ): Boolean {
+            val typeSubstitutor = prepareTypeSubstitutor(superDescriptor, subDescriptor) ?: return false
+
+            val superReturnType = superDescriptor.returnType!!
+
+            val subReturnType = subDescriptor.returnType!!
+
+            val substitutedSuperReturnType = typeSubstitutor.substitute(superReturnType, Variance.OUT_VARIANCE)!!
+
+            return KotlinTypeChecker.DEFAULT.isSubtypeOf(subReturnType, substitutedSuperReturnType)
+        }
+
+        private fun prepareTypeSubstitutor(
+                superDescriptor: CallableDescriptor,
+                subDescriptor: CallableDescriptor
+        ): TypeSubstitutor? {
+            val superTypeParameters = superDescriptor.typeParameters
+            val subTypeParameters = subDescriptor.typeParameters
+            if (subTypeParameters.size != superTypeParameters.size) return null
+
+            val arguments = ArrayList<TypeProjection>(subTypeParameters.size)
+            for (i in superTypeParameters.indices) {
+                arguments.add(TypeProjectionImpl(subTypeParameters[i].defaultType))
+            }
+
+            return IndexedParametersSubstitution(superTypeParameters, arguments).buildSubstitutor()
+        }
+
+        private fun isPropertyTypeOkForOverride(
+                superDescriptor: PropertyDescriptor,
+                subDescriptor: PropertyDescriptor
+        ): Boolean {
+            val typeSubstitutor = prepareTypeSubstitutor(superDescriptor, subDescriptor) ?: return false
+
+            val substitutedSuperReturnType = typeSubstitutor.substitute(superDescriptor.type, Variance.OUT_VARIANCE)!!
+
+            if (superDescriptor.isVar) {
+                return KotlinTypeChecker.DEFAULT.equalTypes(subDescriptor.type, substitutedSuperReturnType)
             }
             else {
-                reportError.nothingToOverride(declared);
+                return KotlinTypeChecker.DEFAULT.isSubtypeOf(subDescriptor.type, substitutedSuperReturnType)
             }
         }
-    }
 
-    private static void checkOverridesForMember(
-            @NotNull CallableMemberDescriptor memberDescriptor,
-            @NotNull Collection<? extends CallableMemberDescriptor> overriddenDescriptors,
-            @NotNull CheckOverrideReportStrategy reportError
-    ) {
-        PropertyDescriptor propertyMemberDescriptor =
-                memberDescriptor instanceof PropertyDescriptor ? (PropertyDescriptor) memberDescriptor : null;
-
-        for (CallableMemberDescriptor overridden : overriddenDescriptors) {
-            if (overridden == null) continue;
-
-            if (!ModalityKt.isOverridable(overridden)) {
-                reportError.overridingFinalMember(memberDescriptor, overridden);
-            }
-
-            if (propertyMemberDescriptor != null) {
-                assert overridden instanceof PropertyDescriptor : overridden + " is overridden by property " + propertyMemberDescriptor;
-                PropertyDescriptor overriddenProperty = (PropertyDescriptor) overridden;
-                if (!isPropertyTypeOkForOverride(overriddenProperty, propertyMemberDescriptor)) {
-                    reportError.propertyTypeMismatchOnOverride(propertyMemberDescriptor, overriddenProperty);
-                }
-            }
-            else if (!isReturnTypeOkForOverride(overridden, memberDescriptor)) {
-                reportError.returnTypeMismatchOnOverride(memberDescriptor, overridden);
-            }
-
-            if (checkPropertyKind(overridden, true) && checkPropertyKind(memberDescriptor, false)) {
-                reportError.varOverriddenByVal(memberDescriptor, overridden);
-            }
-        }
-    }
-
-    private static boolean isReturnTypeOkForOverride(
-            @NotNull CallableDescriptor superDescriptor,
-            @NotNull CallableDescriptor subDescriptor
-    ) {
-        TypeSubstitutor typeSubstitutor = prepareTypeSubstitutor(superDescriptor, subDescriptor);
-        if (typeSubstitutor == null) return false;
-
-        KotlinType superReturnType = superDescriptor.getReturnType();
-        assert superReturnType != null;
-
-        KotlinType subReturnType = subDescriptor.getReturnType();
-        assert subReturnType != null;
-
-        KotlinType substitutedSuperReturnType = typeSubstitutor.substitute(superReturnType, Variance.OUT_VARIANCE);
-        assert substitutedSuperReturnType != null;
-
-        return KotlinTypeChecker.DEFAULT.isSubtypeOf(subReturnType, substitutedSuperReturnType);
-    }
-
-    @Nullable
-    private static TypeSubstitutor prepareTypeSubstitutor(
-            @NotNull CallableDescriptor superDescriptor,
-            @NotNull CallableDescriptor subDescriptor
-    ) {
-        List<TypeParameterDescriptor> superTypeParameters = superDescriptor.getTypeParameters();
-        List<TypeParameterDescriptor> subTypeParameters = subDescriptor.getTypeParameters();
-        if (subTypeParameters.size() != superTypeParameters.size()) return null;
-
-        ArrayList<TypeProjection> arguments = new ArrayList<TypeProjection>(subTypeParameters.size());
-        for (int i = 0; i < superTypeParameters.size(); i++) {
-            arguments.add(new TypeProjectionImpl(subTypeParameters.get(i).getDefaultType()));
-        }
-
-        return new IndexedParametersSubstitution(superTypeParameters, arguments).buildSubstitutor();
-    }
-
-    private static boolean isPropertyTypeOkForOverride(
-            @NotNull PropertyDescriptor superDescriptor,
-            @NotNull PropertyDescriptor subDescriptor
-    ) {
-        TypeSubstitutor typeSubstitutor = prepareTypeSubstitutor(superDescriptor, subDescriptor);
-        if (typeSubstitutor == null) return false;
-
-        KotlinType substitutedSuperReturnType = typeSubstitutor.substitute(superDescriptor.getType(), Variance.OUT_VARIANCE);
-        assert substitutedSuperReturnType != null;
-
-        if (superDescriptor.isVar()) {
-            return KotlinTypeChecker.DEFAULT.equalTypes(subDescriptor.getType(), substitutedSuperReturnType);
-        }
-        else {
-            return KotlinTypeChecker.DEFAULT.isSubtypeOf(subDescriptor.getType(), substitutedSuperReturnType);
-        }
-    }
-
-    private void checkOverrideForComponentFunction(@NotNull final CallableMemberDescriptor componentFunction) {
-        final PsiElement dataModifier = findDataModifierForDataClass(componentFunction.getContainingDeclaration());
-
-        checkOverridesForMember(componentFunction, componentFunction.getOverriddenDescriptors(), new CheckOverrideReportStrategy() {
-            private boolean overrideConflict = false;
-
-            @Override
-            public void overridingFinalMember(@NotNull CallableMemberDescriptor overriding, @NotNull CallableMemberDescriptor overridden) {
-                if (!overrideConflict) {
-                    overrideConflict = true;
-                    trace.report(DATA_CLASS_OVERRIDE_CONFLICT.on(dataModifier, componentFunction, overridden.getContainingDeclaration()));
+        private fun findDataModifierForDataClass(dataClass: DeclarationDescriptor): PsiElement {
+            val classDeclaration = DescriptorToSourceUtils.getSourceFromDescriptor(dataClass) as KtClassOrObject?
+            if (classDeclaration != null && classDeclaration.modifierList != null) {
+                val modifier = classDeclaration.modifierList!!.getModifier(KtTokens.DATA_KEYWORD)
+                if (modifier != null) {
+                    return modifier
                 }
             }
 
-            @Override
-            public void returnTypeMismatchOnOverride(@NotNull CallableMemberDescriptor overriding, @NotNull CallableMemberDescriptor overridden) {
-                if (!overrideConflict) {
-                    overrideConflict = true;
-                    trace.report(DATA_CLASS_OVERRIDE_CONFLICT.on(dataModifier, componentFunction, overridden.getContainingDeclaration()));
-                }
-            }
-
-            @Override
-            public void propertyTypeMismatchOnOverride(@NotNull PropertyDescriptor overriding, @NotNull PropertyDescriptor overridden) {
-                throw new IllegalStateException("Component functions are not properties");
-            }
-
-            @Override
-            public void varOverriddenByVal(@NotNull CallableMemberDescriptor overriding, @NotNull CallableMemberDescriptor overridden) {
-                throw new IllegalStateException("Component functions are not properties");
-            }
-        });
-    }
-
-    @NotNull
-    private static PsiElement findDataModifierForDataClass(@NotNull DeclarationDescriptor dataClass) {
-        KtClassOrObject classDeclaration = (KtClassOrObject) DescriptorToSourceUtils.getSourceFromDescriptor(dataClass);
-        if (classDeclaration != null && classDeclaration.getModifierList() != null) {
-            PsiElement modifier = classDeclaration.getModifierList().getModifier(KtTokens.DATA_KEYWORD);
-            if (modifier != null) {
-                return modifier;
-            }
+            throw IllegalStateException("No data modifier is found for data class " + dataClass)
         }
 
-        throw new IllegalStateException("No data modifier is found for data class " + dataClass);
-    }
-
-    @Nullable
-    private static CallableMemberDescriptor findInvisibleOverriddenDescriptor(
-            @NotNull CallableMemberDescriptor declared,
-            @NotNull ClassDescriptor declaringClass
-    ) {
-        for (KotlinType supertype : declaringClass.getTypeConstructor().getSupertypes()) {
-            Set<CallableMemberDescriptor> all = Sets.newLinkedHashSet();
-            all.addAll(supertype.getMemberScope().getContributedFunctions(declared.getName(), NoLookupLocation.WHEN_CHECK_OVERRIDES));
-            //noinspection unchecked
-            all.addAll((Collection) supertype.getMemberScope().getContributedVariables(declared.getName(), NoLookupLocation.WHEN_CHECK_OVERRIDES));
-            for (CallableMemberDescriptor fromSuper : all) {
-                if (OverridingUtil.DEFAULT.isOverridableBy(fromSuper, declared, null).getResult() == OVERRIDABLE) {
-                    if (OverridingUtil.isVisibleForOverride(declared, fromSuper)) {
-                        throw new IllegalStateException("Descriptor " + fromSuper + " is overridable by " + declared +
-                                                        " and visible but does not appear in its getOverriddenDescriptors()");
+        private fun findInvisibleOverriddenDescriptor(
+                declared: CallableMemberDescriptor,
+                declaringClass: ClassDescriptor
+        ): CallableMemberDescriptor? {
+            for (supertype in declaringClass.typeConstructor.supertypes) {
+                val all = Sets.newLinkedHashSet<CallableMemberDescriptor>()
+                all.addAll(supertype.memberScope.getContributedFunctions(declared.name, NoLookupLocation.WHEN_CHECK_OVERRIDES))
+                all.addAll(supertype.memberScope.getContributedVariables(declared.name, NoLookupLocation.WHEN_CHECK_OVERRIDES))
+                for (fromSuper in all) {
+                    if (OverridingUtil.DEFAULT.isOverridableBy(fromSuper, declared, null).result == OVERRIDABLE) {
+                        if (OverridingUtil.isVisibleForOverride(declared, fromSuper)) {
+                            throw IllegalStateException("Descriptor " + fromSuper + " is overridable by " + declared +
+                                                        " and visible but does not appear in its getOverriddenDescriptors()")
+                        }
+                        return fromSuper
                     }
-                    return fromSuper;
                 }
             }
-        }
-        return null;
-    }
-
-    private void checkParameterOverridesForAllClasses(@NotNull TopDownAnalysisContext c) {
-        for (ClassDescriptorWithResolutionScopes classDescriptor : c.getDeclaredClasses().values()) {
-            for (DeclarationDescriptor member : DescriptorUtils.getAllDescriptors(classDescriptor.getDefaultType().getMemberScope())) {
-                if (member instanceof CallableMemberDescriptor) {
-                    checkOverridesForParameters((CallableMemberDescriptor) member);
-                }
-            }
-        }
-    }
-
-    private void checkOverridesForParameters(@NotNull CallableMemberDescriptor declared) {
-        boolean isDeclaration = declared.getKind() == CallableMemberDescriptor.Kind.DECLARATION;
-        if (isDeclaration) {
-            // No check if the function is not marked as 'override'
-            KtModifierListOwner declaration = (KtModifierListOwner) DescriptorToSourceUtils.descriptorToDeclaration(declared);
-            if (declaration != null && !declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
-                return;
-            }
+            return null
         }
 
-        // Let p1 be a parameter of the overriding function
-        // Let p2 be a parameter of the function being overridden
-        // Then
-        //  a) p1 is not allowed to have a default value declared
-        //  b) p1 must have the same name as p2
-        for (ValueParameterDescriptor parameterFromSubclass : declared.getValueParameters()) {
-            int defaultsInSuper = 0;
-            for (ValueParameterDescriptor parameterFromSuperclass : parameterFromSubclass.getOverriddenDescriptors()) {
-                if (parameterFromSuperclass.declaresDefaultValue()) {
-                    defaultsInSuper++;
-                }
-            }
-            boolean multipleDefaultsInSuper = defaultsInSuper > 1;
-
-            if (isDeclaration) {
-                checkNameAndDefaultForDeclaredParameter(parameterFromSubclass, multipleDefaultsInSuper);
-            }
-            else {
-                checkNameAndDefaultForFakeOverrideParameter(declared, parameterFromSubclass, multipleDefaultsInSuper);
-            }
-        }
-    }
-
-    private void checkNameAndDefaultForDeclaredParameter(@NotNull ValueParameterDescriptor descriptor, boolean multipleDefaultsInSuper) {
-        KtParameter parameter = (KtParameter) DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
-        assert parameter != null : "Declaration not found for parameter: " + descriptor;
-
-        if (descriptor.declaresDefaultValue()) {
-            trace.report(DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE.on(parameter));
+        fun shouldReportParameterNameOverrideWarning(
+                parameterFromSubclass: ValueParameterDescriptor,
+                parameterFromSuperclass: ValueParameterDescriptor
+        ): Boolean {
+            return parameterFromSubclass.containingDeclaration.hasStableParameterNames() &&
+                   parameterFromSuperclass.containingDeclaration.hasStableParameterNames() &&
+                   parameterFromSuperclass.name != parameterFromSubclass.name
         }
 
-        if (multipleDefaultsInSuper) {
-            trace.report(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES.on(parameter, descriptor));
-        }
-
-        for (ValueParameterDescriptor parameterFromSuperclass : descriptor.getOverriddenDescriptors()) {
-            if (shouldReportParameterNameOverrideWarning(descriptor, parameterFromSuperclass)) {
-                //noinspection ConstantConditions
-                trace.report(PARAMETER_NAME_CHANGED_ON_OVERRIDE.on(
-                        parameter,
-                        (ClassDescriptor) parameterFromSuperclass.getContainingDeclaration().getContainingDeclaration(),
-                        parameterFromSuperclass)
-                );
-            }
-        }
-    }
-
-    private void checkNameAndDefaultForFakeOverrideParameter(
-            @NotNull CallableMemberDescriptor containingFunction,
-            @NotNull ValueParameterDescriptor descriptor,
-            boolean multipleDefaultsInSuper
-    ) {
-        DeclarationDescriptor containingClass = containingFunction.getContainingDeclaration();
-        KtClassOrObject classElement = (KtClassOrObject) DescriptorToSourceUtils.descriptorToDeclaration(containingClass);
-        assert classElement != null : "Declaration not found for class: " + containingClass;
-
-        if (multipleDefaultsInSuper) {
-            trace.report(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE.on(classElement, descriptor));
-        }
-
-        for (ValueParameterDescriptor parameterFromSuperclass : descriptor.getOverriddenDescriptors()) {
-            if (shouldReportParameterNameOverrideWarning(descriptor, parameterFromSuperclass)) {
-                trace.report(DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES.on(
-                        classElement,
-                        containingFunction.getOverriddenDescriptors(),
-                        parameterFromSuperclass.getIndex() + 1)
-                );
-            }
-        }
-    }
-
-    public static boolean shouldReportParameterNameOverrideWarning(
-            @NotNull ValueParameterDescriptor parameterFromSubclass,
-            @NotNull ValueParameterDescriptor parameterFromSuperclass
-    ) {
-        return parameterFromSubclass.getContainingDeclaration().hasStableParameterNames() &&
-               parameterFromSuperclass.getContainingDeclaration().hasStableParameterNames() &&
-               !parameterFromSuperclass.getName().equals(parameterFromSubclass.getName());
-    }
-
-    private static boolean checkPropertyKind(@NotNull CallableMemberDescriptor descriptor, boolean isVar) {
-        return descriptor instanceof PropertyDescriptor && ((PropertyDescriptor) descriptor).isVar() == isVar;
-    }
-
-    private void checkVisibility(@NotNull TopDownAnalysisContext c) {
-        for (Map.Entry<KtCallableDeclaration, CallableMemberDescriptor> entry : c.getMembers().entrySet()) {
-            checkVisibilityForMember(entry.getKey(), entry.getValue());
-            if (entry.getKey() instanceof KtProperty && entry.getValue() instanceof PropertyDescriptor) {
-                KtPropertyAccessor setter = ((KtProperty) entry.getKey()).getSetter();
-                PropertySetterDescriptor setterDescriptor = ((PropertyDescriptor) entry.getValue()).getSetter();
-                if (setter != null && setterDescriptor != null) {
-                    checkVisibilityForMember(setter, setterDescriptor);
-                }
-            }
-        }
-    }
-
-    private void checkVisibilityForMember(@NotNull KtDeclaration declaration, @NotNull CallableMemberDescriptor memberDescriptor) {
-        Visibility visibility = memberDescriptor.getVisibility();
-        for (CallableMemberDescriptor descriptor : memberDescriptor.getOverriddenDescriptors()) {
-            Integer compare = Visibilities.compare(visibility, descriptor.getVisibility());
-            if (compare == null) {
-                trace.report(CANNOT_CHANGE_ACCESS_PRIVILEGE.on(declaration, descriptor.getVisibility(), descriptor, descriptor.getContainingDeclaration()));
-                return;
-            }
-            else if (compare < 0) {
-                trace.report(CANNOT_WEAKEN_ACCESS_PRIVILEGE.on(declaration, descriptor.getVisibility(), descriptor, descriptor.getContainingDeclaration()));
-                return;
-            }
+        private fun checkPropertyKind(descriptor: CallableMemberDescriptor, isVar: Boolean): Boolean {
+            return descriptor is PropertyDescriptor && descriptor.isVar == isVar
         }
     }
 }

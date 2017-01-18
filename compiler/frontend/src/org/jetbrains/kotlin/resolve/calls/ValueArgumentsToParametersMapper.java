@@ -201,7 +201,7 @@ public class ValueArgumentsToParametersMapper {
 
                     if (valueParameterDescriptor != null) {
                         for (ValueParameterDescriptor parameterFromSuperclass : valueParameterDescriptor.getOverriddenDescriptors()) {
-                            if (OverrideResolver.shouldReportParameterNameOverrideWarning(valueParameterDescriptor, parameterFromSuperclass)) {
+                            if (OverrideResolver.Companion.shouldReportParameterNameOverrideWarning(valueParameterDescriptor, parameterFromSuperclass)) {
                                 report(NAME_FOR_AMBIGUOUS_PARAMETER.on(nameReference));
                             }
                         }
