@@ -468,7 +468,7 @@ fun filtering(): List<GenericFunction> {
         }
     }
 
-    templates add f("filterIndexed(predicate: (Int, T) -> Boolean)") {
+    templates add f("filterIndexed(predicate: (index: Int, T) -> Boolean)") {
         inline(true)
 
         doc { f ->
@@ -506,7 +506,7 @@ fun filtering(): List<GenericFunction> {
     }
 
 
-    templates add f("filterIndexedTo(destination: C, predicate: (Int, T) -> Boolean)") {
+    templates add f("filterIndexedTo(destination: C, predicate: (index: Int, T) -> Boolean)") {
         inline(true)
 
         include(CharSequences)

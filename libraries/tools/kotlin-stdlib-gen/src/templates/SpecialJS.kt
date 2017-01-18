@@ -21,7 +21,7 @@ import templates.Family.*
 fun specialJS(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
-    templates add f("sort(noinline comparison: (T, T) -> Int)") {
+    templates add f("sort(noinline comparison: (a: T, b: T) -> Int)") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         exclude(PrimitiveType.Boolean)
         inline(true)

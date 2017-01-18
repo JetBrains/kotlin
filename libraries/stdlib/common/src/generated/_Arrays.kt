@@ -1680,126 +1680,126 @@ public header inline fun CharArray.filter(predicate: (Char) -> Boolean): List<Ch
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun <T> Array<out T>.filterIndexed(predicate: (Int, T) -> Boolean): List<T>
+public header inline fun <T> Array<out T>.filterIndexed(predicate: (index: Int, T) -> Boolean): List<T>
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun ByteArray.filterIndexed(predicate: (Int, Byte) -> Boolean): List<Byte>
+public header inline fun ByteArray.filterIndexed(predicate: (index: Int, Byte) -> Boolean): List<Byte>
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun ShortArray.filterIndexed(predicate: (Int, Short) -> Boolean): List<Short>
+public header inline fun ShortArray.filterIndexed(predicate: (index: Int, Short) -> Boolean): List<Short>
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun IntArray.filterIndexed(predicate: (Int, Int) -> Boolean): List<Int>
+public header inline fun IntArray.filterIndexed(predicate: (index: Int, Int) -> Boolean): List<Int>
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun LongArray.filterIndexed(predicate: (Int, Long) -> Boolean): List<Long>
+public header inline fun LongArray.filterIndexed(predicate: (index: Int, Long) -> Boolean): List<Long>
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun FloatArray.filterIndexed(predicate: (Int, Float) -> Boolean): List<Float>
+public header inline fun FloatArray.filterIndexed(predicate: (index: Int, Float) -> Boolean): List<Float>
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun DoubleArray.filterIndexed(predicate: (Int, Double) -> Boolean): List<Double>
+public header inline fun DoubleArray.filterIndexed(predicate: (index: Int, Double) -> Boolean): List<Double>
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun BooleanArray.filterIndexed(predicate: (Int, Boolean) -> Boolean): List<Boolean>
+public header inline fun BooleanArray.filterIndexed(predicate: (index: Int, Boolean) -> Boolean): List<Boolean>
 
 /**
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun CharArray.filterIndexed(predicate: (Int, Char) -> Boolean): List<Char>
+public header inline fun CharArray.filterIndexed(predicate: (index: Int, Char) -> Boolean): List<Char>
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun <T, C : MutableCollection<in T>> Array<out T>.filterIndexedTo(destination: C, predicate: (Int, T) -> Boolean): C
+public header inline fun <T, C : MutableCollection<in T>> Array<out T>.filterIndexedTo(destination: C, predicate: (index: Int, T) -> Boolean): C
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun <C : MutableCollection<in Byte>> ByteArray.filterIndexedTo(destination: C, predicate: (Int, Byte) -> Boolean): C
+public header inline fun <C : MutableCollection<in Byte>> ByteArray.filterIndexedTo(destination: C, predicate: (index: Int, Byte) -> Boolean): C
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun <C : MutableCollection<in Short>> ShortArray.filterIndexedTo(destination: C, predicate: (Int, Short) -> Boolean): C
+public header inline fun <C : MutableCollection<in Short>> ShortArray.filterIndexedTo(destination: C, predicate: (index: Int, Short) -> Boolean): C
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun <C : MutableCollection<in Int>> IntArray.filterIndexedTo(destination: C, predicate: (Int, Int) -> Boolean): C
+public header inline fun <C : MutableCollection<in Int>> IntArray.filterIndexedTo(destination: C, predicate: (index: Int, Int) -> Boolean): C
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun <C : MutableCollection<in Long>> LongArray.filterIndexedTo(destination: C, predicate: (Int, Long) -> Boolean): C
+public header inline fun <C : MutableCollection<in Long>> LongArray.filterIndexedTo(destination: C, predicate: (index: Int, Long) -> Boolean): C
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun <C : MutableCollection<in Float>> FloatArray.filterIndexedTo(destination: C, predicate: (Int, Float) -> Boolean): C
+public header inline fun <C : MutableCollection<in Float>> FloatArray.filterIndexedTo(destination: C, predicate: (index: Int, Float) -> Boolean): C
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun <C : MutableCollection<in Double>> DoubleArray.filterIndexedTo(destination: C, predicate: (Int, Double) -> Boolean): C
+public header inline fun <C : MutableCollection<in Double>> DoubleArray.filterIndexedTo(destination: C, predicate: (index: Int, Double) -> Boolean): C
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterIndexedTo(destination: C, predicate: (Int, Boolean) -> Boolean): C
+public header inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterIndexedTo(destination: C, predicate: (index: Int, Boolean) -> Boolean): C
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun <C : MutableCollection<in Char>> CharArray.filterIndexedTo(destination: C, predicate: (Int, Char) -> Boolean): C
+public header inline fun <C : MutableCollection<in Char>> CharArray.filterIndexedTo(destination: C, predicate: (index: Int, Char) -> Boolean): C
 
 /**
  * Returns a list containing all elements that are instances of specified type parameter R.
@@ -4512,7 +4512,7 @@ public header inline fun <R> CharArray.map(transform: (Char) -> R): List<R>
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <T, R> Array<out T>.mapIndexed(transform: (Int, T) -> R): List<R>
+public header inline fun <T, R> Array<out T>.mapIndexed(transform: (index: Int, T) -> R): List<R>
 
 /**
  * Returns a list containing the results of applying the given [transform] function
@@ -4520,7 +4520,7 @@ public header inline fun <T, R> Array<out T>.mapIndexed(transform: (Int, T) -> R
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <R> ByteArray.mapIndexed(transform: (Int, Byte) -> R): List<R>
+public header inline fun <R> ByteArray.mapIndexed(transform: (index: Int, Byte) -> R): List<R>
 
 /**
  * Returns a list containing the results of applying the given [transform] function
@@ -4528,7 +4528,7 @@ public header inline fun <R> ByteArray.mapIndexed(transform: (Int, Byte) -> R): 
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <R> ShortArray.mapIndexed(transform: (Int, Short) -> R): List<R>
+public header inline fun <R> ShortArray.mapIndexed(transform: (index: Int, Short) -> R): List<R>
 
 /**
  * Returns a list containing the results of applying the given [transform] function
@@ -4536,7 +4536,7 @@ public header inline fun <R> ShortArray.mapIndexed(transform: (Int, Short) -> R)
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <R> IntArray.mapIndexed(transform: (Int, Int) -> R): List<R>
+public header inline fun <R> IntArray.mapIndexed(transform: (index: Int, Int) -> R): List<R>
 
 /**
  * Returns a list containing the results of applying the given [transform] function
@@ -4544,7 +4544,7 @@ public header inline fun <R> IntArray.mapIndexed(transform: (Int, Int) -> R): Li
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <R> LongArray.mapIndexed(transform: (Int, Long) -> R): List<R>
+public header inline fun <R> LongArray.mapIndexed(transform: (index: Int, Long) -> R): List<R>
 
 /**
  * Returns a list containing the results of applying the given [transform] function
@@ -4552,7 +4552,7 @@ public header inline fun <R> LongArray.mapIndexed(transform: (Int, Long) -> R): 
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <R> FloatArray.mapIndexed(transform: (Int, Float) -> R): List<R>
+public header inline fun <R> FloatArray.mapIndexed(transform: (index: Int, Float) -> R): List<R>
 
 /**
  * Returns a list containing the results of applying the given [transform] function
@@ -4560,7 +4560,7 @@ public header inline fun <R> FloatArray.mapIndexed(transform: (Int, Float) -> R)
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <R> DoubleArray.mapIndexed(transform: (Int, Double) -> R): List<R>
+public header inline fun <R> DoubleArray.mapIndexed(transform: (index: Int, Double) -> R): List<R>
 
 /**
  * Returns a list containing the results of applying the given [transform] function
@@ -4568,7 +4568,7 @@ public header inline fun <R> DoubleArray.mapIndexed(transform: (Int, Double) -> 
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <R> BooleanArray.mapIndexed(transform: (Int, Boolean) -> R): List<R>
+public header inline fun <R> BooleanArray.mapIndexed(transform: (index: Int, Boolean) -> R): List<R>
 
 /**
  * Returns a list containing the results of applying the given [transform] function
@@ -4576,7 +4576,7 @@ public header inline fun <R> BooleanArray.mapIndexed(transform: (Int, Boolean) -
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <R> CharArray.mapIndexed(transform: (Int, Char) -> R): List<R>
+public header inline fun <R> CharArray.mapIndexed(transform: (index: Int, Char) -> R): List<R>
 
 /**
  * Returns a list containing only the non-null results of applying the given [transform] function
@@ -4584,7 +4584,7 @@ public header inline fun <R> CharArray.mapIndexed(transform: (Int, Char) -> R): 
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <T, R : Any> Array<out T>.mapIndexedNotNull(transform: (Int, T) -> R?): List<R>
+public header inline fun <T, R : Any> Array<out T>.mapIndexedNotNull(transform: (index: Int, T) -> R?): List<R>
 
 /**
  * Applies the given [transform] function to each element and its index in the original array
@@ -4592,7 +4592,7 @@ public header inline fun <T, R : Any> Array<out T>.mapIndexedNotNull(transform: 
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <T, R : Any, C : MutableCollection<in R>> Array<out T>.mapIndexedNotNullTo(destination: C, transform: (Int, T) -> R?): C
+public header inline fun <T, R : Any, C : MutableCollection<in R>> Array<out T>.mapIndexedNotNullTo(destination: C, transform: (index: Int, T) -> R?): C
 
 /**
  * Applies the given [transform] function to each element and its index in the original array
@@ -4600,7 +4600,7 @@ public header inline fun <T, R : Any, C : MutableCollection<in R>> Array<out T>.
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapIndexedTo(destination: C, transform: (Int, T) -> R): C
+public header inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapIndexedTo(destination: C, transform: (index: Int, T) -> R): C
 
 /**
  * Applies the given [transform] function to each element and its index in the original array
@@ -4608,7 +4608,7 @@ public header inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapInd
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <R, C : MutableCollection<in R>> ByteArray.mapIndexedTo(destination: C, transform: (Int, Byte) -> R): C
+public header inline fun <R, C : MutableCollection<in R>> ByteArray.mapIndexedTo(destination: C, transform: (index: Int, Byte) -> R): C
 
 /**
  * Applies the given [transform] function to each element and its index in the original array
@@ -4616,7 +4616,7 @@ public header inline fun <R, C : MutableCollection<in R>> ByteArray.mapIndexedTo
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <R, C : MutableCollection<in R>> ShortArray.mapIndexedTo(destination: C, transform: (Int, Short) -> R): C
+public header inline fun <R, C : MutableCollection<in R>> ShortArray.mapIndexedTo(destination: C, transform: (index: Int, Short) -> R): C
 
 /**
  * Applies the given [transform] function to each element and its index in the original array
@@ -4624,7 +4624,7 @@ public header inline fun <R, C : MutableCollection<in R>> ShortArray.mapIndexedT
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <R, C : MutableCollection<in R>> IntArray.mapIndexedTo(destination: C, transform: (Int, Int) -> R): C
+public header inline fun <R, C : MutableCollection<in R>> IntArray.mapIndexedTo(destination: C, transform: (index: Int, Int) -> R): C
 
 /**
  * Applies the given [transform] function to each element and its index in the original array
@@ -4632,7 +4632,7 @@ public header inline fun <R, C : MutableCollection<in R>> IntArray.mapIndexedTo(
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <R, C : MutableCollection<in R>> LongArray.mapIndexedTo(destination: C, transform: (Int, Long) -> R): C
+public header inline fun <R, C : MutableCollection<in R>> LongArray.mapIndexedTo(destination: C, transform: (index: Int, Long) -> R): C
 
 /**
  * Applies the given [transform] function to each element and its index in the original array
@@ -4640,7 +4640,7 @@ public header inline fun <R, C : MutableCollection<in R>> LongArray.mapIndexedTo
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <R, C : MutableCollection<in R>> FloatArray.mapIndexedTo(destination: C, transform: (Int, Float) -> R): C
+public header inline fun <R, C : MutableCollection<in R>> FloatArray.mapIndexedTo(destination: C, transform: (index: Int, Float) -> R): C
 
 /**
  * Applies the given [transform] function to each element and its index in the original array
@@ -4648,7 +4648,7 @@ public header inline fun <R, C : MutableCollection<in R>> FloatArray.mapIndexedT
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <R, C : MutableCollection<in R>> DoubleArray.mapIndexedTo(destination: C, transform: (Int, Double) -> R): C
+public header inline fun <R, C : MutableCollection<in R>> DoubleArray.mapIndexedTo(destination: C, transform: (index: Int, Double) -> R): C
 
 /**
  * Applies the given [transform] function to each element and its index in the original array
@@ -4656,7 +4656,7 @@ public header inline fun <R, C : MutableCollection<in R>> DoubleArray.mapIndexed
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <R, C : MutableCollection<in R>> BooleanArray.mapIndexedTo(destination: C, transform: (Int, Boolean) -> R): C
+public header inline fun <R, C : MutableCollection<in R>> BooleanArray.mapIndexedTo(destination: C, transform: (index: Int, Boolean) -> R): C
 
 /**
  * Applies the given [transform] function to each element and its index in the original array
@@ -4664,7 +4664,7 @@ public header inline fun <R, C : MutableCollection<in R>> BooleanArray.mapIndexe
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <R, C : MutableCollection<in R>> CharArray.mapIndexedTo(destination: C, transform: (Int, Char) -> R): C
+public header inline fun <R, C : MutableCollection<in R>> CharArray.mapIndexedTo(destination: C, transform: (index: Int, Char) -> R): C
 
 /**
  * Returns a list containing only the non-null results of applying the given [transform] function
@@ -5419,47 +5419,47 @@ public header inline fun CharArray.count(predicate: (Char) -> Boolean): Int
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun <T, R> Array<out T>.fold(initial: R, operation: (R, T) -> R): R
+public header inline fun <T, R> Array<out T>.fold(initial: R, operation: (acc: R, T) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun <R> ByteArray.fold(initial: R, operation: (R, Byte) -> R): R
+public header inline fun <R> ByteArray.fold(initial: R, operation: (acc: R, Byte) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun <R> ShortArray.fold(initial: R, operation: (R, Short) -> R): R
+public header inline fun <R> ShortArray.fold(initial: R, operation: (acc: R, Short) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun <R> IntArray.fold(initial: R, operation: (R, Int) -> R): R
+public header inline fun <R> IntArray.fold(initial: R, operation: (acc: R, Int) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun <R> LongArray.fold(initial: R, operation: (R, Long) -> R): R
+public header inline fun <R> LongArray.fold(initial: R, operation: (acc: R, Long) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun <R> FloatArray.fold(initial: R, operation: (R, Float) -> R): R
+public header inline fun <R> FloatArray.fold(initial: R, operation: (acc: R, Float) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun <R> DoubleArray.fold(initial: R, operation: (R, Double) -> R): R
+public header inline fun <R> DoubleArray.fold(initial: R, operation: (acc: R, Double) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun <R> BooleanArray.fold(initial: R, operation: (R, Boolean) -> R): R
+public header inline fun <R> BooleanArray.fold(initial: R, operation: (acc: R, Boolean) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun <R> CharArray.fold(initial: R, operation: (R, Char) -> R): R
+public header inline fun <R> CharArray.fold(initial: R, operation: (acc: R, Char) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -5467,7 +5467,7 @@ public header inline fun <R> CharArray.fold(initial: R, operation: (R, Char) -> 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public header inline fun <T, R> Array<out T>.foldIndexed(initial: R, operation: (Int, R, T) -> R): R
+public header inline fun <T, R> Array<out T>.foldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -5475,7 +5475,7 @@ public header inline fun <T, R> Array<out T>.foldIndexed(initial: R, operation: 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public header inline fun <R> ByteArray.foldIndexed(initial: R, operation: (Int, R, Byte) -> R): R
+public header inline fun <R> ByteArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Byte) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -5483,7 +5483,7 @@ public header inline fun <R> ByteArray.foldIndexed(initial: R, operation: (Int, 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public header inline fun <R> ShortArray.foldIndexed(initial: R, operation: (Int, R, Short) -> R): R
+public header inline fun <R> ShortArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Short) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -5491,7 +5491,7 @@ public header inline fun <R> ShortArray.foldIndexed(initial: R, operation: (Int,
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public header inline fun <R> IntArray.foldIndexed(initial: R, operation: (Int, R, Int) -> R): R
+public header inline fun <R> IntArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Int) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -5499,7 +5499,7 @@ public header inline fun <R> IntArray.foldIndexed(initial: R, operation: (Int, R
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public header inline fun <R> LongArray.foldIndexed(initial: R, operation: (Int, R, Long) -> R): R
+public header inline fun <R> LongArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Long) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -5507,7 +5507,7 @@ public header inline fun <R> LongArray.foldIndexed(initial: R, operation: (Int, 
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public header inline fun <R> FloatArray.foldIndexed(initial: R, operation: (Int, R, Float) -> R): R
+public header inline fun <R> FloatArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Float) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -5515,7 +5515,7 @@ public header inline fun <R> FloatArray.foldIndexed(initial: R, operation: (Int,
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public header inline fun <R> DoubleArray.foldIndexed(initial: R, operation: (Int, R, Double) -> R): R
+public header inline fun <R> DoubleArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Double) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -5523,7 +5523,7 @@ public header inline fun <R> DoubleArray.foldIndexed(initial: R, operation: (Int
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public header inline fun <R> BooleanArray.foldIndexed(initial: R, operation: (Int, R, Boolean) -> R): R
+public header inline fun <R> BooleanArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Boolean) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -5531,52 +5531,52 @@ public header inline fun <R> BooleanArray.foldIndexed(initial: R, operation: (In
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public header inline fun <R> CharArray.foldIndexed(initial: R, operation: (Int, R, Char) -> R): R
+public header inline fun <R> CharArray.foldIndexed(initial: R, operation: (index: Int, acc: R, Char) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
-public header inline fun <T, R> Array<out T>.foldRight(initial: R, operation: (T, R) -> R): R
+public header inline fun <T, R> Array<out T>.foldRight(initial: R, operation: (T, acc: R) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
-public header inline fun <R> ByteArray.foldRight(initial: R, operation: (Byte, R) -> R): R
+public header inline fun <R> ByteArray.foldRight(initial: R, operation: (Byte, acc: R) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
-public header inline fun <R> ShortArray.foldRight(initial: R, operation: (Short, R) -> R): R
+public header inline fun <R> ShortArray.foldRight(initial: R, operation: (Short, acc: R) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
-public header inline fun <R> IntArray.foldRight(initial: R, operation: (Int, R) -> R): R
+public header inline fun <R> IntArray.foldRight(initial: R, operation: (Int, acc: R) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
-public header inline fun <R> LongArray.foldRight(initial: R, operation: (Long, R) -> R): R
+public header inline fun <R> LongArray.foldRight(initial: R, operation: (Long, acc: R) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
-public header inline fun <R> FloatArray.foldRight(initial: R, operation: (Float, R) -> R): R
+public header inline fun <R> FloatArray.foldRight(initial: R, operation: (Float, acc: R) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
-public header inline fun <R> DoubleArray.foldRight(initial: R, operation: (Double, R) -> R): R
+public header inline fun <R> DoubleArray.foldRight(initial: R, operation: (Double, acc: R) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
-public header inline fun <R> BooleanArray.foldRight(initial: R, operation: (Boolean, R) -> R): R
+public header inline fun <R> BooleanArray.foldRight(initial: R, operation: (Boolean, acc: R) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
-public header inline fun <R> CharArray.foldRight(initial: R, operation: (Char, R) -> R): R
+public header inline fun <R> CharArray.foldRight(initial: R, operation: (Char, acc: R) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
@@ -5584,7 +5584,7 @@ public header inline fun <R> CharArray.foldRight(initial: R, operation: (Char, R
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public header inline fun <T, R> Array<out T>.foldRightIndexed(initial: R, operation: (Int, T, R) -> R): R
+public header inline fun <T, R> Array<out T>.foldRightIndexed(initial: R, operation: (index: Int, T, acc: R) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
@@ -5592,7 +5592,7 @@ public header inline fun <T, R> Array<out T>.foldRightIndexed(initial: R, operat
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public header inline fun <R> ByteArray.foldRightIndexed(initial: R, operation: (Int, Byte, R) -> R): R
+public header inline fun <R> ByteArray.foldRightIndexed(initial: R, operation: (index: Int, Byte, acc: R) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
@@ -5600,7 +5600,7 @@ public header inline fun <R> ByteArray.foldRightIndexed(initial: R, operation: (
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public header inline fun <R> ShortArray.foldRightIndexed(initial: R, operation: (Int, Short, R) -> R): R
+public header inline fun <R> ShortArray.foldRightIndexed(initial: R, operation: (index: Int, Short, acc: R) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
@@ -5608,7 +5608,7 @@ public header inline fun <R> ShortArray.foldRightIndexed(initial: R, operation: 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public header inline fun <R> IntArray.foldRightIndexed(initial: R, operation: (Int, Int, R) -> R): R
+public header inline fun <R> IntArray.foldRightIndexed(initial: R, operation: (index: Int, Int, acc: R) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
@@ -5616,7 +5616,7 @@ public header inline fun <R> IntArray.foldRightIndexed(initial: R, operation: (I
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public header inline fun <R> LongArray.foldRightIndexed(initial: R, operation: (Int, Long, R) -> R): R
+public header inline fun <R> LongArray.foldRightIndexed(initial: R, operation: (index: Int, Long, acc: R) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
@@ -5624,7 +5624,7 @@ public header inline fun <R> LongArray.foldRightIndexed(initial: R, operation: (
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public header inline fun <R> FloatArray.foldRightIndexed(initial: R, operation: (Int, Float, R) -> R): R
+public header inline fun <R> FloatArray.foldRightIndexed(initial: R, operation: (index: Int, Float, acc: R) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
@@ -5632,7 +5632,7 @@ public header inline fun <R> FloatArray.foldRightIndexed(initial: R, operation: 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public header inline fun <R> DoubleArray.foldRightIndexed(initial: R, operation: (Int, Double, R) -> R): R
+public header inline fun <R> DoubleArray.foldRightIndexed(initial: R, operation: (index: Int, Double, acc: R) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
@@ -5640,7 +5640,7 @@ public header inline fun <R> DoubleArray.foldRightIndexed(initial: R, operation:
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public header inline fun <R> BooleanArray.foldRightIndexed(initial: R, operation: (Int, Boolean, R) -> R): R
+public header inline fun <R> BooleanArray.foldRightIndexed(initial: R, operation: (index: Int, Boolean, acc: R) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
@@ -5648,7 +5648,7 @@ public header inline fun <R> BooleanArray.foldRightIndexed(initial: R, operation
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public header inline fun <R> CharArray.foldRightIndexed(initial: R, operation: (Int, Char, R) -> R): R
+public header inline fun <R> CharArray.foldRightIndexed(initial: R, operation: (index: Int, Char, acc: R) -> R): R
 
 /**
  * Performs the given [action] on each element.
@@ -5700,63 +5700,63 @@ public header inline fun CharArray.forEach(action: (Char) -> Unit): Unit
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public header inline fun <T> Array<out T>.forEachIndexed(action: (Int, T) -> Unit): Unit
+public header inline fun <T> Array<out T>.forEachIndexed(action: (index: Int, T) -> Unit): Unit
 
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public header inline fun ByteArray.forEachIndexed(action: (Int, Byte) -> Unit): Unit
+public header inline fun ByteArray.forEachIndexed(action: (index: Int, Byte) -> Unit): Unit
 
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public header inline fun ShortArray.forEachIndexed(action: (Int, Short) -> Unit): Unit
+public header inline fun ShortArray.forEachIndexed(action: (index: Int, Short) -> Unit): Unit
 
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public header inline fun IntArray.forEachIndexed(action: (Int, Int) -> Unit): Unit
+public header inline fun IntArray.forEachIndexed(action: (index: Int, Int) -> Unit): Unit
 
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public header inline fun LongArray.forEachIndexed(action: (Int, Long) -> Unit): Unit
+public header inline fun LongArray.forEachIndexed(action: (index: Int, Long) -> Unit): Unit
 
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public header inline fun FloatArray.forEachIndexed(action: (Int, Float) -> Unit): Unit
+public header inline fun FloatArray.forEachIndexed(action: (index: Int, Float) -> Unit): Unit
 
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public header inline fun DoubleArray.forEachIndexed(action: (Int, Double) -> Unit): Unit
+public header inline fun DoubleArray.forEachIndexed(action: (index: Int, Double) -> Unit): Unit
 
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public header inline fun BooleanArray.forEachIndexed(action: (Int, Boolean) -> Unit): Unit
+public header inline fun BooleanArray.forEachIndexed(action: (index: Int, Boolean) -> Unit): Unit
 
 /**
  * Performs the given [action] on each element, providing sequential index with the element.
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public header inline fun CharArray.forEachIndexed(action: (Int, Char) -> Unit): Unit
+public header inline fun CharArray.forEachIndexed(action: (index: Int, Char) -> Unit): Unit
 
 /**
  * Returns the largest element or `null` if there are no elements.
@@ -6151,47 +6151,47 @@ public header inline fun CharArray.none(predicate: (Char) -> Boolean): Boolean
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun <S, T: S> Array<out T>.reduce(operation: (S, T) -> S): S
+public header inline fun <S, T: S> Array<out T>.reduce(operation: (acc: S, T) -> S): S
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun ByteArray.reduce(operation: (Byte, Byte) -> Byte): Byte
+public header inline fun ByteArray.reduce(operation: (acc: Byte, Byte) -> Byte): Byte
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun ShortArray.reduce(operation: (Short, Short) -> Short): Short
+public header inline fun ShortArray.reduce(operation: (acc: Short, Short) -> Short): Short
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun IntArray.reduce(operation: (Int, Int) -> Int): Int
+public header inline fun IntArray.reduce(operation: (acc: Int, Int) -> Int): Int
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun LongArray.reduce(operation: (Long, Long) -> Long): Long
+public header inline fun LongArray.reduce(operation: (acc: Long, Long) -> Long): Long
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun FloatArray.reduce(operation: (Float, Float) -> Float): Float
+public header inline fun FloatArray.reduce(operation: (acc: Float, Float) -> Float): Float
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun DoubleArray.reduce(operation: (Double, Double) -> Double): Double
+public header inline fun DoubleArray.reduce(operation: (acc: Double, Double) -> Double): Double
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun BooleanArray.reduce(operation: (Boolean, Boolean) -> Boolean): Boolean
+public header inline fun BooleanArray.reduce(operation: (acc: Boolean, Boolean) -> Boolean): Boolean
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun CharArray.reduce(operation: (Char, Char) -> Char): Char
+public header inline fun CharArray.reduce(operation: (acc: Char, Char) -> Char): Char
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
@@ -6199,7 +6199,7 @@ public header inline fun CharArray.reduce(operation: (Char, Char) -> Char): Char
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public header inline fun <S, T: S> Array<out T>.reduceIndexed(operation: (Int, S, T) -> S): S
+public header inline fun <S, T: S> Array<out T>.reduceIndexed(operation: (index: Int, acc: S, T) -> S): S
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
@@ -6207,7 +6207,7 @@ public header inline fun <S, T: S> Array<out T>.reduceIndexed(operation: (Int, S
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public header inline fun ByteArray.reduceIndexed(operation: (Int, Byte, Byte) -> Byte): Byte
+public header inline fun ByteArray.reduceIndexed(operation: (index: Int, acc: Byte, Byte) -> Byte): Byte
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
@@ -6215,7 +6215,7 @@ public header inline fun ByteArray.reduceIndexed(operation: (Int, Byte, Byte) ->
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public header inline fun ShortArray.reduceIndexed(operation: (Int, Short, Short) -> Short): Short
+public header inline fun ShortArray.reduceIndexed(operation: (index: Int, acc: Short, Short) -> Short): Short
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
@@ -6223,7 +6223,7 @@ public header inline fun ShortArray.reduceIndexed(operation: (Int, Short, Short)
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public header inline fun IntArray.reduceIndexed(operation: (Int, Int, Int) -> Int): Int
+public header inline fun IntArray.reduceIndexed(operation: (index: Int, acc: Int, Int) -> Int): Int
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
@@ -6231,7 +6231,7 @@ public header inline fun IntArray.reduceIndexed(operation: (Int, Int, Int) -> In
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public header inline fun LongArray.reduceIndexed(operation: (Int, Long, Long) -> Long): Long
+public header inline fun LongArray.reduceIndexed(operation: (index: Int, acc: Long, Long) -> Long): Long
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
@@ -6239,7 +6239,7 @@ public header inline fun LongArray.reduceIndexed(operation: (Int, Long, Long) ->
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public header inline fun FloatArray.reduceIndexed(operation: (Int, Float, Float) -> Float): Float
+public header inline fun FloatArray.reduceIndexed(operation: (index: Int, acc: Float, Float) -> Float): Float
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
@@ -6247,7 +6247,7 @@ public header inline fun FloatArray.reduceIndexed(operation: (Int, Float, Float)
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public header inline fun DoubleArray.reduceIndexed(operation: (Int, Double, Double) -> Double): Double
+public header inline fun DoubleArray.reduceIndexed(operation: (index: Int, acc: Double, Double) -> Double): Double
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
@@ -6255,7 +6255,7 @@ public header inline fun DoubleArray.reduceIndexed(operation: (Int, Double, Doub
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public header inline fun BooleanArray.reduceIndexed(operation: (Int, Boolean, Boolean) -> Boolean): Boolean
+public header inline fun BooleanArray.reduceIndexed(operation: (index: Int, acc: Boolean, Boolean) -> Boolean): Boolean
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
@@ -6263,52 +6263,52 @@ public header inline fun BooleanArray.reduceIndexed(operation: (Int, Boolean, Bo
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public header inline fun CharArray.reduceIndexed(operation: (Int, Char, Char) -> Char): Char
+public header inline fun CharArray.reduceIndexed(operation: (index: Int, acc: Char, Char) -> Char): Char
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public header inline fun <S, T: S> Array<out T>.reduceRight(operation: (T, S) -> S): S
+public header inline fun <S, T: S> Array<out T>.reduceRight(operation: (T, acc: S) -> S): S
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public header inline fun ByteArray.reduceRight(operation: (Byte, Byte) -> Byte): Byte
+public header inline fun ByteArray.reduceRight(operation: (Byte, acc: Byte) -> Byte): Byte
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public header inline fun ShortArray.reduceRight(operation: (Short, Short) -> Short): Short
+public header inline fun ShortArray.reduceRight(operation: (Short, acc: Short) -> Short): Short
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public header inline fun IntArray.reduceRight(operation: (Int, Int) -> Int): Int
+public header inline fun IntArray.reduceRight(operation: (Int, acc: Int) -> Int): Int
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public header inline fun LongArray.reduceRight(operation: (Long, Long) -> Long): Long
+public header inline fun LongArray.reduceRight(operation: (Long, acc: Long) -> Long): Long
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public header inline fun FloatArray.reduceRight(operation: (Float, Float) -> Float): Float
+public header inline fun FloatArray.reduceRight(operation: (Float, acc: Float) -> Float): Float
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public header inline fun DoubleArray.reduceRight(operation: (Double, Double) -> Double): Double
+public header inline fun DoubleArray.reduceRight(operation: (Double, acc: Double) -> Double): Double
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public header inline fun BooleanArray.reduceRight(operation: (Boolean, Boolean) -> Boolean): Boolean
+public header inline fun BooleanArray.reduceRight(operation: (Boolean, acc: Boolean) -> Boolean): Boolean
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public header inline fun CharArray.reduceRight(operation: (Char, Char) -> Char): Char
+public header inline fun CharArray.reduceRight(operation: (Char, acc: Char) -> Char): Char
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left
@@ -6316,7 +6316,7 @@ public header inline fun CharArray.reduceRight(operation: (Char, Char) -> Char):
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public header inline fun <S, T: S> Array<out T>.reduceRightIndexed(operation: (Int, T, S) -> S): S
+public header inline fun <S, T: S> Array<out T>.reduceRightIndexed(operation: (index: Int, T, acc: S) -> S): S
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left
@@ -6324,7 +6324,7 @@ public header inline fun <S, T: S> Array<out T>.reduceRightIndexed(operation: (I
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public header inline fun ByteArray.reduceRightIndexed(operation: (Int, Byte, Byte) -> Byte): Byte
+public header inline fun ByteArray.reduceRightIndexed(operation: (index: Int, Byte, acc: Byte) -> Byte): Byte
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left
@@ -6332,7 +6332,7 @@ public header inline fun ByteArray.reduceRightIndexed(operation: (Int, Byte, Byt
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public header inline fun ShortArray.reduceRightIndexed(operation: (Int, Short, Short) -> Short): Short
+public header inline fun ShortArray.reduceRightIndexed(operation: (index: Int, Short, acc: Short) -> Short): Short
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left
@@ -6340,7 +6340,7 @@ public header inline fun ShortArray.reduceRightIndexed(operation: (Int, Short, S
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public header inline fun IntArray.reduceRightIndexed(operation: (Int, Int, Int) -> Int): Int
+public header inline fun IntArray.reduceRightIndexed(operation: (index: Int, Int, acc: Int) -> Int): Int
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left
@@ -6348,7 +6348,7 @@ public header inline fun IntArray.reduceRightIndexed(operation: (Int, Int, Int) 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public header inline fun LongArray.reduceRightIndexed(operation: (Int, Long, Long) -> Long): Long
+public header inline fun LongArray.reduceRightIndexed(operation: (index: Int, Long, acc: Long) -> Long): Long
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left
@@ -6356,7 +6356,7 @@ public header inline fun LongArray.reduceRightIndexed(operation: (Int, Long, Lon
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public header inline fun FloatArray.reduceRightIndexed(operation: (Int, Float, Float) -> Float): Float
+public header inline fun FloatArray.reduceRightIndexed(operation: (index: Int, Float, acc: Float) -> Float): Float
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left
@@ -6364,7 +6364,7 @@ public header inline fun FloatArray.reduceRightIndexed(operation: (Int, Float, F
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public header inline fun DoubleArray.reduceRightIndexed(operation: (Int, Double, Double) -> Double): Double
+public header inline fun DoubleArray.reduceRightIndexed(operation: (index: Int, Double, acc: Double) -> Double): Double
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left
@@ -6372,7 +6372,7 @@ public header inline fun DoubleArray.reduceRightIndexed(operation: (Int, Double,
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public header inline fun BooleanArray.reduceRightIndexed(operation: (Int, Boolean, Boolean) -> Boolean): Boolean
+public header inline fun BooleanArray.reduceRightIndexed(operation: (index: Int, Boolean, acc: Boolean) -> Boolean): Boolean
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left
@@ -6380,7 +6380,7 @@ public header inline fun BooleanArray.reduceRightIndexed(operation: (Int, Boolea
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public header inline fun CharArray.reduceRightIndexed(operation: (Int, Char, Char) -> Char): Char
+public header inline fun CharArray.reduceRightIndexed(operation: (index: Int, Char, acc: Char) -> Char): Char
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
@@ -6588,47 +6588,47 @@ public header infix fun <R> CharArray.zip(other: Array<out R>): List<Pair<Char, 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <T, R, V> Array<out T>.zip(other: Array<out R>, transform: (T, R) -> V): List<V>
+public header inline fun <T, R, V> Array<out T>.zip(other: Array<out R>, transform: (a: T, b: R) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <R, V> ByteArray.zip(other: Array<out R>, transform: (Byte, R) -> V): List<V>
+public header inline fun <R, V> ByteArray.zip(other: Array<out R>, transform: (a: Byte, b: R) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <R, V> ShortArray.zip(other: Array<out R>, transform: (Short, R) -> V): List<V>
+public header inline fun <R, V> ShortArray.zip(other: Array<out R>, transform: (a: Short, b: R) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <R, V> IntArray.zip(other: Array<out R>, transform: (Int, R) -> V): List<V>
+public header inline fun <R, V> IntArray.zip(other: Array<out R>, transform: (a: Int, b: R) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <R, V> LongArray.zip(other: Array<out R>, transform: (Long, R) -> V): List<V>
+public header inline fun <R, V> LongArray.zip(other: Array<out R>, transform: (a: Long, b: R) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <R, V> FloatArray.zip(other: Array<out R>, transform: (Float, R) -> V): List<V>
+public header inline fun <R, V> FloatArray.zip(other: Array<out R>, transform: (a: Float, b: R) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <R, V> DoubleArray.zip(other: Array<out R>, transform: (Double, R) -> V): List<V>
+public header inline fun <R, V> DoubleArray.zip(other: Array<out R>, transform: (a: Double, b: R) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <R, V> BooleanArray.zip(other: Array<out R>, transform: (Boolean, R) -> V): List<V>
+public header inline fun <R, V> BooleanArray.zip(other: Array<out R>, transform: (a: Boolean, b: R) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <R, V> CharArray.zip(other: Array<out R>, transform: (Char, R) -> V): List<V>
+public header inline fun <R, V> CharArray.zip(other: Array<out R>, transform: (a: Char, b: R) -> V): List<V>
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
@@ -6678,47 +6678,47 @@ public header infix fun <R> CharArray.zip(other: Iterable<R>): List<Pair<Char, R
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <T, R, V> Array<out T>.zip(other: Iterable<R>, transform: (T, R) -> V): List<V>
+public header inline fun <T, R, V> Array<out T>.zip(other: Iterable<R>, transform: (a: T, b: R) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <R, V> ByteArray.zip(other: Iterable<R>, transform: (Byte, R) -> V): List<V>
+public header inline fun <R, V> ByteArray.zip(other: Iterable<R>, transform: (a: Byte, b: R) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <R, V> ShortArray.zip(other: Iterable<R>, transform: (Short, R) -> V): List<V>
+public header inline fun <R, V> ShortArray.zip(other: Iterable<R>, transform: (a: Short, b: R) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <R, V> IntArray.zip(other: Iterable<R>, transform: (Int, R) -> V): List<V>
+public header inline fun <R, V> IntArray.zip(other: Iterable<R>, transform: (a: Int, b: R) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <R, V> LongArray.zip(other: Iterable<R>, transform: (Long, R) -> V): List<V>
+public header inline fun <R, V> LongArray.zip(other: Iterable<R>, transform: (a: Long, b: R) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <R, V> FloatArray.zip(other: Iterable<R>, transform: (Float, R) -> V): List<V>
+public header inline fun <R, V> FloatArray.zip(other: Iterable<R>, transform: (a: Float, b: R) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <R, V> DoubleArray.zip(other: Iterable<R>, transform: (Double, R) -> V): List<V>
+public header inline fun <R, V> DoubleArray.zip(other: Iterable<R>, transform: (a: Double, b: R) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <R, V> BooleanArray.zip(other: Iterable<R>, transform: (Boolean, R) -> V): List<V>
+public header inline fun <R, V> BooleanArray.zip(other: Iterable<R>, transform: (a: Boolean, b: R) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <R, V> CharArray.zip(other: Iterable<R>, transform: (Char, R) -> V): List<V>
+public header inline fun <R, V> CharArray.zip(other: Iterable<R>, transform: (a: Char, b: R) -> V): List<V>
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
@@ -6763,42 +6763,42 @@ public header infix fun CharArray.zip(other: CharArray): List<Pair<Char, Char>>
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <V> ByteArray.zip(other: ByteArray, transform: (Byte, Byte) -> V): List<V>
+public header inline fun <V> ByteArray.zip(other: ByteArray, transform: (a: Byte, b: Byte) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <V> ShortArray.zip(other: ShortArray, transform: (Short, Short) -> V): List<V>
+public header inline fun <V> ShortArray.zip(other: ShortArray, transform: (a: Short, b: Short) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <V> IntArray.zip(other: IntArray, transform: (Int, Int) -> V): List<V>
+public header inline fun <V> IntArray.zip(other: IntArray, transform: (a: Int, b: Int) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <V> LongArray.zip(other: LongArray, transform: (Long, Long) -> V): List<V>
+public header inline fun <V> LongArray.zip(other: LongArray, transform: (a: Long, b: Long) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <V> FloatArray.zip(other: FloatArray, transform: (Float, Float) -> V): List<V>
+public header inline fun <V> FloatArray.zip(other: FloatArray, transform: (a: Float, b: Float) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <V> DoubleArray.zip(other: DoubleArray, transform: (Double, Double) -> V): List<V>
+public header inline fun <V> DoubleArray.zip(other: DoubleArray, transform: (a: Double, b: Double) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <V> BooleanArray.zip(other: BooleanArray, transform: (Boolean, Boolean) -> V): List<V>
+public header inline fun <V> BooleanArray.zip(other: BooleanArray, transform: (a: Boolean, b: Boolean) -> V): List<V>
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <V> CharArray.zip(other: CharArray, transform: (Char, Char) -> V): List<V>
+public header inline fun <V> CharArray.zip(other: CharArray, transform: (a: Char, b: Char) -> V): List<V>
 
 /**
  * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.

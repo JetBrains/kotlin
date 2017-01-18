@@ -23,7 +23,7 @@ fun mapping(): List<GenericFunction> {
         }
     }
 
-    templates add f("mapIndexed(transform: (Int, T) -> R)") {
+    templates add f("mapIndexed(transform: (index: Int, T) -> R)") {
         inline(true)
 
         doc { f ->
@@ -107,7 +107,7 @@ fun mapping(): List<GenericFunction> {
 
     }
 
-    templates add f("mapIndexedNotNull(transform: (Int, T) -> R?)") {
+    templates add f("mapIndexedNotNull(transform: (index: Int, T) -> R?)") {
         inline(true)
         include(CharSequences)
         exclude(ArraysOfPrimitives)
@@ -155,7 +155,7 @@ fun mapping(): List<GenericFunction> {
         include(Maps, CharSequences)
     }
 
-    templates add f("mapIndexedTo(destination: C, transform: (Int, T) -> R)") {
+    templates add f("mapIndexedTo(destination: C, transform: (index: Int, T) -> R)") {
         inline(true)
 
         doc { f ->
@@ -202,7 +202,7 @@ fun mapping(): List<GenericFunction> {
         }
     }
 
-    templates add f("mapIndexedNotNullTo(destination: C, transform: (Int, T) -> R?)") {
+    templates add f("mapIndexedNotNullTo(destination: C, transform: (index: Int, T) -> R?)") {
         inline(true)
         include(CharSequences)
         exclude(ArraysOfPrimitives)

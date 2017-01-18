@@ -306,7 +306,7 @@ public inline fun String.filter(predicate: (Char) -> Boolean): String {
  * @param [predicate] function that takes the index of a character and the character itself
  * and returns the result of predicate evaluation on the character.
  */
-public inline fun CharSequence.filterIndexed(predicate: (Int, Char) -> Boolean): CharSequence {
+public inline fun CharSequence.filterIndexed(predicate: (index: Int, Char) -> Boolean): CharSequence {
     return filterIndexedTo(StringBuilder(), predicate)
 }
 
@@ -315,7 +315,7 @@ public inline fun CharSequence.filterIndexed(predicate: (Int, Char) -> Boolean):
  * @param [predicate] function that takes the index of a character and the character itself
  * and returns the result of predicate evaluation on the character.
  */
-public inline fun String.filterIndexed(predicate: (Int, Char) -> Boolean): String {
+public inline fun String.filterIndexed(predicate: (index: Int, Char) -> Boolean): String {
     return filterIndexedTo(StringBuilder(), predicate).toString()
 }
 
@@ -324,7 +324,7 @@ public inline fun String.filterIndexed(predicate: (Int, Char) -> Boolean): Strin
  * @param [predicate] function that takes the index of a character and the character itself
  * and returns the result of predicate evaluation on the character.
  */
-public inline fun <C : Appendable> CharSequence.filterIndexedTo(destination: C, predicate: (Int, Char) -> Boolean): C {
+public inline fun <C : Appendable> CharSequence.filterIndexedTo(destination: C, predicate: (index: Int, Char) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.append(element)
     }
@@ -727,7 +727,7 @@ public inline fun <R> CharSequence.map(transform: (Char) -> R): List<R> {
  * @param [transform] function that takes the index of a character and the character itself
  * and returns the result of the transform applied to the character.
  */
-public inline fun <R> CharSequence.mapIndexed(transform: (Int, Char) -> R): List<R> {
+public inline fun <R> CharSequence.mapIndexed(transform: (index: Int, Char) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(length), transform)
 }
 
@@ -737,7 +737,7 @@ public inline fun <R> CharSequence.mapIndexed(transform: (Int, Char) -> R): List
  * @param [transform] function that takes the index of a character and the character itself
  * and returns the result of the transform applied to the character.
  */
-public inline fun <R : Any> CharSequence.mapIndexedNotNull(transform: (Int, Char) -> R?): List<R> {
+public inline fun <R : Any> CharSequence.mapIndexedNotNull(transform: (index: Int, Char) -> R?): List<R> {
     return mapIndexedNotNullTo(ArrayList<R>(), transform)
 }
 
@@ -747,7 +747,7 @@ public inline fun <R : Any> CharSequence.mapIndexedNotNull(transform: (Int, Char
  * @param [transform] function that takes the index of a character and the character itself
  * and returns the result of the transform applied to the character.
  */
-public inline fun <R : Any, C : MutableCollection<in R>> CharSequence.mapIndexedNotNullTo(destination: C, transform: (Int, Char) -> R?): C {
+public inline fun <R : Any, C : MutableCollection<in R>> CharSequence.mapIndexedNotNullTo(destination: C, transform: (index: Int, Char) -> R?): C {
     forEachIndexed { index, element -> transform(index, element)?.let { destination.add(it) } }
     return destination
 }
@@ -758,7 +758,7 @@ public inline fun <R : Any, C : MutableCollection<in R>> CharSequence.mapIndexed
  * @param [transform] function that takes the index of a character and the character itself
  * and returns the result of the transform applied to the character.
  */
-public inline fun <R, C : MutableCollection<in R>> CharSequence.mapIndexedTo(destination: C, transform: (Int, Char) -> R): C {
+public inline fun <R, C : MutableCollection<in R>> CharSequence.mapIndexedTo(destination: C, transform: (index: Int, Char) -> R): C {
     var index = 0
     for (item in this)
         destination.add(transform(index++, item))
@@ -843,7 +843,7 @@ public inline fun CharSequence.count(predicate: (Char) -> Boolean): Int {
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each character.
  */
-public inline fun <R> CharSequence.fold(initial: R, operation: (R, Char) -> R): R {
+public inline fun <R> CharSequence.fold(initial: R, operation: (acc: R, Char) -> R): R {
     var accumulator = initial
     for (element in this) accumulator = operation(accumulator, element)
     return accumulator
@@ -855,7 +855,7 @@ public inline fun <R> CharSequence.fold(initial: R, operation: (R, Char) -> R): 
  * @param [operation] function that takes the index of a character, current accumulator value
  * and the character itself, and calculates the next accumulator value.
  */
-public inline fun <R> CharSequence.foldIndexed(initial: R, operation: (Int, R, Char) -> R): R {
+public inline fun <R> CharSequence.foldIndexed(initial: R, operation: (index: Int, acc: R, Char) -> R): R {
     var index = 0
     var accumulator = initial
     for (element in this) accumulator = operation(index++, accumulator, element)
@@ -865,7 +865,7 @@ public inline fun <R> CharSequence.foldIndexed(initial: R, operation: (Int, R, C
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each character and current accumulator value.
  */
-public inline fun <R> CharSequence.foldRight(initial: R, operation: (Char, R) -> R): R {
+public inline fun <R> CharSequence.foldRight(initial: R, operation: (Char, acc: R) -> R): R {
     var index = lastIndex
     var accumulator = initial
     while (index >= 0) {
@@ -880,7 +880,7 @@ public inline fun <R> CharSequence.foldRight(initial: R, operation: (Char, R) ->
  * @param [operation] function that takes the index of a character, the character itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public inline fun <R> CharSequence.foldRightIndexed(initial: R, operation: (Int, Char, R) -> R): R {
+public inline fun <R> CharSequence.foldRightIndexed(initial: R, operation: (index: Int, Char, acc: R) -> R): R {
     var index = lastIndex
     var accumulator = initial
     while (index >= 0) {
@@ -902,7 +902,7 @@ public inline fun CharSequence.forEach(action: (Char) -> Unit): Unit {
  * @param [action] function that takes the index of a character and the character itself
  * and performs the desired action on the character.
  */
-public inline fun CharSequence.forEachIndexed(action: (Int, Char) -> Unit): Unit {
+public inline fun CharSequence.forEachIndexed(action: (index: Int, Char) -> Unit): Unit {
     var index = 0
     for (item in this) action(index++, item)
 }
@@ -1022,7 +1022,7 @@ public inline fun <S : CharSequence> S.onEach(action: (Char) -> Unit): S {
 /**
  * Accumulates value starting with the first character and applying [operation] from left to right to current accumulator value and each character.
  */
-public inline fun CharSequence.reduce(operation: (Char, Char) -> Char): Char {
+public inline fun CharSequence.reduce(operation: (acc: Char, Char) -> Char): Char {
     if (isEmpty())
         throw UnsupportedOperationException("Empty char sequence can't be reduced.")
     var accumulator = this[0]
@@ -1038,7 +1038,7 @@ public inline fun CharSequence.reduce(operation: (Char, Char) -> Char): Char {
  * @param [operation] function that takes the index of a character, current accumulator value
  * and the character itself and calculates the next accumulator value.
  */
-public inline fun CharSequence.reduceIndexed(operation: (Int, Char, Char) -> Char): Char {
+public inline fun CharSequence.reduceIndexed(operation: (index: Int, acc: Char, Char) -> Char): Char {
     if (isEmpty())
         throw UnsupportedOperationException("Empty char sequence can't be reduced.")
     var accumulator = this[0]
@@ -1051,7 +1051,7 @@ public inline fun CharSequence.reduceIndexed(operation: (Int, Char, Char) -> Cha
 /**
  * Accumulates value starting with last character and applying [operation] from right to left to each character and current accumulator value.
  */
-public inline fun CharSequence.reduceRight(operation: (Char, Char) -> Char): Char {
+public inline fun CharSequence.reduceRight(operation: (Char, acc: Char) -> Char): Char {
     var index = lastIndex
     if (index < 0) throw UnsupportedOperationException("Empty char sequence can't be reduced.")
     var accumulator = get(index--)
@@ -1067,7 +1067,7 @@ public inline fun CharSequence.reduceRight(operation: (Char, Char) -> Char): Cha
  * @param [operation] function that takes the index of a character, the character itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public inline fun CharSequence.reduceRightIndexed(operation: (Int, Char, Char) -> Char): Char {
+public inline fun CharSequence.reduceRightIndexed(operation: (index: Int, Char, acc: Char) -> Char): Char {
     var index = lastIndex
     if (index < 0) throw UnsupportedOperationException("Empty char sequence can't be reduced.")
     var accumulator = get(index--)
@@ -1146,7 +1146,7 @@ public infix fun CharSequence.zip(other: CharSequence): List<Pair<Char, Char>> {
 /**
  * Returns a list of values built from characters of both char sequences with same indexes using provided [transform]. List has length of shortest char sequence.
  */
-public inline fun <V> CharSequence.zip(other: CharSequence, transform: (Char, Char) -> V): List<V> {
+public inline fun <V> CharSequence.zip(other: CharSequence, transform: (a: Char, b: Char) -> V): List<V> {
     val length = minOf(this.length, other.length)
     val list = ArrayList<V>(length)
     for (i in 0..length-1) {

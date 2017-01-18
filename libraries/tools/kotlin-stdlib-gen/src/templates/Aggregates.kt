@@ -351,7 +351,7 @@ fun aggregates(): List<GenericFunction> {
         body(Maps) { "return entries.maxWith(comparator)" }
     }
 
-    templates add f("foldIndexed(initial: R, operation: (Int, R, T) -> R)") {
+    templates add f("foldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R)") {
         inline(true)
 
         include(CharSequences)
@@ -375,7 +375,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("foldRightIndexed(initial: R, operation: (Int, T, R) -> R)") {
+    templates add f("foldRightIndexed(initial: R, operation: (index: Int, T, acc: R) -> R)") {
         inline(true)
 
         only(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
@@ -415,7 +415,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("fold(initial: R, operation: (R, T) -> R)") {
+    templates add f("fold(initial: R, operation: (acc: R, T) -> R)") {
         inline(true)
 
         include(CharSequences)
@@ -431,7 +431,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("foldRight(initial: R, operation: (T, R) -> R)") {
+    templates add f("foldRight(initial: R, operation: (T, acc: R) -> R)") {
         inline(true)
 
         only(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
@@ -462,7 +462,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("reduceIndexed(operation: (Int, T, T) -> T)") {
+    templates add f("reduceIndexed(operation: (index: Int, acc: T, T) -> T)") {
         inline(true)
         only(ArraysOfPrimitives, CharSequences)
 
@@ -489,7 +489,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("reduceIndexed(operation: (Int, S, T) -> S)") {
+    templates add f("reduceIndexed(operation: (index: Int, acc: S, T) -> S)") {
         inline(true)
         only(ArraysOfObjects, Iterables, Sequences)
 
@@ -531,7 +531,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("reduceRightIndexed(operation: (Int, T, T) -> T)") {
+    templates add f("reduceRightIndexed(operation: (index: Int, T, acc: T) -> T)") {
         inline(true)
 
         only(CharSequences, ArraysOfPrimitives)
@@ -560,7 +560,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("reduceRightIndexed(operation: (Int, T, S) -> S)") {
+    templates add f("reduceRightIndexed(operation: (index: Int, T, acc: S) -> S)") {
         inline(true)
 
         only(Lists, ArraysOfObjects)
@@ -606,7 +606,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("reduce(operation: (T, T) -> T)") {
+    templates add f("reduce(operation: (acc: T, T) -> T)") {
         inline(true)
         only(ArraysOfPrimitives, CharSequences)
 
@@ -626,7 +626,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("reduce(operation: (S, T) -> S)") {
+    templates add f("reduce(operation: (acc: S, T) -> S)") {
         inline(true)
         only(ArraysOfObjects, Iterables, Sequences)
 
@@ -660,7 +660,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("reduceRight(operation: (T, T) -> T)") {
+    templates add f("reduceRight(operation: (T, acc: T) -> T)") {
         inline(true)
 
         only(CharSequences, ArraysOfPrimitives)
@@ -681,7 +681,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("reduceRight(operation: (T, S) -> S)") {
+    templates add f("reduceRight(operation: (T, acc: S) -> S)") {
         inline(true)
 
         only(Lists, ArraysOfObjects)
@@ -773,7 +773,7 @@ fun aggregates(): List<GenericFunction> {
         include(Maps, CharSequences)
     }
 
-    templates add f("forEachIndexed(action: (Int, T) -> Unit)") {
+    templates add f("forEachIndexed(action: (index: Int, T) -> Unit)") {
         inline(true)
         include(CharSequences)
         doc { f ->

@@ -63,7 +63,7 @@ header interface Comparator<T> {
     fun compare(a: T, b: T): Int
 }
 
-header inline fun <T> Comparator(crossinline comparison: (T, T) -> Int): Comparator<T>
+header inline fun <T> Comparator(crossinline comparison: (a: T, b: T) -> Int): Comparator<T>
 
 // From kotlin.kt
 

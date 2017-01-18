@@ -617,7 +617,7 @@ public inline fun <T> Iterable<T>.filter(predicate: (T) -> Boolean): List<T> {
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public inline fun <T> Iterable<T>.filterIndexed(predicate: (Int, T) -> Boolean): List<T> {
+public inline fun <T> Iterable<T>.filterIndexed(predicate: (index: Int, T) -> Boolean): List<T> {
     return filterIndexedTo(ArrayList<T>(), predicate)
 }
 
@@ -626,7 +626,7 @@ public inline fun <T> Iterable<T>.filterIndexed(predicate: (Int, T) -> Boolean):
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterIndexedTo(destination: C, predicate: (Int, T) -> Boolean): C {
+public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterIndexedTo(destination: C, predicate: (index: Int, T) -> Boolean): C {
     forEachIndexed { index, element ->
         if (predicate(index, element)) destination.add(element)
     }
@@ -1218,7 +1218,7 @@ public inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {
  * and returns the result of the transform applied to the element.
  */
 @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-public inline fun <T, R> Iterable<T>.mapIndexed(transform: (Int, T) -> R): List<R> {
+public inline fun <T, R> Iterable<T>.mapIndexed(transform: (index: Int, T) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)
 }
 
@@ -1228,7 +1228,7 @@ public inline fun <T, R> Iterable<T>.mapIndexed(transform: (Int, T) -> R): List<
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public inline fun <T, R : Any> Iterable<T>.mapIndexedNotNull(transform: (Int, T) -> R?): List<R> {
+public inline fun <T, R : Any> Iterable<T>.mapIndexedNotNull(transform: (index: Int, T) -> R?): List<R> {
     return mapIndexedNotNullTo(ArrayList<R>(), transform)
 }
 
@@ -1238,7 +1238,7 @@ public inline fun <T, R : Any> Iterable<T>.mapIndexedNotNull(transform: (Int, T)
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.mapIndexedNotNullTo(destination: C, transform: (Int, T) -> R?): C {
+public inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.mapIndexedNotNullTo(destination: C, transform: (index: Int, T) -> R?): C {
     forEachIndexed { index, element -> transform(index, element)?.let { destination.add(it) } }
     return destination
 }
@@ -1249,7 +1249,7 @@ public inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.mapIndex
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapIndexedTo(destination: C, transform: (Int, T) -> R): C {
+public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapIndexedTo(destination: C, transform: (index: Int, T) -> R): C {
     var index = 0
     for (item in this)
         destination.add(transform(index++, item))
@@ -1416,7 +1416,7 @@ public inline fun <T> Iterable<T>.count(predicate: (T) -> Boolean): Int {
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public inline fun <T, R> Iterable<T>.fold(initial: R, operation: (R, T) -> R): R {
+public inline fun <T, R> Iterable<T>.fold(initial: R, operation: (acc: R, T) -> R): R {
     var accumulator = initial
     for (element in this) accumulator = operation(accumulator, element)
     return accumulator
@@ -1428,7 +1428,7 @@ public inline fun <T, R> Iterable<T>.fold(initial: R, operation: (R, T) -> R): R
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public inline fun <T, R> Iterable<T>.foldIndexed(initial: R, operation: (Int, R, T) -> R): R {
+public inline fun <T, R> Iterable<T>.foldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): R {
     var index = 0
     var accumulator = initial
     for (element in this) accumulator = operation(index++, accumulator, element)
@@ -1438,7 +1438,7 @@ public inline fun <T, R> Iterable<T>.foldIndexed(initial: R, operation: (Int, R,
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
-public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, R) -> R): R {
+public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, acc: R) -> R): R {
     var accumulator = initial
     if (!isEmpty()) {
         val iterator = listIterator(size)
@@ -1455,7 +1455,7 @@ public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, R) -> R): 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public inline fun <T, R> List<T>.foldRightIndexed(initial: R, operation: (Int, T, R) -> R): R {
+public inline fun <T, R> List<T>.foldRightIndexed(initial: R, operation: (index: Int, T, acc: R) -> R): R {
     var accumulator = initial
     if (!isEmpty()) {
         val iterator = listIterator(size)
@@ -1480,7 +1480,7 @@ public inline fun <T> Iterable<T>.forEach(action: (T) -> Unit): Unit {
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public inline fun <T> Iterable<T>.forEachIndexed(action: (Int, T) -> Unit): Unit {
+public inline fun <T> Iterable<T>.forEachIndexed(action: (index: Int, T) -> Unit): Unit {
     var index = 0
     for (item in this) action(index++, item)
 }
@@ -1682,7 +1682,7 @@ public inline fun <T, C : Iterable<T>> C.onEach(action: (T) -> Unit): C {
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public inline fun <S, T: S> Iterable<T>.reduce(operation: (S, T) -> S): S {
+public inline fun <S, T: S> Iterable<T>.reduce(operation: (acc: S, T) -> S): S {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty collection can't be reduced.")
     var accumulator: S = iterator.next()
@@ -1698,7 +1698,7 @@ public inline fun <S, T: S> Iterable<T>.reduce(operation: (S, T) -> S): S {
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public inline fun <S, T: S> Iterable<T>.reduceIndexed(operation: (Int, S, T) -> S): S {
+public inline fun <S, T: S> Iterable<T>.reduceIndexed(operation: (index: Int, acc: S, T) -> S): S {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty collection can't be reduced.")
     var index = 1
@@ -1712,7 +1712,7 @@ public inline fun <S, T: S> Iterable<T>.reduceIndexed(operation: (Int, S, T) -> 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public inline fun <S, T: S> List<T>.reduceRight(operation: (T, S) -> S): S {
+public inline fun <S, T: S> List<T>.reduceRight(operation: (T, acc: S) -> S): S {
     val iterator = listIterator(size)
     if (!iterator.hasPrevious())
         throw UnsupportedOperationException("Empty list can't be reduced.")
@@ -1729,7 +1729,7 @@ public inline fun <S, T: S> List<T>.reduceRight(operation: (T, S) -> S): S {
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public inline fun <S, T: S> List<T>.reduceRightIndexed(operation: (Int, T, S) -> S): S {
+public inline fun <S, T: S> List<T>.reduceRightIndexed(operation: (index: Int, T, acc: S) -> S): S {
     val iterator = listIterator(size)
     if (!iterator.hasPrevious())
         throw UnsupportedOperationException("Empty list can't be reduced.")
@@ -1968,7 +1968,7 @@ public infix fun <T, R> Iterable<T>.zip(other: Array<out R>): List<Pair<T, R>> {
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public inline fun <T, R, V> Iterable<T>.zip(other: Array<out R>, transform: (T, R) -> V): List<V> {
+public inline fun <T, R, V> Iterable<T>.zip(other: Array<out R>, transform: (a: T, b: R) -> V): List<V> {
     val arraySize = other.size
     val list = ArrayList<V>(minOf(collectionSizeOrDefault(10), arraySize))
     var i = 0
@@ -1989,7 +1989,7 @@ public infix fun <T, R> Iterable<T>.zip(other: Iterable<R>): List<Pair<T, R>> {
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (T, R) -> V): List<V> {
+public inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (a: T, b: R) -> V): List<V> {
     val first = iterator()
     val second = other.iterator()
     val list = ArrayList<V>(minOf(collectionSizeOrDefault(10), other.collectionSizeOrDefault(10)))

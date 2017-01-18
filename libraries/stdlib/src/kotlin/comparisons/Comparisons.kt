@@ -196,7 +196,7 @@ public inline fun <T, K> Comparator<T>.thenByDescending(comparator: Comparator<i
  * Creates a comparator using the primary comparator and function to calculate a result of comparison.
  */
 @kotlin.internal.InlineOnly
-public inline fun <T> Comparator<T>.thenComparator(crossinline comparison: (T, T) -> Int): Comparator<T> {
+public inline fun <T> Comparator<T>.thenComparator(crossinline comparison: (a: T, b: T) -> Int): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int {
             val previousCompare = this@thenComparator.compare(a, b)

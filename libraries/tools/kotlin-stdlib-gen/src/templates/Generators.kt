@@ -530,7 +530,7 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-    templates add f("zip(other: Iterable<R>, transform: (T, R) -> V)") {
+    templates add f("zip(other: Iterable<R>, transform: (a: T, b: R) -> V)") {
         exclude(Sequences)
         doc {
             """
@@ -566,7 +566,7 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-    templates add f("zip(other: Array<out R>, transform: (T, R) -> V)") {
+    templates add f("zip(other: Array<out R>, transform: (a: T, b: R) -> V)") {
         exclude(Sequences)
         doc {
             """
@@ -602,7 +602,7 @@ fun generators(): List<GenericFunction> {
 
     }
 
-    templates add f("zip(other: SELF, transform: (T, T) -> V)") {
+    templates add f("zip(other: SELF, transform: (a: T, b: T) -> V)") {
         only(ArraysOfPrimitives)
         doc {
             """
@@ -624,7 +624,7 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-    templates add f("zip(other: Sequence<R>, transform: (T, R) -> V)") {
+    templates add f("zip(other: Sequence<R>, transform: (a: T, b: R) -> V)") {
         only(Sequences)
         doc {
             """
@@ -641,7 +641,7 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-    templates add f("zip(other: CharSequence, transform: (Char, Char) -> V)") {
+    templates add f("zip(other: CharSequence, transform: (a: Char, b: Char) -> V)") {
         only(CharSequences)
         doc {
             """

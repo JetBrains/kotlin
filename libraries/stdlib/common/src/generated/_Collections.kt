@@ -284,14 +284,14 @@ public header inline fun <T> Iterable<T>.filter(predicate: (T) -> Boolean): List
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun <T> Iterable<T>.filterIndexed(predicate: (Int, T) -> Boolean): List<T>
+public header inline fun <T> Iterable<T>.filterIndexed(predicate: (index: Int, T) -> Boolean): List<T>
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterIndexedTo(destination: C, predicate: (Int, T) -> Boolean): C
+public header inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterIndexedTo(destination: C, predicate: (index: Int, T) -> Boolean): C
 
 /**
  * Returns a list containing all elements that are instances of specified type parameter R.
@@ -608,7 +608,7 @@ public header inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R>
  * and returns the result of the transform applied to the element.
  */
 @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
-public header inline fun <T, R> Iterable<T>.mapIndexed(transform: (Int, T) -> R): List<R>
+public header inline fun <T, R> Iterable<T>.mapIndexed(transform: (index: Int, T) -> R): List<R>
 
 /**
  * Returns a list containing only the non-null results of applying the given [transform] function
@@ -616,7 +616,7 @@ public header inline fun <T, R> Iterable<T>.mapIndexed(transform: (Int, T) -> R)
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <T, R : Any> Iterable<T>.mapIndexedNotNull(transform: (Int, T) -> R?): List<R>
+public header inline fun <T, R : Any> Iterable<T>.mapIndexedNotNull(transform: (index: Int, T) -> R?): List<R>
 
 /**
  * Applies the given [transform] function to each element and its index in the original collection
@@ -624,7 +624,7 @@ public header inline fun <T, R : Any> Iterable<T>.mapIndexedNotNull(transform: (
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.mapIndexedNotNullTo(destination: C, transform: (Int, T) -> R?): C
+public header inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.mapIndexedNotNullTo(destination: C, transform: (index: Int, T) -> R?): C
 
 /**
  * Applies the given [transform] function to each element and its index in the original collection
@@ -632,7 +632,7 @@ public header inline fun <T, R : Any, C : MutableCollection<in R>> Iterable<T>.m
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapIndexedTo(destination: C, transform: (Int, T) -> R): C
+public header inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapIndexedTo(destination: C, transform: (index: Int, T) -> R): C
 
 /**
  * Returns a list containing only the non-null results of applying the given [transform] function
@@ -736,7 +736,7 @@ public header inline fun <T> Iterable<T>.count(predicate: (T) -> Boolean): Int
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun <T, R> Iterable<T>.fold(initial: R, operation: (R, T) -> R): R
+public header inline fun <T, R> Iterable<T>.fold(initial: R, operation: (acc: R, T) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -744,12 +744,12 @@ public header inline fun <T, R> Iterable<T>.fold(initial: R, operation: (R, T) -
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public header inline fun <T, R> Iterable<T>.foldIndexed(initial: R, operation: (Int, R, T) -> R): R
+public header inline fun <T, R> Iterable<T>.foldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
-public header inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, R) -> R): R
+public header inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, acc: R) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from right to left
@@ -757,7 +757,7 @@ public header inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, R) 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public header inline fun <T, R> List<T>.foldRightIndexed(initial: R, operation: (Int, T, R) -> R): R
+public header inline fun <T, R> List<T>.foldRightIndexed(initial: R, operation: (index: Int, T, acc: R) -> R): R
 
 /**
  * Performs the given [action] on each element.
@@ -770,7 +770,7 @@ public header inline fun <T> Iterable<T>.forEach(action: (T) -> Unit): Unit
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public header inline fun <T> Iterable<T>.forEachIndexed(action: (Int, T) -> Unit): Unit
+public header inline fun <T> Iterable<T>.forEachIndexed(action: (index: Int, T) -> Unit): Unit
 
 /**
  * Returns the largest element or `null` if there are no elements.
@@ -853,7 +853,7 @@ public header inline fun <T, C : Iterable<T>> C.onEach(action: (T) -> Unit): C
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun <S, T: S> Iterable<T>.reduce(operation: (S, T) -> S): S
+public header inline fun <S, T: S> Iterable<T>.reduce(operation: (acc: S, T) -> S): S
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
@@ -861,12 +861,12 @@ public header inline fun <S, T: S> Iterable<T>.reduce(operation: (S, T) -> S): S
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public header inline fun <S, T: S> Iterable<T>.reduceIndexed(operation: (Int, S, T) -> S): S
+public header inline fun <S, T: S> Iterable<T>.reduceIndexed(operation: (index: Int, acc: S, T) -> S): S
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
-public header inline fun <S, T: S> List<T>.reduceRight(operation: (T, S) -> S): S
+public header inline fun <S, T: S> List<T>.reduceRight(operation: (T, acc: S) -> S): S
 
 /**
  * Accumulates value starting with last element and applying [operation] from right to left
@@ -874,7 +874,7 @@ public header inline fun <S, T: S> List<T>.reduceRight(operation: (T, S) -> S): 
  * @param [operation] function that takes the index of an element, the element itself
  * and current accumulator value, and calculates the next accumulator value.
  */
-public header inline fun <S, T: S> List<T>.reduceRightIndexed(operation: (Int, T, S) -> S): S
+public header inline fun <S, T: S> List<T>.reduceRightIndexed(operation: (index: Int, T, acc: S) -> S): S
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
@@ -989,7 +989,7 @@ public header infix fun <T, R> Iterable<T>.zip(other: Array<out R>): List<Pair<T
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <T, R, V> Iterable<T>.zip(other: Array<out R>, transform: (T, R) -> V): List<V>
+public header inline fun <T, R, V> Iterable<T>.zip(other: Array<out R>, transform: (a: T, b: R) -> V): List<V>
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
@@ -999,7 +999,7 @@ public header infix fun <T, R> Iterable<T>.zip(other: Iterable<R>): List<Pair<T,
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public header inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (T, R) -> V): List<V>
+public header inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (a: T, b: R) -> V): List<V>
 
 /**
  * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.

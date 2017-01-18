@@ -21,6 +21,6 @@ public interface Comparator<T> {
     @JsName("compare") fun compare(a: T, b: T): Int
 }
 
-public inline fun <T> Comparator(crossinline comparison: (T, T) -> Int): Comparator<T> = object : Comparator<T> {
+public inline fun <T> Comparator(crossinline comparison: (a: T, b: T) -> Int): Comparator<T> = object : Comparator<T> {
     override fun compare(a: T, b: T): Int = comparison(a, b)
 }

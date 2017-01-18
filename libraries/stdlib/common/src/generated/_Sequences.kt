@@ -146,14 +146,14 @@ public header fun <T> Sequence<T>.filter(predicate: (T) -> Boolean): Sequence<T>
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header fun <T> Sequence<T>.filterIndexed(predicate: (Int, T) -> Boolean): Sequence<T>
+public header fun <T> Sequence<T>.filterIndexed(predicate: (index: Int, T) -> Boolean): Sequence<T>
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  */
-public header inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterIndexedTo(destination: C, predicate: (Int, T) -> Boolean): C
+public header inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterIndexedTo(destination: C, predicate: (index: Int, T) -> Boolean): C
 
 /**
  * Returns a sequence containing all elements that are instances of specified type parameter R.
@@ -378,7 +378,7 @@ public header fun <T, R> Sequence<T>.map(transform: (T) -> R): Sequence<R>
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header fun <T, R> Sequence<T>.mapIndexed(transform: (Int, T) -> R): Sequence<R>
+public header fun <T, R> Sequence<T>.mapIndexed(transform: (index: Int, T) -> R): Sequence<R>
 
 /**
  * Returns a sequence containing only the non-null results of applying the given [transform] function
@@ -386,7 +386,7 @@ public header fun <T, R> Sequence<T>.mapIndexed(transform: (Int, T) -> R): Seque
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header fun <T, R : Any> Sequence<T>.mapIndexedNotNull(transform: (Int, T) -> R?): Sequence<R>
+public header fun <T, R : Any> Sequence<T>.mapIndexedNotNull(transform: (index: Int, T) -> R?): Sequence<R>
 
 /**
  * Applies the given [transform] function to each element and its index in the original sequence
@@ -394,7 +394,7 @@ public header fun <T, R : Any> Sequence<T>.mapIndexedNotNull(transform: (Int, T)
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <T, R : Any, C : MutableCollection<in R>> Sequence<T>.mapIndexedNotNullTo(destination: C, transform: (Int, T) -> R?): C
+public header inline fun <T, R : Any, C : MutableCollection<in R>> Sequence<T>.mapIndexedNotNullTo(destination: C, transform: (index: Int, T) -> R?): C
 
 /**
  * Applies the given [transform] function to each element and its index in the original sequence
@@ -402,7 +402,7 @@ public header inline fun <T, R : Any, C : MutableCollection<in R>> Sequence<T>.m
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
-public header inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.mapIndexedTo(destination: C, transform: (Int, T) -> R): C
+public header inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.mapIndexedTo(destination: C, transform: (index: Int, T) -> R): C
 
 /**
  * Returns a sequence containing only the non-null results of applying the given [transform] function
@@ -477,7 +477,7 @@ public header inline fun <T> Sequence<T>.count(predicate: (T) -> Boolean): Int
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun <T, R> Sequence<T>.fold(initial: R, operation: (R, T) -> R): R
+public header inline fun <T, R> Sequence<T>.fold(initial: R, operation: (acc: R, T) -> R): R
 
 /**
  * Accumulates value starting with [initial] value and applying [operation] from left to right
@@ -485,7 +485,7 @@ public header inline fun <T, R> Sequence<T>.fold(initial: R, operation: (R, T) -
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself, and calculates the next accumulator value.
  */
-public header inline fun <T, R> Sequence<T>.foldIndexed(initial: R, operation: (Int, R, T) -> R): R
+public header inline fun <T, R> Sequence<T>.foldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): R
 
 /**
  * Performs the given [action] on each element.
@@ -497,7 +497,7 @@ public header inline fun <T> Sequence<T>.forEach(action: (T) -> Unit): Unit
  * @param [action] function that takes the index of an element and the element itself
  * and performs the desired action on the element.
  */
-public header inline fun <T> Sequence<T>.forEachIndexed(action: (Int, T) -> Unit): Unit
+public header inline fun <T> Sequence<T>.forEachIndexed(action: (index: Int, T) -> Unit): Unit
 
 /**
  * Returns the largest element or `null` if there are no elements.
@@ -580,7 +580,7 @@ public header fun <T> Sequence<T>.onEach(action: (T) -> Unit): Sequence<T>
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
-public header inline fun <S, T: S> Sequence<T>.reduce(operation: (S, T) -> S): S
+public header inline fun <S, T: S> Sequence<T>.reduce(operation: (acc: S, T) -> S): S
 
 /**
  * Accumulates value starting with the first element and applying [operation] from left to right
@@ -588,7 +588,7 @@ public header inline fun <S, T: S> Sequence<T>.reduce(operation: (S, T) -> S): S
  * @param [operation] function that takes the index of an element, current accumulator value
  * and the element itself and calculates the next accumulator value.
  */
-public header inline fun <S, T: S> Sequence<T>.reduceIndexed(operation: (Int, S, T) -> S): S
+public header inline fun <S, T: S> Sequence<T>.reduceIndexed(operation: (index: Int, acc: S, T) -> S): S
 
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the sequence.
@@ -691,7 +691,7 @@ public header infix fun <T, R> Sequence<T>.zip(other: Sequence<R>): Sequence<Pai
 /**
  * Returns a sequence of values built from elements of both collections with same indexes using provided [transform]. Resulting sequence has length of shortest input sequences.
  */
-public header fun <T, R, V> Sequence<T>.zip(other: Sequence<R>, transform: (T, R) -> V): Sequence<V>
+public header fun <T, R, V> Sequence<T>.zip(other: Sequence<R>, transform: (a: T, b: R) -> V): Sequence<V>
 
 /**
  * Appends the string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
