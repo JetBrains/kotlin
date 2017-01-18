@@ -1,15 +1,14 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.ir.IrInlineFunctionBody
 import org.jetbrains.kotlin.backend.konan.ir.getArguments
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
@@ -34,7 +33,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         val endOffset   = copyFuncDeclaration.endOffset
         val returnType  = copyFuncDeclaration.descriptor.returnType!!
         val statements  = body.statements
-        val irBlock     = IrBlockImpl(startOffset, endOffset, returnType, null, statements) // Create IrBlock containing function statements.
+        val irBlock     = IrInlineFunctionBody(startOffset, endOffset, returnType, null, statements)
 
         val parameterToExpression = expression.getArguments()                               // Build map parameter -> expression.
         val parametersTransformer = ParametersTransformer(parameterToExpression)
@@ -53,14 +52,6 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 internal class ParametersTransformer(val parameterToExpression: List <Pair<ParameterDescriptor, IrExpression>>): IrElementTransformerVoid() {
 
     override fun visitElement(element: IrElement) = element.accept(this, null)
-
-    //-------------------------------------------------------------------------//
-
-    override fun visitReturn(expression: IrReturn): IrExpression {
-
-        val transformedExpression = super.visitReturn(expression) as IrReturn
-        return transformedExpression.value
-    }
 
     //-------------------------------------------------------------------------//
 

@@ -629,6 +629,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             is IrThrow               -> return evaluateThrow              (value)
             is IrTry                 -> return evaluateTry                (value)
             is IrStringConcatenation -> return evaluateStringConcatenation(value)
+            is IrInlineFunctionBody  -> return evaluateInlineFunction     (value)
             is IrContainerExpression -> return evaluateContainerExpression(value)
             is IrWhileLoop           -> return evaluateWhileLoop          (value)
             is IrDoWhileLoop         -> return evaluateDoWhileLoop        (value)
@@ -741,7 +742,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
      */
     private fun continuationBlock(type: KotlinType,
                                   code: (ContinuationBlock) -> Unit = {}): ContinuationBlock {
-        val entry = codegen.basicBlock()
+        val entry = codegen.basicBlock("continuation_block")
 
         codegen.appendingTo(entry) {
             val valuePhi = if (type.isUnit()) {
@@ -1475,6 +1476,65 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         currentCodeContext.genReturn(target, ret)
         return codegen.kNothingFakeValue
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private inner class InlinedFunctionScope(val inlineBody: IrInlineFunctionBody) : InnerScopeImpl() {
+
+        var bbExit : LLVMBasicBlockRef? = null
+        var resultPhi : LLVMValueRef? = null
+
+        fun getExit(): LLVMBasicBlockRef? {
+            if (bbExit == null) bbExit = codegen.basicBlock("inline_body_exit")
+            return bbExit
+        }
+
+        fun getResult(): LLVMValueRef? {
+            if (resultPhi == null) {
+                val bbCurrent = codegen.currentBlock
+                codegen.positionAtEnd(getExit()!!)
+                resultPhi = codegen.phi(codegen.getLLVMType(inlineBody.type))
+                codegen.positionAtEnd(bbCurrent)
+            }
+            return resultPhi
+        }
+
+        override fun genReturn(target: CallableDescriptor, value: LLVMValueRef?) {
+            if (KotlinBuiltIns.isUnit(inlineBody.type) == false) {
+                codegen.assignPhis(getResult()!! to value!!)
+            }
+            codegen.br(getExit()!!)
+        }
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun evaluateInlineFunction(value: IrInlineFunctionBody): LLVMValueRef {
+        context.log("evaluateInlineFunction              : ${value.statements.forEach { ir2string(it) }}")
+
+        val inlinedFunctionScope = InlinedFunctionScope(value)
+        using(inlinedFunctionScope) {
+            value.statements.forEach {
+                generateStatement(it)
+            }
+        }
+
+        if (!codegen.isAfterTerminator()) {                     // TODO should we solve this problem once and for all
+            if (inlinedFunctionScope.resultPhi != null) {
+                codegen.unreachable()
+            }
+        }
+
+        if (inlinedFunctionScope.bbExit != null) {
+            codegen.positionAtEnd(inlinedFunctionScope.bbExit!!)
+        }
+
+        if (inlinedFunctionScope.resultPhi != null) {
+            return inlinedFunctionScope.resultPhi!!
+        } else {
+            return codegen.theUnitInstanceRef.llvm
+        }
     }
 
     //-------------------------------------------------------------------------//
