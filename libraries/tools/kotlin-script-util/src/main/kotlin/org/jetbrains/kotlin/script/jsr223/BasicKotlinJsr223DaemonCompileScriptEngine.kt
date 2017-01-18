@@ -28,15 +28,16 @@ import java.io.OutputStream
 import javax.script.ScriptContext
 import javax.script.ScriptEngineFactory
 import javax.script.ScriptException
+import kotlin.reflect.KClass
 
-class KotlinJsr223JvmDaemonCompileScriptEngine(
+class BasicKotlinJsr223DaemonCompileScriptEngine(
         disposable: Disposable,
         factory: ScriptEngineFactory,
         compilerJar: File,
         templateClasspath: List<File>,
         templateClassName: String,
-        getScriptArgs: (ScriptContext) -> Array<Any?>?,
-        scriptArgsTypes: Array<Class<*>>?,
+        getScriptArgs: (ScriptContext, Array<out KClass<out Any>>?) -> ScriptArgsWithTypes?,
+        scriptArgsTypes: Array<out KClass<out Any>>?,
         compilerOut: OutputStream = System.err
 ) : KotlinJsr223JvmScriptEngineBase(factory), KotlinJsr223JvmInvocableScriptEngine {
 
@@ -56,20 +57,18 @@ class KotlinJsr223JvmDaemonCompileScriptEngine(
     }
 
     // TODO: bindings passing works only once on the first eval, subsequent setContext/setBindings call have no effect. Consider making it dynamic, but take history into account
-    val localEvaluator by lazy { GenericReplCompiledEvaluator(templateClasspath, Thread.currentThread().contextClassLoader, getScriptArgs(getContext()), scriptArgsTypes) }
+    val localEvaluator by lazy { GenericReplCompilingEvaluator(replCompiler, templateClasspath, Thread.currentThread().contextClassLoader, getScriptArgs(getContext(), scriptArgsTypes)) }
 
-    override val replEvaluator: ReplCompiledEvaluator get() = localEvaluator
-    override val replScriptEvaluator: ReplEvaluatorBase get() = localEvaluator
-}
+    override val replScriptEvaluator: ReplFullEvaluator get() = localEvaluator
 
+    private fun connectToCompileService(compilerJar: File): CompileService {
+        val compilerId = CompilerId.makeCompilerId(compilerJar)
+        val daemonOptions = configureDaemonOptions()
+        val daemonJVMOptions = DaemonJVMOptions()
 
-private fun connectToCompileService(compilerJar: File): CompileService {
-    val compilerId = CompilerId.makeCompilerId(compilerJar)
-    val daemonOptions = configureDaemonOptions()
-    val daemonJVMOptions = DaemonJVMOptions()
+        val daemonReportMessages = arrayListOf<DaemonReportMessage>()
 
-    val daemonReportMessages = arrayListOf<DaemonReportMessage>()
-
-    return KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(null, daemonReportMessages), true, true)
-            ?: throw ScriptException("Unable to connect to repl server:" + daemonReportMessages.joinToString("\n  ", prefix = "\n  ") { "${it.category.name} ${it.message}" })
+        return KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(null, daemonReportMessages), true, true)
+               ?: throw ScriptException("Unable to connect to repl server:" + daemonReportMessages.joinToString("\n  ", prefix = "\n  ") { "${it.category.name} ${it.message}" })
+    }
 }

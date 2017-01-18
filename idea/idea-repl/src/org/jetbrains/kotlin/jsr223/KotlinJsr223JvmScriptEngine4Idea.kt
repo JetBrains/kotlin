@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.jsr223
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.cli.common.repl.GenericReplCompiledEvaluator
-import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineBase
-import org.jetbrains.kotlin.cli.common.repl.ReplCompiledEvaluator
-import org.jetbrains.kotlin.cli.common.repl.ReplCompiler
+import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
@@ -31,14 +28,15 @@ import java.io.File
 import javax.script.ScriptContext
 import javax.script.ScriptEngineFactory
 import javax.script.ScriptException
+import kotlin.reflect.KClass
 
 class KotlinJsr223JvmScriptEngine4Idea(
         disposable: Disposable,
         factory: ScriptEngineFactory,
         templateClasspath: List<File>,
         templateClassName: String,
-        getScriptArgs: (ScriptContext) -> Array<Any?>?,
-        scriptArgsTypes: Array<Class<*>>?
+        private val getScriptArgs: (ScriptContext, Array<out KClass<out Any>>?) -> ScriptArgsWithTypes?,
+        private val scriptArgsTypes: Array<out KClass<out Any>>?
 ) : KotlinJsr223JvmScriptEngineBase(factory) {
 
     private val daemon by lazy {
@@ -66,8 +64,10 @@ class KotlinJsr223JvmScriptEngine4Idea(
         }
     }
 
-    // TODO: bindings passing works only once on the first eval, subsequent setContext/setBindings call have no effect. Consider making it dynamic, but take history into account
-    val localEvaluator: ReplCompiledEvaluator by lazy { GenericReplCompiledEvaluator(templateClasspath, Thread.currentThread().contextClassLoader, getScriptArgs(getContext()), scriptArgsTypes) }
+    override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? =
+            getScriptArgs(getContext(), scriptArgsTypes)
 
-    override val replEvaluator: ReplCompiledEvaluator get() = localEvaluator
+    val localEvaluator: ReplFullEvaluator by lazy { GenericReplCompilingEvaluator(replCompiler, templateClasspath, Thread.currentThread().contextClassLoader) }
+
+    override val replScriptEvaluator: ReplFullEvaluator get() = localEvaluator
 }

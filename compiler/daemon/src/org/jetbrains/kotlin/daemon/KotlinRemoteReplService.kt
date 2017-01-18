@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompiler
-import org.jetbrains.kotlin.cli.jvm.repl.compileAndEval
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.daemon.common.DummyProfiler
@@ -40,12 +39,10 @@ open class KotlinJvmReplService(
         disposable: Disposable,
         templateClasspath: List<File>,
         templateClassName: String,
-        scriptArgs: Array<Any?>?,
-        scriptArgsTypes: Array<Class<*>>?,
+        protected val fallbackScriptArgs: ScriptArgsWithTypes?,
         compilerOutputStreamProxy: RemoteOutputStream,
-        val operationsTracer: RemoteOperationsTracer?
-) : ReplCompiler, ReplEvaluator {
-
+        protected val operationsTracer: RemoteOperationsTracer?
+) : ReplCompileAction, ReplAtomicEvalAction, ReplCheckAction, ReplEvaluatorExposedInternalHistory {
     protected val compilerMessagesStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(compilerOutputStreamProxy, DummyProfiler()), REMOTE_STREAM_BUFFER_SIZE))
 
     protected class KeepFirstErrorMessageCollector(compilerMessagesStream: PrintStream) : MessageCollector {
@@ -105,23 +102,24 @@ open class KotlinJvmReplService(
 
     private val scriptDef = makeScriptDefinition(templateClasspath, templateClassName)
 
-    private val replCompiler : GenericReplCompiler? by lazy {
+    private val replCompiler: ReplCompiler? by lazy {
         if (scriptDef == null) null
         else GenericReplCompiler(disposable, scriptDef, configuration, messageCollector)
     }
 
-    private val compiledEvaluator : GenericReplCompiledEvaluator by lazy {
-        GenericReplCompiledEvaluator(configuration.jvmClasspathRoots, null, scriptArgs, scriptArgsTypes)
+    private val replEvaluator: ReplFullEvaluator? by lazy {
+        replCompiler?.let { compiler ->
+            GenericReplCompilingEvaluator(compiler, configuration.jvmClasspathRoots, null, fallbackScriptArgs, ReplRepeatingMode.NONE)
+        }
     }
 
-    override val lastEvaluatedScript: ClassWithInstance? get() = compiledEvaluator.lastEvaluatedScript
+    override val lastEvaluatedScripts: List<EvalHistoryType> get() = replEvaluator?.lastEvaluatedScripts ?: emptyList()
 
-    override fun check(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplCheckResult {
+    override fun check(codeLine: ReplCodeLine): ReplCheckResponse {
         operationsTracer?.before("check")
         try {
-            return replCompiler?.check(codeLine, history)
-                   ?: ReplCheckResult.Error(history,
-                                            messageCollector.firstErrorMessage ?: "Unknown error",
+            return replCompiler?.check(codeLine)
+                   ?: ReplCheckResponse.Error(messageCollector.firstErrorMessage ?: "Unknown error",
                                             messageCollector.firstErrorLocation ?: CompilerMessageLocation.NO_LOCATION)
         }
         finally {
@@ -129,11 +127,11 @@ open class KotlinJvmReplService(
         }
     }
 
-    override fun compile(codeLine: ReplCodeLine, history: List<ReplCodeLine>): ReplCompileResult {
+    override fun compile(codeLine: ReplCodeLine, verifyHistory: List<ReplCodeLine>?): ReplCompileResponse {
         operationsTracer?.before("compile")
         try {
-            return replCompiler?.compile(codeLine, history)
-                   ?: ReplCompileResult.Error(history,
+            return replCompiler?.compile(codeLine, verifyHistory)
+                   ?: ReplCompileResponse.Error(verifyHistory ?: emptyList(),
                                               messageCollector.firstErrorMessage ?: "Unknown error",
                                               messageCollector.firstErrorLocation ?: CompilerMessageLocation.NO_LOCATION)
         }
@@ -142,13 +140,13 @@ open class KotlinJvmReplService(
         }
     }
 
-    override fun eval(codeLine: ReplCodeLine, history: List<ReplCodeLine>, invokeWrapper: InvokeWrapper?): ReplEvalResult = synchronized(this) {
+    override fun compileAndEval(codeLine: ReplCodeLine, scriptArgs: ScriptArgsWithTypes?, verifyHistory: List<ReplCodeLine>?, invokeWrapper: InvokeWrapper?): ReplEvalResponse {
         operationsTracer?.before("eval")
         try {
-            return replCompiler?.let { compileAndEval(it, compiledEvaluator, codeLine, history, invokeWrapper) }
-                   ?: ReplEvalResult.Error.CompileTime(history,
-                                                       messageCollector.firstErrorMessage ?: "Unknown error",
-                                                       messageCollector.firstErrorLocation ?: CompilerMessageLocation.NO_LOCATION)
+            return replEvaluator?.compileAndEval(codeLine, scriptArgs ?: fallbackScriptArgs, verifyHistory, invokeWrapper)
+                   ?: ReplEvalResponse.Error.CompileTime(verifyHistory ?: replEvaluator?.history ?: emptyList(),
+                                                         messageCollector.firstErrorMessage ?: "Unknown error",
+                                                         messageCollector.firstErrorLocation ?: CompilerMessageLocation.NO_LOCATION)
         }
         finally {
             operationsTracer?.after("eval")
