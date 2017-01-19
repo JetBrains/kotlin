@@ -1,6 +1,0 @@
-import org.jetbrains.kotlin.*
-
-task codegen_blackbox_reflection_specialBuiltIns_getMembersOfStandardJavaClasses (type: RunExternalTest) {
-    source = "codegen/blackbox/reflection/specialBuiltIns/getMembersOfStandardJavaClasses.kt"
-}
-

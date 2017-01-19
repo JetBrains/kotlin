@@ -1,6 +1,0 @@
-import org.jetbrains.kotlin.*
-
-task codegen_blackbox_compatibility_dataClassEqualsHashCodeToString (type: RunExternalTest) {
-    source = "codegen/blackbox/compatibility/dataClassEqualsHashCodeToString.kt"
-}
-

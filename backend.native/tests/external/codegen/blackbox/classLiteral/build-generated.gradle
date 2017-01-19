@@ -1,6 +1,0 @@
-import org.jetbrains.kotlin.*
-
-task codegen_blackbox_classLiteral_primitiveKClassEquality (type: RunExternalTest) {
-    source = "codegen/blackbox/classLiteral/primitiveKClassEquality.kt"
-}
-

@@ -1,6 +1,0 @@
-import org.jetbrains.kotlin.*
-
-task codegen_blackbox_diagnostics_vararg_kt4172 (type: RunExternalTest) {
-    source = "codegen/blackbox/diagnostics/vararg/kt4172.kt"
-}
-

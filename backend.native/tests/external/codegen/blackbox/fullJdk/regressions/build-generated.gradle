@@ -1,6 +1,0 @@
-import org.jetbrains.kotlin.*
-
-task codegen_blackbox_fullJdk_regressions_kt1770 (type: RunExternalTest) {
-    source = "codegen/blackbox/fullJdk/regressions/kt1770.kt"
-}
-
