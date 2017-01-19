@@ -388,7 +388,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                         LLVMSetInitializer(objectPtr, codegen.kNullObjHeaderPtr)
                     }
                 }
-                val irOfCurrentClass = context.ir.moduleIndex.classes[classDescriptor.classId]
+                val irOfCurrentClass = context.ir.moduleIndexForCodegen.classes[classDescriptor.classId]
                 irOfCurrentClass!!.acceptChildrenVoid(object : IrElementVisitorVoid {
                     override fun visitElement(element: IrElement) {
                         element.acceptChildrenVoid(this)

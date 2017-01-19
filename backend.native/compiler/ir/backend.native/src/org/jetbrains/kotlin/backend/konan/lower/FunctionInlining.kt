@@ -24,7 +24,8 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         val functionDescriptor = expression.descriptor as FunctionDescriptor
         if (!functionDescriptor.isInline) return super.visitCall(expression)                // Function is not to be inlined - do nothing.
 
-        val functionDeclaration = context.ir.moduleIndex.functions[functionDescriptor]      // Get FunctionDeclaration by FunctionDescriptor.
+        val functionDeclaration = context.ir.originalModuleIndex
+                .functions[functionDescriptor]                                              // Get FunctionDeclaration by FunctionDescriptor.
         if (functionDeclaration == null) return super.visitCall(expression)                 // Function is declared in another module.
         val copyFuncDeclaration = functionDeclaration.accept(DeepCopyIrTree(), null) as IrFunction // Create copy of the function.
 

@@ -75,7 +75,7 @@ internal interface ContextUtils {
             // In this function we check the presence of the backing filed
             // two ways: first we check IR, then we check the annotation.
 
-            val irClass = context.ir.moduleIndex.classes[this.classId]
+            val irClass = context.ir.moduleIndexForCodegen.classes[this.classId]
             if (irClass != null) {
                 val declarations = irClass.declarations
 
