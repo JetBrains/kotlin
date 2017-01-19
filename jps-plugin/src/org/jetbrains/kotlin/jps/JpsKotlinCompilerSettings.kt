@@ -62,13 +62,6 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
             return settings
         }
 
-        private val JpsModule.targetPlatform: TargetPlatformKind<*>?
-            get() {
-                val facetSettings = kotlinFacetExtension?.settings ?: return TargetPlatformKind.Common
-                if (facetSettings.useProjectSettings) return TargetPlatformKind.Common
-                return facetSettings.versionInfo.targetPlatformKind
-            }
-
         fun getCommonCompilerArguments(module: JpsModule): CommonCompilerArguments {
             val defaultArguments = getSettings(module.project).commonCompilerArguments
             val facetSettings = module.kotlinFacetExtension?.settings ?: return defaultArguments
@@ -132,3 +125,6 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
         }
     }
 }
+
+val JpsModule.targetPlatform: TargetPlatformKind<*>?
+    get() = kotlinFacetExtension?.settings?.versionInfo?.targetPlatformKind
