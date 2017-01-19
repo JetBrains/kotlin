@@ -29,13 +29,12 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtPsiUtil
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.PlatformClassesMappedToKotlinChecker
-import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
-import org.jetbrains.kotlin.resolve.isHiddenInResolution
+import org.jetbrains.kotlin.psi.KtReferenceExpression
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.collectionUtils.concat
 import org.jetbrains.kotlin.utils.Printer
 import java.util.*
@@ -110,6 +109,8 @@ class LazyImportResolver(
                     explicitClassImports.put(alias, importDirective)
                 }
             }
+
+            checkResolvedImportDirective(importDirective)
         }
         for ((alias, import) in explicitClassImports.entries()) {
             if (alias.all { it == '_' }) {
@@ -123,6 +124,18 @@ class LazyImportResolver(
                     traceForImportResolve.report(Errors.CONFLICTING_IMPORT.on(it, alias))
                 }
             }
+        }
+    }
+
+    private fun checkResolvedImportDirective(importDirective: KtImportDirective) {
+        val importedReference = KtPsiUtil.getLastReference(importDirective.importedReference ?: return) ?: return
+        val importedDescriptor = traceForImportResolve.bindingContext.get(BindingContext.REFERENCE_TARGET, importedReference) ?: return
+
+        val aliasName = importDirective.aliasName
+
+        if (importedDescriptor is FunctionDescriptor && importedDescriptor.isOperator &&
+            aliasName != null && OperatorConventions.isConventionName(Name.identifier(aliasName))) {
+            traceForImportResolve.report(Errors.OPERATOR_RENAMED_ON_IMPORT.on(importedReference))
         }
     }
 

@@ -190,6 +190,7 @@ public class DefaultErrorMessages {
         MAP.put(CANNOT_BE_IMPORTED, "Cannot import ''{0}'', functions and properties can be imported only from packages or objects", TO_STRING);
         MAP.put(PACKAGE_CANNOT_BE_IMPORTED, "Packages cannot be imported");
         MAP.put(CONFLICTING_IMPORT, "Conflicting import, imported name ''{0}'' is ambiguous", STRING);
+        MAP.put(OPERATOR_RENAMED_ON_IMPORT, "Operator renamed to a different operator on import");
         MAP.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, "This class shouldn''t be used in Kotlin. Use {0} instead.", CLASSES_OR_SEPARATED);
 
         MAP.put(CANNOT_INFER_PARAMETER_TYPE, "Cannot infer a type for this parameter. Please specify it explicitly.");

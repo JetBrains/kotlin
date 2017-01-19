@@ -9589,6 +9589,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("OperatorRenameOnImport.kt")
+            public void testOperatorRenameOnImport() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/OperatorRenameOnImport.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("PackageLocalClassNotImported.kt")
             public void testPackageLocalClassNotImported() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/imports/PackageLocalClassNotImported.kt");

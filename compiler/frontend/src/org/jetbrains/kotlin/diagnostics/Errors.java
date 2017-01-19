@@ -179,6 +179,8 @@ public interface Errors {
 
     DiagnosticFactory1<KtImportDirective, String> CONFLICTING_IMPORT = DiagnosticFactory1.create(ERROR, PositioningStrategies.IMPORT_ALIAS);
 
+    DiagnosticFactory0<KtSimpleNameExpression> OPERATOR_RENAMED_ON_IMPORT = DiagnosticFactory0.create(ERROR);
+
     // Modifiers
 
     DiagnosticFactory2<PsiElement, KtModifierKeywordToken, KtModifierKeywordToken> INCOMPATIBLE_MODIFIERS = DiagnosticFactory2.create(ERROR);
