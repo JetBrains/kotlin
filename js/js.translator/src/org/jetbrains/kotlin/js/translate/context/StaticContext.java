@@ -279,7 +279,7 @@ public final class StaticContext {
             expression = getQualifiedExpression(suggested.getScope());
         }
 
-        if (isNativeObject(suggested.getDescriptor())) {
+        if (isNativeObject(suggested.getDescriptor()) && DescriptorUtils.isTopLevelDeclaration(suggested.getDescriptor())) {
             String fileModuleName = AnnotationsUtils.getFileModuleName(getBindingContext(), suggested.getDescriptor());
             if (fileModuleName != null) {
                 JsName moduleJsName = getImportedModule(fileModuleName, null).internalName;

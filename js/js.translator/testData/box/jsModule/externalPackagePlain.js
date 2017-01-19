@@ -6,6 +6,11 @@ var lib = function() {
         return this.x + y;
     };
 
+    function Nested() {
+        this.y = 55;
+    }
+    A.Nested = Nested;
+
     B = {
         x: 123,
         foo: function(y) {

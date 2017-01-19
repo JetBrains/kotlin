@@ -14,6 +14,8 @@ external object A {
 @JsNonModule
 external open class B {
     fun foo(): Int
+
+    class Nested
 }
 
 @JsNonModule
@@ -31,6 +33,7 @@ fun box() {
     A.<!CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM!>f<!>()+A.<!CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM!>g<!>
     <!CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM!>B<!>()
     <!CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM!>bar<!>()
+    B.<!CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM!>Nested<!>()
 }
 
 external class DerivedB : <!CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM!>B<!>

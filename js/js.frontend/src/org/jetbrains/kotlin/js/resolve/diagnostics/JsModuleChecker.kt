@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 
@@ -45,10 +46,12 @@ object JsModuleChecker : SimpleDeclarationChecker {
             diagnosticHolder.report(ErrorsJs.JS_MODULE_PROHIBITED_ON_NON_NATIVE.on(declaration))
         }
 
-        val isFileModuleOrNonModule = AnnotationsUtils.getFileModuleName(bindingContext, descriptor) != null ||
-                                      AnnotationsUtils.isFromNonModuleFile(bindingContext, descriptor)
-        if (isFileModuleOrNonModule) {
-            diagnosticHolder.report(ErrorsJs.NESTED_JS_MODULE_PROHIBITED.on(declaration))
+        if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
+            val isFileModuleOrNonModule = AnnotationsUtils.getFileModuleName(bindingContext, descriptor) != null ||
+                                          AnnotationsUtils.isFromNonModuleFile(bindingContext, descriptor)
+            if (isFileModuleOrNonModule) {
+                diagnosticHolder.report(ErrorsJs.NESTED_JS_MODULE_PROHIBITED.on(declaration))
+            }
         }
     }
 
