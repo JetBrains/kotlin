@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.js.inline.clean
 
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 internal class RedundantLabelRemoval(private val root: JsStatement) {
     private val labelUsages = mutableMapOf<JsName, Int>()
@@ -48,27 +47,10 @@ internal class RedundantLabelRemoval(private val root: JsStatement) {
         object : JsVisitorWithContextImpl() {
             override fun endVisit(x: JsLabel, ctx: JsContext<JsNode>) {
                 if (x.synthetic) {
-                    val statementReplacement = perform(x.statement, x.name)
-                    if (statementReplacement == null) {
+                    x.statement = perform(x.statement, x.name)
+                    if (labelUsages[x.name] ?: 0 == 0) {
                         hasChanges = true
-                        ctx.removeMe()
-                    }
-                    else if (labelUsages[x.name] ?: 0 == 0) {
-                        val replacement = statementReplacement
-                        if (replacement is JsBlock) {
-                            hasChanges = true
-                            ctx.addPrevious(replacement.statements)
-                            ctx.removeMe()
-                        }
-                        else {
-                            if (replacement != ctx.currentNode) {
-                                hasChanges = true
-                                ctx.replaceMe(replacement)
-                            }
-                        }
-                    }
-                    else {
-                        x.statement = statementReplacement
+                        ctx.replaceMe(x.statement)
                     }
                 }
 
@@ -79,87 +61,38 @@ internal class RedundantLabelRemoval(private val root: JsStatement) {
         }.accept(root)
     }
 
-    private fun perform(statement: JsStatement, name: JsName): JsStatement? = when (statement) {
+    private fun perform(statement: JsStatement, name: JsName): JsStatement = when (statement) {
         is JsBreak ->
             if (name == statement.label?.name) {
                 unuseLabel(name)
-                null
+                hasChanges = true
+                JsEmpty
             }
             else {
                 statement
             }
         is JsLabel -> {
-            perform(statement.statement, name)?.let { statement }
+            perform(statement.statement, name)
+            statement
         }
-        is JsBlock ->
-            if (perform(statement.statements, name).isEmpty()) {
-                null
-            }
-            else {
-                statement
-            }
+        is JsBlock -> {
+            perform(statement.statements, name)
+            statement
+        }
         is JsIf -> {
-            val thenRemoved = perform(statement.thenStatement, name) == null
-            val elseStatement = statement.elseStatement
-            val elseRemoved = elseStatement?.let { perform(it, name) == null } ?: false
-            when {
-                thenRemoved && (elseRemoved || elseStatement == null) -> {
-                    hasChanges = true
-                    JsAstUtils.asSyntheticStatement(statement.ifExpression)
-                }
-                elseRemoved -> {
-                    hasChanges = true
-                    statement.elseStatement = null
-                    statement
-                }
-                thenRemoved -> {
-                    hasChanges = true
-                    statement.thenStatement = elseStatement ?: JsEmpty
-                    statement.elseStatement = null
-                    statement.ifExpression = JsAstUtils.not(statement.ifExpression)
-                    statement
-                }
-                else -> statement
-            }
+            statement.thenStatement = perform(statement.thenStatement, name)
+            statement.elseStatement = statement.elseStatement?.let { perform(it, name) }
+            statement
         }
         is JsTry -> {
-            // TODO: optimize finally and catch blocks
-            val finallyBlock = statement.finallyBlock
-            val result = perform(statement.tryBlock, name)
-            if (result != null) {
-                statement
-            }
-            else if (finallyBlock != null && !finallyBlock.isEmpty) {
-                finallyBlock
-            }
-            else {
-                null
-            }
+            perform(statement.tryBlock, name)
+            statement
         }
         else -> statement
     }
 
-    private fun perform(statements: MutableList<JsStatement>, name: JsName): MutableList<JsStatement> {
-        val last = statements.lastOrNull()
-        val lastOptimized = last?.let { perform(it, name) }
-        if (lastOptimized != last) {
-            if (lastOptimized == null) {
-                hasChanges = true
-                statements.removeAt(statements.lastIndex)
-            }
-            else if (lastOptimized is JsBlock) {
-                hasChanges = true
-                statements.removeAt(statements.lastIndex)
-                statements.addAll(lastOptimized.statements)
-            }
-            else {
-                if (statements[statements.lastIndex] != lastOptimized) {
-                    hasChanges = true
-                    statements[statements.lastIndex] = lastOptimized
-                }
-            }
-        }
-        return statements
+    private fun perform(statements: MutableList<JsStatement>, name: JsName) {
+        statements.lastOrNull()?.let { statements[statements.lastIndex] = perform(it, name) }
     }
 
     private fun useLabel(name: JsName) {

@@ -18,8 +18,10 @@ package org.jetbrains.kotlin.js.test.optimizer
 
 import org.junit.Test
 
-class RedundantLabelRemovalTest : BasicOptimizerTest("redundant-label-removal") {
+class EmptyStatementEliminationTest : BasicOptimizerTest("empty-statement-elimination") {
     @Test fun emptyIfConditionPreserved() = box()
 
     @Test fun ifWithEmptyThenAndNoElse() = box()
+
+    @Test fun emptyBlockEliminated() = box()
 }
