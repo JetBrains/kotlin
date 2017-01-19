@@ -16,7 +16,7 @@ KInt     Kotlin_Boolean_compareTo_Boolean(KBoolean a, KBoolean b) { if (a == b) 
 //--- Char --------------------------------------------------------------------//
 
 KInt    Kotlin_Char_compareTo_Char   (KChar a, KChar   b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
-KChar   Kotlin_Char_plus_Char        (KChar a, KInt    b) { return a + b; }
+KChar   Kotlin_Char_plus_Int         (KChar a, KInt    b) { return a + b; }
 KInt    Kotlin_Char_minus_Char       (KChar a, KChar   b) { return a - b; }
 KChar   Kotlin_Char_minus_Int        (KChar a, KInt    b) { return a - b; }
 KChar   Kotlin_Char_inc              (KChar a           ) { return a + 1; }
@@ -79,6 +79,11 @@ KByte   Kotlin_Byte_dec              (KByte a           ) { return --a; }
 KInt    Kotlin_Byte_unaryPlus        (KByte a           ) { return  +a; }
 KInt    Kotlin_Byte_unaryMinus       (KByte a           ) { return  -a; }
 
+KByte  Kotlin_Byte_or_Byte           (KByte a, KByte   b) { return a | b; }
+KByte  Kotlin_Byte_xor_Byte          (KByte a, KByte   b) { return a ^ b; }
+KByte  Kotlin_Byte_and_Byte          (KByte a, KByte   b) { return a & b; }
+KByte  Kotlin_Byte_inv               (KByte a           ) { return  ~a;   }
+
 KByte   Kotlin_Byte_toByte           (KByte a           ) { return a; }
 KChar   Kotlin_Byte_toChar           (KByte a           ) { return a; }
 KShort  Kotlin_Byte_toShort          (KByte a           ) { return a; }
@@ -135,6 +140,11 @@ KShort  Kotlin_Short_inc              (KShort a           ) { return ++a; }
 KShort  Kotlin_Short_dec              (KShort a           ) { return --a; }
 KInt    Kotlin_Short_unaryPlus        (KShort a           ) { return  +a; }
 KInt    Kotlin_Short_unaryMinus       (KShort a           ) { return  -a; }
+
+KShort  Kotlin_Short_or_Short         (KShort a, KShort  b) { return a | b; }
+KShort  Kotlin_Short_xor_Short        (KShort a, KShort  b) { return a ^ b; }
+KShort  Kotlin_Short_and_Short        (KShort a, KShort  b) { return a & b; }
+KShort  Kotlin_Short_inv              (KShort a           ) { return  ~a;   }
 
 KByte   Kotlin_Short_toByte           (KShort a           ) { return a; }
 KChar   Kotlin_Short_toChar           (KShort a           ) { return a; }
@@ -196,6 +206,7 @@ KInt    Kotlin_Int_unaryMinus       (KInt a           ) { return  -a; }
 KInt    Kotlin_Int_or_Int           (KInt a, KInt   b)  { return a | b; }
 KInt    Kotlin_Int_xor_Int          (KInt a, KInt   b)  { return a ^ b; }
 KInt    Kotlin_Int_and_Int          (KInt a, KInt   b)  { return a & b; }
+KInt    Kotlin_Int_inv              (KInt a          )  { return  ~a;   }
 KInt    Kotlin_Int_shl_Int          (KInt a, KInt   b)  { return a << b; }
 KInt    Kotlin_Int_shr_Int          (KInt a, KInt   b)  { return a >> b; }
 KInt    Kotlin_Int_ushr_Int         (KInt a, KInt   b) {
@@ -262,9 +273,9 @@ KLong   Kotlin_Long_unaryMinus       (KLong a           ) { return  -a; }
 KLong   Kotlin_Long_xor_Long         (KLong a, KLong   b) { return a ^ b; }
 KLong   Kotlin_Long_or_Long          (KLong a, KLong   b) { return a | b; }
 KLong   Kotlin_Long_and_Long         (KLong a, KLong   b) { return a & b; }
-KLong   Kotlin_Long_shr_Int          (KLong a, KInt    b) {
-  return a >> b;
-}
+KLong   Kotlin_Long_inv              (KLong a           ) { return  ~a;   }
+KLong   Kotlin_Long_shl_Int          (KLong a, KInt    b) { return a << b; }
+KLong   Kotlin_Long_shr_Int          (KLong a, KInt    b) { return a >> b; }
 KLong   Kotlin_Long_ushr_Int         (KLong a, KInt    b) {
   return static_cast<uint64_t>(a) >> b;
 }
