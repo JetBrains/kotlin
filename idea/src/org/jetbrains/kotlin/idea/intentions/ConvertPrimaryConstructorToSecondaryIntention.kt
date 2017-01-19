@@ -17,17 +17,21 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.CommentSaver
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.THIS_KEYWORD
 import org.jetbrains.kotlin.lexer.KtTokens.VARARG_KEYWORD
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder
 import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder.Target.CONSTRUCTOR
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.parents
@@ -118,9 +122,27 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
                     }
                 }.asString()
         )
-        with (klass.addDeclarationBefore(constructor, null)) {
-            commentSaver.restore(this)
+
+        when {
+            klass.isEnum() -> {
+                val lastEnumEntry = klass.collectDescendantsOfType<KtEnumEntry>().lastOrNull()
+                convertToSecondaryConstructor(constructor, commentSaver, klass, lastEnumEntry)
+                convertValueParametersToProperties(element, klass, factory, lastEnumEntry)
+                addSemicolonIfNotExist(klass, factory, lastEnumEntry)
+            }
+            else -> {
+                convertToSecondaryConstructor(constructor, commentSaver, klass)
+                convertValueParametersToProperties(element, klass, factory)
+            }
         }
+
+        for (anonymousInitializer in klass.getAnonymousInitializers()) {
+            anonymousInitializer.delete()
+        }
+        element.delete()
+    }
+
+    fun convertValueParametersToProperties(element: KtPrimaryConstructor, klass: KtClass, factory: KtPsiFactory, anchorBefore: PsiElement? = null) {
         for (valueParameter in element.valueParameters.reversed()) {
             if (!valueParameter.hasValOrVar()) continue
             val isVararg = valueParameter.hasModifier(VARARG_KEYWORD)
@@ -129,11 +151,19 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
             val property = factory.createProperty(valueParameter.modifierList?.text, valueParameter.name!!,
                                                   if (isVararg && typeText != null) "Array<out $typeText>" else typeText,
                                                   valueParameter.isMutable, null)
-            klass.addDeclarationBefore(property, null)
+            if (anchorBefore == null) klass.addDeclarationBefore(property, null) else klass.addDeclarationAfter(property, anchorBefore)
         }
-        for (anonymousInitializer in klass.getAnonymousInitializers()) {
-            anonymousInitializer.delete()
+    }
+
+    private fun convertToSecondaryConstructor(constructor: KtSecondaryConstructor, commentSaver: CommentSaver, klass: KtClass, anchorBefore: PsiElement? = null) {
+        val secondaryConstructor = if (anchorBefore == null) klass.addDeclarationBefore(constructor, null) else klass.addDeclarationAfter(constructor, anchorBefore)
+        commentSaver.restore(secondaryConstructor)
+    }
+
+    private fun addSemicolonIfNotExist(klass: KtClass, factory: KtPsiFactory, lastEnumEntry: KtEnumEntry?) {
+        when {
+            lastEnumEntry == null -> klass.getOrCreateBody().let { it.addAfter(factory.createSemicolon(), it.lBrace) }
+            lastEnumEntry.collectDescendantsOfType<LeafPsiElement> { it.elementType == KtTokens.SEMICOLON }.isEmpty() -> lastEnumEntry.add(factory.createSemicolon())
         }
-        element.delete()
     }
 }
