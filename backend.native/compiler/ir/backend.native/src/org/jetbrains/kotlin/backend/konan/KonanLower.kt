@@ -31,7 +31,7 @@ internal class KonanLower(val context: Context) {
             SharedVariablesLowering(context).runOnFilePostfix(irFile)
         }
         phaser.phase(KonanPhase.LOWER_LOCAL_FUNCTIONS) {
-            LocalFunctionsLowering(context).runOnFilePostfix(irFile)
+            LocalDeclarationsLowering(context).runOnFilePostfix(irFile)
         }
         phaser.phase(KonanPhase.LOWER_CALLABLES) {
             CallableReferenceLowering(context).runOnFilePostfix(irFile)

@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-class LocalFunctionsLowering(val context: BackendContext): DeclarationContainerLoweringPass {
+class LocalDeclarationsLowering(val context: BackendContext): DeclarationContainerLoweringPass {
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.declarations.transformFlat { memberDeclaration ->
             if (memberDeclaration is IrFunction)
