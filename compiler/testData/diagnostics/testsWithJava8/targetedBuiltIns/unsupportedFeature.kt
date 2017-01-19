@@ -29,3 +29,14 @@ fun foo(x: List<String>, y: Throwable) {
     // Falls back to extension in stdlib
     y.printStackTrace()
 }
+
+interface X {
+    fun foo(): Int = 1
+    val hidden: Boolean
+}
+
+class Y : X {
+    // There should not be UNSUPPORTED_FEATURE diagnostic
+    override fun foo() = 1
+    override var hidden: Boolean = true
+}
