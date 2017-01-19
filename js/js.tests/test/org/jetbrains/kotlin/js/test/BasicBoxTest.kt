@@ -28,8 +28,7 @@ import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.js.config.EcmaVersion
@@ -48,6 +47,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils.TestFileFactory
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
@@ -255,6 +255,9 @@ abstract class BasicBoxTest(
         val configuration = environment.configuration.copy()
 
         configuration.put(CommonConfigurationKeys.DISABLE_INLINE, module.inliningDisabled)
+        module.languageVersion?.let {
+            configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl(it, ApiVersion.LATEST))
+        }
 
         configuration.put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB + LibrarySourcesConfig.JS_KOTLIN_TEST + dependencies)
 
@@ -298,6 +301,12 @@ abstract class BasicBoxTest(
             KotlinTestUtils.mkdirs(temporaryFile.parentFile)
             temporaryFile.writeText(text, Charsets.UTF_8)
 
+            val version = InTextDirectivesUtils.findStringWithPrefixes(text, "// LANGUAGE_VERSION:")
+            if (version != null) {
+                assert(currentModule.languageVersion == null) { "Should not specify LANGUAGE_VERSION twice" }
+                currentModule.languageVersion = LanguageVersion.fromVersionString(version)
+            }
+
             return TestFile(temporaryFile.absolutePath, currentModule)
         }
 
@@ -324,6 +333,7 @@ abstract class BasicBoxTest(
         var moduleKind = ModuleKind.PLAIN
         var inliningDisabled = false
         val files = mutableListOf<TestFile>()
+        var languageVersion: LanguageVersion? = null
     }
 
     override fun createEnvironment(): KotlinCoreEnvironment {
