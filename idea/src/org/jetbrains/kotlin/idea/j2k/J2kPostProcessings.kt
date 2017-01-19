@@ -86,12 +86,11 @@ object J2KPostProcessingRegistrar {
 
             val variable = expression.parent as? KtProperty
             if (variable != null && expression == variable.initializer && variable.isLocal) {
-                val refs = ReferencesSearch.search(variable, LocalSearchScope(variable.containingFile)).findAll()
-                for (ref in refs) {
-                    val usage = ref.element as? KtSimpleNameExpression ?: continue
-                    usage.replace(expression)
+                val ref = ReferencesSearch.search(variable, LocalSearchScope(variable.containingFile)).findAll().singleOrNull()
+                if (ref != null && ref.element is KtSimpleNameExpression) {
+                    ref.element.replace(expression)
+                    variable.delete()
                 }
-                variable.delete()
             }
         }
 

@@ -4115,6 +4115,13 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("RedunduntTypeCastAndProhibitedInline.java")
+        public void testRedunduntTypeCastAndProhibitedInline() throws Exception {
+            String fileName = KotlinTestUtils
+                    .navigationMetadata("j2k/testData/fileOrElement/postProcessing/RedunduntTypeCastAndProhibitedInline.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("SyntheticExtensionPropertyAccess.java")
         public void testSyntheticExtensionPropertyAccess() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/SyntheticExtensionPropertyAccess.java");
