@@ -61,6 +61,8 @@ subprojects {
     compileKotlin.compilerJarFile = project.file("${rootDir}/../dist/kotlinc/lib/kotlin-compiler.jar")
     compileTestKotlin.compilerJarFile = project.file("${rootDir}/../dist/kotlinc/lib/kotlin-compiler.jar")
 
+    compileKotlin.kotlinOptions.jdkHome = JDK_16
+
     signing {
         required { project.ext.has('signing.keyId') }
         sign configurations.archives
@@ -80,4 +82,11 @@ subprojects {
             }
         }
     }
+}
+
+static def manifestAttributes(Manifest manifest, Project project, String component) {
+    manifest.attributes \
+        'Kotlin-Runtime-Component': component,
+        'Kotlin-Version': "${project.kotlin_language_version}",
+        'Implementation-Title': "${project.description ?: project.name}"
 }
