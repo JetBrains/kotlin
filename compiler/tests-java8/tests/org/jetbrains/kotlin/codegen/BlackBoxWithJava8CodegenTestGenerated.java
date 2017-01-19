@@ -140,6 +140,12 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
             doTest(fileName);
         }
 
+        @TestMetadata("delegationToMap.kt")
+        public void testDelegationToMap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/delegationBy/delegationToMap.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("diamond.kt")
         public void testDiamond() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/delegationBy/diamond.kt");

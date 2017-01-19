@@ -16,20 +16,29 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
+import org.jetbrains.kotlin.serialization.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 
 object JvmDelegationFilter : DelegationFilter {
 
     override fun filter(interfaceMember: CallableMemberDescriptor): Boolean {
         //We always have only one implementation otherwise it's an error in kotlin and java
-        return !isJavaDefaultMethod(DescriptorUtils.unwrapFakeOverride(interfaceMember))
+        val realMember = DescriptorUtils.unwrapFakeOverride(interfaceMember)
+        return !isJavaDefaultMethod(realMember) && !isBuiltInMemberMappedToJavaDefault(realMember)
     }
 
     private fun isJavaDefaultMethod(interfaceMember: CallableMemberDescriptor): Boolean {
         return interfaceMember is JavaMethodDescriptor && interfaceMember.modality != Modality.ABSTRACT
+    }
+
+    private fun isBuiltInMemberMappedToJavaDefault(interfaceMember: CallableMemberDescriptor): Boolean {
+        return interfaceMember.modality != Modality.ABSTRACT &&
+               KotlinBuiltIns.isBuiltIn(interfaceMember) &&
+               interfaceMember.annotations.hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)
     }
 }
