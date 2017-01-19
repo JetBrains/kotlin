@@ -1,6 +1,9 @@
-// IGNORE_BACKEND: JS, NATIVE
+// IGNORE_BACKEND: JS
 // reason - multifile tests are not supported in JS tests
-//FILE: Holder.java
+// IGNORE_BACKEND: NATIVE
+// reason - no java interop. Consider testing by another way
+
+//FILE: Holder.kt
 
 class Holder {
     public Double value;
