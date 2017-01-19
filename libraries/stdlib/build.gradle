@@ -1,58 +1,52 @@
-
-description = 'Kotlin stdlib'
+description = 'Kotlin Standard Library'
 
 dependencies {
-  compile project(':kotlin-runtime')
-  compile project(':kotlin-test-parent:kotlin-test')
-  compile('junit:junit:4.12')
-  testCompile project(':kotlin-test-parent:kotlin-test-junit')
+    compile project(':kotlin-runtime')
+    testCompile project(':kotlin-test-parent:kotlin-test-junit')
 }
 
 sourceSets {
-  main {
-    kotlin {
-      srcDir 'src'
+    main {
+        java {
+            srcDir 'src'
+        }
     }
-    java {
-      srcDir 'src'
+    test {
+        kotlin {
+            srcDir 'test'
+        }
     }
-  }
-  test {
-    kotlin {
-      srcDir 'test'
-    }
-  }
 }
 
 jar {
-  manifest {
-    attributes 'Kotlin-Runtime-Component': 'Core',
+    manifest {
+        attributes  \
+            'Kotlin-Runtime-Component': 'Core',
+            'Kotlin-Version': "$kotlin_language_version",
             'Implementation-Title': "${project.description ?: project.name}"
-  }
+    }
 }
 
 artifacts {
-  archives sourcesJar
-  archives javadocJar
+    archives sourcesJar
+    archives javadocJar
 }
 
 compileJava {
-  sourceCompatibility = 1.6
-  targetCompatibility = 1.6
-}
-
-compileTestJava {
-  sourceCompatibility = 1.6
-  targetCompatibility = 1.6
+    sourceCompatibility = 1.6
+    targetCompatibility = 1.6
+    options.fork = true
+    options.forkOptions.executable = "${JDK_16}/bin/javac"
 }
 
 compileKotlin {
-  kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package",
-                                    "-Xmultifile-parts-inherit",
-                                    "-Xdump-declarations-to", "${buildDir}/stdlib-declarations.json".toString(),
-                                    "-module-name", "${project.name}".toString()]
-}
-
-compileTestKotlin {
-  kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+    kotlinOptions {
+        jdkHome = JDK_16
+        freeCompilerArgs = [
+                "-Xallow-kotlin-package",
+                "-Xmultifile-parts-inherit",
+                "-Xdump-declarations-to", "${buildDir}/stdlib-declarations.json".toString(),
+                "-module-name", "${project.name}".toString()
+        ]
+    }
 }

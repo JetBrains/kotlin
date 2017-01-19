@@ -42,15 +42,17 @@ compileJava {
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
     options.fork = true
-    // TODO: find how to fix on macos
-//    options.bootClasspath = "${System.getenv('JDK_16')}/jre/lib/rt.jar"
+    options.forkOptions.executable = "${JDK_16}/bin/javac"
 }
 
 compileKotlin {
-    kotlinOptions.freeCompilerArgs = [
-            "-Xallow-kotlin-package",
-            "-Xdump-declarations-to", "${buildDir}/runtime-declarations.json",
-            "-cp", "${rootDir}/../dist/builtins",
-            "-module-name", project.name
-    ]
+    kotlinOptions {
+        jdkHome = JDK_16
+        freeCompilerArgs = [
+                "-Xallow-kotlin-package",
+                "-Xdump-declarations-to", "${buildDir}/runtime-declarations.json",
+                "-cp", "${rootDir}/../dist/builtins",
+                "-module-name", project.name
+        ]
+    }
 }

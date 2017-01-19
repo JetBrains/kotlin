@@ -2,6 +2,7 @@
 buildscript {
     ext.kotlin_version = "1.1-SNAPSHOT"
     ext.kotlin_language_version = "1.1"
+
     repositories {
         mavenCentral()
         maven { url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1' }
@@ -10,6 +11,10 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1-M04"
     }
 }
+
+ext.JDK_16 = System.getenv("JDK_16")
+ext.JDK_17 = System.getenv("JDK_17")
+ext.JDK_18 = System.getenv("JDK_18")
 
 allprojects  {
     apply plugin: 'maven'

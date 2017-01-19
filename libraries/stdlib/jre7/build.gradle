@@ -1,56 +1,49 @@
-
-description = 'Kotlin stdlib JRE 7'
+description = 'Kotlin Standard Library JRE 7 extension'
 
 dependencies {
-  compile project(':kotlin-stdlib')
-  testCompile project(':kotlin-test-parent:kotlin-test-junit')
+    compile project(':kotlin-stdlib')
+    testCompile project(':kotlin-test-parent:kotlin-test-junit')
 }
 
 sourceSets {
-  main {
-    kotlin {
-      srcDir 'src'
+    main {
+        kotlin {
+            srcDir 'src'
+        }
     }
-  }
-  test {
-    kotlin {
-      srcDir 'test'
-      srcDir '../test'
+    test {
+        kotlin {
+            srcDir 'test'
+            srcDir '../test'
+        }
     }
-  }
 }
 
 jar {
-  manifest {
-    attributes 'Kotlin-Runtime-Component': 'Core',
+    manifest {
+        attributes \
+            'Kotlin-Runtime-Component': 'Core',
+            'Kotlin-Version': "$kotlin_language_version",
             'Implementation-Title': "${project.description ?: project.name}"
-  }
+    }
 }
 
 artifacts {
-  archives sourcesJar
-  archives javadocJar
-}
-
-compileJava {
-  sourceCompatibility = 1.7
-  targetCompatibility = 1.7
-}
-
-compileTestJava {
-  sourceCompatibility = 1.7
-  targetCompatibility = 1.7
+    archives sourcesJar
+    archives javadocJar
 }
 
 compileKotlin {
-  kotlinOptions.jdkHome = System.getenv('JDK_17') 
-  kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package",
-                                    "-Xmultifile-parts-inherit",
-                                    "-Xdump-declarations-to", "${buildDir}/stdlib-declarations.json".toString(),
-                                    "-module-name", "${project.name}".toString()]
+    kotlinOptions.jdkHome = JDK_17
+    kotlinOptions.freeCompilerArgs = [
+            "-Xallow-kotlin-package",
+            "-Xmultifile-parts-inherit",
+            "-Xdump-declarations-to", "${buildDir}/stdlib-jre7-declarations.json",
+            "-module-name", project.name
+    ]
 }
 
 compileTestKotlin {
-  kotlinOptions.jdkHome = System.getenv('JDK_17')
-  kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+    kotlinOptions.jdkHome = JDK_17
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
 }

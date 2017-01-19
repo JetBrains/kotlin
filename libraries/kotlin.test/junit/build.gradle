@@ -34,7 +34,7 @@ artifacts {
 }
 
 compileKotlin {
-  kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", "${project.name}".toString()]
+  kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", project.name]
 }
 
 compileTestKotlin {
