@@ -1036,7 +1036,7 @@
     </macrodef>
 
     <target name="builtins">
-        <new-kotlinc output="${output}/classes/builtins" moduleName="kotlin-builtins">
+        <new-kotlinc output="${output}/classes/builtins" moduleName="kotlin-runtime">
             <src>
                 <include name="core/builtins/src"/>
                 <include name="core/runtime.jvm/src"/>
