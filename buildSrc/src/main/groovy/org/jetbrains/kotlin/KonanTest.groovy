@@ -48,6 +48,7 @@ abstract class KonanTest extends DefaultTask {
                     *filesToCompile,
                     *moreArgs,
                     *project.globalArgs)
+
         }
     }
 
@@ -73,6 +74,7 @@ abstract class KonanTest extends DefaultTask {
         println "execution :$exe"
 
         def out = null
+        //TODO Add test timeout
         project.exec {
             commandLine exe
             if (arguments != null) {
@@ -85,6 +87,7 @@ abstract class KonanTest extends DefaultTask {
                 out = new ByteArrayOutputStream()
                 standardOutput = out
             }
+
         }
         if (goldValue != null && goldValue != out.toString())
             throw new RuntimeException("test failed.")
@@ -117,8 +120,12 @@ class LinkKonanTest extends KonanTest {
     }
 }
 
-class RunExternalTest extends RunKonanTest {
+@ParallelizableTask
+class RunExternalTestGroup extends RunKonanTest {
 
+    def groupDirectory = "."
+    def logFileName = "test-result.md"
+    String filter = project.findProperty("filter")
     String goldValue = "OK"
 
     String buildExePath() {
@@ -183,13 +190,35 @@ class RunExternalTest extends RunKonanTest {
     void createFile(String file, String text) {
         project.file(file).write(text)
     }
-}
 
-@ParallelizableTask
-class RunExternalTestGroup extends RunExternalTest {
-    def groupDirectory = "."
-    def logFileName = "test-result.md"
-    String filter = project.findProperty("filter")
+    List<String> findLinesWithPrefixesRemoved(String text, String prefix) {
+        def result = []
+        text.eachLine {
+            if (it.startsWith(prefix)) {
+                result.add(it - prefix)
+            }
+        }
+        return result
+    }
+
+    boolean isEnabledForNativeBackend(String fileName) {
+        def text = project.file(fileName).text
+        def targetBackend = findLinesWithPrefixesRemoved(text, "// TARGET_BACKEND")
+        if (targetBackend.size() != 0) {
+            // There is some target backend. Check if it is NATIVE or not
+            for (String s : targetBackend) {
+                if (s.contains("NATIVE")){ return true }
+            }
+            return false
+        } else {
+            // No target backend. Check if NATIVE backend is ignored
+            def ignoredBackends = findLinesWithPrefixesRemoved(text, "// IGNORE_BACKEND: ")
+            for (String s : ignoredBackends) {
+                if (s.contains("NATIVE")) { return false }
+            }
+            return true
+        }
+    }
 
     @TaskAction
     @Override
@@ -210,21 +239,29 @@ class RunExternalTestGroup extends RunExternalTest {
         }
         def current = 0
         def passed = 0
+        def skipped = 0
         def total = ktFiles.size()
+        def status = null
+        def comment = null
         ktFiles.each {
+            current++
             source = project.relativePath(it)
-            println("TEST: $it.name (${++current}/$total, passed: $passed)")
-            try {
-                super.executeTest()
-                logFile.append("\n|$it.name|PASSED||")
-                println("TEST PASSED\n")
-                passed++
-            } catch (Exception ex) {
-                println("TEST FAILED\n")
-                logFile.append("\n|$it.name|FAILED|${ex.getMessage()}. Cause: ${ex.getCause()?.getMessage()}|")
+            println("TEST: $it.name ($current/$total, passed: $passed, skipped: $skipped)")
+            if (isEnabledForNativeBackend(source)) {
+                try {
+                    super.executeTest()
+                    status = "PASSED"; comment = ""
+                    passed++
+                } catch (Exception ex) {
+                    status = "FAILED"; comment = "Exception: ${ex.getMessage()}. Cause: ${ex.getCause()?.getMessage()}"
+                }
+            } else {
+                status = "SKIPPED"; comment = ""
+                skipped++
             }
+            println("TEST $status\n")
+            logFile.append("\n|$it.name|$status|$comment|")
         }
-        print("TOTAL PASSED: $passed/$total")
+        print("TOTAL PASSED: $passed/$current (SKIPPED: $skipped)")
     }
 }
-
