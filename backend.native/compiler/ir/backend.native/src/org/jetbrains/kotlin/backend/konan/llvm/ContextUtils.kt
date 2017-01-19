@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.name.FqName
@@ -76,10 +77,14 @@ internal interface ContextUtils {
 
             val irClass = context.ir.moduleIndex.classes[this.classId]
             if (irClass != null) {
-                val irProperties = irClass.declarations
+                val declarations = irClass.declarations
 
-                return irProperties.mapNotNull { 
-                    (it as? IrProperty)?.backingField?.descriptor 
+                return declarations.mapNotNull {
+                    when (it) {
+                        is IrProperty -> it.backingField?.descriptor
+                        is IrField -> it.descriptor
+                        else -> null
+                    }
                 }
             } else {
                 val properties = this.unsubstitutedMemberScope.
