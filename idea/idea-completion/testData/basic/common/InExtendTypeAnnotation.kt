@@ -3,5 +3,5 @@ class Test : <caret> {
     }
 }
 
-// EXIST: Any, Nothing, Unit, Int, Number, Array
-// EXIST_JAVA_ONLY: Math, Thread
+// EXIST: Any, Nothing, Unit, Int, Number, Array, Math
+// EXIST_JAVA_ONLY: Thread

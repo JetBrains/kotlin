@@ -1,7 +1,7 @@
 package kotlin.js
 
 //TODO: declare using number
-public external class MathClass() {
+public external object Math {
     public val PI: Double = noImpl
     public fun random(): Double = noImpl
     public fun abs(value: Double): Double = noImpl
@@ -27,7 +27,5 @@ public external class MathClass() {
     public fun ceil(value: Number): Int = noImpl
 }
 
-public external val Math: MathClass
-
-public fun MathClass.min(a: Long, b: Long): Long = if (a <= b) a else b
-public fun MathClass.max(a: Long, b: Long): Long = if (a >= b) a else b
+public fun Math.min(a: Long, b: Long): Long = if (a <= b) a else b
+public fun Math.max(a: Long, b: Long): Long = if (a >= b) a else b
