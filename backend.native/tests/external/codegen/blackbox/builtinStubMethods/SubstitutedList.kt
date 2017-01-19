@@ -1,5 +1,5 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, NATIVE
 
 class MyList: List<String> {
     override val size: Int get() = 0

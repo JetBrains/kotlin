@@ -1,5 +1,5 @@
 // Enable when callable references to builtin members are supported.
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, NATIVE
 
 fun box(): String {
     val f = "kotlin"::length

@@ -1,5 +1,5 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, NATIVE
 
 // WITH_REFLECT
 // KT-13700 Exception obtaining descriptor for property reference

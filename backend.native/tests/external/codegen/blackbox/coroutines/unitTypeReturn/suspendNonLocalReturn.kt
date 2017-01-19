@@ -1,6 +1,6 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, NATIVE
 import kotlin.coroutines.*
 
 var result = "0"

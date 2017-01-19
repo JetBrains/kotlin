@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, NATIVE
 fun box(): String {
     if ((-0.0 as Comparable<Double>) >= 0.0) return "fail 0"
     if ((-0.0F as Comparable<Float>) >= 0.0F) return "fail 1"

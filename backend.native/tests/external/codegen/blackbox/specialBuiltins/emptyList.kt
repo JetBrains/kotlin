@@ -1,5 +1,5 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, NATIVE
 
 private object EmptyList : List<Nothing> {
     override fun contains(element: Nothing): Boolean = false

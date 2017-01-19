@@ -1,5 +1,5 @@
 // TODO: Enable for JS when it supports Java class library.
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, NATIVE
 class SomeClass { companion object }
 
 fun box() = 

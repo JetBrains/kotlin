@@ -1,5 +1,5 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, NATIVE
 
 fun test(b: Boolean): String {
     val a = if (b) IntArray(5) else LongArray(5)

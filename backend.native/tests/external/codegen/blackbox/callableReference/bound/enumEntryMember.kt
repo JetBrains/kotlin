@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, NATIVE
 enum class E {
     A, B;
 

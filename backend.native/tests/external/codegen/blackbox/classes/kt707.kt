@@ -1,5 +1,5 @@
 // TODO: Enable for JS when it supports Java class library.
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, NATIVE
 class List<T>(val head: T, val tail: List<T>? = null)
 
 fun <T> List<T>.mapHead(f: (T)-> T): List<T> = List<T>(f(head), null)

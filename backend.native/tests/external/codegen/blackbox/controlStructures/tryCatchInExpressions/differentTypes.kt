@@ -1,5 +1,5 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, NATIVE
 
 fun foo(b: Byte, s: String, i: Int, d: Double, li: Long): String = "$b $s $i $d $li"
 

@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, NATIVE
 data class Test(val z1: Double, val z2: Double?)
 
 fun box(): String {

@@ -1,5 +1,5 @@
 // TODO enable for JS backend too when KT-14549 will be fixed
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, NATIVE
 
 inline fun run(block: () -> Unit) = block()
 

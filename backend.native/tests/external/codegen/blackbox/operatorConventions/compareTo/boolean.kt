@@ -1,5 +1,5 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, NATIVE
 
 fun checkLess(x: Boolean, y: Boolean) = when {
     x >= y    -> "Fail $x >= $y"

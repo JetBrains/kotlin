@@ -1,5 +1,5 @@
 //WITH_RUNTIME
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, NATIVE
 fun box(): String {
     val a = intArrayOf(1, 2)
     val b = arrayOf("OK")

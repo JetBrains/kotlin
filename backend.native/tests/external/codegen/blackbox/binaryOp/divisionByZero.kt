@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, NATIVE
 // reason - no ArithmeticException in JS
 fun box(): String {
     val a1 = 0

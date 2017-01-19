@@ -1,5 +1,5 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, NATIVE
 
 fun box(): String {
     if (239.toByte().toString() != (239.toByte() as Byte?).toString()) return "byte failed"
