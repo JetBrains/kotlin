@@ -150,6 +150,18 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("extensionPropertyOnTypeAliasFromExpansion.before.Main.kt")
+        public void testExtensionPropertyOnTypeAliasFromExpansion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/extensionPropertyOnTypeAliasFromExpansion.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("extensionPropertyOnTypeAliasFromOtherTypeAlias.before.Main.kt")
+        public void testExtensionPropertyOnTypeAliasFromOtherTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/extensionPropertyOnTypeAliasFromOtherTypeAlias.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("factoryFunctionFromLambda.before.Main.kt")
         public void testFactoryFunctionFromLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/factoryFunctionFromLambda.before.Main.kt");
@@ -579,6 +591,24 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @TestMetadata("timesAssign.before.Main.kt")
         public void testTimesAssign() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/timesAssign.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("typeAliasExtensionFunction.before.Main.kt")
+        public void testTypeAliasExtensionFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/typeAliasExtensionFunction.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("typeAliasExtensionFunctionInTypeAliasChain.before.Main.kt")
+        public void testTypeAliasExtensionFunctionInTypeAliasChain() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/typeAliasExtensionFunctionInTypeAliasChain.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
+        @TestMetadata("typeAliasExtensionProperty.before.Main.kt")
+        public void testTypeAliasExtensionProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/typeAliasExtensionProperty.before.Main.kt");
             doTestWithExtraFile(fileName);
         }
 

@@ -20,34 +20,44 @@ import com.intellij.psi.stubs.IndexSink
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase
+import org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub
 import org.jetbrains.kotlin.util.aliasImportMap
 
 fun <TDeclaration : KtCallableDeclaration> indexTopLevelExtension(stub: KotlinCallableStubBase<TDeclaration>, sink: IndexSink) {
     if (stub.isExtension()) {
         val declaration = stub.psi
         val containingTypeReference = declaration.receiverTypeReference!!
-        containingTypeReference.typeElement?.index(declaration, sink, containingTypeReference)
+        containingTypeReference.typeElement?.index(declaration, containingTypeReference) { typeName ->
+            val name = declaration.name ?: return@index
+            sink.occurrence(KotlinTopLevelExtensionsByReceiverTypeIndex.INSTANCE.key,
+                            KotlinTopLevelExtensionsByReceiverTypeIndex.buildKey(typeName, name))
+        }
     }
 }
 
-private fun <TDeclaration : KtCallableDeclaration> KtTypeElement.index(
-        declaration: TDeclaration, sink: IndexSink, containingTypeReference: KtTypeReference
-) {
-    fun occurrence(typeName: String) {
-        val name = declaration.name ?: return
-        sink.occurrence(KotlinTopLevelExtensionsByReceiverTypeIndex.INSTANCE.key,
-                        KotlinTopLevelExtensionsByReceiverTypeIndex.buildKey(typeName, name))
+fun indexTypeAliasExpansion(stub: KotlinTypeAliasStub, sink: IndexSink) {
+    val declaration = stub.psi
+    val typeReference = declaration.getTypeReference() ?: return
+    val typeElement = typeReference.typeElement ?: return
+    typeElement.index(declaration, typeReference) { typeName ->
+        sink.occurrence(KotlinTypeAliasByExpansionShortNameIndex.KEY, typeName)
     }
+}
 
+private fun KtTypeElement.index(
+        declaration: KtTypeParameterListOwner,
+        containingTypeReference: KtTypeReference,
+        occurrence: (String) -> Unit
+) {
     when (this) {
         is KtUserType -> {
-            var referenceName = referencedName ?: return
+            val referenceName = referencedName ?: return
 
             val typeParameter = declaration.typeParameters.firstOrNull { it.name == referenceName }
             if (typeParameter != null) {
                 val bound = typeParameter.extendsBound
                 if (bound != null) {
-                    bound.typeElement?.index(declaration, sink, containingTypeReference)
+                    bound.typeElement?.index(declaration, containingTypeReference, occurrence)
                 }
                 else {
                     occurrence("Any")
@@ -60,7 +70,7 @@ private fun <TDeclaration : KtCallableDeclaration> KtTypeElement.index(
             aliasImportMap()[referenceName].forEach { occurrence(it) }
         }
 
-        is KtNullableType -> innerType?.index(declaration, sink, containingTypeReference)
+        is KtNullableType -> innerType?.index(declaration, containingTypeReference, occurrence)
 
         is KtFunctionType -> {
             val arity = parameters.size + (if (receiverTypeReference != null) 1 else 0)

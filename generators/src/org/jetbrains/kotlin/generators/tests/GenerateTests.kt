@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.formatter.AbstractFormatterTest
 import org.jetbrains.kotlin.formatter.AbstractTypingIndentationTestBase
 import org.jetbrains.kotlin.generators.tests.generator.*
 import org.jetbrains.kotlin.idea.AbstractExpressionSelectionTest
+import org.jetbrains.kotlin.idea.AbstractKotlinTypeAliasByExpansionShortNameIndexTest
 import org.jetbrains.kotlin.idea.AbstractSmartSelectionTest
 import org.jetbrains.kotlin.idea.actions.AbstractGotoTestOrCodeActionTest
 import org.jetbrains.kotlin.idea.caches.resolve.AbstractIdeCompiledLightClassTest
@@ -527,6 +528,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractQuickFixMultiFileTest> {
             model("quickfix", pattern = """^(\w+)\.((before\.Main\.\w+)|(test))$""", testMethod = "doTestWithExtraFile")
+        }
+
+        testClass<AbstractKotlinTypeAliasByExpansionShortNameIndexTest> {
+            model("typealiasExpansionIndex")
         }
 
         testClass<AbstractHighlightingTest> {

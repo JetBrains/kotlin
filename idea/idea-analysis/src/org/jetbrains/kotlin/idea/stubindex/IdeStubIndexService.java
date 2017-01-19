@@ -177,6 +177,8 @@ public class IdeStubIndexService extends StubIndexService {
             sink.occurrence(KotlinTypeAliasShortNameIndex.getInstance().getKey(), name);
         }
 
+        IndexUtilsKt.indexTypeAliasExpansion(stub, sink);
+
         if (stub.isTopLevel()) {
             FqName fqName = stub.getFqName();
             if (fqName != null) {
