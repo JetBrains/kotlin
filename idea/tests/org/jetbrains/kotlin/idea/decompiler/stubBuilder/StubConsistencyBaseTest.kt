@@ -41,7 +41,7 @@ abstract class StubConsistencyBaseTest : KotlinLightCodeInsightFixtureTestCase()
 
     private fun doTest(id: ClassId) {
         val project = project
-        val packageFile = getVirtualFileFinder().findVirtualFileWithHeader(id)!!
+        val packageFile = getVirtualFileFinder().findVirtualFileWithHeader(id) ?: throw AssertionError("File not found for id: $id")
         val decompiledText = getDecompiledText(packageFile)
         val fileWithDecompiledText = KtPsiFactory(project).createFile(decompiledText)
         val stubTreeFromDecompiledText = KtFileStubBuilder().buildStubTree(fileWithDecompiledText)

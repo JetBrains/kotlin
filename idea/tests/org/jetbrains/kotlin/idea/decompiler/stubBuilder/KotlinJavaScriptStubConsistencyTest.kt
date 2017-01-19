@@ -30,7 +30,7 @@ class KotlinJavaScriptStubConsistencyTest : StubConsistencyBaseTest() {
     override fun getFileIds() = listOf(
             "jquery", "jquery.ui",
             "kotlin", "kotlin.collections", "kotlin.browser", "kotlin.dom", "kotlin.js"
-    ).map { OldPackageFacadeClassUtils.getPackageClassId(FqName(it)) } + ClassId.topLevel(FqName("kotlin.js.JsonClass"))
+    ).map { OldPackageFacadeClassUtils.getPackageClassId(FqName(it)) } + ClassId.topLevel(FqName("kotlin.js.Console"))
 
     override fun getVirtualFileFinder(): VirtualFileFinder =
         JsVirtualFileFinder.SERVICE.getInstance(project)
