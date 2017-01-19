@@ -13,8 +13,6 @@ sourceSets {
             exclude 'org/jetbrains/annotations/**'
         }
         kotlin {
-            srcDir "${rootDir}/../core/builtins/src"
-            srcDir "${rootDir}/../core/runtime.jvm/src"
             exclude 'org/jetbrains/annotations/**'
         }
     }
@@ -23,9 +21,16 @@ sourceSets {
 jar {
     manifest {
         attributes 'Kotlin-Runtime-Component': 'Core',
+                'Kotlin-Version': "$kotlin_language_version",
                 'Implementation-Title': "${project.description ?: project.name}"
     }
     from("${rootDir}/../dist/builtins")
+}
+
+sourcesJar {
+    classifier = 'sources'
+    from sourceSets.main.kotlin
+    from "${rootDir}/../core/builtins/native"
 }
 
 artifacts {
@@ -42,5 +47,10 @@ compileJava {
 }
 
 compileKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", "${project.name}".toString()]
+    kotlinOptions.freeCompilerArgs = [
+            "-Xallow-kotlin-package",
+            "-Xdump-declarations-to", "${buildDir}/runtime-declarations.json",
+            "-cp", "${rootDir}/../dist/builtins",
+            "-module-name", project.name
+    ]
 }

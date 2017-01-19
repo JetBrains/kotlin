@@ -1,6 +1,7 @@
 
 buildscript {
     ext.kotlin_version = "1.1-SNAPSHOT"
+    ext.kotlin_language_version = "1.1"
     repositories {
         mavenCentral()
         maven { url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1' }
@@ -32,7 +33,6 @@ subprojects {
                     'Implementation-Title': "${project.description ?: project.name}", // TODO: project.description is resolved after evaluating this, therefore this attribute is repeated in the projects; seek for a solution
                     'Implementation-Version': version,
                     'Build-Jdk': System.getProperty('java.version'),
-//                    'Kotlin-Version': kotlin.language.version, // TODO: if we need it - find the way to extract it
                     'Built-By': 'JetBrains'
         }
         from("${rootDir}/../dist/kotlinc/build.txt") { into("META-INF/") }
@@ -45,7 +45,7 @@ subprojects {
 
     task sourcesJar(type: Jar, dependsOn:classes) {
         classifier = 'sources'
-        from sourceSets.main.allSource
+        from sourceSets.main.kotlin
     }
 
     task javadocJar(type: Jar, dependsOn:javadoc) {
