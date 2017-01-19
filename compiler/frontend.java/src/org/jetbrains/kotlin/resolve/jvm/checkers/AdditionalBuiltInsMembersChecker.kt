@@ -56,7 +56,8 @@ object AdditionalBuiltInsMemberOverrideDeclarationChecker : DeclarationChecker {
         val resultingDescriptor = descriptor as? CallableMemberDescriptor ?: return
         val overrideKeyword = declaration.modifierList?.getModifier(KtTokens.OVERRIDE_KEYWORD) ?: return
 
-        if (resultingDescriptor.original.overriddenDescriptors.all { it.isAdditionalBuiltInMember() }) {
+        val overriddenDescriptors = resultingDescriptor.original.overriddenDescriptors
+        if (overriddenDescriptors.isNotEmpty() && overriddenDescriptors.all { it.isAdditionalBuiltInMember() }) {
             diagnosticHolder.report(Errors.UNSUPPORTED_FEATURE.on(overrideKeyword, LanguageFeature.AdditionalBuiltInsMembers))
         }
     }
