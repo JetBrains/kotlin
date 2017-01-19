@@ -48,12 +48,11 @@ class FrameworkLibraryValidatorWithDynamicDescription(
             }
         }
 
-    override fun check(): ValidationResult {
-        val targetPlatform = getTargetPlatform()
+    private fun checkLibraryIsConfigured(targetPlatform: TargetPlatformKind<*>): Boolean {
+        // TODO: propose to configure kotlin-stdlib-common once it's available
+        if (targetPlatform == TargetPlatformKind.Common) return true
 
-        if (KotlinVersionInfoProvider.EP_NAME.extensions.any { it.getLibraryVersions(context.module, targetPlatform).isNotEmpty() }) {
-            return ValidationResult.OK
-        }
+        if (KotlinVersionInfoProvider.EP_NAME.extensions.any { it.getLibraryVersions(context.module, targetPlatform).isNotEmpty() }) return true
 
         val libraryDescription = targetPlatform.libraryDescription
         val libraryKinds = libraryDescription.suitableLibraryKinds
@@ -70,14 +69,28 @@ class FrameworkLibraryValidatorWithDynamicDescription(
                     }
                     !found
                 }
-        if (found) return ValidationResult.OK
+        return found
+    }
 
-        // TODO: propose to configure kotlin-stdlib-common once it's available
-        if (targetPlatform == TargetPlatformKind.Common) return ValidationResult.OK
+    override fun check(): ValidationResult {
+        val targetPlatform = getTargetPlatform()
+
+        if (checkLibraryIsConfigured(targetPlatform)) {
+            val conflictingPlatforms = TargetPlatformKind.ALL_PLATFORMS.filter {
+                it != TargetPlatformKind.Common && it.name != targetPlatform.name && checkLibraryIsConfigured(it)
+            }
+            if (conflictingPlatforms.isNotEmpty()) {
+                val platformText = conflictingPlatforms.mapTo(LinkedHashSet()) { it.name }.joinToString()
+                return ValidationResult("Libraries for the following platform are also present in the module dependencies: $platformText")
+            }
+
+            return ValidationResult.OK
+        }
+
 
         return ValidationResult(
                 IdeBundle.message("label.missed.libraries.text", libraryCategoryName),
-                LibrariesQuickFix(libraryDescription)
+                LibrariesQuickFix(targetPlatform.libraryDescription)
         )
     }
 
