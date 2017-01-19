@@ -76,6 +76,8 @@ abstract class AbstractTypeAliasDescriptor(
 
     override fun toString(): String = "typealias ${name.asString()}"
 
+    override fun getOriginal(): TypeAliasDescriptor = super.getOriginal() as TypeAliasDescriptor
+
     protected abstract fun getTypeConstructorTypeParameters(): List<TypeParameterDescriptor>
 
     protected fun computeDefaultType(): SimpleType =

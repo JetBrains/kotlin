@@ -30,5 +30,7 @@ interface TypeAliasDescriptor : ClassifierDescriptorWithTypeParameters {
 
     val classDescriptor: ClassDescriptor?
 
+    override fun getOriginal(): TypeAliasDescriptor
+
     override fun substitute(substitutor: TypeSubstitutor): TypeAliasDescriptor
 }
