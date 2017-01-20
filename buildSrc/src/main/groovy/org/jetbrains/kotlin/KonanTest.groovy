@@ -226,7 +226,8 @@ class RunExternalTestGroup extends RunKonanTest {
     @Override
     void executeTest() {
         def logFile = project.file(logFileName)
-        logFile.write("|Test|Status|Comment|\n|----|------|-------|")
+        logFile.append("\n$groupDirectory\n\n")
+        logFile.append("|Test|Status|Comment|\n|----|------|-------|\n")
         def ktFiles = project.file(groupDirectory).listFiles(new FileFilter() {
             @Override
             boolean accept(File pathname) {
@@ -262,8 +263,8 @@ class RunExternalTestGroup extends RunKonanTest {
                 skipped++
             }
             println("TEST $status\n")
-            logFile.append("\n|$it.name|$status|$comment|")
+            logFile.append("|$it.name|$status|$comment|\n")
         }
-        print("TOTAL PASSED: $passed/$current (SKIPPED: $skipped)")
+        println("TOTAL PASSED: $passed/$current (SKIPPED: $skipped)")
     }
 }

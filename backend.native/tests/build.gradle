@@ -13,21 +13,34 @@ dependencies {
     cli_bc project(path: ':backend.native', configuration: 'cli_bc')
 }
 
+def logFileName = "test-result.md"
+
 task regenerate_external_tests() {
     doLast {
         def externalTestsProject = childProjects["external"]
         def gradleGenerated = externalTestsProject.file("build.gradle")
         def externalTestsDir = externalTestsProject.file("codegen/blackbox")
-        gradleGenerated.write("import org.jetbrains.kotlin.*\n\n")
+        gradleGenerated.write("import org.jetbrains.kotlin.*\n")
         gradleGenerated.append(
-                "configurations {\n" +
-                "    cli_bc\n" +
-                "}\n" +
-                "\n" +
-                "dependencies {\n" +
-                "    cli_bc project(path: ':backend.native', configuration: 'cli_bc')\n" +
-                "}\n\n")
+"""
+configurations {
+    cli_bc
+}
 
+dependencies {
+    cli_bc project(path: ':backend.native', configuration: 'cli_bc')
+}
+"""
+        )
+        gradleGenerated.append(
+"""
+task createLogFile() {
+    doLast {
+        project.file("$logFileName").write("")
+    }
+}
+"""
+        )
         externalTestsDir.eachDirRecurse {
             // Skip build directory and directories without *.kt files.
             if (it.name == "build" || it.listFiles().count {it.name.endsWith(".kt")} == 0) {
@@ -35,17 +48,17 @@ task regenerate_external_tests() {
             }
 
             def taskDirectory = externalTestsProject.relativePath(it)
-            def taskName = taskDirectory.replaceAll("/-", '_')
+            def taskName = taskDirectory.replaceAll("[-/]", '_')
 
             gradleGenerated.append(
                     "task $taskName (type: RunExternalTestGroup) {\n" +
-                    "    groupDirectory = \"$taskDirectory\"\n" +
-                    "    logFileName = \"$taskDirectory/test-result.md\"\n" +
+                    "   dependsOn(createLogFile)\n" +
+                    "   groupDirectory = \"$taskDirectory\"\n" +
+                    "   logFileName = \"$logFileName\"\n" +
                     "}\n\n")
         }
     }
 }
-
 
 task run() {
     dependsOn(tasks.withType(KonanTest).matching { it.enabled })
@@ -54,6 +67,22 @@ task run() {
 task run_external () {
     project.subprojects {
         dependsOn(it.tasks.withType(RunExternalTestGroup).matching { it.enabled })
+    }
+    doLast {
+        def logFile = childProjects["external"].file(logFileName)
+        def logText = logFile.text
+
+        def passed = logText.count("|PASSED|")
+        def failed = logText.count("|FAILED|")
+        def skipped = logText.count("|SKIPPED|")
+
+        def report = "\nDONE.\n\n" +
+                     "PASSED: $passed\n" +
+                     "FAILED: $failed\n" +
+                     "TOTAL (FAILED + PASSED): ${passed + failed}\n" +
+                     "SKIPPED : $skipped"
+        logFile.append(report)
+        println(report)
     }
 }
 
