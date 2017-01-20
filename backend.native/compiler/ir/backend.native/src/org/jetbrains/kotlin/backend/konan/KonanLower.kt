@@ -40,7 +40,7 @@ internal class KonanLower(val context: Context) {
             Autoboxing(context).lower(irFile)
         }
         phaser.phase(KonanPhase.LOWER_INLINE) {
-            FunctionInlining(context).inline(irFile)
+            //FunctionInlining(context).inline(irFile)
         }
     }
 }
