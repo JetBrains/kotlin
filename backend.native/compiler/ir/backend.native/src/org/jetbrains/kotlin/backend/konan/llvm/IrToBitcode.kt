@@ -1337,11 +1337,12 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateGetField(value: IrGetField): LLVMValueRef {
         context.log("evaluateGetField           : ${ir2string(value)}")
         if (value.descriptor.dispatchReceiverParameter != null) {
-            val thisPtr = instanceFieldAccessReceiver(value)
+            val thisPtr = evaluateExpression(value.receiver!!)
             return codegen.loadSlot(
                     fieldPtrOfClass(thisPtr, value.descriptor), value.descriptor.isVar())
         }
         else {
+            assert (value.receiver == null)
             val ptr = LLVMGetNamedGlobal(context.llvmModule, value.descriptor.symbolName)!!
             return codegen.loadSlot(ptr, value.descriptor.isVar())
         }
@@ -1362,26 +1363,15 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun instanceFieldAccessReceiver(expression: IrFieldAccessExpression): LLVMValueRef {
-        val receiverExpression = expression.receiver
-        if (receiverExpression != null) {
-            return evaluateExpression(receiverExpression)
-        } else {
-            val classDescriptor = expression.descriptor.containingDeclaration as ClassDescriptor
-            return currentCodeContext.genGetValue(classDescriptor.thisAsReceiverParameter)
-        }
-    }
-
-    //-------------------------------------------------------------------------//
-
     private fun evaluateSetField(value: IrSetField): LLVMValueRef {
         context.log("evaluateSetField           : ${ir2string(value)}")
         val valueToAssign = evaluateExpression(value.value)
         if (value.descriptor.dispatchReceiverParameter != null) {
-            val thisPtr = instanceFieldAccessReceiver(value)
+            val thisPtr = evaluateExpression(value.receiver!!)
             codegen.storeAnyGlobal(valueToAssign, fieldPtrOfClass(thisPtr, value.descriptor))
         }
         else {
+            assert (value.receiver == null)
             val globalValue = LLVMGetNamedGlobal(context.llvmModule, value.descriptor.symbolName)
             codegen.storeAnyGlobal(valueToAssign, globalValue!!)
         }
@@ -1741,7 +1731,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             val typeInfo = codegen.typeInfoValue(containingClass)
             val allocHint = Int32(1).llvm
             val thisValue = if (containingClass.isArray) {
-                assert(args.size == 1 && args[0].type == int32Type)
+                assert(args.size >= 1 && args[0].type == int32Type)
                 val allocArrayInstanceArgs = listOf(typeInfo, allocHint, args[0])
                 call(context.llvm.allocArrayFunction, allocArrayInstanceArgs)
             } else {
@@ -1854,14 +1844,30 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     fun callVirtual(descriptor: FunctionDescriptor, args: List<LLVMValueRef>): LLVMValueRef {
-        val thisI8PtrPtr    = codegen.bitcast(kInt8PtrPtr, args[0])          // Cast "this (i8*)" to i8**.
-        val typeInfoI8Ptr   = codegen.load(thisI8PtrPtr)                     // Load TypeInfo address.
-        val typeInfoPtr     = codegen.bitcast(codegen.kTypeInfoPtr, typeInfoI8Ptr)   // Cast TypeInfo (i8*) to TypeInfo*.
-        val methodHash      = codegen.functionHash(descriptor)                       // Calculate hash of the method to be invoked
-        val lookupArgs      = listOf(typeInfoPtr, methodHash)                        // Prepare args for lookup
-        val llvmMethod      = call(context.llvm.lookupOpenMethodFunction,
-                lookupArgs)                                                          // Get method ptr to be invoked
+        val typeInfoPtrPtr  = LLVMBuildStructGEP(codegen.builder, args[0], 0 /* type_info */, "")!!
+        val typeInfoPtr     = codegen.load(typeInfoPtrPtr)
+        assert (typeInfoPtr.type == codegen.kTypeInfoPtr)
 
+        val owner = descriptor.containingDeclaration as ClassDescriptor
+        val llvmMethod = if (!owner.isInterface) {
+            // If this is a virtual method of the class - we can call via vtable.
+            val index = owner.vtableIndex(descriptor)
+
+            val vtablePlace = codegen.gep(typeInfoPtr, Int32(1).llvm) // typeInfoPtr + 1
+            val vtable = codegen.bitcast(kInt8PtrPtr, vtablePlace)
+
+            val slot = codegen.gep(vtable, Int32(index).llvm)
+            codegen.load(slot)
+        } else {
+            // Otherwise, call via hashtable.
+            // TODO: optimize by storing interface number in lower bits of 'this' pointer
+            //       when passing object as an interface. This way we can use those bits as index
+            //       for an additional per-interface vtable.
+            val methodHash = codegen.functionHash(descriptor)                       // Calculate hash of the method to be invoked
+            val lookupArgs = listOf(typeInfoPtr, methodHash)                        // Prepare args for lookup
+            call(context.llvm.lookupOpenMethodFunction,
+                    lookupArgs)
+        }
         val functionPtrType = pointerType(codegen.getLlvmFunctionType(descriptor))   // Construct type of the method to be invoked
         val function        = codegen.bitcast(functionPtrType, llvmMethod)           // Cast method address to the type
         return call(descriptor, function, args)                                      // Invoke the method

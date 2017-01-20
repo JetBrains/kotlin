@@ -9,9 +9,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.unboundCallableReferenceTy
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -120,27 +118,42 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     }
 
     override fun IrExpression.useAs(type: KotlinType): IrExpression {
-        return this.adaptIfNecessary(type)
+
+        val actualType = when (this) {
+            is IrCall -> this.descriptor.original.returnType ?: this.type
+            is IrGetField -> this.descriptor.original.type
+            else -> this.type
+        }
+
+        return this.adaptIfNecessary(actualType, type)
     }
 
-    private fun IrExpression.adaptIfNecessary(expectedType: KotlinType): IrExpression {
-        val thisRepresentation = getCustomRepresentation(this.type)
+    override fun IrExpression.useAsArgument(parameter: ParameterDescriptor): IrExpression {
+        return this.useAsValue(parameter.original)
+    }
+
+    override fun IrExpression.useForField(field: PropertyDescriptor): IrExpression {
+        return this.useForVariable(field.original)
+    }
+
+    private fun IrExpression.adaptIfNecessary(actualType: KotlinType, expectedType: KotlinType): IrExpression {
+        val actualRepresentation = getCustomRepresentation(actualType)
         val expectedRepresentation = getCustomRepresentation(expectedType)
 
         return when {
-            thisRepresentation == expectedRepresentation -> this
+            actualRepresentation == expectedRepresentation -> this
 
-            thisRepresentation == null && expectedRepresentation != null -> {
+            actualRepresentation == null && expectedRepresentation != null -> {
                 // This may happen in the following cases:
-                // 1.  `this.type` is `Nothing`;
-                // 2.  `this` has the incompatible type.
+                // 1.  `actualType` is `Nothing`;
+                // 2.  `actualType` is incompatible.
 
                 this.unbox(expectedRepresentation)
             }
 
-            thisRepresentation != null && expectedRepresentation == null -> this.box(thisRepresentation)
+            actualRepresentation != null && expectedRepresentation == null -> this.box(actualRepresentation)
 
-            else -> throw IllegalArgumentException("this is ${this.type}, expected $expectedType")
+            else -> throw IllegalArgumentException("actual type is $actualType, expected $expectedType")
         }
     }
 

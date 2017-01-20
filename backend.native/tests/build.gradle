@@ -41,11 +41,11 @@ abstract class KonanTest extends DefaultTask {
         project.javaexec {
             main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
             classpath = project.configurations.cli_bc
-            jvmArgs "-ea", 
+            jvmArgs "-ea",
                 "-Dkonan.home=${dist.canonicalPath}",
                 "-Djava.library.path=${dist.canonicalPath}/konan/nativelib"
             args("-output", output,
-                 source, 
+                 source,
                  *moreArgs,
                  *project.globalArgs)
         }
@@ -88,7 +88,7 @@ abstract class KonanTest extends DefaultTask {
 
 class RunKonanTest extends KonanTest {
     void compileTest(String source, String exe) {
-        runCompiler(source, exe, []) 
+        runCompiler(source, exe, [])
     }
 }
 
@@ -98,7 +98,7 @@ class LinkKonanTest extends KonanTest {
     void compileTest(String source, String exe) {
         def libDir = project.file(lib).absolutePath
         def libBc = "${libDir}.bc"
-        
+
         runCompiler(lib, libBc, ['-nolink', '-nostdlib'])
         runCompiler(source, exe, ['-library', libBc])
     }
@@ -149,6 +149,12 @@ task objectInitialization(type: RunKonanTest) {
     source = "codegen/object/initialization.kt"
 }
 
+task objectInitialization1(type: RunKonanTest) {
+    disabled = true
+    goldValue = "init\nfield\nconstructor1\ninit\nfield\nconstructor1\nconstructor2\n"
+    source = "codegen/object/initialization1.kt"
+}
+
 task check_type(type: RunKonanTest) {
     goldValue = "true\nfalse\ntrue\ntrue\ntrue\ntrue\n"
     source = "codegen/basics/check_type.kt"
@@ -173,6 +179,41 @@ task sum2(type: RunKonanTest) {
     source = "codegen/function/sum_imm.kt"
 }
 
+task defaults(type: RunKonanTest) {
+    source = "codegen/function/defaults.kt"
+}
+
+task defaults1(type: RunKonanTest) {
+    source = "codegen/function/defaults1.kt"
+}
+
+task defaults2(type: RunKonanTest) {
+    source = "codegen/function/defaults2.kt"
+}
+
+task defaults3(type: RunKonanTest) {
+    source = "codegen/function/defaults3.kt"
+}
+
+task defaults4(type: RunKonanTest) {
+    disabled = true
+    goldValue = "43\n"
+    source = "codegen/function/defaults4.kt"
+}
+
+task defaults5(type: RunKonanTest) {
+    disabled = true
+    goldValue = "5\n6\n"
+    source = "codegen/function/defaults5.kt"
+}
+
+task defaults6(type: RunKonanTest) {
+    disabled = true
+    goldValue = "42\n"
+    source = "codegen/function/defaults6.kt"
+}
+
+
 task sum_3const(type: RunKonanTest) {
     source = "codegen/function/sum_3const.kt"
 }
@@ -195,7 +236,6 @@ task null_check(type: RunKonanTest) {
 }
 
 task array_to_any(type: RunKonanTest) {
-    disabled = true
     source = "codegen/basics/array_to_any.kt"
 }
 
@@ -247,8 +287,8 @@ task tostring3(type: RunKonanTest) {
             "1.17549E-38\n3.40282E+38\n-INF\nINF\n" +
             // Linux version prints -NAN.
             // "NAN\n" +
-            "4.94066E-324\n1.79769E+308\n-INF\nINF\n" 
-            // "NAN\n" 
+            "4.94066E-324\n1.79769E+308\n-INF\nINF\n"
+            // "NAN\n"
     source = "runtime/basic/tostring3.kt"
 }
 
@@ -265,6 +305,11 @@ task array0(type: RunKonanTest) {
 task array1(type: RunKonanTest) {
     goldValue = "4 2\n1-1\n69\n38\n"
     source = "runtime/collections/array1.kt"
+}
+
+task array2(type: RunKonanTest) {
+    goldValue = "0\n2\n4\n6\n8\n40\n"
+    source = "runtime/collections/array2.kt"
 }
 
 task if_else(type: RunKonanTest) {
@@ -307,6 +352,11 @@ task advanced_when5(type: RunKonanTest) {
 task bool_yes(type: RunKonanTest) {
     source = "codegen/function/boolean.kt"
 }
+
+task named(type: RunKonanTest) {
+    source = "codegen/function/named.kt"
+}
+
 
 task plus_eq(type: RunKonanTest) {
     source = "codegen/function/plus_eq.kt"
@@ -360,7 +410,7 @@ task intrinsic(type: RunKonanTest) {
 }
 
 /*
-    Disabled until we extract the classes that should be 
+    Disabled until we extract the classes that should be
     always present from stdlib.kt.bc into a separate binary.
 
 task link(type: LinkKonanTest) {
@@ -386,7 +436,6 @@ task statements0(type: RunKonanTest) {
 }
 
 task boxing0(type: RunKonanTest) {
-    disabled = true
     goldValue = "17\n"
     source = "codegen/boxing/boxing0.kt"
 }
@@ -498,6 +547,10 @@ task moderately_large_array(type: RunKonanTest) {
     source = "runtime/collections/moderately_large_array.kt"
 }
 
+task moderately_large_array1(type: RunKonanTest) {
+    goldValue = "-45392\n"
+    source = "runtime/collections/moderately_large_array1.kt"
+}
 
 task string_builder0(type: RunKonanTest) {
     goldValue = "OK\n"
@@ -805,6 +858,11 @@ task memory_var4(type: RunKonanTest) {
 task memory_throw_cleanup(type: RunKonanTest) {
     goldValue = "Ok\n"
     source = "runtime/memory/throw_cleanup.kt"
+}
+
+task memory_collect_cycles(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "runtime/memory/cycles0.kt"
 }
 
 task unit1(type: RunKonanTest) {

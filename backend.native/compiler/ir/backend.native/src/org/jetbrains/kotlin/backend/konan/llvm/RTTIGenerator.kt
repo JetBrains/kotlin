@@ -4,16 +4,12 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.descriptors.implementation
-import org.jetbrains.kotlin.backend.konan.descriptors.implementedInterfaces
-import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
+import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 
 
@@ -31,7 +27,6 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                                  val objOffsetsCount: Int,
                                  val interfaces: ConstValue,
                                  val interfacesCount: Int,
-                                 val vtable: ConstValue,
                                  val methods: ConstValue,
                                  val methodsCount: Int,
                                  val fields: ConstValue,
@@ -50,8 +45,6 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                     interfaces,
                     Int32(interfacesCount),
 
-                    vtable,
-
                     methods,
                     Int32(methodsCount),
 
@@ -69,46 +62,6 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             LLVMStructSetBody(classType, fieldTypesNativeArrayPtr, fieldTypes.size, 0)
         }
         return classType
-    }
-
-    // TODO: optimize
-    private fun getVtableEntries(classDesc: ClassDescriptor): List<FunctionDescriptor> {
-        assert (!classDesc.isInterface)
-
-        val superVtableEntries = if (KotlinBuiltIns.isSpecialClassWithNoSupertypes(classDesc)) {
-            emptyList()
-        } else {
-            getVtableEntries(classDesc.getSuperClassOrAny())
-        }
-
-        val methods = classDesc.getContributedMethods() // TODO: ensure order is well-defined
-
-        val inheritedVtableSlots = superVtableEntries.map { superMethod ->
-            methods.single { OverridingUtil.overrides(it, superMethod) }
-        }
-
-        return inheritedVtableSlots + (methods - inheritedVtableSlots).filter { it.isOverridable }
-    }
-
-    private fun getMethodTableEntries(classDesc: ClassDescriptor): List<FunctionDescriptor> {
-        assert (classDesc.modality != Modality.ABSTRACT)
-
-        return classDesc.getContributedMethods().filter { it.isOverridableOrOverrides }
-        // TODO: probably method table should contain all accessible methods to improve binary compatibility
-    }
-
-    private fun ClassDescriptor.getContributedMethods(): List<FunctionDescriptor> {
-        val contributedDescriptors = unsubstitutedMemberScope.getContributedDescriptors()
-        // (includes declarations from supers)
-
-        val functions = contributedDescriptors.filterIsInstance<FunctionDescriptor>()
-
-        val properties = contributedDescriptors.filterIsInstance<PropertyDescriptor>()
-        val getters = properties.mapNotNull { it.getter }
-        val setters = properties.mapNotNull { it.setter }
-
-        val allMethods = functions + getters + setters
-        return allMethods
     }
 
     private fun exportTypeInfoIfRequired(classDesc: ClassDescriptor, typeInfoGlobal: LLVMValueRef?) {
@@ -181,26 +134,27 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val fieldsPtr = staticData.placeGlobalConstArray("kfields:$className",
                 runtime.fieldTableRecordType, fields)
 
-        val vtable: List<ConstValue>
+        val vtableEntries: List<ConstValue>
         val methods: List<ConstValue>
 
-        if (classDesc.modality != Modality.ABSTRACT) {
+        if (!classDesc.isAbstract()) {
             // TODO: compile-time resolution limits binary compatibility
-            vtable = getVtableEntries(classDesc).map { it.implementation.entryPointAddress }
+            vtableEntries = classDesc.vtableEntries.map { it.implementation.entryPointAddress }
 
-            methods = getMethodTableEntries(classDesc).map {
+            methods = classDesc.methodTableEntries.map {
                 val nameSignature = it.functionName.localHash
                 // TODO: compile-time resolution limits binary compatibility
                 val methodEntryPoint = it.implementation.entryPointAddress
                 MethodTableRecord(nameSignature, methodEntryPoint)
             }.sortedBy { it.nameSignature.value }
         } else {
-            vtable = emptyList()
+            vtableEntries = emptyList()
             methods = emptyList()
         }
 
+        assert (vtableEntries.size == classDesc.vtableSize)
 
-        val vtablePtr = staticData.placeGlobalConstArray("kvtable:$className", pointerType(int8Type), vtable)
+        val vtable = ConstArray(int8TypePtr, vtableEntries)
 
         val methodsPtr = staticData.placeGlobalConstArray("kmethods:$className",
                 runtime.methodTableRecordType, methods)
@@ -209,15 +163,14 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 superType,
                 objOffsetsPtr, objOffsets.size,
                 interfacesPtr, interfaces.size,
-                vtablePtr,
                 methodsPtr, methods.size,
                 fieldsPtr, if (classDesc.isInterface) -1 else fields.size)
 
-        val typeInfoGlobal = classDesc.llvmTypeInfoPtr // TODO: it is a hack
-        LLVMSetInitializer(typeInfoGlobal, typeInfo.llvm)
+        val typeInfoGlobal = classDesc.typeInfoWithVtable.llvm // TODO: it is a hack
+        LLVMSetInitializer(typeInfoGlobal, Struct(typeInfo, vtable).llvm)
         LLVMSetGlobalConstant(typeInfoGlobal, 1)
 
-        exportTypeInfoIfRequired(classDesc, typeInfoGlobal)
+        exportTypeInfoIfRequired(classDesc, classDesc.llvmTypeInfoPtr)
     }
 
 }

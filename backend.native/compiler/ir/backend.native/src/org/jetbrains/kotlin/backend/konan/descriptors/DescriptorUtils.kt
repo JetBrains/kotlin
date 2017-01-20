@@ -1,6 +1,8 @@
 package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.backend.konan.KonanBuiltIns
+import org.jetbrains.kotlin.backend.konan.llvm.functionName
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -103,7 +105,7 @@ internal fun KonanBuiltIns.getKonanInternalClassOrNull(name: String): ClassDescr
  * @return built-in class `konan.internal.$name`
  */
 internal fun KonanBuiltIns.getKonanInternalClass(name: String): ClassDescriptor =
-        getKonanInternalClassOrNull(name)!!
+        getKonanInternalClassOrNull(name) ?: TODO(name)
 
 internal fun KonanBuiltIns.getKonanInternalFunctions(name: String): List<FunctionDescriptor> {
     return konanInternal.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).toList()
@@ -149,3 +151,61 @@ internal val FunctionDescriptor.isFunctionInvoke: Boolean
     }
 
 internal fun ClassDescriptor.isUnit() = this.defaultType.isUnit()
+
+internal val ClassDescriptor.сontributedMethods: List<FunctionDescriptor>
+    get() {
+        val contributedDescriptors = unsubstitutedMemberScope.getContributedDescriptors()
+        // (includes declarations from supers)
+
+        val functions = contributedDescriptors.filterIsInstance<FunctionDescriptor>()
+
+        val properties = contributedDescriptors.filterIsInstance<PropertyDescriptor>()
+        val getters = properties.mapNotNull { it.getter }
+        val setters = properties.mapNotNull { it.setter }
+
+        val allMethods = (functions + getters + setters).sortedBy {
+           // TODO: use local hash instead, but it needs major refactoring.
+            it.functionName.hashCode()
+        }
+        return allMethods
+    }
+
+fun ClassDescriptor.isAbstract() = this.modality == Modality.SEALED || this.modality == Modality.ABSTRACT
+
+// TODO: optimize
+val ClassDescriptor.vtableEntries: List<FunctionDescriptor>
+    get() {
+        assert(!this.isInterface)
+
+        val superVtableEntries = if (KotlinBuiltIns.isSpecialClassWithNoSupertypes(this)) {
+            emptyList()
+        } else {
+            this.getSuperClassOrAny().vtableEntries
+        }
+
+        val methods = this.сontributedMethods
+
+        val inheritedVtableSlots = superVtableEntries.map { superMethod ->
+            methods.single { OverridingUtil.overrides(it, superMethod) }
+        }
+
+        return inheritedVtableSlots + (methods - inheritedVtableSlots).filter { it.isOverridable }
+    }
+
+val ClassDescriptor.vtableSize: Int
+    get() = if (this.isAbstract()) 0 else this.vtableEntries.size
+
+fun ClassDescriptor.vtableIndex(function: FunctionDescriptor): Int {
+    this.vtableEntries.forEachIndexed { index, functionDescriptor ->
+        if (functionDescriptor == function.original) return index
+    }
+    throw Error(function.toString() + " not in vtable of " + this.toString())
+}
+
+val ClassDescriptor.methodTableEntries: List<FunctionDescriptor>
+    get() {
+        assert (!this.isAbstract())
+
+        return this.сontributedMethods.filter { it.isOverridableOrOverrides }
+        // TODO: probably method table should contain all accessible methods to improve binary compatibility
+    }

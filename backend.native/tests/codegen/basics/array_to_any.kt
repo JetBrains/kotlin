@@ -1,7 +1,7 @@
 fun main(args: Array<String>) {
-    println(foo().toString())
+    foo().hashCode()
 }
 
 fun foo(): Any {
-    return Array<Any?>(0)
+    return Array<Any?>(0, { i -> null })
 }

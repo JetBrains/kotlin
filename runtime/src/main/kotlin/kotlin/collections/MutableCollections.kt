@@ -149,20 +149,16 @@ public fun <T> MutableIterable<T>.removeAll(predicate: (T) -> Boolean): Boolean 
  */
 public fun <T> MutableIterable<T>.retainAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, false)
 
-// TODO: due to boxing problems, cannot use Boolean type.
-@FixmeBoxing
 private fun <T> MutableIterable<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {
-    TODO()
-    /*
     var result = false
     with (iterator()) {
         while (hasNext())
-            if (predicate(next()).toString() == predicateResultToRemove) {
+            if (predicate(next()) == predicateResultToRemove) {
                 remove()
                 result = true
             }
     }
-    return result */
+    return result
 }
 
 /**

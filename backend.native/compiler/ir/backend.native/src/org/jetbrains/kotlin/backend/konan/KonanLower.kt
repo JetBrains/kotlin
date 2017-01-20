@@ -17,6 +17,10 @@ internal class KonanLower(val context: Context) {
     fun lower(irFile: IrFile) {
         val phaser = PhaseManager(context)
 
+        phaser.phase(KonanPhase.LOWER_DEFAULT_PARAMETER_EXTENT) {
+            DefaultParameterStubGenerator(context).runOnFilePostfix(irFile)
+            DefaultParameterInjector(context).runOnFilePostfix(irFile)
+        }
         phaser.phase(KonanPhase.LOWER_BUILTIN_OPERATORS) {
             BuiltinOperatorLowering(context).runOnFilePostfix(irFile)
         }

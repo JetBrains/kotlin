@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.backend.konan.Distribution
 import org.jetbrains.kotlin.backend.konan.hash.GlobalHash
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.descriptors.backingField
+import org.jetbrains.kotlin.backend.konan.descriptors.vtableSize
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -115,21 +116,23 @@ internal interface ContextUtils {
         }
 
     /**
+     * Pointer to struct { TypeInfo, vtable }.
+     */
+    val ClassDescriptor.typeInfoWithVtable: ConstPointer
+        get() {
+            val type = structType(runtime.typeInfoType, LLVMArrayType(int8TypePtr, this.vtableSize)!!)
+            return constPointer(externalGlobal(this.typeInfoSymbolName, type))
+        }
+
+    val ClassDescriptor.typeInfoPtr: ConstPointer
+        get() = typeInfoWithVtable.getElementPtr(0)
+
+    /**
      * Pointer to type info for given class.
      * It may be declared as pointer to external variable.
      */
     val ClassDescriptor.llvmTypeInfoPtr: LLVMValueRef
-        get() {
-            val module = context.llvmModule
-            val globalName = this.typeInfoSymbolName
-            val globalPtr = LLVMGetNamedGlobal(module, globalName) ?:
-                            LLVMAddGlobal(module, runtime.typeInfoType, globalName)!!
-
-            return globalPtr
-        }
-
-    val ClassDescriptor.typeInfoPtr: ConstPointer
-        get() = constPointer(this.llvmTypeInfoPtr)
+        get() = typeInfoPtr.llvm
 
     /**
      * Pointer to type info for this type, or `null` if the type doesn't have corresponding type info.

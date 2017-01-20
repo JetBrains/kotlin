@@ -1,13 +1,13 @@
 package kotlin.collections
 
 /**
- * Returns an array of objects of the given type with the given [size], initialized with **lateinit** _uninitialized_ values.
+ * Returns an array of objects of the given type with the given [size], initialized with _uninitialized_ values.
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-fun <E> arrayOfUninitializedElements(size: Int): Array<E> {
-   // return (if (size == 0) emptyArray else Array<Any>(size)) as Array<E>
-   return Array<E>(size)
+internal fun <E> arrayOfUninitializedElements(size: Int): Array<E> {
+    // TODO: special case for size == 0?
+    return Array<E>(size)
 }
 
 /**
@@ -16,7 +16,7 @@ fun <E> arrayOfUninitializedElements(size: Int): Array<E> {
  * either throwing exception or returning some kind of implementation-specific default value.
  */
 fun <E> Array<E>.copyOfUninitializedElements(newSize: Int): Array<E> {
-    val result = Array<E>(newSize)
+    val result = arrayOfUninitializedElements<E>(newSize)
     this.copyRangeTo(result, 0, if (newSize > this.size) this.size else newSize, 0)
     return result
 }
@@ -33,7 +33,7 @@ fun IntArray.copyOfUninitializedElements(newSize: Int): IntArray {
  * Attempts to read _uninitialized_ value work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-fun <E> Array<E>.resetAt(index: Int) {
+internal fun <E> Array<E>.resetAt(index: Int) {
     (@Suppress("UNCHECKED_CAST")(this as Array<Any?>))[index] = null
 }
 
@@ -50,11 +50,11 @@ external private fun fillImpl(array: IntArray, fromIndex: Int, toIndex: Int, val
  * Attempts to read _uninitialized_ values work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
-fun <E> Array<E>.resetRange(fromIndex: Int, toIndex: Int) {
+internal fun <E> Array<E>.resetRange(fromIndex: Int, toIndex: Int) {
     fillImpl(@Suppress("UNCHECKED_CAST") (this as Array<Any>), fromIndex, toIndex, null)
 }
 
-fun IntArray.fill(fromIndex: Int, toIndex: Int, value: Int) {
+internal fun IntArray.fill(fromIndex: Int, toIndex: Int, value: Int) {
     fillImpl(this, fromIndex, toIndex, value)
 }
 
