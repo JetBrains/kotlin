@@ -1,12 +1,14 @@
-//@Suppress("NOTHING_TO_INLINE")
-//inline fun foo(body: () -> Unit) {
-fun foo(body: () -> Unit) {
+@Suppress("NOTHING_TO_INLINE")
+inline fun foo(body: () -> Unit) {
+    println("hello1")
     body()
+    println("hello4")
 }
 
 fun bar() {
     foo {
-        println("hello")
+        println("hello2")
+        println("hello3")
     }
 }
 
