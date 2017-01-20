@@ -38,17 +38,25 @@ abstract class KonanTest extends DefaultTask {
     abstract void compileTest(List<String> filesToCompile, String exe)
 
     protected void runCompiler(List<String> filesToCompile, String output, List<String> moreArgs) {
-        project.javaexec {
-            main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
-            classpath = project.configurations.cli_bc
-            jvmArgs "-ea",
-                    "-Dkonan.home=${dist.canonicalPath}",
-                    "-Djava.library.path=${dist.canonicalPath}/konan/nativelib"
-            args("-output", output,
-                    *filesToCompile,
-                    *moreArgs,
-                    *project.globalArgs)
-
+        def log = new ByteArrayOutputStream()
+        try {
+            project.javaexec {
+                main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
+                classpath = project.configurations.cli_bc
+                jvmArgs "-ea",
+                        "-Dkonan.home=${dist.canonicalPath}",
+                        "-Djava.library.path=${dist.canonicalPath}/konan/nativelib"
+                args("-output", output,
+                        *filesToCompile,
+                        *moreArgs,
+                        *project.globalArgs)
+                standardOutput = log
+                errorOutput = log
+            }
+        } finally {
+            def logString = log.toString()
+            project.file("${output}.compilation.log").write(logString)
+            println(logString)
         }
     }
 
@@ -127,12 +135,6 @@ class RunExternalTestGroup extends RunKonanTest {
     def logFileName = "test-result.md"
     String filter = project.findProperty("filter")
     String goldValue = "OK"
-
-    String buildExePath() {
-        def exeName = "${name}.kt.exe"
-        def tempDir = temporaryDir.absolutePath
-        return "$tempDir/$exeName"
-    }
 
     // TODO refactor
     List<String> buildCompileList() {
