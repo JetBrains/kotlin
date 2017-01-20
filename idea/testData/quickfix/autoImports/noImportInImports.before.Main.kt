@@ -5,7 +5,6 @@
 // ACTION: Create enum 'SomeTest'
 // ACTION: Create object 'SomeTest'
 // ACTION: Rename reference
-// ACTION: Add dependency on module...
 // ERROR: Unresolved reference: SomeTest
 
 package testing

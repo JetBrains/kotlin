@@ -4,7 +4,6 @@
 // ACTION: Create parameter 'Nested'
 // ACTION: Create property 'Nested'
 // ACTION: Rename reference
-// ACTION: Add dependency on module...
 // ERROR: Unresolved reference: Nested
 
 fun test() {
