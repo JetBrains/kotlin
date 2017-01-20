@@ -1062,8 +1062,10 @@
 
     <target name="kotlin-test">
         <path id="kotlin-test-compile-classpath">
-            <pathelement location="${output}/classes/builtins"/>
             <pathelement location="${output}/builtins"/>
+            <pathelement location="${output}/classes/builtins"/>
+            <pathelement location="${output}/classes/stdlib"/>
+            <pathelement location="libraries/lib/junit-4.11.jar"/>
         </path>
 
         <java classname="org.jetbrains.kotlin.preloading.Preloader" failonerror="true" fork="true" maxmemory="${max.heap.size.for.forked.jvm}">
@@ -1088,6 +1090,7 @@
             <arg value="-Xmulti-platform"/>
             <arg value="libraries/kotlin.test/common/src/main/kotlin"/>
             <arg value="libraries/kotlin.test/jvm/src/main/kotlin"/>
+            <arg value="libraries/kotlin.test/junit/src/main/kotlin"/>
         </java>
 
         <pack-runtime-jar jar-name="kotlin-test.jar" implementation-title="${manifest.impl.title.kotlin.test}" runtime-component="Test">
@@ -1188,7 +1191,7 @@
     </macrodef>
 
     <target name="pack-runtime">
-        <pack-runtime-jar jar-name="kotlin-runtime.jar" implementation-title="${manifest.impl.title.kotlin.jvm.runtime}">
+        <pack-runtime-jar jar-name="kotlin-stdlib.jar" implementation-title="${manifest.impl.title.kotlin.jvm.runtime}">
             <jar-content>
                 <fileset dir="${output}/classes/builtins"/>
                 <fileset dir="${output}/classes/stdlib"/>
@@ -1199,6 +1202,7 @@
                 </zipfileset>
             </jar-content>
         </pack-runtime-jar>
+        <copy file="${kotlin-home}/lib/kotlin-stdlib.jar" tofile="${kotlin-home}/lib/kotlin-runtime.jar"/>
 
         <pack-runtime-jar jar-dir="${output}" jar-name="kotlin-reflect-before-jarjar.jar" implementation-title="${manifest.impl.title.kotlin.jvm.reflect}">
             <jar-content>
@@ -1274,7 +1278,7 @@
             </replaceregexp>
         </sequential>
 
-        <pack-runtime-jar jar-name="kotlin-runtime-sources.jar" implementation-title="${manifest.impl.title.kotlin.jvm.runtime.sources}">
+        <pack-runtime-jar jar-name="kotlin-stdlib-sources.jar" implementation-title="${manifest.impl.title.kotlin.jvm.runtime.sources}">
             <jar-content>
                 <fileset dir="${basedir}/core/builtins/native" includes="**/*"/>
                 <fileset dir="${basedir}/core/builtins/src" includes="**/*"/>
@@ -1284,6 +1288,8 @@
                 <fileset dir="${output}/core.src" includes="**/*"/>
             </jar-content>
         </pack-runtime-jar>
+        <copy file="${kotlin-home}/lib/kotlin-stdlib-sources.jar" tofile="${kotlin-home}/lib/kotlin-runtime-sources.jar"/>
+
 
         <pack-runtime-jar jar-dir="${output}" jar-name="kotlin-reflect-sources-for-maven.jar"
                           implementation-title="${manifest.impl.title.kotlin.jvm.reflect.sources}">

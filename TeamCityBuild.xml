@@ -145,7 +145,7 @@
     </macrodef>
 
     <target name="printStatistics">
-        <print-file-size-statistic path="${kotlin-home}/lib" file-name="kotlin-runtime.jar"/>
+        <print-file-size-statistic path="${kotlin-home}/lib" file-name="kotlin-stdlib.jar"/>
         <print-file-size-statistic path="${kotlin-home}/lib" file-name="kotlin-reflect.jar"/>
 
         <print-file-size-statistic path="${kotlin-home}/lib" file-name="kotlin-jslib.jar"/>
