@@ -2,8 +2,8 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.createFunctionIrGenerator
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.createFunctionIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanPlatform
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -61,14 +61,9 @@ class DefaultParameterStubGenerator internal constructor(val context: Context): 
 
         val functionDescriptor = irFunction.descriptor
         if (bodies.isNotEmpty()) {
-          val (descriptor, mask, extension, dispatch) = functionDescriptor.generateDefaultsDescriptor()
-            val generator = context.createFunctionIrGenerator(descriptor)
-            val builder = generator.createIrBuilder()
-            builder.apply {
-                startOffset = irFunction.startOffset
-                endOffset   = irFunction.endOffset
-            }
-            val body = generator.irBlockBody {
+            val (descriptor, mask, extension, dispatch) = functionDescriptor.generateDefaultsDescriptor()
+            val builder = context.createFunctionIrBuilder(descriptor)
+            val body = builder.irBlockBody(irFunction) {
                 val params = mutableListOf<VariableDescriptor>()
                 val variables = mutableMapOf<VariableDescriptor, VariableDescriptor>()
 

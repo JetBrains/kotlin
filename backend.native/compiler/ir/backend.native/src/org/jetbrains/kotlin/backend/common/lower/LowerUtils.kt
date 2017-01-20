@@ -18,28 +18,28 @@ import org.jetbrains.kotlin.utils.Printer
 
 class IrLoweringContext(backendContext: BackendContext) : IrGeneratorContext(backendContext.irBuiltIns)
 
-class FunctionIrGenerator(backendContext: BackendContext, functionDescriptor: FunctionDescriptor) : IrGeneratorWithScope {
-    override val context = IrLoweringContext(backendContext)
-    override val scope = Scope(functionDescriptor)
-}
+class FunctionIrBuilder(backendContext: BackendContext, functionDescriptor: FunctionDescriptor) :
+        IrBuilderWithScope(
+                IrLoweringContext(backendContext),
+                Scope(functionDescriptor),
+                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET
+        )
 
-fun BackendContext.createFunctionIrGenerator(functionDescriptor: FunctionDescriptor) =
-        FunctionIrGenerator(this, functionDescriptor)
+fun BackendContext.createFunctionIrBuilder(functionDescriptor: FunctionDescriptor) =
+        FunctionIrBuilder(this, functionDescriptor)
 
-class FunctionIrBuilder(context: IrLoweringContext, scope: Scope, startOffset: Int, endOffset: Int) :
-        IrBuilderWithScope(context, scope, startOffset, endOffset)
-
-fun FunctionIrGenerator.createIrBuilder() = FunctionIrBuilder(context, scope, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+fun <T : IrBuilder> T.at(element: IrElement) = this.at(element.startOffset, element.endOffset)
 
 /**
  * Builds [IrBlock] to be used instead of given expression.
  */
-inline fun FunctionIrGenerator.irBlock(expression: IrExpression, origin: IrStatementOrigin? = null,
-                                       resultType: KotlinType? = expression.type,
-                                       body: IrBlockBuilder.() -> Unit) =
+inline fun IrGeneratorWithScope.irBlock(expression: IrExpression, origin: IrStatementOrigin? = null,
+                                        resultType: KotlinType? = expression.type,
+                                        body: IrBlockBuilder.() -> Unit) =
         this.irBlock(expression.startOffset, expression.endOffset, origin, resultType, body)
 
-inline fun FunctionIrGenerator.irBlockBody(irElement: IrElement, body: IrBlockBodyBuilder.() -> Unit) =
+inline fun IrGeneratorWithScope.irBlockBody(irElement: IrElement, body: IrBlockBodyBuilder.() -> Unit) =
         this.irBlockBody(irElement.startOffset, irElement.endOffset, body)
 
 fun computeOverrides(current: ClassDescriptor, functionsFromCurrent: List<CallableMemberDescriptor>): List<DeclarationDescriptor> {

@@ -208,6 +208,17 @@ task cast_simple(type: RunKonanTest) {
     source = "codegen/basics/cast_simple.kt"
 }
 
+task unchecked_cast1(type: RunKonanTest) {
+    goldValue = "17\n17\n42\n42\n"
+    source = "codegen/basics/unchecked_cast1.kt"
+}
+
+task unchecked_cast2(type: RunKonanTest) {
+    disabled = true
+    goldValue = "Ok\n"
+    source = "codegen/basics/unchecked_cast2.kt"
+}
+
 task null_check(type: RunKonanTest) {
     source = "codegen/basics/null_check.kt"
 }
