@@ -63,7 +63,15 @@ fun generateDelegateCall(
         args.add(JsNameRef(jsParamName))
     }
 
-    val functionObject = simpleReturnFunction(context.getScopeForDescriptor(fromDescriptor), JsInvocation(overriddenMemberFunctionRef, args))
+    val intrinsic = context.intrinsics().getFunctionIntrinsic(toDescriptor)
+    val invocation = if (intrinsic.exists()) {
+        intrinsic.apply(thisObject, args, context)
+    }
+    else {
+        JsInvocation(overriddenMemberFunctionRef, args)
+    }
+
+    val functionObject = simpleReturnFunction(context.getScopeForDescriptor(fromDescriptor), invocation)
     functionObject.parameters.addAll(parameters)
 
     context.addFunctionToPrototype(classDescriptor, fromDescriptor, functionObject)
