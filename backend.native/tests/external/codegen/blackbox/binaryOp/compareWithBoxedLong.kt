@@ -1,5 +1,8 @@
 // IGNORE_BACKEND: JS
 // reason - multifile tests are not supported in JS tests
+// IGNORE_BACKEND: NATIVE
+// reason - no java interop.
+
 //FILE: JavaClass.java
 
 class JavaClass {
