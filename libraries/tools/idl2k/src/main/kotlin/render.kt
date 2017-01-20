@@ -100,32 +100,38 @@ private fun Appendable.renderArgumentsDeclaration(args: List<GenerateAttribute>,
 
 private fun renderCall(call: GenerateFunctionCall) = "${call.name.replaceKeywords()}(${call.arguments.joinToString(separator = ", ", transform = String::replaceKeywords)})"
 
-private fun Appendable.renderFunctionDeclaration(f: GenerateFunction, override: Boolean, commented: Boolean, level: Int = 1) {
+private fun Appendable.renderFunctionDeclaration(owner: String, f: GenerateFunction, override: Boolean, commented: Boolean, level: Int = 1) {
     indent(commented, level)
-
-    if (f.nativeGetterOrSetter == NativeGetterOrSetter.GETTER
-            && !f.returnType.nullable
-            && f.returnType != DynamicType) {
-        appendln("@Suppress(\"NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE\")")
-        indent(commented, level)
-    }
-
-    when (f.nativeGetterOrSetter) {
-        NativeGetterOrSetter.GETTER -> { appendln("@nativeGetter"); indent(commented, level); append("operator ") }
-        NativeGetterOrSetter.SETTER -> { appendln("@nativeSetter"); indent(commented, level); append("operator ") }
-        NativeGetterOrSetter.NONE -> {}
-    }
 
     if (override) {
         append("override ")
+    }
+    if (f.nativeGetterOrSetter != NativeGetterOrSetter.NONE) {
+        append("inline operator ")
     }
 
     if (f.name in keywords) {
         append("@JsName(\"${f.name}\") ")
     }
-    append("fun ${f.name.replaceKeywords()}")
+    append("fun ")
+    if (f.nativeGetterOrSetter != NativeGetterOrSetter.NONE) {
+        append("$owner.")
+    }
+    append(f.name.replaceKeywords())
     renderArgumentsDeclaration(f.arguments, override)
-    appendln(": ${f.returnType.render()}")
+    append(": ${f.returnType.render()}")
+
+    when (f.nativeGetterOrSetter) {
+        NativeGetterOrSetter.GETTER -> {
+            append(" = asDynamic()[${f.arguments[0].name}]")
+        }
+        NativeGetterOrSetter.SETTER -> {
+            append(" { asDynamic()[${f.arguments[0].name}] = ${f.arguments[1].name}; }")
+        }
+        NativeGetterOrSetter.NONE -> {}
+    }
+
+    appendln()
 }
 
 private fun List<GenerateAttribute>.hasNoVars() = none { it.isVar }
@@ -210,9 +216,19 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
                 )
             }
     }
-    iface.memberFunctions.filter { (it !in superFunctions || it.override) && !it.static }.map { it.dynamicIfUnknownType(allTypes.keys) }.groupBy { it.signature }.reduceValues(::betterFunction).values.forEach {
-        renderFunctionDeclaration(it.fixRequiredArguments(iface.name), it.signature in superSignatures || it.override, commented = it.isCommented(iface.name))
+    val memberFunctions = iface.memberFunctions.filter { (it !in superFunctions || it.override) && !it.static }
+            .map { it.dynamicIfUnknownType(allTypes.keys) }.groupBy { it.signature }.reduceValues(::betterFunction).values
+
+    fun doRenderFunction(function: GenerateFunction, level: Int = 1) {
+        renderFunctionDeclaration(
+                iface.name, function.fixRequiredArguments(iface.name),
+                function.signature in superSignatures || function.override,
+                commented = function.isCommented(iface.name),
+                level = level
+        )
     }
+
+    memberFunctions.filter { it.nativeGetterOrSetter == NativeGetterOrSetter.NONE }.forEach { doRenderFunction(it) }
 
     val staticAttributes = iface.memberAttributes.filter { it.static }
     val staticFunctions = iface.memberFunctions.filter { it.static }
@@ -228,13 +244,14 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
             renderAttributeDeclarationAsProperty(it, MemberModality.FINAL, level = 2, commented = it.isCommented(iface.name))
         }
         staticFunctions.forEach {
-            renderFunctionDeclaration(it.fixRequiredArguments(iface.name), override = false, level = 2, commented = it.isCommented(iface.name))
+            renderFunctionDeclaration(iface.name, it.fixRequiredArguments(iface.name), override = false, level = 2, commented = it.isCommented(iface.name))
         }
         indent(false, 1)
         appendln("}")
     }
 
     appendln("}")
+    memberFunctions.filter { it.nativeGetterOrSetter != NativeGetterOrSetter.NONE }.forEach { doRenderFunction(it, 0) }
     appendln()
 
     if (iface.generateBuilderFunction) {
@@ -249,7 +266,6 @@ fun Appendable.renderBuilderFunction(dictionary: GenerateTraitOrClass, allSuperT
             .dynamicIfUnknownType(allTypes)
             .map { if (it.initializer == null && (it.type.nullable || it.type == DynamicType) && !it.required) it.copy(initializer = "null") else it }
 
-    appendln("@Suppress(\"NOTHING_TO_INLINE\")")
     append("public inline fun ${dictionary.name}")
     renderArgumentsDeclaration(fields)
     appendln(": ${dictionary.name} {")
