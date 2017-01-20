@@ -16,24 +16,30 @@ L0:
     r(10) -> <v2>
     mark(1..10)
     call(1..10, rangeTo|<v1>, <v2>) -> <v3>
+    mark(1..10)
+    call(1..10, iterator|<v3>) -> <v4>
     v(i)                                                         INIT: in: {} out: {i=D}
 L2 [loop entry point]:
 L6 [condition entry point]:
-    jmp?(L3)                                                     INIT: in: {i=I?D} out: {i=I?D}
-    magic[LOOP_RANGE_ITERATION](1..10|<v3>) -> <v4>
-    w(i|<v4>)                                                    INIT: in: {i=I?D} out: {i=ID}
+    mark(1..10)                                                  INIT: in: {i=I?D} out: {i=I?D}
+    call(1..10, hasNext) -> <v5>
+    jmp?(L3)
+    mark(1..10)
+    call(1..10, next) -> <v6>
+    magic[LOOP_RANGE_ITERATION](1..10|<v6>) -> <v7>
+    w(i|<v7>)                                                    INIT: in: {i=I?D} out: {i=ID}
     mark(for (i in 1..10) { val a = i })                         INIT: in: {i=ID} out: {i=ID}
 L4 [body entry point]:
   4 mark({ val a = i })
     v(val a = i)                                                 INIT: in: {i=ID} out: {a=D, i=ID}
-    r(i) -> <v5>                                                 INIT: in: {a=D, i=ID} out: {a=D, i=ID}
-    w(a|<v5>)                                                    INIT: in: {a=D, i=ID} out: {a=ID, i=ID}
+    r(i) -> <v8>                                                 INIT: in: {a=D, i=ID} out: {a=D, i=ID}
+    w(a|<v8>)                                                    INIT: in: {a=D, i=ID} out: {a=ID, i=ID}
   3 jmp(L2)                                                      INIT: in: {i=ID} out: {i=ID}               USE: in: {i=READ} out: {i=READ}
 L3 [loop exit point]:
 L5 [body exit point]:
     read (Unit)                                                  INIT: in: {i=I?D} out: {i=I?D}
   2 mark("after")                                                INIT: in: {} out: {}
-    r("after") -> <v6>
+    r("after") -> <v9>
 L1:
   1 <END>
 error:

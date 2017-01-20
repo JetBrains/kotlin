@@ -476,48 +476,54 @@ L0:
     r(a) -> <v2>
     mark(1..a)
     call(1..a, rangeTo|<v1>, <v2>) -> <v3>
+    mark(1..a)
+    call(1..a, iterator|<v3>) -> <v4>
     v(i)
 L2 [loop entry point]:
 L6 [condition entry point]:
-    jmp?(L3)                                                                              NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>]                           PREV:[v(i), jmp(L6), jmp(L2)]
-    magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>
-    w(i|<v4>)
+    mark(1..a)                                                                            PREV:[v(i), jmp(L6), jmp(L2)]
+    call(1..a, hasNext) -> <v5>
+    jmp?(L3)                                                                              NEXT:[read (Unit), mark(1..a)]
+    mark(1..a)
+    call(1..a, next) -> <v6>
+    magic[LOOP_RANGE_ITERATION](1..a|<v6>) -> <v7>
+    w(i|<v7>)
     mark(for (i in 1..a) { try { 1 if (2 > 3) { continue@l } } finally { 2 } })
 L4 [body entry point]:
   4 mark({ try { 1 if (2 > 3) { continue@l } } finally { 2 } })
     mark(try { 1 if (2 > 3) { continue@l } } finally { 2 })
     jmp?(L7)                                                                              NEXT:[mark({ 2 }), mark({ 1 if (2 > 3) { continue@l } })]
   5 mark({ 1 if (2 > 3) { continue@l } })
-    r(1) -> <v5>
+    r(1) -> <v8>
     mark(if (2 > 3) { continue@l })
-    r(2) -> <v6>
-    r(3) -> <v7>
+    r(2) -> <v9>
+    r(3) -> <v10>
     mark(2 > 3)
-    call(2 > 3, compareTo|<v6>, <v7>) -> <v8>
-    jf(L8|<v8>)                                                                           NEXT:[read (Unit), mark({ continue@l })]
+    call(2 > 3, compareTo|<v9>, <v10>) -> <v11>
+    jf(L8|<v11>)                                                                          NEXT:[read (Unit), mark({ continue@l })]
   6 mark({ continue@l })
     jmp?(L7)                                                                              NEXT:[mark({ 2 }), mark({ 2 })]
 L9 [start finally]:
   7 mark({ 2 })
-    r(2) -> <v9>
+    r(2) -> <v12>
 L10 [finish finally]:
-  6 jmp(L6)                                                                               NEXT:[jmp?(L3)]
-- 5 jmp(L11)                                                                              NEXT:[merge(if (2 > 3) { continue@l }|!<v10>) -> <v11>]                                      PREV:[]
+  6 jmp(L6)                                                                               NEXT:[mark(1..a)]
+- 5 jmp(L11)                                                                              NEXT:[merge(if (2 > 3) { continue@l }|!<v13>) -> <v14>]                                      PREV:[]
 L8 [else branch]:
-    read (Unit)                                                                           PREV:[jf(L8|<v8>)]
+    read (Unit)                                                                           PREV:[jf(L8|<v11>)]
 L11 ['if' expression result]:
-    merge(if (2 > 3) { continue@l }|!<v10>) -> <v11>
+    merge(if (2 > 3) { continue@l }|!<v13>) -> <v14>
   4 jmp?(L7)                                                                              NEXT:[mark({ 2 }), jmp(L12)]
     jmp(L12)                                                                              NEXT:[mark({ 2 })]
 L7 [onExceptionToFinallyBlock]:
   7 mark({ 2 })                                                                           PREV:[jmp?(L7), jmp?(L7), jmp?(L7)]
-    r(2) -> <v9>
+    r(2) -> <v12>
   4 jmp(error)                                                                            NEXT:[<ERROR>]
 L12 [skipFinallyToErrorBlock]:
   7 mark({ 2 })                                                                           PREV:[jmp(L12)]
-    r(2) -> <v9>
-  4 merge(try { 1 if (2 > 3) { continue@l } } finally { 2 }|<v11>) -> <v12>
-  3 jmp(L2)                                                                               NEXT:[jmp?(L3)]
+    r(2) -> <v12>
+  4 merge(try { 1 if (2 > 3) { continue@l } } finally { 2 }|<v14>) -> <v15>
+  3 jmp(L2)                                                                               NEXT:[mark(1..a)]
 L3 [loop exit point]:
 L5 [body exit point]:
     read (Unit)                                                                           PREV:[jmp?(L3)]
@@ -557,47 +563,53 @@ L0:
     r(a) -> <v2>
     mark(1..a)
     call(1..a, rangeTo|<v1>, <v2>) -> <v3>
+    mark(1..a)
+    call(1..a, iterator|<v3>) -> <v4>
     v(i)
 L3 [loop entry point]:
 L7 [condition entry point]:
-    jmp?(L4)                                                                                            NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>]                                         PREV:[v(i), jmp(L7), jmp(L3)]
-    magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>
-    w(i|<v4>)
+    mark(1..a)                                                                                          PREV:[v(i), jmp(L7), jmp(L3)]
+    call(1..a, hasNext) -> <v5>
+    jmp?(L4)                                                                                            NEXT:[read (Unit), mark(1..a)]
+    mark(1..a)
+    call(1..a, next) -> <v6>
+    magic[LOOP_RANGE_ITERATION](1..a|<v6>) -> <v7>
+    w(i|<v7>)
     mark(for (i in 1..a) { 1 if (2 > 3) { continue@l } })
 L5 [body entry point]:
   5 mark({ 1 if (2 > 3) { continue@l } })
-    r(1) -> <v5>
+    r(1) -> <v8>
     mark(if (2 > 3) { continue@l })
-    r(2) -> <v6>
-    r(3) -> <v7>
+    r(2) -> <v9>
+    r(3) -> <v10>
     mark(2 > 3)
-    call(2 > 3, compareTo|<v6>, <v7>) -> <v8>
-    jf(L8|<v8>)                                                                                         NEXT:[read (Unit), mark({ continue@l })]
+    call(2 > 3, compareTo|<v9>, <v10>) -> <v11>
+    jf(L8|<v11>)                                                                                        NEXT:[read (Unit), mark({ continue@l })]
   6 mark({ continue@l })
-    jmp(L7)                                                                                             NEXT:[jmp?(L4)]
-- 5 jmp(L9)                                                                                             NEXT:[merge(if (2 > 3) { continue@l }|!<v9>) -> <v10>]                                                     PREV:[]
+    jmp(L7)                                                                                             NEXT:[mark(1..a)]
+- 5 jmp(L9)                                                                                             NEXT:[merge(if (2 > 3) { continue@l }|!<v12>) -> <v13>]                                                    PREV:[]
 L8 [else branch]:
-    read (Unit)                                                                                         PREV:[jf(L8|<v8>)]
+    read (Unit)                                                                                         PREV:[jf(L8|<v11>)]
 L9 ['if' expression result]:
-    merge(if (2 > 3) { continue@l }|!<v9>) -> <v10>
-  4 jmp(L3)                                                                                             NEXT:[jmp?(L4)]
+    merge(if (2 > 3) { continue@l }|!<v12>) -> <v13>
+  4 jmp(L3)                                                                                             NEXT:[mark(1..a)]
 L4 [loop exit point]:
 L6 [body exit point]:
     read (Unit)                                                                                         PREV:[jmp?(L4)]
-  3 r(5) -> <v12>
+  3 r(5) -> <v15>
   2 jmp?(L2)                                                                                            NEXT:[mark({ 2 }), jmp(L10)]
     jmp(L10)                                                                                            NEXT:[mark({ 2 })]
 L2 [onExceptionToFinallyBlock]:
 L11 [start finally]:
   3 mark({ 2 })                                                                                         PREV:[jmp?(L2), jmp?(L2)]
-    r(2) -> <v13>
+    r(2) -> <v16>
 L12 [finish finally]:
   2 jmp(error)                                                                                          NEXT:[<ERROR>]
 L10 [skipFinallyToErrorBlock]:
 L13 [copy of L2, onExceptionToFinallyBlock]:
   3 mark({ 2 })                                                                                         PREV:[jmp(L10)]
-    r(2) -> <v13>
-  2 merge(try { l@ for (i in 1..a) { 1 if (2 > 3) { continue@l } } 5 } finally { 2 }|<v12>) -> <v14>
+    r(2) -> <v16>
+  2 merge(try { l@ for (i in 1..a) { 1 if (2 > 3) { continue@l } } 5 } finally { 2 }|<v15>) -> <v17>
 L1:
   1 <END>                                                                                               NEXT:[<SINK>]
 error:
@@ -633,30 +645,36 @@ L0:
     r(a) -> <v2>
     mark(1..a)
     call(1..a, rangeTo|<v1>, <v2>) -> <v3>
+    mark(1..a)
+    call(1..a, iterator|<v3>) -> <v4>
     v(i)
 L3 [loop entry point]:
 L7 [condition entry point]:
-    jmp?(L4)                                                                                           NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>]                                        PREV:[v(i), jmp(L7), jmp(L3)]
-    magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>
-    w(i|<v4>)
+    mark(1..a)                                                                                         PREV:[v(i), jmp(L7), jmp(L3)]
+    call(1..a, hasNext) -> <v5>
+    jmp?(L4)                                                                                           NEXT:[read (Unit), mark(1..a)]
+    mark(1..a)
+    call(1..a, next) -> <v6>
+    magic[LOOP_RANGE_ITERATION](1..a|<v6>) -> <v7>
+    w(i|<v7>)
     mark(for (i in 1..a) { 1 if (2 > 3) { continue@l } })
 L5 [body entry point]:
   5 mark({ 1 if (2 > 3) { continue@l } })
-    r(1) -> <v5>
+    r(1) -> <v8>
     mark(if (2 > 3) { continue@l })
-    r(2) -> <v6>
-    r(3) -> <v7>
+    r(2) -> <v9>
+    r(3) -> <v10>
     mark(2 > 3)
-    call(2 > 3, compareTo|<v6>, <v7>) -> <v8>
-    jf(L8|<v8>)                                                                                        NEXT:[read (Unit), mark({ continue@l })]
+    call(2 > 3, compareTo|<v9>, <v10>) -> <v11>
+    jf(L8|<v11>)                                                                                       NEXT:[read (Unit), mark({ continue@l })]
   6 mark({ continue@l })
-    jmp(L7)                                                                                            NEXT:[jmp?(L4)]
-- 5 jmp(L9)                                                                                            NEXT:[merge(if (2 > 3) { continue@l }|!<v9>) -> <v10>]                                                    PREV:[]
+    jmp(L7)                                                                                            NEXT:[mark(1..a)]
+- 5 jmp(L9)                                                                                            NEXT:[merge(if (2 > 3) { continue@l }|!<v12>) -> <v13>]                                                   PREV:[]
 L8 [else branch]:
-    read (Unit)                                                                                        PREV:[jf(L8|<v8>)]
+    read (Unit)                                                                                        PREV:[jf(L8|<v11>)]
 L9 ['if' expression result]:
-    merge(if (2 > 3) { continue@l }|!<v9>) -> <v10>
-  4 jmp(L3)                                                                                            NEXT:[jmp?(L4)]
+    merge(if (2 > 3) { continue@l }|!<v12>) -> <v13>
+  4 jmp(L3)                                                                                            NEXT:[mark(1..a)]
 L4 [loop exit point]:
 L6 [body exit point]:
     read (Unit)                                                                                        PREV:[jmp?(L4)]
@@ -665,14 +683,14 @@ L6 [body exit point]:
 L2 [onExceptionToFinallyBlock]:
 L11 [start finally]:
   3 mark({ 2 })                                                                                        PREV:[jmp?(L2), jmp?(L2)]
-    r(2) -> <v12>
+    r(2) -> <v15>
 L12 [finish finally]:
   2 jmp(error)                                                                                         NEXT:[<ERROR>]
 L10 [skipFinallyToErrorBlock]:
 L13 [copy of L2, onExceptionToFinallyBlock]:
   3 mark({ 2 })                                                                                        PREV:[jmp(L10)]
-    r(2) -> <v12>
-  2 merge(try { l@ for (i in 1..a) { 1 if (2 > 3) { continue@l } } } finally { 2 }|!<v11>) -> <v13>
+    r(2) -> <v15>
+  2 merge(try { l@ for (i in 1..a) { 1 if (2 > 3) { continue@l } } } finally { 2 }|!<v14>) -> <v16>
 L1:
   1 <END>                                                                                              NEXT:[<SINK>]
 error:

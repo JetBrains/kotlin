@@ -67,39 +67,45 @@ L4 [start finally]:
     r(2) -> <v6>
     mark(1..2)
     call(1..2, rangeTo|<v5>, <v6>) -> <v7>
+    mark(1..2)
+    call(1..2, iterator|<v7>) -> <v8>
     v(i)
 L5 [loop entry point]:
 L9 [condition entry point]:
-    jmp?(L6)                                                                                                              NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..2|<v7>) -> <v8>]                                               PREV:[v(i), jmp(L5)]
-    magic[LOOP_RANGE_ITERATION](1..2|<v7>) -> <v8>
-    w(i|<v8>)
+    mark(1..2)                                                                                                            PREV:[v(i), jmp(L5)]
+    call(1..2, hasNext) -> <v9>
+    jmp?(L6)                                                                                                              NEXT:[read (Unit), mark(1..2)]
+    mark(1..2)
+    call(1..2, next) -> <v10>
+    magic[LOOP_RANGE_ITERATION](1..2|<v10>) -> <v11>
+    w(i|<v11>)
     mark(for (i in 1..2) { })
 L7 [body entry point]:
   6 mark({ })
     read (Unit)
-  5 jmp(L5)                                                                                                               NEXT:[jmp?(L6)]
+  5 jmp(L5)                                                                                                               NEXT:[mark(1..2)]
 L6 [loop exit point]:
 L8 [body exit point]:
     read (Unit)                                                                                                           PREV:[jmp?(L6)]
   4 mark(bar())
-    call(bar(), bar) -> <v9>
-    ret(*|<v9>) L1                                                                                                        NEXT:[<END>]
+    call(bar(), bar) -> <v12>
+    ret(*|<v12>) L1                                                                                                       NEXT:[<END>]
 L10 [finish finally]:
 - 3 ret(*|<v4>) L1                                                                                                        NEXT:[<END>]                                                                                                     PREV:[]
--   jmp(L11)                                                                                                              NEXT:[merge(if (n < 0) return 0|!<v11>) -> <v12>]                                                                PREV:[]
+-   jmp(L11)                                                                                                              NEXT:[merge(if (n < 0) return 0|!<v14>) -> <v15>]                                                                PREV:[]
 L3 [else branch]:
     read (Unit)                                                                                                           PREV:[jf(L3|<v3>)]
 L11 ['if' expression result]:
-    merge(if (n < 0) return 0|!<v11>) -> <v12>
+    merge(if (n < 0) return 0|!<v14>) -> <v15>
     mark(n.let { return it })
-    r(n) -> <v13>
+    r(n) -> <v16>
     mark({ return it })
-    jmp?(L12)                                                                                                             NEXT:[r({ return it }) -> <v14>, d({ return it })]
+    jmp?(L12)                                                                                                             NEXT:[r({ return it }) -> <v17>, d({ return it })]
     d({ return it })                                                                                                      NEXT:[<SINK>]
 L12 [after local declaration]:
-    r({ return it }) -> <v14>                                                                                             PREV:[jmp?(L12)]
+    r({ return it }) -> <v17>                                                                                             PREV:[jmp?(L12)]
     mark(let { return it })
-    call(let { return it }, let|<v13>, <v14>) -> <v15>
+    call(let { return it }, let|<v16>, <v17>) -> <v18>
   2 jmp?(L2)                                                                                                              NEXT:[mark({ for (i in 1..2) { } return bar() }), jmp(L20)]
     jmp(L20)                                                                                                              NEXT:[mark({ for (i in 1..2) { } return bar() })]
 L2 [onExceptionToFinallyBlock]:
@@ -108,23 +114,29 @@ L2 [onExceptionToFinallyBlock]:
     r(2) -> <v6>
     mark(1..2)
     call(1..2, rangeTo|<v5>, <v6>) -> <v7>
+    mark(1..2)
+    call(1..2, iterator|<v7>) -> <v8>
     v(i)
 L21 [copy of L5, loop entry point]:
 L25 [copy of L9, condition entry point]:
-    jmp?(L22)                                                                                                             NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..2|<v7>) -> <v8>]                                               PREV:[v(i), jmp(L21)]
-    magic[LOOP_RANGE_ITERATION](1..2|<v7>) -> <v8>
-    w(i|<v8>)
+    mark(1..2)                                                                                                            PREV:[v(i), jmp(L21)]
+    call(1..2, hasNext) -> <v9>
+    jmp?(L22)                                                                                                             NEXT:[read (Unit), mark(1..2)]
+    mark(1..2)
+    call(1..2, next) -> <v10>
+    magic[LOOP_RANGE_ITERATION](1..2|<v10>) -> <v11>
+    w(i|<v11>)
     mark(for (i in 1..2) { })
 L23 [copy of L7, body entry point]:
   6 mark({ })
     read (Unit)
-  5 jmp(L21)                                                                                                              NEXT:[jmp?(L22)]
+  5 jmp(L21)                                                                                                              NEXT:[mark(1..2)]
 L22 [copy of L6, loop exit point]:
 L24 [copy of L8, body exit point]:
     read (Unit)                                                                                                           PREV:[jmp?(L22)]
   4 mark(bar())
-    call(bar(), bar) -> <v9>
-    ret(*|<v9>) L1                                                                                                        NEXT:[<END>]
+    call(bar(), bar) -> <v12>
+    ret(*|<v12>) L1                                                                                                       NEXT:[<END>]
 - 2 jmp(error)                                                                                                            NEXT:[<ERROR>]                                                                                                   PREV:[]
 L20 [skipFinallyToErrorBlock]:
   4 mark({ for (i in 1..2) { } return bar() })                                                                            PREV:[jmp(L20)]
@@ -132,26 +144,32 @@ L20 [skipFinallyToErrorBlock]:
     r(2) -> <v6>
     mark(1..2)
     call(1..2, rangeTo|<v5>, <v6>) -> <v7>
+    mark(1..2)
+    call(1..2, iterator|<v7>) -> <v8>
     v(i)
 L26 [copy of L5, loop entry point]:
 L30 [copy of L9, condition entry point]:
-    jmp?(L27)                                                                                                             NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..2|<v7>) -> <v8>]                                               PREV:[v(i), jmp(L26)]
-    magic[LOOP_RANGE_ITERATION](1..2|<v7>) -> <v8>
-    w(i|<v8>)
+    mark(1..2)                                                                                                            PREV:[v(i), jmp(L26)]
+    call(1..2, hasNext) -> <v9>
+    jmp?(L27)                                                                                                             NEXT:[read (Unit), mark(1..2)]
+    mark(1..2)
+    call(1..2, next) -> <v10>
+    magic[LOOP_RANGE_ITERATION](1..2|<v10>) -> <v11>
+    w(i|<v11>)
     mark(for (i in 1..2) { })
 L28 [copy of L7, body entry point]:
   6 mark({ })
     read (Unit)
-  5 jmp(L26)                                                                                                              NEXT:[jmp?(L27)]
+  5 jmp(L26)                                                                                                              NEXT:[mark(1..2)]
 L27 [copy of L6, loop exit point]:
 L29 [copy of L8, body exit point]:
     read (Unit)                                                                                                           PREV:[jmp?(L27)]
   4 mark(bar())
-    call(bar(), bar) -> <v9>
-    ret(*|<v9>) L1                                                                                                        NEXT:[<END>]
-- 2 merge(try { if (n < 0) return 0 n.let { return it } } finally { for (i in 1..2) { } return bar() }|<v15>) -> <v16>    PREV:[]
+    call(bar(), bar) -> <v12>
+    ret(*|<v12>) L1                                                                                                       NEXT:[<END>]
+- 2 merge(try { if (n < 0) return 0 n.let { return it } } finally { for (i in 1..2) { } return bar() }|<v18>) -> <v19>    PREV:[]
 L1:
-  1 <END>                                                                                                                 NEXT:[<SINK>]                                                                                                    PREV:[ret(*|<v9>) L1, ret(*|<v9>) L1, ret(*|<v9>) L1, ret(*|<v9>) L1]
+  1 <END>                                                                                                                 NEXT:[<SINK>]                                                                                                    PREV:[ret(*|<v12>) L1, ret(*|<v12>) L1, ret(*|<v12>) L1, ret(*|<v12>) L1]
 error:
     <ERROR>                                                                                                               PREV:[]
 sink:
@@ -169,29 +187,35 @@ L13:
     r(2) -> <v6>
     mark(1..2)
     call(1..2, rangeTo|<v5>, <v6>) -> <v7>
+    mark(1..2)
+    call(1..2, iterator|<v7>) -> <v8>
     v(i)
 L15 [copy of L5, loop entry point]:
 L19 [copy of L9, condition entry point]:
-    jmp?(L16)                                         NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](1..2|<v7>) -> <v8>]    PREV:[v(i), jmp(L15)]
-    magic[LOOP_RANGE_ITERATION](1..2|<v7>) -> <v8>
-    w(i|<v8>)
+    mark(1..2)                                          PREV:[v(i), jmp(L15)]
+    call(1..2, hasNext) -> <v9>
+    jmp?(L16)                                           NEXT:[read (Unit), mark(1..2)]
+    mark(1..2)
+    call(1..2, next) -> <v10>
+    magic[LOOP_RANGE_ITERATION](1..2|<v10>) -> <v11>
+    w(i|<v11>)
     mark(for (i in 1..2) { })
 L17 [copy of L7, body entry point]:
   6 mark({ })
     read (Unit)
-  5 jmp(L15)                                          NEXT:[jmp?(L16)]
+  5 jmp(L15)                                            NEXT:[mark(1..2)]
 L16 [copy of L6, loop exit point]:
 L18 [copy of L8, body exit point]:
-    read (Unit)                                       PREV:[jmp?(L16)]
+    read (Unit)                                         PREV:[jmp?(L16)]
   4 mark(bar())
-    call(bar(), bar) -> <v9>
-    ret(*|<v9>) L1                                    NEXT:[<END>]
-- 5 ret(*|<v0>) L1                                    NEXT:[<END>]                                                          PREV:[]
-- 4 ret(*|!<v1>) L14                                  PREV:[]
+    call(bar(), bar) -> <v12>
+    ret(*|<v12>) L1                                     NEXT:[<END>]
+- 5 ret(*|<v0>) L1                                      NEXT:[<END>]                                               PREV:[]
+- 4 ret(*|!<v1>) L14                                    PREV:[]
 L14:
-    <END>                                             NEXT:[<SINK>]                                                         PREV:[]
+    <END>                                               NEXT:[<SINK>]                                              PREV:[]
 error:
-    <ERROR>                                           PREV:[]
+    <ERROR>                                             PREV:[]
 sink:
-    <SINK>                                            PREV:[<ERROR>, <END>]
+    <SINK>                                              PREV:[<ERROR>, <END>]
 =====================

@@ -14,21 +14,27 @@ L0:
     w(c|<v0>)
   2 mark({ for (e in c) { { break } } })
   3 r(c) -> <v1>
+    mark(c)
+    call(c, iterator|<v1>) -> <v2>
     v(e)
 L2 [loop entry point]:
 L6 [condition entry point]:
-    jmp?(L3)                                               NEXT:[read (Unit), magic[LOOP_RANGE_ITERATION](c|<v1>) -> <v2>]    PREV:[v(e), jmp(L2)]
-    magic[LOOP_RANGE_ITERATION](c|<v1>) -> <v2>
-    w(e|<v2>)
+    mark(c)                                                PREV:[v(e), jmp(L2)]
+    call(c, hasNext) -> <v3>
+    jmp?(L3)                                               NEXT:[read (Unit), mark(c)]
+    mark(c)
+    call(c, next) -> <v4>
+    magic[LOOP_RANGE_ITERATION](c|<v4>) -> <v5>
+    w(e|<v5>)
     mark(for (e in c) { { break } })
 L4 [body entry point]:
   4 mark({ { break } })
     mark({ break })
-    jmp?(L7)                                               NEXT:[r({ break }) -> <v3>, d({ break })]
+    jmp?(L7)                                               NEXT:[r({ break }) -> <v6>, d({ break })]
     d({ break })                                           NEXT:[<SINK>]
 L7 [after local declaration]:
-    r({ break }) -> <v3>                                   PREV:[jmp?(L7)]
-  3 jmp(L2)                                                NEXT:[jmp?(L3)]
+    r({ break }) -> <v6>                                   PREV:[jmp?(L7)]
+  3 jmp(L2)                                                NEXT:[mark(c)]
 L3 [loop exit point]:
 L5 [body exit point]:
     read (Unit)                                            PREV:[jmp?(L3)]

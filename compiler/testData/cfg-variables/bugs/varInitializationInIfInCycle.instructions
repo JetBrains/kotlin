@@ -20,35 +20,41 @@ L0:
     w(numbers|<v0>)                                                                                               INIT: in: {numbers=D} out: {numbers=ID}
   2 mark({ for (i in numbers) { val b: Boolean if (1 < 2) { b = false } else { b = true } use(b) continue } })    INIT: in: {numbers=ID} out: {numbers=ID}                            USE: in: {numbers=READ} out: {numbers=READ}
   3 r(numbers) -> <v1>                                                                                                                                                                USE: in: {} out: {numbers=READ}
+    mark(numbers)
+    call(numbers, iterator|<v1>) -> <v2>
     v(i)                                                                                                          INIT: in: {numbers=ID} out: {i=D, numbers=ID}
 L2 [loop entry point]:
 L6 [condition entry point]:
-    jmp?(L3)                                                                                                      INIT: in: {i=I?D, numbers=ID} out: {i=I?D, numbers=ID}
-    magic[LOOP_RANGE_ITERATION](numbers|<v1>) -> <v2>
-    w(i|<v2>)                                                                                                     INIT: in: {i=I?D, numbers=ID} out: {i=ID, numbers=ID}
+    mark(numbers)                                                                                                 INIT: in: {i=I?D, numbers=ID} out: {i=I?D, numbers=ID}
+    call(numbers, hasNext) -> <v3>
+    jmp?(L3)
+    mark(numbers)
+    call(numbers, next) -> <v4>
+    magic[LOOP_RANGE_ITERATION](numbers|<v4>) -> <v5>
+    w(i|<v5>)                                                                                                     INIT: in: {i=I?D, numbers=ID} out: {i=ID, numbers=ID}
     mark(for (i in numbers) { val b: Boolean if (1 < 2) { b = false } else { b = true } use(b) continue })        INIT: in: {i=ID, numbers=ID} out: {i=ID, numbers=ID}                USE: in: {} out: {}
 L4 [body entry point]:
   4 mark({ val b: Boolean if (1 < 2) { b = false } else { b = true } use(b) continue })
     v(val b: Boolean)                                                                                             INIT: in: {i=ID, numbers=ID} out: {b=D, i=ID, numbers=ID}
     mark(if (1 < 2) { b = false } else { b = true })                                                              INIT: in: {b=D, i=ID, numbers=ID} out: {b=D, i=ID, numbers=ID}
-    r(1) -> <v3>
-    r(2) -> <v4>
+    r(1) -> <v6>
+    r(2) -> <v7>
     mark(1 < 2)
-    call(1 < 2, compareTo|<v3>, <v4>) -> <v5>
-    jf(L7|<v5>)
+    call(1 < 2, compareTo|<v6>, <v7>) -> <v8>
+    jf(L7|<v8>)
   5 mark({ b = false })
-    r(false) -> <v6>                                                                                                                                                                  USE: in: {b=WRITTEN_AFTER_READ} out: {b=WRITTEN_AFTER_READ}
-    w(b|<v6>)                                                                                                     INIT: in: {b=D, i=ID, numbers=ID} out: {b=ID, i=ID, numbers=ID}     USE: in: {b=READ} out: {b=WRITTEN_AFTER_READ}
+    r(false) -> <v9>                                                                                                                                                                  USE: in: {b=WRITTEN_AFTER_READ} out: {b=WRITTEN_AFTER_READ}
+    w(b|<v9>)                                                                                                     INIT: in: {b=D, i=ID, numbers=ID} out: {b=ID, i=ID, numbers=ID}     USE: in: {b=READ} out: {b=WRITTEN_AFTER_READ}
   4 jmp(L8)                                                                                                       INIT: in: {b=ID, i=ID, numbers=ID} out: {b=ID, i=ID, numbers=ID}    USE: in: {b=READ} out: {b=READ}
 L7 [else branch]:
   5 mark({ b = true })                                                                                            INIT: in: {b=D, i=ID, numbers=ID} out: {b=D, i=ID, numbers=ID}
-    r(true) -> <v8>                                                                                                                                                                   USE: in: {b=WRITTEN_AFTER_READ} out: {b=WRITTEN_AFTER_READ}
-    w(b|<v8>)                                                                                                     INIT: in: {b=D, i=ID, numbers=ID} out: {b=ID, i=ID, numbers=ID}     USE: in: {b=READ} out: {b=WRITTEN_AFTER_READ}
+    r(true) -> <v11>                                                                                                                                                                  USE: in: {b=WRITTEN_AFTER_READ} out: {b=WRITTEN_AFTER_READ}
+    w(b|<v11>)                                                                                                    INIT: in: {b=D, i=ID, numbers=ID} out: {b=ID, i=ID, numbers=ID}     USE: in: {b=READ} out: {b=WRITTEN_AFTER_READ}
 L8 ['if' expression result]:
-  4 merge(if (1 < 2) { b = false } else { b = true }|!<v7>, !<v9>) -> <v10>                                       INIT: in: {b=ID, i=ID, numbers=ID} out: {b=ID, i=ID, numbers=ID}    USE: in: {b=READ} out: {b=READ}
-    r(b) -> <v11>                                                                                                                                                                     USE: in: {} out: {b=READ}
+  4 merge(if (1 < 2) { b = false } else { b = true }|!<v10>, !<v12>) -> <v13>                                     INIT: in: {b=ID, i=ID, numbers=ID} out: {b=ID, i=ID, numbers=ID}    USE: in: {b=READ} out: {b=READ}
+    r(b) -> <v14>                                                                                                                                                                     USE: in: {} out: {b=READ}
     mark(use(b))
-    call(use(b), use|<v11>) -> <v12>
+    call(use(b), use|<v14>) -> <v15>
     jmp(L6)                                                                                                                                                                           USE: in: {} out: {}
 - 3 jmp(L2)
 L3 [loop exit point]:

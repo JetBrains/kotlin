@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import java.util.*
 
 class ControlFlowProcessor(private val trace: BindingTrace) {
@@ -750,15 +751,18 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         override fun visitForExpression(expression: KtForExpression) {
             builder.enterBlockScope(expression)
 
-            generateInstructions(expression.loopRange)
+            val loopRange = expression.loopRange
+            generateInstructions(loopRange)
+            generateLoopConventionCall(loopRange, BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL)
             declareLoopParameter(expression)
 
             // TODO : primitive cases
             val loopInfo = builder.enterLoop(expression)
 
             builder.bindLabel(loopInfo.conditionEntryPoint)
+            generateLoopConventionCall(loopRange, BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL)
             builder.nondeterministicJump(loopInfo.exitPoint, expression, null)
-
+            generateLoopConventionCall(loopRange, BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL)
 
             writeLoopParameterAssignment(expression)
 
@@ -771,6 +775,15 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             builder.bindLabel(loopInfo.exitPoint)
             builder.loadUnit(expression)
             builder.exitBlockScope(expression)
+        }
+
+        private fun generateLoopConventionCall(
+                loopRange: KtExpression?,
+                callSlice: ReadOnlySlice<KtExpression, ResolvedCall<FunctionDescriptor>>
+        ) {
+            if (loopRange == null) return
+            val resolvedCall = trace.bindingContext[callSlice, loopRange] ?: return
+            generateCall(resolvedCall)
         }
 
         private fun declareLoopParameter(expression: KtForExpression) {

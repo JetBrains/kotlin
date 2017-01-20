@@ -931,9 +931,7 @@ class ControlFlowInformationProvider private constructor(
     private inline fun traverseCalls(crossinline onCall: (instruction: CallInstruction, resolvedCall: ResolvedCall<*>) -> Unit) {
         pseudocode.traverse(TraversalOrder.FORWARD) { instruction ->
             if (instruction !is CallInstruction) return@traverse
-            val resolvedCall = instruction.element.getResolvedCall(trace.bindingContext) ?: return@traverse
-
-            onCall(instruction, resolvedCall)
+            onCall(instruction, instruction.resolvedCall)
         }
     }
 
