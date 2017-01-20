@@ -31,11 +31,6 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-runtime</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-reflect</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -125,10 +120,6 @@
                             <createSourcesJar>true</createSourcesJar>
                             <filters>
                                 <filter>
-                                    <artifact>*:kotlin-runtime</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/**</exclude>
-                                    </excludes>
                                     <artifact>*:kotlin-reflect</artifact>
                                     <excludes>
                                         <exclude>META-INF/**</exclude>
