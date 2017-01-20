@@ -19,7 +19,7 @@ fun box(): String {
     val inv = o.lift(SwOperator())
     val signature = inv.javaClass.genericSuperclass.toString()
 
-    if (signature != "Inv<java.util.List<?>>") return "fail 1: $signature"
+    if (signature != "Inv<java.util.List<? extends java.lang.CharSequence>>") return "fail 1: $signature"
 
     return "OK"
 }

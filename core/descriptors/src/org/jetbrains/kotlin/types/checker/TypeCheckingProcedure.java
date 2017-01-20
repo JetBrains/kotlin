@@ -264,22 +264,19 @@ public class TypeCheckingProcedure {
     }
 
     private boolean capture(
-            @NotNull TypeProjection firstProjection,
-            @NotNull TypeProjection secondProjection,
+            @NotNull TypeProjection subtypeArgumentProjection,
+            @NotNull TypeProjection supertypeArgumentProjection,
             @NotNull TypeParameterDescriptor parameter
     ) {
         // Capturing makes sense only for invariant classes
         if (parameter.getVariance() != INVARIANT) return false;
 
         // Now, both subtype and supertype relations transform to equality constraints on type arguments:
-        // Array<T> is a subtype, supertype or equal to Array<out Int> then T captures a type that extends Int: 'Captured(out Int)'
-        // Array<T> is a subtype, supertype or equal to Array<in Int> then T captures a type that extends Int: 'Captured(in Int)'
+        // Array<out Int> is a subtype or equal to Array<T> then T captures a type that extends Int: 'Captured(out Int)'
+        // Array<in Int> is a subtype or equal to Array<T> then T captures a type that extends Int: 'Captured(in Int)'
 
-        if (firstProjection.getProjectionKind() == INVARIANT && secondProjection.getProjectionKind() != INVARIANT) {
-            return constraints.capture(firstProjection.getType(), secondProjection);
-        }
-        if (firstProjection.getProjectionKind() != INVARIANT && secondProjection.getProjectionKind() == INVARIANT) {
-            return constraints.capture(secondProjection.getType(), firstProjection);
+        if (subtypeArgumentProjection.getProjectionKind() != INVARIANT && supertypeArgumentProjection.getProjectionKind() == INVARIANT) {
+            return constraints.capture(supertypeArgumentProjection.getType(), subtypeArgumentProjection);
         }
         return false;
     }

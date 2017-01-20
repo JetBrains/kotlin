@@ -36,6 +36,12 @@ public class DiagnosticsWithJava8TestGenerated extends AbstractDiagnosticsWithFu
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava8"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("collectorInference.kt")
+    public void testCollectorInference() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/collectorInference.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("defaultMethods.kt")
     public void testDefaultMethods() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJava8/defaultMethods.kt");

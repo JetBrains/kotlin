@@ -8506,6 +8506,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("doNotCaptureSupertype.kt")
+            public void testDoNotCaptureSupertype() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/doNotCaptureSupertype.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("genericsInType.kt")
             public void testGenericsInType() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/genericsInType.kt");
