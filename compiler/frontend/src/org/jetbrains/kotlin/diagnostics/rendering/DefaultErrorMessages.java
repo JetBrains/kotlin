@@ -267,6 +267,7 @@ public class DefaultErrorMessages {
         MAP.put(ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE, "An anonymous function is not allowed to specify default values for its parameters");
         MAP.put(USELESS_VARARG_ON_PARAMETER, "Vararg on this parameter is useless");
         MAP.put(MULTIPLE_VARARG_PARAMETERS, "Multiple vararg-parameters are prohibited");
+        MAP.put(FORBIDDEN_VARARG_PARAMETER_TYPE, "Forbidden vararg parameter type: {0}", RENDER_TYPE);
 
         MAP.put(HEADER_DECLARATION_WITH_BODY, "Header declaration must not have a body");
         MAP.put(HEADER_DECLARATION_WITH_DEFAULT_PARAMETER, "Header declaration cannot have parameters with default values");

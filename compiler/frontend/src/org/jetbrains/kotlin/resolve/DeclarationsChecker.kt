@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembers
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -891,15 +892,21 @@ class DeclarationsChecker(
     }
 
     private fun checkVarargParameters(trace: BindingTrace, callableDescriptor: CallableDescriptor) {
-        val numberOfVarargParameters = callableDescriptor.valueParameters.count { it.varargElementType != null }
-        if (numberOfVarargParameters > 1) {
-            for (parameter in callableDescriptor.valueParameters) {
-                if (parameter.varargElementType != null) {
-                    val parameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(parameter)
-                    if (parameterDeclaration is KtParameter) {
-                        trace.report(MULTIPLE_VARARG_PARAMETERS.on(parameterDeclaration))
-                    }
-                }
+        val varargParameters = callableDescriptor.valueParameters.filter { it.varargElementType != null }
+
+        if (varargParameters.size > 1) {
+            for (parameter in varargParameters) {
+                val parameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(parameter) as? KtParameter ?: continue
+                trace.report(MULTIPLE_VARARG_PARAMETERS.on(parameterDeclaration))
+            }
+        }
+
+        val nullableNothing = callableDescriptor.builtIns.nullableNothingType
+        for (parameter in varargParameters) {
+            val varargElementType = parameter.varargElementType!!.upperIfFlexible()
+            if (KotlinTypeChecker.DEFAULT.isSubtypeOf(varargElementType, nullableNothing)) {
+                val parameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(parameter) as? KtParameter ?: continue
+                trace.report(FORBIDDEN_VARARG_PARAMETER_TYPE.on(parameterDeclaration, varargElementType))
             }
         }
     }

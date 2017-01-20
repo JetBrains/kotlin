@@ -22627,6 +22627,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("varargOfNothing.kt")
+            public void testVarargOfNothing() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/varargs/varargOfNothing.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("varargsAndFunctionLiterals.kt")
             public void testVarargsAndFunctionLiterals() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/varargs/varargsAndFunctionLiterals.kt");
