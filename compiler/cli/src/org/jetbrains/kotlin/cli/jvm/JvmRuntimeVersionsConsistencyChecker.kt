@@ -51,6 +51,7 @@ object JvmRuntimeVersionsConsistencyChecker {
     private const val MANIFEST_KOTLIN_VERSION_VALUE = "manifest.impl.value.kotlin.version"
     private const val MANIFEST_KOTLIN_RUNTIME_COMPONENT = "manifest.impl.attribute.kotlin.runtime.component"
     private const val MANIFEST_KOTLIN_RUNTIME_COMPONENT_CORE = "manifest.impl.value.kotlin.runtime.component.core"
+    private const val MANIFEST_KOTLIN_RUNTIME_COMPONENT_MAIN = "manifest.impl.value.kotlin.runtime.component.main"
 
     private const val KOTLIN_STDLIB_MODULE = "$META_INF/kotlin-stdlib.kotlin_module"
     private const val KOTLIN_REFLECT_MODULE = "$META_INF/kotlin-reflection.kotlin_module"
@@ -60,6 +61,7 @@ object JvmRuntimeVersionsConsistencyChecker {
 
     private val KOTLIN_RUNTIME_COMPONENT_ATTRIBUTE: String
     private val KOTLIN_RUNTIME_COMPONENT_CORE: String
+    private val KOTLIN_RUNTIME_COMPONENT_MAIN: String
 
     init {
         val manifestProperties: Properties = try {
@@ -90,6 +92,8 @@ object JvmRuntimeVersionsConsistencyChecker {
                 .assertNotNull { "$MANIFEST_KOTLIN_RUNTIME_COMPONENT not found in kotlinManifest.properties" }
         KOTLIN_RUNTIME_COMPONENT_CORE = manifestProperties.getProperty(MANIFEST_KOTLIN_RUNTIME_COMPONENT_CORE)
                 .assertNotNull { "$MANIFEST_KOTLIN_RUNTIME_COMPONENT_CORE not found in kotlinManifest.properties" }
+        KOTLIN_RUNTIME_COMPONENT_MAIN = manifestProperties.getProperty(MANIFEST_KOTLIN_RUNTIME_COMPONENT_MAIN)
+                .assertNotNull { "$MANIFEST_KOTLIN_RUNTIME_COMPONENT_MAIN not found in kotlinManifest.properties" }
     }
 
     private class KotlinLibraryFile(val component: String, val file: VirtualFile, val version: MavenComparableVersion) {
@@ -98,10 +102,11 @@ object JvmRuntimeVersionsConsistencyChecker {
     }
 
     private class RuntimeJarsInfo(
+            // Runtime jars with components "Main" and "Core"
+            val jars: List<KotlinLibraryFile>,
+            // Runtime jars with components "Core" only (a subset of [jars])
             val coreJars: List<KotlinLibraryFile>
-    ) {
-        val hasAnyJarsToCheck: Boolean get() = coreJars.isNotEmpty()
-    }
+    )
 
     fun checkCompilerClasspathConsistency(
             messageCollector: MessageCollector,
@@ -109,13 +114,13 @@ object JvmRuntimeVersionsConsistencyChecker {
             classpathJarRoots: List<VirtualFile>
     ) {
         val runtimeJarsInfo = collectRuntimeJarsInfo(classpathJarRoots)
-        if (runtimeJarsInfo.hasAnyJarsToCheck) {
-            val languageVersion = languageVersionSettings?.let { MavenComparableVersion(it.languageVersion) } ?: CURRENT_COMPILER_VERSION
+        if (runtimeJarsInfo.jars.isEmpty()) return
 
-            if (checkCompilerClasspathConsistency(messageCollector, languageVersion, runtimeJarsInfo)) {
-                messageCollector.issue(null, "Some runtime JAR files in the classpath have an incompatible version. " +
-                                             "Remove them from the classpath or use '-Xskip-runtime-version-check' to suppress errors")
-            }
+        val languageVersion = languageVersionSettings?.let { MavenComparableVersion(it.languageVersion) } ?: CURRENT_COMPILER_VERSION
+
+        if (checkCompilerClasspathConsistency(messageCollector, languageVersion, runtimeJarsInfo)) {
+            messageCollector.issue(null, "Some runtime JAR files in the classpath have an incompatible version. " +
+                                         "Remove them from the classpath or use '-Xskip-runtime-version-check' to suppress errors")
         }
     }
 
@@ -124,12 +129,15 @@ object JvmRuntimeVersionsConsistencyChecker {
             languageVersion: MavenComparableVersion,
             runtimeJarsInfo: RuntimeJarsInfo
     ): Boolean {
-        // Even if language version option was explicitly specified, the JAR files SHOULD NOT be newer than the compiler.
+        // The "Core" jar files should not be newer than the compiler. This behavior is reserved for the future if we realise that we're
+        // going to break language/library compatibility in such a way that it's easier to make the old compiler just report an error
+        // in the case the new runtime library is specified in the classpath, rather than employing any other compatibility breakage tools
+        // we have at our disposal (Deprecated, SinceKotlin, SinceKotlinInfo in metadata, etc.)
         if (runtimeJarsInfo.coreJars.map {
             checkNotNewerThanCompiler(messageCollector, it)
         }.any { it }) return true
 
-        if (runtimeJarsInfo.coreJars.map {
+        if (runtimeJarsInfo.jars.map {
             checkCompatibleWithLanguageVersion(messageCollector, it, languageVersion)
         }.any { it }) return true
 
@@ -155,13 +163,13 @@ object JvmRuntimeVersionsConsistencyChecker {
     }
 
     private fun checkMatchingVersions(messageCollector: MessageCollector, runtimeJarsInfo: RuntimeJarsInfo): Boolean {
-        val oldestCoreJar = runtimeJarsInfo.coreJars.minBy { it.version } ?: return false
-        val newestCoreJar = runtimeJarsInfo.coreJars.maxBy { it.version } ?: return false
+        val oldestJar = runtimeJarsInfo.jars.minBy { it.version } ?: return false
+        val newestJar = runtimeJarsInfo.jars.maxBy { it.version } ?: return false
 
-        if (oldestCoreJar.version != newestCoreJar.version) {
+        if (oldestJar.version != newestJar.version) {
             messageCollector.issue(null, buildString {
                 appendln("Runtime JAR files in the classpath must have the same version. These files were found in the classpath:")
-                for (jar in runtimeJarsInfo.coreJars) {
+                for (jar in runtimeJarsInfo.jars) {
                     appendln("    ${jar.file.path} (version ${jar.version})")
                 }
             }.trimEnd())
@@ -176,7 +184,8 @@ object JvmRuntimeVersionsConsistencyChecker {
     }
 
     private fun collectRuntimeJarsInfo(classpathJarRoots: List<VirtualFile>): RuntimeJarsInfo {
-        val kotlinCoreJars = ArrayList<KotlinLibraryFile>(2)
+        val jars = ArrayList<KotlinLibraryFile>(2)
+        val coreJars = ArrayList<KotlinLibraryFile>(2)
 
         for (jarRoot in classpathJarRoots) {
             val manifest = try {
@@ -190,20 +199,26 @@ object JvmRuntimeVersionsConsistencyChecker {
             val runtimeComponent = getKotlinRuntimeComponent(jarRoot, manifest) ?: continue
             val version = manifest.getKotlinLanguageVersion()
 
+            val jarFile = VfsUtilCore.getVirtualFileForJar(jarRoot) ?: continue
+            val file = KotlinLibraryFile(runtimeComponent, jarFile, version)
+
             if (runtimeComponent == KOTLIN_RUNTIME_COMPONENT_CORE) {
-                val jarFile = VfsUtilCore.getVirtualFileForJar(jarRoot) ?: continue
-                kotlinCoreJars.add(KotlinLibraryFile(runtimeComponent, jarFile, version))
+                jars.add(file)
+                coreJars.add(file)
+            }
+            else if (runtimeComponent == KOTLIN_RUNTIME_COMPONENT_MAIN) {
+                jars.add(file)
             }
         }
 
-        return RuntimeJarsInfo(kotlinCoreJars)
+        return RuntimeJarsInfo(jars, coreJars)
     }
 
     private fun getKotlinRuntimeComponent(jar: VirtualFile, manifest: Manifest): String? {
         manifest.mainAttributes.getValue(KOTLIN_RUNTIME_COMPONENT_ATTRIBUTE)?.let { return it }
 
-        if (jar.findFileByRelativePath(KOTLIN_STDLIB_MODULE) != null) return KOTLIN_RUNTIME_COMPONENT_CORE
-        if (jar.findFileByRelativePath(KOTLIN_REFLECT_MODULE) != null) return KOTLIN_RUNTIME_COMPONENT_CORE
+        if (jar.findFileByRelativePath(KOTLIN_STDLIB_MODULE) != null) return KOTLIN_RUNTIME_COMPONENT_MAIN
+        if (jar.findFileByRelativePath(KOTLIN_REFLECT_MODULE) != null) return KOTLIN_RUNTIME_COMPONENT_MAIN
 
         return null
     }
