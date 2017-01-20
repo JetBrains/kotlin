@@ -67,5 +67,6 @@ object JsPlatformConfigurator : PlatformConfigurator(
         container.useImpl<JsReflectionAPICallChecker>()
         container.useImpl<JsNativeRttiChecker>()
         container.useImpl<JsReifiedNativeChecker>()
+        container.useInstance(ExtensionFunctionToExternalIsInlinable)
     }
 }

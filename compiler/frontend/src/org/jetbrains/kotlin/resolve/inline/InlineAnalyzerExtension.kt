@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 
-object InlineAnalyzerExtension : AnalyzerExtensions.AnalyzerExtension {
+class InlineAnalyzerExtension(private val reasonableInlineRules: Iterable<ReasonableInlineRule>) : AnalyzerExtensions.AnalyzerExtension {
 
     override fun process(descriptor: CallableMemberDescriptor, functionOrProperty: KtCallableDeclaration, trace: BindingTrace) {
         checkModalityAndOverrides(descriptor, functionOrProperty, trace)
@@ -142,6 +142,8 @@ object InlineAnalyzerExtension : AnalyzerExtensions.AnalyzerExtension {
         if (InlineUtil.containsReifiedTypeParameters(functionDescriptor) ||
             functionDescriptor.isInlineOnlyOrReifiable() ||
             functionDescriptor.isHeader) return
+
+        if (reasonableInlineRules.any { it.isInlineReasonable(functionDescriptor, function, trace.bindingContext) }) return
 
         val reportOn = function.modifierList?.getModifier(KtTokens.INLINE_KEYWORD) ?: function
         trace.report(Errors.NOTHING_TO_INLINE.on(reportOn, functionDescriptor))

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.psi.KtProperty;
 import org.jetbrains.kotlin.resolve.inline.InlineAnalyzerExtension;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
+import org.jetbrains.kotlin.resolve.inline.ReasonableInlineRule;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,9 +36,11 @@ public class AnalyzerExtensions {
     }
 
     @NotNull private final BindingTrace trace;
+    @NotNull private final Iterable<ReasonableInlineRule> reasonableInlineRules;
 
-    public AnalyzerExtensions(@NotNull BindingTrace trace) {
+    public AnalyzerExtensions(@NotNull BindingTrace trace, @NotNull Iterable<ReasonableInlineRule> reasonableInlineRules) {
         this.trace = trace;
+        this.reasonableInlineRules = reasonableInlineRules;
     }
 
     public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
@@ -61,17 +64,17 @@ public class AnalyzerExtensions {
     }
 
     @NotNull
-    private static List<InlineAnalyzerExtension> getFunctionExtensions(@NotNull FunctionDescriptor functionDescriptor) {
+    private List<InlineAnalyzerExtension> getFunctionExtensions(@NotNull FunctionDescriptor functionDescriptor) {
         if (InlineUtil.isInline(functionDescriptor)) {
-            return Collections.singletonList(InlineAnalyzerExtension.INSTANCE);
+            return Collections.singletonList(new InlineAnalyzerExtension(reasonableInlineRules));
         }
         return Collections.emptyList();
     }
 
     @NotNull
-    private static List<InlineAnalyzerExtension> getPropertyExtensions(@NotNull PropertyDescriptor propertyDescriptor) {
+    private List<InlineAnalyzerExtension> getPropertyExtensions(@NotNull PropertyDescriptor propertyDescriptor) {
         if (InlineUtil.hasInlineAccessors(propertyDescriptor)) {
-            return Collections.singletonList(InlineAnalyzerExtension.INSTANCE);
+            return Collections.singletonList(new InlineAnalyzerExtension(reasonableInlineRules));
         }
         return Collections.emptyList();
     }
