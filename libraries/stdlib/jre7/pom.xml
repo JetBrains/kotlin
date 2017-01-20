@@ -85,7 +85,7 @@
                     <archive>
                         <manifestEntries>
                             <Kotlin-Version>${kotlin.language.version}</Kotlin-Version>
-                            <Kotlin-Runtime-Component>Core</Kotlin-Runtime-Component>
+                            <Kotlin-Runtime-Component>Main</Kotlin-Runtime-Component>
                         </manifestEntries>
                     </archive>
                 </configuration>

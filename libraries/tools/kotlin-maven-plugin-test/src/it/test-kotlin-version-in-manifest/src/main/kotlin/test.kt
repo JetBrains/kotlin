@@ -17,7 +17,7 @@ val LIBRARIES = listOf(
 
 const val KOTLIN_VERSION = "Kotlin-Version"
 const val KOTLIN_RUNTIME_COMPONENT = "Kotlin-Runtime-Component"
-const val KOTLIN_RUNTIME_COMPONENT_VALUE = "Core"
+const val KOTLIN_RUNTIME_COMPONENT_VALUE = "Main"
 val KOTLIN_VERSION_VALUE = with(KotlinVersion.CURRENT) { "$major.$minor" }
 
 fun main(args: Array<String>) {

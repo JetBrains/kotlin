@@ -461,7 +461,7 @@
             <manifest>
                 <attribute name="Built-By" value="${manifest.impl.vendor}"/>
                 <attribute name="${manifest.impl.attribute.kotlin.version}" value="${manifest.impl.value.kotlin.version}"/>
-                <attribute name="${manifest.impl.attribute.kotlin.runtime.component}" value="${manifest.impl.value.kotlin.runtime.component.core}"/>
+                <attribute name="${manifest.impl.attribute.kotlin.runtime.component}" value="${manifest.impl.value.kotlin.runtime.component.main}"/>
 
                 <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
                 <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.javascript.stdlib}"/>
@@ -479,7 +479,7 @@
             <manifest>
                 <attribute name="Built-By" value="${manifest.impl.vendor}"/>
                 <attribute name="${manifest.impl.attribute.kotlin.version}" value="${manifest.impl.value.kotlin.version}"/>
-                <attribute name="${manifest.impl.attribute.kotlin.runtime.component}" value="${manifest.impl.value.kotlin.runtime.component.core}"/>
+                <attribute name="${manifest.impl.attribute.kotlin.runtime.component}" value="${manifest.impl.value.kotlin.runtime.component.main}"/>
 
                 <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
                 <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.jvm.runtime.sources}"/>
@@ -1119,7 +1119,7 @@
         <attribute name="jar-dir" default="${kotlin-home}/lib"/>
         <attribute name="jar-name"/>
         <attribute name="implementation-title"/>
-        <attribute name="runtime-component" default="${manifest.impl.value.kotlin.runtime.component.core}"/>
+        <attribute name="runtime-component" default="${manifest.impl.value.kotlin.runtime.component.main}"/>
         <element name="jar-content"/>
 
         <sequential>
