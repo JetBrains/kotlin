@@ -36,11 +36,6 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-runtime</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-script-runtime</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -119,8 +114,6 @@
                 <configuration>
                     <systemPropertyVariables>
                         <jvm>${env.JDK_17}/bin/java</jvm>
-                        <kotlin.java.runtime.jar>${org.jetbrains.kotlin:kotlin-runtime:jar}</kotlin.java.runtime.jar>
-                        <kotlin.java.stdlib.jar>${org.jetbrains.kotlin:kotlin-stdlib:jar}</kotlin.java.stdlib.jar>
                     </systemPropertyVariables>
                 </configuration>
                 <executions>

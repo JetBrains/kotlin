@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.script.util.templates.BindingsScriptTemplateWithLoca
 import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithLocalResolving
 import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithMavenResolving
 import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_JAVA_RUNTIME_JAR
+//import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_JAVA_RUNTIME_JAR
 import org.jetbrains.kotlin.utils.PathUtil.getResourcePathForClass
 import org.junit.Assert
 import org.junit.Test
@@ -45,6 +45,7 @@ import java.util.jar.Manifest
 import kotlin.reflect.KClass
 import kotlin.test.*
 
+const val KOTLIN_JAVA_RUNTIME_JAR = "kotlin-stdlib.jar"
 
 class ScriptUtilIT {
 
