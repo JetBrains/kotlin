@@ -1027,3 +1027,18 @@ task inline9(type: RunKonanTest) {
     task vararg0(type: RunKonanTest) {
     source = "lower/vararg.kt"
 }
+
+task inline6(type: RunKonanTest) {
+    goldValue = "hello1\nhello2\nhello3\nhello4\n"
+    source = "codegen/inline/inline6.kt"
+}
+
+task inline7(type: RunKonanTest) {
+    goldValue = "1\n2\n3\n"
+    source = "codegen/inline/inline7.kt"
+}
+
+task inline8(type: RunKonanTest) {
+    goldValue = "5\n"
+    source = "codegen/inline/inline8.kt"
+}
