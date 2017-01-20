@@ -218,10 +218,13 @@ KInt    Kotlin_Int_or_Int           (KInt a, KInt   b)  { return a | b; }
 KInt    Kotlin_Int_xor_Int          (KInt a, KInt   b)  { return a ^ b; }
 KInt    Kotlin_Int_and_Int          (KInt a, KInt   b)  { return a & b; }
 KInt    Kotlin_Int_inv              (KInt a          )  { return  ~a;   }
-KInt    Kotlin_Int_shl_Int          (KInt a, KInt   b)  { return a << b; }
-KInt    Kotlin_Int_shr_Int          (KInt a, KInt   b)  { return a >> b; }
+
+// According to C++11 the result is undefined if the second operator is < 0 or >= <first operand bit length>.
+// We avoid it by using only the least significant bits
+KInt    Kotlin_Int_shl_Int          (KInt a, KInt   b)  { return a << (b & 31); }
+KInt    Kotlin_Int_shr_Int          (KInt a, KInt   b)  { return a >> (b & 31); }
 KInt    Kotlin_Int_ushr_Int         (KInt a, KInt   b) {
-  return static_cast<uint32_t>(a) >> b;
+  return static_cast<uint32_t>(a) >> (b & 31);
 }
 
 KByte   Kotlin_Int_toByte           (KInt a           ) { return a; }
@@ -285,10 +288,13 @@ KLong   Kotlin_Long_xor_Long         (KLong a, KLong   b) { return a ^ b; }
 KLong   Kotlin_Long_or_Long          (KLong a, KLong   b) { return a | b; }
 KLong   Kotlin_Long_and_Long         (KLong a, KLong   b) { return a & b; }
 KLong   Kotlin_Long_inv              (KLong a           ) { return  ~a;   }
-KLong   Kotlin_Long_shl_Int          (KLong a, KInt    b) { return a << b; }
-KLong   Kotlin_Long_shr_Int          (KLong a, KInt    b) { return a >> b; }
+
+// According to C++11 the result is undefined if the second operator is < 0 or >= <first operand bit length>.
+// We avoid it by using only the least significant bits
+KLong   Kotlin_Long_shl_Int          (KLong a, KInt    b) { return a << (b & 63); }
+KLong   Kotlin_Long_shr_Int          (KLong a, KInt    b) { return a >> (b & 63); }
 KLong   Kotlin_Long_ushr_Int         (KLong a, KInt    b) {
-  return static_cast<uint64_t>(a) >> b;
+  return static_cast<uint64_t>(a) >> (b & 63);
 }
 
 KByte   Kotlin_Long_toByte           (KLong a           ) { return a; }
