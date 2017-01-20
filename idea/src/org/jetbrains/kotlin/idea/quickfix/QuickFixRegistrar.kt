@@ -470,6 +470,8 @@ class QuickFixRegistrar : QuickFixContributor {
 
         ErrorsJs.WRONG_EXTERNAL_DECLARATION.registerFactory(MigrateExternalExtensionFix)
 
+        ILLEGAL_SUSPEND_FUNCTION_CALL.registerFactory(AddSuspendModifierFix)
+
         UNSUPPORTED_FEATURE.registerFactory(EnableUnsupportedFeatureFix)
 
         EXPERIMENTAL_FEATURE_ERROR.registerFactory(ChangeCoroutineSupportFix)

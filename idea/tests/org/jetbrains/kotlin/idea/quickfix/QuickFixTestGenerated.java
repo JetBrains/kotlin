@@ -6725,6 +6725,33 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
         }
+
+        @TestMetadata("idea/testData/quickfix/modifiers/suspend")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Suspend extends AbstractQuickFixTest {
+            public void testAllFilesPresentInSuspend() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/modifiers/suspend"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("base.kt")
+            public void testBase() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/suspend/base.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("init.kt")
+            public void testInit() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/suspend/init.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("topLevel.kt")
+            public void testTopLevel() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/suspend/topLevel.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/moveToConstructorParameters")

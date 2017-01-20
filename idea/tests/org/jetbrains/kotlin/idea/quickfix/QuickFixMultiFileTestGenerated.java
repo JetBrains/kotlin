@@ -1758,6 +1758,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 }
             }
         }
+
     }
 
     @TestMetadata("idea/testData/quickfix/nullables")
