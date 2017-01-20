@@ -1,7 +1,18 @@
 #include <math.h>
 
 #include "Natives.h"
+#include "Exceptions.h"
 
+namespace {
+
+inline template<typename R, typename Ta, typename Tb> R div(Ta a, Tb b) {
+    if (__builtin_expect(b == 0, false)) {
+        ThrowArithmeticException();
+    }
+    return a / b;
+}
+
+}
 
 extern "C" {
 
@@ -53,10 +64,10 @@ KLong   Kotlin_Byte_minus_Long       (KByte a, KLong   b) { return a - b; }
 KFloat  Kotlin_Byte_minus_Float      (KByte a, KFloat  b) { return a - b; }
 KDouble Kotlin_Byte_minus_Double     (KByte a, KDouble b) { return a - b; }
 
-KInt    Kotlin_Byte_div_Byte         (KByte a, KByte   b) { return a / b; }
-KInt    Kotlin_Byte_div_Short        (KByte a, KShort  b) { return a / b; }
-KInt    Kotlin_Byte_div_Int          (KByte a, KInt    b) { return a / b; }
-KLong   Kotlin_Byte_div_Long         (KByte a, KLong   b) { return a / b; }
+KInt    Kotlin_Byte_div_Byte         (KByte a, KByte   b) { return div<KInt>(a, b); }
+KInt    Kotlin_Byte_div_Short        (KByte a, KShort  b) { return div<KInt>(a, b); }
+KInt    Kotlin_Byte_div_Int          (KByte a, KInt    b) { return div<KInt>(a, b); }
+KLong   Kotlin_Byte_div_Long         (KByte a, KLong   b) { return div<KLong>(a, b); }
 KFloat  Kotlin_Byte_div_Float        (KByte a, KFloat  b) { return a / b; }
 KDouble Kotlin_Byte_div_Double       (KByte a, KDouble b) { return a / b; }
 
@@ -115,10 +126,10 @@ KLong   Kotlin_Short_minus_Long       (KShort a, KLong   b) { return a - b; }
 KFloat  Kotlin_Short_minus_Float      (KShort a, KFloat  b) { return a - b; }
 KDouble Kotlin_Short_minus_Double     (KShort a, KDouble b) { return a - b; }
 
-KInt    Kotlin_Short_div_Byte         (KShort a, KByte   b) { return a / b; }
-KInt    Kotlin_Short_div_Short        (KShort a, KShort  b) { return a / b; }
-KInt    Kotlin_Short_div_Int          (KShort a, KInt    b) { return a / b; }
-KLong   Kotlin_Short_div_Long         (KShort a, KLong   b) { return a / b; }
+KInt    Kotlin_Short_div_Byte         (KShort a, KByte   b) { return div<KInt>(a, b); }
+KInt    Kotlin_Short_div_Short        (KShort a, KShort  b) { return div<KInt>(a, b); }
+KInt    Kotlin_Short_div_Int          (KShort a, KInt    b) { return div<KInt>(a, b); }
+KLong   Kotlin_Short_div_Long         (KShort a, KLong   b) { return div<KLong>(a, b); }
 KFloat  Kotlin_Short_div_Float        (KShort a, KFloat  b) { return a / b; }
 KDouble Kotlin_Short_div_Double       (KShort a, KDouble b) { return a / b; }
 
@@ -177,10 +188,10 @@ KLong   Kotlin_Int_minus_Long       (KInt a, KLong   b) { return a - b; }
 KFloat  Kotlin_Int_minus_Float      (KInt a, KFloat  b) { return a - b; }
 KDouble Kotlin_Int_minus_Double     (KInt a, KDouble b) { return a - b; }
 
-KInt    Kotlin_Int_div_Byte         (KInt a, KByte   b) { return a / b; }
-KInt    Kotlin_Int_div_Short        (KInt a, KShort  b) { return a / b; }
-KInt    Kotlin_Int_div_Int          (KInt a, KInt    b) { return a / b; }
-KLong   Kotlin_Int_div_Long         (KInt a, KLong   b) { return a / b; }
+KInt    Kotlin_Int_div_Byte         (KInt a, KByte   b) { return div<KInt>(a, b); }
+KInt    Kotlin_Int_div_Short        (KInt a, KShort  b) { return div<KInt>(a, b); }
+KInt    Kotlin_Int_div_Int          (KInt a, KInt    b) { return div<KInt>(a, b); }
+KLong   Kotlin_Int_div_Long         (KInt a, KLong   b) { return div<KLong>(a, b); }
 KFloat  Kotlin_Int_div_Float        (KInt a, KFloat  b) { return a / b; }
 KDouble Kotlin_Int_div_Double       (KInt a, KDouble b) { return a / b; }
 
@@ -244,10 +255,10 @@ KLong   Kotlin_Long_minus_Long       (KLong a, KLong   b) { return a - b; }
 KFloat  Kotlin_Long_minus_Float      (KLong a, KFloat  b) { return a - b; }
 KDouble Kotlin_Long_minus_Double     (KLong a, KDouble b) { return a - b; }
 
-KLong   Kotlin_Long_div_Byte         (KLong a, KByte   b) { return a / b; }
-KLong   Kotlin_Long_div_Short        (KLong a, KShort  b) { return a / b; }
-KLong   Kotlin_Long_div_Int          (KLong a, KInt    b) { return a / b; }
-KLong   Kotlin_Long_div_Long         (KLong a, KLong   b) { return a / b; }
+KLong   Kotlin_Long_div_Byte         (KLong a, KByte   b) { return div<KLong>(a, b); }
+KLong   Kotlin_Long_div_Short        (KLong a, KShort  b) { return div<KLong>(a, b); }
+KLong   Kotlin_Long_div_Int          (KLong a, KInt    b) { return div<KLong>(a, b); }
+KLong   Kotlin_Long_div_Long         (KLong a, KLong   b) { return div<KLong>(a, b); }
 KFloat  Kotlin_Long_div_Float        (KLong a, KFloat  b) { return a / b; }
 KDouble Kotlin_Long_div_Double       (KLong a, KDouble b) { return a / b; }
 

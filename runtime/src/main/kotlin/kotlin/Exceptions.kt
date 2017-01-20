@@ -126,6 +126,14 @@ public class ClassCastException : RuntimeException {
     }
 }
 
+public class ArithmeticException : RuntimeException {
+    constructor() : super() {
+    }
+
+    constructor(s: String) : super(s) {
+    }
+}
+
 public class AssertionError : Error {
 
     constructor() {
