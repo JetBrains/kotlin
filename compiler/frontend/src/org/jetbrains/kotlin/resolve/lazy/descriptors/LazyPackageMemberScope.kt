@@ -36,8 +36,11 @@ class LazyPackageMemberScope(
         return computeDescriptorsFromDeclaredElements(kindFilter, nameFilter, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
     }
 
-    override fun getScopeForMemberDeclarationResolution(declaration: KtDeclaration)
-            = resolveSession.fileScopeProvider.getFileResolutionScope(declaration.getContainingKtFile())
+    override fun getScopeForMemberDeclarationResolution(declaration: KtDeclaration) =
+            resolveSession.fileScopeProvider.getFileResolutionScope(declaration.containingKtFile)
+
+    override fun getScopeForInitializerResolution(declaration: KtDeclaration) =
+            getScopeForMemberDeclarationResolution(declaration)
 
     override fun getNonDeclaredClasses(name: Name, result: MutableSet<ClassDescriptor>) {
         // No extra classes

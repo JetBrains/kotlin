@@ -145,7 +145,7 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
             List<KtDeclaration> declarations = aClass.getDeclarations();
             KtProperty property = (KtProperty) declarations.get(0);
             PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(
-                    classDescriptor, scope, property, KotlinTestUtils.DUMMY_TRACE, DataFlowInfoFactory.EMPTY);
+                    classDescriptor, scope, scope, property, KotlinTestUtils.DUMMY_TRACE, DataFlowInfoFactory.EMPTY);
 
             assertEquals(expectedPropertyModality, propertyDescriptor.getModality());
         }
@@ -158,7 +158,7 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
             List<KtDeclaration> declarations = aClass.getDeclarations();
             KtProperty property = (KtProperty) declarations.get(0);
             PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(
-                    classDescriptor, scope, property, KotlinTestUtils.DUMMY_TRACE, DataFlowInfoFactory.EMPTY);
+                    classDescriptor, scope, scope, property, KotlinTestUtils.DUMMY_TRACE, DataFlowInfoFactory.EMPTY);
             PropertyAccessorDescriptor propertyAccessor = isGetter
                                                           ? propertyDescriptor.getGetter()
                                                           : propertyDescriptor.getSetter();

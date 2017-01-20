@@ -15612,6 +15612,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("primaryConstructorParameter.kt")
+                public void testPrimaryConstructorParameter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/properties/inferenceFromGetters/primaryConstructorParameter.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("recursiveGetter.kt")
                 public void testRecursiveGetter() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/properties/inferenceFromGetters/recursiveGetter.kt");

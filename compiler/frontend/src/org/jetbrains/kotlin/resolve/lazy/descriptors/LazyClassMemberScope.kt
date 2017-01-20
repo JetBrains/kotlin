@@ -95,12 +95,11 @@ open class LazyClassMemberScope(
     private val primaryConstructor: NullableLazyValue<ClassConstructorDescriptor>
             = c.storageManager.createNullableLazyValue { resolvePrimaryConstructor() }
 
-    override fun getScopeForMemberDeclarationResolution(declaration: KtDeclaration): LexicalScope {
-        if (declaration is KtProperty) {
-            return thisDescriptor.scopeForInitializerResolution
-        }
-        return thisDescriptor.scopeForMemberDeclarationResolution
-    }
+    override fun getScopeForMemberDeclarationResolution(declaration: KtDeclaration): LexicalScope =
+            thisDescriptor.scopeForMemberDeclarationResolution
+
+    override fun getScopeForInitializerResolution(declaration: KtDeclaration): LexicalScope =
+            thisDescriptor.scopeForInitializerResolution
 
     private fun <D : CallableMemberDescriptor> generateFakeOverrides(name: Name, fromSupertypes: Collection<D>, result: MutableCollection<D>, exactDescriptorClass: Class<out D>) {
         OverridingUtil.generateOverridesInFunctionGroup(name, fromSupertypes, ArrayList(result), thisDescriptor, object : OverridingStrategy() {

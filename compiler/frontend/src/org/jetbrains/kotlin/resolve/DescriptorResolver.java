@@ -403,6 +403,20 @@ public class DescriptorResolver {
             List<KtTypeParameter> typeParameters,
             BindingTrace trace
     ) {
+        List<TypeParameterDescriptorImpl> descriptors =
+                resolveTypeParametersForDescriptor(containingDescriptor, scopeForAnnotationsResolve, typeParameters, trace);
+        for (TypeParameterDescriptorImpl descriptor : descriptors) {
+            extensibleScope.addClassifierDescriptor(descriptor);
+        }
+        return descriptors;
+    }
+
+    private List<TypeParameterDescriptorImpl> resolveTypeParametersForDescriptor(
+            DeclarationDescriptor containingDescriptor,
+            LexicalScope scopeForAnnotationsResolve,
+            List<KtTypeParameter> typeParameters,
+            BindingTrace trace
+    ) {
         assert containingDescriptor instanceof FunctionDescriptor ||
                containingDescriptor instanceof PropertyDescriptor ||
                containingDescriptor instanceof TypeAliasDescriptor
@@ -411,15 +425,13 @@ public class DescriptorResolver {
         List<TypeParameterDescriptorImpl> result = new ArrayList<TypeParameterDescriptorImpl>();
         for (int i = 0, typeParametersSize = typeParameters.size(); i < typeParametersSize; i++) {
             KtTypeParameter typeParameter = typeParameters.get(i);
-            result.add(resolveTypeParameterForDescriptor(
-                    containingDescriptor, extensibleScope, scopeForAnnotationsResolve, typeParameter, i, trace));
+            result.add(resolveTypeParameterForDescriptor(containingDescriptor, scopeForAnnotationsResolve, typeParameter, i, trace));
         }
         return result;
     }
 
     private TypeParameterDescriptorImpl resolveTypeParameterForDescriptor(
             final DeclarationDescriptor containingDescriptor,
-            LexicalWritableScope extensibleScope,
             LexicalScope scopeForAnnotationsResolve,
             final KtTypeParameter typeParameter,
             int index,
@@ -452,7 +464,6 @@ public class DescriptorResolver {
                 supertypeLoopsResolver
                 );
         trace.record(BindingContext.TYPE_PARAMETER, typeParameter, typeParameterDescriptor);
-        extensibleScope.addClassifierDescriptor(typeParameterDescriptor);
         return typeParameterDescriptor;
     }
 
@@ -777,7 +788,8 @@ public class DescriptorResolver {
     @NotNull
     public PropertyDescriptor resolvePropertyDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull LexicalScope scope,
+            @NotNull LexicalScope scopeForDeclarationResolution,
+            @NotNull LexicalScope scopeForInitializerResolution,
             @NotNull KtProperty property,
             @NotNull final BindingTrace trace,
             @NotNull DataFlowInfo dataFlowInfo
@@ -794,7 +806,7 @@ public class DescriptorResolver {
 
         final AnnotationSplitter.PropertyWrapper wrapper = new AnnotationSplitter.PropertyWrapper(property);
 
-        Annotations allAnnotations = annotationResolver.resolveAnnotationsWithoutArguments(scope, modifierList, trace);
+        Annotations allAnnotations = annotationResolver.resolveAnnotationsWithoutArguments(scopeForDeclarationResolution, modifierList, trace);
         AnnotationSplitter annotationSplitter =
                 new AnnotationSplitter(storageManager, allAnnotations, new Function0<Set<AnnotationUseSiteTarget>>() {
             @Override
@@ -826,43 +838,55 @@ public class DescriptorResolver {
         wrapper.setDescriptor(propertyDescriptor);
 
         List<TypeParameterDescriptorImpl> typeParameterDescriptors;
-        LexicalScope scopeWithTypeParameters;
+        LexicalScope scopeForDeclarationResolutionWithTypeParameters;
+        LexicalScope scopeForInitializerResolutionWithTypeParameters;
         KotlinType receiverType = null;
 
         {
             List<KtTypeParameter> typeParameters = property.getTypeParameters();
             if (typeParameters.isEmpty()) {
-                scopeWithTypeParameters = scope;
+                scopeForDeclarationResolutionWithTypeParameters = scopeForDeclarationResolution;
+                scopeForInitializerResolutionWithTypeParameters = scopeForInitializerResolution;
                 typeParameterDescriptors = Collections.emptyList();
             }
             else {
-                LexicalWritableScope writableScope = new LexicalWritableScope(
-                        scope, containingDeclaration, false, new TraceBasedLocalRedeclarationChecker(trace, overloadChecker),
+                LexicalWritableScope writableScopeForDeclarationResolution = new LexicalWritableScope(
+                        scopeForDeclarationResolution, containingDeclaration, false, new TraceBasedLocalRedeclarationChecker(trace, overloadChecker),
+                        LexicalScopeKind.PROPERTY_HEADER);
+                LexicalWritableScope writableScopeForInitializerResolution = new LexicalWritableScope(
+                        scopeForInitializerResolution, containingDeclaration, false, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
                         LexicalScopeKind.PROPERTY_HEADER);
                 typeParameterDescriptors = resolveTypeParametersForDescriptor(
-                        propertyDescriptor, writableScope, scope, typeParameters, trace);
-                writableScope.freeze();
-                resolveGenericBounds(property, propertyDescriptor, writableScope, typeParameterDescriptors, trace);
-                scopeWithTypeParameters = writableScope;
+                        propertyDescriptor,
+                        scopeForDeclarationResolution, typeParameters, trace);
+                for (TypeParameterDescriptor descriptor : typeParameterDescriptors) {
+                    writableScopeForDeclarationResolution.addClassifierDescriptor(descriptor);
+                    writableScopeForInitializerResolution.addClassifierDescriptor(descriptor);
+                }
+                writableScopeForDeclarationResolution.freeze();
+                writableScopeForInitializerResolution.freeze();
+                resolveGenericBounds(property, propertyDescriptor, writableScopeForDeclarationResolution, typeParameterDescriptors, trace);
+                scopeForDeclarationResolutionWithTypeParameters = writableScopeForDeclarationResolution;
+                scopeForInitializerResolutionWithTypeParameters = writableScopeForInitializerResolution;
             }
 
             KtTypeReference receiverTypeRef = property.getReceiverTypeReference();
             if (receiverTypeRef != null) {
-                receiverType = typeResolver.resolveType(scopeWithTypeParameters, receiverTypeRef, trace, true);
+                receiverType = typeResolver.resolveType(scopeForDeclarationResolutionWithTypeParameters, receiverTypeRef, trace, true);
             }
         }
 
         ReceiverParameterDescriptor receiverDescriptor =
                 DescriptorFactory.createExtensionReceiverParameterForCallable(propertyDescriptor, receiverType);
 
-        LexicalScope scopeForInitializer = ScopeUtils.makeScopeForPropertyInitializer(scopeWithTypeParameters, propertyDescriptor);
+        LexicalScope scopeForInitializer = ScopeUtils.makeScopeForPropertyInitializer(scopeForInitializerResolutionWithTypeParameters, propertyDescriptor);
         KotlinType typeIfKnown = variableTypeAndInitializerResolver.resolveTypeNullable(
                 propertyDescriptor, scopeForInitializer,
                 property, dataFlowInfo, /* local = */ trace, false
         );
 
         PropertyGetterDescriptorImpl getter = resolvePropertyGetterDescriptor(
-                scopeWithTypeParameters, property, propertyDescriptor, annotationSplitter, trace, typeIfKnown);
+                scopeForDeclarationResolutionWithTypeParameters, property, propertyDescriptor, annotationSplitter, trace, typeIfKnown);
 
         KotlinType type = typeIfKnown != null ? typeIfKnown : getter.getReturnType();
 
@@ -876,7 +900,7 @@ public class DescriptorResolver {
                                    receiverDescriptor);
 
         PropertySetterDescriptor setter = resolvePropertySetterDescriptor(
-                scopeWithTypeParameters, property, propertyDescriptor, annotationSplitter, trace);
+                scopeForDeclarationResolutionWithTypeParameters, property, propertyDescriptor, annotationSplitter, trace);
 
         propertyDescriptor.initialize(getter, setter);
 
@@ -1007,7 +1031,7 @@ public class DescriptorResolver {
 
     @NotNull
     private PropertyGetterDescriptorImpl resolvePropertyGetterDescriptor(
-            @NotNull LexicalScope scopeWithTypeParameters,
+            @NotNull LexicalScope scopeForDeclarationResolution,
             @NotNull KtProperty property,
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull AnnotationSplitter annotationSplitter,
@@ -1020,7 +1044,7 @@ public class DescriptorResolver {
         if (getter != null) {
             Annotations getterAnnotations = new CompositeAnnotations(CollectionsKt.listOf(
                     annotationSplitter.getAnnotationsForTarget(PROPERTY_GETTER),
-                    annotationResolver.resolveAnnotationsWithoutArguments(scopeWithTypeParameters, getter.getModifierList(), trace)));
+                    annotationResolver.resolveAnnotationsWithoutArguments(scopeForDeclarationResolution, getter.getModifierList(), trace)));
 
             getterDescriptor = new PropertyGetterDescriptorImpl(
                     propertyDescriptor, getterAnnotations,
@@ -1031,7 +1055,7 @@ public class DescriptorResolver {
                     property.hasModifier(KtTokens.INLINE_KEYWORD) || getter.hasModifier(KtTokens.INLINE_KEYWORD),
                     CallableMemberDescriptor.Kind.DECLARATION, null, KotlinSourceElementKt.toSourceElement(getter)
             );
-            getterType = determineGetterReturnType(scopeWithTypeParameters, trace, getterDescriptor, getter, propertyTypeIfKnown);
+            getterType = determineGetterReturnType(scopeForDeclarationResolution, trace, getterDescriptor, getter, propertyTypeIfKnown);
             trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
         }
         else {

@@ -82,10 +82,9 @@ protected constructor(
 
         val declarations = declarationProvider.getFunctionDeclarations(name)
         for (functionDeclaration in declarations) {
-            val resolutionScope = getScopeForMemberDeclarationResolution(functionDeclaration)
             result.add(c.functionDescriptorResolver.resolveFunctionDescriptor(
                     thisDescriptor,
-                    resolutionScope,
+                    getScopeForMemberDeclarationResolution(functionDeclaration),
                     functionDeclaration,
                     trace,
                     c.declarationScopeProvider.getOuterDataFlowInfoForDeclaration(functionDeclaration)))
@@ -97,6 +96,8 @@ protected constructor(
     }
 
     protected abstract fun getScopeForMemberDeclarationResolution(declaration: KtDeclaration): LexicalScope
+
+    protected abstract fun getScopeForInitializerResolution(declaration: KtDeclaration): LexicalScope
 
     protected abstract fun getNonDeclaredClasses(name: Name, result: MutableSet<ClassDescriptor>)
 
@@ -112,10 +113,10 @@ protected constructor(
 
         val declarations = declarationProvider.getPropertyDeclarations(name)
         for (propertyDeclaration in declarations) {
-            val resolutionScope = getScopeForMemberDeclarationResolution(propertyDeclaration)
             val propertyDescriptor = c.descriptorResolver.resolvePropertyDescriptor(
                     thisDescriptor,
-                    resolutionScope,
+                    getScopeForMemberDeclarationResolution(propertyDeclaration),
+                    getScopeForInitializerResolution(propertyDeclaration),
                     propertyDeclaration,
                     trace,
                     c.declarationScopeProvider.getOuterDataFlowInfoForDeclaration(propertyDeclaration))
