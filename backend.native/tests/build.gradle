@@ -1,3 +1,10 @@
+import com.google.common.collect.Lists
+import groovy.io.FileType
+import org.jetbrains.kotlin.*
+
+import java.nio.file.*
+import java.util.regex.Matcher
+
 configurations {
     cli_bc
 }
@@ -6,107 +13,77 @@ dependencies {
     cli_bc project(path: ':backend.native', configuration: 'cli_bc')
 }
 
+def logFileName = "test-result.md"
 
+task regenerate_external_tests() {
+    doLast {
+        def externalTestsProject = childProjects["external"]
+        def gradleGenerated = externalTestsProject.file("build.gradle")
+        def externalTestsDir = externalTestsProject.file("codegen/blackbox")
+        gradleGenerated.write("import org.jetbrains.kotlin.*\n")
+        gradleGenerated.append(
+"""
+configurations {
+    cli_bc
+}
 
-abstract class KonanTest extends DefaultTask {
-    protected String source
-    def backendNative = project.project(":backend.native")
-    def runtimeProject = project.project(":runtime")
-    def dist = project.parent.parent.file("dist")
-    def llvmLlc = llvmTool("llc")
-    def runtimeBc = new File("${dist.canonicalPath}/lib/runtime.bc").absolutePath
-    def launcherBc = new File("${dist.canonicalPath}/lib/launcher.bc").absolutePath
-    def startKtBc = new File("${dist.canonicalPath}/lib/start.kt.bc").absolutePath
-    def stdlibKtBc = new File("${dist.canonicalPath}/lib/stdlib.kt.bc").absolutePath
-    def mainC = 'main.c'
-    String goldValue = null
-    String testData = null
-    List<String> arguments = null
-
-    boolean enabled = true
-
-    public void setDisabled(boolean value) {
-        this.enabled = !value
+dependencies {
+    cli_bc project(path: ':backend.native', configuration: 'cli_bc')
+}
+"""
+        )
+        gradleGenerated.append(
+"""
+task createLogFile() {
+    doLast {
+        project.file("$logFileName").write("")
     }
+}
+"""
+        )
+        externalTestsDir.eachDirRecurse {
+            // Skip build directory and directories without *.kt files.
+            if (it.name == "build" || it.listFiles().count {it.name.endsWith(".kt")} == 0) {
+                return
+            }
 
-    public KonanTest(){
-        // TODO: that's a long reach up the project tree.
-        // May be we should reorganize a little.
-        dependsOn(project.parent.parent.tasks['dist'])
-    }
+            def taskDirectory = externalTestsProject.relativePath(it)
+            def taskName = taskDirectory.replaceAll("[-/]", '_')
 
-    abstract void compileTest(String source, String exe)
-
-    protected void runCompiler(String source, String output, List<String> moreArgs) {
-        project.javaexec {
-            main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
-            classpath = project.configurations.cli_bc
-            jvmArgs "-ea",
-                "-Dkonan.home=${dist.canonicalPath}",
-                "-Djava.library.path=${dist.canonicalPath}/konan/nativelib"
-            args("-output", output,
-                 source,
-                 *moreArgs,
-                 *project.globalArgs)
+            gradleGenerated.append(
+                    "task $taskName (type: RunExternalTestGroup) {\n" +
+                    "   dependsOn(createLogFile)\n" +
+                    "   groupDirectory = \"$taskDirectory\"\n" +
+                    "   logFileName = \"$logFileName\"\n" +
+                    "}\n\n")
         }
     }
-
-    @TaskAction
-    void executeTest() {
-        def sourceKt = project.file(source).absolutePath
-        def exe = sourceKt.replace(".kt", ".kt.exe")
-
-        compileTest(sourceKt, exe)
-        println "execution :$exe"
-
-        def out = null
-        project.exec {
-            commandLine exe
-            if (arguments != null) {
-                args arguments
-            }
-            if (testData != null) {
-                standardInput = new ByteArrayInputStream(testData.bytes)
-            }
-            if (goldValue != null) {
-                out = new ByteArrayOutputStream()
-                standardOutput = out
-            }
-        }
-        if (goldValue != null && goldValue != out.toString())
-            throw new RuntimeException("test failed")
-    }
-
-    private String llvmTool(String tool) {
-        return "${project.llvmDir}/bin/${tool}"
-    }
-
-    protected List<String> clangLinkArgs() {
-        return project.clangLinkArgs
-    }
 }
-
-class RunKonanTest extends KonanTest {
-    void compileTest(String source, String exe) {
-        runCompiler(source, exe, [])
-    }
-}
-
-class LinkKonanTest extends KonanTest {
-    protected String lib
-
-    void compileTest(String source, String exe) {
-        def libDir = project.file(lib).absolutePath
-        def libBc = "${libDir}.bc"
-
-        runCompiler(lib, libBc, ['-nolink', '-nostdlib'])
-        runCompiler(source, exe, ['-library', libBc])
-    }
-}
-
 
 task run() {
     dependsOn(tasks.withType(KonanTest).matching { it.enabled })
+}
+
+task run_external () {
+    project.subprojects {
+        dependsOn(it.tasks.withType(RunExternalTestGroup).matching { it.enabled })
+    }
+    doLast {
+        def logFile = childProjects["external"].file(logFileName)
+        def logText = logFile.text
+
+        def passed = logText.count("|PASSED|")
+        def failed = logText.count("|FAILED|")
+        def skipped = logText.count("|SKIPPED|")
+
+        def report = "\nDONE.\n\n" +
+                     "PASSED: $passed\n" +
+                     "FAILED: $failed\n" +
+                     "TOTAL (FAILED + PASSED): ${passed + failed}\n" +
+                     "SKIPPED : $skipped"
+        logFile.append(report)
+        println(report)
+    }
 }
 
 task sum (type:RunKonanTest) {
