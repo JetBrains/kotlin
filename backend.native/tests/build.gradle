@@ -814,6 +814,21 @@ task lambda13(type: RunKonanTest) {
     source = "codegen/lambda/lambda13.kt"
 }
 
+task objectExpression1(type: RunKonanTest) {
+    goldValue = "aabb\n"
+    source = "codegen/objectExpression/1.kt"
+}
+
+task objectExpression2(type: RunKonanTest) {
+    goldValue = "a\n"
+    source = "codegen/objectExpression/2.kt"
+}
+
+task objectExpression3(type: RunKonanTest) {
+    goldValue = "\n1\n2\n"
+    source = "codegen/objectExpression/3.kt"
+}
+
 task initializers2(type: RunKonanTest) {
     goldValue = "init globalValue2\n" +
                 "init globalValue3\n" +
