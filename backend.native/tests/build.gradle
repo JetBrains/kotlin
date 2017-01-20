@@ -834,6 +834,11 @@ task initializers4(type: RunKonanTest) {
     source = "runtime/basic/initializers4.kt"
 }
 
+task initializers5(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "runtime/basic/initializers5.kt"
+}
+
 task expression_as_statement(type: RunKonanTest) {
     goldValue = "Ok\n"
     source = "codegen/basics/expression_as_statement.kt"

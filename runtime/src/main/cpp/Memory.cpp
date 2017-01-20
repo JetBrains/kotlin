@@ -440,9 +440,9 @@ OBJ_GETTER(InitInstance,
 
   AllocInstance(type_info, hint, OBJ_RESULT);
   ObjHeader* object = *OBJ_RESULT;
+  UpdateGlobalRef(location, object);
   try {
     ctor(object);
-    UpdateGlobalRef(location, object);
 #if CONCURRENT
     // TODO: locking or smth lock-free in MT case?
 #endif
