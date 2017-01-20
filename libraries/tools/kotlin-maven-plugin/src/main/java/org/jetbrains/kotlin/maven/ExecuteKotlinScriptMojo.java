@@ -270,21 +270,25 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
         Artifact stdlibDep = null;
         Artifact runtimeDep = null;
 
+        ArrayList<File> files = new ArrayList<File>(2);
+
         for (Artifact dep: project.getArtifacts()) {
             if (dep.getArtifactId().equals("kotlin-stdlib")) {
+                files.add(getArtifactFile(dep));
                 stdlibDep = dep;
             }
             if (dep.getArtifactId().equals("kotlin-runtime")) {
+                files.add(getArtifactFile(dep));
                 runtimeDep = dep;
             }
             if (stdlibDep != null && runtimeDep != null) break;
         }
 
-        if (stdlibDep == null || runtimeDep == null) {
-            throw new MojoExecutionException("Unable to find kotlin-stdlib and kotlin-runtime artifacts among project dependencies");
+        if (stdlibDep == null) {
+            throw new MojoExecutionException("Unable to find kotlin-stdlib artifacts among project dependencies");
         }
 
-        return Arrays.asList(getArtifactFile(stdlibDep), getArtifactFile(runtimeDep));
+        return files;
     }
 
     private void initCompiler() {
