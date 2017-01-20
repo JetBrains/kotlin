@@ -29,13 +29,13 @@ task regenerate_external_tests() {
                 "}\n\n")
 
         externalTestsDir.eachDirRecurse {
-            // Skip build directory and directories without *.kt files
-            if (it.name == "build" || it.listFiles().findAll { it.name.endsWith(".kt") }.isEmpty()) {
+            // Skip build directory and directories without *.kt files.
+            if (it.name == "build" || it.listFiles().count {it.name.endsWith(".kt")} == 0) {
                 return
             }
 
             def taskDirectory = externalTestsProject.relativePath(it)
-            def taskName = taskDirectory.replace('/', '_').replace('-', '_')
+            def taskName = taskDirectory.replaceAll("/-", '_')
 
             gradleGenerated.append(
                     "task $taskName (type: RunExternalTestGroup) {\n" +
