@@ -93,7 +93,6 @@ public external interface ProgressEventInit : EventInit {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun ProgressEventInit(lengthComputable: Boolean? = false, loaded: Int? = 0, total: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ProgressEventInit {
     val o = js("({})")
 

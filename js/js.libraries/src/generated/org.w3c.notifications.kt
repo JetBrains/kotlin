@@ -104,7 +104,6 @@ public external interface NotificationOptions {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun NotificationOptions(dir: String? = "auto", lang: String? = "", body: String? = "", tag: String? = "", image: String? = null, icon: String? = null, badge: String? = null, sound: String? = null, vibrate: dynamic = null, timestamp: Number? = null, renotify: Boolean? = false, silent: Boolean? = false, noscreen: Boolean? = false, requireInteraction: Boolean? = false, sticky: Boolean? = false, data: Any? = null, actions: Array<NotificationAction>? = arrayOf()): NotificationOptions {
     val o = js("({})")
 
@@ -141,7 +140,6 @@ public external interface NotificationAction {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun NotificationAction(action: String?, title: String?, icon: String? = null): NotificationAction {
     val o = js("({})")
 
@@ -158,7 +156,6 @@ public external interface GetNotificationOptions {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun GetNotificationOptions(tag: String? = ""): GetNotificationOptions {
     val o = js("({})")
 
@@ -181,7 +178,6 @@ public external interface NotificationEventInit : ExtendableEventInit {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun NotificationEventInit(notification: Notification?, action: String? = "", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): NotificationEventInit {
     val o = js("({})")
 

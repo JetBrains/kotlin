@@ -47,7 +47,6 @@ public external interface WebGLContextAttributes {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun WebGLContextAttributes(alpha: Boolean? = true, depth: Boolean? = true, stencil: Boolean? = false, antialias: Boolean? = true, premultipliedAlpha: Boolean? = true, preserveDrawingBuffer: Boolean? = false, preferLowPowerToHighPerformance: Boolean? = false, failIfMajorPerformanceCaveat: Boolean? = false): WebGLContextAttributes {
     val o = js("({})")
 
@@ -868,7 +867,6 @@ public external interface WebGLContextEventInit : EventInit {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun WebGLContextEventInit(statusMessage: String? = "", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): WebGLContextEventInit {
     val o = js("({})")
 
@@ -904,11 +902,6 @@ public external open class Int8Array : ArrayBufferView {
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
-    @Suppress("NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE")
-    @nativeGetter
-    operator fun get(index: Int): Byte
-    @nativeSetter
-    operator fun set(index: Int, value: Byte): Unit
     fun set(array: Int8Array, offset: Int = noImpl): Unit
     fun set(array: Array<Byte>, offset: Int = noImpl): Unit
     fun subarray(start: Int, end: Int): Int8Array
@@ -917,6 +910,8 @@ public external open class Int8Array : ArrayBufferView {
         val BYTES_PER_ELEMENT: Int
     }
 }
+inline operator fun Int8Array.get(index: Int): Byte = asDynamic()[index]
+inline operator fun Int8Array.set(index: Int, value: Byte): Unit { asDynamic()[index] = value; }
 
 public external open class Uint8Array : ArrayBufferView {
     constructor(length: Int)
@@ -927,11 +922,6 @@ public external open class Uint8Array : ArrayBufferView {
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
-    @Suppress("NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE")
-    @nativeGetter
-    operator fun get(index: Int): Byte
-    @nativeSetter
-    operator fun set(index: Int, value: Byte): Unit
     fun set(array: Uint8Array, offset: Int = noImpl): Unit
     fun set(array: Array<Byte>, offset: Int = noImpl): Unit
     fun subarray(start: Int, end: Int): Uint8Array
@@ -940,6 +930,8 @@ public external open class Uint8Array : ArrayBufferView {
         val BYTES_PER_ELEMENT: Int
     }
 }
+inline operator fun Uint8Array.get(index: Int): Byte = asDynamic()[index]
+inline operator fun Uint8Array.set(index: Int, value: Byte): Unit { asDynamic()[index] = value; }
 
 public external open class Uint8ClampedArray : ArrayBufferView {
     constructor(length: Int)
@@ -950,11 +942,6 @@ public external open class Uint8ClampedArray : ArrayBufferView {
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
-    @Suppress("NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE")
-    @nativeGetter
-    operator fun get(index: Int): Byte
-    @nativeSetter
-    operator fun set(index: Int, value: Byte): Unit
     fun set(array: Uint8ClampedArray, offset: Int = noImpl): Unit
     fun set(array: Array<Byte>, offset: Int = noImpl): Unit
     fun subarray(start: Int, end: Int): Uint8ClampedArray
@@ -963,6 +950,8 @@ public external open class Uint8ClampedArray : ArrayBufferView {
         val BYTES_PER_ELEMENT: Int
     }
 }
+inline operator fun Uint8ClampedArray.get(index: Int): Byte = asDynamic()[index]
+inline operator fun Uint8ClampedArray.set(index: Int, value: Byte): Unit { asDynamic()[index] = value; }
 
 public external open class Int16Array : ArrayBufferView {
     constructor(length: Int)
@@ -973,11 +962,6 @@ public external open class Int16Array : ArrayBufferView {
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
-    @Suppress("NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE")
-    @nativeGetter
-    operator fun get(index: Int): Short
-    @nativeSetter
-    operator fun set(index: Int, value: Short): Unit
     fun set(array: Int16Array, offset: Int = noImpl): Unit
     fun set(array: Array<Short>, offset: Int = noImpl): Unit
     fun subarray(start: Int, end: Int): Int16Array
@@ -986,6 +970,8 @@ public external open class Int16Array : ArrayBufferView {
         val BYTES_PER_ELEMENT: Int
     }
 }
+inline operator fun Int16Array.get(index: Int): Short = asDynamic()[index]
+inline operator fun Int16Array.set(index: Int, value: Short): Unit { asDynamic()[index] = value; }
 
 public external open class Uint16Array : ArrayBufferView {
     constructor(length: Int)
@@ -996,11 +982,6 @@ public external open class Uint16Array : ArrayBufferView {
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
-    @Suppress("NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE")
-    @nativeGetter
-    operator fun get(index: Int): Short
-    @nativeSetter
-    operator fun set(index: Int, value: Short): Unit
     fun set(array: Uint16Array, offset: Int = noImpl): Unit
     fun set(array: Array<Short>, offset: Int = noImpl): Unit
     fun subarray(start: Int, end: Int): Uint16Array
@@ -1009,6 +990,8 @@ public external open class Uint16Array : ArrayBufferView {
         val BYTES_PER_ELEMENT: Int
     }
 }
+inline operator fun Uint16Array.get(index: Int): Short = asDynamic()[index]
+inline operator fun Uint16Array.set(index: Int, value: Short): Unit { asDynamic()[index] = value; }
 
 public external open class Int32Array : ArrayBufferView {
     constructor(length: Int)
@@ -1019,11 +1002,6 @@ public external open class Int32Array : ArrayBufferView {
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
-    @Suppress("NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE")
-    @nativeGetter
-    operator fun get(index: Int): Int
-    @nativeSetter
-    operator fun set(index: Int, value: Int): Unit
     fun set(array: Int32Array, offset: Int = noImpl): Unit
     fun set(array: Array<Int>, offset: Int = noImpl): Unit
     fun subarray(start: Int, end: Int): Int32Array
@@ -1032,6 +1010,8 @@ public external open class Int32Array : ArrayBufferView {
         val BYTES_PER_ELEMENT: Int
     }
 }
+inline operator fun Int32Array.get(index: Int): Int = asDynamic()[index]
+inline operator fun Int32Array.set(index: Int, value: Int): Unit { asDynamic()[index] = value; }
 
 public external open class Uint32Array : ArrayBufferView {
     constructor(length: Int)
@@ -1042,11 +1022,6 @@ public external open class Uint32Array : ArrayBufferView {
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
-    @Suppress("NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE")
-    @nativeGetter
-    operator fun get(index: Int): Int
-    @nativeSetter
-    operator fun set(index: Int, value: Int): Unit
     fun set(array: Uint32Array, offset: Int = noImpl): Unit
     fun set(array: Array<Int>, offset: Int = noImpl): Unit
     fun subarray(start: Int, end: Int): Uint32Array
@@ -1055,6 +1030,8 @@ public external open class Uint32Array : ArrayBufferView {
         val BYTES_PER_ELEMENT: Int
     }
 }
+inline operator fun Uint32Array.get(index: Int): Int = asDynamic()[index]
+inline operator fun Uint32Array.set(index: Int, value: Int): Unit { asDynamic()[index] = value; }
 
 public external open class Float32Array : ArrayBufferView {
     constructor(length: Int)
@@ -1065,11 +1042,6 @@ public external open class Float32Array : ArrayBufferView {
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
-    @Suppress("NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE")
-    @nativeGetter
-    operator fun get(index: Int): Float
-    @nativeSetter
-    operator fun set(index: Int, value: Float): Unit
     fun set(array: Float32Array, offset: Int = noImpl): Unit
     fun set(array: Array<Float>, offset: Int = noImpl): Unit
     fun subarray(start: Int, end: Int): Float32Array
@@ -1078,6 +1050,8 @@ public external open class Float32Array : ArrayBufferView {
         val BYTES_PER_ELEMENT: Int
     }
 }
+inline operator fun Float32Array.get(index: Int): Float = asDynamic()[index]
+inline operator fun Float32Array.set(index: Int, value: Float): Unit { asDynamic()[index] = value; }
 
 public external open class Float64Array : ArrayBufferView {
     constructor(length: Int)
@@ -1088,11 +1062,6 @@ public external open class Float64Array : ArrayBufferView {
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
-    @Suppress("NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE")
-    @nativeGetter
-    operator fun get(index: Int): Double
-    @nativeSetter
-    operator fun set(index: Int, value: Double): Unit
     fun set(array: Float64Array, offset: Int = noImpl): Unit
     fun set(array: Array<Double>, offset: Int = noImpl): Unit
     fun subarray(start: Int, end: Int): Float64Array
@@ -1101,6 +1070,8 @@ public external open class Float64Array : ArrayBufferView {
         val BYTES_PER_ELEMENT: Int
     }
 }
+inline operator fun Float64Array.get(index: Int): Double = asDynamic()[index]
+inline operator fun Float64Array.set(index: Int, value: Double): Unit { asDynamic()[index] = value; }
 
 public external open class DataView(buffer: ArrayBuffer, byteOffset: Int = noImpl, byteLength: Int = noImpl) : ArrayBufferView {
     override val buffer: ArrayBuffer

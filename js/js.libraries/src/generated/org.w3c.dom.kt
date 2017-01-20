@@ -138,8 +138,6 @@ public external open class Document : Node, GlobalEventHandlers, DocumentAndElem
     override val lastElementChild: Element?
     override val childElementCount: Int
     fun exitFullscreen(): dynamic
-    @nativeGetter
-    operator fun get(name: String): dynamic
     fun getElementsByName(elementName: String): NodeList
     fun open(type: String = noImpl, replace: String = noImpl): Document
     fun open(url: String, name: String, features: String): Window
@@ -189,6 +187,7 @@ public external open class Document : Node, GlobalEventHandlers, DocumentAndElem
     override fun convertRectFromNode(rect: DOMRectReadOnly, from: dynamic, options: ConvertCoordinateOptions /* = noImpl */): DOMQuad
     override fun convertPointFromNode(point: DOMPointInit, from: dynamic, options: ConvertCoordinateOptions /* = noImpl */): DOMPoint
 }
+inline operator fun Document.get(name: String): dynamic = asDynamic()[name]
 
 public external abstract class Window : EventTarget, GlobalEventHandlers, WindowEventHandlers, WindowOrWorkerGlobalScope, WindowSessionStorage, WindowLocalStorage, GlobalPerformance, UnionMessagePortOrWindow {
     open val window: Window
@@ -232,8 +231,6 @@ public external abstract class Window : EventTarget, GlobalEventHandlers, Window
     fun focus(): Unit
     fun blur(): Unit
     fun open(url: String = noImpl, target: String = noImpl, features: String = noImpl): Window?
-    @nativeGetter
-    operator fun get(name: String): dynamic
     fun alert(): Unit
     fun alert(message: String): Unit
     fun confirm(message: String = noImpl): Boolean
@@ -257,22 +254,20 @@ public external abstract class Window : EventTarget, GlobalEventHandlers, Window
     fun scrollBy(x: Double, y: Double): Unit
     fun getComputedStyle(elt: Element, pseudoElt: String? = noImpl): CSSStyleDeclaration
 }
+inline operator fun Window.get(name: String): dynamic = asDynamic()[name]
 
 public external abstract class HTMLAllCollection {
     open val length: Int
-//    @nativeGetter
-//    operator fun get(index: Int): Element?
 //    fun namedItem(name: String): UnionElementOrHTMLCollection?
-//    @nativeGetter
-//    operator fun get(name: String): UnionElementOrHTMLCollection?
     fun item(nameOrIndex: String = noImpl): UnionElementOrHTMLCollection?
 }
+//inline operator fun HTMLAllCollection.get(index: Int): Element? = asDynamic()[index]
+//inline operator fun HTMLAllCollection.get(name: String): UnionElementOrHTMLCollection? = asDynamic()[name]
 
 public external abstract class HTMLFormControlsCollection : HTMLCollection {
 //    override fun namedItem(name: String): UnionElementOrRadioNodeList?
-//    @nativeGetter
-//    operator override fun get(name: String): UnionElementOrRadioNodeList?
 }
+//override inline operator fun HTMLFormControlsCollection.get(name: String): UnionElementOrRadioNodeList? = asDynamic()[name]
 
 public external abstract class RadioNodeList : NodeList, UnionElementOrRadioNodeList {
     open var value: String
@@ -281,11 +276,10 @@ public external abstract class RadioNodeList : NodeList, UnionElementOrRadioNode
 public external abstract class HTMLOptionsCollection : HTMLCollection {
     override var length: Int
     open var selectedIndex: Int
-    @nativeSetter
-    operator fun set(index: Int, option: HTMLOptionElement?): Unit
     fun add(element: UnionHTMLOptGroupElementOrHTMLOptionElement, before: dynamic = noImpl): Unit
     fun remove(index: Int): Unit
 }
+inline operator fun HTMLOptionsCollection.set(index: Int, option: HTMLOptionElement?): Unit { asDynamic()[index] = option; }
 
 public external abstract class HTMLElement : Element, ElementCSSInlineStyle, GlobalEventHandlers, DocumentAndElementEventHandlers, ElementContentEditable {
     open var title: String
@@ -317,11 +311,9 @@ public external abstract class HTMLUnknownElement : HTMLElement {
 }
 
 public external abstract class DOMStringMap {
-    @nativeGetter
-    operator fun get(name: String): String?
-    @nativeSetter
-    operator fun set(name: String, value: String): Unit
 }
+inline operator fun DOMStringMap.get(name: String): String? = asDynamic()[name]
+inline operator fun DOMStringMap.set(name: String, value: String): Unit { asDynamic()[name] = value; }
 
 public external abstract class HTMLHtmlElement : HTMLElement {
     open var version: String
@@ -679,10 +671,9 @@ public external abstract class AudioTrackList : EventTarget {
     open var onchange: ((Event) -> dynamic)?
     open var onaddtrack: ((Event) -> dynamic)?
     open var onremovetrack: ((Event) -> dynamic)?
-    @nativeGetter
-    operator fun get(index: Int): AudioTrack?
     fun getTrackById(id: String): AudioTrack?
 }
+inline operator fun AudioTrackList.get(index: Int): AudioTrack? = asDynamic()[index]
 
 public external abstract class AudioTrack : UnionAudioTrackOrTextTrackOrVideoTrack {
     open val id: String
@@ -698,10 +689,9 @@ public external abstract class VideoTrackList : EventTarget {
     open var onchange: ((Event) -> dynamic)?
     open var onaddtrack: ((Event) -> dynamic)?
     open var onremovetrack: ((Event) -> dynamic)?
-    @nativeGetter
-    operator fun get(index: Int): VideoTrack?
     fun getTrackById(id: String): VideoTrack?
 }
+inline operator fun VideoTrackList.get(index: Int): VideoTrack? = asDynamic()[index]
 
 public external abstract class VideoTrack : UnionAudioTrackOrTextTrackOrVideoTrack {
     open val id: String
@@ -716,10 +706,9 @@ public external abstract class TextTrackList : EventTarget {
     open var onchange: ((Event) -> dynamic)?
     open var onaddtrack: ((Event) -> dynamic)?
     open var onremovetrack: ((Event) -> dynamic)?
-    @nativeGetter
-    operator fun get(index: Int): TextTrack?
     fun getTrackById(id: String): TextTrack?
 }
+inline operator fun TextTrackList.get(index: Int): TextTrack? = asDynamic()[index]
 
 public external abstract class TextTrack : EventTarget, UnionAudioTrackOrTextTrackOrVideoTrack {
     open val kind: String
@@ -737,10 +726,9 @@ public external abstract class TextTrack : EventTarget, UnionAudioTrackOrTextTra
 
 public external abstract class TextTrackCueList {
     open val length: Int
-    @nativeGetter
-    operator fun get(index: Int): TextTrackCue?
     fun getCueById(id: String): TextTrackCue?
 }
+inline operator fun TextTrackCueList.get(index: Int): TextTrackCue? = asDynamic()[index]
 
 public external abstract class TextTrackCue : EventTarget {
     open val track: TextTrack?
@@ -768,7 +756,6 @@ public external interface TrackEventInit : EventInit {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun TrackEventInit(track: UnionAudioTrackOrTextTrackOrVideoTrack? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): TrackEventInit {
     val o = js("({})")
 
@@ -890,15 +877,13 @@ public external abstract class HTMLFormElement : HTMLElement {
     open var target: String
     open val elements: HTMLFormControlsCollection
     open val length: Int
-    @nativeGetter
-    operator fun get(index: Int): Element?
-    @nativeGetter
-    operator fun get(name: String): UnionElementOrRadioNodeList?
     fun submit(): Unit
     fun reset(): Unit
     fun checkValidity(): Boolean
     fun reportValidity(): Boolean
 }
+inline operator fun HTMLFormElement.get(index: Int): Element? = asDynamic()[index]
+inline operator fun HTMLFormElement.get(name: String): UnionElementOrRadioNodeList? = asDynamic()[name]
 
 public external abstract class HTMLLabelElement : HTMLElement {
     open val form: HTMLFormElement?
@@ -1007,17 +992,15 @@ public external abstract class HTMLSelectElement : HTMLElement {
     open val validationMessage: String
     open val labels: NodeList
     fun item(index: Int): Element?
-    @nativeGetter
-    operator fun get(index: Int): Element?
     fun namedItem(name: String): HTMLOptionElement?
     fun add(element: UnionHTMLOptGroupElementOrHTMLOptionElement, before: dynamic = noImpl): Unit
     fun remove(index: Int): Unit
-    @nativeSetter
-    operator fun set(index: Int, option: HTMLOptionElement?): Unit
     fun checkValidity(): Boolean
     fun reportValidity(): Boolean
     fun setCustomValidity(error: String): Unit
 }
+inline operator fun HTMLSelectElement.get(index: Int): Element? = asDynamic()[index]
+inline operator fun HTMLSelectElement.set(index: Int, option: HTMLOptionElement?): Unit { asDynamic()[index] = option; }
 
 public external abstract class HTMLDataListElement : HTMLElement {
     open val options: HTMLCollection
@@ -1188,7 +1171,6 @@ public external interface RelatedEventInit : EventInit {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun RelatedEventInit(relatedTarget: EventTarget? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): RelatedEventInit {
     val o = js("({})")
 
@@ -1236,7 +1218,6 @@ public external interface AssignedNodesOptions {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun AssignedNodesOptions(flatten: Boolean? = false): AssignedNodesOptions {
     val o = js("({})")
 
@@ -1259,7 +1240,6 @@ public external interface CanvasRenderingContext2DSettings {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun CanvasRenderingContext2DSettings(alpha: Boolean? = true): CanvasRenderingContext2DSettings {
     val o = js("({})")
 
@@ -1451,7 +1431,6 @@ public external interface HitRegionOptions {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun HitRegionOptions(path: Path2D? = null, fillRule: String? = "nonzero", id: String? = "", parentID: String? = null, cursor: String? = "inherit", control: Element? = null, label: String? = null, role: String? = null): HitRegionOptions {
     val o = js("({})")
 
@@ -1507,7 +1486,6 @@ public external interface ImageBitmapRenderingContextSettings {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun ImageBitmapRenderingContextSettings(alpha: Boolean? = true): ImageBitmapRenderingContextSettings {
     val o = js("({})")
 
@@ -1528,7 +1506,6 @@ public external interface ElementDefinitionOptions {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun ElementDefinitionOptions(extends: String? = null): ElementDefinitionOptions {
     val o = js("({})")
 
@@ -1556,13 +1533,12 @@ public external abstract class DataTransfer {
 
 public external abstract class DataTransferItemList {
     open val length: Int
-    @nativeGetter
-    operator fun get(index: Int): DataTransferItem?
     fun add(data: String, type: String): DataTransferItem?
     fun add(data: File): DataTransferItem?
     fun remove(index: Int): Unit
     fun clear(): Unit
 }
+inline operator fun DataTransferItemList.get(index: Int): DataTransferItem? = asDynamic()[index]
 
 public external abstract class DataTransferItem {
     open val kind: String
@@ -1581,7 +1557,6 @@ public external interface DragEventInit : MouseEventInit {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun DragEventInit(dataTransfer: DataTransfer? = null, screenX: Int? = 0, screenY: Int? = 0, clientX: Int? = 0, clientY: Int? = 0, button: Short? = 0, buttons: Short? = 0, relatedTarget: EventTarget? = null, ctrlKey: Boolean? = false, shiftKey: Boolean? = false, altKey: Boolean? = false, metaKey: Boolean? = false, modifierAltGraph: Boolean? = false, modifierCapsLock: Boolean? = false, modifierFn: Boolean? = false, modifierFnLock: Boolean? = false, modifierHyper: Boolean? = false, modifierNumLock: Boolean? = false, modifierScrollLock: Boolean? = false, modifierSuper: Boolean? = false, modifierSymbol: Boolean? = false, modifierSymbolLock: Boolean? = false, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): DragEventInit {
     val o = js("({})")
 
@@ -1657,7 +1632,6 @@ public external interface PopStateEventInit : EventInit {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun PopStateEventInit(state: Any? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): PopStateEventInit {
     val o = js("({})")
 
@@ -1683,7 +1657,6 @@ public external interface HashChangeEventInit : EventInit {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun HashChangeEventInit(oldURL: String? = "", newURL: String? = "", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): HashChangeEventInit {
     val o = js("({})")
 
@@ -1706,7 +1679,6 @@ public external interface PageTransitionEventInit : EventInit {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun PageTransitionEventInit(persisted: Boolean? = false, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): PageTransitionEventInit {
     val o = js("({})")
 
@@ -1776,7 +1748,6 @@ public external interface ErrorEventInit : EventInit {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun ErrorEventInit(message: String? = "", filename: String? = "", lineno: Int? = 0, colno: Int? = 0, error: Any? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ErrorEventInit {
     val o = js("({})")
 
@@ -1806,7 +1777,6 @@ public external interface PromiseRejectionEventInit : EventInit {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun PromiseRejectionEventInit(promise: dynamic, reason: Any? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): PromiseRejectionEventInit {
     val o = js("({})")
 
@@ -1968,22 +1938,18 @@ public external abstract class PluginArray {
     open val length: Int
     fun refresh(reload: Boolean = noImpl): Unit
     fun item(index: Int): Plugin?
-    @nativeGetter
-    operator fun get(index: Int): Plugin?
     fun namedItem(name: String): Plugin?
-    @nativeGetter
-    operator fun get(name: String): Plugin?
 }
+inline operator fun PluginArray.get(index: Int): Plugin? = asDynamic()[index]
+inline operator fun PluginArray.get(name: String): Plugin? = asDynamic()[name]
 
 public external abstract class MimeTypeArray {
     open val length: Int
     fun item(index: Int): MimeType?
-    @nativeGetter
-    operator fun get(index: Int): MimeType?
     fun namedItem(name: String): MimeType?
-    @nativeGetter
-    operator fun get(name: String): MimeType?
 }
+inline operator fun MimeTypeArray.get(index: Int): MimeType? = asDynamic()[index]
+inline operator fun MimeTypeArray.get(name: String): MimeType? = asDynamic()[name]
 
 public external abstract class Plugin {
     open val name: String
@@ -1991,12 +1957,10 @@ public external abstract class Plugin {
     open val filename: String
     open val length: Int
     fun item(index: Int): MimeType?
-    @nativeGetter
-    operator fun get(index: Int): MimeType?
     fun namedItem(name: String): MimeType?
-    @nativeGetter
-    operator fun get(name: String): MimeType?
 }
+inline operator fun Plugin.get(index: Int): MimeType? = asDynamic()[index]
+inline operator fun Plugin.get(name: String): MimeType? = asDynamic()[name]
 
 public external abstract class MimeType {
     open val type: String
@@ -2032,7 +1996,6 @@ public external interface ImageBitmapOptions {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun ImageBitmapOptions(imageOrientation: String? = "none", premultiplyAlpha: String? = "default", colorSpaceConversion: String? = "default", resizeWidth: Int? = null, resizeHeight: Int? = null, resizeQuality: String? = "low"): ImageBitmapOptions {
     val o = js("({})")
 
@@ -2073,7 +2036,6 @@ public external interface MessageEventInit : EventInit {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun MessageEventInit(data: Any? = null, origin: String? = "", lastEventId: String? = "", source: UnionMessagePortOrWindow? = null, ports: Array<MessagePort>? = arrayOf(), bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): MessageEventInit {
     val o = js("({})")
 
@@ -2111,7 +2073,6 @@ public external interface EventSourceInit {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun EventSourceInit(withCredentials: Boolean? = false): EventSourceInit {
     val o = js("({})")
 
@@ -2163,7 +2124,6 @@ public external interface CloseEventInit : EventInit {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun CloseEventInit(wasClean: Boolean? = false, code: Short? = 0, reason: String? = "", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): CloseEventInit {
     val o = js("({})")
 
@@ -2242,7 +2202,6 @@ public external interface WorkerOptions {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun WorkerOptions(type: String? = "classic", credentials: String? = "omit"): WorkerOptions {
     val o = js("({})")
 
@@ -2281,14 +2240,12 @@ public external abstract class Storage {
     open val length: Int
     fun key(index: Int): String?
     fun getItem(key: String): String?
-    @nativeGetter
-    operator fun get(key: String): String?
     fun setItem(key: String, value: String): Unit
-    @nativeSetter
-    operator fun set(key: String, value: String): Unit
     fun removeItem(key: String): Unit
     fun clear(): Unit
 }
+inline operator fun Storage.get(key: String): String? = asDynamic()[key]
+inline operator fun Storage.set(key: String, value: String): Unit { asDynamic()[key] = value; }
 
 public external interface WindowSessionStorage {
     val sessionStorage: Storage
@@ -2324,7 +2281,6 @@ public external interface StorageEventInit : EventInit {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun StorageEventInit(key: String? = null, oldValue: String? = null, newValue: String? = null, url: String? = "", storageArea: Storage? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): StorageEventInit {
     val o = js("({})")
 
@@ -2418,7 +2374,6 @@ public external interface EventInit {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun EventInit(bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): EventInit {
     val o = js("({})")
 
@@ -2440,7 +2395,6 @@ public external interface CustomEventInit : EventInit {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun CustomEventInit(detail: Any? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): CustomEventInit {
     val o = js("({})")
 
@@ -2458,7 +2412,6 @@ public external interface EventListenerOptions {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun EventListenerOptions(capture: Boolean? = false): EventListenerOptions {
     val o = js("({})")
 
@@ -2476,7 +2429,6 @@ public external interface AddEventListenerOptions : EventListenerOptions {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun AddEventListenerOptions(passive: Boolean? = false, once: Boolean? = false, capture: Boolean? = false): AddEventListenerOptions {
     val o = js("({})")
 
@@ -2525,19 +2477,16 @@ public external interface Slotable {
 public external abstract class NodeList {
     open val length: Int
     fun item(index: Int): Node?
-    @nativeGetter
-    operator fun get(index: Int): Node?
 }
+inline operator fun NodeList.get(index: Int): Node? = asDynamic()[index]
 
 public external abstract class HTMLCollection : UnionElementOrHTMLCollection {
     open val length: Int
     fun item(index: Int): Element?
-    @nativeGetter
-    operator fun get(index: Int): Element?
     fun namedItem(name: String): Element?
-    @nativeGetter
-    operator fun get(name: String): Element?
 }
+inline operator fun HTMLCollection.get(index: Int): Element? = asDynamic()[index]
+inline operator fun HTMLCollection.get(name: String): Element? = asDynamic()[name]
 
 public external open class MutationObserver(callback: (Array<MutationRecord>, MutationObserver) -> Unit) {
     fun observe(target: Node, options: MutationObserverInit = noImpl): Unit
@@ -2569,7 +2518,6 @@ public external interface MutationObserverInit {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun MutationObserverInit(childList: Boolean? = false, attributes: Boolean? = null, characterData: Boolean? = null, subtree: Boolean? = false, attributeOldValue: Boolean? = null, characterDataOldValue: Boolean? = null, attributeFilter: Array<String>? = null): MutationObserverInit {
     val o = js("({})")
 
@@ -2655,7 +2603,6 @@ public external interface GetRootNodeOptions {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun GetRootNodeOptions(composed: Boolean? = false): GetRootNodeOptions {
     val o = js("({})")
 
@@ -2682,7 +2629,6 @@ public external interface ElementCreationOptions {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun ElementCreationOptions(is_: String? = null): ElementCreationOptions {
     val o = js("({})")
 
@@ -2792,7 +2738,6 @@ public external interface ShadowRootInit {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun ShadowRootInit(mode: String?): ShadowRootInit {
     val o = js("({})")
 
@@ -2804,17 +2749,15 @@ public inline fun ShadowRootInit(mode: String?): ShadowRootInit {
 public external abstract class NamedNodeMap {
     open val length: Int
     fun item(index: Int): Attr?
-    @nativeGetter
-    operator fun get(index: Int): Attr?
     fun getNamedItem(qualifiedName: String): Attr?
-    @nativeGetter
-    operator fun get(qualifiedName: String): Attr?
     fun getNamedItemNS(namespace: String?, localName: String): Attr?
     fun setNamedItem(attr: Attr): Attr?
     fun setNamedItemNS(attr: Attr): Attr?
     fun removeNamedItem(qualifiedName: String): Attr
     fun removeNamedItemNS(namespace: String?, localName: String): Attr
 }
+inline operator fun NamedNodeMap.get(index: Int): Attr? = asDynamic()[index]
+inline operator fun NamedNodeMap.get(qualifiedName: String): Attr? = asDynamic()[qualifiedName]
 
 public external abstract class Attr : Node {
     open val namespaceURI: String?
@@ -2967,8 +2910,6 @@ public external abstract class DOMTokenList {
     open val length: Int
     open var value: String
     fun item(index: Int): String?
-    @nativeGetter
-    operator fun get(index: Int): String?
     fun contains(token: String): Boolean
     fun add(vararg tokens: String): Unit
     fun remove(vararg tokens: String): Unit
@@ -2976,6 +2917,7 @@ public external abstract class DOMTokenList {
     fun replace(token: String, newToken: String): Unit
     fun supports(token: String): Boolean
 }
+inline operator fun DOMTokenList.get(index: Int): String? = asDynamic()[index]
 
 public external open class DOMPointReadOnly(x: Double, y: Double, z: Double, w: Double) {
     open val x: Double
@@ -3009,7 +2951,6 @@ public external interface DOMPointInit {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun DOMPointInit(x: Double? = 0.0, y: Double? = 0.0, z: Double? = 0.0, w: Double? = 1.0): DOMPointInit {
     val o = js("({})")
 
@@ -3054,7 +2995,6 @@ public external interface DOMRectInit {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun DOMRectInit(x: Double? = 0.0, y: Double? = 0.0, width: Double? = 0.0, height: Double? = 0.0): DOMRectInit {
     val o = js("({})")
 
@@ -3069,9 +3009,8 @@ public inline fun DOMRectInit(x: Double? = 0.0, y: Double? = 0.0, width: Double?
 public external interface DOMRectList {
     val length: Int
     fun item(index: Int): DOMRect?
-    @nativeGetter
-    operator fun get(index: Int): DOMRect?
 }
+inline operator fun DOMRectList.get(index: Int): DOMRect? = asDynamic()[index]
 
 public external open class DOMQuad {
     constructor(p1: DOMPointInit = noImpl, p2: DOMPointInit = noImpl, p3: DOMPointInit = noImpl, p4: DOMPointInit = noImpl)
@@ -3175,7 +3114,6 @@ public external interface ScrollOptions {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun ScrollOptions(behavior: String? = "auto"): ScrollOptions {
     val o = js("({})")
 
@@ -3193,7 +3131,6 @@ public external interface ScrollToOptions : ScrollOptions {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun ScrollToOptions(left: Double? = null, top: Double? = null, behavior: String? = "auto"): ScrollToOptions {
     val o = js("({})")
 
@@ -3228,7 +3165,6 @@ public external interface MediaQueryListEventInit : EventInit {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun MediaQueryListEventInit(media: String? = "", matches: Boolean? = false, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): MediaQueryListEventInit {
     val o = js("({})")
 
@@ -3265,7 +3201,6 @@ public external interface ScrollIntoViewOptions : ScrollOptions {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun ScrollIntoViewOptions(block: String? = "center", inline: String? = "center", behavior: String? = "auto"): ScrollIntoViewOptions {
     val o = js("({})")
 
@@ -3285,7 +3220,6 @@ public external interface BoxQuadOptions {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun BoxQuadOptions(box: String? = "border", relativeTo: dynamic = null): BoxQuadOptions {
     val o = js("({})")
 
@@ -3304,7 +3238,6 @@ public external interface ConvertCoordinateOptions {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun ConvertCoordinateOptions(fromBox: String? = "border", toBox: String? = "border"): ConvertCoordinateOptions {
     val o = js("({})")
 

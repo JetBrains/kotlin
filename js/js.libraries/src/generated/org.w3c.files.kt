@@ -34,7 +34,6 @@ public external interface BlobPropertyBag {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun BlobPropertyBag(type: String? = ""): BlobPropertyBag {
     val o = js("({})")
 
@@ -54,7 +53,6 @@ public external interface FilePropertyBag : BlobPropertyBag {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun FilePropertyBag(lastModified: Int? = null, type: String? = ""): FilePropertyBag {
     val o = js("({})")
 
@@ -67,9 +65,8 @@ public inline fun FilePropertyBag(lastModified: Int? = null, type: String? = "")
 public external abstract class FileList {
     open val length: Int
     fun item(index: Int): File?
-    @nativeGetter
-    operator fun get(index: Int): File?
 }
+inline operator fun FileList.get(index: Int): File? = asDynamic()[index]
 
 public external open class FileReader : EventTarget {
     open val readyState: Short

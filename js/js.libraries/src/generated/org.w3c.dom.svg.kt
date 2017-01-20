@@ -44,7 +44,6 @@ public external interface SVGBoundingBoxOptions {
         set(value) = noImpl
 }
 
-@Suppress("NOTHING_TO_INLINE")
 public inline fun SVGBoundingBoxOptions(fill: Boolean? = true, stroke: Boolean? = false, markers: Boolean? = false, clipped: Boolean? = false): SVGBoundingBoxOptions {
     val o = js("({})")
 
@@ -121,15 +120,13 @@ public external abstract class SVGNameList {
     fun clear(): Unit
     fun initialize(newItem: dynamic): dynamic
     fun getItem(index: Int): dynamic
-    @nativeGetter
-    operator fun get(index: Int): dynamic
     fun insertItemBefore(newItem: dynamic, index: Int): dynamic
     fun replaceItem(newItem: dynamic, index: Int): dynamic
     fun removeItem(index: Int): dynamic
     fun appendItem(newItem: dynamic): dynamic
-    @nativeSetter
-    operator fun set(index: Int, newItem: dynamic): Unit
 }
+inline operator fun SVGNameList.get(index: Int): dynamic = asDynamic()[index]
+inline operator fun SVGNameList.set(index: Int, newItem: dynamic): Unit { asDynamic()[index] = newItem; }
 
 public external abstract class SVGNumberList {
     open val length: Int
@@ -137,15 +134,13 @@ public external abstract class SVGNumberList {
     fun clear(): Unit
     fun initialize(newItem: SVGNumber): SVGNumber
     fun getItem(index: Int): SVGNumber
-    @nativeGetter
-    operator fun get(index: Int): SVGNumber?
     fun insertItemBefore(newItem: SVGNumber, index: Int): SVGNumber
     fun replaceItem(newItem: SVGNumber, index: Int): SVGNumber
     fun removeItem(index: Int): SVGNumber
     fun appendItem(newItem: SVGNumber): SVGNumber
-    @nativeSetter
-    operator fun set(index: Int, newItem: SVGNumber): Unit
 }
+inline operator fun SVGNumberList.get(index: Int): SVGNumber? = asDynamic()[index]
+inline operator fun SVGNumberList.set(index: Int, newItem: SVGNumber): Unit { asDynamic()[index] = newItem; }
 
 public external abstract class SVGLengthList {
     open val length: Int
@@ -153,15 +148,13 @@ public external abstract class SVGLengthList {
     fun clear(): Unit
     fun initialize(newItem: SVGLength): SVGLength
     fun getItem(index: Int): SVGLength
-    @nativeGetter
-    operator fun get(index: Int): SVGLength?
     fun insertItemBefore(newItem: SVGLength, index: Int): SVGLength
     fun replaceItem(newItem: SVGLength, index: Int): SVGLength
     fun removeItem(index: Int): SVGLength
     fun appendItem(newItem: SVGLength): SVGLength
-    @nativeSetter
-    operator fun set(index: Int, newItem: SVGLength): Unit
 }
+inline operator fun SVGLengthList.get(index: Int): SVGLength? = asDynamic()[index]
+inline operator fun SVGLengthList.set(index: Int, newItem: SVGLength): Unit { asDynamic()[index] = newItem; }
 
 public external abstract class SVGAnimatedBoolean {
     open var baseVal: Boolean
@@ -219,15 +212,13 @@ public external abstract class SVGStringList {
     fun clear(): Unit
     fun initialize(newItem: String): String
     fun getItem(index: Int): String
-    @nativeGetter
-    operator fun get(index: Int): String?
     fun insertItemBefore(newItem: String, index: Int): String
     fun replaceItem(newItem: String, index: Int): String
     fun removeItem(index: Int): String
     fun appendItem(newItem: String): String
-    @nativeSetter
-    operator fun set(index: Int, newItem: String): Unit
 }
+inline operator fun SVGStringList.get(index: Int): String? = asDynamic()[index]
+inline operator fun SVGStringList.set(index: Int, newItem: String): Unit { asDynamic()[index] = newItem; }
 
 public external interface SVGUnitTypes {
 
@@ -383,17 +374,15 @@ public external abstract class SVGTransformList {
     fun clear(): Unit
     fun initialize(newItem: SVGTransform): SVGTransform
     fun getItem(index: Int): SVGTransform
-    @nativeGetter
-    operator fun get(index: Int): SVGTransform?
     fun insertItemBefore(newItem: SVGTransform, index: Int): SVGTransform
     fun replaceItem(newItem: SVGTransform, index: Int): SVGTransform
     fun removeItem(index: Int): SVGTransform
     fun appendItem(newItem: SVGTransform): SVGTransform
-    @nativeSetter
-    operator fun set(index: Int, newItem: SVGTransform): Unit
     fun createSVGTransformFromMatrix(matrix: DOMMatrixReadOnly): SVGTransform
     fun consolidate(): SVGTransform?
 }
+inline operator fun SVGTransformList.get(index: Int): SVGTransform? = asDynamic()[index]
+inline operator fun SVGTransformList.set(index: Int, newItem: SVGTransform): Unit { asDynamic()[index] = newItem; }
 
 public external abstract class SVGAnimatedTransformList {
     open val baseVal: SVGTransformList
@@ -473,15 +462,13 @@ public external abstract class SVGPointList {
     fun clear(): Unit
     fun initialize(newItem: DOMPoint): DOMPoint
     fun getItem(index: Int): DOMPoint
-    @nativeGetter
-    operator fun get(index: Int): DOMPoint?
     fun insertItemBefore(newItem: DOMPoint, index: Int): DOMPoint
     fun replaceItem(newItem: DOMPoint, index: Int): DOMPoint
     fun removeItem(index: Int): DOMPoint
     fun appendItem(newItem: DOMPoint): DOMPoint
-    @nativeSetter
-    operator fun set(index: Int, newItem: DOMPoint): Unit
 }
+inline operator fun SVGPointList.get(index: Int): DOMPoint? = asDynamic()[index]
+inline operator fun SVGPointList.set(index: Int, newItem: DOMPoint): Unit { asDynamic()[index] = newItem; }
 
 public external abstract class SVGPolylineElement : SVGGeometryElement, SVGAnimatedPoints {
 }
