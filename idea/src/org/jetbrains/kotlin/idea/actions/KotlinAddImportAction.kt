@@ -64,9 +64,10 @@ internal fun createSingleImportAction(
     val variants = fqNames
             .map { fqName ->
                 val sameFqNameDescriptors = file.resolveImportReference(fqName)
-                val priority = sameFqNameDescriptors.map { prioritizer.priority(it) }.min()!!
+                val priority = sameFqNameDescriptors.map { prioritizer.priority(it) }.min() ?: return@map null
                 Prioritizer.VariantWithPriority(SingleImportVariant(fqName, sameFqNameDescriptors), priority)
             }
+            .filterNotNull()
             .sortedBy { it.priority }
             .map { it.variant }
 
@@ -150,6 +151,7 @@ class KotlinAddImportAction internal constructor(
     override fun execute(): Boolean {
         PsiDocumentManager.getInstance(project).commitAllDocuments()
         if (!element.isValid) return false
+        if (variants.isEmpty()) return false
 
         if (variants.size == 1 || ApplicationManager.getApplication().isUnitTestMode) {
             addImport(variants.first())
