@@ -330,6 +330,11 @@ task when8(type: RunKonanTest) {
     goldValue = "true\n"
 }
 
+task when9(type: RunKonanTest) {
+    goldValue = "Ok\n"
+    source = "codegen/branching/when9.kt"
+}
+
 task when_through(type: RunKonanTest) {
     source = "codegen/branching/when_through.kt"
 }

@@ -1151,9 +1151,13 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         if (!isNothing)                                     // If "when" has "exit".
             bbExit = codegen.basicBlock()                   // Create basic block to process "exit".
 
-        val resultPhi = if (isUnit || isNothing) null else
+        val hasNoValue = !isUnconditional(expression.branches.last())
+        // (It is possible if IrWhen is used as statement).
+
+        val llvmType = codegen.getLLVMType(expression.type)
+        val resultPhi = if (isUnit || isNothing || hasNoValue) null else
             codegen.appendingTo(bbExit!!) {
-                codegen.phi(codegen.getLLVMType(expression.type))
+                codegen.phi(llvmType)
             }
 
         expression.branches.forEach {                           // Iterate through "when" branches (clauses).
@@ -1167,6 +1171,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             // FIXME: remove the hacks.
             isUnit -> codegen.theUnitInstanceRef.llvm
             isNothing -> codegen.kNothingFakeValue
+            hasNoValue -> LLVMGetUndef(llvmType)!!
             else -> resultPhi!!
         }
     }
