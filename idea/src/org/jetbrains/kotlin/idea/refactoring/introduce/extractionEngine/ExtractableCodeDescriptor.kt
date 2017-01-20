@@ -33,10 +33,9 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
-import org.jetbrains.kotlin.idea.util.isAnnotatedNotNull
-import org.jetbrains.kotlin.idea.util.isAnnotatedNullable
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
@@ -360,7 +359,8 @@ data class ExtractableCodeDescriptor(
         val typeParameters: List<TypeParameter>,
         val replacementMap: MultiMap<KtSimpleNameExpression, Replacement>,
         val controlFlow: ControlFlow,
-        val returnType: KotlinType
+        val returnType: KotlinType,
+        val modifiers: List<KtKeywordToken> = emptyList()
 ) {
     val name: String get() = suggestedNames.firstOrNull() ?: ""
     val duplicates: List<DuplicateInfo> by lazy { findDuplicates() }
@@ -396,7 +396,8 @@ fun ExtractableCodeDescriptor.copy(
             typeParameters,
             newReplacementMap,
             controlFlow.copy(oldToNewParameters),
-            returnType ?: this.returnType)
+            returnType ?: this.returnType,
+            modifiers)
 }
 
 enum class ExtractionTarget(val targetName: String) {

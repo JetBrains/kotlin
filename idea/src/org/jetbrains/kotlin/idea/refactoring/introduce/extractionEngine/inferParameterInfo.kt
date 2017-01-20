@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.cfg.pseudocode.getExpectedTypePredicate
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithReceivers
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
@@ -45,6 +47,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.isSynthesizedInvoke
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
@@ -66,6 +69,7 @@ internal class ParametersInfo {
 }
 
 internal fun ExtractionData.inferParametersInfo(
+        virtualBlock: KtBlockExpression,
         commonParent: PsiElement,
         pseudocode: Pseudocode,
         bindingContext: BindingContext,
@@ -76,7 +80,7 @@ internal fun ExtractionData.inferParametersInfo(
 
     val extractedDescriptorToParameter = HashMap<DeclarationDescriptor, MutableParameter>()
 
-    for (refInfo in getBrokenReferencesInfo(createTemporaryCodeBlock())) {
+    for (refInfo in getBrokenReferencesInfo(virtualBlock)) {
         val ref = refInfo.refExpr
 
         val selector = (ref.parent as? KtCallExpression) ?: ref

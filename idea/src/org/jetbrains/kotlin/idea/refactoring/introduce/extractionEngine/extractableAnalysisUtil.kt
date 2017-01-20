@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverseFollowingInstruction
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -56,6 +57,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.isResolvableInScope
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -63,6 +65,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -637,11 +640,23 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
 
     val modifiedVarDescriptorsWithExpressions = localInstructions.getModifiedVarDescriptors(bindingContext)
 
+    val virtualBlock = createTemporaryCodeBlock()
+
     val targetScope = targetSibling.getResolutionScope(bindingContext, commonParent.getResolutionFacade())
-    val paramsInfo = inferParametersInfo(commonParent, pseudocode, bindingContext, targetScope, modifiedVarDescriptorsWithExpressions.keys)
+    val paramsInfo = inferParametersInfo(
+            virtualBlock,
+            commonParent,
+            pseudocode,
+            bindingContext,
+            targetScope,
+            modifiedVarDescriptorsWithExpressions.keys
+    )
     if (paramsInfo.errorMessage != null) {
         return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(paramsInfo.errorMessage!!))
     }
+
+    val virtualContext = virtualBlock.analyze(BodyResolveMode.PARTIAL)
+    val isSuspendExpected = virtualContext.diagnostics.all().any { it.factory == Errors.ILLEGAL_SUSPEND_FUNCTION_CALL }
 
     val messages = ArrayList<ErrorMessage>()
 
@@ -699,7 +714,8 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
                     paramsInfo.typeParameters.sortedBy { it.originalDeclaration.name!! },
                     paramsInfo.replacementMap,
                     if (messages.isEmpty()) controlFlow else controlFlow.toDefault(),
-                    returnType
+                    returnType,
+                    if (isSuspendExpected) listOf(KtTokens.SUSPEND_KEYWORD) else emptyList()
             ),
             if (messages.isEmpty()) Status.SUCCESS else Status.NON_CRITICAL_ERROR,
             messages
