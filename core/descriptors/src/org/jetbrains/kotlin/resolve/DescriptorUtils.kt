@@ -391,3 +391,9 @@ fun computeSealedSubclasses(sealedClass: ClassDescriptor): Collection<ClassDescr
     collectSubclasses(sealedClass.unsubstitutedInnerClassesScope, collectNested = true)
     return result
 }
+
+fun ClassDescriptor.getNoArgsConstructor(): ClassConstructorDescriptor? =
+        constructors.find { it.valueParameters.isEmpty() }
+
+fun ClassDescriptor.getConstructorForEmptyArgumentsList(): List<ClassConstructorDescriptor> =
+        constructors.filter { it.valueParameters.all { it.hasDefaultValue() || it.varargElementType != null } }

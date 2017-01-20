@@ -7018,6 +7018,39 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/valueof.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("compiler/testData/codegen/box/enum/defaultCtor")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DefaultCtor extends AbstractIrBlackBoxCodegenTest {
+            public void testAllFilesPresentInDefaultCtor() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/enum/defaultCtor"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("constructorWithDefaultArguments.kt")
+            public void testConstructorWithDefaultArguments() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/defaultCtor/constructorWithDefaultArguments.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("constructorWithVararg.kt")
+            public void testConstructorWithVararg() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/defaultCtor/constructorWithVararg.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("secondaryConstructorWithDefaultArguments.kt")
+            public void testSecondaryConstructorWithDefaultArguments() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/defaultCtor/secondaryConstructorWithDefaultArguments.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("secondaryConstructorWithVararg.kt")
+            public void testSecondaryConstructorWithVararg() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/defaultCtor/secondaryConstructorWithVararg.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/evaluate")

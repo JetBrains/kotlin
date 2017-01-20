@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembers
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.*
@@ -882,9 +883,6 @@ class DeclarationsChecker(
                     trace.report(HEADER_ENUM_ENTRY_WITH_BODY.on(enumEntry))
                 }
             }
-            else if (!enumEntry.hasInitializer() && !hasDefaultConstructor(enumClass)) {
-                trace.report(ENUM_ENTRY_SHOULD_BE_INITIALIZED.on(enumEntry))
-            }
         }
         else {
             assert(DescriptorUtils.isInterface(enumClass)) { "Enum entry should be declared in enum class: " + enumEntryClass }
@@ -968,9 +966,6 @@ class DeclarationsChecker(
             val modifierList = declaration.modifierList ?: return true
             return !modifierList.hasModifier(KtTokens.OVERRIDE_KEYWORD)
         }
-
-        private fun hasDefaultConstructor(classDescriptor: ClassDescriptor) =
-                classDescriptor.constructors.any { it.valueParameters.isEmpty() }
 
         private fun PropertyDescriptor.hasAccessorImplementation(): Boolean {
             getter?.let { if (it.hasBody()) return true }

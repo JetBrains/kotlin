@@ -1,0 +1,17 @@
+@kotlin.Metadata
+public final class SecondaryConstructorWithVarargKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public enum class Test {
+    public final static field OK: Test
+    private final @org.jetbrains.annotations.NotNull field str: java.lang.String
+    private final field x: int
+    protected method <init>(@java.lang.Synthetic p0: java.lang.String, @java.lang.Synthetic p1: int, @org.jetbrains.annotations.NotNull p2: int[]): void
+    protected method <init>(@java.lang.Synthetic p0: java.lang.String, @java.lang.Synthetic p1: int, p2: int, @org.jetbrains.annotations.NotNull p3: java.lang.String): void
+    public final @org.jetbrains.annotations.NotNull method getStr(): java.lang.String
+    public final method getX(): int
+    public static method valueOf(p0: java.lang.String): Test
+    public static method values(): Test[]
+}

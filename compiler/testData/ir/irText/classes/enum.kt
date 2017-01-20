@@ -38,3 +38,7 @@ enum class TestEnum4(val x: Int) {
     ;
     abstract fun foo()
 }
+
+enum class TestEnum5(val x: Int = 0) {
+    TEST1, TEST2(), TEST3(0)
+}

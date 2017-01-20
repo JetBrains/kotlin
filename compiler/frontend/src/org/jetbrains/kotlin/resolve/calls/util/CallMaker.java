@@ -283,6 +283,77 @@ public class CallMaker {
     }
 
     @NotNull
+    public static Call makeConstructorCallForEnumEntryWithoutInitializer(@NotNull final KtSuperTypeCallEntry callElement) {
+        return new Call() {
+            @Nullable
+            @Override
+            public ASTNode getCallOperationNode() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public Receiver getExplicitReceiver() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public ReceiverValue getDispatchReceiver() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public KtExpression getCalleeExpression() {
+                return callElement.getCalleeExpression();
+            }
+
+            @Nullable
+            @Override
+            public KtValueArgumentList getValueArgumentList() {
+                return callElement.getValueArgumentList();
+            }
+
+            @NotNull
+            @Override
+            public List<? extends ValueArgument> getValueArguments() {
+                return callElement.getValueArguments();
+            }
+
+            @NotNull
+            @Override
+            public List<? extends LambdaArgument> getFunctionLiteralArguments() {
+                return Collections.emptyList();
+            }
+
+            @NotNull
+            @Override
+            public List<KtTypeProjection> getTypeArguments() {
+                return Collections.emptyList();
+            }
+
+            @Nullable
+            @Override
+            public KtTypeArgumentList getTypeArgumentList() {
+                return null;
+            }
+
+            @NotNull
+            @Override
+            public KtElement getCallElement() {
+                return callElement;
+            }
+
+            @NotNull
+            @Override
+            public CallType getCallType() {
+                return CallType.DEFAULT;
+            }
+        };
+    }
+
+    @NotNull
     public static Call makeCall(@Nullable final Receiver explicitReceiver, @Nullable final ASTNode callOperationNode, @NotNull final KtCallElement callElement) {
         return new Call() {
             @Override

@@ -7327,6 +7327,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("constructorWithDefaultParametersOnly.kt")
+            public void testConstructorWithDefaultParametersOnly() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/constructorWithDefaultParametersOnly.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("dontCreatePackageTypeForEnumEntry.kt")
             public void testDontCreatePackageTypeForEnumEntry() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/dontCreatePackageTypeForEnumEntry.kt");

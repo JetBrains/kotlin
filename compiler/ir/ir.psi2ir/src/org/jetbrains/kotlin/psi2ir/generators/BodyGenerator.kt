@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import java.lang.AssertionError
 import java.util.*
@@ -267,18 +268,25 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
         val statementGenerator = createStatementGenerator()
 
         // Entry constructor with argument(s)
-        ktEnumEntry.getSuperTypeListEntries().firstOrNull()?.let { ktSuperCallElement ->
-            val enumConstructorCall = statementGenerator.pregenerateCall(getResolvedCall(ktSuperCallElement)!!)
-            return CallGenerator(statementGenerator).generateEnumConstructorSuperCall(
-                    ktEnumEntry.startOffset, ktEnumEntry.endOffset,
-                    enumConstructorCall)
+        val ktSuperCallElement = ktEnumEntry.superTypeListEntries.firstOrNull()
+        if (ktSuperCallElement != null) {
+            return statementGenerator.generateEnumConstructorCall(getResolvedCall(ktSuperCallElement)!!, ktEnumEntry)
 
+        }
+
+        val enumDefaultConstructorCall = getResolvedCall(ktEnumEntry)
+        if (enumDefaultConstructorCall != null) {
+            return statementGenerator.generateEnumConstructorCall(enumDefaultConstructorCall, ktEnumEntry)
         }
 
         // No-argument enum entry constructor
         val enumClassConstructor = enumClassDescriptor.constructors.find { it.valueParameters.isEmpty() }!!
         return IrEnumConstructorCallImpl(ktEnumEntry.startOffset, ktEnumEntry.endOffset, enumClassConstructor)
     }
+
+    private fun StatementGenerator.generateEnumConstructorCall(constructorCall: ResolvedCall<out CallableDescriptor>, ktEnumEntry: KtEnumEntry) =
+            CallGenerator(this).generateEnumConstructorSuperCall(ktEnumEntry.startOffset, ktEnumEntry.endOffset,
+                                                                 pregenerateCall(constructorCall))
 
 }
 

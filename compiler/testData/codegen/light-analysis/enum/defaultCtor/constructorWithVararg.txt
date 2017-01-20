@@ -1,0 +1,14 @@
+@kotlin.Metadata
+public final class ConstructorWithVarargKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public enum class Test {
+    public final static field OK: Test
+    private final @org.jetbrains.annotations.NotNull field values: int[]
+    protected method <init>(@java.lang.Synthetic p0: java.lang.String, @java.lang.Synthetic p1: int, @org.jetbrains.annotations.NotNull p2: int[]): void
+    public final @org.jetbrains.annotations.NotNull method getValues(): int[]
+    public static method valueOf(p0: java.lang.String): Test
+    public static method values(): Test[]
+}

@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension;
@@ -1593,12 +1594,17 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         iv.iconst(ordinal);
 
         List<KtSuperTypeListEntry> delegationSpecifiers = enumEntry.getSuperTypeListEntries();
+        ResolvedCall<?> defaultArgumentsConstructorCall = CallUtilKt.getResolvedCall(enumEntry, bindingContext);
+        boolean enumEntryHasSubclass = CodegenBinding.enumEntryNeedSubclass(bindingContext, classDescriptor);
         if (delegationSpecifiers.size() == 1 && !enumEntryNeedSubclass(bindingContext, enumEntry)) {
             ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(delegationSpecifiers.get(0), bindingContext);
 
             CallableMethod method = typeMapper.mapToCallableMethod((ConstructorDescriptor) resolvedCall.getResultingDescriptor(), false);
 
             codegen.invokeMethodWithArguments(method, resolvedCall, StackValue.none());
+        }
+        else if (defaultArgumentsConstructorCall != null && !enumEntryHasSubclass) {
+            codegen.invokeFunction(defaultArgumentsConstructorCall, StackValue.none()).put(Type.VOID_TYPE, iv);
         }
         else {
             iv.invokespecial(implClass.getInternalName(), "<init>", "(Ljava/lang/String;I)V", false);

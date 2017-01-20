@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.Queue;
 import kotlin.Unit;
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.types.*;
@@ -58,6 +60,7 @@ import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class BodyResolver {
+    @NotNull private final Project project;
     @NotNull private final AnnotationChecker annotationChecker;
     @NotNull private final ExpressionTypingServices expressionTypingServices;
     @NotNull private final CallResolver callResolver;
@@ -74,6 +77,7 @@ public class BodyResolver {
     @NotNull private final LanguageVersionSettings languageVersionSettings;
 
     public BodyResolver(
+            @NotNull Project project,
             @NotNull AnnotationResolver annotationResolver,
             @NotNull BodyResolveCache bodyResolveCache,
             @NotNull CallResolver callResolver,
@@ -89,6 +93,7 @@ public class BodyResolver {
             @NotNull OverloadChecker overloadChecker,
             @NotNull LanguageVersionSettings languageVersionSettings
     ) {
+        this.project = project;
         this.annotationResolver = annotationResolver;
         this.bodyResolveCache = bodyResolveCache;
         this.callResolver = callResolver;
@@ -262,7 +267,7 @@ public class BodyResolver {
 
     public void resolveSuperTypeEntryList(
             @NotNull final DataFlowInfo outerDataFlowInfo,
-            @NotNull KtClassOrObject jetClass,
+            @NotNull KtClassOrObject ktClass,
             @NotNull final ClassDescriptor descriptor,
             @Nullable final ConstructorDescriptor primaryConstructor,
             @NotNull LexicalScope scopeForConstructorResolution,
@@ -380,19 +385,49 @@ public class BodyResolver {
             }
         };
 
-        for (KtSuperTypeListEntry delegationSpecifier : jetClass.getSuperTypeListEntries()) {
+        if (ktClass instanceof KtEnumEntry && DescriptorUtils.isEnumEntry(descriptor) && ktClass.getSuperTypeListEntries().isEmpty()) {
+            assert scopeForConstructor != null : "Scope for enum class constructor should be non-null: " + descriptor;
+            resolveConstructorCallForEnumEntryWithoutInitializer((KtEnumEntry) ktClass, descriptor, scopeForConstructor, outerDataFlowInfo);
+        }
+
+        for (KtSuperTypeListEntry delegationSpecifier : ktClass.getSuperTypeListEntries()) {
             delegationSpecifier.accept(visitor);
         }
 
-        if (DescriptorUtils.isAnnotationClass(descriptor) && jetClass.getSuperTypeList() != null) {
-            trace.report(SUPERTYPES_FOR_ANNOTATION_CLASS.on(jetClass.getSuperTypeList()));
+        if (DescriptorUtils.isAnnotationClass(descriptor) && ktClass.getSuperTypeList() != null) {
+            trace.report(SUPERTYPES_FOR_ANNOTATION_CLASS.on(ktClass.getSuperTypeList()));
         }
 
         if (primaryConstructorDelegationCall[0] != null && primaryConstructor != null) {
             recordConstructorDelegationCall(trace, primaryConstructor, primaryConstructorDelegationCall[0]);
         }
 
-        checkSupertypeList(descriptor, supertypes, jetClass);
+        checkSupertypeList(descriptor, supertypes, ktClass);
+    }
+
+    private void resolveConstructorCallForEnumEntryWithoutInitializer(
+            @NotNull KtEnumEntry ktEnumEntry,
+            @NotNull ClassDescriptor enumEntryDescriptor,
+            @NotNull LexicalScope scopeForConstructor,
+            @NotNull DataFlowInfo outerDataFlowInfo
+    ) {
+        assert enumEntryDescriptor.getKind() == ClassKind.ENUM_ENTRY : "Enum entry expected: " + enumEntryDescriptor;
+        ClassDescriptor enumClassDescriptor = (ClassDescriptor) enumEntryDescriptor.getContainingDeclaration();
+        if (enumClassDescriptor.getKind() != ClassKind.ENUM_CLASS) return;
+        if (enumClassDescriptor.isHeader()) return;
+
+        List<ClassConstructorDescriptor> applicableConstructors = DescriptorUtilsKt.getConstructorForEmptyArgumentsList(enumClassDescriptor);
+        if (applicableConstructors.size() != 1) {
+            trace.report(ENUM_ENTRY_SHOULD_BE_INITIALIZED.on(ktEnumEntry));
+            return;
+        }
+
+        KtInitializerList ktInitializerList = new KtPsiFactory(project).createEnumEntryInitializerList();
+        KtSuperTypeCallEntry ktCallEntry = (KtSuperTypeCallEntry) ktInitializerList.getInitializers().get(0);
+        Call call = CallMaker.makeConstructorCallWithoutTypeArguments(ktCallEntry);
+        trace.record(BindingContext.TYPE, ktCallEntry.getTypeReference(), enumClassDescriptor.getDefaultType());
+        trace.record(BindingContext.CALL, ktEnumEntry, call);
+        callResolver.resolveFunctionCall(trace, scopeForConstructor, call, NO_EXPECTED_TYPE, outerDataFlowInfo, false);
     }
 
     // Returns a set of enum or sealed types of which supertypeOwner is an entry or a member
