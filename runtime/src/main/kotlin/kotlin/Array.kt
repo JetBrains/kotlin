@@ -46,6 +46,8 @@ private class IteratorImpl<T>(val collection: Array<T>) : Iterator<T> {
     }
 }
 
+fun <T> arrayOf(vararg elements: T) : Array<out T> = elements
+
 public fun <T, C : MutableCollection<in T>> Array<out T>.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)

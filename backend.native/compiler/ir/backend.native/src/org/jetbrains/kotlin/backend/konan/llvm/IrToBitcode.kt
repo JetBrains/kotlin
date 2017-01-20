@@ -597,11 +597,12 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         context.log("visitField                 : ${ir2string(expression)}")
         val descriptor = expression.descriptor
         if (descriptor.containingDeclaration is PackageFragmentDescriptor) {
-            val globalProperty = LLVMAddGlobal(context.llvmModule, codegen.getLLVMType(descriptor.type), descriptor.symbolName)
+            val type = codegen.getLLVMType(descriptor.type)
+            val globalProperty = LLVMAddGlobal(context.llvmModule, type, descriptor.symbolName)
             if (expression.initializer!!.expression is IrConst<*>) {
                 LLVMSetInitializer(globalProperty, evaluateExpression(expression.initializer!!.expression))
             } else {
-                LLVMSetInitializer(globalProperty, codegen.kNullObjHeaderPtr)
+                LLVMSetInitializer(globalProperty, LLVMConstNull(type))
                 context.llvm.fileInitializers.add(expression)
             }
             return

@@ -829,8 +829,7 @@ task initializers3(type: RunKonanTest) {
 }
 
 task initializers4(type: RunKonanTest) {
-    disabled = true
-    goldValue = "fixme\n"
+    goldValue = "1073741824\ntrue\n"
     source = "runtime/basic/initializers4.kt"
 }
 
