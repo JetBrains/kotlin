@@ -67,7 +67,7 @@ public open class WithDelegation : kotlin.collections.Map<kotlin.String, kotlin.
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.BiConsumer<in kotlin.String, in kotlin.String>): kotlin.Unit
     public open override /*1*/ /*delegation*/ fun get(/*0*/ key: kotlin.String): kotlin.String?
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.PlatformDependent public open override /*1*/ /*delegation*/ fun getOrDefault(/*0*/ key: kotlin.String, /*1*/ defaultValue: kotlin.String): kotlin.String
+    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.PlatformDependent public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: kotlin.String, /*1*/ defaultValue: kotlin.String): kotlin.String
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*delegation*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -85,7 +85,7 @@ public abstract class WithDelegation2 : kotlin.collections.Map<kotlin.String, ko
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.BiConsumer<in kotlin.String, in kotlin.String>): kotlin.Unit
     public open override /*2*/ /*delegation*/ fun get(/*0*/ key: kotlin.String): kotlin.String?
-    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.PlatformDependent public open override /*2*/ /*delegation*/ fun getOrDefault(/*0*/ key: kotlin.String, /*1*/ defaultValue: kotlin.String): kotlin.String
+    @kotlin.SinceKotlin(version = "1.1") @kotlin.internal.PlatformDependent public open override /*2*/ /*fake_override*/ fun getOrDefault(/*0*/ key: kotlin.String, /*1*/ defaultValue: kotlin.String): kotlin.String
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*delegation*/ fun isEmpty(): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun replace(/*0*/ key: kotlin.String, /*1*/ value: kotlin.String): kotlin.String?
