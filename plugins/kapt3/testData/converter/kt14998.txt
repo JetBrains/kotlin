@@ -3,7 +3,7 @@ public final class Outer {
     public final void nonAbstract(java.lang.String s, int i) {
     }
 
-    public abstract void abstract(java.lang.String s, int i);
+    public abstract void _abstract_(java.lang.String s, int i);
 
     public Outer() {
         super();

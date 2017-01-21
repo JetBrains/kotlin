@@ -1,0 +1,14 @@
+public final class _default_ {
+    public java.lang.String _extends_;
+
+    public final java.lang.String getExtends() {
+        return null;
+    }
+
+    public final void _implements_(int _instanceof_) {
+    }
+
+    public _default_() {
+        super();
+    }
+}
