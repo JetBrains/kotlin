@@ -121,3 +121,83 @@ internal inline header fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): I
 
 header fun CharSequence.isBlank(): Boolean
 header fun CharSequence.regionMatches(thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int, ignoreCase: Boolean): Boolean
+
+
+
+/**
+ * Parses the string as a signed [Byte] number and returns the result.
+ * @throws NumberFormatException if the string is not a valid representation of a number.
+ */
+header fun String.toByte(): Byte
+
+/**
+ * Parses the string as a signed [Byte] number and returns the result.
+ * @throws NumberFormatException if the string is not a valid representation of a number.
+ */
+header fun String.toByte(radix: Int): Byte
+
+
+/**
+ * Parses the string as a [Short] number and returns the result.
+ * @throws NumberFormatException if the string is not a valid representation of a number.
+ */
+header fun String.toShort(): Short
+
+/**
+ * Parses the string as a [Short] number and returns the result.
+ * @throws NumberFormatException if the string is not a valid representation of a number.
+ */
+header fun String.toShort(radix: Int): Short
+
+/**
+ * Parses the string as an [Int] number and returns the result.
+ * @throws NumberFormatException if the string is not a valid representation of a number.
+ */
+header fun String.toInt(): Int
+
+/**
+ * Parses the string as an [Int] number and returns the result.
+ * @throws NumberFormatException if the string is not a valid representation of a number.
+ */
+header fun String.toInt(radix: Int): Int
+
+/**
+ * Parses the string as a [Long] number and returns the result.
+ * @throws NumberFormatException if the string is not a valid representation of a number.
+ */
+header fun String.toLong(): Long
+
+/**
+ * Parses the string as a [Long] number and returns the result.
+ * @throws NumberFormatException if the string is not a valid representation of a number.
+ */
+header fun String.toLong(radix: Int): Long
+
+/**
+ * Parses the string as a [Double] number and returns the result.
+ * @throws NumberFormatException if the string is not a valid representation of a number.
+ */
+header fun String.toDouble(): Double
+
+/**
+ * Parses the string as a [Float] number and returns the result.
+ * @throws NumberFormatException if the string is not a valid representation of a number.
+ */
+header fun String.toFloat(): Float
+
+/**
+ * Parses the string as a [Double] number and returns the result
+ * or `null` if the string is not a valid representation of a number.
+ */
+header fun String.toDoubleOrNull(): Double?
+
+/**
+ * Parses the string as a [Float] number and returns the result
+ * or `null` if the string is not a valid representation of a number.
+ */
+header fun String.toFloatOrNull(): Float?
+
+
+@PublishedApi
+internal header fun checkRadix(radix: Int): Int
+internal header fun digitOf(char: Char, radix: Int): Int

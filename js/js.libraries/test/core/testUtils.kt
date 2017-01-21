@@ -20,3 +20,6 @@ public fun assertTypeEquals(expected: Any?, actual: Any?) {
     //TODO: find analogue
     //assertEquals(expected?.javaClass, actual?.javaClass)
 }
+
+internal inline fun String.removeLeadingPlusOnJava6(): String = this
+internal fun doubleTotalOrderEquals(a: Double?, b: Double?) = a == b || (a != a && b != b)
