@@ -634,7 +634,7 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
-    private static Variance getVarianceForWildcard(
+    public static Variance getVarianceForWildcard(
             @NotNull TypeParameterDescriptor parameter,
             @NotNull TypeProjection projection,
             @NotNull TypeMappingMode mode
