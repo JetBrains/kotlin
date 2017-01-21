@@ -12,20 +12,21 @@ public final class MyType<T extends java.lang.Object> {
 public final class Test {
     public ABC a;
     private final ABC b = null;
-    private final List<ABC> c = null;
-    private final List<Map<BCD, ABC<List<BCD>>>> d = null;
-    public List<? extends Map<? extends ABC, ? extends BCD>> e;
+    private final java.util.List<ABC> c = null;
+    private final java.util.List<java.util.Map<BCD, ABC<? extends java.util.List<BCD>>>> d = null;
+    public java.util.List<? extends java.util.Map<? extends ABC, ? extends BCD>> e;
     public ABC<?> f;
     public java.util.List<?> g;
     public ABC<java.lang.Integer, java.lang.String> h;
-    public Function2<ABC, List<BCD>, CDE> i;
+    public Function2<ABC, java.util.List<BCD>, CDE> i;
     public Function0<CDE> j;
-    public Function2<ABC, List<BCD>, CDE> k;
+    public Function2<ABC, java.util.List<BCD>, CDE> k;
     public ABC.BCD.EFG l;
     private final error.NonExistentClass m = null;
     private final java.lang.String n = "";
     public java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends error.NonExistentClass>>>>>>>>>> o11;
-    public List<List<List<List<List<List<List<List<List<ABC>>>>>>>>> o10;
+    public java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<ABC>>>>>>>>> o10;
+    public java.util.Calendar.Builder p;
 
     public final ABC getA() {
         return null;
@@ -38,19 +39,19 @@ public final class Test {
         return null;
     }
 
-    public final List<ABC> getC() {
+    public final java.util.List<ABC> getC() {
         return null;
     }
 
-    public final List<Map<BCD, ABC<List<BCD>>>> getD() {
+    public final java.util.List<java.util.Map<BCD, ABC<? extends java.util.List<BCD>>>> getD() {
         return null;
     }
 
-    public final List<? extends Map<? extends ABC, ? extends BCD>> getE() {
+    public final java.util.List<? extends java.util.Map<? extends ABC, ? extends BCD>> getE() {
         return null;
     }
 
-    public final void setE(List<? extends Map<? extends ABC, ? extends BCD>> p0) {
+    public final void setE(java.util.List<? extends java.util.Map<? extends ABC, ? extends BCD>> p0) {
     }
 
     public final ABC<?> getF() {
@@ -74,11 +75,11 @@ public final class Test {
     public final void setH(ABC<java.lang.Integer, java.lang.String> p0) {
     }
 
-    public final Function2<ABC, List<BCD>, CDE> getI() {
+    public final Function2<ABC, java.util.List<BCD>, CDE> getI() {
         return null;
     }
 
-    public final void setI(Function2<ABC, List<BCD>, CDE> p0) {
+    public final void setI(Function2<ABC, java.util.List<BCD>, CDE> p0) {
     }
 
     public final Function0<CDE> getJ() {
@@ -88,11 +89,11 @@ public final class Test {
     public final void setJ(Function0<CDE> p0) {
     }
 
-    public final Function2<ABC, List<BCD>, CDE> getK() {
+    public final Function2<ABC, java.util.List<BCD>, CDE> getK() {
         return null;
     }
 
-    public final void setK(Function2<ABC, List<BCD>, CDE> p0) {
+    public final void setK(Function2<ABC, java.util.List<BCD>, CDE> p0) {
     }
 
     public final ABC.BCD.EFG getL() {
@@ -117,11 +118,18 @@ public final class Test {
     public final void setO11(java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends error.NonExistentClass>>>>>>>>>> p0) {
     }
 
-    public final List<List<List<List<List<List<List<List<List<ABC>>>>>>>>> getO10() {
+    public final java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<ABC>>>>>>>>> getO10() {
         return null;
     }
 
-    public final void setO10(List<List<List<List<List<List<List<List<List<ABC>>>>>>>>> p0) {
+    public final void setO10(java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<ABC>>>>>>>>> p0) {
+    }
+
+    public final java.util.Calendar.Builder getP() {
+        return null;
+    }
+
+    public final void setP(java.util.Calendar.Builder p0) {
     }
 
     public final BCD f1(ABC a) {

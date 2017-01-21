@@ -90,7 +90,7 @@ private val METHODS_WITH_DECLARATION_SITE_WILDCARDS = setOf(
         BUILTIN_NAMES.mutableMap.child("putAll")
 )
 
-internal fun TypeMappingMode.updateArgumentModeFromAnnotations(type: KotlinType): TypeMappingMode {
+fun TypeMappingMode.updateArgumentModeFromAnnotations(type: KotlinType): TypeMappingMode {
     type.suppressWildcardsMode()?.let {
         return TypeMappingMode.createWithConstantDeclarationSiteWildcardsMode(
                 skipDeclarationSiteWildcards = it, isForAnnotationParameter = isForAnnotationParameter)

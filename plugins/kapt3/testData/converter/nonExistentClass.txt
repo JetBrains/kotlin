@@ -1,16 +1,16 @@
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class NonExistentType {
     private static final ABCDEF a = null;
-    private static final List<ABCDEF> b = null;
+    private static final java.util.List<ABCDEF> b = null;
     private static final Function1<ABCDEF, kotlin.Unit> c = null;
-    private static final ABCDEF<java.lang.String, Function1<List<ABCDEF>, kotlin.Unit>> d = null;
+    private static final ABCDEF<java.lang.String, ? extends Function1<java.util.List<ABCDEF>, kotlin.Unit>> d = null;
     public static final NonExistentType INSTANCE = null;
 
     public final ABCDEF getA() {
         return null;
     }
 
-    public final List<ABCDEF> getB() {
+    public final java.util.List<ABCDEF> getB() {
         return null;
     }
 
@@ -18,7 +18,7 @@ public final class NonExistentType {
         return null;
     }
 
-    public final ABCDEF<java.lang.String, Function1<List<ABCDEF>, kotlin.Unit>> getD() {
+    public final ABCDEF<java.lang.String, ? extends Function1<java.util.List<ABCDEF>, kotlin.Unit>> getD() {
         return null;
     }
 

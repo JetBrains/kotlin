@@ -19,11 +19,16 @@ package org.jetbrains.kotlin.kapt3.stubs
 import com.sun.tools.javac.code.BoundKind
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.codegen.state.updateArgumentModeFromAnnotations
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.kapt3.mapJList
+import org.jetbrains.kotlin.kapt3.mapJListIndexed
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.Variance
 
 internal fun convertKtType(
         reference: KtTypeReference?,
@@ -46,7 +51,7 @@ internal fun convertKtType(
     }
 
     return when (type) {
-        is KtUserType -> convertUserType(type, converter)
+        is KtUserType -> convertUserType(type, converter, reference)
         is KtNullableType -> {
             // Prevent infinite recursion
             val innerType = type.innerType ?: return getDefaultTypeForUnknownType(converter)
@@ -59,13 +64,20 @@ internal fun convertKtType(
 
 private fun getDefaultTypeForUnknownType(converter: ClassFileToSourceStubConverter) = converter.treeMaker.FqName("error.NonExistentClass")
 
-private fun convertUserType(type: KtUserType, converter: ClassFileToSourceStubConverter): JCTree.JCExpression {
-    val qualifierExpression = type.qualifier?.let { convertUserType(it, converter) }
+private fun convertUserType(type: KtUserType, converter: ClassFileToSourceStubConverter, reference: KtTypeReference?): JCTree.JCExpression {
+    val qualifierExpression = type.qualifier?.let { convertUserType(it, converter, null) }
     val referencedName = type.referencedName ?: "error"
     val treeMaker = converter.treeMaker
 
     val baseExpression = if (qualifierExpression == null) {
-        treeMaker.SimpleName(referencedName)
+        // This could be List<SomeErrorType> or similar. List should be converted to java.util.List in this case.
+        val referenceTarget = converter.kaptContext.bindingContext[BindingContext.REFERENCE_TARGET, type.referenceExpression]
+        if (referenceTarget is ClassDescriptor) {
+            treeMaker.FqName(converter.typeMapper.mapType(referenceTarget.defaultType).className)
+        }
+        else {
+            treeMaker.SimpleName(referencedName)
+        }
     } else {
         treeMaker.Select(qualifierExpression, treeMaker.name(referencedName))
     }
@@ -75,20 +87,41 @@ private fun convertUserType(type: KtUserType, converter: ClassFileToSourceStubCo
         return baseExpression
     }
 
-    return treeMaker.TypeApply(baseExpression, mapJList(arguments) { convertTypeProjection(it, converter) })
+    val baseType = reference?.let { converter.kaptContext.bindingContext[BindingContext.TYPE, it] }
+
+    return treeMaker.TypeApply(baseExpression, mapJListIndexed(arguments) { index, projection ->
+        val argumentType = projection.typeReference?.let { converter.kaptContext.bindingContext[BindingContext.TYPE, it] }
+        val typeParameter = argumentType?.constructor?.parameters?.getOrNull(index)
+        val argument = baseType?.arguments?.getOrNull(index)
+
+        val variance = if (argument != null && typeParameter != null) {
+            val argumentMode = TypeMappingMode.GENERIC_ARGUMENT.updateArgumentModeFromAnnotations(argument.type)
+            KotlinTypeMapper.getVarianceForWildcard(typeParameter, argument, argumentMode)
+        }
+        else {
+            null
+        }
+
+        convertTypeProjection(projection, variance, converter)
+    })
 }
 
-private fun convertTypeProjection(type: KtTypeProjection, converter: ClassFileToSourceStubConverter): JCTree.JCExpression {
+private fun convertTypeProjection(type: KtTypeProjection, variance: Variance?, converter: ClassFileToSourceStubConverter): JCTree.JCExpression {
     val reference = type.typeReference
     val treeMaker = converter.treeMaker
+    val projectionKind = type.projectionKind
 
-    return when (type.projectionKind) {
-        KtProjectionKind.IN -> treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.SUPER),
-                                                  convertKtType(reference, converter, shouldBeBoxed = true))
-        KtProjectionKind.OUT -> treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.EXTENDS),
-                                                   convertKtType(reference, converter, shouldBeBoxed = true))
-        KtProjectionKind.STAR -> treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.UNBOUND), null)
-        KtProjectionKind.NONE -> return convertKtType(reference, converter, shouldBeBoxed = true)
+    if (variance === Variance.INVARIANT) {
+        return convertKtType(reference, converter, shouldBeBoxed = true)
+    }
+
+    return when {
+        projectionKind === KtProjectionKind.STAR -> treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.UNBOUND), null)
+        projectionKind === KtProjectionKind.IN || variance === Variance.IN_VARIANCE ->
+            treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.SUPER), convertKtType(reference, converter, shouldBeBoxed = true))
+        projectionKind === KtProjectionKind.OUT || variance === Variance.OUT_VARIANCE ->
+            treeMaker.Wildcard(treeMaker.TypeBoundKind(BoundKind.EXTENDS), convertKtType(reference, converter, shouldBeBoxed = true))
+        else -> convertKtType(reference, converter, shouldBeBoxed = true) // invariant
     }
 }
 

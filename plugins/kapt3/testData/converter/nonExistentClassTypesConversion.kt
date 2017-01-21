@@ -1,6 +1,8 @@
 // NON_EXISTENT_CLASS
 // NO_VALIDATION
 
+import java.util.Calendar
+
 @Suppress("UNRESOLVED_REFERENCE")
 class Test {
     lateinit var a: ABC
@@ -22,6 +24,8 @@ class Test {
 
     lateinit var o11: List<List<List<List<List<List<List<List<List<List<ABC>>>>>>>>>>
     lateinit var o10: List<List<List<List<List<List<List<List<List<ABC>>>>>>>>>
+
+    lateinit var p: Calendar.Builder
 
     fun f1(a: ABC): BCD? {
         return null
