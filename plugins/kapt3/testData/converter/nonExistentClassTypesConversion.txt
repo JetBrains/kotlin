@@ -1,3 +1,13 @@
+public final class MyType<T extends java.lang.Object> {
+
+    public MyType() {
+        super();
+    }
+}
+
+////////////////////
+
+
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class Test {
     public ABC a;
@@ -14,6 +24,8 @@ public final class Test {
     public ABC.BCD.EFG l;
     private final error.NonExistentClass m = null;
     private final java.lang.String n = "";
+    public java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends error.NonExistentClass>>>>>>>>>> o11;
+    public List<List<List<List<List<List<List<List<List<ABC>>>>>>>>> o10;
 
     public final ABC getA() {
         return null;
@@ -98,6 +110,20 @@ public final class Test {
         return null;
     }
 
+    public final java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<error.NonExistentClass>>>>>>>>>> getO11() {
+        return null;
+    }
+
+    public final void setO11(java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends error.NonExistentClass>>>>>>>>>> p0) {
+    }
+
+    public final List<List<List<List<List<List<List<List<List<ABC>>>>>>>>> getO10() {
+        return null;
+    }
+
+    public final void setO10(List<List<List<List<List<List<List<List<List<ABC>>>>>>>>> p0) {
+    }
+
     public final BCD f1(ABC a) {
         return null;
     }
@@ -110,6 +136,10 @@ public final class Test {
     }
 
     public final error.NonExistentClass f4() {
+        return null;
+    }
+
+    public final <T extends java.lang.Object>java.lang.Class<java.lang.Enum<?>> f5(MyType<T> $receiver) {
         return null;
     }
 
