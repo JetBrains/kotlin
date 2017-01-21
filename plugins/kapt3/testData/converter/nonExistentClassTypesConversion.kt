@@ -20,6 +20,9 @@ class Test {
     val m = ABC()
     val n = "".toString()
 
+    lateinit var o11: List<List<List<List<List<List<List<List<List<List<ABC>>>>>>>>>>
+    lateinit var o10: List<List<List<List<List<List<List<List<List<ABC>>>>>>>>>
+
     fun f1(a: ABC): BCD? {
         return null
     }
@@ -31,4 +34,8 @@ class Test {
     }
 
     fun f4() = ABC()
+
+    fun <T> MyType<T>.f5(): java.lang.Class<Enum<*>>? = null
 }
+
+class MyType<T>
