@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.kapt3.stubs
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.code.TypeTag
 import com.sun.tools.javac.file.JavacFileManager
+import com.sun.tools.javac.parser.Tokens
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.JCTree.*
 import com.sun.tools.javac.tree.TreeMaker
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.kapt3.*
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
+import org.jetbrains.kotlin.kapt3.stubs.Kapt3StubUtils.*
 import org.jetbrains.kotlin.kapt3.util.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -69,6 +71,12 @@ class ClassFileToSourceStubConverter(
                 "org.jetbrains.annotations.", // Nullable/NotNull, ReadOnly, Mutable
                 "kotlin.jvm.", "kotlin.Metadata" // Kotlin annotations from runtime
         )
+
+        private val JAVA_KEYWORD_FILTER_REGEX = "[a-z]+".toRegex()
+
+        private val JAVA_KEYWORDS = Tokens.TokenKind.values()
+                .filter { JAVA_KEYWORD_FILTER_REGEX.matches(getTokenName(it)) }
+                .mapTo(hashSetOf(), ::getTokenName)
     }
 
     private val _bindings = mutableMapOf<String, KaptJavaFileObject>()
@@ -210,7 +218,7 @@ class ClassFileToSourceStubConverter(
 
         return treeMaker.ClassDef(
                 modifiers,
-                treeMaker.name(simpleName),
+                treeMaker.name(getNonKeywordName(simpleName)),
                 genericType.typeParameters,
                 if (hasSuperClass) genericType.superClass else null,
                 genericType.interfaces,
@@ -222,7 +230,7 @@ class ClassFileToSourceStubConverter(
         val descriptor = kaptContext.origins[field]?.descriptor
 
         val modifiers = convertModifiers(field.access, ElementKind.FIELD, packageFqName, field.visibleAnnotations, field.invisibleAnnotations)
-        val name = treeMaker.name(field.name)
+        val name = treeMaker.name(getNonKeywordName(field.name))
         val type = Type.getType(field.desc)
 
         // Enum type must be an identifier (Javac requirement)
@@ -260,7 +268,7 @@ class ClassFileToSourceStubConverter(
         }
 
         val isConstructor = method.name == "<init>"
-        val name = treeMaker.name(method.name)
+        val name = treeMaker.name(getNonKeywordName(method.name))
 
         val modifiers = convertModifiers(
                 if (containingClass.isEnum() && isConstructor)
@@ -286,7 +294,7 @@ class ClassFileToSourceStubConverter(
                     info.visibleAnnotations,
                     info.invisibleAnnotations)
 
-            val name = treeMaker.name(info.name)
+            val name = treeMaker.name(getNonKeywordName(info.name))
             val type = treeMaker.Type(info.type)
             treeMaker.VarDef(modifiers, name, type, null)
         }
@@ -392,6 +400,12 @@ class ClassFileToSourceStubConverter(
         }
 
         return ifNonError()
+    }
+
+    private fun getNonKeywordName(name: String): String {
+        // In theory, this could lead to member/parameter name clashes, though it's supposed to be extremely rare.
+        if (name in JAVA_KEYWORDS) return '_' + name + '_'
+        return name
     }
 
     private inline fun <T : JCExpression?> getNotAnonymousType(descriptor: DeclarationDescriptor?, f: () -> T): T {
