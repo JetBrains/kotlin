@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -52,19 +51,19 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
 
 
-class CoroutineCodegen(
+class CoroutineCodegen private constructor(
         outerExpressionCodegen: ExpressionCodegen,
         element: KtElement,
         private val closureContext: ClosureContext,
         classBuilder: ClassBuilder,
-        private val originalSuspendLambdaDescriptor: FunctionDescriptor?
+        private val originalSuspendFunctionDescriptor: FunctionDescriptor,
+        private val isSuspendLambda: Boolean
 ) : ClosureCodegen(
         outerExpressionCodegen.state,
         element, null, closureContext, null,
         FailingFunctionGenerationStrategy,
         outerExpressionCodegen.parentCodegen, classBuilder
 ) {
-
     private val classDescriptor = closureContext.contextDescriptor
     private val builtIns = funDescriptor.builtIns
 
@@ -98,7 +97,8 @@ class CoroutineCodegen(
                         ),
                         builtIns.nullableAnyType,
                         Modality.FINAL,
-                        Visibilities.PUBLIC
+                        Visibilities.PUBLIC,
+                        mapOf(INITIAL_SUSPEND_DESCRIPTOR_FOR_DO_RESUME to originalSuspendFunctionDescriptor)
                 )
             }
 
@@ -130,14 +130,14 @@ class CoroutineCodegen(
     }
 
     override fun generateBridges() {
-        if (originalSuspendLambdaDescriptor == null) return
+        if (!isSuspendLambda) return
         super.generateBridges()
     }
 
     override fun generateBody() {
         super.generateBody()
 
-        if (originalSuspendLambdaDescriptor == null) return
+        if (!isSuspendLambda) return
 
         // create() = ...
         functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, createCoroutineDescriptor,
@@ -224,7 +224,7 @@ class CoroutineCodegen(
     }
 
     private fun generateCreateCoroutineMethod(codegen: ExpressionCodegen) {
-        assert(originalSuspendLambdaDescriptor != null) { "create method should only be generated for suspend lambdas" }
+        assert(isSuspendLambda) { "create method should only be generated for suspend lambdas" }
         val classDescriptor = closureContext.contextDescriptor
         val owner = typeMapper.mapClass(classDescriptor)
 
@@ -273,7 +273,10 @@ class CoroutineCodegen(
     }
 
     private fun allLambdaParameters() =
-            originalSuspendLambdaDescriptor?.extensionReceiverParameter.singletonOrEmptyList() + originalSuspendLambdaDescriptor?.valueParameters.orEmpty()
+            if (isSuspendLambda)
+                originalSuspendFunctionDescriptor.extensionReceiverParameter.singletonOrEmptyList() + originalSuspendFunctionDescriptor.valueParameters.orEmpty()
+            else
+                emptyList()
 
     private fun ExpressionCodegen.generateLoadField(fieldInfo: FieldInfo) {
         StackValue.field(fieldInfo, generateThisOrOuter(context.thisDescriptor, false)).put(fieldInfo.fieldType, v)
@@ -304,7 +307,7 @@ class CoroutineCodegen(
     }
 
     override fun generateKotlinMetadataAnnotation() {
-        if (originalSuspendLambdaDescriptor != null) {
+        if (isSuspendLambda) {
             super.generateKotlinMetadataAnnotation()
         }
         else {
@@ -334,7 +337,8 @@ class CoroutineCodegen(
                             originalSuspendLambdaDescriptor, expressionCodegen, expressionCodegen.state.typeMapper
                     ),
                     classBuilder,
-                    originalSuspendLambdaDescriptor
+                    originalSuspendLambdaDescriptor,
+                    isSuspendLambda = true
             )
         }
 
@@ -356,7 +360,8 @@ class CoroutineCodegen(
                             originalSuspendDescriptor, expressionCodegen, expressionCodegen.state.typeMapper
                     ),
                     cv,
-                    originalSuspendLambdaDescriptor = null
+                    originalSuspendDescriptor,
+                    isSuspendLambda = false
             )
         }
     }
