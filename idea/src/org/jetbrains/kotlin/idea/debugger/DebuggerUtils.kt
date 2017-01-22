@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 object DebuggerUtils {
@@ -101,7 +102,8 @@ object DebuggerUtils {
     fun analyzeInlinedFunctions(
             resolutionFacadeForFile: ResolutionFacade,
             file: KtFile,
-            analyzeOnlyReifiedInlineFunctions: Boolean
+            analyzeOnlyReifiedInlineFunctions: Boolean,
+            bindingContext: BindingContext? = null
     ): Pair<BindingContext, List<KtFile>> {
         val analyzedElements = HashSet<KtElement>()
         val context = analyzeElementWithInline(
@@ -109,7 +111,8 @@ object DebuggerUtils {
                 file,
                 1,
                 analyzedElements,
-                !analyzeOnlyReifiedInlineFunctions)
+                !analyzeOnlyReifiedInlineFunctions, bindingContext
+        )
 
         //We processing another files just to annotate anonymous classes within their inline functions
         //Bytecode not produced for them cause of filtering via generateClassFilter
@@ -135,11 +138,14 @@ object DebuggerUtils {
             element: KtElement,
             deep: Int,
             analyzedElements: MutableSet<KtElement>,
-            analyzeInlineFunctions: Boolean): BindingContext {
+            analyzeInlineFunctions: Boolean,
+            fullResolveContext: BindingContext? = null
+    ): BindingContext {
         val project = element.project
         val inlineFunctions = HashSet<KtNamedFunction>()
 
         val innerContexts = ArrayList<BindingContext>()
+        innerContexts.addIfNotNull(fullResolveContext)
 
         element.accept(object : KtTreeVisitorVoid() {
             override fun visitExpression(expression: KtExpression) {
