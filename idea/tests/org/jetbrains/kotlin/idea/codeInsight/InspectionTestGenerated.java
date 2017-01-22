@@ -173,6 +173,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("dataClassPrivateConstructor/inspectionData/inspections.test")
+        public void testDataClassPrivateConstructor_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/dataClassPrivateConstructor/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("dynamic/js/inspectionData/inspections.test")
         public void testDynamic_js_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/dynamic/js/inspectionData/inspections.test");
