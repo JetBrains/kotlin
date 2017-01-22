@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -170,6 +170,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         @TestMetadata("convertSecondaryToPrimary/inspectionData/inspections.test")
         public void testConvertSecondaryToPrimary_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/convertSecondaryToPrimary/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("dataClassPrivateConstructor/inspectionData/inspections.test")
+        public void testDataClassPrivateConstructor_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/dataClassPrivateConstructor/inspectionData/inspections.test");
             doTest(fileName);
         }
 
