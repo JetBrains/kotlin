@@ -164,23 +164,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @Nullable
-    private static FunctionDescriptor getOriginalSuspendDescriptor(MethodContext context) {
-        FunctionDescriptor originalCoroutineDescriptor = getOriginalCoroutineDescriptor(context);
-        if (originalCoroutineDescriptor != null) return originalCoroutineDescriptor;
-
-        if (context.getFunctionDescriptor().isSuspend()) {
-            return CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction(context.getFunctionDescriptor());
-        }
-
-        return null;
-    }
-
-    @Nullable
-    private static FunctionDescriptor getOriginalCoroutineDescriptor(MethodContext context) {
+    private static FunctionDescriptor getOriginalSuspendLambdaDescriptorFromContext(MethodContext context) {
         if ((context.getParentContext() instanceof ClosureContext) &&
             (context.getParentContext().closure != null) &&
             context.getParentContext().closure.isSuspend()) {
-            return ((ClosureContext) context.getParentContext()).getCoroutineDescriptor();
+            return ((ClosureContext) context.getParentContext()).getOriginalSuspendLambdaDescriptor();
         }
 
         return null;
@@ -1754,7 +1742,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (captureReceiver != null) {
             StackValue capturedReceiver =
                     functionReferenceReceiver != null ? functionReferenceReceiver :
-                    generateExtensionReceiver(unwrapOriginalLambdaDescriptorForCoroutine(context));
+                    generateExtensionReceiver(unwrapOriginalDescriptorForSuspendLambda(context));
             callGenerator.putCapturedValueOnStack(capturedReceiver, capturedReceiver.type, paramIndex++);
         }
 
@@ -1793,9 +1781,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    private static CallableDescriptor unwrapOriginalLambdaDescriptorForCoroutine(@NotNull MethodContext context) {
-        FunctionDescriptor coroutine = getOriginalSuspendDescriptor(context);
-        if (coroutine != null) return coroutine;
+    private static CallableDescriptor unwrapOriginalDescriptorForSuspendLambda(@NotNull MethodContext context) {
+        FunctionDescriptor originalSuspendLambdaDescriptor = getOriginalSuspendLambdaDescriptorFromContext(context);
+        if (originalSuspendLambdaDescriptor != null) return originalSuspendLambdaDescriptor;
+
+        if (context.getFunctionDescriptor().isSuspend()) {
+            return CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction(context.getFunctionDescriptor());
+        }
+
         return context.getFunctionDescriptor();
     }
 
@@ -2246,9 +2239,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     public void returnExpression(KtExpression expr) {
         boolean isBlockedNamedFunction = expr instanceof KtBlockExpression && expr.getParent() instanceof KtNamedFunction;
 
-        FunctionDescriptor originalCoroutineDescriptor = getOriginalCoroutineDescriptor(context);
+        FunctionDescriptor originalSuspendLambdaDescriptor = getOriginalSuspendLambdaDescriptorFromContext(context);
         boolean isVoidCoroutineLambda =
-                originalCoroutineDescriptor != null && TypeSignatureMappingKt.hasVoidReturnType(originalCoroutineDescriptor);
+                originalSuspendLambdaDescriptor != null && TypeSignatureMappingKt.hasVoidReturnType(originalSuspendLambdaDescriptor);
 
         // If generating body for named block-bodied function or Unit-typed coroutine lambda, generate it as sequence of statements
         Type typeForExpression =

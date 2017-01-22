@@ -480,9 +480,9 @@ public class InlineCodegen extends CallGenerator {
     @NotNull
     private static CallableMemberDescriptor getLabelOwnerDescriptor(@NotNull MethodContext context) {
         if (context.getParentContext() instanceof ClosureContext &&
-            ((ClosureContext) context.getParentContext()).getCoroutineDescriptor() != null) {
+            ((ClosureContext) context.getParentContext()).getOriginalSuspendLambdaDescriptor() != null) {
             //noinspection ConstantConditions
-            return ((ClosureContext) context.getParentContext()).getCoroutineDescriptor();
+            return ((ClosureContext) context.getParentContext()).getOriginalSuspendLambdaDescriptor();
         }
 
         return context.getContextDescriptor();

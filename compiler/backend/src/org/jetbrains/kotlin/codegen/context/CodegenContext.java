@@ -340,14 +340,14 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
     @NotNull
     public ClosureContext intoCoroutineClosure(
-            // copy of lambda descriptor that have Continuation<Unit> return type (as it's ep)
-            @NotNull FunctionDescriptor funDescriptorReturningContinuation,
-            // original coroutine lambda descriptor having return type T (the type that can be returned within lambda)
-            @NotNull FunctionDescriptor coroutineLambdaDescriptor,
+            // copy of lambda descriptor that has an additional value parameter Continuation<T>
+            @NotNull FunctionDescriptor jvmViewOfSuspendLambda,
+            // original coroutine lambda descriptor
+            @NotNull FunctionDescriptor originalSuspendLambdaDescriptor,
             @NotNull LocalLookup localLookup,
             @NotNull KotlinTypeMapper typeMapper
     ) {
-        return new ClosureContext(typeMapper, funDescriptorReturningContinuation, this, localLookup, coroutineLambdaDescriptor);
+        return new ClosureContext(typeMapper, jvmViewOfSuspendLambda, this, localLookup, originalSuspendLambdaDescriptor);
     }
 
     @Nullable

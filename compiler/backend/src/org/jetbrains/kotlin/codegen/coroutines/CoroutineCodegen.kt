@@ -319,22 +319,22 @@ class CoroutineCodegen(
         @JvmStatic
         fun createByLambda(
                 expressionCodegen: ExpressionCodegen,
-                originalCoroutineLambdaDescriptor: FunctionDescriptor,
+                originalSuspendLambdaDescriptor: FunctionDescriptor,
                 declaration: KtElement,
                 classBuilder: ClassBuilder
         ): ClosureCodegen? {
             if (declaration !is KtFunctionLiteral) return null
-            if (!originalCoroutineLambdaDescriptor.isSuspendLambda) return null
+            if (!originalSuspendLambdaDescriptor.isSuspendLambda) return null
 
             return CoroutineCodegen(
                     expressionCodegen,
                     declaration,
                     expressionCodegen.context.intoCoroutineClosure(
-                            getOrCreateJvmSuspendFunctionView(originalCoroutineLambdaDescriptor, expressionCodegen.state.bindingContext),
-                            originalCoroutineLambdaDescriptor, expressionCodegen, expressionCodegen.state.typeMapper
+                            getOrCreateJvmSuspendFunctionView(originalSuspendLambdaDescriptor, expressionCodegen.state.bindingContext),
+                            originalSuspendLambdaDescriptor, expressionCodegen, expressionCodegen.state.typeMapper
                     ),
                     classBuilder,
-                    originalCoroutineLambdaDescriptor
+                    originalSuspendLambdaDescriptor
             )
         }
 
