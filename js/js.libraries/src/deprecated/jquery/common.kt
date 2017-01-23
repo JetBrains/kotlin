@@ -3,8 +3,8 @@ package jquery
 import org.w3c.dom.Element
 
 public external class JQuery() {
-    public fun addClass(className: String): JQuery = noImpl;
-    public fun addClass(f: Element.(Int, String) -> String): JQuery = noImpl;
+    public fun addClass(className: String): JQuery
+    public fun addClass(f: Element.(Int, String) -> String): JQuery
 
     public fun attr(attrName: String): String
     public fun attr(attrName: String, value: String): JQuery
@@ -37,9 +37,9 @@ public external class JQuery() {
     public fun slideUp(): JQuery
     public fun hover(handlerInOut: Element.() -> Unit): JQuery
     public fun hover(handlerIn: Element.() -> Unit, handlerOut: Element.() -> Unit): JQuery
-    public fun next(): JQuery = noImpl
-    public fun parent(): JQuery = noImpl
-    public fun `val`(): String? = noImpl
+    public fun next(): JQuery
+    public fun parent(): JQuery
+    public fun `val`(): String?
 }
 
 open public external class MouseEvent() {

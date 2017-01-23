@@ -17,22 +17,22 @@
 package kotlin.text.js
 
 
-public external class RegExp(pattern: String, flags: String? = noImpl) {
+public external class RegExp(pattern: String, flags: String? = definedExternally) {
 
-    public fun test(str: String): Boolean = noImpl
+    public fun test(str: String): Boolean
 
-    public fun exec(str: String): RegExpMatch? = noImpl
+    public fun exec(str: String): RegExpMatch?
 
-    public override fun toString(): String = noImpl
+    public override fun toString(): String
 
     /**
      * The lastIndex is a read/write integer property of regular expressions that specifies the index at which to start the next match.
      */
     public var lastIndex: Int
 
-    public val global: Boolean get() = noImpl
-    public val ignoreCase: Boolean get() = noImpl
-    public val multiline: Boolean get() = noImpl
+    public val global: Boolean
+    public val ignoreCase: Boolean
+    public val multiline: Boolean
 }
 
 public fun RegExp.reset() {

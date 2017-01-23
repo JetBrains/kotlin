@@ -58,7 +58,7 @@ internal fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Ar
 }
 
 @library("arrayToString")
-internal fun arrayToString(array: Array<*>): String = noImpl
+internal fun arrayToString(array: Array<*>): String = definedExternally
 
 /**
  * Returns an immutable list containing only the specified object [element].

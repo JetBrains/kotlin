@@ -22,31 +22,31 @@ package kotlin
 public inline fun <T> emptyArray(): Array<T> = js("[]")
 
 @library
-public fun <T> arrayOf(vararg elements: T): Array<T> = noImpl
+public fun <T> arrayOf(vararg elements: T): Array<T> = definedExternally
 
 @library
-public fun doubleArrayOf(vararg elements: Double): DoubleArray = noImpl
+public fun doubleArrayOf(vararg elements: Double): DoubleArray = definedExternally
 
 @library
-public fun floatArrayOf(vararg elements: Float): FloatArray = noImpl
+public fun floatArrayOf(vararg elements: Float): FloatArray = definedExternally
 
 @library
-public fun longArrayOf(vararg elements: Long): LongArray = noImpl
+public fun longArrayOf(vararg elements: Long): LongArray = definedExternally
 
 @library
-public fun intArrayOf(vararg elements: Int): IntArray = noImpl
+public fun intArrayOf(vararg elements: Int): IntArray = definedExternally
 
 @library
-public fun charArrayOf(vararg elements: Char): CharArray = noImpl
+public fun charArrayOf(vararg elements: Char): CharArray = definedExternally
 
 @library
-public fun shortArrayOf(vararg elements: Short): ShortArray = noImpl
+public fun shortArrayOf(vararg elements: Short): ShortArray = definedExternally
 
 @library
-public fun byteArrayOf(vararg elements: Byte): ByteArray = noImpl
+public fun byteArrayOf(vararg elements: Byte): ByteArray = definedExternally
 
 @library
-public fun booleanArrayOf(vararg elements: Boolean): BooleanArray = noImpl
+public fun booleanArrayOf(vararg elements: Boolean): BooleanArray = definedExternally
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].

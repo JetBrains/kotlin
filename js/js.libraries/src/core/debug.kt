@@ -9,4 +9,4 @@ external public interface Console {
     public fun warn(vararg o: Any?): Unit
 }
 
-public external val console: Console = noImpl
+public external val console: Console

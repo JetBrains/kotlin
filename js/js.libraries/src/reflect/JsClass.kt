@@ -25,7 +25,7 @@ external interface JsClass<T : Any> {
 }
 
 @Deprecated("Use class literal and extension property `js` instead.", replaceWith = ReplaceWith("T::class.js"))
-external fun <T : Any> jsClass(): JsClass<T> = noImpl
+external fun <T : Any> jsClass(): JsClass<T>
 
 @Deprecated("Use class literal and extension property `js` instead.", replaceWith = ReplaceWith("this::class.js"))
 val <T : Any> T.jsClass: JsClass<T>

@@ -22,7 +22,7 @@ public inline fun String.concat(str: String): String = asDynamic().concat(str)
 
 public inline fun String.match(regex: String): Array<String> = asDynamic().match(regex)
 
-//native public fun String.trim() : String = noImpl
+//native public fun String.trim(): String
 //TODO: String.replace to implement effective trimLeading and trimTrailing
 
 public inline val CharSequence.size: Int get() = asDynamic().length

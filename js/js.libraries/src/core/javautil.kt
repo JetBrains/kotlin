@@ -22,7 +22,7 @@ package java.util
 
 @Deprecated("Use kotlin.js.Date instead", ReplaceWith("kotlin.js.Date"))
 public external class Date() {
-    public fun getTime(): Int = noImpl
+    public fun getTime(): Int
 }
 
 @Deprecated("Use kotlin.collections.RandomAccess instead", ReplaceWith("kotlin.collections.RandomAccess"))
