@@ -1,7 +1,10 @@
 package kotlin.js
 
 public external val noImpl: Nothing
-    get() = noImpl
+    get() = definedExternally
+
+public external val definedExternally: Nothing
+    get() = definedExternally
 
 public external fun eval(expr: String): dynamic = noImpl
 

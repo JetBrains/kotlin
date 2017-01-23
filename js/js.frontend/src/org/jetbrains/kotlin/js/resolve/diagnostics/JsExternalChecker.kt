@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 object JsExternalChecker : SimpleDeclarationChecker {
-    val NO_IMPL_PROPERTY_NAME = FqNameUnsafe("kotlin.js.noImpl")
+    val DEFINED_EXTENRALLY_PROPERTY_NAMES = setOf(FqNameUnsafe("kotlin.js.noImpl"), FqNameUnsafe("kotlin.js.definedExternally"))
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink,
                        bindingContext: BindingContext) {
@@ -109,12 +109,14 @@ object JsExternalChecker : SimpleDeclarationChecker {
         if (declaration is KtDeclarationWithBody && !declaration.hasValidExternalBody(bindingContext)) {
             diagnosticHolder.report(ErrorsJs.WRONG_BODY_OF_EXTERNAL_DECLARATION.on(declaration.bodyExpression!!))
         }
-        else if (declaration is KtDeclarationWithInitializer && declaration.initializer?.isNoImplExpression(bindingContext) == false) {
+        else if (declaration is KtDeclarationWithInitializer &&
+                 declaration.initializer?.isDefinedExternallyExpression(bindingContext) == false
+        ) {
             diagnosticHolder.report(ErrorsJs.WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION.on(declaration.initializer!!))
         }
         if (declaration is KtCallableDeclaration) {
             for (defaultValue in declaration.valueParameters.mapNotNull { it.defaultValue }) {
-                if (!defaultValue.isNoImplExpression(bindingContext)) {
+                if (!defaultValue.isDefinedExternallyExpression(bindingContext)) {
                     diagnosticHolder.report(ErrorsJs.WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER.on(defaultValue))
                 }
             }
@@ -200,20 +202,20 @@ object JsExternalChecker : SimpleDeclarationChecker {
         if (!hasBody()) return true
         val body = bodyExpression!!
         return if (!hasBlockBody()) {
-            body.isNoImplExpression(bindingContext)
+            body.isDefinedExternallyExpression(bindingContext)
         }
         else if (body is KtBlockExpression) {
             val statement = body.statements.singleOrNull() ?: return false
-            statement.isNoImplExpression(bindingContext)
+            statement.isDefinedExternallyExpression(bindingContext)
         }
         else {
             false
         }
     }
 
-    private fun KtExpression.isNoImplExpression(bindingContext: BindingContext): Boolean {
+    private fun KtExpression.isDefinedExternallyExpression(bindingContext: BindingContext): Boolean {
         val descriptor = getResolvedCall(bindingContext)?.resultingDescriptor as? PropertyDescriptor ?: return false
         val container = descriptor.containingDeclaration as? PackageFragmentDescriptor ?: return false
-        return container.fqNameUnsafe == NO_IMPL_PROPERTY_NAME.parent() && descriptor.name == NO_IMPL_PROPERTY_NAME.shortName()
+        return DEFINED_EXTENRALLY_PROPERTY_NAMES.any { container.fqNameUnsafe == it.parent() && descriptor.name == it.shortName() }
     }
 }
