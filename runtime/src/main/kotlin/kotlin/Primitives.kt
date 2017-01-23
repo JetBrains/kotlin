@@ -168,6 +168,19 @@ public final class Byte : Number(), Comparable<Byte> {
     @SymbolName("Kotlin_Byte_unaryMinus")
     external public operator fun unaryMinus(): Int
 
+    /** Performs a bitwise AND operation between the two values. */
+    @SymbolName("Kotlin_Byte_and_Byte")
+    external public infix fun and(other: Byte): Byte
+    /** Performs a bitwise OR operation between the two values. */
+    @SymbolName("Kotlin_Byte_or_Byte")
+    external public infix fun or(other: Byte): Byte
+    /** Performs a bitwise XOR operation between the two values. */
+    @SymbolName("Kotlin_Byte_xor_Byte")
+    external public infix fun xor(other: Byte): Byte
+    /** Inverts the bits in this value/ */
+    @SymbolName("Kotlin_Byte_inv")
+    external public fun inv(): Byte
+
     @SymbolName("Kotlin_Byte_toByte")
     external public override fun toByte(): Byte
     @SymbolName("Kotlin_Byte_toChar")
@@ -376,6 +389,19 @@ public final class Short : Number(), Comparable<Short> {
     /** Returns the negative of this value. */
     @SymbolName("Kotlin_Short_unaryMinus")
     external public operator fun unaryMinus(): Int
+
+    /** Performs a bitwise AND operation between the two values. */
+    @SymbolName("Kotlin_Short_and_Short")
+    external public infix fun and(other: Short): Short
+    /** Performs a bitwise OR operation between the two values. */
+    @SymbolName("Kotlin_Short_or_Short")
+    external public infix fun or(other: Short): Short
+    /** Performs a bitwise XOR operation between the two values. */
+    @SymbolName("Kotlin_Short_xor_Short")
+    external public infix fun xor(other: Short): Short
+    /** Inverts the bits in this value/ */
+    @SymbolName("Kotlin_Short_inv")
+    external public fun inv(): Short
 
     /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Byte): IntRange {
@@ -861,7 +887,7 @@ public final class Long : Number(), Comparable<Long> {
     }
 
     /** Shifts this value left by [bits]. */
-    @SymbolName("Kotlin_Long_shl_Long")
+    @SymbolName("Kotlin_Long_shl_Int")
     external public infix fun shl(bitCount: Int): Long
     /** Shifts this value right by [bits], filling the leftmost bits with copies of the sign bit. */
     @SymbolName("Kotlin_Long_shr_Int")
