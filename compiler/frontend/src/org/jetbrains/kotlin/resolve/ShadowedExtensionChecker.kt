@@ -91,6 +91,7 @@ class ShadowedExtensionChecker(val typeSpecificityComparator: TypeSpecificityCom
         if (extension.valueParameters.size != member.valueParameters.size) return false
         if (extension.varargParameterPosition() != member.varargParameterPosition()) return false
         if (extension.isOperator && !member.isOperator) return false
+        if (extension.isInfix && !member.isInfix) return false
 
         val extensionSignature = FlatSignature.createForPossiblyShadowedExtension(extension)
         val memberSignature = FlatSignature.createFromCallableDescriptor(member)

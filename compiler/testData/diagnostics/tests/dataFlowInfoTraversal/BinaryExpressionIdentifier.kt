@@ -1,6 +1,6 @@
 // !CHECK_TYPE
 
-infix fun Int.<!EXTENSION_SHADOWED_BY_MEMBER!>compareTo<!>(<!UNUSED_PARAMETER!>o<!>: Int) = 0
+infix fun Int.compareTo(<!UNUSED_PARAMETER!>o<!>: Int) = 0
 
 fun foo(a: Number): Int {
     val result = (a as Int) compareTo <!DEBUG_INFO_SMARTCAST!>a<!>

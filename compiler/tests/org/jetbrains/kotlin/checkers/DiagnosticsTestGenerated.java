@@ -16035,6 +16035,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("infixExtensionVsNonInfixMember.kt")
+                public void testInfixExtensionVsNonInfixMember() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension/infixExtensionVsNonInfixMember.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("localExtensionShadowedByMember.kt")
                 public void testLocalExtensionShadowedByMember() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/shadowedExtension/localExtensionShadowedByMember.kt");
