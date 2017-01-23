@@ -72,7 +72,7 @@ public fun String.toLong(radix: Int): Long = toLongOrNull(radix) ?: numberFormat
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
 public fun String.toDouble(): Double = (+(this.asDynamic())).unsafeCast<Double>().also {
-    if (it.isNaN() && !this.isNaN())
+    if (it.isNaN() && !this.isNaN() || it == 0.0 && this.isBlank())
         numberFormatError(this)
 }
 
@@ -87,7 +87,7 @@ public inline fun String.toFloat(): Float = toDouble().unsafeCast<Float>()
  * or `null` if the string is not a valid representation of a number.
  */
 public fun String.toDoubleOrNull(): Double? = (+(this.asDynamic())).unsafeCast<Double>().takeIf {
-    !(it.isNaN() && !this.isNaN())
+    !(it.isNaN() && !this.isNaN() || it == 0.0 && this.isBlank())
 }
 
 /**

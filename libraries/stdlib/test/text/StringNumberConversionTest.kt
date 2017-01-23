@@ -19,6 +19,8 @@ class StringNumberConversionTest {
             assertProduces("+77", 77.toByte())
             assertProduces("-128", Byte.MIN_VALUE)
             assertFailsOrNull("128")
+            assertFailsOrNull("")
+            assertFailsOrNull("   ")
         }
 
         compareConversionWithRadix(String::toByte, String::toByteOrNull) {
@@ -26,6 +28,8 @@ class StringNumberConversionTest {
             assertProduces(16, "+7F", 127.toByte())
             assertProduces(16, "-80", (-128).toByte())
             assertFailsOrNull(2, "10000000")
+            assertFailsOrNull(8, "")
+            assertFailsOrNull(8, "   ")
         }
     }
 
@@ -35,12 +39,16 @@ class StringNumberConversionTest {
             assertProduces("32767", Short.MAX_VALUE)
             assertProduces("-32768", Short.MIN_VALUE)
             assertFailsOrNull("+32768")
+            assertFailsOrNull("")
+            assertFailsOrNull("   ")
         }
 
         compareConversionWithRadix(String::toShort, String::toShortOrNull) {
             assertProduces(16, "7FFF", 0x7FFF.toShort())
             assertProduces(16, "-8000", (-0x8000).toShort())
             assertFailsOrNull(5, "10000000")
+            assertFailsOrNull(2, "")
+            assertFailsOrNull(2, "   ")
         }
     }
 
@@ -53,6 +61,8 @@ class StringNumberConversionTest {
             assertFailsOrNull("2147483648")
             assertFailsOrNull("-2147483649")
             assertFailsOrNull("239239kotlin")
+            assertFailsOrNull("")
+            assertFailsOrNull("   ")
         }
 
         compareConversionWithRadix(String::toInt, String::toIntOrNull) {
@@ -71,6 +81,8 @@ class StringNumberConversionTest {
             assertFailsOrNull(10, "2147483648")
             assertFailsOrNull(8, "99")
             assertFailsOrNull(10, "Kona")
+            assertFailsOrNull(16, "")
+            assertFailsOrNull(16, "  ")
         }
 
         assertFailsWith<IllegalArgumentException>("Expected to fail with radix 1") { "1".toInt(radix = 1) }
@@ -96,6 +108,8 @@ class StringNumberConversionTest {
             assertFailsOrNull("92233,75809")
             assertFailsOrNull("92233`75809")
             assertFailsOrNull("-922337KOTLIN775809")
+            assertFailsOrNull("")
+            assertFailsOrNull("  ")
         }
 
         compareConversionWithRadix(String::toLong, String::toLongOrNull) {
@@ -112,6 +126,8 @@ class StringNumberConversionTest {
 
             assertFailsOrNull(8, "99")
             assertFailsOrNull(10, "Hazelnut")
+            assertFailsOrNull(4, "")
+            assertFailsOrNull(4, "  ")
         }
 
         assertFailsWith<IllegalArgumentException>("Expected to fail with radix 37") { "37".toLong(radix = 37) }
@@ -132,6 +148,8 @@ class StringNumberConversionTest {
             assertProduces("-1e39", Float.NEGATIVE_INFINITY)
             assertProduces("1000000000000000000000000000000000000000", Float.POSITIVE_INFINITY)
             assertFailsOrNull("dark side")
+            assertFailsOrNull("")
+            assertFailsOrNull("   ")
         }
     }
 
@@ -151,6 +169,8 @@ class StringNumberConversionTest {
 
             assertFailsOrNull("7..7")
             assertFailsOrNull("007 not a number")
+            assertFailsOrNull("")
+            assertFailsOrNull("   ")
         }
     }
 
