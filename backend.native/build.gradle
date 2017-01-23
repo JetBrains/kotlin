@@ -143,7 +143,7 @@ kotlinNativeInterop {
      compilerOpts '-fPIC'
      linkerOpts '-fPIC'
      linker 'clang++'
-     linkOutputs ':common:compileHash'
+     linkOutputs ':common:hostHash'
 
      headers fileTree('../common/src/hash/headers') {
        include '**/*.h'
@@ -191,48 +191,48 @@ task start(dependsOn: 'hostStart')
 // so we provide custom values for
 // -runtime, -properties, -library and -Djava.library.path
 
-targetList.each { platformName ->
-    task("${platformName}Stdlib", type: JavaExec) {
+targetList.each { target ->
+    task("${target}Stdlib", type: JavaExec) {
         main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
         classpath = project.configurations.cli_bc
         jvmArgs "-ea", 
             "-Dkonan.home=${project.parent.file('dist')}",
             "-Djava.library.path=${project.buildDir}/nativelibs"
-        args('-output', project(':runtime').file("build/${platformName}/stdlib.kt.bc"), 
+        args('-output', project(':runtime').file("build/${target}/stdlib.kt.bc"), 
             '-nolink', '-nostdlib',
-            '-target', platformName,
-            '-runtime', project(':runtime').file("build/${platformName}/runtime.bc"),
+            '-target', target,
+            '-runtime', project(':runtime').file("build/${target}/runtime.bc"),
             '-properties', project(':backend.native').file('konan.properties'),
         project(':runtime').file('src/main/kotlin'), 
         *project.globalArgs)
 
         inputs.dir(project(':runtime').file('src/main/kotlin'))
-        outputs.file(project(':runtime').file("build/${platformName}/stdlib.kt.bc"))
+        outputs.file(project(':runtime').file("build/${target}/stdlib.kt.bc"))
 
-        dependsOn ":runtime:build"
+        dependsOn ":runtime:${target}Runtime"
     }
 }
 
-targetList.each { platformName ->
-    task("${platformName}Start", type: JavaExec) {
+targetList.each { target ->
+    task("${target}Start", type: JavaExec) {
         main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
         classpath = project.configurations.cli_bc
         jvmArgs "-ea", 
             "-Dkonan.home=${project.parent.file('dist')}",
             "-Djava.library.path=${project.buildDir}/nativelibs"
-        args('-output', project(':runtime').file("build/${platformName}/start.kt.bc"), 
+        args('-output', project(':runtime').file("build/${target}/start.kt.bc"), 
             '-nolink', '-nostdlib',
-            '-target', platformName,
-            '-library', project(':runtime').file("build/${platformName}/stdlib.kt.bc"),
-            '-runtime', project(':runtime').file("build/${platformName}/runtime.bc"),
+            '-target', target,
+            '-library', project(':runtime').file("build/${target}/stdlib.kt.bc"),
+            '-runtime', project(':runtime').file("build/${target}/runtime.bc"),
             '-properties', project(':backend.native').file('konan.properties'),
         project(':runtime').file('src/launcher/kotlin'), 
         *project.globalArgs)
 
         inputs.dir(project(':runtime').file('src/launcher/kotlin'))
-        outputs.file(project(':runtime').file("build/${platformName}/start.kt.bc"))
+        outputs.file(project(':runtime').file("build/${target}/start.kt.bc"))
 
-        dependsOn ":runtime:build", "${platformName}Stdlib"
+        dependsOn ":runtime:${target}Runtime", "${target}Stdlib"
     }
 }
 
@@ -248,7 +248,7 @@ task jars(type: Jar) {
          'build/classes/hashInteropStubs', 
          'build/classes/llvmInteropStubs'
 
-    dependsOn 'build', ':runtime:build', 'external_jars'
+    dependsOn 'build', ':runtime:hostRuntime', 'external_jars'
 }
 
 task external_jars(type: Copy) {

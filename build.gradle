@@ -148,7 +148,7 @@ task list_dist(type: Exec) {
 }
 
 task dist_runtime(type: Copy) {
-    dependsOn ':runtime:build'
+    dependsOn ':runtime:hostRuntime'
     dependsOn ':backend.native:hostStdlib'
     dependsOn ':backend.native:hostStart'
 
@@ -161,7 +161,7 @@ task dist_runtime(type: Copy) {
 }
 
 task cross_dist_runtime(type: Copy) {
-    dependsOn ':runtime:build'
+    dependsOn.addAll(targetList.collect { ":runtime:${it}Runtime" })
     dependsOn.addAll(targetList.collect { ":backend.native:${it}Stdlib" })
     dependsOn.addAll(targetList.collect { ":backend.native:${it}Start" })
 

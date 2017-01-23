@@ -1,28 +1,29 @@
-import org.jetbrains.kotlin.CompilePerTarget
+import org.jetbrains.kotlin.CompileCppToBitcode
 
 // TODO: consider using some Gradle plugins to build and test
 
-
-task build(type: CompilePerTarget) {
-    name 'runtime'
-    srcRoot file('src/main')
-    dependsOn ":common:compileHash"
-    dependsOn "launcher"
-    targetList targetList
-    targetArgs targetArgs
-    compilerArgs '-I' + project.file('../common/src/hash/headers') // TODO: copy-pasted from 'common'
-    targetLinkerArgs targetList.collectEntries {
-        [it,[project.file("../common/build/$it/hash.bc")]]
+targetList.each { targetName ->
+    task("${targetName}Runtime", type: CompileCppToBitcode) {
+        name "runtime"
+        srcRoot file('src/main')
+        dependsOn ":common:${targetName}Hash"
+        dependsOn "${targetName}Launcher"
+        target targetName
+        compilerArgs targetArgs[targetName]
+        compilerArgs '-I' + project.file('../common/src/hash/headers')
+        linkerArgs project.file("../common/build/$targetName/hash.bc").path
     }
 }
 
-task launcher(type: CompilePerTarget) {
-    name 'launcher'
-    srcRoot file('src/launcher')
-    targetList targetList
-    targetArgs targetArgs
-    compilerArgs '-I' + project.file('../common/src/hash/headers') // TODO: copy-pasted from 'common'
-    compilerArgs '-I' + project.file('src/main/cpp')
+targetList.each { targetName ->
+    task("${targetName}Launcher", type: CompileCppToBitcode) {
+        name "launcher"
+        srcRoot file('src/launcher')
+        target targetName
+        compilerArgs targetArgs[targetName]
+        compilerArgs '-I' + project.file('../common/src/hash/headers')
+        compilerArgs '-I' + project.file('src/main/cpp')
+    }
 }
 
 task clean << {
