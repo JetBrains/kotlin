@@ -177,11 +177,10 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
         val instanceName = functionWithBody.scope.declareFreshName("instance")
         functionWithBody.body.statements += JsAstUtils.newVar(instanceName, JsNameRef(context.metadata.facadeName, instantiation))
 
-        val invokeResume = JsInvocation(JsNameRef(context.metadata.resumeName, instanceName.makeRef()), JsLiteral.NULL).makeStmt()
-        val returnResult = JsReturn(JsNameRef(context.metadata.resultName, instanceName.makeRef()))
+        val invokeResume = JsReturn(JsInvocation(JsNameRef(context.metadata.doResumeName, instanceName.makeRef()), JsLiteral.NULL))
 
         functionWithBody.body.statements += JsIf(
-                suspendedName.makeRef(), JsReturn(instanceName.makeRef()), JsBlock(invokeResume, returnResult))
+                suspendedName.makeRef(), JsReturn(instanceName.makeRef()), invokeResume)
     }
 
     private fun generateCoroutineBody(

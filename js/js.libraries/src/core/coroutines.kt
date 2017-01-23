@@ -28,7 +28,7 @@ import kotlin.coroutines.intrinsics.*
 public fun <R, T> (suspend R.() -> T).createCoroutine(
         receiver: R,
         completion: Continuation<T>
-): Continuation<Unit> = this.asDynamic()(receiver, completion, true).facade
+): Continuation<Unit> = this.asDynamic()(receiver, completion, true)
 
 /**
  * Starts coroutine with receiver type [R] and result type [T].
@@ -40,7 +40,8 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
         receiver: R,
         completion: Continuation<T>
 ) {
-    this.asDynamic()(receiver, completion)
+    val coroutine: Continuation<Any?> = this.asDynamic()(receiver, completion, true)
+    coroutine.resume(null)
 }
 
 /**
@@ -52,7 +53,7 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
 @SinceKotlin("1.1")
 public fun <T> (suspend () -> T).createCoroutine(
         completion: Continuation<T>
-): Continuation<Unit> = this.asDynamic()(completion, true).facade
+): Continuation<Unit> = this.asDynamic()(completion, true)
 
 /**
  * Starts coroutine without receiver and with result type [T].
@@ -63,7 +64,8 @@ public fun <T> (suspend () -> T).createCoroutine(
 public fun <T> (suspend  () -> T).startCoroutine(
         completion: Continuation<T>
 ) {
-    this.asDynamic()(completion)
+    val coroutine: Continuation<Any?> = this.asDynamic()(completion, true)
+    coroutine.resume(null)
 }
 
 /**
@@ -97,22 +99,16 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
 
     override fun resume(data: Any?) {
         result = data
-        try {
-            result = doResume()
-            if (result != SUSPENDED_MARKER) {
-                val data = result
-                result = SUSPENDED_MARKER
-                resultContinuation.resume(data)
-            }
-        }
-        catch (e: Throwable) {
-            resultContinuation.resumeWithException(e)
-        }
+        doResumeWrapper()
     }
 
     override fun resumeWithException(exception: Throwable) {
         state = exceptionState
         this.exception = exception
+        doResumeWrapper()
+    }
+
+    protected fun doResumeWrapper() {
         try {
             result = doResume()
             if (result != SUSPENDED_MARKER) {
