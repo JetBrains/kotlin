@@ -7,1209 +7,807 @@ configurations {
 dependencies {
     cli_bc project(path: ':backend.native', configuration: 'cli_bc')
 }
-
-task createLogFile() {
-    doLast {
-        project.file("test-result.md").write("")
-    }
-}
 task codegen_blackbox_annotations (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/annotations"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_annotations_annotatedLambda (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/annotations/annotatedLambda"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_argumentOrder (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/argumentOrder"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_arrays (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/arrays"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_arrays_multiDecl (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/arrays/multiDecl"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_arrays_multiDecl_int (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/arrays/multiDecl/int"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_arrays_multiDecl_long (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/arrays/multiDecl/long"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_binaryOp (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/binaryOp"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_boxingOptimization (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/boxingOptimization"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_bridges (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/bridges"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_bridges_substitutionInSuperClass (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/bridges/substitutionInSuperClass"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_builtinStubMethods (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/builtinStubMethods"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_builtinStubMethods_extendJavaCollections (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/builtinStubMethods/extendJavaCollections"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_callableReference_bound (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/callableReference/bound"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_callableReference_bound_equals (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/callableReference/bound/equals"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_callableReference_bound_inline (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/callableReference/bound/inline"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_callableReference_function (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/callableReference/function"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_callableReference_function_local (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/callableReference/function/local"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_callableReference_property (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/callableReference/property"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_casts (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/casts"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_casts_functions (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/casts/functions"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_casts_literalExpressionAsGenericArgument (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/casts/literalExpressionAsGenericArgument"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_casts_mutableCollections (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/casts/mutableCollections"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_classes (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/classes"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_classes_inner (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/classes/inner"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_classLiteral (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/classLiteral"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_classLiteral_bound (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/classLiteral/bound"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_classLiteral_java (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/classLiteral/java"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_closures (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/closures"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_closures_captureOuterProperty (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/closures/captureOuterProperty"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_closures_closureInsideClosure (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/closures/closureInsideClosure"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_collections (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/collections"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_compatibility (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/compatibility"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_constants (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/constants"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_controlStructures (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/controlStructures"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_controlStructures_breakContinueInExpressions (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/controlStructures/breakContinueInExpressions"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_controlStructures_returnsNothing (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/controlStructures/returnsNothing"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_controlStructures_tryCatchInExpressions (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/controlStructures/tryCatchInExpressions"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_coroutines (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/coroutines"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_coroutines_controlFlow (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/coroutines/controlFlow"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_coroutines_intLikeVarSpilling (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/coroutines/intLikeVarSpilling"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_coroutines_multiModule (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/coroutines/multiModule"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_coroutines_stackUnwinding (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/coroutines/stackUnwinding"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_coroutines_suspendFunctionTypeCall (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/coroutines/suspendFunctionTypeCall"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_coroutines_unitTypeReturn (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/coroutines/unitTypeReturn"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_dataClasses (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/dataClasses"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_dataClasses_copy (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/dataClasses/copy"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_dataClasses_equals (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/dataClasses/equals"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_dataClasses_hashCode (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/dataClasses/hashCode"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_dataClasses_toString (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/dataClasses/toString"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_deadCodeElimination (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/deadCodeElimination"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_defaultArguments (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/defaultArguments"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_defaultArguments_constructor (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/defaultArguments/constructor"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_defaultArguments_convention (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/defaultArguments/convention"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_defaultArguments_function (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/defaultArguments/function"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_defaultArguments_private (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/defaultArguments/private"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_defaultArguments_signature (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/defaultArguments/signature"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_delegatedProperty (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/delegatedProperty"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_delegatedProperty_local (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/delegatedProperty/local"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_delegatedProperty_provideDelegate (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/delegatedProperty/provideDelegate"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_delegation (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/delegation"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_destructuringDeclInLambdaParam (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/destructuringDeclInLambdaParam"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_diagnostics_functions_inference (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/diagnostics/functions/inference"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_diagnostics_functions_invoke_onObjects (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/diagnostics/functions/invoke/onObjects"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_diagnostics_functions_tailRecursion (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/diagnostics/functions/tailRecursion"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_diagnostics_vararg (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/diagnostics/vararg"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_elvis (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/elvis"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_enum (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/enum"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_evaluate (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/evaluate"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_exclExcl (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/exclExcl"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_extensionFunctions (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/extensionFunctions"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_extensionProperties (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/extensionProperties"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_external (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/external"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_fakeOverride (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/fakeOverride"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_fieldRename (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/fieldRename"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_finally (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/finally"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_fullJdk (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/fullJdk"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_fullJdk_native (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/fullJdk/native"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_fullJdk_regressions (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/fullJdk/regressions"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_functions (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/functions"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_functions_functionExpression (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/functions/functionExpression"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_functions_invoke (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/functions/invoke"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_functions_localFunctions (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/functions/localFunctions"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_hashPMap (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/hashPMap"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_ieee754 (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/ieee754"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_increment (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/increment"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_innerNested (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/innerNested"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_innerNested_superConstructorCall (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/innerNested/superConstructorCall"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_instructions_swap (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/instructions/swap"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_intrinsics (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/intrinsics"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_javaInterop (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/javaInterop"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_javaInterop_generics (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/javaInterop/generics"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_javaInterop_notNullAssertions (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/javaInterop/notNullAssertions"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_javaInterop_objectMethods (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/javaInterop/objectMethods"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_jdk (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/jdk"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_jvmField (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/jvmField"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_jvmName (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/jvmName"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_jvmName_fileFacades (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/jvmName/fileFacades"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_jvmOverloads (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/jvmOverloads"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_jvmStatic (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/jvmStatic"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_labels (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/labels"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_lazyCodegen (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/lazyCodegen"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_lazyCodegen_optimizations (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/lazyCodegen/optimizations"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_localClasses (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/localClasses"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_mangling (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/mangling"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_multiDecl (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/multiDecl"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_multiDecl_forIterator (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/multiDecl/forIterator"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_multiDecl_forIterator_longIterator (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/multiDecl/forIterator/longIterator"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_multiDecl_forRange (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/multiDecl/forRange"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_multiDecl_forRange_explicitRangeTo (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/multiDecl/forRange/explicitRangeTo"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_multiDecl_forRange_explicitRangeTo_int (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/multiDecl/forRange/explicitRangeTo/int"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_multiDecl_forRange_explicitRangeTo_long (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/multiDecl/forRange/explicitRangeTo/long"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_multiDecl_forRange_explicitRangeToWithDot (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/multiDecl/forRange/explicitRangeToWithDot"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_multiDecl_forRange_explicitRangeToWithDot_int (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/multiDecl/forRange/explicitRangeToWithDot/int"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_multiDecl_forRange_explicitRangeToWithDot_long (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/multiDecl/forRange/explicitRangeToWithDot/long"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_multiDecl_forRange_int (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/multiDecl/forRange/int"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_multiDecl_forRange_long (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/multiDecl/forRange/long"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_multifileClasses (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/multifileClasses"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_multifileClasses_optimized (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/multifileClasses/optimized"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_nonLocalReturns (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/nonLocalReturns"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_objectIntrinsics (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/objectIntrinsics"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_objects (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/objects"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_operatorConventions (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/operatorConventions"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_operatorConventions_compareTo (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/operatorConventions/compareTo"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_package (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/package"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_platformTypes_primitives (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/platformTypes/primitives"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_primitiveTypes (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/primitiveTypes"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_private (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/private"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_privateConstructors (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/privateConstructors"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_properties (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/properties"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_properties_const (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/properties/const"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_properties_lateinit (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/properties/lateinit"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_publishedApi (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/publishedApi"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_ranges (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/ranges"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_ranges_contains (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/ranges/contains"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_ranges_expression (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/ranges/expression"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_ranges_forInDownTo (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/ranges/forInDownTo"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_ranges_forInIndices (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/ranges/forInIndices"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_ranges_literal (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/ranges/literal"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_ranges_nullableLoopParameter (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/ranges/nullableLoopParameter"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_annotations (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/annotations"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_call (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/call"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_call_bound (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/call/bound"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_callBy (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/callBy"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_classes (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/classes"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_classLiterals (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/classLiterals"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_constructors (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/constructors"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_createAnnotation (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/createAnnotation"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_enclosing (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/enclosing"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_functions (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/functions"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_genericSignature (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/genericSignature"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_isInstance (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/isInstance"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_kClassInAnnotation (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/kClassInAnnotation"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_lambdaClasses (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/lambdaClasses"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_mapping (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/mapping"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_mapping_fakeOverrides (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/mapping/fakeOverrides"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_mapping_jvmStatic (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/mapping/jvmStatic"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_mapping_types (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/mapping/types"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_methodsFromAny (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/methodsFromAny"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_modifiers (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/modifiers"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_multifileClasses (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/multifileClasses"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_noReflectAtRuntime (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/noReflectAtRuntime"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_noReflectAtRuntime_methodsFromAny (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/noReflectAtRuntime/methodsFromAny"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_parameters (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/parameters"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_properties (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/properties"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_properties_accessors (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/properties/accessors"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_specialBuiltIns (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/specialBuiltIns"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_supertypes (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/supertypes"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_typeParameters (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/typeParameters"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_types (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/types"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_types_createType (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/types/createType"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reflection_types_subtyping (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reflection/types/subtyping"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_regressions (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/regressions"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reified (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reified"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_reified_arraysReification (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/reified/arraysReification"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_safeCall (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/safeCall"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_sam_constructors (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/sam/constructors"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_sealed (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/sealed"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_secondaryConstructors (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/secondaryConstructors"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_smap (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/smap"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_smartCasts (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/smartCasts"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_specialBuiltins (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/specialBuiltins"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_statics (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/statics"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_storeStackBeforeInline (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/storeStackBeforeInline"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_strings (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/strings"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_super (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/super"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_synchronized (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/synchronized"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_syntheticAccessors (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/syntheticAccessors"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_toArray (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/toArray"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_topLevelPrivate (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/topLevelPrivate"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_traits (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/traits"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_typealias (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/typealias"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_typeInfo (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/typeInfo"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_typeMapping (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/typeMapping"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_unaryOp (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/unaryOp"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_unit (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/unit"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_vararg (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/vararg"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_when (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/when"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_when_enumOptimization (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/when/enumOptimization"
-   logFileName = "test-result.md"
 }
 
 task codegen_blackbox_when_stringOptimization (type: RunExternalTestGroup) {
-   dependsOn(createLogFile)
    groupDirectory = "codegen/blackbox/when/stringOptimization"
-   logFileName = "test-result.md"
 }
 
+
+task daily {
+    dependsOn(codegen_blackbox_annotations)
+}

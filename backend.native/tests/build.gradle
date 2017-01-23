@@ -52,7 +52,7 @@ dependencies {
         }
         gradleGenerated.append(
 """
-daily {
+task daily {
     dependsOn(codegen_blackbox_annotations)
 }
 """
