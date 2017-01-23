@@ -4,7 +4,7 @@
 }
 
 @native class A(x: String) : I {
-    override fun foo(): String = noImpl
+    override fun foo(): String = definedExternally
 }
 
 fun createObject(): Any = A("OK")

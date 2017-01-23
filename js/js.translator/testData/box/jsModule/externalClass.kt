@@ -2,10 +2,10 @@
 package foo
 
 @JsModule("lib")
-external class A(x: Int = noImpl) {
+external class A(x: Int = definedExternally) {
     val x: Int
 
-    fun foo(y: Int): Int = noImpl
+    fun foo(y: Int): Int = definedExternally
 }
 
 fun box(): String {

@@ -9,5 +9,5 @@ external class C {
     @nativeSetter
     fun foo(d: Double, v: Any): Any
     @nativeSetter
-    fun bar(d: Double, v: Any): Any = noImpl
+    fun bar(d: Double, v: Any): Any = definedExternally
 }

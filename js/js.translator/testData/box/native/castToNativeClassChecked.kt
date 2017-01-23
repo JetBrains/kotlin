@@ -4,7 +4,7 @@
 }
 
 @native class A(x: String)  {
-    fun foo(): String = noImpl
+    fun foo(): String = definedExternally
 }
 
 fun createObject(): Any = A("fail: CCE not thrown")

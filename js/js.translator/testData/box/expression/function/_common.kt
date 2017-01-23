@@ -6,6 +6,6 @@ fun String.replaceAll(regexp: String, replacement: String): String = replace(Reg
 
 inline fun String.search(regexp: RegExp): Int = asDynamic().search(regexp)
 
-external class RegExp(regexp: String, flags: String = noImpl) {
-    fun exec(s: String): Array<String>? = noImpl
+external class RegExp(regexp: String, flags: String = definedExternally) {
+    fun exec(s: String): Array<String>? = definedExternally
 }

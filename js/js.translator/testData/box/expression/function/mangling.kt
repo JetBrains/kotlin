@@ -6,13 +6,13 @@ public fun public_baz(i: Int) {
     log = "public_baz"
 }
 external public fun public_baz(a: String) {
-    noImpl
+    definedExternally
 }
 
 internal fun internal_baz(i: Int) {
 }
 internal external fun internal_baz(a: String) {
-    noImpl
+    definedExternally
 }
 
 private fun getCurrentPackage(): dynamic = js("_").foo
@@ -20,7 +20,7 @@ private fun getCurrentPackage(): dynamic = js("_").foo
 private fun private_baz(i: Int) {
 }
 private external fun private_baz(a: String) {
-    noImpl
+    definedExternally
 }
 
 public class PublicClass {

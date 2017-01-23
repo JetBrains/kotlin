@@ -2,17 +2,17 @@ package foo
 
 external class Function(vararg argsAndCode: String) {
     @nativeInvoke
-    operator fun invoke(a: Any?): Any? = noImpl
+    operator fun invoke(a: Any?): Any? = definedExternally
 
     @nativeInvoke
-    fun baz(a: Any?, b: Any?): Any? = noImpl
+    fun baz(a: Any?, b: Any?): Any? = definedExternally
 }
 
 @nativeInvoke
-operator fun Function.invoke(a: Any?, b: Any?): Any? = noImpl
+operator fun Function.invoke(a: Any?, b: Any?): Any? = definedExternally
 
 @nativeInvoke
-fun Function.bar(a: Any?, b: Any?): Any? = noImpl
+fun Function.bar(a: Any?, b: Any?): Any? = definedExternally
 
 object t{}
 

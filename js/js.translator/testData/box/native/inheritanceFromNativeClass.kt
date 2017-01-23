@@ -3,13 +3,13 @@ package foo
 internal external open class A(a: Int) {
     val a: Int
 
-    fun g(): Int = noImpl
-    fun m(): Int = noImpl
+    fun g(): Int = definedExternally
+    fun m(): Int = definedExternally
 
-    public open fun foo(i: Int): String = noImpl
-    public fun boo(i: Int): String = noImpl
+    public open fun foo(i: Int): String = definedExternally
+    public fun boo(i: Int): String = definedExternally
     @JsName("bar")
-    open fun baz(i: Int): String = noImpl
+    open fun baz(i: Int): String = definedExternally
 }
 
 internal class B(val b: Int) : A(b / 2) {

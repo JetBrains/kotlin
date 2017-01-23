@@ -4,12 +4,12 @@ package foo
 
 @JsModule("libfoo")
 @JsNonModule
-external fun foo(x: Int): Int = noImpl
+external fun foo(x: Int): Int = definedExternally
 
 @JsModule("libbar") 
 @JsNonModule
 @JsName("baz")
-external fun bar(x: Int): Int = noImpl
+external fun bar(x: Int): Int = definedExternally
 
 fun box(): String {
     assertEquals(65, foo(42))

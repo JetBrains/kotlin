@@ -2,7 +2,7 @@
 @nativeGetter
 fun String.foo(n: Int): Int?
 @nativeGetter
-fun String.bar(n: Int): Int? = noImpl
+fun String.bar(n: Int): Int? = definedExternally
 
 
 external interface T {

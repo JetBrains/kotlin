@@ -1,8 +1,8 @@
 package foo
 
 external class A(b: Int) {
-    fun g(): Int = noImpl
-    fun m(): Int = noImpl
+    fun g(): Int = definedExternally
+    fun m(): Int = definedExternally
 }
 
 

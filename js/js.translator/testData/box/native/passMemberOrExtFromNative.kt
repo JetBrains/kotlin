@@ -3,7 +3,7 @@ package foo
 external class A(v: String) {
     val v: String
 
-    fun m(i:Int, s:String): String = noImpl
+    fun m(i:Int, s:String): String = definedExternally
 }
 
 fun bar(a: A, extLambda: A.(Int, String) -> String): String = a.(extLambda)(4, "boo")

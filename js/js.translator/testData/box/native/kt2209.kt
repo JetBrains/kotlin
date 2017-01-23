@@ -12,7 +12,7 @@ external interface LastError {
     val message: String
 }
 
-external val chrome: Chrome = noImpl
+external val chrome: Chrome = definedExternally
 
 fun box(): String {
     val lastError = chrome.extension.lastError?.message

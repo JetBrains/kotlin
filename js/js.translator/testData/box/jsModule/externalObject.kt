@@ -3,9 +3,9 @@ package foo
 
 @JsModule("lib")
 external object A {
-    val x: Int = noImpl
+    val x: Int = definedExternally
 
-    fun foo(y: Int): Int = noImpl
+    fun foo(y: Int): Int = definedExternally
 }
 
 fun box(): String {

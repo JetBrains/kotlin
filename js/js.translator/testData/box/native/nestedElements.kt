@@ -82,33 +82,33 @@ fun box(): String {
 
 external object Object {
     object Object {
-        val a: String = noImpl
-        var b: String = noImpl
-        fun test(): Int = noImpl
+        val a: String = definedExternally
+        var b: String = definedExternally
+        fun test(): Int = definedExternally
 
         @JsName("AnotherClass")
         class Class(a: String) {
             val a: String
-            var b: String = noImpl
-            fun test(): Int = noImpl
+            var b: String = definedExternally
+            fun test(): Int = definedExternally
 
             companion object {
-                val a: String = noImpl
-                var b: String = noImpl
-                fun test(): Int = noImpl
+                val a: String = definedExternally
+                var b: String = definedExternally
+                fun test(): Int = definedExternally
             }
         }
     }
 
     class Class(a: String) {
         val a: String
-        var b: String = noImpl
-        fun test(): Int = noImpl
+        var b: String = definedExternally
+        fun test(): Int = definedExternally
 
         companion object {
-            val a: String = noImpl
-            var b: String = noImpl
-            fun test(): Int = noImpl
+            val a: String = definedExternally
+            var b: String = definedExternally
+            fun test(): Int = definedExternally
         }
     }
 
@@ -118,34 +118,34 @@ external object Object {
         fun test(): Int
 
         companion object {
-            val a: String = noImpl
-            var b: String = noImpl
-            fun test(): Int = noImpl
+            val a: String = definedExternally
+            var b: String = definedExternally
+            fun test(): Int = definedExternally
         }
     }
 
-    val a: Trait = noImpl
-    var b: String = noImpl
-    fun test(): Int = noImpl
+    val a: Trait = definedExternally
+    var b: String = definedExternally
+    fun test(): Int = definedExternally
 }
 
 @JsName("SomeClass")
 external class Class {
     object Object {
-        val a: String = noImpl
-        var b: String = noImpl
-        fun test(): Int = noImpl
+        val a: String = definedExternally
+        var b: String = definedExternally
+        fun test(): Int = definedExternally
     }
 
     class Class(a: String) {
         val a: String
-        var b: String = noImpl
-        fun test(): Int = noImpl
+        var b: String = definedExternally
+        fun test(): Int = definedExternally
 
         companion object {
-            val a: String = noImpl
-            var b: String = noImpl
-            fun test(): Int = noImpl
+            val a: String = definedExternally
+            var b: String = definedExternally
+            fun test(): Int = definedExternally
         }
     }
 
@@ -155,37 +155,37 @@ external class Class {
         fun test(): Int
 
         companion object {
-            val a: String = noImpl
-            var b: String = noImpl
-            fun test(): Int = noImpl
+            val a: String = definedExternally
+            var b: String = definedExternally
+            fun test(): Int = definedExternally
         }
     }
 
     companion object {
         @JsName("aaa")
-        val a: Trait = noImpl
-        var b: String = noImpl
-        fun test(): Int = noImpl
+        val a: Trait = definedExternally
+        var b: String = definedExternally
+        fun test(): Int = definedExternally
     }
 }
 
 external interface Trait {
     @JsName("SomeObject")
     object Object {
-        val a: String = noImpl
-        var b: String = noImpl
-        fun test(): Int = noImpl
+        val a: String = definedExternally
+        var b: String = definedExternally
+        fun test(): Int = definedExternally
     }
 
     class Class(a: String) {
         val a: String
-        var b: String = noImpl
-        fun test(): Int = noImpl
+        var b: String = definedExternally
+        fun test(): Int = definedExternally
 
         companion object {
-            val a: String = noImpl
-            var b: String = noImpl
-            fun test(): Int = noImpl
+            val a: String = definedExternally
+            var b: String = definedExternally
+            fun test(): Int = definedExternally
         }
     }
 
@@ -196,15 +196,15 @@ external interface Trait {
         fun test(): Int
 
         companion object {
-            val a: String = noImpl
-            var b: String = noImpl
-            fun test(): Int = noImpl
+            val a: String = definedExternally
+            var b: String = definedExternally
+            fun test(): Int = definedExternally
         }
     }
 
     companion object {
-        val a: Trait = noImpl
-        var b: String = noImpl
-        fun test(): Int = noImpl
+        val a: Trait = definedExternally
+        var b: String = definedExternally
+        fun test(): Int = definedExternally
     }
 }

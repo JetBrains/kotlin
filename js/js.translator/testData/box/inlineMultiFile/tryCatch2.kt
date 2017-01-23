@@ -137,7 +137,7 @@ inline fun <T, R> T.performWithFail2(job: (T)-> R, failJob: (e: RuntimeException
 }
 
 external object Number {
-    fun parseInt(str: String): Int = noImpl
+    fun parseInt(str: String): Int = definedExternally
 }
 
 inline fun String.toInt2(): Int = this.toInt()

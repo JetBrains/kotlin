@@ -5,7 +5,7 @@ package foo
 external class A(x: Int) {
     val x: Int
 
-    fun foo(y: Int): Int = noImpl
+    fun foo(y: Int): Int = definedExternally
 
     class Nested {
         val y: Int
@@ -13,16 +13,16 @@ external class A(x: Int) {
 }
 
 external object B {
-    val x: Int = noImpl
+    val x: Int = definedExternally
 
-    fun foo(y: Int): Int = noImpl
+    fun foo(y: Int): Int = definedExternally
 }
 
-external fun foo(y: Int): Int = noImpl
+external fun foo(y: Int): Int = definedExternally
 
-external val bar: Int = noImpl
+external val bar: Int = definedExternally
 
-external var mbar: Int = noImpl
+external var mbar: Int = definedExternally
 
 fun box(): String {
     val a = A(23)

@@ -2,10 +2,10 @@
 // unreachable code suppressed due to KT-9586
 
 external val baz: Int
-external val boo: Int = noImpl
+external val boo: Int = definedExternally
 
 external fun foo()
-external fun bar() { noImpl }
+external fun bar() { definedExternally }
 
 external interface T {
     val baz: Int
@@ -15,35 +15,35 @@ external interface T {
 
     companion object {
         val baz: Int
-        val boo: Int = noImpl
+        val boo: Int = definedExternally
 
         fun foo()
-        fun bar(): String = noImpl
+        fun bar(): String = definedExternally
     }
 }
 
 external class C {
     val baz: Int
-    val boo: Int = noImpl
+    val boo: Int = definedExternally
 
     fun foo()
-    fun bar() { noImpl }
+    fun bar() { definedExternally }
 
     companion object {
         val baz: Int
-        val boo: Int = noImpl
+        val boo: Int = definedExternally
 
         fun foo()
-        fun bar(): String = noImpl
+        fun bar(): String = definedExternally
     }
 }
 
 external object O {
     val baz: Int
-    val boo: Int = noImpl
+    val boo: Int = definedExternally
 
     fun foo(s: String): String
-    fun bar(s: String): String = noImpl
+    fun bar(s: String): String = definedExternally
 }
 
 

@@ -3,34 +3,34 @@ package foo
 @JsName("Object")
 external class JsObject {
     @nativeGetter
-    operator fun get(a: String): Any? = noImpl
+    operator fun get(a: String): Any? = definedExternally
 
     @nativeSetter
-    operator fun set(a: String, v: Any?): Unit = noImpl
+    operator fun set(a: String, v: Any?): Unit = definedExternally
 
     @nativeGetter
-    fun take(a: Int): Any? = noImpl
+    fun take(a: Int): Any? = definedExternally
 
     @nativeSetter
-    fun put(a: Int, v: Any?): Unit = noImpl
+    fun put(a: Int, v: Any?): Unit = definedExternally
 }
 
 @nativeGetter
-operator fun JsObject.get(a: Int): Any? = noImpl
+operator fun JsObject.get(a: Int): Any? = definedExternally
 
 @nativeSetter
-operator fun JsObject.set(a: Int, v: Any?): Unit = noImpl
+operator fun JsObject.set(a: Int, v: Any?): Unit = definedExternally
 
 @nativeGetter
-fun JsObject.take(a: String): Any? = noImpl
+fun JsObject.take(a: String): Any? = definedExternally
 
 @nativeSetter
-fun JsObject.put(a: String, v: Any?): Unit = noImpl
+fun JsObject.put(a: String, v: Any?): Unit = definedExternally
 
 
 object t{}
 
-external fun getTestObject(): JsObject = noImpl
+external fun getTestObject(): JsObject = definedExternally
 
 fun test(obj: JsObject, key: String, oldValue: Any?, newValue: Any) {
     assertEquals(oldValue, obj[key])

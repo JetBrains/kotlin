@@ -7,7 +7,7 @@ inline fun <reified T : Any> log(x: T) {
 }
 
 @native class C {
-    override fun toString() = noImpl
+    override fun toString() = definedExternally
 }
 
 fun box(): String {

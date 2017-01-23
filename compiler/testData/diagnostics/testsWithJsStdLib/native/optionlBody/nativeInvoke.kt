@@ -2,12 +2,12 @@
 @nativeInvoke
 fun String.foo(): Int
 @nativeInvoke
-fun String.bar(): Int = noImpl
+fun String.bar(): Int = definedExternally
 
 
 external object O {
     @nativeInvoke
     fun foo()
     @nativeInvoke
-    fun bar() { noImpl }
+    fun bar() { definedExternally }
 }

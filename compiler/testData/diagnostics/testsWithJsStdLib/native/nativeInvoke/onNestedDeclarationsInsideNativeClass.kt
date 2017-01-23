@@ -4,26 +4,26 @@ external class A {
     class B {
         class C {
             @nativeInvoke
-            fun foo() { noImpl }
+            fun foo() { definedExternally }
 
             @nativeInvoke
-            fun invoke(a: String): Int = noImpl
+            fun invoke(a: String): Int = definedExternally
         }
 
         object obj {
             @nativeInvoke
-            fun foo() { noImpl }
+            fun foo() { definedExternally }
 
             @nativeInvoke
-            fun invoke(a: String): Int = noImpl
+            fun invoke(a: String): Int = definedExternally
         }
 
         companion object {
             @nativeInvoke
-            fun foo() { noImpl }
+            fun foo() { definedExternally }
 
             @nativeInvoke
-            fun invoke(a: String): Int = noImpl
+            fun invoke(a: String): Int = definedExternally
         }
     }
 }

@@ -2,15 +2,15 @@ package foo
 
 external class A(x: Int) {
     var x: Int
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
 
-    fun foo(): Int = noImpl
+    fun foo(): Int = definedExternally
 
     class B(value: Int) {
         val value: Int
 
-        fun bar(): Int = noImpl
+        fun bar(): Int = definedExternally
     }
 }
 

@@ -5,7 +5,7 @@ package lib
 
 fun foo() = 23
 
-external fun bar(): Int = noImpl
+external fun bar(): Int = definedExternally
 
 inline fun baz() = 99
 

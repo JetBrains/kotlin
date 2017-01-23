@@ -9,7 +9,7 @@ internal class B {
 }
 
 
-internal external fun nativeBox(b: B): String = noImpl
+internal external fun nativeBox(b: B): String = definedExternally
 
 fun box(): String {
     val r = nativeBox(B())

@@ -1,5 +1,5 @@
 open external class A {
-    open fun f(x: Int = noImpl)
+    open fun f(x: Int = definedExternally)
 }
 
 class B : A() {
@@ -12,7 +12,7 @@ external class C : A {
 
 
 external interface I {
-    fun f(x: Int = noImpl)
+    fun f(x: Int = definedExternally)
 }
 
 interface J {

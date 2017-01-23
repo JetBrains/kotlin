@@ -2,7 +2,7 @@ package q
 
 external class Foo {
     // RUN:
-    fun foo(s: Array<String>) = noImpl
+    fun foo(s: Array<String>)
 }
 
 

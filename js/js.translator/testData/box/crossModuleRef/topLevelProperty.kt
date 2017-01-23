@@ -7,10 +7,10 @@ val foo = 23
 val boo: Int
     get() = 42
 
-external val bar: Int = noImpl
+external val bar: Int = definedExternally
 
 external val far: Int
-    get() = noImpl
+    get() = definedExternally
 
 // TODO: annotations like this are not serialized properly. Uncomment after KT-14529 gets fixed
 /*

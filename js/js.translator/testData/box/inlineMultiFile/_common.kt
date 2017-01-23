@@ -1,1 +1,1 @@
-external public fun parseInt(s: String, radix: Int = noImpl): Int = noImpl
+external public fun parseInt(s: String, radix: Int = definedExternally): Int = definedExternally

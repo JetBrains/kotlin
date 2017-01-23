@@ -5,7 +5,7 @@ external class A(c: Int) {
 
     companion object {
         val g: Int
-        val c: String = noImpl
+        val c: String = definedExternally
     }
 }
 

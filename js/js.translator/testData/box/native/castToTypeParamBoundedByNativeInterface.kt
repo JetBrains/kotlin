@@ -10,7 +10,7 @@ interface J {
 @native abstract class B() : I
 
 @native class A(x: String) : B() {
-    override fun foo(): String = noImpl
+    override fun foo(): String = definedExternally
 }
 
 fun createObject(): Any = A("OK")

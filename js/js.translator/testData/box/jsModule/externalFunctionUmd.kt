@@ -3,7 +3,7 @@ package foo
 
 @JsModule("lib-foo")
 @JsNonModule
-external fun foo(x: Int): Int = noImpl
+external fun foo(x: Int): Int = definedExternally
 
 fun box(): String {
     assertEquals(65, foo(42))

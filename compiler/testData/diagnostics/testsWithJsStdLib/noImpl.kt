@@ -1,29 +1,29 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -UNREACHABLE_CODE
 
-val prop: String = <!CALL_TO_NO_IMPL_FROM_NON_EXTERNAL_DECLARATION!>noImpl<!>
+val prop: String = <!CALL_TO_NO_IMPL_FROM_NON_EXTERNAL_DECLARATION!>definedExternally<!>
 
 val prop2: String
-    get() = <!CALL_TO_NO_IMPL_FROM_NON_EXTERNAL_DECLARATION!>noImpl<!>
+    get() = <!CALL_TO_NO_IMPL_FROM_NON_EXTERNAL_DECLARATION!>definedExternally<!>
 
-fun foo(x: Int, y: String = <!CALL_TO_NO_IMPL_FROM_NON_EXTERNAL_DECLARATION!>noImpl<!>) {
+fun foo(x: Int, y: String = <!CALL_TO_NO_IMPL_FROM_NON_EXTERNAL_DECLARATION!>definedExternally<!>) {
     println("Hello")
     println("world")
 
     object {
-        fun bar(): Any = <!CALL_TO_NO_IMPL_FROM_NON_EXTERNAL_DECLARATION!>noImpl<!>
+        fun bar(): Any = <!CALL_TO_NO_IMPL_FROM_NON_EXTERNAL_DECLARATION!>definedExternally<!>
     }
 
     listOf<String>()
-            .map<String, String> { <!CALL_TO_NO_IMPL_FROM_NON_EXTERNAL_DECLARATION!>noImpl<!> }
-            .filter(fun(x: String): Boolean { <!CALL_TO_NO_IMPL_FROM_NON_EXTERNAL_DECLARATION!>noImpl<!> })
+            .map<String, String> { <!CALL_TO_NO_IMPL_FROM_NON_EXTERNAL_DECLARATION!>definedExternally<!> }
+            .filter(fun(x: String): Boolean { <!CALL_TO_NO_IMPL_FROM_NON_EXTERNAL_DECLARATION!>definedExternally<!> })
 
-    <!CALL_TO_NO_IMPL_FROM_NON_EXTERNAL_DECLARATION!>noImpl<!>
+    <!CALL_TO_NO_IMPL_FROM_NON_EXTERNAL_DECLARATION!>definedExternally<!>
 }
 
 open class A(val x: Int)
 
-open class B() : A(<!CALL_TO_NO_IMPL_FROM_NON_EXTERNAL_DECLARATION!>noImpl<!>) {
+open class B() : A(<!CALL_TO_NO_IMPL_FROM_NON_EXTERNAL_DECLARATION!>definedExternally<!>) {
     constructor(y: String) : this()
 
-    constructor(y: String, z: String) : this(y + z + <!CALL_TO_NO_IMPL_FROM_NON_EXTERNAL_DECLARATION!>noImpl<!>)
+    constructor(y: String, z: String) : this(y + z + <!CALL_TO_NO_IMPL_FROM_NON_EXTERNAL_DECLARATION!>definedExternally<!>)
 }

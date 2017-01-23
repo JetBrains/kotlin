@@ -1,7 +1,7 @@
 package foo
 
 external interface A {
-    val bar: Int? get() = noImpl
+    val bar: Int? get() = definedExternally
     fun foo(): String
 }
 

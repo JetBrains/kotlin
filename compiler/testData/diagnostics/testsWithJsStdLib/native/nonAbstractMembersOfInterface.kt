@@ -1,21 +1,21 @@
 external interface I {
-    <!NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE!>fun foo(): Unit<!> = noImpl
+    <!NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE!>fun foo(): Unit<!> = definedExternally
 
     val a: Int?
-        get() = noImpl
+        get() = definedExternally
 
     var b: String?
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
 
     <!NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE!>val c: Int<!>
-        get() = noImpl
+        get() = definedExternally
 
     <!NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE!>var d: String<!>
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
 
     var e: dynamic
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
 }

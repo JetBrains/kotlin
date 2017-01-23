@@ -1,31 +1,31 @@
 package foo
 
 @JsName("bar")
-external fun foo(): Int = noImpl
+external fun foo(): Int = definedExternally
 
 @JsName("baz")
-external val prop: Int get() = noImpl
+external val prop: Int get() = definedExternally
 
 @JsName("B")
 external class A {
     @JsName("g")
-    fun f(): Int = noImpl
+    fun f(): Int = definedExternally
 
     @JsName("q")
-    val p: Int get() = noImpl
+    val p: Int get() = definedExternally
 
     companion object {
         @JsName("g")
-        fun f(): Int = noImpl
+        fun f(): Int = definedExternally
 
         @JsName("q")
-        val p: Int get() = noImpl
+        val p: Int get() = definedExternally
     }
 }
 
 @JsName("P")
 external object O {
-    fun f(): Int = noImpl
+    fun f(): Int = definedExternally
 }
 
 fun box(): String {

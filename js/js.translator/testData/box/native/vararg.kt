@@ -1,12 +1,12 @@
 package foo
 
-external fun paramCount(vararg a: Int): Int = noImpl
+external fun paramCount(vararg a: Int): Int = definedExternally
 
 @JsName("paramCount")
-external fun anotherParamCount(vararg a: Int): Int = noImpl
+external fun anotherParamCount(vararg a: Int): Int = definedExternally
 
 @JsName("paramCount")
-external fun <T> genericParamCount(vararg a: T): Int = noImpl
+external fun <T> genericParamCount(vararg a: T): Int = definedExternally
 
 // test spread operator
 fun count(vararg a: Int) = paramCount(*a)
@@ -14,19 +14,19 @@ fun count(vararg a: Int) = paramCount(*a)
 // test spread operator
 fun anotherCount(vararg a: Int) = anotherParamCount(*a)
 
-external fun test3(bar: Bar, dummy: Int, vararg args: Int): Boolean = noImpl
+external fun test3(bar: Bar, dummy: Int, vararg args: Int): Boolean = definedExternally
 
-external class Bar(size: Int, order: Int = noImpl) {
+external class Bar(size: Int, order: Int = definedExternally) {
     val size: Int
-    fun test(order: Int, dummy: Int, vararg args: Int): Boolean = noImpl
+    fun test(order: Int, dummy: Int, vararg args: Int): Boolean = definedExternally
     companion object {
-        fun startNewTest(): Boolean = noImpl
-        var hasOrderProblem: Boolean = noImpl
+        fun startNewTest(): Boolean = definedExternally
+        var hasOrderProblem: Boolean = definedExternally
     }
 }
 
 external object obj {
-    fun test(size: Int, vararg args: Int): Boolean = noImpl
+    fun test(size: Int, vararg args: Int): Boolean = definedExternally
 }
 
 fun spreadInMethodCall(size: Int, vararg args: Int) = Bar(size).test(0, 1, *args)
@@ -35,7 +35,7 @@ fun spreadInObjectMethodCall(size: Int, vararg args: Int) = obj.test(size, *args
 
 fun spreadInPackageMethodCall(size: Int, vararg args: Int) = test3(Bar(size), 1, *args)
 
-external fun testNativeVarargWithFunLit(vararg args: Int, f: (a: IntArray) -> Boolean): Boolean = noImpl
+external fun testNativeVarargWithFunLit(vararg args: Int, f: (a: IntArray) -> Boolean): Boolean = definedExternally
 
 fun testSpreadOperatorWithSafeCall(a: Bar?, expected: Boolean?, vararg args: Int): Boolean {
     return a?.test(0, 1, *args) == expected
@@ -50,11 +50,11 @@ fun testCallOrder(vararg args: Int) =
         Bar(args.size, 0).test(1, 1, *args) && Bar(args.size, 2).test(3, 1, *args) &&
         !Bar.hasOrderProblem
 
-external fun sumOfParameters(x: Int, y: Int, vararg a: Int): Int = noImpl
+external fun sumOfParameters(x: Int, y: Int, vararg a: Int): Int = definedExternally
 
-external fun sumFunValuesOnParameters(x: Int, y: Int, vararg a: Int, f: (Int) -> Int): Int = noImpl
+external fun sumFunValuesOnParameters(x: Int, y: Int, vararg a: Int, f: (Int) -> Int): Int = definedExternally
 
-external fun <T> idArrayVarArg(vararg a: Array<T>): Array<T> = noImpl
+external fun <T> idArrayVarArg(vararg a: Array<T>): Array<T> = definedExternally
 
 fun box(): String {
     if (paramCount() != 0)

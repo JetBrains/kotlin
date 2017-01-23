@@ -1,7 +1,7 @@
 external open class A {
-    open fun f(x: Int): String = noImpl
+    open fun f(x: Int): String = definedExternally
 
-    open fun f(x: String): String = noImpl
+    open fun f(x: String): String = definedExternally
 }
 
 class B : A() {
