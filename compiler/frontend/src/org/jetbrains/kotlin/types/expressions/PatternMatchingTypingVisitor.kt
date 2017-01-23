@@ -245,15 +245,6 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             possibleTypesForSubject: Set<KotlinType>
     ) {
         val subjectExpression = expression.subjectExpression ?: return
-        val isNullableType = TypeUtils.isNullableType(subjectType)
-        val bindingContext = contextBeforeSubject.trace.bindingContext
-        if (isNullableType && !WhenChecker.containsNullCase(expression, bindingContext)) {
-            val notNullableType = TypeUtils.makeNotNullable(subjectType)
-            if (checkSmartCastToExpectedTypeInSubject(contextBeforeSubject, subjectExpression, subjectType,
-                                                      notNullableType)) {
-                return
-            }
-        }
         for (possibleCastType in possibleTypesForSubject) {
             val possibleCastClass = possibleCastType.constructor.declarationDescriptor as? ClassDescriptor ?: continue
             if (possibleCastClass.kind == ClassKind.ENUM_CLASS || possibleCastClass.modality == Modality.SEALED) {
@@ -261,6 +252,15 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                                                           possibleCastType)) {
                     return
                 }
+            }
+        }
+        val isNullableType = TypeUtils.isNullableType(subjectType)
+        val bindingContext = contextBeforeSubject.trace.bindingContext
+        if (isNullableType && !WhenChecker.containsNullCase(expression, bindingContext)) {
+            val notNullableType = TypeUtils.makeNotNullable(subjectType)
+            if (checkSmartCastToExpectedTypeInSubject(contextBeforeSubject, subjectExpression, subjectType,
+                                                      notNullableType)) {
+                return
             }
         }
     }

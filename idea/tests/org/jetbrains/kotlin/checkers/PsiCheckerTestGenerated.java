@@ -917,6 +917,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTestWithInfos(fileName);
         }
 
+        @TestMetadata("SmartCastToEnum.kt")
+        public void testSmartCastToEnum() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/SmartCastToEnum.kt");
+            doTestWithInfos(fileName);
+        }
+
         @TestMetadata("SmartCasts.kt")
         public void testSmartCasts() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/SmartCasts.kt");
