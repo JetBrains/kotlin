@@ -1,5 +1,6 @@
 package kotlin.js
 
+@Deprecated(message = "Use `definedExternally` instead", level = DeprecationLevel.ERROR, replaceWith = ReplaceWith("definedExternally"))
 public external val noImpl: Nothing
 
 public external val definedExternally: Nothing
