@@ -36,8 +36,9 @@ allprojects {
                 ["--sysroot=$hostSysrootDir"], 
              "iphone":
                 ["-stdlib=libc++", "-arch", "arm64", "-isysroot", "$iphoneSysrootDir"],
-             "iphone_sim":
-                ["-stdlib=libc++", "-isysroot", "$iphoneSimSysrootDir"],
+// TODO: re-enable after simulator sysroot is available in the dependencies
+//             "iphone_sim":
+//                ["-stdlib=libc++", "-isysroot", "$iphoneSimSysrootDir"],
             ]
      }
      ext.targetList = ext.targetArgs.keySet() as List
