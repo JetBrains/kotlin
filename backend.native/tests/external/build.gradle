@@ -1,5 +1,9 @@
 import org.jetbrains.kotlin.*
 
+/*******************************************************************************
+*      WARNING: This file auto generated with command 
+*      # ./gradlew  :backend.native:tests:regenerate_external_tests
+*******************************************************************************/
 configurations {
     cli_bc
 }
