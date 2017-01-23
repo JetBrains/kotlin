@@ -40,11 +40,13 @@ import org.jetbrains.kotlin.idea.conversion.copy.end
 import org.jetbrains.kotlin.idea.conversion.copy.range
 import org.jetbrains.kotlin.idea.conversion.copy.start
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.kdoc.KDocReference
 import org.jetbrains.kotlin.idea.references.*
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getFileResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.kdoc.psi.api.KDocElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
@@ -124,7 +126,9 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
             endOffsets: IntArray
     ): List<KotlinReferenceData> {
         val ranges = toTextRanges(startOffsets, endOffsets)
-        val elementsByRange = ranges.associateBy({ it }, { file.elementsInRange(it).filterIsInstance<KtElement>() })
+        val elementsByRange = ranges.associateBy({ it }, {
+            file.elementsInRange(it).filter { it is KtElement || it is KDocElement }
+        })
 
         val allElementsToResolve = elementsByRange.values.flatMap { it }.flatMap { it.collectDescendantsOfType<KtElement>() }
         val bindingContext = file.getResolutionFacade().analyze(allElementsToResolve, BodyResolveMode.PARTIAL)
@@ -139,7 +143,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
     }
 
     private fun MutableCollection<KotlinReferenceData>.addReferenceDataInsideElement(
-            element: KtElement,
+            element: PsiElement,
             file: KtFile,
             startOffset: Int,
             startOffsets: IntArray,
@@ -300,21 +304,27 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
         )
 
         val bindingRequests = ArrayList<BindingRequest>()
-        val extensionsToImport = ArrayList<CallableDescriptor>()
+        val descriptorsToImport = ArrayList<DeclarationDescriptor>()
+
         for ((reference, refData) in referencesToRestore) {
             val fqName = FqName(refData.fqName)
 
-            if (!refData.kind.isExtension() && reference is KtSimpleNameReference) {
-                val pointer = smartPointerManager.createSmartPsiElementPointer(reference.element, file)
-                bindingRequests.add(BindingRequest(pointer, fqName))
+            if (!refData.kind.isExtension()) {
+                if (reference is KtSimpleNameReference) {
+                    val pointer = smartPointerManager.createSmartPsiElementPointer(reference.element, file)
+                    bindingRequests.add(BindingRequest(pointer, fqName))
+                }
+                else if (reference is KDocReference) {
+                    descriptorsToImport.addAll(findImportableDescriptors(fqName, file))
+                }
             }
 
             if (refData.kind.isExtension()) {
-                extensionsToImport.addIfNotNull(findCallableToImport(fqName, file))
+                descriptorsToImport.addIfNotNull(findCallableToImport(fqName, file))
             }
         }
 
-        for (descriptor in extensionsToImport) {
+        for (descriptor in descriptorsToImport) {
             importHelper.importDescriptor(file, descriptor)
         }
         for ((pointer, fqName) in bindingRequests) {

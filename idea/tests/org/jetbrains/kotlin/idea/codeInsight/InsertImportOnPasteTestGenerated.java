@@ -320,6 +320,12 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCopy(fileName);
         }
 
+        @TestMetadata("OnlyKDocReferenced.kt")
+        public void testOnlyKDocReferenced() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/imports/OnlyKDocReferenced.kt");
+            doTestCopy(fileName);
+        }
+
         @TestMetadata("OverloadedExtensionFunction.kt")
         public void testOverloadedExtensionFunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/imports/OverloadedExtensionFunction.kt");
@@ -680,6 +686,12 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("Object.kt")
         public void testObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Object.kt");
+            doTestCut(fileName);
+        }
+
+        @TestMetadata("OnlyKDocReferenced.kt")
+        public void testOnlyKDocReferenced() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/imports/OnlyKDocReferenced.kt");
             doTestCut(fileName);
         }
 
