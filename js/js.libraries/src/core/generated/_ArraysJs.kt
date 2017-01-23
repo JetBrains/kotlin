@@ -5157,7 +5157,7 @@ public fun CharArray.sortedWith(comparator: Comparator<in Char>): List<Char> {
 @SinceKotlin("1.1")
 @library("arrayDeepEquals")
 public infix fun <T> Array<out T>.contentDeepEquals(other: Array<out T>): Boolean {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5169,7 +5169,7 @@ public infix fun <T> Array<out T>.contentDeepEquals(other: Array<out T>): Boolea
 @SinceKotlin("1.1")
 @library("arrayDeepHashCode")
 public fun <T> Array<out T>.contentDeepHashCode(): Int {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5182,7 +5182,7 @@ public fun <T> Array<out T>.contentDeepHashCode(): Int {
 @SinceKotlin("1.1")
 @library("arrayDeepToString")
 public fun <T> Array<out T>.contentDeepToString(): String {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5192,7 +5192,7 @@ public fun <T> Array<out T>.contentDeepToString(): String {
 @SinceKotlin("1.1")
 @library("arrayEquals")
 public infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boolean {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5202,7 +5202,7 @@ public infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boolean {
 @SinceKotlin("1.1")
 @library("arrayEquals")
 public infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5212,7 +5212,7 @@ public infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
 @SinceKotlin("1.1")
 @library("arrayEquals")
 public infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5222,7 +5222,7 @@ public infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
 @SinceKotlin("1.1")
 @library("arrayEquals")
 public infix fun IntArray.contentEquals(other: IntArray): Boolean {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5232,7 +5232,7 @@ public infix fun IntArray.contentEquals(other: IntArray): Boolean {
 @SinceKotlin("1.1")
 @library("arrayEquals")
 public infix fun LongArray.contentEquals(other: LongArray): Boolean {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5242,7 +5242,7 @@ public infix fun LongArray.contentEquals(other: LongArray): Boolean {
 @SinceKotlin("1.1")
 @library("arrayEquals")
 public infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5252,7 +5252,7 @@ public infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
 @SinceKotlin("1.1")
 @library("arrayEquals")
 public infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5262,7 +5262,7 @@ public infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
 @SinceKotlin("1.1")
 @library("arrayEquals")
 public infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5272,7 +5272,7 @@ public infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean {
 @SinceKotlin("1.1")
 @library("arrayEquals")
 public infix fun CharArray.contentEquals(other: CharArray): Boolean {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5281,7 +5281,7 @@ public infix fun CharArray.contentEquals(other: CharArray): Boolean {
 @SinceKotlin("1.1")
 @library("arrayHashCode")
 public fun <T> Array<out T>.contentHashCode(): Int {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5290,7 +5290,7 @@ public fun <T> Array<out T>.contentHashCode(): Int {
 @SinceKotlin("1.1")
 @library("arrayHashCode")
 public fun ByteArray.contentHashCode(): Int {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5299,7 +5299,7 @@ public fun ByteArray.contentHashCode(): Int {
 @SinceKotlin("1.1")
 @library("arrayHashCode")
 public fun ShortArray.contentHashCode(): Int {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5308,7 +5308,7 @@ public fun ShortArray.contentHashCode(): Int {
 @SinceKotlin("1.1")
 @library("arrayHashCode")
 public fun IntArray.contentHashCode(): Int {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5317,7 +5317,7 @@ public fun IntArray.contentHashCode(): Int {
 @SinceKotlin("1.1")
 @library("arrayHashCode")
 public fun LongArray.contentHashCode(): Int {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5326,7 +5326,7 @@ public fun LongArray.contentHashCode(): Int {
 @SinceKotlin("1.1")
 @library("arrayHashCode")
 public fun FloatArray.contentHashCode(): Int {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5335,7 +5335,7 @@ public fun FloatArray.contentHashCode(): Int {
 @SinceKotlin("1.1")
 @library("arrayHashCode")
 public fun DoubleArray.contentHashCode(): Int {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5344,7 +5344,7 @@ public fun DoubleArray.contentHashCode(): Int {
 @SinceKotlin("1.1")
 @library("arrayHashCode")
 public fun BooleanArray.contentHashCode(): Int {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5353,7 +5353,7 @@ public fun BooleanArray.contentHashCode(): Int {
 @SinceKotlin("1.1")
 @library("arrayHashCode")
 public fun CharArray.contentHashCode(): Int {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5362,7 +5362,7 @@ public fun CharArray.contentHashCode(): Int {
 @SinceKotlin("1.1")
 @library("arrayToString")
 public fun <T> Array<out T>.contentToString(): String {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5371,7 +5371,7 @@ public fun <T> Array<out T>.contentToString(): String {
 @SinceKotlin("1.1")
 @library("arrayToString")
 public fun ByteArray.contentToString(): String {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5380,7 +5380,7 @@ public fun ByteArray.contentToString(): String {
 @SinceKotlin("1.1")
 @library("arrayToString")
 public fun ShortArray.contentToString(): String {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5389,7 +5389,7 @@ public fun ShortArray.contentToString(): String {
 @SinceKotlin("1.1")
 @library("arrayToString")
 public fun IntArray.contentToString(): String {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5398,7 +5398,7 @@ public fun IntArray.contentToString(): String {
 @SinceKotlin("1.1")
 @library("arrayToString")
 public fun LongArray.contentToString(): String {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5407,7 +5407,7 @@ public fun LongArray.contentToString(): String {
 @SinceKotlin("1.1")
 @library("arrayToString")
 public fun FloatArray.contentToString(): String {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5416,7 +5416,7 @@ public fun FloatArray.contentToString(): String {
 @SinceKotlin("1.1")
 @library("arrayToString")
 public fun DoubleArray.contentToString(): String {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5425,7 +5425,7 @@ public fun DoubleArray.contentToString(): String {
 @SinceKotlin("1.1")
 @library("arrayToString")
 public fun BooleanArray.contentToString(): String {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -5434,7 +5434,7 @@ public fun BooleanArray.contentToString(): String {
 @SinceKotlin("1.1")
 @library("arrayToString")
 public fun CharArray.contentToString(): String {
-    return noImpl
+    definedExternally
 }
 
 /**
@@ -13374,7 +13374,7 @@ public inline fun <T> Array<out T>.plusElement(element: T): Array<T> {
  */
 @library("primitiveArraySort")
 public fun IntArray.sort(): Unit {
-    noImpl
+    definedExternally
 }
 
 /**
@@ -13390,7 +13390,7 @@ public fun LongArray.sort(): Unit {
  */
 @library("primitiveArraySort")
 public fun ByteArray.sort(): Unit {
-    noImpl
+    definedExternally
 }
 
 /**
@@ -13398,7 +13398,7 @@ public fun ByteArray.sort(): Unit {
  */
 @library("primitiveArraySort")
 public fun ShortArray.sort(): Unit {
-    noImpl
+    definedExternally
 }
 
 /**
@@ -13406,7 +13406,7 @@ public fun ShortArray.sort(): Unit {
  */
 @library("primitiveArraySort")
 public fun DoubleArray.sort(): Unit {
-    noImpl
+    definedExternally
 }
 
 /**
@@ -13414,7 +13414,7 @@ public fun DoubleArray.sort(): Unit {
  */
 @library("primitiveArraySort")
 public fun FloatArray.sort(): Unit {
-    noImpl
+    definedExternally
 }
 
 /**
@@ -13422,7 +13422,7 @@ public fun FloatArray.sort(): Unit {
  */
 @library("primitiveArraySort")
 public fun CharArray.sort(): Unit {
-    noImpl
+    definedExternally
 }
 
 /**
