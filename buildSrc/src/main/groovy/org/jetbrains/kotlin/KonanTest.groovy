@@ -123,7 +123,7 @@ class LinkKonanTest extends KonanTest {
 class RunExternalTestGroup extends RunKonanTest {
 
     def groupDirectory = "."
-    def logFileName = "test-result.md"
+    def logFileName = "${name}.md"
     String filter = project.findProperty("filter")
     String goldValue = "OK"
 
