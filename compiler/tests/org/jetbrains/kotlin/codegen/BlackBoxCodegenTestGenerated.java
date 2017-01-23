@@ -17689,6 +17689,30 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt14597.kt")
+            public void testKt14597() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/enumOptimization/kt14597.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt14597_full.kt")
+            public void testKt14597_full() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/enumOptimization/kt14597_full.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt14802.kt")
+            public void testKt14802() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/enumOptimization/kt14802.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt15806.kt")
+            public void testKt15806() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/enumOptimization/kt15806.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("manyWhensWithinClass.kt")
             public void testManyWhensWithinClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/enumOptimization/manyWhensWithinClass.kt");

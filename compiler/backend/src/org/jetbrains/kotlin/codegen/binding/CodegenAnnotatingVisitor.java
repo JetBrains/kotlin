@@ -648,8 +648,10 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         int fieldNumber = mappings.size();
 
         assert expression.getSubjectExpression() != null : "subject expression should be not null in a valid when by enums";
-        KotlinType type = bindingContext.getType(expression.getSubjectExpression());
+
+        KotlinType type = WhenChecker.whenSubjectType(expression, bindingContext);
         assert type != null : "should not be null in a valid when by enums";
+
         ClassDescriptor classDescriptor = (ClassDescriptor) type.getConstructor().getDeclarationDescriptor();
         assert classDescriptor != null : "because it's enum";
 

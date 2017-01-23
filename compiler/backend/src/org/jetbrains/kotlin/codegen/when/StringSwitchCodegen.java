@@ -43,7 +43,7 @@ public class StringSwitchCodegen extends SwitchCodegen {
             boolean isExhaustive,
             @NotNull ExpressionCodegen codegen
     ) {
-        super(expression, isStatement, isExhaustive, codegen);
+        super(expression, isStatement, isExhaustive, codegen, null);
     }
 
     @Override

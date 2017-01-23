@@ -1712,6 +1712,24 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt14597_full.kt")
+        public void testKt14597_full() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/whenEnumOptimization/kt14597_full.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt14802.kt")
+        public void testKt14802() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/whenEnumOptimization/kt14802.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt15806.kt")
+        public void testKt15806() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/whenEnumOptimization/kt15806.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("manyWhensWithinClass.kt")
         public void testManyWhensWithinClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/whenEnumOptimization/manyWhensWithinClass.kt");

@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.codegen.when;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.ExpressionCodegen;
 import org.jetbrains.kotlin.codegen.FrameMap;
-import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.psi.KtWhenEntry;
 import org.jetbrains.kotlin.psi.KtWhenExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -51,7 +51,8 @@ abstract public class SwitchCodegen {
 
     public SwitchCodegen(
             @NotNull KtWhenExpression expression, boolean isStatement,
-            boolean isExhaustive, @NotNull ExpressionCodegen codegen
+            boolean isExhaustive, @NotNull ExpressionCodegen codegen,
+            @Nullable Type subjectType
     ) {
         this.expression = expression;
         this.isStatement = isStatement;
@@ -59,7 +60,7 @@ abstract public class SwitchCodegen {
         this.codegen = codegen;
         this.bindingContext = codegen.getBindingContext();
 
-        subjectType = codegen.expressionType(expression.getSubjectExpression());
+        this.subjectType = subjectType != null ? subjectType : codegen.expressionType(expression.getSubjectExpression());
         resultType = isStatement ? Type.VOID_TYPE : codegen.expressionType(expression);
         v = codegen.v;
     }

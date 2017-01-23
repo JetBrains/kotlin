@@ -1,0 +1,14 @@
+@kotlin.Metadata
+public final class Kt15806Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private final static method doTheThing(@org.jetbrains.annotations.Nullable p0: java.lang.Object): java.lang.String
+}
+
+@kotlin.Metadata
+public enum class Level {
+    public final static field K: Level
+    public final static field O: Level
+    protected method <init>(p0: java.lang.String, p1: int): void
+    public static method valueOf(p0: java.lang.String): Level
+    public static method values(): Level[]
+}

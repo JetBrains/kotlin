@@ -280,7 +280,8 @@ object WhenChecker {
         return classDescriptor
     }
 
-    private fun whenSubjectType(expression: KtWhenExpression, context: BindingContext) =
+    @JvmStatic
+    fun whenSubjectType(expression: KtWhenExpression, context: BindingContext) =
             expression.subjectExpression?.let { context.get(SMARTCAST, it)?.defaultType ?: context.getType(it) }
 
     @JvmStatic
