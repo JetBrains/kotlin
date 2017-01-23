@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js.translate.expression
 
-import org.jetbrains.kotlin.builtins.isBuiltinExtensionFunctionalType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -38,13 +37,9 @@ import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
-import org.jetbrains.kotlin.types.KotlinType
 
 class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslator(context) {
-    fun translate(
-            declaration: KtDeclarationWithBody,
-            continuationType: KotlinType? = null
-    ): JsExpression {
+    fun translate(declaration: KtDeclarationWithBody): JsExpression {
         val invokingContext = context()
         val descriptor = getFunctionDescriptor(invokingContext.bindingContext(), declaration)
 
@@ -80,7 +75,7 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
                 lambda.name = tracker.getNameForCapturedDescriptor(descriptor)
             }
             lambdaCreator.name.staticRef = lambdaCreator
-            lambdaCreator.fillCoroutineMetadata(invokingContext, descriptor, continuationType)
+            lambdaCreator.fillCoroutineMetadata(invokingContext, descriptor)
             return lambdaCreator.withCapturedParameters(descriptor, descriptor.wrapContextForCoroutineIfNecessary(functionContext),
                                                         invokingContext)
         }
@@ -96,15 +91,15 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
         lambda.isLocal = true
 
         invokingContext.addDeclarationStatement(lambda.makeStmt())
-        lambda.fillCoroutineMetadata(invokingContext, descriptor, continuationType)
+        lambda.fillCoroutineMetadata(invokingContext, descriptor)
         lambda.name.staticRef = lambda
         return getReferenceToLambda(invokingContext, descriptor, lambda.name)
     }
 
-    fun JsFunction.fillCoroutineMetadata(context: TranslationContext, descriptor: FunctionDescriptor, continuationType: KotlinType?) {
-        if (continuationType == null) return
+    fun JsFunction.fillCoroutineMetadata(context: TranslationContext, descriptor: FunctionDescriptor) {
+        if (!descriptor.isSuspend) return
 
-        fillCoroutineMetadata(context, descriptor, hasController = continuationType.isBuiltinExtensionFunctionalType, isLambda = true)
+        fillCoroutineMetadata(context, descriptor, hasController = descriptor.extensionReceiverParameter != null, isLambda = true)
     }
 
     fun ValueParameterDescriptorImpl.WithDestructuringDeclaration.translate(context: TranslationContext): JsVars {

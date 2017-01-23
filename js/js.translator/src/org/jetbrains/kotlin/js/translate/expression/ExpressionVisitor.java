@@ -446,13 +446,13 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
     public JsNode visitLambdaExpression(@NotNull KtLambdaExpression expression, @NotNull TranslationContext context) {
-        return new LiteralFunctionTranslator(context).translate(expression.getFunctionLiteral(), null);
+        return new LiteralFunctionTranslator(context).translate(expression.getFunctionLiteral());
     }
 
     @Override
     @NotNull
     public JsNode visitNamedFunction(@NotNull KtNamedFunction expression, @NotNull TranslationContext context) {
-        JsExpression alias = new LiteralFunctionTranslator(context).translate(expression, null);
+        JsExpression alias = new LiteralFunctionTranslator(context).translate(expression);
 
         FunctionDescriptor descriptor = getFunctionDescriptor(context.bindingContext(), expression);
         JsNameRef nameRef = (JsNameRef) ReferenceTranslator.translateAsValueReference(descriptor, context);

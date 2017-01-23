@@ -16,24 +16,26 @@
 
 package org.jetbrains.kotlin.js.translate.reference
 
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
 import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
-import org.jetbrains.kotlin.coroutines.isSuspendLambda
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TemporaryConstVariable
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.expression.LiteralFunctionTranslator
 import org.jetbrains.kotlin.js.translate.expression.PatternTranslator
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
-import org.jetbrains.kotlin.js.translate.utils.*
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtLambdaExpression
-import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
+import org.jetbrains.kotlin.js.translate.utils.getReferenceToJsClass
 import org.jetbrains.kotlin.psi.ValueArgument
-import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
@@ -151,26 +153,11 @@ class CallArgumentTranslator private constructor(
             context: TranslationContext,
             resolvedCall: ResolvedCall<*>
     ): Map<ValueArgument, JsExpression> {
-        val argsToParameters = resolvedCall.valueArguments
-                .flatMap { (param, args) -> args.arguments.map { param to it } }
-                .associate { (param, arg) -> arg to param }
-
         val argumentContexts = resolvedCall.call.valueArguments.associate { it to context.innerBlock() }
 
         var result = resolvedCall.call.valueArguments.associate { arg ->
             val argumentContext = argumentContexts[arg]!!
-            val argumentExpression = KtPsiUtil.deparenthesize(arg.getArgumentExpression())
-
-            val lambdaDescriptor = argumentExpression?.let { argumentContext.extractLambda(it) }
-            val jsExpr = if (lambdaDescriptor?.isSuspendLambda == true) {
-                val lambdaExpression = (argumentExpression as KtLambdaExpression).functionLiteral
-                val param = argsToParameters[arg]!!
-                LiteralFunctionTranslator(argumentContext).translate(lambdaExpression, param.type)
-            }
-            else {
-                Translation.translateAsExpression(arg.getArgumentExpression()!!, argumentContext)
-            }
-
+            val jsExpr = Translation.translateAsExpression(arg.getArgumentExpression()!!, argumentContext)
             arg to jsExpr
         }
 
@@ -223,11 +210,6 @@ class CallArgumentTranslator private constructor(
         ): List<JsExpression> {
             if (resolvedArgument is DefaultValueArgument) return listOf(Namer.getUndefinedExpression())
             return resolvedArgument.arguments.map { translatedArgs[it]!! }
-        }
-
-        private fun TranslationContext.extractLambda(expression: KtExpression): CallableDescriptor? {
-            val lambdaExpression = expression as? KtLambdaExpression ?: return null
-            return BindingUtils.getFunctionDescriptor(bindingContext(), lambdaExpression.functionLiteral)
         }
 
         private fun translateVarargArgument(
