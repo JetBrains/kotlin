@@ -59,7 +59,7 @@ fun arrays(): List<GenericFunction> {
         body(Platform.JVM) { "return java.util.Arrays.equals(this, other)" }
 
         annotations(Platform.JS, """@library("arrayEquals")""")
-        body(Platform.JS) { "return noImpl" }
+        body(Platform.JS) { "definedExternally" }
 
     }
 
@@ -80,7 +80,7 @@ fun arrays(): List<GenericFunction> {
         returns("Boolean")
         body(Platform.JVM) { "return java.util.Arrays.deepEquals(this, other)" }
         annotations(Platform.JS, """@library("arrayDeepEquals")""")
-        body(Platform.JS) { "return noImpl" }
+        body(Platform.JS) { "definedExternally" }
     }
 
     templates add f("contentToString()") {
@@ -91,7 +91,7 @@ fun arrays(): List<GenericFunction> {
         returns("String")
         body(Platform.JVM) { "return java.util.Arrays.toString(this)" }
         annotations(Platform.JS, """@library("arrayToString")""")
-        body(Platform.JS) { "return noImpl" }
+        body(Platform.JS) { "definedExternally" }
     }
 
     templates add f("contentDeepToString()") {
@@ -110,7 +110,7 @@ fun arrays(): List<GenericFunction> {
         returns("String")
         body(Platform.JVM) { "return java.util.Arrays.deepToString(this)" }
         annotations(Platform.JS, """@library("arrayDeepToString")""")
-        body(Platform.JS) { "return noImpl" }
+        body(Platform.JS) { "definedExternally" }
     }
 
     templates add f("contentHashCode()") {
@@ -123,7 +123,7 @@ fun arrays(): List<GenericFunction> {
         returns("Int")
         body(Platform.JVM) { "return java.util.Arrays.hashCode(this)" }
         annotations(Platform.JS, """@library("arrayHashCode")""")
-        body(Platform.JS) { "return noImpl" }
+        body(Platform.JS) { "definedExternally" }
     }
 
     templates add f("contentDeepHashCode()") {
@@ -141,7 +141,7 @@ fun arrays(): List<GenericFunction> {
         returns("Int")
         body(Platform.JVM) { "return java.util.Arrays.deepHashCode(this)" }
         annotations(Platform.JS, """@library("arrayDeepHashCode")""")
-        body(Platform.JS) { "return noImpl" }
+        body(Platform.JS) { "definedExternally" }
     }
 
     templates addAll PrimitiveType.defaultPrimitives.map { primitive ->

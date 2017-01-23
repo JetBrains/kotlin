@@ -348,7 +348,7 @@ object CommonArrays {
                 }
                 if (primitive != PrimitiveType.Long) {
                     annotations(Platform.JS, """@library("primitiveArraySort")""")
-                    body(Platform.JS) { "noImpl" }
+                    body(Platform.JS) { "definedExternally" }
                 }
                 else {
                     body(Platform.JS) {
