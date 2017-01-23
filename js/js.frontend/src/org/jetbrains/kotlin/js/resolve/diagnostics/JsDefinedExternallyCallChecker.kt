@@ -30,7 +30,7 @@ object JsDefinedExternallyCallChecker : CallChecker {
 
         val ownerDescriptor = context.scope.ownerDescriptor
         if (!AnnotationsUtils.isNativeObject(ownerDescriptor) && !AnnotationsUtils.isPredefinedObject(ownerDescriptor)) {
-            context.trace.report(ErrorsJs.CALL_TO_NO_IMPL_FROM_NON_EXTERNAL_DECLARATION.on(reportOn))
+            context.trace.report(ErrorsJs.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION.on(reportOn))
         }
     }
 }

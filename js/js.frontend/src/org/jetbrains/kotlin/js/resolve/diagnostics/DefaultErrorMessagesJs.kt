@@ -85,16 +85,17 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE,
             "Only nullable properties of external interfaces are allowed to be non-abstract")
 
-        put(ErrorsJs.WRONG_BODY_OF_EXTERNAL_DECLARATION, "Wrong body of external declaration. Must be either ' = noImpl' or { noImpl }")
-        put(ErrorsJs.WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION, "Wrong initializer of external declaration. Must be ' = noImpl'")
+        put(ErrorsJs.WRONG_BODY_OF_EXTERNAL_DECLARATION,
+            "Wrong body of external declaration. Must be either ' = definedExternally' or { definedExternally }")
+        put(ErrorsJs.WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION, "Wrong initializer of external declaration. Must be ' = definedExternally'")
         put(ErrorsJs.WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER,
-            "Wrong default value for parameter of external function. Must be ' = noImpl'")
+            "Wrong default value for parameter of external function. Must be ' = definedExternally'")
         put(ErrorsJs.EXTERNAL_DELEGATED_CONSTRUCTOR_CALL, "Delegated constructor call in external class is not allowed")
         put(ErrorsJs.EXTERNAL_DELEGATION, "Can't use delegate on external declaration")
         put(ErrorsJs.EXTERNAL_ANONYMOUS_INITIALIZER, "Anonymous initializer is not allowed in external classes")
         put(ErrorsJs.EXTERNAL_ENUM_ENTRY_WITH_BODY, "Entry of external enum class can't have body")
         put(ErrorsJs.EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER, "External class constructor cannot have a property parameter")
-        put(ErrorsJs.CALL_TO_NO_IMPL_FROM_NON_EXTERNAL_DECLARATION, "This property can only be used from external declarations")
+        put(ErrorsJs.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION, "This property can only be used from external declarations")
 
         this
     }
