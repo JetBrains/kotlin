@@ -89,6 +89,12 @@ public class GenerateToStringActionTestGenerated extends AbstractGenerateToStrin
             doTest(fileName);
         }
 
+        @TestMetadata("keepQuotes.kt")
+        public void testKeepQuotes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/toString/multipeTemplates/keepQuotes.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("multipleVars.kt")
         public void testMultipleVars() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/toString/multipeTemplates/multipleVars.kt");
@@ -149,6 +155,12 @@ public class GenerateToStringActionTestGenerated extends AbstractGenerateToStrin
         @TestMetadata("explicitDefaultAccessors.kt")
         public void testExplicitDefaultAccessors() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/toString/singleTemplate/explicitDefaultAccessors.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("keepQuotes.kt")
+        public void testKeepQuotes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/toString/singleTemplate/keepQuotes.kt");
             doTest(fileName);
         }
 

@@ -1,0 +1,21 @@
+class Example(val `in`: String, val `cl ass`: String, val `valid`: Boolean) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+
+        other as Example
+
+        if (`in` != other.`in`) return false
+        if (`cl ass` != other.`cl ass`) return false
+        if (`valid` != other.`valid`) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = `in`.hashCode()
+        result = 31 * result + `cl ass`.hashCode()
+        result = 31 * result + `valid`.hashCode()
+        return result
+    }
+}

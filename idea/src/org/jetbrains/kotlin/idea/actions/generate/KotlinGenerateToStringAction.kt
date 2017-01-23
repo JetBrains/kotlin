@@ -23,6 +23,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.util.Key
+import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -30,11 +31,11 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.insertMembersAfter
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
+import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -57,7 +58,8 @@ class KotlinGenerateToStringAction : KotlinGenerateMemberActionBase<KotlinGenera
     data class Info(val classDescriptor: ClassDescriptor,
                     val variablesToUse: List<VariableDescriptor>,
                     val generateSuperCall: Boolean,
-                    val generator: Generator)
+                    val generator: Generator,
+                    val project: Project)
 
     enum class Generator(val text: String) {
         SINGLE_TEMPLATE("Single template") {
@@ -67,7 +69,7 @@ class KotlinGenerateToStringAction : KotlinGenerateMemberActionBase<KotlinGenera
                 return buildString {
                     append("return \"${className.quoteIfNeeded()}(")
                     info.variablesToUse.joinTo(this) {
-                        val ref = it.name.asString().quoteIfNeeded()
+                        val ref = (DescriptorToSourceUtilsIde.getAnyDeclaration(info.project, it) as PsiNameIdentifierOwner).nameIdentifier!!.text
                         "$ref=${renderVariableValue(it, ref)}"
                     }
                     append(")")
@@ -89,7 +91,7 @@ class KotlinGenerateToStringAction : KotlinGenerateMemberActionBase<KotlinGenera
                         val varIterator = info.variablesToUse.iterator()
                         while (varIterator.hasNext()) {
                             val it = varIterator.next()
-                            val ref = it.name.asString().quoteIfNeeded()
+                            val ref = (DescriptorToSourceUtilsIde.getAnyDeclaration(info.project, it) as PsiNameIdentifierOwner).nameIdentifier!!.text
                             append("\"$ref=${renderVariableValue(it, ref)}")
                             if (varIterator.hasNext()) {
                                 append(',')
@@ -152,7 +154,8 @@ class KotlinGenerateToStringAction : KotlinGenerateMemberActionBase<KotlinGenera
             val info = Info(classDescriptor,
                             properties.map { context[BindingContext.DECLARATION_TO_DESCRIPTOR, it] as VariableDescriptor },
                             false,
-                            Generator.SINGLE_TEMPLATE)
+                            Generator.SINGLE_TEMPLATE,
+                            project)
             return klass.adjuster?.let { it(info) } ?: info
         }
 
@@ -172,7 +175,8 @@ class KotlinGenerateToStringAction : KotlinGenerateMemberActionBase<KotlinGenera
         return Info(classDescriptor,
                     chooser.selectedElements?.map { it.descriptor as VariableDescriptor } ?: emptyList(),
                     headerPanel.isGenerateSuperCall,
-                    headerPanel.selectedGenerator)
+                    headerPanel.selectedGenerator,
+                    project)
     }
 
     private fun generateToString(project: Project, info: Info): KtNamedFunction? {

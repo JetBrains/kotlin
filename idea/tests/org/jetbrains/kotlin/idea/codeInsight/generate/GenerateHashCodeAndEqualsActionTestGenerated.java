@@ -90,6 +90,12 @@ public class GenerateHashCodeAndEqualsActionTestGenerated extends AbstractGenera
         doTest(fileName);
     }
 
+    @TestMetadata("keepQuotes.kt")
+    public void testKeepQuotes() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/keepQuotes.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("multipleVars.kt")
     public void testMultipleVars() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/multipleVars.kt");
