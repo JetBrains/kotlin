@@ -10,7 +10,7 @@ import kotlin.coroutines.intrinsics.*
  * Creates coroutine with receiver type [R] and result type [T].
  * This function creates a new, fresh instance of suspendable computation every time it is invoked.
  * To start executing the created coroutine, invoke `resume(Unit)` on the returned [Continuation] instance.
- * The [completion] continuation is invoked when coroutine completes with result of exception.
+ * The [completion] continuation is invoked when coroutine completes with result or exception.
  */
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
@@ -22,7 +22,7 @@ public fun <R, T> (suspend R.() -> T).createCoroutine(
 /**
  * Starts coroutine with receiver type [R] and result type [T].
  * This function creates and start a new, fresh instance of suspendable computation every time it is invoked.
- * The [completion] continuation is invoked when coroutine completes with result of exception.
+ * The [completion] continuation is invoked when coroutine completes with result or exception.
  */
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
@@ -37,7 +37,7 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
  * Creates coroutine without receiver and with result type [T].
  * This function creates a new, fresh instance of suspendable computation every time it is invoked.
  * To start executing the created coroutine, invoke `resume(Unit)` on the returned [Continuation] instance.
- * The [completion] continuation is invoked when coroutine completes with result of exception.
+ * The [completion] continuation is invoked when coroutine completes with result or exception.
  */
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
@@ -48,7 +48,7 @@ public fun <T> (suspend () -> T).createCoroutine(
 /**
  * Starts coroutine without receiver and with result type [T].
  * This function creates and start a new, fresh instance of suspendable computation every time it is invoked.
- * The [completion] continuation is invoked when coroutine completes with result of exception.
+ * The [completion] continuation is invoked when coroutine completes with result or exception.
  */
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
