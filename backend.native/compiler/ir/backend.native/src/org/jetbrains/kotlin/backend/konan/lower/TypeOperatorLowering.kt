@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalFunctions
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 /**
  * This lowering pass lowers some [IrTypeOperatorCall]s.
@@ -43,15 +45,22 @@ private class TypeOperatorTransformer(val context: Context, val function: Functi
         return declaration
     }
 
-    private tailrec fun KotlinType.erasure(): KotlinType {
+    private fun KotlinType.erasure(): KotlinType {
         val descriptor = this.constructor.declarationDescriptor
-        return if (descriptor is TypeParameterDescriptor) {
-            val upperBound = descriptor.upperBounds.singleOrNull() ?:
-                TODO("$descriptor : ${descriptor.upperBounds}")
+        return when (descriptor) {
+            is ClassDescriptor -> this
+            is TypeParameterDescriptor -> {
+                val upperBound = descriptor.upperBounds.singleOrNull() ?:
+                        TODO("$descriptor : ${descriptor.upperBounds}")
 
-            upperBound.erasure()
-        } else {
-            this
+                if (this.isMarkedNullable) {
+                    // `T?`
+                    upperBound.erasure().makeNullable()
+                } else {
+                    upperBound.erasure()
+                }
+            }
+            else -> TODO(this.toString())
         }
     }
 
