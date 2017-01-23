@@ -815,3 +815,7 @@ task codegen_blackbox_when_stringOptimization (type: RunExternalTestGroup) {
 task daily {
     dependsOn(codegen_blackbox_annotations)
 }
+
+task run() {
+    dependsOn(tasks.withType(RunExternalTestGroup).matching { it.enabled })
+}
