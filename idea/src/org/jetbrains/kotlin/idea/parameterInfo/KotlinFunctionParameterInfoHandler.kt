@@ -358,8 +358,8 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         // First try to find strictly matching descriptor, then one with the same declaration.
         // The second way is needed for the case when the descriptor was invalidated and new one has been built.
         // See testLocalFunctionBug().
-        val resolvedCall = candidates.singleOrNull { it.resultingDescriptor.original == overload.original }
-                           ?: candidates.singleOrNull { descriptorsEqual(it.resultingDescriptor, overload) }
+        val resolvedCall = candidates.firstOrNull { it.resultingDescriptor.original == overload.original }
+                           ?: candidates.firstOrNull { descriptorsEqual(it.resultingDescriptor, overload) }
                            ?: return null
         val resultingDescriptor = resolvedCall.resultingDescriptor
 

@@ -95,6 +95,12 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ExtensionOnCapturedScopeChange.kt")
+        public void testExtensionOnCapturedScopeChange() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/functionCall/ExtensionOnCapturedScopeChange.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ExtensionOnClassObject.kt")
         public void testExtensionOnClassObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/functionCall/ExtensionOnClassObject.kt");
