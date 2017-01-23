@@ -89,6 +89,9 @@ if (isLinux()) {
     task iphoneSysroot(type: TgzNativeDep) {
         baseName = "target-sysroot-1-darwin-ios"
     }
+    task iphoneSimSysroot(type: TgzNativeDep) {
+        baseName = "target-sysroot-1-darwin-ios-sim"
+    }
 }
 
 

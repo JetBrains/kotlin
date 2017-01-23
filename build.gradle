@@ -37,7 +37,7 @@ allprojects {
              "iphone":
                 ["-stdlib=libc++", "-arch", "arm64", "-isysroot", "$iphoneSysrootDir"],
              "iphone_sim":
-                ["-stdlib=libc++"]
+                ["-stdlib=libc++", "-isysroot", "$iphoneSimSysrootDir"],
             ]
      }
      ext.targetList = ext.targetArgs.keySet() as List

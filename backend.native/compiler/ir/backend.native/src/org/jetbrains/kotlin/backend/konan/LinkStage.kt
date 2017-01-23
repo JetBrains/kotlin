@@ -67,6 +67,14 @@ internal class IPhoneOSfromMacOSPlatform(distribution: Distribution)
     override val targetSysRoot = "${distribution.dependencies}/${properties.propertyString("targetSysRoot.osx-ios")!!}"
 }
 
+internal class IPhoneSimulatorFromMacOSPlatform(distribution: Distribution) 
+    : MacOSPlatform(distribution) {
+
+    override val arch = properties.propertyString("arch.osx-ios-sim")!!
+    override val osVersionMin = properties.propertyList("osVersionMin.osx-ios-sim")
+    override val llvmLlcFlags = properties.propertyList("llvmLlcFlags.osx-ios-sim")
+    override val targetSysRoot = "${distribution.dependencies}/${properties.propertyString("targetSysRoot.osx-ios-sim")!!}"
+}
 internal class LinuxPlatform(distribution: Distribution) 
     : PlatformFlags(distribution) {
 
@@ -121,6 +129,8 @@ internal class LinkStage(val context: Context) {
     val platform: PlatformFlags = when (TargetManager.host) {
         KonanTarget.LINUX -> LinuxPlatform(distribution)
         KonanTarget.MACBOOK -> when (targetManager.current) {
+            KonanTarget.IPHONE_SIM
+                -> IPhoneSimulatorFromMacOSPlatform(distribution)
             KonanTarget.IPHONE 
                 -> IPhoneOSfromMacOSPlatform(distribution)
             KonanTarget.MACBOOK
