@@ -16,11 +16,13 @@ class TargetManager(val config: CompilerConfiguration) {
 
     init {
         when (host) {
-            KonanTarget.MACBOOK -> KonanTarget.MACBOOK.enabled = true
             KonanTarget.LINUX   -> KonanTarget.LINUX.enabled = true
+            KonanTarget.MACBOOK -> {
+                KonanTarget.MACBOOK.enabled = true
+                KonanTarget.IPHONE.enabled = true
+                KonanTarget.IPHONE_SIM.enabled = true
+            }
         }
-        KonanTarget.IPHONE.enabled = true
-        KonanTarget.IPHONE_SIM.enabled = true
 
         if (!current.enabled) {
             error("Target $current is not available on the current host")
