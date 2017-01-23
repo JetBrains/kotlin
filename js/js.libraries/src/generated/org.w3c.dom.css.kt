@@ -254,7 +254,7 @@ public external abstract class CSSStyleDeclaration {
     fun item(index: Int): String
     fun getPropertyValue(property: String): String
     fun getPropertyPriority(property: String): String
-    fun setProperty(property: String, value: String, priority: String = noImpl): Unit
+    fun setProperty(property: String, value: String, priority: String = definedExternally): Unit
     fun setPropertyValue(property: String, value: String): Unit
     fun setPropertyPriority(property: String, priority: String): Unit
     fun removeProperty(property: String): String

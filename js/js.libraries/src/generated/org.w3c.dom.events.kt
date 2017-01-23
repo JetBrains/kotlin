@@ -20,18 +20,18 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-public external open class UIEvent(type: String, eventInitDict: UIEventInit = noImpl) : Event {
+public external open class UIEvent(type: String, eventInitDict: UIEventInit = definedExternally) : Event {
     open val view: Window?
     open val detail: Int
 }
 
 public external interface UIEventInit : EventInit {
     var view: Window? /* = null */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var detail: Int? /* = 0 */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
 }
 
 public inline fun UIEventInit(view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): UIEventInit {
@@ -46,14 +46,14 @@ public inline fun UIEventInit(view: Window? = null, detail: Int? = 0, bubbles: B
     return o
 }
 
-public external open class FocusEvent(type: String, eventInitDict: FocusEventInit = noImpl) : UIEvent {
+public external open class FocusEvent(type: String, eventInitDict: FocusEventInit = definedExternally) : UIEvent {
     open val relatedTarget: EventTarget?
 }
 
 public external interface FocusEventInit : UIEventInit {
     var relatedTarget: EventTarget? /* = null */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
 }
 
 public inline fun FocusEventInit(relatedTarget: EventTarget? = null, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): FocusEventInit {
@@ -69,7 +69,7 @@ public inline fun FocusEventInit(relatedTarget: EventTarget? = null, view: Windo
     return o
 }
 
-public external open class MouseEvent(type: String, eventInitDict: MouseEventInit = noImpl) : UIEvent, UnionElementOrMouseEvent {
+public external open class MouseEvent(type: String, eventInitDict: MouseEventInit = definedExternally) : UIEvent, UnionElementOrMouseEvent {
     open val region: String?
     open val screenX: Int
     open val screenY: Int
@@ -91,26 +91,26 @@ public external open class MouseEvent(type: String, eventInitDict: MouseEventIni
 
 public external interface MouseEventInit : EventModifierInit {
     var screenX: Int? /* = 0 */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var screenY: Int? /* = 0 */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var clientX: Int? /* = 0 */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var clientY: Int? /* = 0 */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var button: Short? /* = 0 */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var buttons: Short? /* = 0 */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var relatedTarget: EventTarget? /* = null */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
 }
 
 public inline fun MouseEventInit(screenX: Int? = 0, screenY: Int? = 0, clientX: Int? = 0, clientY: Int? = 0, button: Short? = 0, buttons: Short? = 0, relatedTarget: EventTarget? = null, ctrlKey: Boolean? = false, shiftKey: Boolean? = false, altKey: Boolean? = false, metaKey: Boolean? = false, modifierAltGraph: Boolean? = false, modifierCapsLock: Boolean? = false, modifierFn: Boolean? = false, modifierFnLock: Boolean? = false, modifierHyper: Boolean? = false, modifierNumLock: Boolean? = false, modifierScrollLock: Boolean? = false, modifierSuper: Boolean? = false, modifierSymbol: Boolean? = false, modifierSymbolLock: Boolean? = false, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): MouseEventInit {
@@ -148,47 +148,47 @@ public inline fun MouseEventInit(screenX: Int? = 0, screenY: Int? = 0, clientX: 
 
 public external interface EventModifierInit : UIEventInit {
     var ctrlKey: Boolean? /* = false */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var shiftKey: Boolean? /* = false */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var altKey: Boolean? /* = false */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var metaKey: Boolean? /* = false */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var modifierAltGraph: Boolean? /* = false */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var modifierCapsLock: Boolean? /* = false */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var modifierFn: Boolean? /* = false */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var modifierFnLock: Boolean? /* = false */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var modifierHyper: Boolean? /* = false */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var modifierNumLock: Boolean? /* = false */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var modifierScrollLock: Boolean? /* = false */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var modifierSuper: Boolean? /* = false */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var modifierSymbol: Boolean? /* = false */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var modifierSymbolLock: Boolean? /* = false */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
 }
 
 public inline fun EventModifierInit(ctrlKey: Boolean? = false, shiftKey: Boolean? = false, altKey: Boolean? = false, metaKey: Boolean? = false, modifierAltGraph: Boolean? = false, modifierCapsLock: Boolean? = false, modifierFn: Boolean? = false, modifierFnLock: Boolean? = false, modifierHyper: Boolean? = false, modifierNumLock: Boolean? = false, modifierScrollLock: Boolean? = false, modifierSuper: Boolean? = false, modifierSymbol: Boolean? = false, modifierSymbolLock: Boolean? = false, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): EventModifierInit {
@@ -217,7 +217,7 @@ public inline fun EventModifierInit(ctrlKey: Boolean? = false, shiftKey: Boolean
     return o
 }
 
-public external open class WheelEvent(type: String, eventInitDict: WheelEventInit = noImpl) : MouseEvent {
+public external open class WheelEvent(type: String, eventInitDict: WheelEventInit = definedExternally) : MouseEvent {
     open val deltaX: Double
     open val deltaY: Double
     open val deltaZ: Double
@@ -232,17 +232,17 @@ public external open class WheelEvent(type: String, eventInitDict: WheelEventIni
 
 public external interface WheelEventInit : MouseEventInit {
     var deltaX: Double? /* = 0.0 */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var deltaY: Double? /* = 0.0 */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var deltaZ: Double? /* = 0.0 */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var deltaMode: Int? /* = 0 */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
 }
 
 public inline fun WheelEventInit(deltaX: Double? = 0.0, deltaY: Double? = 0.0, deltaZ: Double? = 0.0, deltaMode: Int? = 0, screenX: Int? = 0, screenY: Int? = 0, clientX: Int? = 0, clientY: Int? = 0, button: Short? = 0, buttons: Short? = 0, relatedTarget: EventTarget? = null, ctrlKey: Boolean? = false, shiftKey: Boolean? = false, altKey: Boolean? = false, metaKey: Boolean? = false, modifierAltGraph: Boolean? = false, modifierCapsLock: Boolean? = false, modifierFn: Boolean? = false, modifierFnLock: Boolean? = false, modifierHyper: Boolean? = false, modifierNumLock: Boolean? = false, modifierScrollLock: Boolean? = false, modifierSuper: Boolean? = false, modifierSymbol: Boolean? = false, modifierSymbolLock: Boolean? = false, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): WheelEventInit {
@@ -282,18 +282,18 @@ public inline fun WheelEventInit(deltaX: Double? = 0.0, deltaY: Double? = 0.0, d
     return o
 }
 
-public external open class InputEvent(type: String, eventInitDict: InputEventInit = noImpl) : UIEvent {
+public external open class InputEvent(type: String, eventInitDict: InputEventInit = definedExternally) : UIEvent {
     open val data: String
     open val isComposing: Boolean
 }
 
 public external interface InputEventInit : UIEventInit {
     var data: String? /* = "" */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var isComposing: Boolean? /* = false */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
 }
 
 public inline fun InputEventInit(data: String? = "", isComposing: Boolean? = false, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): InputEventInit {
@@ -310,7 +310,7 @@ public inline fun InputEventInit(data: String? = "", isComposing: Boolean? = fal
     return o
 }
 
-public external open class KeyboardEvent(type: String, eventInitDict: KeyboardEventInit = noImpl) : UIEvent {
+public external open class KeyboardEvent(type: String, eventInitDict: KeyboardEventInit = definedExternally) : UIEvent {
     open val key: String
     open val code: String
     open val location: Int
@@ -335,20 +335,20 @@ public external open class KeyboardEvent(type: String, eventInitDict: KeyboardEv
 
 public external interface KeyboardEventInit : EventModifierInit {
     var key: String? /* = "" */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var code: String? /* = "" */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var location: Int? /* = 0 */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var repeat: Boolean? /* = false */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var isComposing: Boolean? /* = false */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
 }
 
 public inline fun KeyboardEventInit(key: String? = "", code: String? = "", location: Int? = 0, repeat: Boolean? = false, isComposing: Boolean? = false, ctrlKey: Boolean? = false, shiftKey: Boolean? = false, altKey: Boolean? = false, metaKey: Boolean? = false, modifierAltGraph: Boolean? = false, modifierCapsLock: Boolean? = false, modifierFn: Boolean? = false, modifierFnLock: Boolean? = false, modifierHyper: Boolean? = false, modifierNumLock: Boolean? = false, modifierScrollLock: Boolean? = false, modifierSuper: Boolean? = false, modifierSymbol: Boolean? = false, modifierSymbolLock: Boolean? = false, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): KeyboardEventInit {
@@ -382,14 +382,14 @@ public inline fun KeyboardEventInit(key: String? = "", code: String? = "", locat
     return o
 }
 
-public external open class CompositionEvent(type: String, eventInitDict: CompositionEventInit = noImpl) : UIEvent {
+public external open class CompositionEvent(type: String, eventInitDict: CompositionEventInit = definedExternally) : UIEvent {
     open val data: String
 }
 
 public external interface CompositionEventInit : UIEventInit {
     var data: String? /* = "" */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
 }
 
 public inline fun CompositionEventInit(data: String? = "", view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): CompositionEventInit {
@@ -405,7 +405,7 @@ public inline fun CompositionEventInit(data: String? = "", view: Window? = null,
     return o
 }
 
-public external open class Event(type: String, eventInitDict: EventInit = noImpl) {
+public external open class Event(type: String, eventInitDict: EventInit = definedExternally) {
     open val type: String
     open val target: EventTarget?
     open val currentTarget: EventTarget?
@@ -431,10 +431,10 @@ public external open class Event(type: String, eventInitDict: EventInit = noImpl
 }
 
 public external abstract class EventTarget {
-    fun addEventListener(type: String, callback: EventListener?, options: dynamic = noImpl): Unit
-    fun addEventListener(type: String, callback: ((Event) -> Unit)?, options: dynamic = noImpl): Unit
-    fun removeEventListener(type: String, callback: EventListener?, options: dynamic = noImpl): Unit
-    fun removeEventListener(type: String, callback: ((Event) -> Unit)?, options: dynamic = noImpl): Unit
+    fun addEventListener(type: String, callback: EventListener?, options: dynamic = definedExternally): Unit
+    fun addEventListener(type: String, callback: ((Event) -> Unit)?, options: dynamic = definedExternally): Unit
+    fun removeEventListener(type: String, callback: EventListener?, options: dynamic = definedExternally): Unit
+    fun removeEventListener(type: String, callback: ((Event) -> Unit)?, options: dynamic = definedExternally): Unit
     fun dispatchEvent(event: Event): Boolean
 }
 

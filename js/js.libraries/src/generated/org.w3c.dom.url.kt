@@ -20,7 +20,7 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-public external open class URL(url: String, base: String = noImpl) {
+public external open class URL(url: String, base: String = definedExternally) {
     var href: String
     open val origin: String
     var protocol: String
@@ -43,7 +43,7 @@ public external open class URL(url: String, base: String = noImpl) {
     }
 }
 
-public external open class URLSearchParams(init: dynamic = noImpl) {
+public external open class URLSearchParams(init: dynamic = definedExternally) {
     fun append(name: String, value: String): Unit
     fun delete(name: String): Unit
     fun get(name: String): String?

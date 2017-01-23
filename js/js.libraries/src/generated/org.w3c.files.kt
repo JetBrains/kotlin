@@ -20,18 +20,18 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-public external open class Blob(blobParts: Array<dynamic> = noImpl, options: BlobPropertyBag = noImpl) {
+public external open class Blob(blobParts: Array<dynamic> = definedExternally, options: BlobPropertyBag = definedExternally) {
     open val size: Int
     open val type: String
     open val isClosed: Boolean
-    fun slice(start: Int = noImpl, end: Int = noImpl, contentType: String = noImpl): Blob
+    fun slice(start: Int = definedExternally, end: Int = definedExternally, contentType: String = definedExternally): Blob
     fun close(): Unit
 }
 
 public external interface BlobPropertyBag {
     var type: String? /* = "" */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
 }
 
 public inline fun BlobPropertyBag(type: String? = ""): BlobPropertyBag {
@@ -42,15 +42,15 @@ public inline fun BlobPropertyBag(type: String? = ""): BlobPropertyBag {
     return o
 }
 
-public external open class File(fileBits: Array<dynamic>, fileName: String, options: FilePropertyBag = noImpl) : Blob {
+public external open class File(fileBits: Array<dynamic>, fileName: String, options: FilePropertyBag = definedExternally) : Blob {
     open val name: String
     open val lastModified: Int
 }
 
 public external interface FilePropertyBag : BlobPropertyBag {
     var lastModified: Int?
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
 }
 
 public inline fun FilePropertyBag(lastModified: Int? = null, type: String? = ""): FilePropertyBag {
@@ -80,7 +80,7 @@ public external open class FileReader : EventTarget {
     var onloadend: ((Event) -> dynamic)?
     fun readAsArrayBuffer(blob: Blob): Unit
     fun readAsBinaryString(blob: Blob): Unit
-    fun readAsText(blob: Blob, label: String = noImpl): Unit
+    fun readAsText(blob: Blob, label: String = definedExternally): Unit
     fun readAsDataURL(blob: Blob): Unit
     fun abort(): Unit
 
@@ -94,7 +94,7 @@ public external open class FileReader : EventTarget {
 public external open class FileReaderSync {
     fun readAsArrayBuffer(blob: Blob): ArrayBuffer
     fun readAsBinaryString(blob: Blob): String
-    fun readAsText(blob: Blob, label: String = noImpl): String
+    fun readAsText(blob: Blob, label: String = definedExternally): String
     fun readAsDataURL(blob: Blob): String
 }
 

@@ -31,17 +31,17 @@ public external abstract class SVGElement : Element, ElementCSSInlineStyle, Glob
 
 public external interface SVGBoundingBoxOptions {
     var fill: Boolean? /* = true */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var stroke: Boolean? /* = false */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var markers: Boolean? /* = false */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var clipped: Boolean? /* = false */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
 }
 
 public inline fun SVGBoundingBoxOptions(fill: Boolean? = true, stroke: Boolean? = false, markers: Boolean? = false, clipped: Boolean? = false): SVGBoundingBoxOptions {
@@ -57,7 +57,7 @@ public inline fun SVGBoundingBoxOptions(fill: Boolean? = true, stroke: Boolean? 
 
 public external abstract class SVGGraphicsElement : SVGElement, SVGTests {
     open val transform: SVGAnimatedTransformList
-    fun getBBox(options: SVGBoundingBoxOptions = noImpl): DOMRect
+    fun getBBox(options: SVGBoundingBoxOptions = definedExternally): DOMRect
     fun getCTM(): DOMMatrix?
     fun getScreenCTM(): DOMMatrix?
 }

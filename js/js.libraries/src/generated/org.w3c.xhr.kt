@@ -47,9 +47,9 @@ public external open class XMLHttpRequest : XMLHttpRequestEventTarget {
     open val responseText: String
     open val responseXML: Document?
     fun open(method: String, url: String): Unit
-    fun open(method: String, url: String, async: Boolean, username: String? = noImpl, password: String? = noImpl): Unit
+    fun open(method: String, url: String, async: Boolean, username: String? = definedExternally, password: String? = definedExternally): Unit
     fun setRequestHeader(name: String, value: String): Unit
-    fun send(body: dynamic = noImpl): Unit
+    fun send(body: dynamic = definedExternally): Unit
     fun abort(): Unit
     fun getResponseHeader(name: String): String?
     fun getAllResponseHeaders(): String
@@ -64,18 +64,18 @@ public external open class XMLHttpRequest : XMLHttpRequestEventTarget {
     }
 }
 
-public external open class FormData(form: HTMLFormElement = noImpl) {
+public external open class FormData(form: HTMLFormElement = definedExternally) {
     fun append(name: String, value: String): Unit
-    fun append(name: String, value: Blob, filename: String = noImpl): Unit
+    fun append(name: String, value: Blob, filename: String = definedExternally): Unit
     fun delete(name: String): Unit
     fun get(name: String): dynamic
     fun getAll(name: String): Array<dynamic>
     fun has(name: String): Boolean
     fun set(name: String, value: String): Unit
-    fun set(name: String, value: Blob, filename: String = noImpl): Unit
+    fun set(name: String, value: Blob, filename: String = definedExternally): Unit
 }
 
-public external open class ProgressEvent(type: String, eventInitDict: ProgressEventInit = noImpl) : Event {
+public external open class ProgressEvent(type: String, eventInitDict: ProgressEventInit = definedExternally) : Event {
     open val lengthComputable: Boolean
     open val loaded: Int
     open val total: Int
@@ -83,14 +83,14 @@ public external open class ProgressEvent(type: String, eventInitDict: ProgressEv
 
 public external interface ProgressEventInit : EventInit {
     var lengthComputable: Boolean? /* = false */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var loaded: Int? /* = 0 */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var total: Int? /* = 0 */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
 }
 
 public inline fun ProgressEventInit(lengthComputable: Boolean? = false, loaded: Int? = 0, total: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ProgressEventInit {

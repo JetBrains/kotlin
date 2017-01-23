@@ -20,7 +20,7 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-public external open class Headers(init: dynamic = noImpl) {
+public external open class Headers(init: dynamic = definedExternally) {
     fun append(name: String, value: String): Unit
     fun delete(name: String): Unit
     fun get(name: String): String?
@@ -37,7 +37,7 @@ public external interface Body {
     fun text(): dynamic
 }
 
-public external open class Request(input: dynamic, init: RequestInit = noImpl) : Body {
+public external open class Request(input: dynamic, init: RequestInit = definedExternally) : Body {
     open val method: String
     open val url: String
     open val headers: Headers
@@ -62,41 +62,41 @@ public external open class Request(input: dynamic, init: RequestInit = noImpl) :
 
 public external interface RequestInit {
     var method: String?
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var headers: dynamic
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var body: dynamic
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var referrer: String?
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var referrerPolicy: dynamic
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var mode: String?
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var credentials: String?
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var cache: String?
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var redirect: String?
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var integrity: String?
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var keepalive: Boolean?
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var window: Any?
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
 }
 
 public inline fun RequestInit(method: String? = null, headers: dynamic = null, body: dynamic = null, referrer: String? = null, referrerPolicy: dynamic = null, mode: String? = null, credentials: String? = null, cache: String? = null, redirect: String? = null, integrity: String? = null, keepalive: Boolean? = null, window: Any? = null): RequestInit {
@@ -118,7 +118,7 @@ public inline fun RequestInit(method: String? = null, headers: dynamic = null, b
     return o
 }
 
-public external open class Response(body: dynamic = noImpl, init: ResponseInit = noImpl) : Body {
+public external open class Response(body: dynamic = definedExternally, init: ResponseInit = definedExternally) : Body {
     open val type: String
     open val url: String
     open val redirected: Boolean
@@ -138,20 +138,20 @@ public external open class Response(body: dynamic = noImpl, init: ResponseInit =
 
     companion object {
         fun error(): Response
-        fun redirect(url: String, status: Short = noImpl): Response
+        fun redirect(url: String, status: Short = definedExternally): Response
     }
 }
 
 public external interface ResponseInit {
     var status: Short? /* = 200 */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var statusText: String? /* = "OK" */
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
     var headers: dynamic
-        get() = noImpl
-        set(value) = noImpl
+        get() = definedExternally
+        set(value) = definedExternally
 }
 
 public inline fun ResponseInit(status: Short? = 200, statusText: String? = "OK", headers: dynamic = null): ResponseInit {
