@@ -23,21 +23,16 @@ task regenerate_external_tests() {
         gradleGenerated.write("import org.jetbrains.kotlin.*\n")
         gradleGenerated.append(
 """
+###############################################################################
+# WARNING: This file auto generated with command 
+#   ./gradlew  :backend.native:tests:regenerate_external_tests
+###############################################################################
 configurations {
     cli_bc
 }
 
 dependencies {
     cli_bc project(path: ':backend.native', configuration: 'cli_bc')
-}
-"""
-        )
-        gradleGenerated.append(
-"""
-task createLogFile() {
-    doLast {
-        project.file("$logFileName").write("")
-    }
 }
 """
         )
@@ -52,11 +47,16 @@ task createLogFile() {
 
             gradleGenerated.append(
                     "task $taskName (type: RunExternalTestGroup) {\n" +
-                    "   dependsOn(createLogFile)\n" +
                     "   groupDirectory = \"$taskDirectory\"\n" +
-                    "   logFileName = \"$logFileName\"\n" +
                     "}\n\n")
         }
+        gradleGenerated.append(
+"""
+daily {
+    dependsOn(codegen_blackbox_annotations)
+}
+"""
+        )
     }
 }
 
