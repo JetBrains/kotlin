@@ -97,6 +97,7 @@ open class ChangeVisibilityModifierIntention protected constructor(
             is KtPrimaryConstructor -> declaration.valueParameterList?.let { TextRange.from(it.startOffset, 0) } //TODO: use constructor keyword if exist
             is KtSecondaryConstructor -> declaration.getConstructorKeyword().textRange
             is KtParameter -> declaration.valOrVarKeyword?.textRange
+            is KtTypeAlias -> declaration.getTypeAliasKeyword()?.textRange
             else -> null
         }
     }

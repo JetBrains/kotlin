@@ -2796,6 +2796,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("noModifierTypeAlias.kt")
+            public void testNoModifierTypeAlias() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/noModifierTypeAlias.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("notForAbstract.kt")
             public void testNotForAbstract() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/notForAbstract.kt");
@@ -2937,6 +2943,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/public/simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("typeAlias.kt")
+            public void testTypeAlias() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/public/typeAlias.kt");
                 doTest(fileName);
             }
         }
