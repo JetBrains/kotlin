@@ -818,6 +818,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepOverTest(fileName);
         }
 
+        @TestMetadata("stopInSuspendFunctionWithoutSuspendPoints.kt")
+        public void testStopInSuspendFunctionWithoutSuspendPoints() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInSuspendFunctionWithoutSuspendPoints.kt");
+            doStepOverTest(fileName);
+        }
+
         @TestMetadata("stopInlineCallInLocalFunInSecondaryConstructor.kt")
         public void testStopInlineCallInLocalFunInSecondaryConstructor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInlineCallInLocalFunInSecondaryConstructor.kt");
