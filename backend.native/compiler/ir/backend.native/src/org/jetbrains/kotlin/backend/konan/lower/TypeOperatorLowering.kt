@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalFunctions
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
@@ -14,7 +15,9 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 /**
  * This lowering pass lowers some [IrTypeOperatorCall]s.
@@ -30,6 +33,10 @@ internal class TypeOperatorLowering(val context: Context) : FunctionLoweringPass
 private class TypeOperatorTransformer(val context: Context, val function: FunctionDescriptor) : IrElementTransformerVoid() {
 
     private val builder = context.createFunctionIrBuilder(function)
+
+    val throwClassCastException by lazy {
+        context.builtIns.getKonanInternalFunctions("ThrowClassCastException").single()
+    }
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
         // ignore inner functions during this pass
@@ -49,16 +56,43 @@ private class TypeOperatorTransformer(val context: Context, val function: Functi
     }
 
     private fun lowerCast(expression: IrTypeOperatorCall): IrExpression {
+        builder.at(expression)
         val typeOperand = expression.typeOperand.erasure()
-        return if (expression.argument.type.isSubtypeOf(typeOperand)) {
-            // TODO: consider the case when expression type is wrong e.g. due to generics-related unchecked casts.
-            expression.argument
-        } else if (typeOperand == expression.typeOperand) {
-            expression
-        } else {
-            builder.at(expression).irAs(expression.argument, typeOperand)
+
+        assert (!TypeUtils.hasNullableSuperType(typeOperand)) // So that `isNullable()` <=> `isMarkedNullable`.
+
+        // TODO: consider the case when expression type is wrong e.g. due to generics-related unchecked casts.
+
+        return when {
+            expression.argument.type.isSubtypeOf(typeOperand) -> expression.argument
+
+            expression.argument.type.isNullable() -> {
+                with (builder) {
+                    irLet(expression.argument) { argument ->
+                        irIfThenElse(
+                                type = expression.type,
+                                condition = irEqeqeq(irGet(argument), irNull()),
+
+                                thenPart = if (typeOperand.isMarkedNullable)
+                                    irNull()
+                                else
+                                    irCall(throwClassCastException),
+
+                                elsePart = irAs(irGet(argument), typeOperand.makeNotNullable())
+                        )
+                    }
+                }
+            }
+
+            typeOperand.isMarkedNullable -> builder.irAs(expression.argument, typeOperand.makeNotNullable())
+
+            typeOperand == expression.typeOperand -> expression
+
+            else -> builder.irAs(expression.argument, typeOperand)
         }
     }
+
+    private fun KotlinType.isNullable() = TypeUtils.isNullableType(this)
 
     private fun lowerSafeCast(expression: IrTypeOperatorCall): IrExpression {
         val typeOperand = expression.typeOperand.erasure()
