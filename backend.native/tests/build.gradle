@@ -23,10 +23,10 @@ task regenerate_external_tests() {
         gradleGenerated.write("import org.jetbrains.kotlin.*\n")
         gradleGenerated.append(
 """
-###############################################################################
-# WARNING: This file auto generated with command 
-#   ./gradlew  :backend.native:tests:regenerate_external_tests
-###############################################################################
+/*******************************************************************************
+*      WARNING: This file auto generated with command 
+*      # ./gradlew  :backend.native:tests:regenerate_external_tests
+*******************************************************************************/
 configurations {
     cli_bc
 }
