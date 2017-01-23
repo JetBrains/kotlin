@@ -74,11 +74,11 @@ private fun Appendable.renderAttributeDeclarationAsProperty(arg: GenerateAttribu
     appendln()
     if (arg.getterNoImpl) {
         indent(commented, level + 1)
-        appendln("get() = noImpl")
+        appendln("get() = definedExternally")
     }
     if (arg.setterNoImpl) {
         indent(commented, level + 1)
-        appendln("set(value) = noImpl")
+        appendln("set(value) = definedExternally")
     }
 }
 
@@ -87,7 +87,7 @@ private val keywords = setOf("interface", "is", "as")
 private fun String.parse() = if (this.startsWith("0x")) BigInteger(this.substring(2), 16) else BigInteger(this)
 private fun String.replaceWrongConstants(type: Type) = when {
     this == "null" && type.nullable -> "null"
-    this == "noImpl" || type is SimpleType && type.type == "Int" && parse() > BigInteger.valueOf(Int.MAX_VALUE.toLong()) -> "noImpl"
+    this == "definedExternally" || type is SimpleType && type.type == "Int" && parse() > BigInteger.valueOf(Int.MAX_VALUE.toLong()) -> "definedExternally"
     type is SimpleType && type.type == "Double" && this.matches("[0-9]+".toRegex()) -> "${this}.0"
     else -> this
 }

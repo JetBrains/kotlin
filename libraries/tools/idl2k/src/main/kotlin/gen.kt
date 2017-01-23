@@ -35,7 +35,7 @@ fun generateFunction(repository: Repository, function: Operation, functionName: 
                         GenerateAttribute(
                                 name = it.name,
                                 type = mappedType,
-                                initializer = if (it.defaultValue != null) "noImpl" else null,
+                                initializer = if (it.defaultValue != null) "definedExternally" else null,
                                 getterSetterNoImpl = false,
                                 override = false,
                                 kind = AttributeKind.ARGUMENT,
@@ -92,7 +92,7 @@ fun generateAttribute(putNoImpl: Boolean, repository: Repository, attribute: Att
                         mapLiteral(attribute.defaultValue, mapType(repository, attribute.type))
                     }
                     else if (attribute.defaultValue != null) {
-                        "noImpl"
+                        "definedExternally"
                     }
                     else {
                         null

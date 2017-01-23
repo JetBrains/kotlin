@@ -213,7 +213,7 @@ class AttributeVisitor(private val readOnly: Boolean = false, private val static
 
     override fun visitOptionalOrRequiredArgument(ctx: WebIDLParser.OptionalOrRequiredArgumentContext): Attribute {
         if (ctx.children?.any { it is TerminalNode && it.text == "optional" } ?: false) {
-            defaultValue = "noImpl"
+            defaultValue = "definedExternally"
         }
         if (ctx.children?.any { it is TerminalNode && it.text == "required" } ?: false) {
             required = true
