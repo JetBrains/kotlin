@@ -104,7 +104,6 @@ task fields1(type: RunKonanTest) {
 }
 
 task fields2(type: RunKonanTest) {
-    disabled = true
     goldValue =
             "Set global = 1\n" +
             "Set member = 42\n" +
