@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.inline.clean
 
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
+import org.jetbrains.kotlin.js.backend.ast.metadata.isSuspend
 import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.collectLocalVariables
@@ -35,7 +36,7 @@ class RedundantStatementElimination(private val root: JsFunction) {
     private fun process() {
         object : JsVisitorWithContextImpl() {
             override fun visit(x: JsExpressionStatement, ctx: JsContext<JsNode>): Boolean {
-                if (x.synthetic || x.expression.synthetic) {
+                if (!x.expression.isSuspend && (x.synthetic || x.expression.synthetic)) {
                     val replacement = replace(x.expression)
                     if (replacement.size != 1 || replacement[0] != x.expression) {
                         hasChanges = true
@@ -47,7 +48,7 @@ class RedundantStatementElimination(private val root: JsFunction) {
             }
 
             override fun visit(x: JsBinaryOperation, ctx: JsContext<JsNode>): Boolean {
-                if (x.operator == JsBinaryOperator.COMMA) {
+                if (!x.isSuspend && x.operator == JsBinaryOperator.COMMA) {
                     val expressions = replace(x.arg1)
                     val replacement = if (expressions.isEmpty()) {
                         x.arg2

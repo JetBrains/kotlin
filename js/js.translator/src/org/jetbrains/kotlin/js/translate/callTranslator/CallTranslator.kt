@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
-import org.jetbrains.kotlin.js.backend.ast.JsInvocation
 import org.jetbrains.kotlin.js.backend.ast.JsNameRef
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
 import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineResult
@@ -90,9 +89,10 @@ private fun ResolvedCall<out CallableDescriptor>.expectedReceivers(): Boolean {
     return this.explicitReceiverKind != NO_EXPLICIT_RECEIVER
 }
 
-private fun translateCall(context: TranslationContext,
-                          resolvedCall: ResolvedCall<out FunctionDescriptor>,
-                          explicitReceivers: ExplicitReceivers
+private fun translateCall(
+        context: TranslationContext,
+        resolvedCall: ResolvedCall<out FunctionDescriptor>,
+        explicitReceivers: ExplicitReceivers
 ): JsExpression {
     if (resolvedCall is VariableAsFunctionResolvedCall) {
         assert(explicitReceivers.extensionReceiver == null) { "VariableAsFunctionResolvedCall must have one receiver" }
@@ -138,7 +138,7 @@ private fun translateFunctionCall(
     }
 
     if (resolvedCall.resultingDescriptor.isSuspend && context.isInStateMachine) {
-        context.currentBlock.statements += JsAstUtils.asSyntheticStatement((callExpression as JsInvocation).apply { isSuspend = true })
+        context.currentBlock.statements += JsAstUtils.asSyntheticStatement(callExpression.apply { isSuspend = true })
         val coroutineRef = TranslationUtils.translateContinuationArgument(context, resolvedCall)
         return context.defineTemporary(JsNameRef("\$\$coroutineResult\$\$", coroutineRef).apply {
             sideEffects = SideEffectKind.DEPENDS_ON_STATE
@@ -213,7 +213,7 @@ abstract class CallCase<in I : CallInfo> {
                 callInfo.bothReceivers()
         }
 
-        return callInfo.constructSafeCallIsNeeded(result)
+        return callInfo.constructSafeCallIfNeeded(result)
     }
 }
 
@@ -235,7 +235,7 @@ interface DelegateIntrinsic<in I : CallInfo> {
                 }
 
         if (result != null) {
-            return callInfo.constructSafeCallIsNeeded(result)
+            return callInfo.constructSafeCallIfNeeded(result)
         } else {
             return null
         }

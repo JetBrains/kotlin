@@ -5565,25 +5565,13 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("suspensionInsideSafeCall.kt")
         public void testSuspensionInsideSafeCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspensionInsideSafeCall.kt");
-            try {
-                doTest(fileName);
-            }
-            catch (Throwable ignore) {
-                return;
-            }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            doTest(fileName);
         }
 
         @TestMetadata("suspensionInsideSafeCallWithElvis.kt")
         public void testSuspensionInsideSafeCallWithElvis() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspensionInsideSafeCallWithElvis.kt");
-            try {
-                doTest(fileName);
-            }
-            catch (Throwable ignore) {
-                return;
-            }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            doTest(fileName);
         }
 
         @TestMetadata("tryCatchFinallyWithHandleResult.kt")

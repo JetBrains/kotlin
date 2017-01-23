@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.js.translate.callTranslator
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.js.backend.ast.JsBlock
 import org.jetbrains.kotlin.js.backend.ast.JsConditional
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsLiteral
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
@@ -41,7 +41,7 @@ interface CallInfo {
     val dispatchReceiver: JsExpression?
     val extensionReceiver: JsExpression?
 
-    fun constructSafeCallIsNeeded(result: JsExpression): JsExpression
+    fun constructSafeCallIfNeeded(result: JsExpression): JsExpression
 }
 
 abstract class AbstractCallInfo : CallInfo {
@@ -162,7 +162,7 @@ private fun TranslationContext.createCallInfo(
 
         val notNullConditionalForSafeCall: JsConditional? = notNullConditional
 
-        override fun constructSafeCallIsNeeded(result: JsExpression): JsExpression {
+        override fun constructSafeCallIfNeeded(result: JsExpression): JsExpression {
             if (notNullConditionalForSafeCall == null) {
                 return result
             } else {

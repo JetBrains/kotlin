@@ -29,11 +29,18 @@ fun JsNode.collectNodesToSplit(breakContinueTargets: Map<JsContinue, JsStatement
         var childrenInSet = false
         var finallyLevel = 0
 
-        override fun visitInvocation(invocation: JsInvocation) {
-            super.visitInvocation(invocation)
-            if (invocation.isSuspend) {
-                nodes += invocation
+        override fun visitExpressionStatement(x: JsExpressionStatement) {
+            super.visitExpressionStatement(x)
+            if (x.expression.isSuspend) {
+                nodes += x.expression
                 childrenInSet = true
+            }
+            else {
+                val assignment = JsAstUtils.decomposeAssignment(x.expression)
+                if (assignment != null && assignment.second.isSuspend) {
+                    nodes += assignment.second
+                    childrenInSet = true
+                }
             }
         }
 

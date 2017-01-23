@@ -73,7 +73,7 @@ var HasMetadata.sideEffects: SideEffectKind by MetadataProperty(default = SideEf
  * Denotes a suspension call-site that is to be processed by coroutine transformer.
  * More clearly, denotes invocation that should immediately return from coroutine state machine
  */
-var JsInvocation.isSuspend: Boolean by MetadataProperty(default = false)
+var JsExpression.isSuspend: Boolean by MetadataProperty(default = false)
 
 /**
  * Denotes a reference to coroutine's `result` field that contains result of

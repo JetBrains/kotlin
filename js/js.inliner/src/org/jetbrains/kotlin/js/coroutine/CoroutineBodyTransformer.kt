@@ -332,29 +332,22 @@ class CoroutineBodyTransformer(private val program: JsProgram, private val conte
     }
 
     private fun handleExpression(expression: JsExpression): JsExpression? {
-        return if (expression is JsInvocation) {
-            if (handleInvocation(expression)) null else expression
-        }
-        else {
-            val assignment = JsAstUtils.decomposeAssignment(expression)
-            if (assignment != null) {
-                (assignment.second as? JsInvocation)?.let { return if (handleInvocation(it)) null else expression }
+        val assignment = JsAstUtils.decomposeAssignment(expression)
+        if (assignment != null) {
+            val rhs = assignment.second
+            if (rhs.isSuspend) {
+                handleSuspend(expression)
+                return null
             }
-            expression
         }
-    }
-
-    private fun handleInvocation(expression: JsInvocation): Boolean {
-        return if (expression.isSuspend) {
+        else if (expression.isSuspend) {
             handleSuspend(expression)
-            true
+            return null
         }
-        else {
-            false
-        }
+        return expression
     }
 
-    private fun handleSuspend(invocation: JsInvocation) {
+    private fun handleSuspend(invocation: JsExpression) {
         val nextBlock = CoroutineBlock()
         currentStatements += state(nextBlock)
 
