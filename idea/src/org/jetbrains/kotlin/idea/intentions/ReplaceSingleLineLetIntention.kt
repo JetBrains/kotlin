@@ -116,7 +116,8 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
                 if (right.hasLambdaExpression()) return false
                 return !right.receiverUsedAsArgument(parameterName)
             }
-            else -> return true
+            is KtConstantExpression -> return true
+            else -> return false
         }
     }
 
