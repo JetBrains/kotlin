@@ -1086,7 +1086,7 @@
             <arg value="kotlin-test"/>
             <arg value="-Xallow-kotlin-package"/>
             <arg value="-Xmulti-platform"/>
-            <arg value="libraries/kotlin.test/shared/src/main/kotlin"/>
+            <arg value="libraries/kotlin.test/common/src/main/kotlin"/>
             <arg value="libraries/kotlin.test/jvm/src/main/kotlin"/>
         </java>
 
@@ -1116,7 +1116,7 @@
             <arg line="-main noCall"/>
             <arg line="-module-kind umd"/>
             <arg value="-Xmulti-platform"/>
-            <arg value="libraries/kotlin.test/shared/src/main/kotlin"/>
+            <arg value="libraries/kotlin.test/common/src/main/kotlin"/>
             <arg value="libraries/kotlin.test/js/src/main/kotlin"/>
         </java>
         <pack-runtime-jar jar-name="kotlin-test-js.jar" implementation-title="${manifest.impl.title.kotlin.test}" runtime-component="TestJs">

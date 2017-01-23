@@ -12,10 +12,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>shared</module>
-        <module>junit</module>
+        <module>common</module>
         <module>jvm</module>
         <module>js</module>
+        <module>junit</module>
     </modules>
 
     <properties>
