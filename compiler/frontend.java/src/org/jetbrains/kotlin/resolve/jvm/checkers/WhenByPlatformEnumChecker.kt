@@ -20,8 +20,10 @@ import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNotNull
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtWhenExpression
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -33,8 +35,15 @@ class WhenByPlatformEnumChecker : AdditionalTypeChecker {
     override fun checkType(expression: KtExpression, expressionType: KotlinType, expressionTypeWithSmartCast: KotlinType, c: ResolutionContext<*>) {
         if (expression is KtWhenExpression && expression.elseExpression == null) {
             // Check for conditionally-exhaustive when on platform enums, see KT-6399
-            val type = expression.subjectExpression?.let { c.trace.getType(it) } ?: return
+            val subjectExpression = expression.subjectExpression ?: return
+            val type = c.trace.getType(subjectExpression) ?: return
             if (type.isFlexible() && TypeUtils.isNullableType(type.asFlexibleType().upperBound) && !type.annotations.isMarkedNotNull()) {
+                val dataFlowValue = DataFlowValueFactory.createDataFlowValue(subjectExpression, type, c)
+                val dataFlowInfo = c.trace[BindingContext.EXPRESSION_TYPE_INFO, subjectExpression]?.dataFlowInfo
+                if (dataFlowInfo != null && !dataFlowInfo.getStableNullability(dataFlowValue).canBeNull()) {
+                    return
+                }
+
                 val enumClassDescriptor = WhenChecker.getClassDescriptorOfTypeIfEnum(type) ?: return
                 val context = c.trace.bindingContext
                 if (WhenChecker.getEnumMissingCases(expression, context, enumClassDescriptor).isEmpty()

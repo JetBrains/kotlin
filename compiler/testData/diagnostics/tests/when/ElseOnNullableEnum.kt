@@ -27,6 +27,15 @@ fun platformType() = when (<!WHEN_ENUM_CAN_BE_NULL_IN_JAVA!>J.foo()<!>) {
     E.B -> 8
 }
 
+fun platformTypeSmartCast(): Int {
+    val e = J.foo()
+    if (e == null) return -1
+    return when (<!DEBUG_INFO_SMARTCAST!>e<!>) {
+        E.A -> 1
+        E.B -> 2
+    }
+}
+
 
 // FILE: J.java
 

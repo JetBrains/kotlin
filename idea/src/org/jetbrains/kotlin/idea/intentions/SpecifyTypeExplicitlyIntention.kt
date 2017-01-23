@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.containsTypeAliases
 import org.jetbrains.kotlin.utils.ifEmpty
 
 class SpecifyTypeExplicitlyIntention :
