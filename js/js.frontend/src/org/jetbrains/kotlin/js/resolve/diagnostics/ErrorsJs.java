@@ -60,8 +60,10 @@ public interface ErrorsJs {
     DiagnosticFactory0<KtElement> JS_MODULE_PROHIBITED_ON_VAR = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<KtElement> JS_MODULE_PROHIBITED_ON_NON_NATIVE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<KtElement> NESTED_JS_MODULE_PROHIBITED = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
-    DiagnosticFactory0<PsiElement> CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM = DiagnosticFactory0.create(ERROR, DEFAULT);
-    DiagnosticFactory0<PsiElement> CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM = DiagnosticFactory0.create(ERROR, DEFAULT);
+    DiagnosticFactory1<PsiElement, DeclarationDescriptor> CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM =
+            DiagnosticFactory1.create(ERROR, DEFAULT);
+    DiagnosticFactory1<PsiElement, DeclarationDescriptor> CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM =
+            DiagnosticFactory1.create(ERROR, DEFAULT);
     DiagnosticFactory0<PsiElement> CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE = DiagnosticFactory0.create(ERROR, DEFAULT);
 
     DiagnosticFactory1<KtElement, KotlinType> NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE =

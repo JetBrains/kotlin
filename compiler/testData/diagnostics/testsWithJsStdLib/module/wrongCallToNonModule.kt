@@ -34,6 +34,14 @@ fun box() {
     <!CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM!>B<!>()
     <!CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM!>bar<!>()
     B.<!CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM!>Nested<!>()
+
+    boo<<!CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM!>B?<!>>(null)
+    <!CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM!>boo<!>(null as B?)
+    boo<<!CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM!>B.Nested?<!>>(null)
 }
 
 external class DerivedB : <!CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM!>B<!>
+
+inline fun <reified T> boo(x: T) {
+    println("${T::class.simpleName}: $x")
+}

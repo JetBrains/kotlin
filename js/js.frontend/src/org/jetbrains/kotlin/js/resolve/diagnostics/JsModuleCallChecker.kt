@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
@@ -26,6 +27,8 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ClassValueReceiver
 
 object JsModuleCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
+        checkReifieidTypeParameters(resolvedCall, reportOn, context)
+
         val callee = extractModuleCallee(resolvedCall) ?: return
         val bindingContext = context.trace.bindingContext
         val containingDescriptor = context.scope.ownerDescriptor
@@ -40,5 +43,19 @@ object JsModuleCallChecker : CallChecker {
         if (receiver is ClassValueReceiver) return receiver.classQualifier.descriptor
 
         return null
+    }
+
+    private fun checkReifieidTypeParameters(call: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
+        val containingDescriptor = context.scope.ownerDescriptor
+        val typeParams = call.candidateDescriptor.typeParameters.map { it.original }.withIndex().filter { (_, param) -> param.isReified }
+        val typeArguments = call.call.typeArgumentList
+                ?.let { args -> typeParams.associate { (index, param) -> param.original to args.arguments[index].typeReference }}
+                .orEmpty()
+        for (typeParam in typeParams.map { (_, param) -> param.original }) {
+            val argPsi = typeArguments[typeParam] ?: reportOn
+            val typeArgument = call.typeArguments[typeParam] ?: continue
+            val typeArgumentClass = typeArgument.constructor.declarationDescriptor as? ClassDescriptor ?: continue
+            checkJsModuleUsage(context.trace.bindingContext, context.trace, containingDescriptor, typeArgumentClass, argPsi)
+        }
     }
 }

@@ -1,6 +1,7 @@
 package
 
 package bar {
+    public inline fun </*0*/ reified T> boo(/*0*/ x: T): kotlin.Unit
     public fun box(): kotlin.Unit
 
     public external final class DerivedB : foo.B {

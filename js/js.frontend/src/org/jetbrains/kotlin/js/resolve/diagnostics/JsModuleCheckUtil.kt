@@ -50,12 +50,12 @@ fun checkJsModuleUsage(
     else {
         if (moduleKind == ModuleKind.PLAIN) {
             if (!callToNonModule && callToModule) {
-                diagnosticSink.report(ErrorsJs.CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM.on(reportOn))
+                diagnosticSink.report(ErrorsJs.CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM.on(reportOn, callee))
             }
         }
         else {
             if (!callToModule && callToNonModule) {
-                diagnosticSink.report(ErrorsJs.CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM.on(reportOn))
+                diagnosticSink.report(ErrorsJs.CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM.on(reportOn, callee))
             }
         }
     }
