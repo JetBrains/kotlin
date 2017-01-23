@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.jvm
 
+import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -55,6 +56,7 @@ object JvmRuntimeVersionsConsistencyChecker {
 
     private const val KOTLIN_STDLIB_MODULE = "$META_INF/kotlin-stdlib.kotlin_module"
     private const val KOTLIN_REFLECT_MODULE = "$META_INF/kotlin-reflection.kotlin_module"
+    private const val KOTLIN_COMPILER_MODULE = "$META_INF/kotlin-compiler.kotlin_module"
 
     private val KOTLIN_VERSION_ATTRIBUTE: String
     private val CURRENT_COMPILER_VERSION: MavenComparableVersion
@@ -216,6 +218,11 @@ object JvmRuntimeVersionsConsistencyChecker {
 
     private fun getKotlinRuntimeComponent(jar: VirtualFile, manifest: Manifest): String? {
         manifest.mainAttributes.getValue(KOTLIN_RUNTIME_COMPONENT_ATTRIBUTE)?.let { return it }
+
+        // Do not treat kotlin-compiler and kotlin-compiler-embeddable as Kotlin runtime libraries.
+        // The second condition is needed because when the compiler is built with "compiler-quick", there's no kotlin-compiler.kotlin_module
+        if (jar.findFileByRelativePath(KOTLIN_COMPILER_MODULE) != null ||
+            jar.findFileByRelativePath(this::class.java.name.replace('.', '/') + "." + JavaClassFileType.INSTANCE.defaultExtension) != null) return null
 
         if (jar.findFileByRelativePath(KOTLIN_STDLIB_MODULE) != null) return KOTLIN_RUNTIME_COMPONENT_MAIN
         if (jar.findFileByRelativePath(KOTLIN_REFLECT_MODULE) != null) return KOTLIN_RUNTIME_COMPONENT_MAIN
