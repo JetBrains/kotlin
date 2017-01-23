@@ -1,6 +1,6 @@
 
 fun main(args: Array<String>) {
-    val x = parseInt(args[0])
+    val x = args[0].toInt()
     //Check if a number lies within a range:
     val y = 10
     if (x in 1..y - 1)

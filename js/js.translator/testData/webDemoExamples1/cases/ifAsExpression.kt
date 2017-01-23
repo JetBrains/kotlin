@@ -1,5 +1,3 @@
 fun main(args: Array<String>) {
-    println(max(parseInt(args[0]), parseInt(args[1])))
+    println(maxOf(args[0].toInt(), args[1].toInt()))
 }
-
-fun max(a: Int, b: Int) = if (a > b) a else b

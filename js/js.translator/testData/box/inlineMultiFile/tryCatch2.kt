@@ -140,6 +140,6 @@ external object Number {
     fun parseInt(str: String): Int = noImpl
 }
 
-inline fun String.toInt2(): Int = parseInt(this)
+inline fun String.toInt2(): Int = this.toInt()
 
 class RuntimeExceptionWithValue(val value: String = "") : RuntimeException()

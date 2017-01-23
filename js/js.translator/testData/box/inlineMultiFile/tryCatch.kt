@@ -69,6 +69,6 @@ inline fun <T, R> T.perform(job: (T)-> R) : R {
     return job(this)
 }
 
-inline fun String.toInt2() : Int = parseInt(this)
+inline fun String.toInt2() : Int = this.toInt()
 
 class RuntimeExceptionWithValue(val value: String) : RuntimeException()

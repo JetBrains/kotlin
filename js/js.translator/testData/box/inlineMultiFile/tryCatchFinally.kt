@@ -104,4 +104,4 @@ inline fun <T, R> T.performWithFailFinally(job: (T)-> R, failJob : (e: RuntimeEx
     }
 }
 
-inline fun String.toInt2() : Int = parseInt(this)
+inline fun String.toInt2() : Int = this.toInt()
