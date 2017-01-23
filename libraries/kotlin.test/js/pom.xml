@@ -20,6 +20,7 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test-common</artifactId>
             <version>${project.version}</version>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
