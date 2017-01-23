@@ -211,6 +211,8 @@ fun JsBlock.replaceSpecialReferences(context: CoroutineTransformationContext) {
             ctx.replaceMe(JsNameRef(context.receiverFieldName, JsLiteral.THIS))
         }
 
+        override fun visit(x: JsFunction, ctx: JsContext<*>) = false
+
         override fun endVisit(x: JsNameRef, ctx: JsContext<in JsNode>) {
             when {
                 x.coroutineReceiver -> {
@@ -237,6 +239,8 @@ fun JsBlock.replaceSpecialReferences(context: CoroutineTransformationContext) {
 fun JsBlock.replaceLocalVariables(scope: JsScope, context: CoroutineTransformationContext, localVariables: Set<JsName>) {
     replaceSpecialReferences(context)
     val visitor = object : JsVisitorWithContextImpl() {
+        override fun visit(x: JsFunction, ctx: JsContext<*>) = false
+
         override fun endVisit(x: JsNameRef, ctx: JsContext<in JsNode>) {
             if (x.qualifier == null && x.name in localVariables) {
                 val fieldName = scope.getFieldName(x.name!!)

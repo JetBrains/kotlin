@@ -4769,6 +4769,12 @@ public class LightAnalysisModeCodegenTestGenerated extends AbstractLightAnalysis
             doTest(fileName);
         }
 
+        @TestMetadata("localDelegate.kt")
+        public void testLocalDelegate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/localDelegate.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("multipleInvokeCalls.kt")
         public void testMultipleInvokeCalls() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/multipleInvokeCalls.kt");
