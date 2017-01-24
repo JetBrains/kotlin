@@ -1,6 +1,7 @@
 package org.jetbrains
 
 import org.junit.*
+import kotlin.test.*
 
 open class SharedTest {
     @Test
