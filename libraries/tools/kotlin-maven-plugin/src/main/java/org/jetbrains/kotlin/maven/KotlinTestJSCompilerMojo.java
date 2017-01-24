@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.maven;
 
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -84,6 +85,11 @@ public class KotlinTestJSCompilerMojo extends K2JSCompilerMojo {
 
         arguments.outputFile = outputFile;
         arguments.metaInfo = metaInfo;
+    }
+
+    @Override
+    protected List<String> getClassPathElements() throws DependencyResolutionRequiredException {
+        return project.getTestClasspathElements();
     }
 
     @Override

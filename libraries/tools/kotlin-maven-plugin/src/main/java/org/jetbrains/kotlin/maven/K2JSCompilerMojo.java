@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.maven;
 
 import com.intellij.util.ArrayUtil;
 import kotlin.text.StringsKt;
-import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -98,7 +98,12 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
         arguments.kjsm = kjsm;
         arguments.moduleKind = moduleKind;
 
-        List<String> libraries = getKotlinJavascriptLibraryFiles();
+        List<String> libraries = null;
+        try {
+            libraries = getKotlinJavascriptLibraryFiles();
+        } catch (DependencyResolutionRequiredException e) {
+            throw new MojoExecutionException("Unresolved dependencies", e);
+        }
         getLog().debug("libraryFiles: " + libraries);
         arguments.libraryFiles = ArrayUtil.toStringArray(libraries);
 
@@ -116,33 +121,38 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
         }
     }
 
+    protected List<String> getClassPathElements() throws DependencyResolutionRequiredException {
+        return project.getCompileClasspathElements();
+    }
+
     /**
      * Returns all Kotlin Javascript dependencies that this project has, including transitive ones.
      *
      * @return array of paths to kotlin javascript libraries
      */
     @NotNull
-    private List<String> getKotlinJavascriptLibraryFiles() {
+    private List<String> getKotlinJavascriptLibraryFiles() throws DependencyResolutionRequiredException {
         List<String> libraries = new ArrayList<String>();
 
-        for (Artifact artifact : project.getArtifacts()) {
-            if (artifact.getScope().equals(Artifact.SCOPE_COMPILE)) {
-                File file = artifact.getFile();
-                if (LibraryUtils.isKotlinJavascriptLibrary(file)) {
-                    libraries.add(file.getAbsolutePath());
-                }
-                else {
-                    getLog().warn("artifact " + artifact + " is not a Kotlin Javascript Library");
-                }
+        for (String path : getClassPathElements()) {
+            File file = new File(path);
+
+            if (file.exists() && LibraryUtils.isKotlinJavascriptLibrary(file)) {
+                libraries.add(file.getAbsolutePath());
+            }
+            else {
+                getLog().debug("artifact " + file.getAbsolutePath() + " is not a Kotlin Javascript Library");
             }
         }
 
-        for (String file : getOutputDirectoriesCollector()) {
-            if (new File(file).exists()) {
-                libraries.add(file);
+        for (String path : getOutputDirectoriesCollector()) {
+            File file = new File(path);
+
+            if (file.exists() && LibraryUtils.isKotlinJavascriptLibrary(file)) {
+                libraries.add(file.getAbsolutePath());
             }
             else {
-                getLog().warn("JS output directory missing: " + file);
+                getLog().debug("JS output directory missing: " + file);
             }
         }
 
