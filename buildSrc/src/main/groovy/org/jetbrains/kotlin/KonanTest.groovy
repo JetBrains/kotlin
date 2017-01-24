@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin
 
+import groovy.json.JsonBuilder
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.TaskAction
@@ -141,6 +142,17 @@ class RunExternalTestGroup extends RunKonanTest {
     String filter = project.findProperty("filter")
     String goldValue = "OK"
 
+    class TestResult {
+        String name = null
+        String status = null
+        String comment = null
+
+        TestResult(String name, String status, String comment){
+            this.name = name;
+            this.status = status;
+            this.comment = comment;
+        }
+    }
 
     // TODO refactor
     List<String> buildCompileList() {
@@ -212,13 +224,13 @@ class RunExternalTestGroup extends RunKonanTest {
         def text = project.file(fileName).text
         def targetBackend = findLinesWithPrefixesRemoved(text, "// TARGET_BACKEND")
         if (targetBackend.size() != 0) {
-            // There is some target backend. Check if it is NATIVE or not
+            // There is some target backend. Check if it is NATIVE or not.
             for (String s : targetBackend) {
                 if (s.contains("NATIVE")){ return true }
             }
             return false
         } else {
-            // No target backend. Check if NATIVE backend is ignored
+            // No target backend. Check if NATIVE backend is ignored.
             def ignoredBackends = findLinesWithPrefixesRemoved(text, "// IGNORE_BACKEND: ")
             for (String s : ignoredBackends) {
                 if (s.contains("NATIVE")) { return false }
@@ -231,9 +243,8 @@ class RunExternalTestGroup extends RunKonanTest {
     @Override
     void executeTest() {
         createOutputDirectory()
-        def logFile = project.file("${outputDirectory}/result.md")
-        logFile.append("\n$groupDirectory\n\n")
-        logFile.append("|Test|Status|Comment|\n|----|------|-------|\n")
+
+        // Form the test list.
         def ktFiles = project.file(groupDirectory).listFiles(new FileFilter() {
             @Override
             boolean accept(File pathname) {
@@ -246,12 +257,15 @@ class RunExternalTestGroup extends RunKonanTest {
                 it.name =~ pattern
             }
         }
+
+        // Run the tests.
         def current = 0
         def passed = 0
         def skipped = 0
+        def failed = 0
         def total = ktFiles.size()
-        def status = null
-        def comment = null
+        def results = []
+        def currentResult = null
         ktFiles.each {
             current++
             source = project.relativePath(it)
@@ -259,18 +273,39 @@ class RunExternalTestGroup extends RunKonanTest {
             if (isEnabledForNativeBackend(source)) {
                 try {
                     super.executeTest()
-                    status = "PASSED"; comment = ""
+                    currentResult = new TestResult(it.name, "PASSED", "")
                     passed++
                 } catch (Exception ex) {
-                    status = "FAILED"; comment = "Exception: ${ex.getMessage()}. Cause: ${ex.getCause()?.getMessage()}"
+                    currentResult = new TestResult(it.name, "FAILED",
+                            "Exception: ${ex.getMessage()}. Cause: ${ex.getCause()?.getMessage()}")
+                    failed++
                 }
             } else {
-                status = "SKIPPED"; comment = ""
+                currentResult = new TestResult(it.name, "SKIPPED", "")
                 skipped++
             }
-            println("TEST $status\n")
-            logFile.append("|$it.name|$status|$comment|\n")
+            println("TEST $currentResult.status\n")
+            results.add(currentResult)
         }
-        println("TOTAL PASSED: $passed/$current (SKIPPED: $skipped)")
+
+        // Save the report.
+        def reportFile = project.file("${outputDirectory}/results.json")
+        def json = new JsonBuilder()
+        json {
+            "statistics" "total" : total, "passed" : passed, "failed" : failed, "skipped" : skipped
+
+            "tests" {
+                results.each { result ->
+                    "$result.name" {
+                        "status" result.status
+                        "comment" result.comment
+                    }
+                }
+            }
+
+
+        }
+        reportFile.write(json.toPrettyString())
+        println("TOTAL PASSED: $passed/$total (SKIPPED: $skipped)")
     }
 }

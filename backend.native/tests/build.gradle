@@ -1,9 +1,4 @@
-import com.google.common.collect.Lists
-import groovy.io.FileType
 import org.jetbrains.kotlin.*
-
-import java.nio.file.*
-import java.util.regex.Matcher
 
 configurations {
     cli_bc
