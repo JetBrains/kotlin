@@ -18,7 +18,7 @@ package foo
 
 object Bar {
     companion object {
-        val value = "foobar";
+        val value = "foobar"
             @JvmStatic get() {
             }
     }

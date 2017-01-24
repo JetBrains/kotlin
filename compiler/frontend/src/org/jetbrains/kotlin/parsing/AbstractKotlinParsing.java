@@ -239,8 +239,12 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
         return myBuilder.lookAhead(k);
     }
 
-    protected void consumeIf(KtToken token) {
-        if (at(token)) advance(); // token
+    protected boolean consumeIf(KtToken token) {
+        if (at(token)) {
+            advance(); // token
+            return true;
+        }
+        return false;
     }
 
     // TODO: Migrate to predicates

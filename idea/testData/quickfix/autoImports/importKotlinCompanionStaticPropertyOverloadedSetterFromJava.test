@@ -18,7 +18,7 @@ package foo
 
 object Bar {
     companion object {
-        var variable: String;
+        var variable: String
             @JvmStatic set(value) {
                 field = value
             }

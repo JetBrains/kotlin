@@ -335,7 +335,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      */
     private void parsePrefixExpression() {
         if (at(AT)) {
-            if (!parseLocalDeclaration(/* rollbackIfDefinitelyNotExpression = */ false)) {
+            if (!parseLocalDeclaration(/* rollbackIfDefinitelyNotExpression = */ false, false)) {
                 PsiBuilder.Marker expression = mark();
                 myKotlinParsing.parseAnnotations(DEFAULT);
                 parsePrefixExpression();
@@ -661,7 +661,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             parseDoWhile();
         }
         else if (atSet(LOCAL_DECLARATION_FIRST) &&
-                    parseLocalDeclaration(/* rollbackIfDefinitelyNotExpression = */ myBuilder.newlineBeforeCurrentToken())) {
+                    parseLocalDeclaration(/* rollbackIfDefinitelyNotExpression = */ myBuilder.newlineBeforeCurrentToken(), false)) {
             // declaration was parsed, do nothing
         }
         else if (at(IDENTIFIER)) {
@@ -830,7 +830,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             PsiBuilder.Marker property = mark();
             myKotlinParsing.parseModifierList(DEFAULT, TokenSet.create(EQ, RPAR));
             if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) {
-                myKotlinParsing.parseProperty(true);
+                myKotlinParsing.parseLocalProperty(false);
                 property.done(PROPERTY);
             }
             else {
@@ -1008,12 +1008,12 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     /*
      * modifiers declarationRest
      */
-    private boolean parseLocalDeclaration(boolean rollbackIfDefinitelyNotExpression) {
+    private boolean parseLocalDeclaration(boolean rollbackIfDefinitelyNotExpression, boolean isScriptTopLevel) {
         PsiBuilder.Marker decl = mark();
         KotlinParsing.ModifierDetector detector = new KotlinParsing.ModifierDetector();
         myKotlinParsing.parseModifierList(detector, DEFAULT, TokenSet.EMPTY);
 
-        IElementType declType = parseLocalDeclarationRest(detector.isEnumDetected(), rollbackIfDefinitelyNotExpression);
+        IElementType declType = parseLocalDeclarationRest(detector.isEnumDetected(), rollbackIfDefinitelyNotExpression, isScriptTopLevel);
 
         if (declType != null) {
             // we do not attach preceding comments (non-doc) to local variables because they are likely commenting a few statements below
@@ -1243,7 +1243,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *  ;
      */
     private void parseStatement(boolean isScriptTopLevel) {
-        if (!parseLocalDeclaration(/* rollbackIfDefinitelyNotExpression = */false)) {
+        if (!parseLocalDeclaration(/* rollbackIfDefinitelyNotExpression = */false, /* isScriptTopLevel = */ isScriptTopLevel)) {
             if (!atSet(EXPRESSION_FIRST)) {
                 errorAndAdvance("Expecting a statement");
             }
@@ -1293,7 +1293,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   ;
      */
     @Nullable
-    private IElementType parseLocalDeclarationRest(boolean isEnum, boolean failIfDefinitelyNotExpression) {
+    private IElementType parseLocalDeclarationRest(boolean isEnum, boolean failIfDefinitelyNotExpression, boolean isScriptTopLevel) {
         IElementType keywordToken = tt();
         IElementType declType = null;
 
@@ -1310,7 +1310,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             declType = myKotlinParsing.parseFunction();
         }
         else if (keywordToken == VAL_KEYWORD || keywordToken == VAR_KEYWORD) {
-            declType = myKotlinParsing.parseProperty(true);
+            declType = myKotlinParsing.parseLocalProperty(isScriptTopLevel);
         }
         else if (keywordToken == TYPE_ALIAS_KEYWORD) {
             declType = myKotlinParsing.parseTypeAlias();

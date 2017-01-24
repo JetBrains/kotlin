@@ -7,7 +7,7 @@ annotation class Accessor(val value: String)
 
 interface Z {
     @Property("OK")
-    val z: String;
+    val z: String
         @Accessor("OK")
         get() = "OK"
 }

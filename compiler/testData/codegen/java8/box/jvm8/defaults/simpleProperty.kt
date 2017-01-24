@@ -2,7 +2,7 @@
 // KOTLIN_CONFIGURATION_FLAGS: +JVM.JVM8_TARGET_WITH_DEFAULTS
 
 interface Z {
-    val z: String;
+    val z: String
         get() = "OK"
 }
 

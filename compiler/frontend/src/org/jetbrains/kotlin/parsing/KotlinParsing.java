@@ -1242,10 +1242,28 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   ;
      */
     private IElementType parseProperty() {
-        return parseProperty(false);
+        return parseProperty(PropertyParsingMode.MEMBER_OR_TOPLEVEL);
     }
 
-    public IElementType parseProperty(boolean local) {
+    public IElementType parseLocalProperty(boolean isScriptTopLevel) {
+        return parseProperty(isScriptTopLevel ? PropertyParsingMode.SCRIPT_TOPLEVEL : PropertyParsingMode.LOCAL);
+    }
+
+    enum PropertyParsingMode {
+        MEMBER_OR_TOPLEVEL(false, true),
+        LOCAL(true, false),
+        SCRIPT_TOPLEVEL(true, true);
+
+        public final boolean desctructuringAllowed;
+        public final boolean accessorsAllowed;
+
+        PropertyParsingMode(boolean desctructuringAllowed, boolean accessorsAllowed) {
+            this.desctructuringAllowed = desctructuringAllowed;
+            this.accessorsAllowed = accessorsAllowed;
+        }
+    }
+
+    public IElementType parseProperty(PropertyParsingMode mode) {
         assert (at(VAL_KEYWORD) || at(VAR_KEYWORD));
         advance();
 
@@ -1268,7 +1286,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         if (multiDeclaration) {
             PsiBuilder.Marker multiDecl = mark();
             parseMultiDeclarationName(propertyNameFollow);
-            errorIf(multiDecl, !local, "Destructuring declarations are only allowed for local variables/values");
+            errorIf(multiDecl, !mode.desctructuringAllowed, "Destructuring declarations are only allowed for local variables/values");
         }
         else {
             parseFunctionOrPropertyName(receiverTypeDeclared, "property", propertyNameFollow, /*nameRequired = */ true);
@@ -1297,25 +1315,30 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         beforeName.drop();
 
-        if (!local) {
+        if (mode.accessorsAllowed) {
             // It's only needed for non-local properties, because in local ones:
             // "val a = 1; b" must not be an infix call of b on "val ...;"
-            consumeIf(SEMICOLON);
 
-            AccessorKind accessorKind = parsePropertyGetterOrSetter(null);
-            if (accessorKind != null) {
-                parsePropertyGetterOrSetter(accessorKind);
-            }
+            myBuilder.enableNewlines();
+            boolean hasNewLineWithSemicolon = consumeIf(SEMICOLON) && myBuilder.newlineBeforeCurrentToken();
+            myBuilder.restoreNewlinesState();
 
-            if (!atSet(EOL_OR_SEMICOLON, RBRACE)) {
-                if (getLastToken() != SEMICOLON) {
-                    errorUntil(
-                            "Property getter or setter expected",
-                            TokenSet.orSet(DECLARATION_FIRST, TokenSet.create(EOL_OR_SEMICOLON, LBRACE, RBRACE)));
+            if (!hasNewLineWithSemicolon) {
+                AccessorKind accessorKind = parsePropertyGetterOrSetter(null);
+                if (accessorKind != null) {
+                    parsePropertyGetterOrSetter(accessorKind);
                 }
-            }
-            else {
-                consumeIf(SEMICOLON);
+
+                if (!atSet(EOL_OR_SEMICOLON, RBRACE)) {
+                    if (getLastToken() != SEMICOLON) {
+                        errorUntil(
+                                "Property getter or setter expected",
+                                TokenSet.orSet(DECLARATION_FIRST, TokenSet.create(EOL_OR_SEMICOLON, LBRACE, RBRACE)));
+                    }
+                }
+                else {
+                    consumeIf(SEMICOLON);
+                }
             }
         }
 

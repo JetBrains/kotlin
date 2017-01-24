@@ -17,7 +17,7 @@ public class Foo {
 package foo
 
 object Bar {
-    val value = "foobar";
+    val value = "foobar"
         @JvmStatic get() {
         }
 }

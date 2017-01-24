@@ -9,7 +9,7 @@ public var propInc: Int = 0
 
 public var dec: Int = 0;
 
-public var propDec: Int = 0;
+public var propDec: Int = 0
     get() { dec--; return field}
     set(a: Int) {
         dec--

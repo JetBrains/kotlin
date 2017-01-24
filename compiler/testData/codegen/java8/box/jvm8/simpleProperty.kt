@@ -1,7 +1,7 @@
 // JVM_TARGET: 1.8
 
 interface Z {
-    val z: String;
+    val z: String
         get() = "OK"
 }
 

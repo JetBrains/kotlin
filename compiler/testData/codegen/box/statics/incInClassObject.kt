@@ -10,7 +10,7 @@ class A {
 
         var holder: String = ""
 
-        var r2: Int = 1;
+        var r2: Int = 1
             get() {
                 holder += "getR2"
                 return field
@@ -22,7 +22,7 @@ class A {
             return r2
         }
 
-        var r3: Int = 1;
+        var r3: Int = 1
             set(p: Int) {
                 holder += "setR3"
                 field = p
@@ -34,7 +34,7 @@ class A {
             return r3
         }
 
-        var r4: Int = 1;
+        var r4: Int = 1
             get() {
                 holder += "getR4"
                 return field

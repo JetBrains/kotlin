@@ -2695,6 +2695,12 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("topLevelPropertiesWithGetSet.kts")
+            public void testTopLevelPropertiesWithGetSet() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/script/topLevelPropertiesWithGetSet.kts");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("unexpectedSymbol.kts")
             public void testUnexpectedSymbol() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/script/unexpectedSymbol.kts");
