@@ -128,6 +128,10 @@ inline fun <reified T : PsiElement> PsiElement.getNonStrictParentOfType(): T? {
     return PsiTreeUtil.getParentOfType(this, T::class.java, false)
 }
 
+inline fun <reified T : PsiElement> PsiElement.getTopmostParentOfType(): T? {
+    return PsiTreeUtil.getTopmostParentOfType(this, T::class.java)
+}
+
 inline fun <reified T : PsiElement> PsiElement.getChildOfType(): T? {
     return PsiTreeUtil.getChildOfType(this, T::class.java)
 }

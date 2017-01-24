@@ -7850,6 +7850,30 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("FqReference.kt")
+        public void testFqReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importMember/FqReference.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FqReferenceCall.kt")
+        public void testFqReferenceCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importMember/FqReferenceCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FqReferenceForNestedMember.kt")
+        public void testFqReferenceForNestedMember() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importMember/FqReferenceForNestedMember.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FqReferenceForNestedMember2.kt")
+        public void testFqReferenceForNestedMember2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importMember/FqReferenceForNestedMember2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("FromCompanionObject.kt")
         public void testFromCompanionObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importMember/FromCompanionObject.kt");

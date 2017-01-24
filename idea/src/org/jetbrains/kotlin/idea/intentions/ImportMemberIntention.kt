@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.ImportDescriptorResult
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import org.jetbrains.kotlin.psi.KtUserType
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -37,25 +34,36 @@ class ImportMemberIntention : SelfTargetingOffsetIndependentIntention<KtNameRefe
         KtNameReferenceExpression::class.java,
         "Add import for member"
 ){
+
+    private fun getFullQualifier(element: KtNameReferenceExpression): KtQualifiedExpression?
+            = element.getTopmostParentOfType<KtQualifiedExpression>()
+
     override fun isApplicableTo(element: KtNameReferenceExpression): Boolean {
-        val qualifiedElement = element.getQualifiedElement()
-        if (qualifiedElement == element) return false
+        if (element.getQualifiedElement() == element) return false //Ignore simple name expressions
+
+        val qualifiedExpression = getFullQualifier(element) ?: element.getQualifiedElement()
 
         if (element.isInImportDirective()) return false
 
-        val fqName = targetFqName(qualifiedElement) ?: return false
+        val fqName = targetFqName(qualifiedExpression) ?: return false
 
         text = "Add import for '${fqName.asString()}'"
         return true
     }
 
     override fun applyTo(element: KtNameReferenceExpression, editor: Editor?) {
-        val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
-        val targets = element.mainReference.resolveToDescriptors(bindingContext)
+
+        val qualifiedElement = getFullQualifier(element)
+
+        // If expression is fqn reference, take full qualified selector, otherwise (Type reference) take element
+        val targetElement = qualifiedElement?.selectorExpression?.getQualifiedElementSelector() ?: element
+
+        val bindingContext = targetElement.analyze(BodyResolveMode.PARTIAL)
+        val targets = targetElement.mainReference?.resolveToDescriptors(bindingContext) ?: return
         val fqName = targets.map { it.importableFqName!! }.single()
 
-        val file = element.containingKtFile
-        val helper = ImportInsertHelper.getInstance(element.project)
+        val file = targetElement.containingKtFile
+        val helper = ImportInsertHelper.getInstance(targetElement.project)
         if (helper.importDescriptor(file, targets.first()) == ImportDescriptorResult.FAIL) return
 
         val qualifiedExpressions = file.collectDescendantsOfType<KtDotQualifiedExpression> { qualifiedExpression ->

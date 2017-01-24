@@ -1,0 +1,9 @@
+import java.util.ArrayList
+
+// INTENTION_TEXT: "Add import for 'java.util.ArrayList'"
+// WITH_RUNTIME
+
+fun test() {
+    val myList = ArrayList<Int>()
+    val otherList = ArrayList<String>()
+}
