@@ -20,63 +20,42 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragment
-import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.storage.StorageManager
-import java.io.InputStream
+import org.jetbrains.kotlin.storage.getValue
 
 class KotlinJavascriptPackageFragment(
         fqName: FqName,
         storageManager: StorageManager,
         module: ModuleDescriptor,
-        private val loadResource: (path: String) -> InputStream?
+        private val proto: JsProtoBuf.Library.Part,
+        private val nameResolver: NameResolver
 ) : DeserializedPackageFragment(fqName, storageManager, module) {
-    private val nameResolver =
-            loadResourceSure(KotlinJavascriptSerializedResourcePaths.getStringTableFilePath(fqName)).use { stream ->
-                NameResolverImpl.read(stream)
-            }
-
-    private val fileMap: Map<Int, FileHolder> by lazy {
-        loadResource(KotlinJavascriptSerializedResourcePaths.getFileListFilePath(fqName))?.use { rawInput ->
-            val input = CodedInputStream.newInstance(rawInput)
-            val filesProto = JsProtoBuf.Files.parseFrom(input).fileOrBuilderList
-            filesProto.associate { it.id to FileHolder(it.annotationList) }
-        }.orEmpty()
+    private val fileMap: Map<Int, FileHolder> by storageManager.createLazyValue {
+        proto.files.fileList.associate { file -> file.id to FileHolder(file.annotationList) }
     }
 
-    private val annotationDeserializer: AnnotationDeserializer by lazy {
+    private val annotationDeserializer: AnnotationDeserializer by storageManager.createLazyValue {
         AnnotationDeserializer(module, components.notFoundClasses)
     }
 
-    override val classDataFinder = KotlinJavascriptClassDataFinder(nameResolver, loadResource)
+    override val classDataFinder = KotlinJavascriptClassDataFinder(proto, nameResolver)
 
     override fun computeMemberScope(): DeserializedPackageMemberScope =
-            loadResourceSure(KotlinJavascriptSerializedResourcePaths.getPackageFilePath(fqName)).use { packageStream ->
-                val packageProto = ProtoBuf.Package.parseFrom(packageStream, JsSerializerProtocol.extensionRegistry)
-                DeserializedPackageMemberScope(
-                        this, packageProto, nameResolver, containerSource = null, components = components,
-                        classNames = { loadClassNames() }
-                )
-            }
-
-    private fun loadClassNames(): Collection<Name> =
-            loadResourceSure(KotlinJavascriptSerializedResourcePaths.getClassesInPackageFilePath(fqName)).use { classesStream ->
-                val classesProto = JsProtoBuf.Classes.parseFrom(classesStream, JsSerializerProtocol.extensionRegistry)
-                classesProto.classNameList?.map { id -> nameResolver.getName(id) } ?: listOf()
-            }
-
-    private fun loadResourceSure(path: String): InputStream =
-            loadResource(path) ?: throw IllegalStateException("Resource not found in classpath: $path")
+            DeserializedPackageMemberScope(
+                    this, proto.`package`, nameResolver, containerSource = null, components = components,
+                    classNames = { classDataFinder.allClassIds.filterNot(ClassId::isNestedClass).map { it.shortClassName } }
+            )
 
     fun getContainingFileAnnotations(descriptor: DeclarationDescriptor): List<AnnotationDescriptor> {
         if (DescriptorUtils.getParentOfType(descriptor, PackageFragmentDescriptor::class.java) != this) {
@@ -93,7 +72,7 @@ class KotlinJavascriptPackageFragment(
     }
 
     private inner class FileHolder(val annotationsProto: List<ProtoBuf.Annotation>) {
-        val annotations: List<AnnotationDescriptor> by lazy {
+        val annotations: List<AnnotationDescriptor> by storageManager.createLazyValue {
             annotationsProto.map { annotationDeserializer.deserializeAnnotation(it, nameResolver) }
         }
     }

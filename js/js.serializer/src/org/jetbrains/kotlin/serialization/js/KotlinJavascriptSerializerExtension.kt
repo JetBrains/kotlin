@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.serialization.js
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -24,10 +25,13 @@ import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
+import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.types.FlexibleType
 
-class KotlinJavascriptSerializerExtension(private val fileRegistry: KotlinFileRegistry) :
-        KotlinSerializerExtensionBase(JsSerializerProtocol) {
+class KotlinJavascriptSerializerExtension(
+        private val fileRegistry: KotlinFileRegistry,
+        private val packageFqName: FqName
+) : KotlinSerializerExtensionBase(JsSerializerProtocol) {
     override val stringTable = JavaScriptStringTable()
 
     override fun serializeFlexibleType(flexibleType: FlexibleType, lowerProto: ProtoBuf.Type.Builder, upperProto: ProtoBuf.Type.Builder) {
@@ -40,6 +44,10 @@ class KotlinJavascriptSerializerExtension(private val fileRegistry: KotlinFileRe
             proto.setExtension(JsProtoBuf.classContainingFileId, id)
         }
         super.serializeClass(descriptor, proto)
+    }
+
+    override fun serializePackage(proto: ProtoBuf.Package.Builder) {
+        proto.setExtension(BuiltInsProtoBuf.packageFqName, stringTable.getPackageFqNameIndex(packageFqName))
     }
 
     override fun serializeProperty(descriptor: PropertyDescriptor, proto: ProtoBuf.Property.Builder) {

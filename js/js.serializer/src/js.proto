@@ -30,6 +30,10 @@ message Files {
   repeated File file = 1;
 }
 
+extend Package {
+  optional int32 package_fq_name = 131;
+}
+
 extend Class {
   repeated Annotation class_annotation = 130;
   optional int32 class_containing_file_id = 135;
@@ -72,11 +76,6 @@ message Classes {
 }
 
 message Library {
-  message FileEntry {
-    required string path = 1;
-    required bytes content = 2;
-  }
-
   enum Kind {
     PLAIN = 1;
     AMD = 2;
@@ -84,7 +83,22 @@ message Library {
     UMD = 4;
   }
 
-  repeated FileEntry entry = 1;
-  optional Kind kind = 2 [default = PLAIN];
+  // This is a copy of BuiltIns in builtins.proto
+  // TODO: combine the two
+  message Part {
+    optional StringTable strings = 1;
+    optional QualifiedNameTable qualified_names = 2;
+
+    optional Package package = 3;
+
+    repeated Class class = 4;
+
+    optional Files files = 130;
+  }
+
+  optional Kind kind = 1 [default = PLAIN];
+
+  repeated Part part = 2;
+
   repeated string imported_module = 3;
 }

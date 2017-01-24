@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
-import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer
-import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptClassDataFinder
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializedResourcePaths
+import org.jetbrains.kotlin.serialization.js.*
 import java.io.ByteArrayInputStream
 
 class KotlinJavaScriptDeserializerForDecompiler(
@@ -52,9 +49,8 @@ class KotlinJavaScriptDeserializerForDecompiler(
     override val targetPlatform: TargetPlatform get() = JsPlatform
     override val builtIns: KotlinBuiltIns get() = DefaultBuiltIns.Instance
 
-    private val classDataFinder = KotlinJavascriptClassDataFinder(nameResolver) { path ->
-        packageDirectory.findChild(path.substringAfterLast("/"))?.inputStream
-    }
+    // TODO: read metadata from .kjsm files here
+    private val classDataFinder = KotlinJavascriptClassDataFinder(JsProtoBuf.Library.Part.getDefaultInstance(), nameResolver)
 
     override val deserializationComponents: DeserializationComponents
 
