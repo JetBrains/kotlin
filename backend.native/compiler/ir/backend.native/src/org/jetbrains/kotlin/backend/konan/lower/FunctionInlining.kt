@@ -6,9 +6,15 @@ import org.jetbrains.kotlin.backend.konan.ir.getArguments
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
@@ -17,6 +23,28 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 internal class FunctionInlining(val context: Context): IrElementTransformerVoid() {
 
     fun inline(irFile: IrFile) = irFile.accept(this, null)
+
+    //-------------------------------------------------------------------------//
+
+    fun evaluateExpressionParameters(callExpression: IrCall,
+        statements: MutableList<IrStatement>): List<Pair<ParameterDescriptor, IrExpression>> {
+
+        val scope         = Scope(callExpression.descriptor as FunctionDescriptor)
+        val parametersOld = callExpression.getArguments()                                   // Create map inline_function_parameter -> containing_function_expression.
+        val parametersNew = parametersOld.map {
+            val parameter = it.first
+            val value     = it.second
+            if (value is IrGetValue) return@map it                                          // If value is not an expression - do nothing.
+
+            val newVar = scope.createTemporaryVariable(value, "inline", false)              // Create new variable and init it with the expression.
+            statements.add(0, newVar)                                                       // Add initialization of the new variable in statement list.
+
+            val getVal = IrGetValueImpl(0, 0, newVar.descriptor)                            // Create new IR element representing access the new variable
+            parameter to getVal                                                             // Parameter will be replaced with the new variable.
+        }
+        return parametersNew
+    }
+
 
     //-------------------------------------------------------------------------//
 
@@ -33,11 +61,11 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         val endOffset   = copyFuncDeclaration.endOffset
         val returnType  = copyFuncDeclaration.descriptor.returnType!!
         val statements  = body.statements
-        val irBlock     = IrInlineFunctionBody(startOffset, endOffset, returnType, null, statements)
 
-        val parameterToExpression = expression.getArguments()                               // Build map parameter -> expression.
-        val parametersTransformer = ParametersTransformer(parameterToExpression)
-        irBlock.accept(parametersTransformer, null)                                         // Replace parameters with expression.
+        val parameters  = evaluateExpressionParameters(expression, statements)              // Evaluate parameters representing expression.
+        val transformer = ParametersTransformer(parameters)
+        val irBlock     = IrInlineFunctionBody(startOffset, endOffset, returnType, null, statements)
+        irBlock.accept(transformer, null)                                                   // Replace parameters with expression.
 
         return irBlock                                                                      // Return newly created IrBlock instead of IrCall.
     }
