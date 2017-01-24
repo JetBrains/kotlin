@@ -2,6 +2,7 @@ package jquery
 
 import org.w3c.dom.Element
 
+@Deprecated("JQuery is going to be removed from the standard library")
 public external class JQuery() {
     public fun addClass(className: String): JQuery
     public fun addClass(f: Element.(Int, String) -> String): JQuery
@@ -42,6 +43,7 @@ public external class JQuery() {
     public fun `val`(): String?
 }
 
+@Deprecated("JQuery is going to be removed from the standard library")
 open public external class MouseEvent() {
     public val pageX: Double
     public val pageY: Double
@@ -49,19 +51,26 @@ open public external class MouseEvent() {
     public fun isDefaultPrevented(): Boolean
 }
 
+@Deprecated("JQuery is going to be removed from the standard library")
 public external class MouseClickEvent() : MouseEvent {
     public val which: Int
 }
 
+@Deprecated("JQuery is going to be removed from the standard library")
 @JsName("$")
 public external fun jq(selector: String): JQuery
+@Deprecated("JQuery is going to be removed from the standard library")
 @JsName("$")
 public external fun jq(selector: String, context: Element): JQuery
+@Deprecated("JQuery is going to be removed from the standard library")
 @JsName("$")
 public external fun jq(callback: () -> Unit): JQuery
+@Deprecated("JQuery is going to be removed from the standard library")
 @JsName("$")
 public external fun jq(obj: JQuery): JQuery
+@Deprecated("JQuery is going to be removed from the standard library")
 @JsName("$")
 public external fun jq(el: Element): JQuery
+@Deprecated("JQuery is going to be removed from the standard library")
 @JsName("$")
 public external fun jq(): JQuery
