@@ -1236,7 +1236,7 @@ public abstract interface class kotlin/reflect/KProperty1$Getter : kotlin/jvm/fu
 
 public abstract interface class kotlin/reflect/KProperty2 : kotlin/jvm/functions/Function2, kotlin/reflect/KProperty {
 	public abstract fun get (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-	public abstract fun getDelegate (Ljava/lang/Object;)Ljava/lang/Object;
+	public abstract fun getDelegate (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 	public abstract fun getGetter ()Lkotlin/reflect/KProperty2$Getter;
 }
 
