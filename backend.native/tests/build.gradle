@@ -178,7 +178,6 @@ task defaults3(type: RunKonanTest) {
 }
 
 task defaults4(type: RunKonanTest) {
-    disabled = true
     goldValue = "43\n"
     source = "codegen/function/defaults4.kt"
 }
@@ -193,6 +192,15 @@ task defaults6(type: RunKonanTest) {
     source = "codegen/function/defaults6.kt"
 }
 
+task defaults7(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "codegen/function/defaults7.kt"
+}
+
+task defaults8(type: RunKonanTest) {
+    goldValue = "2\n"
+    source = "codegen/function/defaults8.kt"
+}
 
 task sum_3const(type: RunKonanTest) {
     source = "codegen/function/sum_3const.kt"
