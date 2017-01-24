@@ -144,9 +144,6 @@ object KotlinJavascriptSerializationUtil {
             }
         }, skip)
 
-        writeFun(KotlinJavascriptSerializedResourcePaths.getFileListFilePath(fqName),
-                 serializeFiles(fileRegistry, bindingContext, AnnotationSerializer(serializer.stringTable)))
-
         val packageStream = ByteArrayOutputStream()
         val fragments = packageView.fragments
         val members = fragments
@@ -157,6 +154,9 @@ object KotlinJavascriptSerializationUtil {
             packageProto.writeTo(packageStream)
             writeFun(KotlinJavascriptSerializedResourcePaths.getPackageFilePath(fqName), packageStream.toByteArray())
         }
+
+        writeFun(KotlinJavascriptSerializedResourcePaths.getFileListFilePath(fqName),
+                 serializeFiles(fileRegistry, bindingContext, AnnotationSerializer(serializer.stringTable)))
 
         val strings = serializerExtension.stringTable
         serializeClassNamesInPackage(fqName, fragments, strings, skip, writeFun)

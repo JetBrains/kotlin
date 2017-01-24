@@ -55,3 +55,7 @@ annotation class JsModule(val import: String)
 @Retention(AnnotationRetention.BINARY)
 @Target(CLASS, PROPERTY, FUNCTION, FILE)
 annotation class JsNonModule
+
+@Retention(AnnotationRetention.BINARY)
+@Target(AnnotationTarget.FILE)
+annotation class JsQualifier(val value: String)

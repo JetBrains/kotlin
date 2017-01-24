@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.translate.context;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.util.Factory;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.hash.LinkedHashMap;
 import org.jetbrains.annotations.NotNull;
@@ -287,7 +288,14 @@ public final class StaticContext {
             String fileModuleName = AnnotationsUtils.getFileModuleName(getBindingContext(), suggested.getDescriptor());
             if (fileModuleName != null) {
                 JsName moduleJsName = getImportedModule(fileModuleName, null).internalName;
-                expression = pureFqn(moduleJsName, null);
+                expression = pureFqn(moduleJsName, expression);
+            }
+
+            String qualifier = AnnotationsUtils.getFileQualifier(getBindingContext(), suggested.getDescriptor());
+            if (qualifier != null) {
+                for (String qualifierPart : StringUtil.split(qualifier, ".")) {
+                    expression = pureFqn(qualifierPart, expression);
+                }
             }
         }
 

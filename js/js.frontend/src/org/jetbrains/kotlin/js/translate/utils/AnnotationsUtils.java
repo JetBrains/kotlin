@@ -42,6 +42,7 @@ public final class AnnotationsUtils {
     private static final String JS_NAME = "kotlin.js.JsName";
     private static final FqName JS_MODULE_ANNOTATION = new FqName("kotlin.js.JsModule");
     private static final FqName JS_NON_MODULE_ANNOTATION = new FqName("kotlin.js.JsNonModule");
+    private static final FqName JS_QUALIFIER_ANNOTATION = new FqName("kotlin.js.JsQualifier");
 
     private AnnotationsUtils() {
     }
@@ -197,21 +198,34 @@ public final class AnnotationsUtils {
     @Nullable
     public static String getModuleName(@NotNull DeclarationDescriptor declaration) {
         AnnotationDescriptor annotation = declaration.getAnnotations().findAnnotation(JS_MODULE_ANNOTATION);
-        return annotation != null ? extractJsModuleName(annotation) : null;
+        return annotation != null ? extractSingleStringArgument(annotation) : null;
     }
 
     @Nullable
     public static String getFileModuleName(@NotNull BindingContext bindingContext, @NotNull DeclarationDescriptor declaration) {
+        return getSingleStringAnnotationArgument(bindingContext, declaration, JS_MODULE_ANNOTATION);
+    }
+
+    @Nullable
+    public static String getFileQualifier(@NotNull BindingContext bindingContext, @NotNull DeclarationDescriptor declaration) {
+        return getSingleStringAnnotationArgument(bindingContext, declaration, JS_QUALIFIER_ANNOTATION);
+    }
+
+    @Nullable
+    private static String getSingleStringAnnotationArgument(
+            @NotNull BindingContext bindingContext,
+            @NotNull DeclarationDescriptor declaration,
+            @NotNull FqName annotationFqName
+    ) {
         for (AnnotationDescriptor annotation : getContainingFileAnnotations(bindingContext, declaration)) {
             DeclarationDescriptor annotationType = annotation.getType().getConstructor().getDeclarationDescriptor();
             if (annotationType == null) continue;
 
             FqNameUnsafe fqName = DescriptorUtils.getFqName(annotation.getType().getConstructor().getDeclarationDescriptor());
-            if (fqName.equals(JS_MODULE_ANNOTATION.toUnsafe())) {
-                return extractJsModuleName(annotation);
+            if (fqName.equals(annotationFqName.toUnsafe())) {
+                return extractSingleStringArgument(annotation);
             }
         }
-
         return null;
     }
 
@@ -237,7 +251,7 @@ public final class AnnotationsUtils {
     }
 
     @Nullable
-    private static String extractJsModuleName(@NotNull AnnotationDescriptor annotation) {
+    private static String extractSingleStringArgument(@NotNull AnnotationDescriptor annotation) {
         if (annotation.getAllValueArguments().isEmpty()) return null;
 
         ConstantValue<?> importValue = annotation.getAllValueArguments().values().iterator().next();
