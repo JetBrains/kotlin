@@ -20,18 +20,22 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.ClassData
 import org.jetbrains.kotlin.serialization.ClassDataWithSource
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import java.io.InputStream
 
 class KotlinJavascriptClassDataFinder(
-        private val nameResolver: NameResolver,
-        private val loadResource: (path: String) -> InputStream?
+        proto: JsProtoBuf.Library.Part,
+        private val nameResolver: NameResolver
 ) : ClassDataFinder {
+    private val classIdToProto =
+            proto.class_List.associateBy { klass ->
+                nameResolver.getClassId(klass.fqName)
+            }
+
+    internal val allClassIds: Collection<ClassId> get() = classIdToProto.keys
+
     override fun findClassData(classId: ClassId): ClassDataWithSource? {
-        val stream = loadResource(KotlinJavascriptSerializedResourcePaths.getClassMetadataPath(classId)) ?: return null
-        val classProto = ProtoBuf.Class.parseFrom(stream, JsSerializerProtocol.extensionRegistry)
+        val classProto = classIdToProto[classId] ?: return null
         return ClassDataWithSource(ClassData(nameResolver, classProto), SourceElement.NO_SOURCE)
     }
 }

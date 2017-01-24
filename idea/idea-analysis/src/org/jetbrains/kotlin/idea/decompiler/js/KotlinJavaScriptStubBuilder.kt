@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
+import org.jetbrains.kotlin.serialization.js.JsProtoBuf
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptClassDataFinder
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializedResourcePaths
@@ -76,9 +77,8 @@ class KotlinJavaScriptStubBuilder : ClsStubBuilder() {
     }
 
     private fun createStubBuilderComponents(file: VirtualFile, nameResolver: NameResolver): ClsStubBuilderComponents {
-        val classDataFinder = KotlinJavascriptClassDataFinder(nameResolver) { path ->
-            file.parent.findChild(path.substringAfterLast("/"))?.inputStream
-        }
+        // TODO: read metadata from .kjsm files here
+        val classDataFinder = KotlinJavascriptClassDataFinder(JsProtoBuf.Library.Part.getDefaultInstance(), nameResolver)
         val annotationLoader = AnnotationLoaderForStubBuilderImpl(JsSerializerProtocol)
         return ClsStubBuilderComponents(classDataFinder, annotationLoader, file)
     }

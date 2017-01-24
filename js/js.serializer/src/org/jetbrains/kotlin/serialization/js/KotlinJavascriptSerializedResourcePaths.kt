@@ -59,20 +59,6 @@ fun FqName.isPackageClassFqName(): Boolean = !this.isRoot && getPackageClassFqNa
 
 fun isDefaultPackageMetafile(fileName: String): Boolean = fileName == DEFAULT_PACKAGE_METAFILE_NAME
 
-fun isPackageMetadataFile(fileName: String): Boolean =
-        KotlinJavascriptSerializedResourcePaths.getPackageFilePath(getPackageFqName(fileName)) == fileName
-
-fun isStringTableFile(fileName: String): Boolean =
-        KotlinJavascriptSerializedResourcePaths.getStringTableFilePath(getPackageFqName(fileName)) == fileName
-
-fun isClassesInPackageFile(fileName: String): Boolean =
-        KotlinJavascriptSerializedResourcePaths.getClassesInPackageFilePath(getPackageFqName(fileName)) == fileName
-
-private fun getPackageFqName(fileName: String): FqName = FqName(getPackageName(fileName))
-
-private fun getPackageName(filePath: String): String =
-        if (filePath.indexOf('/') >= 0) filePath.substringBeforeLast('/').replace('/', '.') else ""
-
 private fun getPackageClassFqName(packageFQN: FqName): FqName {
     return packageFQN.child(Name.identifier(getPackageClassName(packageFQN)))
 }
