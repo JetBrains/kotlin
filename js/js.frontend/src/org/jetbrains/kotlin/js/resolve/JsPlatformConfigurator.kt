@@ -36,7 +36,7 @@ object JsPlatformConfigurator : PlatformConfigurator(
         DynamicTypesAllowed(),
         additionalDeclarationCheckers = listOf(
                 NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(),
-                JsNameChecker, JsModuleChecker,
+                JsNameChecker, JsModuleChecker, JsExternalFileChecker,
                 JsExternalChecker, JsInheritanceChecker,
                 JsRuntimeAnnotationChecker,
                 JsDynamicDeclarationChecker,

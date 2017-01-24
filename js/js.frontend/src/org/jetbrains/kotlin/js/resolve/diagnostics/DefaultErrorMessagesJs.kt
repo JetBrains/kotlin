@@ -64,6 +64,11 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
                                                                "from modular project")
         put(ErrorsJs.CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE, "When accessing module declarations from UMD, " +
                                                                         "they must be marked by both @JsModule and @JsNonModule")
+
+        put(ErrorsJs.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
+            "Can't put non-external declarations in file marked with {0} annotation", RENDER_TYPE)
+        put(ErrorsJs.WRONG_JS_QUALIFIER, "Qualifier contains illegal characters")
+
         put(ErrorsJs.CANNOT_CHECK_FOR_NATIVE_INTERFACE, "Cannot check for native interface: {0}", RENDER_TYPE)
         put(ErrorsJs.UNCHECKED_CAST_TO_NATIVE_INTERFACE, "Unchecked cast to native interface: {0} to {1}", RENDER_TYPE, RENDER_TYPE)
         put(ErrorsJs.NATIVE_INTERFACE_AS_REIFIED_TYPE_ARGUMENT, "Cannot pass native interface {0} for reified type parameter", RENDER_TYPE)

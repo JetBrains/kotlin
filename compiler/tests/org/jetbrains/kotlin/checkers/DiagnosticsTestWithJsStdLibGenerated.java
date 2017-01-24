@@ -383,6 +383,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
+        @TestMetadata("jsModuleNonExternal.kt")
+        public void testJsModuleNonExternal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/module/jsModuleNonExternal.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("jsModuleWithoutParameters.kt")
         public void testJsModuleWithoutParameters() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/module/jsModuleWithoutParameters.kt");

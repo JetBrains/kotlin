@@ -63,6 +63,11 @@ public interface ErrorsJs {
     DiagnosticFactory0<PsiElement> CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM = DiagnosticFactory0.create(ERROR, DEFAULT);
     DiagnosticFactory0<PsiElement> CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM = DiagnosticFactory0.create(ERROR, DEFAULT);
     DiagnosticFactory0<PsiElement> CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE = DiagnosticFactory0.create(ERROR, DEFAULT);
+
+    DiagnosticFactory1<KtElement, KotlinType> NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE =
+            DiagnosticFactory1.create(ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtValueArgument> WRONG_JS_QUALIFIER = DiagnosticFactory0.create(ERROR, PositioningStrategies.DEFAULT);
+
     DiagnosticFactory1<PsiElement, KotlinType> CANNOT_CHECK_FOR_NATIVE_INTERFACE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> UNCHECKED_CAST_TO_NATIVE_INTERFACE = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory1<PsiElement, KotlinType> NATIVE_INTERFACE_AS_REIFIED_TYPE_ARGUMENT = DiagnosticFactory1.create(ERROR);

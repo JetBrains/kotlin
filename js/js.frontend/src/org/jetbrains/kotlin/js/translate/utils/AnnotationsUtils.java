@@ -40,9 +40,9 @@ import java.util.List;
 
 public final class AnnotationsUtils {
     private static final String JS_NAME = "kotlin.js.JsName";
-    private static final FqName JS_MODULE_ANNOTATION = new FqName("kotlin.js.JsModule");
+    public static final FqName JS_MODULE_ANNOTATION = new FqName("kotlin.js.JsModule");
     private static final FqName JS_NON_MODULE_ANNOTATION = new FqName("kotlin.js.JsNonModule");
-    private static final FqName JS_QUALIFIER_ANNOTATION = new FqName("kotlin.js.JsQualifier");
+    public static final FqName JS_QUALIFIER_ANNOTATION = new FqName("kotlin.js.JsQualifier");
 
     private AnnotationsUtils() {
     }
@@ -262,7 +262,7 @@ public final class AnnotationsUtils {
     }
 
     @NotNull
-    private static List<AnnotationDescriptor> getContainingFileAnnotations(
+    public static List<AnnotationDescriptor> getContainingFileAnnotations(
             @NotNull BindingContext bindingContext,
             @NotNull DeclarationDescriptor descriptor
     ) {

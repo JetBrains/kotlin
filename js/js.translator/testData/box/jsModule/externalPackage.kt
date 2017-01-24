@@ -1,3 +1,4 @@
+// FILE: a.kt
 // MODULE_KIND: AMD
 @file:JsModule("lib")
 package foo
@@ -23,6 +24,9 @@ external fun foo(y: Int): Int = definedExternally
 external val bar: Int = definedExternally
 
 external var mbar: Int = definedExternally
+
+// FILE: b.kt
+package foo
 
 fun box(): String {
     val a = A(23)
