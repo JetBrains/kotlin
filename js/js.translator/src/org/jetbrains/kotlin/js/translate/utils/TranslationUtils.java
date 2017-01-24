@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js.translate.utils;
 
-import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -24,6 +23,8 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
+import org.jetbrains.kotlin.js.backend.ast.*;
+import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TemporaryConstVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
@@ -41,7 +42,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.serialization.deserialization.FindClassInModuleKt;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -398,17 +398,5 @@ public final class TranslationUtils {
                !(descriptor instanceof ConstructorDescriptor) &&
                descriptor.getContainingDeclaration() instanceof ClassDescriptor &&
                ModalityKt.isOverridable(descriptor);
-    }
-
-
-    public static boolean isImmediateSubtypeOfError(@NotNull ClassDescriptor descriptor) {
-        if (!isExceptionClass(descriptor)) return false;
-        ClassDescriptor superClass = DescriptorUtilsKt.getSuperClassOrAny(descriptor);
-        return TypeUtilsKt.isThrowable(superClass.getDefaultType()) || AnnotationsUtils.isNativeObject(superClass);
-    }
-
-    public static boolean isExceptionClass(@NotNull ClassDescriptor descriptor) {
-        ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
-        return TypeUtilsKt.isSubtypeOf(descriptor.getDefaultType(), module.getBuiltIns().getThrowable().getDefaultType());
     }
 }

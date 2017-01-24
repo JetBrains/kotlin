@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.Collection;
@@ -187,5 +188,17 @@ public final class JsDescriptorUtils {
         ModuleDescriptor moduleDescriptor = DescriptorUtils.getContainingModule(descriptor);
         String moduleName = moduleDescriptor.getName().asString();
         return moduleName.substring(1, moduleName.length() - 1);
+    }
+
+
+    public static boolean isImmediateSubtypeOfError(@NotNull ClassDescriptor descriptor) {
+        if (!isExceptionClass(descriptor)) return false;
+        ClassDescriptor superClass = org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getSuperClassOrAny(descriptor);
+        return TypeUtilsKt.isThrowable(superClass.getDefaultType()) || AnnotationsUtils.isNativeObject(superClass);
+    }
+
+    public static boolean isExceptionClass(@NotNull ClassDescriptor descriptor) {
+        ModuleDescriptor module = DescriptorUtils.getContainingModule(descriptor);
+        return TypeUtilsKt.isSubtypeOf(descriptor.getDefaultType(), module.getBuiltIns().getThrowable().getDefaultType());
     }
 }

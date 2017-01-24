@@ -252,7 +252,7 @@ class ClassTranslator private constructor(
         val delegationClassDescriptor = (resolvedCall?.resultingDescriptor as? ClassConstructorDescriptor)?.constructedClass
 
         if (resolvedCall != null && !KotlinBuiltIns.isAny(delegationClassDescriptor!!)) {
-            if (TranslationUtils.isImmediateSubtypeOfError(classDescriptor)) {
+            if (JsDescriptorUtils.isImmediateSubtypeOfError(classDescriptor)) {
                 superCallGenerators += {
                     val innerContext = context().innerBlock()
                     ClassInitializerTranslator.emulateSuperCallToNativeError(
@@ -468,7 +468,7 @@ class ClassTranslator private constructor(
     }
 
     private fun mayBeAddThrowableProperties(context: TranslationContext) {
-        if (!TranslationUtils.isImmediateSubtypeOfError(descriptor)) return
+        if (!JsDescriptorUtils.isImmediateSubtypeOfError(descriptor)) return
 
         val properties = listOf("message", "cause")
                 .map { Name.identifier(it) }

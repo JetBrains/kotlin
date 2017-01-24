@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils;
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.AstUtilsKt;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
@@ -188,7 +187,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
                 return;
             }
 
-            if (TranslationUtils.isImmediateSubtypeOfError(classDescriptor)) {
+            if (JsDescriptorUtils.isImmediateSubtypeOfError(classDescriptor)) {
                 emulateSuperCallToNativeError(context, classDescriptor, superCall, JsLiteral.THIS);
                 return;
             }
@@ -385,9 +384,9 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     }
 
     private void addThrowableCall() {
-        if (!TranslationUtils.isExceptionClass(classDescriptor)) return;
+        if (!JsDescriptorUtils.isExceptionClass(classDescriptor)) return;
 
-        if (TranslationUtils.isImmediateSubtypeOfError(classDescriptor)) {
+        if (JsDescriptorUtils.isImmediateSubtypeOfError(classDescriptor)) {
             ClassDescriptor superClass = DescriptorUtilsKt.getSuperClassOrAny(classDescriptor);
             JsExpression invocation = new JsInvocation(
                     pureFqn("captureStack", Namer.kotlinObject()),
