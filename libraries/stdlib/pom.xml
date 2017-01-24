@@ -20,9 +20,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-test-junit</artifactId>
-            <version>${project.version}</version>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -65,6 +65,16 @@
                         <goals>
                             <goal>test-compile</goal>
                         </goals>
+                        <configuration>
+                            <args combine.children="append">
+                                <arg>-Xmulti-platform</arg>
+                            </args>
+                            <sourceDirs>
+                                <dir>${project.basedir}/../kotlin.test/common/src/main/kotlin</dir>
+                                <dir>${project.basedir}/../kotlin.test/jvm/src/main/kotlin</dir>
+                                <dir>${project.basedir}/../kotlin.test/junit/src/main/kotlin</dir>
+                            </sourceDirs>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
