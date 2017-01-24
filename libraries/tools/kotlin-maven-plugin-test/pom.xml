@@ -100,6 +100,12 @@
                             <!--This could speed up test by providing local repo as remote repo for test but might be tricky on different OS-->
                             <!--<settingsFile>src/it/settings.xml</settingsFile>-->
                             <localRepositoryPath>local-repo</localRepositoryPath>
+                            <extraArtifacts>
+                                <artifact>org.jetbrains.kotlin:kotlin-test-parent:${project.version}:pom</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-test-common:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-test:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-test-js:${project.version}</artifact>
+                            </extraArtifacts>
                             <showErrors>true</showErrors>
                             <postBuildHookScript>verify</postBuildHookScript>
                             <streamLogs>false</streamLogs>
