@@ -1,0 +1,30 @@
+@kotlin.Metadata
+public final class A {
+    private @org.jetbrains.annotations.NotNull field value: java.lang.String
+    inner class A/B
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getValue(): java.lang.String
+    private final method setValue(p0: java.lang.String): void
+}
+
+@kotlin.Metadata
+public final class A/B {
+    synthetic final field this$0: A
+    inner class A/B
+    public method <init>(p0: A): void
+    public final @org.jetbrains.annotations.NotNull method foo(): kotlin.reflect.KMutableProperty0
+}
+
+@kotlin.Metadata
+public final class C {
+    private @org.jetbrains.annotations.NotNull field value: java.lang.String
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method bar(): kotlin.reflect.KMutableProperty0
+    public final @org.jetbrains.annotations.NotNull method getValue(): java.lang.String
+    private final method setValue(p0: java.lang.String): void
+}
+
+@kotlin.Metadata
+public final class PrivateSetOuterClassKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

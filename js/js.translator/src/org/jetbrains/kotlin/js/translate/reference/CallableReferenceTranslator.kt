@@ -142,7 +142,10 @@ object CallableReferenceTranslator {
         val setter = descriptor.setter ?: return false
         if (setter.visibility != Visibilities.PRIVATE) return true
         val classDescriptor = context.classDescriptor ?: return false
-        return classDescriptor == descriptor.containingDeclaration
+
+        val outerClasses = generateSequence<DeclarationDescriptor>(classDescriptor) { it.containingDeclaration }
+                .filterIsInstance<ClassDescriptor>()
+        return descriptor.containingDeclaration in outerClasses
     }
 
     private fun translateForPropertyAccessor(

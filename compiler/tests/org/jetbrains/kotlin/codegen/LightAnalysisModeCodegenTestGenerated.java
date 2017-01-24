@@ -2176,6 +2176,12 @@ public class LightAnalysisModeCodegenTestGenerated extends AbstractLightAnalysis
                 doTest(fileName);
             }
 
+            @TestMetadata("privateSetOuterClass.kt")
+            public void testPrivateSetOuterClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/property/privateSetOuterClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("privateSetterInsideClass.kt")
             public void testPrivateSetterInsideClass() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/property/privateSetterInsideClass.kt");
