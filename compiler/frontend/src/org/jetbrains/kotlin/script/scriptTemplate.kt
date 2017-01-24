@@ -30,6 +30,10 @@ const val DEFAULT_SCRIPT_FILE_PATTERN = ".*\\.kts"
 annotation class ScriptTemplateDefinition(val resolver: KClass<out ScriptDependenciesResolver> = BasicScriptDependenciesResolver::class,
                                           val scriptFilePattern: String = DEFAULT_SCRIPT_FILE_PATTERN)
 
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class SamWithReceiverAnnotations(vararg val annotations: String)
+
 interface ScriptContents {
 
     data class Position(val line: Int, val col: Int)

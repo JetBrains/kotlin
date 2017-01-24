@@ -1,0 +1,34 @@
+package
+
+@SamWithReceiver1 public /*synthesized*/ fun Sam(/*0*/ function: (a: kotlin.String!) -> kotlin.Unit): Sam
+
+public open class Exec {
+    public constructor Exec()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public/*package*/ open fun exec(/*0*/ sam: Sam!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@SamWithReceiver1 public interface Sam {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun run(/*0*/ a: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class SamWithReceiver1 : kotlin.Annotation {
+    public constructor SamWithReceiver1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Test : kotlin.script.templates.standard.ScriptTemplateWithArgs {
+    public constructor Test(/*0*/ args: kotlin.Array<kotlin.String>)
+    public final override /*1*/ /*fake_override*/ val args: kotlin.Array<kotlin.String>
+    public final val e: Exec
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

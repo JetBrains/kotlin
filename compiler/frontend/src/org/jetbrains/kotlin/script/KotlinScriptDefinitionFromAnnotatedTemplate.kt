@@ -63,6 +63,10 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
         }
     }
 
+    val samWithReceiverAnnotations: List<String>? by lazy {
+        template.annotations.firstIsInstanceOrNull<SamWithReceiverAnnotations>()?.annotations?.toList()
+    }
+
     private val acceptedAnnotations: List<KClass<out Annotation>> by lazy {
         val resolveMethod = ScriptDependenciesResolver::resolve
         val resolverMethodAnnotations =
@@ -146,9 +150,10 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
         override val text: CharSequence? by lazy { getFileContents(myFile) }
     }
 
-    override fun toString(): String {
-        return "KotlinScriptDefinitionFromAnnotatedTemplate - ${template.simpleName}"
-    }
+    override fun toString(): String = "KotlinScriptDefinitionFromAnnotatedTemplate - ${template.simpleName}"
+
+    override val annotationsForSamWithReceivers: List<String>
+        get() = samWithReceiverAnnotations ?: super.annotationsForSamWithReceivers
 
     companion object {
         internal val log = Logger.getInstance(KotlinScriptDefinitionFromAnnotatedTemplate::class.java)

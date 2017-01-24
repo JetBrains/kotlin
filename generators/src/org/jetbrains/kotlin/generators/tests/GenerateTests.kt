@@ -164,6 +164,7 @@ import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
 import org.jetbrains.kotlin.idea.refactoring.AbstractNameSuggestionProviderTest
+import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverScriptTest
 import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverTest
 import java.io.File
 import java.lang.IllegalArgumentException
@@ -1177,6 +1178,9 @@ fun main(args: Array<String>) {
     testGroup("plugins/plugins-tests/tests", "plugins/sam-with-receiver/sam-with-receiver-cli/testData") {
         testClass<AbstractSamWithReceiverTest> {
             model("diagnostics")
+        }
+        testClass<AbstractSamWithReceiverScriptTest> {
+            model("script", extension = "kts")
         }
     }
 
