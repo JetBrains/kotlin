@@ -30,11 +30,11 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.xdebugger.impl.XDebugSessionImpl
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
+import org.jetbrains.kotlin.codegen.coroutines.DO_RESUME_METHOD_NAME
+import org.jetbrains.kotlin.codegen.coroutines.containsNonTailSuspensionCalls
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.fileClasses.getFileClassInternalName
 import org.jetbrains.kotlin.idea.debugger.breakpoints.getLambdasAtLineIfAny
@@ -145,27 +145,35 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
                 }
             }
             element is KtProperty && (!element.readAction { it.isTopLevel } || !isInLibrary) -> {
-                val descriptor = typeMapper.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
-                if (descriptor !is PropertyDescriptor) {
-                    return CachedClassNames(classNamesForPosition(elementOfClassName, withInlines))
-                }
+                val descriptor = typeMapper.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element) as? PropertyDescriptor ?:
+                                 return CachedClassNames(classNamesForPosition(elementOfClassName, withInlines))
 
                 return CachedClassNames(getJvmInternalNameForPropertyOwner(typeMapper, descriptor))
             }
             element is KtNamedFunction -> {
-                val parentInternalName = if (elementOfClassName is KtClassOrObject) {
-                    getClassNameForClass(elementOfClassName, typeMapper)
-                }
-                else if (elementOfClassName != null) {
-                    val asmType = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, element)
-                    asmType.internalName
-                }
-                else {
-                    getClassNameForFile(file)
+                val descriptor = typeMapper.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
+
+                val parentInternalName = when {
+                    isSuspendDescriptor(descriptor, typeMapper.bindingContext) -> {
+                        CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, element).internalName
+                    }
+                    elementOfClassName is KtClassOrObject -> getClassNameForClass(elementOfClassName, typeMapper)
+                    elementOfClassName != null -> {
+                        val asmType = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, element)
+                        asmType.internalName
+                    }
+                    else -> {
+                        val descriptor = typeMapper.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
+                        if (isSuspendDescriptor(descriptor, typeMapper.bindingContext)) {
+                            CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, element).internalName
+                        }
+                        else {
+                            getClassNameForFile(file)
+                        }
+                    }
                 }
 
                 if (!withInlines) return NonCachedClassNames(parentInternalName)
-
                 val inlinedCalls = findInlinedCalls(element, typeMapper.bindingContext)
                 if (parentInternalName == null) return CachedClassNames(inlinedCalls)
 
@@ -176,6 +184,10 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
         }
 
         return CachedClassNames(getClassNameForFile(file))
+    }
+
+    private fun isSuspendDescriptor(descriptor: DeclarationDescriptor?, bindingContext: BindingContext): Boolean {
+        return descriptor is SimpleFunctionDescriptor && descriptor.isSuspend && descriptor.containsNonTailSuspensionCalls(bindingContext)
     }
 
     private fun inlineCallClassPatterns(typeMapper: KotlinTypeMapper, element: KtElement): List<String> {
@@ -215,10 +227,20 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
         val originalInternalClassName = CodegenBinding.asmTypeForAnonymousClass(
                 typeMapper.bindingContext, ktAnonymousClassElementProducer).internalName
 
-        val ownerDescriptorName = lexicalScope.ownerDescriptor.name
+        val ownerDescriptor = lexicalScope.ownerDescriptor
 
-        val mangledInternalClassName = originalInternalClassName.funPrefix() + (if (ownerDescriptorName.isSpecial) "\$\$special\$" else "$") +
-                       InlineCodegenUtil.INLINE_TRANSFORMATION_SUFFIX + "$" + inlineFunctionName
+        val className = if (isSuspendDescriptor(ownerDescriptor, typeMapper.bindingContext)) {
+            originalInternalClassName.replaceAfterLast("$", DO_RESUME_METHOD_NAME)
+        }
+        else {
+            originalInternalClassName.funPrefix()
+        }
+
+        val mangledInternalClassName =
+                className +
+                (if (ownerDescriptor.name.isSpecial) "\$\$special\$" else "$") +
+                InlineCodegenUtil.INLINE_TRANSFORMATION_SUFFIX + "$" +
+                inlineFunctionName
 
         return listOf("$mangledInternalClassName*")
     }
