@@ -20,6 +20,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     var returnSlot: LLVMValueRef? = null
     var slotsPhi: LLVMValueRef? = null
     var slotCount = 0
+    var localAllocs = 0
 
     fun prologue(descriptor: FunctionDescriptor) {
         prologue(llvmFunction(descriptor),
@@ -45,16 +46,18 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         cleanupLandingpad = LLVMAppendBasicBlock(function, "cleanup_landingpad")!!
         positionAtEnd(entryBb!!)
         slotsPhi = phi(kObjHeaderPtrPtr)
-        slotCount = 0
+        // First slot can be assigned to keep pointer to frame local arena.
+        slotCount = 1
+        localAllocs = 0
     }
 
     fun epilogue() {
         appendingTo(prologueBb!!) {
-            val slots = if (slotCount > 0)
+            val slots = if (needSlots)
                 LLVMBuildArrayAlloca(builder, kObjHeaderPtr, Int32(slotCount).llvm, "")!!
             else
                 kNullObjHeaderPtrPtr
-            if (slotCount > 0) {
+            if (needSlots) {
                 // Zero-init slots.
                 val slotsMem = bitcast(kInt8Ptr, slots)
                 val pointerSize = LLVMABISizeOfType(llvmTargetData, kObjHeaderPtr).toInt()
@@ -102,9 +105,14 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         slotsPhi = null
     }
 
-    fun releaseVars() {
-        if (slotCount > 0) {
-            call(context.llvm.releaseLocalRefsFunction,
+    private val needSlots: Boolean
+        get() {
+            return slotCount > 1 || localAllocs > 0
+        }
+
+    private fun releaseVars() {
+        if (needSlots) {
+            call(context.llvm.leaveFrameFunction,
                     listOf(slotsPhi!!, Int32(slotCount).llvm))
         }
     }
@@ -148,6 +156,36 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
             return LLVMBuildAlloca(builder, type, name)!!
         }
     }
+
+
+    // Return object slot (ab)used for arena matching given allocation.
+    private fun arenaSlot() : LLVMValueRef {
+        return gep(slotsPhi!!, Int32(0).llvm)
+    }
+
+    fun allocInstance(typeInfo: LLVMValueRef, hint: Int) : LLVMValueRef {
+        if (hint == SCOPE_FRAME) {
+            val aux = arenaSlot()
+            localAllocs++
+            return call(context.llvm.arenaAllocInstanceFunction, listOf(typeInfo, aux))
+        } else {
+            val slot = vars.createAnonymousSlot()
+            return call(context.llvm.allocInstanceFunction, listOf(typeInfo, slot))
+        }
+    }
+
+    fun allocArray(
+          typeInfo: LLVMValueRef, hint: Int, count: LLVMValueRef) : LLVMValueRef {
+        if (hint == SCOPE_FRAME) {
+            val aux = arenaSlot()
+            localAllocs++
+            return call(context.llvm.arenaAllocArrayFunction, listOf(typeInfo, count, aux))
+        } else {
+            val slot = vars.createAnonymousSlot()
+            return call(context.llvm.allocArrayFunction, listOf(typeInfo, count, slot))
+        }
+    }
+
     fun load(value: LLVMValueRef, name: String = ""): LLVMValueRef {
         val result = LLVMBuildLoad(builder, value, name)!!
         // Use loadSlot() API for that.

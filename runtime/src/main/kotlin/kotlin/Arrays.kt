@@ -2,6 +2,8 @@ package kotlin
 
 import kotlin.collections.*
 
+// TODO: make all iterator() methods inline.
+
 /**
  * An array of bytes.
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
@@ -27,7 +29,7 @@ public final class ByteArray : Cloneable {
     external private fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
-    public operator fun iterator(): kotlin.collections.ByteIterator {
+    public operator fun iterator(): ByteIterator {
         return ByteIteratorImpl(this)
     }
 }

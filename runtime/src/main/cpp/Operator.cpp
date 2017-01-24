@@ -5,7 +5,7 @@
 
 namespace {
 
-inline template<typename R, typename Ta, typename Tb> R div(Ta a, Tb b) {
+template<typename R, typename Ta, typename Tb> R div(Ta a, Tb b) {
     if (__builtin_expect(b == 0, false)) {
         ThrowArithmeticException();
     }

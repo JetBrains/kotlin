@@ -24,6 +24,12 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
+// Different scopes/lifetimes of an object, computed by escape analysis.
+const val SCOPE_FRAME = 0
+const val SCOPE_GLOBAL = 1
+const val SCOPE_ARENA = 2
+const val SCOPE_PERMANENT = 3
+
 /**
  * Provides utility methods to the implementer.
  */
@@ -263,13 +269,15 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     var globalInitIndex:Int = 0
 
     val allocInstanceFunction = importRtFunction("AllocInstance")
-    val initInstanceFunction = importRtFunction("InitInstance")
+    val arenaAllocInstanceFunction = importRtFunction("ArenaAllocInstance")
     val allocArrayFunction = importRtFunction("AllocArrayInstance")
+    val arenaAllocArrayFunction = importRtFunction("ArenaAllocArrayInstance")
+    val initInstanceFunction = importRtFunction("InitInstance")
     val setLocalRefFunction = importRtFunction("SetLocalRef")
     val setGlobalRefFunction = importRtFunction("SetGlobalRef")
     val updateLocalRefFunction = importRtFunction("UpdateLocalRef")
     val updateGlobalRefFunction = importRtFunction("UpdateGlobalRef")
-    val releaseLocalRefsFunction = importRtFunction("ReleaseLocalRefs")
+    val leaveFrameFunction = importRtFunction("LeaveFrame")
     val setArrayFunction = importRtFunction("Kotlin_Array_set")
     val copyImplArrayFunction = importRtFunction("Kotlin_Array_copyImpl")
     val lookupFieldOffset = importRtFunction("LookupFieldOffset")
