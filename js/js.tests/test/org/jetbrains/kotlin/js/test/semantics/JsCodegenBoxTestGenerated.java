@@ -5852,6 +5852,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("operators.kt")
+            public void testOperators() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/operators.kt");
+                try {
+                    doTest(fileName);
+                }
+                catch (Throwable ignore) {
+                    return;
+                }
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            }
+
             @TestMetadata("privateFunctions.kt")
             public void testPrivateFunctions() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/privateFunctions.kt");

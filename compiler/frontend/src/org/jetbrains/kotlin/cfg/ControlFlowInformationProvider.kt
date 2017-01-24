@@ -829,6 +829,19 @@ class ControlFlowInformationProvider private constructor(
             }
         }
 
+        pseudocode.traverse(TraversalOrder.FORWARD) { instruction ->
+            if (instruction !is VariableDeclarationInstruction || instruction.element !is KtProperty || !instruction.element.hasDelegate()) return@traverse
+
+            val variableDescriptor =
+                    trace[BindingContext.DECLARATION_TO_DESCRIPTOR, instruction.element] as? VariableDescriptorWithAccessors
+                    ?: return@traverse
+
+            containsNonTailCalls =
+                    containsNonTailCalls || variableDescriptor.accessors.any {
+                        trace[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, it]?.candidateDescriptor?.isSuspend == true
+                    }
+        }
+
         if (containsNonTailCalls) {
             trace.record(BindingContext.CONTAINS_NON_TAIL_SUSPEND_CALLS, currentFunction.original)
         }

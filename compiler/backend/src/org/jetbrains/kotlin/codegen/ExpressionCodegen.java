@@ -2912,9 +2912,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             boolean isSuspensionPoint,
             boolean isConstructor
     ) {
-        boolean isSafeCall = receiver instanceof StackValue.SafeCall;
+        boolean isSafeCallOrOnStack = receiver instanceof StackValue.SafeCall || receiver instanceof StackValue.OnStack;
 
-        if (isSuspensionPoint && !isSafeCall) {
+        if (isSuspensionPoint && !isSafeCallOrOnStack) {
             // Inline markers are used to spill the stack before coroutine suspension
             addInlineMarker(v, true);
         }
@@ -2941,7 +2941,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             // The problem is that the stack before the call is not restored in case of null receiver.
             // The solution is to spill stack just after receiver is loaded (after IFNULL) in case of safe call.
             // But the problem is that we should leave the receiver itself on the stack, so we store it in a temporary variable.
-            if (isSuspensionPoint && isSafeCall) {
+            if (isSuspensionPoint && isSafeCallOrOnStack) {
                 int tmpVar = myFrameMap.enterTemp(receiver.type);
 
                 v.store(tmpVar, receiver.type);

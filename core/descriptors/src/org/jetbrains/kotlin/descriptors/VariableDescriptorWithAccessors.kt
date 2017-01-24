@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.descriptors
 
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
+
 interface VariableDescriptorWithAccessors : VariableDescriptor {
     val getter: VariableAccessorDescriptor?
 
@@ -31,3 +33,6 @@ interface VariableDescriptorWithAccessors : VariableDescriptor {
     @Deprecated("Do not call this method in the compiler front-end.")
     val isDelegated: Boolean
 }
+
+val VariableDescriptorWithAccessors.accessors: List<VariableAccessorDescriptor>
+    get() = getter.singletonOrEmptyList() + setter.singletonOrEmptyList()
