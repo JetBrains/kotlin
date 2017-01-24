@@ -21,3 +21,22 @@ public interface Sequence<out T> {
      */
     public operator fun iterator(): Iterator<T>
 }
+
+/**
+ * A sequence that supports drop(n) and take(n) operations
+ */
+internal interface DropTakeSequence<T> : Sequence<T> {
+    fun drop(n: Int): Sequence<T>
+    fun take(n: Int): Sequence<T>
+}
+
+/**
+ * Returns an empty sequence.
+ */
+public fun <T> emptySequence(): Sequence<T> = EmptySequence
+
+private object EmptySequence : Sequence<Nothing>, DropTakeSequence<Nothing> {
+    override fun iterator(): Iterator<Nothing> = EmptyIterator
+    override fun drop(n: Int) = EmptySequence
+    override fun take(n: Int) = EmptySequence
+}

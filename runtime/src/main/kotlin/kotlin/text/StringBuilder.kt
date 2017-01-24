@@ -13,7 +13,7 @@ external fun toCharArray(string: String) : CharArray
 
 class StringBuilder private constructor (
         private var array: CharArray
-) : CharSequence {
+) : CharSequence, Appendable {
     constructor() : this(10)
 
     constructor(capacity: Int) : this(CharArray(capacity))
@@ -57,10 +57,16 @@ class StringBuilder private constructor (
         }
     }
 
-    fun append(it: Char) {
+    // Of Appenable.
+    override fun append(c: Char) : Appendable {
         ensureExtraCapacity(1)
-        array[length++] = it
+        array[length++] = c
+        return this
     }
+
+    override fun append(csq: CharSequence?): Appendable = TODO()
+
+    override fun append(csq: CharSequence?, start: Int, end: Int): Appendable = TODO()
 
     fun append(it: CharArray) {
         ensureExtraCapacity(it.size)

@@ -333,3 +333,12 @@ public fun Long.coerceIn(range: ClosedRange<Long>): Long {
 public fun IntProgression.reversed(): IntProgression {
     return IntProgression.fromClosedRange(last, first, -step)
 }
+
+/**
+ * Returns a progression from this value down to the specified [to] value with the step -1.
+ *
+ * The [to] value has to be less than this value.
+ */
+public infix fun Int.downTo(to: Int): IntProgression {
+    return IntProgression.fromClosedRange(this, to, -1)
+}

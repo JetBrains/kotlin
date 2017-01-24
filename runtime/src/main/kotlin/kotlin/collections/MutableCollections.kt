@@ -1,5 +1,7 @@
 package kotlin.collections
 
+import kotlin.comparisons.*
+
 /**
  * Removes a single instance of the specified element from this
  * collection, if it is present.
@@ -171,11 +173,7 @@ public fun <T> MutableList<T>.removeAll(predicate: (T) -> Boolean): Boolean = fi
  */
 public fun <T> MutableList<T>.retainAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, false)
 
-@Fixme
 private fun <T> MutableList<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {
-    TODO()
-}
-/* TODO: fix downTo, RandomAccess
     if (this !is RandomAccess)
         return (this as MutableIterable<T>).filterInPlace(predicate, predicateResultToRemove)
 
@@ -199,97 +197,68 @@ private fun <T> MutableList<T>.filterInPlace(predicate: (T) -> Boolean, predicat
     else {
         return false
     }
-} */
+}
 
 /**
  * Removes all elements from this [MutableCollection] that are also contained in the given [elements] collection.
  */
-@Fixme
 public fun <T> MutableCollection<in T>.removeAll(elements: Iterable<T>): Boolean {
-    // TODO: add convertToSetForSetOperationWith
-    // return removeAll(elements.convertToSetForSetOperationWith(this))
-    var removed = false
-    for (e in elements) {
-        removed = removed or remove(e)
-    }
-    return removed
+    return removeAll(elements.convertToSetForSetOperationWith(this))
 }
 
 /**
  * Removes all elements from this [MutableCollection] that are also contained in the given [elements] sequence.
  */
-@Fixme
 public fun <T> MutableCollection<in T>.removeAll(elements: Sequence<T>): Boolean {
-    // TODO: add toHashSet()
-    //val set = elements.toHashSet()
-    // return set.isNotEmpty() && removeAll(set)
-    var removed = false
-    for (e in elements) {
-        removed = removed or remove(e)
-    }
-    return removed
+    val set = elements.toHashSet()
+    return set.isNotEmpty() && removeAll(set)
 }
 
 /**
  * Removes all elements from this [MutableCollection] that are also contained in the given [elements] array.
  */
-@Fixme
 public fun <T> MutableCollection<in T>.removeAll(elements: Array<out T>): Boolean {
-    // TODO: add toHashSet()
-    // return elements.isNotEmpty() && removeAll(elements.toHashSet())
-    var removed = false
-    for (e in elements) {
-        removed = removed or remove(e)
-    }
-    return removed
+    return elements.isNotEmpty() && removeAll(elements.toHashSet())
 }
 
 /**
  * Retains only elements of this [MutableCollection] that are contained in the given [elements] collection.
  */
-@Fixme
 public fun <T> MutableCollection<in T>.retainAll(elements: Iterable<T>): Boolean {
-    TODO()
-    //return retainAll(elements.convertToSetForSetOperationWith(this))
+    return retainAll(elements.convertToSetForSetOperationWith(this))
 }
 
 /**
  * Retains only elements of this [MutableCollection] that are contained in the given [elements] array.
  */
-@Fixme
 public fun <T> MutableCollection<in T>.retainAll(elements: Array<out T>): Boolean {
-    TODO()
-    //if (elements.isNotEmpty())
-    //    return retainAll(elements.toHashSet())
-    //else
-    //    return retainNothing()
+    if (elements.isNotEmpty())
+        return retainAll(elements.toHashSet())
+    else
+        return retainNothing()
 }
 
 /**
  * Retains only elements of this [MutableCollection] that are contained in the given [elements] sequence.
  */
-@Fixme
 public fun <T> MutableCollection<in T>.retainAll(elements: Sequence<T>): Boolean {
-    TODO()
-    //val set = elements.toHashSet()
-    //if (set.isNotEmpty())
-    //    return retainAll(set)
-    //else
-    //    return retainNothing()
+    val set = elements.toHashSet()
+    if (set.isNotEmpty())
+        return retainAll(set)
+    else
+        return retainNothing()
 }
 
-@Fixme
 private fun MutableCollection<*>.retainNothing(): Boolean {
-    TODO()
-    //val result = isNotEmpty()
-    //clear()
-    //return result
+    val result = isNotEmpty()
+    clear()
+    return result
 }
 
 /**
  * Sorts elements in the list in-place according to their natural sort order.
  */
-@Fixme
+@FixmeSorting
 public fun <T : Comparable<T>> MutableList<T>.sort(): Unit {
     TODO()
     //if (size > 1) java.util.Collections.sort(this)
@@ -298,6 +267,8 @@ public fun <T : Comparable<T>> MutableList<T>.sort(): Unit {
 /**
  * Sorts elements in the list in-place according to the order specified with [comparator].
  */
-//public fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
-//if (size > 1) java.util.Collections.sort(this, comparator)
-//}
+@FixmeSorting
+public fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
+    TODO()
+    //if (size > 1) java.util.Collections.sort(this, comparator)
+}

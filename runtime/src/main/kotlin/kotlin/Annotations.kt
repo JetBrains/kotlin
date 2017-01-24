@@ -6,7 +6,8 @@ package kotlin
  */
 //@Target(CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER,
 //        CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPE, EXPRESSION, FILE, TYPEALIAS)
-@Target(AnnotationTarget.TYPE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.EXPRESSION)
+@Target(AnnotationTarget.TYPE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.EXPRESSION,
+        AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.FUNCTION)
 //@Retention(SOURCE)
 public annotation class Suppress(vararg val names: String)
 

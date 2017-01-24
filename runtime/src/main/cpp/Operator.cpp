@@ -370,7 +370,11 @@ KInt   Kotlin_Float_bits              (KFloat a) {
   return alias.i;
 }
 
-//--- Double ------------------------------------------------------------------//
+KBoolean Kotlin_Float_isNaN           (KFloat a)          { return isnan(a); }
+KBoolean Kotlin_Float_isInfinite      (KFloat a)          { return isinf(a); }
+KBoolean Kotlin_Float_isFinite        (KFloat a)          { return isfinite(a); }
+
+  //--- Double ------------------------------------------------------------------//
 
 KInt    Kotlin_Double_compareTo_Byte   (KDouble a, KByte   b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
 KInt    Kotlin_Double_compareTo_Short  (KDouble a, KShort  b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
@@ -434,5 +438,9 @@ KLong   Kotlin_Double_bits             (KDouble a) {
   alias.d = a;
   return alias.l;
 }
+
+KBoolean Kotlin_Double_isNaN           (KDouble a)          { return isnan(a); }
+KBoolean Kotlin_Double_isInfinite      (KDouble a)          { return isinf(a); }
+KBoolean Kotlin_Double_isFinite        (KDouble a)          { return isfinite(a); }
 
 }  // extern "C"

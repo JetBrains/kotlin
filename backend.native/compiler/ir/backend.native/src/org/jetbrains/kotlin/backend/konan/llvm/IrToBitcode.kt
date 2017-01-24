@@ -1334,6 +1334,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     private fun genInstanceOf(obj: LLVMValueRef, type: KotlinType): LLVMValueRef {
         val dstDescriptor = TypeUtils.getClassDescriptor(type)                         // Get class descriptor for dst type.
+        // Reified parameters are not yet supported.
+        assert(dstDescriptor != null)
         val dstTypeInfo   = codegen.typeInfoValue(dstDescriptor!!)                     // Get TypeInfo for dst type.
         val srcObjInfoPtr = codegen.bitcast(codegen.kObjHeaderPtr, obj)                // Cast src to ObjInfoPtr.
         val args          = listOf(srcObjInfoPtr, dstTypeInfo)                         // Create arg list.

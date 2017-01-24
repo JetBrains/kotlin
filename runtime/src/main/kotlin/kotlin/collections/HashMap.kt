@@ -671,3 +671,6 @@ internal class HashMapEntrySet<K, V> internal constructor(
         return size == other.size && backing.containsAllEntries(other as Collection<Map.Entry<*, *>>)
     }
 }
+
+// This hash map keeps insertion order.
+typealias LinkedHashMap<K, V> = HashMap<K, V>

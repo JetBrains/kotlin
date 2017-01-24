@@ -489,14 +489,6 @@ public inline fun <T> Array<out T>.lastOrNull(predicate: (T) -> Boolean): T? {
 }
 
 /**
- * Returns `true` if the array is empty.
- */
-@kotlin.internal.InlineOnly
-public inline fun <T> Array<out T>.isEmpty(): Boolean {
-    return size == 0
-}
-
-/**
  * Returns the range of valid indices for the array.
  */
 public val <T> Array<out T>.indices: IntRange
@@ -592,4 +584,300 @@ public fun Array<out Double>.sum(): Double {
     return sum
 }
 
+// From _Arrays.kt.
 
+/**
+ * Returns `true` if the array is empty.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<out T>.isEmpty(): Boolean {
+    return size == 0
+}
+
+/**
+ * Returns `true` if the array is empty.
+ */
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.isEmpty(): Boolean {
+    return size == 0
+}
+
+/**
+ * Returns `true` if the array is empty.
+ */
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.isEmpty(): Boolean {
+    return size == 0
+}
+
+/**
+ * Returns `true` if the array is empty.
+ */
+@kotlin.internal.InlineOnly
+public inline fun IntArray.isEmpty(): Boolean {
+    return size == 0
+}
+
+/**
+ * Returns `true` if the array is empty.
+ */
+@kotlin.internal.InlineOnly
+public inline fun LongArray.isEmpty(): Boolean {
+    return size == 0
+}
+
+/**
+ * Returns `true` if the array is empty.
+ */
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.isEmpty(): Boolean {
+    return size == 0
+}
+
+/**
+ * Returns `true` if the array is empty.
+ */
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.isEmpty(): Boolean {
+    return size == 0
+}
+/**
+ * Returns `true` if the array is empty.
+ */
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.isEmpty(): Boolean {
+    return size == 0
+}
+
+/**
+ * Returns `true` if the array is empty.
+ */
+@kotlin.internal.InlineOnly
+public inline fun CharArray.isEmpty(): Boolean {
+    return size == 0
+}
+
+/**
+ * Returns `true` if the array is not empty.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<out T>.isNotEmpty(): Boolean {
+    return !isEmpty()
+}
+
+/**
+ * Returns `true` if the array is not empty.
+ */
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.isNotEmpty(): Boolean {
+    return !isEmpty()
+}
+
+/**
+ * Returns `true` if the array is not empty.
+ */
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.isNotEmpty(): Boolean {
+    return !isEmpty()
+}
+
+/**
+ * Returns `true` if the array is not empty.
+ */
+@kotlin.internal.InlineOnly
+public inline fun IntArray.isNotEmpty(): Boolean {
+    return !isEmpty()
+}
+
+/**
+ * Returns `true` if the array is not empty.
+ */
+@kotlin.internal.InlineOnly
+public inline fun LongArray.isNotEmpty(): Boolean {
+    return !isEmpty()
+}
+
+/**
+ * Returns `true` if the array is not empty.
+ */
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.isNotEmpty(): Boolean {
+    return !isEmpty()
+}
+
+/**
+ * Returns `true` if the array is not empty.
+ */
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.isNotEmpty(): Boolean {
+    return !isEmpty()
+}
+
+/**
+ * Returns `true` if the array is not empty.
+ */
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.isNotEmpty(): Boolean {
+    return !isEmpty()
+}
+
+/**
+ * Returns `true` if the array is not empty.
+ */
+@kotlin.internal.InlineOnly
+public inline fun CharArray.isNotEmpty(): Boolean {
+    return !isEmpty()
+}
+
+/**
+ * Appends all elements to the given [destination] collection.
+ */
+public fun <T, C : MutableCollection<in T>> Array<out T>.toCollection(destination: C): C {
+    for (item in this) {
+        destination.add(item)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements to the given [destination] collection.
+ */
+public fun <C : MutableCollection<in Byte>> ByteArray.toCollection(destination: C): C {
+    for (item in this) {
+        destination.add(item)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements to the given [destination] collection.
+ */
+public fun <C : MutableCollection<in Short>> ShortArray.toCollection(destination: C): C {
+    for (item in this) {
+        destination.add(item)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements to the given [destination] collection.
+ */
+public fun <C : MutableCollection<in Int>> IntArray.toCollection(destination: C): C {
+    for (item in this) {
+        destination.add(item)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements to the given [destination] collection.
+ */
+public fun <C : MutableCollection<in Long>> LongArray.toCollection(destination: C): C {
+    for (item in this) {
+        destination.add(item)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements to the given [destination] collection.
+ */
+public fun <C : MutableCollection<in Float>> FloatArray.toCollection(destination: C): C {
+    for (item in this) {
+        destination.add(item)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements to the given [destination] collection.
+ */
+public fun <C : MutableCollection<in Double>> DoubleArray.toCollection(destination: C): C {
+    for (item in this) {
+        destination.add(item)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements to the given [destination] collection.
+ */
+public fun <C : MutableCollection<in Boolean>> BooleanArray.toCollection(destination: C): C {
+    for (item in this) {
+        destination.add(item)
+    }
+    return destination
+}
+
+/**
+ * Appends all elements to the given [destination] collection.
+ */
+public fun <C : MutableCollection<in Char>> CharArray.toCollection(destination: C): C {
+    for (item in this) {
+        destination.add(item)
+    }
+    return destination
+}
+
+/**
+ * Returns a [HashSet] of all elements.
+ */
+public fun <T> Array<out T>.toHashSet(): HashSet<T> {
+    return toCollection(HashSet<T>(mapCapacity(size)))
+}
+
+/**
+ * Returns a [HashSet] of all elements.
+ */
+public fun ByteArray.toHashSet(): HashSet<Byte> {
+    return toCollection(HashSet<Byte>(mapCapacity(size)))
+}
+
+/**
+ * Returns a [HashSet] of all elements.
+ */
+public fun ShortArray.toHashSet(): HashSet<Short> {
+    return toCollection(HashSet<Short>(mapCapacity(size)))
+}
+
+/**
+ * Returns a [HashSet] of all elements.
+ */
+public fun IntArray.toHashSet(): HashSet<Int> {
+    return toCollection(HashSet<Int>(mapCapacity(size)))
+}
+
+/**
+ * Returns a [HashSet] of all elements.
+ */
+public fun LongArray.toHashSet(): HashSet<Long> {
+    return toCollection(HashSet<Long>(mapCapacity(size)))
+}
+
+/**
+ * Returns a [HashSet] of all elements.
+ */
+public fun FloatArray.toHashSet(): HashSet<Float> {
+    return toCollection(HashSet<Float>(mapCapacity(size)))
+}
+
+/**
+ * Returns a [HashSet] of all elements.
+ */
+public fun DoubleArray.toHashSet(): HashSet<Double> {
+    return toCollection(HashSet<Double>(mapCapacity(size)))
+}
+
+/**
+ * Returns a [HashSet] of all elements.
+ */
+public fun BooleanArray.toHashSet(): HashSet<Boolean> {
+    return toCollection(HashSet<Boolean>(mapCapacity(size)))
+}
+
+/**
+ * Returns a [HashSet] of all elements.
+ */
+public fun CharArray.toHashSet(): HashSet<Char> {
+    return toCollection(HashSet<Char>(mapCapacity(size)))
+}

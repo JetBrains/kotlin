@@ -1,5 +1,7 @@
 package kotlin
 
+import kotlin.comparisons.Comparator
+
 /**
  * Classes which inherit from this interface have a defined total ordering between their instances.
  */
@@ -11,3 +13,6 @@ public interface Comparable<in T> {
      */
     public operator fun compareTo(other: T): Int
 }
+
+typealias Comparator<T> = kotlin.comparisons.Comparator<T>
+
