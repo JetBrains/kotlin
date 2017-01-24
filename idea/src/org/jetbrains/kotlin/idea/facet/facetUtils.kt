@@ -25,7 +25,9 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.util.text.VersionComparatorUtil
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.copyBean
+import org.jetbrains.kotlin.cli.common.arguments.parseArguments
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
@@ -180,5 +182,28 @@ fun KotlinFacet.configureFacet(
             }
         }
         compilerInfo.coroutineSupport = coroutineSupport
+    }
+}
+
+fun parseCompilerArgumentsToFacet(arguments: List<String>, kotlinFacet: KotlinFacet) {
+    val argumentArray = arguments.toTypedArray()
+    with(kotlinFacet.configuration.settings) {
+        // todo: merge common arguments with platform-specific ones in facet settings
+        parseArguments(argumentArray, compilerInfo.commonCompilerArguments!!, ignoreInvalidArguments = true)
+
+        when (versionInfo.targetPlatformKind) {
+            is TargetPlatformKind.Jvm -> {
+                val jvmTarget = K2JVMCompilerArguments().apply { parseArguments(argumentArray, this) }.jvmTarget
+                if (jvmTarget != null) {
+                    versionInfo.targetPlatformKind = TargetPlatformKind.Jvm.JVM_PLATFORMS.firstOrNull {
+                        VersionComparatorUtil.compare(it.version.description, jvmTarget) >= 0
+                    } ?: TargetPlatformKind.Jvm.JVM_PLATFORMS.last()
+                }
+            }
+            is TargetPlatformKind.JavaScript -> parseArguments(argumentArray, compilerInfo.k2jsCompilerArguments!!)
+            else -> {}
+        }
+
+        compilerInfo.compilerSettings!!.additionalArguments = compilerInfo.commonCompilerArguments!!.freeArgs.joinToString(separator = " ")
     }
 }

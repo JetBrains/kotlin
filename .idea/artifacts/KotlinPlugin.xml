@@ -10,6 +10,7 @@
     <root id="root">
       <element id="directory" name="lib">
         <element id="archive" name="kotlin-plugin.jar">
+          <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/cli-parser-1.1.2.jar" path-in-jar="/" />
           <element id="module-output" name="backend" />
           <element id="module-output" name="frontend" />
           <element id="module-output" name="descriptors" />

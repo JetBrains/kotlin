@@ -23,13 +23,17 @@ import com.intellij.openapi.externalSystem.model.project.ModuleDependencyData
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.roots.DependencyScope
+import com.intellij.openapi.util.Key
 import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.kotlin.gradle.KotlinGradleModel
 import org.jetbrains.kotlin.gradle.KotlinGradleModelBuilder
+import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.plugins.gradle.model.ExternalProject
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil.getModuleId
+
+var DataNode<ModuleData>.serializedCompilerArguments by UserDataProperty(Key.create<List<String>>("SERIALIZED_COMPILER_ARGUMENTS"))
 
 class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() {
     override fun getToolingExtensionsClasses(): Set<Class<out Any>> {
@@ -44,6 +48,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
                                             ideModule: DataNode<ModuleData>,
                                             ideProject: DataNode<ProjectData>) {
         val gradleModel = resolverCtx.getExtraProject(gradleModule, KotlinGradleModel::class.java) ?: return
+
         gradleModel.implements?.let { implementsModuleId ->
             val targetModule = findModule(ideProject, implementsModuleId) ?: return
             if (resolverCtx.isResolveModulePerSourceSet) {
@@ -53,6 +58,8 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
                 addDependency(ideModule, targetModule)
             }
         }
+
+        ideModule.serializedCompilerArguments = gradleModel.serializedCompilerArguments
 
         super.populateModuleDependencies(gradleModule, ideModule, ideProject)
     }

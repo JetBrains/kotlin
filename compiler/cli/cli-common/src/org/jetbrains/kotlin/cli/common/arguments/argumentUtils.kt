@@ -22,15 +22,17 @@ import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.util.*
 
-fun <A : CommonCompilerArguments> parseArguments(args: Array<String>, arguments: A) {
+@JvmOverloads fun <A : CommonCompilerArguments> parseArguments(args: Array<String>, arguments: A, ignoreInvalidArguments: Boolean = false) {
     val unparsedArgs = Args.parse(arguments, args, false)
     val (unknownExtraArgs, unknownArgs) = unparsedArgs.partition { it.startsWith("-X") }
     arguments.unknownExtraFlags = unknownExtraArgs
-    arguments.freeArgs = unknownArgs
+    arguments.freeArgs = if (ignoreInvalidArguments) unknownArgs.filterNot { it.startsWith("-") } else unknownArgs
 
-    for (argument in arguments.freeArgs) {
-        if (argument.startsWith("-")) {
-            throw IllegalArgumentException("Invalid argument: " + argument)
+    if (!ignoreInvalidArguments) {
+        for (argument in unknownArgs) {
+            if (argument.startsWith("-")) {
+                throw IllegalArgumentException("Invalid argument: " + argument)
+            }
         }
     }
 }

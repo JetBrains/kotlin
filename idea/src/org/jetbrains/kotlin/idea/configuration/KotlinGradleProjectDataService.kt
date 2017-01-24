@@ -24,14 +24,13 @@ import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsPr
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
+import com.intellij.util.text.VersionComparatorUtil
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
-import org.jetbrains.kotlin.idea.facet.KotlinFacet
-import org.jetbrains.kotlin.idea.facet.configureFacet
-import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
-import org.jetbrains.kotlin.idea.facet.mavenLibraryId
+import org.jetbrains.kotlin.idea.facet.*
 import org.jetbrains.kotlin.idea.inspections.gradle.findAll
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
 import org.jetbrains.kotlin.idea.inspections.gradle.getResolvedKotlinStdlibVersionByModuleData
@@ -88,6 +87,7 @@ class KotlinGradleProjectDataService : AbstractProjectDataService<GradleSourceSe
 
             val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider, false)
             kotlinFacet.configureFacet(compilerVersion, coroutinesProperty, platformKind, modelsProvider)
+            moduleNode.serializedCompilerArguments?.let { parseCompilerArgumentsToFacet(it, kotlinFacet) }
             GradleProjectImportHandler.getInstances(project).forEach { it(kotlinFacet, sourceSetNode) }
         }
     }

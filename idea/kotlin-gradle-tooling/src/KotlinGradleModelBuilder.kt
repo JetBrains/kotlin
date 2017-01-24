@@ -25,25 +25,46 @@ import java.lang.Exception
 
 interface KotlinGradleModel : Serializable {
     val implements: String?
+    val serializedCompilerArguments: List<String>?
 }
 
-class KotlinGradleModelImpl(override val implements: String?) : KotlinGradleModel
+class KotlinGradleModelImpl(
+        override val implements: String?,
+        override val serializedCompilerArguments: List<String>?
+) : KotlinGradleModel
 
 class KotlinGradleModelBuilder : ModelBuilderService {
+    companion object {
+        val compileTasks = listOf("compileKotlin", "compileKotlin2Js")
+    }
+
     override fun getErrorMessageBuilder(project: Project, e: Exception): ErrorMessageBuilder {
         return ErrorMessageBuilder.create(project, e, "Gradle import errors").withDescription("Unable to build Kotlin project configuration")
     }
 
     override fun canBuild(modelName: String?): Boolean = modelName == KotlinGradleModel::class.java.name
 
-    override fun buildAll(modelName: String?, project: Project): Any {
+    private fun getImplements(project: Project): String? {
         val implementsConfiguration = project.configurations.findByName("implement")
         if (implementsConfiguration != null) {
             val implementsProjectDependency = implementsConfiguration.dependencies.filterIsInstance<ProjectDependency>().firstOrNull()
-            if (implementsProjectDependency != null) {
-                return KotlinGradleModelImpl(implementsProjectDependency.dependencyProject.path)
-            }
+            if (implementsProjectDependency != null) return implementsProjectDependency.dependencyProject.path
         }
-        return KotlinGradleModelImpl(null)
+        return null
     }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun getCompilerArguments(project: Project): List<String>? {
+        val compileTask = compileTasks.mapNotNull { project.getTasksByName(it, false).firstOrNull() }.firstOrNull() ?: return null
+        val taskClass = compileTask.javaClass
+        return try {
+            taskClass.getDeclaredMethod("getSerializedCompilerArguments").invoke(compileTask) as List<String>
+        }
+        catch (e : NoSuchMethodException) {
+            null
+        }
+    }
+
+    override fun buildAll(modelName: String?, project: Project) =
+            KotlinGradleModelImpl(getImplements(project), getCompilerArguments(project))
 }
