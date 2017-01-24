@@ -61,8 +61,10 @@ class ValueParameterResolver(
         val defaultValue = jetParameter.getDefaultValue() ?: return
         expressionTypingServices.getTypeInfo(defaultValue, context.replaceExpectedType(valueParameterDescriptor.type))
         if (DescriptorUtils.isAnnotationClass(DescriptorResolver.getContainingClass(context.scope))) {
-            constantExpressionEvaluator.evaluateExpression(defaultValue, context.trace, valueParameterDescriptor.type)
-            ?: context.trace.report(Errors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT.on(defaultValue))
+            val constant = constantExpressionEvaluator.evaluateExpression(defaultValue, context.trace, valueParameterDescriptor.type)
+            if (constant == null || constant.usesNonConstValAsConstant) {
+                context.trace.report(Errors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT.on(defaultValue))
+            }
         }
     }
 }

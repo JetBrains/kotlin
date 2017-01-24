@@ -1206,6 +1206,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                 }
 
+                @TestMetadata("annotationConstructorDefaultParameter.kt")
+                public void testAnnotationConstructorDefaultParameter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/annotationConstructorDefaultParameter.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("booleanLocalVal.kt")
                 public void testBooleanLocalVal() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/booleanLocalVal.kt");

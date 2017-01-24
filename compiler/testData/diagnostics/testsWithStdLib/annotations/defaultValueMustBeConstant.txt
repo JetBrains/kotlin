@@ -1,6 +1,6 @@
 package
 
-public val CONST: kotlin.Int = 1
+public const val CONST: kotlin.Int = 1
 public val nonConst: kotlin.Int
 public val nonConstKClass: kotlin.reflect.KClass<kotlin.String>
 public fun foo(): kotlin.Int
