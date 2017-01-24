@@ -18,8 +18,10 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.references.ReferenceAccess
 import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.idea.util.CommentSaver
@@ -146,10 +148,13 @@ class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(KtExpre
                 KtTokens.MINUSEQ -> if (functionName == "minusAssign") "$0.minusAssign($1)" else "$0 = $0.minus($1)"
                 KtTokens.MULTEQ -> if (functionName == "multAssign") "$0.multAssign($1)" else "$0 = $0.mult($1)"
                 KtTokens.DIVEQ -> if (functionName == "divAssign") "$0.divAssign($1)" else "$0 = $0.div($1)"
-                KtTokens.PERCEQ ->
-                    if (functionName == "remAssign") "$0.remAssign($1)"
-                    else if (functionName == "modAssign") "$0.modAssign($1)" // TODO: delete me (deprecated modAssign)
-                    else "$0 = $0.rem($1)"
+                KtTokens.PERCEQ -> {
+                    val remSupported = element.languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
+                    if (remSupported && functionName == "remAssign") "$0.remAssign($1)"
+                    else if (functionName == "modAssign") "$0.modAssign($1)"
+                    else if (remSupported) "$0 = $0.rem($1)"
+                    else "$0 = $0.mod($1)"
+                }
                 KtTokens.EQEQ -> if (elemType?.isMarkedNullable ?: true) "$0?.equals($1) ?: ($1 == null)" else "$0.equals($1)"
                 KtTokens.EXCLEQ -> if (elemType?.isMarkedNullable ?: true) "!($0?.equals($1) ?: ($1 == null))" else "!$0.equals($1)"
                 KtTokens.GT -> "$0.compareTo($1) > 0"
