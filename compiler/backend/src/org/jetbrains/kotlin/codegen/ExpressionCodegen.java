@@ -2732,6 +2732,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (originalIfSamAdapter != null) {
             descriptor = originalIfSamAdapter;
         }
+
+        descriptor = CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction(descriptor);
+
         // $default method is not private, so you need no accessor to call it
         return CallUtilKt.usesDefaultArguments(resolvedCall)
                ? descriptor
