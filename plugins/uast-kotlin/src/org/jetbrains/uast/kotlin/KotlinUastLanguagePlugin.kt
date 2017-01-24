@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiVariable
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
@@ -187,6 +188,9 @@ internal object KotlinConverter {
             is KtCatchClause -> el<UCatchClause> { KotlinUCatchClause(element, parent) }
             is KtExpression -> KotlinConverter.convertExpression(element, parent, requiredType)
             is KtLambdaArgument -> KotlinConverter.convertExpression(element.getLambdaExpression(), parent, requiredType)
+            is KtContainerNode -> element.getExpression()?.let {
+                KotlinConverter.convertExpression(it, parent, requiredType)
+            } ?: UastEmptyExpression
             else -> {
                 if (element is LeafPsiElement && element.elementType == KtTokens.IDENTIFIER) {
                     el<UIdentifier> { UIdentifier(element, parent) }
@@ -313,4 +317,7 @@ internal object KotlinConverter {
         val result = declarations.first() as TDeclaration
         return result
     }
+
+    internal fun KtContainerNode.getExpression(): KtExpression? =
+            PsiTreeUtil.getChildOfType(this, KtExpression::class.java)
 }

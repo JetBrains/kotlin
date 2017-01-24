@@ -1,7 +1,10 @@
 // INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintCommitTransactionInspection
 
+@file:Suppress("UNUSED_VARIABLE")
+
 import android.app.Activity
 import android.app.FragmentTransaction
+import android.app.FragmentManager
 import android.os.Bundle
 
 class MainActivity : Activity() {
@@ -17,8 +20,7 @@ class MainActivity : Activity() {
         transaction2.commit()
 
         //WARNING
-        @Suppress("UNUSED_VARIABLE")
-        val transaction3 = fragmentManager.<warning>beginTransaction</warning>()
+        val transaction3 = fragmentManager.<warning descr="This transaction should be completed with a `commit()` call">beginTransaction</warning>()
 
         //OK
         fragmentManager.beginTransaction().commit()
@@ -29,5 +31,11 @@ class MainActivity : Activity() {
             val a = fragmentManager.beginTransaction()
             a.commit()
         }
+    }
+
+    // KT-14780: Kotlin Lint: "Missing commit() calls" false positive when the result of `commit()` is assigned or used as receiver
+    fun testResultOfCommit(fm: FragmentManager) {
+        val r1 = fm.beginTransaction().hide(fm.findFragmentByTag("aTag")).commit()
+        val r2 = fm.beginTransaction().hide(fm.findFragmentByTag("aTag")).commit().toString()
     }
 }
