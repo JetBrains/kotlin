@@ -1,11 +1,8 @@
 package org.jetbrains.kotlin
 
-import groovy.io.FileType
 import org.gradle.api.DefaultTask
-import org.gradle.api.internal.tasks.testing.detection.DefaultTestExecuter
 import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.testing.Test
 
 abstract class KonanTest extends DefaultTask {
     protected String source
@@ -17,6 +14,8 @@ abstract class KonanTest extends DefaultTask {
     def startKtBc = new File("${dist.canonicalPath}/lib/start.kt.bc").absolutePath
     def stdlibKtBc = new File("${dist.canonicalPath}/lib/stdlib.kt.bc").absolutePath
     def mainC = 'main.c'
+    def outputSourceSetName = "testOutputLocal"
+    String outputDirectory = null
     String goldValue = null
     String testData = null
     List<String> arguments = null
@@ -27,10 +26,25 @@ abstract class KonanTest extends DefaultTask {
         this.enabled = !value
     }
 
+    // Uses directory defined in $outputSourceSetName source set.
+    // If such source set doesn't exist, uses temporary directory.
+    public void createOutputDirectory() {
+        if (outputDirectory != null) {
+            return
+        }
+
+        def outputSourceSet = project.sourceSets.findByName(getOutputSourceSetName())
+        if (outputSourceSet != null) {
+            outputDirectory = outputSourceSet.output.getDirs().getSingleFile().absolutePath + "/$name"
+            project.file(outputDirectory).mkdirs()
+        } else {
+            outputDirectory = getTemporaryDir().absolutePath
+        }
+    }
+
     public KonanTest(){
         // TODO: that's a long reach up the project tree.
         // May be we should reorganize a little.
-        //dependsOn(project.parent.parent.tasks['dist'])
         dependsOn(project.rootProject.tasks['dist'])
     }
 
@@ -65,8 +79,7 @@ abstract class KonanTest extends DefaultTask {
 
     String buildExePath() {
         def exeName = project.file(source).name.replace(".kt", ".kt.exe")
-        def tempDir = temporaryDir.absolutePath
-        return "$tempDir/$exeName"
+        return "$outputDirectory/$exeName"
     }
 
     List<String> buildCompileList() {
@@ -75,6 +88,7 @@ abstract class KonanTest extends DefaultTask {
 
     @TaskAction
     void executeTest() {
+        createOutputDirectory()
         def exe = buildExePath()
 
         compileTest(buildCompileList(), exe)
@@ -123,9 +137,10 @@ class LinkKonanTest extends KonanTest {
 class RunExternalTestGroup extends RunKonanTest {
 
     def groupDirectory = "."
-    def logFileName = "${name}.md"
+    def outputSourceSetName = "testOutputExternal"
     String filter = project.findProperty("filter")
     String goldValue = "OK"
+
 
     // TODO refactor
     List<String> buildCompileList() {
@@ -137,15 +152,14 @@ class RunExternalTestGroup extends RunKonanTest {
         def srcFile = project.file(source)
         def srcText = srcFile.text
         def matcher = filePattern.matcher(srcText)
-        def tmpDir = temporaryDir.absolutePath
 
         if (!matcher.find()) {
             // There is only one file in the input
             project.copy{
                 from srcFile.absolutePath
-                into tmpDir
+                into outputDirectory
             }
-            def newFile ="$tmpDir/${srcFile.name}"
+            def newFile ="$outputDirectory/${srcFile.name}"
             if (srcText =~ boxPattern && srcText =~ packagePattern){
                 boxPackage = (srcText =~ packagePattern)[0][1]
                 boxPackage += '.'
@@ -156,7 +170,7 @@ class RunExternalTestGroup extends RunKonanTest {
             def processedChars = 0
             while (true) {
                 def filePath = matcher.group(1)
-                filePath = "$tmpDir/$filePath"
+                filePath = "$outputDirectory/$filePath"
                 def start = processedChars
                 def nextFileExists = matcher.find()
                 def end = nextFileExists ? matcher.start() : srcText.length()
@@ -171,8 +185,8 @@ class RunExternalTestGroup extends RunKonanTest {
                 if (!nextFileExists) break
             }
         }
-        createLauncherFile("$tmpDir/_launcher.kt", boxPackage)
-        result.add("$tmpDir/_launcher.kt")
+        createLauncherFile("$outputDirectory/_launcher.kt", boxPackage)
+        result.add("$outputDirectory/_launcher.kt")
         return result
     }
 
@@ -216,7 +230,8 @@ class RunExternalTestGroup extends RunKonanTest {
     @TaskAction
     @Override
     void executeTest() {
-        def logFile = project.file(logFileName)
+        createOutputDirectory()
+        def logFile = project.file("${outputDirectory}/result.md")
         logFile.append("\n$groupDirectory\n\n")
         logFile.append("|Test|Status|Comment|\n|----|------|-------|\n")
         def ktFiles = project.file(groupDirectory).listFiles(new FileFilter() {

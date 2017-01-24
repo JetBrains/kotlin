@@ -13,7 +13,20 @@ dependencies {
     cli_bc project(path: ':backend.native', configuration: 'cli_bc')
 }
 
-def logFileName = "test-result.md"
+allprojects {
+    // Root directories for test output (logs, compiled files, statistics etc). Only single path must be in each set.
+    sourceSets {
+        // :backend.native:tests
+        testOutputLocal {
+            output.dir(rootProject.file("testOutput/local"))
+        }
+
+        // :backend.native:tests:external
+        testOutputExternal {
+            output.dir(rootProject.file("testOutput/external"))
+        }
+    }
+}
 
 task regenerate_external_tests() {
     doLast {
