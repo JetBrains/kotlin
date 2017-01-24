@@ -48,6 +48,12 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
         doTest(fileName);
     }
 
+    @TestMetadata("capturedSuperCall.kt")
+    public void testCapturedSuperCall() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/capturedSuperCall.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("defaultMethodCallFromInterface.kt")
     public void testDefaultMethodCallFromInterface() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/defaultMethodCallFromInterface.kt");
@@ -197,6 +203,12 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
             doTest(fileName);
         }
 
+        @TestMetadata("capturedSuperCall.kt")
+        public void testCapturedSuperCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/capturedSuperCall.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("defaultArgs.kt")
         public void testDefaultArgs() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaultArgs.kt");
@@ -280,6 +292,12 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
             @TestMetadata("bridgeInInterface.kt")
             public void testBridgeInInterface() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/bridgeInInterface.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("capturedSuperCall.kt")
+            public void testCapturedSuperCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/jvm8/defaults/capturedSuperCall.kt");
                 doTest(fileName);
             }
 

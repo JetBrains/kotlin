@@ -37,7 +37,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityAccessFlag;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isNonDefaultInterfaceMember;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isInlineOnlyOrReifiable;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PROTECTED;
@@ -391,8 +391,11 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
     @SuppressWarnings("unchecked")
     @NotNull
-    public <D extends CallableMemberDescriptor> D getAccessorForSuperCallIfNeeded(@NotNull D descriptor, @Nullable ClassDescriptor superCallTarget) {
-        if (superCallTarget != null && !isJvmInterface(descriptor.getContainingDeclaration())) {
+    public <D extends CallableMemberDescriptor> D getAccessorForSuperCallIfNeeded(
+            @NotNull D descriptor,
+            @Nullable ClassDescriptor superCallTarget,
+            @NotNull GenerationState state) {
+        if (superCallTarget != null && !isNonDefaultInterfaceMember(descriptor, state)) {
             CodegenContext afterInline = getFirstCrossInlineOrNonInlineContext();
             CodegenContext c = afterInline.findParentContextWithDescriptor(superCallTarget);
             assert c != null : "Couldn't find a context for a super-call: " + descriptor;

@@ -67,6 +67,7 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvm8InterfaceWithDefaultsMember;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isNonDefaultInterfaceMember;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
@@ -771,7 +772,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                 ((AccessorForCallableDescriptor) accessorDescriptor).getSuperCallTarget() != null
         );
 
-        boolean hasDispatchReceiver = !isStaticDeclaration(functionDescriptor) && !isInterface(functionDescriptor.getContainingDeclaration());
+        boolean hasDispatchReceiver = !isStaticDeclaration(functionDescriptor) && !isNonDefaultInterfaceMember(functionDescriptor, state);
         int reg = hasDispatchReceiver ? 1 : 0;
         boolean accessorIsConstructor = accessorDescriptor instanceof AccessorForConstructorDescriptor;
         if (!accessorIsConstructor && functionDescriptor instanceof ConstructorDescriptor) {

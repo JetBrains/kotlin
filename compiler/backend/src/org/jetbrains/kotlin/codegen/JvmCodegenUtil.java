@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
+import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.load.kotlin.*;
 import org.jetbrains.kotlin.psi.Call;
@@ -96,6 +97,17 @@ public class JvmCodegenUtil {
     public static boolean isJvm8InterfaceWithDefaultsMember(@NotNull CallableMemberDescriptor descriptor, @NotNull GenerationState state) {
         DeclarationDescriptor declaration = descriptor.getContainingDeclaration();
         return isJvm8InterfaceWithDefaults(declaration, state);
+    }
+
+    public static boolean isNonDefaultInterfaceMember(@NotNull CallableMemberDescriptor descriptor, @NotNull GenerationState state) {
+        if (!isJvmInterface(descriptor.getContainingDeclaration())) {
+            return false;
+        }
+        if (descriptor instanceof JavaCallableMemberDescriptor) {
+            return descriptor.getModality() == Modality.ABSTRACT;
+        }
+
+        return !isJvm8InterfaceWithDefaultsMember(descriptor, state);
     }
 
     public static boolean isJvmInterface(DeclarationDescriptor descriptor) {
