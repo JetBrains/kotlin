@@ -61,7 +61,13 @@ internal fun captureStack(baseClass: JsClass<in Throwable>, instance: Throwable)
 @JsName("newThrowable")
 internal fun newThrowable(message: String?, cause: Throwable?): Throwable {
     val throwable = js("new Error()")
-    throwable.message = if (jsTypeOf(message) == "undefined" && cause != null) cause.toString() else message
+    throwable.message = if (jsTypeOf(message) == "undefined") {
+        if (cause != null) cause.toString() else null
+    }
+    else {
+        message
+    }
     throwable.cause = cause
+    throwable.name = "Throwable"
     return throwable
 }

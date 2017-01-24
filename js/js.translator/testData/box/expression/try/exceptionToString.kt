@@ -13,6 +13,8 @@ fun check(e: Throwable, expectedString: String) {
 }
 
 fun box(): String {
+    check(Throwable(), "Throwable: null")
+    check(Throwable("ccc"), "Throwable: ccc")
     check(Exception(), "Exception: null")
     check(Exception("bbb"), "Exception: bbb")
     check(MyException(), "MyException: null")
