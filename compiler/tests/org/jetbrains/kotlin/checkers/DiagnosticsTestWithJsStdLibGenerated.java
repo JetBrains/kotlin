@@ -996,6 +996,27 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
     }
 
+    @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/qualifier")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Qualifier extends AbstractDiagnosticsTestWithJsStdLib {
+        public void testAllFilesPresentInQualifier() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/qualifier"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("jsQualifierNonExternal.kt")
+        public void testJsQualifierNonExternal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/qualifier/jsQualifierNonExternal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("wrongQualifier.kt")
+        public void testWrongQualifier() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/qualifier/wrongQualifier.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/reflection")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
