@@ -22,3 +22,7 @@ fun local() {
     <!UNSUPPORTED_FEATURE!>operator<!> fun Int.rem(x: Int) {}
     <!UNSUPPORTED_FEATURE!>operator<!> fun String.remAssign(x: Int) {}
 }
+
+fun noOverflow() {
+    (-1).<!DEPRECATION!>mod<!>(5)
+}

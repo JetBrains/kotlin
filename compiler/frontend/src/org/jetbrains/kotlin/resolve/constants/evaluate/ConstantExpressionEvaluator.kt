@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -510,7 +510,7 @@ private class ConstantExpressionEvaluatorVisitor(
     }
 
     private fun evaluateBinaryAndCheck(receiver: OperationArgument, parameter: OperationArgument, name: String, callExpression: KtExpression): Any? {
-        val functions = binaryOperations[BinaryOperationKey(receiver.ctcType, parameter.ctcType, name)] ?: return null
+        val functions = getBinaryOperation(receiver, parameter, name) ?: return null
 
         val (function, checker) = functions
         val actualResult = try {
@@ -526,13 +526,23 @@ private class ConstantExpressionEvaluatorVisitor(
 
         fun toBigInteger(value: Any?) = BigInteger.valueOf((value as Number).toLong())
 
-        val resultInBigIntegers = checker(toBigInteger(receiver.value), toBigInteger(parameter.value))
+        val refinedChecker = if (name == OperatorNameConventions.MOD.asString()) {
+            getBinaryOperation(receiver, parameter, OperatorNameConventions.REM.asString())?.second ?: return null
+        }
+        else {
+            checker
+        }
+
+        val resultInBigIntegers = refinedChecker(toBigInteger(receiver.value), toBigInteger(parameter.value))
 
         if (toBigInteger(actualResult) != resultInBigIntegers) {
             trace.report(Errors.INTEGER_OVERFLOW.on(callExpression.getStrictParentOfType<KtExpression>() ?: callExpression))
         }
         return actualResult
     }
+
+    private fun getBinaryOperation(receiver: OperationArgument, parameter: OperationArgument, name: String) =
+            binaryOperations[BinaryOperationKey(receiver.ctcType, parameter.ctcType, name)]
 
     private fun isDivisionByZero(name: String, parameter: Any?): Boolean {
         if (name == OperatorConventions.BINARY_OPERATION_NAMES[KtTokens.DIV]!!.asString()) {

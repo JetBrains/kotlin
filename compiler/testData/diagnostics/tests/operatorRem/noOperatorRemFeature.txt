@@ -1,6 +1,7 @@
 package
 
 public fun local(): kotlin.Unit
+public fun noOverflow(): kotlin.Unit
 public operator fun Baz.rem(/*0*/ x: kotlin.Int): kotlin.Unit
 
 public final class Bar {
