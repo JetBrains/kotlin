@@ -53,6 +53,8 @@ Kotlin.callSetter = function (thisObject, klass, propertyName, value) {
 };
 
 function isInheritanceFromInterface(metadata, iface) {
+    if (metadata == null) return false;
+
     var baseClasses = metadata.baseClasses;
     var i;
     for (i = 0; i < baseClasses.length; i++) {
