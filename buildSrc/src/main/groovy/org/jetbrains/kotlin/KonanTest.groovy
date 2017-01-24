@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin
 
-import groovy.json.JsonBuilder
+import groovy.json.JsonOutput
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.TaskAction
@@ -141,16 +141,45 @@ class RunExternalTestGroup extends RunKonanTest {
     def outputSourceSetName = "testOutputExternal"
     String filter = project.findProperty("filter")
     String goldValue = "OK"
+    Map<String, TestResult> results = [:]
+    Statistics statistics = new Statistics()
 
-    class TestResult {
-        String name = null
+    static class TestResult {
         String status = null
         String comment = null
 
-        TestResult(String name, String status, String comment){
-            this.name = name;
+        TestResult(String status, String comment = ""){
             this.status = status;
             this.comment = comment;
+        }
+    }
+
+    static class Statistics {
+        int total = 0
+        int passed = 0
+        int failed = 0
+        int skipped = 0
+
+        void pass(int count = 1) {
+            passed += count
+            total += count
+        }
+
+        void skip(int count = 1) {
+            skipped += count
+            total += count
+        }
+
+        void fail(int count = 1) {
+            failed += count
+            total += count
+        }
+
+        void add(Statistics other) {
+            total   += other.total
+            passed  += other.passed
+            failed  += other.failed
+            skipped += other.skipped
         }
     }
 
@@ -259,53 +288,33 @@ class RunExternalTestGroup extends RunKonanTest {
         }
 
         // Run the tests.
-        def current = 0
-        def passed = 0
-        def skipped = 0
-        def failed = 0
-        def total = ktFiles.size()
-        def results = []
         def currentResult = null
+        statistics = new Statistics()
         ktFiles.each {
-            current++
             source = project.relativePath(it)
-            println("TEST: $it.name ($current/$total, passed: $passed, skipped: $skipped)")
+            println("TEST: $it.name ($statistics.total/$ktFiles.size, passed: $statistics.passed, skipped: $statistics.skipped)")
             if (isEnabledForNativeBackend(source)) {
                 try {
                     super.executeTest()
-                    currentResult = new TestResult(it.name, "PASSED", "")
-                    passed++
+                    currentResult = new TestResult("PASSED")
+                    statistics.pass()
                 } catch (Exception ex) {
-                    currentResult = new TestResult(it.name, "FAILED",
+                    currentResult = new TestResult("FAILED",
                             "Exception: ${ex.getMessage()}. Cause: ${ex.getCause()?.getMessage()}")
-                    failed++
+                    statistics.fail()
                 }
             } else {
-                currentResult = new TestResult(it.name, "SKIPPED", "")
-                skipped++
+                currentResult = new TestResult("SKIPPED")
+                statistics.skip()
             }
             println("TEST $currentResult.status\n")
-            results.add(currentResult)
+            results.put(it.name, currentResult)
         }
 
         // Save the report.
         def reportFile = project.file("${outputDirectory}/results.json")
-        def json = new JsonBuilder()
-        json {
-            "statistics" "total" : total, "passed" : passed, "failed" : failed, "skipped" : skipped
-
-            "tests" {
-                results.each { result ->
-                    "$result.name" {
-                        "status" result.status
-                        "comment" result.comment
-                    }
-                }
-            }
-
-
-        }
-        reportFile.write(json.toPrettyString())
-        println("TOTAL PASSED: $passed/$total (SKIPPED: $skipped)")
+        def json = JsonOutput.toJson(["statistics" : statistics, "tests" : results])
+        reportFile.write(JsonOutput.prettyPrint(json))
+        println("TOTAL PASSED: $statistics.passed/$statistics.total (SKIPPED: $statistics.skipped)")
     }
 }

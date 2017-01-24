@@ -1,3 +1,4 @@
+import groovy.json.JsonOutput
 import org.jetbrains.kotlin.*
 
 configurations {
@@ -8,7 +9,7 @@ dependencies {
     cli_bc project(path: ':backend.native', configuration: 'cli_bc')
 }
 
-def testOutputRoot = rootProject.file("testOutput").absolutePath
+def testOutputRoot = rootProject.file("test.output").absolutePath
 
 allprojects {
     // Root directories for test output (logs, compiled files, statistics etc). Only single path must be in each set.
@@ -30,7 +31,6 @@ task clean {
         delete(rootProject.file(testOutputRoot))
     }
 }
-
 
 task regenerate_external_tests() {
     doLast {
@@ -86,24 +86,28 @@ task run() {
 }
 
 task run_external () {
-    project.subprojects {
-        dependsOn(it.tasks.withType(RunExternalTestGroup).matching { it.enabled })
-    }
+    // TODO Consider test output directory cleaning before execution.
+    // TODO Consider using some logger instead of println
+    def testTasks = childProjects["external"].tasks.withType(RunExternalTestGroup).matching { it.enabled }
+    dependsOn(testTasks)
+
     doLast {
-        def logFile = childProjects["external"].file(logFileName)
-        def logText = logFile.text
+        Map<String, Map<String, RunExternalTestGroup.TestResult>> results = [:]
+        def statistics = new RunExternalTestGroup.Statistics()
+        testTasks.matching { it.state.executed }.each {
+            results.put(it.name, it.results)
+            statistics.add(it.statistics)
+        }
 
-        def passed = logText.count("|PASSED|")
-        def failed = logText.count("|FAILED|")
-        def skipped = logText.count("|SKIPPED|")
-
-        def report = "\nDONE.\n\n" +
-                     "PASSED: $passed\n" +
-                     "FAILED: $failed\n" +
-                     "TOTAL (FAILED + PASSED): ${passed + failed}\n" +
-                     "SKIPPED : $skipped"
-        logFile.append(report)
-        println(report)
+        def output = ["statistics" : statistics, "tests" : results]
+        def json = JsonOutput.toJson(output)
+        def reportFile = new File(sourceSets.testOutputExternal.output.getDirs().getSingleFile(), "results.json")
+        reportFile.write(JsonOutput.prettyPrint(json))
+        println("DONE.\n\n" +
+                "TOTAL: $statistics.total\n" +
+                "PASSED: $statistics.passed\n" +
+                "FAILED: $statistics.failed\n" +
+                "SKIPPED: $statistics.skipped")
     }
 }
 
