@@ -16,15 +16,22 @@
 
 package org.jetbrains.kotlin.codegen.optimization
 
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.common.removeEmptyCatchBlocks
+import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class DeadCodeEliminationMethodTransformer : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
-        val frames = MethodTransformer.analyze(internalClassName, methodNode, OptimizationBasicInterpreter())
+        transformWithResult(internalClassName, methodNode)
+    }
+
+    fun transformWithResult(internalClassName: String, methodNode: MethodNode): Result {
+        val removedNodes = HashSet<AbstractInsnNode>()
+
+        val frames = analyze(internalClassName, methodNode, OptimizationBasicInterpreter())
         val insnList = methodNode.instructions
         val insnsArray = insnList.toArray()
 
@@ -32,9 +39,19 @@ class DeadCodeEliminationMethodTransformer : MethodTransformer() {
         // by try/catch blocks or local variables table.
         insnsArray.zip(frames).filter {
             it.second == null && it.first.isMeaningful
-        }.forEach { insnList.remove(it.first) }
+        }.forEach {
+            insnList.remove(it.first)
+            removedNodes.add(it.first)
+        }
 
         // Remove empty try-catch blocks to make sure we don't break data flow analysis invariants by dead code elimination.
         methodNode.removeEmptyCatchBlocks()
+
+        return Result(removedNodes)
+    }
+
+    class Result(val removedNodes: Set<AbstractInsnNode>) {
+        fun isRemoved(node: AbstractInsnNode) = removedNodes.contains(node)
+        fun isAlive(node: AbstractInsnNode) = !isRemoved(node)
     }
 }

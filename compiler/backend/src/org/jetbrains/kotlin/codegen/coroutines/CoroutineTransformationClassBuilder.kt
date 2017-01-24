@@ -83,10 +83,7 @@ class CoroutineTransformerMethodVisitor(
 
         // Remove unreachable suspension points
         // If we don't do this, then relevant frames will not be analyzed, that is unexpected from point of view of next steps (e.g. variable spilling)
-        DeadCodeEliminationMethodTransformer().transform(classBuilder.thisName, methodNode)
-        suspensionPoints.removeAll {
-            it.suspensionCallBegin.next == null && it.suspensionCallBegin.previous == null
-        }
+        removeUnreachableSuspensionPointsAndExitPoints(methodNode, suspensionPoints)
 
         processUninitializedStores(methodNode)
 
@@ -136,6 +133,22 @@ class CoroutineTransformerMethodVisitor(
 
     }
 
+    private fun removeUnreachableSuspensionPointsAndExitPoints(methodNode: MethodNode, suspensionPoints: MutableList<SuspensionPoint>) {
+        val dceResult = DeadCodeEliminationMethodTransformer().transformWithResult(classBuilder.thisName, methodNode)
+
+        // If the suspension call begin is alive and suspension call end is dead
+        // (e.g., an inlined suspend function call ends with throwing a exception -- see KT-15017),
+        // this is an exit point for the corresponding coroutine.
+        // It doesn't introduce an additional state to the corresponding coroutine's FSM.
+        suspensionPoints.forEach {
+            if (dceResult.isAlive(it.suspensionCallBegin) && dceResult.isRemoved(it.suspensionCallEnd)) {
+                methodNode.instructions.remove(it.suspensionCallBegin)
+            }
+        }
+
+        suspensionPoints.removeAll { dceResult.isRemoved(it.suspensionCallBegin) || dceResult.isRemoved(it.suspensionCallEnd) }
+    }
+
     private fun collectSuspensionPoints(methodNode: MethodNode): MutableList<SuspensionPoint> {
         val suspensionPoints = mutableListOf<SuspensionPoint>()
         val beforeSuspensionPointMarkerStack = Stack<MethodInsnNode>()
@@ -149,12 +162,7 @@ class CoroutineTransformerMethodVisitor(
                 }
 
                 AFTER_SUSPENSION_POINT_MARKER_NAME -> {
-                    suspensionPoints.add(
-                            SuspensionPoint(
-                                suspensionCallBegin = beforeSuspensionPointMarkerStack.pop(),
-                                suspensionCallEnd = methodInsn
-                            )
-                    )
+                    suspensionPoints.add(SuspensionPoint(beforeSuspensionPointMarkerStack.pop(), methodInsn))
                 }
             }
         }
@@ -186,8 +194,8 @@ class CoroutineTransformerMethodVisitor(
 
         for (suspension in suspensionPoints) {
             val suspensionCallBegin = suspension.suspensionCallBegin
-            val suspensionCallEnd = suspension.suspensionCallEnd
-            assert(frames[suspensionCallEnd.next.index()]?.stackSize == 1) {
+
+            assert(frames[suspension.suspensionCallEnd.next.index()]?.stackSize == 1) {
                 "Stack should be spilled before suspension call"
             }
 
@@ -430,9 +438,3 @@ private class SuspensionPoint(
 ) {
     lateinit var tryCatchBlocksContinuationLabel: LabelNode
 }
-
-private val DEFAULT_VALUE_OPCODES =
-        setOf(Opcodes.ICONST_0, Opcodes.LCONST_0, Opcodes.FCONST_0, Opcodes.DCONST_0, Opcodes.ACONST_NULL,
-              // GETSTATIC Unit.Instance
-              Opcodes.GETSTATIC)
-

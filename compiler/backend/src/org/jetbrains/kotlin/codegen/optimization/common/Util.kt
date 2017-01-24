@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.optimization.common
 
+import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -120,3 +121,7 @@ fun insnListOf(vararg insns: AbstractInsnNode) = InsnList().apply { insns.forEac
 
 fun AbstractInsnNode.isStoreOperation(): Boolean = getOpcode() in Opcodes.ISTORE..Opcodes.ASTORE
 fun AbstractInsnNode.isLoadOperation(): Boolean = getOpcode() in Opcodes.ILOAD..Opcodes.ALOAD
+
+val AbstractInsnNode?.insnText get() = InlineCodegenUtil.getInsnText(this)
+val AbstractInsnNode?.debugText get() =
+        if (this == null) "<null>" else "${this.javaClass.simpleName}: $insnText"
