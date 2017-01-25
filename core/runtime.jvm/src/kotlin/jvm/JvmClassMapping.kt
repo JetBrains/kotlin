@@ -33,7 +33,8 @@ import java.lang.Short as JavaLangShort
 /**
  * Returns a Java [Class] instance corresponding to the given [KClass] instance.
  */
-public val <T : Any> KClass<T>.java: Class<T>
+@Suppress("UPPER_BOUND_VIOLATED")
+public val <T> KClass<T>.java: Class<T>
     @JvmName("getJavaClass")
     get() = (this as ClassBasedDeclarationContainer).jClass as Class<T>
 
