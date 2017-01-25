@@ -27,11 +27,11 @@ public external abstract class ServiceWorkerRegistration : EventTarget {
     open val scope: String
     open var onupdatefound: ((Event) -> dynamic)?
     open val APISpace: dynamic
-    fun update(): dynamic
-    fun unregister(): dynamic
-    fun methodName(): dynamic
-    fun showNotification(title: String, options: NotificationOptions = definedExternally): dynamic
-    fun getNotifications(filter: GetNotificationOptions = definedExternally): dynamic
+    fun update(): Promise<Unit>
+    fun unregister(): Promise<Boolean>
+    fun methodName(): Promise<dynamic>
+    fun showNotification(title: String, options: NotificationOptions = definedExternally): Promise<Unit>
+    fun getNotifications(filter: GetNotificationOptions = definedExternally): Promise<dynamic>
 }
 
 public external abstract class ServiceWorkerGlobalScope : WorkerGlobalScope {
@@ -45,7 +45,7 @@ public external abstract class ServiceWorkerGlobalScope : WorkerGlobalScope {
     open var onfunctionalevent: ((Event) -> dynamic)?
     open var onnotificationclick: ((Event) -> dynamic)?
     open var onnotificationclose: ((Event) -> dynamic)?
-    fun skipWaiting(): dynamic
+    fun skipWaiting(): Promise<Unit>
 }
 
 public external abstract class ServiceWorker : EventTarget, AbstractWorker, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker {
@@ -57,12 +57,12 @@ public external abstract class ServiceWorker : EventTarget, AbstractWorker, Unio
 
 public external abstract class ServiceWorkerContainer : EventTarget {
     open val controller: ServiceWorker?
-    open val ready: dynamic
+    open val ready: Promise<ServiceWorkerRegistration>
     open var oncontrollerchange: ((Event) -> dynamic)?
     open var onmessage: ((Event) -> dynamic)?
-    fun register(scriptURL: String, options: RegistrationOptions = definedExternally): dynamic
-    fun getRegistration(clientURL: String = definedExternally): dynamic
-    fun getRegistrations(): dynamic
+    fun register(scriptURL: String, options: RegistrationOptions = definedExternally): Promise<ServiceWorkerRegistration>
+    fun getRegistration(clientURL: String = definedExternally): Promise<Any?>
+    fun getRegistrations(): Promise<dynamic>
     fun startMessages(): Unit
 }
 
@@ -89,7 +89,7 @@ public external open class ServiceWorkerMessageEvent(type: String, eventInitDict
     open val origin: String
     open val lastEventId: String
     open val source: UnionMessagePortOrServiceWorker?
-    open val ports: dynamic
+    open val ports: Array<out MessagePort>?
 }
 
 public external interface ServiceWorkerMessageEventInit : EventInit {
@@ -135,15 +135,15 @@ public external abstract class Client : UnionClientOrMessagePortOrServiceWorker 
 public external abstract class WindowClient : Client {
     open val visibilityState: dynamic
     open val focused: Boolean
-    fun focus(): dynamic
-    fun navigate(url: String): dynamic
+    fun focus(): Promise<WindowClient>
+    fun navigate(url: String): Promise<WindowClient>
 }
 
 public external abstract class Clients {
-    fun get(id: String): dynamic
-    fun matchAll(options: ClientQueryOptions = definedExternally): dynamic
-    fun openWindow(url: String): dynamic
-    fun claim(): dynamic
+    fun get(id: String): Promise<Any?>
+    fun matchAll(options: ClientQueryOptions = definedExternally): Promise<dynamic>
+    fun openWindow(url: String): Promise<WindowClient?>
+    fun claim(): Promise<Unit>
 }
 
 public external interface ClientQueryOptions {
@@ -165,7 +165,7 @@ public inline fun ClientQueryOptions(includeUncontrolled: Boolean? = false, type
 }
 
 public external open class ExtendableEvent(type: String, eventInitDict: ExtendableEventInit = definedExternally) : Event {
-    fun waitUntil(f: dynamic): Unit
+    fun waitUntil(f: Promise<Any?>): Unit
 }
 
 public external interface ExtendableEventInit : EventInit {
@@ -207,7 +207,7 @@ public external open class FetchEvent(type: String, eventInitDict: FetchEventIni
     open val request: Request
     open val clientId: String?
     open val isReload: Boolean
-    fun respondWith(r: dynamic): Unit
+    fun respondWith(r: Promise<Response>): Unit
 }
 
 public external interface FetchEventInit : ExtendableEventInit {
@@ -238,7 +238,7 @@ public inline fun FetchEventInit(request: Request?, clientId: String? = null, is
 public external open class ForeignFetchEvent(type: String, eventInitDict: ForeignFetchEventInit) : ExtendableEvent {
     open val request: Request
     open val origin: String
-    fun respondWith(r: dynamic): Unit
+    fun respondWith(r: Promise<ForeignFetchResponse>): Unit
 }
 
 public external interface ForeignFetchEventInit : ExtendableEventInit {
@@ -289,7 +289,7 @@ public external open class ExtendableMessageEvent(type: String, eventInitDict: E
     open val origin: String
     open val lastEventId: String
     open val source: UnionClientOrMessagePortOrServiceWorker?
-    open val ports: dynamic
+    open val ports: Array<out MessagePort>?
 }
 
 public external interface ExtendableMessageEventInit : ExtendableEventInit {
@@ -326,13 +326,13 @@ public inline fun ExtendableMessageEventInit(data: Any? = null, origin: String? 
 }
 
 public external abstract class Cache {
-    fun match(request: dynamic, options: CacheQueryOptions = definedExternally): dynamic
-    fun matchAll(request: dynamic = definedExternally, options: CacheQueryOptions = definedExternally): dynamic
-    fun add(request: dynamic): dynamic
-    fun addAll(requests: Array<dynamic>): dynamic
-    fun put(request: dynamic, response: Response): dynamic
-    fun delete(request: dynamic, options: CacheQueryOptions = definedExternally): dynamic
-    fun keys(request: dynamic = definedExternally, options: CacheQueryOptions = definedExternally): dynamic
+    fun match(request: dynamic, options: CacheQueryOptions = definedExternally): Promise<Any?>
+    fun matchAll(request: dynamic = definedExternally, options: CacheQueryOptions = definedExternally): Promise<dynamic>
+    fun add(request: dynamic): Promise<Unit>
+    fun addAll(requests: Array<dynamic>): Promise<Unit>
+    fun put(request: dynamic, response: Response): Promise<Unit>
+    fun delete(request: dynamic, options: CacheQueryOptions = definedExternally): Promise<Boolean>
+    fun keys(request: dynamic = definedExternally, options: CacheQueryOptions = definedExternally): Promise<dynamic>
 }
 
 public external interface CacheQueryOptions {
@@ -388,11 +388,11 @@ public inline fun CacheBatchOperation(type: String? = null, request: Request? = 
 }
 
 public external abstract class CacheStorage {
-    fun match(request: dynamic, options: CacheQueryOptions = definedExternally): dynamic
-    fun has(cacheName: String): dynamic
-    fun open(cacheName: String): dynamic
-    fun delete(cacheName: String): dynamic
-    fun keys(): dynamic
+    fun match(request: dynamic, options: CacheQueryOptions = definedExternally): Promise<Any?>
+    fun has(cacheName: String): Promise<Boolean>
+    fun open(cacheName: String): Promise<Cache>
+    fun delete(cacheName: String): Promise<Boolean>
+    fun keys(): Promise<dynamic>
 }
 
 public external open class FunctionalEvent : ExtendableEvent {

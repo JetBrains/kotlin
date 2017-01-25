@@ -30,11 +30,11 @@ public external open class Headers(init: dynamic = definedExternally) {
 
 public external interface Body {
     val bodyUsed: Boolean
-    fun arrayBuffer(): dynamic
-    fun blob(): dynamic
-    fun formData(): dynamic
-    fun json(): dynamic
-    fun text(): dynamic
+    fun arrayBuffer(): Promise<ArrayBuffer>
+    fun blob(): Promise<Blob>
+    fun formData(): Promise<FormData>
+    fun json(): Promise<Any?>
+    fun text(): Promise<String>
 }
 
 public external open class Request(input: dynamic, init: RequestInit = definedExternally) : Body {
@@ -53,11 +53,11 @@ public external open class Request(input: dynamic, init: RequestInit = definedEx
     open val keepalive: Boolean
     override val bodyUsed: Boolean
     fun clone(): Request
-    override fun arrayBuffer(): dynamic
-    override fun blob(): dynamic
-    override fun formData(): dynamic
-    override fun json(): dynamic
-    override fun text(): dynamic
+    override fun arrayBuffer(): Promise<ArrayBuffer>
+    override fun blob(): Promise<Blob>
+    override fun formData(): Promise<FormData>
+    override fun json(): Promise<Any?>
+    override fun text(): Promise<String>
 }
 
 public external interface RequestInit {
@@ -127,14 +127,14 @@ public external open class Response(body: dynamic = definedExternally, init: Res
     open val statusText: String
     open val headers: Headers
     open val body: dynamic
-    open val trailer: dynamic
+    open val trailer: Promise<Headers>
     override val bodyUsed: Boolean
     fun clone(): Response
-    override fun arrayBuffer(): dynamic
-    override fun blob(): dynamic
-    override fun formData(): dynamic
-    override fun json(): dynamic
-    override fun text(): dynamic
+    override fun arrayBuffer(): Promise<ArrayBuffer>
+    override fun blob(): Promise<Blob>
+    override fun formData(): Promise<FormData>
+    override fun json(): Promise<Any?>
+    override fun text(): Promise<String>
 
     companion object {
         fun error(): Response

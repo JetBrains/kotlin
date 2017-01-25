@@ -32,7 +32,7 @@ public external open class Notification(title: String, options: NotificationOpti
     open val icon: String
     open val badge: String
     open val sound: String
-    open val vibrate: dynamic
+    open val vibrate: Array<out Int>
     open val timestamp: Number
     open val renotify: Boolean
     open val silent: Boolean
@@ -40,13 +40,13 @@ public external open class Notification(title: String, options: NotificationOpti
     open val requireInteraction: Boolean
     open val sticky: Boolean
     open val data: Any?
-    open val actions: dynamic
+    open val actions: Array<out NotificationAction>
     fun close(): Unit
 
     companion object {
         var permission: String
         var maxActions: Int
-        fun requestPermission(deprecatedCallback: (String) -> Unit = definedExternally): dynamic
+        fun requestPermission(deprecatedCallback: (String) -> Unit = definedExternally): Promise<String>
     }
 }
 
