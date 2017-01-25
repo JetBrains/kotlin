@@ -150,12 +150,14 @@ abstract class KonanTest extends DefaultTask {
     }
 }
 
+@ParallelizableTask
 class RunKonanTest extends KonanTest {
     void compileTest(List<String> filesToCompile, String exe) {
         runCompiler(filesToCompile, exe, [])
     }
 }
 
+@ParallelizableTask
 class LinkKonanTest extends KonanTest {
     protected String lib
 
