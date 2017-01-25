@@ -11,4 +11,7 @@ public final data class Modifiers public constructor(x: kotlin.Int) {
     public final inline fun inlined(crossinline arg1: () -> kotlin.Unit, noinline arg2: () -> kotlin.Unit): kotlin.Unit { /* compiled code */ }
 
     public final tailrec fun sum(x: kotlin.Long, sum: kotlin.Long): kotlin.Long { /* compiled code */ }
+
+    public final annotation class Ann public constructor() : kotlin.Annotation {
+    }
 }

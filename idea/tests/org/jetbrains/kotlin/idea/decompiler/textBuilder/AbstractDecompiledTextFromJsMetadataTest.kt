@@ -23,10 +23,12 @@ import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.ModuleKind
 import org.jetbrains.kotlin.idea.test.configureAs
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import kotlin.test.assertTrue
 
 abstract class AbstractDecompiledTextFromJsMetadataTest(baseDirectory: String) : AbstractDecompiledTextBaseTest(baseDirectory, true) {
-    override fun getFileToDecompile(): VirtualFile = getKjsmFile(TEST_PACKAGE, getTestName(false), myModule!!)
+    override fun getFileToDecompile(): VirtualFile = getKjsmFile(TEST_PACKAGE, myModule!!)
 
     override fun checkPsiFile(psiFile: PsiFile) =
             assertTrue(psiFile is KtDecompiledFile, "Expecting decompiled kotlin javascript file, was: " + psiFile.javaClass)
@@ -41,13 +43,9 @@ abstract class AbstractCommonDecompiledTextFromJsMetadataTest : AbstractDecompil
 
 abstract class AbstractJsDecompiledTextFromJsMetadataTest : AbstractDecompiledTextFromJsMetadataTest("/decompiler/decompiledTextJs")
 
-fun getKjsmFile(
-        packageName: String,
-        className: String,
-        module: Module
-): VirtualFile {
+fun getKjsmFile(packageName: String, module: Module): VirtualFile {
     val root = findTestLibraryRoot(module)!!
     root.refresh(false, true)
     val packageDir = root.findFileByRelativePath(JdkAndMockLibraryProjectDescriptor.LIBRARY_NAME + "/" + packageName.replace(".", "/"))!!
-    return packageDir.findChild(className + ".kjsm")!!
+    return packageDir.findChild(JsSerializerProtocol.getKjsmFilePath(FqName(packageName)).substringAfterLast('/'))!!
 }
