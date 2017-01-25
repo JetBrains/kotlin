@@ -955,6 +955,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
                 doTest(fileName);
             }
 
+            @TestMetadata("nativeInterfaceClassLiteral.kt")
+            public void testNativeInterfaceClassLiteral() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/rtti/nativeInterfaceClassLiteral.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("whenIsNativeInterface.kt")
             public void testWhenIsNativeInterface() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/native/rtti/whenIsNativeInterface.kt");
