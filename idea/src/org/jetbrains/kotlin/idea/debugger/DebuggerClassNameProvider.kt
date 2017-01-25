@@ -163,13 +163,7 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
                         asmType.internalName
                     }
                     else -> {
-                        val descriptor = typeMapper.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
-                        if (isSuspendDescriptor(descriptor, typeMapper.bindingContext)) {
-                            CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, element).internalName
-                        }
-                        else {
-                            getClassNameForFile(file)
-                        }
+                        getClassNameForFile(file)
                     }
                 }
 
