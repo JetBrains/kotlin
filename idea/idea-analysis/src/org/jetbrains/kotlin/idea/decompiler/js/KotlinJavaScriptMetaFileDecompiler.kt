@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.decompiler.js
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiManager
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.serialization.js.JsProtoBuf
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.utils.JsBinaryVersion
 import java.io.ByteArrayInputStream
+import java.io.IOException
 
 class KotlinJavaScriptMetaFileDecompiler : ClassFileDecompilers.Full() {
     private val stubBuilder = KotlinJavaScriptStubBuilder()
@@ -49,6 +51,10 @@ class KotlinJavaScriptMetaFileDecompiler : ClassFileDecompilers.Full() {
             KtDecompiledFile(provider, ::buildDecompiledTextFromJsMetadata)
         }
     }
+
+    companion object {
+        internal val LOG = Logger.getInstance(KotlinJavaScriptMetaFileDecompiler::class.java)
+    }
 }
 
 private val decompilerRendererForJS = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
@@ -60,9 +66,11 @@ fun buildDecompiledTextFromJsMetadata(kjsmFile: VirtualFile): DecompiledText {
     }
 
     val file = KjsmFile.read(kjsmFile)
-               ?: error("Unexpectedly empty file: $kjsmFile")
 
     when (file) {
+        null -> {
+            return createIncompatibleAbiVersionDecompiledText(JsBinaryVersion.INSTANCE, JsBinaryVersion.INVALID_VERSION)
+        }
         is KjsmFile.Incompatible -> {
             return createIncompatibleAbiVersionDecompiledText(JsBinaryVersion.INSTANCE, file.version)
         }
@@ -94,11 +102,7 @@ sealed class KjsmFile {
 
     companion object {
         fun read(file: VirtualFile): KjsmFile? {
-            if (!file.isValid) {
-                return null
-            }
-
-            val stream = ByteArrayInputStream(file.contentsToByteArray())
+            val stream = ByteArrayInputStream(readFileContentsSafely(file) ?: return null)
 
             val version = JsBinaryVersion.readFrom(stream)
             if (!version.isCompatible()) {
@@ -110,6 +114,22 @@ sealed class KjsmFile {
             val result = Compatible(header, proto)
 
             return result
+        }
+
+        private fun readFileContentsSafely(file: VirtualFile): ByteArray? {
+            if (!file.isValid) return null
+
+            return try {
+                file.contentsToByteArray()
+            }
+            catch (e: IOException) {
+                // This is needed because sometimes we're given VirtualFile instances that point to non-existent .jar entries.
+                // Such files are valid (isValid() returns true), but an attempt to read their contents results in a FileNotFoundException.
+                // This looks like a platform issue, but we must still deal with it somehow here.
+                // Calling "refresh()" instead of catching an exception would be more correct, but is likely to degrade performance
+                KotlinJavaScriptMetaFileDecompiler.LOG.warn("Attempt to read non-existing file: $file", e)
+                null
+            }
         }
     }
 }
