@@ -12,49 +12,6 @@
 
     <artifactId>kotlin-maven-plugin-test</artifactId>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-maven-plugin</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-reflect</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-script-util</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-js</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-jre7</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-jre8</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -101,10 +58,21 @@
                             <!--<settingsFile>src/it/settings.xml</settingsFile>-->
                             <localRepositoryPath>local-repo</localRepositoryPath>
                             <extraArtifacts>
+                                <artifact>org.jetbrains.kotlin:kotlin-maven-plugin:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-maven-allopen:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-maven-noarg:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-runtime:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-stdlib:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-stdlib-common:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-stdlib-js:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-stdlib-jre7:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-stdlib-jre8:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-reflect:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test-parent:${project.version}:pom</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test-common:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test-js:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-script-util:${project.version}</artifact>
                             </extraArtifacts>
                             <showErrors>true</showErrors>
                             <postBuildHookScript>verify</postBuildHookScript>
