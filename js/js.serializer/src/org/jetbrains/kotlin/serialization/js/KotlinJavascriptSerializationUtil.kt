@@ -17,18 +17,13 @@
 package org.jetbrains.kotlin.serialization.js
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.AnnotationSerializer
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.JsBinaryVersion
@@ -72,7 +67,7 @@ object KotlinJavascriptSerializationUtil {
         importedModules.forEach { builder.addImportedModule(it) }
 
         for (fqName in getPackagesFqNames(module)) {
-            val part = serializePackageFragment(bindingContext, fqName, module)
+            val part = serializePackage(bindingContext, module, fqName)
             if (part.hasPackage() || part.class_Count > 0) {
                 builder.addPart(part)
             }
@@ -81,54 +76,12 @@ object KotlinJavascriptSerializationUtil {
         return builder.build()
     }
 
-    private fun serializePackageFragment(
-            bindingContext: BindingContext,
-            fqName: FqName,
-            module: ModuleDescriptor
-    ): JsProtoBuf.Library.Part {
-        val part = JsProtoBuf.Library.Part.newBuilder()
-        serializePackage(bindingContext, module, fqName, object : SerializerCallbacks {
-            override fun writeClass(classId: ClassId, classProto: ProtoBuf.Class) {
-                part.addClass_(classProto)
-            }
-
-            override fun writePackage(fqName: FqName, packageProto: ProtoBuf.Package) {
-                part.`package` = packageProto
-            }
-
-            override fun writeFiles(fqName: FqName, filesProto: JsProtoBuf.Files) {
-                part.files = filesProto
-            }
-
-            override fun writeStringTable(fqName: FqName, stringTable: StringTableImpl) {
-                val (strings, qualifiedNames) = stringTable.buildProto()
-                part.strings = strings
-                part.qualifiedNames = qualifiedNames
-            }
-
-            override fun writeClassNames(fqName: FqName, classNames: List<Name>, stringTable: StringTableImpl) {
-                // Do nothing
-            }
-        })
-        return part.build()
-    }
-
     fun metadataAsString(bindingContext: BindingContext, jsDescriptor: JsModuleDescriptor<ModuleDescriptor>): String =
             KotlinJavascriptMetadataUtils.formatMetadataAsString(jsDescriptor.name, jsDescriptor.serializeToBinaryMetadata(bindingContext))
 
-    interface SerializerCallbacks {
-        fun writeClass(classId: ClassId, classProto: ProtoBuf.Class)
+    fun serializePackage(bindingContext: BindingContext, module: ModuleDescriptor, fqName: FqName): JsProtoBuf.Library.Part {
+        val builder = JsProtoBuf.Library.Part.newBuilder()
 
-        fun writePackage(fqName: FqName, packageProto: ProtoBuf.Package)
-
-        fun writeFiles(fqName: FqName, filesProto: JsProtoBuf.Files)
-
-        fun writeStringTable(fqName: FqName, stringTable: StringTableImpl)
-
-        fun writeClassNames(fqName: FqName, classNames: List<Name>, stringTable: StringTableImpl)
-    }
-
-    fun serializePackage(bindingContext: BindingContext, module: ModuleDescriptor, fqName: FqName, callbacks: SerializerCallbacks) {
         val packageView = module.getPackage(fqName)
 
         // TODO: ModuleDescriptor should be able to return the package only with the contents of that module, without dependencies
@@ -138,14 +91,26 @@ object KotlinJavascriptSerializationUtil {
         val serializerExtension = KotlinJavascriptSerializerExtension(fileRegistry, fqName)
         val serializer = DescriptorSerializer.createTopLevel(serializerExtension)
 
-        val classifierDescriptors = DescriptorSerializer.sort(packageView.memberScope.getContributedDescriptors(
-                DescriptorKindFilter.CLASSIFIERS))
+        val classDescriptors = DescriptorSerializer.sort(
+                packageView.memberScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS)
+        ).filterIsInstance<ClassDescriptor>()
 
-        ClassSerializationUtil.serializeClasses(classifierDescriptors, serializer, object : ClassSerializationUtil.Sink {
-            override fun writeClass(classDescriptor: ClassDescriptor, classProto: ProtoBuf.Class) {
-                callbacks.writeClass(classDescriptor.classId!!, classProto)
+        fun serializeClasses(descriptors: Collection<DeclarationDescriptor>) {
+            fun serializeClass(classDescriptor: ClassDescriptor) {
+                if (skip(classDescriptor)) return
+                val classProto = serializer.classProto(classDescriptor).build() ?: error("Class not serialized: $classDescriptor")
+                builder.addClass_(classProto)
+                serializeClasses(classDescriptor.unsubstitutedInnerClassesScope.getContributedDescriptors())
             }
-        }, skip)
+
+            for (descriptor in descriptors) {
+                if (descriptor is ClassDescriptor) {
+                    serializeClass(descriptor)
+                }
+            }
+        }
+
+        serializeClasses(classDescriptors)
 
         val stringTable = serializerExtension.stringTable
 
@@ -153,19 +118,17 @@ object KotlinJavascriptSerializationUtil {
         val members = fragments
                 .flatMap { fragment -> DescriptorUtils.getAllDescriptors(fragment.getMemberScope()) }
                 .filterNot(skip)
-        val packageProto = serializer.packagePartProto(members)
-        packageProto.setExtension(JsProtoBuf.packageFqName, stringTable.getPackageFqNameIndex(fqName))
-        callbacks.writePackage(fqName, packageProto.build())
+        builder.`package` = serializer.packagePartProto(members).apply {
+            setExtension(JsProtoBuf.packageFqName, stringTable.getPackageFqNameIndex(fqName))
+        }.build()
 
-        val fileTable = serializeFiles(fileRegistry, bindingContext, AnnotationSerializer(stringTable))
-        callbacks.writeFiles(fqName, fileTable)
+        builder.files = serializeFiles(fileRegistry, bindingContext, AnnotationSerializer(stringTable))
 
-        val classNames = DescriptorSerializer.sort(fragments.flatMap { fragment ->
-            fragment.getMemberScope().getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS).filterIsInstance<ClassDescriptor>()
-        }.filterNot(skip)).map { it.name }
-        callbacks.writeClassNames(fqName, classNames, stringTable)
+        val (strings, qualifiedNames) = stringTable.buildProto()
+        builder.strings = strings
+        builder.qualifiedNames = qualifiedNames
 
-        callbacks.writeStringTable(fqName, stringTable)
+        return builder.build()
     }
 
     private fun serializeFiles(
@@ -190,7 +153,7 @@ object KotlinJavascriptSerializationUtil {
         val contentMap = hashMapOf<String, ByteArray>()
 
         for (fqName in getPackagesFqNames(module)) {
-            val part = serializePackageFragment(bindingContext, fqName, module)
+            val part = serializePackage(bindingContext, module, fqName)
             if (part.class_Count == 0 && part.`package`.let { packageProto ->
                 packageProto.functionCount == 0 && packageProto.propertyCount == 0 && packageProto.typeAliasCount == 0
             }) continue
