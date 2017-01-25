@@ -11,8 +11,6 @@
         <include name="src/kotlin/Progressions.kt"/>
         <include name="src/kotlin/ProgressionIterators.kt"/>
         <include name="src/kotlin/Ranges.kt"/>
-        <include name="src/kotlin/FloatingPointConstants.kt"/>
-        <include name="src/kotlin/IntegerConstants.kt"/>
         <include name="src/kotlin/internal/InternalAnnotations.kt"/>
         <include name="src/kotlin/internal/progressionUtil.kt"/>
     </fileset>
