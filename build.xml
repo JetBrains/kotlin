@@ -314,6 +314,7 @@
 
     <macrodef name="new-kotlin2js">
         <attribute name="output"/>
+        <attribute name="additionalOptions" default=""/>
         <element name="src"/>
 
         <sequential>
@@ -341,8 +342,7 @@
                 <arg value="@{output}"/>
                 <arg value="-no-stdlib"/>
                 <arg value="-version"/>
-                <arg value="-meta-info"/>
-                <arg value="-kjsm"/>
+                <arg line="@{additionalOptions}"/>
                 <arg line="-main noCall"/>
                 <arg line="-module-kind commonjs"/>
                 <arg value="-Xallow-kotlin-package"/>
@@ -409,6 +409,7 @@
     <target name="js-stdlib">
         <property environment="env"/>
         <kotlin-pp src="libraries/stdlib/src" output="${intermediate-sources}/stdlib/js" profile="JS" />
+        <cleandir dir="${js.stdlib.output.dir}"/>
 
         <!-- We don't want descriptors for built-ins to be serialized, so we compile these files separately. -->
         <new-kotlin2js output="${js.stdlib.output.dir}/tmp-builtins/kotlin.js">
@@ -419,7 +420,7 @@
             </src>
         </new-kotlin2js>
 
-        <new-kotlin2js output="${js.stdlib.output.dir}/tmp/kotlin.js">
+        <new-kotlin2js output="${js.stdlib.output.dir}/tmp/kotlin.js" additionalOptions="-meta-info -kjsm">
             <src>
                 <union>
                     <fileset refid="kotlin.builtin.files"/>
