@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object CoroutineSuspendCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        val descriptor = resolvedCall.candidateDescriptor as? SimpleFunctionDescriptor ?: return
+        val descriptor = resolvedCall.candidateDescriptor as? FunctionDescriptor ?: return
         if (!descriptor.isSuspend) return
 
         val enclosingSuspendFunction =
@@ -60,9 +60,7 @@ object CoroutineSuspendCallChecker : CallChecker {
                     context.trace.report(Errors.NON_LOCAL_SUSPENSION_POINT.on(reportOn))
                 }
 
-                context.trace.record(
-                        BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.call, enclosingSuspendFunction
-                )
+                context.trace.record(BindingContext.ENCLOSING_SUSPEND_FUNCTION_FOR_SUSPEND_FUNCTION_CALL, resolvedCall.call, enclosingSuspendFunction)
 
                 checkRestrictsSuspension(enclosingSuspendFunction, resolvedCall, reportOn, context)
             }
