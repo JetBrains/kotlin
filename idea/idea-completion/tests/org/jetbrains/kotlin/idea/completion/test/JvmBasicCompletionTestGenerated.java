@@ -1261,6 +1261,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("GenericConstructor.kt")
+            public void testGenericConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/callableReference/GenericConstructor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("HigherOrderFunction.kt")
             public void testHigherOrderFunction() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/callableReference/HigherOrderFunction.kt");

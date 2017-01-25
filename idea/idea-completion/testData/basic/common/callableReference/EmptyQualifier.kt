@@ -9,7 +9,6 @@ var globalVar = 1
 
 fun funWithFunctionParameter(p: () -> Unit) {}
 
-// callable references to generic functions are not supported currently
 fun <T> genericFun(t: T): T = t
 
 class C {
@@ -54,7 +53,7 @@ abstract class AbstractClass
 // ABSENT: class
 // ABSENT: class.java
 // EXIST: { itemText: "funWithFunctionParameter", tailText: "(p: () -> Unit) (<root>)", attributes: "" }
-// ABSENT: genericFun
+// EXIST: { itemText: "genericFun", tailText: "(t: T) (<root>)", attributes: "" }
 
 // ABSENT: "kotlin"
 // ABSENT: "java"
