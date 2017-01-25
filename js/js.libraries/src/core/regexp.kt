@@ -44,10 +44,8 @@ public external interface RegExpMatch {
     public val index: Int
     public val input: String
     public val length: Int
-
-    @nativeGetter
-    public operator fun get(index: Int): String?
 }
 
+public inline operator fun RegExpMatch.get(index: Int): String? = asDynamic()[index]
 
 public inline fun RegExpMatch.asArray(): Array<out String?> = unsafeCast<Array<out String?>>()
