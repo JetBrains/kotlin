@@ -1,6 +1,12 @@
 package
 
 public const val constInitializer1: kotlin.Double = Infinity.toDouble()
+public const val constInitializer10: kotlin.Double = NaN.toDouble()
+public const val constInitializer11: kotlin.Double = NaN.toDouble()
+public const val constInitializer12: kotlin.Double = NaN.toDouble()
+public const val constInitializer13: kotlin.Double = NaN.toDouble()
+public const val constInitializer14: kotlin.Double = NaN.toDouble()
+public const val constInitializer15: kotlin.Double = Infinity.toDouble()
 public const val constInitializer2: kotlin.Double = Infinity.toDouble()
 public const val constInitializer3: kotlin.Double = Infinity.toDouble()
 public const val constInitializer4: kotlin.Double = -Infinity.toDouble()
@@ -13,6 +19,11 @@ public const val defaultGetter: kotlin.Int = 19
 public const val delegated: kotlin.Int
 public const val nonConstInitializer1: kotlin.Int
 public const val nonConstInitializer10: kotlin.Int
+public const val nonConstInitializer11: kotlin.Int
+public const val nonConstInitializer12: kotlin.Int
+public const val nonConstInitializer13: kotlin.Int
+public const val nonConstInitializer14: kotlin.Int
+public const val nonConstInitializer15: kotlin.Int
 public const val nonConstInitializer2: kotlin.String
 public const val nonConstInitializer3: kotlin.String
 public const val nonConstInitializer4: kotlin.Double

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.*
@@ -241,6 +242,11 @@ class ConstantExpressionEvaluator(
         }
     }
 }
+
+private val DIVISION_OPERATION_NAMES =
+        listOf(OperatorNameConventions.DIV, OperatorNameConventions.REM, OperatorNameConventions.MOD)
+                .map(Name::asString)
+                .toSet()
 
 private class ConstantExpressionEvaluatorVisitor(
         private val constantExpressionEvaluator: ConstantExpressionEvaluator,
@@ -545,7 +551,7 @@ private class ConstantExpressionEvaluatorVisitor(
             binaryOperations[BinaryOperationKey(receiver.ctcType, parameter.ctcType, name)]
 
     private fun isDivisionByZero(name: String, parameter: Any?): Boolean {
-        if (name == OperatorConventions.BINARY_OPERATION_NAMES[KtTokens.DIV]!!.asString()) {
+        if (name in DIVISION_OPERATION_NAMES) {
             if (isIntegerType(parameter)) {
                 return (parameter as Number).toLong() == 0.toLong()
             }

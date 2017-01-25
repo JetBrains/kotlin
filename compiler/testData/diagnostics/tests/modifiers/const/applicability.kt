@@ -42,7 +42,7 @@ const val delegated: Int <!CONST_VAL_WITH_DELEGATE!>by Delegate()<!>
 
 
 const val withGetter: Int
-<!CONST_VAL_WITH_GETTER!>get() = 13<!>
+    <!CONST_VAL_WITH_GETTER!>get() = 13<!>
 
 const val withExplicitDefaultGetter: Int = 1
     <!CONST_VAL_WITH_GETTER!>get<!>
@@ -80,6 +80,11 @@ const val nonConstInitializer7 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>-1/0<!>
 const val nonConstInitializer8 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1/0 - 1/0<!>
 const val nonConstInitializer9 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1.0/0.0 - 1/0<!>
 const val nonConstInitializer10 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>0/0<!>
+const val nonConstInitializer11 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1 % 0<!>
+const val nonConstInitializer12 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>0 % 0<!>
+const val nonConstInitializer13 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>0.<!DEPRECATION!>mod<!>(0)<!>
+const val nonConstInitializer14 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>0.rem(0)<!>
+const val nonConstInitializer15 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>0.div(0)<!>
 
 const val constInitializer1 = 1.0/0
 const val constInitializer2 = 1/0.0
@@ -90,6 +95,12 @@ const val constInitializer6 = 42 + 1.0/0
 const val constInitializer7 = 42 - 1.0/0
 const val constInitializer8 = 1.0/0 - 1.0/0
 const val constInitializer9 = 0.0/0 + 1.0/0
+const val constInitializer10 = 1.0 % 0
+const val constInitializer11 = 0.0 % 0
+const val constInitializer12 = (-1.0) % 0
+const val constInitializer13 = 1.0.rem(0)
+const val constInitializer14 = 1.0.<!DEPRECATION!>mod<!>(0)
+const val constInitializer15 = 1.0.div(0)
 
 // ------------------
 class Delegate {
