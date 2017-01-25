@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 private val exclusions =
         listOf(
                 "kotlin.jvm.internal",
-                "kotlin.coroutines.intrinsics"
+                "kotlin.coroutines.intrinsics",
+                "kotlin.reflect.jvm.internal"
         )
 
 private fun shouldBeHiddenAsInternalImplementationDetail(fqName: String) = exclusions.any { fqName.startsWith(it) }
