@@ -30,11 +30,10 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.GlobalSearchScopeWithModuleSources
-import org.jetbrains.kotlin.utils.alwaysNull
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
-import java.lang.reflect.Method
 import java.util.*
 
 interface IdeaModuleInfo : ModuleInfo {
@@ -155,7 +154,7 @@ private class ModuleProductionSourceScope(module: Module) : ModuleSourceScope(mo
     // KT-6206
     override fun hashCode(): Int = 31 * module.hashCode()
 
-    override fun contains(file: VirtualFile) = moduleFileIndex.isInSourceContent(file) && !moduleFileIndex.isInTestSourceContent(file)
+    override fun contains(file: VirtualFile) = moduleFileIndex.isInSourceContentWithoutInjected(file) && !moduleFileIndex.isInTestSourceContent(file)
 
     override fun toString() = "ModuleProductionSourceScope($module)"
 }

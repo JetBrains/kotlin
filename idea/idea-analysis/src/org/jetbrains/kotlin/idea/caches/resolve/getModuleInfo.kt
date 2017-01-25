@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.script.getScriptDefinition
@@ -95,7 +96,7 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
             warnIfDecompiled()
             return module.testSourceInfo()
         }
-        else if (moduleFileIndex.isInSourceContent(virtualFile)) {
+        else if (moduleFileIndex.isInSourceContentWithoutInjected(virtualFile)) {
             warnIfDecompiled()
             return module.productionSourceInfo()
         }

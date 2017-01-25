@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi.psiUtil
 
+import com.intellij.injected.editor.VirtualFileWindow
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.search.PsiSearchScopeUtil
@@ -329,9 +330,10 @@ fun PsiElement.getElementTextWithContext(): String {
     val inFileParentOffset = elementContextOffset - startContextOffset
 
 
+    val isInjected = containingFile is VirtualFileWindow
     return StringBuilder(topLevelElement.text)
             .insert(inFileParentOffset, "<caret>")
-            .insert(0, "File name: ${containingFile.name} Physical: ${containingFile.isPhysical}\n")
+            .insert(0, "File name: ${containingFile.name} Physical: ${containingFile.isPhysical} Injected: $isInjected\n")
             .toString()
 }
 

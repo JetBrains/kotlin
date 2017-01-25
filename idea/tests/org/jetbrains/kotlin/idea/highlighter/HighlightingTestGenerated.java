@@ -78,6 +78,12 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
         doTest(fileName);
     }
 
+    @TestMetadata("KotlinInjection.kt")
+    public void testKotlinInjection() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/KotlinInjection.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Labels.kt")
     public void testLabels() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/Labels.kt");
