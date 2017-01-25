@@ -19,55 +19,61 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
+fun FunctionDescriptor.asImportedFromObject(original: FunctionImportedFromObject? = null) =
+        FunctionImportedFromObject(this, original)
+
+fun PropertyDescriptor.asImportedFromObject(original: PropertyImportedFromObject? = null) =
+        PropertyImportedFromObject(this, original)
+
 abstract class ImportedFromObjectCallableDescriptor<out TCallable : CallableMemberDescriptor>(
-        val callableFromObject: TCallable
+        val callableFromObject: TCallable,
+        originalOrNull: TCallable?
 ) : CallableDescriptor {
+
     val containingObject = callableFromObject.containingDeclaration as ClassDescriptor
+
+    protected val _original = originalOrNull ?: this
 }
 
 // members imported from object should be wrapped to not require dispatch receiver
-class FunctionImportedFromObject(functionFromObject: FunctionDescriptor) :
-        FunctionDescriptor by functionFromObject,
-        ImportedFromObjectCallableDescriptor<FunctionDescriptor>(functionFromObject) {
+class FunctionImportedFromObject(
+        functionFromObject: FunctionDescriptor,
+        originalOrNull: FunctionDescriptor? = null
+) : ImportedFromObjectCallableDescriptor<FunctionDescriptor>(functionFromObject, originalOrNull),
+        FunctionDescriptor by functionFromObject {
+
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = null
 
-    override fun substitute(substitutor: TypeSubstitutor) = callableFromObject.substitute(substitutor)?.wrap()
+    override fun substitute(substitutor: TypeSubstitutor) =
+            callableFromObject.substitute(substitutor)?.asImportedFromObject(this)
 
-    private val _original by lazy {
-        functionFromObject.original.wrap()
-    }
-
-    override fun getOriginal() = _original
+    override fun getOriginal() = _original as FunctionDescriptor
 
     override fun copy(
             newOwner: DeclarationDescriptor?, modality: Modality?, visibility: Visibility?,
             kind: CallableMemberDescriptor.Kind?, copyOverrides: Boolean
     ): FunctionDescriptor {
-        throw IllegalStateException("copy() should not be called on ${this.javaClass.simpleName}, was called for $this")
+        throw UnsupportedOperationException("copy() should not be called on ${this.javaClass.simpleName}, was called for $this")
     }
 }
 
-class PropertyImportedFromObject(propertyFromObject: PropertyDescriptor) :
-        PropertyDescriptor by propertyFromObject,
-        ImportedFromObjectCallableDescriptor<PropertyDescriptor>(propertyFromObject) {
+class PropertyImportedFromObject(
+        propertyFromObject: PropertyDescriptor,
+        originalOrNull: PropertyDescriptor? = null
+) : ImportedFromObjectCallableDescriptor<PropertyDescriptor>(propertyFromObject, originalOrNull),
+        PropertyDescriptor by propertyFromObject {
 
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = null
 
-    override fun substitute(substitutor: TypeSubstitutor) = callableFromObject.substitute(substitutor)?.wrap()
+    override fun substitute(substitutor: TypeSubstitutor) = callableFromObject.substitute(substitutor)?.asImportedFromObject(this)
 
-    private val _original by lazy {
-        propertyFromObject.original.wrap()
-    }
-
-    override fun getOriginal() = _original
+    override fun getOriginal() = _original as PropertyDescriptor
 
     override fun copy(
             newOwner: DeclarationDescriptor?, modality: Modality?, visibility: Visibility?,
             kind: CallableMemberDescriptor.Kind?, copyOverrides: Boolean
     ): FunctionDescriptor {
-        throw IllegalStateException("copy() should not be called on ${this.javaClass.simpleName}, was called for $this")
+        throw UnsupportedOperationException("copy() should not be called on ${this.javaClass.simpleName}, was called for $this")
     }
 }
 
-private fun FunctionDescriptor.wrap() = FunctionImportedFromObject(this)
-private fun PropertyDescriptor.wrap() = PropertyImportedFromObject(this)

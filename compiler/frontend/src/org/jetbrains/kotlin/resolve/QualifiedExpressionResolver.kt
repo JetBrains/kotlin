@@ -257,12 +257,15 @@ class QualifiedExpressionResolver {
                 descriptors.addAll(staticClassScope.getContributedVariables(lastName, location))
 
                 if (packageOrClassDescriptor.kind == ClassKind.OBJECT) {
-                    descriptors.addAll(packageOrClassDescriptor.unsubstitutedMemberScope.getContributedFunctions(lastName, location).map {
-                        FunctionImportedFromObject(it)
-                    })
-                    val properties = packageOrClassDescriptor.unsubstitutedMemberScope.getContributedVariables(lastName, location)
-                            .filterIsInstance<PropertyDescriptor>().map { PropertyImportedFromObject(it) }
-                    descriptors.addAll(properties)
+                    descriptors.addAll(
+                            packageOrClassDescriptor.unsubstitutedMemberScope.getContributedFunctions(lastName, location)
+                                    .map { it.asImportedFromObject() }
+                    )
+                    descriptors.addAll(
+                            packageOrClassDescriptor.unsubstitutedMemberScope.getContributedVariables(lastName, location)
+                                    .filterIsInstance<PropertyDescriptor>()
+                                    .map { it.asImportedFromObject() }
+                    )
                 }
             }
 
