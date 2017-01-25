@@ -162,12 +162,12 @@ internal class LinkStage(val context: Context) {
     }
 
     fun llvmLlc(file: BitcodeFile): ObjectFile {
-        // TODO: Make it a temporary file.
-        val objectFile = "$file.o"
-
+        val tmpObjectFile = File.createTempFile(File(file).name, ".o")
+        tmpObjectFile.deleteOnExit()
+        val objectFile = tmpObjectFile.absolutePath
         val tool = distribution.llvmLlc
-        val command = listOf(distribution.llvmLlc, "-o", objectFile, "-filetype=obj") +  
-            properties.propertyList("llvmLlcFlags.$suffix") + listOf(file)
+        val command = listOf(distribution.llvmLlc, "-o", objectFile, "-filetype=obj") +
+                properties.propertyList("llvmLlcFlags.$suffix") + listOf(file)
         runTool(*command.toTypedArray())
 
         return objectFile
