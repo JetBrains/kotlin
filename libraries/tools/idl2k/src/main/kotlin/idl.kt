@@ -20,6 +20,7 @@ import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.ParseTree
+import org.antlr.v4.runtime.tree.RuleNode
 import org.antlr.v4.runtime.tree.TerminalNode
 import org.antlr.webidl.WebIDLBaseVisitor
 import org.antlr.webidl.WebIDLLexer
@@ -130,11 +131,24 @@ class UnionTypeVisitor(val namespace: String) : WebIDLBaseVisitor<List<Type>>() 
 
 class TypeVisitor(val namespace: String) : WebIDLBaseVisitor<Type>() {
     private var type: Type = AnyType()
+    private var awaitingSimpleType = false
 
     override fun defaultResult() = type
 
+    override fun visitType(ctx: TypeContext?): Type {
+        type = super.visitType(ctx)
+        return type
+    }
+
+    override fun visitReturnType(ctx: ReturnTypeContext?): Type {
+        awaitingSimpleType = true
+        type = super.visitReturnType(ctx)
+        return type
+    }
+
     override fun visitNonAnyType(ctx: WebIDLParser.NonAnyTypeContext): Type {
-        type = SimpleType(ctx.text, false)
+        awaitingSimpleType = true
+        type = super.visitNonAnyType(ctx)
         return type
     }
 
@@ -143,19 +157,62 @@ class TypeVisitor(val namespace: String) : WebIDLBaseVisitor<Type>() {
         return type
     }
 
+    override fun visitPromiseType(ctx: PromiseTypeContext): Type {
+        type = PromiseType(TypeVisitor(namespace).visitChildren(ctx), false)
+        return type
+    }
+
+    override fun visitSequenceType(ctx: SequenceTypeContext): Type {
+        val mutable = ctx.getChild(0).text == "sequence"
+        type = ArrayType(TypeVisitor(namespace).visitChildren(ctx), mutable = mutable, nullable = false)
+        return type
+    }
+
     override fun visitTypeSuffix(ctx: TypeSuffixContext): Type {
         when (ctx.text?.trim()) {
             "?" -> type = type.toNullable()
-            "[]" -> type = ArrayType(type, false)
-            "[]?" -> type = ArrayType(type, true)
-            "?[]" -> type = ArrayType(type.toNullable(), false)
+            "[]" -> type = ArrayType(type, mutable = true, nullable = false)
+            "[]?" -> type = ArrayType(type, mutable = true, nullable = false)
+            "?[]" -> type = ArrayType(type.toNullable(), mutable = true, nullable = false)
         }
 
         return type
     }
 
+    override fun visitNull_(ctx: Null_Context): Type {
+        if (ctx.text?.trim() == "?") {
+            type = type.toNullable()
+        }
+        return type
+    }
+
     override fun visitTerminal(node: TerminalNode): Type {
-        type = SimpleType(node.text, false)
+        if (awaitingSimpleType) {
+            type = SimpleType(node.text, false)
+            awaitingSimpleType = false
+        }
+        return type
+    }
+
+    override fun visitUnsignedIntegerType(ctx: UnsignedIntegerTypeContext): Type {
+        awaitingSimpleType = false
+        type = super.visitUnsignedIntegerType(ctx)
+        return type
+    }
+
+    override fun visitUnrestrictedFloatType(ctx: UnrestrictedFloatTypeContext): Type {
+        awaitingSimpleType = false
+        type = super.visitUnrestrictedFloatType(ctx)
+        return type
+    }
+
+    override fun visitFloatType(ctx: FloatTypeContext): Type {
+        type = SimpleType(ctx.text, false)
+        return type
+    }
+
+    override fun visitIntegerType(ctx: IntegerTypeContext): Type {
+        type = SimpleType(ctx.text, false)
         return type
     }
 }

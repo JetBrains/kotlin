@@ -50,6 +50,7 @@
                 <version>${antlr.version}</version>
                 <executions>
                     <execution>
+                        <id>antlr</id>
                         <goals>
                             <goal>antlr4</goal>
                         </goals>

@@ -63,6 +63,8 @@ fun Type.dynamicIfUnknownType(allTypes: Set<String>, standardTypes: Set<Type> = 
     this is ArrayType -> copy(memberType = this.memberType.dynamicIfUnknownType(allTypes, standardTypes))
     this is UnionType -> if (this.name !in allTypes) DynamicType else this
     this is FunctionType -> copy(returnType = returnType.dynamicIfUnknownType(allTypes, standardTypes), parameterTypes = parameterTypes.map { it.copy(type = it.type.dynamicIfUnknownType(allTypes, standardTypes)) })
+    this is PromiseType ->
+        copy(valueType = valueType.dynamicIfUnknownType(allTypes, standardTypes))
 
     else -> DynamicType
 }
@@ -74,19 +76,14 @@ internal fun mapType(repository: Repository, type: Type): Type = when (type) {
         val typeName = type.type
         when {
             typeName in typeMapper -> typeMapper[typeName]!!.withNullability(type.nullable)
-            typeName.endsWith("?") -> mapType(repository, SimpleType(typeName.removeSuffix("?"), false)).toNullable()
-            typeName.endsWith("[]") -> ArrayType(memberType = mapType(repository, SimpleType(typeName.removeSuffix("[]"), false)), nullable = type.nullable)
-            typeName.startsWith("unrestricted") -> mapType(repository, SimpleType(typeName.removePrefix("unrestricted"), false))
-            typeName.startsWith("sequence<") -> ArrayType(mapType(repository, SimpleType(typeName.removePrefix("sequence<").removeSuffix(">").trim(), false)), type.nullable)
-            typeName == "sequence" -> ArrayType(DynamicType, type.nullable)
             typeName in repository.interfaces -> type
             typeName in repository.typeDefs -> mapTypedef(repository, type)
             typeName in repository.enums -> SimpleType("String", type.nullable)
-            typeName.startsWith("Promise<") -> DynamicType
 
             else -> type
         }
     }
+    is PromiseType -> type.copy(valueType = mapType(repository, type.valueType))
     is ArrayType -> type.copy(memberType = mapType(repository, type.memberType))
     is UnionType -> UnionType(type.namespace, type.memberTypes.map { mt -> mapType(repository, mt) }, type.nullable).toSingleTypeIfPossible()
     is FunctionType -> type.copy(
@@ -94,7 +91,10 @@ internal fun mapType(repository: Repository, type: Type): Type = when (type) {
             returnType = mapType(repository, type.returnType).dynamicIfAnyType(),
             parameterTypes = type.parameterTypes.takeWhile { !it.vararg }.map { it.copy(type = mapType(repository, it.type)) }
     )
-    else -> type
+
+    is AnyType,
+    is UnitType,
+    is DynamicType -> type
 }
 
 private fun mapTypedef(repository: Repository, type: SimpleType): Type {

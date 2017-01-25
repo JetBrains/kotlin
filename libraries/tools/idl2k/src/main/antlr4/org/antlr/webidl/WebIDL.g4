@@ -465,7 +465,7 @@ nonAnyType
 	| 'DOMString' typeSuffix
 	| 'USVString' typeSuffix
 	| IDENTIFIER_WEBIDL typeSuffix
-	| 'sequence' '<' type '>' null_
+	| sequenceType null_
 	| 'object' typeSuffix
 	| 'Date' typeSuffix
 	| 'RegExp' typeSuffix
@@ -504,6 +504,11 @@ unsignedIntegerType
 integerType
 	: 'short'
 	| 'long'+
+;
+
+sequenceType
+    : 'sequence' '<' type '>'
+    | 'FrozenArray' '<' type '>'
 ;
 
 promiseType
