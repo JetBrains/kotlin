@@ -52,8 +52,15 @@ const val ANNOTATIONS_PLUGIN_NAME = "org.jetbrains.kotlin.kapt"
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
 const val USING_EXPERIMENTAL_INCREMENTAL_MESSAGE = "Using experimental kotlin incremental compilation"
 
-abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCompile() {
+abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCompile(), CompilerArgumentAware {
     abstract protected fun populateCompilerArguments(): T
+
+    override val serializedCompilerArguments: List<String>
+        get() {
+            val arguments = populateCompilerArguments()
+            arguments.setupCommonCompilerArgs()
+            return ArgumentUtils.convertArgumentsToStringList(arguments)
+        }
 
     // indicates that task should compile kotlin incrementally if possible
     // it's not possible when IncrementalTaskInputs#isIncremental returns false (i.e first build)
