@@ -147,8 +147,9 @@ internal class LinkStage(val context: Context) {
     val libraries = context.config.libraries
 
     fun llvmLto(files: List<BitcodeFile>): ObjectFile {
-        // TODO: Make it a temporary file.
-        val combined = "combined.o" 
+        val tmpCombined = File.createTempFile("combined", ".o")
+        tmpCombined.deleteOnExit()
+        val combined = tmpCombined.absolutePath
 
         val tool = distribution.llvmLto
         val command = mutableListOf(tool, "-o", combined)
@@ -165,6 +166,7 @@ internal class LinkStage(val context: Context) {
         val tmpObjectFile = File.createTempFile(File(file).name, ".o")
         tmpObjectFile.deleteOnExit()
         val objectFile = tmpObjectFile.absolutePath
+
         val tool = distribution.llvmLlc
         val command = listOf(distribution.llvmLlc, "-o", objectFile, "-filetype=obj") +
                 properties.propertyList("llvmLlcFlags.$suffix") + listOf(file)
