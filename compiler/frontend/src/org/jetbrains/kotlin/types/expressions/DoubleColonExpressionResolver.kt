@@ -76,7 +76,8 @@ class DoubleColonExpressionResolver(
         val dataFlowAnalyzer: DataFlowAnalyzer,
         val reflectionTypes: ReflectionTypes,
         val typeResolver: TypeResolver,
-        val languageVersionSettings: LanguageVersionSettings
+        val languageVersionSettings: LanguageVersionSettings,
+        val additionalCheckers: Iterable<ClassLiteralChecker>
 ) {
     private lateinit var expressionTypingServices: ExpressionTypingServices
 
@@ -136,6 +137,9 @@ class DoubleColonExpressionResolver(
         }
         else if (!result.possiblyBareType.isBare && !isAllowedInClassLiteral(type)) {
             c.trace.report(CLASS_LITERAL_LHS_NOT_A_CLASS.on(expression))
+        }
+        for (additionalChecker in additionalCheckers) {
+            additionalChecker.check(expression, type, c)
         }
     }
 
