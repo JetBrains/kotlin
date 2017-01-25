@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JS
-// see KT-14097
-
 enum class Test(val x: Int, val str: String) {
     OK;
     constructor(vararg xs: Int) : this(xs.size + 42, "OK")

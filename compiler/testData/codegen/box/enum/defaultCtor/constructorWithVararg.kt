@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS
-
 enum class Test(vararg xs: Int) {
     OK;
     val values = xs

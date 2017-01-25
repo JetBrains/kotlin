@@ -66,8 +66,7 @@ class DeclarationBodyVisitor(
             val enumInstanceName = context.createGlobalName(enumName.ident + "_instance")
 
             assert(supertypes.size == 1) { "Simple Enum entry must have one supertype" }
-            val jsEnumEntryCreation = ClassInitializerTranslator
-                    .generateEnumEntryInstanceCreation(context, supertypes[0], enumEntry, enumEntryOrdinal)
+            val jsEnumEntryCreation = ClassInitializerTranslator.generateEnumEntryInstanceCreation(context, enumEntry, enumEntryOrdinal)
             context.addDeclarationStatement(JsAstUtils.newVar(enumInstanceName, null))
             enumInitializer.body.statements += JsAstUtils.assignment(pureFqn(enumInstanceName, null), jsEnumEntryCreation).makeStmt()
 

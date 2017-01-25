@@ -40,13 +40,14 @@ import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtEnumEntry;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtParameter;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.ArrayList;
@@ -58,7 +59,6 @@ import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.setDefaultValueForArguments;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn;
 import static org.jetbrains.kotlin.js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.getClassDescriptorForType;
 
 public final class ClassInitializerTranslator extends AbstractTranslator {
     @NotNull
@@ -144,23 +144,21 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     @NotNull
     public static JsExpression generateEnumEntryInstanceCreation(
             @NotNull TranslationContext context,
-            @NotNull KotlinType enumClassType,
-            @NotNull KtClassOrObject classDeclaration,
+            @NotNull KtEnumEntry enumEntry,
             int ordinal
     ) {
-        ResolvedCall<FunctionDescriptor> superCall = getSuperCall(context.bindingContext(), classDeclaration);
+        ResolvedCall<? extends FunctionDescriptor> resolvedCall = getSuperCall(context.bindingContext(), enumEntry);
+        if (resolvedCall == null) {
+            assert enumEntry.getInitializerList() == null : "Super call is missing on an enum entry with explicit initializer list " +
+                                                            PsiUtilsKt.getTextWithLocation(enumEntry);
+            resolvedCall = CallUtilKt.getFunctionResolvedCallWithAssert(enumEntry, context.bindingContext());
+        }
 
-        JsExpression nameArg = context.program().getStringLiteral(classDeclaration.getName());
+        JsExpression nameArg = context.program().getStringLiteral(enumEntry.getName());
         JsExpression ordinalArg = context.program().getNumberLiteral(ordinal);
         List<JsExpression> additionalArgs = Arrays.asList(nameArg, ordinalArg);
 
-        if (superCall == null) {
-            ClassDescriptor classDescriptor = getClassDescriptorForType(enumClassType);
-            JsNameRef reference = context.getInnerReference(classDescriptor);
-            return new JsNew(reference, additionalArgs);
-        }
-
-        JsExpression call = CallTranslator.translate(context, superCall);
+        JsExpression call = CallTranslator.translate(context, resolvedCall);
         if (call instanceof JsInvocation) {
             JsInvocation invocation = (JsInvocation) call;
             invocation.getArguments().addAll(0, additionalArgs);
