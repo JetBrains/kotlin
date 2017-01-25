@@ -399,7 +399,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         private fun addRepository(repositoriesBlock: GrClosableBlock, version: String): Boolean {
             val snippet = when {
                 isSnapshot(version) -> SNAPSHOT_REPOSITORY_SNIPPET
-                is11Prerelease(version) -> EAP_11_REPOSITORY_SNIPPET
+                useEap11Repository(version) -> EAP_11_REPOSITORY_SNIPPET
                 isEap(version) -> EAP_REPOSITORY_SNIPPET
                 !isRepositoryConfigured(repositoriesBlock) -> MAVEN_CENTRAL
                 else -> return false

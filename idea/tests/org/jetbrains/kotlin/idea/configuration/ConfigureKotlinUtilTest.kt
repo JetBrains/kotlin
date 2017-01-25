@@ -21,13 +21,16 @@ import org.junit.Assert
 
 class ConfigureKotlinUtilTest : UsefulTestCase() {
     fun test11Prerelease() {
-        Assert.assertTrue(is11Prerelease("1.1-M04"))
-        Assert.assertTrue(is11Prerelease("1.1-beta"))
-        Assert.assertTrue(is11Prerelease("1.1-beta-2"))
-        Assert.assertTrue(is11Prerelease("1.1-rc2"))
-        Assert.assertFalse(is11Prerelease("1.1"))
-        Assert.assertFalse(is11Prerelease("1.1.2"))
-        Assert.assertFalse(is11Prerelease("1.1.2-3"))
-        Assert.assertFalse(is11Prerelease("1.1-dev-1234"))
+        Assert.assertTrue(useEap11Repository("1.1-M04"))
+        Assert.assertTrue(useEap11Repository("1.1-beta"))
+        Assert.assertTrue(useEap11Repository("1.1.0-beta"))
+        Assert.assertTrue(useEap11Repository("1.1-beta-2"))
+        Assert.assertTrue(useEap11Repository("1.1-rc2"))
+        Assert.assertTrue(useEap11Repository("1.1.0-RC"))
+        Assert.assertTrue(useEap11Repository("1.1.1-eap-22"))
+        Assert.assertFalse(useEap11Repository("1.1"))
+        Assert.assertFalse(useEap11Repository("1.1.2"))
+        Assert.assertFalse(useEap11Repository("1.1.2-3"))
+        Assert.assertFalse(useEap11Repository("1.1-dev-1234"))
     }
 }

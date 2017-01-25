@@ -166,6 +166,6 @@ fun isEap(version: String): Boolean {
     return version.contains("rc") || version.contains("eap")
 }
 
-fun is11Prerelease(version: String): Boolean {
-    return Regex("1\\.1-[A-Za-z][A-Za-z0-9-]*").matches(version) && !version.startsWith("1.1-dev")
+fun useEap11Repository(version: String): Boolean {
+    return Regex("1\\.1(\\.\\d)?-[A-Za-z][A-Za-z0-9-]*").matches(version) && !version.startsWith("1.1.0-dev")
 }
