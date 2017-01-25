@@ -1,7 +1,0 @@
-compiler/testData/cli/js/diagnosticWhenReferenceToBuiltinsMember.kt:4:5: error: callable references for builtin members are not supported yet: 'Int::toByte'
-    Int::toByte
-    ^
-compiler/testData/cli/js/diagnosticWhenReferenceToBuiltinsMember.kt:5:5: error: callable references for builtin members are not supported yet: 'String::get'
-    String::get
-    ^
-COMPILATION_ERROR

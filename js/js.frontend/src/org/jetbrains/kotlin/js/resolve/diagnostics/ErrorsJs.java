@@ -38,7 +38,6 @@ public interface ErrorsJs {
     DiagnosticFactory1<KtExpression, JsCallData> JSCODE_WARNING = DiagnosticFactory1.create(WARNING, JsCodePositioningStrategy.INSTANCE);
     DiagnosticFactory0<KtExpression> JSCODE_ARGUMENT_SHOULD_BE_CONSTANT = DiagnosticFactory0.create(ERROR, DEFAULT);
     DiagnosticFactory1<KtElement, KtElement> NOT_SUPPORTED = DiagnosticFactory1.create(ERROR, DEFAULT);
-    DiagnosticFactory1<KtElement, KtElement> REFERENCE_TO_BUILTIN_MEMBERS_NOT_SUPPORTED = DiagnosticFactory1.create(ERROR, DEFAULT);
     DiagnosticFactory0<KtExpression> JSCODE_NO_JAVASCRIPT_PRODUCED = DiagnosticFactory0.create(ERROR, DEFAULT);
     DiagnosticFactory1<KtExpression, String> WRONG_EXTERNAL_DECLARATION = DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<KtExpression> NESTED_EXTERNAL_DECLARATION = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);

@@ -419,12 +419,6 @@ public class CliTestGenerated extends AbstractCliTest {
             doJsTest(fileName);
         }
 
-        @TestMetadata("diagnosticWhenReferenceToBuiltinsMember.args")
-        public void testDiagnosticWhenReferenceToBuiltinsMember() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/diagnosticWhenReferenceToBuiltinsMember.args");
-            doJsTest(fileName);
-        }
-
         @TestMetadata("emptySources.args")
         public void testEmptySources() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/emptySources.args");
