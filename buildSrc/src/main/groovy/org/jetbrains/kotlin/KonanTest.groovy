@@ -274,7 +274,7 @@ class RunExternalTestGroup extends RunKonanTest {
         createOutputDirectory()
 
         // Form the test list.
-        def ktFiles = project.file(groupDirectory).listFiles(new FileFilter() {
+        List<File> ktFiles = project.file(groupDirectory).listFiles(new FileFilter() {
             @Override
             boolean accept(File pathname) {
                 pathname.isFile() && pathname.name.endsWith(".kt")
@@ -292,7 +292,7 @@ class RunExternalTestGroup extends RunKonanTest {
         statistics = new Statistics()
         ktFiles.each {
             source = project.relativePath(it)
-            println("TEST: $it.name ($statistics.total/$ktFiles.size, passed: $statistics.passed, skipped: $statistics.skipped)")
+            println("TEST: $it.name ($statistics.total/${ktFiles.size()}, passed: $statistics.passed, skipped: $statistics.skipped)")
             if (isEnabledForNativeBackend(source)) {
                 try {
                     super.executeTest()
