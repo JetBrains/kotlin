@@ -11847,6 +11847,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitLambdaParameterTypes/typesAlreadyImplicit.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("withDestructuring.kt")
+        public void testWithDestructuring() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitLambdaParameterTypes/withDestructuring.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withDestructuringAndSimple.kt")
+        public void testWithDestructuringAndSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitLambdaParameterTypes/withDestructuringAndSimple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withDestructuringInMiddle.kt")
+        public void testWithDestructuringInMiddle() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitLambdaParameterTypes/withDestructuringInMiddle.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/intentions/removeExplicitSuperQualifier")
