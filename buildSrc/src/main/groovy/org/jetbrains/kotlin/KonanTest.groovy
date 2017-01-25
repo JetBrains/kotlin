@@ -83,8 +83,42 @@ abstract class KonanTest extends DefaultTask {
         return "$outputDirectory/$exeName"
     }
 
+    // TODO refactor
     List<String> buildCompileList() {
-        return [project.file(source).absolutePath]
+        def result = []
+        def filePattern = ~/(?m)\/\/\s*FILE:\s*(.*)$/
+        def srcFile = project.file(source)
+        def srcText = srcFile.text
+        def matcher = filePattern.matcher(srcText)
+
+        if (!matcher.find()) {
+            // There is only one file in the input
+            project.copy{
+                from srcFile.absolutePath
+                into outputDirectory
+            }
+            def newFile ="$outputDirectory/${srcFile.name}"
+            result.add(newFile)
+        } else {
+            // There are several files
+            def processedChars = 0
+            while (true) {
+                def filePath = "$outputDirectory/${matcher.group(1)}"
+                def start = processedChars
+                def nextFileExists = matcher.find()
+                def end = nextFileExists ? matcher.start() : srcText.length()
+                def fileText = srcText.substring(start, end)
+                processedChars = end
+                createFile(filePath, fileText)
+                result.add(filePath)
+                if (!nextFileExists) break
+            }
+        }
+        return result
+    }
+
+    void createFile(String file, String text) {
+        project.file(file).write(text)
     }
 
     @TaskAction
@@ -183,47 +217,18 @@ class RunExternalTestGroup extends RunKonanTest {
         }
     }
 
-    // TODO refactor
     List<String> buildCompileList() {
-        def result = []
-        def filePattern = ~/(?m)\/\/\s*FILE:\s*(.*)$/
         def packagePattern = ~/(?m)package\s*([a-zA-z-][a-zA-Z0-9.-]*)/  //TODO check the regex
         def boxPattern = ~/(?m)fun\s*box\s*\(\s*\)/
         def boxPackage = ""
-        def srcFile = project.file(source)
-        def srcText = srcFile.text
-        def matcher = filePattern.matcher(srcText)
 
-        if (!matcher.find()) {
-            // There is only one file in the input
-            project.copy{
-                from srcFile.absolutePath
-                into outputDirectory
-            }
-            def newFile ="$outputDirectory/${srcFile.name}"
-            if (srcText =~ boxPattern && srcText =~ packagePattern){
-                boxPackage = (srcText =~ packagePattern)[0][1]
+        def result = super.buildCompileList()
+        for (String filePath : result) {
+            def text = project.file(filePath).text
+            if (text =~ boxPattern && text =~ packagePattern){
+                boxPackage = (text =~ packagePattern)[0][1]
                 boxPackage += '.'
-            }
-            result.add(newFile)
-        } else {
-            // There are several files
-            def processedChars = 0
-            while (true) {
-                def filePath = matcher.group(1)
-                filePath = "$outputDirectory/$filePath"
-                def start = processedChars
-                def nextFileExists = matcher.find()
-                def end = nextFileExists ? matcher.start() : srcText.length()
-                def fileText = srcText.substring(start, end)
-                processedChars = end
-                createFile(filePath, fileText)
-                if (fileText =~ boxPattern && fileText =~ packagePattern){
-                    boxPackage = (fileText =~ packagePattern)[0][1]
-                    boxPackage += '.'
-                }
-                result.add(filePath)
-                if (!nextFileExists) break
+                break
             }
         }
         createLauncherFile("$outputDirectory/_launcher.kt", boxPackage)
@@ -233,10 +238,6 @@ class RunExternalTestGroup extends RunKonanTest {
 
     void createLauncherFile(String file, String pkg) {
         createFile(file, "fun main(args : Array<String>) { print(${pkg}box()) }")
-    }
-
-    void createFile(String file, String text) {
-        project.file(file).write(text)
     }
 
     List<String> findLinesWithPrefixesRemoved(String text, String prefix) {
