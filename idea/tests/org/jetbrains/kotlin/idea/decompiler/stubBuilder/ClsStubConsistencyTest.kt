@@ -16,22 +16,35 @@
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
-import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.testFramework.LightProjectDescriptor
+import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.idea.decompiler.classFile.KotlinClsStubBuilder
 import org.jetbrains.kotlin.idea.decompiler.classFile.buildDecompiledTextForClassFile
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
+import org.junit.Assert
 
-class ClsStubConsistencyTest : StubConsistencyBaseTest() {
-    override fun getVirtualFileFinder(): VirtualFileFinder = JvmVirtualFileFinder.SERVICE.getInstance(project)
-    override fun getFileIds(): List<ClassId> = listOf(ClassId.topLevel(FqName("kotlin.collections.CollectionsKt")))
+class ClsStubConsistencyTest : KotlinLightCodeInsightFixtureTestCase() {
+    private fun doTest(id: ClassId) {
+        val packageFile = JvmVirtualFileFinder.SERVICE.getInstance(project).findVirtualFileWithHeader(id)
+                          ?: throw AssertionError("File not found for id: $id")
+        val decompiledText = buildDecompiledTextForClassFile(packageFile).text
+        val fileWithDecompiledText = KtPsiFactory(project).createFile(decompiledText)
+        val stubTreeFromDecompiledText = KtFileStubBuilder().buildStubTree(fileWithDecompiledText)
+        val expectedText = stubTreeFromDecompiledText.serializeToString()
 
-    override fun createStubBuilder() = KotlinClsStubBuilder()
+        val fileStub = KotlinClsStubBuilder().buildFileStub(FileContentImpl.createByFile(packageFile))!!
+        Assert.assertEquals(expectedText, fileStub.serializeToString())
+    }
 
-    override fun getDecompiledText(packageFile: VirtualFile): String = buildDecompiledTextForClassFile(packageFile).text
+    override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
-    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+    fun testConsistency() {
+        doTest(ClassId.topLevel(FqName("kotlin.collections.CollectionsKt")))
+    }
 }

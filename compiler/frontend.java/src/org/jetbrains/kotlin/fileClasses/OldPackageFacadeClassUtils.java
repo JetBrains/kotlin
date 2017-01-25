@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.fileClasses;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
 
 public final class OldPackageFacadeClassUtils {
     private static final String PACKAGE_CLASS_NAME_SUFFIX = "Package";
@@ -40,15 +38,5 @@ public final class OldPackageFacadeClassUtils {
     @NotNull
     private static String capitalizeNonEmptyString(@NotNull String s) {
         return Character.isUpperCase(s.charAt(0)) ? s : Character.toUpperCase(s.charAt(0)) + s.substring(1);
-    }
-
-    @NotNull
-    public static FqName getPackageClassFqName(@NotNull FqName packageFQN) {
-        return packageFQN.child(Name.identifier(getPackageClassName(packageFQN)));
-    }
-
-    @NotNull
-    public static ClassId getPackageClassId(@NotNull FqName packageFQN) {
-        return new ClassId(packageFQN, Name.identifier(getPackageClassName(packageFQN)));
     }
 }
