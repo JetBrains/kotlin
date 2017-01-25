@@ -296,6 +296,41 @@ task empty_substring(type: RunKonanTest) {
     source = "runtime/basic/empty_substring.kt"
 }
 
+task enum0(type: RunKonanTest) {
+    goldValue = "VALUE\n"
+    source = "codegen/enum/test0.kt"
+}
+
+task enum1(type: RunKonanTest) {
+    goldValue = "z12\n"
+    source = "codegen/enum/test1.kt"
+}
+
+task enum_valueOf(type: RunKonanTest) {
+    goldValue = "E1\n"
+    source = "codegen/enum/valueOf.kt"
+}
+
+task enum_values(type: RunKonanTest) {
+    goldValue = "E2\n"
+    source = "codegen/enum/values.kt"
+}
+
+task enum_vCallNoEntryClass(type: RunKonanTest) {
+    goldValue = "('z3', 3)\n"
+    source = "codegen/enum/vCallNoEntryClass.kt"
+}
+
+task enum_vCallWithEntryClass(type: RunKonanTest) {
+    goldValue = "z1z2\n"
+    source = "codegen/enum/vCallWithEntryClass.kt"
+}
+
+task enum_companionObject(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/enum/companionObject.kt"
+}
+
 task array0(type: RunKonanTest) {
     goldValue = "5\n6\n7\n8\n9\n10\n11\n12\n13\n"
     source = "runtime/collections/array0.kt"

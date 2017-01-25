@@ -171,6 +171,7 @@ internal val ClassDescriptor.сontributedMethods: List<FunctionDescriptor>
     }
 
 fun ClassDescriptor.isAbstract() = this.modality == Modality.SEALED || this.modality == Modality.ABSTRACT
+        || this.kind == ClassKind.ENUM_CLASS
 
 // TODO: optimize
 val ClassDescriptor.vtableEntries: List<FunctionDescriptor>
@@ -186,7 +187,7 @@ val ClassDescriptor.vtableEntries: List<FunctionDescriptor>
         val methods = this.сontributedMethods
 
         val inheritedVtableSlots = superVtableEntries.map { superMethod ->
-            methods.single { OverridingUtil.overrides(it, superMethod) }
+            methods.singleOrNull { OverridingUtil.overrides(it, superMethod) } ?: superMethod
         }
 
         return inheritedVtableSlots + (methods - inheritedVtableSlots).filter { it.isOverridable }
