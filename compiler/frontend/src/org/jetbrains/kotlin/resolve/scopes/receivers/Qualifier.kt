@@ -17,13 +17,18 @@
 package org.jetbrains.kotlin.resolve.scopes.receivers
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.Printer
 import java.util.*
 
 interface Qualifier : QualifierReceiver {
@@ -91,7 +96,28 @@ class TypeAliasQualifier(
         }
 
     override val staticScope: MemberScope
-        get() = classDescriptor.staticScope
+        get() = when {
+            DescriptorUtils.isEnumClass(classDescriptor) ->
+                ChainedMemberScope("Static scope for typealias ${descriptor.name}",
+                                   listOf(classDescriptor.staticScope, EnumEntriesScope()))
+            else ->
+                classDescriptor.staticScope
+        }
+
+    private inner class EnumEntriesScope : MemberScopeImpl() {
+        override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
+                classDescriptor.unsubstitutedInnerClassesScope
+                        .getContributedClassifier(name, location)
+                        ?.takeIf { DescriptorUtils.isEnumEntry(it) }
+
+        override fun printScopeStructure(p: Printer) {
+            p.println(javaClass.simpleName, " {")
+            p.pushIndent()
+            p.println("descriptor = ", descriptor)
+            p.popIndent()
+            p.println("}")
+        }
+    }
 }
 
 class ClassValueReceiver(val classQualifier: ClassifierQualifier, private val type: KotlinType) : ExpressionReceiver {

@@ -123,7 +123,7 @@ public final class BindingUtils {
         if (descriptor instanceof TypeAliasDescriptor) {
             ClassDescriptor classDescriptor = ((TypeAliasDescriptor) descriptor).getClassDescriptor();
             assert classDescriptor != null : "Class descriptor must be non-null in resolved typealias: " + descriptor;
-            if (classDescriptor.getKind() != ClassKind.OBJECT) {
+            if (classDescriptor.getKind() != ClassKind.OBJECT && classDescriptor.getKind() != ClassKind.ENUM_CLASS) {
                 classDescriptor = classDescriptor.getCompanionObjectDescriptor();
                 assert classDescriptor != null : "Resolved typealias must have non-null class descriptor: " + descriptor;
             }
