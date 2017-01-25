@@ -7,6 +7,6 @@ data class Modifiers(val x: Int) {
     }
 
     inline fun inlined(crossinline arg1: ()->Unit, noinline arg2: ()->Unit): Unit {}
-}
 
-annotation class Ann
+    annotation class Ann
+}

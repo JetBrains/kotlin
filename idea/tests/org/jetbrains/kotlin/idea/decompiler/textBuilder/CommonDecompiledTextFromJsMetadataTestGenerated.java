@@ -144,12 +144,6 @@ public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCom
         doTest(fileName);
     }
 
-    @TestMetadata("TypeAliases")
-    public void testTypeAliases() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/TypeAliases/");
-        doTest(fileName);
-    }
-
     @TestMetadata("TypeModifiers")
     public void testTypeModifiers() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/TypeModifiers/");

@@ -54,4 +54,10 @@ public class JvmDecompiledTextTestGenerated extends AbstractJvmDecompiledTextTes
         doTest(fileName);
     }
 
+    @TestMetadata("TypeAliases")
+    public void testTypeAliases() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledTextJvm/TypeAliases/");
+        doTest(fileName);
+    }
+
 }

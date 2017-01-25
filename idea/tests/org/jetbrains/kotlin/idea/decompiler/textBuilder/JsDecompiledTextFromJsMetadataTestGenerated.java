@@ -42,4 +42,10 @@ public class JsDecompiledTextFromJsMetadataTestGenerated extends AbstractJsDecom
         doTest(fileName);
     }
 
+    @TestMetadata("TypeAliases")
+    public void testTypeAliases() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledTextJs/TypeAliases/");
+        doTest(fileName);
+    }
+
 }

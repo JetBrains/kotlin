@@ -5,9 +5,9 @@ package test
 
 public final class ClassWithClassObject public constructor() {
     public companion object {
-        public final val a: test.A /* compiled code */
+        public final val a: test.ClassWithClassObject.A /* compiled code */
 
-        public final var b: test.B /* compiled code */
+        public final var b: test.ClassWithClassObject.B /* compiled code */
 
         public final val kotlin.Int.g: kotlin.Int /* compiled code */
 
@@ -21,4 +21,10 @@ public final class ClassWithClassObject public constructor() {
     }
 
     public final fun f(): kotlin.Unit { /* compiled code */ }
+
+    public final class A public constructor() {
+    }
+
+    public final class B public constructor() {
+    }
 }
