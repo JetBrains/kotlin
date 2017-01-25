@@ -65,7 +65,7 @@ public final class TopLevelFIF extends CompositeFIF {
     public static final KotlinFunctionIntrinsic KOTLIN_EQUALS = new KotlinFunctionIntrinsic("equals");
 
     @NotNull
-    public static final KotlinFunctionIntrinsic KOTLIN_SUBSEQUENCE = new KotlinFunctionIntrinsic("subSequence");
+    private static final KotlinFunctionIntrinsic KOTLIN_SUBSEQUENCE = new KotlinFunctionIntrinsic("subSequence");
 
     @NotNull
     private static final DescriptorPredicate HASH_CODE_IN_ANY = pattern("kotlin", "Any", "hashCode");
@@ -147,11 +147,13 @@ public final class TopLevelFIF extends CompositeFIF {
         }
     };
 
-    private static final FunctionIntrinsic STRING_SUBSTRING = new FunctionIntrinsic() {
+    private static final FunctionIntrinsic STRING_SUBSTRING = new FunctionIntrinsicWithReceiverComputed() {
         @NotNull
         @Override
         public JsExpression apply(
-                @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
+                @Nullable JsExpression receiver,
+               @NotNull List<? extends JsExpression> arguments,
+               @NotNull TranslationContext context
         ) {
             return new JsInvocation(new JsNameRef("substring", receiver), arguments);
         }
