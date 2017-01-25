@@ -56,26 +56,17 @@ import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.JsBinaryVersion
-import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.constant
 import java.io.File
 import java.io.IOException
 
 fun getLibraryRootsWithAbiIncompatibleKotlinClasses(module: Module): Collection<BinaryVersionedFile<JvmMetadataVersion>> {
-    return getLibraryRootsWithAbiIncompatibleVersion(
-            module,
-            JvmMetadataVersion.INSTANCE,
-            KotlinMetadataVersionIndex,
-            { version -> !version.isCompatible() })
+    return getLibraryRootsWithAbiIncompatibleVersion(module, JvmMetadataVersion.INSTANCE, KotlinMetadataVersionIndex)
 }
 
 fun getLibraryRootsWithAbiIncompatibleForKotlinJs(module: Module): Collection<BinaryVersionedFile<JsBinaryVersion>> {
-    return getLibraryRootsWithAbiIncompatibleVersion(
-            module,
-            JsBinaryVersion.INSTANCE,
-            KotlinJavaScriptAbiVersionIndex,
-            { version -> !KotlinJavascriptMetadataUtils.isAbiVersionCompatible(version.minor) })       // TODO: support major.minor.patch version in JS metadata
+    return getLibraryRootsWithAbiIncompatibleVersion(module, JsBinaryVersion.INSTANCE, KotlinJavaScriptAbiVersionIndex)
 }
 
 fun updateLibraries(project: Project, libraries: Collection<Library>) {
@@ -243,8 +234,8 @@ data class BinaryVersionedFile<out T : BinaryVersion>(val file: VirtualFile, val
 private fun <T : BinaryVersion> getLibraryRootsWithAbiIncompatibleVersion(
         module: Module,
         supportedVersion: T,
-        index: ScalarIndexExtension<T>,
-        checkVersion: (T) -> Boolean): Collection<BinaryVersionedFile<T>> {
+        index: ScalarIndexExtension<T>
+): Collection<BinaryVersionedFile<T>> {
     val id = index.name
 
     val moduleWithAllDependencies = setOf(module) + ModuleUtil.getAllDependentModules(module)
@@ -252,7 +243,7 @@ private fun <T : BinaryVersion> getLibraryRootsWithAbiIncompatibleVersion(
             moduleWithAllDependencies.map { it.moduleWithLibrariesScope }.toTypedArray())
 
     val allVersions = FileBasedIndex.getInstance().getAllKeys(id, module.project)
-    val badVersions = allVersions.filter(checkVersion).toHashSet()
+    val badVersions = allVersions.filterNot(BinaryVersion::isCompatible).toHashSet()
     val badRoots = Sets.newHashSet<BinaryVersionedFile<T>>()
     val fileIndex = ProjectFileIndex.SERVICE.getInstance(module.project)
 

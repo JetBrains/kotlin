@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
-import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils;
+import org.jetbrains.kotlin.utils.JsBinaryVersion;
 import org.jetbrains.kotlin.utils.PathUtil;
 import org.jetbrains.kotlin.utils.StringsKt;
 import org.junit.Assert;
@@ -159,18 +159,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     }
 
     protected void doJsTest(@NotNull String fileName) throws Exception {
-        doTest(fileName, new K2JSCompiler(), new BinaryVersion() {
-            @Override
-            public boolean isCompatible() {
-                throw new UnsupportedOperationException();
-            }
-
-            @NotNull
-            @Override
-            public String toString() {
-                return String.valueOf(KotlinJavascriptMetadataUtils.ABI_VERSION);
-            }
-        });
+        doTest(fileName, new K2JSCompiler(), JsBinaryVersion.INSTANCE);
     }
 
     public static String removePerfOutput(String output) {

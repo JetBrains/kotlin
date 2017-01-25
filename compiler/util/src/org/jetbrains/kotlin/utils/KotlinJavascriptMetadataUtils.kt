@@ -23,13 +23,13 @@ import java.io.InputStream
 import javax.xml.bind.DatatypeConverter.parseBase64Binary
 import javax.xml.bind.DatatypeConverter.printBase64Binary
 
-class KotlinJavascriptMetadata(val abiVersion: Int, val moduleName: String, val body: ByteArray) {
-    val isAbiVersionCompatible: Boolean = KotlinJavascriptMetadataUtils.isAbiVersionCompatible(abiVersion)
-}
+class KotlinJavascriptMetadata(val version: JsBinaryVersion, val moduleName: String, val body: ByteArray)
 
 // TODO: move to JS modules
 class JsBinaryVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
     override fun isCompatible() = this.isCompatibleTo(INSTANCE)
+
+    fun toInteger() = (patch shl 16) + (minOf(minor, 255) shl 8) + minOf(major, 255)
 
     companion object {
         @JvmField
@@ -37,6 +37,9 @@ class JsBinaryVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
 
         @JvmField
         val INVALID_VERSION = JsBinaryVersion()
+
+        fun fromInteger(version: Int): JsBinaryVersion =
+                JsBinaryVersion(version and 255, (version shr 8) and 255, version shr 16)
 
         fun readFrom(stream: InputStream): JsBinaryVersion {
             val dataInput = DataInputStream(stream)
@@ -63,37 +66,37 @@ object KotlinJavascriptMetadataUtils {
      */
     private val METADATA_PATTERN = "(?m)\\w+\\.$KOTLIN_JAVASCRIPT_METHOD_NAME\\((\\d+),\\s*(['\"])([^'\"]*)\\2,\\s*(['\"])([^'\"]*)\\4\\)".toPattern()
 
-    @JvmField val ABI_VERSION: Int = JsBinaryVersion.INSTANCE.minor
-
     fun replaceSuffix(filePath: String): String = filePath.substringBeforeLast(JS_EXT) + META_JS_SUFFIX
 
-    @JvmStatic fun isAbiVersionCompatible(abiVersion: Int): Boolean = abiVersion == ABI_VERSION
-
-    @JvmStatic fun hasMetadata(text: String): Boolean =
+    @JvmStatic
+    fun hasMetadata(text: String): Boolean =
             KOTLIN_JAVASCRIPT_METHOD_NAME_PATTERN.matcher(text).find() && METADATA_PATTERN.matcher(text).find()
 
     fun formatMetadataAsString(moduleName: String, content: ByteArray): String =
-        "// Kotlin.$KOTLIN_JAVASCRIPT_METHOD_NAME($ABI_VERSION, \"$moduleName\", \"${printBase64Binary(content)}\");\n"
+        "// Kotlin.$KOTLIN_JAVASCRIPT_METHOD_NAME(${JsBinaryVersion.INSTANCE.toInteger()}, \"$moduleName\", \"${printBase64Binary(content)}\");\n"
 
-    @JvmStatic fun loadMetadata(file: File): List<KotlinJavascriptMetadata> {
+    @JvmStatic
+    fun loadMetadata(file: File): List<KotlinJavascriptMetadata> {
         assert(file.exists()) { "Library $file not found" }
         val metadataList = arrayListOf<KotlinJavascriptMetadata>()
-        JsLibraryUtils.traverseJsLibrary(file) { content, relativePath ->
+        JsLibraryUtils.traverseJsLibrary(file) { content, _ ->
             parseMetadata(content, metadataList)
         }
 
         return metadataList
     }
 
-    @JvmStatic fun loadMetadata(path: String): List<KotlinJavascriptMetadata> = loadMetadata(File(path))
+    @JvmStatic
+    fun loadMetadata(path: String): List<KotlinJavascriptMetadata> = loadMetadata(File(path))
 
-    @JvmStatic fun parseMetadata(text: String, metadataList: MutableList<KotlinJavascriptMetadata>) {
+    @JvmStatic
+    fun parseMetadata(text: String, metadataList: MutableList<KotlinJavascriptMetadata>) {
         // Check for literal pattern first in order to reduce time for large files without metadata
         if (!KOTLIN_JAVASCRIPT_METHOD_NAME_PATTERN.matcher(text).find()) return
 
         val matcher = METADATA_PATTERN.matcher(text)
         while (matcher.find()) {
-            val abiVersion = matcher.group(1).toInt()
+            val abiVersion = JsBinaryVersion.fromInteger(matcher.group(1).toInt())
             val moduleName = matcher.group(3)
             val data = matcher.group(5)
             metadataList.add(KotlinJavascriptMetadata(abiVersion, moduleName, parseBase64Binary(data)))

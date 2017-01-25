@@ -37,8 +37,8 @@ import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor;
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
+import org.jetbrains.kotlin.utils.JsBinaryVersion;
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata;
-import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -128,9 +128,8 @@ public abstract class JsConfig {
     }
 
     private JsModuleDescriptor<ModuleDescriptorImpl> createModuleDescriptor(KotlinJavascriptMetadata metadata) {
-        assert metadata.isAbiVersionCompatible() :
-                "expected abi version " + KotlinJavascriptMetadataUtils.ABI_VERSION +
-                ", but metadata.abiVersion = " + metadata.getAbiVersion();
+        assert metadata.getVersion().isCompatible() :
+                "Expected JS metadata version " + JsBinaryVersion.INSTANCE + ", but actual metadata version is " + metadata.getVersion();
 
         ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(
                 Name.special("<" + metadata.getModuleName() + ">"), storageManager, JsPlatform.INSTANCE.getBuiltIns()
