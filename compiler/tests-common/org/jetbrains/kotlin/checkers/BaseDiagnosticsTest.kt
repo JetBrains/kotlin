@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.junit.Assert
@@ -275,6 +276,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         )
 
         val LANGUAGE_DIRECTIVE = "LANGUAGE"
+        val LANGUAGE_VERSION = "LANGUAGE_VERSION"
         private val LANGUAGE_PATTERN = Pattern.compile("([\\+\\-])(\\w+)\\s*")
 
         val API_VERSION_DIRECTIVE = "API_VERSION"
@@ -302,14 +304,17 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         private fun parseLanguageVersionSettings(directiveMap: Map<String, String>): LanguageVersionSettings? {
             val apiVersionString = directiveMap[API_VERSION_DIRECTIVE]
             val directives = directiveMap[LANGUAGE_DIRECTIVE]
-            if (apiVersionString == null && directives == null) return null
+            val languageVersionDirective = directiveMap[LANGUAGE_VERSION]
+            if (apiVersionString == null && directives == null && languageVersionDirective == null) return null
 
             val apiVersion = (if (apiVersionString != null) ApiVersion.parse(apiVersionString) else ApiVersion.LATEST)
                              ?: error("Unknown API version: $apiVersionString")
 
             val languageFeatures = directives?.let(this::collectLanguageFeatureMap).orEmpty()
 
-            return DiagnosticTestLanguageVersionSettings(languageFeatures, apiVersion, LanguageVersion.LATEST)
+            val languageVersion: LanguageVersion = languageVersionDirective?.let { LanguageVersion.fromVersionString(it) } ?: LanguageVersion.LATEST
+
+            return DiagnosticTestLanguageVersionSettings(languageFeatures, apiVersion, languageVersion)
         }
 
         private fun collectLanguageFeatureMap(directives: String): Map<LanguageFeature, Boolean> {

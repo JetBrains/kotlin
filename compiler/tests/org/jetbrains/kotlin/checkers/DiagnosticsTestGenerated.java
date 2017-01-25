@@ -6462,6 +6462,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("simple1.0.kt")
+                public void testSimple1_0() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegation/memberHidesSupertypeOverride/simple1.0.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("simpleNoOverride.kt")
                 public void testSimpleNoOverride() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegation/memberHidesSupertypeOverride/simpleNoOverride.kt");

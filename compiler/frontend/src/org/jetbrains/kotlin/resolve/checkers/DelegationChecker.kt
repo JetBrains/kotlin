@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -40,8 +39,6 @@ class DelegationChecker : DeclarationChecker {
             bindingContext: BindingContext,
             languageVersionSettings: LanguageVersionSettings
     ) {
-        if (languageVersionSettings.languageVersion == LanguageVersion.KOTLIN_1_0) return
-
         if (descriptor !is ClassDescriptor) return
         if (declaration !is KtClassOrObject) return
 
