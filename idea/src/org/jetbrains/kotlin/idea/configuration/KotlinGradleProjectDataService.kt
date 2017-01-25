@@ -24,8 +24,6 @@ import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsPr
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
-import com.intellij.util.text.VersionComparatorUtil
-import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.TargetPlatformKind
@@ -93,12 +91,16 @@ class KotlinGradleProjectDataService : AbstractProjectDataService<GradleSourceSe
     }
 }
 
+private val gradlePropertyFiles = listOf("local.properties", "gradle.properties")
+
 private fun findKotlinCoroutinesProperty(project: Project): CoroutineSupport {
-    val localPropertiesFile = project.baseDir.findChild("local.properties") ?: return CoroutineSupport.DEFAULT
+    for (propertyFileName in gradlePropertyFiles) {
+        val propertyFile = project.baseDir.findChild(propertyFileName) ?: continue
+        val properties = Properties()
+        properties.load(propertyFile.inputStream)
+        val coroutinesProperty = properties.getProperty("kotlin.coroutines") ?: continue
+        return CoroutineSupport.byCompilerArgument(coroutinesProperty)
+    }
 
-    val properties = Properties()
-    properties.load(localPropertiesFile.inputStream)
-    val coroutinesProperty = properties.getProperty("kotlin.coroutines") ?: return CoroutineSupport.DEFAULT
-
-    return CoroutineSupport.byCompilerArgument(coroutinesProperty)
+    return CoroutineSupport.DEFAULT
 }
