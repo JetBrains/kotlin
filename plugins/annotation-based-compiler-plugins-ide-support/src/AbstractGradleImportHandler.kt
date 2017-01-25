@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.annotation.plugin.ide
 
 import com.intellij.openapi.externalSystem.model.DataNode
+import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.model.task.TaskData
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import org.jetbrains.kotlin.idea.configuration.GradleProjectImportHandler
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
@@ -35,18 +37,23 @@ abstract class AbstractGradleImportHandler : GradleProjectImportHandler {
     abstract val dataStorageTaskName: String
     abstract val pluginJarFileFromIdea: File
 
-    override fun invoke(facet: KotlinFacet, sourceSetNode: DataNode<GradleSourceSetData>) {
-        modifyCompilerArgumentsForPlugin(facet, getPluginSetup(sourceSetNode),
+    override fun importBySourceSet(facet: KotlinFacet, sourceSetNode: DataNode<GradleSourceSetData>) {
+        modifyCompilerArgumentsForPlugin(facet, getPluginSetupBySourceSet(sourceSetNode),
                                          compilerPluginId = compilerPluginId,
                                          pluginName = pluginName,
                                          annotationOptionName = annotationOptionName)
     }
 
-    private fun getPluginSetup(
-            sourceSetNode: DataNode<GradleSourceSetData>
+    override fun importByModule(facet: KotlinFacet, moduleNode: DataNode<ModuleData>) {
+        modifyCompilerArgumentsForPlugin(facet, getPluginSetupByModule(moduleNode),
+                                         compilerPluginId = compilerPluginId,
+                                         pluginName = pluginName,
+                                         annotationOptionName = annotationOptionName)
+    }
+
+    private fun getPluginSetupByModule(
+            moduleNode: DataNode<ModuleData>
     ): AnnotationBasedCompilerPluginSetup? {
-        val moduleNode = sourceSetNode.parent ?: return null
-        if (moduleNode.data !is ModuleData) return null
         val dataStorageTaskData = moduleNode.children.firstOrNull {
             val data = it.data as? TaskData ?: return@firstOrNull false
             data.name == dataStorageTaskName
@@ -63,4 +70,7 @@ abstract class AbstractGradleImportHandler : GradleProjectImportHandler {
 
         return AnnotationBasedCompilerPluginSetup(annotationFqNames, classpath)
     }
+
+    private fun getPluginSetupBySourceSet(sourceSetNode: DataNode<GradleSourceSetData>) =
+            ExternalSystemApiUtil.findParent(sourceSetNode, ProjectKeys.MODULE)?.let { getPluginSetupByModule(it) }
 }

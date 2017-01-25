@@ -155,10 +155,9 @@ val TargetPlatformKind<*>.mavenLibraryId: String
 fun Module.getOrCreateFacet(modelsProvider: IdeModifiableModelsProvider, useProjectSettings: Boolean): KotlinFacet {
     val facetModel = modelsProvider.getModifiableFacetModel(this)
 
-    facetModel.findFacet(KotlinFacetType.TYPE_ID, KotlinFacetType.INSTANCE.defaultFacetName)?.let { return it }
-
-    val facet = with(KotlinFacetType.INSTANCE) { createFacet(this@getOrCreateFacet, defaultFacetName, createDefaultConfiguration(), null) }
-    facetModel.addFacet(facet)
+    val facet = facetModel.findFacet(KotlinFacetType.TYPE_ID, KotlinFacetType.INSTANCE.defaultFacetName)
+                ?: with(KotlinFacetType.INSTANCE) { createFacet(this@getOrCreateFacet, defaultFacetName, createDefaultConfiguration(), null) }
+                        .apply { facetModel.addFacet(this) }
     facet.configuration.settings.useProjectSettings = useProjectSettings
     return facet
 }

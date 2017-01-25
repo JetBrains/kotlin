@@ -12,6 +12,7 @@
     </extensionPoints>
 
     <extensions defaultExtensionNs="com.intellij">
+        <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleSourceSetDataService"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectDataService"/>
 
         <localInspection
