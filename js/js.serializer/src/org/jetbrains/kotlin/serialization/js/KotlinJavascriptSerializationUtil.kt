@@ -158,13 +158,6 @@ object KotlinJavascriptSerializationUtil {
                 packageProto.functionCount == 0 && packageProto.propertyCount == 0 && packageProto.typeAliasCount == 0
             }) continue
 
-            val packageFqName = fqName.asString()
-
-            val header = JsProtoBuf.Header.newBuilder()
-            // TODO: write pre-release flag if needed
-            // TODO: write JS code binary version
-            header.packageFqName = packageFqName
-
             val stream = ByteArrayOutputStream()
             with(DataOutputStream(stream)) {
                 val version = JsBinaryVersion.INSTANCE.toArray()
@@ -172,13 +165,26 @@ object KotlinJavascriptSerializationUtil {
                 version.forEach(this::writeInt)
             }
 
-            header.build().writeDelimitedTo(stream)
+            serializeHeader(fqName).writeDelimitedTo(stream)
             part.writeTo(stream)
 
             contentMap[JsSerializerProtocol.getKjsmFilePath(fqName)] = stream.toByteArray()
         }
 
         return contentMap
+    }
+
+    fun serializeHeader(packageFqName: FqName?): JsProtoBuf.Header {
+        val header = JsProtoBuf.Header.newBuilder()
+
+        if (packageFqName != null) {
+            header.packageFqName = packageFqName.asString()
+        }
+
+        // TODO: write pre-release flag if needed
+        // TODO: write JS code binary version
+
+        return header.build()
     }
 
     private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
@@ -202,14 +208,17 @@ object KotlinJavascriptSerializationUtil {
     }
 
     private fun JsModuleDescriptor<ModuleDescriptor>.serializeToBinaryMetadata(bindingContext: BindingContext): ByteArray {
-        val proto = serializeMetadata(bindingContext, data, kind, imported)
         return ByteArrayOutputStream().apply {
-            GZIPOutputStream(this).use(proto::writeTo)
+            GZIPOutputStream(this).use { stream ->
+                serializeHeader(null).writeDelimitedTo(stream)
+                serializeMetadata(bindingContext, data, kind, imported).writeTo(stream)
+            }
         }.toByteArray()
     }
 
     private fun ByteArray.deserializeToLibraryParts(name: String): JsModuleDescriptor<List<JsProtoBuf.Library.Part>> {
         val content = GZIPInputStream(ByteArrayInputStream(this)).use { stream ->
+            JsProtoBuf.Header.parseDelimitedFrom(stream, JsSerializerProtocol.extensionRegistry)
             JsProtoBuf.Library.parseFrom(stream, JsSerializerProtocol.extensionRegistry)
         }
 
