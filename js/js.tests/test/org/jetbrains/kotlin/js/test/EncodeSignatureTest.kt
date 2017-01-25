@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.test
 
 import com.intellij.mock.MockVirtualFileSystem
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -183,27 +184,38 @@ class EncodeSignatureTest {
         """)
     }
 
+    @Suppress("ObjectLiteralToLambda")
     private fun assertSignature(expectedEncoding: String, codeSnippet: String, name: String = "test") {
-        val environment = createEnvironment()
-        val project = environment.project
+        val disposable = object : Disposable {
+            override fun dispose() {
+            }
+        }
 
-        val fs = MockVirtualFileSystem()
-        val file = fs.file("sample.kt", codeSnippet).findFileByPath("/sample.kt")
-        val psiManager = PsiManager.getInstance(project)
-        val psiFile = psiManager.findFile(file) as KtFile
+        val environment = createEnvironment(disposable)
+        try {
+            val project = environment.project
 
-        val configuration = environment.configuration.copy()
-        configuration.put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB)
-        configuration.put(CommonConfigurationKeys.MODULE_NAME, "sample")
+            val fs = MockVirtualFileSystem()
+            val file = fs.file("sample.kt", codeSnippet).findFileByPath("/sample.kt")
+            val psiManager = PsiManager.getInstance(project)
+            val psiFile = psiManager.findFile(file) as KtFile
 
-        val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(listOf(psiFile), LibrarySourcesConfig(project, configuration))
-        val module = analysisResult.moduleDescriptor
-        val rootPackage = module.getPackage(FqName.ROOT)
+            val configuration = environment.configuration.copy()
+            configuration.put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB)
+            configuration.put(CommonConfigurationKeys.MODULE_NAME, "sample")
 
-        val testDescriptor = findTestCallable(rootPackage, name) ?:
-                             error("Descriptor named `$name` was not found in provided snippet: $codeSnippet")
-        val actualEncoding = encodeSignature(testDescriptor)
-        Assert.assertEquals(expectedEncoding, actualEncoding)
+            val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(listOf(psiFile), LibrarySourcesConfig(project, configuration))
+            val module = analysisResult.moduleDescriptor
+            val rootPackage = module.getPackage(FqName.ROOT)
+
+            val testDescriptor = findTestCallable(rootPackage, name) ?:
+                                 error("Descriptor named `$name` was not found in provided snippet: $codeSnippet")
+            val actualEncoding = encodeSignature(testDescriptor)
+            Assert.assertEquals(expectedEncoding, actualEncoding)
+        }
+        finally {
+            Disposer.dispose(disposable)
+        }
     }
 
     private fun findTestCallable(scope: MemberScope, name: String): CallableMemberDescriptor? {
@@ -227,7 +239,7 @@ class EncodeSignatureTest {
         }
     }
 
-    fun createEnvironment(): KotlinCoreEnvironment {
-        return KotlinCoreEnvironment.createForTests(Disposable { }, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
+    fun createEnvironment(disposable: Disposable): KotlinCoreEnvironment {
+        return KotlinCoreEnvironment.createForTests(disposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
     }
 }
