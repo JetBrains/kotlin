@@ -5485,6 +5485,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers/common_js"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
             }
 
+            @TestMetadata("inlineFromModuleWithNonIdentifierName.kt")
+            public void testInlineFromModuleWithNonIdentifierName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModuleWrappers/common_js/inlineFromModuleWithNonIdentifierName.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("moduleWithNonIdentifierName.kt")
             public void testModuleWithNonIdentifierName() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModuleWrappers/common_js/moduleWithNonIdentifierName.kt");
@@ -5504,6 +5510,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         public static class Plain extends AbstractBoxJsTest {
             public void testAllFilesPresentInPlain() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/multiModuleWrappers/plain"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
+            }
+
+            @TestMetadata("inlineFromModuleWithNonIdentifierName.kt")
+            public void testInlineFromModuleWithNonIdentifierName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/multiModuleWrappers/plain/inlineFromModuleWithNonIdentifierName.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("moduleWithNonIdentifierName.kt")

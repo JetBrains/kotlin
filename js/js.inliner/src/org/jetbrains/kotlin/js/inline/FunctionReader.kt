@@ -46,7 +46,7 @@ import java.io.File
 private val JS_IDENTIFIER_START = "\\p{Lu}\\p{Ll}\\p{Lt}\\p{Lm}\\p{Lo}\\p{Nl}\\\$_"
 private val JS_IDENTIFIER_PART = "$JS_IDENTIFIER_START\\p{Pc}\\p{Mc}\\p{Mn}\\d"
 private val JS_IDENTIFIER="[$JS_IDENTIFIER_START][$JS_IDENTIFIER_PART]*"
-private val DEFINE_MODULE_PATTERN = ("($JS_IDENTIFIER)\\.defineModule\\(\\s*(['\"])(\\w+)\\2\\s*,\\s*(\\w+)\\s*\\)").toRegex().toPattern()
+private val DEFINE_MODULE_PATTERN = ("($JS_IDENTIFIER)\\.defineModule\\(\\s*(['\"])([^'\"]+)\\2\\s*,\\s*(\\w+)\\s*\\)").toRegex().toPattern()
 private val DEFINE_MODULE_FIND_PATTERN = ".defineModule("
 
 class FunctionReader(private val context: TranslationContext) {
@@ -87,7 +87,7 @@ class FunctionReader(private val context: TranslationContext) {
                 val moduleName = preciseMatcher.group(3)
                 val moduleVariable = preciseMatcher.group(4)
                 val kotlinVariable = preciseMatcher.group(1)
-                assert(moduleName !in moduleJsDefinition) { "Module is defined in more, than one file" }
+                assert(moduleName !in moduleJsDefinition) { "Module \"$moduleName\" is defined in more, than one file" }
                 moduleJsDefinition[moduleName] = fileContent
                 moduleRootVariable[moduleName] = moduleVariable
                 moduleKotlinVariable[moduleName] = kotlinVariable
