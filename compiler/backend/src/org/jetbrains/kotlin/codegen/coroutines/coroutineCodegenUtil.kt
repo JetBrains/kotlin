@@ -30,9 +30,7 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
@@ -94,10 +92,18 @@ fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(
                 )
         )
     }
-    val function = candidateDescriptor as? SimpleFunctionDescriptor ?: return null
+    val function = candidateDescriptor as? FunctionDescriptor ?: return null
     if (!function.isSuspend || function.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) != null) return null
 
-    val newCandidateDescriptor = getOrCreateJvmSuspendFunctionView(function, bindingContext)
+    val newCandidateDescriptor =
+            when (function) {
+                is FunctionImportedFromObject ->
+                    getOrCreateJvmSuspendFunctionView(function.callableFromObject, bindingContext).asImportedFromObject()
+                is SimpleFunctionDescriptor ->
+                    getOrCreateJvmSuspendFunctionView(function, bindingContext)
+                else ->
+                    throw AssertionError("Unexpected suspend function descriptor: $function")
+            }
 
     val newCall = ResolvedCallImpl(
             call,
