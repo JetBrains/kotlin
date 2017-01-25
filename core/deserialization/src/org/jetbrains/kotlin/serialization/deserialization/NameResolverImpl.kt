@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedName
-import java.io.InputStream
 import java.util.*
 
 class NameResolverImpl(
@@ -29,7 +28,7 @@ class NameResolverImpl(
         private val qualifiedNames: ProtoBuf.QualifiedNameTable
 ) : NameResolver {
 
-    override fun getString(index: Int) = strings.getString(index)
+    override fun getString(index: Int): String = strings.getString(index)
 
     override fun getName(index: Int) = Name.guessByFirstCharacter(strings.getString(index))
 
@@ -64,13 +63,5 @@ class NameResolverImpl(
             index = proto.parentQualifiedName
         }
         return Triple(packageNameSegments, relativeClassNameSegments, local)
-    }
-
-    companion object {
-        fun read(stream: InputStream): NameResolverImpl {
-            val simpleNames = ProtoBuf.StringTable.parseDelimitedFrom(stream)
-            val qualifiedNames = ProtoBuf.QualifiedNameTable.parseDelimitedFrom(stream)
-            return NameResolverImpl(simpleNames, qualifiedNames)
-        }
     }
 }

@@ -53,11 +53,12 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
 import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinderFactory
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.JsBinaryVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.addToStdlib.constant
 import java.io.File
 import java.io.IOException
 
@@ -282,10 +283,10 @@ fun getKotlinJvmRuntimeMarkerClass(project: Project, scope: GlobalSearchScope): 
     }
 }
 
-fun getKotlinJsRuntimeMarkerClass(project: Project, scope: GlobalSearchScope): VirtualFile? {
+fun hasKotlinJsKjsmFile(project: Project, scope: GlobalSearchScope): Boolean {
     return runReadAction {
         project.runWithAlternativeResolveEnabled {
-            JsVirtualFileFinderFactory.SERVICE.getInstance(project).create(scope).findVirtualFileWithHeader(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.unit.toSafe()))
+            JsVirtualFileFinderFactory.SERVICE.getInstance(project).create(scope).hasPackage(constant { FqName("kotlin.js") })
         }
     }
 }

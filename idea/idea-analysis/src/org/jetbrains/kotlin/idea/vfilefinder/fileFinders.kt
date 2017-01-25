@@ -43,12 +43,15 @@ private fun findVirtualFileWithHeader(classId: ClassId, key: ID<FqName, Void>, s
     return files.iterator().next()
 }
 
+// TODO: drop this implementation, replace with a much simpler service
 class JsIDEVirtualFileFinder(private val scope: GlobalSearchScope) : JsVirtualFileFinder {
 
     init { checkScopeForFinder(scope, LOG) }
 
     override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? =
-            findVirtualFileWithHeader(classId, KotlinJavaScriptMetaFileIndex.KEY, scope, LOG)
+            throw UnsupportedOperationException("This method should not be called. (classId = $classId)")
+
+    override fun hasPackage(fqName: FqName): Boolean = KotlinJavaScriptMetaFileIndex.hasPackage(fqName, scope)
 
     companion object {
         private val LOG = Logger.getInstance(JsIDEVirtualFileFinder::class.java)
@@ -60,10 +63,7 @@ class JvmIDEVirtualFileFinder(private val scope: GlobalSearchScope) : VirtualFil
         return findVirtualFileWithHeader(classId, KotlinMetadataFileIndex.KEY, scope, LOG)?.inputStream
     }
 
-    override fun hasMetadataPackage(fqName: FqName): Boolean {
-        return !FileBasedIndex.getInstance().processValues(KotlinMetadataFilePackageIndex.KEY,
-                                                           fqName, null, { _, _ -> false }, scope)
-   }
+    override fun hasMetadataPackage(fqName: FqName): Boolean = KotlinMetadataFilePackageIndex.hasPackage(fqName, scope)
 
     // TODO: load built-ins metadata from scope
     override fun findBuiltInsData(packageFqName: FqName): InputStream? = null
@@ -77,3 +77,6 @@ class JvmIDEVirtualFileFinder(private val scope: GlobalSearchScope) : VirtualFil
         private val LOG = Logger.getInstance(JvmIDEVirtualFileFinder::class.java)
     }
 }
+
+private fun <T> KotlinFileIndexBase<T>.hasPackage(fqName: FqName, scope: GlobalSearchScope): Boolean =
+        !FileBasedIndex.getInstance().processValues(name, fqName, null, { _, _ -> false }, scope)

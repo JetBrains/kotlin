@@ -20,61 +20,96 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
-import com.intellij.psi.compiled.ClsStubBuilder
-import org.jetbrains.kotlin.fileClasses.OldPackageFacadeClassUtils
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
+import org.jetbrains.kotlin.idea.decompiler.common.createIncompatibleAbiVersionDecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
-import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolverForDecompiler
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendererOptions
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
-import java.util.*
+import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.serialization.js.JsProtoBuf
+import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
+import org.jetbrains.kotlin.utils.JsBinaryVersion
+import java.io.ByteArrayInputStream
 
 class KotlinJavaScriptMetaFileDecompiler : ClassFileDecompilers.Full() {
     private val stubBuilder = KotlinJavaScriptStubBuilder()
 
     override fun accepts(file: VirtualFile): Boolean {
-        return file.name.endsWith("." + KotlinJavascriptSerializationUtil.CLASS_METADATA_FILE_EXTENSION)
+        return file.fileType == KotlinJavaScriptMetaFileType
     }
 
-    override fun getStubBuilder(): ClsStubBuilder {
-        return stubBuilder
-    }
+    override fun getStubBuilder() = stubBuilder
 
     override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean): FileViewProvider {
         return KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
-            if (JsMetaFileUtils.isKotlinJavaScriptInternalCompiledFile(file)) {
-                null
-            }
-            else {
-                KtDecompiledFile(provider) { file -> buildDecompiledTextFromJsMetadata(file) }
-            }
+            KtDecompiledFile(provider, ::buildDecompiledTextFromJsMetadata)
         }
     }
 }
 
 private val decompilerRendererForJS = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
 
-fun buildDecompiledTextFromJsMetadata(
-        classFile: VirtualFile,
-        resolver: ResolverForDecompiler = KotlinJavaScriptDeserializerForDecompiler(classFile)
-): DecompiledText {
-    val packageFqName = JsMetaFileUtils.getPackageFqName(classFile)
-    val isPackageHeader = JsMetaFileUtils.isPackageHeader(classFile)
-
-    if (isPackageHeader) {
-        return buildDecompiledText(packageFqName,
-                                   resolveDeclarationsInPackage(packageFqName, resolver),
-                                   decompilerRendererForJS)
+// TODO: deduplicate code with KotlinBuiltInDecompiler
+fun buildDecompiledTextFromJsMetadata(kjsmFile: VirtualFile): DecompiledText {
+    if (kjsmFile.fileType != KotlinJavaScriptMetaFileType) {
+        error("Unexpected file type ${kjsmFile.fileType}")
     }
-    else {
-        val classId = JsMetaFileUtils.getClassId(classFile)
-        return buildDecompiledText(packageFqName, listOfNotNull(resolver.resolveTopLevelClass(classId)), decompilerRendererForJS)
+
+    val file = KjsmFile.read(kjsmFile)
+               ?: error("Unexpectedly empty file: $kjsmFile")
+
+    when (file) {
+        is KjsmFile.Incompatible -> {
+            return createIncompatibleAbiVersionDecompiledText(JsBinaryVersion.INSTANCE, file.version)
+        }
+        is KjsmFile.Compatible -> {
+            val packageFqName = file.packageFqName
+            val resolver = KotlinJavaScriptDeserializerForDecompiler(packageFqName, file.proto, file.nameResolver)
+            val declarations = arrayListOf<DeclarationDescriptor>()
+            declarations.addAll(resolver.resolveDeclarationsInFacade(packageFqName))
+            for (klass in file.classesToDecompile) {
+                val classId = file.nameResolver.getClassId(klass.fqName)
+                declarations.add(resolver.resolveTopLevelClass(classId)!!)
+            }
+            return buildDecompiledText(packageFqName, declarations, decompilerRendererForJS)
+        }
     }
 }
 
-private fun resolveDeclarationsInPackage(packageFqName: FqName, resolver: ResolverForDecompiler) =
-        ArrayList(resolver.resolveDeclarationsInFacade(OldPackageFacadeClassUtils.getPackageClassFqName(packageFqName)))
+// TODO: deduplicate code with BuiltInDefinitionFile
+sealed class KjsmFile {
+    class Incompatible(val version: JsBinaryVersion) : KjsmFile()
+
+    class Compatible(val header: JsProtoBuf.Header, val proto: JsProtoBuf.Library.Part) : KjsmFile() {
+        val packageFqName = FqName(header.packageFqName)
+        val nameResolver = NameResolverImpl(proto.strings, proto.qualifiedNames)
+
+        val classesToDecompile =
+                proto.class_List.filterNot { proto -> nameResolver.getClassId(proto.fqName).isNestedClass }
+    }
+
+    companion object {
+        fun read(file: VirtualFile): KjsmFile? {
+            if (!file.isValid) {
+                return null
+            }
+
+            val stream = ByteArrayInputStream(file.contentsToByteArray())
+
+            val version = JsBinaryVersion.readFrom(stream)
+            if (!version.isCompatible()) {
+                return Incompatible(version)
+            }
+
+            val header = JsProtoBuf.Header.parseDelimitedFrom(stream)
+            val proto = JsProtoBuf.Library.Part.parseFrom(stream, JsSerializerProtocol.extensionRegistry)
+            val result = Compatible(header, proto)
+
+            return result
+        }
+    }
+}

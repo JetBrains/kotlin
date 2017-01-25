@@ -16,70 +16,55 @@
 
 package org.jetbrains.kotlin.idea.decompiler.js
 
-import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.compiled.ClsStubBuilder
 import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.idea.decompiler.common.AnnotationLoaderForStubBuilderImpl
-import org.jetbrains.kotlin.idea.decompiler.stubBuilder.ClsStubBuilderComponents
-import org.jetbrains.kotlin.idea.decompiler.stubBuilder.createPackageFacadeStub
-import org.jetbrains.kotlin.idea.decompiler.stubBuilder.createTopLevelClassStub
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.idea.decompiler.stubBuilder.*
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
-import org.jetbrains.kotlin.serialization.js.JsProtoBuf
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptClassDataFinder
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializedResourcePaths
-import java.io.ByteArrayInputStream
 
+// TODO: deduplicate code with KotlinBuiltInStubBuilder
 class KotlinJavaScriptStubBuilder : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + KotlinStubVersions.JS_STUB_VERSION
 
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
-        val file = content.file
+        val virtualFile = content.file
+        assert(virtualFile.fileType == KotlinJavaScriptMetaFileType) { "Unexpected file type ${virtualFile.fileType}" }
+        val file = KjsmFile.read(virtualFile) ?: return null
 
-        if (file.fileSystem.protocol != StandardFileSystems.JAR_PROTOCOL ||
-            JsMetaFileUtils.isKotlinJavaScriptInternalCompiledFile(file)) return null
+        when (file) {
+            is KjsmFile.Incompatible -> {
+                return createIncompatibleAbiVersionFileStub()
+            }
+            is KjsmFile.Compatible -> {
+                val packageProto = file.proto.`package`
+                val packageFqName = file.packageFqName
+                val nameResolver = file.nameResolver
+                val components = ClsStubBuilderComponents(
+                        KotlinJavascriptClassDataFinder(file.proto, nameResolver),
+                        AnnotationLoaderForStubBuilderImpl(JsSerializerProtocol),
+                        virtualFile
+                )
+                val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
 
-        return doBuildFileStub(file)
-    }
-
-    fun doBuildFileStub(file: VirtualFile): PsiFileStub<KtFile>? {
-        val packageFqName = JsMetaFileUtils.getPackageFqName(file)
-
-        val content = file.contentsToByteArray(false)
-        val isPackageHeader = JsMetaFileUtils.isPackageHeader(file)
-
-        val moduleDirectory = JsMetaFileUtils.getModuleDirectory(file)
-        val stringsFileName = KotlinJavascriptSerializedResourcePaths.getStringTableFilePath(packageFqName)
-        val stringsFile = moduleDirectory.findFileByRelativePath(stringsFileName) ?: error("strings file not found: $stringsFileName")
-
-        val nameResolver = NameResolverImpl.read(ByteArrayInputStream(stringsFile.contentsToByteArray(false)))
-        val components = createStubBuilderComponents(file, nameResolver)
-
-        if (isPackageHeader) {
-            val packageProto = ProtoBuf.Package.parseFrom(content, JsSerializerProtocol.extensionRegistry)
-            val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
-            return createPackageFacadeStub(packageProto, packageFqName, context)
+                val fileStub = createFileStub(packageFqName, isScript = false)
+                createDeclarationsStubs(
+                        fileStub, context,
+                        ProtoContainer.Package(packageFqName, context.nameResolver, context.typeTable, source = null),
+                        packageProto
+                )
+                for (classProto in file.classesToDecompile) {
+                    createClassStub(
+                            fileStub, classProto, nameResolver, nameResolver.getClassId(classProto.fqName), source = null, context = context
+                    )
+                }
+                return fileStub
+            }
         }
-        else {
-            val classProto = ProtoBuf.Class.parseFrom(content, JsSerializerProtocol.extensionRegistry)
-            val context = components.createContext(nameResolver, packageFqName, TypeTable(classProto.typeTable))
-            val classId = JsMetaFileUtils.getClassId(file)
-            return createTopLevelClassStub(classId, classProto, source = null, context = context, isScript = false)
-        }
-    }
-
-    private fun createStubBuilderComponents(file: VirtualFile, nameResolver: NameResolver): ClsStubBuilderComponents {
-        // TODO: read metadata from .kjsm files here
-        val classDataFinder = KotlinJavascriptClassDataFinder(JsProtoBuf.Library.Part.getDefaultInstance(), nameResolver)
-        val annotationLoader = AnnotationLoaderForStubBuilderImpl(JsSerializerProtocol)
-        return ClsStubBuilderComponents(classDataFinder, annotationLoader, file)
     }
 }

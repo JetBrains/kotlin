@@ -45,7 +45,8 @@ class KotlinJavaScriptDecompiledTextConsistencyTest : TextConsistencyBaseTest() 
     override fun getVirtualFileFinder(): VirtualFileFinder = JsVirtualFileFinder.SERVICE.getInstance(project)
 
     override fun getDecompiledText(packageFile: VirtualFile, resolver: ResolverForDecompiler?): String =
-            (resolver?.let { buildDecompiledTextFromJsMetadata(packageFile, it) } ?: buildDecompiledTextFromJsMetadata(packageFile)).text
+            // TODO: use resolver here
+            buildDecompiledTextFromJsMetadata(packageFile).text
 
     override fun getModuleDescriptor(): ModuleDescriptor {
         val stdlibJar = PathUtil.getKotlinPathsForDistDirectory().jsStdLibJarPath.absolutePath
