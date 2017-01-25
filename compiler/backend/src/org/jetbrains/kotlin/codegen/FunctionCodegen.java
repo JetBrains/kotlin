@@ -938,8 +938,6 @@ public class FunctionCodegen {
         InstructionAdapter iv = new InstructionAdapter(mv);
         genDefaultSuperCallCheckIfNeeded(iv, functionDescriptor, defaultMethod);
 
-        loadExplicitArgumentsOnStack(OBJECT_TYPE, isStatic, signature, generator);
-
         List<JvmMethodParameterSignature> mappedParameters = signature.getValueParameters();
         int capturedArgumentsCount = 0;
         while (capturedArgumentsCount < mappedParameters.size() &&
@@ -968,7 +966,15 @@ public class FunctionCodegen {
 
                 iv.mark(loadArg);
             }
+        }
 
+        // load arguments after defaults generation to avoid redundant stack normalization operations
+        loadExplicitArgumentsOnStack(OBJECT_TYPE, isStatic, signature, generator);
+
+        for (int index = 0; index < valueParameters.size(); index++) {
+            ValueParameterDescriptor parameterDescriptor = valueParameters.get(index);
+            Type type = mappedParameters.get(capturedArgumentsCount + index).getAsmType();
+            int parameterIndex = frameMap.getIndex(parameterDescriptor);
             generator.putValueIfNeeded(type, StackValue.local(parameterIndex, type));
         }
 
