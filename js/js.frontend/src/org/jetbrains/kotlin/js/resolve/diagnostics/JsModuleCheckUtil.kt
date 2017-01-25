@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.js.resolve.MODULE_KIND
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 fun checkJsModuleUsage(
@@ -50,15 +51,20 @@ fun checkJsModuleUsage(
     else {
         if (moduleKind == ModuleKind.PLAIN) {
             if (!callToNonModule && callToModule) {
-                diagnosticSink.report(ErrorsJs.CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM.on(reportOn, callee))
+                diagnosticSink.report(ErrorsJs.CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM.on(reportOn, normalizeDescriptor(callee)))
             }
         }
         else {
             if (!callToModule && callToNonModule) {
-                diagnosticSink.report(ErrorsJs.CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM.on(reportOn, callee))
+                diagnosticSink.report(ErrorsJs.CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM.on(reportOn, normalizeDescriptor(callee)))
             }
         }
     }
+}
+
+private fun normalizeDescriptor(descriptor: DeclarationDescriptor): DeclarationDescriptor {
+    if (descriptor is FakeCallableDescriptorForObject) return descriptor.classDescriptor
+    return descriptor
 }
 
 private fun findRoot(callee: DeclarationDescriptor) = generateSequence(callee) { it.containingDeclaration }

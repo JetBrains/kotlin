@@ -40,11 +40,18 @@ fun box() {
     <!CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM!>bar<!>()
     <!CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM!>baz<!>()
 
+    println(::<!CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM!>bar<!>.name)
+    println(::<!CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM!>baz<!>.name)
+    println(<!CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM!>A<!>::f.name)
+
     B.<!CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM!>Nested<!>()
 
     boo<<!CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM!>B?<!>>(null)
     <!CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM!>boo<!>(null as B?)
     boo<<!CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM!>B.Nested?<!>>(null)
+
+    println(<!CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM!>B::class<!>)
+    println(<!CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM!>B.Nested::class<!>)
 }
 
 external class DerivedB : <!CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM!>B<!>
