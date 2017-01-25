@@ -124,7 +124,7 @@ internal class Kotlin2JvmSourceSetProcessor(
 
                 var kotlinAfterJavaTask: KotlinCompile? = null
 
-                if (aptConfiguration.dependencies.size > 1 && !Kapt3GradleSubplugin.isEnabled(project)) {
+                if (!Kapt3GradleSubplugin.isEnabled(project) && aptConfiguration.allDependencies.size > 1) {
                     javaTask.dependsOn(aptConfiguration.buildDependencies)
 
                     val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(sourceSetName)
@@ -351,7 +351,7 @@ internal open class KotlinAndroidPlugin(
                 for (provider in variantData.sourceProviders) {
                     val aptConfiguration = aptConfigurations[(provider as AndroidSourceSet).name]
                     // Ignore if there's only an annotation processor wrapper in dependencies (added by default)
-                    if (aptConfiguration != null && aptConfiguration.dependencies.size > 1) {
+                    if (aptConfiguration != null && aptConfiguration.allDependencies.size > 1) {
                         javaTask.dependsOn(aptConfiguration.buildDependencies)
                         aptFiles.addAll(aptConfiguration.resolve())
                     }
@@ -572,6 +572,7 @@ private fun Project.getAptDirsForSourceSet(sourceSetName: String): Pair<File, Fi
 private fun Project.createAptConfiguration(sourceSetName: String, kotlinPluginVersion: String): Configuration {
     val aptConfigurationName = Kapt3KotlinGradleSubplugin.getKaptConfigurationName(sourceSetName)
 
+    configurations.findByName(aptConfigurationName)?.let { return it }
     val aptConfiguration = configurations.create(aptConfigurationName)
 
     // Add base kotlin-annotation-processing artifact for the main kapt configuration,
@@ -580,7 +581,10 @@ private fun Project.createAptConfiguration(sourceSetName: String, kotlinPluginVe
         val kotlinAnnotationProcessingDep = "org.jetbrains.kotlin:kotlin-annotation-processing:$kotlinPluginVersion"
         aptConfiguration.dependencies.add(dependencies.create(kotlinAnnotationProcessingDep))
     } else {
-        Kapt3KotlinGradleSubplugin.findMainKaptConfiguration(this)?.let { aptConfiguration.extendsFrom(it) }
+        // "main" configuration can be created after some other. We should handle this case
+        val mainConfiguration = Kapt3KotlinGradleSubplugin.findMainKaptConfiguration(this)
+                ?: createAptConfiguration("main", kotlinPluginVersion)
+        aptConfiguration.extendsFrom(mainConfiguration)
     }
 
     return aptConfiguration

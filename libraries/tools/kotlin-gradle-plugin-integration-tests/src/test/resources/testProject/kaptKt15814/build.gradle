@@ -1,0 +1,25 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+  ext.dagger_version = '1.2.5'
+  repositories {
+    mavenLocal()
+    jcenter()
+  }
+  dependencies {
+    classpath "com.android.tools.build:gradle:$android_tools_version"
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    classpath "com.jakewharton.sdkmanager:gradle-plugin:0.12.+"
+  }
+}
+
+allprojects {
+  repositories {
+    mavenLocal()
+    jcenter()
+  }
+}
+
+task clean(type: Delete) {
+  delete rootProject.buildDir
+}
