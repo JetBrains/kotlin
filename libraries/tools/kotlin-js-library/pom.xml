@@ -12,7 +12,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>kotlin-js-library</artifactId>
+    <artifactId>kotlin-stdlib-js</artifactId>
     <packaging>jar</packaging>
 
     <build>
