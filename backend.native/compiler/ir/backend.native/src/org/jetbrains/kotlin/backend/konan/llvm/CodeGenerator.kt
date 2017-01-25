@@ -23,8 +23,16 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     var localAllocs = 0
 
     fun prologue(descriptor: FunctionDescriptor) {
-        prologue(llvmFunction(descriptor),
+        val llvmFunction = llvmFunction(descriptor)
+
+        prologue(llvmFunction,
                 LLVMGetReturnType(getLlvmFunctionType(descriptor))!!)
+
+        if (!descriptor.isExported()) {
+            LLVMSetLinkage(llvmFunction, LLVMLinkage.LLVMPrivateLinkage)
+            // (Cannot do this before the function body is created).
+        }
+
         if (descriptor is ConstructorDescriptor) {
             constructedClass = descriptor.constructedClass
         }
@@ -300,7 +308,6 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     //-------------------------------------------------------------------------//
 
     /* to class descriptor */
-    fun classType(descriptor: ClassDescriptor): LLVMTypeRef = LLVMGetTypeByName(context.llvmModule, descriptor.symbolName)!!
     fun typeInfoValue(descriptor: ClassDescriptor): LLVMValueRef = descriptor.llvmTypeInfoPtr
 
     /**
@@ -313,12 +320,6 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         return LLVMGetParam(fn.llvmFunction, i)!!
     }
     fun countParams(fn: FunctionDescriptor) = LLVMCountParams(fn.llvmFunction)
-
-    fun indexInClass(p:PropertyDescriptor):Int {
-        val index = (p.containingDeclaration as ClassDescriptor).fields.indexOf(p)
-        assert(index >= 0) { "Unable to find property $p" }
-        return index
-    }
 
     fun basicBlock(name: String = "label_"): LLVMBasicBlockRef {
         val currentBlock = this.currentBlock

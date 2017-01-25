@@ -15,34 +15,34 @@ internal class StaticData(override val context: Context): ContextUtils {
     class Global private constructor(val staticData: StaticData, val llvmGlobal: LLVMValueRef) {
         companion object {
 
-            private fun createLlvmGlobal(module: LLVMModuleRef, type: LLVMTypeRef, name: String): LLVMValueRef {
-                val isUnnamed = (name == "") // LLVM will select the unique index and represent the global as `@idx`.
+            private fun createLlvmGlobal(module: LLVMModuleRef,
+                                         type: LLVMTypeRef,
+                                         name: String,
+                                         isExported: Boolean
+            ): LLVMValueRef {
 
-                if (!isUnnamed) {
-                    LLVMGetNamedGlobal(module, name)?.let { existingGlobal ->
-                        if (getGlobalType(existingGlobal) != type || LLVMGetInitializer(existingGlobal) != null) {
-                            throw IllegalArgumentException("Global '$name' already exists")
-                        } else {
-                            return existingGlobal
-                        }
-                    }
+                if (isExported && LLVMGetNamedGlobal(module, name) != null) {
+                    throw IllegalArgumentException("Global '$name' already exists")
                 }
 
                 val llvmGlobal = LLVMAddGlobal(module, type, name)!!
 
-                if (isUnnamed) {
-                    // Currently using unnamed globals may result in link errors due to symbol redefinition;
-                    // apply the workaround:
+                if (!isExported) {
                     LLVMSetLinkage(llvmGlobal, LLVMLinkage.LLVMPrivateLinkage)
                 }
 
                 return llvmGlobal
             }
 
-            fun create(staticData: StaticData, type: LLVMTypeRef, name: String): Global {
+            fun create(staticData: StaticData, type: LLVMTypeRef, name: String, isExported: Boolean): Global {
                 val module = staticData.context.llvmModule
 
-                val llvmGlobal = createLlvmGlobal(module!!, type, name)
+                val isUnnamed = (name == "") // LLVM will select the unique index and represent the global as `@idx`.
+                if (isUnnamed && isExported) {
+                    throw IllegalArgumentException("unnamed global can't be exported")
+                }
+
+                val llvmGlobal = createLlvmGlobal(module!!, type, name, isExported)
                 return Global(staticData, llvmGlobal)
             }
         }
@@ -110,15 +110,15 @@ internal class StaticData(override val context: Context): ContextUtils {
      *
      * It is external until explicitly initialized with [Global.setInitializer].
      */
-    fun createGlobal(type: LLVMTypeRef, name: String): Global {
-        return Global.create(this, type, name)
+    fun createGlobal(type: LLVMTypeRef, name: String, isExported: Boolean = false): Global {
+        return Global.create(this, type, name, isExported)
     }
 
     /**
      * Creates [Global] with given name and value.
      */
-    fun placeGlobal(name: String, initializer: ConstValue): Global {
-        val global = createGlobal(initializer.llvmType, name)
+    fun placeGlobal(name: String, initializer: ConstValue, isExported: Boolean = false): Global {
+        val global = createGlobal(initializer.llvmType, name, isExported)
         global.setInitializer(initializer)
         return global
     }

@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
-internal fun ContextUtils.getLLVMType(type: KotlinType): LLVMTypeRef {
+internal fun RuntimeAware.getLLVMType(type: KotlinType): LLVMTypeRef {
     return when {
         // Nullable types must be represented as objects for boxing.
         type.isMarkedNullable -> this.kObjHeaderPtr
@@ -23,7 +23,7 @@ internal fun ContextUtils.getLLVMType(type: KotlinType): LLVMTypeRef {
     }!!
 }
 
-internal fun ContextUtils.getLLVMReturnType(type: KotlinType): LLVMTypeRef {
+internal fun RuntimeAware.getLLVMReturnType(type: KotlinType): LLVMTypeRef {
     return when {
         type.isUnit() -> LLVMVoidType()!!
         // TODO: stdlib have methods taking Nothing, such as kotlin.collections.EmptySet.contains().

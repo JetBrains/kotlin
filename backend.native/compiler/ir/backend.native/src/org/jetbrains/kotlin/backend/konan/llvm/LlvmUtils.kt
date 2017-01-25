@@ -111,21 +111,21 @@ internal val ContextUtils.kTheAnyTypeInfo: LLVMValueRef
     get() = KonanPlatform.builtIns.any.llvmTypeInfoPtr
 internal val ContextUtils.kTheArrayTypeInfo: LLVMValueRef
     get() = KonanPlatform.builtIns.array.llvmTypeInfoPtr
-internal val ContextUtils.kTypeInfo: LLVMTypeRef
-    get() = LLVMGetTypeByName(context.llvmModule, "struct.TypeInfo")!!
-internal val ContextUtils.kObjHeader: LLVMTypeRef
-    get() = LLVMGetTypeByName(context.llvmModule, "struct.ObjHeader")!!
-internal val ContextUtils.kContainerHeader: LLVMTypeRef
-    get() = LLVMGetTypeByName(context.llvmModule, "struct.ContainerHeader")!!
-internal val ContextUtils.kObjHeaderPtr: LLVMTypeRef
+internal val RuntimeAware.kTypeInfo: LLVMTypeRef
+    get() = runtime.typeInfoType
+internal val RuntimeAware.kObjHeader: LLVMTypeRef
+    get() = runtime.objHeaderType
+internal val RuntimeAware.kContainerHeader: LLVMTypeRef
+    get() = runtime.containerHeaderType
+internal val RuntimeAware.kObjHeaderPtr: LLVMTypeRef
     get() = pointerType(kObjHeader)
-internal val ContextUtils.kObjHeaderPtrPtr: LLVMTypeRef
+internal val RuntimeAware.kObjHeaderPtrPtr: LLVMTypeRef
     get() = pointerType(kObjHeaderPtr)
-internal val ContextUtils.kArrayHeader: LLVMTypeRef
-    get() = LLVMGetTypeByName(context.llvmModule, "struct.ArrayHeader")!!
-internal val ContextUtils.kArrayHeaderPtr: LLVMTypeRef
+internal val RuntimeAware.kArrayHeader: LLVMTypeRef
+    get() = runtime.arrayHeaderType
+internal val RuntimeAware.kArrayHeaderPtr: LLVMTypeRef
     get() = pointerType(kArrayHeader)
-internal val ContextUtils.kTypeInfoPtr: LLVMTypeRef
+internal val RuntimeAware.kTypeInfoPtr: LLVMTypeRef
     get() = pointerType(kTypeInfo)
 internal val kInt1         = LLVMInt1Type()!!
 internal val kBoolean      = kInt1
@@ -151,18 +151,6 @@ internal fun structType(types: List<LLVMTypeRef>): LLVMTypeRef = memScoped {
     LLVMStructType(allocArrayOf(types)[0].ptr, types.size, 0)!!
 }
 
-internal fun ContextUtils.getLlvmFunctionType(function: FunctionDescriptor): LLVMTypeRef {
-    val original = function.original
-    val returnType = if (original is ConstructorDescriptor) voidType else getLLVMReturnType(original.returnType!!)
-    val paramTypes = ArrayList(original.allValueParameters.map { getLLVMType(it.type) })
-    if (isObjectType(returnType)) paramTypes.add(kObjHeaderPtrPtr)
-
-    memScoped {
-        val paramTypesPtr = allocArrayOf(paramTypes)[0].ptr
-        return LLVMFunctionType(returnType, paramTypesPtr, paramTypes.size, 0)!!
-    }
-}
-
 internal fun ContextUtils.numParameters(functionType: LLVMTypeRef) : Int {
     // Note that type is usually function pointer, so we have to dereference it.
     return LLVMCountParamTypes(LLVMGetElementType(functionType))!!
@@ -178,7 +166,7 @@ internal fun ContextUtils.isObjectRef(value: LLVMValueRef): Boolean {
     return isObjectType(value.type)
 }
 
-internal fun ContextUtils.isObjectType(type: LLVMTypeRef): Boolean {
+internal fun RuntimeAware.isObjectType(type: LLVMTypeRef): Boolean {
     return type == kObjHeaderPtr || type == kArrayHeaderPtr
 }
 
@@ -200,6 +188,7 @@ internal fun ContextUtils.externalGlobal(name: String, type: LLVMTypeRef): LLVMV
     val found = LLVMGetNamedGlobal(context.llvmModule, name)
     if (found != null) {
         assert (getGlobalType(found) == type)
+        assert (LLVMGetInitializer(found) == null)
         return found
     } else {
         return LLVMAddGlobal(context.llvmModule, type, name)!!
@@ -227,3 +216,9 @@ internal operator fun LLVMAttributeSet.contains(attribute: LLVMAttribute): Boole
     return (this and attribute.value) != 0
 }
 
+fun getStructElements(type: LLVMTypeRef): List<LLVMTypeRef> {
+    val count = LLVMCountStructElementTypes(type)
+    return (0 until count).map {
+        LLVMStructGetTypeAtIndex(type, it)!!
+    }
+}

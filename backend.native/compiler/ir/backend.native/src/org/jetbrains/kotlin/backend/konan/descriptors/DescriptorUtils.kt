@@ -35,16 +35,16 @@ internal val ClassDescriptor.implementedInterfaces: List<ClassDescriptor>
  *
  * TODO: this method is actually a part of resolve and probably duplicates another one
  */
-internal val FunctionDescriptor.implementation: FunctionDescriptor
-    get() {
-        if (this.kind.isReal) {
-            return this
-        } else {
-            val overridden = OverridingUtil.getOverriddenDeclarations(this)
-            val filtered = OverridingUtil.filterOutOverridden(overridden)
-            return filtered.first { it.modality != Modality.ABSTRACT } as FunctionDescriptor
-        }
+internal fun FunctionDescriptor.resolveFakeOverride(): FunctionDescriptor {
+    if (this.kind.isReal) {
+        return this
+    } else {
+        val overridden = OverridingUtil.getOverriddenDeclarations(this)
+        val filtered = OverridingUtil.filterOutOverridden(overridden)
+        // TODO: is it correct to take first?
+        return filtered.first { it.modality != Modality.ABSTRACT } as FunctionDescriptor
     }
+}
 
 private val intrinsicAnnotation = FqName("konan.internal.Intrinsic")
 
@@ -192,9 +192,6 @@ val ClassDescriptor.vtableEntries: List<FunctionDescriptor>
 
         return inheritedVtableSlots + (methods - inheritedVtableSlots).filter { it.isOverridable }
     }
-
-val ClassDescriptor.vtableSize: Int
-    get() = if (this.isAbstract()) 0 else this.vtableEntries.size
 
 fun ClassDescriptor.vtableIndex(function: FunctionDescriptor): Int {
     this.vtableEntries.forEachIndexed { index, functionDescriptor ->

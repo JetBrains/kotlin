@@ -3,24 +3,15 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.Distribution
 import org.jetbrains.kotlin.backend.konan.hash.GlobalHash
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jetbrains.kotlin.backend.konan.descriptors.backingField
-import org.jetbrains.kotlin.backend.konan.descriptors.vtableSize
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
@@ -33,10 +24,10 @@ const val SCOPE_PERMANENT = 3
 /**
  * Provides utility methods to the implementer.
  */
-internal interface ContextUtils {
+internal interface ContextUtils : RuntimeAware {
     val context: Context
 
-    val runtime: Runtime
+    override val runtime: Runtime
         get() = context.llvm.runtime
 
     /**
@@ -50,57 +41,7 @@ internal interface ContextUtils {
     val staticData: StaticData
         get() = context.llvm.staticData
 
-    /**
-     * All fields of the class instance.
-     * The order respects the class hierarchy, i.e. a class [fields] contains superclass [fields] as a prefix.
-     */
-    val ClassDescriptor.fields: List<PropertyDescriptor>
-        get() {
-            val superClass = this.getSuperClassNotAny() // TODO: what if Any has fields?
-            val superFields = if (superClass != null) superClass.fields else emptyList()
-
-            return superFields + this.declaredFields
-        }
-
-    /**
-     * Fields declared in the class.
-     */
-    val ClassDescriptor.declaredFields: List<PropertyDescriptor>
-        get() {
-            // TODO: Here's what is going on here:
-            // The existence of a backing field for a property is only described in the IR, 
-            // but not in the property descriptor.
-            // That works, while we process the IR, but not for deserialized descriptors.
-            //
-            // So to have something in deserialized descriptors, 
-            // while we still see the IR, we mark the property with an annotation.
-            //
-            // We could apply the annotation during IR rewite, but we still are not
-            // that far in the rewriting infrastructure. So we postpone
-            // the annotation until the serializer.
-            //
-            // In this function we check the presence of the backing filed
-            // two ways: first we check IR, then we check the annotation.
-
-            val irClass = context.ir.moduleIndexForCodegen.classes[this.classId]
-            if (irClass != null) {
-                val declarations = irClass.declarations
-
-                return declarations.mapNotNull {
-                    when (it) {
-                        is IrProperty -> it.backingField?.descriptor
-                        is IrField -> it.descriptor
-                        else -> null
-                    }
-                }
-            } else {
-                val properties = this.unsubstitutedMemberScope.
-                    getContributedDescriptors().
-                    filterIsInstance<PropertyDescriptor>()
-
-                return properties.mapNotNull{ it.backingField }
-            }
-        }
+    fun isExternal(descriptor: DeclarationDescriptor) = descriptor.module != context.ir.irModule.descriptor
 
     /**
      * LLVM function generated from the Kotlin function.
@@ -112,13 +53,12 @@ internal interface ContextUtils {
             if (this is TypeAliasConstructorDescriptor) {
                 return this.underlyingConstructorDescriptor.llvmFunction
             }
-            val globalName = this.symbolName
-            val module = context.llvmModule
 
-            val functionType = getLlvmFunctionType(this)
-
-            return LLVMGetNamedFunction(module, globalName) ?:
-                    LLVMAddFunction(module, globalName, functionType)!!
+            return if (isExternal(this)) {
+                context.llvm.externalFunction(this.symbolName, getLlvmFunctionType(this))
+            } else {
+                context.llvmDeclarations.forFunction(this).llvmFunction
+            }
         }
 
     /**
@@ -130,17 +70,14 @@ internal interface ContextUtils {
             return constValue(result)
         }
 
-    /**
-     * Pointer to struct { TypeInfo, vtable }.
-     */
-    val ClassDescriptor.typeInfoWithVtable: ConstPointer
-        get() {
-            val type = structType(runtime.typeInfoType, LLVMArrayType(int8TypePtr, this.vtableSize)!!)
-            return constPointer(externalGlobal(this.typeInfoSymbolName, type))
-        }
-
     val ClassDescriptor.typeInfoPtr: ConstPointer
-        get() = typeInfoWithVtable.getElementPtr(0)
+        get() {
+            return if (isExternal(this)) {
+                constPointer(externalGlobal(this.typeInfoSymbolName, runtime.typeInfoType))
+            } else {
+                context.llvmDeclarations.forClass(this).typeInfo
+            }
+        }
 
     /**
      * Pointer to type info for given class.
@@ -238,13 +175,14 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         }
     }
 
-    private fun externalFunction(name: String, type: LLVMTypeRef): LLVMValueRef {
-        val found = LLVMGetNamedFunction(context.llvmModule, name)
+    internal fun externalFunction(name: String, type: LLVMTypeRef): LLVMValueRef {
+        val found = LLVMGetNamedFunction(llvmModule, name)
         if (found != null) {
             assert (getFunctionType(found) == type)
+            assert (LLVMGetLinkage(found) == LLVMLinkage.LLVMExternalLinkage)
             return found
         } else {
-            return LLVMAddFunction(context.llvmModule, name, type)!!
+            return LLVMAddFunction(llvmModule, name, type)!!
         }
     }
 

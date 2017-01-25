@@ -3,6 +3,10 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 
+interface RuntimeAware {
+    val runtime: Runtime
+}
+
 class Runtime(private val bitcodeFile: String) {
     val llvmModule: LLVMModuleRef
 
