@@ -26,8 +26,5 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
-sourceSets {
-    main.java.srcDirs += 'src/main/kotlin'
-}
 
 // VERSION: $VERSION$

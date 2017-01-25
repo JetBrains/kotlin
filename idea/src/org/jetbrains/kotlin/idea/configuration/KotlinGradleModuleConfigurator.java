@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock;
 
 public class KotlinGradleModuleConfigurator extends KotlinWithGradleConfigurator {
     public static final String NAME = "gradle";
@@ -56,12 +55,6 @@ public class KotlinGradleModuleConfigurator extends KotlinWithGradleConfigurator
     @Override
     protected String getApplyPluginDirective() {
         return APPLY_KOTLIN;
-    }
-
-    @Override
-    protected boolean addSourceSetsBlock(@NotNull GroovyFile file) {
-        GrClosableBlock sourceSetBlock = Companion.getSourceSetsBlock(file);
-        return Companion.addLastExpressionInBlockIfNeeded(Companion.getSOURCE_SET(), sourceSetBlock);
     }
 
     @Override

@@ -142,14 +142,10 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         val dependenciesBlock = getDependenciesBlock(file)
         wasModified = wasModified or addExpressionInBlockIfNeeded(LIBRARY, dependenciesBlock, false)
 
-        wasModified = wasModified or addSourceSetsBlock(file)
-
         return wasModified
     }
 
     protected abstract val applyPluginDirective: String
-
-    protected abstract fun addSourceSetsBlock(file: GroovyFile): Boolean
 
     protected abstract fun addElementsToFile(
             groovyFile: GroovyFile,
