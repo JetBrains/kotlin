@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.resolve.jvm
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
@@ -26,7 +28,8 @@ import org.jetbrains.kotlin.serialization.deserialization.PLATFORM_DEPENDENT_ANN
 
 object JvmDelegationFilter : DelegationFilter {
 
-    override fun filter(interfaceMember: CallableMemberDescriptor): Boolean {
+    override fun filter(interfaceMember: CallableMemberDescriptor, languageVersionSettings: LanguageVersionSettings): Boolean {
+        if (languageVersionSettings.languageVersion == LanguageVersion.KOTLIN_1_0) return true
         //We always have only one implementation otherwise it's an error in kotlin and java
         val realMember = DescriptorUtils.unwrapFakeOverride(interfaceMember)
         return !isJavaDefaultMethod(realMember) && !isBuiltInMemberMappedToJavaDefault(realMember)

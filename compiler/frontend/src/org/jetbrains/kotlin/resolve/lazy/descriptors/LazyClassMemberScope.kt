@@ -295,7 +295,8 @@ open class LazyClassMemberScope(
                     extractor.extract(type, name)
         }
         return DelegationResolver.generateDelegatedMembers(
-                classOrObject, thisDescriptor, existingDescriptors, trace, lazyMemberExtractor, lazyTypeResolver, c.delegationFilter
+                classOrObject, thisDescriptor, existingDescriptors, trace, lazyMemberExtractor,
+                lazyTypeResolver, c.delegationFilter, c.languageVersionSettings
         )
     }
 

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.diagnostics.Errors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED
@@ -38,7 +39,8 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
         private val trace: BindingTrace,
         private val memberExtractor: MemberExtractor<T>,
         private val typeResolver: TypeResolver,
-        private val delegationFilter: DelegationFilter
+        private val delegationFilter: DelegationFilter,
+        private val languageVersionSettings: LanguageVersionSettings
 ) {
 
     private fun generateDelegatedMembers(): Collection<T> {
@@ -93,7 +95,7 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
         return memberExtractor.getMembersByType(interfaceType).filter { descriptor ->
             descriptor.isOverridable &&
             !classSupertypeMembers.any { isOverridableBy(it, descriptor) } &&
-            delegationFilter.filter(descriptor)
+            delegationFilter.filter(descriptor, languageVersionSettings)
         }
     }
 
@@ -113,9 +115,10 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
                 trace: BindingTrace,
                 memberExtractor: MemberExtractor<T>,
                 typeResolver: TypeResolver,
-                delegationFilter: DelegationFilter
+                delegationFilter: DelegationFilter,
+                languageVersionSettings: LanguageVersionSettings
         ): Collection<T> =
-                DelegationResolver(classOrObject, ownerDescriptor, existingMembers, trace, memberExtractor, typeResolver, delegationFilter)
+                DelegationResolver(classOrObject, ownerDescriptor, existingMembers, trace, memberExtractor, typeResolver, delegationFilter, languageVersionSettings)
                         .generateDelegatedMembers()
 
         private fun isOverridingAnyOf(

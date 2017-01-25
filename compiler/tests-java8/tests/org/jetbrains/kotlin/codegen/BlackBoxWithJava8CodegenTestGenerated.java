@@ -181,6 +181,12 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/delegationBy/simple.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("simple1.0.kt")
+        public void testSimple1_0() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/delegationBy/simple1.0.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/java8/box/jvm8")
