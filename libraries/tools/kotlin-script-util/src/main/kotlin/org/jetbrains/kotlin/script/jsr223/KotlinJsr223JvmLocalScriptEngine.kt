@@ -38,8 +38,8 @@ class KotlinJsr223JvmLocalScriptEngine(
         factory: ScriptEngineFactory,
         val templateClasspath: List<File>,
         templateClassName: String,
-        getScriptArgs: (ScriptContext, Array<out KClass<out Any>>?) -> ScriptArgsWithTypes?,
-        scriptArgsTypes: Array<out KClass<out Any>>?
+        val getScriptArgs: (ScriptContext, Array<out KClass<out Any>>?) -> ScriptArgsWithTypes?,
+        val scriptArgsTypes: Array<out KClass<out Any>>?
 ) : KotlinJsr223JvmScriptEngineBase(factory), KotlinJsr223JvmInvocableScriptEngine {
 
     override val replCompiler: ReplCompiler by lazy {
@@ -53,6 +53,8 @@ class KotlinJsr223JvmLocalScriptEngine(
     private val localEvaluator by lazy { GenericReplCompilingEvaluator(replCompiler, templateClasspath, Thread.currentThread().contextClassLoader, getScriptArgs(getContext(), scriptArgsTypes)) }
 
     override val replScriptEvaluator: ReplFullEvaluator get() = localEvaluator
+
+    override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? = getScriptArgs(context, scriptArgsTypes)
 
     private fun makeScriptDefinition(templateClasspath: List<File>, templateClassName: String): KotlinScriptDefinition {
         val classloader = URLClassLoader(templateClasspath.map { it.toURI().toURL() }.toTypedArray(), this.javaClass.classLoader)

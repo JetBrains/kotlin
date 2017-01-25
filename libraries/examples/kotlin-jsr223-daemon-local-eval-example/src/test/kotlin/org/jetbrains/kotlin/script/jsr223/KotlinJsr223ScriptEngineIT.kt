@@ -92,6 +92,25 @@ obj
         val res3 = invocator!!.invokeMethod(res1, "fn1", 3)
         Assert.assertEquals(6, res3)
     }
+
+    @Test
+    fun testEvalWithContext() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+
+        engine.put("z", 33)
+
+        engine.eval("""val x = 10 + bindings["z"] as Int""")
+
+        val result = engine.eval("""x + 20""")
+        Assert.assertEquals(63, result)
+
+        // in the current implementation the history is shared between contexts, so "x" could also be used in this line,
+        // but this behaviour probably will not be preserved in the future, since contexts may become completely isolated
+        val result2 = engine.eval("""11 + bindings["boundValue"] as Int""", engine.createBindings().apply {
+            put("boundValue", 100)
+        })
+        Assert.assertEquals(111, result2)
+    }
 }
 
 fun assertThrows(exceptionClass: Class<*>, body: () -> Unit) {

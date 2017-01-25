@@ -36,8 +36,8 @@ class KotlinJsr223JvmDaemonCompileScriptEngine(
         compilerJar: File,
         templateClasspath: List<File>,
         templateClassName: String,
-        getScriptArgs: (ScriptContext, Array<out KClass<out Any>>?) -> ScriptArgsWithTypes?,
-        scriptArgsTypes: Array<out KClass<out Any>>?,
+        val getScriptArgs: (ScriptContext, Array<out KClass<out Any>>?) -> ScriptArgsWithTypes?,
+        val scriptArgsTypes: Array<out KClass<out Any>>?,
         compilerOut: OutputStream = System.err
 ) : KotlinJsr223JvmScriptEngineBase(factory), KotlinJsr223JvmInvocableScriptEngine {
 
@@ -60,6 +60,8 @@ class KotlinJsr223JvmDaemonCompileScriptEngine(
     val localEvaluator by lazy { GenericReplCompilingEvaluator(replCompiler, templateClasspath, Thread.currentThread().contextClassLoader, getScriptArgs(getContext(), scriptArgsTypes)) }
 
     override val replScriptEvaluator: ReplFullEvaluator get() = localEvaluator
+
+    override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? = getScriptArgs(context, scriptArgsTypes)
 
     private fun connectToCompileService(compilerJar: File): CompileService {
         val compilerId = CompilerId.makeCompilerId(compilerJar)

@@ -58,7 +58,7 @@ open class GenericReplCompiler(disposable: Disposable,
 
             removedCompiledLines.zip(removedAnalyzedLines).forEach {
                 if (it.first.first != it.second) {
-                    throw IllegalStateException("History mistmatch when resetting lines")
+                    throw IllegalStateException("History mismatch when resetting lines")
                 }
             }
 
