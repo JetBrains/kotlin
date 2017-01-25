@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.configuration.ui.notifications.ConfigureKotlinNotification
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
-import org.jetbrains.kotlin.idea.versions.getKotlinJsRuntimeMarkerClass
 import org.jetbrains.kotlin.idea.versions.getKotlinJvmRuntimeMarkerClass
+import org.jetbrains.kotlin.idea.versions.hasKotlinJsKjsmFile
 import org.jetbrains.kotlin.idea.vfilefinder.JvmIDEVirtualFileFinder
 import org.jetbrains.kotlin.utils.ifEmpty
 
@@ -132,7 +132,7 @@ fun getNonConfiguredModules(project: Project, excludeModules: Collection<Module>
 fun hasAnyKotlinRuntimeInScope(module: Module): Boolean {
     val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
     return getKotlinJvmRuntimeMarkerClass(module.project, scope) != null ||
-           getKotlinJsRuntimeMarkerClass(module.project, scope) != null ||
+           hasKotlinJsKjsmFile(module.project, scope) ||
            hasKotlinCommonRuntimeInScope(scope)
 }
 
@@ -143,7 +143,7 @@ fun hasKotlinJvmRuntimeInScope(module: Module): Boolean {
 
 fun hasKotlinJsRuntimeInScope(module: Module): Boolean {
     val scope = module.getModuleWithDependenciesAndLibrariesScope(hasKotlinFilesOnlyInTests(module))
-    return getKotlinJsRuntimeMarkerClass(module.project, scope) != null
+    return hasKotlinJsKjsmFile(module.project, scope)
 }
 
 fun hasKotlinCommonRuntimeInScope(scope: GlobalSearchScope): Boolean {

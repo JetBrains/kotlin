@@ -21,6 +21,18 @@ import "core/deserialization/src/descriptors.proto";
 option java_outer_classname = "JsProtoBuf";
 option optimize_for = LITE_RUNTIME;
 
+message Header {
+  /*
+    preRelease
+  */
+  optional int32 flags = 1;
+
+  // (patch << 16) + (minor << 8) + major
+  optional int32 js_code_binary_version = 2;
+
+  optional string package_fq_name = 3;
+}
+
 message File {
   required int32 id = 1;
   repeated Annotation annotation = 2;

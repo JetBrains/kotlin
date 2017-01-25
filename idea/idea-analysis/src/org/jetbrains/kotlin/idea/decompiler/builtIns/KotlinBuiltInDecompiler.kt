@@ -77,7 +77,7 @@ fun buildDecompiledTextForBuiltIns(builtInFile: VirtualFile): DecompiledText {
         }
         is BuiltInDefinitionFile.Compatible -> {
             val packageFqName = file.packageFqName
-            val resolver = KotlinBuiltInDeserializerForDecompiler(file.packageDirectory, packageFqName, file.proto, file.nameResolver)
+            val resolver = KotlinBuiltInDeserializerForDecompiler(packageFqName, file.proto, file.nameResolver)
             val declarations = arrayListOf<DeclarationDescriptor>()
             declarations.addAll(resolver.resolveDeclarationsInFacade(packageFqName))
             for (classProto in file.classesToDecompile) {

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.decompiler.js
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -28,61 +27,45 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
-import org.jetbrains.kotlin.serialization.js.*
-import java.io.ByteArrayInputStream
+import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer
+import org.jetbrains.kotlin.serialization.js.JsProtoBuf
+import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
+import org.jetbrains.kotlin.serialization.js.KotlinJavascriptClassDataFinder
 
+// TODO: deduplicate with KotlinBuiltInDeserializerForDecompiler
 class KotlinJavaScriptDeserializerForDecompiler(
-        classFile: VirtualFile
-) : DeserializerForDecompilerBase(classFile.parent!!, JsMetaFileUtils.getPackageFqName(classFile)) {
-
-    private val nameResolver = run {
-        val moduleDirectory = JsMetaFileUtils.getModuleDirectory(packageDirectory)
-        val stringsFileName = KotlinJavascriptSerializedResourcePaths.getStringTableFilePath(directoryPackageFqName)
-        val stringsFile = moduleDirectory.findFileByRelativePath(stringsFileName)
-        assert(stringsFile != null) { "strings file not found: $stringsFileName" }
-        NameResolverImpl.read(ByteArrayInputStream(stringsFile!!.contentsToByteArray(false)))
-    }
-
+        packageFqName: FqName,
+        private val proto: JsProtoBuf.Library.Part,
+        private val nameResolver: NameResolver
+) : DeserializerForDecompilerBase(packageFqName) {
     override val targetPlatform: TargetPlatform get() = JsPlatform
     override val builtIns: KotlinBuiltIns get() = DefaultBuiltIns.Instance
-
-    // TODO: read metadata from .kjsm files here
-    private val classDataFinder = KotlinJavascriptClassDataFinder(JsProtoBuf.Library.Part.getDefaultInstance(), nameResolver)
 
     override val deserializationComponents: DeserializationComponents
 
     init {
         val notFoundClasses = NotFoundClasses(storageManager, moduleDescriptor)
-        val annotationAndConstantLoader = AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, JsSerializerProtocol)
 
         deserializationComponents = DeserializationComponents(
-                storageManager, moduleDescriptor, DeserializationConfiguration.Default, classDataFinder, annotationAndConstantLoader,
-                packageFragmentProvider, ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), LoggingErrorReporter(LOG),
+                storageManager, moduleDescriptor, DeserializationConfiguration.Default, KotlinJavascriptClassDataFinder(proto, nameResolver),
+                AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, JsSerializerProtocol), packageFragmentProvider,
+                ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), LoggingErrorReporter(LOG),
                 LookupTracker.DO_NOTHING, DynamicTypeDeserializer, emptyList(), notFoundClasses
         )
     }
 
     override fun resolveDeclarationsInFacade(facadeFqName: FqName): List<DeclarationDescriptor> {
-        val packageFqName = facadeFqName.parent()
-        assert(packageFqName == directoryPackageFqName) {
-            "Was called for $packageFqName; only members of $directoryPackageFqName package are expected."
-        }
-        val packageFilePath = KotlinJavascriptSerializedResourcePaths.getPackageFilePath(directoryPackageFqName).substringAfterLast("/")
-        val file = packageDirectory.findChild(packageFilePath)
-        if (file == null) {
-            LOG.error("Could not read data for package $packageFqName; $packageFilePath absent in $packageDirectory")
-            return emptyList()
+        assert(facadeFqName == directoryPackageFqName) {
+            "Was called for $facadeFqName; only members of $directoryPackageFqName package are expected."
         }
 
-        val content = file.contentsToByteArray(false)
-        val packageProto = ProtoBuf.Package.parseFrom(content, JsSerializerProtocol.extensionRegistry)
         val membersScope = DeserializedPackageMemberScope(
-                createDummyPackageFragment(packageFqName), packageProto, nameResolver, containerSource = null,
+                createDummyPackageFragment(facadeFqName), proto.`package`, nameResolver, containerSource = null,
                 components = deserializationComponents
         ) { emptyList() }
+
         return membersScope.getContributedDescriptors().toList()
     }
 

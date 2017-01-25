@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.decompiler.builtIns
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.builtins.BuiltInsClassDataFinder
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
@@ -34,11 +33,10 @@ import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 
 class KotlinBuiltInDeserializerForDecompiler(
-        packageDirectory: VirtualFile,
         packageFqName: FqName,
         private val proto: BuiltInsProtoBuf.BuiltIns,
         private val nameResolver: NameResolver
-) : DeserializerForDecompilerBase(packageDirectory, packageFqName) {
+) : DeserializerForDecompilerBase(packageFqName) {
     override val targetPlatform: TargetPlatform get() = TargetPlatform.Default
     override val builtIns: KotlinBuiltIns get() = DefaultBuiltIns.Instance
 

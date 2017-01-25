@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.utils
 
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
+import java.io.DataInputStream
 import java.io.File
+import java.io.InputStream
 import javax.xml.bind.DatatypeConverter.parseBase64Binary
 import javax.xml.bind.DatatypeConverter.printBase64Binary
 
@@ -31,10 +33,21 @@ class JsBinaryVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
 
     companion object {
         @JvmField
-        val INSTANCE = JsBinaryVersion(0, 7, 0)
+        val INSTANCE = JsBinaryVersion(0, 8, 0)
 
         @JvmField
         val INVALID_VERSION = JsBinaryVersion()
+
+        fun readFrom(stream: InputStream): JsBinaryVersion {
+            val dataInput = DataInputStream(stream)
+            val size = dataInput.readInt()
+
+            // We assume here that the version will always have 3 components. This is needed to prevent reading an unpredictable amount
+            // of integers from old .kjsm files (pre-1.1) because they did not have the version in the beginning
+            if (size != INSTANCE.toArray().size) return INVALID_VERSION
+
+            return JsBinaryVersion(*(1..size).map { dataInput.readInt() }.toIntArray())
+        }
     }
 }
 

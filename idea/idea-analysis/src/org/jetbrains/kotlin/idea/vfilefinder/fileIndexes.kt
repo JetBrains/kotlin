@@ -24,12 +24,14 @@ import com.intellij.util.io.KeyDescriptor
 import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
 import org.jetbrains.kotlin.idea.decompiler.builtIns.BuiltInDefinitionFile
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
-import org.jetbrains.kotlin.idea.decompiler.js.JsMetaFileUtils
 import org.jetbrains.kotlin.idea.decompiler.js.KotlinJavaScriptMetaFileType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
+import org.jetbrains.kotlin.serialization.js.JsProtoBuf
+import org.jetbrains.kotlin.utils.JsBinaryVersion
+import java.io.ByteArrayInputStream
 import java.io.DataInput
 import java.io.DataOutput
 import java.util.*
@@ -98,13 +100,15 @@ object KotlinJavaScriptMetaFileIndex : KotlinFileIndexBase<KotlinJavaScriptMetaF
 
     override fun getVersion() = VERSION
 
-    private val VERSION = 3
+    private val VERSION = 4
 
     private val INDEXER = indexer { fileContent ->
-        if (fileContent.fileType == KotlinJavaScriptMetaFileType) JsMetaFileUtils.getClassFqName(fileContent.file) else null
+        val stream = ByteArrayInputStream(fileContent.content)
+        if (JsBinaryVersion.readFrom(stream).isCompatible()) {
+            FqName(JsProtoBuf.Header.parseDelimitedFrom(stream).packageFqName)
+        }
+        else null
     }
-
-    override fun dependsOnFileContent(): Boolean = false
 }
 
 open class KotlinMetadataFileIndexBase<T>(classOfIndex: Class<T>, indexFunction: (ClassId) -> FqName) : KotlinFileIndexBase<T>(classOfIndex) {
