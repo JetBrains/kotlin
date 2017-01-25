@@ -1801,6 +1801,21 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
 
     }
 
+    @TestMetadata("idea/testData/quickfix/optimizeImports")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class OptimizeImports extends AbstractQuickFixMultiFileTest {
+        public void testAllFilesPresentInOptimizeImports() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/optimizeImports"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("notRemoveImportsForTypeAliases.before.Main.kt")
+        public void testNotRemoveImportsForTypeAliases() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/optimizeImports/notRemoveImportsForTypeAliases.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/override")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

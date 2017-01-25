@@ -104,12 +104,6 @@ public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsT
             doTest(fileName);
         }
 
-        @TestMetadata("KT13766.kt")
-        public void testKT13766() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/jvm/KT13766.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("Kt1850FullQualified.kt")
         public void testKt1850FullQualified() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/optimizeImports/jvm/Kt1850FullQualified.kt");
