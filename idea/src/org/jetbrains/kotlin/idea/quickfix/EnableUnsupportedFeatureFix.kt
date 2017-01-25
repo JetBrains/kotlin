@@ -43,7 +43,10 @@ sealed class EnableUnsupportedFeatureFix(
             val module = ModuleUtilCore.findModuleForPsiElement(file) ?: return
             val facetSettings = KotlinFacet.get(module)?.configuration?.settings ?: return
             ModuleRootModificationUtil.updateModel(module) {
-                facetSettings.versionInfo.languageLevel = targetVersion
+                with(facetSettings.versionInfo) {
+                    languageLevel = targetVersion
+                    apiLevel = targetVersion
+                }
             }
         }
     }
@@ -54,7 +57,10 @@ sealed class EnableUnsupportedFeatureFix(
         override fun getText() = "Set project language level to ${targetVersion.versionString}"
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-            KotlinCommonCompilerArgumentsHolder.getInstance(project).settings.languageVersion = targetVersion.versionString
+            with(KotlinCommonCompilerArgumentsHolder.getInstance(project).settings) {
+                languageVersion = targetVersion.versionString
+                apiVersion = targetVersion.versionString
+            }
             ProjectRootManagerEx.getInstanceEx(project).makeRootsChange({}, false, true)
         }
     }
