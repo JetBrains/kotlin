@@ -158,6 +158,16 @@ fun getSomething() = 10
     }
 
     @Test
+    fun testKaptKt15814() {
+        val project = Project("kaptKt15814", gradleVersion)
+        val options = defaultBuildOptions().copy(incremental = false)
+
+        project.build("assembleDebug", "test", options = options) {
+            assertSuccessful()
+        }
+    }
+
+    @Test
     fun testAndroidIcepickProject() {
         val project = Project("AndroidIcepickProject", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = false)
