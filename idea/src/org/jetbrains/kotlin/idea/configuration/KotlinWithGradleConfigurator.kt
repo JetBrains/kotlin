@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.codeInsight.CodeInsightUtilCore
 import com.intellij.ide.actions.OpenFileAction
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ExternalLibraryDescriptor
 import com.intellij.openapi.roots.ModuleRootManager
@@ -33,6 +35,7 @@ import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.versions.getStdlibArtifactId
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
@@ -72,7 +75,9 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
 
     private fun isFileConfigured(projectGradleFile: GroovyFile): Boolean {
         val fileText = projectGradleFile.text
-        return containsDirective(fileText, applyPluginDirective) && fileText.contains(LIBRARY)
+        return containsDirective(fileText, applyPluginDirective) &&
+               fileText.contains("org.jetbrains.kotlin") &&
+               fileText.contains("kotlin-stdlib")
     }
 
     @JvmSuppressWildcards
@@ -140,7 +145,8 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         wasModified = wasModified or addRepository(repositoriesBlock, version)
 
         val dependenciesBlock = getDependenciesBlock(file)
-        wasModified = wasModified or addExpressionInBlockIfNeeded(LIBRARY, dependenciesBlock, false)
+        val sdk = ModuleUtil.findModuleForPsiElement(file)?.let { ModuleRootManager.getInstance(it).sdk }
+        wasModified = wasModified or addExpressionInBlockIfNeeded(getRuntimeLibrary(sdk), dependenciesBlock, false)
 
         return wasModified
     }
@@ -187,8 +193,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
 
         private val MAVEN_CENTRAL = "mavenCentral()\n"
         private val JCENTER = "jcenter()\n"
-        val LIBRARY = "compile \"org.jetbrains.kotlin:kotlin-stdlib:\$kotlin_version\""
-        val SOURCE_SET = "main.java.srcDirs += 'src/main/kotlin'\n"
+
         private val VERSION = String.format("ext.kotlin_version = '%s'", VERSION_TEMPLATE)
 
         private fun containsDirective(fileText: String, directive: String): Boolean {
@@ -318,8 +323,6 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
             return getBlockOrCreate(file, "dependencies")
         }
 
-        fun getSourceSetsBlock(parent: GrStatementOwner) = getBlockOrCreate(parent, "sourceSets")
-
         private fun getBuildScriptBlock(file: GrStatementOwner) = getBlockOrCreate(file, "buildscript")
 
         private fun getBuildScriptDependenciesBlock(file: GrStatementOwner): GrClosableBlock {
@@ -401,6 +404,11 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
                 else -> return false
             }
             return addLastExpressionInBlockIfNeeded(snippet, repositoriesBlock)
+        }
+
+        fun getRuntimeLibrary(sdk: Sdk?): String {
+            val artifactId = getStdlibArtifactId(sdk)
+            return "compile \"org.jetbrains.kotlin:$artifactId:\$kotlin_version\""
         }
     }
 }

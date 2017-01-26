@@ -22,6 +22,9 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.JavaSdkVersion
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectFileIndex
@@ -287,6 +290,18 @@ fun getKotlinJsRuntimeMarkerClass(project: Project, scope: GlobalSearchScope): V
     }
 }
 
+fun getStdlibArtifactId(sdk: Sdk?): String {
+    val sdkVersion = sdk?.let { JavaSdk.getInstance().getVersion(it) }
+    val artifactId = when (sdkVersion) {
+        JavaSdkVersion.JDK_1_8, JavaSdkVersion.JDK_1_9 -> MAVEN_STDLIB_ID_JRE8
+        JavaSdkVersion.JDK_1_7 -> MAVEN_STDLIB_ID_JRE7
+        else -> MAVEN_STDLIB_ID
+    }
+    return artifactId
+}
+
 val MAVEN_STDLIB_ID = "kotlin-stdlib"
+val MAVEN_STDLIB_ID_JRE7 = "kotlin-stdlib-jre7"
+val MAVEN_STDLIB_ID_JRE8 = "kotlin-stdlib-jre8"
 val MAVEN_JS_STDLIB_ID = "kotlin-js-library"
 val MAVEN_COMMON_STDLIB_ID = "kotlin-stdlib-common" // TODO: KotlinCommonMavenConfigurator

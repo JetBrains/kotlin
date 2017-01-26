@@ -73,7 +73,7 @@ class GradleKotlinJavaFrameworkSupportProvider : GradleFrameworkSupportProvider(
                 .addRepositoriesDefinition("mavenCentral()")
 
                 .addBuildscriptPropertyDefinition("ext.kotlin_version = '$kotlinVersion'")
-                .addDependencyNotation(KotlinWithGradleConfigurator.LIBRARY)
+                .addDependencyNotation(KotlinWithGradleConfigurator.getRuntimeLibrary(rootModel.sdk))
                 .addBuildscriptDependencyNotation(KotlinWithGradleConfigurator.CLASSPATH)
     }
 }
