@@ -28,7 +28,6 @@ import java.io.File
 import java.util.ArrayList
 
 object JpsJsModuleUtils {
-
     fun getLibraryFilesAndDependencies(target: ModuleBuildTarget): List<String> {
         val result = ArrayList<String>()
         getLibraryFiles(target, result)
@@ -40,11 +39,7 @@ object JpsJsModuleUtils {
         val libraries = JpsUtils.getAllDependencies(target).libraries
         for (library in libraries) {
             for (root in library.getRoots(JpsOrderRootType.COMPILED)) {
-                val path = JpsPathUtil.urlToPath(root.url)
-                // ignore files, added only for IDE support (stubs and indexes)
-                if (!path.startsWith(KotlinJavascriptMetadataUtils.VFS_PROTOCOL + "://")) {
-                    result.add(path)
-                }
+                result.add(JpsPathUtil.urlToPath(root.url))
             }
         }
     }
