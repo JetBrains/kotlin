@@ -50,7 +50,9 @@ fun MessageCollector.reportFromDaemon(outputsCollector: ((File, List<File>) -> U
                     }
                 }
             }
-            report(CompilerMessageSeverity.OUTPUT, message!!, CompilerMessageLocation.NO_LOCATION)
+            else {
+                report(CompilerMessageSeverity.OUTPUT, message!!, CompilerMessageLocation.NO_LOCATION)
+            }
         }
         ReportCategory.EXCEPTION -> {
             report(CompilerMessageSeverity.EXCEPTION, message.orEmpty(), CompilerMessageLocation.NO_LOCATION)
