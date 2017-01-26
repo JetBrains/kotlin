@@ -1,6 +1,7 @@
 kotlin-data-container
 Module 'module' production
     format-version.txt
+    jvm-build-meta-info.txt
     inline-functions.tab
     inlined-to.tab
     package-parts.tab

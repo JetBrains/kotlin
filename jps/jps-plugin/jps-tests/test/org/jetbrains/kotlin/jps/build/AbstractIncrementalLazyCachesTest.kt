@@ -75,13 +75,18 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
         val sb = StringBuilder()
         val p = Printer(sb)
         val targets = projectDescriptor.allModuleTargets
-        val paths = projectDescriptor.dataManager.dataPaths
+        val dataManager = projectDescriptor.dataManager
+        val paths = dataManager.dataPaths
         val versions = CacheVersionProvider(paths)
 
-        dumpCachesForTarget(p, paths, KotlinDataContainerTarget, versions.dataContainerVersion())
+        dumpCachesForTarget(p, paths, KotlinDataContainerTarget, versions.dataContainerVersion().formatVersionFile)
 
         for (target in targets.sortedBy { it.presentableName }) {
-            dumpCachesForTarget(p, paths, target, versions.normalVersion(target), versions.experimentalVersion(target),
+            val jvmMetaBuildInfo = jvmBuildMetaInfoFile(target, dataManager)
+            dumpCachesForTarget(p, paths, target,
+                                versions.normalVersion(target).formatVersionFile,
+                                versions.experimentalVersion(target).formatVersionFile,
+                                jvmMetaBuildInfo,
                                 subdirectory = KOTLIN_CACHE_DIRECTORY_NAME)
         }
 
@@ -92,16 +97,15 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
             p: Printer,
             paths: BuildDataPaths,
             target: BuildTarget<*>,
-            vararg cacheVersions: CacheVersion,
+            vararg cacheVersionsFiles: File,
             subdirectory: String? = null
     ) {
         p.println(target)
         p.pushIndent()
 
         val dataRoot = paths.getTargetDataRoot(target).let { if (subdirectory != null) File(it, subdirectory) else it }
-        cacheVersions
-                .map { it.formatVersionFile }
-                .filter { it.exists() }
+        cacheVersionsFiles
+                .filter(File::exists)
                 .sortedBy { it.name }
                 .forEach { p.println(it.name) }
 
