@@ -19,16 +19,23 @@ package org.jetbrains.kotlin.idea.kdoc
 import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractQuickDocProviderTest.wrapToFileComparisonFailure
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 class KDocSampleTest : AbstractMultiModuleTest() {
 
     override val testPath: String = "${super.testPath}/kdoc/multiModuleSamples/"
     override fun getTestDataPath() = testPath
+
+    override fun setUp() {
+        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+        super.setUp()
+    }
 
     fun testSimple() {
 
