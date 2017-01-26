@@ -165,7 +165,7 @@ private fun detectPlatformByLibrary(moduleNode: DataNode<ModuleData>): TargetPla
     return detectedPlatforms.singleOrNull() ?: detectedPlatforms.firstOrNull { it != TargetPlatformKind.Common }
 }
 
-private fun configureFacetByGradleModule(
+fun configureFacetByGradleModule(
         moduleNode: DataNode<ModuleData>,
         sourceSetNode: DataNode<GradleSourceSetData>?,
         ideModule: Module,
