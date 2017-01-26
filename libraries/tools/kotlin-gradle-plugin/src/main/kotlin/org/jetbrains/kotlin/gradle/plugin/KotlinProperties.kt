@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.dsl.Coroutines
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
@@ -35,7 +36,7 @@ fun mapKotlinTaskProperties(project: Project, task: AbstractKotlinCompile<*>) {
 
 private val propertyMappings = listOf(
         KotlinPropertyMapping("kotlin.incremental", AbstractKotlinCompile<*>::incremental, String::toBoolean),
-        KotlinPropertyMapping("kotlin.coroutines", AbstractKotlinCompile<*>::coroutines) { CoroutineSupport.byCompilerArgument(it) }
+        KotlinPropertyMapping("kotlin.coroutines", AbstractKotlinCompile<*>::coroutinesFromGradleProperties) { Coroutines.byCompilerArgument(it) }
 )
 
 private class KotlinPropertyMapping<T>(
@@ -58,19 +59,5 @@ private class KotlinPropertyMapping<T>(
 
         val transformedValue = transform(value) ?: return
         taskProperty.set(task, transformedValue)
-    }
-}
-
-enum class CoroutineSupport(val compilerArgument: String) {
-    ENABLED("enable"),
-    ENABLED_WITH_WARNING("warn"),
-    DISABLED("error");
-
-    companion object {
-        val DEFAULT = ENABLED_WITH_WARNING
-
-        fun byCompilerArgument(argument: String): CoroutineSupport {
-            return CoroutineSupport.values().find { it.compilerArgument == argument } ?: DEFAULT
-        }
     }
 }

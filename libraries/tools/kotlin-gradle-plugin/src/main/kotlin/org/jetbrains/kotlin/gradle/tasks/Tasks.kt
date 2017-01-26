@@ -20,6 +20,7 @@ import org.codehaus.groovy.runtime.MethodClosure
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.logging.Logger
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -35,7 +36,6 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.CoroutineSupport
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.kotlinInfo
 import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
@@ -62,6 +62,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
             return ArgumentUtils.convertArgumentsToStringList(arguments)
         }
 
+    private val kotlinExt: KotlinProjectExtension
+            get() = project.extensions.findByType(KotlinProjectExtension::class.java)!!
+
     // indicates that task should compile kotlin incrementally if possible
     // it's not possible when IncrementalTaskInputs#isIncremental returns false (i.e first build)
     var incremental: Boolean = false
@@ -73,12 +76,13 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
             System.setProperty("kotlin.incremental.compilation.experimental", value.toString())
         }
 
-    var coroutines: CoroutineSupport = CoroutineSupport.DEFAULT
-        get() = field
-        set(value) {
-            field = value
-            logger.kotlinDebug { "Set $this.coroutines=${value.compilerArgument}" }
-        }
+    internal var coroutinesFromGradleProperties: Coroutines? = null
+    // Input is needed to force rebuild even if source files are not changed
+    @get:Input
+    val coroutines: Coroutines
+        get() = kotlinExt.experimental.coroutines
+                ?: coroutinesFromGradleProperties
+                ?: Coroutines.DEFAULT
 
     var compilerJarFile: File? = null
     internal val compilerJar: File
@@ -124,9 +128,11 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     internal abstract fun callCompiler(args: T, sourceRoots: SourceRoots, changedFiles: ChangedFiles)
 
     private fun CommonCompilerArguments.setupCommonCompilerArgs() {
-        coroutinesEnable = coroutines == CoroutineSupport.ENABLED
-        coroutinesWarn = coroutines == CoroutineSupport.ENABLED_WITH_WARNING
-        coroutinesError = coroutines == CoroutineSupport.DISABLED
+        coroutines.let {
+            coroutinesEnable = it == Coroutines.ENABLE
+            coroutinesWarn =   it == Coroutines.WARN
+            coroutinesError =  it == Coroutines.ERROR
+        }
 
         if (project.logger.isDebugEnabled) {
             verbose = true

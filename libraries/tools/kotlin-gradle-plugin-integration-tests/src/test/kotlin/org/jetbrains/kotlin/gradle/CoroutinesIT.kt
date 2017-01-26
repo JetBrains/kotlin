@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.util.getFileByName
+import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
 
@@ -24,6 +26,24 @@ class CoroutinesIT: BaseGradleIT() {
         private const val GRADLE_VERSION = "2.14.1"
         private const val LOCAL_PROPERTIES = "local.properties"
         private const val GRADLE_PROPERTIES = "gradle.properties"
+    }
+
+    @Test
+    fun testCoroutinesProjectDSL() {
+        val project = Project("coroutinesProjectDSL", GRADLE_VERSION)
+        project.build("assemble") {
+            assertSuccessful()
+            assertContains("-Xcoroutines=enable")
+        }
+
+        project.projectDir.getFileByName("build.gradle").modify {
+            it.replace("coroutines 'enable'", "coroutines 'error'")
+        }
+
+        project.build("assemble") {
+            assertFailed()
+            assertContains("-Xcoroutines=error")
+        }
     }
 
     @Test
