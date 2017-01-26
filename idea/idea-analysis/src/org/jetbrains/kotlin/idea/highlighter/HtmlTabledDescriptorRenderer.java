@@ -156,7 +156,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
             if (isErrorPosition.apply(VALUE_PARAMETER_POSITION.position(i))) {
                 error = true;
             }
-            String renderedArgument = getTypeRenderer().render(argumentType, context);
+            String renderedArgument = argumentType == null ? "unknown" : getTypeRenderer().render(argumentType, context);
 
             tdRight(result, RenderersUtilKt.renderStrong(renderedArgument, error) + (iterator.hasNext() ? RenderersUtilKt.renderStrong(",") : ""));
             i++;
