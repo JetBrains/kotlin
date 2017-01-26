@@ -70,6 +70,7 @@
                                 <arg>-Xmulti-platform</arg>
                             </args>
                             <sourceDirs>
+                                <dir>${project.basedir}/test</dir>
                                 <dir>${project.basedir}/../kotlin.test/common/src/main/kotlin</dir>
                                 <dir>${project.basedir}/../kotlin.test/jvm/src/main/kotlin</dir>
                                 <dir>${project.basedir}/../kotlin.test/junit/src/main/kotlin</dir>
