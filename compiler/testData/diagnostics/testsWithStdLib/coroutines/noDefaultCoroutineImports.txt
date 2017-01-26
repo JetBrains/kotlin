@@ -1,0 +1,4 @@
+package
+
+public fun test(/*0*/ c: [ERROR : Continuation<Unit>]<kotlin.Unit>): kotlin.Unit
+public fun test2(/*0*/ c: kotlin.coroutines.experimental.Continuation<kotlin.Unit>): kotlin.Unit

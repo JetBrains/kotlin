@@ -1,9 +1,9 @@
 package forTests
 
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
-import kotlin.coroutines.startCoroutine
+import kotlin.coroutines.experimental.Continuation
+import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.experimental.EmptyCoroutineContext
+import kotlin.coroutines.experimental.startCoroutine
 
 open class EmptyContinuation(override val context: CoroutineContext = EmptyCoroutineContext) : Continuation<Any?> {
     companion object : EmptyContinuation()
