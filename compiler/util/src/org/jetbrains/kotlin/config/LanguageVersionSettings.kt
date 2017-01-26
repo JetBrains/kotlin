@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.config
 import org.jetbrains.kotlin.config.LanguageVersion.KOTLIN_1_1
 import org.jetbrains.kotlin.utils.DescriptionAware
 
-enum class LanguageFeature(val sinceVersion: LanguageVersion?) {
+enum class LanguageFeature(val sinceVersion: LanguageVersion?, val hintUrl: String? = null) {
     // Note: names of these entries are also used in diagnostic tests and in user-visible messages (see presentableText below)
     TypeAliases(KOTLIN_1_1),
     BoundCallableReferences(KOTLIN_1_1),
     LocalDelegatedProperties(KOTLIN_1_1),
     TopLevelSealedInheritance(KOTLIN_1_1),
-    Coroutines(KOTLIN_1_1),
+    Coroutines(KOTLIN_1_1, "https://kotlinlang.org/docs/diagnostics/experimental-coroutines"),
     AdditionalBuiltInsMembers(KOTLIN_1_1),
     DataClassInheritance(KOTLIN_1_1),
     InlineProperties(KOTLIN_1_1),
@@ -42,16 +42,18 @@ enum class LanguageFeature(val sinceVersion: LanguageVersion?) {
     SafeCallBoundSmartCasts(KOTLIN_1_1),
 
     // Experimental features
-    MultiPlatformProjects(null),
+    MultiPlatformProjects(null, "https://kotlinlang.org/docs/diagnostics/experimental-multitraget-projects"),
     MultiPlatformDoNotCheckImpl(null),
 
     WarnOnCoroutines(null),
     ErrorOnCoroutines(null)
     ;
 
-    val presentableText: String
+    val presentableName: String
         // E.g. "DestructuringLambdaParameters" -> ["Destructuring", "Lambda", "Parameters"] -> "destructuring lambda parameters"
         get() = name.split("(?<!^)(?=[A-Z])".toRegex()).joinToString(separator = " ", transform = String::toLowerCase)
+
+    val presentableText get() = if (hintUrl == null) presentableName else "$presentableName (See: $hintUrl)"
 
     companion object {
         @JvmStatic
