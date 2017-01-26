@@ -103,9 +103,11 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
 
             KotlinCopyPasteReferenceProcessor().processReferenceData(project, targetFile, bounds.start, referenceData.toTypedArray())
 
-            explicitImports.forEach { fqName ->
-                targetFile.resolveImportReference(fqName).firstOrNull()?.let {
-                    ImportInsertHelper.getInstance(project).importDescriptor(targetFile, it)
+            runWriteAction {
+                explicitImports.forEach { fqName ->
+                    targetFile.resolveImportReference(fqName).firstOrNull()?.let {
+                        ImportInsertHelper.getInstance(project).importDescriptor(targetFile, it)
+                    }
                 }
             }
 
