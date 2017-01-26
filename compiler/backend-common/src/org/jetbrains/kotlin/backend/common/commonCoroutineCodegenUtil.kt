@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 val SUSPEND_COROUTINE_OR_RETURN_NAME = Name.identifier("suspendCoroutineOrReturn")
-val CONTINUATION_RESUME_METHOD_NAME = Name.identifier("resume")
 val SUSPENDED_MARKER_NAME = Name.identifier("SUSPENDED_MARKER")
 
 fun FunctionDescriptor.isBuiltInSuspendCoroutineOrReturn(): Boolean {

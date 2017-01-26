@@ -48,10 +48,6 @@ class JvmRuntimeTypes(module: ModuleDescriptor) {
         (0..2).map { i -> createClass(kotlinJvmInternalPackage, "MutablePropertyReference$i") }
     }
 
-    private val suspendFunctions: List<ClassDescriptor> by lazy {
-        (0..1).map { i -> createClass(kotlinJvmInternalPackage, "SuspendFunction$i", ClassKind.INTERFACE) }
-    }
-
     private fun createClass(
             packageFragment: PackageFragmentDescriptor,
             name: String,
