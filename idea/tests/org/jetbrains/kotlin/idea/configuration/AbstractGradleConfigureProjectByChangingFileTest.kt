@@ -23,7 +23,8 @@ import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
 abstract class AbstractGradleConfigureProjectByChangingFileTest : AbstractConfigureProjectByChangingFileTest<KotlinWithGradleConfigurator>() {
 
     fun doTestGradle(path: String) {
-        doTest(path, path.replace("before", "after"), KotlinGradleModuleConfigurator())
+        doTest(path, path.replace("before", "after"),
+               if ("js" in path) KotlinJsGradleModuleConfigurator() else KotlinGradleModuleConfigurator())
     }
 
     override fun runConfigurator(module: Module, file: PsiFile, configurator: KotlinWithGradleConfigurator, version: String, collector: NotificationMessageCollector) {

@@ -71,7 +71,9 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         return ConfigureKotlinStatus.BROKEN
     }
 
-    protected abstract fun isApplicable(module: Module): Boolean
+    protected open fun isApplicable(module: Module): Boolean {
+        return KotlinPluginUtil.isGradleModule(module) && !KotlinPluginUtil.isAndroidGradleModule(module)
+    }
 
     private fun isFileConfigured(projectGradleFile: GroovyFile): Boolean {
         val fileText = projectGradleFile.text
@@ -146,18 +148,29 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
 
         val dependenciesBlock = getDependenciesBlock(file)
         val sdk = ModuleUtil.findModuleForPsiElement(file)?.let { ModuleRootManager.getInstance(it).sdk }
-        wasModified = wasModified or addExpressionInBlockIfNeeded(getRuntimeLibrary(sdk), dependenciesBlock, false)
+        wasModified = wasModified or addExpressionInBlockIfNeeded(getDependencyDirective(sdk), dependenciesBlock, false)
 
         return wasModified
     }
 
+    protected open fun getDependencyDirective(sdk: Sdk?) = getRuntimeLibrary(sdk)
+
     protected abstract val applyPluginDirective: String
 
-    protected abstract fun addElementsToFile(
+    protected open fun addElementsToFile(
             groovyFile: GroovyFile,
             isTopLevelProjectFile: Boolean,
             version: String
-    ): Boolean
+    ): Boolean {
+        if (!isTopLevelProjectFile) {
+            var wasModified = addElementsToProjectFile(groovyFile, version)
+            wasModified = wasModified or addElementsToModuleFile(groovyFile, version)
+            return wasModified
+        }
+        return false
+    }
+
+
 
     fun changeGradleFile(
             groovyFile: GroovyFile,

@@ -41,6 +41,7 @@
         <gradleProjectImportHandler implementation="org.jetbrains.kotlin.noarg.ide.NoArgGradleProjectImportHandler"/>
 
         <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleModuleConfigurator"/>
+        <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinJsGradleModuleConfigurator"/>
         <versionInfoProvider implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinVersionInfoProvider"/>
     </extensions>
 </idea-plugin>

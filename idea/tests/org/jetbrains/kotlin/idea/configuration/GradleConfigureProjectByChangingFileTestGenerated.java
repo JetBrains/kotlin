@@ -48,6 +48,12 @@ public class GradleConfigureProjectByChangingFileTestGenerated extends AbstractG
         doTestGradle(fileName);
     }
 
+    @TestMetadata("js_before.gradle")
+    public void testJs() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gradle/js_before.gradle");
+        doTestGradle(fileName);
+    }
+
     @TestMetadata("m04Version_before.gradle")
     public void testM04Version() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gradle/m04Version_before.gradle");

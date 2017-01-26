@@ -16,12 +16,9 @@
 
 package org.jetbrains.kotlin.idea.configuration;
 
-import com.intellij.openapi.module.Module;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
-import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
 
 public class KotlinGradleModuleConfigurator extends KotlinWithGradleConfigurator {
     public static final String NAME = "gradle";
@@ -47,24 +44,8 @@ public class KotlinGradleModuleConfigurator extends KotlinWithGradleConfigurator
     }
 
     @Override
-    public boolean isApplicable(@NotNull Module module) {
-        return KotlinPluginUtil.isGradleModule(module) &&
-               !KotlinPluginUtil.isAndroidGradleModule(module);
-    }
-
-    @Override
     protected String getApplyPluginDirective() {
         return APPLY_KOTLIN;
-    }
-
-    @Override
-    protected boolean addElementsToFile(@NotNull GroovyFile groovyFile, boolean isTopLevelProjectFile, @NotNull String version) {
-        if (!isTopLevelProjectFile) {
-            boolean wasModified = Companion.addElementsToProjectFile(groovyFile, version);
-            wasModified |= addElementsToModuleFile(groovyFile, version);
-            return wasModified;
-        }
-        return false;
     }
 
     KotlinGradleModuleConfigurator() {

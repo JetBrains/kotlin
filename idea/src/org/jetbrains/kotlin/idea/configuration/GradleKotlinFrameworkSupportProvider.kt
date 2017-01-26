@@ -92,7 +92,9 @@ class GradleKotlinJavaFrameworkSupportProvider : GradleKotlinFrameworkSupportPro
 }
 
 class GradleKotlinJSFrameworkSupportProvider : GradleKotlinFrameworkSupportProvider("KOTLIN_JS", "Kotlin (JavaScript)") {
-    override fun getPluginDefinition() = "apply plugin: 'kotlin2js'"
+    override fun getPluginDefinition(): String {
+        return KotlinJsGradleModuleConfigurator.APPLY_KOTLIN_JS
+    }
 
     override fun getRuntimeLibrary(rootModel: ModifiableRootModel) =
             KotlinWithGradleConfigurator.getDependencySnippet(MAVEN_JS_STDLIB_ID)
