@@ -36,7 +36,7 @@ fun numeric(): List<GenericFunction> {
                 sum += element
                 count += 1
             }
-            return if (count == 0) 0.0 else sum / count
+            return if (count == 0) Double.NaN else sum / count
             """
         }
     }

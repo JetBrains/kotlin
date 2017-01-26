@@ -1334,7 +1334,7 @@ public fun Sequence<Byte>.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**
@@ -1348,7 +1348,7 @@ public fun Sequence<Short>.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**
@@ -1362,7 +1362,7 @@ public fun Sequence<Int>.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**
@@ -1376,7 +1376,7 @@ public fun Sequence<Long>.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**
@@ -1390,7 +1390,7 @@ public fun Sequence<Float>.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**
@@ -1404,7 +1404,7 @@ public fun Sequence<Double>.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**

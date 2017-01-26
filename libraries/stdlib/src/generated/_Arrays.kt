@@ -12678,7 +12678,7 @@ public fun Array<out Byte>.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**
@@ -12692,7 +12692,7 @@ public fun Array<out Short>.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**
@@ -12706,7 +12706,7 @@ public fun Array<out Int>.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**
@@ -12720,7 +12720,7 @@ public fun Array<out Long>.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**
@@ -12734,7 +12734,7 @@ public fun Array<out Float>.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**
@@ -12748,7 +12748,7 @@ public fun Array<out Double>.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**
@@ -12761,7 +12761,7 @@ public fun ByteArray.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**
@@ -12774,7 +12774,7 @@ public fun ShortArray.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**
@@ -12787,7 +12787,7 @@ public fun IntArray.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**
@@ -12800,7 +12800,7 @@ public fun LongArray.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**
@@ -12813,7 +12813,7 @@ public fun FloatArray.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**
@@ -12826,7 +12826,7 @@ public fun DoubleArray.average(): Double {
         sum += element
         count += 1
     }
-    return if (count == 0) 0.0 else sum / count
+    return if (count == 0) Double.NaN else sum / count
 }
 
 /**

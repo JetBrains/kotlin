@@ -420,7 +420,7 @@ class ArraysTest {
     }
 
     @Test fun average() {
-        expect(0.0) { arrayOf<Int>().average() }
+        assertTrue() { arrayOf<Int>().average().isNaN() }
         expect(3.8) { arrayOf(1, 2, 5, 8, 3).average() }
         expect(2.1) { arrayOf(1.6, 2.6, 3.6, 0.6).average() }
         expect(100.0) { arrayOf<Byte>(100, 100, 100, 100, 100, 100).average() }
