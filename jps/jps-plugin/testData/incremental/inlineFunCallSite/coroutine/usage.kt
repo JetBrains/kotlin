@@ -1,6 +1,6 @@
 package usage
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 fun async(x: suspend Controller.() -> Unit) {
     x.startCoroutine(Controller(), object : Continuation<Unit> {
