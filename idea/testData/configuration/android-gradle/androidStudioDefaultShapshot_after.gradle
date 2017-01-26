@@ -29,14 +29,11 @@ android {
         minSdkVersion 7
         targetSdkVersion 16
     }
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-    }
 }
 
 dependencies {
     compile 'com.android.support:support-v4:13.0.0'
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
 
 // VERSION: $VERSION$

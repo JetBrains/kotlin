@@ -21,15 +21,12 @@ repositories {
 dependencies {
     compile 'com.example.android.multiproject:util:1.0'
     releaseCompile 'com.google.guava:guava:11.0.2'
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
 
 android {
     compileSdkVersion 15
     buildToolsVersion "17.0"
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-    }
 }
 
 group = 'com.example.android.multiproject'

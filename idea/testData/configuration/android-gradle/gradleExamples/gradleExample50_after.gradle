@@ -21,12 +21,11 @@ android {
                 srcDirs 'src/main/res1', 'src/main/res2'
             }
         }
-        main.java.srcDirs += 'src/main/kotlin'
     }
 }
 repositories {
     mavenCentral()
 }
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }

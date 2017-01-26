@@ -22,14 +22,11 @@ android {
     buildTypes.debug {
         zipAlign true
     }
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-    }
 }
 
 android.applicationVariants.each { variant ->
     variant.outputFile = file("$project.buildDir/${variant.name}.apk")
 }
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
