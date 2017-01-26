@@ -6109,12 +6109,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Migration extends AbstractQuickFixTest {
-        @TestMetadata("addOverrideToEqualsHashCodeToString.kt")
-        public void testAddOverrideToEqualsHashCodeToString() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/addOverrideToEqualsHashCodeToString.kt");
-            doTest(fileName);
-        }
-
         public void testAllFilesPresentInMigration() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }

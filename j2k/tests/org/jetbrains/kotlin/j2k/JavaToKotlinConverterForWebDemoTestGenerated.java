@@ -4117,8 +4117,7 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
 
         @TestMetadata("RedunduntTypeCastAndProhibitedInline.java")
         public void testRedunduntTypeCastAndProhibitedInline() throws Exception {
-            String fileName = KotlinTestUtils
-                    .navigationMetadata("j2k/testData/fileOrElement/postProcessing/RedunduntTypeCastAndProhibitedInline.java");
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/postProcessing/RedunduntTypeCastAndProhibitedInline.java");
             doTest(fileName);
         }
 
