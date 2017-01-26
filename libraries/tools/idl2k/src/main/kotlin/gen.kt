@@ -16,6 +16,8 @@
 
 package org.jetbrains.idl2k
 
+import org.jetbrains.idl2k.util.mapEnumConstant
+
 private fun Operation.getterOrSetter() = this.attributes.map { it.call }.toSet().let { attributes ->
     when {
         "getter" in attributes -> NativeGetterOrSetter.GETTER
@@ -89,7 +91,7 @@ fun generateAttribute(putNoImpl: Boolean, repository: Repository, attribute: Att
                 type = mapType(repository, attribute.type).let { if (nullableAttributes) it.toNullable() else it },
                 initializer =
                     if (putNoImpl && !attribute.static) {
-                        mapLiteral(attribute.defaultValue, mapType(repository, attribute.type))
+                        mapLiteral(attribute.defaultValue, mapType(repository, attribute.type), repository.enums)
                     }
                     else if (attribute.defaultValue != null) {
                         "definedExternally"
@@ -228,15 +230,21 @@ fun generateUnions(ifaces: List<GenerateTraitOrClass>, typedefs: Iterable<Typede
     )
 }
 
-private fun mapLiteral(literal: String?, expectedType: Type = DynamicType) = when (literal) {
-    "[]" -> when {
-        expectedType == DynamicType -> "arrayOf<dynamic>()"
-        expectedType is AnyType -> "arrayOf<dynamic>()"
-        expectedType is UnionType -> "arrayOf<dynamic>()"
-        else -> "arrayOf()"
+private fun mapLiteral(literal: String?, expectedType: Type = DynamicType, enums: Map<String, EnumDefinition>) =
+    if (literal != null && expectedType is SimpleType && expectedType.type in enums.keys) {
+        expectedType.type + "." + mapEnumConstant(literal.removeSurrounding("\"", "\""))
     }
-    else -> literal
-}
+    else {
+        when (literal) {
+            "[]" -> when {
+                expectedType == DynamicType -> "arrayOf<dynamic>()"
+                expectedType is AnyType -> "arrayOf<dynamic>()"
+                expectedType is UnionType -> "arrayOf<dynamic>()"
+                else -> "arrayOf()"
+            }
+            else -> literal
+        }
+    }
 
 fun implementInterfaces(declarations: List<GenerateTraitOrClass>) {
     val unimplementedMemberMap = getUnimplementedMembers(declarations)

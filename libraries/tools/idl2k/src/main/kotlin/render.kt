@@ -16,6 +16,7 @@
 
 package org.jetbrains.idl2k
 
+import org.jetbrains.idl2k.util.mapEnumConstant
 import java.math.BigInteger
 
 private fun <O : Appendable> O.indent(commented: Boolean = false, level: Int) {
@@ -142,7 +143,9 @@ private fun GenerateFunction.isCommented(parent: String) =
 private fun GenerateAttribute.isRequiredFunctionArgument(owner: String, functionName: String) = "$owner.$functionName.$name" in requiredArguments
 private fun GenerateFunction.fixRequiredArguments(parent: String) = copy(arguments = arguments.map { arg -> arg.copy(initializer = if (arg.isRequiredFunctionArgument(parent, name)) null else arg.initializer) })
 
-fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUnions: Map<String, List<String>>, iface: GenerateTraitOrClass, markerAnnotation: Boolean = false) {
+fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, enums: List<EnumDefinition>, typeNamesToUnions: Map<String, List<String>>, iface: GenerateTraitOrClass, markerAnnotation: Boolean = false) {
+    val allTypesAndEnums = allTypes.keys + enums.map { it.name }
+
     append("public external ")
     if (markerAnnotation) {
         append("@marker ")
@@ -159,7 +162,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     append(iface.name)
     val primary = iface.primaryConstructor
     if (primary != null && (primary.constructor.arguments.isNotEmpty() || iface.secondaryConstructors.isNotEmpty())) {
-        renderArgumentsDeclaration(primary.constructor.fixRequiredArguments(iface.name).arguments.dynamicIfUnknownType(allTypes.keys), false)
+        renderArgumentsDeclaration(primary.constructor.fixRequiredArguments(iface.name).arguments.dynamicIfUnknownType(allTypesAndEnums), false)
     }
 
     val superTypesExclude = inheritanceExclude[iface.name] ?: emptySet()
@@ -176,7 +179,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     iface.secondaryConstructors.forEach { secondary ->
         indent(false, 1)
         append("constructor")
-        renderArgumentsDeclaration(secondary.constructor.fixRequiredArguments(iface.name).arguments.dynamicIfUnknownType(allTypes.keys), false)
+        renderArgumentsDeclaration(secondary.constructor.fixRequiredArguments(iface.name).arguments.dynamicIfUnknownType(allTypesAndEnums), false)
 
         appendln()
     }
@@ -188,7 +191,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
 
     iface.memberAttributes
         .filter { it !in superAttributes && !it.static && (it.isVar || (it.isVal && superAttributesByName[it.name]?.hasNoVars() ?: true)) }
-        .map { it.dynamicIfUnknownType(allTypes.keys) }
+        .map { it.dynamicIfUnknownType(allTypesAndEnums) }
         .groupBy { it.name }
         .mapValues { it.value.filter { "${iface.name}.${it.name}" !in commentOutDeclarations && "${iface.name}.${it.name}: ${it.type.render()}" !in commentOutDeclarations  } }
         .filterValues { it.isNotEmpty() }
@@ -217,7 +220,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
             }
     }
     val memberFunctions = iface.memberFunctions.filter { (it !in superFunctions || it.override) && !it.static }
-            .map { it.dynamicIfUnknownType(allTypes.keys) }.groupBy { it.signature }.reduceValues(::betterFunction).values
+            .map { it.dynamicIfUnknownType(allTypesAndEnums) }.groupBy { it.signature }.reduceValues(::betterFunction).values
 
     fun doRenderFunction(function: GenerateFunction, level: Int = 1) {
         renderFunctionDeclaration(
@@ -255,7 +258,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     appendln()
 
     if (iface.generateBuilderFunction) {
-        renderBuilderFunction(iface, allSuperTypes, allTypes.keys)
+        renderBuilderFunction(iface, allSuperTypes, allTypesAndEnums)
     }
 }
 
@@ -336,21 +339,40 @@ private fun merge(a: GenerateAttribute, b: GenerateAttribute): GenerateAttribute
 
 fun <K, V> List<Pair<K, V>>.toMultiMap(): Map<K, List<V>> = groupBy { it.first }.mapValues { it.value.map { it.second } }
 
-fun Appendable.render(namespace: String, ifaces: List<GenerateTraitOrClass>, unions : GenerateUnionTypes) {
+fun Appendable.render(enumDefinition: EnumDefinition) {
+    appendln("/* please, don't implement this interface! */")
+    appendln("public external interface ${enumDefinition.name} {")
+    indent(level = 1)
+    appendln("companion object")
+    appendln("}")
+
+    for (entry in enumDefinition.entries) {
+        val entryName = mapEnumConstant(entry)
+        appendln("public inline val ${enumDefinition.name}.Companion.$entryName: ${enumDefinition.name} " +
+                "get() = \"$entry\".asDynamic().unsafeCast<${enumDefinition.name}>()")
+    }
+
+    appendln()
+}
+
+fun Appendable.render(namespace: String, ifaces: List<GenerateTraitOrClass>, unions: GenerateUnionTypes, enums: List<EnumDefinition>) {
     val declaredTypes = ifaces.associateBy { it.name }
 
     val allTypes = declaredTypes + unions.anonymousUnionsMap + unions.typedefsMarkersMap
     declaredTypes.values.filter { it.namespace == namespace }.forEach {
-        render(allTypes, unions.typeNamesToUnionsMap, it)
+        render(allTypes, enums, unions.typeNamesToUnionsMap, it)
     }
 
     unions.anonymousUnionsMap.values.filter { it.namespace == "" || it.namespace == namespace }.forEach {
-        render(allTypes, emptyMap(), it, markerAnnotation = true)
+        render(allTypes, enums, emptyMap(), it, markerAnnotation = true)
     }
 
     unions.typedefsMarkersMap.values.filter { it.namespace == "" || it.namespace == namespace }.forEach {
-        render(allTypes, emptyMap(), it, markerAnnotation = true)
+        render(allTypes, enums, emptyMap(), it, markerAnnotation = true)
     }
+
+    enums.filter { it.namespace == namespace }
+            .forEach { render(it) }
 }
 
 enum class MemberModality {

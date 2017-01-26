@@ -40,7 +40,7 @@ fun main(args: Array<String>) {
         }
     }
     val unions = generateUnions(definitions, repository.typeDefs.values)
-    val allPackages = definitions.map { it.namespace }.distinct().sorted()
+    val allPackages = (definitions.asSequence().map { it.namespace } + repository.enums.values.map { it.namespace }).distinct().sorted()
     implementInterfaces(definitions)
 
     outDir.deleteRecursively()
@@ -66,7 +66,7 @@ fun main(args: Array<String>) {
             }
             w.appendln()
 
-            w.render(pkg, definitions, unions)
+            w.render(pkg, definitions, unions, repository.enums.values.toList())
         }
     }
 }

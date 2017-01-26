@@ -20,13 +20,12 @@ import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.ParseTree
-import org.antlr.v4.runtime.tree.RuleNode
 import org.antlr.v4.runtime.tree.TerminalNode
 import org.antlr.webidl.WebIDLBaseVisitor
 import org.antlr.webidl.WebIDLLexer
 import org.antlr.webidl.WebIDLParser
 import org.antlr.webidl.WebIDLParser.*
-import java.util.ArrayList
+import java.util.*
 
 data class ExtendedAttribute(val name: String?, val call: String, val arguments: List<Attribute>)
 data class Operation(val name: String, val returnType: Type, val parameters: List<Attribute>, val attributes: List<ExtendedAttribute>, val static: Boolean)
@@ -57,7 +56,7 @@ data class InterfaceDefinition(
 ) : Definition
 
 data class ExtensionInterfaceDefinition(val namespace: String, val name: String, val implements: String) : Definition
-data class EnumDefinition(val namespace: String, val name: String) : Definition
+data class EnumDefinition(val namespace: String, val name: String, val entries: List<String>) : Definition
 
 class ExtendedAttributeArgumentsParser(private val namespace: String) : WebIDLBaseVisitor<List<Attribute>>() {
     private val arguments = ArrayList<Attribute>()
@@ -337,13 +336,15 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val nam
     private val constants = ArrayList<Constant>()
     private var partial = false
     private var callback = false
+    private val enumEntries = mutableListOf<String>()
+    private var enumEntryExpected = false
 
     override fun defaultResult(): Definition = when (kind) {
         DefinitionKind.INTERFACE -> InterfaceDefinition(name, namespace, extendedAttributes, operations, attributes, inherited, constants, false, partial, callback)
         DefinitionKind.DICTIONARY -> InterfaceDefinition(name, namespace, extendedAttributes, operations, attributes, inherited, constants, /* dictionary = */ true, partial, callback)
         DefinitionKind.EXTENSION_INTERFACE -> ExtensionInterfaceDefinition(namespace, name, implements ?: "")
         DefinitionKind.TYPEDEF -> TypedefDefinition(typedefType ?: AnyType(true), namespace, name)
-        DefinitionKind.ENUM -> EnumDefinition(namespace, name)
+        DefinitionKind.ENUM -> EnumDefinition(namespace, name, enumEntries)
     }
 
     override fun visitCallbackRestOrInterface(ctx: WebIDLParser.CallbackRestOrInterfaceContext): Definition {
@@ -408,10 +409,21 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val nam
     }
 
     override fun visitEnum_(ctx: Enum_Context): Definition {
+        enumEntryExpected = true
         kind = DefinitionKind.ENUM
         name = getName(ctx)
 
+        super.visitEnum_(ctx)
+
+        enumEntryExpected = false
         return defaultResult()
+    }
+
+    override fun visitTerminal(node: TerminalNode): Definition {
+        if (enumEntryExpected && node.symbol.type == WebIDLParser.STRING_WEBIDL) {
+            enumEntries += node.symbol.text.removeSurrounding("\"", "\"")
+        }
+        return super.visitTerminal(node)
     }
 
     override fun visitDictionary(ctx: DictionaryContext): Definition {

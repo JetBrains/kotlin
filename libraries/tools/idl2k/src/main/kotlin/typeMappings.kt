@@ -78,7 +78,6 @@ internal fun mapType(repository: Repository, type: Type): Type = when (type) {
             typeName in typeMapper -> typeMapper[typeName]!!.withNullability(type.nullable)
             typeName in repository.interfaces -> type
             typeName in repository.typeDefs -> mapTypedef(repository, type)
-            typeName in repository.enums -> SimpleType("String", type.nullable)
 
             else -> type
         }
