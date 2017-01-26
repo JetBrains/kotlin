@@ -1,9 +1,9 @@
 // FILE: castToNativeClassChecked.kt
-@native abstract class S() {
+external abstract class S() {
     abstract fun foo(): String
 }
 
-@native class A(x: String)  {
+external class A(x: String)  {
     fun foo(): String = definedExternally
 }
 

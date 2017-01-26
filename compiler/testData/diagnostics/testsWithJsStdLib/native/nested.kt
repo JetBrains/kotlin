@@ -1,4 +1,3 @@
-// !DIAGNOSTICS: -DEPRECATION
 object O
 
 class TopLevel {
@@ -9,8 +8,6 @@ class TopLevel {
     fun foo() = 23
 
     <!NESTED_EXTERNAL_DECLARATION!>external fun bar(): Int<!>
-
-    <!NESTED_EXTERNAL_DECLARATION!>@native fun baz(): Int<!>
 
     val x = "a"
 

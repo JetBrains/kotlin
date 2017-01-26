@@ -1,6 +1,6 @@
 package test
 
-@native fun foo(ignore: dynamic): String
+external fun foo(ignore: dynamic): String
 
 @JsName("foo")
 fun foo() = "K"

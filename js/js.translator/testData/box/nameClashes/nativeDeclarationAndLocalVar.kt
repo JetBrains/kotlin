@@ -1,8 +1,8 @@
 package test
 
-@native fun foo(): dynamic
+external fun foo(): dynamic
 
-@native fun bar(): dynamic
+external fun bar(): dynamic
 
 fun box(): String {
     val foo = "local foo;"

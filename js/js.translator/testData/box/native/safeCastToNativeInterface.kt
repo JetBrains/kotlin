@@ -1,4 +1,4 @@
-@native interface I {
+external interface I {
     fun foo(): String
 }
 fun createObject(): Any? = null

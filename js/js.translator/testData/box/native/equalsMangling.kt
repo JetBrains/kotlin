@@ -1,8 +1,8 @@
 data class A(val number: Int)
 
-@native fun foo(first: A, second: A): Boolean
+external fun foo(first: A, second: A): Boolean
 
-@native class B(value: Int)
+external class B(value: Int)
 
 fun box(): String {
     val a = A(23)

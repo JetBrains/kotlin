@@ -1,9 +1,9 @@
 // FILE: castToNativeInterface.kt
-@native interface I {
+external interface I {
     fun foo(): String
 }
 
-@native class A(x: String) : I {
+external class A(x: String) : I {
     override fun foo(): String = definedExternally
 }
 

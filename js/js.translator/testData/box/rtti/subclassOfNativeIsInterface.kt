@@ -1,4 +1,4 @@
-@native open class A
+external open class A
 
 interface I
 

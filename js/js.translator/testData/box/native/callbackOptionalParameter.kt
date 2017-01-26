@@ -14,7 +14,7 @@ class B : A() {
     }
 }
 
-@native fun bar(a: A)
+external fun bar(a: A)
 
 fun box(): String {
     bar(A())

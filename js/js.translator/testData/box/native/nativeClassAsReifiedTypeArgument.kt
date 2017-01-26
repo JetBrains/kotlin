@@ -6,7 +6,7 @@ inline fun <reified T : Any> log(x: T) {
     global += T::class.js.name + ": " + x
 }
 
-@native class C {
+external class C {
     override fun toString() = definedExternally
 }
 

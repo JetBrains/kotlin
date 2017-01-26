@@ -1,5 +1,5 @@
 // FILE: castToTypeParamBoundedByNativeInterface.kt
-@native interface I {
+external interface I {
     fun foo(): String
 }
 
@@ -7,9 +7,9 @@ interface J {
     fun bar(): String
 }
 
-@native abstract class B() : I
+external abstract class B() : I
 
-@native class A(x: String) : B() {
+external class A(x: String) : B {
     override fun foo(): String = definedExternally
 }
 
