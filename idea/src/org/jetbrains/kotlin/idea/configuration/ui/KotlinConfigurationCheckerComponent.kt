@@ -24,9 +24,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
 import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.versions.*
-import org.jetbrains.kotlin.idea.versions.VersionedLibrary
+import java.util.concurrent.atomic.AtomicInteger
 
 class KotlinConfigurationCheckerComponent protected constructor(project: Project) : AbstractProjectComponent(project) {
+    private var syncCount = AtomicInteger()
 
     init {
         NotificationsConfiguration.getNotificationsConfiguration().register(CONFIGURE_NOTIFICATION_GROUP_ID, NotificationDisplayType.STICKY_BALLOON, true)
@@ -41,13 +42,35 @@ class KotlinConfigurationCheckerComponent protected constructor(project: Project
                 if (!libraries.isEmpty()) {
                     notifyOutdatedKotlinRuntime(myProject, libraries)
                 }
-                showConfigureKotlinNotificationIfNeeded(myProject,
-                                                        collectModulesWithOutdatedRuntime(libraries))
+                if (syncCount.get() == 0) {
+                    showConfigureKotlinNotificationIfNeeded(myProject,
+                                                            collectModulesWithOutdatedRuntime(libraries))
+                }
+            }
+        }
+    }
+
+    val isSyncing: Boolean get() = syncCount.get() > 0
+
+    fun syncStarted() {
+        syncCount.incrementAndGet()
+    }
+
+    fun syncDone() {
+        if (syncCount.decrementAndGet() == 0) {
+            DumbService.getInstance(myProject).smartInvokeLater {
+                if (!isSyncing) {
+                    showConfigureKotlinNotificationIfNeeded(myProject,
+                                                            collectModulesWithOutdatedRuntime(findOutdatedKotlinLibraries(myProject)))
+                }
             }
         }
     }
 
     companion object {
         val CONFIGURE_NOTIFICATION_GROUP_ID = "Configure Kotlin in Project"
+
+        fun getInstance(project: Project): KotlinConfigurationCheckerComponent
+                = project.getComponent(KotlinConfigurationCheckerComponent::class.java)
     }
 }
