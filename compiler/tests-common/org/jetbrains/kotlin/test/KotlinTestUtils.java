@@ -42,6 +42,7 @@ import junit.framework.TestCase;
 import kotlin.collections.CollectionsKt;
 import kotlin.collections.SetsKt;
 import kotlin.jvm.functions.Function1;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -111,10 +112,12 @@ public class KotlinTestUtils {
      *
      * Several files may follow one module
      */
-    public static final Pattern FILE_OR_MODULE_PATTERN = Pattern.compile(
-            "(?://\\s*MODULE:\\s*([\\w\\d_\\-]+)(\\([\\w\\d_\\-]+(?:,\\s*[\\w\\d_\\-]+)*\\))?\\s*)?" +
+    private static final String MODULE_DELIMITER = ",\\s*";
+
+    private static final Pattern FILE_OR_MODULE_PATTERN = Pattern.compile(
+            "(?://\\s*MODULE:\\s*([^()\\n]+)(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*)?" +
             "//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
-    public static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*!([\\w_]+)(:\\s*(.*)$)?", Pattern.MULTILINE);
+    private static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*!([\\w_]+)(:\\s*(.*)$)?", Pattern.MULTILINE);
 
     public static final BindingTrace DUMMY_TRACE = new BindingTrace() {
         @NotNull
@@ -680,13 +683,7 @@ public class KotlinTestUtils {
 
     private static List<String> parseDependencies(@Nullable String dependencies) {
         if (dependencies == null) return Collections.emptyList();
-
-        Matcher matcher = Pattern.compile("[\\w\\d_\\-]+").matcher(dependencies);
-        List<String> result = new ArrayList<String>();
-        while (matcher.find()) {
-            result.add(matcher.group());
-        }
-        return result;
+        return StringsKt.split(dependencies, Pattern.compile(MODULE_DELIMITER), 0);
     }
 
     @NotNull
