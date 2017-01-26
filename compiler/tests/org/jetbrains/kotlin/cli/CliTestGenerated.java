@@ -407,12 +407,6 @@ public class CliTestGenerated extends AbstractCliTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/js"), Pattern.compile("^(.+)\\.args$"), TargetBackend.ANY, false);
         }
 
-        @TestMetadata("createKjsm.args")
-        public void testCreateKjsm() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/createKjsm.args");
-            doJsTest(fileName);
-        }
-
         @TestMetadata("createMetadata.args")
         public void testCreateMetadata() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/createMetadata.args");

@@ -5,12 +5,6 @@ package org.jetbrains.kotlin.gradle.dsl
 interface KotlinJsOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions {
 
     /**
-     * Generate kjsm-files (for creating libraries)
-     * Default value: true
-     */
-     var kjsm: kotlin.Boolean
-
-    /**
      * Whether a main function should be called
      * Possible values: "call", "noCall"
      * Default value: "call"
@@ -18,7 +12,7 @@ interface KotlinJsOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
      var main: kotlin.String
 
     /**
-     * Generate metadata
+     * Generate .meta.js and .kjsm files with metadata. Use to create a library
      * Default value: true
      */
      var metaInfo: kotlin.Boolean

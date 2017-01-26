@@ -16,18 +16,18 @@
 
 package org.jetbrains.kotlin.js.facade
 
-import org.jetbrains.kotlin.js.backend.ast.JsProgram
-import org.jetbrains.kotlin.js.util.TextOutput
-import org.jetbrains.kotlin.js.util.TextOutputImpl
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.kotlin.backend.common.output.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.sourceMap.JsSourceGenerationVisitor
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilder
+import org.jetbrains.kotlin.js.util.TextOutput
+import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
@@ -86,9 +86,7 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
                 val sourceFilesForMetaFile = ArrayList(sourceFiles)
                 val jsMetaFile = SimpleOutputFile(sourceFilesForMetaFile, metaFileName, metaFileContent)
                 outputFiles.add(jsMetaFile)
-            }
 
-            if (config.configuration.getBoolean(JSConfigurationKeys.KJSM)) {
                 KotlinJavascriptSerializationUtil.toContentMap(bindingContext, moduleDescriptor).forEach {
                     // TODO Add correct source files
                     outputFiles.add(SimpleOutputBinaryFile(emptyList(), config.moduleId + VfsUtilCore.VFS_SEPARATOR_CHAR + it.key, it.value))

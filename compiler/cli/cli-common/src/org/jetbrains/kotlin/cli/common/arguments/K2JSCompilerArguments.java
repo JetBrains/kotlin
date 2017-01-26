@@ -44,12 +44,8 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
     public boolean sourceMap;
 
     @GradleOption(DefaultValues.BooleanTrueDefault.class)
-    @Argument(value = "meta-info", description = "Generate metadata")
+    @Argument(value = "meta-info", description = "Generate .meta.js and .kjsm files with metadata. Use to create a library")
     public boolean metaInfo;
-
-    @GradleOption(DefaultValues.BooleanTrueDefault.class)
-    @Argument(value = "kjsm", description = "Generate kjsm-files (for creating libraries)")
-    public boolean kjsm;
 
     @GradleOption(DefaultValues.JsEcmaVersions.class)
     @Argument(value = "target", description = "Generate JS files for specific ECMA version")

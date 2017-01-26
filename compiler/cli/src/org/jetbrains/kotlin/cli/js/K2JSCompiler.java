@@ -275,9 +275,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         if (arguments.metaInfo) {
             configuration.put(JSConfigurationKeys.META_INFO, true);
         }
-        if (arguments.kjsm) {
-            configuration.put(JSConfigurationKeys.KJSM, true);
-        }
 
         List<String> libraryFiles = new SmartList<String>();
         if (!arguments.noStdlib) {
