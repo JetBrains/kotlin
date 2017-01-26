@@ -217,7 +217,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             var zeroOccurrences = true
 
             for (name in listOf(declaration.name) + declaration.getAccessorNames() + declaration.getClassNameForCompanionObject().singletonOrEmptyList()) {
-                assert(name != null) { "Name is null for " + declaration.getElementTextWithContext() }
+                if (name == null) continue
                 when (psiSearchHelper.isCheapEnoughToSearch(name!!, useScope, null, null)) {
                     ZERO_OCCURRENCES -> {} // go on, check other names
                     FEW_OCCURRENCES -> zeroOccurrences = false
