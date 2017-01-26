@@ -90,6 +90,12 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         doTest(fileName);
     }
 
+    @TestMetadata("jvmOverloadsAndParametersAnnotations.kt")
+    public void testJvmOverloadsAndParametersAnnotations() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/jvmOverloadsAndParametersAnnotations.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("noCollectionStubMethodsInInterface.kt")
     public void testNoCollectionStubMethodsInInterface() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeListing/noCollectionStubMethodsInInterface.kt");

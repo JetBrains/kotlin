@@ -331,8 +331,21 @@ public class FunctionCodegen {
             @NotNull InnerClassConsumer innerClassConsumer,
             @NotNull GenerationState state
     ) {
+        generateParameterAnnotations(
+                functionDescriptor, mv, jvmSignature, functionDescriptor.getValueParameters(), innerClassConsumer, state
+        );
+    }
+
+    public static void generateParameterAnnotations(
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull MethodVisitor mv,
+            @NotNull JvmMethodSignature jvmSignature,
+            @NotNull List<ValueParameterDescriptor> valueParameters,
+            @NotNull InnerClassConsumer innerClassConsumer,
+            @NotNull GenerationState state
+    ) {
         KotlinTypeMapper typeMapper = state.getTypeMapper();
-        Iterator<ValueParameterDescriptor> iterator = functionDescriptor.getValueParameters().iterator();
+        Iterator<ValueParameterDescriptor> iterator = valueParameters.iterator();
         List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getValueParameters();
 
         for (int i = 0; i < kotlinParameterTypes.size(); i++) {

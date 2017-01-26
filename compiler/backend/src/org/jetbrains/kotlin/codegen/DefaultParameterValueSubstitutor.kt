@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -146,10 +147,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
             mv.visitAnnotation(ANNOTATION_TYPE_DESCRIPTOR_FOR_JVMOVERLOADS_GENERATED_METHODS, /* visible = */ false)
         }
 
-        remainingParameters.withIndex().forEach {
-            val annotationCodegen = AnnotationCodegen.forParameter(it.index, mv, memberCodegen, typeMapper)
-            annotationCodegen.genAnnotations(it.value, signature.valueParameters[it.index].asmType)
-        }
+        FunctionCodegen.generateParameterAnnotations(functionDescriptor, mv, signature, remainingParameters, memberCodegen, state)
 
         if (!state.classBuilderMode.generateBodies) {
             FunctionCodegen.generateLocalVariablesForParameters(mv, signature, null, Label(), Label(), remainingParameters, isStatic, typeMapper)
