@@ -154,7 +154,7 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
                 val descriptor = typeMapper.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
 
                 val parentInternalName = when {
-                    isSuspendDescriptor(descriptor, typeMapper.bindingContext) -> {
+                    isFunctionWithSuspendStateMachine(descriptor, typeMapper.bindingContext) -> {
                         CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, element).internalName
                     }
                     elementOfClassName is KtClassOrObject -> getClassNameForClass(elementOfClassName, typeMapper)
@@ -180,7 +180,7 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
         return CachedClassNames(getClassNameForFile(file))
     }
 
-    private fun isSuspendDescriptor(descriptor: DeclarationDescriptor?, bindingContext: BindingContext): Boolean {
+    private fun isFunctionWithSuspendStateMachine(descriptor: DeclarationDescriptor?, bindingContext: BindingContext): Boolean {
         return descriptor is SimpleFunctionDescriptor && descriptor.isSuspend && descriptor.containsNonTailSuspensionCalls(bindingContext)
     }
 
@@ -223,7 +223,7 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
 
         val ownerDescriptor = lexicalScope.ownerDescriptor
 
-        val className = if (isSuspendDescriptor(ownerDescriptor, typeMapper.bindingContext)) {
+        val className = if (isFunctionWithSuspendStateMachine(ownerDescriptor, typeMapper.bindingContext)) {
             originalInternalClassName.replaceAfterLast("$", DO_RESUME_METHOD_NAME)
         }
         else {
