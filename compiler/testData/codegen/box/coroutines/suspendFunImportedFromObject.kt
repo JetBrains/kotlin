@@ -4,7 +4,7 @@
 // FILE: stuff.kt
 package stuff
 
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 object Host {
     suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
@@ -15,8 +15,8 @@ object Host {
 
 
 // FILE: test.kt
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 import stuff.Host.suspendHere
 
 fun builder(c: suspend () -> Unit) {

@@ -15,13 +15,13 @@
  */
 
 @file:JvmVersion
-package kotlin.coroutines.jvm.internal
+package kotlin.coroutines.experimental.jvm.internal
 
 import java.lang.IllegalStateException
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.ContinuationInterceptor
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.intrinsics.SUSPENDED_MARKER
+import kotlin.coroutines.experimental.Continuation
+import kotlin.coroutines.experimental.ContinuationInterceptor
+import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.experimental.intrinsics.SUSPENDED_MARKER
 import kotlin.jvm.internal.Lambda
 
 abstract class CoroutineImpl(

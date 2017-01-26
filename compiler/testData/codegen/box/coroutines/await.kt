@@ -1,8 +1,8 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // FILE: promise.kt
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 class Promise<T>(private val executor: ((T) -> Unit) -> Unit) {
     private var value: Any? = null
@@ -49,8 +49,8 @@ fun processQueue() {
 }
 
 // FILE: await.kt
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 private var log = ""
 
@@ -95,8 +95,8 @@ fun <T> asyncOperation(resultSupplier: () -> T) = Promise<T> { resolve ->
 fun getLog() = log
 
 // FILE: main.kt
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 private fun test() = async<String> {
     val o = await(asyncOperation { "O" })

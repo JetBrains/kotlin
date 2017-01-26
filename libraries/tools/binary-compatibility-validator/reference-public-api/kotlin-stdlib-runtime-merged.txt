@@ -1940,95 +1940,95 @@ public final class kotlin/concurrent/TimersKt {
 	public static final fun timer (Ljava/lang/String;Z)Ljava/util/Timer;
 }
 
-public abstract class kotlin/coroutines/AbstractCoroutineContextElement : kotlin/coroutines/CoroutineContext$Element {
-	public fun <init> (Lkotlin/coroutines/CoroutineContext$Key;)V
+public abstract class kotlin/coroutines/experimental/AbstractCoroutineContextElement : kotlin/coroutines/experimental/CoroutineContext$Element {
+	public fun <init> (Lkotlin/coroutines/experimental/CoroutineContext$Key;)V
 	public fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
-	public fun get (Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext$Element;
-	public fun getKey ()Lkotlin/coroutines/CoroutineContext$Key;
-	public fun minusKey (Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext;
-	public fun plus (Lkotlin/coroutines/CoroutineContext;)Lkotlin/coroutines/CoroutineContext;
+	public fun get (Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext$Element;
+	public fun getKey ()Lkotlin/coroutines/experimental/CoroutineContext$Key;
+	public fun minusKey (Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext;
+	public fun plus (Lkotlin/coroutines/experimental/CoroutineContext;)Lkotlin/coroutines/experimental/CoroutineContext;
 }
 
-public abstract interface class kotlin/coroutines/Continuation {
-	public abstract fun getContext ()Lkotlin/coroutines/CoroutineContext;
+public abstract interface class kotlin/coroutines/experimental/Continuation {
+	public abstract fun getContext ()Lkotlin/coroutines/experimental/CoroutineContext;
 	public abstract fun resume (Ljava/lang/Object;)V
 	public abstract fun resumeWithException (Ljava/lang/Throwable;)V
 }
 
-public abstract interface class kotlin/coroutines/ContinuationInterceptor : kotlin/coroutines/CoroutineContext$Element {
-	public static final field Key Lkotlin/coroutines/ContinuationInterceptor$Key;
-	public abstract fun interceptContinuation (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+public abstract interface class kotlin/coroutines/experimental/ContinuationInterceptor : kotlin/coroutines/experimental/CoroutineContext$Element {
+	public static final field Key Lkotlin/coroutines/experimental/ContinuationInterceptor$Key;
+	public abstract fun interceptContinuation (Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
 }
 
-public final class kotlin/coroutines/ContinuationInterceptor$Key : kotlin/coroutines/CoroutineContext$Key {
+public final class kotlin/coroutines/experimental/ContinuationInterceptor$Key : kotlin/coroutines/experimental/CoroutineContext$Key {
 }
 
-public abstract interface class kotlin/coroutines/CoroutineContext {
+public abstract interface class kotlin/coroutines/experimental/CoroutineContext {
 	public abstract fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
-	public abstract fun get (Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext$Element;
-	public abstract fun minusKey (Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext;
-	public abstract fun plus (Lkotlin/coroutines/CoroutineContext;)Lkotlin/coroutines/CoroutineContext;
+	public abstract fun get (Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext$Element;
+	public abstract fun minusKey (Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext;
+	public abstract fun plus (Lkotlin/coroutines/experimental/CoroutineContext;)Lkotlin/coroutines/experimental/CoroutineContext;
 }
 
-public abstract interface class kotlin/coroutines/CoroutineContext$Element : kotlin/coroutines/CoroutineContext {
-	public abstract fun getKey ()Lkotlin/coroutines/CoroutineContext$Key;
+public abstract interface class kotlin/coroutines/experimental/CoroutineContext$Element : kotlin/coroutines/experimental/CoroutineContext {
+	public abstract fun getKey ()Lkotlin/coroutines/experimental/CoroutineContext$Key;
 }
 
-public abstract interface class kotlin/coroutines/CoroutineContext$Key {
+public abstract interface class kotlin/coroutines/experimental/CoroutineContext$Key {
 }
 
-public final class kotlin/coroutines/CoroutinesKt {
-	public static final fun createCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
-	public static final fun createCoroutine (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
-	public static final fun startCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)V
-	public static final fun startCoroutine (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)V
-	public static final fun suspendCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+public final class kotlin/coroutines/experimental/CoroutinesKt {
+	public static final fun createCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
+	public static final fun createCoroutine (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
+	public static final fun startCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/experimental/Continuation;)V
+	public static final fun startCoroutine (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/experimental/Continuation;)V
+	public static final fun suspendCoroutine (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;
 }
 
-public final class kotlin/coroutines/EmptyCoroutineContext : kotlin/coroutines/CoroutineContext {
-	public static final field INSTANCE Lkotlin/coroutines/EmptyCoroutineContext;
+public final class kotlin/coroutines/experimental/EmptyCoroutineContext : kotlin/coroutines/experimental/CoroutineContext {
+	public static final field INSTANCE Lkotlin/coroutines/experimental/EmptyCoroutineContext;
 	public fun fold (Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
-	public fun get (Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext$Element;
+	public fun get (Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext$Element;
 	public fun hashCode ()I
-	public fun minusKey (Lkotlin/coroutines/CoroutineContext$Key;)Lkotlin/coroutines/CoroutineContext;
-	public fun plus (Lkotlin/coroutines/CoroutineContext;)Lkotlin/coroutines/CoroutineContext;
+	public fun minusKey (Lkotlin/coroutines/experimental/CoroutineContext$Key;)Lkotlin/coroutines/experimental/CoroutineContext;
+	public fun plus (Lkotlin/coroutines/experimental/CoroutineContext;)Lkotlin/coroutines/experimental/CoroutineContext;
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract interface annotation class kotlin/coroutines/RestrictsSuspension : java/lang/annotation/Annotation {
+public abstract interface annotation class kotlin/coroutines/experimental/RestrictsSuspension : java/lang/annotation/Annotation {
 }
 
-public final class kotlin/coroutines/SafeContinuation : kotlin/coroutines/Continuation {
-	public static final field Companion Lkotlin/coroutines/SafeContinuation$Companion;
-	public fun <init> (Lkotlin/coroutines/Continuation;)V
-	public fun getContext ()Lkotlin/coroutines/CoroutineContext;
+public final class kotlin/coroutines/experimental/SafeContinuation : kotlin/coroutines/experimental/Continuation {
+	public static final field Companion Lkotlin/coroutines/experimental/SafeContinuation$Companion;
+	public fun <init> (Lkotlin/coroutines/experimental/Continuation;)V
+	public fun getContext ()Lkotlin/coroutines/experimental/CoroutineContext;
 	public final fun getResult ()Ljava/lang/Object;
 	public fun resume (Ljava/lang/Object;)V
 	public fun resumeWithException (Ljava/lang/Throwable;)V
 }
 
-public final class kotlin/coroutines/SafeContinuation$Companion {
+public final class kotlin/coroutines/experimental/SafeContinuation$Companion {
 }
 
-public final class kotlin/coroutines/intrinsics/IntrinsicsKt {
+public final class kotlin/coroutines/experimental/intrinsics/IntrinsicsKt {
 	public static final fun getSUSPENDED_MARKER ()Ljava/lang/Object;
 }
 
-public abstract class kotlin/coroutines/jvm/internal/CoroutineImpl : kotlin/jvm/internal/Lambda, kotlin/coroutines/Continuation {
-	protected field completion Lkotlin/coroutines/Continuation;
+public abstract class kotlin/coroutines/experimental/jvm/internal/CoroutineImpl : kotlin/jvm/internal/Lambda, kotlin/coroutines/experimental/Continuation {
+	protected field completion Lkotlin/coroutines/experimental/Continuation;
 	protected field label I
-	public fun <init> (ILkotlin/coroutines/Continuation;)V
-	public fun create (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
-	public fun create (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+	public fun <init> (ILkotlin/coroutines/experimental/Continuation;)V
+	public fun create (Ljava/lang/Object;Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
+	public fun create (Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
 	protected abstract fun doResume (Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;
-	public fun getContext ()Lkotlin/coroutines/CoroutineContext;
-	public final fun getFacade ()Lkotlin/coroutines/Continuation;
+	public fun getContext ()Lkotlin/coroutines/experimental/CoroutineContext;
+	public final fun getFacade ()Lkotlin/coroutines/experimental/Continuation;
 	public fun resume (Ljava/lang/Object;)V
 	public fun resumeWithException (Ljava/lang/Throwable;)V
 }
 
-public final class kotlin/coroutines/jvm/internal/CoroutineIntrinsics {
-	public static final fun normalizeContinuation (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+public final class kotlin/coroutines/experimental/jvm/internal/CoroutineIntrinsics {
+	public static final fun normalizeContinuation (Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
 }
 
 public final class kotlin/internal/PlatformImplementationsKt {
@@ -3363,10 +3363,10 @@ public abstract interface class kotlin/sequences/Sequence {
 }
 
 public abstract class kotlin/sequences/SequenceBuilder {
-	public abstract fun yield (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun yieldAll (Ljava/lang/Iterable;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun yieldAll (Ljava/util/Iterator;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public final fun yieldAll (Lkotlin/sequences/Sequence;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun yield (Ljava/lang/Object;Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;
+	public final fun yieldAll (Ljava/lang/Iterable;Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;
+	public abstract fun yieldAll (Ljava/util/Iterator;Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;
+	public final fun yieldAll (Lkotlin/sequences/Sequence;Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;
 }
 
 public final class kotlin/sequences/SequencesKt {

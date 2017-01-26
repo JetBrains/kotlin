@@ -2,8 +2,8 @@
 // FULL_JDK
 
 import java.util.concurrent.CompletableFuture
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 fun foo(): CompletableFuture<String> = CompletableFuture.supplyAsync { "foo" }
 fun bar(v: String): CompletableFuture<String> = CompletableFuture.supplyAsync { "bar with $v" }

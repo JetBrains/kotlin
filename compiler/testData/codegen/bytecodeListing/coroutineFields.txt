@@ -2,7 +2,7 @@
 final class Controller$multipleSuspensions$1 {
     synthetic final field this$0: Controller
     inner class Controller$multipleSuspensions$1
-    method <init>(p0: Controller, p1: kotlin.coroutines.Continuation): void
+    method <init>(p0: Controller, p1: kotlin.coroutines.experimental.Continuation): void
     public final @org.jetbrains.annotations.Nullable method doResume(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Throwable): java.lang.Object
 }
 
@@ -10,7 +10,7 @@ final class Controller$multipleSuspensions$1 {
 final class Controller$nonTailCall$1 {
     synthetic final field this$0: Controller
     inner class Controller$nonTailCall$1
-    method <init>(p0: Controller, p1: kotlin.coroutines.Continuation): void
+    method <init>(p0: Controller, p1: kotlin.coroutines.experimental.Continuation): void
     public final @org.jetbrains.annotations.Nullable method doResume(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Throwable): java.lang.Object
 }
 
@@ -19,10 +19,10 @@ public final class Controller {
     inner class Controller$multipleSuspensions$1
     inner class Controller$nonTailCall$1
     public method <init>(): void
-    public final @org.jetbrains.annotations.Nullable method multipleSuspensions(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method nonTailCall(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method suspendHere(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method tailCall(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method multipleSuspensions(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method nonTailCall(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method suspendHere(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method tailCall(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
@@ -33,11 +33,11 @@ final class CoroutineFieldsKt$box$1 {
     private field L$1: java.lang.Object
     private field p$: Controller
     inner class CoroutineFieldsKt$box$1
-    method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef, p1: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: Controller, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public synthetic method create(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef, p1: kotlin.coroutines.experimental.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: Controller, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): kotlin.coroutines.experimental.Continuation
+    public synthetic method create(p0: java.lang.Object, p1: kotlin.coroutines.experimental.Continuation): kotlin.coroutines.experimental.Continuation
     public final @org.jetbrains.annotations.Nullable method doResume(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Throwable): java.lang.Object
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: Controller, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: Controller, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public synthetic method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
 }
 

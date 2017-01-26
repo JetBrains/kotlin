@@ -1,6 +1,6 @@
 // WITH_RUNTIME
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 class Controller {
     suspend fun suspendHere() = suspendCoroutineOrReturn<String> { x ->
         x.resume("OK")

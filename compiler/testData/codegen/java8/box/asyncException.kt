@@ -2,8 +2,8 @@
 // FULL_JDK
 
 import java.util.concurrent.CompletableFuture
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 fun exception(v: String): CompletableFuture<String> = CompletableFuture.supplyAsync { throw RuntimeException(v) }
 
@@ -46,7 +46,7 @@ fun <T> async(c: suspend () -> T): CompletableFuture<T> {
     val future = CompletableFuture<T>()
     c.startCoroutine(object : Continuation<T> {
         override val context = EmptyCoroutineContext
-        
+
         override fun resume(data: T) {
             future.complete(data)
         }

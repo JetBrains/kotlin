@@ -1,8 +1,8 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.SUSPENDED_MARKER
-import kotlin.coroutines.intrinsics.suspendCoroutineOrReturn
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.SUSPENDED_MARKER
+import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
 
 class OkDelegate {
     operator fun getValue(receiver: Any?, property: Any?): String = "OK"

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kotlin.coroutines
+package kotlin.coroutines.experimental
 
 /**
  * Persistent context for the coroutine. It is an indexed set of [Element] instances.

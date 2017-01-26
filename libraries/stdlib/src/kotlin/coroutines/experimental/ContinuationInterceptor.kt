@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kotlin.coroutines
+package kotlin.coroutines.experimental
 
 /**
  * Marks coroutine context element that intercepts coroutine continuations.

@@ -1,9 +1,9 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // TARGET_BACKEND: JVM
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.SUSPENDED_MARKER
-import kotlin.coroutines.intrinsics.suspendCoroutineOrReturn
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.SUSPENDED_MARKER
+import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
 
 class MyTest {
     suspend fun act(value: String): String = suspendCoroutineOrReturn {

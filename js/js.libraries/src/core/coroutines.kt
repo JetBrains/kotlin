@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package kotlin.coroutines
+package kotlin.coroutines.experimental
 
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 /**
  * Creates coroutine with receiver type [R] and result type [T].

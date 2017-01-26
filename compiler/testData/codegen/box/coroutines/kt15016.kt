@@ -1,9 +1,9 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 
-import kotlin.coroutines.intrinsics.SUSPENDED_MARKER
-import kotlin.coroutines.intrinsics.suspendCoroutineOrReturn
-import kotlin.coroutines.startCoroutine
+import kotlin.coroutines.experimental.intrinsics.SUSPENDED_MARKER
+import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
+import kotlin.coroutines.experimental.startCoroutine
 
 class Bar(val x: Any)
 inline fun Any.map(transform: (Any) -> Any) {

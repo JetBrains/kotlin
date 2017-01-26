@@ -1,7 +1,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 
 suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->

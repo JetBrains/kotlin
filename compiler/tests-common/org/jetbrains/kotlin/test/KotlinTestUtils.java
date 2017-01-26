@@ -650,7 +650,7 @@ public class KotlinTestUtils {
             M supportModule = hasModules ? factory.createModule("support", Collections.<String>emptyList()) : null;
             testFiles.add(factory.createFile(supportModule,
                                              "CoroutineUtil.kt",
-                                             "import kotlin.coroutines.*\n" +
+                                             "import kotlin.coroutines.experimental.*\n" +
                                              "fun <T> handleResultContinuation(x: (T) -> Unit): Continuation<T> = object: Continuation<T> {\n" +
                                              "    override val context = EmptyCoroutineContext\n" +
                                              "    override fun resumeWithException(exception: Throwable) {\n" +

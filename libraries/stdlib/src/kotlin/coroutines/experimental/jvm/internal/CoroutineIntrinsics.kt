@@ -16,9 +16,10 @@
 
 @file:JvmVersion
 @file:JvmName("CoroutineIntrinsics")
-package kotlin.coroutines.jvm.internal
+package kotlin.coroutines.experimental.jvm.internal
 
-import kotlin.coroutines.Continuation
+import kotlin.coroutines.experimental.Continuation
+import kotlin.coroutines.experimental.jvm.internal.CoroutineImpl
 
 fun <T> normalizeContinuation(continuation: Continuation<T>): Continuation<T> =
-        (continuation as? kotlin.coroutines.jvm.internal.CoroutineImpl)?.facade ?: continuation
+        (continuation as? CoroutineImpl)?.facade ?: continuation

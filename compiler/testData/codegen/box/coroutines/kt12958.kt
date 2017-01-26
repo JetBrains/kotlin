@@ -1,8 +1,8 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // WITH_CONTINUATION
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 suspend fun <V> suspendHere(v: V): V = suspendCoroutineOrReturn { x ->
     x.resume(v)

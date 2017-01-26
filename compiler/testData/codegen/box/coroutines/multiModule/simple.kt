@@ -4,8 +4,8 @@
 // FILE: controller.kt
 package lib
 
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 class Controller {
     suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
@@ -17,8 +17,8 @@ class Controller {
 // MODULE: main(controller, support)
 // FILE: main.kt
 import lib.*
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 fun builder(c: suspend Controller.() -> Unit) {
     c.startCoroutine(Controller(), EmptyContinuation)

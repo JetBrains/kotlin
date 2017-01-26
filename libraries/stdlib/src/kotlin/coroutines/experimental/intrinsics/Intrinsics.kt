@@ -16,9 +16,9 @@
 
 @file:kotlin.jvm.JvmName("IntrinsicsKt")
 
-package kotlin.coroutines.intrinsics
+package kotlin.coroutines.experimental.intrinsics
 
-import kotlin.coroutines.Continuation
+import kotlin.coroutines.experimental.Continuation
 
 /**
  * Obtains the current continuation instance inside suspend functions and either suspend

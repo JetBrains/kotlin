@@ -1,8 +1,8 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // IGNORE_BACKEND: JS
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 import kotlin.reflect.KProperty
 
 suspend fun suspendThere(v: String): String = suspendCoroutineOrReturn { x ->

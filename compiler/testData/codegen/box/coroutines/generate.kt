@@ -1,8 +1,8 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // FULL_JDK
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 fun box(): String {
     val x = gen().joinToString()

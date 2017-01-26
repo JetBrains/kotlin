@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package kotlin.coroutines
+package kotlin.coroutines.experimental
 
-import kotlin.coroutines.CoroutineContext.*
+import kotlin.coroutines.experimental.CoroutineContext.*
 
 /**
  * Base class for [CoroutineContext.Element] implementations.

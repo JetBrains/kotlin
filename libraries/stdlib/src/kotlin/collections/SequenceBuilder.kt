@@ -2,8 +2,8 @@
 @file:kotlin.jvm.JvmName("SequencesKt")
 package kotlin.sequences
 
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 /**
  *  Builds a [Sequence] lazily yielding values one by one.

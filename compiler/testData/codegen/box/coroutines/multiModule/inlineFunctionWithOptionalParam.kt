@@ -8,8 +8,8 @@ inline fun foo(x: String = "OK"): String {
 // FILE: main.kt
 // WITH_RUNTIME
 // WITH_COROUTINES
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 var result = ""
 

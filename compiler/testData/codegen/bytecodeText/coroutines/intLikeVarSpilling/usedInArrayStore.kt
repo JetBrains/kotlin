@@ -2,8 +2,8 @@
 // WITH_COROUTINES
 // TREAT_AS_ONE_FILE
 // TARGET_BACKEND: JVM
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 class Controller {
     suspend fun suspendHere(): Unit = suspendCoroutineOrReturn { x ->

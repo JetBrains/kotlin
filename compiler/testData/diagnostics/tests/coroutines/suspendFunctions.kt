@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
-import kotlin.coroutines.*
+import kotlin.coroutines.experimental.*
 
 class Controller {
     suspend fun noParams() {

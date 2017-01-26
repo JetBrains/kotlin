@@ -1,8 +1,8 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // TREAT_AS_ONE_FILE
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
     x.resume("OK")
 }

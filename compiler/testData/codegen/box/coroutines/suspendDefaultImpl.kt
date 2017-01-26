@@ -1,7 +1,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-import kotlin.coroutines.startCoroutine
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.experimental.startCoroutine
+import kotlin.coroutines.experimental.intrinsics.*
 
 interface TestInterface {
     suspend fun toInt(): Int = suspendCoroutineOrReturn { x ->

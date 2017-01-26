@@ -1,11 +1,28 @@
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 @file:kotlin.jvm.JvmName("CoroutinesKt")
 @file:kotlin.jvm.JvmVersion
-package kotlin.coroutines
+package kotlin.coroutines.experimental
 
 import java.lang.IllegalStateException
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-import kotlin.coroutines.intrinsics.SUSPENDED_MARKER
-import kotlin.coroutines.intrinsics.suspendCoroutineOrReturn
+import kotlin.coroutines.experimental.intrinsics.SUSPENDED_MARKER
+import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
+import kotlin.coroutines.experimental.jvm.internal.CoroutineImpl
 
 /**
  * Creates coroutine with receiver type [R] and result type [T].
@@ -18,7 +35,8 @@ import kotlin.coroutines.intrinsics.suspendCoroutineOrReturn
 public fun <R, T> (suspend R.() -> T).createCoroutine(
         receiver: R,
         completion: Continuation<T>
-): Continuation<Unit> = ((this as kotlin.coroutines.jvm.internal.CoroutineImpl).create(receiver, completion) as kotlin.coroutines.jvm.internal.CoroutineImpl).facade
+): Continuation<Unit> =
+        ((this as CoroutineImpl).create(receiver, completion) as CoroutineImpl).facade
 
 /**
  * Starts coroutine with receiver type [R] and result type [T].
@@ -44,7 +62,7 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
 @Suppress("UNCHECKED_CAST")
 public fun <T> (suspend () -> T).createCoroutine(
         completion: Continuation<T>
-): Continuation<Unit> = ((this as kotlin.coroutines.jvm.internal.CoroutineImpl).create(completion) as kotlin.coroutines.jvm.internal.CoroutineImpl).facade
+): Continuation<Unit> = ((this as CoroutineImpl).create(completion) as CoroutineImpl).facade
 
 /**
  * Starts coroutine without receiver and with result type [T].
