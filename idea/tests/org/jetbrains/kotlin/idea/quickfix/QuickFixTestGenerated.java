@@ -4495,6 +4495,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("replaceModToRem.kt")
+        public void testReplaceModToRem() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/replaceModToRem.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("shortenReferences.kt")
         public void testShortenReferences() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/shortenReferences.kt");
