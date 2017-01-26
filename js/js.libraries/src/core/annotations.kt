@@ -23,15 +23,15 @@ import kotlin.annotation.AnnotationTarget.*
 public annotation class native(@Deprecated public val name: String = "")
 
 @Target(FUNCTION)
-@Deprecated("Use inline extension function with body using dynamic", level = DeprecationLevel.ERROR)
+@Deprecated("Use inline extension function with body using dynamic")
 public annotation class nativeGetter
 
 @Target(FUNCTION)
-@Deprecated("Use inline extension function with body using dynamic", level = DeprecationLevel.ERROR)
+@Deprecated("Use inline extension function with body using dynamic")
 public annotation class nativeSetter
 
 @Target(FUNCTION)
-@Deprecated("Use inline extension function with body using dynamic", level = DeprecationLevel.ERROR)
+@Deprecated("Use inline extension function with body using dynamic")
 public annotation class nativeInvoke
 
 @Target(CLASS, FUNCTION, PROPERTY)
