@@ -89,15 +89,22 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
                 "$PROJECT_NAME.js",
                 "$PROJECT_NAME.meta.js",
                 "lib/kotlin.js",
-                "lib/kotlin.meta.js"
+                "lib/kotlin.meta.js",
+                "$PROJECT_NAME/root-package.kjsm"
         )
         private val EXPECTED_JS_FILES_IN_OUTPUT_FOR_MODULE_STDLIB_ONLY = hashSetOf(
                 "$ADDITIONAL_MODULE_NAME.js",
                 "$ADDITIONAL_MODULE_NAME.meta.js",
                 "lib/kotlin.js",
-                "lib/kotlin.meta.js"
+                "lib/kotlin.meta.js",
+                "$ADDITIONAL_MODULE_NAME/module2/module2.kjsm"
         )
-        private val EXPECTED_JS_FILES_IN_OUTPUT_NO_COPY = hashSetOf("$PROJECT_NAME.js", "$PROJECT_NAME.meta.js")
+        private val EXPECTED_JS_FILES_IN_OUTPUT_NO_COPY = hashSetOf(
+                "$PROJECT_NAME.js",
+                "$PROJECT_NAME.meta.js",
+                "$PROJECT_NAME/root-package.kjsm",
+                "$PROJECT_NAME/library/sample/sample.kjsm"
+        )
         private val EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_DEFAULT_DIR = hashSetOf(
                 "$PROJECT_NAME.js",
                 "$PROJECT_NAME.meta.js",
@@ -108,7 +115,9 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
                 "lib/dir/file1.js",
                 "lib/META-INF-ex/file2.js",
                 "lib/res0.js",
-                "lib/resdir/res1.js"
+                "lib/resdir/res1.js",
+                "$PROJECT_NAME/root-package.kjsm",
+                "$PROJECT_NAME/library/sample/sample.kjsm"
         )
         private val EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_CUSTOM_DIR = hashSetOf(
                 "$PROJECT_NAME.js",
@@ -120,7 +129,9 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
                 "custom/dir/file1.js",
                 "custom/META-INF-ex/file2.js",
                 "custom/res0.js",
-                "custom/resdir/res1.js"
+                "custom/resdir/res1.js",
+                "$PROJECT_NAME/root-package.kjsm",
+                "$PROJECT_NAME/library/sample/sample.kjsm"
         )
 
         private fun k2jsOutput(vararg moduleNames: String): Array<String> {
