@@ -407,8 +407,9 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         }
 
         fun getRuntimeLibrary(sdk: Sdk?): String {
-            val artifactId = getStdlibArtifactId(sdk)
-            return "compile \"org.jetbrains.kotlin:$artifactId:\$kotlin_version\""
+            return getDependencySnippet(getStdlibArtifactId(sdk))
         }
+
+        fun getDependencySnippet(artifactId: String) = "compile \"org.jetbrains.kotlin:$artifactId:\$kotlin_version\""
     }
 }
