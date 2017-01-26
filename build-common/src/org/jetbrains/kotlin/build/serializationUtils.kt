@@ -22,7 +22,7 @@ import kotlin.reflect.full.createType
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
-internal inline fun <reified T : Any> serializeToPlainText(instance: T): String {
+inline fun <reified T : Any> serializeToPlainText(instance: T): String {
     val lines = ArrayList<String>()
     for (property in T::class.memberProperties) {
         val value = property.get(instance)
@@ -33,7 +33,7 @@ internal inline fun <reified T : Any> serializeToPlainText(instance: T): String 
     return lines.joinToString("\n")
 }
 
-internal inline fun <reified T : Any> deserializeFromPlainText(str: String): T? {
+inline fun <reified T : Any> deserializeFromPlainText(str: String): T? {
     val args = ArrayList<Any?>()
     val properties = str
             .split("\n")
