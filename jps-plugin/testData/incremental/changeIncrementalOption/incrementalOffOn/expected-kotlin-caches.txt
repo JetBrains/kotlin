@@ -1,11 +1,13 @@
 kotlin-data-container
 Module 'module1' production
     format-version.txt
+    jvm-build-meta-info.txt
     proto.tab
     source-to-classes.tab
 Module 'module1' tests
 Module 'module2' production
     format-version.txt
+    jvm-build-meta-info.txt
     inline-functions.tab
     inlined-to.tab
     package-parts.tab
@@ -14,11 +16,13 @@ Module 'module2' production
 Module 'module2' tests
 Module 'module3' production
     format-version.txt
+    jvm-build-meta-info.txt
     proto.tab
     source-to-classes.tab
 Module 'module3' tests
 Module 'module4' production
     format-version.txt
+    jvm-build-meta-info.txt
     proto.tab
     source-to-classes.tab
 Module 'module4' tests
