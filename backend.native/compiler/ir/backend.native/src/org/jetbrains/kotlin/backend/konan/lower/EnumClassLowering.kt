@@ -2,12 +2,10 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.SimpleMemberScope
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.descriptors.createValueParameter
 import org.jetbrains.kotlin.backend.jvm.descriptors.initialize
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanBuiltIns
 import org.jetbrains.kotlin.backend.konan.KonanPlatform
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalFunctions
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
@@ -31,14 +29,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
@@ -178,7 +173,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                 defaultEnumEntryConstructors.put(loweredEnumConstructor, constructorDescriptor)
             }
 
-            val memberScope = SimpleMemberScope(listOf())
+            val memberScope = MemberScope.Empty
             defaultClassDescriptor.initialize(memberScope, constructors, null)
 
             return defaultClass
@@ -221,7 +216,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                     ++i
             }
 
-            val memberScope = SimpleMemberScope(listOf(valuesFunctionDescriptor, valueOfFunctionDescriptor))
+            val memberScope = MemberScope.Empty
 
             val constructorOfAny = irClass.descriptor.module.builtIns.any.constructors.first()
             val (constructorDescriptor, constructor) = createSimpleDelegatingConstructor(implObjectDescriptor, constructorOfAny)
