@@ -49,6 +49,9 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
                           commonOptions + additionalOptions)
     }
 
+    println("### Attributes common for 'kotlin' and 'kotlin2js'\n")
+    generateMarkdown(commonOptions + additionalOptions)
+
     // generate jvm interface
     val jvmInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions")
     val jvmOptions = gradleOptions<K2JVMCompilerArguments>()
@@ -68,6 +71,9 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
                      commonOptions + jvmOptions)
     }
 
+    println("\n### Attributes specific for 'kotlin'\n")
+    generateMarkdown(jvmOptions)
+
     // generate js interface
     val jsInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions")
     val jsOptions = gradleOptions<K2JSCompilerArguments>()
@@ -85,6 +91,9 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
                      k2JsCompilerArgumentsFqName,
                      commonOptions + jsOptions)
     }
+
+    println("\n### Attributes specific for 'kotlin2js'\n")
+    generateMarkdown(jsOptions)
 }
 
 fun main(args: Array<String>) {
@@ -207,6 +216,23 @@ private inline fun Printer.withIndent(fn: Printer.()->Unit) {
     pushIndent()
     fn()
     popIndent()
+}
+
+private fun generateMarkdown(properties: List<KProperty1<*, *>>) {
+    println("| Name | Description | Possible values |Default value |")
+    println("|------|-------------|-----------------|--------------|")
+    for (property in properties) {
+        val name = property.name
+        val description = property.findAnnotation<Argument>()!!.description
+        val possibleValues = property.gradleValues.possibleValues
+        val defaultValue = when (property.gradleDefaultValue) {
+            "null" -> ""
+            "emptyList()" -> "[]"
+            else -> property.gradleDefaultValue
+        }
+
+        println("| `$name` | $description | ${possibleValues.orEmpty().joinToString()} | $defaultValue |")
+    }
 }
 
 private val KProperty1<*, *>.gradleValues: DefaultValues
