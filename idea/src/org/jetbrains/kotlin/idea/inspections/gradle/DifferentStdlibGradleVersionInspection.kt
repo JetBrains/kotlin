@@ -114,11 +114,11 @@ class DifferentStdlibGradleVersionInspection : GradleBaseInspection() {
 }
 
 internal fun DataNode<*>.getResolvedKotlinStdlibVersionByModuleData(libraryId: String): String? {
-    val libraryNameMarker = "org.jetbrains.kotlin:$libraryId:"
+    val libraryNameMarker = "org.jetbrains.kotlin:$libraryId"
     for (sourceSetData in findAll(GradleSourceSetData.KEY).filter { it.data.internalName.endsWith("main") }) {
         for (libraryDependencyData in sourceSetData.node.findAll(ProjectKeys.LIBRARY_DEPENDENCY)) {
             if (libraryDependencyData.data.externalName.startsWith(libraryNameMarker)) {
-                return libraryDependencyData.data.externalName.substringAfter(libraryNameMarker)
+                return libraryDependencyData.data.externalName.substringAfter(libraryNameMarker).substringAfter(':')
             }
         }
     }
