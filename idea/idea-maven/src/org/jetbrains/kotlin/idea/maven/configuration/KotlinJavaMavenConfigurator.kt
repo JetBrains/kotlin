@@ -17,14 +17,16 @@
 package org.jetbrains.kotlin.idea.maven.configuration
 
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.roots.ModuleRootManager
 import org.jetbrains.idea.maven.dom.model.MavenDomPlugin
 import org.jetbrains.kotlin.idea.configuration.hasKotlinJvmRuntimeInScope
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID
+import org.jetbrains.kotlin.idea.versions.getStdlibArtifactId
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
-class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(MAVEN_STDLIB_ID, KotlinJavaMavenConfigurator.TEST_LIB_ID, false, KotlinJavaMavenConfigurator.NAME, KotlinJavaMavenConfigurator.PRESENTABLE_TEXT) {
+class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(KotlinJavaMavenConfigurator.TEST_LIB_ID, false, KotlinJavaMavenConfigurator.NAME, KotlinJavaMavenConfigurator.PRESENTABLE_TEXT) {
 
     override fun isKotlinModule(module: Module): Boolean {
         return hasKotlinJvmRuntimeInScope(module)
@@ -32,6 +34,10 @@ class KotlinJavaMavenConfigurator : KotlinMavenConfigurator(MAVEN_STDLIB_ID, Kot
 
     override fun isRelevantGoal(goalName: String): Boolean {
         return goalName == PomFile.KotlinGoals.Compile
+    }
+
+    override fun getStdlibArtifactId(module: Module): String {
+        return getStdlibArtifactId(ModuleRootManager.getInstance(module).sdk)
     }
 
     override fun createExecutions(pomFile: PomFile, kotlinPlugin: MavenDomPlugin, module: Module) {

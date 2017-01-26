@@ -43,8 +43,7 @@ import org.jetbrains.kotlin.idea.maven.excludeMavenChildrenModules
 import org.jetbrains.kotlin.idea.maven.kotlinPluginId
 
 abstract class KotlinMavenConfigurator
-        protected constructor(private val stdlibArtifactId: String,
-                              private val testArtifactId: String?,
+        protected constructor(private val testArtifactId: String?,
                               private val addJunit: Boolean,
                               override val name: String,
                               override val presentableText: String) : KotlinProjectConfigurator {
@@ -103,6 +102,7 @@ abstract class KotlinMavenConfigurator
     protected abstract fun isRelevantGoal(goalName: String): Boolean
 
     protected abstract fun createExecutions(pomFile: PomFile, kotlinPlugin: MavenDomPlugin, module: Module)
+    protected abstract fun getStdlibArtifactId(module: Module): String
 
     fun changePomFile(
             module: Module,
@@ -120,7 +120,7 @@ abstract class KotlinMavenConfigurator
         val pom = PomFile(file as XmlFile)
         pom.addProperty(KOTLIN_VERSION_PROPERTY, version)
 
-        pom.addDependency(MavenId(GROUP_ID, stdlibArtifactId, "\${$KOTLIN_VERSION_PROPERTY}"), MavenArtifactScope.COMPILE, null, false, null)
+        pom.addDependency(MavenId(GROUP_ID, getStdlibArtifactId(module), "\${$KOTLIN_VERSION_PROPERTY}"), MavenArtifactScope.COMPILE, null, false, null)
         if (testArtifactId != null) {
             pom.addDependency(MavenId(GROUP_ID, testArtifactId, "\${$KOTLIN_VERSION_PROPERTY}"), MavenArtifactScope.TEST, null, false, null)
         }
