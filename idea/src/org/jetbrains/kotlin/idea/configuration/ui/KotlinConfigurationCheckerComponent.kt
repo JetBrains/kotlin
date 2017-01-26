@@ -14,50 +14,40 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.configuration.ui;
+package org.jetbrains.kotlin.idea.configuration.ui
 
-import com.intellij.notification.NotificationDisplayType;
-import com.intellij.notification.NotificationsConfiguration;
-import com.intellij.openapi.components.AbstractProjectComponent;
-import com.intellij.openapi.project.DumbService;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.startup.StartupManager;
-import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
-import org.jetbrains.kotlin.idea.versions.OutdatedKotlinRuntimeCheckerKt;
-import org.jetbrains.kotlin.idea.versions.VersionedLibrary;
+import com.intellij.notification.NotificationDisplayType
+import com.intellij.notification.NotificationsConfiguration
+import com.intellij.openapi.components.AbstractProjectComponent
+import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.startup.StartupManager
+import org.jetbrains.kotlin.idea.configuration.*
+import org.jetbrains.kotlin.idea.versions.*
+import org.jetbrains.kotlin.idea.versions.VersionedLibrary
 
-import java.util.List;
+class KotlinConfigurationCheckerComponent protected constructor(project: Project) : AbstractProjectComponent(project) {
 
-public class KotlinConfigurationCheckerComponent extends AbstractProjectComponent {
-    public static final String CONFIGURE_NOTIFICATION_GROUP_ID = "Configure Kotlin in Project";
-
-    protected KotlinConfigurationCheckerComponent(Project project) {
-        super(project);
-
-        NotificationsConfiguration.getNotificationsConfiguration().
-                register(CONFIGURE_NOTIFICATION_GROUP_ID, NotificationDisplayType.STICKY_BALLOON, true);
+    init {
+        NotificationsConfiguration.getNotificationsConfiguration().register(CONFIGURE_NOTIFICATION_GROUP_ID, NotificationDisplayType.STICKY_BALLOON, true)
     }
 
-    @Override
-    public void projectOpened() {
-        super.projectOpened();
+    override fun projectOpened() {
+        super.projectOpened()
 
-        StartupManager.getInstance(myProject).registerPostStartupActivity(new Runnable() {
-            @Override
-            public void run() {
-                DumbService.getInstance(myProject).smartInvokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        List<VersionedLibrary> libraries = OutdatedKotlinRuntimeCheckerKt.findOutdatedKotlinLibraries(myProject);
-                        if (!libraries.isEmpty()) {
-                            OutdatedKotlinRuntimeCheckerKt.notifyOutdatedKotlinRuntime(myProject, libraries);
-                        }
-                        ConfigureKotlinInProjectUtilsKt.showConfigureKotlinNotificationIfNeeded(myProject,
-                                                                                                OutdatedKotlinRuntimeCheckerKt
-                                                                                                        .collectModulesWithOutdatedRuntime(libraries));
-                    }
-                });
+        StartupManager.getInstance(myProject).registerPostStartupActivity {
+            DumbService.getInstance(myProject).smartInvokeLater {
+                val libraries = findOutdatedKotlinLibraries(myProject)
+                if (!libraries.isEmpty()) {
+                    notifyOutdatedKotlinRuntime(myProject, libraries)
+                }
+                showConfigureKotlinNotificationIfNeeded(myProject,
+                                                        collectModulesWithOutdatedRuntime(libraries))
             }
-        });
+        }
+    }
+
+    companion object {
+        val CONFIGURE_NOTIFICATION_GROUP_ID = "Configure Kotlin in Project"
     }
 }
