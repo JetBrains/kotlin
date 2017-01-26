@@ -25,6 +25,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiMethod
 import com.intellij.util.Range
 import com.intellij.util.containers.OrderedSet
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
@@ -50,8 +51,8 @@ class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
         val elementAtOffset = position.elementAt ?: return emptyList()
 
-        val element = CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, elementAtOffset.textRange.startOffset)
-        if (element !is KtElement) return emptyList()
+        val element = CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, elementAtOffset.textRange.startOffset) as? KtElement ?:
+                      return emptyList()
 
         val elementTextRange = element.textRange ?: return emptyList()
 
@@ -80,8 +81,10 @@ class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                     val arguments = resolvedCall.valueArguments
                     for ((param, argument) in arguments) {
                         if (argument.arguments.any { getArgumentExpression(it) == function }) {
-                            val label = KotlinLambdaSmartStepTarget.calcLabel(resolvedCall.resultingDescriptor, param.name)
-                            result.add(KotlinLambdaSmartStepTarget(label, function, lines, InlineUtil.isInline(resolvedCall.resultingDescriptor)))
+                            val resultingDescriptor = resolvedCall.resultingDescriptor
+                            val label = KotlinLambdaSmartStepTarget.calcLabel(resultingDescriptor, param.name)
+                            result.add(KotlinLambdaSmartStepTarget(
+                                    label, function, lines, InlineUtil.isInline(resultingDescriptor), param.type.isSuspendFunctionType))
                             return true
                         }
                     }
@@ -195,8 +198,11 @@ class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
     override fun createMethodFilter(stepTarget: SmartStepTarget?): MethodFilter? {
         return when (stepTarget) {
-            is KotlinMethodSmartStepTarget -> KotlinBasicStepMethodFilter(stepTarget.descriptor, stepTarget.callingExpressionLines!!)
-            is KotlinLambdaSmartStepTarget -> KotlinLambdaMethodFilter(stepTarget.getLambda(), stepTarget.callingExpressionLines!!, stepTarget.isInline)
+            is KotlinMethodSmartStepTarget ->
+                KotlinBasicStepMethodFilter(stepTarget.descriptor, stepTarget.callingExpressionLines!!)
+            is KotlinLambdaSmartStepTarget ->
+                KotlinLambdaMethodFilter(
+                        stepTarget.getLambda(), stepTarget.callingExpressionLines!!, stepTarget.isInline, stepTarget.isSuspend)
             else -> super.createMethodFilter(stepTarget)
         }
     }
