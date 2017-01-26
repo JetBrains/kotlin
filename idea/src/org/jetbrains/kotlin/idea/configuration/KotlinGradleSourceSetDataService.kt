@@ -102,7 +102,7 @@ private fun detectPlatformByLibrary(moduleNode: DataNode<ModuleData>): TargetPla
     return TargetPlatformKind.ALL_PLATFORMS.firstOrNull { moduleNode.getResolvedKotlinStdlibVersionByModuleData(it.mavenLibraryIds) != null }
 }
 
-private fun configureFacetByGradleModule(
+fun configureFacetByGradleModule(
         moduleNode: DataNode<ModuleData>,
         sourceSetNode: DataNode<GradleSourceSetData>?,
         ideModule: Module,
