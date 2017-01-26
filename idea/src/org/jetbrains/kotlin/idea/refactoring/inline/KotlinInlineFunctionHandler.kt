@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.lang.Language
 import com.intellij.lang.refactoring.InlineActionHandler
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -48,7 +49,8 @@ class KotlinInlineFunctionHandler: InlineActionHandler() {
     override fun canInlineElement(element: PsiElement): Boolean {
         return element is KtNamedFunction
                && element.hasBody()
-               && element.getUseScope() is GlobalSearchScope // TODO support local functions
+               && element.getUseScope() is GlobalSearchScope  // TODO support local functions
+               && ApplicationManager.getApplication().isUnitTestMode
     }
 
     override fun inlineElement(project: Project, editor: Editor?, element: PsiElement) {
