@@ -23,6 +23,7 @@
             <category>Kotlin Android</category>
         </intentionAction>
 
+        <externalProjectDataService implementation="org.jetbrains.kotlin.android.configure.KotlinGradleAndroidModuleModelProjectDataService"/>
 
         <codeInsight.unresolvedReferenceQuickFixProvider
             implementation="org.jetbrains.kotlin.android.inspection.KotlinAndroidResourceQuickFixProvider"/>
