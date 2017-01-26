@@ -38,6 +38,7 @@ import kotlin.coroutines.Continuation
  * continuation instance.
  */
 @SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
 public inline suspend fun <T> suspendCoroutineOrReturn(crossinline block: (Continuation<T>) -> Any?): T = null!!
 
 /**

@@ -1831,7 +1831,6 @@ public final class kotlin/coroutines/SafeContinuation$Companion {
 
 public final class kotlin/coroutines/intrinsics/IntrinsicsKt {
 	public static final fun getSUSPENDED_MARKER ()Ljava/lang/Object;
-	public static final fun suspendCoroutineOrReturn (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract class kotlin/coroutines/jvm/internal/CoroutineImpl : kotlin/jvm/internal/Lambda, kotlin/coroutines/Continuation {
