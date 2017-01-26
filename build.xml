@@ -450,7 +450,7 @@
             <arg line="js-stdlib-merge" />
         </java>
 
-        <jar jarfile="${kotlin-home}/lib/kotlin-jslib.jar" duplicate="fail">
+        <jar jarfile="${kotlin-home}/lib/kotlin-stdlib-js.jar" duplicate="fail">
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
             <zipfileset dir="${js.stdlib.output.dir}" prefix="">
                 <include name="kotlin.js"/>
@@ -469,10 +469,11 @@
                 <attribute name="Specification-Title" value="${manifest.spec.title.kotlin.javascript.lib}"/>
             </manifest>
         </jar>
+        <copy file="${kotlin-home}/lib/kotlin-stdlib-js.jar" tofile="${kotlin-home}/lib/kotlin-jslib.jar" />
     </target>
 
     <target name="pack-js-stdlib-sources">
-        <jar destfile="${kotlin-home}/lib/kotlin-jslib-sources.jar" duplicate="fail">
+        <jar destfile="${kotlin-home}/lib/kotlin-stdlib-js-sources.jar" duplicate="fail">
             <resources refid="js.lib.files" />
             <fileset refid="kotlin.builtin.files" />
 
@@ -486,6 +487,7 @@
                 <attribute name="Implementation-Version" value="${build.number}"/>
             </manifest>
         </jar>
+        <copy file="${kotlin-home}/lib/kotlin-stdlib-js-sources.jar" tofile="${kotlin-home}/lib/kotlin-jslib-sources.jar" />
     </target>
 
     <target name="kotlin-js-stdlib" depends="js-stdlib,js-kotlin-test,pack-js-stdlib-sources"/>

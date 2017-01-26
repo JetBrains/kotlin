@@ -26,10 +26,10 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
-                                <copy file="${kotlin-dist}/kotlinc/lib/kotlin-jslib.jar"
+                                <copy file="${kotlin-dist}/kotlinc/lib/kotlin-stdlib-js.jar"
                                       tofile="${basedir}/target/${project.artifactId}-${project.version}.jar"
                                       overwrite="true" verbose="true"/>
-                                <copy file="${kotlin-dist}/kotlinc/lib/kotlin-jslib-sources.jar"
+                                <copy file="${kotlin-dist}/kotlinc/lib/kotlin-stdlib-js-sources.jar"
                                       tofile="${basedir}/target/${project.artifactId}-${project.version}-sources.jar"
                                       overwrite="true" verbose="true"/>
                             </tasks>

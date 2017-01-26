@@ -118,6 +118,6 @@
 
     <!-- Used on TeamCity-->
     <target name="unzip-jslib.jar">
-        <unzip src="${output}/kotlinc/lib/kotlin-jslib.jar" dest="${js.stdlib.output.dir}"/>
+        <unzip src="${output}/kotlinc/lib/kotlin-stdlib-js.jar" dest="${js.stdlib.output.dir}"/>
     </target>
 </project>

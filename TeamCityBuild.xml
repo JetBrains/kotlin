@@ -148,7 +148,7 @@
         <print-file-size-statistic path="${kotlin-home}/lib" file-name="kotlin-stdlib.jar"/>
         <print-file-size-statistic path="${kotlin-home}/lib" file-name="kotlin-reflect.jar"/>
 
-        <print-file-size-statistic path="${kotlin-home}/lib" file-name="kotlin-jslib.jar"/>
+        <print-file-size-statistic path="${kotlin-home}/lib" file-name="kotlin-stdlib-js.jar"/>
         <print-file-size-statistic path="${js.stdlib.output.dir}" file-name="kotlin.js"/>
         <print-file-size-statistic path="${js.stdlib.output.dir}" file-name="${compiled.stdlib.meta.js}"/>
         <print-file-size-statistic path="${js.stdlib.output.dir}" file-name="${compiled.stdlib.js}"/>
