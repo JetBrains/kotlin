@@ -110,6 +110,12 @@ class DeserializedDescriptorResolver {
         private val KOTLIN_1_1_EAP_METADATA_VERSION = JvmMetadataVersion(1, 1, 2)
 
         var IS_PRE_RELEASE = KotlinCompilerVersion.IS_PRE_RELEASE
+            get() {
+                val testOverrideValue = System.getProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY)
+                return testOverrideValue?.toBoolean() ?: field
+            }
             @Deprecated("Should only be used in tests") set
+
+        const val TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY = "kotlin.test.is.pre.release"
     }
 }
