@@ -28,10 +28,10 @@ public class PathUtil {
 
     public static final String JPS_KOTLIN_HOME_PROPERTY = "jps.kotlin.home";
 
-    public static final String JS_LIB_JAR_NAME = "kotlin-jslib.jar";
+    public static final String JS_LIB_JAR_NAME = "kotlin-stdlib-js.jar";
     public static final String ALLOPEN_PLUGIN_JAR_NAME = "allopen-compiler-plugin.jar";
     public static final String NOARG_PLUGIN_JAR_NAME = "noarg-compiler-plugin.jar";
-    public static final String JS_LIB_SRC_JAR_NAME = "kotlin-jslib-sources.jar";
+    public static final String JS_LIB_SRC_JAR_NAME = "kotlin-stdlib-js-sources.jar";
     public static final String KOTLIN_JAVA_RUNTIME_JAR = "kotlin-runtime.jar";
     public static final String KOTLIN_JAVA_REFLECT_JAR = "kotlin-reflect.jar";
     public static final String KOTLIN_JAVA_SCRIPT_RUNTIME_JAR = "kotlin-script-runtime.jar";
