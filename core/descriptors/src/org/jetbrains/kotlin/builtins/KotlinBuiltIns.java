@@ -57,8 +57,6 @@ public abstract class KotlinBuiltIns {
     public static final FqName BUILT_INS_PACKAGE_FQ_NAME = FqName.topLevel(BUILT_INS_PACKAGE_NAME);
     private static final FqName ANNOTATION_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("annotation"));
     public static final FqName COLLECTIONS_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("collections"));
-    public static final FqName COROUTINES_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("coroutines"));
-    private static final FqName COROUTINES_INTRINSICS_PACKAGE_FQ_NAME = COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("intrinsics"));
     public static final FqName RANGES_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("ranges"));
     public static final FqName TEXT_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("text"));
 
@@ -68,8 +66,6 @@ public abstract class KotlinBuiltIns {
             RANGES_PACKAGE_FQ_NAME,
             ANNOTATION_PACKAGE_FQ_NAME,
             ReflectionTypesKt.getKOTLIN_REFLECT_FQ_NAME(),
-            COROUTINES_PACKAGE_FQ_NAME,
-            COROUTINES_INTRINSICS_PACKAGE_FQ_NAME,
             BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal"))
     );
 
@@ -98,13 +94,9 @@ public abstract class KotlinBuiltIns {
                 PackageFragmentDescriptor kotlinCollections = createPackage(provider, nameToFragment, COLLECTIONS_PACKAGE_FQ_NAME);
                 createPackage(provider, nameToFragment, RANGES_PACKAGE_FQ_NAME);
                 PackageFragmentDescriptor kotlinAnnotation = createPackage(provider, nameToFragment, ANNOTATION_PACKAGE_FQ_NAME);
-                PackageFragmentDescriptor coroutinePackage = createPackage(provider, null, COROUTINES_PACKAGE_FQ_NAME);
-                PackageFragmentDescriptor coroutineIntrinsicsPackage =
-                        createPackage(provider, null, COROUTINES_INTRINSICS_PACKAGE_FQ_NAME);
-
                 Set<PackageFragmentDescriptor> allImportedByDefault = new LinkedHashSet<PackageFragmentDescriptor>(nameToFragment.values());
 
-                return new PackageFragments(kotlin, kotlinCollections, kotlinAnnotation, coroutinePackage, coroutineIntrinsicsPackage, allImportedByDefault);
+                return new PackageFragments(kotlin, kotlinCollections, kotlinAnnotation, allImportedByDefault);
             }
         });
 
@@ -133,7 +125,7 @@ public abstract class KotlinBuiltIns {
             public ClassDescriptor invoke(Integer arity) {
                 return new FunctionClassDescriptor(
                         getStorageManager(),
-                        packageFragments.invoke().coroutinePackageFragment,
+                        packageFragments.invoke().builtInsPackageFragment,
                         FunctionClassDescriptor.Kind.SuspendFunction,
                         arity
                 );
@@ -252,23 +244,17 @@ public abstract class KotlinBuiltIns {
         public final PackageFragmentDescriptor builtInsPackageFragment;
         public final PackageFragmentDescriptor collectionsPackageFragment;
         public final PackageFragmentDescriptor annotationPackageFragment;
-        public final PackageFragmentDescriptor coroutinePackageFragment;
-        public final PackageFragmentDescriptor coroutineIntrinsicsPackage;
         public final Set<PackageFragmentDescriptor> allImportedByDefaultBuiltInsPackageFragments;
 
         private PackageFragments(
                 @NotNull PackageFragmentDescriptor builtInsPackageFragment,
                 @NotNull PackageFragmentDescriptor collectionsPackageFragment,
                 @NotNull PackageFragmentDescriptor annotationPackageFragment,
-                @NotNull PackageFragmentDescriptor coroutinePackageFragment,
-                @NotNull PackageFragmentDescriptor coroutineIntrinsicsPackage,
                 @NotNull Set<PackageFragmentDescriptor> allImportedByDefaultBuiltInsPackageFragments
         ) {
             this.builtInsPackageFragment = builtInsPackageFragment;
             this.collectionsPackageFragment = collectionsPackageFragment;
             this.annotationPackageFragment = annotationPackageFragment;
-            this.coroutinePackageFragment = coroutinePackageFragment;
-            this.coroutineIntrinsicsPackage = coroutineIntrinsicsPackage;
             this.allImportedByDefaultBuiltInsPackageFragments = allImportedByDefaultBuiltInsPackageFragments;
         }
     }
@@ -396,11 +382,6 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public Set<PackageFragmentDescriptor> getBuiltInsPackageFragmentsImportedByDefault() {
         return packageFragments.invoke().allImportedByDefaultBuiltInsPackageFragments;
-    }
-
-    @NotNull
-    public PackageFragmentDescriptor getBuiltInsCoroutineIntrinsicsPackageFragment() {
-        return packageFragments.invoke().coroutineIntrinsicsPackage;
     }
 
     @NotNull

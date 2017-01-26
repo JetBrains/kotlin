@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.MutableClassDescriptor
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.isBuiltinWithSpecialDescriptorInJvm
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor

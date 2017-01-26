@@ -4,7 +4,8 @@ package kotlin.coroutines
 
 import java.lang.IllegalStateException
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.intrinsics.SUSPENDED_MARKER
+import kotlin.coroutines.intrinsics.suspendCoroutineOrReturn
 
 /**
  * Creates coroutine with receiver type [R] and result type [T].
@@ -17,7 +18,7 @@ import kotlin.coroutines.intrinsics.*
 public fun <R, T> (suspend R.() -> T).createCoroutine(
         receiver: R,
         completion: Continuation<T>
-): Continuation<Unit> = ((this as kotlin.jvm.internal.CoroutineImpl).create(receiver, completion) as kotlin.jvm.internal.CoroutineImpl).facade
+): Continuation<Unit> = ((this as kotlin.coroutines.jvm.internal.CoroutineImpl).create(receiver, completion) as kotlin.coroutines.jvm.internal.CoroutineImpl).facade
 
 /**
  * Starts coroutine with receiver type [R] and result type [T].
@@ -43,7 +44,7 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
 @Suppress("UNCHECKED_CAST")
 public fun <T> (suspend () -> T).createCoroutine(
         completion: Continuation<T>
-): Continuation<Unit> = ((this as kotlin.jvm.internal.CoroutineImpl).create(completion) as kotlin.jvm.internal.CoroutineImpl).facade
+): Continuation<Unit> = ((this as kotlin.coroutines.jvm.internal.CoroutineImpl).create(completion) as kotlin.coroutines.jvm.internal.CoroutineImpl).facade
 
 /**
  * Starts coroutine without receiver and with result type [T].

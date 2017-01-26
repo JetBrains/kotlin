@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 
 private val NO_INFER_ANNOTATION_FQ_NAME = FqName("kotlin.internal.NoInfer")
@@ -32,7 +33,7 @@ val LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_FQ_NAME = FqName("kotlin.internal.LowPri
 private val HIDES_MEMBERS_ANNOTATION_FQ_NAME = FqName("kotlin.internal.HidesMembers")
 private val ONLY_INPUT_TYPES_FQ_NAME = FqName("kotlin.internal.OnlyInputTypes")
 private val DYNAMIC_EXTENSION_FQ_NAME = FqName("kotlin.internal.DynamicExtension")
-private val RESTRICTS_SUSPENSION_FQ_NAME = FqName("kotlin.coroutines.RestrictsSuspension")
+private val RESTRICTS_SUSPENSION_FQ_NAME = DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("RestrictsSuspension"))
 
 // @HidesMembers annotation only has effect for members with these names
 val HIDES_MEMBERS_NAME_LIST = setOf(Name.identifier("forEach"))

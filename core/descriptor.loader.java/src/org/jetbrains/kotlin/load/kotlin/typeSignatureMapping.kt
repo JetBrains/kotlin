@@ -19,10 +19,14 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.MutableClassDescriptor
+import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
@@ -60,6 +64,25 @@ interface TypeMappingConfiguration<out T : Any> {
 
 const val NON_EXISTENT_CLASS_NAME = "error/NonExistentClass"
 
+private val FAKE_CONTINUATION_CLASS_DESCRIPTOR =
+        MutableClassDescriptor(
+                ErrorUtils.getErrorModule(),
+                ClassKind.INTERFACE, /* isInner = */ false, /* isExternal = */ false,
+                DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME.shortName(), SourceElement.NO_SOURCE
+        ).apply {
+            modality = Modality.ABSTRACT
+            visibility = Visibilities.PUBLIC
+            setTypeParameterDescriptors(
+                TypeParameterDescriptorImpl.createWithDefaultBound(
+                      this, Annotations.EMPTY, false, Variance.IN_VARIANCE, Name.identifier("T"), 0
+                ).let(::listOf)
+            )
+            createTypeConstructor()
+        }
+
+private val CONTINUATION_INTERNAL_NAME =
+        JvmClassName.byClassId(ClassId.topLevel(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME)).internalName
+
 fun <T : Any> mapType(
         kotlinType: KotlinType,
         factory: JvmTypeFactory<T>,
@@ -76,7 +99,11 @@ fun <T : Any> mapType(
                         kotlinType.getReceiverTypeFromFunctionType(),
                         kotlinType.getValueParameterTypesFromFunctionType().map(TypeProjection::getType) +
                             KotlinTypeFactory.simpleType(
-                                    Annotations.EMPTY, kotlinType.builtIns.continuationClassDescriptor.typeConstructor,
+                                    Annotations.EMPTY,
+                                    // Continuation interface is not a part of built-ins anymore, it has been moved to stdlib.
+                                    // While it must be somewhere in the dependencies, but here we don't have a reference to the module,
+                                    // and it's rather complicated to inject it by now, so we just use a fake class descriptor.
+                                    FAKE_CONTINUATION_CLASS_DESCRIPTOR.typeConstructor,
                                     listOf(kotlinType.getReturnTypeFromFunctionType().asTypeProjection()), nullable = false
                             ),
                         // TODO: names
@@ -188,6 +215,11 @@ private fun <T : Any> mapBuiltInType(
         typeMappingConfiguration: TypeMappingConfiguration<T>
 ): T? {
     val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
+
+    if (descriptor === FAKE_CONTINUATION_CLASS_DESCRIPTOR) {
+
+        return typeFactory.createObjectType(CONTINUATION_INTERNAL_NAME)
+    }
 
     val fqName = descriptor.fqNameUnsafe
 

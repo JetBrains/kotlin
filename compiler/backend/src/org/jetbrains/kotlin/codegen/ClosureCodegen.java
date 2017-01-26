@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.ClosureContext;
+import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
@@ -429,7 +430,8 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             iv.load(0, superClassAsmType);
 
             String superClassConstructorDescriptor;
-            if (superClassAsmType.equals(LAMBDA) || superClassAsmType.equals(FUNCTION_REFERENCE) || superClassAsmType.equals(COROUTINE_IMPL)) {
+            if (superClassAsmType.equals(LAMBDA) || superClassAsmType.equals(FUNCTION_REFERENCE) ||
+                superClassAsmType.equals(CoroutineCodegenUtilKt.COROUTINE_IMPL_ASM_TYPE)) {
                 int arity = calculateArity();
                 iv.iconst(arity);
                 if (shouldHaveBoundReferenceReceiver) {

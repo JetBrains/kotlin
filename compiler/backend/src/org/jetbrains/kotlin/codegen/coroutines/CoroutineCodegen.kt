@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
@@ -106,11 +108,7 @@ class CoroutineCodegen private constructor(
         funDescriptor.createCustomCopy {
             setName(Name.identifier(SUSPEND_FUNCTION_CREATE_METHOD_NAME))
             setReturnType(
-                    KotlinTypeFactory.simpleNotNullType(
-                            Annotations.EMPTY,
-                            builtIns.continuationClassDescriptor,
-                            listOf(builtIns.unitType.asTypeProjection())
-                    )
+                    funDescriptor.module.getContinuationOfTypeOrAny(builtIns.unitType)
             )
             setVisibility(Visibilities.PUBLIC)
         }
@@ -178,7 +176,7 @@ class CoroutineCodegen private constructor(
                 v.thisName,
                 createCoroutineDescriptor.name.identifier,
                 Type.getMethodDescriptor(
-                        AsmTypes.CONTINUATION,
+                        CONTINUATION_ASM_TYPE,
                         *parameterTypes.toTypedArray()
                 ),
                 false
@@ -192,7 +190,7 @@ class CoroutineCodegen private constructor(
 
     override fun generateConstructor(): Method {
         val args = calculateConstructorParameters(typeMapper, closure, asmType)
-        val argTypes = args.map { it.fieldType }.plus(AsmTypes.CONTINUATION).toTypedArray()
+        val argTypes = args.map { it.fieldType }.plus(CONTINUATION_ASM_TYPE).toTypedArray()
 
         val constructor = Method("<init>", Type.VOID_TYPE, argTypes)
         val mv = v.newMethod(
@@ -212,7 +210,7 @@ class CoroutineCodegen private constructor(
             iv.iconst(calculateArity())
             iv.load(argTypes.map { it.size }.sum(), AsmTypes.OBJECT_TYPE)
 
-            val superClassConstructorDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE, AsmTypes.CONTINUATION)
+            val superClassConstructorDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE, CONTINUATION_ASM_TYPE)
             iv.invokespecial(superClassAsmType.internalName, "<init>", superClassConstructorDescriptor, false)
 
             iv.visitInsn(Opcodes.RETURN)

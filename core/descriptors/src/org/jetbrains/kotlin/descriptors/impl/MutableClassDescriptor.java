@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen;
+package org.jetbrains.kotlin.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl;
-import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase;
-import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;

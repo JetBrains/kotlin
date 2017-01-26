@@ -40,9 +40,6 @@ public class AsmTypes {
     public static final Type MUTABLE_PROPERTY_REFERENCE0 = Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference0");
     public static final Type MUTABLE_PROPERTY_REFERENCE1 = Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference1");
     public static final Type MUTABLE_PROPERTY_REFERENCE2 = Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference2");
-    public static final Type COROUTINE_IMPL = Type.getObjectType("kotlin/jvm/internal/CoroutineImpl");
-    public static final Type COROUTINES_INTRINSICS_FILE_FACADE = Type.getObjectType("kotlin/coroutines/intrinsics/IntrinsicsKt");
-    public static final Type CONTINUATION = Type.getObjectType("kotlin/coroutines/Continuation");
 
 
     public static final Type[] PROPERTY_REFERENCE_IMPL = {

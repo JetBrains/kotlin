@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package kotlin.jvm.internal
+@file:JvmVersion
+package kotlin.coroutines.jvm.internal
 
 import java.lang.IllegalStateException
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.ContinuationInterceptor
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.intrinsics.SUSPENDED_MARKER
+import kotlin.jvm.internal.Lambda
 
 abstract class CoroutineImpl(
         arity: Int,
         @JvmField
         protected var completion: Continuation<Any?>?
-) : Lambda(arity), Continuation<Any?>  {
+) : Lambda(arity), Continuation<Any?> {
 
     // label == -1 when coroutine cannot be started (it is just a factory object) or has already finished execution
     // label == 0 in initial part of the coroutine

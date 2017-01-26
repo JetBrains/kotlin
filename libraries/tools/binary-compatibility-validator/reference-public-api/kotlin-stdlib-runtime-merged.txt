@@ -2012,7 +2012,23 @@ public final class kotlin/coroutines/SafeContinuation$Companion {
 
 public final class kotlin/coroutines/intrinsics/IntrinsicsKt {
 	public static final fun getSUSPENDED_MARKER ()Ljava/lang/Object;
-	public static final fun suspendCoroutineOrReturn (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract class kotlin/coroutines/jvm/internal/CoroutineImpl : kotlin/jvm/internal/Lambda, kotlin/coroutines/Continuation {
+	protected field completion Lkotlin/coroutines/Continuation;
+	protected field label I
+	public fun <init> (ILkotlin/coroutines/Continuation;)V
+	public fun create (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+	public fun create (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+	protected abstract fun doResume (Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;
+	public fun getContext ()Lkotlin/coroutines/CoroutineContext;
+	public final fun getFacade ()Lkotlin/coroutines/Continuation;
+	public fun resume (Ljava/lang/Object;)V
+	public fun resumeWithException (Ljava/lang/Throwable;)V
+}
+
+public final class kotlin/coroutines/jvm/internal/CoroutineIntrinsics {
+	public static final fun normalizeContinuation (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
 }
 
 public final class kotlin/internal/PlatformImplementationsKt {
@@ -2409,23 +2425,6 @@ public final class kotlin/jvm/internal/ClassReference : kotlin/jvm/internal/Clas
 public class kotlin/jvm/internal/CollectionToArray {
 	public static fun toArray (Ljava/util/Collection;)[Ljava/lang/Object;
 	public static fun toArray (Ljava/util/Collection;[Ljava/lang/Object;)[Ljava/lang/Object;
-}
-
-public abstract class kotlin/jvm/internal/CoroutineImpl : kotlin/jvm/internal/Lambda, kotlin/coroutines/Continuation {
-	protected field completion Lkotlin/coroutines/Continuation;
-	protected field label I
-	public fun <init> (ILkotlin/coroutines/Continuation;)V
-	public fun create (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
-	public fun create (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
-	protected abstract fun doResume (Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;
-	public fun getContext ()Lkotlin/coroutines/CoroutineContext;
-	public final fun getFacade ()Lkotlin/coroutines/Continuation;
-	public fun resume (Ljava/lang/Object;)V
-	public fun resumeWithException (Ljava/lang/Throwable;)V
-}
-
-public final class kotlin/jvm/internal/CoroutineIntrinsics {
-	public static final fun normalizeContinuation (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
 }
 
 public final class kotlin/jvm/internal/DoubleCompanionObject {

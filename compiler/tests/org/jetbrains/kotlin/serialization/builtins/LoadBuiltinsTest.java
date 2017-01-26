@@ -88,7 +88,7 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
         ModuleDescriptor module =
                 LazyResolveTestUtilsKt.createResolveSessionForFiles(getEnvironment().getProject(), files, false).getModuleDescriptor();
 
-        for (FqName packageFqName : CollectionsKt.listOf(BUILT_INS_PACKAGE_FQ_NAME, COLLECTIONS_PACKAGE_FQ_NAME, RANGES_PACKAGE_FQ_NAME, COROUTINES_PACKAGE_FQ_NAME)) {
+        for (FqName packageFqName : CollectionsKt.listOf(BUILT_INS_PACKAGE_FQ_NAME, COLLECTIONS_PACKAGE_FQ_NAME, RANGES_PACKAGE_FQ_NAME)) {
             PackageFragmentDescriptor fromLazyResolve =
                     CollectionsKt.single(module.getPackage(packageFqName).getFragments());
             if (fromLazyResolve instanceof LazyPackageDescriptor) {

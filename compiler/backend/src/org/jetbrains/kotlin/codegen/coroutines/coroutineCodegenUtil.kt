@@ -17,16 +17,20 @@
 package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.backend.common.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.backend.common.SUSPENDED_MARKER_NAME
 import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineOrReturn
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.codegen.topLevelClassAsmType
+import org.jetbrains.kotlin.codegen.topLevelClassInternalName
 import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -35,7 +39,9 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
@@ -58,7 +64,22 @@ const val COROUTINE_LABEL_FIELD_NAME = "label"
 const val SUSPEND_FUNCTION_CREATE_METHOD_NAME = "create"
 const val DO_RESUME_METHOD_NAME = "doResume"
 
-private val INTERNAL_COROUTINE_INTRINSICS_OWNER = "kotlin/jvm/internal/CoroutineIntrinsics"
+@JvmField
+val COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME =
+        DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("jvm")).child(Name.identifier("internal"))
+
+@JvmField
+val CONTINUATION_ASM_TYPE = DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME.topLevelClassAsmType()
+
+@JvmField
+val COROUTINE_IMPL_ASM_TYPE = COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("CoroutineImpl")).topLevelClassAsmType()
+
+private val COROUTINES_INTRINSICS_FILE_FACADE_INTERNAL_NAME =
+        COROUTINES_INTRINSICS_PACKAGE_FQ_NAME.child(Name.identifier("IntrinsicsKt")).topLevelClassAsmType()
+
+private val INTERNAL_COROUTINE_INTRINSICS_OWNER_INTERNAL_NAME =
+        COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("CoroutineIntrinsics")).topLevelClassInternalName()
+
 private val NORMALIZE_CONTINUATION_METHOD_NAME = "normalizeContinuation"
 
 data class ResolvedCallWithRealDescriptor(val resolvedCall: ResolvedCall<*>, val fakeContinuationExpression: KtExpression)
@@ -206,10 +227,16 @@ fun <D : FunctionDescriptor> D.createCustomCopy(
 }
 
 private fun FunctionDescriptor.getContinuationParameterTypeOfSuspendFunction() =
-        KotlinTypeFactory.simpleType(
-                builtIns.continuationClassDescriptor.defaultType,
-                arguments = listOf(returnType!!.asTypeProjection())
-        )
+        module.getContinuationOfTypeOrAny(returnType!!)
+
+fun ModuleDescriptor.getContinuationOfTypeOrAny(kotlinType: KotlinType) =
+        module.findContinuationClassDescriptorOrNull(NoLookupLocation.FROM_BACKEND)?.defaultType?.let {
+            KotlinTypeFactory.simpleType(
+                    it,
+                    arguments = listOf(kotlinType.asTypeProjection())
+            )
+        } ?: module.builtIns.nullableAnyType
+
 
 fun FunctionDescriptor.isBuiltInSuspendCoroutineOrReturnInJvm() =
         getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)?.isBuiltInSuspendCoroutineOrReturn() == true
@@ -235,9 +262,9 @@ fun createMethodNodeForSuspendCoroutineOrReturn(
 
     node.visitMethodInsn(
             Opcodes.INVOKESTATIC,
-            INTERNAL_COROUTINE_INTRINSICS_OWNER,
+            INTERNAL_COROUTINE_INTRINSICS_OWNER_INTERNAL_NAME,
             NORMALIZE_CONTINUATION_METHOD_NAME,
-            Type.getMethodDescriptor(AsmTypes.CONTINUATION, AsmTypes.CONTINUATION),
+            Type.getMethodDescriptor(CONTINUATION_ASM_TYPE, CONTINUATION_ASM_TYPE),
             false
     )
 
@@ -260,7 +287,7 @@ fun <D : CallableDescriptor?> D.unwrapInitialDescriptorForSuspendFunction(): D =
 
 fun InstructionAdapter.loadSuspendMarker() {
     invokestatic(
-            AsmTypes.COROUTINES_INTRINSICS_FILE_FACADE.internalName,
+            COROUTINES_INTRINSICS_FILE_FACADE_INTERNAL_NAME.internalName,
             "get$SUSPENDED_MARKER_NAME",
             Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE),
             false

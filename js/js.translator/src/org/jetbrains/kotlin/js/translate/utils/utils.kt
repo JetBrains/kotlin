@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.translate.utils
 
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.backend.common.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.backend.common.SUSPENDED_MARKER_NAME
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -173,5 +173,3 @@ fun JsFunction.fillCoroutineMetadata(
             hasReceiver = descriptor.dispatchReceiverParameter != null
     )
 }
-
-private val COROUTINES_INTRINSICS_PACKAGE_FQ_NAME = FqName("kotlin.coroutines.intrinsics")

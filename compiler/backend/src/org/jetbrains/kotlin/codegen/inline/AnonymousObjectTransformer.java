@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.codegen.ClassBuilder;
 import org.jetbrains.kotlin.codegen.FieldInfo;
 import org.jetbrains.kotlin.codegen.StackValue;
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
+import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -68,7 +68,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
             public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
                 InlineCodegenUtil.assertVersionNotGreaterThanGeneratedOne(version, name, inliningContext.state);
                 classBuilder.defineClass(null, version, access, name, signature, superName, interfaces);
-                if(AsmTypes.COROUTINE_IMPL.getInternalName().equals(superName)) {
+                if(CoroutineCodegenUtilKt.COROUTINE_IMPL_ASM_TYPE.getInternalName().equals(superName)) {
                     inliningContext.setContinuation(true);
                 }
             }

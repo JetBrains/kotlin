@@ -364,7 +364,7 @@ public final class TranslationUtils {
 
     @NotNull
     public static ClassDescriptor getCoroutineBaseClass(@NotNull TranslationContext context) {
-        FqName className = KotlinBuiltIns.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("CoroutineImpl"));
+        FqName className = DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("CoroutineImpl"));
         ClassDescriptor descriptor = FindClassInModuleKt.findClassAcrossModuleDependencies(
                 context.getCurrentModule(), ClassId.topLevel(className));
         assert descriptor != null;

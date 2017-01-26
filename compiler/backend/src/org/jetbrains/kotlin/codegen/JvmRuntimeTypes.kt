@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.builtins.createFunctionType
+import org.jetbrains.kotlin.codegen.coroutines.COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.MutableClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -31,6 +33,8 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 
 class JvmRuntimeTypes(module: ModuleDescriptor) {
     private val kotlinJvmInternalPackage = MutablePackageFragmentDescriptor(module, FqName("kotlin.jvm.internal"))
+    private val kotlinCoroutinesJvmInternalPackage =
+            MutablePackageFragmentDescriptor(module, COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME)
 
     private fun klass(name: String) = lazy { createClass(kotlinJvmInternalPackage, name) }
 
@@ -38,7 +42,7 @@ class JvmRuntimeTypes(module: ModuleDescriptor) {
     private val functionReference: ClassDescriptor by klass("FunctionReference")
     private val localVariableReference: ClassDescriptor by klass("LocalVariableReference")
     private val mutableLocalVariableReference: ClassDescriptor by klass("MutableLocalVariableReference")
-    private val coroutineImplClass by klass("CoroutineImpl")
+    private val coroutineImplClass by lazy { createClass(kotlinCoroutinesJvmInternalPackage, "CoroutineImpl") }
 
     private val propertyReferences: List<ClassDescriptor> by lazy {
         (0..2).map { i -> createClass(kotlinJvmInternalPackage, "PropertyReference$i") }

@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:kotlin.jvm.JvmName("CoroutineIntrinsics")
-package kotlin.jvm.internal
+
+@file:JvmVersion
+@file:JvmName("CoroutineIntrinsics")
+package kotlin.coroutines.jvm.internal
 
 import kotlin.coroutines.Continuation
 
 fun <T> normalizeContinuation(continuation: Continuation<T>): Continuation<T> =
-        (continuation as? CoroutineImpl)?.facade ?: continuation
+        (continuation as? kotlin.coroutines.jvm.internal.CoroutineImpl)?.facade ?: continuation

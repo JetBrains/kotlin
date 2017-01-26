@@ -16,12 +16,10 @@
 
 package org.jetbrains.kotlin.descriptors
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.sure
 
 fun ModuleDescriptor.resolveClassByFqName(fqName: FqName, lookupLocation: LookupLocation): ClassDescriptor? {
     if (fqName.isRoot) return null
@@ -34,4 +32,8 @@ fun ModuleDescriptor.resolveClassByFqName(fqName: FqName, lookupLocation: Lookup
             ?.getContributedClassifier(fqName.shortName(), lookupLocation) as? ClassDescriptor
 }
 
-val KotlinBuiltIns.continuationClassDescriptor get() = getBuiltInClassByFqName(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME)
+fun ModuleDescriptor.findContinuationClassDescriptorOrNull(lookupLocation: LookupLocation) =
+        resolveClassByFqName(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME, lookupLocation)
+
+fun ModuleDescriptor.findContinuationClassDescriptor(lookupLocation: LookupLocation) =
+        findContinuationClassDescriptorOrNull(lookupLocation).sure { "Continuation interface is not found" }

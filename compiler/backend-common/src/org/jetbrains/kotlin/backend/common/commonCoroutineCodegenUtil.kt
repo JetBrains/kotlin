@@ -20,10 +20,13 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 val SUSPEND_COROUTINE_OR_RETURN_NAME = Name.identifier("suspendCoroutineOrReturn")
 val SUSPENDED_MARKER_NAME = Name.identifier("SUSPENDED_MARKER")
+
+val COROUTINES_INTRINSICS_PACKAGE_FQ_NAME = DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("intrinsics"))
 
 fun FunctionDescriptor.isBuiltInSuspendCoroutineOrReturn(): Boolean {
     if (name != SUSPEND_COROUTINE_OR_RETURN_NAME) return false
@@ -36,6 +39,6 @@ fun FunctionDescriptor.isBuiltInSuspendCoroutineOrReturn(): Boolean {
 }
 
 fun FunctionDescriptor.getBuiltInSuspendCoroutineOrReturn() =
-        builtIns.builtInsCoroutineIntrinsicsPackageFragment.getMemberScope()
+        module.getPackage(COROUTINES_INTRINSICS_PACKAGE_FQ_NAME).memberScope
                 .getContributedFunctions(SUSPEND_COROUTINE_OR_RETURN_NAME, NoLookupLocation.FROM_BACKEND)
                 .singleOrNull()

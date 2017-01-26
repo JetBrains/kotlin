@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:kotlin.jvm.JvmName("IntrinsicsKt")
+
 package kotlin.coroutines.intrinsics
 
 import kotlin.coroutines.Continuation
