@@ -69,7 +69,7 @@ class DefaultParameterStubGenerator internal constructor(val context: Context): 
         log("detected ${functionDescriptor.name.asString()} has got #${bodies.size} default expressions")
         functionDescriptor.overriddenDescriptors.forEach { context.log("DEFAULT-REPLACER: $it") }
         if (bodies.isNotEmpty()) {
-            val description = functionDescriptor.generateDefaultsDescription()
+            val description = functionDescriptor.getOrCreateDefaultsDescription(context)
             val builder = context.createFunctionIrBuilder(description.function)
             val body = builder.irBlockBody(irFunction) {
                 val params = mutableListOf<VariableDescriptor>()
@@ -228,7 +228,7 @@ class DefaultParameterInjector internal constructor(val context: Context): BodyL
                 var maskValue = 0
                 val rawDescriptor = expression.descriptor as FunctionDescriptor
                 val descriptor =  rawDescriptor.overriddenDescriptors.firstOrNull()?:rawDescriptor
-                val desc = descriptor.generateDefaultsDescription()
+                val desc = descriptor.getOrCreateDefaultsDescription(context)
                 descriptor.valueParameters.forEach {
                     log("descriptor::${descriptor.name.asString()}#${it.index}: ${it.name.asString()}")
                 }
@@ -276,13 +276,22 @@ val intAnd = DescriptorUtils.getFunctionByName(intDesctiptor.unsubstitutedMember
 data class DefaultParameterDescription(val function: FunctionDescriptor, val mask:ValueParameterDescriptor,
                                        val hasExtensionReceiver:Boolean, val hasDispatchReceiver: Boolean)
 
-fun FunctionDescriptor.generateDefaultsDescription(): DefaultParameterDescription {
+private fun FunctionDescriptor.getOrCreateDefaultsDescription(context: Context): DefaultParameterDescription {
+    return context.ir.defaultParameterDescriptions.getOrPut(this) {
+        this.generateDefaultsDescription(context)
+    }
+}
+
+private fun FunctionDescriptor.generateDefaultsDescription(context: Context): DefaultParameterDescription {
     val descriptor = when (this){
-        is ConstructorDescriptor -> ClassConstructorDescriptorImpl.createSynthesized(
-                                    /* containingDeclaration = */ this.containingDeclaration as ClassDescriptor,
-                                    /* annotations           = */ annotations,
-                                    /* isPrimary             = */ false,
-                                    /* source                = */ SourceElement.NO_SOURCE)
+        is ConstructorDescriptor -> DefaultParameterClassConstructorDescriptor(
+                containingDeclaration = this.containingDeclaration as ClassDescriptor,
+                annotations = annotations,
+                original = null,
+                isPrimary = false,
+                source = SourceElement.NO_SOURCE,
+                kind = CallableMemberDescriptor.Kind.SYNTHESIZED)
+
         is FunctionDescriptor    -> SimpleFunctionDescriptorImpl.create(
                                      /* containingDeclaration = */ this.containingDeclaration,
                                      /* annotations           = */ Annotations.EMPTY,
@@ -321,8 +330,7 @@ fun FunctionDescriptor.generateDefaultsDescription(): DefaultParameterDescriptio
             /* modality                      = */ Modality.FINAL,
             /* visibility                    = */ this.visibility)
     return DefaultParameterDescription(
-            function             = if (descriptor is ClassConstructorDescriptor) DefaultParameterClassConstructorDescriptor(descriptor)
-                                   else descriptor,
+            function             = descriptor,
             mask                 = maskVariable,
             hasDispatchReceiver  = (extensionReceiverParameter != null),
             hasExtensionReceiver = (dispatchReceiverParameter  != null))
@@ -347,8 +355,16 @@ private fun valueParameter(descriptor: FunctionDescriptor, index: Int, name: Str
 /**
  *  This descriptor overrides name property, for class constructor : instead of <init> -> <init>$defeult symbol.
  */
-class DefaultParameterClassConstructorDescriptor(val descriptor: ClassConstructorDescriptor): ClassConstructorDescriptor by descriptor {
+class DefaultParameterClassConstructorDescriptor(
+        containingDeclaration: ClassDescriptor,
+        original: ConstructorDescriptor?,
+        annotations: Annotations,
+        isPrimary: Boolean,
+        kind: CallableMemberDescriptor.Kind,
+        source: SourceElement
+) : ClassConstructorDescriptorImpl(containingDeclaration, original, annotations, isPrimary, kind, source) {
+
     override fun getName(): Name {
-        return Name.identifier("${descriptor.name.asString()}\$default")
+        return Name.identifier("${super.getName().asString()}\$default")
     }
 }
