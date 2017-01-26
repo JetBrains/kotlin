@@ -57,7 +57,6 @@ class JsBinaryVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
 object KotlinJavascriptMetadataUtils {
     const val JS_EXT: String = ".js"
     const val META_JS_SUFFIX: String = ".meta.js"
-    const val VFS_PROTOCOL: String = "kotlin-js-meta"
     private val KOTLIN_JAVASCRIPT_METHOD_NAME = "kotlin_module_metadata"
     private val KOTLIN_JAVASCRIPT_METHOD_NAME_PATTERN = "\\.kotlin_module_metadata\\(".toPattern()
 
