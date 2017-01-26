@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiComment
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -34,10 +35,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
-import org.jetbrains.kotlin.psi.psiUtil.contentRange
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -85,7 +83,7 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
     override fun applyTo(element: KtObjectLiteralExpression, editor: Editor?) {
         val commentSaver = CommentSaver(element)
 
-        val (baseTypeRef, baseType, singleFunction) = extractData(element)!!
+        val (_, baseType, singleFunction) = extractData(element)!!
 
         val returnSaver = ReturnSaver(singleFunction)
 
@@ -111,13 +109,19 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
                 appendFixedText("->")
             }
 
-            if (singleFunction.hasBlockBody()) {
-                appendChildRange((body as KtBlockExpression).contentRange())
+            val lastCommentOwner = if (singleFunction.hasBlockBody()) {
+                val contentRange = (body as KtBlockExpression).contentRange()
+                appendChildRange(contentRange)
+                contentRange.last
             }
             else {
                 appendExpression(body)
+                body
             }
 
+            if (lastCommentOwner?.anyDescendantOfType<PsiComment> { it.tokenType == KtTokens.EOL_COMMENT } ?: false) {
+                appendFixedText("\n")
+            }
             appendFixedText("}")
         }
 

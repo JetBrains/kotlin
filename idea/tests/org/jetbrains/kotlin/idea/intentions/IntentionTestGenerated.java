@@ -11112,6 +11112,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("WithComment.kt")
+        public void testWithComment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/WithComment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("WithCommentAfterExpression.kt")
+        public void testWithCommentAfterExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/WithCommentAfterExpression.kt");
+            doTest(fileName);
+        }
+
     }
 
     @TestMetadata("idea/testData/intentions/operatorToFunction")
