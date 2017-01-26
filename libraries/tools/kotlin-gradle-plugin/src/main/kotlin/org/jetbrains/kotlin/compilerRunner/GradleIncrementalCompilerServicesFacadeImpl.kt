@@ -22,7 +22,10 @@ internal open class GradleCompilerServicesFacadeImpl(
         project: Project,
         val compilerMessageCollector: MessageCollector,
         port: Int = SOCKET_ANY_FREE_PORT
-) : UnicastRemoteObject(port), CompilerServicesFacadeBase, Remote {
+) : UnicastRemoteObject(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory),
+    CompilerServicesFacadeBase,
+    Remote {
+
     protected val log: Logger = project.logger
 
     override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
