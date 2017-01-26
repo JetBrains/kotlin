@@ -50,7 +50,7 @@ public external abstract class ServiceWorkerGlobalScope : WorkerGlobalScope {
 
 public external abstract class ServiceWorker : EventTarget, AbstractWorker, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker {
     open val scriptURL: String
-    open val state: String
+    open val state: ServiceWorkerState
     open var onstatechange: ((Event) -> dynamic)?
     fun postMessage(message: Any?, transfer: Array<dynamic> = definedExternally): Unit
 }
@@ -70,12 +70,12 @@ public external interface RegistrationOptions {
     var scope: String?
         get() = definedExternally
         set(value) = definedExternally
-    var type: String? /* = "classic" */
+    var type: WorkerType? /* = WorkerType.CLASSIC */
         get() = definedExternally
         set(value) = definedExternally
 }
 
-public inline fun RegistrationOptions(scope: String? = null, type: String? = "classic"): RegistrationOptions {
+public inline fun RegistrationOptions(scope: String? = null, type: WorkerType? = WorkerType.CLASSIC): RegistrationOptions {
     val o = js("({})")
 
     o["scope"] = scope
@@ -127,7 +127,7 @@ public inline fun ServiceWorkerMessageEventInit(data: Any? = null, origin: Strin
 
 public external abstract class Client : UnionClientOrMessagePortOrServiceWorker {
     open val url: String
-    open val frameType: String
+    open val frameType: FrameType
     open val id: String
     fun postMessage(message: Any?, transfer: Array<dynamic> = definedExternally): Unit
 }
@@ -150,12 +150,12 @@ public external interface ClientQueryOptions {
     var includeUncontrolled: Boolean? /* = false */
         get() = definedExternally
         set(value) = definedExternally
-    var type: String? /* = "window" */
+    var type: ClientType? /* = ClientType.WINDOW */
         get() = definedExternally
         set(value) = definedExternally
 }
 
-public inline fun ClientQueryOptions(includeUncontrolled: Boolean? = false, type: String? = "window"): ClientQueryOptions {
+public inline fun ClientQueryOptions(includeUncontrolled: Boolean? = false, type: ClientType? = ClientType.WINDOW): ClientQueryOptions {
     val o = js("({})")
 
     o["includeUncontrolled"] = includeUncontrolled
@@ -400,4 +400,32 @@ public external open class FunctionalEvent : ExtendableEvent {
 
 public external @marker interface UnionClientOrMessagePortOrServiceWorker {
 }
+
+/* please, don't implement this interface! */
+public external interface ServiceWorkerState {
+    companion object
+}
+public inline val ServiceWorkerState.Companion.INSTALLING: ServiceWorkerState get() = "installing".asDynamic().unsafeCast<ServiceWorkerState>()
+public inline val ServiceWorkerState.Companion.INSTALLED: ServiceWorkerState get() = "installed".asDynamic().unsafeCast<ServiceWorkerState>()
+public inline val ServiceWorkerState.Companion.ACTIVATING: ServiceWorkerState get() = "activating".asDynamic().unsafeCast<ServiceWorkerState>()
+public inline val ServiceWorkerState.Companion.ACTIVATED: ServiceWorkerState get() = "activated".asDynamic().unsafeCast<ServiceWorkerState>()
+public inline val ServiceWorkerState.Companion.REDUNDANT: ServiceWorkerState get() = "redundant".asDynamic().unsafeCast<ServiceWorkerState>()
+
+/* please, don't implement this interface! */
+public external interface FrameType {
+    companion object
+}
+public inline val FrameType.Companion.AUXILIARY: FrameType get() = "auxiliary".asDynamic().unsafeCast<FrameType>()
+public inline val FrameType.Companion.TOP_LEVEL: FrameType get() = "top-level".asDynamic().unsafeCast<FrameType>()
+public inline val FrameType.Companion.NESTED: FrameType get() = "nested".asDynamic().unsafeCast<FrameType>()
+public inline val FrameType.Companion.NONE: FrameType get() = "none".asDynamic().unsafeCast<FrameType>()
+
+/* please, don't implement this interface! */
+public external interface ClientType {
+    companion object
+}
+public inline val ClientType.Companion.WINDOW: ClientType get() = "window".asDynamic().unsafeCast<ClientType>()
+public inline val ClientType.Companion.WORKER: ClientType get() = "worker".asDynamic().unsafeCast<ClientType>()
+public inline val ClientType.Companion.SHAREDWORKER: ClientType get() = "sharedworker".asDynamic().unsafeCast<ClientType>()
+public inline val ClientType.Companion.ALL: ClientType get() = "all".asDynamic().unsafeCast<ClientType>()
 

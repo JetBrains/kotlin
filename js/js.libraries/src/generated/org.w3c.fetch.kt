@@ -41,14 +41,14 @@ public external open class Request(input: dynamic, init: RequestInit = definedEx
     open val method: String
     open val url: String
     open val headers: Headers
-    open val type: String
-    open val destination: String
+    open val type: RequestType
+    open val destination: RequestDestination
     open val referrer: String
     open val referrerPolicy: dynamic
-    open val mode: String
-    open val credentials: String
-    open val cache: String
-    open val redirect: String
+    open val mode: RequestMode
+    open val credentials: RequestCredentials
+    open val cache: RequestCache
+    open val redirect: RequestRedirect
     open val integrity: String
     open val keepalive: Boolean
     override val bodyUsed: Boolean
@@ -76,16 +76,16 @@ public external interface RequestInit {
     var referrerPolicy: dynamic
         get() = definedExternally
         set(value) = definedExternally
-    var mode: String?
+    var mode: RequestMode?
         get() = definedExternally
         set(value) = definedExternally
-    var credentials: String?
+    var credentials: RequestCredentials?
         get() = definedExternally
         set(value) = definedExternally
-    var cache: String?
+    var cache: RequestCache?
         get() = definedExternally
         set(value) = definedExternally
-    var redirect: String?
+    var redirect: RequestRedirect?
         get() = definedExternally
         set(value) = definedExternally
     var integrity: String?
@@ -99,7 +99,7 @@ public external interface RequestInit {
         set(value) = definedExternally
 }
 
-public inline fun RequestInit(method: String? = null, headers: dynamic = null, body: dynamic = null, referrer: String? = null, referrerPolicy: dynamic = null, mode: String? = null, credentials: String? = null, cache: String? = null, redirect: String? = null, integrity: String? = null, keepalive: Boolean? = null, window: Any? = null): RequestInit {
+public inline fun RequestInit(method: String? = null, headers: dynamic = null, body: dynamic = null, referrer: String? = null, referrerPolicy: dynamic = null, mode: RequestMode? = null, credentials: RequestCredentials? = null, cache: RequestCache? = null, redirect: RequestRedirect? = null, integrity: String? = null, keepalive: Boolean? = null, window: Any? = null): RequestInit {
     val o = js("({})")
 
     o["method"] = method
@@ -119,7 +119,7 @@ public inline fun RequestInit(method: String? = null, headers: dynamic = null, b
 }
 
 public external open class Response(body: dynamic = definedExternally, init: ResponseInit = definedExternally) : Body {
-    open val type: String
+    open val type: ResponseType
     open val url: String
     open val redirected: Boolean
     open val status: Short
@@ -163,4 +163,84 @@ public inline fun ResponseInit(status: Short? = 200, statusText: String? = "OK",
 
     return o
 }
+
+/* please, don't implement this interface! */
+public external interface RequestType {
+    companion object
+}
+public inline val RequestType.Companion.EMPTY: RequestType get() = "".asDynamic().unsafeCast<RequestType>()
+public inline val RequestType.Companion.AUDIO: RequestType get() = "audio".asDynamic().unsafeCast<RequestType>()
+public inline val RequestType.Companion.FONT: RequestType get() = "font".asDynamic().unsafeCast<RequestType>()
+public inline val RequestType.Companion.IMAGE: RequestType get() = "image".asDynamic().unsafeCast<RequestType>()
+public inline val RequestType.Companion.SCRIPT: RequestType get() = "script".asDynamic().unsafeCast<RequestType>()
+public inline val RequestType.Companion.STYLE: RequestType get() = "style".asDynamic().unsafeCast<RequestType>()
+public inline val RequestType.Companion.TRACK: RequestType get() = "track".asDynamic().unsafeCast<RequestType>()
+public inline val RequestType.Companion.VIDEO: RequestType get() = "video".asDynamic().unsafeCast<RequestType>()
+
+/* please, don't implement this interface! */
+public external interface RequestDestination {
+    companion object
+}
+public inline val RequestDestination.Companion.EMPTY: RequestDestination get() = "".asDynamic().unsafeCast<RequestDestination>()
+public inline val RequestDestination.Companion.DOCUMENT: RequestDestination get() = "document".asDynamic().unsafeCast<RequestDestination>()
+public inline val RequestDestination.Companion.EMBED: RequestDestination get() = "embed".asDynamic().unsafeCast<RequestDestination>()
+public inline val RequestDestination.Companion.FONT: RequestDestination get() = "font".asDynamic().unsafeCast<RequestDestination>()
+public inline val RequestDestination.Companion.IMAGE: RequestDestination get() = "image".asDynamic().unsafeCast<RequestDestination>()
+public inline val RequestDestination.Companion.MANIFEST: RequestDestination get() = "manifest".asDynamic().unsafeCast<RequestDestination>()
+public inline val RequestDestination.Companion.MEDIA: RequestDestination get() = "media".asDynamic().unsafeCast<RequestDestination>()
+public inline val RequestDestination.Companion.OBJECT: RequestDestination get() = "object".asDynamic().unsafeCast<RequestDestination>()
+public inline val RequestDestination.Companion.REPORT: RequestDestination get() = "report".asDynamic().unsafeCast<RequestDestination>()
+public inline val RequestDestination.Companion.SCRIPT: RequestDestination get() = "script".asDynamic().unsafeCast<RequestDestination>()
+public inline val RequestDestination.Companion.SERVICEWORKER: RequestDestination get() = "serviceworker".asDynamic().unsafeCast<RequestDestination>()
+public inline val RequestDestination.Companion.SHAREDWORKER: RequestDestination get() = "sharedworker".asDynamic().unsafeCast<RequestDestination>()
+public inline val RequestDestination.Companion.STYLE: RequestDestination get() = "style".asDynamic().unsafeCast<RequestDestination>()
+public inline val RequestDestination.Companion.WORKER: RequestDestination get() = "worker".asDynamic().unsafeCast<RequestDestination>()
+public inline val RequestDestination.Companion.XSLT: RequestDestination get() = "xslt".asDynamic().unsafeCast<RequestDestination>()
+
+/* please, don't implement this interface! */
+public external interface RequestMode {
+    companion object
+}
+public inline val RequestMode.Companion.NAVIGATE: RequestMode get() = "navigate".asDynamic().unsafeCast<RequestMode>()
+public inline val RequestMode.Companion.SAME_ORIGIN: RequestMode get() = "same-origin".asDynamic().unsafeCast<RequestMode>()
+public inline val RequestMode.Companion.NO_CORS: RequestMode get() = "no-cors".asDynamic().unsafeCast<RequestMode>()
+public inline val RequestMode.Companion.CORS: RequestMode get() = "cors".asDynamic().unsafeCast<RequestMode>()
+
+/* please, don't implement this interface! */
+public external interface RequestCredentials {
+    companion object
+}
+public inline val RequestCredentials.Companion.OMIT: RequestCredentials get() = "omit".asDynamic().unsafeCast<RequestCredentials>()
+public inline val RequestCredentials.Companion.SAME_ORIGIN: RequestCredentials get() = "same-origin".asDynamic().unsafeCast<RequestCredentials>()
+public inline val RequestCredentials.Companion.INCLUDE: RequestCredentials get() = "include".asDynamic().unsafeCast<RequestCredentials>()
+
+/* please, don't implement this interface! */
+public external interface RequestCache {
+    companion object
+}
+public inline val RequestCache.Companion.DEFAULT: RequestCache get() = "default".asDynamic().unsafeCast<RequestCache>()
+public inline val RequestCache.Companion.NO_STORE: RequestCache get() = "no-store".asDynamic().unsafeCast<RequestCache>()
+public inline val RequestCache.Companion.RELOAD: RequestCache get() = "reload".asDynamic().unsafeCast<RequestCache>()
+public inline val RequestCache.Companion.NO_CACHE: RequestCache get() = "no-cache".asDynamic().unsafeCast<RequestCache>()
+public inline val RequestCache.Companion.FORCE_CACHE: RequestCache get() = "force-cache".asDynamic().unsafeCast<RequestCache>()
+public inline val RequestCache.Companion.ONLY_IF_CACHED: RequestCache get() = "only-if-cached".asDynamic().unsafeCast<RequestCache>()
+
+/* please, don't implement this interface! */
+public external interface RequestRedirect {
+    companion object
+}
+public inline val RequestRedirect.Companion.FOLLOW: RequestRedirect get() = "follow".asDynamic().unsafeCast<RequestRedirect>()
+public inline val RequestRedirect.Companion.ERROR: RequestRedirect get() = "error".asDynamic().unsafeCast<RequestRedirect>()
+public inline val RequestRedirect.Companion.MANUAL: RequestRedirect get() = "manual".asDynamic().unsafeCast<RequestRedirect>()
+
+/* please, don't implement this interface! */
+public external interface ResponseType {
+    companion object
+}
+public inline val ResponseType.Companion.BASIC: ResponseType get() = "basic".asDynamic().unsafeCast<ResponseType>()
+public inline val ResponseType.Companion.CORS: ResponseType get() = "cors".asDynamic().unsafeCast<ResponseType>()
+public inline val ResponseType.Companion.DEFAULT: ResponseType get() = "default".asDynamic().unsafeCast<ResponseType>()
+public inline val ResponseType.Companion.ERROR: ResponseType get() = "error".asDynamic().unsafeCast<ResponseType>()
+public inline val ResponseType.Companion.OPAQUE: ResponseType get() = "opaque".asDynamic().unsafeCast<ResponseType>()
+public inline val ResponseType.Companion.OPAQUEREDIRECT: ResponseType get() = "opaqueredirect".asDynamic().unsafeCast<ResponseType>()
 

@@ -24,7 +24,7 @@ public external open class Notification(title: String, options: NotificationOpti
     var onclick: ((Event) -> dynamic)?
     var onerror: ((Event) -> dynamic)?
     open val title: String
-    open val dir: String
+    open val dir: NotificationDirection
     open val lang: String
     open val body: String
     open val tag: String
@@ -44,14 +44,14 @@ public external open class Notification(title: String, options: NotificationOpti
     fun close(): Unit
 
     companion object {
-        var permission: String
+        var permission: NotificationPermission
         var maxActions: Int
-        fun requestPermission(deprecatedCallback: (String) -> Unit = definedExternally): Promise<String>
+        fun requestPermission(deprecatedCallback: (NotificationPermission) -> Unit = definedExternally): Promise<NotificationPermission>
     }
 }
 
 public external interface NotificationOptions {
-    var dir: String? /* = "auto" */
+    var dir: NotificationDirection? /* = NotificationDirection.AUTO */
         get() = definedExternally
         set(value) = definedExternally
     var lang: String? /* = "" */
@@ -104,7 +104,7 @@ public external interface NotificationOptions {
         set(value) = definedExternally
 }
 
-public inline fun NotificationOptions(dir: String? = "auto", lang: String? = "", body: String? = "", tag: String? = "", image: String? = null, icon: String? = null, badge: String? = null, sound: String? = null, vibrate: dynamic = null, timestamp: Number? = null, renotify: Boolean? = false, silent: Boolean? = false, noscreen: Boolean? = false, requireInteraction: Boolean? = false, sticky: Boolean? = false, data: Any? = null, actions: Array<NotificationAction>? = arrayOf()): NotificationOptions {
+public inline fun NotificationOptions(dir: NotificationDirection? = NotificationDirection.AUTO, lang: String? = "", body: String? = "", tag: String? = "", image: String? = null, icon: String? = null, badge: String? = null, sound: String? = null, vibrate: dynamic = null, timestamp: Number? = null, renotify: Boolean? = false, silent: Boolean? = false, noscreen: Boolean? = false, requireInteraction: Boolean? = false, sticky: Boolean? = false, data: Any? = null, actions: Array<NotificationAction>? = arrayOf()): NotificationOptions {
     val o = js("({})")
 
     o["dir"] = dir
@@ -189,4 +189,20 @@ public inline fun NotificationEventInit(notification: Notification?, action: Str
 
     return o
 }
+
+/* please, don't implement this interface! */
+public external interface NotificationPermission {
+    companion object
+}
+public inline val NotificationPermission.Companion.DEFAULT: NotificationPermission get() = "default".asDynamic().unsafeCast<NotificationPermission>()
+public inline val NotificationPermission.Companion.DENIED: NotificationPermission get() = "denied".asDynamic().unsafeCast<NotificationPermission>()
+public inline val NotificationPermission.Companion.GRANTED: NotificationPermission get() = "granted".asDynamic().unsafeCast<NotificationPermission>()
+
+/* please, don't implement this interface! */
+public external interface NotificationDirection {
+    companion object
+}
+public inline val NotificationDirection.Companion.AUTO: NotificationDirection get() = "auto".asDynamic().unsafeCast<NotificationDirection>()
+public inline val NotificationDirection.Companion.LTR: NotificationDirection get() = "ltr".asDynamic().unsafeCast<NotificationDirection>()
+public inline val NotificationDirection.Companion.RTL: NotificationDirection get() = "rtl".asDynamic().unsafeCast<NotificationDirection>()
 

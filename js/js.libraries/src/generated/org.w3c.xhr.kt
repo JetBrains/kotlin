@@ -42,7 +42,7 @@ public external open class XMLHttpRequest : XMLHttpRequestEventTarget {
     open val responseURL: String
     open val status: Short
     open val statusText: String
-    var responseType: String
+    var responseType: XMLHttpRequestResponseType
     open val response: Any?
     open val responseText: String
     open val responseXML: Document?
@@ -105,4 +105,15 @@ public inline fun ProgressEventInit(lengthComputable: Boolean? = false, loaded: 
 
     return o
 }
+
+/* please, don't implement this interface! */
+public external interface XMLHttpRequestResponseType {
+    companion object
+}
+public inline val XMLHttpRequestResponseType.Companion.EMPTY: XMLHttpRequestResponseType get() = "".asDynamic().unsafeCast<XMLHttpRequestResponseType>()
+public inline val XMLHttpRequestResponseType.Companion.ARRAYBUFFER: XMLHttpRequestResponseType get() = "arraybuffer".asDynamic().unsafeCast<XMLHttpRequestResponseType>()
+public inline val XMLHttpRequestResponseType.Companion.BLOB: XMLHttpRequestResponseType get() = "blob".asDynamic().unsafeCast<XMLHttpRequestResponseType>()
+public inline val XMLHttpRequestResponseType.Companion.DOCUMENT: XMLHttpRequestResponseType get() = "document".asDynamic().unsafeCast<XMLHttpRequestResponseType>()
+public inline val XMLHttpRequestResponseType.Companion.JSON: XMLHttpRequestResponseType get() = "json".asDynamic().unsafeCast<XMLHttpRequestResponseType>()
+public inline val XMLHttpRequestResponseType.Companion.TEXT: XMLHttpRequestResponseType get() = "text".asDynamic().unsafeCast<XMLHttpRequestResponseType>()
 

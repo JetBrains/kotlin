@@ -33,7 +33,7 @@ public external open class Document : Node, GlobalEventHandlers, DocumentAndElem
     open val location: Location?
     var cookie: String
     open val lastModified: String
-    open val readyState: String
+    open val readyState: DocumentReadyState
     var dir: String
     var body: HTMLElement?
     open val head: HTMLHeadElement?
@@ -333,11 +333,11 @@ public external abstract class HTMLBaseElement : HTMLElement {
 
 public external abstract class HTMLLinkElement : HTMLElement, LinkStyle {
     open var scope: String
-    open var workerType: String
+    open var workerType: WorkerType
     open var href: String
     open var crossOrigin: String?
     open var rel: String
-    @JsName("as") open var as_: String
+    @JsName("as") open var as_: RequestDestination
     open val relList: DOMTokenList
     open var media: String
     open var nonce: String
@@ -635,12 +635,12 @@ public external abstract class HTMLMediaElement : HTMLElement {
     open val videoTracks: VideoTrackList
     open val textTracks: TextTrackList
     fun load(): Unit
-    fun canPlayType(type: String): String
+    fun canPlayType(type: String): CanPlayTypeResult
     fun fastSeek(time: Double): Unit
     fun getStartDate(): dynamic
     fun play(): Promise<Unit>
     fun pause(): Unit
-    fun addTextTrack(kind: String, label: String = definedExternally, language: String = definedExternally): TextTrack
+    fun addTextTrack(kind: TextTrackKind, label: String = definedExternally, language: String = definedExternally): TextTrack
 
     companion object {
         val NETWORK_EMPTY: Short
@@ -711,12 +711,12 @@ public external abstract class TextTrackList : EventTarget {
 inline operator fun TextTrackList.get(index: Int): TextTrack? = asDynamic()[index]
 
 public external abstract class TextTrack : EventTarget, UnionAudioTrackOrTextTrackOrVideoTrack {
-    open val kind: String
+    open val kind: TextTrackKind
     open val label: String
     open val language: String
     open val id: String
     open val inBandMetadataTrackDispatchType: String
-    open var mode: String
+    open var mode: TextTrackMode
     open val cues: TextTrackCueList?
     open val activeCues: TextTrackCueList?
     open var oncuechange: ((Event) -> dynamic)?
@@ -946,7 +946,7 @@ public external abstract class HTMLInputElement : HTMLElement {
     fun setCustomValidity(error: String): Unit
     fun select(): Unit
     fun setRangeText(replacement: String): Unit
-    fun setRangeText(replacement: String, start: Int, end: Int, selectionMode: String = definedExternally): Unit
+    fun setRangeText(replacement: String, start: Int, end: Int, selectionMode: SelectionMode = definedExternally): Unit
     fun setSelectionRange(start: Int, end: Int, direction: String = definedExternally): Unit
 }
 
@@ -1054,7 +1054,7 @@ public external abstract class HTMLTextAreaElement : HTMLElement {
     fun setCustomValidity(error: String): Unit
     fun select(): Unit
     fun setRangeText(replacement: String): Unit
-    fun setRangeText(replacement: String, start: Int, end: Int, selectionMode: String = definedExternally): Unit
+    fun setRangeText(replacement: String, start: Int, end: Int, selectionMode: SelectionMode = definedExternally): Unit
     fun setSelectionRange(start: Int, end: Int, direction: String = definedExternally): Unit
 }
 
@@ -1275,7 +1275,7 @@ public external interface CanvasCompositing {
 
 public external interface CanvasImageSmoothing {
     var imageSmoothingEnabled: Boolean
-    var imageSmoothingQuality: String
+    var imageSmoothingQuality: ImageSmoothingQuality
 }
 
 public external interface CanvasFillStrokeStyles {
@@ -1305,15 +1305,15 @@ public external interface CanvasRect {
 
 public external interface CanvasDrawPath {
     fun beginPath(): Unit
-    fun fill(fillRule: String = definedExternally): Unit
-    fun fill(path: Path2D, fillRule: String = definedExternally): Unit
+    fun fill(fillRule: CanvasFillRule = definedExternally): Unit
+    fun fill(path: Path2D, fillRule: CanvasFillRule = definedExternally): Unit
     fun stroke(): Unit
     fun stroke(path: Path2D): Unit
-    fun clip(fillRule: String = definedExternally): Unit
-    fun clip(path: Path2D, fillRule: String = definedExternally): Unit
+    fun clip(fillRule: CanvasFillRule = definedExternally): Unit
+    fun clip(path: Path2D, fillRule: CanvasFillRule = definedExternally): Unit
     fun resetClip(): Unit
-    fun isPointInPath(x: Double, y: Double, fillRule: String = definedExternally): Boolean
-    fun isPointInPath(path: Path2D, x: Double, y: Double, fillRule: String = definedExternally): Boolean
+    fun isPointInPath(x: Double, y: Double, fillRule: CanvasFillRule = definedExternally): Boolean
+    fun isPointInPath(path: Path2D, x: Double, y: Double, fillRule: CanvasFillRule = definedExternally): Boolean
     fun isPointInStroke(x: Double, y: Double): Boolean
     fun isPointInStroke(path: Path2D, x: Double, y: Double): Boolean
 }
@@ -1353,8 +1353,8 @@ public external interface CanvasImageData {
 
 public external interface CanvasPathDrawingStyles {
     var lineWidth: Double
-    var lineCap: String
-    var lineJoin: String
+    var lineCap: CanvasLineCap
+    var lineJoin: CanvasLineJoin
     var miterLimit: Double
     var lineDashOffset: Double
     fun setLineDash(segments: Array<Double>): Unit
@@ -1363,9 +1363,9 @@ public external interface CanvasPathDrawingStyles {
 
 public external interface CanvasTextDrawingStyles {
     var font: String
-    var textAlign: String
-    var textBaseline: String
-    var direction: String
+    var textAlign: CanvasTextAlign
+    var textBaseline: CanvasTextBaseline
+    var direction: CanvasDirection
 }
 
 public external interface CanvasPath {
@@ -1408,7 +1408,7 @@ public external interface HitRegionOptions {
     var path: Path2D? /* = null */
         get() = definedExternally
         set(value) = definedExternally
-    var fillRule: String? /* = "nonzero" */
+    var fillRule: CanvasFillRule? /* = CanvasFillRule.NONZERO */
         get() = definedExternally
         set(value) = definedExternally
     var id: String? /* = "" */
@@ -1431,7 +1431,7 @@ public external interface HitRegionOptions {
         set(value) = definedExternally
 }
 
-public inline fun HitRegionOptions(path: Path2D? = null, fillRule: String? = "nonzero", id: String? = "", parentID: String? = null, cursor: String? = "inherit", control: Element? = null, label: String? = null, role: String? = null): HitRegionOptions {
+public inline fun HitRegionOptions(path: Path2D? = null, fillRule: CanvasFillRule? = CanvasFillRule.NONZERO, id: String? = "", parentID: String? = null, cursor: String? = "inherit", control: Element? = null, label: String? = null, role: String? = null): HitRegionOptions {
     val o = js("({})")
 
     o["path"] = path
@@ -1456,7 +1456,7 @@ public external open class ImageData : TexImageSource {
 
 public external open class Path2D() : CanvasPath {
     constructor(path: Path2D)
-    constructor(paths: Array<Path2D>, fillRule: String = definedExternally)
+    constructor(paths: Array<Path2D>, fillRule: CanvasFillRule = definedExternally)
     constructor(d: String)
     fun addPath(path: Path2D, transform: dynamic = definedExternally): Unit
     override fun closePath(): Unit
@@ -1597,7 +1597,7 @@ public external abstract class BarProp {
 
 public external abstract class History {
     open val length: Int
-    open var scrollRestoration: String
+    open var scrollRestoration: ScrollRestoration
     open val state: Any?
     fun go(delta: Int = definedExternally): Unit
     fun back(): Unit
@@ -1976,13 +1976,13 @@ public external abstract class ImageBitmap : TexImageSource {
 }
 
 public external interface ImageBitmapOptions {
-    var imageOrientation: String? /* = "none" */
+    var imageOrientation: ImageOrientation? /* = ImageOrientation.NONE */
         get() = definedExternally
         set(value) = definedExternally
-    var premultiplyAlpha: String? /* = "default" */
+    var premultiplyAlpha: PremultiplyAlpha? /* = PremultiplyAlpha.DEFAULT */
         get() = definedExternally
         set(value) = definedExternally
-    var colorSpaceConversion: String? /* = "default" */
+    var colorSpaceConversion: ColorSpaceConversion? /* = ColorSpaceConversion.DEFAULT */
         get() = definedExternally
         set(value) = definedExternally
     var resizeWidth: Int?
@@ -1991,12 +1991,12 @@ public external interface ImageBitmapOptions {
     var resizeHeight: Int?
         get() = definedExternally
         set(value) = definedExternally
-    var resizeQuality: String? /* = "low" */
+    var resizeQuality: ResizeQuality? /* = ResizeQuality.LOW */
         get() = definedExternally
         set(value) = definedExternally
 }
 
-public inline fun ImageBitmapOptions(imageOrientation: String? = "none", premultiplyAlpha: String? = "default", colorSpaceConversion: String? = "default", resizeWidth: Int? = null, resizeHeight: Int? = null, resizeQuality: String? = "low"): ImageBitmapOptions {
+public inline fun ImageBitmapOptions(imageOrientation: ImageOrientation? = ImageOrientation.NONE, premultiplyAlpha: PremultiplyAlpha? = PremultiplyAlpha.DEFAULT, colorSpaceConversion: ColorSpaceConversion? = ColorSpaceConversion.DEFAULT, resizeWidth: Int? = null, resizeHeight: Int? = null, resizeQuality: ResizeQuality? = ResizeQuality.LOW): ImageBitmapOptions {
     val o = js("({})")
 
     o["imageOrientation"] = imageOrientation
@@ -2091,7 +2091,7 @@ public external open class WebSocket(url: String, protocols: dynamic = definedEx
     open val extensions: String
     open val protocol: String
     var onmessage: ((Event) -> dynamic)?
-    var binaryType: String
+    var binaryType: BinaryType
     fun close(code: Short = definedExternally, reason: String = definedExternally): Unit
     fun send(data: String): Unit
     fun send(data: Blob): Unit
@@ -2194,15 +2194,15 @@ public external open class Worker(scriptURL: String, options: WorkerOptions = de
 }
 
 public external interface WorkerOptions {
-    var type: String? /* = "classic" */
+    var type: WorkerType? /* = WorkerType.CLASSIC */
         get() = definedExternally
         set(value) = definedExternally
-    var credentials: String? /* = "omit" */
+    var credentials: RequestCredentials? /* = RequestCredentials.OMIT */
         get() = definedExternally
         set(value) = definedExternally
 }
 
-public inline fun WorkerOptions(type: String? = "classic", credentials: String? = "omit"): WorkerOptions {
+public inline fun WorkerOptions(type: WorkerType? = WorkerType.CLASSIC, credentials: RequestCredentials? = RequestCredentials.OMIT): WorkerOptions {
     val o = js("({})")
 
     o["type"] = type
@@ -2663,7 +2663,7 @@ public external open class DocumentFragment : Node, NonElementParentNode, Parent
 }
 
 public external open class ShadowRoot : DocumentFragment, DocumentOrShadowRoot {
-    open val mode: String
+    open val mode: ShadowRootMode
     open val host: Element
     override val fullscreenElement: Element?
     override fun getElementById(elementId: String): Element?
@@ -2733,12 +2733,12 @@ public external abstract class Element : Node, ParentNode, NonDocumentTypeChildN
 }
 
 public external interface ShadowRootInit {
-    var mode: String?
+    var mode: ShadowRootMode?
         get() = definedExternally
         set(value) = definedExternally
 }
 
-public inline fun ShadowRootInit(mode: String?): ShadowRootInit {
+public inline fun ShadowRootInit(mode: ShadowRootMode?): ShadowRootInit {
     val o = js("({})")
 
     o["mode"] = mode
@@ -3109,12 +3109,12 @@ public external open class DOMMatrix() : DOMMatrixReadOnly {
 }
 
 public external interface ScrollOptions {
-    var behavior: String? /* = "auto" */
+    var behavior: ScrollBehavior? /* = ScrollBehavior.AUTO */
         get() = definedExternally
         set(value) = definedExternally
 }
 
-public inline fun ScrollOptions(behavior: String? = "auto"): ScrollOptions {
+public inline fun ScrollOptions(behavior: ScrollBehavior? = ScrollBehavior.AUTO): ScrollOptions {
     val o = js("({})")
 
     o["behavior"] = behavior
@@ -3131,7 +3131,7 @@ public external interface ScrollToOptions : ScrollOptions {
         set(value) = definedExternally
 }
 
-public inline fun ScrollToOptions(left: Double? = null, top: Double? = null, behavior: String? = "auto"): ScrollToOptions {
+public inline fun ScrollToOptions(left: Double? = null, top: Double? = null, behavior: ScrollBehavior? = ScrollBehavior.AUTO): ScrollToOptions {
     val o = js("({})")
 
     o["left"] = left
@@ -3193,15 +3193,15 @@ public external abstract class CaretPosition {
 }
 
 public external interface ScrollIntoViewOptions : ScrollOptions {
-    var block: String? /* = "center" */
+    var block: ScrollLogicalPosition? /* = ScrollLogicalPosition.CENTER */
         get() = definedExternally
         set(value) = definedExternally
-    var inline: String? /* = "center" */
+    var inline: ScrollLogicalPosition? /* = ScrollLogicalPosition.CENTER */
         get() = definedExternally
         set(value) = definedExternally
 }
 
-public inline fun ScrollIntoViewOptions(block: String? = "center", inline: String? = "center", behavior: String? = "auto"): ScrollIntoViewOptions {
+public inline fun ScrollIntoViewOptions(block: ScrollLogicalPosition? = ScrollLogicalPosition.CENTER, inline: ScrollLogicalPosition? = ScrollLogicalPosition.CENTER, behavior: ScrollBehavior? = ScrollBehavior.AUTO): ScrollIntoViewOptions {
     val o = js("({})")
 
     o["block"] = block
@@ -3212,7 +3212,7 @@ public inline fun ScrollIntoViewOptions(block: String? = "center", inline: Strin
 }
 
 public external interface BoxQuadOptions {
-    var box: String? /* = "border" */
+    var box: CSSBoxType? /* = CSSBoxType.BORDER */
         get() = definedExternally
         set(value) = definedExternally
     var relativeTo: dynamic
@@ -3220,7 +3220,7 @@ public external interface BoxQuadOptions {
         set(value) = definedExternally
 }
 
-public inline fun BoxQuadOptions(box: String? = "border", relativeTo: dynamic = null): BoxQuadOptions {
+public inline fun BoxQuadOptions(box: CSSBoxType? = CSSBoxType.BORDER, relativeTo: dynamic = null): BoxQuadOptions {
     val o = js("({})")
 
     o["box"] = box
@@ -3230,15 +3230,15 @@ public inline fun BoxQuadOptions(box: String? = "border", relativeTo: dynamic = 
 }
 
 public external interface ConvertCoordinateOptions {
-    var fromBox: String? /* = "border" */
+    var fromBox: CSSBoxType? /* = CSSBoxType.BORDER */
         get() = definedExternally
         set(value) = definedExternally
-    var toBox: String? /* = "border" */
+    var toBox: CSSBoxType? /* = CSSBoxType.BORDER */
         get() = definedExternally
         set(value) = definedExternally
 }
 
-public inline fun ConvertCoordinateOptions(fromBox: String? = "border", toBox: String? = "border"): ConvertCoordinateOptions {
+public inline fun ConvertCoordinateOptions(fromBox: CSSBoxType? = CSSBoxType.BORDER, toBox: CSSBoxType? = CSSBoxType.BORDER): ConvertCoordinateOptions {
     val o = js("({})")
 
     o["fromBox"] = fromBox
@@ -3286,4 +3286,192 @@ public external @marker interface RenderingContext {
 
 public external @marker interface HTMLOrSVGImageElement {
 }
+
+/* please, don't implement this interface! */
+public external interface DocumentReadyState {
+    companion object
+}
+public inline val DocumentReadyState.Companion.LOADING: DocumentReadyState get() = "loading".asDynamic().unsafeCast<DocumentReadyState>()
+public inline val DocumentReadyState.Companion.INTERACTIVE: DocumentReadyState get() = "interactive".asDynamic().unsafeCast<DocumentReadyState>()
+public inline val DocumentReadyState.Companion.COMPLETE: DocumentReadyState get() = "complete".asDynamic().unsafeCast<DocumentReadyState>()
+
+/* please, don't implement this interface! */
+public external interface CanPlayTypeResult {
+    companion object
+}
+public inline val CanPlayTypeResult.Companion.EMPTY: CanPlayTypeResult get() = "".asDynamic().unsafeCast<CanPlayTypeResult>()
+public inline val CanPlayTypeResult.Companion.MAYBE: CanPlayTypeResult get() = "maybe".asDynamic().unsafeCast<CanPlayTypeResult>()
+public inline val CanPlayTypeResult.Companion.PROBABLY: CanPlayTypeResult get() = "probably".asDynamic().unsafeCast<CanPlayTypeResult>()
+
+/* please, don't implement this interface! */
+public external interface TextTrackMode {
+    companion object
+}
+public inline val TextTrackMode.Companion.DISABLED: TextTrackMode get() = "disabled".asDynamic().unsafeCast<TextTrackMode>()
+public inline val TextTrackMode.Companion.HIDDEN: TextTrackMode get() = "hidden".asDynamic().unsafeCast<TextTrackMode>()
+public inline val TextTrackMode.Companion.SHOWING: TextTrackMode get() = "showing".asDynamic().unsafeCast<TextTrackMode>()
+
+/* please, don't implement this interface! */
+public external interface TextTrackKind {
+    companion object
+}
+public inline val TextTrackKind.Companion.SUBTITLES: TextTrackKind get() = "subtitles".asDynamic().unsafeCast<TextTrackKind>()
+public inline val TextTrackKind.Companion.CAPTIONS: TextTrackKind get() = "captions".asDynamic().unsafeCast<TextTrackKind>()
+public inline val TextTrackKind.Companion.DESCRIPTIONS: TextTrackKind get() = "descriptions".asDynamic().unsafeCast<TextTrackKind>()
+public inline val TextTrackKind.Companion.CHAPTERS: TextTrackKind get() = "chapters".asDynamic().unsafeCast<TextTrackKind>()
+public inline val TextTrackKind.Companion.METADATA: TextTrackKind get() = "metadata".asDynamic().unsafeCast<TextTrackKind>()
+
+/* please, don't implement this interface! */
+public external interface SelectionMode {
+    companion object
+}
+public inline val SelectionMode.Companion.SELECT: SelectionMode get() = "select".asDynamic().unsafeCast<SelectionMode>()
+public inline val SelectionMode.Companion.START: SelectionMode get() = "start".asDynamic().unsafeCast<SelectionMode>()
+public inline val SelectionMode.Companion.END: SelectionMode get() = "end".asDynamic().unsafeCast<SelectionMode>()
+public inline val SelectionMode.Companion.PRESERVE: SelectionMode get() = "preserve".asDynamic().unsafeCast<SelectionMode>()
+
+/* please, don't implement this interface! */
+public external interface CanvasFillRule {
+    companion object
+}
+public inline val CanvasFillRule.Companion.NONZERO: CanvasFillRule get() = "nonzero".asDynamic().unsafeCast<CanvasFillRule>()
+public inline val CanvasFillRule.Companion.EVENODD: CanvasFillRule get() = "evenodd".asDynamic().unsafeCast<CanvasFillRule>()
+
+/* please, don't implement this interface! */
+public external interface ImageSmoothingQuality {
+    companion object
+}
+public inline val ImageSmoothingQuality.Companion.LOW: ImageSmoothingQuality get() = "low".asDynamic().unsafeCast<ImageSmoothingQuality>()
+public inline val ImageSmoothingQuality.Companion.MEDIUM: ImageSmoothingQuality get() = "medium".asDynamic().unsafeCast<ImageSmoothingQuality>()
+public inline val ImageSmoothingQuality.Companion.HIGH: ImageSmoothingQuality get() = "high".asDynamic().unsafeCast<ImageSmoothingQuality>()
+
+/* please, don't implement this interface! */
+public external interface CanvasLineCap {
+    companion object
+}
+public inline val CanvasLineCap.Companion.BUTT: CanvasLineCap get() = "butt".asDynamic().unsafeCast<CanvasLineCap>()
+public inline val CanvasLineCap.Companion.ROUND: CanvasLineCap get() = "round".asDynamic().unsafeCast<CanvasLineCap>()
+public inline val CanvasLineCap.Companion.SQUARE: CanvasLineCap get() = "square".asDynamic().unsafeCast<CanvasLineCap>()
+
+/* please, don't implement this interface! */
+public external interface CanvasLineJoin {
+    companion object
+}
+public inline val CanvasLineJoin.Companion.ROUND: CanvasLineJoin get() = "round".asDynamic().unsafeCast<CanvasLineJoin>()
+public inline val CanvasLineJoin.Companion.BEVEL: CanvasLineJoin get() = "bevel".asDynamic().unsafeCast<CanvasLineJoin>()
+public inline val CanvasLineJoin.Companion.MITER: CanvasLineJoin get() = "miter".asDynamic().unsafeCast<CanvasLineJoin>()
+
+/* please, don't implement this interface! */
+public external interface CanvasTextAlign {
+    companion object
+}
+public inline val CanvasTextAlign.Companion.START: CanvasTextAlign get() = "start".asDynamic().unsafeCast<CanvasTextAlign>()
+public inline val CanvasTextAlign.Companion.END: CanvasTextAlign get() = "end".asDynamic().unsafeCast<CanvasTextAlign>()
+public inline val CanvasTextAlign.Companion.LEFT: CanvasTextAlign get() = "left".asDynamic().unsafeCast<CanvasTextAlign>()
+public inline val CanvasTextAlign.Companion.RIGHT: CanvasTextAlign get() = "right".asDynamic().unsafeCast<CanvasTextAlign>()
+public inline val CanvasTextAlign.Companion.CENTER: CanvasTextAlign get() = "center".asDynamic().unsafeCast<CanvasTextAlign>()
+
+/* please, don't implement this interface! */
+public external interface CanvasTextBaseline {
+    companion object
+}
+public inline val CanvasTextBaseline.Companion.TOP: CanvasTextBaseline get() = "top".asDynamic().unsafeCast<CanvasTextBaseline>()
+public inline val CanvasTextBaseline.Companion.HANGING: CanvasTextBaseline get() = "hanging".asDynamic().unsafeCast<CanvasTextBaseline>()
+public inline val CanvasTextBaseline.Companion.MIDDLE: CanvasTextBaseline get() = "middle".asDynamic().unsafeCast<CanvasTextBaseline>()
+public inline val CanvasTextBaseline.Companion.ALPHABETIC: CanvasTextBaseline get() = "alphabetic".asDynamic().unsafeCast<CanvasTextBaseline>()
+public inline val CanvasTextBaseline.Companion.IDEOGRAPHIC: CanvasTextBaseline get() = "ideographic".asDynamic().unsafeCast<CanvasTextBaseline>()
+public inline val CanvasTextBaseline.Companion.BOTTOM: CanvasTextBaseline get() = "bottom".asDynamic().unsafeCast<CanvasTextBaseline>()
+
+/* please, don't implement this interface! */
+public external interface CanvasDirection {
+    companion object
+}
+public inline val CanvasDirection.Companion.LTR: CanvasDirection get() = "ltr".asDynamic().unsafeCast<CanvasDirection>()
+public inline val CanvasDirection.Companion.RTL: CanvasDirection get() = "rtl".asDynamic().unsafeCast<CanvasDirection>()
+public inline val CanvasDirection.Companion.INHERIT: CanvasDirection get() = "inherit".asDynamic().unsafeCast<CanvasDirection>()
+
+/* please, don't implement this interface! */
+public external interface ScrollRestoration {
+    companion object
+}
+public inline val ScrollRestoration.Companion.AUTO: ScrollRestoration get() = "auto".asDynamic().unsafeCast<ScrollRestoration>()
+public inline val ScrollRestoration.Companion.MANUAL: ScrollRestoration get() = "manual".asDynamic().unsafeCast<ScrollRestoration>()
+
+/* please, don't implement this interface! */
+public external interface ImageOrientation {
+    companion object
+}
+public inline val ImageOrientation.Companion.NONE: ImageOrientation get() = "none".asDynamic().unsafeCast<ImageOrientation>()
+public inline val ImageOrientation.Companion.FLIPY: ImageOrientation get() = "flipY".asDynamic().unsafeCast<ImageOrientation>()
+
+/* please, don't implement this interface! */
+public external interface PremultiplyAlpha {
+    companion object
+}
+public inline val PremultiplyAlpha.Companion.NONE: PremultiplyAlpha get() = "none".asDynamic().unsafeCast<PremultiplyAlpha>()
+public inline val PremultiplyAlpha.Companion.PREMULTIPLY: PremultiplyAlpha get() = "premultiply".asDynamic().unsafeCast<PremultiplyAlpha>()
+public inline val PremultiplyAlpha.Companion.DEFAULT: PremultiplyAlpha get() = "default".asDynamic().unsafeCast<PremultiplyAlpha>()
+
+/* please, don't implement this interface! */
+public external interface ColorSpaceConversion {
+    companion object
+}
+public inline val ColorSpaceConversion.Companion.NONE: ColorSpaceConversion get() = "none".asDynamic().unsafeCast<ColorSpaceConversion>()
+public inline val ColorSpaceConversion.Companion.DEFAULT: ColorSpaceConversion get() = "default".asDynamic().unsafeCast<ColorSpaceConversion>()
+
+/* please, don't implement this interface! */
+public external interface ResizeQuality {
+    companion object
+}
+public inline val ResizeQuality.Companion.PIXELATED: ResizeQuality get() = "pixelated".asDynamic().unsafeCast<ResizeQuality>()
+public inline val ResizeQuality.Companion.LOW: ResizeQuality get() = "low".asDynamic().unsafeCast<ResizeQuality>()
+public inline val ResizeQuality.Companion.MEDIUM: ResizeQuality get() = "medium".asDynamic().unsafeCast<ResizeQuality>()
+public inline val ResizeQuality.Companion.HIGH: ResizeQuality get() = "high".asDynamic().unsafeCast<ResizeQuality>()
+
+/* please, don't implement this interface! */
+public external interface BinaryType {
+    companion object
+}
+public inline val BinaryType.Companion.BLOB: BinaryType get() = "blob".asDynamic().unsafeCast<BinaryType>()
+public inline val BinaryType.Companion.ARRAYBUFFER: BinaryType get() = "arraybuffer".asDynamic().unsafeCast<BinaryType>()
+
+/* please, don't implement this interface! */
+public external interface WorkerType {
+    companion object
+}
+public inline val WorkerType.Companion.CLASSIC: WorkerType get() = "classic".asDynamic().unsafeCast<WorkerType>()
+public inline val WorkerType.Companion.MODULE: WorkerType get() = "module".asDynamic().unsafeCast<WorkerType>()
+
+/* please, don't implement this interface! */
+public external interface ShadowRootMode {
+    companion object
+}
+public inline val ShadowRootMode.Companion.OPEN: ShadowRootMode get() = "open".asDynamic().unsafeCast<ShadowRootMode>()
+public inline val ShadowRootMode.Companion.CLOSED: ShadowRootMode get() = "closed".asDynamic().unsafeCast<ShadowRootMode>()
+
+/* please, don't implement this interface! */
+public external interface ScrollBehavior {
+    companion object
+}
+public inline val ScrollBehavior.Companion.AUTO: ScrollBehavior get() = "auto".asDynamic().unsafeCast<ScrollBehavior>()
+public inline val ScrollBehavior.Companion.INSTANT: ScrollBehavior get() = "instant".asDynamic().unsafeCast<ScrollBehavior>()
+public inline val ScrollBehavior.Companion.SMOOTH: ScrollBehavior get() = "smooth".asDynamic().unsafeCast<ScrollBehavior>()
+
+/* please, don't implement this interface! */
+public external interface ScrollLogicalPosition {
+    companion object
+}
+public inline val ScrollLogicalPosition.Companion.START: ScrollLogicalPosition get() = "start".asDynamic().unsafeCast<ScrollLogicalPosition>()
+public inline val ScrollLogicalPosition.Companion.CENTER: ScrollLogicalPosition get() = "center".asDynamic().unsafeCast<ScrollLogicalPosition>()
+public inline val ScrollLogicalPosition.Companion.END: ScrollLogicalPosition get() = "end".asDynamic().unsafeCast<ScrollLogicalPosition>()
+public inline val ScrollLogicalPosition.Companion.NEAREST: ScrollLogicalPosition get() = "nearest".asDynamic().unsafeCast<ScrollLogicalPosition>()
+
+/* please, don't implement this interface! */
+public external interface CSSBoxType {
+    companion object
+}
+public inline val CSSBoxType.Companion.MARGIN: CSSBoxType get() = "margin".asDynamic().unsafeCast<CSSBoxType>()
+public inline val CSSBoxType.Companion.BORDER: CSSBoxType get() = "border".asDynamic().unsafeCast<CSSBoxType>()
+public inline val CSSBoxType.Companion.PADDING: CSSBoxType get() = "padding".asDynamic().unsafeCast<CSSBoxType>()
+public inline val CSSBoxType.Companion.CONTENT: CSSBoxType get() = "content".asDynamic().unsafeCast<CSSBoxType>()
 
