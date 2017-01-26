@@ -38,7 +38,9 @@ fun setTypeReference(declaration: KtCallableDeclaration, addAfter: PsiElement?, 
             return oldTypeRef.replace(typeRef) as KtTypeReference
         }
         else {
-            val anchor = addAfter ?: declaration.nameIdentifier?.siblings(forward = true)?.firstOrNull { it is PsiErrorElement }
+            val anchor = addAfter
+                         ?: declaration.nameIdentifier?.siblings(forward = true)?.firstOrNull { it is PsiErrorElement }
+                         ?: (declaration as? KtParameter)?.destructuringDeclaration
             val newTypeRef = declaration.addAfter(typeRef, anchor) as KtTypeReference
             declaration.addAfter(KtPsiFactory(declaration.project).createColon(), anchor)
             return newTypeRef

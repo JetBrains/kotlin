@@ -13867,6 +13867,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("destructuringInLambda.kt")
+        public void testDestructuringInLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/destructuringInLambda.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("enumType.kt")
         public void testEnumType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/enumType.kt");
