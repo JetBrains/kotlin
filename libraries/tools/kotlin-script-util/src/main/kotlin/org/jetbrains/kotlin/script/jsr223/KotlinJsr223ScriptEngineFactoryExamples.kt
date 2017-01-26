@@ -79,12 +79,13 @@ private fun contextClasspath(keyName: String, classLoader: ClassLoader): List<Fi
 
 private fun scriptCompilationClasspathFromContext(classLoader: ClassLoader = Thread.currentThread().contextClassLoader): List<File> =
         (System.getProperty("kotlin.script.classpath")?.split(File.pathSeparator)?.map(::File)
-         ?: contextClasspath(KOTLIN_JAVA_RUNTIME_JAR, classLoader)
-         ?: listOf(kotlinRuntimeJar, kotlinScriptRuntimeJar)
-        )
-                .map { it?.canonicalFile }
-                .distinct()
-                .mapNotNull { it?.existsOrNull() }
+          ?: classpathFromClassloader(classLoader)
+        ).let {
+            it?.plus(kotlinScriptStandardJars) ?: kotlinScriptStandardJars
+        }
+        .map { it?.canonicalFile }
+        .distinct()
+        .mapNotNull { it?.existsOrNull() }
 
 private val kotlinCompilerJar: File by lazy {
     // highest prio - explicit property
@@ -97,9 +98,9 @@ private val kotlinCompilerJar: File by lazy {
     ?: throw FileNotFoundException("Cannot find kotlin compiler jar, set kotlin.compiler.jar property to proper location")
 }
 
-private val kotlinRuntimeJar: File? by lazy {
+private val kotlinStdlibJar: File? by lazy {
     System.getProperty("kotlin.java.runtime.jar")?.let(::File)?.existsOrNull()
-    ?: kotlinCompilerJar.let { File(it.parentFile, KOTLIN_JAVA_RUNTIME_JAR) }.existsOrNull()
+    ?: kotlinCompilerJar.let { File(it.parentFile, KOTLIN_JAVA_STDLIB_JAR) }.existsOrNull()
     ?: getResourcePathForClass(JvmStatic::class.java).existsOrNull()
 }
 
@@ -109,5 +110,6 @@ private val kotlinScriptRuntimeJar: File? by lazy {
     ?: getResourcePathForClass(ScriptTemplateWithArgs::class.java).existsOrNull()
 }
 
+private val kotlinScriptStandardJars by lazy { listOf(kotlinStdlibJar, kotlinScriptRuntimeJar) }
 
 

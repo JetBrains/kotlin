@@ -20,8 +20,7 @@ import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineFactoryBase
 import org.jetbrains.kotlin.cli.common.repl.ScriptArgsWithTypes
 import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_JAVA_RUNTIME_JAR
-import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR
+import org.jetbrains.kotlin.utils.PathUtil.*
 import java.io.File
 import java.io.FileNotFoundException
 import java.net.URL
@@ -80,20 +79,23 @@ private fun contextClasspath(keyName: String, classLoader: ClassLoader): List<Fi
 
 private fun scriptCompilationClasspathFromContext(classLoader: ClassLoader): List<File> =
         ( System.getProperty("kotlin.script.classpath")?.split(File.pathSeparator)?.map(::File)
-          ?: contextClasspath(KOTLIN_JAVA_RUNTIME_JAR, classLoader)
-          ?: listOf(kotlinRuntimeJar, kotlinScriptRuntimeJar)
-        )
+          ?: classpathFromClassloader(classLoader)
+        ).let {
+            it?.plus(kotlinScriptStandardJars) ?: kotlinScriptStandardJars
+        }
         .map { it?.canonicalFile }
         .distinct()
         .mapNotNull { it?.existsOrNull() }
 
 
-private val kotlinRuntimeJar: File? by lazy {
+private val kotlinStdlibJar: File? by lazy {
     System.getProperty("kotlin.java.runtime.jar")?.let(::File)?.existsOrNull()
-    ?: kotlinCompilerJar.let { File(it.parentFile, KOTLIN_JAVA_RUNTIME_JAR) }.existsOrNull()
+    ?: kotlinCompilerJar.let { File(it.parentFile, KOTLIN_JAVA_STDLIB_JAR) }.existsOrNull()
 }
 
 private val kotlinScriptRuntimeJar: File? by lazy {
     System.getProperty("kotlin.script.runtime.jar")?.let(::File)?.existsOrNull()
     ?: kotlinCompilerJar.let { File(it.parentFile, KOTLIN_JAVA_SCRIPT_RUNTIME_JAR) }.existsOrNull()
 }
+
+private val kotlinScriptStandardJars by lazy { listOf(kotlinStdlibJar, kotlinScriptRuntimeJar) }
