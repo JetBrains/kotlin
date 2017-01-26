@@ -58,16 +58,10 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
     private String outputFile;
 
     /**
-     * Flag enables or disables metafile generation
+     * Flag enables or disables .meta.js and .kjsm files generation, used to create libraries
      */
     @Parameter(defaultValue = "true")
     private boolean metaInfo;
-
-    /**
-     * Flag enables or disables kjsm generation
-     */
-    @Parameter(defaultValue = "true")
-    private boolean kjsm;
 
     /**
      * Flags enables or disable source map generation
@@ -95,7 +89,6 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
         arguments.outputFile = outputFile;
         arguments.noStdlib = true;
         arguments.metaInfo = metaInfo;
-        arguments.kjsm = kjsm;
         arguments.moduleKind = moduleKind;
 
         List<String> libraries = null;

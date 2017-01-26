@@ -420,7 +420,7 @@
             </src>
         </new-kotlin2js>
 
-        <new-kotlin2js output="${js.stdlib.output.dir}/tmp/kotlin.js" additionalOptions="-meta-info -kjsm">
+        <new-kotlin2js output="${js.stdlib.output.dir}/tmp/kotlin.js" additionalOptions="-meta-info">
             <src>
                 <union>
                     <fileset refid="kotlin.builtin.files"/>
@@ -1119,7 +1119,6 @@
             <arg value="${output}/classes/kotlin-test-js/kotlin-test.js"/>
             <arg value="-version"/>
             <arg value="-meta-info"/>
-            <arg value="-kjsm"/>
             <arg line="-main noCall"/>
             <arg line="-module-kind umd"/>
             <arg value="-Xmulti-platform"/>

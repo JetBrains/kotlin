@@ -21,7 +21,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.io.ZipUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
@@ -135,7 +134,7 @@ public class MockLibraryUtil {
     }
 
     @NotNull
-    public static File compileJsLibraryToJar(
+    private static File compileJsLibraryToJar(
             @NotNull String sourcesPath,
             @NotNull String jarName,
             boolean addSources
@@ -145,8 +144,7 @@ public class MockLibraryUtil {
 
             File outDir = new File(contentDir, "out");
             File outputFile = new File(outDir, jarName + ".js");
-            File outputMetaFile = new File(outDir, jarName + ".meta.js");
-            compileKotlin2JS(sourcesPath, outputFile, outputMetaFile, true);
+            compileKotlin2JS(sourcesPath, outputFile);
 
             return createJarFile(contentDir, outDir, sourcesPath, jarName, addSources);
         }
@@ -221,15 +219,10 @@ public class MockLibraryUtil {
         runJvmCompiler(args);
     }
 
-    public static void compileKotlin2JS(@NotNull String sourcesPath, @NotNull File outputFile, @Nullable File metaFile, boolean kjsm) {
+    private static void compileKotlin2JS(@NotNull String sourcesPath, @NotNull File outputFile) {
         List<String> args = new ArrayList<String>();
-        if (metaFile != null) {
-            args.add("-meta-info");
-        }
-        if (kjsm) {
-            args.add("-kjsm");
-        }
 
+        args.add("-meta-info");
         args.add("-output");
         args.add(outputFile.getAbsolutePath());
 

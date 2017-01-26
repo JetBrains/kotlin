@@ -28,9 +28,7 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> SOURCE_MAP =
             CompilerConfigurationKey.create("generate source map");
     public static final CompilerConfigurationKey<Boolean> META_INFO =
-            CompilerConfigurationKey.create("generate metadata");
-    public static final CompilerConfigurationKey<Boolean> KJSM =
-            CompilerConfigurationKey.create("generate .kjsm files");
+            CompilerConfigurationKey.create("generate .meta.js and .kjsm files");
 
     public static final CompilerConfigurationKey<EcmaVersion> TARGET =
             CompilerConfigurationKey.create("ECMA version target");
