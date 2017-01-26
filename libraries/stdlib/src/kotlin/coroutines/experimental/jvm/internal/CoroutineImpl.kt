@@ -51,7 +51,7 @@ abstract class CoroutineImpl(
     override fun resume(value: Any?) {
         try {
             val result = doResume(value, null)
-            if (result != COROUTINE_SUSPENDED)
+            if (result !== COROUTINE_SUSPENDED)
                 completion!!.resume(result)
         } catch (e: Throwable) {
             completion!!.resumeWithException(e)
@@ -61,7 +61,7 @@ abstract class CoroutineImpl(
     override fun resumeWithException(exception: Throwable) {
         try {
             val result = doResume(null, exception)
-            if (result != COROUTINE_SUSPENDED)
+            if (result !== COROUTINE_SUSPENDED)
                 completion!!.resume(result)
         } catch (e: Throwable) {
             completion!!.resumeWithException(e)
