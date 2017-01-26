@@ -57,10 +57,11 @@ class KotlinConsoleKeeper(val project: Project) {
 
     private fun createCommandLine(module: Module): GeneralCommandLine? {
         val javaParameters = createJavaParametersWithSdk(module)
+        val sdk = javaParameters.jdk ?: return null
+        val sdkType = sdk.sdkType
+        val exePath = (sdkType as JavaSdkType).getVMExecutablePath(sdk)
 
-        javaParameters.mainClass = "dummy"
-
-        val commandLine = javaParameters.toCommandLine()
+        val commandLine = JdkUtil.setupJVMCommandLine(exePath, javaParameters, true)
 
         val paramList = commandLine.parametersList
         paramList.clearAll()
