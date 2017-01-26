@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 import kotlin.coroutines.experimental.intrinsics.SUSPENDED_MARKER
 import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
 import kotlin.coroutines.experimental.jvm.internal.CoroutineImpl
+import kotlin.coroutines.experimental.jvm.internal.interceptContinuationIfNeeded
 
 /**
  * Creates coroutine with receiver type [R] and result type [T].
@@ -35,8 +36,14 @@ import kotlin.coroutines.experimental.jvm.internal.CoroutineImpl
 public fun <R, T> (suspend R.() -> T).createCoroutine(
         receiver: R,
         completion: Continuation<T>
-): Continuation<Unit> =
-        ((this as CoroutineImpl).create(receiver, completion) as CoroutineImpl).facade
+): Continuation<Unit> {
+    if (this !is CoroutineImpl) {
+        return buildContinuationByInvokeCall(completion) {
+            (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
+        }
+    }
+    return ((this as CoroutineImpl).create(receiver, completion) as CoroutineImpl).facade
+}
 
 /**
  * Starts coroutine with receiver type [R] and result type [T].
@@ -62,7 +69,14 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
 @Suppress("UNCHECKED_CAST")
 public fun <T> (suspend () -> T).createCoroutine(
         completion: Continuation<T>
-): Continuation<Unit> = ((this as CoroutineImpl).create(completion) as CoroutineImpl).facade
+): Continuation<Unit> {
+    if (this !is CoroutineImpl) {
+        return buildContinuationByInvokeCall(completion) {
+            (this as Function1<Continuation<T>, Any?>).invoke(completion)
+        }
+    }
+    return ((this as CoroutineImpl).create(completion) as CoroutineImpl).facade
+}
 
 /**
  * Starts coroutine without receiver and with result type [T].
@@ -94,6 +108,39 @@ public inline suspend fun <T> suspendCoroutine(crossinline block: (Continuation<
         }
 
 // INTERNAL DECLARATIONS
+
+private inline fun <T> buildContinuationByInvokeCall(
+        completion: Continuation<T>,
+        crossinline block: () -> Any?
+): Continuation<Unit> {
+    val continuation =
+            object : Continuation<Unit> {
+                override val context: CoroutineContext
+                    get() = completion.context
+
+                override fun resume(value: Unit) {
+                    processInvokeCallOnCoroutine(completion, block)
+                }
+
+                override fun resumeWithException(exception: Throwable) {
+                    completion.resumeWithException(exception)
+                }
+            }
+
+    return completion.context.interceptContinuationIfNeeded(continuation)
+}
+
+private inline fun processInvokeCallOnCoroutine(completion: Continuation<*>, block: () -> Any?) {
+    try {
+        val result = block()
+        if (result !== SUSPENDED_MARKER) {
+            @Suppress("UNCHECKED_CAST")
+            (completion as Continuation<Any?>).resume(result)
+        }
+    } catch (t: Throwable) {
+        completion.resumeWithException(t)
+    }
+}
 
 private val UNDECIDED: Any? = Any()
 private val RESUMED: Any? = Any()

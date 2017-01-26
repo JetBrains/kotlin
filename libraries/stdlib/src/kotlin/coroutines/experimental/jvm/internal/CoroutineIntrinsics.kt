@@ -19,7 +19,13 @@
 package kotlin.coroutines.experimental.jvm.internal
 
 import kotlin.coroutines.experimental.Continuation
+import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.experimental.ContinuationInterceptor
 import kotlin.coroutines.experimental.jvm.internal.CoroutineImpl
 
 fun <T> normalizeContinuation(continuation: Continuation<T>): Continuation<T> =
         (continuation as? CoroutineImpl)?.facade ?: continuation
+
+internal fun <T> CoroutineContext.interceptContinuationIfNeeded(
+        continuation: Continuation<T>
+) = this[ContinuationInterceptor]?.interceptContinuation(continuation) ?: continuation

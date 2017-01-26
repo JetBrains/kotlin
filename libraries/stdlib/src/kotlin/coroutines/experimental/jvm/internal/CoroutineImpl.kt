@@ -22,6 +22,7 @@ import kotlin.coroutines.experimental.Continuation
 import kotlin.coroutines.experimental.ContinuationInterceptor
 import kotlin.coroutines.experimental.CoroutineContext
 import kotlin.coroutines.experimental.intrinsics.SUSPENDED_MARKER
+import kotlin.coroutines.experimental.jvm.internal.interceptContinuationIfNeeded
 import kotlin.jvm.internal.Lambda
 
 abstract class CoroutineImpl(
@@ -43,7 +44,7 @@ abstract class CoroutineImpl(
     private var _facade: Continuation<Any?>? = null
 
     val facade: Continuation<Any?> get() {
-        if (_facade == null) _facade = _context!![ContinuationInterceptor]?.interceptContinuation(this) ?: this
+        if (_facade == null) _facade = _context!!.interceptContinuationIfNeeded(this)
         return _facade!!
     }
 
