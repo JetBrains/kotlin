@@ -10,4 +10,4 @@ abstract class Middle : Base {
 
 abstract class MyClass : Middle()
 
-<!DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE!>class A : MyClass(), Base by Delegate()<!>
+<!DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE!>class A<!> : MyClass(), Base by Delegate()

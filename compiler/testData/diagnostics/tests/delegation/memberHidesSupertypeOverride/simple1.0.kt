@@ -16,6 +16,6 @@ public abstract class MyClass : Base {
     }
 }
 
-<!DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE!>class A : MyClass(), Base by Delegate() {
+<!DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE!>class A<!> : MyClass(), Base by Delegate() {
     override fun getValue() = "Delegate"
-}<!>
+}
