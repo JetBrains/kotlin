@@ -106,8 +106,13 @@ class KotlinAndroidAddStringResource : SelfTargetingIntention<KtLiteralStringTem
 
         val dialog = CreateXmlResourceDialog(module, ResourceType.STRING, resourceName, stringValue, true)
         dialog.title = EXTRACT_RESOURCE_DIALOG_TITLE
-        if (showDialog && !dialog.showAndGet()) {
-            return null
+        if (showDialog) {
+            if (!dialog.showAndGet()) {
+                return null
+            }
+        }
+        else {
+            dialog.close(0)
         }
 
         return CreateXmlResourceParameters(dialog.resourceName,
