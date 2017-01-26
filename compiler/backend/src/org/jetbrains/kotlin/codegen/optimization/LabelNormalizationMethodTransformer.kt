@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.optimization
 
+import org.jetbrains.kotlin.codegen.optimization.common.removeEmptyCatchBlocks
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -34,6 +35,7 @@ class LabelNormalizationMethodTransformer : MethodTransformer() {
                 rewriteNonLabelInstructions()
                 rewriteTryCatchBlocks()
                 rewriteLocalVars()
+                methodNode.removeEmptyCatchBlocks()
             }
         }
 
