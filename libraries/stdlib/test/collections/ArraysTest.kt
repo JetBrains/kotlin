@@ -356,7 +356,7 @@ class ArraysTest {
         expect(1, { byteArrayOf(1, 3, 2).minBy { it * it } })
         expect(3, { shortArrayOf(3, 2).minBy { "a" } })
         expect(2.0F, { floatArrayOf(3.0F, 2.0F).minBy { it.toString() } })
-        expect(2.0, { doubleArrayOf(2.0, 3.0).minBy { Math.sqrt(it) } })
+        expect(2.0, { doubleArrayOf(2.0, 3.0).minBy { it * it } })
     }
 
     @Test fun maxBy() {
@@ -375,7 +375,7 @@ class ArraysTest {
         expect(3, { byteArrayOf(1, 3, 2).maxBy { it * it } })
         expect(3, { shortArrayOf(3, 2).maxBy { "a" } })
         expect(3.0F, { floatArrayOf(3.0F, 2.0F).maxBy { it.toString() } })
-        expect(3.0, { doubleArrayOf(2.0, 3.0).maxBy { Math.sqrt(it) } })
+        expect(3.0, { doubleArrayOf(2.0, 3.0).maxBy { it * it } })
     }
 
     @Test fun minIndex() {
