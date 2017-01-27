@@ -20,6 +20,7 @@ import com.intellij.debugger.engine.DebugProcess
 import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.evaluation.EvaluationContext
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
+import com.intellij.debugger.impl.ClassLoadingUtils
 import com.intellij.openapi.projectRoots.JdkVersionUtil
 import com.intellij.openapi.util.SystemInfo
 import com.sun.jdi.ClassLoaderReference
@@ -30,7 +31,7 @@ fun loadClasses(evaluationContext: EvaluationContextImpl, classes: Collection<Pa
 
     val classLoader: ClassLoaderReference
     try {
-        classLoader = CompilingEvaluatorUtils.getClassLoader(evaluationContext, process)
+        classLoader = ClassLoadingUtils.getClassLoader(evaluationContext, process)
     }
     catch (e: Exception) {
         throw EvaluateException("Error creating evaluation class loader: " + e, e)
@@ -61,7 +62,8 @@ private fun defineClasses(
 ) {
     val lambdaSuperclasses = LAMBDA_SUPERCLASSES.map { it.name to it.bytes }
     for ((className, bytes) in lambdaSuperclasses + classes) {
-        CompilingEvaluatorUtils.defineClass(className, bytes, context, process, classLoader)
+        val patchedBytes = CompilingEvaluatorUtils.changeSuperToMagicAccessor(bytes)
+        ClassLoadingUtils.defineClass(className, patchedBytes, context, process, classLoader)
     }
 }
 
