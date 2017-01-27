@@ -31,6 +31,6 @@ class ConfigureKotlinUtilTest : UsefulTestCase() {
         Assert.assertFalse(useEap11Repository("1.1"))
         Assert.assertFalse(useEap11Repository("1.1.2"))
         Assert.assertFalse(useEap11Repository("1.1.2-3"))
-        Assert.assertFalse(useEap11Repository("1.1-dev-1234"))
+        Assert.assertFalse(useEap11Repository("1.1.0-dev-1234"))
     }
 }
