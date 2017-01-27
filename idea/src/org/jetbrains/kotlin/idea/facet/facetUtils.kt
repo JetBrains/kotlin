@@ -188,7 +188,11 @@ fun parseCompilerArgumentsToFacet(arguments: List<String>, kotlinFacet: KotlinFa
     val argumentArray = arguments.toTypedArray()
     with(kotlinFacet.configuration.settings) {
         // todo: merge common arguments with platform-specific ones in facet settings
-        parseArguments(argumentArray, compilerInfo.commonCompilerArguments!!, ignoreInvalidArguments = true)
+        compilerInfo.commonCompilerArguments!!.let { commonCompilerArguments ->
+            parseArguments(argumentArray, commonCompilerArguments, ignoreInvalidArguments = true)
+            versionInfo.apiLevel = LanguageVersion.fromVersionString(commonCompilerArguments.apiVersion)
+            versionInfo.languageLevel = LanguageVersion.fromVersionString(commonCompilerArguments.languageVersion)
+        }
 
         when (versionInfo.targetPlatformKind) {
             is TargetPlatformKind.Jvm -> {
