@@ -80,3 +80,12 @@ private inline fun tryConnectToDaemon(port: Int, report: (DaemonReportCategory, 
     }
     return null
 }
+
+private const val validFlagFileKeywordChars = "abcdefghijklmnopqrstuvwxyz0123456789-_"
+
+fun makeAutodeletingFlagFile(keyword: String = "compiler-client", baseDir: File? = null): File {
+    val flagFile = File.createTempFile("kotlin-${keyword.filter { validFlagFileKeywordChars.contains(it.toLowerCase()) }}-", "-is-running",
+                                       baseDir?.let { if (it.isDirectory && it.exists()) it else null })
+    flagFile.deleteOnExit()
+    return flagFile
+}

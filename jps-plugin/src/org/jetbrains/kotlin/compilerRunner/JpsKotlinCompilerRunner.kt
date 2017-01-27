@@ -205,10 +205,10 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
             val libPath = CompilerRunnerUtil.getLibPath(environment.kotlinPaths, environment.messageCollector)
             val compilerPath = File(libPath, "kotlin-compiler.jar")
             val compilerId = CompilerId.makeCompilerId(compilerPath)
-            val flagFile = File.createTempFile("kotlin-compiler-jps-session-", "-is-running").apply {
-                deleteOnExit()
-            }
-            jpsDaemonConnection = newDaemonConnection(compilerId, flagFile, environment)
+            // TODO: pass daemon options to newDaemonConnection
+            val daemonOptions = configureDaemonOptions()
+            val flagFile = makeAutodeletingFlagFile("compiler-jps-session-", File(daemonOptions.runFilesPathOrDefault))
+            jpsDaemonConnection = newDaemonConnection(compilerId, flagFile, environment, daemonOptions)
         }
         return jpsDaemonConnection!!
     }

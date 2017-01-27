@@ -34,7 +34,6 @@ import java.util.concurrent.TimeUnit
 import kotlin.comparisons.compareByDescending
 import kotlin.concurrent.thread
 
-
 class CompilationServices(
         val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
         val compilationCanceledStatus: CompilationCanceledStatus? = null
@@ -56,18 +55,12 @@ object KotlinCompilerClient {
                                 autostart: Boolean = true,
                                 checkId: Boolean = true
     ): CompileService? {
-        fun newFlagFile(): File {
-            val flagFile = File.createTempFile("kotlin-compiler-client-", "-is-running")
-            flagFile.deleteOnExit()
-            return flagFile
-        }
-
         val flagFile = System.getProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY)
-                     ?.let { it.trimQuotes() }
+                     ?.let(String::trimQuotes)
                      ?.check { !it.isBlank() }
-                     ?.let { File(it) }
-                     ?.check { it.exists() }
-                     ?: newFlagFile()
+                     ?.let(::File)
+                     ?.check(File::exists)
+                     ?: makeAutodeletingFlagFile(baseDir = File(daemonOptions.runFilesPathOrDefault))
         return connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, reportingTargets, autostart)
     }
 
@@ -249,7 +242,7 @@ object KotlinCompilerClient {
                     val res = daemon.remoteCompile(CompileService.NO_SESSION, CompileService.TargetPlatform.JVM, filteredArgs.toList().toTypedArray(), servicesFacade, outStrm, CompileService.OutputFormat.PLAIN, outStrm, null)
 
                     val endTime = System.nanoTime()
-                    println("Compilation result code: $res")
+                    println("Compilation ${if (res.isGood) "succeeded" else "failed"}, result code: ${res.get()}")
                     val memAfter = daemon.getUsedMemory().get() / 1024
                     println("Compilation time: " + TimeUnit.NANOSECONDS.toMillis(endTime - startTime) + " ms")
                     println("Used memory $memAfter (${"%+d".format(memAfter - memBefore)} kb)")
@@ -329,7 +322,7 @@ object KotlinCompilerClient {
         val daemonLauncher = Native.get(ProcessLauncher::class.java)
         val daemon = daemonLauncher.start(processBuilder)
 
-        var isEchoRead = Semaphore(1)
+        val isEchoRead = Semaphore(1)
         isEchoRead.acquire()
 
         val stdoutThread =
@@ -358,7 +351,7 @@ object KotlinCompilerClient {
                     it.toLong()
                 }
                 catch (e: Exception) {
-                    reportingTargets.report(DaemonReportCategory.INFO, "unable to interpret ${COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY} property ('$it'); using default timeout $DAEMON_DEFAULT_STARTUP_TIMEOUT_MS ms")
+                    reportingTargets.report(DaemonReportCategory.INFO, "unable to interpret $COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY property ('$it'); using default timeout $DAEMON_DEFAULT_STARTUP_TIMEOUT_MS ms")
                     null
                 }
             } ?: DAEMON_DEFAULT_STARTUP_TIMEOUT_MS
