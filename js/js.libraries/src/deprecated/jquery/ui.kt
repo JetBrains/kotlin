@@ -3,6 +3,7 @@ package jquery.ui
 
 //jquery UI
 import jquery.JQuery
+import kotlin.js.Json
 
 @Deprecated("JQuery is going to be removed from the standard library")
 public inline fun JQuery.buttonset(): JQuery = asDynamic().buttonset()
