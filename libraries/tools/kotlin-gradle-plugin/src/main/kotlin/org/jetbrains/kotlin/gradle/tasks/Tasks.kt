@@ -382,7 +382,7 @@ internal class GradleMessageCollector(val logger: Logger) : MessageCollector {
                     "e"
                 }
                 CompilerMessageSeverity.INFO -> "i"
-                CompilerMessageSeverity.WARNING -> "w"
+                CompilerMessageSeverity.WARNING, CompilerMessageSeverity.STRONG_WARNING -> "w"
                 else -> throw IllegalArgumentException("Unknown CompilerMessageSeverity: $severity")
             })
             append(": ")
@@ -404,7 +404,7 @@ internal class GradleMessageCollector(val logger: Logger) : MessageCollector {
             in CompilerMessageSeverity.VERBOSE -> logger.debug(text)
             in CompilerMessageSeverity.ERRORS -> logger.error(text)
             CompilerMessageSeverity.INFO -> logger.info(text)
-            CompilerMessageSeverity.WARNING -> logger.warn(text)
+            CompilerMessageSeverity.WARNING, CompilerMessageSeverity.STRONG_WARNING -> logger.warn(text)
             else -> throw IllegalArgumentException("Unknown CompilerMessageSeverity: $severity")
         }
     }

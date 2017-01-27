@@ -46,7 +46,7 @@ internal class CompileServicesFacadeMessageCollector(
             else -> {
                 val reportSeverity = when (severity) {
                     CompilerMessageSeverity.ERROR -> ReportSeverity.ERROR
-                    CompilerMessageSeverity.WARNING -> ReportSeverity.WARNING
+                    CompilerMessageSeverity.WARNING, CompilerMessageSeverity.STRONG_WARNING -> ReportSeverity.WARNING
                     CompilerMessageSeverity.INFO -> ReportSeverity.INFO
                     else -> ReportSeverity.DEBUG
                 }
@@ -57,7 +57,7 @@ internal class CompileServicesFacadeMessageCollector(
             }
         }
 
-        hasErrors = hasErrors || severity == CompilerMessageSeverity.ERROR || severity == CompilerMessageSeverity.EXCEPTION
+        hasErrors = hasErrors || severity.isError
     }
 
     override fun hasErrors(): Boolean = hasErrors
