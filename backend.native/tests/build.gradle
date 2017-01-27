@@ -292,6 +292,21 @@ task empty_substring(type: RunKonanTest) {
     source = "runtime/basic/empty_substring.kt"
 }
 
+task superFunCall(type: RunKonanTest) {
+    goldValue = "<fun:C><fun:C1>\n<fun:C><fun:C3>\n"
+    source = "codegen/basics/superFunCall.kt"
+}
+
+task superGetterCall(type: RunKonanTest) {
+    goldValue = "<prop:C><prop:C1>\n<prop:C><prop:C3>\n"
+    source = "codegen/basics/superGetterCall.kt"
+}
+
+task superSetterCall(type: RunKonanTest) {
+    goldValue = "<prop:C1><prop:C>zzz\n<prop:C3><prop:C>zzz\n"
+    source = "codegen/basics/superSetterCall.kt"
+}
+
 task enum0(type: RunKonanTest) {
     goldValue = "VALUE\n"
     source = "codegen/enum/test0.kt"

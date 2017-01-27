@@ -1681,7 +1681,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         when (descriptor) {
             is IrBuiltinOperatorDescriptorBase -> return evaluateOperatorCall      (callee, args)
             is ConstructorDescriptor           -> return evaluateConstructorCall   (callee, args)
-            else                               -> return evaluateSimpleFunctionCall(descriptor, args)
+            else                               -> return evaluateSimpleFunctionCall(descriptor, args, callee.superQualifier)
         }
     }
 
@@ -1721,9 +1721,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     //-------------------------------------------------------------------------//
 
-    private fun evaluateSimpleFunctionCall(descriptor: FunctionDescriptor, args: List<LLVMValueRef>): LLVMValueRef {
+    private fun evaluateSimpleFunctionCall(descriptor: FunctionDescriptor, args: List<LLVMValueRef>, superClass: ClassDescriptor? = null): LLVMValueRef {
         //context.log("evaluateSimpleFunctionCall : $tmpVariableName = ${ir2string(value)}")
-        if (descriptor.isOverridable)
+        if (descriptor.isOverridable && superClass == null)
             return callVirtual(descriptor, args)
         else
             return callDirect(descriptor, args)
@@ -1737,7 +1737,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         if (descriptor.dispatchReceiverParameter != null)
             args.add(evaluateExpression(value.dispatchReceiver!!))         //add this ptr
         args.add(evaluateExpression(value.getValueArgument(0)!!))
-        return evaluateSimpleFunctionCall(descriptor, args)
+        return evaluateSimpleFunctionCall(descriptor, args, value.superQualifier)
     }
 
     //-------------------------------------------------------------------------//
