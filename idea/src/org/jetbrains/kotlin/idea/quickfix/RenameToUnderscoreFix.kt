@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.*
 
 class RenameToUnderscoreFix(element: KtCallableDeclaration) : KotlinQuickFixAction<KtCallableDeclaration>(element) {
@@ -48,7 +50,10 @@ class RenameToUnderscoreFix(element: KtCallableDeclaration) : KotlinQuickFixActi
                 else -> null
             }
 
-            if (declaration?.nameIdentifier == null) return null
+            if (declaration?.nameIdentifier == null ||
+                !declaration.languageVersionSettings.supportsFeature(LanguageFeature.SingleUnderscoreForParameterName)) {
+                return null
+            }
 
             return RenameToUnderscoreFix(declaration)
         }
