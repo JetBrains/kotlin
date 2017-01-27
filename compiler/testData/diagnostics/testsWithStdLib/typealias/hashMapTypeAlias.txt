@@ -1,6 +1,6 @@
 package
 
-public val mutableNamesByTeam1: java.util.HashMap<kotlin.String, kotlin.collections.MutableList<kotlin.String>>
+public val mutableNamesByTeam1: HM<kotlin.String, kotlin.collections.MutableList<kotlin.String>> /* = java.util.HashMap<kotlin.String, kotlin.collections.MutableList<kotlin.String>> */
 public val mutableNamesByTeam2: java.util.HashMap<kotlin.String, kotlin.collections.MutableList<kotlin.String>>
 public val nameToTeam: kotlin.collections.List<kotlin.Pair<kotlin.String, kotlin.String>>
 public val namesByTeam: kotlin.collections.Map<kotlin.String, kotlin.collections.List<kotlin.String>>

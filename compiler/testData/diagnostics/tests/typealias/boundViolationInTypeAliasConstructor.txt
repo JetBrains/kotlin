@@ -1,11 +1,11 @@
 package
 
 public val x1: Num<kotlin.String>
-public val x2: Num<kotlin.String>
-public val x3: Num<kotlin.String>
+public val x2: N<kotlin.String> /* = Num<kotlin.String> */
+public val x3: N2<kotlin.String> /* = Num<kotlin.String> */
 public val y1: TColl<kotlin.Any, kotlin.Any>
-public val y2: TColl<kotlin.Any, kotlin.Any>
-public val y3: TColl<kotlin.Any, kotlin.Any>
+public val y2: TC<kotlin.Any, kotlin.Any> /* = TColl<kotlin.Any, kotlin.Any> */
+public val y3: TC2<kotlin.Any, kotlin.Any> /* = TColl<kotlin.Any, kotlin.Any> */
 
 public final class Num</*0*/ T : kotlin.Number> {
     public constructor Num</*0*/ T : kotlin.Number>(/*0*/ x: T)

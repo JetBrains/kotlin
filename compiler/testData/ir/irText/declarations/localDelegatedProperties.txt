@@ -24,8 +24,8 @@ FILE /localDelegatedProperties.kt
   FUN public fun test2(): kotlin.Unit
     BLOCK_BODY
       LOCAL_DELEGATED_PROPERTY var x: kotlin.Int
-        VAR DELEGATE val `x$delegate`: java.util.HashMap<kotlin.String, kotlin.Int>
-          CALL 'hashMapOf(): HashMap<String, Int>' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
+        VAR DELEGATE val `x$delegate`: kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */
+          CALL 'hashMapOf(): HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
             <K>: String
             <V>: Int
         FUN DELEGATED_PROPERTY_ACCESSOR local final fun <get-x>(): kotlin.Int
@@ -33,7 +33,7 @@ FILE /localDelegatedProperties.kt
             RETURN type=kotlin.Nothing from='<get-x>(): Int'
               CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, in Int>: Int' type=kotlin.Int origin=null
                 <V>: Int
-                $receiver: GET_VAR '`x$delegate`: HashMap<String, Int>' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
+                $receiver: GET_VAR '`x$delegate`: HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
                 thisRef: CONST Null type=kotlin.Nothing? value='null'
                 property: CALLABLE_REFERENCE 'x: Int' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
         FUN DELEGATED_PROPERTY_ACCESSOR local final fun <set-x>(value: kotlin.Int): kotlin.Int
@@ -42,7 +42,7 @@ FILE /localDelegatedProperties.kt
               TYPE_OP origin=IMPLICIT_CAST typeOperand=kotlin.Int
                 CALL 'setValue(Any?, KProperty<*>, Int) on MutableMap<in String, in Int>: Unit' type=kotlin.Unit origin=null
                   <V>: Int
-                  $receiver: GET_VAR '`x$delegate`: HashMap<String, Int>' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
+                  $receiver: GET_VAR '`x$delegate`: HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
                   thisRef: CONST Null type=kotlin.Nothing? value='null'
                   property: CALLABLE_REFERENCE 'x: Int' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
                   value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null

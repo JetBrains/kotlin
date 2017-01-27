@@ -1,7 +1,7 @@
 package
 
-public val test1: Cons<kotlin.Int>
-public val test2: Cons<kotlin.Int>
+public val test1: C<kotlin.Int> /* = Cons<kotlin.Int> */
+public val test2: C<kotlin.Int> /* = Cons<kotlin.Int> */
 
 public final class Cons</*0*/ T : kotlin.Number> {
     public constructor Cons</*0*/ T : kotlin.Number>(/*0*/ head: T, /*1*/ tail: Cons<T>?)

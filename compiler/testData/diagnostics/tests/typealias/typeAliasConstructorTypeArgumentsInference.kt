@@ -2,7 +2,7 @@ class Num<Tn : Number>(val x: Tn)
 typealias N<T> = Num<T>
 
 val test0 = N(1)
-val test1 = <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED(Type parameter bound for Tn in type inferred from type alias expansion for fun <T> <init>\(x: T\): Num<T>
+val test1 = <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED(Type parameter bound for Tn in type inferred from type alias expansion for fun <T> <init>\(x: T\): N<T> /* = Num<T> */
  is not satisfied: inferred type String is not a subtype of Number)!>N<!>("1")
 
 

@@ -3,9 +3,9 @@ package
 public val r1: Ref<in kotlin.Int>
 public val r1a: Ref<in kotlin.Int>
 public val r2: LateInitNumRef<kotlin.Int>
-public val r2a: LateInitNumRef<kotlin.Int>
+public val r2a: LateNR<kotlin.Int> /* = LateInitNumRef<kotlin.Int> */
 public val r3: LateInitNumRef<kotlin.Int>
-public val r3a: LateInitNumRef<kotlin.Int>
+public val r3a: LateNR<kotlin.Int> /* = LateInitNumRef<kotlin.Int> */
 public fun test(): kotlin.Unit
 public fun </*0*/ V, /*1*/ R : Ref<in V>> update(/*0*/ r: R, /*1*/ v: V): R
 

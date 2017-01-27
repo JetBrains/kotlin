@@ -229,11 +229,21 @@ public class TypeSubstitutor {
             return originalProjection;
         }
 
+        KotlinType substitutedAbbreviation = null;
+        SimpleType abbreviation = SpecialTypesKt.getAbbreviation(type);
+        if (abbreviation != null) {
+            substitutedAbbreviation = substitute(abbreviation, Variance.INVARIANT);
+        }
+
         List<TypeProjection> substitutedArguments = substituteTypeArguments(
                 type.getConstructor().getParameters(), type.getArguments(), recursionDepth);
 
         KotlinType substitutedType =
                 TypeSubstitutionKt.replace(type, substitutedArguments, substitution.filterAnnotations(type.getAnnotations()));
+        if (substitutedType instanceof SimpleType && substitutedAbbreviation instanceof SimpleType) {
+            substitutedType = SpecialTypesKt.withAbbreviation((SimpleType) substitutedType, (SimpleType) substitutedAbbreviation);
+        }
+
         return new TypeProjectionImpl(projectionKind, substitutedType);
     }
 

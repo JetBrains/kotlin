@@ -20,9 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 
 interface TypeAliasConstructorDescriptor : ConstructorDescriptor {
     val underlyingConstructorDescriptor: ClassConstructorDescriptor
@@ -122,15 +120,22 @@ class TypeAliasConstructorDescriptorImpl private constructor(
             val valueParameters = FunctionDescriptorImpl.getSubstitutedValueParameters(typeAliasConstructor, constructor.valueParameters, substitutor, false, false)
                                   ?: return null
 
-            val returnType = substitutor.substitute(constructor.returnType, Variance.INVARIANT)
-                             ?: return null
+            val returnType = run {
+                val returnTypeNoAbbreviation = substitutor.substitute(constructor.returnType, Variance.INVARIANT)
+                                               ?: return null
+                val abbreviation = typeAliasDescriptor.defaultType
+                if (returnTypeNoAbbreviation is SimpleType && abbreviation is SimpleType)
+                    returnTypeNoAbbreviation.withAbbreviation(abbreviation)
+                else
+                    returnTypeNoAbbreviation
+            }
 
             val receiverParameterType =
                     if (withDispatchReceiver) null
                     else constructor.dispatchReceiverParameter?.let { substitutor.safeSubstitute(it.type, Variance.INVARIANT) }
 
             val dispatchReceiver =
-                    if (withDispatchReceiver) constructor.dispatchReceiverParameter?.let { it.substitute(substitutor) }
+                    if (withDispatchReceiver) constructor.dispatchReceiverParameter?.substitute(substitutor)
                     else null
 
             typeAliasConstructor.initialize(

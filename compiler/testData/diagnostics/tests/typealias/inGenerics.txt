@@ -2,7 +2,7 @@ package
 
 public val ms: MyString /* = kotlin.String */ = "MyString"
 public val msc: MyStringContainer /* = Container<MyString? /* = kotlin.String? */> */
-public val msc1: Container<MyString? /* = kotlin.String? */>
+public val msc1: MyStringContainer /* = Container<MyString? /* = kotlin.String? */> */
 public val msn: MyString? /* = kotlin.String? */ = null
 
 public final class Container</*0*/ T> {

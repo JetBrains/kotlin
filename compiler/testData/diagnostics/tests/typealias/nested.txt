@@ -11,7 +11,7 @@ public final class C {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun first(/*0*/ p: C.P2 /* = Pair<kotlin.Int, kotlin.Int> */): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final fun p(): Pair<kotlin.Int, kotlin.Int>
+    public final fun p(): C.P2 /* = Pair<kotlin.Int, kotlin.Int> */
     public final fun second(/*0*/ p: C.P2 /* = Pair<kotlin.Int, kotlin.Int> */): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     public typealias P2 = Pair<kotlin.Int, kotlin.Int>

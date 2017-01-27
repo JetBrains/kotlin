@@ -1,11 +1,11 @@
 package
 
-public val test0: Num<kotlin.Int>
+public val test0: N<kotlin.Int> /* = Num<kotlin.Int> */
 public val test1: [ERROR : Type for N("1")]
-public val test2: Cons<kotlin.Int>
+public val test2: C<kotlin.Int> /* = Cons<kotlin.Int> */
 public val test3: [ERROR : Type for CC(1, 2)]
-public val test4: Cons<Cons<kotlin.Int>>
-public val test5: Pair<kotlin.Int, kotlin.collections.List<kotlin.Int>>
+public val test4: CC<kotlin.Int> /* = Cons<Cons<kotlin.Int>> */
+public val test5: PL<kotlin.Int> /* = Pair<kotlin.Int, kotlin.collections.List<kotlin.Int>> */
 public fun testProjections1(/*0*/ x: Pair<in kotlin.Int, out kotlin.String>): [ERROR : Error function type]
 public fun testProjections2(/*0*/ x: Pair<in kotlin.Int, out kotlin.Number>): [ERROR : Error function type]
 public fun testProjections3(/*0*/ x: Pair<in kotlin.Number, out kotlin.Int>): [ERROR : Error function type]

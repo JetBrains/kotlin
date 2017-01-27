@@ -1,6 +1,6 @@
 package
 
-public val test1: Hr<kotlin.Int, kotlin.String, Foo<kotlin.Int>, Bar<kotlin.String>>
+public val test1: Test<kotlin.Int, kotlin.String> /* = Hr<kotlin.Int, kotlin.String, Foo<kotlin.Int>, Bar<kotlin.String>> */
 public val test2: [ERROR : Type for Test(1, 2)]
 public val test3: [ERROR : Type for Bas(1, 1)]
 

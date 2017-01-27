@@ -1,23 +1,23 @@
 package
 
-public val test0: Pair<kotlin.Int, kotlin.Int>
-public val test0p2: Pair<kotlin.Int, kotlin.Int>
-public val test0p2a: Pair<kotlin.Any, kotlin.Any>
-public val test0pr: Pair<kotlin.Int, kotlin.String>
-public val test1: Pair<kotlin.Int, [ERROR : Explicit type argument expected for T2]>
-public val test1p2: Pair<kotlin.Int, kotlin.Int>
-public val test1pr: Pair<[ERROR : Explicit type argument expected for T2], kotlin.Int>
-public val test2: Pair<kotlin.Int, kotlin.Int>
-public val test2p2: Pair<kotlin.Int, kotlin.Int>
-public val test2pr: Pair<kotlin.String, kotlin.Int>
-public val test2pra: Pair<kotlin.Int, kotlin.String>
-public val test3: Pair<kotlin.Int, kotlin.Int>
-public val test3p2: Pair<kotlin.Int, kotlin.Int>
-public val test3pr: Pair<kotlin.String, kotlin.String>
+public val test0: P<kotlin.Int, kotlin.Int> /* = Pair<kotlin.Int, kotlin.Int> */
+public val test0p2: P2<kotlin.Int> /* = Pair<kotlin.Int, kotlin.Int> */
+public val test0p2a: P2<kotlin.Any> /* = Pair<kotlin.Any, kotlin.Any> */
+public val test0pr: PR<kotlin.String, kotlin.Int> /* = Pair<kotlin.Int, kotlin.String> */
+public val test1: P<kotlin.Int, [ERROR : Explicit type argument expected for T2]> /* = Pair<kotlin.Int, [ERROR : Explicit type argument expected for T2]> */
+public val test1p2: P2<kotlin.Int> /* = Pair<kotlin.Int, kotlin.Int> */
+public val test1pr: PR<kotlin.Int, [ERROR : Explicit type argument expected for T2]> /* = Pair<[ERROR : Explicit type argument expected for T2], kotlin.Int> */
+public val test2: P<kotlin.Int, kotlin.Int> /* = Pair<kotlin.Int, kotlin.Int> */
+public val test2p2: P2<kotlin.Int> /* = Pair<kotlin.Int, kotlin.Int> */
+public val test2pr: PR<kotlin.Int, kotlin.String> /* = Pair<kotlin.String, kotlin.Int> */
+public val test2pra: PR<kotlin.String, kotlin.Int> /* = Pair<kotlin.Int, kotlin.String> */
+public val test3: P<kotlin.Int, kotlin.Int> /* = Pair<kotlin.Int, kotlin.Int> */
+public val test3p2: P2<kotlin.Int> /* = Pair<kotlin.Int, kotlin.Int> */
+public val test3pr: P2<kotlin.String> /* = Pair<kotlin.String, kotlin.String> */
 public val testN0: [ERROR : Type for N("")]
-public val testN1: Num<kotlin.Int>
-public val testN1a: Num<kotlin.String>
-public val testN2: Num<kotlin.Int>
+public val testN1: N<kotlin.Int> /* = Num<kotlin.Int> */
+public val testN1a: N<kotlin.String> /* = Num<kotlin.String> */
+public val testN2: N<kotlin.Int> /* = Num<kotlin.Int> */
 
 public final class Num</*0*/ T : kotlin.Number> {
     public constructor Num</*0*/ T : kotlin.Number>(/*0*/ x: T)

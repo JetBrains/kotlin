@@ -90,9 +90,9 @@ FILE /classLevelProperties.kt
               thisRef: GET_VAR '<receiver: C>' type=C origin=null
               property: CALLABLE_REFERENCE 'test7: Int' type=kotlin.reflect.KProperty1<C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     PROPERTY public final var test8: kotlin.Int
-      FIELD DELEGATE val `test8$delegate`: java.util.HashMap<kotlin.String, kotlin.Int>
+      FIELD DELEGATE val `test8$delegate`: kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */
         EXPRESSION_BODY
-          CALL 'hashMapOf(): HashMap<String, Int>' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
+          CALL 'hashMapOf(): HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
             <K>: String
             <V>: Int
       FUN DELEGATED_PROPERTY_ACCESSOR public final fun <get-test8>(): kotlin.Int
@@ -100,7 +100,7 @@ FILE /classLevelProperties.kt
           RETURN type=kotlin.Nothing from='<get-test8>(): Int'
             CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, in Int>: Int' type=kotlin.Int origin=null
               <V>: Int
-              $receiver: GET_FIELD '`test8$delegate`: HashMap<String, Int>' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
+              $receiver: GET_FIELD '`test8$delegate`: HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
                 receiver: GET_VAR '<receiver: C>' type=C origin=null
               thisRef: GET_VAR '<receiver: C>' type=C origin=null
               property: CALLABLE_REFERENCE 'test8: Int' type=kotlin.reflect.KMutableProperty1<C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
@@ -109,7 +109,7 @@ FILE /classLevelProperties.kt
           RETURN type=kotlin.Nothing from='<set-test8>(Int): Unit'
             CALL 'setValue(Any?, KProperty<*>, Int) on MutableMap<in String, in Int>: Unit' type=kotlin.Unit origin=null
               <V>: Int
-              $receiver: GET_FIELD '`test8$delegate`: HashMap<String, Int>' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
+              $receiver: GET_FIELD '`test8$delegate`: HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
                 receiver: GET_VAR '<receiver: C>' type=C origin=null
               thisRef: GET_VAR '<receiver: C>' type=C origin=null
               property: CALLABLE_REFERENCE 'test8: Int' type=kotlin.reflect.KMutableProperty1<C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE

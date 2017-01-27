@@ -1,9 +1,9 @@
 package
 
-public val test5: TColl<kotlin.Number, kotlin.collections.Collection<kotlin.Number>>
-public val test6: TColl<kotlin.Number, kotlin.collections.Collection<kotlin.Int>>
-public val test7: TColl<kotlin.Number, kotlin.collections.List<kotlin.Int>>
-public val test8: TColl<kotlin.Number, kotlin.collections.List<kotlin.Any>>
+public val test5: TC2<kotlin.Number, kotlin.collections.Collection<kotlin.Number>> /* = TColl<kotlin.Number, kotlin.collections.Collection<kotlin.Number>> */
+public val test6: TC2<kotlin.Number, kotlin.collections.Collection<kotlin.Int>> /* = TColl<kotlin.Number, kotlin.collections.Collection<kotlin.Int>> */
+public val test7: TC2<kotlin.Number, kotlin.collections.List<kotlin.Int>> /* = TColl<kotlin.Number, kotlin.collections.List<kotlin.Int>> */
+public val test8: TC2<kotlin.Number, kotlin.collections.List<kotlin.Any>> /* = TColl<kotlin.Number, kotlin.collections.List<kotlin.Any>> */
 public fun test1(/*0*/ x: TC2<kotlin.Number, kotlin.collections.Collection<kotlin.Number>> /* = TColl<kotlin.Number, kotlin.collections.Collection<kotlin.Number>> */): kotlin.Unit
 public fun test2(/*0*/ x: TC2<kotlin.Number, kotlin.collections.Collection<kotlin.Int>> /* = TColl<kotlin.Number, kotlin.collections.Collection<kotlin.Int>> */): kotlin.Unit
 public fun test3(/*0*/ x: TC2<kotlin.Number, kotlin.collections.List<kotlin.Int>> /* = TColl<kotlin.Number, kotlin.collections.List<kotlin.Int>> */): kotlin.Unit

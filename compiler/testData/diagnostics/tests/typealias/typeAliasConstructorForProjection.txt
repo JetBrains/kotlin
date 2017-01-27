@@ -1,10 +1,10 @@
 package
 
-public val test1: C<*>
-public val test2: C<in kotlin.Int>
-public val test3: C<out kotlin.Int>
-public val test4: C<[ERROR : Star projection in a call]>
-public val test5: C<CT<*> /* = C<*> */>
+public val test1: CStar /* = C<*> */
+public val test2: CIn /* = C<in kotlin.Int> */
+public val test3: COut /* = C<out kotlin.Int> */
+public val test4: CT<[ERROR : Star projection in a call]> /* = C<[ERROR : Star projection in a call]> */
+public val test5: CT<CT<*> /* = C<*> */> /* = C<CT<*> /* = C<*> */> */
 
 public final class C</*0*/ T> {
     public constructor C</*0*/ T>()
