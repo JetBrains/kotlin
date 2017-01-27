@@ -31,7 +31,10 @@ import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.RawCommandLineEditor;
+import com.intellij.util.text.VersionComparatorUtil;
+import kotlin.collections.ArraysKt;
 import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +51,10 @@ import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Configurable.NoScroll{
@@ -114,7 +120,17 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         this.k2jvmCompilerArguments = k2jvmCompilerArguments;
         this.isProjectSettings = isProjectSettings;
 
-        if (!isProjectSettings) {
+        if (isProjectSettings) {
+            languageVersionComboBox.addActionListener(
+                    new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            restrictAPIVersions();
+                        }
+                    }
+            );
+        }
+        else {
             languageVersionPanel.setVisible(false);
             apiVersionPanel.setVisible(false);
         }
@@ -194,6 +210,31 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
     private static boolean isModified(@NotNull TextFieldWithBrowseButton chooser, @Nullable String currentValue) {
         return !StringUtil.equals(StringUtil.nullize(chooser.getText(), true), currentValue);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void restrictAPIVersions() {
+        String selectedAPIVersion = getSelectedAPIVersion();
+        final String selectedLanguageVersion = getSelectedLanguageVersion();
+        List<String> permittedAPIVersions = ArraysKt.mapNotNull(
+                LanguageVersion.values(),
+                new Function1<LanguageVersion, String>() {
+                    @Override
+                    public String invoke(LanguageVersion version) {
+                        return VersionComparatorUtil.compare(version.getVersionString(), selectedLanguageVersion) <= 0
+                               ? version.getVersionString()
+                               : null;
+                    }
+                }
+        );
+        apiVersionComboBox.setModel(
+                new DefaultComboBoxModel(permittedAPIVersions.toArray())
+        );
+        apiVersionComboBox.setSelectedItem(
+                VersionComparatorUtil.compare(selectedAPIVersion, selectedLanguageVersion) <= 0
+                ? selectedAPIVersion
+                : selectedLanguageVersion
+        );
     }
 
     @SuppressWarnings("unchecked")
@@ -357,6 +398,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         if (isProjectSettings) {
             languageVersionComboBox.setSelectedItem(getLanguageVersionOrDefault(commonCompilerArguments.languageVersion));
             apiVersionComboBox.setSelectedItem(getLanguageVersionOrDefault(commonCompilerArguments.apiVersion));
+            restrictAPIVersions();
         }
         coroutineSupportComboBox.setSelectedItem(CoroutineSupport.byCompilerArguments(commonCompilerArguments));
         additionalArgsOptionsField.setText(compilerSettings.additionalArguments);

@@ -24,10 +24,7 @@ import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import java.awt.BorderLayout
-import javax.swing.JCheckBox
-import javax.swing.JComboBox
-import javax.swing.JComponent
-import javax.swing.JPanel
+import javax.swing.*
 
 class KotlinFacetEditorGeneralTab(
         private val configuration: KotlinFacetConfiguration,
@@ -84,6 +81,7 @@ class KotlinFacetEditorGeneralTab(
 
         languageVersionComboBox.addActionListener {
             validatorsManager.validate()
+            restrictAPIVersions()
         }
 
         apiVersionComboBox.addActionListener {
@@ -98,6 +96,19 @@ class KotlinFacetEditorGeneralTab(
         updateCompilerTab()
 
         reset()
+    }
+
+    private fun restrictAPIVersions() {
+        val selectedLanguageVersion = languageVersionComboBox.selectedItem as LanguageVersion? ?: return
+        val selectedAPIVersion = apiVersionComboBox.selectedItem as LanguageVersion?
+        val permittedAPIVersions = LanguageVersion.values().filter { it <= selectedLanguageVersion }
+        apiVersionComboBox.model = DefaultComboBoxModel<LanguageVersion>(permittedAPIVersions.toTypedArray())
+        apiVersionComboBox.selectedItem = if (selectedAPIVersion != null && selectedAPIVersion > selectedLanguageVersion) {
+            selectedLanguageVersion
+        }
+        else {
+            selectedAPIVersion
+        }
     }
 
     private fun useProjectSettingsChanged() {
@@ -131,6 +142,7 @@ class KotlinFacetEditorGeneralTab(
             languageVersionComboBox.selectedItem = languageLevel
             apiVersionComboBox.selectedItem = apiLevel
             targetPlatformComboBox.selectedItem = targetPlatformKind
+            restrictAPIVersions()
         }
         useProjectSettingsChanged()
     }

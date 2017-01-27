@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.idea.compiler.configuration;
 
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.text.VersionComparatorUtil;
+import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 
@@ -31,9 +33,19 @@ import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMMON_COMPILE
     }
 )
 public class KotlinCommonCompilerArgumentsHolder extends BaseKotlinCompilerSettings<CommonCompilerArguments> {
-
     public static KotlinCommonCompilerArgumentsHolder getInstance(Project project) {
         return ServiceManager.getService(project, KotlinCommonCompilerArgumentsHolder.class);
+    }
+
+    @Override
+    public void loadState(Element state) {
+        super.loadState(state);
+
+        // To fix earlier configurations with incorrect combination of language and API version
+        CommonCompilerArguments settings = getSettings();
+        if (VersionComparatorUtil.compare(settings.languageVersion, settings.apiVersion) < 0) {
+            settings.apiVersion = settings.languageVersion;
+        }
     }
 
     @NotNull
