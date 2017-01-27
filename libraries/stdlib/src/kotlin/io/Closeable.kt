@@ -30,14 +30,20 @@ import kotlin.internal.*
  */
 @InlineOnly
 public inline fun <T : Closeable?, R> T.use(block: (T) -> R): R {
-    var exception: Throwable? = null
+    var closed = false
     try {
         return block(this)
-    } catch (e: Throwable) {
-        exception = e
+    } catch (e: Exception) {
+        closed = true
+        try {
+            this?.close()
+        } catch (closeException: Exception) {
+        }
         throw e
     } finally {
-        this.closeFinally(exception)
+        if (!closed) {
+            this?.close()
+        }
     }
 }
 
