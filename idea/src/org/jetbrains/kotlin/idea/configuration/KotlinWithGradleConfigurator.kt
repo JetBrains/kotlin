@@ -43,6 +43,7 @@ import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElementFactory
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.GrStatement
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrApplicationStatement
+import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrAssignmentExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrMethodCallExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.util.GrStatementOwner
@@ -269,6 +270,22 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
             val experimentalBlock = getBlockOrCreate(kotlinBlock, "experimental")
             addOrReplaceExpression(experimentalBlock, snippet) { stmt ->
                 (stmt as? GrMethodCall)?.invokedExpression?.text == "coroutines"
+            }
+            return kotlinBlock.parent
+        }
+
+        fun changeLanguageVersion(module: Module, languageVersion: String, forTests: Boolean): PsiElement? {
+            return changeBuildGradle(module) { gradleFile ->
+                changeLanguageVersion(gradleFile, languageVersion, forTests)
+            }
+        }
+
+        fun changeLanguageVersion(gradleFile: GroovyFile, languageVersion: String, forTests: Boolean): PsiElement? {
+            val snippet = "languageVersion = \"$languageVersion\""
+            val kotlinBlock = getBlockOrCreate(gradleFile, if (forTests) "compileTestKotlin" else "compileKotlin")
+            val experimentalBlock = getBlockOrCreate(kotlinBlock, "kotlinOptions")
+            addOrReplaceExpression(experimentalBlock, snippet) { stmt ->
+                (stmt as? GrAssignmentExpression)?.lValue?.text == "languageVersion"
             }
             return kotlinBlock.parent
         }

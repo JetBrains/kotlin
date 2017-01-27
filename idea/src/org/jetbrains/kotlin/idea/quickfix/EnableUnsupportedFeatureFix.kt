@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.psi.PsiElement
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
+import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -41,6 +44,15 @@ sealed class EnableUnsupportedFeatureFix(
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
             val module = ModuleUtilCore.findModuleForPsiElement(file) ?: return
+            if (KotlinPluginUtil.isGradleModule(module)) {
+                val forTests = ModuleRootManager.getInstance(module).fileIndex.isInTestSourceContent(file.virtualFile)
+                val element = KotlinWithGradleConfigurator.changeLanguageVersion(module, targetVersion.versionString, forTests)
+                element?.let {
+                    OpenFileDescriptor(project, it.containingFile.virtualFile, it.textRange.startOffset).navigate(true)
+                }
+                return
+            }
+
             val facetSettings = KotlinFacet.get(module)?.configuration?.settings ?: return
             ModuleRootModificationUtil.updateModel(module) {
                 with(facetSettings.versionInfo) {
@@ -69,9 +81,11 @@ sealed class EnableUnsupportedFeatureFix(
         override fun createAction(diagnostic: Diagnostic): EnableUnsupportedFeatureFix? {
             val targetVersion = Errors.UNSUPPORTED_FEATURE.cast(diagnostic).a.sinceVersion ?: return null
             val module = ModuleUtilCore.findModuleForPsiElement(diagnostic.psiElement) ?: return null
-            if (KotlinPluginUtil.isGradleModule(module) || KotlinPluginUtil.isMavenModule(module)) return null
-            val facetSettings = KotlinFacet.get(module)?.configuration?.settings
-            if (facetSettings == null || facetSettings.useProjectSettings) return InProject(diagnostic.psiElement, targetVersion)
+            if (KotlinPluginUtil.isMavenModule(module)) return null
+            if (!KotlinPluginUtil.isGradleModule(module)) {
+                val facetSettings = KotlinFacet.get(module)?.configuration?.settings
+                if (facetSettings == null || facetSettings.useProjectSettings) return InProject(diagnostic.psiElement, targetVersion)
+            }
             return InModule(diagnostic.psiElement, targetVersion)
         }
     }

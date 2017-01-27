@@ -58,4 +58,41 @@ class KotlinWithGradleConfiguratorTest : LightCodeInsightFixtureTestCase() {
                   |}
                   |""".trimMargin("|"))
     }
+
+    fun testAddLanguageVersion() {
+        val buildGradle = myFixture.configureByText("build.gradle", "apply plugin: 'kotlin'\n") as GroovyFile
+        myFixture.project.executeWriteCommand("") {
+            KotlinWithGradleConfigurator.changeLanguageVersion(buildGradle, "1.1", false)
+        }
+        myFixture.checkResult(
+                """apply plugin: 'kotlin'
+                  |compileKotlin {
+                  |    kotlinOptions {
+                  |        languageVersion = "1.1"
+                  |    }
+                  |}
+                  |""".trimMargin("|"))
+    }
+
+    fun testChangeLanguageVersion() {
+        val buildGradle = myFixture.configureByText("build.gradle",
+               """apply plugin: 'kotlin'
+                  |compileKotlin {
+                  |    kotlinOptions {
+                  |        languageVersion = "1.0"
+                  |    }
+                  |}
+                  |""".trimMargin("|")) as GroovyFile
+        myFixture.project.executeWriteCommand("") {
+            KotlinWithGradleConfigurator.changeLanguageVersion(buildGradle, "1.1", false)
+        }
+        myFixture.checkResult(
+                """apply plugin: 'kotlin'
+                  |compileKotlin {
+                  |    kotlinOptions {
+                  |        languageVersion = "1.1"
+                  |    }
+                  |}
+                  |""".trimMargin("|"))
+    }
 }
