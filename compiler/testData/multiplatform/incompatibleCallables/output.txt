@@ -1,6 +1,12 @@
 -- Common --
-Exit code: OK
+Exit code: COMPILATION_ERROR
 Output:
+compiler/testData/multiplatform/incompatibleCallables/common.kt:1:15: error: unresolved reference: coroutines
+import kotlin.coroutines.experimental.*
+              ^
+compiler/testData/multiplatform/incompatibleCallables/common.kt:24:20: error: unresolved reference: Continuation
+header fun <A, B : Continuation<A>> f13()
+                   ^
 
 -- JVM --
 Exit code: COMPILATION_ERROR
