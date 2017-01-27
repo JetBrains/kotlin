@@ -1,16 +1,40 @@
-@file:kotlin.jvm.JvmMultifileClass
-@file:kotlin.jvm.JvmName("SequencesKt")
-package kotlin.sequences
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import kotlin.coroutines.experimental.*
+@file:kotlin.jvm.JvmMultifileClass
+@file:kotlin.jvm.JvmName("SequenceBuilderKt")
+package kotlin.coroutines.experimental
+
 import kotlin.coroutines.experimental.intrinsics.*
 
 /**
  *  Builds a [Sequence] lazily yielding values one by one.
  */
 @SinceKotlin("1.1")
-public fun <T> buildSequence(builderAction: suspend SequenceBuilder<T>.() -> Unit): Sequence<T> = Sequence { buildIteratorImpl(builderAction) }
+public fun <T> buildSequence(builderAction: suspend SequenceBuilder<T>.() -> Unit): Sequence<T> = Sequence { buildIterator(builderAction) }
 
+/**
+ * Builds an [Iterator] lazily yielding values one by one.
+ */
+@SinceKotlin("1.1")
+public fun <T> buildIterator(builderAction: suspend SequenceBuilder<T>.() -> Unit): Iterator<T> {
+    val iterator = SequenceBuilderIterator<T>()
+    iterator.nextStep = builderAction.createCoroutine(receiver = iterator, completion = iterator)
+    return iterator
+}
 
 /**
  * Builder for a [Sequence] or an [Iterator], provides [yield] and [yieldAll] suspension functions.
@@ -46,24 +70,12 @@ public abstract class SequenceBuilder<in T> internal constructor() {
     public suspend fun yieldAll(sequence: Sequence<T>) = yieldAll(sequence.iterator())
 }
 
-
-
-internal fun <T> buildIteratorImpl(builderAction: suspend SequenceBuilder<T>.() -> Unit): Iterator<T> {
-    val iterator = SequenceBuilderIterator<T>()
-    iterator.nextStep = builderAction.createCoroutine(receiver = iterator, completion = iterator)
-    return iterator
-}
-
-
-
-
 private typealias State = Int
 private const val State_NotReady: State = 0
 private const val State_ManyReady: State = 1
 private const val State_Ready: State = 2
 private const val State_Done: State = 3
 private const val State_Failed: State = 4
-
 
 private class SequenceBuilderIterator<T> : SequenceBuilder<T>(), Iterator<T>, Continuation<Unit> {
     private var state = State_NotReady

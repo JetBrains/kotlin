@@ -1565,7 +1565,6 @@ public final class kotlin/collections/CollectionsKt {
 	public static synthetic fun binarySearch$default (Ljava/util/List;Ljava/lang/Object;Ljava/util/Comparator;IIILjava/lang/Object;)I
 	public static final fun binarySearchBy (Ljava/util/List;Ljava/lang/Comparable;IILkotlin/jvm/functions/Function1;)I
 	public static synthetic fun binarySearchBy$default (Ljava/util/List;Ljava/lang/Comparable;IILkotlin/jvm/functions/Function1;ILjava/lang/Object;)I
-	public static final fun buildIterator (Lkotlin/jvm/functions/Function2;)Ljava/util/Iterator;
 	public static final fun collectionSizeOrDefault (Ljava/lang/Iterable;I)I
 	public static final fun collectionSizeOrNull (Ljava/lang/Iterable;)Ljava/lang/Integer;
 	public static final fun contains (Ljava/lang/Iterable;Ljava/lang/Object;)Z
@@ -2008,6 +2007,18 @@ public final class kotlin/coroutines/experimental/SafeContinuation : kotlin/coro
 }
 
 public final class kotlin/coroutines/experimental/SafeContinuation$Companion {
+}
+
+public abstract class kotlin/coroutines/experimental/SequenceBuilder {
+	public abstract fun yield (Ljava/lang/Object;Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;
+	public final fun yieldAll (Ljava/lang/Iterable;Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;
+	public abstract fun yieldAll (Ljava/util/Iterator;Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;
+	public final fun yieldAll (Lkotlin/sequences/Sequence;Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;
+}
+
+public final class kotlin/coroutines/experimental/SequenceBuilderKt {
+	public static final fun buildIterator (Lkotlin/jvm/functions/Function2;)Ljava/util/Iterator;
+	public static final fun buildSequence (Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
 }
 
 public final class kotlin/coroutines/experimental/intrinsics/IntrinsicsKt {
@@ -3362,13 +3373,6 @@ public abstract interface class kotlin/sequences/Sequence {
 	public abstract fun iterator ()Ljava/util/Iterator;
 }
 
-public abstract class kotlin/sequences/SequenceBuilder {
-	public abstract fun yield (Ljava/lang/Object;Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;
-	public final fun yieldAll (Ljava/lang/Iterable;Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;
-	public abstract fun yieldAll (Ljava/util/Iterator;Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;
-	public final fun yieldAll (Lkotlin/sequences/Sequence;Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;
-}
-
 public final class kotlin/sequences/SequencesKt {
 	public static final fun all (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun any (Lkotlin/sequences/Sequence;)Z
@@ -3387,7 +3391,6 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun averageOfInt (Lkotlin/sequences/Sequence;)D
 	public static final fun averageOfLong (Lkotlin/sequences/Sequence;)D
 	public static final fun averageOfShort (Lkotlin/sequences/Sequence;)D
-	public static final fun buildSequence (Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
 	public static final fun constrainOnce (Lkotlin/sequences/Sequence;)Lkotlin/sequences/Sequence;
 	public static final fun contains (Lkotlin/sequences/Sequence;Ljava/lang/Object;)Z
 	public static final fun count (Lkotlin/sequences/Sequence;)I
