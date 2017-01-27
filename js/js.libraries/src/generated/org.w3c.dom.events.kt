@@ -7,6 +7,7 @@
 
 package org.w3c.dom.events
 
+import kotlin.js.*
 import org.khronos.webgl.*
 import org.w3c.dom.*
 import org.w3c.dom.css.*
