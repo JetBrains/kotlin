@@ -97,7 +97,7 @@ public final class Namer {
 
     public static final String LOCAL_MODULE_PREFIX = "$module$";
     public static final String METADATA = "$metadata$";
-    public static final String METADATA_SUPERTYPES = "baseClasses";
+    public static final String METADATA_SUPERTYPES = "interfaces";
     public static final String METADATA_SIMPLE_NAME = "simpleName";
     public static final String METADATA_CLASS_KIND = "kind";
     public static final String CLASS_KIND_ENUM = "Kind";
