@@ -83,7 +83,7 @@ class KtLightAnnotation(
         private fun unwrapArray(arguments: List<ValueArgument>): PsiElement? {
             val arrayInitializer = parent as? LightArrayInitializerValue ?: return null
             val exprIndex = arrayInitializer.initializers.indexOf(this)
-            if (exprIndex < 0) return null
+            if (exprIndex < 0 || exprIndex >= arguments.size) return null
             return arguments[exprIndex].getArgumentExpression()
         }
 
