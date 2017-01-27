@@ -111,9 +111,9 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
     protected fun doResumeWrapper() {
         try {
             result = doResume()
-            if (result != SUSPENDED_MARKER) {
+            if (result != COROUTINE_SUSPENDED) {
                 val data = result
-                result = SUSPENDED_MARKER
+                result = COROUTINE_SUSPENDED
                 resultContinuation.resume(data)
             }
         }
@@ -140,7 +140,7 @@ internal class SafeContinuation<in T> internal constructor(private val delegate:
             UNDECIDED -> {
                 result = value
             }
-            SUSPENDED_MARKER -> {
+            COROUTINE_SUSPENDED -> {
                 result = RESUMED
                 delegate.resume(value)
             }
@@ -155,7 +155,7 @@ internal class SafeContinuation<in T> internal constructor(private val delegate:
             UNDECIDED -> {
                 result = Fail(exception)
             }
-            SUSPENDED_MARKER -> {
+            COROUTINE_SUSPENDED -> {
                 result = RESUMED
                 delegate.resumeWithException(exception)
             }
@@ -167,12 +167,12 @@ internal class SafeContinuation<in T> internal constructor(private val delegate:
 
     internal fun getResult(): Any? {
         if (result == UNDECIDED) {
-            result = SUSPENDED_MARKER
+            result = COROUTINE_SUSPENDED
         }
         val result = this.result
         return when (result) {
             RESUMED -> {
-                SUSPENDED_MARKER // already called continuation, indicate SUSPENDED upstream
+                COROUTINE_SUSPENDED // already called continuation, indicate SUSPENDED upstream
             }
             is Fail -> {
                 throw result.exception

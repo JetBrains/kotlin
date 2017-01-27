@@ -9,7 +9,7 @@ class Controller {
     suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
         result++
         x.resume("OK")
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 }
 

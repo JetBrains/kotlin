@@ -23,7 +23,7 @@ class X {
 
 suspend fun suspendThere(v: String): String = suspendCoroutineOrReturn { x ->
     x.resume(v)
-    SUSPENDED_MARKER
+    COROUTINE_SUSPENDED
 }
 
 fun builder(c: suspend X.() -> Unit) {

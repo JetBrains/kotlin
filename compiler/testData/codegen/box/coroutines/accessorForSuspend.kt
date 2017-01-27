@@ -10,7 +10,7 @@ fun builder(c: suspend () -> Unit) {
 class A {
     suspend private fun a(): String = suspendCoroutineOrReturn { x ->
         x.resume("OK")
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 
     suspend fun myfun(): String {

@@ -6,7 +6,7 @@ import kotlin.coroutines.experimental.intrinsics.*
 class Controller {
     suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
         x.resumeWithException(RuntimeException("OK"))
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 }
 

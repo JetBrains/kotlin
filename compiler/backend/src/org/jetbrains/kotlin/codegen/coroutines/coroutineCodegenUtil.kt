@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
-import org.jetbrains.kotlin.backend.common.SUSPENDED_MARKER_NAME
+import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
 import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineOrReturn
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.codegen.StackValue
@@ -285,10 +285,10 @@ fun createMethodNodeForSuspendCoroutineOrReturn(
 fun <D : CallableDescriptor?> D.unwrapInitialDescriptorForSuspendFunction(): D =
         this.safeAs<SimpleFunctionDescriptor>()?.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) as D ?: this
 
-fun InstructionAdapter.loadSuspendMarker() {
+fun InstructionAdapter.loadCoroutineSuspendedMarker() {
     invokestatic(
             COROUTINES_INTRINSICS_FILE_FACADE_INTERNAL_NAME.internalName,
-            "get$SUSPENDED_MARKER_NAME",
+            "get$COROUTINE_SUSPENDED_NAME",
             Type.getMethodDescriptor(AsmTypes.OBJECT_TYPE),
             false
     )

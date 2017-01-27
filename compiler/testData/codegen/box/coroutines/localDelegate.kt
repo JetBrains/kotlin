@@ -1,7 +1,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.SUSPENDED_MARKER
+import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
 import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
 
 class OkDelegate {
@@ -10,7 +10,7 @@ class OkDelegate {
 
 suspend fun <T> suspendWithValue(value: T): T = suspendCoroutineOrReturn { c ->
     c.resume(value)
-    SUSPENDED_MARKER
+    COROUTINE_SUSPENDED
 }
 
 fun launch(c: suspend () -> String): String {

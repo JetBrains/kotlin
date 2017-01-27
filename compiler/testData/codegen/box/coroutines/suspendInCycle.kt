@@ -7,11 +7,11 @@ class Controller {
     var i = 0
     suspend fun suspendHere(): Int = suspendCoroutineOrReturn { x ->
         x.resume(i++)
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
     suspend fun suspendThere(): String = suspendCoroutineOrReturn { x ->
         x.resume("?")
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 }
 

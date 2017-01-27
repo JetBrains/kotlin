@@ -1,7 +1,7 @@
 // WITH_RUNTIME
 // IGNORE_BACKEND: JS
 import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.SUSPENDED_MARKER
+import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
 
 fun runCustomLambdaAsCoroutine(e: Throwable? = null, x: (Continuation<String>) -> Any?): String {
     var result = "fail"
@@ -69,7 +69,7 @@ fun runCustomLambdaAsCoroutine(e: Throwable? = null, x: (Continuation<String>) -
 fun box(): String {
     val x = runCustomLambdaAsCoroutine {
         it.resume("OK")
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 
     if (x != "OK") return "fail 1: $x"

@@ -10,14 +10,14 @@ class Controller {
     suspend fun <T> suspendAndLog(value: T): T = suspendCoroutineOrReturn { c ->
         result += "suspend($value);"
         c.resume(value)
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 
     // Tail calls are not allowed to be Nothing typed. See KT-15051
     suspend fun suspendLogAndThrow(exception: Throwable): Any? = suspendCoroutineOrReturn { c ->
         result += "throw(${exception.message});"
         c.resumeWithException(exception)
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 }
 

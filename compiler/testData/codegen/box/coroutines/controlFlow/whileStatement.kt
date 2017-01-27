@@ -9,7 +9,7 @@ class Controller {
 
     suspend fun <T> suspendWithResult(value: T): T = suspendCoroutineOrReturn { c ->
         c.resume(value)
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 }
 

@@ -10,13 +10,13 @@ class Controller {
     suspend fun <T> suspendWithValue(value: T): T = suspendCoroutineOrReturn { continuation ->
         log += "suspend($value);"
         continuation.resume(value)
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 
     suspend fun suspendWithException(value: String): Unit = suspendCoroutineOrReturn { continuation ->
         log += "error($value);"
         continuation.resumeWithException(RuntimeException(value))
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 }
 

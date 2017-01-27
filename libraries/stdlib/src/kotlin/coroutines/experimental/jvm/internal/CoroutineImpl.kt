@@ -21,7 +21,7 @@ import java.lang.IllegalStateException
 import kotlin.coroutines.experimental.Continuation
 import kotlin.coroutines.experimental.ContinuationInterceptor
 import kotlin.coroutines.experimental.CoroutineContext
-import kotlin.coroutines.experimental.intrinsics.SUSPENDED_MARKER
+import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
 import kotlin.coroutines.experimental.jvm.internal.interceptContinuationIfNeeded
 import kotlin.jvm.internal.Lambda
 
@@ -51,7 +51,7 @@ abstract class CoroutineImpl(
     override fun resume(value: Any?) {
         try {
             val result = doResume(value, null)
-            if (result != SUSPENDED_MARKER)
+            if (result != COROUTINE_SUSPENDED)
                 completion!!.resume(result)
         } catch (e: Throwable) {
             completion!!.resumeWithException(e)
@@ -61,7 +61,7 @@ abstract class CoroutineImpl(
     override fun resumeWithException(exception: Throwable) {
         try {
             val result = doResume(null, exception)
-            if (result != SUSPENDED_MARKER)
+            if (result != COROUTINE_SUSPENDED)
                 completion!!.resume(result)
         } catch (e: Throwable) {
             completion!!.resumeWithException(e)

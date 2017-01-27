@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.translate.utils
 
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.backend.common.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
-import org.jetbrains.kotlin.backend.common.SUSPENDED_MARKER_NAME
+import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -150,7 +150,7 @@ fun JsFunction.fillCoroutineMetadata(
 
     val suspendPropertyDescriptor = context.currentModule.getPackage(COROUTINES_INTRINSICS_PACKAGE_FQ_NAME)
             .memberScope
-            .getContributedVariables(SUSPENDED_MARKER_NAME, NoLookupLocation.FROM_BACKEND).first()
+            .getContributedVariables(COROUTINE_SUSPENDED_NAME, NoLookupLocation.FROM_BACKEND).first()
 
     val coroutineBaseClassRef = ReferenceTranslator.translateAsTypeReference(TranslationUtils.getCoroutineBaseClass(context), context)
 

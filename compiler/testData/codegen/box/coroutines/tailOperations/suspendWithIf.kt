@@ -9,7 +9,7 @@ suspend fun foo(x: Any): Int {
 
 suspend fun suspendHere(): Int = suspendCoroutineOrReturn { x ->
     x.resume(56)
-    SUSPENDED_MARKER
+    COROUTINE_SUSPENDED
 }
 
 fun builder(c: suspend () -> Unit) {

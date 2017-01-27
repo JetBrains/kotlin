@@ -10,7 +10,7 @@ suspend fun suspendHere(x: Int): Unit {
     result = "OK"
     return suspendCoroutineOrReturn { x ->
         x.resume(Unit)
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 }
 

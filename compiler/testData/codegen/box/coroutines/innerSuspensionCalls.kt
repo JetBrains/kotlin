@@ -7,7 +7,7 @@ class Controller {
     var i = 0
     suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
         x.resume((i++).toString())
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 }
 

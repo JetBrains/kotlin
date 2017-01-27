@@ -131,7 +131,7 @@ private class SequenceBuilderIterator<T> : SequenceBuilder<T>(), Iterator<T>, Co
         state = State_Ready
         return suspendCoroutineOrReturn { c ->
             nextStep = c
-            SUSPENDED_MARKER
+            COROUTINE_SUSPENDED
         }
     }
 
@@ -141,7 +141,7 @@ private class SequenceBuilderIterator<T> : SequenceBuilder<T>(), Iterator<T>, Co
         state = State_ManyReady
         return suspendCoroutineOrReturn { c ->
             nextStep = c
-            SUSPENDED_MARKER
+            COROUTINE_SUSPENDED
         }
     }
 

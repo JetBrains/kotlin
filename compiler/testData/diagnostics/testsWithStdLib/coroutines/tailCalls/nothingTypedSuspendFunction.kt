@@ -4,5 +4,5 @@ import kotlin.coroutines.experimental.intrinsics.*
 
 suspend fun suspendLogAndThrow(exception: Throwable): Nothing = suspendCoroutineOrReturn { c ->
     c.resumeWithException(exception)
-    SUSPENDED_MARKER
+    COROUTINE_SUSPENDED
 }

@@ -65,5 +65,5 @@ suspend fun <V> await(f: CompletableFuture<V>) = suspendCoroutineOrReturn<V> { m
         else
             machine.resumeWithException(throwable)
     }
-    SUSPENDED_MARKER
+    COROUTINE_SUSPENDED
 }

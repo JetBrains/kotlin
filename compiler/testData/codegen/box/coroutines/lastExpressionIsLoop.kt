@@ -9,7 +9,7 @@ class Controller {
     suspend fun suspendHere(v: String): Unit = suspendCoroutineOrReturn { x ->
         result += v
         x.resume(Unit)
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 }
 

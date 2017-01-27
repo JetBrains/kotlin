@@ -57,6 +57,6 @@ class GeneratedIterator<T>(block: suspend Generator<T>.() -> Unit) : AbstractIte
         setNext(value)
         nextStep = c
 
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 }

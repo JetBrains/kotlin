@@ -9,7 +9,7 @@ class Controller {
     suspend fun <T> suspendAndLog(value: T): T = suspendCoroutineOrReturn { c ->
         result += "suspend($value);"
         c.resume(value)
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 }
 

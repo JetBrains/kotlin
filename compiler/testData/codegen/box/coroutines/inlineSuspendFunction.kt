@@ -14,7 +14,7 @@ class Controller {
 
     suspend inline fun suspendInline(v: String): String = suspendCoroutineOrReturn { x ->
         withValue(v, x)
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 
     suspend inline fun suspendInline(crossinline b: () -> String): String = suspendInline(b())

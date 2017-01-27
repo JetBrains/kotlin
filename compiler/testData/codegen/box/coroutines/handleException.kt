@@ -12,7 +12,7 @@ class Controller {
             x.resume(v)
         }
 
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 
     suspend fun suspendWithException(e: Exception): String = suspendCoroutineOrReturn { x ->
@@ -20,7 +20,7 @@ class Controller {
             x.resumeWithException(e)
         }
 
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 
     fun run(c: suspend Controller.() -> Unit) {

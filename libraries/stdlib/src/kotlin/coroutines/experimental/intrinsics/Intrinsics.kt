@@ -24,7 +24,7 @@ import kotlin.coroutines.experimental.Continuation
  * Obtains the current continuation instance inside suspend functions and either suspend
  * currently running coroutine or return result immediately without suspension.
  *
- * If the [block] returns the special [SUSPENDED_MARKER] value, it means that suspend function did suspend the execution and will
+ * If the [block] returns the special [COROUTINE_SUSPENDED] value, it means that suspend function did suspend the execution and will
  * not return any result immediately. In this case, the [Continuation] provided to the [block] shall be invoked at some moment in the
  * future when the result becomes available to resume the computation.
  *
@@ -46,5 +46,5 @@ public inline suspend fun <T> suspendCoroutineOrReturn(crossinline block: (Conti
  * the execution was suspended and will not return any result immediately.
  */
 @SinceKotlin("1.1")
-public val SUSPENDED_MARKER: Any = Any()
+public val COROUTINE_SUSPENDED: Any = Any()
 

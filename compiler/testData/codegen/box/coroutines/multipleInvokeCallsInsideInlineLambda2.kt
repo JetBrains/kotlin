@@ -8,7 +8,7 @@ class Controller {
     var result = "fail"
     suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
         lastSuspension = x
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 
     fun hasNext() = lastSuspension != null

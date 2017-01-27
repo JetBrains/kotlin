@@ -102,7 +102,7 @@ class CoroutineTransformerMethodVisitor(
             // tableswitch(this.label)
             insertBefore(firstToInsertBefore,
                          insnListOf(
-                                 *withInstructionAdapter { loadSuspendMarker() }.toArray(),
+                                 *withInstructionAdapter { loadCoroutineSuspendedMarker() }.toArray(),
                                  VarInsnNode(Opcodes.ASTORE, suspendMarkerVarIndex),
                                  VarInsnNode(Opcodes.ALOAD, 0),
                                  FieldInsnNode(

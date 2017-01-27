@@ -6,7 +6,7 @@ import kotlin.coroutines.experimental.intrinsics.*
 class TestClass {
     suspend fun toInt(): Int = suspendCoroutineOrReturn { x ->
         x.resume(14)
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 }
 

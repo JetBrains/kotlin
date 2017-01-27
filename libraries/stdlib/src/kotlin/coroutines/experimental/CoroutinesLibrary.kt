@@ -20,7 +20,7 @@ package kotlin.coroutines.experimental
 
 import java.lang.IllegalStateException
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-import kotlin.coroutines.experimental.intrinsics.SUSPENDED_MARKER
+import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
 import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
 import kotlin.coroutines.experimental.jvm.internal.CoroutineImpl
 import kotlin.coroutines.experimental.jvm.internal.interceptContinuationIfNeeded
@@ -133,7 +133,7 @@ private inline fun <T> buildContinuationByInvokeCall(
 private inline fun processInvokeCallOnCoroutine(completion: Continuation<*>, block: () -> Any?) {
     try {
         val result = block()
-        if (result !== SUSPENDED_MARKER) {
+        if (result !== COROUTINE_SUSPENDED) {
             @Suppress("UNCHECKED_CAST")
             (completion as Continuation<Any?>).resume(result)
         }
@@ -169,7 +169,7 @@ internal class SafeContinuation<in T> @PublishedApi internal constructor(private
             val result = this.result // atomic read
             when (result) {
                 UNDECIDED -> if (cas(UNDECIDED, value)) return
-                SUSPENDED_MARKER -> if (cas(SUSPENDED_MARKER, RESUMED)) {
+                COROUTINE_SUSPENDED -> if (cas(COROUTINE_SUSPENDED, RESUMED)) {
                     delegate.resume(value)
                     return
                 }
@@ -183,7 +183,7 @@ internal class SafeContinuation<in T> @PublishedApi internal constructor(private
             val result = this.result // atomic read
             when (result) {
                 UNDECIDED -> if (cas(UNDECIDED, Fail(exception))) return
-                SUSPENDED_MARKER -> if (cas(SUSPENDED_MARKER, RESUMED)) {
+                COROUTINE_SUSPENDED -> if (cas(COROUTINE_SUSPENDED, RESUMED)) {
                     delegate.resumeWithException(exception)
                     return
                 }
@@ -196,13 +196,13 @@ internal class SafeContinuation<in T> @PublishedApi internal constructor(private
     internal fun getResult(): Any? {
         var result = this.result // atomic read
         if (result == UNDECIDED) {
-            if (cas(UNDECIDED, SUSPENDED_MARKER)) return SUSPENDED_MARKER
+            if (cas(UNDECIDED, COROUTINE_SUSPENDED)) return COROUTINE_SUSPENDED
             result = this.result // reread volatile var
         }
         when (result) {
-            RESUMED -> return SUSPENDED_MARKER // already called continuation, indicate SUSPENDED_MARKER upstream
+            RESUMED -> return COROUTINE_SUSPENDED // already called continuation, indicate COROUTINE_SUSPENDED upstream
             is Fail -> throw result.exception
-            else -> return result // either SUSPENDED_MARKER or data
+            else -> return result // either COROUTINE_SUSPENDED or data
         }
     }
 }

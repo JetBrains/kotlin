@@ -8,13 +8,13 @@ class Controller {
     suspend fun runInstanceOf(): Boolean = suspendCoroutineOrReturn { x ->
         val y: Any = x
         x.resume(x is Continuation<*>)
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 
     suspend fun runCast(): Boolean = suspendCoroutineOrReturn { x ->
         val y: Any = x
         x.resume(Continuation::class.isInstance(y as Continuation<*>))
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 }
 

@@ -6,7 +6,7 @@ import kotlin.coroutines.experimental.intrinsics.*
 class Controller {
     suspend fun <T> suspendHere(v: T): T = suspendCoroutineOrReturn { x ->
         x.resume(v)
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 }
 

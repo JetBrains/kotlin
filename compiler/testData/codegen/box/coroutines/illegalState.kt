@@ -6,7 +6,7 @@ import kotlin.coroutines.experimental.intrinsics.*
 
 suspend fun suspendHere(): Unit = suspendCoroutineOrReturn { x ->
     x.resume(Unit)
-    SUSPENDED_MARKER
+    COROUTINE_SUSPENDED
 }
 
 fun builder1(c: suspend () -> Unit) {

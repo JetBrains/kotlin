@@ -40,14 +40,14 @@ class AsyncGeneratorIterator<T>: AsyncIterator<T>, AsyncGenerator<T>, Continuati
         computesNext = false
         computeContinuation = c
         nextStep!!.resume(Unit)
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 
     suspend fun computeNext(): T = suspendCoroutineOrReturn { c ->
         computesNext = true
         computeContinuation = c
         nextStep!!.resume(Unit)
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -98,7 +98,7 @@ class AsyncGeneratorIterator<T>: AsyncIterator<T>, AsyncGenerator<T>, Continuati
         nextValue = value
         nextStep = c
         resumeIterator(null)
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 }
 

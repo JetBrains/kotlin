@@ -7,7 +7,7 @@ class Controller {
     suspend fun noParams(): Unit = suspendCoroutineOrReturn {
         if (hashCode() % 2 == 0) {
             it.resume(Unit)
-            SUSPENDED_MARKER
+            COROUTINE_SUSPENDED
         }
         else {
             Unit

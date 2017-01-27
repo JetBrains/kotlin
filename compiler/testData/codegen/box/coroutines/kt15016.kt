@@ -1,7 +1,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 
-import kotlin.coroutines.experimental.intrinsics.SUSPENDED_MARKER
+import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
 import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
 import kotlin.coroutines.experimental.startCoroutine
 
@@ -24,7 +24,7 @@ class Foo(val value: Any) {
 
 suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
     x.resume("OK")
-    SUSPENDED_MARKER
+    COROUTINE_SUSPENDED
 }
 
 fun builder(c: suspend () -> Unit) {

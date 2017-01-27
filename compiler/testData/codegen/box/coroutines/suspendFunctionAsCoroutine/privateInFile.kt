@@ -9,7 +9,7 @@ private suspend fun foo(): String  {
     if (x) {
         return suspendCoroutineOrReturn<String> {
             it.resume("OK")
-            SUSPENDED_MARKER
+            COROUTINE_SUSPENDED
         }
     }
 

@@ -7,7 +7,7 @@ import kotlin.reflect.KProperty
 
 suspend fun suspendThere(v: String): String = suspendCoroutineOrReturn { x ->
     x.resume(v)
-    SUSPENDED_MARKER
+    COROUTINE_SUSPENDED
 }
 
 class A(val x: String) {
@@ -21,13 +21,13 @@ class A(val x: String) {
         if (value != "56") return@suspendCoroutineOrReturn Unit
         isSetValueCalled = true
         x.resume(Unit)
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 
     operator suspend fun provideDelegate(host: Any?, p: Any): A = suspendCoroutineOrReturn { x ->
         isProvideDelegateCalled = true
         x.resume(this)
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 
     operator suspend fun plus(y: String) = suspendThere(x + y)
@@ -36,14 +36,14 @@ class A(val x: String) {
     operator suspend fun inc(): A = suspendCoroutineOrReturn { x ->
         isProvideDelegateCalled = true
         x.resume(this)
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 
     operator suspend fun minusAssign(y: String): Unit = suspendCoroutineOrReturn { x ->
         if (y != "56") return@suspendCoroutineOrReturn Unit
         isMinusAssignCalled = true
         x.resume(Unit)
-        SUSPENDED_MARKER
+        COROUTINE_SUSPENDED
     }
 }
 
