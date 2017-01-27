@@ -8,6 +8,7 @@ package kotlin.sequences
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+import kotlin.js.*
 import kotlin.comparisons.*
 
 /**

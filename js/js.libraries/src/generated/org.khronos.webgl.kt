@@ -7,6 +7,7 @@
 
 package org.khronos.webgl
 
+import kotlin.js.*
 import org.w3c.dom.*
 import org.w3c.dom.css.*
 import org.w3c.dom.events.*

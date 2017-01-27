@@ -61,6 +61,7 @@ fun main(args: Array<String>) {
             w.appendln("package $pkg")
             w.appendln()
 
+            w.appendln("import kotlin.js.*")
             allPackages.filter { it != pkg }.forEach { import ->
                 w.appendln("import $import.*")
             }
