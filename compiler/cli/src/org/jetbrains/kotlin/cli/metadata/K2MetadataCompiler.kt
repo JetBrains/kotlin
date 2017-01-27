@@ -65,7 +65,7 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
             if (destination.endsWith(".jar")) {
                 // TODO: support .jar destination
                 collector.report(
-                        CompilerMessageSeverity.WARNING,
+                        CompilerMessageSeverity.STRONG_WARNING,
                         ".jar destination is not yet supported, results will be written to the directory with the given name",
                         CompilerMessageLocation.NO_LOCATION
                 )
