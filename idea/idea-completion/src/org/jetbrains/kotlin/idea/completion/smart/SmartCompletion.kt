@@ -210,7 +210,7 @@ class SmartCompletion(
             }
 
             if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
-                TypeInstantiationItems(resolutionFacade, bindingContext, visibilityFilter, toFromOriginalFileMapper, inheritorSearchScope, lookupElementFactory, forBasicCompletion)
+                TypeInstantiationItems(resolutionFacade, bindingContext, visibilityFilter, toFromOriginalFileMapper, inheritorSearchScope, lookupElementFactory, forBasicCompletion, indicesHelper)
                         .addTo(items, inheritanceSearchers, expectedInfos)
 
                 if (expression is KtSimpleNameExpression) {

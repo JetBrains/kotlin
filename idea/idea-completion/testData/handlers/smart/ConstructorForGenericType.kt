@@ -8,3 +8,4 @@ fun f(){
 }
 
 // ELEMENT: HashMap
+// TAIL_TEXT: (...) (kotlin.collections)

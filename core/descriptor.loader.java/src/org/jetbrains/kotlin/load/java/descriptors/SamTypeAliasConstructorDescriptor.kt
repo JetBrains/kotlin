@@ -31,7 +31,7 @@ class SamTypeAliasConstructorDescriptorImpl(
         typeAliasDescriptor.containingDeclaration,
         null,
         samInterfaceConstructorDescriptor.baseDescriptorForSynthetic.annotations,
-        samInterfaceConstructorDescriptor.baseDescriptorForSynthetic.name,
+        typeAliasDescriptor.name,
         CallableMemberDescriptor.Kind.SYNTHESIZED,
         typeAliasDescriptor.source
 ), SamTypeAliasConstructorDescriptor {
