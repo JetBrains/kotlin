@@ -60,7 +60,7 @@ object KotlinCompilerClient {
                      ?.check { !it.isBlank() }
                      ?.let(::File)
                      ?.check(File::exists)
-                     ?: makeAutodeletingFlagFile()
+                     ?: makeAutodeletingFlagFile(baseDir = File(daemonOptions.runFilesPathOrDefault))
         return connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, reportingTargets, autostart)
     }
 

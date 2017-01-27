@@ -328,7 +328,7 @@ class CompileServiceImpl(
             compilationOptions: CompilationOptions,
             servicesFacade: CompilerServicesFacadeBase,
             compilationResults: CompilationResults?
-    ): CompileService.CallResult<Int> {
+    ): CompileService.CallResult<Int> = ifAlive {
         val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
         val daemonReporter = DaemonMessageReporter(servicesFacade, compilationOptions)
         val compilerMode = compilationOptions.compilerMode
@@ -342,10 +342,10 @@ class CompileServiceImpl(
         }
         catch (e: IllegalArgumentException) {
             messageCollector.report(CompilerMessageSeverity.EXCEPTION, e.stackTraceStr, CompilerMessageLocation.NO_LOCATION)
-            return CompileService.CallResult.Error("Could not deserialize compiler arguments")
+            return@ifAlive CompileService.CallResult.Error("Could not deserialize compiler arguments")
         }
 
-        return when (compilerMode) {
+        return@ifAlive when (compilerMode) {
             CompilerMode.JPS_COMPILER -> {
                 val jpsServicesFacade = servicesFacade as JpsCompilerServicesFacade
 
