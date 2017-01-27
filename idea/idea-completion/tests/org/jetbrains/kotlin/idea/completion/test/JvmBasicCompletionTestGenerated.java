@@ -1017,6 +1017,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/TopLevelAnnotationArg2.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("TypeAliasToAnnotation.kt")
+            public void testTypeAliasToAnnotation() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/TypeAliasToAnnotation.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/idea-completion/testData/basic/common/autoPopup")

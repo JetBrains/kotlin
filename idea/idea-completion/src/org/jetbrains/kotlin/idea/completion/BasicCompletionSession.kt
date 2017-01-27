@@ -316,7 +316,7 @@ class BasicCompletionSession(
                 when (callTypeAndReceiver) {
                     is CallTypeAndReceiver.ANNOTATION -> {
                         classKindFilter = { it == ClassKind.ANNOTATION_CLASS }
-                        includeTypeAliases = false
+                        includeTypeAliases = true
                     }
 
                     is CallTypeAndReceiver.DEFAULT, is CallTypeAndReceiver.TYPE -> {
