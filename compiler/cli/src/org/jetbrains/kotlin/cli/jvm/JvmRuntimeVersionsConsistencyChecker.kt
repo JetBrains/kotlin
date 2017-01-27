@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.cli.jvm
 
-import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -24,9 +23,11 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersion.KOTLIN_1_0
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.MavenComparableVersion
 import java.util.*
+import java.util.jar.Attributes
 import java.util.jar.Manifest
 
 internal inline fun Properties.getString(propertyName: String, otherwise: () -> String): String =
@@ -56,7 +57,10 @@ object JvmRuntimeVersionsConsistencyChecker {
 
     private const val KOTLIN_STDLIB_MODULE = "$META_INF/kotlin-stdlib.kotlin_module"
     private const val KOTLIN_REFLECT_MODULE = "$META_INF/kotlin-reflection.kotlin_module"
-    private const val KOTLIN_COMPILER_MODULE = "$META_INF/kotlin-compiler.kotlin_module"
+
+    private val RUNTIME_IMPLEMENTATION_TITLES = setOf(
+            "kotlin-runtime", "kotlin-stdlib", "kotlin-reflect", "Kotlin Runtime", "Kotlin Standard Library", "Kotlin Reflect"
+    )
 
     private val KOTLIN_VERSION_ATTRIBUTE: String
     private val CURRENT_COMPILER_VERSION: MavenComparableVersion
@@ -107,7 +111,9 @@ object JvmRuntimeVersionsConsistencyChecker {
             // Runtime jars with components "Main" and "Core"
             val jars: List<KotlinLibraryFile>,
             // Runtime jars with components "Core" only (a subset of [jars])
-            val coreJars: List<KotlinLibraryFile>
+            val coreJars: List<KotlinLibraryFile>,
+            // Library jars which have some Kotlin Runtime library bundled into them
+            val otherLibrariesWithBundledRuntime: List<VirtualFile>
     )
 
     fun checkCompilerClasspathConsistency(
@@ -121,8 +127,30 @@ object JvmRuntimeVersionsConsistencyChecker {
         val languageVersion = languageVersionSettings?.let { MavenComparableVersion(it.languageVersion) } ?: CURRENT_COMPILER_VERSION
 
         if (checkCompilerClasspathConsistency(messageCollector, languageVersion, runtimeJarsInfo)) {
-            messageCollector.issue(null, "Some runtime JAR files in the classpath have an incompatible version. " +
-                                         "Remove them from the classpath or use '-Xskip-runtime-version-check' to suppress errors")
+            messageCollector.issue(
+                    null,
+                    "Some runtime JAR files in the classpath have an incompatible version. " +
+                    "Remove them from the classpath or use '-Xskip-runtime-version-check' to suppress errors"
+            )
+        }
+
+        val librariesWithBundled = runtimeJarsInfo.otherLibrariesWithBundledRuntime
+        if (librariesWithBundled.isNotEmpty()) {
+            messageCollector.issue(
+                    null,
+                    "Some JAR files in the classpath have the Kotlin Runtime library bundled into them. " +
+                    "This may cause difficult to debug problems if there's a different version of the Kotlin Runtime library in the classpath. " +
+                    "Consider removing these libraries from the classpath or use '-Xskip-runtime-version-check' to suppress this warning",
+                    CompilerMessageSeverity.STRONG_WARNING
+            )
+
+            for (library in librariesWithBundled) {
+                messageCollector.issue(
+                        library,
+                        "Library has Kotlin runtime bundled into it",
+                        CompilerMessageSeverity.STRONG_WARNING
+                )
+            }
         }
     }
 
@@ -181,27 +209,40 @@ object JvmRuntimeVersionsConsistencyChecker {
         return false
     }
 
-    private fun MessageCollector.issue(file: VirtualFile?, message: String) {
-        report(VERSION_ISSUE_SEVERITY, message, CompilerMessageLocation.create(file?.let(VfsUtilCore::virtualToIoFile)?.path))
+    private fun MessageCollector.issue(file: VirtualFile?, message: String, severity: CompilerMessageSeverity = VERSION_ISSUE_SEVERITY) {
+        report(severity, message, CompilerMessageLocation.create(file?.let(VfsUtilCore::virtualToIoFile)?.path))
     }
 
     private fun collectRuntimeJarsInfo(classpathJarRoots: List<VirtualFile>): RuntimeJarsInfo {
         val jars = ArrayList<KotlinLibraryFile>(2)
         val coreJars = ArrayList<KotlinLibraryFile>(2)
+        val otherLibrariesWithBundledRuntime = ArrayList<VirtualFile>(0)
 
         for (jarRoot in classpathJarRoots) {
             val manifest = try {
-                val manifestFile = jarRoot.findFileByRelativePath(MANIFEST_MF) ?: continue
-                Manifest(manifestFile.inputStream)
+                jarRoot.findFileByRelativePath(MANIFEST_MF)?.let { Manifest(it.inputStream) }
             }
             catch (e: Exception) {
                 continue
             }
 
-            val runtimeComponent = getKotlinRuntimeComponent(jarRoot, manifest) ?: continue
-            val version = manifest.getKotlinLanguageVersion()
+            val runtimeComponent = manifest?.mainAttributes?.getValue(KOTLIN_RUNTIME_COMPONENT_ATTRIBUTE)
+            if (runtimeComponent == null) {
+                if (jarRoot.findFileByRelativePath(KOTLIN_STDLIB_MODULE) != null ||
+                    jarRoot.findFileByRelativePath(KOTLIN_REFLECT_MODULE) != null) {
+                    val jarFile = VfsUtilCore.getVirtualFileForJar(jarRoot) ?: continue
+                    if (isGenuineKotlinRuntime(manifest)) {
+                        jars.add(KotlinLibraryFile(KOTLIN_RUNTIME_COMPONENT_MAIN, jarFile, MavenComparableVersion(KOTLIN_1_0)))
+                    }
+                    else {
+                        otherLibrariesWithBundledRuntime.add(jarFile)
+                    }
+                }
+                continue
+            }
 
             val jarFile = VfsUtilCore.getVirtualFileForJar(jarRoot) ?: continue
+            val version = manifest.getKotlinLanguageVersion()
             val file = KotlinLibraryFile(runtimeComponent, jarFile, version)
 
             if (runtimeComponent == KOTLIN_RUNTIME_COMPONENT_CORE) {
@@ -213,25 +254,17 @@ object JvmRuntimeVersionsConsistencyChecker {
             }
         }
 
-        return RuntimeJarsInfo(jars, coreJars)
+        return RuntimeJarsInfo(jars, coreJars, otherLibrariesWithBundledRuntime)
     }
 
-    private fun getKotlinRuntimeComponent(jar: VirtualFile, manifest: Manifest): String? {
-        manifest.mainAttributes.getValue(KOTLIN_RUNTIME_COMPONENT_ATTRIBUTE)?.let { return it }
-
-        // Do not treat kotlin-compiler and kotlin-compiler-embeddable as Kotlin runtime libraries.
-        // The second condition is needed because when the compiler is built with "compiler-quick", there's no kotlin-compiler.kotlin_module
-        if (jar.findFileByRelativePath(KOTLIN_COMPILER_MODULE) != null ||
-            jar.findFileByRelativePath(this::class.java.name.replace('.', '/') + "." + JavaClassFileType.INSTANCE.defaultExtension) != null) return null
-
-        if (jar.findFileByRelativePath(KOTLIN_STDLIB_MODULE) != null) return KOTLIN_RUNTIME_COMPONENT_MAIN
-        if (jar.findFileByRelativePath(KOTLIN_REFLECT_MODULE) != null) return KOTLIN_RUNTIME_COMPONENT_MAIN
-
-        return null
+    // Returns true if the manifest is from the original Kotlin Runtime jar, false if it's from a library with a bundled runtime
+    private fun isGenuineKotlinRuntime(manifest: Manifest?): Boolean {
+        return manifest != null &&
+               manifest.mainAttributes.getValue(Attributes.Name.IMPLEMENTATION_TITLE) in RUNTIME_IMPLEMENTATION_TITLES
     }
 
     private fun Manifest.getKotlinLanguageVersion(): MavenComparableVersion =
-            MavenComparableVersion(mainAttributes.getValue(KOTLIN_VERSION_ATTRIBUTE) ?: LanguageVersion.KOTLIN_1_0.versionString)
+            MavenComparableVersion(mainAttributes.getValue(KOTLIN_VERSION_ATTRIBUTE) ?: KOTLIN_1_0.versionString)
 
     private fun MavenComparableVersion(languageVersion: LanguageVersion): MavenComparableVersion =
             MavenComparableVersion(languageVersion.versionString)
