@@ -40,8 +40,10 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
 import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElementFactory
+import org.jetbrains.plugins.groovy.lang.psi.api.statements.GrStatement
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrApplicationStatement
+import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrMethodCallExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.util.GrStatementOwner
 import java.io.File
@@ -253,6 +255,43 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
                             .showNotification()
                 }
             }
+        }
+
+        fun changeCoroutineConfiguration(module: Module, coroutineOption: String): PsiElement? {
+            return changeBuildGradle(module) { gradleFile ->
+                changeCoroutineConfiguration(gradleFile, coroutineOption)
+            }
+        }
+
+        fun changeCoroutineConfiguration(gradleFile: GroovyFile, coroutineOption: String): PsiElement? {
+            val snippet = "coroutines \"$coroutineOption\""
+            val kotlinBlock = getBlockOrCreate(gradleFile, "kotlin")
+            val experimentalBlock = getBlockOrCreate(kotlinBlock, "experimental")
+            addOrReplaceExpression(experimentalBlock, snippet) { stmt ->
+                (stmt as? GrMethodCall)?.invokedExpression?.text == "coroutines"
+            }
+            return kotlinBlock.parent
+        }
+
+        private fun changeBuildGradle(module: Module, body: (GroovyFile) -> PsiElement?): PsiElement? {
+            val gradleFilePath = getModuleFilePath(module)
+            val gradleFile = getBuildGradleFile(module.project, gradleFilePath)
+            if (gradleFile != null && canConfigureFile(gradleFile)) {
+                return gradleFile.project.executeWriteCommand("Change build.gradle configuration", null) {
+                    body(gradleFile)
+                }
+            }
+            return null
+        }
+
+        private fun addOrReplaceExpression(block: GrClosableBlock, snippet: String, predicate: (GrStatement) -> Boolean) {
+            block.statements.firstOrNull(predicate)?.let { stmt ->
+                val newStatement = GroovyPsiElementFactory.getInstance(block.project).createExpressionFromText(snippet)
+                CodeStyleManager.getInstance(block.project).reformat(newStatement)
+                stmt.replaceWithStatement(newStatement)
+                return
+            }
+            addLastExpressionInBlockIfNeeded(snippet, block)
         }
 
         fun getKotlinStdlibVersion(module: Module): String? {

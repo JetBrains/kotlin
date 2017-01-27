@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
+import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -41,6 +43,14 @@ sealed class ChangeCoroutineSupportFix(
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
             val module = ModuleUtilCore.findModuleForPsiElement(file) ?: return
+            if (KotlinPluginUtil.isGradleModule(module)) {
+                val element = KotlinWithGradleConfigurator.changeCoroutineConfiguration(module, coroutineSupport.compilerArgument)
+                element?.let {
+                    OpenFileDescriptor(project, it.containingFile.virtualFile, it.textRange.startOffset).navigate(true)
+                }
+                return
+            }
+
             val facetSettings = KotlinFacet.get(module)?.configuration?.settings ?: return
             ModuleRootModificationUtil.updateModel(module) {
                 facetSettings.compilerInfo.coroutineSupport = coroutineSupport
@@ -85,10 +95,13 @@ sealed class ChangeCoroutineSupportFix(
                 else -> return emptyList()
             }
             val module = ModuleUtilCore.findModuleForPsiElement(diagnostic.psiElement) ?: return emptyList()
-            if (KotlinPluginUtil.isGradleModule(module) || KotlinPluginUtil.isMavenModule(module)) return emptyList()
+            if (KotlinPluginUtil.isMavenModule(module)) return emptyList()
             val facetSettings = KotlinFacet.get(module)?.configuration?.settings
+
+            val configureInProject = (facetSettings == null || facetSettings.useProjectSettings) &&
+                                     !KotlinPluginUtil.isGradleModule(module)
             val quickFixConstructor: (PsiElement, CoroutineSupport) -> ChangeCoroutineSupportFix =
-                    if (facetSettings == null || facetSettings.useProjectSettings) ::InProject else ::InModule
+                    if (configureInProject) ::InProject else ::InModule
             return newCoroutineSupports.map { quickFixConstructor(diagnostic.psiElement, it) }
         }
     }
