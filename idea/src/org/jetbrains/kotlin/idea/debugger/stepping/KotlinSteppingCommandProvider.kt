@@ -36,8 +36,6 @@ import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
@@ -45,8 +43,8 @@ import org.jetbrains.kotlin.idea.debugger.ktLocationInfo
 import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.GOTO
 import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.MOVE
 import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.RETURN
-import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.RETURN_VOID
 import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.RETURN_OBJECT
+import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.RETURN_VOID
 import org.jetbrains.kotlin.idea.debugger.stepping.DexBytecode.RETURN_WIDE
 import org.jetbrains.kotlin.idea.refactoring.getLineEndOffset
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
@@ -269,26 +267,29 @@ private fun findCallsOnPosition(sourcePosition: SourcePosition, filter: (KtCallE
 
 sealed class Action(val position: XSourcePositionImpl? = null,
                     val stepOverInlineData: StepOverFilterData? = null) {
-    class STEP_OVER : Action()
-    class STEP_OUT : Action()
-    class RUN_TO_CURSOR(position: XSourcePositionImpl) : Action(position)
-    class STEP_OVER_INLINED(stepOverInlineData: StepOverFilterData) : Action(stepOverInlineData = stepOverInlineData)
-
-    fun apply(debugProcess: DebugProcessImpl,
-              suspendContext: SuspendContextImpl,
-              ignoreBreakpoints: Boolean) {
-        when (this) {
-            is Action.RUN_TO_CURSOR -> {
-                runReadAction {
-                    debugProcess.createRunToCursorCommand(suspendContext, position!!, ignoreBreakpoints)
-                }.contextAction(suspendContext)
-            }
-            is Action.STEP_OUT -> debugProcess.createStepOutCommand(suspendContext).contextAction(suspendContext)
-            is Action.STEP_OVER -> debugProcess.createStepOverCommand(suspendContext, ignoreBreakpoints).contextAction(suspendContext)
-            is Action.STEP_OVER_INLINED -> KotlinStepActionFactory(debugProcess).createKotlinStepOverInlineAction(
+    class STEP_OVER : Action() {
+        override fun apply(debugProcess: DebugProcessImpl, suspendContext: SuspendContextImpl, ignoreBreakpoints: Boolean) =
+                debugProcess.createStepOverCommand(suspendContext, ignoreBreakpoints).contextAction(suspendContext)
+    }
+    class STEP_OUT : Action() {
+        override fun apply(debugProcess: DebugProcessImpl, suspendContext: SuspendContextImpl, ignoreBreakpoints: Boolean) =
+            debugProcess.createStepOutCommand(suspendContext).contextAction(suspendContext)
+    }
+    class RUN_TO_CURSOR(position: XSourcePositionImpl) : Action(position) {
+        override fun apply(debugProcess: DebugProcessImpl, suspendContext: SuspendContextImpl, ignoreBreakpoints: Boolean) {
+            return runReadAction {
+                debugProcess.createRunToCursorCommand(suspendContext, position!!, ignoreBreakpoints)
+            }.contextAction(suspendContext)
+        }
+    }
+    class STEP_OVER_INLINED(stepOverInlineData: StepOverFilterData) : Action(stepOverInlineData = stepOverInlineData) {
+        override fun apply(debugProcess: DebugProcessImpl, suspendContext: SuspendContextImpl, ignoreBreakpoints: Boolean) {
+            return KotlinStepActionFactory(debugProcess).createKotlinStepOverInlineAction(
                     KotlinStepOverInlineFilter(debugProcess.project, stepOverInlineData!!)).contextAction(suspendContext)
         }
     }
+
+    abstract fun apply(debugProcess: DebugProcessImpl, suspendContext: SuspendContextImpl, ignoreBreakpoints: Boolean)
 }
 
 interface KotlinMethodFilter : MethodFilter {
