@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
-import org.jetbrains.kotlin.cli.common.repl.makeSriptBaseName
+import org.jetbrains.kotlin.cli.common.repl.makeScriptBaseName
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.repl.messages.DiagnosticMessageHolder
@@ -74,9 +74,9 @@ open class GenericReplChecker(
 
     fun check(codeLine: ReplCodeLine, generation: Long): ReplCheckResult {
         stateLock.write {
-            val scriptFileName = makeSriptBaseName(codeLine, generation)
+            val scriptFileName = makeScriptBaseName(codeLine, generation)
             val virtualFile =
-                    LightVirtualFile("${scriptFileName}${KotlinParserDefinition.STD_SCRIPT_EXT}", KotlinLanguage.INSTANCE, codeLine.code).apply {
+                    LightVirtualFile("$scriptFileName${KotlinParserDefinition.STD_SCRIPT_EXT}", KotlinLanguage.INSTANCE, codeLine.code).apply {
                         charset = CharsetToolkit.UTF8_CHARSET
                     }
             val psiFile: KtFile = psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile?

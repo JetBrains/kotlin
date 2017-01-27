@@ -17,23 +17,22 @@
 package org.jetbrains.kotlin.cli.common.repl
 
 import java.io.Serializable
-import java.util.concurrent.ConcurrentLinkedDeque
+import java.util.*
 
 
 typealias CompiledHistoryItem<T> = Pair<CompiledReplCodeLine, T>
 typealias SourceHistoryItem<T> = Pair<ReplCodeLine, T>
 
-typealias CompiledHistoryStorage<T> = ConcurrentLinkedDeque<CompiledHistoryItem<T>>
+typealias CompiledHistoryStorage<T> = ArrayDeque<CompiledHistoryItem<T>>
 typealias CompiledHistoryList<T> = List<CompiledHistoryItem<T>>
 typealias SourceHistoryList<T> = List<SourceHistoryItem<T>>
 typealias SourceList = List<ReplCodeLine>
 
 /*
-   Not thread safe, the caller is assumed to lock access.  Even though ConcurrentLinkedDeque is used, there are mutliple
-   actions that require locking.
+   WARNING: Not thread safe, the caller is assumed to lock access.
  */
 class ReplHistory<T>(startingHistory: CompiledHistoryList<T> = emptyList()) : Serializable {
-    private val history: CompiledHistoryStorage<T> = ConcurrentLinkedDeque(startingHistory)
+    private val history: CompiledHistoryStorage<T> = ArrayDeque(startingHistory)
 
     fun isEmpty(): Boolean = history.isEmpty()
     fun isNotEmpty(): Boolean = history.isNotEmpty()
@@ -62,9 +61,7 @@ class ReplHistory<T>(startingHistory: CompiledHistoryList<T> = emptyList()) : Se
         return removed.reversed()
     }
 
-    fun resetToLine(line: ReplCodeLine): SourceHistoryList<T> {
-        return resetToLine(line.no)
-    }
+    fun resetToLine(line: ReplCodeLine): SourceHistoryList<T> = resetToLine(line.no)
 
     fun resetToLine(line: CompiledReplCodeLine): CompiledHistoryList<T> {
         val removed = arrayListOf<CompiledHistoryItem<T>>()
@@ -86,13 +83,11 @@ class ReplHistory<T>(startingHistory: CompiledHistoryList<T> = emptyList()) : Se
     }
 
     // return from the compareHistory the first line that does not match or null
-    fun firstMismatchingHistory(compareHistory: SourceList?): Int? {
-        if (compareHistory == null) return null
-
-        val firstMismatch = history.zip(compareHistory).firstOrNull { it.first.first.source != it.second }?.second?.no
-        if (compareHistory.size == history.size) return firstMismatch
-        if (compareHistory.size > history.size) return compareHistory[history.size].no
-        return history.toList()[compareHistory.size].first.source.no
+    fun firstMismatchingHistory(compareHistory: SourceList?): Int? = when {
+        compareHistory == null -> null
+        compareHistory.size == history.size -> history.zip(compareHistory).firstOrNull { it.first.first.source != it.second }?.second?.no
+        compareHistory.size > history.size -> compareHistory[history.size].no
+        else -> history.toList()[compareHistory.size].first.source.no
     }
 
     fun copySources(): SourceList = history.map { it.first.source }

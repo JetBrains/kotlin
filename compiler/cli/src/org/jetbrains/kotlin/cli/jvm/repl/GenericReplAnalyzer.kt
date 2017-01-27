@@ -53,7 +53,7 @@ class GenericReplAnalyzer(environment: KotlinCoreEnvironment,
     private val topDownAnalyzer: LazyTopDownAnalyzer
     private val resolveSession: ResolveSession
     private val scriptDeclarationFactory: ScriptMutableDeclarationProviderFactory
-    private val replState = ResetableReplState()
+    private val replState = ResettableReplState()
 
     val module: ModuleDescriptorImpl
         get() = stateLock.read { field }
@@ -63,8 +63,8 @@ class GenericReplAnalyzer(environment: KotlinCoreEnvironment,
 
     init {
         // Module source scope is empty because all binary classes are in the dependency module, and all source classes are guaranteed
-        // to be found via ResolveSession. The latter is true as long as light classes are not needed in NONE (which is currently true
-        // because no symbol declared in the NONE session can be used from Java)
+        // to be found via ResolveSession. The latter is true as long as light classes are not needed in REPL (which is currently true
+        // because no symbol declared in the REPL session can be used from Java)
         val container = TopDownAnalyzerFacadeForJVM.createContainer(
                 environment.project,
                 emptyList(),
@@ -178,7 +178,8 @@ class GenericReplAnalyzer(environment: KotlinCoreEnvironment,
         }
     }
 
-    class ResetableReplState() {
+    // TODO: merge with org.jetbrains.kotlin.resolve.repl.ReplState when switching to new REPL infrastruct everywhere
+    class ResettableReplState {
         private val successfulLines = ReplHistory<LineInfo.SuccessfulLine>()
         private val submittedLines = hashMapOf<KtFile, LineInfo>()
 
@@ -232,5 +233,3 @@ class GenericReplAnalyzer(environment: KotlinCoreEnvironment,
         }
     }
 }
-
-

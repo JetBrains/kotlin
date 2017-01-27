@@ -32,7 +32,7 @@ interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
     val replScriptEvaluator: ReplEvaluatorExposedInternalHistory
 
     private fun prioritizedHistory(receiverClass: KClass<*>?, receiverInstance: Any?): List<EvalClassWithInstanceAndLoader> {
-        return replScriptEvaluator.lastEvaluatedScripts.map { it.second }.filter { it.instance != null }.reversed().assertNotEmpty("no script ").let { history ->
+        return replScriptEvaluator.lastEvaluatedScripts.map { it.second }.filter { it.instance != null }.reversed().ensureNotEmpty("no script ").let { history ->
             if (receiverInstance != null) {
                 val receiverKlass = receiverClass ?: receiverInstance.javaClass.kotlin
                 val receiverInHistory = history.find { it.instance == receiverInstance } ?:
@@ -94,7 +94,7 @@ interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
     }
 
     private fun <T : Any> proxyInterface(thiz: Any?, clasz: Class<T>?): T? {
-        replScriptEvaluator.lastEvaluatedScripts.assertNotEmpty("no script")
+        replScriptEvaluator.lastEvaluatedScripts.ensureNotEmpty("no script")
         val priority = prioritizedHistory(thiz?.javaClass?.kotlin, thiz)
 
         if (clasz == null) throw IllegalArgumentException("class object cannot be null")

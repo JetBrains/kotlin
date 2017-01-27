@@ -20,8 +20,8 @@ import com.google.common.base.Throwables
 import java.io.File
 import java.net.URLClassLoader
 
-fun makeSriptBaseName(codeLine: ReplCodeLine, generation: Long) =
-        "Line_${codeLine.no}" + if (generation > 1) "_gen_${generation}" else ""
+fun makeScriptBaseName(codeLine: ReplCodeLine, generation: Long) =
+        "Line_${codeLine.no}${if (generation > 1) "_gen_$generation" else ""}"
 
 fun renderReplStackTrace(cause: Throwable, startFromMethodName: String): String {
     val newTrace = arrayListOf<StackTraceElement>()
@@ -55,10 +55,10 @@ internal fun ClassLoader.listAllUrlsAsFiles(): List<File> {
 }
 
 internal fun URLClassLoader.listLocalUrlsAsFiles(): List<File> {
-    return this.urLs.map { it.toString().removePrefix("file:") }.filterNotNull().map { File(it) }
+    return this.urLs.map { it.toString().removePrefix("file:") }.filterNotNull().map(::File)
 }
 
-internal fun <T : Any> List<T>.assertNotEmpty(error: String): List<T> {
+internal fun <T : Any> List<T>.ensureNotEmpty(error: String): List<T> {
     if (this.isEmpty()) throw IllegalStateException(error)
     return this
 }

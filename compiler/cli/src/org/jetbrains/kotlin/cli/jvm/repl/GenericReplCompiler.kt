@@ -68,7 +68,7 @@ open class GenericReplCompiler(disposable: Disposable,
 
     override val history: List<ReplCodeLine> get() = stateLock.read { descriptorsHistory.copySources() }
 
-    override fun check(codeLine: ReplCodeLine): ReplCheckResult {
+    override fun check(codeLine: ReplCodeLine): ReplCheckResult = stateLock.read {
         return checker.check(codeLine, generation.get())
     }
 
@@ -87,7 +87,7 @@ open class GenericReplCompiler(disposable: Disposable,
                     when (res) {
                         is ReplCheckResult.Incomplete -> return@compile ReplCompileResult.Incomplete(descriptorsHistory.copySources())
                         is ReplCheckResult.Error -> return@compile ReplCompileResult.Error(descriptorsHistory.copySources(), res.message, res.location)
-                        is ReplCheckResult.Ok -> NO_ACTION()
+                        is ReplCheckResult.Ok -> {} // continue
                     }
                 }
                 Pair(checker.lineState!!.psiFile, checker.lineState!!.errorHolder)
@@ -125,7 +125,7 @@ open class GenericReplCompiler(disposable: Disposable,
                     setOf(psiFile.script!!.getContainingKtFile()),
                     org.jetbrains.kotlin.codegen.CompilationErrorHandler.THROW_EXCEPTION)
 
-            val generatedClassname = makeSriptBaseName(codeLine, currentGeneration)
+            val generatedClassname = makeScriptBaseName(codeLine, currentGeneration)
             val compiledCodeLine = CompiledReplCodeLine(generatedClassname, codeLine)
             descriptorsHistory.add(compiledCodeLine, scriptDescriptor)
 

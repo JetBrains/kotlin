@@ -25,9 +25,10 @@ val KOTLIN_SCRIPT_HISTORY_BINDINGS_KEY = "kotlin.script.history"
 
 
 // TODO consider additional error handling
-@Suppress("UNCHECKED_CAST")
 val Bindings.kotlinScriptHistory: MutableList<ReplCodeLine>
+    @Suppress("UNCHECKED_CAST")
     get() = getOrPut(KOTLIN_SCRIPT_HISTORY_BINDINGS_KEY, { arrayListOf<ReplCodeLine>() }) as MutableList<ReplCodeLine>
+
 
 abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEngineFactory) : AbstractScriptEngine(), ScriptEngine, Compilable {
 

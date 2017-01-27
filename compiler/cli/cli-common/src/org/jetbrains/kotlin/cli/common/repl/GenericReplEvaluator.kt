@@ -27,7 +27,8 @@ open class GenericReplEvaluator(baseClasspath: Iterable<File>,
                                 baseClassloader: ClassLoader?,
                                 protected val fallbackScriptArgs: ScriptArgsWithTypes? = null,
                                 protected val repeatingMode: ReplRepeatingMode = ReplRepeatingMode.REPEAT_ONLY_MOST_RECENT,
-                                protected val stateLock: ReentrantReadWriteLock = ReentrantReadWriteLock()) : ReplEvaluator {
+                                protected val stateLock: ReentrantReadWriteLock = ReentrantReadWriteLock()
+) : ReplEvaluator {
 
     private val topClassLoader: ReplClassLoader = makeReplClassLoader(baseClassloader, baseClasspath)
 
@@ -42,7 +43,7 @@ open class GenericReplEvaluator(baseClasspath: Iterable<File>,
     override val history: List<ReplCodeLine> get() = stateLock.read { evaluatedHistory.copySources() }
 
     override val currentClasspath: List<File> get() = stateLock.read {
-        evaluatedHistory.copyValues().lastOrNull()?.let { it.classLoader.listAllUrlsAsFiles() }
+        evaluatedHistory.copyValues().lastOrNull()?.classLoader?.listAllUrlsAsFiles()
         ?: topClassLoader.listAllUrlsAsFiles()
     }
 
@@ -57,8 +58,8 @@ open class GenericReplEvaluator(baseClasspath: Iterable<File>,
         return stateLock.write {
             var mainLineClassName: String? = null
             val classLoader = makeReplClassLoader(effectiveHistory.lastOrNull()?.classLoader ?: topClassLoader, compileResult.classpathAddendum)
-            fun classNameFromPath(path: String) = JvmClassName.byInternalName(path.replaceFirst("\\.class$".toRegex(), ""))
-            fun compiledClassesNames() = compileResult.classes.map { classNameFromPath(it.path).fqNameForClassNameWithoutDollars.asString() }
+            fun classNameFromPath(path: String) = JvmClassName.byInternalName(path.removeSuffix(".class"))
+            fun compiledClassesNames() = compileResult.classes.map { classNameFromPath(it.path).internalName.replace('/', '.') }
             val expectedClassName = compileResult.generatedClassname
             compileResult.classes.filter { it.path.endsWith(".class") }
                     .forEach {
@@ -154,8 +155,7 @@ open class GenericReplEvaluator(baseClasspath: Iterable<File>,
                 historyActor.processClasses(compileResult)
             }
             catch (e: Exception) {
-                return@eval ReplEvalResult.Error.Runtime(evaluatedHistory.copySources(),
-                                                         e.message!!, e)
+                return@eval ReplEvalResult.Error.Runtime(evaluatedHistory.copySources(), e.message ?: "unknown", e)
             }
 
             val currentScriptArgs = scriptArgs ?: fallbackScriptArgs
@@ -167,6 +167,7 @@ open class GenericReplEvaluator(baseClasspath: Iterable<File>,
                                                      ).toTypedArray()
             val constructorArgs: Array<Any?> = (historyActor.effectiveHistory.map { it.instance } + useScriptArgs.orEmpty()).toTypedArray()
 
+            // TODO: try/catch ?
             val scriptInstanceConstructor = scriptClass.getConstructor(*constructorParams)
 
             historyActor.addPlaceholder(compileResult.compiledCodeLine, EvalClassWithInstanceAndLoader(scriptClass.kotlin, null, classLoader, invokeWrapper))
