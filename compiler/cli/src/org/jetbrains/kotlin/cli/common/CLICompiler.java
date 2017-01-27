@@ -278,7 +278,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
     private void reportUnknownExtraFlags(@NotNull MessageCollector collector, @NotNull A arguments) {
         for (String flag : arguments.unknownExtraFlags) {
             collector.report(
-                    CompilerMessageSeverity.WARNING,
+                    CompilerMessageSeverity.STRONG_WARNING,
                     "Flag is not supported by this version of the compiler: " + flag,
                     CompilerMessageLocation.NO_LOCATION
             );

@@ -206,7 +206,7 @@ class AnalyzerWithCompilerReport(private val messageCollector: MessageCollector)
 
         fun reportBytecodeVersionErrors(bindingContext: BindingContext, messageCollector: MessageCollector) {
             val severity = if (System.getProperty("kotlin.jvm.disable.bytecode.version.error") == "true")
-                CompilerMessageSeverity.WARNING
+                CompilerMessageSeverity.STRONG_WARNING
             else
                 CompilerMessageSeverity.ERROR
 

@@ -163,7 +163,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 val moduleScript = CompileEnvironmentUtil.loadModuleDescriptions(arguments.module, sanitizedCollector)
 
                 if (outputDir != null) {
-                    messageCollector.report(CompilerMessageSeverity.WARNING, "The '-d' option with a directory destination is ignored because '-module' is specified", CompilerMessageLocation.NO_LOCATION)
+                    messageCollector.report(CompilerMessageSeverity.STRONG_WARNING, "The '-d' option with a directory destination is ignored because '-module' is specified", CompilerMessageLocation.NO_LOCATION)
                 }
 
                 val directory = File(arguments.module).absoluteFile.parentFile
@@ -332,7 +332,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 }
                 else {
                     if (arguments.jdkHome != null) {
-                        messageCollector.report(CompilerMessageSeverity.WARNING,
+                        messageCollector.report(CompilerMessageSeverity.STRONG_WARNING,
                                                 "The '-jdk-home' option is ignored because '-no-jdk' is specified",
                                                 CompilerMessageLocation.NO_LOCATION)
                     }
