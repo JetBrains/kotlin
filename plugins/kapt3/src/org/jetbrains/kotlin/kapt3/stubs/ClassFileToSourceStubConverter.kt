@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.kapt3.*
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
-import org.jetbrains.kotlin.kapt3.stubs.Kapt3StubUtils.*
 import org.jetbrains.kotlin.kapt3.util.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -75,8 +74,8 @@ class ClassFileToSourceStubConverter(
         private val JAVA_KEYWORD_FILTER_REGEX = "[a-z]+".toRegex()
 
         private val JAVA_KEYWORDS = Tokens.TokenKind.values()
-                .filter { JAVA_KEYWORD_FILTER_REGEX.matches(getTokenName(it)) }
-                .mapTo(hashSetOf(), ::getTokenName)
+                .filter { JAVA_KEYWORD_FILTER_REGEX.matches(it.toString().orEmpty()) }
+                .mapTo(hashSetOf(), Any::toString)
     }
 
     private val _bindings = mutableMapOf<String, KaptJavaFileObject>()
