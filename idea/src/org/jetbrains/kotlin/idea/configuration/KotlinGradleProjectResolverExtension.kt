@@ -34,6 +34,7 @@ import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExten
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil.getModuleId
 
 var DataNode<ModuleData>.serializedCompilerArguments by UserDataProperty(Key.create<List<String>>("SERIALIZED_COMPILER_ARGUMENTS"))
+var DataNode<ModuleData>.coroutines by UserDataProperty(Key.create<String>("KOTLIN_COROUTINES"))
 
 class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() {
     override fun getToolingExtensionsClasses(): Set<Class<out Any>> {
@@ -60,6 +61,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         }
 
         ideModule.serializedCompilerArguments = gradleModel.serializedCompilerArguments
+        ideModule.coroutines = gradleModel.coroutines
 
         super.populateModuleDependencies(gradleModule, ideModule, ideProject)
     }

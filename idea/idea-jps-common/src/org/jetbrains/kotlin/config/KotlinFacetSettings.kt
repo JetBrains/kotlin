@@ -82,7 +82,7 @@ enum class CoroutineSupport(
         }
 
         fun byCompilerArgument(argument: String): CoroutineSupport {
-            return CoroutineSupport.values().find { it.compilerArgument == argument } ?: DEFAULT
+            return CoroutineSupport.values().find { it.compilerArgument.equals(argument, ignoreCase = true) } ?: DEFAULT
         }
     }
 }

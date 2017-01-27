@@ -115,7 +115,8 @@ private fun configureFacetByGradleModule(
                           ?: return null
     val platformKind = detectPlatformByPlugin(moduleNode) ?: detectPlatformByLibrary(moduleNode)
 
-    val coroutinesProperty = findKotlinCoroutinesProperty(ideModule.project)
+    val coroutinesProperty = CoroutineSupport.byCompilerArgument(
+            moduleNode.coroutines ?: findKotlinCoroutinesProperty(ideModule.project))
 
     val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider, false)
     kotlinFacet.configureFacet(compilerVersion, coroutinesProperty, platformKind, modelsProvider)
@@ -127,14 +128,13 @@ private fun configureFacetByGradleModule(
 
 private val gradlePropertyFiles = listOf("local.properties", "gradle.properties")
 
-private fun findKotlinCoroutinesProperty(project: Project): CoroutineSupport {
+private fun findKotlinCoroutinesProperty(project: Project): String {
     for (propertyFileName in gradlePropertyFiles) {
         val propertyFile = project.baseDir.findChild(propertyFileName) ?: continue
         val properties = Properties()
         properties.load(propertyFile.inputStream)
-        val coroutinesProperty = properties.getProperty("kotlin.coroutines") ?: continue
-        return CoroutineSupport.byCompilerArgument(coroutinesProperty)
+        properties.getProperty("kotlin.coroutines")?.let { return it }
     }
 
-    return CoroutineSupport.DEFAULT
+    return CoroutineSupport.DEFAULT.compilerArgument
 }

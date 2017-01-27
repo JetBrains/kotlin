@@ -26,11 +26,13 @@ import java.lang.Exception
 interface KotlinGradleModel : Serializable {
     val implements: String?
     val serializedCompilerArguments: List<String>?
+    val coroutines: String?
 }
 
 class KotlinGradleModelImpl(
         override val implements: String?,
-        override val serializedCompilerArguments: List<String>?
+        override val serializedCompilerArguments: List<String>?,
+        override val coroutines: String?
 ) : KotlinGradleModel
 
 class KotlinGradleModelBuilder : ModelBuilderService {
@@ -65,6 +67,23 @@ class KotlinGradleModelBuilder : ModelBuilderService {
         }
     }
 
+    private fun getCoroutines(project: Project): String? {
+        val kotlinExtension = project.extensions.findByName("kotlin") ?: return null
+        val experimentalExtension = try {
+            kotlinExtension.javaClass.getMethod("getExperimental").invoke(kotlinExtension)
+        }
+        catch(e: NoSuchMethodException) {
+            return null
+        }
+
+        return try {
+            experimentalExtension.javaClass.getMethod("getCoroutines").invoke(experimentalExtension)?.toString()
+        }
+        catch(e: NoSuchMethodException) {
+            null
+        }
+    }
+
     override fun buildAll(modelName: String?, project: Project) =
-            KotlinGradleModelImpl(getImplements(project), getCompilerArguments(project))
+            KotlinGradleModelImpl(getImplements(project), getCompilerArguments(project), getCoroutines(project))
 }
