@@ -113,14 +113,15 @@ private fun KtParameter.toAnnotationLightMethod(): PsiMethod? {
 }
 
 fun KtTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
-    val paramList = getNonStrictParentOfType<KtTypeParameterList>()
-    if (paramList == null) return listOf()
+    val paramList = getNonStrictParentOfType<KtTypeParameterList>() ?: return listOf()
 
-    val paramIndex = paramList.getParameters().indexOf(this)
-    val jetDeclaration = paramList.getNonStrictParentOfType<KtDeclaration>() ?: return listOf()
-    val lightOwners = jetDeclaration.toLightElements()
+    val paramIndex = paramList.parameters.indexOf(this)
+    val ktDeclaration = paramList.getNonStrictParentOfType<KtDeclaration>() ?: return listOf()
+    val lightOwners = ktDeclaration.toLightElements()
 
-    return lightOwners.mapNotNull { lightOwner -> (lightOwner as? PsiTypeParameterListOwner)?.typeParameters?.get(paramIndex) }
+    return lightOwners.mapNotNull { lightOwner ->
+        (lightOwner as? PsiTypeParameterListOwner)?.typeParameters?.getOrNull(paramIndex)
+    }
 }
 
 // Returns original declaration if given PsiElement is a Kotlin light element, and element itself otherwise
