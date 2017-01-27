@@ -117,7 +117,6 @@
 - [`KT-13353`](https://youtrack.jetbrains.com/issue/KT-13353) Add Map.minus(key) and Map.minus(keys) to stdlib
 - [`KT-14279`](https://youtrack.jetbrains.com/issue/KT-14279) Make String.matches(Regex) infix
 - [`KT-15399`](https://youtrack.jetbrains.com/issue/KT-15399) Iterable.max() returns null for empty collection, but Iterable.average() returns zero
-- [`KT-15790`](https://youtrack.jetbrains.com/issue/KT-15790) Add extension `MutableList.sort` with single parameter of functional type with the same arity as Comparator
 
 ### IDE
 
