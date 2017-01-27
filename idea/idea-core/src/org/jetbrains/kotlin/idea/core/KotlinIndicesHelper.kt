@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.isHiddenInResolution
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.asSimpleType
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
@@ -175,29 +176,33 @@ class KotlinIndicesHelper(
     }
 
 
-    private fun resolveTypeAliasesUsingIndex(type: KotlinType, originalTypeName: String, out: MutableCollection<String>) {
+    fun resolveTypeAliasesUsingIndex(type: KotlinType, originalTypeName: String): Set<TypeAliasDescriptor> {
+        val typeConstructor = type.constructor
+
         val index = KotlinTypeAliasByExpansionShortNameIndex.INSTANCE
+        val out = mutableSetOf<TypeAliasDescriptor>()
 
         fun searchRecursively(typeName: String) {
             ProgressManager.checkCanceled()
             index[typeName, project, scope].asSequence()
                     .map { it.resolveToDescriptorIfAny() as? TypeAliasDescriptor }
                     .filterNotNull()
-                    .filter { it.expandedType == type }
-                    .map { it.name.asString() }
+                    .filter { it.expandedType.constructor == typeConstructor }
                     .filter { it !in out }
-                    .onEach(::searchRecursively)
-                    .toCollection(out)
+                    .onEach { out.add(it) }
+                    .map { it.name.asString() }
+                    .forEach(::searchRecursively)
         }
 
         searchRecursively(originalTypeName)
+        return out
     }
 
     private fun MutableCollection<String>.addTypeNames(type: KotlinType) {
         val constructor = type.constructor
         constructor.declarationDescriptor?.name?.asString()?.let { typeName ->
             add(typeName)
-            resolveTypeAliasesUsingIndex(type, typeName, this)
+            resolveTypeAliasesUsingIndex(type, typeName).mapTo(this, { it.name.asString() })
         }
         constructor.supertypes.forEach { addTypeNames(it) }
     }
