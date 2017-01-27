@@ -5490,6 +5490,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("mergeNullAndString.kt")
+        public void testMergeNullAndString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/mergeNullAndString.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("multipleInvokeCalls.kt")
         public void testMultipleInvokeCalls() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/multipleInvokeCalls.kt");

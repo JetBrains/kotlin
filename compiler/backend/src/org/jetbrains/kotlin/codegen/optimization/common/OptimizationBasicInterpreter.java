@@ -72,13 +72,9 @@ public class OptimizationBasicInterpreter extends Interpreter<BasicValue> implem
 
     @Override
     public BasicValue newOperation(@NotNull AbstractInsnNode insn) throws AnalyzerException {
-        if (insn.getOpcode() == Opcodes.ACONST_NULL) {
-            return newValue(Type.getObjectType("java/lang/Object"));
-        }
-
         switch (insn.getOpcode()) {
             case ACONST_NULL:
-                return newValue(Type.getObjectType("null"));
+                return NULL_VALUE;
             case ICONST_M1:
             case ICONST_0:
             case ICONST_1:
@@ -362,6 +358,9 @@ public class OptimizationBasicInterpreter extends Interpreter<BasicValue> implem
         // if merge of two references then `lub` is java/lang/Object
         // arrays also are BasicValues with reference type's
         if (isReference(v) && isReference(w)) {
+            if (v == NULL_VALUE) return newValue(w.getType());
+            if (w == NULL_VALUE) return newValue(v.getType());
+
             return StrictBasicValue.REFERENCE_VALUE;
         }
 
