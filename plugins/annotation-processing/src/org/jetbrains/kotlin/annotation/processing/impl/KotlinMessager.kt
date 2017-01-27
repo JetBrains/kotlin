@@ -47,9 +47,13 @@ class KotlinMessager(private val messageCollector: MessageCollector) : Messager 
                 errorCount++
                 CompilerMessageSeverity.ERROR
             }
-            Kind.WARNING, Kind.MANDATORY_WARNING -> {
+            Kind.WARNING -> {
                 warningCount++
                 CompilerMessageSeverity.WARNING
+            }
+            Kind.MANDATORY_WARNING -> {
+                warningCount++
+                CompilerMessageSeverity.STRONG_WARNING
             }
             else -> CompilerMessageSeverity.LOGGING
         }

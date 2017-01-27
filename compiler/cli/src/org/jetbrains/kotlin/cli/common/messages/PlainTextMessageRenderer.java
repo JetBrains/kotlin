@@ -49,7 +49,7 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
 
     private static final String LINE_SEPARATOR = LineSeparator.getSystemLineSeparator().getSeparatorString();
 
-    private static final Set<CompilerMessageSeverity> IMPORTANT_MESSAGE_SEVERITIES = EnumSet.of(EXCEPTION, ERROR, WARNING);
+    private static final Set<CompilerMessageSeverity> IMPORTANT_MESSAGE_SEVERITIES = EnumSet.of(EXCEPTION, ERROR, STRONG_WARNING, WARNING);
 
     @Override
     public String renderPreamble() {
@@ -83,7 +83,7 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
             Ansi ansi = Ansi.ansi()
                     .bold()
                     .fg(severityColor(severity))
-                    .a(severity.name().toLowerCase())
+                    .a(severity.getPresentableName())
                     .a(": ")
                     .reset();
 
@@ -102,7 +102,7 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
             }
         }
         else {
-            result.append(severity.name().toLowerCase());
+            result.append(severity.getPresentableName());
             result.append(": ");
             result.append(decapitalizeIfNeeded(message));
         }
@@ -141,6 +141,8 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
                 return Ansi.Color.RED;
             case ERROR:
                 return Ansi.Color.RED;
+            case STRONG_WARNING:
+                return Ansi.Color.YELLOW;
             case WARNING:
                 return Ansi.Color.YELLOW;
             case INFO:

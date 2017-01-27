@@ -28,7 +28,8 @@ public class XmlMessageRenderer implements MessageRenderer {
     @Override
     public String render(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location) {
         StringBuilder out = new StringBuilder();
-        out.append("<").append(severity.toString());
+        String tagName = severity.getPresentableName();
+        out.append("<").append(tagName);
         if (location.getPath() != null) {
             out.append(" path=\"").append(e(location.getPath())).append("\"");
             out.append(" line=\"").append(location.getLine()).append("\"");
@@ -38,11 +39,11 @@ public class XmlMessageRenderer implements MessageRenderer {
 
         out.append(e(message));
 
-        out.append("</").append(severity.toString()).append(">\n");
+        out.append("</").append(tagName).append(">\n");
         return out.toString();
     }
 
-    private String e(String str) {
+    private static String e(String str) {
         return StringUtil.escapeXml(str);
     }
 

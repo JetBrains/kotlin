@@ -16,13 +16,16 @@
 
 package org.jetbrains.kotlin.cli.common.messages;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.EnumSet;
 
 public enum CompilerMessageSeverity {
-    INFO,
-    ERROR,
-    WARNING,
     EXCEPTION,
+    ERROR,
+    STRONG_WARNING,
+    WARNING,
+    INFO,
     LOGGING,
     OUTPUT;
 
@@ -31,5 +34,26 @@ public enum CompilerMessageSeverity {
 
     public boolean isError() {
         return ERRORS.contains(this);
+    }
+
+    @NotNull
+    public String getPresentableName() {
+        switch (this) {
+            case EXCEPTION:
+                return "exception";
+            case ERROR:
+                return "error";
+            case STRONG_WARNING:
+            case WARNING:
+                return "warning";
+            case INFO:
+                return "info";
+            case LOGGING:
+                return "logging";
+            case OUTPUT:
+                return "output";
+            default:
+                throw new UnsupportedOperationException("Unknown severity: " + this);
+        }
     }
 }
