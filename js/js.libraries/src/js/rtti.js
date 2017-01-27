@@ -55,15 +55,15 @@ Kotlin.callSetter = function (thisObject, klass, propertyName, value) {
 function isInheritanceFromInterface(metadata, iface) {
     if (metadata == null) return false;
 
-    var baseClasses = metadata.baseClasses;
+    var interfaces = metadata.interfaces;
     var i;
-    for (i = 0; i < baseClasses.length; i++) {
-        if (baseClasses[i] === iface) {
+    for (i = 0; i < interfaces.length; i++) {
+        if (interfaces[i] === iface) {
             return true;
         }
     }
-    for (i = 0; i < baseClasses.length; i++) {
-        if (isInheritanceFromInterface(baseClasses[i].$metadata$, iface)) {
+    for (i = 0; i < interfaces.length; i++) {
+        if (isInheritanceFromInterface(interfaces[i].$metadata$, iface)) {
             return true;
         }
     }

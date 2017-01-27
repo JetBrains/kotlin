@@ -54,7 +54,7 @@ var propertyRefClassMetadataCache = [
 function getPropertyRefMetadata(cache) {
     if (cache.value === null) {
         cache.value = {
-            baseClasses: [cache.implementedInterface()],
+            interfaces: [cache.implementedInterface()],
             baseClass: null,
             functions: {},
             properties: {},
