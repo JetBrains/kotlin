@@ -1,0 +1,7 @@
+fun foo() {
+    // comment 1
+    <caret>if (/* comment 2 */ true && false /* comment 3 */) {
+        // comment 4
+        foo()
+    }
+}

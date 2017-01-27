@@ -1,0 +1,5 @@
+fun foo() {
+    <caret>if (true && false) {
+        foo()
+    }
+}
