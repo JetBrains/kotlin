@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.TypeAliasQualifier
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.util.supertypesWithAny
@@ -282,9 +283,8 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
     val receiverValues = if (receiverExpression != null) {
         val receiverType =
                 bindingContext.getType(receiverExpression) ?:
-                (bindingContext.get(BindingContext.QUALIFIER, receiverExpression) as? ClassQualifier)?.let {
-                    it.descriptor.classValueType
-                } ?:
+                (bindingContext.get(BindingContext.QUALIFIER, receiverExpression) as? ClassQualifier)?.descriptor?.classValueType ?:
+                (bindingContext.get(BindingContext.QUALIFIER, receiverExpression) as? TypeAliasQualifier)?.classDescriptor?.classValueType ?:
                 return emptyList()
         listOf(ExpressionReceiver.create(receiverExpression, receiverType, bindingContext))
     }

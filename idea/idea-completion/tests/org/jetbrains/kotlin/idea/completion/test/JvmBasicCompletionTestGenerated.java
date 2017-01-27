@@ -1982,6 +1982,33 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
+        @TestMetadata("idea/idea-completion/testData/basic/common/objects")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Objects extends AbstractJvmBasicCompletionTest {
+            public void testAllFilesPresentInObjects() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/objects"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("PropertyFromCompanionObjectFromTypeAliasToNestedInObjectClass.kt")
+            public void testPropertyFromCompanionObjectFromTypeAliasToNestedInObjectClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/objects/PropertyFromCompanionObjectFromTypeAliasToNestedInObjectClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("PropertyOfTypeAliasToObject.kt")
+            public void testPropertyOfTypeAliasToObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/objects/PropertyOfTypeAliasToObject.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("TypeAliasToNestedObject.kt")
+            public void testTypeAliasToNestedObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/objects/TypeAliasToNestedObject.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/idea-completion/testData/basic/common/override")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
