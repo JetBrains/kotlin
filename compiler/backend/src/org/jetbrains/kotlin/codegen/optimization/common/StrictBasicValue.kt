@@ -45,6 +45,9 @@ open class StrictBasicValue(type: Type?) : BasicValue(type) {
         val SHORT_VALUE = StrictBasicValue(Type.SHORT_TYPE)
         @JvmField
         val REFERENCE_VALUE = StrictBasicValue(Type.getObjectType("java/lang/Object"))
+
+        @JvmField
+        val NULL_VALUE = StrictBasicValue(Type.getObjectType("java/lang/Object"))
     }
 
     override fun equals(other: Any?): Boolean {
@@ -60,4 +63,9 @@ open class StrictBasicValue(type: Type?) : BasicValue(type) {
     }
 
     override fun hashCode() = (type?.hashCode() ?: 0)
+
+    override fun toString(): String {
+        if (this === UNINITIALIZED_VALUE) return "."
+        return super.toString()
+    }
 }
