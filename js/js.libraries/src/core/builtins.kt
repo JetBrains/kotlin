@@ -39,7 +39,7 @@ internal class PropertyMetadata(@JsName("callableName") val name: String)
 internal fun noWhenBranchMatched(): Nothing = throw NoWhenBranchMatchedException()
 
 @JsName("subSequence")
-fun subSequence(c: CharSequence, startIndex: Int, endIndex: Int): CharSequence {
+internal fun subSequence(c: CharSequence, startIndex: Int, endIndex: Int): CharSequence {
     if (c is String) {
         return c.substring(startIndex, endIndex)
     }
