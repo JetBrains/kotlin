@@ -23,12 +23,14 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.Processor
 import com.intellij.util.Query
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -45,7 +47,7 @@ import java.util.*
 
 class DestructureInspection : IntentionBasedInspection<KtDeclaration>(
         DestructureIntention::class,
-        { element, inspection ->
+        { element, _ ->
             if (element is KtParameter) true
             else {
                 val usagesToRemove = DestructureIntention.collectUsagesToRemove(element)?.data
@@ -127,18 +129,21 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
 
         internal fun KtDeclaration.isSuitableDeclaration() = getUsageScopeElement() != null
 
-        private fun KtDeclaration.getUsageScopeElement() = when (this) {
-            is KtParameter -> {
-                val parent = parent
-                when {
-                    parent is KtForExpression -> parent
-                    parent?.parent is KtFunctionLiteral -> parent.parent
-                    else -> null
+        private fun KtDeclaration.getUsageScopeElement(): PsiElement? {
+            val lambdaSupported = languageVersionSettings.supportsFeature(LanguageFeature.DestructuringLambdaParameters)
+            return when (this) {
+                is KtParameter -> {
+                    val parent = parent
+                    when {
+                        parent is KtForExpression -> parent
+                        parent.parent is KtFunctionLiteral -> if (lambdaSupported) parent.parent else null
+                        else -> null
+                    }
                 }
+                is KtVariableDeclaration -> parent
+                is KtFunctionLiteral -> if (!hasParameterSpecification() && lambdaSupported) this else null
+                else -> null
             }
-            is KtVariableDeclaration -> parent
-            is KtFunctionLiteral -> if (!hasParameterSpecification()) this else null
-            else -> null
         }
 
         internal data class UsagesToRemove(val data: List<UsageData>, val removeSelectorInLoopRange: Boolean)
