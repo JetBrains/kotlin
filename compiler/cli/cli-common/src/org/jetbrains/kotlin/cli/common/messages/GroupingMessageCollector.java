@@ -68,7 +68,7 @@ public class GroupingMessageCollector implements MessageCollector {
 
         for (String path : sortedKeys()) {
             for (Message message : groupedMessages.get(path)) {
-                if (!hasErrors || message.severity.isError()) {
+                if (!hasErrors || message.severity.isError() || message.severity == CompilerMessageSeverity.STRONG_WARNING) {
                     delegate.report(message.severity, message.message, message.location);
                 }
             }

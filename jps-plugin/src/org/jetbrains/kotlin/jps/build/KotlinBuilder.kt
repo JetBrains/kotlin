@@ -46,7 +46,10 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
-import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
+import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
+import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
+import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.config.CompilerRunnerConstants
 import org.jetbrains.kotlin.config.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX
 import org.jetbrains.kotlin.config.IncrementalCompilation
@@ -729,7 +732,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             return when (severity) {
                 INFO -> BuildMessage.Kind.INFO
                 ERROR, EXCEPTION -> BuildMessage.Kind.ERROR
-                WARNING -> BuildMessage.Kind.WARNING
+                WARNING, STRONG_WARNING -> BuildMessage.Kind.WARNING
                 LOGGING -> BuildMessage.Kind.PROGRESS
                 else -> throw IllegalArgumentException("Unsupported severity: " + severity)
             }
