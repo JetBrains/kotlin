@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.resolve
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
@@ -32,4 +33,6 @@ object JsPlatform : TargetPlatform("JS") {
         get() = DefaultBuiltIns.Instance
 
     override val multiTargetPlatform = MultiTargetPlatform.Specific(platformName)
+
+    override val excludedImports: List<FqName> = listOf("Promise", "Date", "Console", "Math", "RegExp", "RegExpMatch", "Json", "json").map { FqName("kotlin.js.$it") }
 }

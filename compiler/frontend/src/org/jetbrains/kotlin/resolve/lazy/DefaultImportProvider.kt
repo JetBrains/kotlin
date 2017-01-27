@@ -63,6 +63,6 @@ class DefaultImportProvider(
                         .mapNotNull { it.expandedType.constructor.declarationDescriptor?.fqNameSafe }
                         .filter { nonKotlinDefaultImportedPackages.any(it::isChildOf) }
 
-        nonKotlinAliasedTypeFqNames
+        nonKotlinAliasedTypeFqNames + targetPlatform.excludedImports
     }
 }
