@@ -1,6 +1,6 @@
 package kotlin.js
 
-public external class Json() {
+public external interface Json {
     operator fun get(propertyName: String): Any?
     operator fun set(propertyName: String, value: Any?): Unit
 }
