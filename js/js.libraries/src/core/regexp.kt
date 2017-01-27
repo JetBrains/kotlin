@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kotlin.text.js
+package kotlin.js
 
 
 public external class RegExp(pattern: String, flags: String? = definedExternally) {

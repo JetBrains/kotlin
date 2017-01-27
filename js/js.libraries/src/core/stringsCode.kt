@@ -1,6 +1,6 @@
 package kotlin.text
 
-import kotlin.text.js.RegExp
+import kotlin.js.RegExp
 
 internal inline fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int = nativeIndexOf(ch.toString(), fromIndex)
 internal inline fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int = nativeLastIndexOf(ch.toString(), fromIndex)

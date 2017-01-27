@@ -1,6 +1,6 @@
 package kotlin.text
 
-import kotlin.text.js.RegExp
+import kotlin.js.RegExp
 
 @kotlin.internal.InlineOnly
 public inline fun String.toUpperCase(): String = asDynamic().toUpperCase()

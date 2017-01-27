@@ -1,5 +1,6 @@
 package test.js
 
+import kotlin.js.*
 import kotlin.test.*
 import org.junit.Test as test
 
