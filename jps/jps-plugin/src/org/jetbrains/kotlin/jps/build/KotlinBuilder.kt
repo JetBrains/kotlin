@@ -639,7 +639,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             // We do not support circular dependencies, but if they are present, we do our best should not break the build,
             // so we simply yield a warning and report NOTHING_DONE
             environment.messageCollector.report(
-                    WARNING,
+                    STRONG_WARNING,
                     "Circular dependencies are not supported. The following JS modules depend on each other: "
                     + chunk.modules.map { it.name }.joinToString(", ") + ". "
                     + "Kotlin is not compiled for these modules",
@@ -690,7 +690,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     ): OutputItemsCollector? {
         if (chunk.modules.size > 1) {
             environment.messageCollector.report(
-                    WARNING,
+                    STRONG_WARNING,
                     "Circular dependencies are only partially supported. The following modules depend on each other: "
                     + chunk.modules.map { it.name }.joinToString(", ") + ". "
                     + "Kotlin will compile them, but some strange effect may happen",
