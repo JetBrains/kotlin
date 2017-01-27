@@ -18,7 +18,7 @@ package test.coroutines
 
 import kotlin.test.*
 import org.junit.Test
-import kotlin.coroutines.*
+import kotlin.coroutines.experimental.*
 
 /**
  * Test to ensure that coroutine machinery does not call equals/hashCode/toString anywhere.
