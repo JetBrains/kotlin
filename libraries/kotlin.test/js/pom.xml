@@ -34,7 +34,7 @@
 
                 <configuration>
                     <args>
-                        <!--<arg>-Xallow-kotlin-package</arg>-->
+                        <arg>-Xallow-kotlin-package</arg>
                         <arg>-Xmulti-platform</arg>
                     </args>
                     <moduleKind>umd</moduleKind>

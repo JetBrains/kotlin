@@ -5,7 +5,6 @@ where advanced options include:
   -Xno-optimize              Disable optimizations
   -Xreport-perf              Report detailed performance statistics
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
-  -Xallow-kotlin-package     Allow compiling code in package 'kotlin'
   -Xskip-metadata-version-check Load classes with bad metadata version anyway (incl. pre-release classes)
   -Xskip-runtime-version-check Allow Kotlin runtime libraries of incompatible versions in the classpath
   -Xdump-declarations-to <path> Path to JSON file to dump Java to Kotlin declaration mappings
@@ -15,6 +14,7 @@ where advanced options include:
                              Load definitions of built-in declarations from module dependencies, instead of from the compiler
   -Xno-inline                Disable method inlining
   -Xrepeat <count>           Repeat compilation (for performance analysis)
+  -Xallow-kotlin-package     Allow compiling code in package 'kotlin'
   -Xplugin <path>            Load plugins from the given classpath
   -Xmulti-platform           Enable experimental language support for multi-platform projects
   -Xno-check-impl            Do not check presence of 'impl' modifier in multi-platform projects

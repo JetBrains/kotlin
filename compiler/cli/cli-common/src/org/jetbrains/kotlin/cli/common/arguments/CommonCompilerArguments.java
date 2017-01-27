@@ -63,6 +63,9 @@ public abstract class CommonCompilerArguments implements Serializable {
     @ValueDescription("<count>")
     public String repeat;
 
+    @Argument(value = "Xallow-kotlin-package", description = "Allow compiling code in package 'kotlin'")
+    public boolean allowKotlinPackage;
+
     @Argument(value = "Xplugin", description = "Load plugins from the given classpath")
     @ValueDescription("<path>")
     public String[] pluginClasspaths;

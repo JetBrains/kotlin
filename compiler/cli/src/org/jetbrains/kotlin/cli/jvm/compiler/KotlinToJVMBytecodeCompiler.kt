@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.JarUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -25,16 +25,15 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAll
-import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
@@ -52,8 +51,6 @@ import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
@@ -61,6 +58,7 @@ import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
+import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
 import java.io.File
 import java.io.IOException
 import java.lang.reflect.InvocationTargetException
@@ -154,7 +152,7 @@ object KotlinToJVMBytecodeCompiler {
         }
 
         try {
-            for ((module, state) in outputs) {
+            for ((_, state) in outputs) {
                 ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
                 writeOutput(state.configuration, state.factory, null)
             }
@@ -443,23 +441,6 @@ object KotlinToJVMBytecodeCompiler {
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
         return generationState
-    }
-
-    private fun checkKotlinPackageUsage(environment: KotlinCoreEnvironment, files: Collection<KtFile>): Boolean {
-        if (environment.configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)) {
-            return true
-        }
-        val messageCollector = environment.configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-        val kotlinPackage = FqName.topLevel(Name.identifier("kotlin"))
-        files.forEach {
-            if (it.packageFqName.isSubpackageOf(kotlinPackage)) {
-                messageCollector.report(CompilerMessageSeverity.ERROR,
-                                        "Only the Kotlin standard library is allowed to use the 'kotlin' package",
-                                        MessageUtil.psiElementToMessageLocation(it.packageDirective!!))
-                return false
-            }
-        }
-        return true
     }
 
     private val KotlinCoreEnvironment.messageCollector: MessageCollector

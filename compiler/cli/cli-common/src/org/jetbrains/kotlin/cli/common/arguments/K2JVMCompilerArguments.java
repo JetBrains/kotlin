@@ -94,9 +94,6 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "Xmultifile-parts-inherit", description = "Compile multifile classes as a hierarchy of parts and facade")
     public boolean inheritMultifileParts;
 
-    @Argument(value = "Xallow-kotlin-package", description = "Allow compiling code in package 'kotlin'")
-    public boolean allowKotlinPackage;
-
     @Argument(value = "Xskip-metadata-version-check", description = "Load classes with bad metadata version anyway (incl. pre-release classes)")
     public boolean skipMetadataVersionCheck;
 

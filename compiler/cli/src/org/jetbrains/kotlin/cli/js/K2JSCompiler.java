@@ -68,6 +68,7 @@ import java.util.Map;
 
 import static org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR;
 import static org.jetbrains.kotlin.cli.common.ExitCode.OK;
+import static org.jetbrains.kotlin.cli.common.UtilsKt.checkKotlinPackageUsage;
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION;
 
 public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
@@ -111,6 +112,10 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         Project project = environmentForJS.getProject();
         List<KtFile> sourcesFiles = environmentForJS.getSourceFiles();
+
+        environmentForJS.getConfiguration().put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage);
+
+        if (!checkKotlinPackageUsage(environmentForJS, sourcesFiles)) return ExitCode.COMPILATION_ERROR;
 
         if (arguments.outputFile == null) {
             messageCollector.report(CompilerMessageSeverity.ERROR, "Specify output file via -output", CompilerMessageLocation.NO_LOCATION);

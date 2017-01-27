@@ -443,6 +443,12 @@ public class CliTestGenerated extends AbstractCliTest {
             doJsTest(fileName);
         }
 
+        @TestMetadata("kotlinPackage.args")
+        public void testKotlinPackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/kotlinPackage.args");
+            doJsTest(fileName);
+        }
+
         @TestMetadata("languageVersion.args")
         public void testLanguageVersion() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/languageVersion.args");

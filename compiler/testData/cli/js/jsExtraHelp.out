@@ -2,6 +2,7 @@ Usage: kotlinc-js <options> <source files>
 where advanced options include:
   -Xno-inline                Disable method inlining
   -Xrepeat <count>           Repeat compilation (for performance analysis)
+  -Xallow-kotlin-package     Allow compiling code in package 'kotlin'
   -Xplugin <path>            Load plugins from the given classpath
   -Xmulti-platform           Enable experimental language support for multi-platform projects
   -Xno-check-impl            Do not check presence of 'impl' modifier in multi-platform projects

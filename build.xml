@@ -345,6 +345,7 @@
                 <arg value="-kjsm"/>
                 <arg line="-main noCall"/>
                 <arg line="-module-kind commonjs"/>
+                <arg value="-Xallow-kotlin-package"/>
             </java>
         </sequential>
     </macrodef>
@@ -1121,6 +1122,7 @@
             <arg line="-main noCall"/>
             <arg line="-module-kind umd"/>
             <arg value="-Xmulti-platform"/>
+            <arg value="-Xallow-kotlin-package"/>
             <arg value="libraries/kotlin.test/common/src/main/kotlin"/>
             <arg value="libraries/kotlin.test/js/src/main/kotlin"/>
         </java>
