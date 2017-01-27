@@ -67,8 +67,7 @@ import org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.JvmRuntimeVersionsConsistencyChecker
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
@@ -217,7 +216,7 @@ class KotlinCoreEnvironment private constructor(
                             FqName(it)
                         }
                         else {
-                            report(WARNING, "Invalid package prefix name is ignored: $it")
+                            report(STRONG_WARNING, "Invalid package prefix name is ignored: $it")
                             null
                         }
                     }
@@ -273,7 +272,7 @@ class KotlinCoreEnvironment private constructor(
         val path = root.file
         val localFile = findLocalDirectory(path.absolutePath)
         if (localFile == null) {
-            report(WARNING, "Classpath entry points to a non-existent location: $path")
+            report(STRONG_WARNING, "Classpath entry points to a non-existent location: $path")
             return null
         }
         return localFile
@@ -286,7 +285,7 @@ class KotlinCoreEnvironment private constructor(
         val path = root.file
         val jarFile = applicationEnvironment.jarFileSystem.findFileByPath("$path${URLUtil.JAR_SEPARATOR}")
         if (jarFile == null) {
-            report(WARNING, "Classpath entry points to a file that is not a JAR archive: $path")
+            report(STRONG_WARNING, "Classpath entry points to a file that is not a JAR archive: $path")
             return null
         }
         return jarFile
@@ -297,7 +296,7 @@ class KotlinCoreEnvironment private constructor(
 
         configuration.kotlinSourceRoots.forEach { path ->
             if (!uniqueSourceRoots.add(path)) {
-                report(WARNING, "Duplicate source root: $path")
+                report(STRONG_WARNING, "Duplicate source root: $path")
             }
         }
 
