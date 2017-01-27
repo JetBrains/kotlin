@@ -782,6 +782,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("UnusedParametersVersion10.kt")
+        public void testUnusedParametersVersion10() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/UnusedParametersVersion10.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("UnusedVariables.kt")
         public void testUnusedVariables() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/UnusedVariables.kt");

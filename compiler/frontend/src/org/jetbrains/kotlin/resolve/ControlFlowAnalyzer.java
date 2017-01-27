@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cfg.ControlFlowInformationProvider;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
@@ -33,10 +34,14 @@ import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 public class ControlFlowAnalyzer {
     @NotNull private final BindingTrace trace;
     @NotNull private final KotlinBuiltIns builtIns;
+    @NotNull private final LanguageVersionSettings languageVersionSettings;
 
-    public ControlFlowAnalyzer(@NotNull BindingTrace trace, @NotNull KotlinBuiltIns builtIns) {
+    public ControlFlowAnalyzer(
+            @NotNull BindingTrace trace, @NotNull KotlinBuiltIns builtIns, @NotNull LanguageVersionSettings languageVersionSettings
+    ) {
         this.trace = trace;
         this.builtIns = builtIns;
+        this.languageVersionSettings = languageVersionSettings;
     }
 
     public void process(@NotNull BodiesResolveContext c) {
@@ -68,7 +73,8 @@ public class ControlFlowAnalyzer {
     }
 
     private void checkSecondaryConstructor(@NotNull KtSecondaryConstructor constructor) {
-        ControlFlowInformationProvider controlFlowInformationProvider = new ControlFlowInformationProvider(constructor, trace);
+        ControlFlowInformationProvider controlFlowInformationProvider =
+                new ControlFlowInformationProvider(constructor, trace, languageVersionSettings);
         controlFlowInformationProvider.checkDeclaration();
         controlFlowInformationProvider.checkFunction(builtIns.getUnitType());
     }
@@ -76,8 +82,8 @@ public class ControlFlowAnalyzer {
     private void checkDeclarationContainer(@NotNull BodiesResolveContext c, KtDeclarationContainer declarationContainer) {
         // A pseudocode of class/object initialization corresponds to a class/object
         // or initialization of properties corresponds to a package declared in a file
-        ControlFlowInformationProvider
-                controlFlowInformationProvider = new ControlFlowInformationProvider((KtElement) declarationContainer, trace);
+        ControlFlowInformationProvider controlFlowInformationProvider =
+                new ControlFlowInformationProvider((KtElement) declarationContainer, trace, languageVersionSettings);
         if (c.getTopDownAnalysisMode().isLocalDeclarations()) {
             controlFlowInformationProvider.checkForLocalClassOrObjectMode();
             return;
@@ -98,7 +104,8 @@ public class ControlFlowAnalyzer {
 
     private void checkFunction(@NotNull BodiesResolveContext c, @NotNull KtDeclarationWithBody function, @Nullable KotlinType expectedReturnType) {
         if (!function.hasBody()) return;
-        ControlFlowInformationProvider controlFlowInformationProvider = new ControlFlowInformationProvider(function, trace);
+        ControlFlowInformationProvider controlFlowInformationProvider =
+                new ControlFlowInformationProvider(function, trace, languageVersionSettings);
         if (c.getTopDownAnalysisMode().isLocalDeclarations()) {
             controlFlowInformationProvider.checkForLocalClassOrObjectMode();
             return;

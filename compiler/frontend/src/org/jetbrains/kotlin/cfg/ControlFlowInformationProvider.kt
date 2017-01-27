@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.MarkInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.sideEffectFree
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.*
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.referencedProperty
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -61,15 +63,16 @@ import java.util.*
 class ControlFlowInformationProvider private constructor(
         private val subroutine: KtElement,
         private val trace: BindingTrace,
-        private val pseudocode: Pseudocode
+        private val pseudocode: Pseudocode,
+        private val languageVersionSettings: LanguageVersionSettings
 ) {
 
     private val pseudocodeVariablesData by lazy {
         PseudocodeVariablesData(pseudocode, trace.bindingContext)
     }
 
-    constructor(declaration: KtElement, trace: BindingTrace)
-    : this(declaration, trace, ControlFlowProcessor(trace).generatePseudocode(declaration))
+    constructor(declaration: KtElement, trace: BindingTrace, languageVersionSettings: LanguageVersionSettings)
+    : this(declaration, trace, ControlFlowProcessor(trace).generatePseudocode(declaration), languageVersionSettings)
 
     fun checkForLocalClassOrObjectMode() {
         // Local classes and objects are analyzed twice: when TopDownAnalyzer processes it and as a part of its container.
@@ -174,7 +177,8 @@ class ControlFlowInformationProvider private constructor(
                 val functionDescriptor = trace.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element) as? CallableDescriptor
                 val expectedType = functionDescriptor?.returnType
 
-                val providerForLocalDeclaration = ControlFlowInformationProvider(element, trace, localDeclarationInstruction.body)
+                val providerForLocalDeclaration = ControlFlowInformationProvider(
+                        element, trace, localDeclarationInstruction.body, languageVersionSettings)
 
                 providerForLocalDeclaration.checkFunction(expectedType)
             }
@@ -604,7 +608,7 @@ class ControlFlowInformationProvider private constructor(
             if (element.isSingleUnderscore) return
             when {
                 // KtDestructuringDeclarationEntry -> KtDestructuringDeclaration -> KtParameter -> KtParameterList
-                element is KtDestructuringDeclarationEntry && element.parent?.parent?.parent is KtParameterList ->
+                element is KtDestructuringDeclarationEntry && element.parent.parent?.parent is KtParameterList ->
                     report(Errors.UNUSED_DESTRUCTURED_PARAMETER_ENTRY.on(element, variableDescriptor), ctxt)
 
                 KtPsiUtil.isRemovableVariableDeclaration(element) ->
@@ -630,7 +634,7 @@ class ControlFlowInformationProvider private constructor(
     }
 
     private fun processUnusedParameter(ctxt: VariableUseContext, element: KtParameter, variableDescriptor: VariableDescriptor) {
-        val owner = element.parent?.parent
+        val owner = element.parent.parent
         when (owner) {
             is KtPrimaryConstructor -> if (!element.hasValOrVar()) {
                 val containingClass = owner.getContainingClassOrObject()
@@ -642,6 +646,10 @@ class ControlFlowInformationProvider private constructor(
                 }
             }
             is KtFunction -> {
+                if (owner is KtFunctionLiteral &&
+                    !languageVersionSettings.supportsFeature(LanguageFeature.SingleUnderscoreForParameterName)) {
+                    return
+                }
                 val mainFunctionDetector = MainFunctionDetector(trace.bindingContext)
                 val isMain = owner is KtNamedFunction && mainFunctionDetector.isMain(owner)
                 val functionDescriptor =
