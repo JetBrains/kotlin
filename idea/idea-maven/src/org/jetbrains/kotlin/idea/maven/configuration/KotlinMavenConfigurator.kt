@@ -60,11 +60,31 @@ abstract class KotlinMavenConfigurator
             return ConfigureKotlinStatus.BROKEN
         }
 
+        if (isKotlinModule(module)) {
+            return checkKotlinPlugin(module)
+        }
+        return ConfigureKotlinStatus.CAN_BE_CONFIGURED
+    }
+
+    private fun checkKotlinPlugin(module: Module): ConfigureKotlinStatus {
+        val psi = findModulePomFile(module) as? XmlFile ?: return ConfigureKotlinStatus.BROKEN
         val pom = PomFile(psi)
 
-        if (isKotlinModule(module) && hasKotlinPlugin(pom)) {
+        if (hasKotlinPlugin(pom)) {
             return ConfigureKotlinStatus.CONFIGURED
         }
+
+        val mavenProjectsManager = MavenProjectsManager.getInstance(module.project)
+        val mavenProject = mavenProjectsManager.findProject(module) ?: return ConfigureKotlinStatus.BROKEN
+
+        val kotlinPluginId = kotlinPluginId(null)
+        val kotlinPlugin = mavenProject.plugins.find { it.mavenId.equals(kotlinPluginId.groupId, kotlinPluginId.artifactId)}
+                           ?: return ConfigureKotlinStatus.CAN_BE_CONFIGURED
+
+        if (kotlinPlugin.executions.any { it.goals.any(this::isRelevantGoal) }) {
+            return ConfigureKotlinStatus.CONFIGURED
+        }
+
         return ConfigureKotlinStatus.CAN_BE_CONFIGURED
     }
 
