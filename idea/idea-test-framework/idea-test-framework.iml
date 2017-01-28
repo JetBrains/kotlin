@@ -14,5 +14,6 @@
     <orderEntry type="module" module-name="idea-core" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
+    <orderEntry type="module" module-name="idea" scope="TEST" />
   </component>
 </module>

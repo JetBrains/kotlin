@@ -20,6 +20,7 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.kotlin.idea.completion.KeywordLookupObject
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinProjectDescriptorWithFacet
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 abstract class AbstractKeywordCompletionTest : KotlinFixtureCompletionBaseTestCase() {
@@ -32,7 +33,12 @@ abstract class AbstractKeywordCompletionTest : KotlinFixtureCompletionBaseTestCa
         return items.filter { it.`object` is KeywordLookupObject }.toTypedArray()
     }
 
-    override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE
+    override fun getProjectDescriptor(): KotlinLightProjectDescriptor {
+        if ("LangLevel10" in fileName()) {
+            return KotlinProjectDescriptorWithFacet.KOTLIN_10
+        }
+        return KotlinLightProjectDescriptor.INSTANCE
+    }
 
     override fun defaultInvocationCount() = 1
 }
