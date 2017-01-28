@@ -20,7 +20,7 @@ import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
@@ -30,10 +30,13 @@ import com.intellij.psi.filters.position.LeftNeighbour
 import com.intellij.psi.filters.position.PositionElementFilter
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.*
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.createKeywordConstructLookupElement
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -255,7 +258,7 @@ object KeywordCompletion {
                                        position: PsiElement): (KtKeywordToken) -> Boolean {
         val offset = position.getStartOffsetInAncestor(contextElement)
         val truncatedContext = contextElement.text!!.substring(0, offset)
-        return buildFilterByText(prefixText + truncatedContext, contextElement.project)
+        return buildFilterByText(prefixText + truncatedContext, position)
     }
 
     private fun buildFilterWithReducedContext(prefixText: String,
@@ -263,12 +266,12 @@ object KeywordCompletion {
                                               position: PsiElement): (KtKeywordToken) -> Boolean {
         val builder = StringBuilder()
         buildReducedContextBefore(builder, position, contextElement)
-        return buildFilterByText(prefixText + builder.toString(), position.project)
+        return buildFilterByText(prefixText + builder.toString(), position)
     }
 
 
-    private fun buildFilterByText(prefixText: String, project: Project): (KtKeywordToken) -> Boolean {
-        val psiFactory = KtPsiFactory(project)
+    private fun buildFilterByText(prefixText: String, position: PsiElement): (KtKeywordToken) -> Boolean {
+        val psiFactory = KtPsiFactory(position.project)
         return fun (keywordTokenType): Boolean {
             val postfix = if (prefixText.endsWith("@")) ":X Y.Z" else " X"
             val file = psiFactory.createFile(prefixText + keywordTokenType.value + postfix)
@@ -280,6 +283,8 @@ object KeywordCompletion {
                 elementAt.getNonStrictParentOfType<PsiErrorElement>() != null -> return false
 
                 isErrorElementBefore(elementAt) -> return false
+
+                !isSupportedAtLanguageLevel(keywordTokenType, position) -> return false
 
                 keywordTokenType !is KtModifierKeywordToken -> return true
 
@@ -354,6 +359,17 @@ object KeywordCompletion {
             NOT_IS -> keywordType == IS_KEYWORD
             else -> false
         }
+    }
+
+    private fun isSupportedAtLanguageLevel(keyword: KtKeywordToken, position: PsiElement): Boolean {
+        val languageVersionSettings = ModuleUtilCore.findModuleForPsiElement(position)?.languageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT
+        val feature = when (keyword) {
+            KtTokens.TYPE_ALIAS_KEYWORD -> LanguageFeature.TypeAliases
+            KtTokens.HEADER_KEYWORD, KtTokens.IMPL_KEYWORD -> LanguageFeature.MultiPlatformProjects
+            KtTokens.SUSPEND_KEYWORD -> LanguageFeature.Coroutines
+            else -> return true
+        }
+        return languageVersionSettings.supportsFeature(feature)
     }
 
     // builds text within scope (or from the start of the file) before position element excluding almost all declarations
