@@ -1,3 +1,6 @@
+// WITH_RUNTIME
+import kotlin.experimental.*
+
 fun box(): String {
     // D = 1101 C = 1100
     // 6 = 0110 5 = 0101
