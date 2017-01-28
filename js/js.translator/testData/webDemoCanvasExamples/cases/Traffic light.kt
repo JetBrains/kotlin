@@ -1,5 +1,6 @@
 package traffic
 
+import kotlin.js.*
 import kotlin.browser.window
 import org.w3c.dom.*
 import jquery.*

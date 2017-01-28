@@ -1,3 +1,5 @@
+// TARGET_BACKEND: JVM
+
 operator fun Int.plus(a: Int?) = this + a!!
 
 public open class PerfectNumberFinder() {
