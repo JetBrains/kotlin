@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea
 
 import com.intellij.debugger.NoDataException
+import com.intellij.debugger.engine.ExtraSteppingFilter
 import com.intellij.debugger.engine.SuspendContext
 import com.intellij.debugger.settings.DebuggerSettings
 import com.sun.jdi.Location
@@ -24,8 +25,7 @@ import com.sun.jdi.request.StepRequest
 import org.jetbrains.kotlin.idea.debugger.KotlinPositionManager
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
-class ExtraSteppingFilter : com.intellij.debugger.engine.ExtraSteppingFilter {
-
+class KotlinExtraSteppingFilter : ExtraSteppingFilter {
     override fun isApplicable(context: SuspendContext?): Boolean {
         if (context == null) {
             return false
@@ -52,9 +52,7 @@ class ExtraSteppingFilter : com.intellij.debugger.engine.ExtraSteppingFilter {
                 }
                 catch(e: NoDataException) {
                     return false
-                }
-
-        if (sourcePosition == null) return false
+                } ?: return false
 
         val settings = DebuggerSettings.getInstance()
         if (settings.TRACING_FILTERS_ENABLED) {
