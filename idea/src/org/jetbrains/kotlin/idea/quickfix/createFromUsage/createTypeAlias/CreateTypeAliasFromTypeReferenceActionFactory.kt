@@ -16,17 +16,17 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeAlias
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.quickfix.IntentionActionPriority
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactoryWithDelegate
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromTypeReferenceActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.getTypeConstraintInfo
-import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.types.typeUtil.containsError
@@ -36,6 +36,7 @@ object CreateTypeAliasFromTypeReferenceActionFactory : KotlinSingleIntentionActi
 
     override fun extractFixData(element: KtUserType, diagnostic: Diagnostic): TypeAliasInfo? {
         if (element.getParentOfTypeAndBranch<KtUserType>(true) { qualifier } != null) return null
+        if (!element.languageVersionSettings.supportsFeature(LanguageFeature.TypeAliases)) return null
 
         val classInfo = CreateClassFromTypeReferenceActionFactory.extractFixData(element, diagnostic) ?: return null
         if (classInfo.targetParent is KtDeclaration) return null
