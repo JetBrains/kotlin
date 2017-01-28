@@ -110,11 +110,11 @@
         <module>tools/kotlin-noarg</module>
         <module>tools/kotlin-maven-noarg</module>
 
+        <module>tools/kotlin-script-util</module>
         <module>tools/kotlin-gradle-plugin</module>
         <module>tools/kotlin-gradle-plugin-api</module>
         <module>tools/kotlin-android-extensions</module>
         <module>tools/kotlin-maven-plugin-test</module>
-        <module>tools/kotlin-script-util</module>
 
         <module>examples/annotation-processor-example</module>
         <module>examples/kotlin-java-example</module>
