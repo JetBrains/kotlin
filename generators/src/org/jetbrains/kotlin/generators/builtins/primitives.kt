@@ -123,7 +123,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             if (kind == PrimitiveType.INT || kind == PrimitiveType.LONG) {
                 generateBitShiftOperators(className)
             }
-            if (kind == PrimitiveType.INT || kind == PrimitiveType.LONG || kind == PrimitiveType.BYTE || kind == PrimitiveType.SHORT) {
+            if (kind == PrimitiveType.INT || kind == PrimitiveType.LONG /* || kind == PrimitiveType.BYTE || kind == PrimitiveType.SHORT */) {
                 generateBitwiseOperators(className, since = if (kind == PrimitiveType.BYTE || kind == PrimitiveType.SHORT) "1.1" else null)
             }
 
