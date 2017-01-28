@@ -29,31 +29,23 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.EmptyResolverForProject
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.getService
 import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
-import org.jetbrains.kotlin.idea.project.AnalyzerFacadeProvider
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.outOfBlockModificationCount
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.js.resolve.JsPlatform
-import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.diagnostics.KotlinSuppressCache
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.script.KotlinScriptExternalDependencies
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
 import java.lang.AssertionError
@@ -377,32 +369,12 @@ private fun globalResolveSessionProvider(
     val delegateResolverProvider = reuseDataFrom?.moduleResolverProvider
     val delegateResolverForProject = delegateResolverProvider?.resolverForProject ?: EmptyResolverForProject()
 
-    val reusedBuiltIns = delegateResolverProvider?.builtIns
-    val newBuiltIns: KotlinBuiltIns? = when {
-        reusedBuiltIns != null -> null
-        platform is JsPlatform -> JsPlatform.builtIns
-        platform is JvmPlatform && sdk != null -> JvmBuiltIns(globalContext.storageManager)
-        else -> DefaultBuiltIns.Instance
-    }
-
-    val builtIns = reusedBuiltIns ?: newBuiltIns!!
-    val moduleResolverProvider = createModuleResolverProvider(
+    createModuleResolverProvider(
             debugName, project, globalContext, sdk,
-            AnalyzerFacadeProvider.getAnalyzerFacade(platform),
+            platform,
             syntheticFiles, delegateResolverForProject, moduleFilter,
             allModules,
-            builtIns,
+            delegateResolverProvider?.builtInsCache,
             dependencies
     )
-
-    if (newBuiltIns is JvmBuiltIns) {
-        val sdkInfo = SdkInfo(project, sdk!!)
-        newBuiltIns.initialize(
-                moduleResolverProvider.resolverForProject.descriptorForModule(sdkInfo),
-                moduleResolverProvider.resolverForProject.resolverForModule(sdkInfo)
-                        .componentProvider.get<LanguageVersionSettings>()
-                        .supportsFeature(LanguageFeature.AdditionalBuiltInsMembers))
-    }
-
-    moduleResolverProvider
 }

@@ -44,7 +44,10 @@ class JvmBuiltIns @JvmOverloads constructor(
         JvmBuiltInsSettings(
                 builtInsModule, storageManager,
                 { ownerModuleDescriptor.sure { "JvmBuiltins has not been initialized properly" } },
-                { isAdditionalBuiltInsFeatureSupported }
+                {
+                    ownerModuleDescriptor.sure { "JvmBuiltins has not been initialized properly" }
+                    isAdditionalBuiltInsFeatureSupported
+                }
         )
     }
 

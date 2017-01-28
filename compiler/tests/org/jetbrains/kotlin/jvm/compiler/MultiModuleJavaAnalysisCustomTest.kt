@@ -74,7 +74,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
                     val moduleName = javaClass.name.asString().toLowerCase().first().toString()
                     modules.first { it._name == moduleName }
                 },
-                builtIns = builtIns,
+                builtIns = { builtIns },
                 modulePlatforms = { MultiTargetPlatform.Specific("JVM") }
         )
 

@@ -23,19 +23,20 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.JdkOrderEntry
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
-import org.jetbrains.kotlin.analyzer.AnalyzerFacade
 import org.jetbrains.kotlin.analyzer.ModuleContent
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForProject
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.SourceKind
+import org.jetbrains.kotlin.idea.project.AnalyzerFacadeProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 
 fun createModuleResolverProvider(
@@ -43,14 +44,21 @@ fun createModuleResolverProvider(
         project: Project,
         globalContext: GlobalContextImpl,
         sdk: Sdk?,
-        analyzerFacade: AnalyzerFacade<JvmPlatformParameters>,
+        platform: TargetPlatform,
         syntheticFiles: Collection<KtFile>,
         delegateResolver: ResolverForProject<IdeaModuleInfo>,
         moduleFilter: (IdeaModuleInfo) -> Boolean,
         allModules: Collection<IdeaModuleInfo>?,
-        builtIns: KotlinBuiltIns,
+        builtInsCache: BuiltInsCache?, // this cache is null only for SDK resolver provider
         dependencies: Collection<Any>
 ): ModuleResolverProvider {
+    var sdkBuiltIns: KotlinBuiltIns? = null
+
+    val builtInsProvider: (ModuleInfo) -> KotlinBuiltIns = builtInsCache?.let { it::getBuiltIns } ?: run {
+        sdkBuiltIns = BuiltInsCache.calculateBuiltIns(platform, sdk, globalContext);
+
+        { _: ModuleInfo -> sdkBuiltIns!! }
+    }
 
     val allModuleInfos = (allModules ?: collectAllModuleInfosFromIdeaModel(project)).toHashSet()
 
@@ -71,10 +79,10 @@ fun createModuleResolverProvider(
             psiClass.getNullableModuleInfo()
         }
 
-        val resolverForProject = analyzerFacade.setupResolverForProject(
+        return AnalyzerFacadeProvider.getAnalyzerFacade(platform).setupResolverForProject(
                 debugName, globalContext.withProject(project), modulesToCreateResolversFor, modulesContent,
-                jvmPlatformParameters, IdeaEnvironment, builtIns,
-                delegateResolver, { m, c -> IDEPackagePartProvider(c.moduleContentScope) },
+                jvmPlatformParameters, IdeaEnvironment, builtInsProvider,
+                delegateResolver, { _, c -> IDEPackagePartProvider(c.moduleContentScope) },
                 sdk?.let { SdkInfo(project, it) },
                 modulePlatforms = { moduleInfo ->
                     val module = (moduleInfo as? ModuleSourceInfo)?.module
@@ -89,14 +97,19 @@ fun createModuleResolverProvider(
                 }
 
         )
-        return resolverForProject
     }
 
     val resolverForProject = createResolverForProject()
 
+    val newBuiltInsCache = builtInsCache ?: run {
+        val sdkModuleDescriptor = sdk?.let { resolverForProject.descriptorForModule(SdkInfo(project, it)) }
+
+        BuiltInsCache.createCacheAndInitializeBuiltIns(project, platform, sdk, sdkModuleDescriptor, sdkBuiltIns!!, globalContext)
+    }
+
     return ModuleResolverProviderImpl(
             resolverForProject,
-            builtIns,
+            newBuiltInsCache,
             dependencies + listOf(globalContext.exceptionTracker)
     )
 }
@@ -133,11 +146,12 @@ fun getAllProjectSdks(): Collection<Sdk> {
 
 interface ModuleResolverProvider {
     val resolverForProject: ResolverForProject<IdeaModuleInfo>
-    val builtIns: KotlinBuiltIns
+    val builtInsCache: BuiltInsCache
     val cacheDependencies: Collection<Any>
 }
 
 class ModuleResolverProviderImpl(
         override val resolverForProject: ResolverForProject<IdeaModuleInfo>,
-        override val builtIns: KotlinBuiltIns,
-        override val cacheDependencies: Collection<Any>) : ModuleResolverProvider
+        override val builtInsCache: BuiltInsCache,
+        override val cacheDependencies: Collection<Any>
+) : ModuleResolverProvider
