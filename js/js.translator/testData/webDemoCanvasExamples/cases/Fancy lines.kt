@@ -6,6 +6,7 @@ Note that only a subset of the api is supported for now.
 
 package fancylines
 
+import kotlin.js.*
 import kotlin.browser.window
 import org.w3c.dom.*
 import jquery.*

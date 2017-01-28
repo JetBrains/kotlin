@@ -5,6 +5,7 @@
 package creatures
 
 import jquery.*
+import kotlin.js.*
 import kotlin.browser.window
 import org.w3c.dom.*
 
