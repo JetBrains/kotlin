@@ -20,12 +20,16 @@ import com.intellij.lang.refactoring.RefactoringSupportProvider
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.RefactoringActionHandler
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils.ElementKind.TYPE_CONSTRUCTOR
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils.ElementKind.TYPE_ELEMENT
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSupportProvider
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractIntroduceAction
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.processDuplicates
@@ -125,5 +129,12 @@ open class KotlinIntroduceTypeAliasHandler : RefactoringActionHandler {
 }
 
 class IntroduceTypeAliasAction : AbstractIntroduceAction() {
-    override fun getRefactoringHandler(provider: RefactoringSupportProvider) = KotlinIntroduceTypeAliasHandler.INSTANCE
+    override fun getRefactoringHandler(provider: RefactoringSupportProvider): RefactoringActionHandler? {
+        return if (provider is KotlinRefactoringSupportProvider) KotlinIntroduceTypeAliasHandler.INSTANCE else null
+    }
+
+    override fun isAvailableOnElementInEditorAndFile(element: PsiElement, editor: Editor, file: PsiFile, context: DataContext): Boolean {
+        return super.isAvailableOnElementInEditorAndFile(element, editor, file, context) &&
+               (ModuleUtil.findModuleForPsiElement(file)?.languageVersionSettings?.supportsFeature(LanguageFeature.TypeAliases) ?: false)
+    }
 }
