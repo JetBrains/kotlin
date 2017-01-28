@@ -53,7 +53,6 @@ public final class BooleanArray {
 
 public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     /*primary*/ private constructor Byte()
-    @kotlin.SinceKotlin(version = "1.1") public final infix fun and(/*0*/ other: kotlin.Byte): kotlin.Byte
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
     public final operator fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
@@ -68,7 +67,6 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     public final operator fun div(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Int
     public final operator fun inc(): kotlin.Byte
-    @kotlin.SinceKotlin(version = "1.1") public final fun inv(): kotlin.Byte
     public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -81,7 +79,6 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Int
     @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
     @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
-    @kotlin.SinceKotlin(version = "1.1") public final infix fun or(/*0*/ other: kotlin.Byte): kotlin.Byte
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -113,7 +110,6 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     public open override /*1*/ fun toShort(): kotlin.Short
     public final operator fun unaryMinus(): kotlin.Int
     public final operator fun unaryPlus(): kotlin.Int
-    @kotlin.SinceKotlin(version = "1.1") public final infix fun xor(/*0*/ other: kotlin.Byte): kotlin.Byte
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
@@ -613,7 +609,6 @@ public abstract class Number {
 
 public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     /*primary*/ private constructor Short()
-    @kotlin.SinceKotlin(version = "1.1") public final infix fun and(/*0*/ other: kotlin.Short): kotlin.Short
     public final operator fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
     public final operator fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
@@ -628,7 +623,6 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public final operator fun div(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun div(/*0*/ other: kotlin.Short): kotlin.Int
     public final operator fun inc(): kotlin.Short
-    @kotlin.SinceKotlin(version = "1.1") public final fun inv(): kotlin.Short
     public final operator fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun minus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -641,7 +635,6 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Int
     @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
     @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
-    @kotlin.SinceKotlin(version = "1.1") public final infix fun or(/*0*/ other: kotlin.Short): kotlin.Short
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -673,7 +666,6 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public open override /*1*/ fun toShort(): kotlin.Short
     public final operator fun unaryMinus(): kotlin.Int
     public final operator fun unaryPlus(): kotlin.Int
-    @kotlin.SinceKotlin(version = "1.1") public final infix fun xor(/*0*/ other: kotlin.Short): kotlin.Short
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
