@@ -8,6 +8,8 @@ import java.io.File
 
 class KotlinAndroidGradleCLIOnly : AbstractKotlinAndroidGradleTests(gradleVersion = "2.3", androidGradlePluginVersion = "1.5.+")
 
+class KotlinAndroidWithJackGradleCLIOnly : AbstractKotlinAndroidWithJackGradleTests(gradleVersion = "3.3", androidGradlePluginVersion = "2.3.+")
+
 abstract class AbstractKotlinAndroidGradleTests(
         private val gradleVersion: String,
         private val androidGradlePluginVersion: String
@@ -16,8 +18,6 @@ abstract class AbstractKotlinAndroidGradleTests(
     override fun defaultBuildOptions() =
             super.defaultBuildOptions().copy(androidHome = File("../../../dependencies/android-sdk-for-tests"),
                                              androidGradlePluginVersion = androidGradlePluginVersion)
-
-
 
     @Test
     fun testSimpleCompile() {
@@ -197,3 +197,175 @@ fun getSomething() = 10
         }
     }
 }
+
+
+abstract class AbstractKotlinAndroidWithJackGradleTests(
+        private val gradleVersion: String,
+        private val androidGradlePluginVersion: String
+) : BaseGradleIT() {
+
+    fun getEnvJDK_18() = System.getenv()["JDK_18"]
+
+    override fun defaultBuildOptions() =
+            super.defaultBuildOptions().copy(androidHome = File("../../../dependencies/android-sdk-for-tests"),
+                    androidGradlePluginVersion = androidGradlePluginVersion, javaHome = File(getEnvJDK_18()))
+
+    @Test
+    fun testSimpleCompile() {
+        val project = Project("AndroidJackProject", gradleVersion)
+
+        project.build("build", "test") {
+            assertSuccessful()
+            assertContains(
+                    ":Lib:compileReleaseKotlin",
+
+                    ":compileFlavor1DebugKotlin",
+                    ":zipKotlinClassesForFlavor1Debug",
+                    ":transformKotlinClassesWithJillForFlavor1Debug",
+
+                    ":compileFlavor2DebugKotlin",
+                    ":zipKotlinClassesForFlavor2Debug",
+                    ":transformKotlinClassesWithJillForFlavor2Debug",
+
+                    ":compileFlavor1JnidebugKotlin",
+                    ":zipKotlinClassesForFlavor1Jnidebug",
+                    ":transformKotlinClassesWithJillForFlavor1Jnidebug",
+
+                    ":compileFlavor1ReleaseKotlin",
+                    ":zipKotlinClassesForFlavor1Release",
+                    ":transformKotlinClassesWithJillForFlavor1Release",
+
+                    ":compileFlavor2JnidebugKotlin",
+                    ":zipKotlinClassesForFlavor2Jnidebug",
+                    ":transformKotlinClassesWithJillForFlavor2Jnidebug",
+
+                    ":compileFlavor2ReleaseKotlin",
+                    ":zipKotlinClassesForFlavor2Release",
+                    ":transformKotlinClassesWithJillForFlavor2Release",
+
+                    ":compileFlavor1DebugUnitTestKotlin",
+                    "InternalDummyTest PASSED"
+            )
+            checkKotlinGradleBuildServices()
+        }
+
+        // Run the build second time, assert everything is up-to-date
+        project.build("build") {
+            assertSuccessful()
+            assertContains(
+                    ":Lib:compileReleaseKotlin UP-TO-DATE",
+
+                    ":compileFlavor1DebugKotlin UP-TO-DATE",
+                    ":zipKotlinClassesForFlavor1Debug UP-TO-DATE",
+                    ":transformKotlinClassesWithJillForFlavor1Debug UP-TO-DATE",
+
+                    ":compileFlavor2DebugKotlin UP-TO-DATE",
+                    ":zipKotlinClassesForFlavor2Debug UP-TO-DATE",
+                    ":transformKotlinClassesWithJillForFlavor2Debug UP-TO-DATE",
+
+                    ":compileFlavor1JnidebugKotlin UP-TO-DATE",
+                    ":zipKotlinClassesForFlavor1Jnidebug UP-TO-DATE",
+                    ":transformKotlinClassesWithJillForFlavor1Jnidebug UP-TO-DATE",
+
+                    ":compileFlavor1ReleaseKotlin UP-TO-DATE",
+                    ":zipKotlinClassesForFlavor1Release UP-TO-DATE",
+                    ":transformKotlinClassesWithJillForFlavor1Release UP-TO-DATE",
+
+                    ":compileFlavor2JnidebugKotlin UP-TO-DATE",
+                    ":zipKotlinClassesForFlavor2Jnidebug UP-TO-DATE",
+                    ":transformKotlinClassesWithJillForFlavor2Jnidebug UP-TO-DATE",
+
+                    ":compileFlavor2ReleaseKotlin UP-TO-DATE",
+                    ":zipKotlinClassesForFlavor2Release UP-TO-DATE",
+                    ":transformKotlinClassesWithJillForFlavor2Release UP-TO-DATE"
+            )
+        }
+
+        project.build("build", "--rerun-tasks") {
+            assertSuccessful()
+            assertContains(
+                    ":Lib:compileReleaseKotlin",
+
+                    ":compileFlavor1DebugKotlin",
+                    ":zipKotlinClassesForFlavor1Debug",
+                    ":transformKotlinClassesWithJillForFlavor1Debug",
+
+                    ":compileFlavor2DebugKotlin",
+                    ":zipKotlinClassesForFlavor2Debug",
+                    ":transformKotlinClassesWithJillForFlavor2Debug",
+
+                    ":compileFlavor1JnidebugKotlin",
+                    ":zipKotlinClassesForFlavor1Jnidebug",
+                    ":transformKotlinClassesWithJillForFlavor1Jnidebug",
+
+                    ":compileFlavor1ReleaseKotlin",
+                    ":zipKotlinClassesForFlavor1Release",
+                    ":transformKotlinClassesWithJillForFlavor1Release",
+
+                    ":compileFlavor2JnidebugKotlin",
+                    ":zipKotlinClassesForFlavor2Jnidebug",
+                    ":transformKotlinClassesWithJillForFlavor2Jnidebug",
+
+                    ":compileFlavor2ReleaseKotlin",
+                    ":zipKotlinClassesForFlavor2Release",
+                    ":transformKotlinClassesWithJillForFlavor2Release",
+
+                    ":compileFlavor1DebugUnitTestKotlin",
+                    "InternalDummyTest PASSED"
+            )
+            checkKotlinGradleBuildServices()
+        }
+
+    }
+
+    @Test
+    fun testDagger() {
+        val project = Project("AndroidDaggerJackProject", gradleVersion)
+        val options = defaultBuildOptions().copy(incremental = false)
+
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+            assertContains(
+                    ":kaptDebugKotlin",
+                    ":compileDebugKotlin",
+                    ":zipKotlinClassesForDebug",
+                    ":transformKotlinClassesWithJillForDebug",
+                    ":transformJackWithJackForDebug"
+            )
+        }
+    }
+
+    @Test
+    fun testAndroidExtensions() {
+        val project = Project("AndroidExtensionsJackProject", gradleVersion)
+        val options = defaultBuildOptions().copy(incremental = false)
+
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+            assertContains(
+                    ":compileDebugKotlin",
+                    ":zipKotlinClassesForDebug",
+                    ":transformKotlinClassesWithJillForDebug",
+                    ":transformJackWithJackForDebug"
+            )
+        }
+    }
+
+    @Test
+    fun testIcepick() {
+        val project = Project("AndroidIcepickJackProject", gradleVersion)
+        val options = defaultBuildOptions().copy(incremental = false)
+
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+            assertContains(
+                    ":kaptDebugKotlin",
+                    ":compileDebugKotlin",
+                    ":zipKotlinClassesForDebug",
+                    ":transformKotlinClassesWithJillForDebug",
+                    ":transformJackWithJackForDebug"
+            )
+        }
+    }
+}
+

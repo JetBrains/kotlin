@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">Icepick</string>
+  <string name="action_add_state">Add some state</string>
+</resources>

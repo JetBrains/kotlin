@@ -24,6 +24,7 @@ abstract class BaseGradleIT {
     @Before
     fun setUp() {
         workingDir = FileUtil.createTempDirectory("BaseGradleIT", null)
+        acceptAndroidSdkLicenses()
     }
 
     @After
@@ -31,34 +32,59 @@ abstract class BaseGradleIT {
         workingDir.deleteRecursively()
     }
 
+    // https://developer.android.com/studio/intro/update.html#download-with-gradle
+    fun acceptAndroidSdkLicenses() = defaultBuildOptions().androidHome?.let {
+        val sdkLicenses = File(it, "licenses")
+        sdkLicenses.mkdirs()
+
+        val sdkLicense = File(sdkLicenses, "android-sdk-license")
+        if (!sdkLicense.exists()) {
+            sdkLicense.createNewFile()
+            sdkLicense.writeText("8933bad161af4178b1185d1a37fbf41ea5269c55")
+        }
+
+        val sdkPreviewLicense = File(sdkLicenses, "android-sdk-preview-license")
+        if (!sdkPreviewLicense.exists()) {
+            sdkPreviewLicense.writeText("84831b9409646a918e30573bab4c9c91346d8abd")
+        }
+    }
+
     companion object {
 
+        @JvmStatic
         protected val ranDaemonVersions = hashMapOf<String, Int>()
+
         val resourcesRootFile = File("src/test/resources")
         val MAX_DAEMON_RUNS = 30
+
+        fun getEnvJDK_18() = System.getenv()["JDK_18"]
 
         @AfterClass
         @JvmStatic
         @Synchronized
         @Suppress("unused")
         fun tearDownAll() {
-            ranDaemonVersions.keys.forEach { stopDaemon(it) }
+            // Latest gradle requires Java > 7
+            val environmentVariables = hashMapOf<String, String>()
+            getEnvJDK_18()?.let { environmentVariables["JAVA_HOME"] = it }
+
+            ranDaemonVersions.keys.forEach { stopDaemon(it, environmentVariables) }
             ranDaemonVersions.clear()
         }
 
-        fun stopDaemon(ver: String) {
+        fun stopDaemon(ver: String, environmentVariables: Map<String, String> = mapOf()) {
             println("Stopping gradle daemon v$ver")
             val wrapperDir = File(resourcesRootFile, "GradleWrapper-$ver")
             val cmd = createGradleCommand(arrayListOf("-stop"))
-            val result = runProcess(cmd, wrapperDir)
+            val result = runProcess(cmd, wrapperDir, environmentVariables)
             assert(result.isSuccessful) { "Could not stop daemon: $result" }
         }
 
         @Synchronized
-        fun prepareDaemon(version: String) {
+        fun prepareDaemon(version: String, environmentVariables: Map<String, String> = mapOf()) {
             val useCount = ranDaemonVersions.get(version)
             if (useCount == null || useCount > MAX_DAEMON_RUNS) {
-                stopDaemon(version)
+                stopDaemon(version, environmentVariables)
                 ranDaemonVersions.put(version, 1)
             }
             else {
@@ -73,6 +99,7 @@ abstract class BaseGradleIT {
             val daemonOptionSupported: Boolean = true,
             val incremental: Boolean? = null,
             val androidHome: File? = null,
+            val javaHome: File? = null,
             val androidGradlePluginVersion: String? = null,
             val forceOutputToStdout: Boolean = false,
             val debug: Boolean = false,
@@ -140,7 +167,7 @@ abstract class BaseGradleIT {
         val env = createEnvironmentVariablesMap(options)
 
         if (options.withDaemon) {
-            prepareDaemon(wrapperVersion)
+            prepareDaemon(wrapperVersion, env)
         }
 
         println("<=== Test build: ${this.projectName} $cmd ===>")
@@ -284,12 +311,15 @@ abstract class BaseGradleIT {
                 addAll(options.freeCommandLineArgs)
             }
 
-    private fun Project.createEnvironmentVariablesMap(options: BuildOptions): Map<String, String> =
+    private fun createEnvironmentVariablesMap(options: BuildOptions): Map<String, String> =
             hashMapOf<String, String>().apply {
-                val sdkDir = options.androidHome
-                if (sdkDir != null) {
+                options.androidHome?.let { sdkDir ->
                     sdkDir.parentFile.mkdirs()
                     put("ANDROID_HOME", sdkDir.canonicalPath)
+                }
+
+                options.javaHome?.let {
+                    put("JAVA_HOME", it.canonicalPath)
                 }
             }
 
