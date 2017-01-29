@@ -1,0 +1,43 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+dependencies {
+    compile "frankiesardo:icepick:3.2.0"
+    kapt "frankiesardo:icepick-processor:3.2.0"
+
+    compile 'org.parceler:parceler-api:1.1.5'
+    kapt 'org.parceler:parceler:1.1.5'
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "25.0.1"
+
+    defaultConfig {
+        applicationId "com.example.icepick.kotlin"
+        minSdkVersion 14
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+
+        jackOptions { enabled true }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://clojars.org/repo/"
+    }
+    mavenLocal()
+}

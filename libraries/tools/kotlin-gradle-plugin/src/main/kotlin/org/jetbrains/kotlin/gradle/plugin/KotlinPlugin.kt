@@ -17,6 +17,7 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.initKapt
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
+import org.jetbrains.kotlin.gradle.plugin.android.KotlinJillTask
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.incremental.configureMultiProjectIncrementalCompilation
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProviderAndroidWrapper
@@ -364,7 +366,8 @@ internal open class KotlinAndroidPlugin(
             val variantDataName = variantData.name
             logger.kotlinDebug("Process variant [$variantDataName]")
 
-            val javaTask = AndroidGradleWrapper.getJavaCompile(variantData)
+            val javaTask = AndroidGradleWrapper.getJavaTask(variantData)
+
             if (javaTask == null) {
                 logger.info("KOTLIN: javaTask is missing for $variantDataName, so Kotlin files won't be compiled for it")
                 continue
@@ -433,6 +436,30 @@ internal open class KotlinAndroidPlugin(
                 val artifactDifferenceRegistryProvider = ArtifactDifferenceRegistryProviderAndroidWrapper(kotlinGradleBuildServices.artifactDifferenceRegistryProvider, jarToAarMapping)
                 configureMultiProjectIncrementalCompilation(project, kotlinTask, javaTask, kotlinAfterJavaTask,
                         artifactDifferenceRegistryProvider, artifactFile)
+            }
+
+            if (AndroidGradleWrapper.isJackEnabled(variantData)) {
+                val scope = variantData.scope
+                val kotlinDestinationDir = kotlinTask.destinationDir
+                val jarPath = File(kotlinDestinationDir.parent, kotlinDestinationDir.name + ".jar")
+                val zipTaskName = scope.getTaskName("zipKotlinClassesFor")
+                project.tasks.create(zipTaskName, Zip::class.java) { zipTask ->
+                    zipTask.from(kotlinDestinationDir)
+                    zipTask.destinationDir = File(jarPath.parent)
+                    zipTask.archiveName = jarPath.name
+                    zipTask.dependsOn(kotlinTask)
+                }
+
+                val kotlinJillTaskName = scope.getTaskName("transformKotlinClassesWithJillFor")
+                val jillOutputFilePath = File(jarPath.absolutePath + ".jill")
+                project.tasks.create(kotlinJillTaskName, KotlinJillTask::class.java) { jillTask ->
+                    jillTask.buildTools = variantData.scope.globalScope.androidBuilder.targetInfo.buildTools
+                    jillTask.inputJarFile = jarPath
+                    jillTask.outputJillFile = jillOutputFilePath
+                    jillTask.dependsOn(zipTaskName)
+                }
+
+                AndroidGradleWrapper.configureJackTask(variantData, jillOutputFilePath, kotlinJillTaskName)
             }
         }
     }

@@ -1,0 +1,52 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+dependencies {
+    compile project(':Lib')
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    testCompile 'junit:junit:4.12'
+}
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "25.0.1"
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/java2'
+        main.kotlin.srcDirs += 'root/kotlin'
+        test.kotlin.srcDirs += 'src/test/kotlin'
+    }
+
+    defaultConfig {
+        minSdkVersion 7
+        targetSdkVersion 22
+
+        jackOptions { enabled true }
+    }
+
+    buildTypes {
+        jnidebug.initWith(buildTypes.debug)
+        jnidebug {
+            applicationIdSuffix ".jnidebug"
+            jniDebuggable true
+        }
+    }
+
+    productFlavors {
+        flavor1 {
+            applicationId "com.example.flavor1"
+            versionCode 20
+        }
+
+        flavor2 {
+            applicationId "com.example.flavor2"
+            minSdkVersion 14
+        }
+    }
+
+    publishNonDefault true
+
+    kotlinOptions {
+        noJdk = true
+    }
+}
