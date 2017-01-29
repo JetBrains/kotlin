@@ -16,11 +16,13 @@
 
 package kotlin.js
 
+@kotlin.internal.InlineOnly
 public inline fun Any?.asDynamic(): dynamic = this
 
 /**
  * Reinterprets this value as a value of the specified type [T] without any actual type checking.
  */
+@kotlin.internal.InlineOnly
 public inline fun <T> Any?.unsafeCast(): @kotlin.internal.NoInfer T = this.asDynamic()
 
 /**
@@ -28,6 +30,7 @@ public inline fun <T> Any?.unsafeCast(): @kotlin.internal.NoInfer T = this.asDyn
  */
 @kotlin.internal.DynamicExtension
 @JsName("unsafeCastDynamic")
+@kotlin.internal.InlineOnly
 public inline fun <T> dynamic.unsafeCast(): @kotlin.internal.NoInfer T = this
 
 /**

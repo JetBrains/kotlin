@@ -35,4 +35,5 @@ public annotation class Volatile
 @Retention(AnnotationRetention.SOURCE)
 public annotation class Synchronized
 
+@kotlin.internal.InlineOnly
 public inline fun <R> synchronized(lock: Any, crossinline block: () -> R): R = block()

@@ -20,8 +20,10 @@ public external fun js(code: String): dynamic
 /**
  * Function corresponding to JavaScript's `typeof` operator
  */
+@kotlin.internal.InlineOnly
 public inline fun jsTypeOf(a: Any?): String = js("typeof a")
 
+@kotlin.internal.InlineOnly
 internal inline fun deleteProperty(obj: Any, property: Any) {
     js("delete obj[property]")
 }
