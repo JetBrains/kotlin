@@ -239,7 +239,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
                     typeInfoSymbolName)!!
 
             if (!descriptor.isExported()) {
-                LLVMSetLinkage(llvmTypeInfoPtr, LLVMLinkage.LLVMPrivateLinkage)
+                LLVMSetLinkage(llvmTypeInfoPtr, LLVMLinkage.LLVMInternalLinkage)
             }
 
             typeInfoPtr = constPointer(llvmTypeInfoPtr)

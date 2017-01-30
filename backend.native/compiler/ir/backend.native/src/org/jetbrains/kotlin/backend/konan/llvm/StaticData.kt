@@ -28,7 +28,7 @@ internal class StaticData(override val context: Context): ContextUtils {
                 val llvmGlobal = LLVMAddGlobal(module, type, name)!!
 
                 if (!isExported) {
-                    LLVMSetLinkage(llvmGlobal, LLVMLinkage.LLVMPrivateLinkage)
+                    LLVMSetLinkage(llvmGlobal, LLVMLinkage.LLVMInternalLinkage)
                 }
 
                 return llvmGlobal

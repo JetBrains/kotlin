@@ -1,6 +1,7 @@
 package kotlin
 
 import kotlin.collections.*
+import kotlin.internal.PureReifiable
 
 // TODO: make all iterator() methods inline.
 
@@ -882,4 +883,123 @@ public fun BooleanArray.toHashSet(): HashSet<Boolean> {
  */
 public fun CharArray.toHashSet(): HashSet<Char> {
     return toCollection(HashSet<Char>(mapCapacity(size)))
+}
+
+// From Library.kt.
+/**
+ * Returns an array of objects of the given type with the given [size], initialized with null values.
+ */
+public inline fun <reified @PureReifiable T> arrayOfNulls(size: Int): Array<T?> =
+        @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+        arrayOfUninitializedElements<T?>(size)
+
+/**
+ * Returns an array containing the specified elements.
+ */
+public inline fun <reified @PureReifiable T> arrayOf(vararg elements: T): Array<T> = elements as Array<T>
+
+// TODO: optimize those operations.
+/**
+ * Returns an array containing the specified [Double] numbers.
+ */
+
+public fun doubleArrayOf(vararg elements: Double): DoubleArray {
+    val result = DoubleArray(elements.size)
+    var index = 0
+    while (index < elements.size) {
+        result[index] = elements[index]
+        index++
+    }
+    return result
+}
+
+/**
+ * Returns an array containing the specified [Float] numbers.
+ */
+public fun floatArrayOf(vararg elements: Float): FloatArray {
+    val result = FloatArray(elements.size)
+    var index = 0
+    while (index < elements.size) {
+        result[index] = elements[index]
+        index++
+    }
+    return result
+}
+
+/**
+ * Returns an array containing the specified [Long] numbers.
+ */
+public fun longArrayOf(vararg elements: Long): LongArray {
+    val result = LongArray(elements.size)
+    var index = 0
+    while (index < elements.size) {
+        result[index] = elements[index]
+        index++
+    }
+    return result
+}
+
+/**
+ * Returns an array containing the specified [Int] numbers.
+ */
+public fun intArrayOf(vararg elements: Int): IntArray {
+    val result = IntArray(elements.size)
+    var index = 0
+    while (index < elements.size) {
+        result[index] = elements[index]
+        index++
+    }
+    return result
+}
+
+/**
+ * Returns an array containing the specified characters.
+ */
+public fun charArrayOf(vararg elements: Char): CharArray {
+    val result = CharArray(elements.size)
+    var index = 0
+    while (index < elements.size) {
+        result[index] = elements[index]
+        index++
+    }
+    return result
+}
+
+/**
+ * Returns an array containing the specified [Short] numbers.
+ */
+public fun shortArrayOf(vararg elements: Short): ShortArray {
+    val result = ShortArray(elements.size)
+    var index = 0
+    while (index < elements.size) {
+        result[index] = elements[index]
+        index++
+    }
+    return result
+}
+
+/**
+ * Returns an array containing the specified [Byte] numbers.
+ */
+public fun byteArrayOf(vararg elements: Byte): ByteArray {
+    val result = ByteArray(elements.size)
+    var index = 0
+    while (index < elements.size) {
+        result[index] = elements[index]
+        index++
+    }
+    return result
+}
+
+/**
+ * Returns an array containing the specified boolean values.
+ */
+public fun booleanArrayOf(vararg elements: Boolean): BooleanArray {
+    val result = BooleanArray(elements.size)
+    var index = 0
+    while (index < elements.size) {
+        result[index] = elements[index]
+        index++
+    }
+    return result
 }

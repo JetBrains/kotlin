@@ -614,7 +614,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 context.llvm.fileInitializers.add(expression)
             }
 
-            LLVMSetLinkage(globalProperty, LLVMLinkage.LLVMPrivateLinkage)
+            LLVMSetLinkage(globalProperty, LLVMLinkage.LLVMInternalLinkage)
             // (Cannot do this before the global is initialized).
 
             return

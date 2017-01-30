@@ -559,8 +559,7 @@ OBJ_GETTER(InitInstance,
     RETURN_OBJ(value);
   }
 
-  AllocInstance(type_info, OBJ_RESULT);
-  ObjHeader* object = *OBJ_RESULT;
+  ObjHeader* object = AllocInstance(type_info, OBJ_RESULT);
   UpdateGlobalRef(location, object);
   try {
     ctor(object);
@@ -574,7 +573,7 @@ OBJ_GETTER(InitInstance,
   } catch (...) {
     UpdateLocalRef(OBJ_RESULT, nullptr);
     UpdateGlobalRef(location, nullptr);
-    RETURN_OBJ(nullptr);
+    throw;
   }
 }
 

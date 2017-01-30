@@ -46,7 +46,6 @@ private class IteratorImpl<T>(val collection: Array<T>) : Iterator<T> {
     }
 }
 
-public fun <T> arrayOf(vararg elements: T) : Array<out T> = elements
 
 @kotlin.internal.InlineOnly
 public inline operator fun <T> Array<T>.plus(elements: Array<T>): Array<T> {

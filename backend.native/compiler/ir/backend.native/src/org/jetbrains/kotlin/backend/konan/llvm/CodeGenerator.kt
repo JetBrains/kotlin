@@ -32,8 +32,8 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         prologue(llvmFunction,
                 LLVMGetReturnType(getLlvmFunctionType(descriptor))!!)
 
-        if (!descriptor.isExported() && !context.debug) {
-            LLVMSetLinkage(llvmFunction, LLVMLinkage.LLVMPrivateLinkage)
+        if (!descriptor.isExported()) {
+            LLVMSetLinkage(llvmFunction, LLVMLinkage.LLVMInternalLinkage)
             // (Cannot do this before the function body is created).
         }
 
