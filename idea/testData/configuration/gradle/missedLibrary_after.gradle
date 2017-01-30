@@ -6,7 +6,7 @@ version = '1.0'
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 }
 
 buildscript {
