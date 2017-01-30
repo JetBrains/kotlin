@@ -1,4 +1,5 @@
 package kotlin
+import konan.internal.ExportForCompiler
 
 // TODO: remove that, as RTTI shall be per instantiation.
 @ExportTypeInfo("theArrayTypeInfo")
@@ -11,6 +12,8 @@ public final class Array<T> : Cloneable {
             index++
         }
     }
+
+    @ExportForCompiler
     internal constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
     public val size: Int
