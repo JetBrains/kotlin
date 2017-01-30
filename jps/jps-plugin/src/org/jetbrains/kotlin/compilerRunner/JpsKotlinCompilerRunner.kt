@@ -19,7 +19,10 @@ package org.jetbrains.kotlin.compilerRunner
 import org.jetbrains.jps.api.GlobalOptions
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
-import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.mergeBeans
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerSettings
@@ -28,9 +31,6 @@ import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
-import java.io.Serializable
-import java.rmi.server.UnicastRemoteObject
-import java.util.*
 
 class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
     override val log: KotlinLogger = JpsKotlinLogger(KotlinBuilder.LOG)
@@ -72,11 +72,11 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
             compilerSettings: CompilerSettings,
             environment: JpsCompilerEnvironment,
             sourceFiles: Collection<File>,
-            libraryFiles: List<String>,
+            libraries: List<String>,
             outputFile: File
     ) {
         val arguments = mergeBeans(commonArguments, k2jsArguments)
-        setupK2JsArguments(outputFile, sourceFiles, libraryFiles, arguments)
+        setupK2JsArguments(outputFile, sourceFiles, libraries, arguments)
         withCompilerSettings(compilerSettings) {
             runCompiler(K2JS_COMPILER, arguments, environment)
         }
@@ -182,13 +182,13 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
         }
     }
 
-    private fun setupK2JsArguments( _outputFile: File, sourceFiles: Collection<File>, _libraryFiles: List<String>, settings: K2JSCompilerArguments) {
+    private fun setupK2JsArguments(_outputFile: File, sourceFiles: Collection<File>, _libraries: List<String>, settings: K2JSCompilerArguments) {
         with(settings) {
             noStdlib = true
             freeArgs = sourceFiles.map { it.path }
             outputFile = _outputFile.path
             metaInfo = true
-            libraryFiles = _libraryFiles.toTypedArray()
+            libraries = _libraries.joinToString(File.pathSeparator)
         }
     }
 
