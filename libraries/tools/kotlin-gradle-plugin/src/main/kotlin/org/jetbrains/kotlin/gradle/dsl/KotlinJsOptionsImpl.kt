@@ -19,11 +19,13 @@ package org.jetbrains.kotlin.gradle.dsl
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 
-internal class KotlinJsOptionsImpl() : KotlinJsOptionsBase() {
+internal class KotlinJsOptionsImpl : KotlinJsOptionsBase() {
     override var freeCompilerArgs: List<String> = listOf()
 
     override fun updateArguments(args: K2JSCompilerArguments) {
         super.updateArguments(args)
-        K2JSCompiler().parseArguments(freeCompilerArgs.toTypedArray(), args)
+        // cast to List<Any> is important because in Groovy a GString can be inside of a list
+        val freeArgsArray = (freeCompilerArgs as List<Any>).map(Any::toString).toTypedArray()
+        K2JSCompiler().parseArguments(freeArgsArray, args)
     }
 }
