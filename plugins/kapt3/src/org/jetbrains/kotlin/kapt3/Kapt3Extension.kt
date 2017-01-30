@@ -125,11 +125,6 @@ abstract class AbstractKapt3Extension(
 
         fun doNotGenerateCode() = AnalysisResult.Companion.success(BindingContext.EMPTY, module, shouldGenerateCode = false)
 
-        if (files.isEmpty()) {
-            logger.info("No Kotlin source files, aborting")
-            return if (aptOnly) doNotGenerateCode() else null
-        }
-
         logger.info { "Initial analysis took ${System.currentTimeMillis() - pluginInitializedTime} ms" }
         logger.info { "Kotlin files to compile: " + files.map { it.virtualFile?.name ?: "<in memory ${it.hashCode()}>" } }
 
@@ -153,6 +148,12 @@ abstract class AbstractKapt3Extension(
             if (thr !is KaptError || thr.kind != KaptError.Kind.ERROR_RAISED) {
                 logger.exception(thr)
             }
+
+            // We don't have any Kotlin files, so there isn't anything we can report diagnostic on
+            if (files.isEmpty()) {
+                throw thr
+            }
+
             bindingTrace.report(ErrorsKapt3.KAPT3_PROCESSING_ERROR.on(files.first()))
             return null // Compilation will be aborted anyway because of the error above
         } finally {
