@@ -677,11 +677,19 @@ public final class JsProtoBuf {
       org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
     /**
-     * <code>required int32 id = 1;</code>
+     * <code>optional int32 id = 1;</code>
+     *
+     * <pre>
+     * If absent, id is the index of the file in the Files.file list
+     * </pre>
      */
     boolean hasId();
     /**
-     * <code>required int32 id = 1;</code>
+     * <code>optional int32 id = 1;</code>
+     *
+     * <pre>
+     * If absent, id is the index of the file in the Files.file list
+     * </pre>
      */
     int getId();
 
@@ -802,13 +810,21 @@ public final class JsProtoBuf {
     public static final int ID_FIELD_NUMBER = 1;
     private int id_;
     /**
-     * <code>required int32 id = 1;</code>
+     * <code>optional int32 id = 1;</code>
+     *
+     * <pre>
+     * If absent, id is the index of the file in the Files.file list
+     * </pre>
      */
     public boolean hasId() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required int32 id = 1;</code>
+     * <code>optional int32 id = 1;</code>
+     *
+     * <pre>
+     * If absent, id is the index of the file in the Files.file list
+     * </pre>
      */
     public int getId() {
       return id_;
@@ -859,10 +875,6 @@ public final class JsProtoBuf {
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
-      if (!hasId()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       for (int i = 0; i < getAnnotationCount(); i++) {
         if (!getAnnotation(i).isInitialized()) {
           memoizedIsInitialized = 0;
@@ -1054,10 +1066,6 @@ public final class JsProtoBuf {
       }
 
       public final boolean isInitialized() {
-        if (!hasId()) {
-          
-          return false;
-        }
         for (int i = 0; i < getAnnotationCount(); i++) {
           if (!getAnnotation(i).isInitialized()) {
             
@@ -1088,19 +1096,31 @@ public final class JsProtoBuf {
 
       private int id_ ;
       /**
-       * <code>required int32 id = 1;</code>
+       * <code>optional int32 id = 1;</code>
+       *
+       * <pre>
+       * If absent, id is the index of the file in the Files.file list
+       * </pre>
        */
       public boolean hasId() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required int32 id = 1;</code>
+       * <code>optional int32 id = 1;</code>
+       *
+       * <pre>
+       * If absent, id is the index of the file in the Files.file list
+       * </pre>
        */
       public int getId() {
         return id_;
       }
       /**
-       * <code>required int32 id = 1;</code>
+       * <code>optional int32 id = 1;</code>
+       *
+       * <pre>
+       * If absent, id is the index of the file in the Files.file list
+       * </pre>
        */
       public Builder setId(int value) {
         bitField0_ |= 0x00000001;
@@ -1109,7 +1129,11 @@ public final class JsProtoBuf {
         return this;
       }
       /**
-       * <code>required int32 id = 1;</code>
+       * <code>optional int32 id = 1;</code>
+       *
+       * <pre>
+       * If absent, id is the index of the file in the Files.file list
+       * </pre>
        */
       public Builder clearId() {
         bitField0_ = (bitField0_ & ~0x00000001);

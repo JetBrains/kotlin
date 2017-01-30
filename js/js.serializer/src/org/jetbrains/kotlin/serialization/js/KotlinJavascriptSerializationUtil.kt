@@ -137,9 +137,11 @@ object KotlinJavascriptSerializationUtil {
             serializer: AnnotationSerializer
     ): JsProtoBuf.Files {
         val filesProto = JsProtoBuf.Files.newBuilder()
-        for ((file, id) in fileRegistry.fileIds) {
+        for ((file, id) in fileRegistry.fileIds.entries.sortedBy { it.value }) {
             val fileProto = JsProtoBuf.File.newBuilder()
-            fileProto.id = id
+            if (id != filesProto.fileCount) {
+                fileProto.id = id
+            }
             for (annotationPsi in file.annotationEntries) {
                 val annotation = bindingContext[BindingContext.ANNOTATION, annotationPsi]!!
                 fileProto.addAnnotation(serializer.serializeAnnotation(annotation))

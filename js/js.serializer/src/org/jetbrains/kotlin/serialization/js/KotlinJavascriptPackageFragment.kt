@@ -42,7 +42,9 @@ class KotlinJavascriptPackageFragment(
         private val nameResolver: NameResolver
 ) : DeserializedPackageFragment(fqName, storageManager, module) {
     private val fileMap: Map<Int, FileHolder> by storageManager.createLazyValue {
-        proto.files.fileList.associate { file -> file.id to FileHolder(file.annotationList) }
+        proto.files.fileList.withIndex().associate { (index, file) ->
+            (if (file.hasId()) file.id else index) to FileHolder(file.annotationList)
+        }
     }
 
     private val annotationDeserializer: AnnotationDeserializer by storageManager.createLazyValue {
