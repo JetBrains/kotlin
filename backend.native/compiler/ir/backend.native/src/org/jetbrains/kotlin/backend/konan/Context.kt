@@ -17,6 +17,8 @@ import java.lang.System.out
 
 internal final class Context(val config: KonanConfig) : KonanBackendContext() {
 
+    val debug = true
+
     var moduleDescriptor: ModuleDescriptor? = null
 
     // TODO: make lateinit?

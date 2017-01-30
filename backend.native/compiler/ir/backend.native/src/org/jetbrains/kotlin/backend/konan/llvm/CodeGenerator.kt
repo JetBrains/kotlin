@@ -17,10 +17,14 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     // TODO: remove, to make CodeGenerator descriptor-agnostic.
     var constructedClass: ClassDescriptor? = null
     val vars = VariableManager(this)
-    var returnSlot: LLVMValueRef? = null
-    var slotsPhi: LLVMValueRef? = null
-    var slotCount = 0
-    var localAllocs = 0
+    private var returnSlot: LLVMValueRef? = null
+    private var slotsPhi: LLVMValueRef? = null
+    private var slotCount = 0
+    private var localAllocs = 0
+    private var arenaSlot: LLVMValueRef? = null
+
+    private val intPtrType = LLVMIntPtrType(llvmTargetData)!!
+    private val immOneIntPtrType = LLVMConstInt(intPtrType, 1, 1)!!
 
     fun prologue(descriptor: FunctionDescriptor) {
         val llvmFunction = llvmFunction(descriptor)
@@ -28,7 +32,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         prologue(llvmFunction,
                 LLVMGetReturnType(getLlvmFunctionType(descriptor))!!)
 
-        if (!descriptor.isExported()) {
+        if (!descriptor.isExported() && !context.debug) {
             LLVMSetLinkage(llvmFunction, LLVMLinkage.LLVMPrivateLinkage)
             // (Cannot do this before the function body is created).
         }
@@ -57,6 +61,9 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         // First slot can be assigned to keep pointer to frame local arena.
         slotCount = 1
         localAllocs = 0
+        // Is removed by DCE trivially, if not needed.
+        arenaSlot = intToPtr(
+                or(ptrToInt(slotsPhi, intPtrType), immOneIntPtrType), kObjHeaderPtrPtr)
     }
 
     fun epilogue() {
@@ -90,7 +97,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
                     val returnPhi = phi(returnType!!)
                     addPhiIncoming(returnPhi, *returns.toList().toTypedArray())
                     if (returnSlot != null) {
-                        updateLocalRef(returnPhi, returnSlot!!)
+                        updateReturnRef(returnPhi, returnSlot!!)
                     }
                     releaseVars()
                     LLVMBuildRet(builder, returnPhi)
@@ -139,6 +146,8 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     fun div   (arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildSDiv(builder, arg0, arg1, name)!!
     fun srem  (arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildSRem(builder, arg0, arg1, name)!!
 
+    fun or  (arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildOr (builder, arg0, arg1, name)!!
+
     /* integers comparisons */
     fun icmpEq(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntEQ,  arg0, arg1, name)!!
     fun icmpGt(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntSGT, arg0, arg1, name)!!
@@ -154,7 +163,8 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     fun bitcast(type: LLVMTypeRef?, value: LLVMValueRef, name: String = "") = LLVMBuildBitCast(builder, value, type, name)!!
 
-    fun intToPtr(imm: LLVMValueRef?, DestTy: LLVMTypeRef, Name: String = "") = LLVMBuildIntToPtr(builder, imm, DestTy, Name)!!
+    fun intToPtr(value: LLVMValueRef?, DestTy: LLVMTypeRef, Name: String = "") = LLVMBuildIntToPtr(builder, value, DestTy, Name)!!
+    fun ptrToInt(value: LLVMValueRef?, DestTy: LLVMTypeRef, Name: String = "") = LLVMBuildPtrToInt(builder, value, DestTy, Name)!!
 
     fun alloca(type: LLVMTypeRef?, name: String = ""): LLVMValueRef {
         if (isObjectType(type!!)) {
@@ -165,33 +175,13 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         }
     }
 
-
-    // Return object slot (ab)used for arena matching given allocation.
-    private fun arenaSlot() : LLVMValueRef {
-        return gep(slotsPhi!!, Int32(0).llvm)
-    }
-
-    fun allocInstance(typeInfo: LLVMValueRef, hint: Int) : LLVMValueRef {
-        if (hint == SCOPE_FRAME) {
-            val aux = arenaSlot()
-            localAllocs++
-            return call(context.llvm.arenaAllocInstanceFunction, listOf(typeInfo, aux))
-        } else {
-            val slot = vars.createAnonymousSlot()
-            return call(context.llvm.allocInstanceFunction, listOf(typeInfo, slot))
-        }
+    fun allocInstance(typeInfo: LLVMValueRef, lifetime: Lifetime) : LLVMValueRef {
+        return call(context.llvm.allocInstanceFunction, listOf(typeInfo), lifetime)
     }
 
     fun allocArray(
-          typeInfo: LLVMValueRef, hint: Int, count: LLVMValueRef) : LLVMValueRef {
-        if (hint == SCOPE_FRAME) {
-            val aux = arenaSlot()
-            localAllocs++
-            return call(context.llvm.arenaAllocArrayFunction, listOf(typeInfo, count, aux))
-        } else {
-            val slot = vars.createAnonymousSlot()
-            return call(context.llvm.allocArrayFunction, listOf(typeInfo, count, slot))
-        }
+          typeInfo: LLVMValueRef, count: LLVMValueRef, lifetime: Lifetime) : LLVMValueRef {
+        return call(context.llvm.allocArrayFunction, listOf(typeInfo, count), lifetime)
     }
 
     fun load(value: LLVMValueRef, name: String = ""): LLVMValueRef {
@@ -235,6 +225,10 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         }
     }
 
+    fun updateReturnRef(value: LLVMValueRef, address: LLVMValueRef) {
+        call(context.llvm.updateReturnRefFunction, listOf(address, value))
+    }
+
     // Only use ignoreOld, when sure that memory is freshly inited and have no value.
     fun updateLocalRef(value: LLVMValueRef, address: LLVMValueRef, ignoreOld: Boolean = false) {
         call(if (ignoreOld) context.llvm.setLocalRefFunction else context.llvm.updateLocalRefFunction,
@@ -250,19 +244,44 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     //-------------------------------------------------------------------------//
 
-    fun callAtFunctionScope(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>, name: String = "") =
-            call(llvmFunction, args, this::cleanupLandingpad, name)
+    fun callAtFunctionScope(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
+                            lifetime: Lifetime) =
+            call(llvmFunction, args, lifetime, this::cleanupLandingpad)
 
     fun call(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
-             lazyLandingpad: () -> LLVMBasicBlockRef? = { null }, name: String = ""): LLVMValueRef {
+             resultLifetime: Lifetime = Lifetime.IRRELEVANT,
+             lazyLandingpad: () -> LLVMBasicBlockRef? = { null }): LLVMValueRef {
+        var callArgs = if (isObjectReturn(llvmFunction.type)) {
+            // If function returns an object - create slot for the returned value or give local arena.
+            // This allows appropriate rootset accounting by just looking at the stack slots,
+            // along with ability to allocate in appropriate arena.
+            val resultSlot = when (resultLifetime.slotType) {
+                SlotType.ARENA -> {
+                    localAllocs++
+                    arenaSlot!!
+                }
+                SlotType.RETURN -> returnSlot!!
+                // TODO: for RETURN_IF_ARENA choose between created slot and arenaSlot
+                // dynamically.
+                SlotType.ANONYMOUS, SlotType.RETURN_IF_ARENA -> vars.createAnonymousSlot()
+                else -> throw Error("Incorrect slot type")
+            }
+            args + resultSlot
+        } else {
+            args
+        }
+        return callRaw(llvmFunction, callArgs, lazyLandingpad)
+    }
 
+    private fun callRaw(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
+             lazyLandingpad: () -> LLVMBasicBlockRef?): LLVMValueRef {
         memScoped {
             val rargs = allocArrayOf(args)[0].ptr
 
             if (LLVMIsAFunction(llvmFunction) != null /* the function declaration */ &&
                     LLVMAttribute.LLVMNoUnwindAttribute in LLVMGetFunctionAttrSet(llvmFunction)) {
 
-                return LLVMBuildCall(builder, llvmFunction, rargs, args.size, name)!!
+                return LLVMBuildCall(builder, llvmFunction, rargs, args.size, "")!!
             } else {
                 val landingpad = lazyLandingpad()
 
@@ -276,7 +295,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
                 }
 
                 val success = basicBlock()
-                val result = LLVMBuildInvoke(builder, llvmFunction, rargs, args.size, success, landingpad, name)!!
+                val result = LLVMBuildInvoke(builder, llvmFunction, rargs, args.size, success, landingpad, "")!!
                 positionAtEnd(success)
                 return result
             }

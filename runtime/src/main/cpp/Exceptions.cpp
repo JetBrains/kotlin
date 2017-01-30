@@ -50,15 +50,13 @@ OBJ_GETTER0(GetCurrentStackTrace) {
   RuntimeAssert(symbols != nullptr, "Not enough memory to retrieve the stacktrace");
 
   AutoFree autoFree(symbols);
-  AllocArrayInstance(theArrayTypeInfo, size, OBJ_RESULT);
-
-  ArrayHeader* array = (*OBJ_RESULT)->array();
+  ObjHeader* result = AllocArrayInstance(theArrayTypeInfo, size, OBJ_RESULT);
+  ArrayHeader* array = result->array();
   for (int index = 0; index < size; ++index) {
     AllocStringInstance(symbols[index], strlen(symbols[index]),
                         ArrayAddressOfElementAt(array, index));
   }
-
-  RETURN_OBJ_RESULT();
+  return result;
 }
 
 void ThrowException(KRef exception) {

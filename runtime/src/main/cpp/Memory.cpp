@@ -90,6 +90,15 @@ inline container_size_t alignUp(container_size_t size, int alignment) {
   return (size + alignment - 1) & ~(alignment - 1);
 }
 
+inline bool isArenaSlot(ObjHeader** slot) {
+  return (reinterpret_cast<uintptr_t>(slot) & ARENA_BIT) != 0;
+}
+
+inline ObjHeader** asArenaSlot(ObjHeader** slot) {
+  return reinterpret_cast<ObjHeader**>(
+      reinterpret_cast<uintptr_t>(slot) & ~ARENA_BIT);
+}
+
 #if USE_GC
 
 // Must be vector or map 'container -> number', to keep reference counters correct.
@@ -199,13 +208,26 @@ void phase4(ContainerHeader* header, ContainerHeaderSet* toRemove) {
 #endif // USE_GC
 
 // We use first slot as place to store frame-local arena container.
-ArenaContainer* initedArena(ObjHeader** auxSlot) {
+// TODO: create ArenaContainer object on the stack, so that we don't
+// do two allocations per frame (ArenaContainer + actual container).
+inline ArenaContainer* initedArena(ObjHeader** auxSlot) {
   ObjHeader* slotValue = *auxSlot;
   if (slotValue) return reinterpret_cast<ArenaContainer*>(slotValue);
   ArenaContainer* arena = allocMemory<ArenaContainer>(sizeof(ArenaContainer));
   arena->Init();
   *auxSlot = reinterpret_cast<ObjHeader*>(arena);
   return arena;
+}
+
+// TODO: shall we do padding for alignment?
+inline container_size_t objectSize(const ObjHeader* obj) {
+  const TypeInfo* type_info = obj->type_info();
+  container_size_t size = type_info->instanceSize_ < 0 ?
+      // An array.
+      ArrayDataSizeBytes(obj->array()) + sizeof(ArrayHeader)
+      :
+      type_info->instanceSize_ + sizeof(ObjHeader);
+  return alignUp(size, kObjectAlignment);
 }
 
 }  // namespace
@@ -221,16 +243,7 @@ ContainerHeader* AllocContainer(size_t size) {
   return result;
 }
 
-// TODO: shall we do padding for alignment?
-uint32_t ObjectSize(const ObjHeader* obj) {
-  const TypeInfo* type_info = obj->type_info();
-  if (type_info->instanceSize_ < 0) {
-    // An array.
-    return ArrayDataSizeBytes(obj->array()) + sizeof(ArrayHeader);
-  } else {
-    return type_info->instanceSize_ + sizeof(ObjHeader);
-  }
-}
+
 
 void FreeContainer(ContainerHeader* header) {
   RuntimeAssert(!isPermanent(header), "this kind of container shalln't be freed");
@@ -262,7 +275,8 @@ void FreeContainer(ContainerHeader* header) {
       ArrayHeader* array = obj->array();
       ReleaseLocalRefs(ArrayAddressOfElementAt(array, 0), array->count_);
     }
-    obj = reinterpret_cast<ObjHeader*>(reinterpret_cast<uintptr_t>(obj) + ObjectSize(obj));
+    obj = reinterpret_cast<ObjHeader*>(
+      reinterpret_cast<uintptr_t>(obj) + objectSize(obj));
   }
 
   // And release underlying memory.
@@ -345,6 +359,7 @@ void ArenaContainer::Deinit() {
 bool ArenaContainer::allocContainer(container_size_t minSize) {
   auto size = minSize + sizeof(ContainerHeader) + sizeof(ContainerChunk);
   size = alignUp(size, kContainerAlignment);
+  // TODO: keep simple cache of container chunks.
   ContainerChunk* result = allocMemory<ContainerChunk>(size);
   RuntimeAssert(result != nullptr, "Cannot alloc memory");
   if (result == nullptr) return false;
@@ -493,24 +508,29 @@ void DeinitMemory() {
   memoryState = nullptr;
 }
 
-ObjHeader* ArenaAllocInstance(const TypeInfo* type_info, ObjHeader** auxSlot) {
-  RuntimeAssert(type_info->instanceSize_ >= 0, "must be an object");
-  return initedArena(auxSlot)->PlaceObject(type_info);
-}
-
 OBJ_GETTER(AllocInstance, const TypeInfo* type_info) {
   RuntimeAssert(type_info->instanceSize_ >= 0, "must be an object");
+  if (isArenaSlot(OBJ_RESULT)) {
+    auto arena = initedArena(asArenaSlot(OBJ_RESULT));
+    auto result = arena->PlaceObject(type_info);
+#if TRACE_MEMORY
+    fprintf(stderr, "instace %p in arena: %p\n", result, arena);
+#endif
+    return result;
+  }
   RETURN_OBJ(ObjectContainer(type_info).GetPlace());
-}
-
-ObjHeader* ArenaAllocArrayInstance(
-    const TypeInfo* type_info, uint32_t elements, ObjHeader** auxSlot) {
-  RuntimeAssert(type_info->instanceSize_ < 0, "must be an array");
-  return initedArena(auxSlot)->PlaceArray(type_info, elements)->obj();
 }
 
 OBJ_GETTER(AllocArrayInstance, const TypeInfo* type_info, uint32_t elements) {
   RuntimeAssert(type_info->instanceSize_ < 0, "must be an array");
+  if (isArenaSlot(OBJ_RESULT)) {
+    auto arena = initedArena(asArenaSlot(OBJ_RESULT));
+    auto result = arena->PlaceArray(type_info, elements)->obj();
+#if TRACE_MEMORY
+    fprintf(stderr, "array[%d] %p in arena: %p\n", elements, result, arena);
+#endif
+    return result;
+  }
   RETURN_OBJ(ArrayContainer(type_info, elements).GetPlace()->obj());
 }
 
@@ -550,7 +570,7 @@ OBJ_GETTER(InitInstance,
 #if TRACE_MEMORY
     memoryState->globalObjects->push_back(location);
 #endif
-    RETURN_OBJ_RESULT();
+    return object;
   } catch (...) {
     UpdateLocalRef(OBJ_RESULT, nullptr);
     UpdateGlobalRef(location, nullptr);
@@ -581,7 +601,25 @@ void SetGlobalRef(ObjHeader** location, const ObjHeader* object) {
 #endif
 }
 
+void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
+  if (isArenaSlot(returnSlot)) return;
+  ObjHeader* old = *returnSlot;
+#if TRACE_MEMORY
+  fprintf(stderr, "UpdateReturnRef *%p: %p -> %p\n", returnSlot, old, object);
+#endif
+  if (old != object) {
+    if (object != nullptr) {
+      AddRef(object);
+    }
+    *const_cast<const ObjHeader**>(returnSlot) = object;
+    if (old > reinterpret_cast<ObjHeader*>(1)) {
+      ReleaseRef(old);
+    }
+  }
+}
+
 void UpdateLocalRef(ObjHeader** location, const ObjHeader* object) {
+  RuntimeAssert(!isArenaSlot(location), "must not be a slot");
   ObjHeader* old = *location;
 #if TRACE_MEMORY
   fprintf(stderr, "UpdateLocalRef *%p: %p -> %p\n", location, old, object);
@@ -598,6 +636,7 @@ void UpdateLocalRef(ObjHeader** location, const ObjHeader* object) {
 }
 
 void UpdateGlobalRef(ObjHeader** location, const ObjHeader* object) {
+  RuntimeAssert(!isArenaSlot(location), "Must not be an arena");
 #if CONCURRENT
   ObjHeader* old = *location;
 #if TRACE_MEMORY
@@ -625,9 +664,15 @@ void UpdateGlobalRef(ObjHeader** location, const ObjHeader* object) {
 }
 
 void LeaveFrame(ObjHeader** start, int count) {
+#if TRACE_MEMORY
+    fprintf(stderr, "LeaveFrame %p .. %p\n", start, start + count);
+#endif
   ReleaseLocalRefs(start + 1, count - 1);
   if (*start != nullptr) {
     auto arena = initedArena(start);
+#if TRACE_MEMORY
+    fprintf(stderr, "LeaveFrame: free arena %p\n", arena);
+#endif
     arena->Deinit();
     freeMemory(arena);
   }

@@ -11,8 +11,8 @@ namespace {
 
 OBJ_GETTER(makeString, const char* cstring) {
   uint32_t length = strlen(cstring);
-  ArrayHeader* result = ArrayContainer(
-      theStringTypeInfo, length).GetPlace();
+  ArrayHeader* result = AllocArrayInstance(
+      theStringTypeInfo, length, OBJ_RESULT)->array();
   memcpy(
       ByteArrayAddressOfElementAt(result, 0),
       cstring,

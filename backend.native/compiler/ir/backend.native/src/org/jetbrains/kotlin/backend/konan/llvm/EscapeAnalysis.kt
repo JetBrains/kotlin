@@ -2,7 +2,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -11,14 +11,15 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 // We build graph with the following nodes:
 //    * allocation set, keeping tuple of [local, ctor call, owner function], AS
 //    * local store set, keeping pair [local, stored], LSS
-//    * field store set, keeping tuple [local, stored], FSS
-//    * global store set, [local, stored], GSS
+//    * field store set, keeping tuple [local, object to store, stored field id], FSS
+//    * global store set, [local, stored global address], GSS
 // Function we're trying to compute is the following:
 //   for each element of AS, could it be referred by someone, whose value is
 //   alive on return from function, where element was allocated.
 // Each element in RS is associated with few elements in AS, which it could refer to.
-// TODO: exact algorithm TBD.
-internal class EscapeAnalyzerVisitor(val allocHints: MutableMap<IrCall, Int>) : IrElementVisitorVoid {
+//
+internal class EscapeAnalyzerVisitor(
+        val lifetimes: MutableMap<IrMemberAccessExpression, Lifetime>) : IrElementVisitorVoid {
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
@@ -29,8 +30,9 @@ internal class EscapeAnalyzerVisitor(val allocHints: MutableMap<IrCall, Int>) : 
     }
 }
 
-fun prepareAllocHints(irModule: IrModuleFragment, allocHints: MutableMap<IrCall, Int>) {
-    assert(allocHints.size == 0)
+internal fun computeLifetimes(irModule: IrModuleFragment,
+                              lifetimes: MutableMap<IrMemberAccessExpression, Lifetime>) {
+    assert(lifetimes.size == 0)
 
-    irModule.acceptVoid(EscapeAnalyzerVisitor(allocHints))
+    irModule.acceptVoid(EscapeAnalyzerVisitor(lifetimes))
 }
