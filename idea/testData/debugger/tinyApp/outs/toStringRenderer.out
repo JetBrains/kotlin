@@ -20,6 +20,7 @@ Compile bytecode for args.size
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = toStringRenderer.kt, 3)
    local    = a: toStringRenderer.A = {toStringRenderer.A@uniqueID}myA (sp = toStringRenderer.kt, 4)
               - Class has no fields
+            - args.size = ...
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

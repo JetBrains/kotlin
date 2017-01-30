@@ -35,6 +35,7 @@ Compile bytecode for a1.prop
      field    = prop: int = 1 (sp = evSkipAnonymousObject.kt, 4)
    local    = a2: evSkipAnonymousObject.A = {evSkipAnonymousObject.A@uniqueID} (sp = evSkipAnonymousObject.kt, 9)
      field    = prop: int = 1 (sp = evSkipAnonymousObject.kt, 4)
+            - a1.prop = ...
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

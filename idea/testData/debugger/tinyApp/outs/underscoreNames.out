@@ -62,6 +62,7 @@ Compile bytecode for arrayOfA
    local    = q: java.lang.String =  (sp = underscoreNames.kt, 16)
      field    = value: char[] = {char[0]@uniqueID} (sp = String.!EXT!)
      field    = hash: int = 0 (sp = String.!EXT!)
+            - arrayOfA = ...
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0
