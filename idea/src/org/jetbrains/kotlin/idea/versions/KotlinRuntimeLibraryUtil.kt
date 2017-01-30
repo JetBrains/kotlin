@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinderFactory
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
-import org.jetbrains.kotlin.utils.JsBinaryVersion
+import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.constant
 import java.io.File
@@ -65,8 +65,8 @@ fun getLibraryRootsWithAbiIncompatibleKotlinClasses(module: Module): Collection<
     return getLibraryRootsWithAbiIncompatibleVersion(module, JvmMetadataVersion.INSTANCE, KotlinMetadataVersionIndex)
 }
 
-fun getLibraryRootsWithAbiIncompatibleForKotlinJs(module: Module): Collection<BinaryVersionedFile<JsBinaryVersion>> {
-    return getLibraryRootsWithAbiIncompatibleVersion(module, JsBinaryVersion.INSTANCE, KotlinJavaScriptAbiVersionIndex)
+fun getLibraryRootsWithAbiIncompatibleForKotlinJs(module: Module): Collection<BinaryVersionedFile<JsMetadataVersion>> {
+    return getLibraryRootsWithAbiIncompatibleVersion(module, JsMetadataVersion.INSTANCE, KotlinJavaScriptAbiVersionIndex)
 }
 
 fun updateLibraries(project: Project, libraries: Collection<Library>) {

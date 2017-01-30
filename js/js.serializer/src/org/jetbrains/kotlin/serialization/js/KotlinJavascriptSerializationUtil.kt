@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.serialization.AnnotationSerializer
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.utils.JsBinaryVersion
+import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -162,7 +162,7 @@ object KotlinJavascriptSerializationUtil {
 
             val stream = ByteArrayOutputStream()
             with(DataOutputStream(stream)) {
-                val version = JsBinaryVersion.INSTANCE.toArray()
+                val version = JsMetadataVersion.INSTANCE.toArray()
                 writeInt(version.size)
                 version.forEach(this::writeInt)
             }

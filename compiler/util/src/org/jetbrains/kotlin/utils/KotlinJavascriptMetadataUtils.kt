@@ -23,25 +23,25 @@ import java.io.InputStream
 import javax.xml.bind.DatatypeConverter.parseBase64Binary
 import javax.xml.bind.DatatypeConverter.printBase64Binary
 
-class KotlinJavascriptMetadata(val version: JsBinaryVersion, val moduleName: String, val body: ByteArray)
+class KotlinJavascriptMetadata(val version: JsMetadataVersion, val moduleName: String, val body: ByteArray)
 
 // TODO: move to JS modules
-class JsBinaryVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
+class JsMetadataVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
     override fun isCompatible() = this.isCompatibleTo(INSTANCE)
 
     fun toInteger() = (patch shl 16) + (minOf(minor, 255) shl 8) + minOf(major, 255)
 
     companion object {
         @JvmField
-        val INSTANCE = JsBinaryVersion(0, 8, 0)
+        val INSTANCE = JsMetadataVersion(1, 0, 0)
 
         @JvmField
-        val INVALID_VERSION = JsBinaryVersion()
+        val INVALID_VERSION = JsMetadataVersion()
 
-        fun fromInteger(version: Int): JsBinaryVersion =
-                JsBinaryVersion(version and 255, (version shr 8) and 255, version shr 16)
+        fun fromInteger(version: Int): JsMetadataVersion =
+                JsMetadataVersion(version and 255, (version shr 8) and 255, version shr 16)
 
-        fun readFrom(stream: InputStream): JsBinaryVersion {
+        fun readFrom(stream: InputStream): JsMetadataVersion {
             val dataInput = DataInputStream(stream)
             val size = dataInput.readInt()
 
@@ -49,7 +49,7 @@ class JsBinaryVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
             // of integers from old .kjsm files (pre-1.1) because they did not have the version in the beginning
             if (size != INSTANCE.toArray().size) return INVALID_VERSION
 
-            return JsBinaryVersion(*(1..size).map { dataInput.readInt() }.toIntArray())
+            return JsMetadataVersion(*(1..size).map { dataInput.readInt() }.toIntArray())
         }
     }
 }
@@ -72,7 +72,7 @@ object KotlinJavascriptMetadataUtils {
             KOTLIN_JAVASCRIPT_METHOD_NAME_PATTERN.matcher(text).find() && METADATA_PATTERN.matcher(text).find()
 
     fun formatMetadataAsString(moduleName: String, content: ByteArray): String =
-        "// Kotlin.$KOTLIN_JAVASCRIPT_METHOD_NAME(${JsBinaryVersion.INSTANCE.toInteger()}, \"$moduleName\", \"${printBase64Binary(content)}\");\n"
+        "// Kotlin.$KOTLIN_JAVASCRIPT_METHOD_NAME(${JsMetadataVersion.INSTANCE.toInteger()}, \"$moduleName\", \"${printBase64Binary(content)}\");\n"
 
     @JvmStatic
     fun loadMetadata(file: File): List<KotlinJavascriptMetadata> {
@@ -95,7 +95,7 @@ object KotlinJavascriptMetadataUtils {
 
         val matcher = METADATA_PATTERN.matcher(text)
         while (matcher.find()) {
-            val abiVersion = JsBinaryVersion.fromInteger(matcher.group(1).toInt())
+            val abiVersion = JsMetadataVersion.fromInteger(matcher.group(1).toInt())
             val moduleName = matcher.group(3)
             val data = matcher.group(5)
             metadataList.add(KotlinJavascriptMetadata(abiVersion, moduleName, parseBase64Binary(data)))

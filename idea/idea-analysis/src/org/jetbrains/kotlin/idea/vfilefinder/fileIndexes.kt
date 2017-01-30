@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
 import org.jetbrains.kotlin.serialization.js.JsProtoBuf
-import org.jetbrains.kotlin.utils.JsBinaryVersion
+import org.jetbrains.kotlin.utils.JsMetadataVersion
 import java.io.ByteArrayInputStream
 import java.io.DataInput
 import java.io.DataOutput
@@ -104,7 +104,7 @@ object KotlinJavaScriptMetaFileIndex : KotlinFileIndexBase<KotlinJavaScriptMetaF
 
     private val INDEXER = indexer { fileContent ->
         val stream = ByteArrayInputStream(fileContent.content)
-        if (JsBinaryVersion.readFrom(stream).isCompatible()) {
+        if (JsMetadataVersion.readFrom(stream).isCompatible()) {
             FqName(JsProtoBuf.Header.parseDelimitedFrom(stream).packageFqName)
         }
         else null
