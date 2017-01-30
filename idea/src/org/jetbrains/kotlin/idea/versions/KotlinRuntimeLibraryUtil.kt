@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.versions
 
-import com.google.common.collect.Sets
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
@@ -63,11 +62,11 @@ import java.io.File
 import java.io.IOException
 
 fun getLibraryRootsWithAbiIncompatibleKotlinClasses(module: Module): Collection<BinaryVersionedFile<JvmMetadataVersion>> {
-    return getLibraryRootsWithAbiIncompatibleVersion(module, JvmMetadataVersion.INSTANCE, KotlinMetadataVersionIndex)
+    return getLibraryRootsWithAbiIncompatibleVersion(module, JvmMetadataVersion.INSTANCE, KotlinJvmMetadataVersionIndex)
 }
 
 fun getLibraryRootsWithAbiIncompatibleForKotlinJs(module: Module): Collection<BinaryVersionedFile<JsMetadataVersion>> {
-    return getLibraryRootsWithAbiIncompatibleVersion(module, JsMetadataVersion.INSTANCE, KotlinJavaScriptAbiVersionIndex)
+    return getLibraryRootsWithAbiIncompatibleVersion(module, JsMetadataVersion.INSTANCE, KotlinJsMetadataVersionIndex)
 }
 
 fun updateLibraries(project: Project, libraries: Collection<Library>) {
@@ -259,14 +258,14 @@ private fun <T : BinaryVersion> getLibraryRootsWithAbiIncompatibleVersion(
 
     val allVersions = FileBasedIndex.getInstance().getAllKeys(id, module.project)
     val badVersions = allVersions.filterNot(BinaryVersion::isCompatible).toHashSet()
-    val badRoots = Sets.newHashSet<BinaryVersionedFile<T>>()
+    val badRoots = hashSetOf<BinaryVersionedFile<T>>()
     val fileIndex = ProjectFileIndex.SERVICE.getInstance(module.project)
 
     for (version in badVersions) {
         val indexedFiles = FileBasedIndex.getInstance().getContainingFiles(id, version, moduleWithAllDependentLibraries)
         for (indexedFile in indexedFiles) {
             val libraryRoot = fileIndex.getClassRootForFile(indexedFile) ?:
-                    error("Only library roots were requested, and only class files should be indexed with KotlinAbiVersionIndex key. " +
+                    error("Only library roots were requested, and only class files should be indexed with the $id key. " +
                           "File: ${indexedFile.path}")
             badRoots.add(BinaryVersionedFile(getLocalFile(libraryRoot), version, supportedVersion))
         }

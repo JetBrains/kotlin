@@ -26,12 +26,12 @@ import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.util.*
 
-object KotlinJavaScriptAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinJavaScriptAbiVersionIndex, JsMetadataVersion>(
-        KotlinJavaScriptAbiVersionIndex::class.java, ::JsMetadataVersion
+object KotlinJsMetadataVersionIndex : KotlinMetadataVersionIndexBase<KotlinJsMetadataVersionIndex, JsMetadataVersion>(
+        KotlinJsMetadataVersionIndex::class.java, ::JsMetadataVersion
 ) {
     override fun getIndexer() = INDEXER
 
-    override fun getInputFilter() = FileBasedIndex.InputFilter() { file -> JavaScript.EXTENSION == file.extension }
+    override fun getInputFilter() = FileBasedIndex.InputFilter { file -> JavaScript.EXTENSION == file.extension }
 
     override fun getVersion() = VERSION
 

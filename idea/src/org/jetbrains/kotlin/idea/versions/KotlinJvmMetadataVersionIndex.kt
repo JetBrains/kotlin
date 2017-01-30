@@ -28,12 +28,12 @@ import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 
-object KotlinMetadataVersionIndex : KotlinAbiVersionIndexBase<KotlinMetadataVersionIndex, JvmMetadataVersion>(
-        KotlinMetadataVersionIndex::class.java, { JvmMetadataVersion(*it) }
+object KotlinJvmMetadataVersionIndex : KotlinMetadataVersionIndexBase<KotlinJvmMetadataVersionIndex, JvmMetadataVersion>(
+        KotlinJvmMetadataVersionIndex::class.java, ::JvmMetadataVersion
 ) {
     override fun getIndexer() = INDEXER
 
-    override fun getInputFilter() = FileBasedIndex.InputFilter() { file -> file.fileType == StdFileTypes.CLASS }
+    override fun getInputFilter() = FileBasedIndex.InputFilter { file -> file.fileType == StdFileTypes.CLASS }
 
     override fun getVersion() = VERSION
 
@@ -45,7 +45,7 @@ object KotlinMetadataVersionIndex : KotlinAbiVersionIndexBase<KotlinMetadataVers
             KotlinClassHeader.Kind.MULTIFILE_CLASS
     )
 
-    private val INDEXER = DataIndexer<JvmMetadataVersion, Void, FileContent>() { inputData: FileContent ->
+    private val INDEXER = DataIndexer<JvmMetadataVersion, Void, FileContent> { inputData: FileContent ->
         var version: JvmMetadataVersion? = null
         var annotationPresent = false
         var kind: KotlinClassHeader.Kind? = null

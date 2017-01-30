@@ -29,12 +29,12 @@ import java.io.DataOutput
 /**
  * Important! This is not a stub-based index. And it has its own version
  */
-abstract class KotlinAbiVersionIndexBase<T, V : BinaryVersion>(
+abstract class KotlinMetadataVersionIndexBase<T, V : BinaryVersion>(
         private val classOfIndex: Class<T>,
         protected val createBinaryVersion: (IntArray) -> V
 ) : ScalarIndexExtension<V>() {
 
-    override fun getName() = ID.create<V, Void>(classOfIndex.canonicalName)
+    override fun getName(): ID<V, Void> = ID.create<V, Void>(classOfIndex.canonicalName)
 
     override fun getKeyDescriptor(): KeyDescriptor<V> = object : KeyDescriptor<V> {
         override fun isEqual(val1: V, val2: V): Boolean = val1 == val2
