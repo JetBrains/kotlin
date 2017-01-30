@@ -346,4 +346,23 @@ class KotlinGradleIT: BaseGradleIT() {
             assertFileExists("libJs/build/classes/test/libJs_test.js")
         }
     }
+
+    @Test
+    fun testFreeCompilerArgs() {
+        val project = Project("kotlinProject", GRADLE_VERSION)
+        project.setupWorkingDir()
+
+        File(project.projectDir, "build.gradle").modify {
+            // lazy eval is important
+            val customModuleName = "\${project.name}"
+            it + """
+            compileKotlin {
+                kotlinOptions.freeCompilerArgs = [ "-module-name", "$customModuleName" ]
+            }"""
+        }
+
+        project.build("build") {
+            assertSuccessful()
+        }
+    }
 }
