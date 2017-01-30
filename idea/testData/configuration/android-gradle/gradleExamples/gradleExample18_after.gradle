@@ -20,7 +20,7 @@ dependencies {
     debugCompile 'com.android.support:support-v13:13.0.0'
 
     compile 'com.google.android.gms:play-services:3.1.36'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 }
 
 android {

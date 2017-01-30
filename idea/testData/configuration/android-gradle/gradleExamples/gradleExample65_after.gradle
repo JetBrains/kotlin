@@ -21,7 +21,7 @@ repositories {
 dependencies {
     compile 'com.example.android.multiproject:util:1.0'
     releaseCompile 'com.google.guava:guava:11.0.2'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 }
 
 android {
