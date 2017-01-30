@@ -34,7 +34,9 @@ message Header {
 }
 
 message File {
-  required int32 id = 1;
+  // If absent, id is the index of the file in the Files.file list
+  optional int32 id = 1;
+
   repeated Annotation annotation = 2;
 }
 

@@ -722,11 +722,19 @@ public final class DebugJsProtoBuf {
       org.jetbrains.kotlin.protobuf.MessageOrBuilder {
 
     /**
-     * <code>required int32 id = 1;</code>
+     * <code>optional int32 id = 1;</code>
+     *
+     * <pre>
+     * If absent, id is the index of the file in the Files.file list
+     * </pre>
      */
     boolean hasId();
     /**
-     * <code>required int32 id = 1;</code>
+     * <code>optional int32 id = 1;</code>
+     *
+     * <pre>
+     * If absent, id is the index of the file in the Files.file list
+     * </pre>
      */
     int getId();
 
@@ -865,13 +873,21 @@ public final class DebugJsProtoBuf {
     public static final int ID_FIELD_NUMBER = 1;
     private int id_;
     /**
-     * <code>required int32 id = 1;</code>
+     * <code>optional int32 id = 1;</code>
+     *
+     * <pre>
+     * If absent, id is the index of the file in the Files.file list
+     * </pre>
      */
     public boolean hasId() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required int32 id = 1;</code>
+     * <code>optional int32 id = 1;</code>
+     *
+     * <pre>
+     * If absent, id is the index of the file in the Files.file list
+     * </pre>
      */
     public int getId() {
       return id_;
@@ -922,10 +938,6 @@ public final class DebugJsProtoBuf {
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
-      if (!hasId()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
       for (int i = 0; i < getAnnotationCount(); i++) {
         if (!getAnnotation(i).isInitialized()) {
           memoizedIsInitialized = 0;
@@ -1179,10 +1191,6 @@ public final class DebugJsProtoBuf {
       }
 
       public final boolean isInitialized() {
-        if (!hasId()) {
-          
-          return false;
-        }
         for (int i = 0; i < getAnnotationCount(); i++) {
           if (!getAnnotation(i).isInitialized()) {
             
@@ -1213,19 +1221,31 @@ public final class DebugJsProtoBuf {
 
       private int id_ ;
       /**
-       * <code>required int32 id = 1;</code>
+       * <code>optional int32 id = 1;</code>
+       *
+       * <pre>
+       * If absent, id is the index of the file in the Files.file list
+       * </pre>
        */
       public boolean hasId() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>required int32 id = 1;</code>
+       * <code>optional int32 id = 1;</code>
+       *
+       * <pre>
+       * If absent, id is the index of the file in the Files.file list
+       * </pre>
        */
       public int getId() {
         return id_;
       }
       /**
-       * <code>required int32 id = 1;</code>
+       * <code>optional int32 id = 1;</code>
+       *
+       * <pre>
+       * If absent, id is the index of the file in the Files.file list
+       * </pre>
        */
       public Builder setId(int value) {
         bitField0_ |= 0x00000001;
@@ -1234,7 +1254,11 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>required int32 id = 1;</code>
+       * <code>optional int32 id = 1;</code>
+       *
+       * <pre>
+       * If absent, id is the index of the file in the Files.file list
+       * </pre>
        */
       public Builder clearId() {
         bitField0_ = (bitField0_ & ~0x00000001);
@@ -5456,7 +5480,7 @@ public final class DebugJsProtoBuf {
       "re/deserialization/src/descriptors.debug" +
       ".proto\"P\n\006Header\022\r\n\005flags\030\001 \001(\005\022\036\n\026js_co" +
       "de_binary_version\030\002 \001(\005\022\027\n\017package_fq_na" +
-      "me\030\003 \001(\t\"V\n\004File\022\n\n\002id\030\001 \002(\005\022B\n\nannotati" +
+      "me\030\003 \001(\t\"V\n\004File\022\n\n\002id\030\001 \001(\005\022B\n\nannotati" +
       "on\030\002 \003(\0132..org.jetbrains.kotlin.serializ" +
       "ation.Annotation\"B\n\005Files\0229\n\004file\030\001 \003(\0132" +
       "+.org.jetbrains.kotlin.serialization.js." +
