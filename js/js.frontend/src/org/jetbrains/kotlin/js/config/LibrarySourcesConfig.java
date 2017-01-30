@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.utils.JsBinaryVersion;
+import org.jetbrains.kotlin.utils.JsMetadataVersion;
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata;
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils;
 import org.jetbrains.kotlin.utils.LibraryUtils;
@@ -148,7 +148,7 @@ public class LibrarySourcesConfig extends JsConfig {
                     if (!metadata.getVersion().isCompatible()) {
                         report.invoke("File '" + path + "' was compiled with an incompatible version of Kotlin. " +
                                       "The binary version of its metadata is " + metadata.getVersion() +
-                                      ", expected version is " + JsBinaryVersion.INSTANCE);
+                                      ", expected version is " + JsMetadataVersion.INSTANCE);
                         return true;
                     }
                 }

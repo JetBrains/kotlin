@@ -21,13 +21,13 @@ import com.intellij.util.indexing.DataIndexer
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.js.JavaScript
-import org.jetbrains.kotlin.utils.JsBinaryVersion
+import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.util.*
 
-object KotlinJavaScriptAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinJavaScriptAbiVersionIndex, JsBinaryVersion>(
-        KotlinJavaScriptAbiVersionIndex::class.java, ::JsBinaryVersion
+object KotlinJavaScriptAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinJavaScriptAbiVersionIndex, JsMetadataVersion>(
+        KotlinJavaScriptAbiVersionIndex::class.java, ::JsMetadataVersion
 ) {
     override fun getIndexer() = INDEXER
 
@@ -38,7 +38,7 @@ object KotlinJavaScriptAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinJavaScr
     private val VERSION = 3
 
     private val INDEXER = DataIndexer { inputData: FileContent ->
-        val result = HashMap<JsBinaryVersion, Void?>()
+        val result = HashMap<JsMetadataVersion, Void?>()
 
         tryBlock(inputData) {
             val text = VfsUtilCore.loadText(inputData.file)
@@ -47,7 +47,7 @@ object KotlinJavaScriptAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinJavaScr
             for (metadata in metadataList) {
                 val version = metadata.version.takeIf { it.isCompatible() }
                               // Version is set to something weird
-                              ?: JsBinaryVersion.INVALID_VERSION
+                              ?: JsMetadataVersion.INVALID_VERSION
                 result[version] = null
             }
         }

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.js.JsProtoBuf
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
-import org.jetbrains.kotlin.utils.JsBinaryVersion
+import org.jetbrains.kotlin.utils.JsMetadataVersion
 import java.io.ByteArrayInputStream
 import java.io.IOException
 
@@ -64,10 +64,10 @@ fun buildDecompiledTextFromJsMetadata(kjsmFile: VirtualFile): DecompiledText {
 
     when (file) {
         null -> {
-            return createIncompatibleAbiVersionDecompiledText(JsBinaryVersion.INSTANCE, JsBinaryVersion.INVALID_VERSION)
+            return createIncompatibleAbiVersionDecompiledText(JsMetadataVersion.INSTANCE, JsMetadataVersion.INVALID_VERSION)
         }
         is KjsmFile.Incompatible -> {
-            return createIncompatibleAbiVersionDecompiledText(JsBinaryVersion.INSTANCE, file.version)
+            return createIncompatibleAbiVersionDecompiledText(JsMetadataVersion.INSTANCE, file.version)
         }
         is KjsmFile.Compatible -> {
             val packageFqName = file.packageFqName
@@ -85,7 +85,7 @@ fun buildDecompiledTextFromJsMetadata(kjsmFile: VirtualFile): DecompiledText {
 
 // TODO: deduplicate code with BuiltInDefinitionFile
 sealed class KjsmFile {
-    class Incompatible(val version: JsBinaryVersion) : KjsmFile()
+    class Incompatible(val version: JsMetadataVersion) : KjsmFile()
 
     class Compatible(val header: JsProtoBuf.Header, val proto: JsProtoBuf.Library.Part) : KjsmFile() {
         val packageFqName = FqName(header.packageFqName)
@@ -99,7 +99,7 @@ sealed class KjsmFile {
         fun read(file: VirtualFile): KjsmFile? {
             val stream = ByteArrayInputStream(readFileContentsSafely(file) ?: return null)
 
-            val version = JsBinaryVersion.readFrom(stream)
+            val version = JsMetadataVersion.readFrom(stream)
             if (!version.isCompatible()) {
                 return Incompatible(version)
             }
