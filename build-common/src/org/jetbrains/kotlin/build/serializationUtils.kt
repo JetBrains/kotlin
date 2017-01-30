@@ -17,14 +17,14 @@
 package org.jetbrains.kotlin.build
 
 import kotlin.reflect.KClass
-import kotlin.reflect.KParameter
-import kotlin.reflect.full.createType
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 
-inline fun <reified T : Any> serializeToPlainText(instance: T): String {
+inline fun <reified T : Any> serializeToPlainText(instance: T): String = serializeToPlainText(instance, T::class)
+
+fun <T : Any> serializeToPlainText(instance: T, klass: KClass<T>): String {
     val lines = ArrayList<String>()
-    for (property in T::class.memberProperties) {
+    for (property in klass.memberProperties) {
         val value = property.get(instance)
         if (value != null) {
             lines.add("${property.name}=$value")
@@ -33,18 +33,18 @@ inline fun <reified T : Any> serializeToPlainText(instance: T): String {
     return lines.joinToString("\n")
 }
 
-inline fun <reified T : Any> deserializeFromPlainText(str: String): T? {
+inline fun <reified T : Any> deserializeFromPlainText(str: String): T? = deserializeFromPlainText(str, T::class)
+
+fun <T : Any> deserializeFromPlainText(str: String, klass: KClass<T>): T? {
     val args = ArrayList<Any?>()
     val properties = str
             .split("\n")
             .filter(String::isNotBlank)
             .associate { it.substringBefore("=") to it.substringAfter("=") }
 
-    val primaryConstructor = T::class.primaryConstructor
-                             ?: throw IllegalStateException("Class ${T::class.java} does not have primary constructor")
-    val params = primaryConstructor.parameters
-    val sortedBy = params.sortedBy { it.index }
-    for (param in sortedBy) {
+    val primaryConstructor = klass.primaryConstructor
+                             ?: throw IllegalStateException("${klass.java} does not have primary constructor")
+    for (param in primaryConstructor.parameters.sortedBy { it.index }) {
         val argumentString = properties[param.name]
 
         if (argumentString == null) {
@@ -57,10 +57,10 @@ inline fun <reified T : Any> deserializeFromPlainText(str: String): T? {
             }
         }
 
-        val argument: Any? = when {
-            param.isTypeOrNullableType(Int::class) -> argumentString.toInt()
-            param.isTypeOrNullableType(Boolean::class) -> argumentString.toBoolean()
-            param.isTypeOrNullableType(String::class) -> argumentString
+        val argument: Any? = when (param.type.classifier) {
+            Int::class -> argumentString.toInt()
+            Boolean::class -> argumentString.toBoolean()
+            String::class -> argumentString
             else -> throw IllegalStateException("Unexpected property type: ${param.type}")
         }
 
@@ -69,9 +69,3 @@ inline fun <reified T : Any> deserializeFromPlainText(str: String): T? {
 
     return primaryConstructor.call(*args.toTypedArray())
 }
-
-@PublishedApi
-internal fun <T : Any> KParameter.isTypeOrNullableType(klass: KClass<T>): Boolean =
-        this.type == klass.createType(nullable = true) || this.type == klass.createType(nullable = false)
-
-
