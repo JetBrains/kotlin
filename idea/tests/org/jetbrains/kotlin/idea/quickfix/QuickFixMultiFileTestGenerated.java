@@ -390,6 +390,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             doTestWithExtraFile(fileName);
         }
 
+        @TestMetadata("memberWithTopLevelConflict.before.Main.kt")
+        public void testMemberWithTopLevelConflict() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/memberWithTopLevelConflict.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("minusOperator.before.Main.kt")
         public void testMinusOperator() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/minusOperator.before.Main.kt");
