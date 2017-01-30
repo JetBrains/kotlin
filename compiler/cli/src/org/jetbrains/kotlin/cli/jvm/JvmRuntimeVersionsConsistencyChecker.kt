@@ -127,12 +127,15 @@ object JvmRuntimeVersionsConsistencyChecker {
 
         val languageVersion = languageVersionSettings?.let { MavenComparableVersion(it.languageVersion) } ?: CURRENT_COMPILER_VERSION
 
-        if (checkCompilerClasspathConsistency(messageCollector, languageVersion, runtimeJarsInfo)) {
-            messageCollector.issue(
-                    null,
-                    "Some runtime JAR files in the classpath have an incompatible version. " +
-                    "Remove them from the classpath or use '-Xskip-runtime-version-check' to suppress errors"
-            )
+        val consistency = checkCompilerClasspathConsistency(messageCollector, languageVersion, runtimeJarsInfo)
+        if (consistency != ClasspathConsistency.Consistent) {
+            val extraHint =
+                    if (consistency == ClasspathConsistency.InconsistentWithLanguageVersion)
+                        "Remove them from the classpath or pass the correct '-language-version' explicitly. " +
+                        "Alternatively, you can use '-Xskip-runtime-version-check' to suppress this error"
+                    else
+                        "Remove them from the classpath or use '-Xskip-runtime-version-check' to suppress errors"
+            messageCollector.issue(null, "Some runtime JAR files in the classpath have an incompatible version. $extraHint")
         }
 
         val librariesWithBundled = runtimeJarsInfo.otherLibrariesWithBundledRuntime
@@ -155,24 +158,35 @@ object JvmRuntimeVersionsConsistencyChecker {
         }
     }
 
+    private sealed class ClasspathConsistency {
+        object Consistent : ClasspathConsistency()
+        object InconsistentWithLanguageVersion : ClasspathConsistency()
+        object InconsistentWithCompilerVersion : ClasspathConsistency()
+        object InconsistentBecauseOfRuntimesWithDifferentVersions : ClasspathConsistency()
+    }
+
     private fun checkCompilerClasspathConsistency(
             messageCollector: MessageCollector,
             languageVersion: MavenComparableVersion,
             runtimeJarsInfo: RuntimeJarsInfo
-    ): Boolean {
+    ): ClasspathConsistency {
         // The "Core" jar files should not be newer than the compiler. This behavior is reserved for the future if we realise that we're
         // going to break language/library compatibility in such a way that it's easier to make the old compiler just report an error
         // in the case the new runtime library is specified in the classpath, rather than employing any other compatibility breakage tools
         // we have at our disposal (Deprecated, SinceKotlin, SinceKotlinInfo in metadata, etc.)
         if (runtimeJarsInfo.coreJars.map {
             checkNotNewerThanCompiler(messageCollector, it)
-        }.any { it }) return true
+        }.any { it }) return ClasspathConsistency.InconsistentWithCompilerVersion
 
         if (runtimeJarsInfo.jars.map {
             checkCompatibleWithLanguageVersion(messageCollector, it, languageVersion)
-        }.any { it }) return true
+        }.any { it }) return ClasspathConsistency.InconsistentWithLanguageVersion
 
-        return checkMatchingVersions(messageCollector, runtimeJarsInfo)
+        if (checkMatchingVersions(messageCollector, runtimeJarsInfo)) {
+            return ClasspathConsistency.InconsistentBecauseOfRuntimesWithDifferentVersions
+        }
+
+        return ClasspathConsistency.Consistent
     }
 
     private fun checkNotNewerThanCompiler(messageCollector: MessageCollector, jar: KotlinLibraryFile): Boolean {
