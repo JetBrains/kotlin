@@ -37,8 +37,8 @@ public abstract @interface Anno3 {
 
 
 public enum Colors {
-    /*public static final*/ WHITE /* = null */,
-    /*public static final*/ BLACK /* = null */;
+    /*public static final*/ WHITE /* = new WHITE() */,
+    /*public static final*/ BLACK /* = new BLACK() */;
 
     Colors() {
     }

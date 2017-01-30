@@ -25,3 +25,12 @@ enum EnumClass2 {
         this.blah = blah;
     }
 }
+
+enum EnumClass3 {
+    A {
+        @Override
+        void a() {}
+    };
+
+    abstract void a();
+}

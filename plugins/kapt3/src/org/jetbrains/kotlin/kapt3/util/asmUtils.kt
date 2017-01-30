@@ -20,6 +20,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AnnotationNode
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
+import org.jetbrains.org.objectweb.asm.tree.FieldNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 internal fun isEnum(access: Int) = (access and Opcodes.ACC_ENUM) != 0
@@ -32,6 +33,8 @@ internal fun isAbstract(access: Int) = (access and Opcodes.ACC_ABSTRACT) != 0
 internal fun ClassNode.isEnum() = (access and Opcodes.ACC_ENUM) != 0
 internal fun ClassNode.isAnnotation() = (access and Opcodes.ACC_ANNOTATION) != 0
 internal fun MethodNode.isVarargs() = (access and Opcodes.ACC_VARARGS) != 0
+
+internal fun FieldNode.isEnumValue() = (access and Opcodes.ACC_ENUM) != 0
 
 internal fun <T> List<T>?.isNullOrEmpty() = this == null || this.isEmpty()
 

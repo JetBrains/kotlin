@@ -37,8 +37,8 @@ public final class Test {
     }
 
     public static enum NestedEnum {
-        /*public static final*/ BLACK /* = null */,
-        /*public static final*/ WHITE /* = null */;
+        /*public static final*/ BLACK /* = new BLACK() */,
+        /*public static final*/ WHITE /* = new WHITE() */;
 
         NestedEnum() {
         }
