@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersion.KOTLIN_1_0
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.MavenComparableVersion
+import java.io.IOException
 import java.util.*
 import java.util.jar.Attributes
 import java.util.jar.Manifest
@@ -102,9 +103,9 @@ object JvmRuntimeVersionsConsistencyChecker {
                 .assertNotNull { "$MANIFEST_KOTLIN_RUNTIME_COMPONENT_MAIN not found in kotlinManifest.properties" }
     }
 
-    private class KotlinLibraryFile(val component: String, val file: VirtualFile, val version: MavenComparableVersion) {
+    private class KotlinLibraryFile(val file: VirtualFile, val version: MavenComparableVersion) {
         override fun toString(): String =
-                "${file.name}:$version ($component)"
+                "${file.name}:$version"
     }
 
     private class RuntimeJarsInfo(
@@ -219,42 +220,60 @@ object JvmRuntimeVersionsConsistencyChecker {
         val otherLibrariesWithBundledRuntime = ArrayList<VirtualFile>(0)
 
         for (jarRoot in classpathJarRoots) {
-            val manifest = try {
-                jarRoot.findFileByRelativePath(MANIFEST_MF)?.let { Manifest(it.inputStream) }
-            }
-            catch (e: Exception) {
-                continue
-            }
-
-            val runtimeComponent = manifest?.mainAttributes?.getValue(KOTLIN_RUNTIME_COMPONENT_ATTRIBUTE)
-            if (runtimeComponent == null) {
-                if (jarRoot.findFileByRelativePath(KOTLIN_STDLIB_MODULE) != null ||
-                    jarRoot.findFileByRelativePath(KOTLIN_REFLECT_MODULE) != null) {
-                    val jarFile = VfsUtilCore.getVirtualFileForJar(jarRoot) ?: continue
-                    if (isGenuineKotlinRuntime(manifest)) {
-                        jars.add(KotlinLibraryFile(KOTLIN_RUNTIME_COMPONENT_MAIN, jarFile, MavenComparableVersion(KOTLIN_1_0)))
-                    }
-                    else {
-                        otherLibrariesWithBundledRuntime.add(jarFile)
-                    }
-                }
-                continue
-            }
+            val fileKind = determineFileKind(jarRoot)
+            if (fileKind is FileKind.Irrelevant) continue
 
             val jarFile = VfsUtilCore.getVirtualFileForJar(jarRoot) ?: continue
-            val version = manifest.getKotlinLanguageVersion()
-            val file = KotlinLibraryFile(runtimeComponent, jarFile, version)
-
-            if (runtimeComponent == KOTLIN_RUNTIME_COMPONENT_CORE) {
-                jars.add(file)
-                coreJars.add(file)
-            }
-            else if (runtimeComponent == KOTLIN_RUNTIME_COMPONENT_MAIN) {
-                jars.add(file)
+            when (fileKind) {
+                is FileKind.Runtime -> {
+                    val file = KotlinLibraryFile(jarFile, fileKind.version)
+                    jars.add(file)
+                    if (fileKind.isCoreComponent) {
+                        coreJars.add(file)
+                    }
+                }
+                FileKind.OldRuntime -> jars.add(KotlinLibraryFile(jarFile, MavenComparableVersion(KOTLIN_1_0)))
+                FileKind.LibraryWithBundledRuntime -> otherLibrariesWithBundledRuntime.add(jarFile)
             }
         }
 
         return RuntimeJarsInfo(jars, coreJars, otherLibrariesWithBundledRuntime)
+    }
+
+    private sealed class FileKind {
+        class Runtime(val version: MavenComparableVersion, val isCoreComponent: Boolean) : FileKind()
+
+        // Runtime library of Kotlin 1.0
+        object OldRuntime : FileKind()
+
+        object LibraryWithBundledRuntime : FileKind()
+
+        object Irrelevant : FileKind()
+    }
+
+    private fun determineFileKind(jarRoot: VirtualFile): FileKind {
+        val manifestFile = jarRoot.findFileByRelativePath(MANIFEST_MF)
+        val manifest = try {
+            manifestFile?.let { Manifest(it.inputStream) }
+        }
+        catch (e: IOException) {
+            return FileKind.Irrelevant
+        }
+
+        val runtimeComponent = manifest?.mainAttributes?.getValue(KOTLIN_RUNTIME_COMPONENT_ATTRIBUTE)
+        return when (runtimeComponent) {
+            KOTLIN_RUNTIME_COMPONENT_MAIN ->
+                FileKind.Runtime(manifest.getKotlinLanguageVersion(), isCoreComponent = false)
+            KOTLIN_RUNTIME_COMPONENT_CORE ->
+                FileKind.Runtime(manifest.getKotlinLanguageVersion(), isCoreComponent = true)
+            null -> when {
+                jarRoot.findFileByRelativePath(KOTLIN_STDLIB_MODULE) == null &&
+                jarRoot.findFileByRelativePath(KOTLIN_REFLECT_MODULE) == null -> FileKind.Irrelevant
+                isGenuineKotlinRuntime(manifest) -> FileKind.OldRuntime
+                else -> FileKind.LibraryWithBundledRuntime
+            }
+            else -> FileKind.Irrelevant
+        }
     }
 
     // Returns true if the manifest is from the original Kotlin Runtime jar, false if it's from a library with a bundled runtime
