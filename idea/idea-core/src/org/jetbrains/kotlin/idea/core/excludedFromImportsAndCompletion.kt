@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 private val exclusions =
         listOf(
                 "kotlin.jvm.internal",
-                "kotlin.coroutines.intrinsics",
+                "kotlin.coroutines.experimental.intrinsics",
+                "kotlin.coroutines.experimental.jvm.internal",
                 "kotlin.reflect.jvm.internal"
         )
 

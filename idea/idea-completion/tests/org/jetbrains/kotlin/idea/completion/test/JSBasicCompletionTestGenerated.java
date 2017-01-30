@@ -578,6 +578,18 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("NoCompletionForCoroutinesIntinsics.kt")
+        public void testNoCompletionForCoroutinesIntinsics() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoCompletionForCoroutinesIntinsics.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoCompletionForCoroutinesJvmInternal.kt")
+        public void testNoCompletionForCoroutinesJvmInternal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoCompletionForCoroutinesJvmInternal.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NoCompletionForExcluded.kt")
         public void testNoCompletionForExcluded() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoCompletionForExcluded.kt");
