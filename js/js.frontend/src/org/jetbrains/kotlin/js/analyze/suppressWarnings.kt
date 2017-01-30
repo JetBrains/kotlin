@@ -20,11 +20,8 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.js.PredefinedAnnotation.*
-import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor
 import org.jetbrains.kotlin.resolve.diagnostics.FUNCTION_NO_BODY_ERRORS
@@ -50,10 +47,3 @@ class SuppressUninitializedErrorsForNativeDeclarations : DiagnosticSuppressor {
     }
 }
 
-class SuppressWarningsFromExternalModules : DiagnosticSuppressor {
-    override fun isSuppressed(diagnostic: Diagnostic): Boolean {
-        val file = diagnostic.psiFile
-        return diagnostic.severity == Severity.WARNING &&
-               file is KtFile && file.getUserData(LibrarySourcesConfig.EXTERNAL_MODULE_NAME) != null
-    }
-}

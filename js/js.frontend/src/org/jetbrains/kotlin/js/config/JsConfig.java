@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js.config;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.SmartList;
 import kotlin.collections.CollectionsKt;
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration;
 import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor;
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil;
@@ -39,7 +37,6 @@ import org.jetbrains.kotlin.utils.JsMetadataVersion;
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -50,7 +47,6 @@ public abstract class JsConfig {
     private final Project project;
     private final CompilerConfiguration configuration;
     private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
-    private final List<KtFile> sourceFilesFromLibraries = new SmartList<KtFile>();
 
     @NotNull
     protected final List<KotlinJavascriptMetadata> metadata = new SmartList<KotlinJavascriptMetadata>();
@@ -92,7 +88,7 @@ public abstract class JsConfig {
 
     public abstract boolean checkLibFilesAndReportErrors(@NotNull Reporter report);
 
-    protected abstract void init(@NotNull List<KtFile> sourceFilesInLibraries, @NotNull List<KotlinJavascriptMetadata> metadata);
+    protected abstract void init(@NotNull List<KotlinJavascriptMetadata> metadata);
 
     @NotNull
     public List<JsModuleDescriptor<ModuleDescriptorImpl>> getModuleDescriptors() {
@@ -117,16 +113,10 @@ public abstract class JsConfig {
         return moduleDescriptors;
     }
 
-    @NotNull
-    private List<KtFile> getSourceFilesFromLibraries() {
-        init();
-        return sourceFilesFromLibraries;
-    }
-
     private void init() {
         if (initialized) return;
 
-        init(sourceFilesFromLibraries, metadata);
+        init(metadata);
         initialized = true;
     }
 
@@ -152,13 +142,5 @@ public abstract class JsConfig {
 
     private static void setDependencies(ModuleDescriptorImpl module, List<ModuleDescriptorImpl> modules) {
         module.setDependencies(CollectionsKt.plus(modules, JsPlatform.INSTANCE.getBuiltIns().getBuiltInsModule()));
-    }
-
-    @NotNull
-    public static Collection<KtFile> withJsLibAdded(@NotNull Collection<KtFile> files, @NotNull JsConfig config) {
-        Collection<KtFile> allFiles = Lists.newArrayList();
-        allFiles.addAll(files);
-        allFiles.addAll(config.getSourceFilesFromLibraries());
-        return allFiles;
     }
 }

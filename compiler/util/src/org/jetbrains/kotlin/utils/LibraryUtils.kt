@@ -27,17 +27,13 @@ import java.util.jar.Manifest
 object LibraryUtils {
     private val LOG = Logger.getInstance(LibraryUtils::class.java)
 
-    val KOTLIN_JS_MODULE_NAME: String = "Kotlin-JS-Module-Name"
     private var TITLE_KOTLIN_JAVASCRIPT_STDLIB: String
-    private var TITLE_KOTLIN_JAVASCRIPT_LIB: String
 
     val META_INF = "META-INF/"
     private val MANIFEST_PATH = "${META_INF}MANIFEST.MF"
-    private val KOTLIN_JS_MODULE_ATTRIBUTE_NAME = Attributes.Name(KOTLIN_JS_MODULE_NAME)
 
     init {
         var jsStdLib = ""
-        var jsLib = ""
 
         val manifestProperties = LibraryUtils::class.java.getResourceAsStream("/kotlinManifest.properties")
         if (manifestProperties != null) {
@@ -45,7 +41,6 @@ object LibraryUtils {
                 val properties = Properties()
                 properties.load(manifestProperties)
                 jsStdLib = properties.getPropertyOrFail("manifest.impl.title.kotlin.javascript.stdlib")
-                jsLib = properties.getPropertyOrFail("manifest.spec.title.kotlin.javascript.lib")
             }
             catch (e: IOException) {
                 LOG.error(e)
@@ -57,27 +52,14 @@ object LibraryUtils {
         }
 
         TITLE_KOTLIN_JAVASCRIPT_STDLIB = jsStdLib
-        TITLE_KOTLIN_JAVASCRIPT_LIB = jsLib
     }
 
     @JvmStatic fun getJarFile(classesRoots: List<VirtualFile>, jarName: String): VirtualFile? {
         return classesRoots.firstOrNull { it.name == jarName }
     }
 
-    @JvmStatic fun getKotlinJsModuleName(library: File): String? {
-        return getManifestMainAttributesFromJarOrDirectory(library)?.getValue(KOTLIN_JS_MODULE_ATTRIBUTE_NAME)
-    }
-
-    @JvmStatic fun isOldKotlinJavascriptLibrary(library: File): Boolean =
-            checkAttributeValue(library, TITLE_KOTLIN_JAVASCRIPT_LIB, Attributes.Name.SPECIFICATION_TITLE) &&
-            getKotlinJsModuleName(library) != null
-
-    @JvmStatic fun isKotlinJavascriptLibraryWithMetadata(library: File): Boolean =
-            KotlinJavascriptMetadataUtils.loadMetadata(library).isNotEmpty()
-
     @Suppress("unused") // used in K2JSCompilerMojo
-    @JvmStatic fun isKotlinJavascriptLibrary(library: File): Boolean =
-            isOldKotlinJavascriptLibrary(library) || isKotlinJavascriptLibraryWithMetadata(library)
+    @JvmStatic fun isKotlinJavascriptLibrary(library: File): Boolean = KotlinJavascriptMetadataUtils.loadMetadata(library).isNotEmpty()
 
     @JvmStatic fun isKotlinJavascriptStdLibrary(library: File): Boolean {
         return checkAttributeValue(library, TITLE_KOTLIN_JAVASCRIPT_STDLIB, Attributes.Name.IMPLEMENTATION_TITLE)

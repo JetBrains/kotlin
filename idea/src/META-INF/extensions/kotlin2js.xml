@@ -8,6 +8,5 @@
         <suppressStringProvider implementation="org.jetbrains.kotlin.js.analyze.SuppressUnusedParameterForJsNative"/>
         <suppressStringProvider implementation="org.jetbrains.kotlin.js.analyze.SuppressNoBodyErrorsForNativeDeclarations"/>
         <diagnosticSuppressor implementation="org.jetbrains.kotlin.js.analyze.SuppressUninitializedErrorsForNativeDeclarations"/>
-        <diagnosticSuppressor implementation="org.jetbrains.kotlin.js.analyze.SuppressWarningsFromExternalModules"/>
     </extensions>
 </idea-plugin>

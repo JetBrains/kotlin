@@ -104,14 +104,6 @@ public class AntTaskJsTest extends AbstractAntTaskTest {
         doJsAntTest();
     }
 
-    public void testSimpleWithStdlibAndAnotherLib() throws Exception {
-        doJsAntTest("jslib-example.js");
-    }
-
-    public void testSimpleWithStdlibAndFolderAsAnotherLib() throws Exception {
-        doJsAntTest("jslib-example.js");
-    }
-
     public void testSimpleWithoutStdlibAndFolderAsAnotherLib() throws Exception {
         doJsAntTest("jslib-example.js");
     }

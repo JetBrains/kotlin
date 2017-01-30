@@ -98,8 +98,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         private val EXPECTED_JS_FILES_IN_OUTPUT_NO_COPY = hashSetOf(
                 "$PROJECT_NAME.js",
                 "$PROJECT_NAME.meta.js",
-                "$PROJECT_NAME/root-package.kjsm",
-                "$PROJECT_NAME/library/sample/sample.kjsm"
+                "$PROJECT_NAME/root-package.kjsm"
         )
         private val EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_DEFAULT_DIR = hashSetOf(
                 "$PROJECT_NAME.js",
@@ -107,13 +106,13 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
                 "lib/kotlin.js",
                 "lib/kotlin.meta.js",
                 "lib/jslib-example.js",
+                "lib/jslib-example.meta.js",
                 "lib/file0.js",
                 "lib/dir/file1.js",
                 "lib/META-INF-ex/file2.js",
                 "lib/res0.js",
                 "lib/resdir/res1.js",
-                "$PROJECT_NAME/root-package.kjsm",
-                "$PROJECT_NAME/library/sample/sample.kjsm"
+                "$PROJECT_NAME/root-package.kjsm"
         )
         private val EXPECTED_JS_FILES_IN_OUTPUT_WITH_ADDITIONAL_LIB_AND_CUSTOM_DIR = hashSetOf(
                 "$PROJECT_NAME.js",
@@ -121,13 +120,13 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
                 "custom/kotlin.js",
                 "custom/kotlin.meta.js",
                 "custom/jslib-example.js",
+                "custom/jslib-example.meta.js",
                 "custom/file0.js",
                 "custom/dir/file1.js",
                 "custom/META-INF-ex/file2.js",
                 "custom/res0.js",
                 "custom/resdir/res1.js",
-                "$PROJECT_NAME/root-package.kjsm",
-                "$PROJECT_NAME/library/sample/sample.kjsm"
+                "$PROJECT_NAME/root-package.kjsm"
         )
 
         private fun k2jsOutput(vararg moduleNames: String): Array<String> {
