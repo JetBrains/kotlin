@@ -1,7 +1,13 @@
 compiler/testData/cli/jvm/noStdlib.kt:1:8: error: unresolved reference: kotlin
 import kotlin.reflect.*
        ^
-compiler/testData/cli/jvm/noStdlib.kt:5:5: error: unresolved reference: listOf
+compiler/testData/cli/jvm/noStdlib.kt:4:5: error: cannot access class 'kotlin.reflect.KClass'. Check your module classpath for missing or conflicting dependencies
+    String::class.primaryConstructor
+    ^
+compiler/testData/cli/jvm/noStdlib.kt:5:5: error: cannot access class 'kotlin.reflect.KCallable'. Check your module classpath for missing or conflicting dependencies
+    ::foo.isExternal
+    ^
+compiler/testData/cli/jvm/noStdlib.kt:6:5: error: unresolved reference: listOf
     listOf(42)
     ^
 COMPILATION_ERROR
