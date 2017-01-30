@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ enum class LanguageFeature(val sinceVersion: LanguageVersion?, val hintUrl: Stri
     ShortSyntaxForPropertyGetters(KOTLIN_1_1),
     RefinedSamAdaptersPriority(KOTLIN_1_1),
     SafeCallBoundSmartCasts(KOTLIN_1_1),
+    TypeInferenceOnGenericsForCallableReferences(KOTLIN_1_1),
 
     // Experimental features
     MultiPlatformProjects(null, "https://kotlinlang.org/docs/diagnostics/experimental-multitraget-projects"),
