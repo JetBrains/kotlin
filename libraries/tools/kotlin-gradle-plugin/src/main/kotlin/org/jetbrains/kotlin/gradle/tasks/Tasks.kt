@@ -79,7 +79,10 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     internal var coroutinesFromGradleProperties: Coroutines? = null
     // Input is needed to force rebuild even if source files are not changed
     @get:Input
-    val coroutines: Coroutines
+    internal val coroutinesStr: String
+            get() = coroutines.name
+
+    private val coroutines: Coroutines
         get() = kotlinExt.experimental.coroutines
                 ?: coroutinesFromGradleProperties
                 ?: Coroutines.DEFAULT
