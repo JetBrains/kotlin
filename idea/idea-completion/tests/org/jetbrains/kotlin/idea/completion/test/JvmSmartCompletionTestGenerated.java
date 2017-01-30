@@ -498,12 +498,6 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
-    @TestMetadata("SAMConstructorForTypeAlias.kt")
-    public void testSAMConstructorForTypeAlias() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/SAMConstructorForTypeAlias.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("SAMExpected1.kt")
     public void testSAMExpected1() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/SAMExpected1.kt");
@@ -831,36 +825,6 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     public static class Constructor extends AbstractJvmSmartCompletionTest {
         public void testAllFilesPresentInConstructor() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smart/constructor"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("ConstructorViaTypeAlias.kt")
-        public void testConstructorViaTypeAlias() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/ConstructorViaTypeAlias.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("ConstructorWithTypeParamsPartialSubstitution1ViaTypeAlias.kt")
-        public void testConstructorWithTypeParamsPartialSubstitution1ViaTypeAlias() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/ConstructorWithTypeParamsPartialSubstitution1ViaTypeAlias.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("ConstructorWithTypeParamsPartialSubstitution2ViaTypeAlias.kt")
-        public void testConstructorWithTypeParamsPartialSubstitution2ViaTypeAlias() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/ConstructorWithTypeParamsPartialSubstitution2ViaTypeAlias.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("ConstructorWithTypeParamsSubstitutionViaTypeAlias.kt")
-        public void testConstructorWithTypeParamsSubstitutionViaTypeAlias() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/ConstructorWithTypeParamsSubstitutionViaTypeAlias.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("ConstructorWithTypeParamsViaTypeAlias.kt")
-        public void testConstructorWithTypeParamsViaTypeAlias() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/constructor/ConstructorWithTypeParamsViaTypeAlias.kt");
-            doTest(fileName);
         }
 
         @TestMetadata("GenericJavaClass.kt")
