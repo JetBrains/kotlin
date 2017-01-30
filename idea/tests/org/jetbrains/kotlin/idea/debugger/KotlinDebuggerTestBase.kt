@@ -213,8 +213,11 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
             stepTargets.filterIsInstance<SmartStepTarget>().mapNotNull {
                 stepTarget ->
                 when (stepTarget) {
-                    is KotlinLambdaSmartStepTarget -> KotlinLambdaMethodFilter(stepTarget.getLambda(), stepTarget.getCallingExpressionLines()!!, stepTarget.isInline)
-                    is KotlinMethodSmartStepTarget -> KotlinBasicStepMethodFilter(stepTarget.descriptor, stepTarget.getCallingExpressionLines()!!)
+                    is KotlinLambdaSmartStepTarget ->
+                        KotlinLambdaMethodFilter(
+                                stepTarget.getLambda(), stepTarget.getCallingExpressionLines()!!, stepTarget.isInline, stepTarget.isSuspend)
+                    is KotlinMethodSmartStepTarget ->
+                        KotlinBasicStepMethodFilter(stepTarget.descriptor, stepTarget.getCallingExpressionLines()!!)
                     is MethodSmartStepTarget -> BasicStepMethodFilter(stepTarget.method, stepTarget.getCallingExpressionLines())
                     else -> null
                 }
