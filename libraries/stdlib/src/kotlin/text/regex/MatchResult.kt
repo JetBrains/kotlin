@@ -24,7 +24,7 @@ package kotlin.text
  *
  * An element of the collection at the particular index can be `null`,
  * if the corresponding group in the regular expression is optional and
- * there was not match captured by that group.
+ * there was no match captured by that group.
  */
 public interface MatchGroupCollection : Collection<MatchGroup?> {
 
