@@ -105,6 +105,7 @@ object KotlinNameSuggester {
     }
 
     private val COMMON_TYPE_PARAMETER_NAMES = listOf("T", "U", "V", "W", "X", "Y", "Z")
+    private val MAX_NUMBER_OF_SUGGESTED_NAME_CHECKS = 1000
 
     fun suggestNamesForTypeParameters(count: Int, validator: (String) -> Boolean): List<String> {
         val result = ArrayList<String>()
@@ -143,7 +144,7 @@ object KotlinNameSuggester {
     fun suggestNameByName(name: String, validator: (String) -> Boolean): String {
         if (validator(name)) return name
         var i = 1
-        while (!validator(name + i)) {
+        while (i <= MAX_NUMBER_OF_SUGGESTED_NAME_CHECKS && !validator(name + i)) {
             ++i
         }
 

@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
@@ -94,7 +95,7 @@ class NewDeclarationNameValidator(
         }
     }
 
-    private fun notExcluded(it: DeclarationDescriptorWithSource) = it.source.getPsi() !in excludedDeclarations
+    private fun isExcluded(it: DeclarationDescriptorWithSource) = ErrorUtils.isError(it) || it.source.getPsi() in excludedDeclarations
 
     private fun LexicalScope.hasConflict(name: Name): Boolean {
         fun DeclarationDescriptor.isVisible(): Boolean {
@@ -106,10 +107,10 @@ class NewDeclarationNameValidator(
 
         return when(target) {
             Target.VARIABLES ->
-                getAllAccessibleVariables(name).any { !it.isExtension && it.isVisible() && notExcluded(it) }
+                getAllAccessibleVariables(name).any { !it.isExtension && it.isVisible() && !isExcluded(it) }
             Target.FUNCTIONS_AND_CLASSES ->
-                getAllAccessibleFunctions(name).any { !it.isExtension && it.isVisible() && notExcluded(it) } ||
-                findClassifier(name, NoLookupLocation.FROM_IDE)?.let { it.isVisible() && notExcluded(it) } ?: false
+                getAllAccessibleFunctions(name).any { !it.isExtension && it.isVisible() && !isExcluded(it) } ||
+                findClassifier(name, NoLookupLocation.FROM_IDE)?.let { it.isVisible() && !isExcluded(it) } ?: false
         }
     }
 
