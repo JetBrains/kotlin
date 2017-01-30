@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -160,8 +161,10 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
             if (reference !is KtMultiReference<*> && descriptors.size > 1) return@forEachDescendantOfType
 
             for (descriptor in descriptors) {
-                val declarations = DescriptorToSourceUtilsIde.getAllDeclarations(file.project, descriptor)
-                val declaration = declarations.singleOrNull()
+                val effectiveReferencedDescriptors = DescriptorToSourceUtils.getEffectiveReferencedDescriptors(descriptor).asSequence()
+                val declaration = effectiveReferencedDescriptors
+                        .map { DescriptorToSourceUtils.getSourceFromDescriptor(it) }
+                        .singleOrNull()
                 if (declaration != null && declaration.isInCopiedArea(file, startOffsets, endOffsets)) continue
 
                 if (!reference.canBeResolvedViaImport(descriptor)) continue
