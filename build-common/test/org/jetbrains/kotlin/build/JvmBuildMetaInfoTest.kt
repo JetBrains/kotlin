@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.build
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.junit.Assert.assertNotEquals
 import org.junit.Test
 
@@ -28,27 +30,26 @@ class JvmBuildMetaInfoTest : TestCase() {
         val args = K2JVMCompilerArguments()
         val info = JvmBuildMetaInfo(args)
         val actual = JvmBuildMetaInfo.serializeToString(info)
-        val expectedTempalte =
-"""apiVersionString=1.1
-bytecodeVersionMajor=1
-bytecodeVersionMinor=0
-bytecodeVersionPatch=1
-compilerBuildVersion=@snapshot@
-coroutinesEnable=false
-coroutinesError=false
-coroutinesVersion=0
-coroutinesWarn=false
-isEAP=@isEAP@
-languageVersionString=1.1
-metadataVersionMajor=1
-metadataVersionMinor=1
-metadataVersionPatch=3
-multiplatformEnable=false
-multiplatformVersion=0
-ownVersion=0"""
-        val expected = expectedTempalte.replace("@snapshot@", KotlinCompilerVersion.VERSION)
-                                       .replace("@isEAP@", KotlinCompilerVersion.IS_PRE_RELEASE.toString())
-        assertEquals(expected, actual)
+        val expectedKeys = listOf(
+                "apiVersionString",
+                "bytecodeVersionMajor",
+                "bytecodeVersionMinor",
+                "bytecodeVersionPatch",
+                "compilerBuildVersion",
+                "coroutinesEnable",
+                "coroutinesError",
+                "coroutinesVersion",
+                "coroutinesWarn",
+                "isEAP",
+                "languageVersionString",
+                "metadataVersionMajor",
+                "metadataVersionMinor",
+                "metadataVersionPatch",
+                "multiplatformEnable",
+                "multiplatformVersion",
+                "ownVersion"
+        )
+        assertEquals(expectedKeys, actual.split("\r\n", "\n").map { line -> line.split("=").first() })
     }
 
     @Test
