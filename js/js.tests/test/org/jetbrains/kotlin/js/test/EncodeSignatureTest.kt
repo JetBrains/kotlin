@@ -184,6 +184,12 @@ class EncodeSignatureTest {
         """)
     }
 
+    @Test
+    fun missingType() {
+        assertSignature(",kotlin.Int", "fun test(a: WrongClass, b: Int) {}")
+        assertSignature(",kotlin.Int", "fun test(a: WrongClass<String>, b: Int) {}")
+    }
+
     @Suppress("ObjectLiteralToLambda")
     private fun assertSignature(expectedEncoding: String, codeSnippet: String, name: String = "test") {
         val disposable = object : Disposable {

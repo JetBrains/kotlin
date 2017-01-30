@@ -82,14 +82,14 @@ private fun StringBuilder.encodeForSignature(
 
     append(DescriptorUtils.getFqName(declaration).asString())
 
-    if (type.arguments.isNotEmpty()) {
-        val parameters = declaration.typeConstructor.parameters
+    val parameters = declaration.typeConstructor.parameters
+    if (type.arguments.isNotEmpty() && parameters.isNotEmpty()) {
         append("<")
-        for ((index, argument) in type.arguments.withIndex()) {
-            if (index > 0) {
+        for ((argument, parameter) in type.arguments.zip(parameters)) {
+            if (parameter.index > 0) {
                 append(",")
             }
-            encodeForSignature(argument, parameters[index], typeParameterNamer)
+            encodeForSignature(argument, parameter, typeParameterNamer)
         }
         append(">")
     }
