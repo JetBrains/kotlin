@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.decompiler.classFile
 
-import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
@@ -37,21 +36,10 @@ val KOTLIN_COMPILED_FILE_ATTRIBUTE: String = "kotlin-compiled-file".apply {
 val KEY = Key.create<IsKotlinBinary>(KOTLIN_COMPILED_FILE_ATTRIBUTE)
 
 /**
- * Checks if this file is a compiled Kotlin class file (not necessarily ABI-compatible with the current plugin)
- */
-fun isKotlinJvmCompiledFile(file: VirtualFile): Boolean {
-    if (file.extension != JavaClassFileType.INSTANCE!!.defaultExtension) {
-        return false
-    }
-
-    return IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(file) != null
-}
-
-/**
  * Checks if this file is a compiled Kotlin class file ABI-compatible with the current plugin
  */
 fun isKotlinWithCompatibleAbiVersion(file: VirtualFile): Boolean {
-    if (!isKotlinJvmCompiledFile(file)) return false
+    if (!IDEKotlinBinaryClassCache.isKotlinJvmCompiledFile(file)) return false
 
     val kotlinClass = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(file)
     return kotlinClass != null && kotlinClass.classHeader.metadataVersion.isCompatible()
@@ -62,7 +50,7 @@ fun isKotlinWithCompatibleAbiVersion(file: VirtualFile): Boolean {
  * which should NOT be decompiled (and, as a result, shown under the library in the Project view, be searchable via Find class, etc.)
  */
 fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
-    if (!isKotlinJvmCompiledFile(file)) {
+    if (!IDEKotlinBinaryClassCache.isKotlinJvmCompiledFile(file)) {
         return false
     }
 

@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.types.isFlexible
 class KotlinClassFileDecompiler : ClassFileDecompilers.Full() {
     private val stubBuilder = KotlinClsStubBuilder()
 
-    override fun accepts(file: VirtualFile) = isKotlinJvmCompiledFile(file)
+    override fun accepts(file: VirtualFile) = IDEKotlinBinaryClassCache.isKotlinJvmCompiledFile(file)
 
     override fun getStubBuilder() = stubBuilder
 

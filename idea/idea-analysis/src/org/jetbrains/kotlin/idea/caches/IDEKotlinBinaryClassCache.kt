@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.caches
 
+import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
@@ -27,6 +28,21 @@ import org.jetbrains.kotlin.name.ClassId
 object IDEKotlinBinaryClassCache {
     data class KotlinBinaryHeaderData(val classHeader: KotlinClassHeader, val classId: ClassId)
     data class KotlinBinaryData(val isKotlinBinary: Boolean, val timestamp: Long, val headerData: KotlinBinaryHeaderData?)
+
+    /**
+     * Checks if this file is a compiled Kotlin class file (not necessarily ABI-compatible with the current plugin)
+     */
+    fun isKotlinJvmCompiledFile(file: VirtualFile): Boolean {
+        if (file.extension != JavaClassFileType.INSTANCE!!.defaultExtension) {
+            return false
+        }
+
+        val cached = getKotlinBinaryFromCache(file)
+        if (cached != null) {
+            return cached.isKotlinBinary
+        }
+        return getKotlinBinaryClass(file) != null
+    }
 
     fun getKotlinBinaryClass(file: VirtualFile, fileContent: ByteArray? = null): KotlinJvmBinaryClass? {
         val cached = getKotlinBinaryFromCache(file)
