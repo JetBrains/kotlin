@@ -734,6 +734,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("excludedCoroutineImpl.kt")
+        public void testExcludedCoroutineImpl() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/excludedCoroutineImpl.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("excludedCoroutineIntrinsics.kt")
+        public void testExcludedCoroutineIntrinsics() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/excludedCoroutineIntrinsics.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("excludedFromImport.kt")
         public void testExcludedFromImport() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/excludedFromImport.kt");
