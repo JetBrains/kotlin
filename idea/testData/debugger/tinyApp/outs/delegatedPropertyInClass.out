@@ -42,6 +42,7 @@ Compile bytecode for args.size
      field    = propEx: int = {java.lang.IllegalStateException@uniqueID}java.lang.IllegalStateException (sp = delegatedPropertyInClass.kt, 14)
        field    = detailMessage: java.lang.String = null (sp = Throwable.!EXT!)
        field    = cause: java.lang.Throwable = {java.lang.IllegalStateException@uniqueID}java.lang.IllegalStateException (sp = Throwable.!EXT!)
+            - args.size = ...
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

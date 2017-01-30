@@ -34,6 +34,7 @@ Compile bytecode for a2.prop
    local    = a3: evLineRange.A = {evLineRange.A@uniqueID} (sp = evLineRange.kt, 10)
      field    = prop: int = 1 (sp = evLineRange.kt, 4)
    local    = i1: int = 1 (sp = evLineRange.kt, 13)
+            - a2.prop = ...
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

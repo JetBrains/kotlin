@@ -30,6 +30,7 @@ Compile bytecode for args.size
    local    = a: delegatedPropertyInClassWoRenderer.A = {delegatedPropertyInClassWoRenderer.A@uniqueID} (sp = delegatedPropertyInClassWoRenderer.kt, 7)
      field    = prop: int = {delegatedPropertyInClassWoRenderer.MyDelegate@uniqueID} (sp = delegatedPropertyInClassWoRenderer.kt, 13)
                 - Class has no fields
+            - args.size = ...
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

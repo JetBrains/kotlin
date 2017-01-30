@@ -18,6 +18,7 @@ Compile bytecode for a
  frame    = foo:5, A {evFunctionDeclaration}
    this     = this = {evFunctionDeclaration.A@uniqueID}
      field    = a: int = 1 (sp = evFunctionDeclaration.kt, 3)
+            - a = ...
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

@@ -30,6 +30,7 @@ Compile bytecode for a2.prop
    local    = a3: evBreakpointOnPropertyDeclaration.A = {evBreakpointOnPropertyDeclaration.A@uniqueID} (sp = evBreakpointOnPropertyDeclaration.kt, 10)
      field    = prop: int = 1 (sp = evBreakpointOnPropertyDeclaration.kt, 4)
    local    = p1: int = 1 (sp = evBreakpointOnPropertyDeclaration.kt, 12)
+            - a2.prop = ...
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

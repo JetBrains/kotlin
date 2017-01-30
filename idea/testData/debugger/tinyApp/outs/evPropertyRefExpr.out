@@ -24,6 +24,7 @@ Compile bytecode for prop
  frame    = test:8, A {evPropertyRefExpr}
    this     = this = {evPropertyRefExpr.A@uniqueID}
      field    = prop: int = 1 (sp = evPropertyRefExpr.kt, 4)
+            - prop = ...
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0
