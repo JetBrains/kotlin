@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.decompiler.js
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiManager
@@ -50,10 +49,6 @@ class KotlinJavaScriptMetaFileDecompiler : ClassFileDecompilers.Full() {
         return KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
             KtDecompiledFile(provider, ::buildDecompiledTextFromJsMetadata)
         }
-    }
-
-    companion object {
-        internal val LOG = Logger.getInstance(KotlinJavaScriptMetaFileDecompiler::class.java)
     }
 }
 
@@ -125,9 +120,8 @@ sealed class KjsmFile {
             catch (e: IOException) {
                 // This is needed because sometimes we're given VirtualFile instances that point to non-existent .jar entries.
                 // Such files are valid (isValid() returns true), but an attempt to read their contents results in a FileNotFoundException.
-                // This looks like a platform issue, but we must still deal with it somehow here.
-                // Calling "refresh()" instead of catching an exception would be more correct, but is likely to degrade performance
-                KotlinJavaScriptMetaFileDecompiler.LOG.warn("Attempt to read non-existing file: $file", e)
+                // Note that although calling "refresh()" instead of catching an exception would seem more correct here,
+                // it's not always allowed and also is likely to degrade performance
                 null
             }
         }
