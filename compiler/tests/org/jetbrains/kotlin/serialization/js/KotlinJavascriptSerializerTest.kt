@@ -50,7 +50,7 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
 
         val configuration = KotlinTestUtils.newConfiguration()
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-        configuration.put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB)
+        configuration.put(JSConfigurationKeys.LIBRARIES, LibrarySourcesConfig.JS_STDLIB)
 
         configuration.addKotlinSourceRoots(srcDirs.map { it.path })
 

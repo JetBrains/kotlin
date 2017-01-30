@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.maven;
 
-import com.intellij.util.ArrayUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import kotlin.text.StringsKt;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -97,8 +97,8 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
         } catch (DependencyResolutionRequiredException e) {
             throw new MojoExecutionException("Unresolved dependencies", e);
         }
-        getLog().debug("libraryFiles: " + libraries);
-        arguments.libraryFiles = ArrayUtil.toStringArray(libraries);
+        getLog().debug("libraries: " + libraries);
+        arguments.libraries = StringUtil.join(libraries, File.pathSeparator);
 
         arguments.sourceMap = sourceMap;
 

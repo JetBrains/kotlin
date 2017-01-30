@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind;
 import java.util.List;
 
 public class JSConfigurationKeys {
-    public static final CompilerConfigurationKey<List<String>> LIBRARY_FILES =
+    public static final CompilerConfigurationKey<List<String>> LIBRARIES =
             CompilerConfigurationKey.create("library file paths");
 
     public static final CompilerConfigurationKey<Boolean> SOURCE_MAP =

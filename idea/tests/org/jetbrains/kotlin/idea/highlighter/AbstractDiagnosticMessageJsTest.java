@@ -64,7 +64,7 @@ public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnostic
     private JsConfig getConfig(@Nullable LanguageVersion explicitLanguageVersion) {
         CompilerConfiguration configuration = getEnvironment().getConfiguration().copy();
         configuration.put(CommonConfigurationKeys.MODULE_NAME, KotlinTestUtils.TEST_MODULE_NAME);
-        configuration.put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB);
+        configuration.put(JSConfigurationKeys.LIBRARIES, LibrarySourcesConfig.JS_STDLIB);
         configuration.put(CommonConfigurationKeys.DISABLE_INLINE, true);
         configuration.put(JSConfigurationKeys.UNIT_TEST_CONFIG, true);
         if (explicitLanguageVersion != null) {

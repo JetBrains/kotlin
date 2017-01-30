@@ -3,9 +3,9 @@
   <property name="library.path" value="${test.data}/jslib-example"/>
   <target name="build">
     <kotlin2js src="${test.data}/root1" output="${temp}/out.js" main="call">
-      <library>
+      <libraries>
         <pathelement path="${library.path}"/>
-      </library>
+      </libraries>
     </kotlin2js>
     <copy todir="${temp}">
       <fileset dir="${library.path}">

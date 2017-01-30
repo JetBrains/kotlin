@@ -322,7 +322,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         }
         librariesWithStdlib.add(getKotlinPathsForDistDirectory().getJsKotlinTestJarPath().getAbsolutePath());
 
-        configuration.put(JSConfigurationKeys.LIBRARY_FILES, librariesWithStdlib);
+        configuration.put(JSConfigurationKeys.LIBRARIES, librariesWithStdlib);
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, moduleName);
         configuration.put(JSConfigurationKeys.TARGET, ecmaVersion);

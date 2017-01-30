@@ -58,8 +58,8 @@ import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.facade.TranslationResult;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
@@ -276,16 +276,16 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             configuration.put(JSConfigurationKeys.META_INFO, true);
         }
 
-        List<String> libraryFiles = new SmartList<String>();
+        List<String> libraries = new SmartList<String>();
         if (!arguments.noStdlib) {
-            libraryFiles.add(0, PathUtil.getKotlinPathsForCompiler().getJsStdLibJarPath().getAbsolutePath());
+            libraries.add(0, PathUtil.getKotlinPathsForCompiler().getJsStdLibJarPath().getAbsolutePath());
         }
 
-        if (arguments.libraryFiles != null) {
-            ContainerUtil.addAllNotNull(libraryFiles, arguments.libraryFiles);
+        if (arguments.libraries != null) {
+            ContainerUtil.addAllNotNull(libraries, arguments.libraries.split(File.pathSeparator));
         }
 
-        configuration.put(JSConfigurationKeys.LIBRARY_FILES, libraryFiles);
+        configuration.put(JSConfigurationKeys.LIBRARIES, libraries);
 
         String moduleKindName = arguments.moduleKind;
         ModuleKind moduleKind = moduleKindName != null ? moduleKindMap.get(moduleKindName) : ModuleKind.PLAIN;

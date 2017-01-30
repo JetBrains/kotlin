@@ -36,9 +36,9 @@ import java.util.List;
  * has completed so that there are various kotlin files to be compiled
  */
 public class CompileMavenGeneratedJSLibrary extends SingleFileTranslationTest {
-    protected final String generatedJsDir = "libraries/tools/kotlin-js-library/target/";
-    protected String generatedJsDefinitionsDir = generatedJsDir + "generated-js-definitions";
-    protected File generatedJsLibraryDir = new File( generatedJsDir + "generated-js-library");
+    private static final String generatedJsDir = "libraries/tools/kotlin-js-library/target/";
+    private static final String generatedJsDefinitionsDir = generatedJsDir + "generated-js-definitions";
+    private final File generatedJsLibraryDir = new File(generatedJsDir + "generated-js-library");
 
     public CompileMavenGeneratedJSLibrary() {
         super("kotlin-js-library/");
@@ -96,7 +96,7 @@ public class CompileMavenGeneratedJSLibrary extends SingleFileTranslationTest {
 
             List<String> args = new ArrayList<String>(Arrays.asList(
                     "-output", outputFile,
-                    "-library-files", generatedJsDefinitionsDir,
+                    "-libraries", generatedJsDefinitionsDir,
                     "-verbose"
             ));
             args.addAll(files);
