@@ -207,7 +207,7 @@ class EncodeSignatureTest {
             val psiFile = psiManager.findFile(file) as KtFile
 
             val configuration = environment.configuration.copy()
-            configuration.put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB)
+            configuration.put(JSConfigurationKeys.LIBRARIES, LibrarySourcesConfig.JS_STDLIB)
             configuration.put(CommonConfigurationKeys.MODULE_NAME, "sample")
 
             val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(listOf(psiFile), LibrarySourcesConfig(project, configuration))

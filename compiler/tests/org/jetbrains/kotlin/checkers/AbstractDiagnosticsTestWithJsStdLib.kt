@@ -47,7 +47,7 @@ abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractDiagnosticsTest() {
         super.setUp()
         config = LibrarySourcesConfig(project, environment.configuration.copy().apply {
             put(CommonConfigurationKeys.MODULE_NAME, KotlinTestUtils.TEST_MODULE_NAME)
-            put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB)
+            put(JSConfigurationKeys.LIBRARIES, LibrarySourcesConfig.JS_STDLIB)
         })
     }
 

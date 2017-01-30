@@ -60,7 +60,7 @@ public class LibrarySourcesConfig extends JsConfig {
 
     @NotNull
     public List<String> getLibraries() {
-        return getConfiguration().getList(JSConfigurationKeys.LIBRARY_FILES);
+        return getConfiguration().getList(JSConfigurationKeys.LIBRARIES);
     }
 
     @Override

@@ -1,6 +1,6 @@
 $TESTDATA_DIR$/simple2js.kt
 -no-stdlib
--library-files
+-libraries
 $TESTDATA_DIR$/wrongAbiVersionLib/wrongAbiLib.meta.js
 -output
 $TEMP_DIR$/out.js

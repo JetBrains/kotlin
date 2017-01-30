@@ -259,7 +259,7 @@ abstract class BasicBoxTest(
             configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl(it, ApiVersion.LATEST))
         }
 
-        configuration.put(JSConfigurationKeys.LIBRARY_FILES, LibrarySourcesConfig.JS_STDLIB + LibrarySourcesConfig.JS_KOTLIN_TEST + dependencies)
+        configuration.put(JSConfigurationKeys.LIBRARIES, LibrarySourcesConfig.JS_STDLIB + LibrarySourcesConfig.JS_KOTLIN_TEST + dependencies)
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, module.name.removeSuffix(OLD_MODULE_SUFFIX))
         configuration.put(JSConfigurationKeys.MODULE_KIND, module.moduleKind)
