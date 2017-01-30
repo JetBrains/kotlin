@@ -20,10 +20,17 @@ import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.openapi.Disposable
 import com.intellij.psi.PsiManager
+import com.intellij.psi.controlFlow.ControlFlowFactory
 
 open class KotlinCoreProjectEnvironment(
         disposable: Disposable,
         applicationEnvironment: JavaCoreApplicationEnvironment
 ) : JavaCoreProjectEnvironment(disposable, applicationEnvironment) {
+    init {
+        myProject.registerService<ControlFlowFactory>(ControlFlowFactory::class.java,
+                                                      ControlFlowFactory(myPsiManager))
+
+    }
+
     override fun createCoreFileManager() = KotlinCliJavaFileManagerImpl(PsiManager.getInstance(project))
 }
