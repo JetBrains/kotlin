@@ -71,7 +71,7 @@ object JsInheritanceChecker : SimpleDeclarationChecker {
     private fun findFakeMethodOverridingExternalWithOptionalParams(cls: ClassDescriptor): FunctionDescriptor? {
         val members = cls.unsubstitutedMemberScope.getContributedDescriptors(DescriptorKindFilter.CALLABLES)
                 .mapNotNull { it as? FunctionDescriptor }
-                .filter { it.containingDeclaration == cls && !it.kind.isReal }
+                .filter { it.containingDeclaration == cls && !it.kind.isReal && it.overriddenDescriptors.size > 1 }
 
         return members.firstOrNull { isOverridingExternalWithOptionalParams(it) }
     }
