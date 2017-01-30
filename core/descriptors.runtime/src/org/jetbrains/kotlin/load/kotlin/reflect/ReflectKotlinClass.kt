@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.kotlin.reflect
 
-import com.sun.xml.internal.ws.org.objectweb.asm.Opcodes
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.load.java.structure.reflect.desc
 import org.jetbrains.kotlin.load.java.structure.reflect.isEnumClassOrSpecializedEnumEntryClass
@@ -61,11 +60,11 @@ class ReflectKotlinClass private constructor(
     override val classId: ClassId
         get() = klass.classId
 
-    override fun loadClassAnnotations(visitor: KotlinJvmBinaryClass.AnnotationVisitor) {
+    override fun loadClassAnnotations(visitor: KotlinJvmBinaryClass.AnnotationVisitor, cachedContents: ByteArray?) {
         ReflectClassStructure.loadClassAnnotations(klass, visitor)
     }
 
-    override fun visitMembers(visitor: KotlinJvmBinaryClass.MemberVisitor) {
+    override fun visitMembers(visitor: KotlinJvmBinaryClass.MemberVisitor, cachedContents: ByteArray?) {
         ReflectClassStructure.visitMembers(klass, visitor)
     }
 
