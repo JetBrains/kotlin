@@ -145,8 +145,9 @@ abstract class KonanTest extends DefaultTask {
             }
 
         }
-        if (goldValue != null && goldValue != out.toString())
+        if (goldValue != null && goldValue != out.toString()) {
             throw new RuntimeException("test failed.")
+        }
     }
 }
 
@@ -176,9 +177,12 @@ class RunExternalTestGroup extends RunKonanTest {
     def groupDirectory = "."
     def outputSourceSetName = "testOutputExternal"
     String filter = project.findProperty("filter")
-    String goldValue = "OK"
     Map<String, TestResult> results = [:]
     Statistics statistics = new Statistics()
+
+    RunExternalTestGroup() {
+        goldValue = "OK"
+    }
 
     static class TestResult {
         String status = null
