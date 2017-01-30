@@ -33,6 +33,10 @@ internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
         // Treat any `@ExportForCppRuntime` declaration as exported.
         return true
     }
+    if (this.annotations.hasAnnotation(exportForCompilerAnnotation)){
+        return true
+    }
+
 
     if (this is ConstructorDescriptor && constructedClass.kind.isSingleton) {
         // Currently code generator can access the constructor of the singleton,
@@ -57,6 +61,8 @@ internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
 private val symbolNameAnnotation = FqName("konan.SymbolName")
 
 private val exportForCppRuntimeAnnotation = FqName("konan.internal.ExportForCppRuntime")
+
+private val exportForCompilerAnnotation = FqName("konan.internal.ExportForCompiler")
 
 private fun typeToHashString(type: KotlinType): String {
     if (TypeUtils.isTypeParameter(type)) return "GENERIC"
