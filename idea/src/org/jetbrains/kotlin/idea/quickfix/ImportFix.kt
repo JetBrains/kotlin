@@ -258,7 +258,67 @@ internal abstract class OrdinaryImportFixBase<T : KtExpression>(expression: T, f
 internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFixBase<KtSimpleNameExpression>(expression, MyFactory) {
     override fun getCallTypeAndReceiver() = element?.let { CallTypeAndReceiver.detect(it) }
 
-    override val importNames = element?.mainReference?.resolvesByNames ?: emptyList()
+    private fun importNamesForMembers(): Collection<Name> {
+        val element = element ?: return emptyList()
+
+        if (element.getIdentifier() != null) {
+            val name = element.getReferencedName()
+            if (Name.isValidIdentifier(name)) {
+                return Name.identifier(name).singletonList()
+            }
+        }
+
+        return emptyList()
+    }
+
+    override val importNames: Collection<Name> = ((element?.mainReference?.resolvesByNames ?: emptyList()) + importNamesForMembers()).distinct()
+
+    private fun collectMemberCandidates(
+            name: String,
+            callTypeAndReceiver: CallTypeAndReceiver<*, *>,
+            indicesHelper: KotlinIndicesHelper
+    ): List<DeclarationDescriptor> {
+
+        val element = element ?: return emptyList()
+        if (element.isImportDirectiveExpression() || isSelectorInQualified(element)) return emptyList()
+
+        val result = ArrayList<DeclarationDescriptor>()
+
+        val filterByCallType = callTypeAndReceiver.toFilter()
+
+        indicesHelper.getKotlinEnumsByName(name).filterTo(result, filterByCallType)
+
+        val processor = { descriptor: CallableDescriptor ->
+            if (descriptor.canBeReferencedViaImport() && filterByCallType(descriptor)) {
+                result.add(descriptor)
+            }
+        }
+
+        indicesHelper.processKotlinCallablesByName(
+                name,
+                filter = { declaration -> (declaration.parent as? KtClassBody)?.parent is KtObjectDeclaration },
+                processor = processor
+        )
+
+        if (TargetPlatformDetector.getPlatform(element.containingKtFile) == JvmPlatform) {
+            indicesHelper.processJvmCallablesByName(
+                    name,
+                    filter = { it.hasModifierProperty(PsiModifier.STATIC) },
+                    processor = processor
+            )
+        }
+        return result
+    }
+
+
+    override fun fillCandidates(
+            name: String,
+            callTypeAndReceiver: CallTypeAndReceiver<*, *>,
+            bindingContext: BindingContext,
+            indicesHelper: KotlinIndicesHelper
+    ): List<DeclarationDescriptor> {
+        return super.fillCandidates(name, callTypeAndReceiver, bindingContext, indicesHelper) + collectMemberCandidates(name, callTypeAndReceiver, indicesHelper)
+    }
 
     companion object MyFactory : Factory() {
         override fun createAction(diagnostic: Diagnostic) =
@@ -413,68 +473,6 @@ internal class ComponentsImportFix(
             val names = importNames(sameTypeDiagnostics)
             val solveSeveralProblems = sameTypeDiagnostics.size > 1
             return (element as? KtExpression)?.let { ComponentsImportFix(it, names, solveSeveralProblems) }.singletonOrEmptyList()
-        }
-    }
-}
-
-internal class ImportMemberFix(expression: KtSimpleNameExpression) : ImportFixBase<KtSimpleNameExpression>(expression, MyFactory) {
-    override fun getText() = "Import member"
-
-    override fun fillCandidates(
-            name: String,
-            callTypeAndReceiver: CallTypeAndReceiver<*, *>,
-            bindingContext: BindingContext,
-            indicesHelper: KotlinIndicesHelper
-    ): List<DeclarationDescriptor> {
-        val element = element ?: return emptyList()
-        if (element.isImportDirectiveExpression() || isSelectorInQualified(element)) return emptyList()
-
-        val result = ArrayList<DeclarationDescriptor>()
-
-        val filterByCallType = callTypeAndReceiver.toFilter()
-
-        indicesHelper.getKotlinEnumsByName(name).filterTo(result, filterByCallType)
-
-        val processor = { descriptor: CallableDescriptor ->
-            if (descriptor.canBeReferencedViaImport() && filterByCallType(descriptor)) {
-                result.add(descriptor)
-            }
-        }
-
-        indicesHelper.processKotlinCallablesByName(
-                name,
-                filter = { declaration -> (declaration.parent as? KtClassBody)?.parent is KtObjectDeclaration },
-                processor = processor
-        )
-
-        if (TargetPlatformDetector.getPlatform(element.getContainingKtFile()) == JvmPlatform) {
-            indicesHelper.processJvmCallablesByName(
-                    name,
-                    filter = { it.hasModifierProperty(PsiModifier.STATIC) },
-                    processor = processor
-            )
-        }
-
-        return result
-    }
-
-    override fun getCallTypeAndReceiver() = element?.let { CallTypeAndReceiver.detect(it) }
-
-    override val importNames: Collection<Name> = run {
-        val element = element ?: return@run emptyList()
-
-        if (element.getIdentifier() != null) {
-            val name = element.getReferencedName()
-            if (Name.isValidIdentifier(name)) {
-                return@run Name.identifier(name).singletonList()
-            }
-        }
-        return@run emptyList()
-    }
-
-    companion object MyFactory : Factory() {
-        override fun createAction(diagnostic: Diagnostic) = (diagnostic.psiElement as? KtSimpleNameExpression)?.let {
-            ImportMemberFix(it).apply { computeSuggestions() }
         }
     }
 }

@@ -138,7 +138,7 @@ class QuickFixRegistrar : QuickFixContributor {
         DEPRECATED_BINARY_MOD.registerFactory(removeModifierFactory)
         DEPRECATED_BINARY_MOD.registerFactory(RenameModToRemFix.Factory)
 
-        UNRESOLVED_REFERENCE.registerFactory(ImportMemberFix)
+
         UNRESOLVED_REFERENCE.registerFactory(ImportFix)
         UNRESOLVED_REFERENCE.registerFactory(ImportConstructorReferenceFix)
 
