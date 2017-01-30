@@ -28,7 +28,11 @@ import kotlin.coroutines.experimental.intrinsics.*
 public fun <R, T> (suspend R.() -> T).createCoroutine(
         receiver: R,
         completion: Continuation<T>
-): Continuation<Unit> = this.asDynamic()(receiver, completion, true)
+): Continuation<Unit> =
+        SafeContinuation(
+                this.asDynamic()(receiver, completion, true),
+                COROUTINE_SUSPENDED
+        )
 
 /**
  * Starts coroutine with receiver type [R] and result type [T].
@@ -40,8 +44,7 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
         receiver: R,
         completion: Continuation<T>
 ) {
-    val coroutine: Continuation<Any?> = this.asDynamic()(receiver, completion, true)
-    coroutine.resume(null)
+    createCoroutine(receiver, completion).resume(Unit)
 }
 
 /**
@@ -53,7 +56,11 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
 @SinceKotlin("1.1")
 public fun <T> (suspend () -> T).createCoroutine(
         completion: Continuation<T>
-): Continuation<Unit> = this.asDynamic()(completion, true)
+): Continuation<Unit> =
+        SafeContinuation(
+                this.asDynamic()(completion, true),
+                COROUTINE_SUSPENDED
+        )
 
 /**
  * Starts coroutine without receiver and with result type [T].
@@ -64,8 +71,7 @@ public fun <T> (suspend () -> T).createCoroutine(
 public fun <T> (suspend  () -> T).startCoroutine(
         completion: Continuation<T>
 ) {
-    val coroutine: Continuation<Any?> = this.asDynamic()(completion, true)
-    coroutine.resume(null)
+    createCoroutine(completion).resume(Unit)
 }
 
 /**
@@ -129,11 +135,15 @@ private val UNDECIDED: Any? = Any()
 private val RESUMED: Any? = Any()
 private class Fail(val exception: Throwable)
 
-internal class SafeContinuation<in T> internal constructor(private val delegate: Continuation<T>) : Continuation<T> {
+internal class SafeContinuation<in T>
+@PublishedApi internal constructor(
+        private val delegate: Continuation<T>,
+        initialResult: Any? = UNDECIDED
+) : Continuation<T> {
     public override val context: CoroutineContext
         get() = delegate.context
 
-    private var result: Any? = UNDECIDED
+    private var result: Any? = initialResult
 
     override fun resume(value: T) {
         when {

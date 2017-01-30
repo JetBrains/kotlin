@@ -36,14 +36,16 @@ import kotlin.coroutines.experimental.jvm.internal.interceptContinuationIfNeeded
 public fun <R, T> (suspend R.() -> T).createCoroutine(
         receiver: R,
         completion: Continuation<T>
-): Continuation<Unit> {
-    if (this !is CoroutineImpl) {
-        return buildContinuationByInvokeCall(completion) {
-            (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
-        }
-    }
-    return ((this as CoroutineImpl).create(receiver, completion) as CoroutineImpl).facade
-}
+): Continuation<Unit> =
+    SafeContinuation(
+        if (this !is CoroutineImpl)
+            buildContinuationByInvokeCall(completion) {
+                (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
+            }
+        else
+            ((this as CoroutineImpl).create(receiver, completion) as CoroutineImpl).facade,
+        COROUTINE_SUSPENDED
+    )
 
 /**
  * Starts coroutine with receiver type [R] and result type [T].
@@ -69,14 +71,16 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
 @Suppress("UNCHECKED_CAST")
 public fun <T> (suspend () -> T).createCoroutine(
         completion: Continuation<T>
-): Continuation<Unit> {
-    if (this !is CoroutineImpl) {
-        return buildContinuationByInvokeCall(completion) {
-            (this as Function1<Continuation<T>, Any?>).invoke(completion)
-        }
-    }
-    return ((this as CoroutineImpl).create(completion) as CoroutineImpl).facade
-}
+): Continuation<Unit> =
+    SafeContinuation(
+            if (this !is CoroutineImpl)
+                buildContinuationByInvokeCall(completion) {
+                    (this as Function1<Continuation<T>, Any?>).invoke(completion)
+                }
+            else
+                ((this as CoroutineImpl).create(completion) as CoroutineImpl).facade,
+            COROUTINE_SUSPENDED
+    )
 
 /**
  * Starts coroutine without receiver and with result type [T].
@@ -147,12 +151,16 @@ private val RESUMED: Any? = Any()
 private class Fail(val exception: Throwable)
 
 @PublishedApi
-internal class SafeContinuation<in T> @PublishedApi internal constructor(private val delegate: Continuation<T>) : Continuation<T> {
+internal class SafeContinuation<in T>
+@PublishedApi internal constructor(
+        private val delegate: Continuation<T>,
+        initialResult: Any? = UNDECIDED
+) : Continuation<T> {
     public override val context: CoroutineContext
         get() = delegate.context
 
     @Volatile
-    private var result: Any? = UNDECIDED
+    private var result: Any? = initialResult
 
     companion object {
         @Suppress("UNCHECKED_CAST")
@@ -197,9 +205,9 @@ internal class SafeContinuation<in T> @PublishedApi internal constructor(private
             result = this.result // reread volatile var
         }
         when {
-            result === RESUMED -> return COROUTINE_SUSPENDED // already called continuation, indicate SUSPENDED_MARKER upstream
+            result === RESUMED -> return COROUTINE_SUSPENDED // already called continuation, indicate COROUTINE_SUSPENDED upstream
             result is Fail -> throw result.exception
-            else -> return result // either SUSPENDED_MARKER or data
+            else -> return result // either COROUTINE_SUSPENDED or data
         }
     }
 }
