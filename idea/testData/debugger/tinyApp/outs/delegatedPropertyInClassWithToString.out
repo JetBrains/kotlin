@@ -31,6 +31,7 @@ Compile bytecode for args.size
      field    = prop$delegate: delegatedPropertyInClassWithToString.MyDelegate = {delegatedPropertyInClassWithToString.MyDelegate@uniqueID} (sp = delegatedPropertyInClassWithToString.kt, 12)
                 - Class has no fields
      field    = prop: int = 1 (sp = delegatedPropertyInClassWithToString.kt, 12)
+            - args.size = ...
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0
