@@ -37,8 +37,8 @@ package test;
 
 @Anno(value = "enum")
 public enum Enum {
-    /*public static final*/ WHITE /* = null */,
-    /*public static final*/ BLACK /* = null */;
+    /*public static final*/ WHITE /* = new WHITE(0) */,
+    /*public static final*/ BLACK /* = new BLACK(0) */;
     private final int x = 0;
 
     public final int getX() {

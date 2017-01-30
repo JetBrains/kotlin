@@ -32,6 +32,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFileToSourceStubConverterTest {
+    @TestMetadata("abstractEnum.kt")
+    public void testAbstractEnum() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/abstractEnum.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("abstractMethods.kt")
     public void testAbstractMethods() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/kapt3/testData/converter/abstractMethods.kt");
