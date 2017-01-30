@@ -15,7 +15,6 @@
     <orderEntry type="library" scope="PROVIDED" name="java-i18n" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="gradle-and-groovy-plugin" level="project" />
     <orderEntry type="module" module-name="eval4j" />
-    <orderEntry type="library" exported="" name="intellij-core-analysis" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -35,5 +34,6 @@
     <orderEntry type="module" module-name="idea-jps-common" />
     <orderEntry type="module" module-name="cli-common" />
     <orderEntry type="module" module-name="descriptors" />
+    <orderEntry type="library" exported="" name="idea-full" level="project" />
   </component>
 </module>
