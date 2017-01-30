@@ -22,3 +22,10 @@ annotation class HasBackingField
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 annotation class Intrinsic
+
+/**
+ * Exports symbol for compiler needs.
+ */
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
+@Retention(AnnotationRetention.BINARY)
+annotation class ExportForCompiler
