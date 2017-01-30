@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,7 +86,8 @@ private val DEFAULT_CALL_CHECKERS = listOf(
         CapturingInClosureChecker(), InlineCheckerWrapper(), SafeCallChecker(),
         DeprecatedCallChecker, CallReturnsArrayOfNothingChecker(), InfixCallChecker(), OperatorCallChecker(),
         ConstructorHeaderCallChecker, ProtectedConstructorCallChecker, ApiVersionCallChecker,
-        CoroutineSuspendCallChecker, BuilderFunctionsCallChecker, DslScopeViolationCallChecker
+        CoroutineSuspendCallChecker, BuilderFunctionsCallChecker, DslScopeViolationCallChecker,
+        CallableReferenceCompatibilityChecker()
 )
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(DeprecatedClassifierUsageChecker(), ApiVersionClassifierUsageChecker)

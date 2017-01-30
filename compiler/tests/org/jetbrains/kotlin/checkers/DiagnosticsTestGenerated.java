@@ -2298,6 +2298,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("noInferenceFeatureForCallableReferences.kt")
+                public void testNoInferenceFeatureForCallableReferences() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/generic/noInferenceFeatureForCallableReferences.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("resolutionGenericCallableWithNullableTypes.kt")
                 public void testResolutionGenericCallableWithNullableTypes() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/generic/resolutionGenericCallableWithNullableTypes.kt");
