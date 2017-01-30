@@ -103,7 +103,8 @@ abstract class BaseGradleIT {
             val androidGradlePluginVersion: String? = null,
             val forceOutputToStdout: Boolean = false,
             val debug: Boolean = false,
-            val freeCommandLineArgs: List<String> = emptyList())
+            val freeCommandLineArgs: List<String> = emptyList(),
+            val kotlinVersion: String = KOTLIN_VERSION)
 
     open inner class Project(
             val projectName: String,
@@ -302,7 +303,7 @@ abstract class BaseGradleIT {
                     add(if (options.withDaemon) "--daemon" else "--no-daemon")
                 }
 
-                add("-Pkotlin_version=" + KOTLIN_VERSION)
+                add("-Pkotlin_version=" + options.kotlinVersion)
                 options.incremental?.let { add("-Pkotlin.incremental=$it") }
                 options.androidGradlePluginVersion?.let { add("-Pandroid_tools_version=$it")}
                 if (options.debug) {
