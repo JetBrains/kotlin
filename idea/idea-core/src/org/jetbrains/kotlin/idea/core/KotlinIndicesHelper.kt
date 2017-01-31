@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiMember
-import com.intellij.psi.PsiModifier
+import com.intellij.psi.*
 import com.intellij.psi.impl.CompositeShortNamesCache
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
@@ -49,7 +47,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.isHiddenInResolution
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.asSimpleType
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
@@ -310,14 +307,29 @@ class KotlinIndicesHelper(
     }
     private fun getJavaCallables(name: String, shortNamesCache: PsiShortNamesCache): Sequence<Any> {
         filteredShortNamesCaches?.let { caches -> return getCallablesByName(name, scopeWithoutKotlin, caches) }
-        return shortNamesCache.getFieldsByName(name, scopeWithoutKotlin).asSequence() +
-               shortNamesCache.getMethodsByName(name, scopeWithoutKotlin).asSequence()
+        return shortNamesCache.getFieldsByNameUnfiltered(name, scopeWithoutKotlin).asSequence() +
+               shortNamesCache.getMethodsByNameUnfiltered(name, scopeWithoutKotlin).asSequence()
     }
 
     private fun getCallablesByName(name: String, scope: GlobalSearchScope, caches: List<PsiShortNamesCache>): Sequence<Any> {
         return caches.asSequence().flatMap { cache ->
-            cache.getMethodsByName(name, scope).asSequence() + cache.getFieldsByName(name, scope).asSequence()
+            cache.getMethodsByNameUnfiltered(name, scope) + cache.getFieldsByNameUnfiltered(name, scope).asSequence()
         }
+    }
+
+    // getMethodsByName() removes duplicates from returned set of names, which can be excessively slow
+    // if the number of candidates is large (KT-16071) and is unnecessary because Kotlin performs its own
+    // duplicate filtering later
+    private fun PsiShortNamesCache.getMethodsByNameUnfiltered(name: String, scope: GlobalSearchScope): Sequence<PsiMethod> {
+        val result = arrayListOf<PsiMethod>()
+        processMethodsWithName(name, scope) { result.add(it) }
+        return result.asSequence()
+    }
+
+    private fun PsiShortNamesCache.getFieldsByNameUnfiltered(name: String, scope: GlobalSearchScope): Sequence<PsiField> {
+        val result = arrayListOf<PsiField>()
+        processFieldsWithName(name, { field -> result.add(field); true }, scope, null)
+        return result.asSequence()
     }
 
     fun processKotlinCallablesByName(
