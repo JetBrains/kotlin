@@ -150,9 +150,6 @@ abstract class CAdaptedFunctionTypeImpl<F : Function<*>>
 
 private typealias UserData = (ret: COpaquePointer, args: CArray<COpaquePointerVar>)->Unit
 
-inline fun <reified T : CAdaptedFunctionTypeImpl<*>> CAdaptedFunctionTypeImpl.Companion.of(): T =
-    T::class.objectInstance!!
-
 private fun loadCallbacksLibrary() {
     System.loadLibrary("callbacks")
 }

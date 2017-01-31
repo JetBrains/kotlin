@@ -38,12 +38,12 @@ object nativeMemUtils {
     fun getDouble(mem: NativePointed) = unsafe.getDouble(mem.address)
     fun putDouble(mem: NativePointed, value: Double) = unsafe.putDouble(mem.address, value)
 
-    fun getPtr(mem: NativePointed): NativePtr = when (dataModel) {
+    fun getNativePtr(mem: NativePointed): NativePtr = when (dataModel) {
         DataModel._32BIT -> getInt(mem).toLong()
         DataModel._64BIT -> getLong(mem)
     }
 
-    fun putPtr(mem: NativePointed, value: NativePtr) = when (dataModel) {
+    fun putNativePtr(mem: NativePointed, value: NativePtr) = when (dataModel) {
         DataModel._32BIT -> putInt(mem, value.toInt())
         DataModel._64BIT -> putLong(mem, value)
     }
