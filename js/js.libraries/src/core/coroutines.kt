@@ -35,19 +35,6 @@ public fun <R, T> (suspend R.() -> T).createCoroutine(
         )
 
 /**
- * Starts coroutine with receiver type [R] and result type [T].
- * This function creates and start a new, fresh instance of suspendable computation every time it is invoked.
- * The [completion] continuation is invoked when coroutine completes with result of exception.
- */
-@SinceKotlin("1.1")
-public fun <R, T> (suspend R.() -> T).startCoroutine(
-        receiver: R,
-        completion: Continuation<T>
-) {
-    createCoroutine(receiver, completion).resume(Unit)
-}
-
-/**
  * Creates coroutine without receiver and with result type [T].
  * This function creates a new, fresh instance of suspendable computation every time it is invoked.
  * To start executing the created coroutine, invoke `resume(Unit)` on the returned [Continuation] instance.
@@ -61,33 +48,6 @@ public fun <T> (suspend () -> T).createCoroutine(
                 this.asDynamic()(completion, true),
                 COROUTINE_SUSPENDED
         )
-
-/**
- * Starts coroutine without receiver and with result type [T].
- * This function creates and start a new, fresh instance of suspendable computation every time it is invoked.
- * The [completion] continuation is invoked when coroutine completes with result of exception.
- */
-@SinceKotlin("1.1")
-public fun <T> (suspend  () -> T).startCoroutine(
-        completion: Continuation<T>
-) {
-    createCoroutine(completion).resume(Unit)
-}
-
-/**
- * Obtains the current continuation instance inside suspend functions and suspends
- * currently running coroutine.
- *
- * In this function both [Continuation.resume] and [Continuation.resumeWithException] can be used either synchronously in
- * the same stack-frame where suspension function is run or asynchronously later in the same thread or
- * from a different thread of execution. Repeated invocation of any resume function produces [IllegalStateException].
- */
-@SinceKotlin("1.1")
-public suspend fun <T> suspendCoroutine(block: (Continuation<T>) -> Unit): T = suspendCoroutineOrReturn { c ->
-    val safe = SafeContinuation(c)
-    block(safe)
-    safe.getResult()
-}
 
 // ------- internal stuff -------
 
@@ -135,11 +95,16 @@ private val UNDECIDED: Any? = Any()
 private val RESUMED: Any? = Any()
 private class Fail(val exception: Throwable)
 
+@PublishedApi
 internal class SafeContinuation<in T>
-@PublishedApi internal constructor(
+internal constructor(
         private val delegate: Continuation<T>,
-        initialResult: Any? = UNDECIDED
+        initialResult: Any?
 ) : Continuation<T> {
+
+    @PublishedApi
+    internal constructor(delegate: Continuation<T>) : this(delegate, UNDECIDED)
+
     public override val context: CoroutineContext
         get() = delegate.context
 
@@ -175,6 +140,7 @@ internal class SafeContinuation<in T>
         }
     }
 
+    @PublishedApi
     internal fun getResult(): Any? {
         if (result === UNDECIDED) {
             result = COROUTINE_SUSPENDED
