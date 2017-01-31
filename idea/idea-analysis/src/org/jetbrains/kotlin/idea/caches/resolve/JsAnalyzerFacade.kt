@@ -61,7 +61,7 @@ object JsAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
                 BindingTraceContext(),
                 JsPlatform,
                 targetEnvironment,
-                LanguageSettingsProvider.getInstance(project).getLanguageVersionSettings(moduleInfo)
+                LanguageSettingsProvider.getInstance(project).getLanguageVersionSettings(moduleInfo, project)
         )
         var packageFragmentProvider = container.get<ResolveSession>().packageFragmentProvider
 
