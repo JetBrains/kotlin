@@ -43,7 +43,7 @@ enum class LanguageFeature(val sinceVersion: LanguageVersion?, val hintUrl: Stri
     TypeInferenceOnGenericsForCallableReferences(KOTLIN_1_1),
 
     // Experimental features
-    MultiPlatformProjects(null, "https://kotlinlang.org/docs/diagnostics/experimental-multitraget-projects"),
+    MultiPlatformProjects(null),
     MultiPlatformDoNotCheckImpl(null),
 
     WarnOnCoroutines(null),
