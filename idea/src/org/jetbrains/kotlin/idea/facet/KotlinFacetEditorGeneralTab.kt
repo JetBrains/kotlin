@@ -23,19 +23,21 @@ import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerConfigurableTab
 import java.awt.BorderLayout
 import javax.swing.*
 
 class KotlinFacetEditorGeneralTab(
         private val configuration: KotlinFacetConfiguration,
         private val editorContext: FacetEditorContext,
-        validatorsManager: FacetValidatorsManager,
-        private val compilerTab: KotlinFacetEditorCompilerTab
+        validatorsManager: FacetValidatorsManager
 ) : FacetEditorTab() {
     inner class VersionValidator : FacetEditorValidator() {
         override fun check(): ValidationResult {
-            val apiLevel = apiVersionComboBox.selectedItem as? LanguageVersion? ?: return ValidationResult.OK
-            val languageLevel = languageVersionComboBox.selectedItem as? LanguageVersion? ?: return ValidationResult.OK
+            val apiLevel = compilerConfigurable.apiVersionComboBox.selectedItem as? LanguageVersion?
+                           ?: return ValidationResult.OK
+            val languageLevel = compilerConfigurable.languageVersionComboBox.selectedItem as? LanguageVersion?
+                                ?: return ValidationResult.OK
             val targetPlatform = targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
             val libraryLevel = getLibraryLanguageLevel(editorContext.module, editorContext.rootModel, targetPlatform)
             if (languageLevel < apiLevel || libraryLevel < apiLevel) {
@@ -45,17 +47,19 @@ class KotlinFacetEditorGeneralTab(
         }
     }
 
+    private val compilerConfigurable = with(configuration.settings.compilerInfo) {
+        KotlinCompilerConfigurableTab(
+                editorContext.project,
+                commonCompilerArguments,
+                k2jsCompilerArguments,
+                compilerSettings,
+                null,
+                null,
+                false
+        )
+    }
+
     private val useProjectSettingsCheckBox = JCheckBox("Use project settings")
-
-    private val languageVersionComboBox =
-            JComboBox<LanguageVersion>(LanguageVersion.values()).apply {
-                setRenderer(DescriptionListCellRenderer())
-            }
-
-    private val apiVersionComboBox =
-            JComboBox<LanguageVersion>(LanguageVersion.values()).apply {
-                setRenderer(DescriptionListCellRenderer())
-            }
 
     private val targetPlatformComboBox =
             JComboBox<TargetPlatformKind<*>>(TargetPlatformKind.ALL_PLATFORMS.toTypedArray()).apply {
@@ -76,105 +80,71 @@ class KotlinFacetEditorGeneralTab(
         validatorsManager.registerValidator(versionValidator)
 
         useProjectSettingsCheckBox.addActionListener {
-            useProjectSettingsChanged()
+            updateCompilerConfigurable()
         }
 
-        languageVersionComboBox.addActionListener {
+        compilerConfigurable.languageVersionComboBox.addActionListener {
             validatorsManager.validate()
-            restrictAPIVersions()
         }
 
-        apiVersionComboBox.addActionListener {
+        compilerConfigurable.apiVersionComboBox.addActionListener {
             validatorsManager.validate()
         }
 
         targetPlatformComboBox.addActionListener {
             validatorsManager.validate()
-            updateCompilerTab()
+            updateCompilerConfigurable()
         }
 
-        updateCompilerTab()
+        updateCompilerConfigurable()
 
         reset()
     }
 
-    private fun restrictAPIVersions() {
-        val selectedLanguageVersion = languageVersionComboBox.selectedItem as LanguageVersion? ?: return
-        val selectedAPIVersion = apiVersionComboBox.selectedItem as LanguageVersion?
-        val permittedAPIVersions = LanguageVersion.values().filter { it <= selectedLanguageVersion }
-        apiVersionComboBox.model = DefaultComboBoxModel<LanguageVersion>(permittedAPIVersions.toTypedArray())
-        apiVersionComboBox.selectedItem = if (selectedAPIVersion != null && selectedAPIVersion > selectedLanguageVersion) {
-            selectedLanguageVersion
-        }
-        else {
-            selectedAPIVersion
-        }
-    }
-
-    private fun useProjectSettingsChanged() {
-        val useModuleSpecific = !useProjectSettingsCheckBox.isSelected
-        languageVersionComboBox.isEnabled = useModuleSpecific
-        apiVersionComboBox.isEnabled = useModuleSpecific
-
-        updateCompilerTab()
-    }
-
-    private fun updateCompilerTab() {
-        compilerTab.compilerConfigurable.setTargetPlatform(chosenPlatform)
-        UIUtil.setEnabled(compilerTab.compilerConfigurable.contentPane, !useProjectSettingsCheckBox.isSelected, true)
+    private fun updateCompilerConfigurable() {
+        compilerConfigurable.setTargetPlatform(chosenPlatform)
+        UIUtil.setEnabled(compilerConfigurable.contentPane, !useProjectSettingsCheckBox.isSelected, true)
     }
 
     override fun isModified(): Boolean {
         if (useProjectSettingsCheckBox.isSelected != configuration.settings.useProjectSettings) return true
-
-        return with(configuration.settings.versionInfo) {
-            if (useProjectSettingsCheckBox.isSelected) return targetPlatformComboBox.selectedItem != targetPlatformKind
-
-            languageVersionComboBox.selectedItem != languageLevel
-            || targetPlatformComboBox.selectedItem != targetPlatformKind
-            || apiVersionComboBox.selectedItem != apiLevel
-        }
+        if (targetPlatformComboBox.selectedItem != configuration.settings.versionInfo.targetPlatformKind) return true
+        return !useProjectSettingsCheckBox.isSelected && compilerConfigurable.isModified
     }
 
     override fun reset() {
         useProjectSettingsCheckBox.isSelected = configuration.settings.useProjectSettings
-        with(configuration.settings.versionInfo) {
-            languageVersionComboBox.selectedItem = languageLevel
-            apiVersionComboBox.selectedItem = apiLevel
-            targetPlatformComboBox.selectedItem = targetPlatformKind
-            restrictAPIVersions()
-        }
-        useProjectSettingsChanged()
+        targetPlatformComboBox.selectedItem = configuration.settings.versionInfo.targetPlatformKind
+        compilerConfigurable.reset()
+        updateCompilerConfigurable()
     }
 
     override fun apply() {
-        configuration.settings.useProjectSettings = useProjectSettingsCheckBox.isSelected
-        with(configuration.settings.versionInfo) {
-            if (!useProjectSettingsCheckBox.isSelected) {
-                languageLevel = languageVersionComboBox.selectedItem as LanguageVersion?
-                apiLevel = apiVersionComboBox.selectedItem as LanguageVersion?
-            }
-            targetPlatformKind = targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
+        compilerConfigurable.apply()
+        with(configuration.settings) {
+            useProjectSettings = useProjectSettingsCheckBox.isSelected
+            versionInfo.targetPlatformKind = targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
+            versionInfo.languageLevel = LanguageVersion.fromVersionString(compilerInfo.commonCompilerArguments?.languageVersion)
+            versionInfo.apiLevel = LanguageVersion.fromVersionString(compilerInfo.commonCompilerArguments?.apiVersion)
         }
     }
 
     override fun getDisplayName() = "General"
 
     override fun createComponent(): JComponent {
-       val mainPanel = JPanel(BorderLayout())
-       val contentPanel = FormBuilder
-               .createFormBuilder()
-               .addComponent(useProjectSettingsCheckBox)
-               .addLabeledComponent("&Language version: ", languageVersionComboBox)
-               .addLabeledComponent("&Standard library API version: ", apiVersionComboBox)
-               .addLabeledComponent("&Target platform: ", targetPlatformComboBox)
-               .panel
+        val mainPanel = JPanel(BorderLayout())
+        val contentPanel = FormBuilder
+                .createFormBuilder()
+                .addComponent(useProjectSettingsCheckBox)
+                .addLabeledComponent("&Target platform: ", targetPlatformComboBox)
+                .addComponent(compilerConfigurable.createComponent()!!)
+                .panel
         mainPanel.add(contentPanel, BorderLayout.NORTH)
         return mainPanel
     }
 
     override fun disposeUIResources() {
-
+        compilerConfigurable.disposeUIResources()
     }
 
     val chosenPlatform: TargetPlatformKind<*>?
