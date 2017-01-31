@@ -9,5 +9,5 @@ fun bar(i1: Int, i2: Int): Int {
 }
 
 fun main(args: Array<String>) {
-    println(bar(1, 8).toString())
+    println(bar(3, 8).toString())
 }
