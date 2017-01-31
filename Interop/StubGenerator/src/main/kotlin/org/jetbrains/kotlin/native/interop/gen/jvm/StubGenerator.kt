@@ -3,12 +3,20 @@ package org.jetbrains.kotlin.native.interop.gen.jvm
 import org.jetbrains.kotlin.native.interop.indexer.*
 import java.lang.IllegalStateException
 
+enum class KotlinPlatform {
+    JVM,
+    NATIVE
+}
+
+// TODO: mostly rename 'jni' to 'c'.
+
 class StubGenerator(
         val nativeIndex: NativeIndex,
         val pkgName: String,
         val libName: String,
         val excludedFunctions: Set<String>,
-        val dumpShims: Boolean) {
+        val dumpShims: Boolean,
+        val platform: KotlinPlatform = KotlinPlatform.JVM) {
 
     /**
      * The names that should not be used for struct classes to prevent name clashes
@@ -253,7 +261,7 @@ class StubGenerator(
             override fun argFromJni(name: String) = "CPointer.createNullable<$pointee>($name)"
 
             override val jniType: String
-                get() = "Long"
+                get() = "NativePtr"
 
             override fun constructPointedType(valueType: String) = "CPointerVarWithValueMappedTo<$valueType>"
         }
@@ -264,7 +272,7 @@ class StubGenerator(
             override fun argFromJni(name: String) = "interpretPointed<$pointed>($name)"
 
             override val jniType: String
-                get() = "Long"
+                get() = "NativePtr"
 
             override fun constructPointedType(valueType: String): String {
                 // TODO: this method must not exist
@@ -390,7 +398,7 @@ class StubGenerator(
                             kotlinType = "String?",
                             kotlinConv = { name -> "$name?.toCString(memScope).rawPtr" },
                             memScoped = true,
-                            kotlinJniBridgeType = "Long"
+                            kotlinJniBridgeType = "NativePtr"
                     )
                 }
             }
@@ -573,7 +581,7 @@ class StubGenerator(
             paramBindings.add(OutValueBinding(
                     kotlinType = "NativePlacement",
                     kotlinConv = { name -> "$name.alloc<${retValMirror.pointedTypeName}>().rawPtr" },
-                    kotlinJniBridgeType = "Long"
+                    kotlinJniBridgeType = "NativePtr"
             ))
         }
 
@@ -614,7 +622,7 @@ class StubGenerator(
 
         val header = "fun ${func.name}($args): ${retValBinding.kotlinType}"
 
-        fun generateBody() {
+        fun generateBody(memScoped: Boolean) {
             val externalParamNames = paramNames.mapIndexed { i: Int, name: String ->
                 val binding = paramBindings[i]
                 val externalParamName: String
@@ -631,8 +639,9 @@ class StubGenerator(
             }
             out("val res = externals.${func.name}(" + externalParamNames.joinToString(", ") + ")")
 
+            val result = retValBinding.conv("res")
             if (dumpShims) {
-                val returnValueRepresentation  = retValBinding.conv("res")
+                val returnValueRepresentation  = result
                 out("print(\"\${${returnValueRepresentation}}\\t= \")")
                 out("print(\"${func.name}( \")")
                 val argsRepresentation = paramNames.map{"\${${it}}"}.joinToString(", ")
@@ -640,17 +649,21 @@ class StubGenerator(
                 out("println(\")\")")
             }
 
-            out("return " + retValBinding.conv("res"))
+            if (memScoped) {
+                out(result)
+            } else {
+                out("return " + result)
+            }
         }
 
         block(header) {
             val memScoped = paramBindings.any { it.memScoped }
             if (memScoped) {
-                block("memScoped") {
-                    generateBody()
+                block("return memScoped") {
+                    generateBody(true)
                 }
             } else {
-                generateBody()
+                generateBody(false)
             }
         }
     }
@@ -696,6 +709,11 @@ class StubGenerator(
     private fun generateFunctionType(type: FunctionType, name: String) {
         val kotlinFunctionType = getKotlinFunctionType(type)
 
+        if (platform == KotlinPlatform.NATIVE) {
+            out("object $name : CFunctionType {}")
+            return
+        }
+
         val constructorArgs = listOf(getRetValFfiType(type.returnType)) +
                 type.parameterTypes.map { getArgFfiType(it) }
 
@@ -727,6 +745,12 @@ class StubGenerator(
         }
     }
 
+    private val FunctionDecl.stubSymbolName: String
+        get() {
+            require(platform == KotlinPlatform.NATIVE)
+            return "kni_" + pkgName.replace('/', '_') + '_' + this.name
+        }
+
     /**
      * Produces to [out] the definition of Kotlin JNI function used in binding for given C function.
      */
@@ -739,6 +763,9 @@ class StubGenerator(
             "$name: " + paramBindings[i].kotlinJniBridgeType
         }.joinToString(", ")
 
+        if (platform == KotlinPlatform.NATIVE) {
+            out("@SymbolName(\"${func.stubSymbolName}\")")
+        }
         out("external fun ${func.name}($args): ${retValBinding.kotlinJniBridgeType}")
     }
 
@@ -797,7 +824,9 @@ class StubGenerator(
         }
 
         block("object externals") {
-            out("init { System.loadLibrary(\"$libName\") }")
+            if (platform == KotlinPlatform.JVM) {
+                out("init { System.loadLibrary(\"$libName\") }")
+            }
             functionsToBind.forEach {
                 try {
                     transaction {
@@ -814,12 +843,36 @@ class StubGenerator(
     /**
      * Returns the C type to be used for value of given Kotlin type in JNI function implementation.
      */
+    fun getCBridgeType(kotlinJniBridgeType: String): String {
+        return when (platform) {
+            KotlinPlatform.JVM -> getCJniBridgeType(kotlinJniBridgeType)
+            KotlinPlatform.NATIVE -> getCNativeBridgeType(kotlinJniBridgeType)
+        }
+    }
+
+    fun getCNativeBridgeType(kotlinJniBridgeType: String) = when (kotlinJniBridgeType) {
+        "Unit" -> "void"
+        "Byte" -> "int8_t"
+        "Short" -> "int16_t"
+        "Int" -> "int32_t"
+        "Long" -> "int64_t"
+        "Float" -> "float"
+        "Double" -> "double" // TODO: float32_t, float64_t?
+        "NativePtr" -> "void*"
+        else -> TODO(kotlinJniBridgeType)
+    }
+
+    /**
+     * Returns the C type to be used for value of given Kotlin type in JNI function implementation.
+     */
     fun getCJniBridgeType(kotlinJniBridgeType: String) = when (kotlinJniBridgeType) {
         "Unit" -> "void"
         "Byte" -> "jbyte"
         "Short" -> "jshort"
         "Int" -> "jint"
-        "Long" -> "jlong"
+        "Long", "NativePtr" -> "jlong"
+        "Float" -> "jfloat"
+        "Double" -> "jdouble"
         else -> throw NotImplementedError(kotlinJniBridgeType)
     }
 
@@ -828,7 +881,9 @@ class StubGenerator(
      */
     fun generateCFile(headerFiles: List<String>) {
         out("#include <stdint.h>")
-        out("#include <jni.h>")
+        if (platform == KotlinPlatform.JVM) {
+            out("#include <jni.h>")
+        }
         headerFiles.forEach {
             out("#include <$it>")
         }
@@ -856,11 +911,11 @@ class StubGenerator(
                 if (paramBindings.isEmpty())
                     ""
                 else paramBindings
-                        .map { getCJniBridgeType(it.kotlinJniBridgeType) }
+                        .map { getCBridgeType(it.kotlinJniBridgeType) }
                         .mapIndexed { i, type -> "$type ${paramNames[i]}" }
                         .joinToString(separator = ", ", prefix = ", ")
 
-        val cReturnType = getCJniBridgeType(retValBinding.kotlinJniBridgeType)
+        val cReturnType = getCBridgeType(retValBinding.kotlinJniBridgeType)
 
         val params = func.parameters.mapIndexed { i, parameter ->
             val cType = parameter.type.getStringRepresentation()
@@ -872,14 +927,26 @@ class StubGenerator(
         }.joinToString(", ")
 
         val callExpr = "${func.name}($params)"
-        val funcFullName = if (pkgName.isEmpty()) {
-            "externals.${func.name}"
-        } else {
-            "$pkgName.externals.${func.name}"
+        val jniFuncName = when (platform) {
+            KotlinPlatform.JVM -> {
+                val funcFullName = if (pkgName.isEmpty()) {
+                    "externals.${func.name}"
+                } else {
+                    "$pkgName.externals.${func.name}"
+                }
+                "Java_" + funcFullName.replace("_", "_1").replace('.', '_').replace("$", "_00024")
+            }
+            KotlinPlatform.NATIVE -> {
+                func.stubSymbolName
+            }
         }
-        val jniFuncName = "Java_" + funcFullName.replace("_", "_1").replace('.', '_').replace("$", "_00024")
 
-        block("JNIEXPORT $cReturnType JNICALL $jniFuncName (JNIEnv *env, jobject obj$args)") {
+        val funcDecl = when (platform) {
+            KotlinPlatform.JVM -> "JNIEXPORT $cReturnType JNICALL $jniFuncName (JNIEnv *env, jobject obj$args)"
+            KotlinPlatform.NATIVE -> "$cReturnType $jniFuncName (void* obj$args)"
+        }
+
+        block(funcDecl) {
 
             if (cReturnType == "void") {
                 out("$callExpr;")

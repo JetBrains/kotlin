@@ -99,6 +99,10 @@ private fun processLib(ktGenRoot: String,
 
     val args = additionalArgs.groupBy ({ getArgPrefix(it)!! }, { dropPrefix(it)!! }) // TODO
 
+    val platformName = args["-target"]?.single() ?: "jvm"
+
+    val platform = KotlinPlatform.values().single { it.name.equals(platformName, ignoreCase = true) }
+
     val defFile = args["-def"]?.single()?.let { File(it) }
 
     val config = Properties()
@@ -133,7 +137,7 @@ private fun processLib(ktGenRoot: String,
 
     val nativeIndex = buildNativeIndex(headerFiles, compilerOpts)
 
-    val gen = StubGenerator(nativeIndex, outKtPkg, libName, excludedFunctions, generateShims)
+    val gen = StubGenerator(nativeIndex, outKtPkg, libName, excludedFunctions, generateShims, platform)
 
     outKtFile.parentFile.mkdirs()
     outKtFile.bufferedWriter().use { out ->
@@ -151,36 +155,50 @@ private fun processLib(ktGenRoot: String,
         }
     }
 
-    val outOFile = createTempFile(suffix = ".o")
-
-    val javaHome = System.getProperty("java.home")
-    val compilerArgsForJniIncludes = listOf("", "linux", "darwin").map { "-I$javaHome/../include/$it" }.toTypedArray()
-
-    val compilerCmd = arrayOf("$llvmInstallPath/bin/$compiler", *compilerOpts.toTypedArray(),
-            *compilerArgsForJniIncludes,
-            "-c", outCFile.path, "-o", outOFile.path)
+    File(nativeLibsDir).mkdirs()
 
     val workDir = defFile?.parentFile ?: File(System.getProperty("java.io.tmpdir"))
 
-    ProcessBuilder(*compilerCmd)
-            .directory(workDir)
-            .inheritIO()
-            .runExpectingSuccess()
+    if (platform == KotlinPlatform.JVM) {
 
-    File(nativeLibsDir).mkdirs()
+        val outOFile = createTempFile(suffix = ".o")
 
-    val outLib = nativeLibsDir + "/" + System.mapLibraryName(libName)
+        val javaHome = System.getProperty("java.home")
+        val compilerArgsForJniIncludes = listOf("", "linux", "darwin").map { "-I$javaHome/../include/$it" }.toTypedArray()
 
-    val linkerCmd = arrayOf("$llvmInstallPath/bin/$linker", *linkerOpts, outOFile.path, "-shared", "-o", outLib,
-            "-Wl,-flat_namespace,-undefined,dynamic_lookup")
+        val compilerCmd = arrayOf("$llvmInstallPath/bin/$compiler", *compilerOpts.toTypedArray(),
+                *compilerArgsForJniIncludes,
+                "-c", outCFile.path, "-o", outOFile.path)
 
-    ProcessBuilder(*linkerCmd)
-            .directory(workDir)
-            .inheritIO()
-            .runExpectingSuccess()
+        ProcessBuilder(*compilerCmd)
+                .directory(workDir)
+                .inheritIO()
+                .runExpectingSuccess()
+
+        val outLib = nativeLibsDir + "/" + System.mapLibraryName(libName)
+
+        val linkerCmd = arrayOf("$llvmInstallPath/bin/$linker", *linkerOpts, outOFile.path, "-shared", "-o", outLib,
+                "-Wl,-flat_namespace,-undefined,dynamic_lookup")
+
+        ProcessBuilder(*linkerCmd)
+                .directory(workDir)
+                .inheritIO()
+                .runExpectingSuccess()
+
+        outOFile.delete()
+    } else if (platform == KotlinPlatform.NATIVE) {
+        val outBcName = libName + ".bc"
+        val outLib = nativeLibsDir + "/" + outBcName
+        val compilerCmd = arrayOf("$llvmInstallPath/bin/$compiler", *compilerOpts.toTypedArray(),
+                "-emit-llvm", "-c", outCFile.path, "-o", outLib)
+
+        ProcessBuilder(*compilerCmd)
+                .directory(workDir)
+                .inheritIO()
+                .runExpectingSuccess()
+    }
 
     outCFile.delete()
-    outOFile.delete()
 }
 
 private fun buildNativeIndex(headerFiles: List<String>, compilerOpts: List<String>): NativeIndex {
