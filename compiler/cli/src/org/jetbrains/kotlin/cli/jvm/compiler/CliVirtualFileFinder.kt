@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmen
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.io.InputStream
 
-class JvmCliVirtualFileFinder(
+class CliVirtualFileFinder(
         private val index: JvmDependenciesIndex,
         private val scope: GlobalSearchScope
 ) : VirtualFileKotlinClassFinder() {

@@ -16,8 +16,16 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.name.ClassId
 
-interface VirtualFileFinderFactory {
-    fun create(scope: GlobalSearchScope): VirtualFileFinder
+interface VirtualFileFinder : KotlinClassFinder {
+    fun findVirtualFileWithHeader(classId: ClassId): VirtualFile?
+
+    companion object SERVICE {
+        fun getInstance(project: Project): VirtualFileFinder =
+                VirtualFileFinderFactory.getInstance(project).create(GlobalSearchScope.allScope(project))
+    }
 }

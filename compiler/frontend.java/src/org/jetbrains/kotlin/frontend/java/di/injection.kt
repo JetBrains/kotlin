@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.load.java.sam.SamWithReceiverResolver
 import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava
-import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
@@ -60,7 +60,7 @@ private fun StorageComponentContainer.configureJavaTopDownAnalysis(
     useImpl<JavaDescriptorResolver>()
     useImpl<DeserializationComponentsForJava>()
 
-    useInstance(JvmVirtualFileFinderFactory.SERVICE.getInstance(project).create(moduleContentScope))
+    useInstance(VirtualFileFinderFactory.getInstance(project).create(moduleContentScope))
 
     useImpl<FileScopeProviderImpl>()
 

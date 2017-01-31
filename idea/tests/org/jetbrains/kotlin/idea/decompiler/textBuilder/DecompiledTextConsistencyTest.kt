@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescrip
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.descriptors.isFromJvmPackagePart
-import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingTraceContext
@@ -52,7 +52,7 @@ class DecompiledTextConsistencyTest : LightCodeInsightFixtureTestCase() {
                 FqName("kotlin.collections.TypeAliasesKt") to null
         )) {
             val classId = ClassId.topLevel(packageFacadeFqName)
-            val classFile = JvmVirtualFileFinder.SERVICE.getInstance(project).findVirtualFileWithHeader(classId)!!
+            val classFile = VirtualFileFinder.SERVICE.getInstance(project).findVirtualFileWithHeader(classId)!!
 
             val module = TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                     project, listOf(), BindingTraceContext(), KotlinTestUtils.newConfiguration(), ::IDEPackagePartProvider

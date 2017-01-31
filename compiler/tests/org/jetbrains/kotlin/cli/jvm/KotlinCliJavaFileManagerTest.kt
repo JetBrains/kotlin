@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
-import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -195,7 +195,7 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
         File(fooPackageDir, "$className.java").writeText(text)
 
         @Suppress("UNUSED_VARIABLE") // used to implicitly initialize classpath/index in the manager
-        val coreJavaFileFinder = JvmVirtualFileFinder.SERVICE.getInstance(project)
+        val coreJavaFileFinder = VirtualFileFinder.SERVICE.getInstance(project)
         val coreJavaFileManager = ServiceManager.getService(project, CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
 
         val root = environment.contentRootToVirtualFile(JavaSourceRoot(javaFilesDir!!, null))!!

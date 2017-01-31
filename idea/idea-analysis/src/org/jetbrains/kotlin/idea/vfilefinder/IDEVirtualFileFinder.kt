@@ -21,13 +21,12 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.ID
-import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClassFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import java.io.InputStream
 
-class JvmIDEVirtualFileFinder(private val scope: GlobalSearchScope) : VirtualFileKotlinClassFinder(), JvmVirtualFileFinder {
+class IDEVirtualFileFinder(private val scope: GlobalSearchScope) : VirtualFileKotlinClassFinder() {
     override fun findMetadata(classId: ClassId): InputStream? {
         return findVirtualFileWithHeader(classId, KotlinMetadataFileIndex.KEY)?.inputStream
     }
@@ -55,6 +54,6 @@ class JvmIDEVirtualFileFinder(private val scope: GlobalSearchScope) : VirtualFil
     }
 
     companion object {
-        private val LOG = Logger.getInstance(JvmIDEVirtualFileFinder::class.java)
+        private val LOG = Logger.getInstance(IDEVirtualFileFinder::class.java)
     }
 }

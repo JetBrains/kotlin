@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.vfilefinder
+package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
-import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
+import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 
-class JvmIDEVirtualFileFinderFactory : JvmVirtualFileFinderFactory {
-    override fun create(scope: GlobalSearchScope): JvmVirtualFileFinder = JvmIDEVirtualFileFinder(scope)
+// TODO: create different JvmDependenciesIndex instances for different sets of source roots to improve performance
+class CliVirtualFileFinderFactory(private val index: JvmDependenciesIndex) : VirtualFileFinderFactory {
+    override fun create(scope: GlobalSearchScope): VirtualFileFinder = CliVirtualFileFinder(index, scope)
 }

@@ -143,7 +143,7 @@ public abstract class AbstractPositionManagerTest extends KotlinLightCodeInsight
         }
 
         CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK);
-        // TODO: delete this once JvmIDEVirtualFileFinder supports loading .kotlin_builtins files
+        // TODO: delete this once IDEVirtualFileFinder supports loading .kotlin_builtins files
         configuration.put(JVMConfigurationKeys.ADD_BUILT_INS_FROM_COMPILER_TO_DEPENDENCIES, true);
 
         GenerationState state = GenerationUtils.compileFiles(

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.decompiler.classFile.KotlinClsStubBuilder
 import org.jetbrains.kotlin.idea.decompiler.classFile.buildDecompiledTextForClassFile
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -31,7 +31,7 @@ import org.junit.Assert
 
 class ClsStubConsistencyTest : KotlinLightCodeInsightFixtureTestCase() {
     private fun doTest(id: ClassId) {
-        val packageFile = JvmVirtualFileFinder.SERVICE.getInstance(project).findVirtualFileWithHeader(id)
+        val packageFile = VirtualFileFinder.SERVICE.getInstance(project).findVirtualFileWithHeader(id)
                           ?: throw AssertionError("File not found for id: $id")
         val decompiledText = buildDecompiledTextForClassFile(packageFile).text
         val fileWithDecompiledText = KtPsiFactory(project).createFile(decompiledText)

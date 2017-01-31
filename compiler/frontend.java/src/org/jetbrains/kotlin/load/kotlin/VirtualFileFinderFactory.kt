@@ -16,9 +16,15 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.name.ClassId
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.project.Project
+import com.intellij.psi.search.GlobalSearchScope
 
-interface VirtualFileFinder {
-    fun findVirtualFileWithHeader(classId: ClassId): VirtualFile?
+interface VirtualFileFinderFactory : MetadataFinderFactory {
+    override fun create(scope: GlobalSearchScope): VirtualFileFinder
+
+    companion object SERVICE {
+        fun getInstance(project: Project): VirtualFileFinderFactory =
+                ServiceManager.getService(project, VirtualFileFinderFactory::class.java)
+    }
 }

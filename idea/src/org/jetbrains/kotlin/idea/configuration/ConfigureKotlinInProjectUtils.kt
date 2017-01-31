@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.idea.configuration.ui.notifications.ConfigureKotlinN
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.versions.getKotlinJvmRuntimeMarkerClass
 import org.jetbrains.kotlin.idea.versions.hasKotlinJsKjsmFile
-import org.jetbrains.kotlin.idea.vfilefinder.JvmIDEVirtualFileFinder
+import org.jetbrains.kotlin.idea.vfilefinder.IDEVirtualFileFinder
 import org.jetbrains.kotlin.utils.ifEmpty
 
 data class RepositoryDescription(val id: String, val name: String, val url: String, val isSnapshot: Boolean)
@@ -147,7 +147,7 @@ fun hasKotlinJsRuntimeInScope(module: Module): Boolean {
 }
 
 fun hasKotlinCommonRuntimeInScope(scope: GlobalSearchScope): Boolean {
-    return JvmIDEVirtualFileFinder(scope).hasMetadataPackage(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
+    return IDEVirtualFileFinder(scope).hasMetadataPackage(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
 }
 
 fun hasKotlinFilesOnlyInTests(module: Module): Boolean {

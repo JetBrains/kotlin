@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder;
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -179,7 +179,7 @@ public class InlineCodegenUtil {
 
     @Nullable
     public static VirtualFile findVirtualFile(@NotNull GenerationState state, @NotNull ClassId classId) {
-        return JvmVirtualFileFinder.SERVICE.getInstance(state.getProject()).findVirtualFileWithHeader(classId);
+        return VirtualFileFinder.SERVICE.getInstance(state.getProject()).findVirtualFileWithHeader(classId);
     }
 
     @Nullable

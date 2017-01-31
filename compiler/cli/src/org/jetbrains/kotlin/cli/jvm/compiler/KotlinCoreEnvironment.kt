@@ -86,7 +86,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
@@ -175,9 +175,9 @@ class KotlinCoreEnvironment private constructor(
         (ServiceManager.getService(project, CoreJavaFileManager::class.java)
                 as KotlinCliJavaFileManagerImpl).initIndex(rootsIndex)
 
-        val finderFactory = JvmCliVirtualFileFinderFactory(rootsIndex)
+        val finderFactory = CliVirtualFileFinderFactory(rootsIndex)
         project.registerService(MetadataFinderFactory::class.java, finderFactory)
-        project.registerService(JvmVirtualFileFinderFactory::class.java, finderFactory)
+        project.registerService(VirtualFileFinderFactory::class.java, finderFactory)
 
         ExpressionCodegenExtension.registerExtensionPoint(project)
         SyntheticResolveExtension.registerExtensionPoint(project)
