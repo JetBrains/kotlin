@@ -111,10 +111,6 @@ public fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolea
 public fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String =
         nativeReplace(RegExp(Regex.escape(oldChar.toString()), if (ignoreCase) "gi" else "g"), newChar.toString())
 
-@Deprecated("Use replaceFirst(String, String) instead.", ReplaceWith("replaceFirst(oldValue, newValue, ignoreCase = ignoreCase)"), level = DeprecationLevel.ERROR)
-public fun String.replaceFirstLiteral(oldValue: String, newValue: String, ignoreCase: Boolean = false): String =
-        nativeReplace(RegExp(Regex.escape(oldValue), if (ignoreCase) "i" else ""), Regex.escapeReplacement(newValue))
-
 public fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean = false): String =
         nativeReplace(RegExp(Regex.escape(oldValue), if (ignoreCase) "i" else ""), Regex.escapeReplacement(newValue))
 
