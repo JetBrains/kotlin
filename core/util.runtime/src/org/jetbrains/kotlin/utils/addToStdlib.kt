@@ -20,10 +20,13 @@ import java.lang.reflect.Modifier
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
+@Deprecated("Use listOfNotNull(this) or this.let(::listOfNotNull) instead", ReplaceWith("listOfNotNull(this)"))
 fun <T: Any> T?.singletonOrEmptyList(): List<T> = if (this != null) Collections.singletonList(this) else Collections.emptyList()
 
+@Deprecated("Use listOf(this) or this.let(::listOf) instead", ReplaceWith("listOf(this)"))
 fun <T> T.singletonList(): List<T> = Collections.singletonList(this)
 
+@Deprecated("Use this?.let(::setOf).orEmpty() instead", ReplaceWith("this?.let(::setOf).orEmpty()"))
 fun <T: Any> T?.singletonOrEmptySet(): Set<T> = if (this != null) Collections.singleton(this) else Collections.emptySet()
 
 inline fun <reified T : Any> Sequence<*>.firstIsInstanceOrNull(): T? {
@@ -76,6 +79,7 @@ fun <T> sequenceOfLazyValues(vararg elements: () -> T): Sequence<T> = elements.a
 
 fun <T1, T2> Pair<T1, T2>.swap(): Pair<T2, T1> = Pair(second, first)
 
+@Deprecated("Use takeIf() instead.", ReplaceWith("this.takeIf(predicate)"))
 fun <T: Any> T.check(predicate: (T) -> Boolean): T? = if (predicate(this)) this else null
 
 inline fun <reified T : Any> Any?.safeAs(): T? = this as? T
@@ -100,15 +104,11 @@ fun <T : Any> constant(calculator: () -> T): T {
 
 private val constantMap = ConcurrentHashMap<Function0<*>, Any>()
 
-fun String.indexOfOrNull(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int? {
-    val index = indexOf(char, startIndex, ignoreCase)
-    return if (index >= 0) index else null
-}
+fun String.indexOfOrNull(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int? =
+        indexOf(char, startIndex, ignoreCase).takeIf { it >= 0 }
 
-fun String.lastIndexOfOrNull(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int? {
-    val index = lastIndexOf(char, startIndex, ignoreCase)
-    return if (index >= 0) index else null
-}
+fun String.lastIndexOfOrNull(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int? =
+        lastIndexOf(char, startIndex, ignoreCase).takeIf { it >= 0 }
 
 inline fun <T, R : Any> Iterable<T>.firstNotNullResult(transform: (T) -> R?): R? {
     for (element in this) {
