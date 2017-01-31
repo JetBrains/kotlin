@@ -45,9 +45,11 @@
 
 #### Kapt
 - [`KT-15675`](https://youtrack.jetbrains.com/issue/KT-15675) Kapt3 doesn't generate classes annotated with AutoValue
+- [`KT-15803`](https://youtrack.jetbrains.com/issue/KT-15803) Kotlin 1.0.6 broke Dagger
 - [`KT-15814`](https://youtrack.jetbrains.com/issue/KT-15814) Regression: Kapt is not working in 1.0.6 / 1.1-M04 / 1.1-Beta
 - [`KT-15838`](https://youtrack.jetbrains.com/issue/KT-15838) kapt3 1.1-beta: KaptError: Java file parsing error
 - [`KT-15841`](https://youtrack.jetbrains.com/issue/KT-15841) 1.1-Beta + kapt3 fails to build the project with StackOverflowError
+- [`KT-15915`](https://youtrack.jetbrains.com/issue/KT-15915) Kapt: Kotlin class target directory is cleared before compilation (and after kapt task)
 
 #### Exceptions / Errors
 - [`KT-8264`](https://youtrack.jetbrains.com/issue/KT-8264) Internal compiler error: java.lang.ArithmeticException: BigInteger: modulus not positive
@@ -55,6 +57,7 @@
 - [`KT-14966`](https://youtrack.jetbrains.com/issue/KT-14966) Regression: VerifyError on access super implementation from delegate 
 - [`KT-15017`](https://youtrack.jetbrains.com/issue/KT-15017) Throwing exception in the end of inline suspend-functions lead to internal compiler error
 - [`KT-15439`](https://youtrack.jetbrains.com/issue/KT-15439) Resolved call is not completed for generic callable reference in if-expression
+- [`KT-15500`](https://youtrack.jetbrains.com/issue/KT-15500) Exception passing freeCompilerArgs to gradle plugin
 - [`KT-15646`](https://youtrack.jetbrains.com/issue/KT-15646) InconsistentDebugInfoException when stepping over `throw`
 - [`KT-15726`](https://youtrack.jetbrains.com/issue/KT-15726) Kotlin compiles invalid bytecode for nested try-catch with return
 - [`KT-15743`](https://youtrack.jetbrains.com/issue/KT-15743) Overloaded Kotlin extensions annotates wrong parameters in java
@@ -110,6 +113,7 @@
 #### Standard library support
 - [`KT-4497`](https://youtrack.jetbrains.com/issue/KT-4497) JS: add String.toInt, String.toDouble etc extension functions to JS stdlib
 - [`KT-14035`](https://youtrack.jetbrains.com/issue/KT-14035) JS: support CharSequence
+- [`KT-14036`](https://youtrack.jetbrains.com/issue/KT-14036) JS: use Int16 for Char when it possible and box to our Char otherwise
 - [`KT-15312`](https://youtrack.jetbrains.com/issue/KT-15312) JS: map kotlin.Throwable to JS Error
 - [`KT-15940`](https://youtrack.jetbrains.com/issue/KT-15940) JS: rename all js stdlib artifacts (ant, maven) to "kotlin-stdlib-js.jar"
 
@@ -135,6 +139,7 @@
 - [`KT-15797`](https://youtrack.jetbrains.com/issue/KT-15797) JS: wrong code for accessing to nested class inside js module
 - [`KT-15863`](https://youtrack.jetbrains.com/issue/KT-15863) JS: Extension function reference shifts parameters loosing the receiver
 - [`KT-16049`](https://youtrack.jetbrains.com/issue/KT-16049) JS: drop "-kjsm" command line option, merge the logic into "-meta-info"
+- [`KT-16083`](https://youtrack.jetbrains.com/issue/KT-16083) JS: rename "-library-files" argument to "-libraries" and change separator from comma to system file separator
 
 ### Standard library
 - [`KT-13353`](https://youtrack.jetbrains.com/issue/KT-13353) Add Map.minus(key) and Map.minus(keys) to stdlib
@@ -157,6 +162,12 @@
 - [`KT-15819`](https://youtrack.jetbrains.com/issue/KT-15819) It would be nice if compileKotlin options are imported into Kotlin facet from gradle/maven
 - [`KT-16015`](https://youtrack.jetbrains.com/issue/KT-16015) Prohibit api-version > language-version in Facet and Project Settings
 
+#### Coroutine support
+- [`KT-14704`](https://youtrack.jetbrains.com/issue/KT-14704) Extract Method should work in coroutines
+- [`KT-15955`](https://youtrack.jetbrains.com/issue/KT-15955) Quickfix to enable coroutines through Gradle project configuration
+- [`KT-16018`](https://youtrack.jetbrains.com/issue/KT-16018) Hide coroutines intrinsics from import and completion
+- [`KT-16075`](https://youtrack.jetbrains.com/issue/KT-16075) Error:Kotlin: The -Xcoroutines can only have one value
+
 #### Intention actions, inspections and quick-fixes
 
 ##### New features
@@ -167,7 +178,7 @@
 - [`KT-15738`](https://youtrack.jetbrains.com/issue/KT-15738) Intention to add `suspend` modifier to functional type
 - [`KT-15800`](https://youtrack.jetbrains.com/issue/KT-15800) QuickFix to convert a function to suspending on error when calling suspension inside
 - [`KT-15874`](https://youtrack.jetbrains.com/issue/KT-15874) Replace operator with function call replaces % with deprecated mod
-- [`KT-15955`](https://youtrack.jetbrains.com/issue/KT-15955) Quickfix to enable coroutines through Gradle project configuration
+- [`KT-16072`](https://youtrack.jetbrains.com/issue/KT-16072) Intentions to convert suspend lambdas to callable references should not be shown
 
 ##### Bug fixes
 - [`KT-13710`](https://youtrack.jetbrains.com/issue/KT-13710) Import intention action shouldn't appear in import list
@@ -188,9 +199,6 @@
 - [`KT-16019`](https://youtrack.jetbrains.com/issue/KT-16019) Do not suggest renaming to underscore in 1.0 compatibility mode
 - [`KT-16036`](https://youtrack.jetbrains.com/issue/KT-16036) "Create type alias from usage" quickfix should not be suggested at language level 1.0
 
-#### Refactorings
-- [`KT-14704`](https://youtrack.jetbrains.com/issue/KT-14704) Extract Method should work in coroutines
-
 #### Android support
 - [`KT-13275`](https://youtrack.jetbrains.com/issue/KT-13275) Kotlin Gradle plugin for Android doesn't work when jackOptions enabled
 - [`KT-15282`](https://youtrack.jetbrains.com/issue/KT-15282) Issues debugging crossinline Android code
@@ -202,6 +210,7 @@
 #### Various issues
 - [`KT-9011`](https://youtrack.jetbrains.com/issue/KT-9011) Shift+Enter should insert curly braces when invoked after class declaration
 - [`KT-11308`](https://youtrack.jetbrains.com/issue/KT-11308) Hide kotlin.jvm.internal package contents from completion and auto-import
+- [`KT-14252`](https://youtrack.jetbrains.com/issue/KT-14252) Completion could suggest constructors available via typealiases
 - [`KT-14722`](https://youtrack.jetbrains.com/issue/KT-14722) completion list isn't filled up for typealias to object
 - [`KT-14767`](https://youtrack.jetbrains.com/issue/KT-14767) typealias to annotation class should appear in the completion list
 - [`KT-14859`](https://youtrack.jetbrains.com/issue/KT-14859) "Parameter Info" sometimes does not work properly inside lambda
@@ -211,12 +220,12 @@
 - [`KT-15883`](https://youtrack.jetbrains.com/issue/KT-15883) Generating equals() and hashCode(): hashCode doesn't correctly honor variable names with backticks
 - [`KT-15911`](https://youtrack.jetbrains.com/issue/KT-15911) Kotlin REPL will not launch: "Neither main class nor JAR path is specified"
 - [`KT-15978`](https://youtrack.jetbrains.com/issue/KT-15978) Typealias from Kotlin 1.1 are suggested in completion even if language level is set to 1.0 in settings
-- [`KT-16018`](https://youtrack.jetbrains.com/issue/KT-16018) Hide coroutines intrinsics from import and completion
 
 ### J2K
 - [`KT-15789`](https://youtrack.jetbrains.com/issue/KT-15789) Kotlin plugin incorrectly converts for-loops from Java to Kotlin
 
 ### Gradle support
+- [`KT-14619`](https://youtrack.jetbrains.com/issue/KT-14619) Gradle: The '-d' option with a directory destination is ignored because '-module' is specified
 - [`KT-14830`](https://youtrack.jetbrains.com/issue/KT-14830) Kotlin Gradle plugin configuration should not add 'kotlin' source directory by default
 - [`KT-15279`](https://youtrack.jetbrains.com/issue/KT-15279) 'Kotlin not configured message' should not be displayed while gradle sync is in progress
 - [`KT-15812`](https://youtrack.jetbrains.com/issue/KT-15812) Create Kotlin facet on importing gradle project with unchecked option Create separate module per source set
