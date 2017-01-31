@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
 import java.io.File
-import java.net.URLDecoder
-import java.nio.charset.Charset
 
 open class KaptTask : AbstractCompile() {
     private val rawSourceRoots = FilteringSourceRootsContainer({ !it.isInsideDestinationDir() })
@@ -24,6 +22,7 @@ open class KaptTask : AbstractCompile() {
 
     internal val pluginOptions = CompilerPluginOptions()
     internal lateinit var kotlinCompileTask: KotlinCompile
+    internal lateinit var javaCompileTask: AbstractCompile
 
     override fun setSource(sources: Any?) {
         val filteredSources = rawSourceRoots.set(sources)
@@ -75,5 +74,7 @@ open class KaptTask : AbstractCompile() {
         val compilerRunner = GradleCompilerRunner(project)
         val exitCode = compilerRunner.runJvmCompiler(sourceRoots.kotlinSourceFiles, sourceRoots.javaSourceRoots, args, environment)
         throwGradleExceptionIfError(exitCode)
+
+        javaCompileTask.source(destinationDir.walkTopDown().filter { it.extension == "java" }.toList())
     }
 }
