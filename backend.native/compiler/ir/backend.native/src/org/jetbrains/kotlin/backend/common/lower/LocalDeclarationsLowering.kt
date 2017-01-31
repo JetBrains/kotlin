@@ -519,7 +519,8 @@ class LocalDeclarationsLowering(val context: BackendContext): DeclarationContain
                         /* isConst = */ false,
                         /* isHeader = */ false,
                         /* isImpl = */ false,
-                        /* isExternal = */ false)
+                        /* isExternal = */ false,
+                        /* isDelegated = */ false)
 
                 fieldDescriptor.initialize(/* getter = */ null, /* setter = */ null)
 

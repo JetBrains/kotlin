@@ -303,7 +303,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
             val receiver = ReceiverParameterDescriptorImpl(implObjectDescriptor, ImplicitClassReceiver(implObjectDescriptor))
             return PropertyDescriptorImpl.create(implObjectDescriptor, Annotations.EMPTY, Modality.FINAL, Visibilities.PRIVATE,
                     false, "VALUES".synthesizedName, CallableMemberDescriptor.Kind.SYNTHESIZED, irClass.descriptor.source,
-                    false, false, false, false, false).initialize(valuesArrayType, dispatchReceiverParameter = receiver)
+                    false, false, false, false, false, false).initialize(valuesArrayType, dispatchReceiverParameter = receiver)
         }
 
         private val kotlinPackage = context.irModule!!.descriptor.getPackage(FqName("kotlin"))
