@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.annotation.plugin.ide.AbstractMavenImportHandler
 class NoArgMavenProjectImportHandler : AbstractMavenImportHandler() {
     private companion object {
         val ANNOTATATION_PARAMETER_PREFIX = "no-arg:${NoArgCommandLineProcessor.ANNOTATION_OPTION.name}="
-        private val JPA_NOARG_ANNOTATIONS = listOf("javax.persistence.Entity")
     }
 
     override val compilerPluginId = NoArgCommandLineProcessor.PLUGIN_ID
@@ -36,8 +35,10 @@ class NoArgMavenProjectImportHandler : AbstractMavenImportHandler() {
         }
 
         val annotations = mutableListOf<String>()
-        if ("jpa" in enabledCompilerPlugins) {
-            annotations.addAll(JPA_NOARG_ANNOTATIONS)
+        for ((presetName, presetAnnotations) in NoArgCommandLineProcessor.SUPPORTED_PRESETS) {
+            if (presetName in enabledCompilerPlugins) {
+                annotations.addAll(presetAnnotations)
+            }
         }
 
         annotations.addAll(compilerPluginOptions.mapNotNull { text ->

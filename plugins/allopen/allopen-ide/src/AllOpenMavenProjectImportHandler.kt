@@ -22,13 +22,6 @@ import org.jetbrains.kotlin.annotation.plugin.ide.AbstractMavenImportHandler
 class AllOpenMavenProjectImportHandler : AbstractMavenImportHandler() {
     private companion object {
         val ANNOTATION_PARAMETER_PREFIX = "all-open:${AllOpenCommandLineProcessor.ANNOTATION_OPTION.name}="
-
-        private val SPRING_ALLOPEN_ANNOTATIONS = listOf(
-                "org.springframework.stereotype.Component",
-                "org.springframework.transaction.annotation.Transactional",
-                "org.springframework.scheduling.annotation.Async",
-                "org.springframework.cache.annotation.Cacheable"
-        )
     }
 
     override val compilerPluginId = AllOpenCommandLineProcessor.PLUGIN_ID
@@ -42,8 +35,11 @@ class AllOpenMavenProjectImportHandler : AbstractMavenImportHandler() {
         }
 
         val annotations = mutableListOf<String>()
-        if ("spring" in enabledCompilerPlugins) {
-            annotations.addAll(SPRING_ALLOPEN_ANNOTATIONS)
+
+        for ((presetName, presetAnnotations) in AllOpenCommandLineProcessor.SUPPORTED_PRESETS) {
+            if (presetName in enabledCompilerPlugins) {
+                annotations.addAll(presetAnnotations)
+            }
         }
 
         annotations.addAll(compilerPluginOptions.mapNotNull { text ->

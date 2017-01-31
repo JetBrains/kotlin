@@ -30,6 +30,9 @@ import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
+import org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor.Companion.SUPPORTED_PRESETS
+import org.jetbrains.kotlin.noarg.NoArgConfigurationKeys.ANNOTATION
+import org.jetbrains.kotlin.noarg.NoArgConfigurationKeys.PRESET
 import org.jetbrains.kotlin.noarg.diagnostic.CliNoArgDeclarationChecker
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
@@ -37,32 +40,39 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 object NoArgConfigurationKeys {
     val ANNOTATION: CompilerConfigurationKey<List<String>> =
             CompilerConfigurationKey.create("annotation qualified name")
+
+    val PRESET: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create("annotation preset")
 }
 
 class NoArgCommandLineProcessor : CommandLineProcessor {
     companion object {
-        val PLUGIN_ID = "org.jetbrains.kotlin.noarg"
+        val SUPPORTED_PRESETS = mapOf("jpa" to listOf("javax.persistence.Entity"))
 
         val ANNOTATION_OPTION = CliOption("annotation", "<fqname>", "Annotation qualified names",
                                           required = false, allowMultipleOccurrences = true)
+
+        val PRESET_OPTION = CliOption("preset", "<name>", "Preset name (${SUPPORTED_PRESETS.keys.joinToString()})",
+                                      required = false, allowMultipleOccurrences = true)
+
+        val PLUGIN_ID = "org.jetbrains.kotlin.noarg"
     }
 
     override val pluginId = PLUGIN_ID
-    override val pluginOptions = listOf(ANNOTATION_OPTION)
+    override val pluginOptions = listOf(ANNOTATION_OPTION, PRESET_OPTION)
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) = when (option) {
-        ANNOTATION_OPTION -> {
-            val paths = configuration.getList(NoArgConfigurationKeys.ANNOTATION).toMutableList()
-            paths.add(value)
-            configuration.put(NoArgConfigurationKeys.ANNOTATION, paths)
-        }
+        ANNOTATION_OPTION -> configuration.appendList(ANNOTATION, value)
+        PRESET_OPTION -> configuration.appendList(PRESET, value)
         else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
     }
 }
 
 class NoArgComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        val annotations = configuration.get(NoArgConfigurationKeys.ANNOTATION) ?: return
+        val annotations = configuration.get(ANNOTATION)?.toMutableList() ?: mutableListOf()
+        configuration.get(PRESET)?.forEach { preset ->
+            SUPPORTED_PRESETS[preset]?.let { annotations += it }
+        }
         if (annotations.isEmpty()) return
 
         Extensions.getRootArea().getExtensionPoint(DefaultErrorMessages.Extension.EP_NAME).registerExtension(DefaultErrorMessagesNoArg())

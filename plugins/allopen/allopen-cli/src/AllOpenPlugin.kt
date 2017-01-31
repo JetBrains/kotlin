@@ -17,6 +17,9 @@
 package org.jetbrains.kotlin.allopen
 
 import com.intellij.mock.MockProject
+import org.jetbrains.kotlin.allopen.AllOpenCommandLineProcessor.Companion.SUPPORTED_PRESETS
+import org.jetbrains.kotlin.allopen.AllOpenConfigurationKeys.ANNOTATION
+import org.jetbrains.kotlin.allopen.AllOpenConfigurationKeys.PRESET
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
@@ -28,32 +31,43 @@ import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 object AllOpenConfigurationKeys {
     val ANNOTATION: CompilerConfigurationKey<List<String>> =
             CompilerConfigurationKey.create("annotation qualified name")
+
+    val PRESET: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create("annotation preset")
 }
 
 class AllOpenCommandLineProcessor : CommandLineProcessor {
     companion object {
+        val SUPPORTED_PRESETS = mapOf("spring" to listOf(
+                "org.springframework.stereotype.Component",
+                "org.springframework.transaction.annotation.Transactional",
+                "org.springframework.scheduling.annotation.Async",
+                "org.springframework.cache.annotation.Cacheable"))
+
         val ANNOTATION_OPTION = CliOption("annotation", "<fqname>", "Annotation qualified names",
                                           required = false, allowMultipleOccurrences = true)
+
+        val PRESET_OPTION = CliOption("preset", "<name>", "Preset name (${SUPPORTED_PRESETS.keys.joinToString()})",
+                                      required = false, allowMultipleOccurrences = true)
 
         val PLUGIN_ID = "org.jetbrains.kotlin.allopen"
     }
 
     override val pluginId = PLUGIN_ID
-    override val pluginOptions = listOf(ANNOTATION_OPTION)
+    override val pluginOptions = listOf(ANNOTATION_OPTION, PRESET_OPTION)
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) = when (option) {
-        ANNOTATION_OPTION -> {
-            val paths = configuration.getList(AllOpenConfigurationKeys.ANNOTATION).toMutableList()
-            paths.add(value)
-            configuration.put(AllOpenConfigurationKeys.ANNOTATION, paths)
-        }
+        ANNOTATION_OPTION -> configuration.appendList(ANNOTATION, value)
+        PRESET_OPTION -> configuration.appendList(PRESET, value)
         else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
     }
 }
 
 class AllOpenComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        val annotations = configuration.get(AllOpenConfigurationKeys.ANNOTATION) ?: return
+        val annotations = configuration.get(ANNOTATION)?.toMutableList() ?: mutableListOf()
+        configuration.get(PRESET)?.forEach { preset ->
+            SUPPORTED_PRESETS[preset]?.let { annotations += it }
+        }
         if (annotations.isEmpty()) return
 
         DeclarationAttributeAltererExtension.registerExtension(project, CliAllOpenDeclarationAttributeAltererExtension(annotations))

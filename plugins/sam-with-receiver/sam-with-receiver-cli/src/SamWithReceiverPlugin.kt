@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.load.java.sam.SamWithReceiverResolver
+import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverConfigurationKeys.ANNOTATION
 
 object SamWithReceiverConfigurationKeys {
     val ANNOTATION: CompilerConfigurationKey<List<String>> =
@@ -46,11 +47,7 @@ class SamWithReceiverCommandLineProcessor : CommandLineProcessor {
     override val pluginOptions = listOf(ANNOTATION_OPTION)
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) = when (option) {
-        ANNOTATION_OPTION -> {
-            val paths = configuration.getList(SamWithReceiverConfigurationKeys.ANNOTATION).toMutableList()
-            paths.add(value)
-            configuration.put(SamWithReceiverConfigurationKeys.ANNOTATION, paths)
-        }
+        ANNOTATION_OPTION -> configuration.appendList(ANNOTATION, value)
         else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
     }
 }

@@ -116,12 +116,6 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             listOf(SOURCE_OUTPUT_DIR_OPTION, ANNOTATION_PROCESSOR_CLASSPATH_OPTION, APT_OPTIONS_OPTION,
                    CLASS_OUTPUT_DIR_OPTION, VERBOSE_MODE_OPTION, STUBS_OUTPUT_DIR_OPTION, APT_ONLY_OPTION, USE_LIGHT_ANALYSIS_OPTION)
 
-    private fun <T> CompilerConfiguration.appendList(option: CompilerConfigurationKey<List<T>>, value: T) {
-        val paths = getList(option).toMutableList()
-        paths.add(value)
-        put(option, paths)
-    }
-
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
             ANNOTATION_PROCESSOR_CLASSPATH_OPTION -> configuration.appendList(ANNOTATION_PROCESSOR_CLASSPATH, value)
