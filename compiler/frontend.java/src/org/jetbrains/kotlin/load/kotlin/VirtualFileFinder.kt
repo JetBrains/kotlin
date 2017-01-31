@@ -19,10 +19,35 @@ package org.jetbrains.kotlin.load.kotlin
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.utils.sure
 
-interface VirtualFileFinder : KotlinClassFinder {
-    fun findVirtualFileWithHeader(classId: ClassId): VirtualFile?
+abstract class VirtualFileFinder : KotlinClassFinder {
+    abstract fun findVirtualFileWithHeader(classId: ClassId): VirtualFile?
+
+    override fun findKotlinClass(classId: ClassId): KotlinJvmBinaryClass? {
+        val file = findVirtualFileWithHeader(classId) ?: return null
+        return KotlinBinaryClassCache.getKotlinBinaryClass(file)
+    }
+
+    override fun findKotlinClass(javaClass: JavaClass): KotlinJvmBinaryClass? {
+        var file = (javaClass as JavaClassImpl).psi.containingFile?.virtualFile ?: return null
+        if (javaClass.outerClass != null) {
+            // For nested classes we get a file of the containing class, to get the actual class file for A.B.C,
+            // we take the file for A, take its parent directory, then in this directory we look for A$B$C.class
+            file = file.parent!!.findChild(classFileName(javaClass) + ".class").sure { "Virtual file not found for $javaClass" }
+        }
+
+        return KotlinBinaryClassCache.getKotlinBinaryClass(file)
+    }
+
+    private fun classFileName(jClass: JavaClass): String {
+        val simpleName = jClass.name.asString()
+        val outerClass = jClass.outerClass ?: return simpleName
+        return classFileName(outerClass) + "$" + simpleName
+    }
 
     companion object SERVICE {
         fun getInstance(project: Project): VirtualFileFinder =
