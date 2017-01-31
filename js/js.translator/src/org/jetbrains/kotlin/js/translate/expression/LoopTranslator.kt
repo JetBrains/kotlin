@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtWhileExpressionBase
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 fun createWhile(doWhile: Boolean, expression: KtWhileExpressionBase, context: TranslationContext): JsNode {
     val conditionExpression = expression.condition ?:
@@ -89,13 +90,13 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
     fun isForOverRangeLiteral(): Boolean =
             loopRange is KtBinaryExpression && loopRange.operationToken == KtTokens.RANGE && isForOverRange()
 
-   fun isForOverArray(): Boolean {
+    fun isForOverArray(): Boolean {
         return KotlinBuiltIns.isArray(rangeType) || KotlinBuiltIns.isPrimitiveArray(rangeType)
     }
 
 
     val loopParameter = expression.loopParameter!!
-    val destructuringParameter: KtDestructuringDeclaration? = loopParameter?.destructuringDeclaration
+    val destructuringParameter: KtDestructuringDeclaration? = loopParameter.destructuringDeclaration
     val parameterName = if (destructuringParameter == null) {
         context.getNameForElement(loopParameter)
     }
@@ -109,18 +110,19 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
             return realBody
         }
         else {
+            val block = JsBlock()
+
             val currentVarInit =
                 if (destructuringParameter == null) {
                     newVar(parameterName, itemValue)
                 }
                 else {
-                    DestructuringDeclarationTranslator.translate(destructuringParameter, parameterName, itemValue, context)
+                    DestructuringDeclarationTranslator.translate(
+                            destructuringParameter, parameterName, itemValue, context.innerBlock(block))
                 }
+            block.statements += currentVarInit
+            block.statements += if (realBody is JsBlock) realBody.statements else realBody.singletonOrEmptyList()
 
-            if (realBody == null) return JsBlock(currentVarInit)
-
-            val block = convertToBlock(realBody)
-            block.statements.add(0, currentVarInit)
             return block
         }
     }

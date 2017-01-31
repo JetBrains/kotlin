@@ -77,18 +77,18 @@ public class DestructuringDeclarationTranslator extends AbstractTranslator {
     }
 
     private JsVars translate() {
-        List<JsVars.JsVar> jsVars = new ArrayList<JsVars.JsVar>();
         if (initializer != null) {
-            jsVars.add(new JsVars.JsVar(multiObjectName, initializer));
+            context().getCurrentBlock().getStatements().add(JsAstUtils.newVar(multiObjectName, initializer));
         }
 
+        List<JsVars.JsVar> jsVars = new ArrayList<JsVars.JsVar>();
         JsNameRef multiObjNameRef = multiObjectName.makeRef();
         for (KtDestructuringDeclarationEntry entry : multiDeclaration.getEntries()) {
-            VariableDescriptor descriptor = BindingContextUtils.getNotNull( context().bindingContext(), BindingContext.VARIABLE, entry);
+            VariableDescriptor descriptor = BindingContextUtils.getNotNull(context().bindingContext(), BindingContext.VARIABLE, entry);
             // Do not call `componentX` for destructuring entry called _
             if (descriptor.getName().isSpecial()) continue;
 
-            ResolvedCall<FunctionDescriptor> entryInitCall =  context().bindingContext().get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
+            ResolvedCall<FunctionDescriptor> entryInitCall = context().bindingContext().get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
             assert entryInitCall != null : "Entry init call must be not null";
             JsExpression entryInitializer = CallTranslator.translate(context(), entryInitCall, multiObjNameRef);
             FunctionDescriptor candidateDescriptor = entryInitCall.getCandidateDescriptor();
@@ -101,7 +101,7 @@ public class DestructuringDeclarationTranslator extends AbstractTranslator {
                 entryInitializer = JsAstUtils.charToBoxedChar(entryInitializer);
             }
 
-            JsName name =  context().getNameForDescriptor(descriptor);
+            JsName name = context().getNameForDescriptor(descriptor);
             if (isVarCapturedInClosure(context().bindingContext(), descriptor)) {
                 JsNameRef alias = getCapturedVarAccessor(name.makeRef());
                 entryInitializer = JsAstUtils.wrapValue(alias, entryInitializer);

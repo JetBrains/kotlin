@@ -63,7 +63,7 @@ public class DynamicIncrementTranslator extends IncrementTranslator {
 
     @Override
     @NotNull
-    protected JsExpression operationExpression(@NotNull JsExpression receiver) {
+    protected JsExpression operationExpression(@NotNull TranslationContext context, @NotNull JsExpression receiver) {
         return unaryAsBinary(receiver);
     }
 

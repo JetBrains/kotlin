@@ -1,6 +1,5 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-// IGNORE_BACKEND: JS
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 import kotlin.reflect.KProperty
@@ -34,7 +33,7 @@ class A(val x: String) {
     operator suspend fun unaryPlus() = suspendThere(x + "K")
 
     operator suspend fun inc(): A = suspendCoroutineOrReturn { x ->
-        isProvideDelegateCalled = true
+        isIncCalled = true
         x.resume(this)
         COROUTINE_SUSPENDED
     }
@@ -86,7 +85,13 @@ suspend fun foo4() {
 
 suspend fun foo6() {
     var y = a++
-    if (y.isIncCalled) throw RuntimeException("fail 7")
+    if (!y.isIncCalled) throw RuntimeException("fail 7")
+}
+
+suspend fun foo7() {
+    a.isIncCalled = false
+    val y = ++a
+    if (!y.isIncCalled) throw RuntimeException("fail 8")
 }
 
 fun box(): String {
@@ -98,6 +103,7 @@ fun box(): String {
         foo4()
         //foo5()
         foo6()
+        foo7()
     }
 
     return "OK"

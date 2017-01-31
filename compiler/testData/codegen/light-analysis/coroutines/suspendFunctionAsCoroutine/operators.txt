@@ -60,6 +60,7 @@ public final class OperatorsKt {
     public final static @org.jetbrains.annotations.Nullable method foo3(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method foo4(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method foo6(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method foo7(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.NotNull method getA(): A
     public final static method setA(@org.jetbrains.annotations.NotNull p0: A): void
     public final static @org.jetbrains.annotations.Nullable method suspendThere(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object

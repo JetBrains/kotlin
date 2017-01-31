@@ -38,11 +38,9 @@ public final class OverloadedIncrementTranslator extends IncrementTranslator {
         this.resolvedCall = CallUtilKt.getFunctionResolvedCallWithAssert(expression, context.bindingContext());
     }
 
-
     @Override
     @NotNull
-    protected JsExpression operationExpression(@NotNull JsExpression receiver) {
-        return CallTranslator.translate(context(), resolvedCall, receiver);
+    protected JsExpression operationExpression(@NotNull TranslationContext context, @NotNull JsExpression receiver) {
+        return CallTranslator.translate(context, resolvedCall, receiver);
     }
-
 }

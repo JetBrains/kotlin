@@ -91,7 +91,7 @@ public abstract class IncrementTranslator extends AbstractTranslator {
         // code fragment: expr(a++)
         // generate: expr(a = a.inc(), a)
         JsExpression getExpression = accessTranslator.translateAsGet();
-        JsExpression reassignment = variableReassignment(getExpression);
+        JsExpression reassignment = variableReassignment(context().innerBlock(accessBlock), getExpression);
         accessBlock.getStatements().add(JsAstUtils.asSyntheticStatement(reassignment));
         JsExpression getNewValue = accessTranslator.translateAsGet();
 
@@ -114,7 +114,7 @@ public abstract class IncrementTranslator extends AbstractTranslator {
         // generate: expr( (t1 = a, t2 = t1, a = t1.inc(), t2) )
         TemporaryVariable t1 = context().declareTemporary(accessTranslator.translateAsGet());
         accessBlock.getStatements().add(t1.assignmentStatement());
-        JsExpression variableReassignment = variableReassignment(t1.reference());
+        JsExpression variableReassignment = variableReassignment(context().innerBlock(accessBlock), t1.reference());
         accessBlock.getStatements().add(JsAstUtils.asSyntheticStatement(variableReassignment));
 
         JsExpression result;
@@ -131,13 +131,13 @@ public abstract class IncrementTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsExpression variableReassignment(@NotNull JsExpression toCallMethodUpon) {
-        JsExpression overloadedMethodCallOnPropertyGetter = operationExpression(toCallMethodUpon);
+    private JsExpression variableReassignment(@NotNull TranslationContext context, @NotNull JsExpression toCallMethodUpon) {
+        JsExpression overloadedMethodCallOnPropertyGetter = operationExpression(context, toCallMethodUpon);
         return accessTranslator.translateAsSet(overloadedMethodCallOnPropertyGetter);
     }
 
     @NotNull
-    abstract JsExpression operationExpression(@NotNull JsExpression receiver);
+    abstract JsExpression operationExpression(@NotNull TranslationContext context, @NotNull JsExpression receiver);
 
     private static boolean isDynamic(TranslationContext context, KtUnaryExpression expression) {
         CallableDescriptor operationDescriptor = getCallableDescriptorForOperationExpression(context.bindingContext(), expression);
