@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInsight.CodeInsightUtilBase
 import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.InspectionsBundle
 import com.intellij.codeInspection.LocalQuickFix
@@ -36,7 +35,6 @@ import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.source.getPsi
-import org.jetbrains.kotlin.types.typeUtil.supertypes
 
 object DeleteEqualsAndHashCodeFix : LocalQuickFix {
     override fun getName() = "Delete equals()/hashCode()"
@@ -62,6 +60,8 @@ sealed class GenerateEqualsOrHashCodeFix : LocalQuickFix {
     }
 
     override fun getFamilyName() = name
+
+    override fun startInWriteAction() = false
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         if (!FileModificationService.getInstance().preparePsiElementForWrite(descriptor.psiElement)) return
