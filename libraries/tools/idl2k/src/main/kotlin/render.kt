@@ -104,6 +104,9 @@ private fun renderCall(call: GenerateFunctionCall) = "${call.name.replaceKeyword
 private fun Appendable.renderFunctionDeclaration(owner: String, f: GenerateFunction, override: Boolean, commented: Boolean, level: Int = 1) {
     indent(commented, level)
 
+    if (f.nativeGetterOrSetter != NativeGetterOrSetter.NONE) {
+        append("@kotlin.internal.InlineOnly ")
+    }
     if (override) {
         append("override ")
     }
@@ -269,6 +272,7 @@ fun Appendable.renderBuilderFunction(dictionary: GenerateTraitOrClass, allSuperT
             .dynamicIfUnknownType(allTypes)
             .map { if (it.initializer == null && (it.type.nullable || it.type == DynamicType) && !it.required) it.copy(initializer = "null") else it }
 
+    appendln("@kotlin.internal.InlineOnly")
     append("public inline fun ${dictionary.name}")
     renderArgumentsDeclaration(fields)
     appendln(": ${dictionary.name} {")
