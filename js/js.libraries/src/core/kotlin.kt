@@ -71,6 +71,15 @@ internal fun <T> arrayOfNulls(reference: Array<out T>, size: Int): Array<T> {
     return arrayOfNulls<Any>(size).unsafeCast<Array<T>>()
 }
 
+internal fun arrayCopy(source: dynamic, dest: dynamic): dynamic {
+    val srcLen: Int = source.length
+    val dstLen: Int = dest.length
+    var index: Int = 0
+    while (index < srcLen && index < dstLen) dest[index] = source[index++]
+    return dest
+}
+
+
 internal fun arrayCopyResize(source: dynamic, newSize: Int, defaultValue: Any?): dynamic {
     val result = source.slice(0, newSize)
     var index: Int = source.length
@@ -87,6 +96,12 @@ internal fun <T> arrayPlusCollection(array: dynamic, collection: Collection<T>):
     var index: Int = array.length
     for (element in collection) result[index++] = element
     return result
+}
+
+internal fun <T> typedArrayPlusCollection(array: dynamic, dst: dynamic, collection: Collection<T>): dynamic {
+    var index: Int = array.length
+    for (element in collection) dst[index++] = element
+    return dst
 }
 
 // no singleton map implementation in js, return map as is

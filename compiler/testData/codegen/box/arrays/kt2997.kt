@@ -54,19 +54,19 @@ fun foo(a: Any): Int {
 
 fun box(): String {
     val iA = IntArray(1)
-    if (foo(iA) != 1) return "fail int[]"
+    if (iA !is IntArray || foo(iA) != 1) return "fail int[]"
     val sA = ShortArray(1)
-    if (foo(sA) != 1) return "fail short[]"
+    if (sA !is ShortArray || foo(sA) != 1) return "fail short[]"
     val bA = ByteArray(1)
-    if (foo(bA) != 1) return "fail byte[]"
+    if (bA !is ByteArray || foo(bA) != 1) return "fail byte[]"
     val fA = FloatArray(1)
-    if (foo(fA) != 1) return "fail float[]"
+    if (fA !is FloatArray || foo(fA) != 1) return "fail float[]"
     val dA = DoubleArray(1)
-    if (foo(dA) != 1) return "fail double[]"
+    if (dA !is DoubleArray || foo(dA) != 1) return "fail double[]"
     val boolA = BooleanArray(1)
-    if (foo(boolA) != 1) return "fail boolean[]"
+    if (boolA !is BooleanArray || foo(boolA) != 1) return "fail boolean[]"
     val cA = CharArray(1)
-    if (foo(cA) != 1) return "fail char[]"
+    if (cA !is CharArray || foo(cA) != 1) return "fail char[]"
     val oA = arrayOfNulls<Int>(1)
     if (foo(oA) != 1) return "fail Any[]"
 

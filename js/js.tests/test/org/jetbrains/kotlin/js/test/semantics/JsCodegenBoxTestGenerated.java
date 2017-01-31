@@ -416,13 +416,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("arrayInstanceOf.kt")
         public void testArrayInstanceOf() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/arrayInstanceOf.kt");
-            try {
-                doTest(fileName);
-            }
-            catch (Throwable ignore) {
-                return;
-            }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            doTest(fileName);
         }
 
         @TestMetadata("arrayPlusAssign.kt")
@@ -734,13 +728,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("kt7288.kt")
         public void testKt7288() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/kt7288.kt");
-            try {
-                doTest(fileName);
-            }
-            catch (Throwable ignore) {
-                return;
-            }
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+            doTest(fileName);
         }
 
         @TestMetadata("kt7338.kt")
@@ -800,6 +788,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("nonNullArray.kt")
         public void testNonNullArray() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/nonNullArray.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("primitiveArrays.kt")
+        public void testPrimitiveArrays() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/primitiveArrays.kt");
             doTest(fileName);
         }
 
@@ -15119,13 +15113,7 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("kt13241_Array.kt")
             public void testKt13241_Array() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInIndices/kt13241_Array.kt");
-                try {
-                    doTest(fileName);
-                }
-                catch (Throwable ignore) {
-                    return;
-                }
-                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+                doTest(fileName);
             }
 
             @TestMetadata("kt13241_CharSequence.kt")
