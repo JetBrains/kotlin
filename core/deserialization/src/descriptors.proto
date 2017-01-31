@@ -442,3 +442,16 @@ message SinceKotlinInfo {
 message SinceKotlinInfoTable {
   repeated SinceKotlinInfo info = 1;
 }
+
+// A part of the package, which is used to serialize .kjsm/.meta.js, .kotlin_builtins and .kotlin_metadata files.
+// Is not used in the JVM back-end
+message PackageFragment {
+  optional StringTable strings = 1;
+  optional QualifiedNameTable qualified_names = 2;
+
+  optional Package package = 3;
+
+  repeated Class class = 4;
+
+  extensions 100 to 199;
+}

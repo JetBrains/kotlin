@@ -27,17 +27,17 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer
-import org.jetbrains.kotlin.serialization.js.JsProtoBuf
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptClassDataFinder
 
 // TODO: deduplicate with KotlinBuiltInDeserializerForDecompiler
 class KotlinJavaScriptDeserializerForDecompiler(
         packageFqName: FqName,
-        private val proto: JsProtoBuf.Library.Part,
+        private val proto: ProtoBuf.PackageFragment,
         private val nameResolver: NameResolver
 ) : DeserializerForDecompilerBase(packageFqName) {
     override val targetPlatform: TargetPlatform get() = JsPlatform

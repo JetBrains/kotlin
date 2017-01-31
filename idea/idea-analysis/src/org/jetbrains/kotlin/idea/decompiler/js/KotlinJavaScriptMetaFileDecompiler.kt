@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendererOptions
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.js.JsProtoBuf
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
@@ -88,7 +89,7 @@ fun buildDecompiledTextFromJsMetadata(kjsmFile: VirtualFile): DecompiledText {
 sealed class KjsmFile {
     class Incompatible(val version: JsMetadataVersion) : KjsmFile()
 
-    class Compatible(val header: JsProtoBuf.Header, val proto: JsProtoBuf.Library.Part) : KjsmFile() {
+    class Compatible(val header: JsProtoBuf.Header, val proto: ProtoBuf.PackageFragment) : KjsmFile() {
         val packageFqName = FqName(header.packageFqName)
         val nameResolver = NameResolverImpl(proto.strings, proto.qualifiedNames)
 
@@ -106,10 +107,9 @@ sealed class KjsmFile {
             }
 
             val header = JsProtoBuf.Header.parseDelimitedFrom(stream)
-            val proto = JsProtoBuf.Library.Part.parseFrom(stream, JsSerializerProtocol.extensionRegistry)
-            val result = Compatible(header, proto)
+            val proto = ProtoBuf.PackageFragment.parseFrom(stream, JsSerializerProtocol.extensionRegistry)
 
-            return result
+            return Compatible(header, proto)
         }
 
         private fun readFileContentsSafely(file: VirtualFile): ByteArray? {

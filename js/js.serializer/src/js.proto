@@ -84,6 +84,10 @@ extend TypeParameter {
   repeated Annotation type_parameter_annotation = 130;
 }
 
+extend PackageFragment {
+  optional Files package_fragment_files = 130;
+}
+
 message Classes {
   // id in StringTable
   repeated int32 class_name = 1 [packed = true];
@@ -97,22 +101,9 @@ message Library {
     UMD = 4;
   }
 
-  // This is a copy of BuiltIns in builtins.proto
-  // TODO: combine the two
-  message Part {
-    optional StringTable strings = 1;
-    optional QualifiedNameTable qualified_names = 2;
-
-    optional Package package = 3;
-
-    repeated Class class = 4;
-
-    optional Files files = 130;
-  }
-
   optional Kind kind = 1 [default = PLAIN];
 
-  repeated Part part = 2;
+  repeated PackageFragment package_fragment = 2;
 
   repeated string imported_module = 3;
 }

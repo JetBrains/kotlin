@@ -20,23 +20,24 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.PackageFragmentProviderImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
 
 fun createKotlinJavascriptPackageFragmentProvider(
         storageManager: StorageManager,
         module: ModuleDescriptor,
-        libraryParts: List<JsProtoBuf.Library.Part>,
+        packageFragmentProtos: List<ProtoBuf.PackageFragment>,
         configuration: DeserializationConfiguration
 ): PackageFragmentProvider {
-    val packageFragments = libraryParts.map { part ->
-        val nameResolver = NameResolverImpl(part.strings, part.qualifiedNames)
+    val packageFragments = packageFragmentProtos.map { proto ->
+        val nameResolver = NameResolverImpl(proto.strings, proto.qualifiedNames)
         val fqName = when {
-            part.hasPackage() -> nameResolver.getPackageFqName(part.`package`.getExtension(JsProtoBuf.packageFqName))
-            part.class_Count > 0 -> nameResolver.getClassId(part.class_OrBuilderList.first().fqName).packageFqName
+            proto.hasPackage() -> nameResolver.getPackageFqName(proto.`package`.getExtension(JsProtoBuf.packageFqName))
+            proto.class_Count > 0 -> nameResolver.getClassId(proto.class_OrBuilderList.first().fqName).packageFqName
             else -> throw IllegalStateException("Invalid library part: either a Package or a Class must be present")
         }
-        KotlinJavascriptPackageFragment(fqName, storageManager, module, part, nameResolver)
+        KotlinJavascriptPackageFragment(fqName, storageManager, module, proto, nameResolver)
     }
 
     val provider = PackageFragmentProviderImpl(packageFragments)

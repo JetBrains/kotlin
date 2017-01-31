@@ -20,11 +20,12 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.ClassData
 import org.jetbrains.kotlin.serialization.ClassDataWithSource
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 
 class KotlinJavascriptClassDataFinder(
-        proto: JsProtoBuf.Library.Part,
+        proto: ProtoBuf.PackageFragment,
         private val nameResolver: NameResolver
 ) : ClassDataFinder {
     private val classIdToProto =
