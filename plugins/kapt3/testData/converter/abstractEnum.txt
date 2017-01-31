@@ -1,0 +1,125 @@
+public enum E {
+    /*public static final*/ X /* = new X(){
+
+        @java.lang.Override()
+        public void a() {
+        }
+
+        X() {
+            super();
+        }
+    } */,
+    /*public static final*/ Y /* = new Y(){
+
+        @java.lang.Override()
+        public void a() {
+        }
+
+        Y() {
+            super();
+        }
+    } */;
+
+    public abstract void a();
+
+    public final void b() {
+    }
+
+    E() {
+    }
+
+    public static final class Obj {
+        public static final E.Obj INSTANCE = null;
+
+        private Obj() {
+            super();
+        }
+    }
+
+    public static final class NestedClass {
+
+        public NestedClass() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+
+public enum E2 {
+    /*public static final*/ X /* = new X(0){
+
+        @java.lang.Override()
+        public void a() {
+        }
+
+        X() {
+            super(0);
+        }
+    } */,
+    /*public static final*/ Y /* = new Y(0){
+
+        @java.lang.Override()
+        public void a() {
+        }
+
+        Y() {
+            super(0);
+        }
+    } */;
+
+    public abstract void a();
+
+    E2(int n) {
+    }
+
+    E2(java.lang.String s) {
+    }
+}
+
+////////////////////
+
+
+public enum E3 {
+    /*public static final*/ X /* = new X(null) */,
+    /*public static final*/ Y /* = new Y(null) */;
+    private final java.lang.String a = null;
+
+    public final java.lang.String getA() {
+        return null;
+    }
+
+    E3(java.lang.String a) {
+    }
+}
+
+////////////////////
+
+
+public enum E4 {
+    /*public static final*/ X /* = new X(null, 0, 0L, false) */;
+    private final java.lang.String a = null;
+    private final int b = 0;
+    private final long c = 0L;
+    private final boolean d = false;
+
+    public final java.lang.String getA() {
+        return null;
+    }
+
+    public final int getB() {
+        return 0;
+    }
+
+    public final long getC() {
+        return 0L;
+    }
+
+    public final boolean getD() {
+        return false;
+    }
+
+    E4(java.lang.String a, int b, long c, boolean d) {
+    }
+}

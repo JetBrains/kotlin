@@ -155,21 +155,14 @@ class ClassFileToSourceStubConverter(
         val isNested = (descriptor as? ClassDescriptor)?.isNested ?: false
         val isInner = isNested && (descriptor as? ClassDescriptor)?.isInner ?: false
 
-        val flags = when {
-            (descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.INTERFACE -> {
-                // Classes inside interfaces should always be public and static.
-                // See com.sun.tools.javac.comp.Enter.visitClassDef for more information.
-                (clazz.access or Opcodes.ACC_PUBLIC or Opcodes.ACC_STATIC) and
-                        Opcodes.ACC_PRIVATE.inv() and Opcodes.ACC_PROTECTED.inv() // Remove private and protected modifiers
-            }
-            !isInner && isNested -> clazz.access or Opcodes.ACC_STATIC
-            else -> clazz.access
-        }
-
-        val modifiers = convertModifiers(flags, ElementKind.CLASS, packageFqName, clazz.visibleAnnotations, clazz.invisibleAnnotations)
+        val flags = getClassAccessFlags(clazz, descriptor, isInner, isNested)
 
         val isEnum = clazz.isEnum()
         val isAnnotation = clazz.isAnnotation()
+
+        val modifiers = convertModifiers(flags,
+                if (isEnum) ElementKind.ENUM else ElementKind.CLASS,
+                packageFqName, clazz.visibleAnnotations, clazz.invisibleAnnotations)
 
         val isDefaultImpls = clazz.name.endsWith("${descriptor.name.asString()}/DefaultImpls")
                              && isPublic(clazz.access) && isFinal(clazz.access)
@@ -181,14 +174,7 @@ class ClassFileToSourceStubConverter(
             return null
         }
 
-        val simpleName = when (descriptor) {
-            is PackageFragmentDescriptor -> {
-                val className = if (packageFqName.isEmpty()) clazz.name else clazz.name.drop(packageFqName.length + 1)
-                if (className.isEmpty()) throw IllegalStateException("Invalid package facade class name: ${clazz.name}")
-                className
-            }
-            else -> if (isDefaultImpls) "DefaultImpls" else descriptor.name.asString()
-        }
+        val simpleName = getClassName(clazz, descriptor, isDefaultImpls, packageFqName)
 
         val interfaces = mapJList(clazz.interfaces) {
             if (isAnnotation && it == "java/lang/annotation/Annotation") return@mapJList null
@@ -200,7 +186,49 @@ class ClassFileToSourceStubConverter(
         val hasSuperClass = clazz.superName != "java/lang/Object" && !isEnum
         val genericType = signatureParser.parseClassSignature(clazz.signature, superClass, interfaces)
 
-        val fields = mapJList<FieldNode, JCTree>(clazz.fields) { convertField(it, packageFqName) }
+        class EnumValueData(val field: FieldNode, val innerClass: InnerClassNode?, val correspondingClass: ClassNode?)
+
+        val enumValuesData = clazz.fields.filter { it.isEnumValue() }.map { field ->
+            var foundInnerClass: InnerClassNode? = null
+            var correspondingClass: ClassNode? = null
+
+            for (innerClass in clazz.innerClasses) {
+                // Class should have the same name as enum value
+                if (innerClass.innerName != field.name) continue
+                val classNode = kaptContext.compiledClasses.firstOrNull { it.name == innerClass.name } ?: continue
+
+                // Super class name of the class should be our enum class
+                if (classNode.superName != clazz.name) continue
+
+                correspondingClass = classNode
+                foundInnerClass = innerClass
+                break
+            }
+
+            EnumValueData(field, foundInnerClass, correspondingClass)
+        }
+
+        val enumValues: JavacList<JCTree> = mapJList(enumValuesData) { data ->
+            val constructorArguments = Type.getArgumentTypes(clazz.methods.firstOrNull {
+                it.name == "<init>" && Type.getArgumentsAndReturnSizes(it.desc).shr(2) >= 2
+            }?.desc ?: "()Z")
+
+            val args = mapJList(constructorArguments.drop(2)) { convertLiteralExpression(getDefaultValue(it)) }
+            
+            val def = data.correspondingClass?.let { convertClass(it, packageFqName, false) }
+
+            convertField(data.field, packageFqName, treeMaker.NewClass(
+                    /* enclosing = */ null,
+                    /* typeArgs = */ JavacList.nil(),
+                    /* clazz = */ treeMaker.Ident(treeMaker.name(data.field.name)),
+                    /* args = */ args,
+                    /* def = */ def))
+        }
+
+        val fields = mapJList<FieldNode, JCTree>(clazz.fields) {
+            if (it.isEnumValue()) null else convertField(it, packageFqName)
+        }
+
         val methods = mapJList<MethodNode, JCTree>(clazz.methods) {
             if (isEnum) {
                 if (it.name == "values" && it.desc == "()[L${clazz.name};") return@mapJList null
@@ -209,7 +237,9 @@ class ClassFileToSourceStubConverter(
 
             convertMethod(it, clazz, packageFqName)
         }
+
         val nestedClasses = mapJList<InnerClassNode, JCTree>(clazz.innerClasses) { innerClass ->
+            if (enumValuesData.any { it.innerClass == innerClass }) return@mapJList null
             if (innerClass.outerName != clazz.name) return@mapJList null
             val innerClassNode = kaptContext.compiledClasses.firstOrNull { it.name == innerClass.name } ?: return@mapJList null
             convertClass(innerClassNode, packageFqName, false)
@@ -221,10 +251,32 @@ class ClassFileToSourceStubConverter(
                 genericType.typeParameters,
                 if (hasSuperClass) genericType.superClass else null,
                 genericType.interfaces,
-                fields + methods + nestedClasses)
+                enumValues + fields + methods + nestedClasses)
     }
 
-    private fun convertField(field: FieldNode, packageFqName: String): JCVariableDecl? {
+    private fun getClassAccessFlags(clazz: ClassNode, descriptor: DeclarationDescriptor, isInner: Boolean, isNested: Boolean) = when {
+        (descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.INTERFACE -> {
+            // Classes inside interfaces should always be public and static.
+            // See com.sun.tools.javac.comp.Enter.visitClassDef for more information.
+            (clazz.access or Opcodes.ACC_PUBLIC or Opcodes.ACC_STATIC) and
+                    Opcodes.ACC_PRIVATE.inv() and Opcodes.ACC_PROTECTED.inv() // Remove private and protected modifiers
+        }
+        !isInner && isNested -> clazz.access or Opcodes.ACC_STATIC
+        else -> clazz.access
+    }
+
+    private fun getClassName(clazz: ClassNode, descriptor: DeclarationDescriptor, isDefaultImpls: Boolean, packageFqName: String): String {
+        return when (descriptor) {
+            is PackageFragmentDescriptor -> {
+                val className = if (packageFqName.isEmpty()) clazz.name else clazz.name.drop(packageFqName.length + 1)
+                if (className.isEmpty()) throw IllegalStateException("Invalid package facade class name: ${clazz.name}")
+                className
+            }
+            else -> if (isDefaultImpls) "DefaultImpls" else descriptor.name.asString()
+        }
+    }
+
+    private fun convertField(field: FieldNode, packageFqName: String, explicitInitializer: JCExpression? = null): JCVariableDecl? {
         if (isSynthetic(field.access)) return null
         val descriptor = kaptContext.origins[field]?.descriptor
 
@@ -244,7 +296,8 @@ class ClassFileToSourceStubConverter(
 
         val value = field.value
 
-        val initializer = convertValueOfPrimitiveTypeOrString(value)
+        val initializer = explicitInitializer
+                          ?: convertValueOfPrimitiveTypeOrString(value)
                           ?: if (isFinal(field.access)) convertLiteralExpression(getDefaultValue(type)) else null
 
         return treeMaker.VarDef(modifiers, name, typeExpression, initializer)
@@ -460,6 +513,7 @@ class ClassFileToSourceStubConverter(
         } ?: annotations
 
         val flags = when (kind) {
+            ElementKind.ENUM -> access and CLASS_MODIFIERS and Opcodes.ACC_ABSTRACT.inv().toLong()
             ElementKind.CLASS -> access and CLASS_MODIFIERS
             ElementKind.METHOD -> access and METHOD_MODIFIERS
             ElementKind.FIELD -> access and FIELD_MODIFIERS

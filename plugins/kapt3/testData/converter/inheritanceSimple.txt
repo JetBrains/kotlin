@@ -5,8 +5,8 @@ public abstract interface Context {
 
 
 public enum Result {
-    /*public static final*/ SUCCESS /* = null */,
-    /*public static final*/ ERROR /* = null */;
+    /*public static final*/ SUCCESS /* = new SUCCESS() */,
+    /*public static final*/ ERROR /* = new ERROR() */;
 
     Result() {
     }

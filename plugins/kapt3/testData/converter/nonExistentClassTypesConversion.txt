@@ -1,13 +1,3 @@
-public final class MyType<T extends java.lang.Object> {
-
-    public MyType() {
-        super();
-    }
-}
-
-////////////////////
-
-
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class Test {
     public ABC a;
@@ -152,6 +142,16 @@ public final class Test {
     }
 
     public Test() {
+        super();
+    }
+}
+
+////////////////////
+
+
+public final class MyType<T extends java.lang.Object> {
+
+    public MyType() {
         super();
     }
 }
