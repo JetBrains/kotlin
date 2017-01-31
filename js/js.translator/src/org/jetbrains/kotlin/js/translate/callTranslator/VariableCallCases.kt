@@ -24,14 +24,17 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.js.backend.ast.JsLiteral
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.Namer.getCapturedVarAccessor
+import org.jetbrains.kotlin.js.translate.declaration.contextWithPropertyMetadataCreationIntrinsified
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.reference.buildReifiedTypeArgs
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import java.util.*
@@ -100,9 +103,20 @@ object DefaultVariableAccessCase : VariableAccessCase() {
 
         val localVariableDescriptor = resolvedCall.resultingDescriptor as? LocalVariableDescriptor
         val accessorDescriptor = if (isGetAccess()) localVariableDescriptor?.getter else localVariableDescriptor?.setter
-        if (accessorDescriptor != null) {
-            val funRef = JsNameRef(TranslationUtils.getAccessorFunctionName(accessorDescriptor), ref)
-            return JsInvocation(funRef, *additionalArguments.toTypedArray())
+        val delegatedCall = accessorDescriptor?.let { context.bindingContext()[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, it] }
+        if (delegatedCall != null) {
+            val delegateContext = context.contextWithPropertyMetadataCreationIntrinsified(
+                    delegatedCall, localVariableDescriptor!!, JsLiteral.NULL)
+            val delegateContextWithArgs = if (!isGetAccess()) {
+                val valueArg = delegatedCall.valueArgumentsByIndex!![2].arguments[0].getArgumentExpression()
+                delegateContext.innerContextWithAliasesForExpressions(mapOf(valueArg to value!!))
+            }
+            else {
+                delegateContext
+            }
+            val localVariableRef = context.getAliasForDescriptor(localVariableDescriptor) ?:
+                                   JsAstUtils.pureFqn(context.getNameForDescriptor(localVariableDescriptor), null)
+            return CallTranslator.translate(delegateContextWithArgs, delegatedCall, localVariableRef)
         }
 
         return constructAccessExpression(ref)

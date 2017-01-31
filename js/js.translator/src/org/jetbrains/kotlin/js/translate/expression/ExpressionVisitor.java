@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.js.translate.expression;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -36,7 +35,10 @@ import org.jetbrains.kotlin.js.translate.general.TranslatorVisitor;
 import org.jetbrains.kotlin.js.translate.operation.BinaryOperationTranslator;
 import org.jetbrains.kotlin.js.translate.operation.UnaryOperationTranslator;
 import org.jetbrains.kotlin.js.translate.reference.*;
-import org.jetbrains.kotlin.js.translate.utils.*;
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
+import org.jetbrains.kotlin.js.translate.utils.UtilsKt;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -134,6 +136,8 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             JsExpression jsReturnExpression = translateAsExpression(returned, context);
 
             KotlinType returnedType = context.bindingContext().getType(returned);
+            assert returnedType != null : "Resolved return expression is expected to have type: " +
+                                          PsiUtilsKt.getTextWithLocation(jetReturnExpression);
 
             if (KotlinBuiltIns.isCharOrNullableChar(returnedType) &&
                 TranslationUtils.shouldBoxReturnValue((CallableDescriptor)context.getDeclarationDescriptor())) {
@@ -203,19 +207,12 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         JsExpression initializer = translateInitializerForProperty(expression, context);
 
         KtExpression delegateExpression = expression.getDelegateExpression();
-        if (delegateExpression != null) {
-            SmartList<JsPropertyInitializer> propertyInitializers = new SmartList<JsPropertyInitializer>();
-            PropertyTranslatorKt.translateAccessors((VariableDescriptorWithAccessors) descriptor, propertyInitializers, context);
-            JsExpression initializerValue = PropertyTranslatorKt.translateDelegateOrInitializerExpression(context, expression);
-            assert initializerValue != null : "Initializer must be non-null for property with delegate";
-            JsPropertyInitializer delegateInitializer = new JsPropertyInitializer(
-                    context.program().getStringLiteral(Namer.getDelegateName(descriptor.getName().asString())), initializerValue);
-            propertyInitializers.add(delegateInitializer);
-            initializer = new JsObjectLiteral(propertyInitializers, true);
-        }
-
         JsName name = context.getNameForDescriptor(descriptor);
-        if (isVarCapturedInClosure(context.bindingContext(), descriptor)) {
+        if (delegateExpression != null) {
+            initializer = PropertyTranslatorKt.translateDelegateOrInitializerExpression(context, expression);
+            assert initializer != null : "Initializer must be non-null for property with delegate";
+        }
+        else if (isVarCapturedInClosure(context.bindingContext(), descriptor)) {
             JsNameRef alias = getCapturedVarAccessor(name.makeRef());
             initializer = JsAstUtils.wrapValue(alias, initializer == null ? JsLiteral.NULL : initializer);
         }
