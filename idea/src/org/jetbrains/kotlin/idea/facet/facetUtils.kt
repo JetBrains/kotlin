@@ -189,7 +189,16 @@ fun parseCompilerArgumentsToFacet(arguments: List<String>, kotlinFacet: KotlinFa
     with(kotlinFacet.configuration.settings) {
         // todo: merge common arguments with platform-specific ones in facet settings
         compilerInfo.commonCompilerArguments!!.let { commonCompilerArguments ->
+            val oldCoroutineSupport = CoroutineSupport.byCompilerArguments(commonCompilerArguments)
+            commonCompilerArguments.coroutinesEnable = false
+            commonCompilerArguments.coroutinesWarn = false
+            commonCompilerArguments.coroutinesError = false
+
             parseArguments(argumentArray, commonCompilerArguments, ignoreInvalidArguments = true)
+            if (!commonCompilerArguments.coroutinesEnable && !commonCompilerArguments.coroutinesWarn && !commonCompilerArguments.coroutinesError) {
+                compilerInfo.coroutineSupport = oldCoroutineSupport
+            }
+
             versionInfo.apiLevel = LanguageVersion.fromVersionString(commonCompilerArguments.apiVersion)
             versionInfo.languageLevel = LanguageVersion.fromVersionString(commonCompilerArguments.languageVersion)
         }
