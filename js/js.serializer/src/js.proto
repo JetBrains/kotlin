@@ -28,7 +28,7 @@ message Header {
   optional int32 flags = 1;
 
   // (patch << 16) + (minor << 8) + major
-  optional int32 js_code_binary_version = 2;
+  optional int32 js_code_binary_version = 2 [default = 1];
 
   optional string package_fq_name = 3;
 }

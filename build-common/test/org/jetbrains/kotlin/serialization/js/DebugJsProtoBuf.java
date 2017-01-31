@@ -43,7 +43,7 @@ public final class DebugJsProtoBuf {
     int getFlags();
 
     /**
-     * <code>optional int32 js_code_binary_version = 2;</code>
+     * <code>optional int32 js_code_binary_version = 2 [default = 1];</code>
      *
      * <pre>
      * (patch &lt;&lt; 16) + (minor &lt;&lt; 8) + major
@@ -51,7 +51,7 @@ public final class DebugJsProtoBuf {
      */
     boolean hasJsCodeBinaryVersion();
     /**
-     * <code>optional int32 js_code_binary_version = 2;</code>
+     * <code>optional int32 js_code_binary_version = 2 [default = 1];</code>
      *
      * <pre>
      * (patch &lt;&lt; 16) + (minor &lt;&lt; 8) + major
@@ -207,7 +207,7 @@ public final class DebugJsProtoBuf {
     public static final int JS_CODE_BINARY_VERSION_FIELD_NUMBER = 2;
     private int jsCodeBinaryVersion_;
     /**
-     * <code>optional int32 js_code_binary_version = 2;</code>
+     * <code>optional int32 js_code_binary_version = 2 [default = 1];</code>
      *
      * <pre>
      * (patch &lt;&lt; 16) + (minor &lt;&lt; 8) + major
@@ -217,7 +217,7 @@ public final class DebugJsProtoBuf {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional int32 js_code_binary_version = 2;</code>
+     * <code>optional int32 js_code_binary_version = 2 [default = 1];</code>
      *
      * <pre>
      * (patch &lt;&lt; 16) + (minor &lt;&lt; 8) + major
@@ -271,7 +271,7 @@ public final class DebugJsProtoBuf {
 
     private void initFields() {
       flags_ = 0;
-      jsCodeBinaryVersion_ = 0;
+      jsCodeBinaryVersion_ = 1;
       packageFqName_ = "";
     }
     private byte memoizedIsInitialized = -1;
@@ -436,7 +436,7 @@ public final class DebugJsProtoBuf {
         super.clear();
         flags_ = 0;
         bitField0_ = (bitField0_ & ~0x00000001);
-        jsCodeBinaryVersion_ = 0;
+        jsCodeBinaryVersion_ = 1;
         bitField0_ = (bitField0_ & ~0x00000002);
         packageFqName_ = "";
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -582,9 +582,9 @@ public final class DebugJsProtoBuf {
         return this;
       }
 
-      private int jsCodeBinaryVersion_ ;
+      private int jsCodeBinaryVersion_ = 1;
       /**
-       * <code>optional int32 js_code_binary_version = 2;</code>
+       * <code>optional int32 js_code_binary_version = 2 [default = 1];</code>
        *
        * <pre>
        * (patch &lt;&lt; 16) + (minor &lt;&lt; 8) + major
@@ -594,7 +594,7 @@ public final class DebugJsProtoBuf {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>optional int32 js_code_binary_version = 2;</code>
+       * <code>optional int32 js_code_binary_version = 2 [default = 1];</code>
        *
        * <pre>
        * (patch &lt;&lt; 16) + (minor &lt;&lt; 8) + major
@@ -604,7 +604,7 @@ public final class DebugJsProtoBuf {
         return jsCodeBinaryVersion_;
       }
       /**
-       * <code>optional int32 js_code_binary_version = 2;</code>
+       * <code>optional int32 js_code_binary_version = 2 [default = 1];</code>
        *
        * <pre>
        * (patch &lt;&lt; 16) + (minor &lt;&lt; 8) + major
@@ -617,7 +617,7 @@ public final class DebugJsProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 js_code_binary_version = 2;</code>
+       * <code>optional int32 js_code_binary_version = 2 [default = 1];</code>
        *
        * <pre>
        * (patch &lt;&lt; 16) + (minor &lt;&lt; 8) + major
@@ -625,7 +625,7 @@ public final class DebugJsProtoBuf {
        */
       public Builder clearJsCodeBinaryVersion() {
         bitField0_ = (bitField0_ & ~0x00000002);
-        jsCodeBinaryVersion_ = 0;
+        jsCodeBinaryVersion_ = 1;
         onChanged();
         return this;
       }
@@ -5478,65 +5478,65 @@ public final class DebugJsProtoBuf {
       "\n#js/js.serializer/src/js.debug.proto\022%o" +
       "rg.jetbrains.kotlin.serialization.js\0320co" +
       "re/deserialization/src/descriptors.debug" +
-      ".proto\"P\n\006Header\022\r\n\005flags\030\001 \001(\005\022\036\n\026js_co" +
-      "de_binary_version\030\002 \001(\005\022\027\n\017package_fq_na" +
-      "me\030\003 \001(\t\"V\n\004File\022\n\n\002id\030\001 \001(\005\022B\n\nannotati" +
-      "on\030\002 \003(\0132..org.jetbrains.kotlin.serializ" +
-      "ation.Annotation\"B\n\005Files\0229\n\004file\030\001 \003(\0132" +
-      "+.org.jetbrains.kotlin.serialization.js." +
-      "File\"!\n\007Classes\022\026\n\nclass_name\030\001 \003(\005B\002\020\001\"",
-      "\265\004\n\007Library\022H\n\004kind\030\001 \001(\01623.org.jetbrain" +
-      "s.kotlin.serialization.js.Library.Kind:\005" +
-      "PLAIN\022A\n\004part\030\002 \003(\01323.org.jetbrains.kotl" +
-      "in.serialization.js.Library.Part\022\027\n\017impo" +
-      "rted_module\030\003 \003(\t\032\317\002\n\004Part\022@\n\007strings\030\001 " +
-      "\001(\0132/.org.jetbrains.kotlin.serialization" +
-      ".StringTable\022O\n\017qualified_names\030\002 \001(\01326." +
-      "org.jetbrains.kotlin.serialization.Quali" +
-      "fiedNameTable\022<\n\007package\030\003 \001(\0132+.org.jet" +
-      "brains.kotlin.serialization.Package\0228\n\005c",
-      "lass\030\004 \003(\0132).org.jetbrains.kotlin.serial" +
-      "ization.Class\022<\n\005files\030\202\001 \001(\0132,.org.jetb" +
-      "rains.kotlin.serialization.js.Files\"2\n\004K" +
-      "ind\022\t\n\005PLAIN\020\001\022\007\n\003AMD\020\002\022\r\n\tCOMMON_JS\020\003\022\007" +
-      "\n\003UMD\020\004:E\n\017package_fq_name\022+.org.jetbrai" +
-      "ns.kotlin.serialization.Package\030\203\001 \001(\005:t" +
-      "\n\020class_annotation\022).org.jetbrains.kotli" +
-      "n.serialization.Class\030\202\001 \003(\0132..org.jetbr" +
-      "ains.kotlin.serialization.Annotation:L\n\030" +
-      "class_containing_file_id\022).org.jetbrains",
-      ".kotlin.serialization.Class\030\207\001 \001(\005:\200\001\n\026c" +
-      "onstructor_annotation\022/.org.jetbrains.ko" +
-      "tlin.serialization.Constructor\030\202\001 \003(\0132.." +
-      "org.jetbrains.kotlin.serialization.Annot" +
-      "ation:z\n\023function_annotation\022,.org.jetbr" +
-      "ains.kotlin.serialization.Function\030\202\001 \003(" +
-      "\0132..org.jetbrains.kotlin.serialization.A" +
-      "nnotation:R\n\033function_containing_file_id" +
-      "\022,.org.jetbrains.kotlin.serialization.Fu" +
-      "nction\030\207\001 \001(\005:z\n\023property_annotation\022,.o",
-      "rg.jetbrains.kotlin.serialization.Proper" +
-      "ty\030\202\001 \003(\0132..org.jetbrains.kotlin.seriali" +
-      "zation.Annotation:\210\001\n\022compile_time_value" +
-      "\022,.org.jetbrains.kotlin.serialization.Pr" +
-      "operty\030\203\001 \001(\0132=.org.jetbrains.kotlin.ser" +
-      "ialization.Annotation.Argument.Value:R\n\033" +
-      "property_containing_file_id\022,.org.jetbra" +
-      "ins.kotlin.serialization.Property\030\207\001 \001(\005" +
-      ":}\n\025enum_entry_annotation\022-.org.jetbrain" +
-      "s.kotlin.serialization.EnumEntry\030\202\001 \003(\0132",
-      "..org.jetbrains.kotlin.serialization.Ann" +
-      "otation:\201\001\n\024parameter_annotation\0222.org.j" +
-      "etbrains.kotlin.serialization.ValueParam" +
-      "eter\030\202\001 \003(\0132..org.jetbrains.kotlin.seria" +
-      "lization.Annotation:r\n\017type_annotation\022(" +
-      ".org.jetbrains.kotlin.serialization.Type" +
-      "\030\202\001 \003(\0132..org.jetbrains.kotlin.serializa" +
-      "tion.Annotation:\205\001\n\031type_parameter_annot" +
-      "ation\0221.org.jetbrains.kotlin.serializati" +
-      "on.TypeParameter\030\202\001 \003(\0132..org.jetbrains.",
-      "kotlin.serialization.AnnotationB\021B\017Debug" +
-      "JsProtoBuf"
+      ".proto\"S\n\006Header\022\r\n\005flags\030\001 \001(\005\022!\n\026js_co" +
+      "de_binary_version\030\002 \001(\005:\0011\022\027\n\017package_fq" +
+      "_name\030\003 \001(\t\"V\n\004File\022\n\n\002id\030\001 \001(\005\022B\n\nannot" +
+      "ation\030\002 \003(\0132..org.jetbrains.kotlin.seria" +
+      "lization.Annotation\"B\n\005Files\0229\n\004file\030\001 \003" +
+      "(\0132+.org.jetbrains.kotlin.serialization." +
+      "js.File\"!\n\007Classes\022\026\n\nclass_name\030\001 \003(\005B\002",
+      "\020\001\"\265\004\n\007Library\022H\n\004kind\030\001 \001(\01623.org.jetbr" +
+      "ains.kotlin.serialization.js.Library.Kin" +
+      "d:\005PLAIN\022A\n\004part\030\002 \003(\01323.org.jetbrains.k" +
+      "otlin.serialization.js.Library.Part\022\027\n\017i" +
+      "mported_module\030\003 \003(\t\032\317\002\n\004Part\022@\n\007strings" +
+      "\030\001 \001(\0132/.org.jetbrains.kotlin.serializat" +
+      "ion.StringTable\022O\n\017qualified_names\030\002 \001(\013" +
+      "26.org.jetbrains.kotlin.serialization.Qu" +
+      "alifiedNameTable\022<\n\007package\030\003 \001(\0132+.org." +
+      "jetbrains.kotlin.serialization.Package\0228",
+      "\n\005class\030\004 \003(\0132).org.jetbrains.kotlin.ser" +
+      "ialization.Class\022<\n\005files\030\202\001 \001(\0132,.org.j" +
+      "etbrains.kotlin.serialization.js.Files\"2" +
+      "\n\004Kind\022\t\n\005PLAIN\020\001\022\007\n\003AMD\020\002\022\r\n\tCOMMON_JS\020" +
+      "\003\022\007\n\003UMD\020\004:E\n\017package_fq_name\022+.org.jetb" +
+      "rains.kotlin.serialization.Package\030\203\001 \001(" +
+      "\005:t\n\020class_annotation\022).org.jetbrains.ko" +
+      "tlin.serialization.Class\030\202\001 \003(\0132..org.je" +
+      "tbrains.kotlin.serialization.Annotation:" +
+      "L\n\030class_containing_file_id\022).org.jetbra",
+      "ins.kotlin.serialization.Class\030\207\001 \001(\005:\200\001" +
+      "\n\026constructor_annotation\022/.org.jetbrains" +
+      ".kotlin.serialization.Constructor\030\202\001 \003(\013" +
+      "2..org.jetbrains.kotlin.serialization.An" +
+      "notation:z\n\023function_annotation\022,.org.je" +
+      "tbrains.kotlin.serialization.Function\030\202\001" +
+      " \003(\0132..org.jetbrains.kotlin.serializatio" +
+      "n.Annotation:R\n\033function_containing_file" +
+      "_id\022,.org.jetbrains.kotlin.serialization" +
+      ".Function\030\207\001 \001(\005:z\n\023property_annotation\022",
+      ",.org.jetbrains.kotlin.serialization.Pro" +
+      "perty\030\202\001 \003(\0132..org.jetbrains.kotlin.seri" +
+      "alization.Annotation:\210\001\n\022compile_time_va" +
+      "lue\022,.org.jetbrains.kotlin.serialization" +
+      ".Property\030\203\001 \001(\0132=.org.jetbrains.kotlin." +
+      "serialization.Annotation.Argument.Value:" +
+      "R\n\033property_containing_file_id\022,.org.jet" +
+      "brains.kotlin.serialization.Property\030\207\001 " +
+      "\001(\005:}\n\025enum_entry_annotation\022-.org.jetbr" +
+      "ains.kotlin.serialization.EnumEntry\030\202\001 \003",
+      "(\0132..org.jetbrains.kotlin.serialization." +
+      "Annotation:\201\001\n\024parameter_annotation\0222.or" +
+      "g.jetbrains.kotlin.serialization.ValuePa" +
+      "rameter\030\202\001 \003(\0132..org.jetbrains.kotlin.se" +
+      "rialization.Annotation:r\n\017type_annotatio" +
+      "n\022(.org.jetbrains.kotlin.serialization.T" +
+      "ype\030\202\001 \003(\0132..org.jetbrains.kotlin.serial" +
+      "ization.Annotation:\205\001\n\031type_parameter_an" +
+      "notation\0221.org.jetbrains.kotlin.serializ" +
+      "ation.TypeParameter\030\202\001 \003(\0132..org.jetbrai",
+      "ns.kotlin.serialization.AnnotationB\021B\017De" +
+      "bugJsProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

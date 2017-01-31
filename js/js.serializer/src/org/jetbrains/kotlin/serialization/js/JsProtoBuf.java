@@ -43,7 +43,7 @@ public final class JsProtoBuf {
     int getFlags();
 
     /**
-     * <code>optional int32 js_code_binary_version = 2;</code>
+     * <code>optional int32 js_code_binary_version = 2 [default = 1];</code>
      *
      * <pre>
      * (patch &lt;&lt; 16) + (minor &lt;&lt; 8) + major
@@ -51,7 +51,7 @@ public final class JsProtoBuf {
      */
     boolean hasJsCodeBinaryVersion();
     /**
-     * <code>optional int32 js_code_binary_version = 2;</code>
+     * <code>optional int32 js_code_binary_version = 2 [default = 1];</code>
      *
      * <pre>
      * (patch &lt;&lt; 16) + (minor &lt;&lt; 8) + major
@@ -199,7 +199,7 @@ public final class JsProtoBuf {
     public static final int JS_CODE_BINARY_VERSION_FIELD_NUMBER = 2;
     private int jsCodeBinaryVersion_;
     /**
-     * <code>optional int32 js_code_binary_version = 2;</code>
+     * <code>optional int32 js_code_binary_version = 2 [default = 1];</code>
      *
      * <pre>
      * (patch &lt;&lt; 16) + (minor &lt;&lt; 8) + major
@@ -209,7 +209,7 @@ public final class JsProtoBuf {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional int32 js_code_binary_version = 2;</code>
+     * <code>optional int32 js_code_binary_version = 2 [default = 1];</code>
      *
      * <pre>
      * (patch &lt;&lt; 16) + (minor &lt;&lt; 8) + major
@@ -263,7 +263,7 @@ public final class JsProtoBuf {
 
     private void initFields() {
       flags_ = 0;
-      jsCodeBinaryVersion_ = 0;
+      jsCodeBinaryVersion_ = 1;
       packageFqName_ = "";
     }
     private byte memoizedIsInitialized = -1;
@@ -405,7 +405,7 @@ public final class JsProtoBuf {
         super.clear();
         flags_ = 0;
         bitField0_ = (bitField0_ & ~0x00000001);
-        jsCodeBinaryVersion_ = 0;
+        jsCodeBinaryVersion_ = 1;
         bitField0_ = (bitField0_ & ~0x00000002);
         packageFqName_ = "";
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -537,9 +537,9 @@ public final class JsProtoBuf {
         return this;
       }
 
-      private int jsCodeBinaryVersion_ ;
+      private int jsCodeBinaryVersion_ = 1;
       /**
-       * <code>optional int32 js_code_binary_version = 2;</code>
+       * <code>optional int32 js_code_binary_version = 2 [default = 1];</code>
        *
        * <pre>
        * (patch &lt;&lt; 16) + (minor &lt;&lt; 8) + major
@@ -549,7 +549,7 @@ public final class JsProtoBuf {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>optional int32 js_code_binary_version = 2;</code>
+       * <code>optional int32 js_code_binary_version = 2 [default = 1];</code>
        *
        * <pre>
        * (patch &lt;&lt; 16) + (minor &lt;&lt; 8) + major
@@ -559,7 +559,7 @@ public final class JsProtoBuf {
         return jsCodeBinaryVersion_;
       }
       /**
-       * <code>optional int32 js_code_binary_version = 2;</code>
+       * <code>optional int32 js_code_binary_version = 2 [default = 1];</code>
        *
        * <pre>
        * (patch &lt;&lt; 16) + (minor &lt;&lt; 8) + major
@@ -572,7 +572,7 @@ public final class JsProtoBuf {
         return this;
       }
       /**
-       * <code>optional int32 js_code_binary_version = 2;</code>
+       * <code>optional int32 js_code_binary_version = 2 [default = 1];</code>
        *
        * <pre>
        * (patch &lt;&lt; 16) + (minor &lt;&lt; 8) + major
@@ -580,7 +580,7 @@ public final class JsProtoBuf {
        */
       public Builder clearJsCodeBinaryVersion() {
         bitField0_ = (bitField0_ & ~0x00000002);
-        jsCodeBinaryVersion_ = 0;
+        jsCodeBinaryVersion_ = 1;
         
         return this;
       }
