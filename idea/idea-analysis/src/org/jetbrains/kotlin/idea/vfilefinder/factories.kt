@@ -23,7 +23,3 @@ import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
 class JvmIDEVirtualFileFinderFactory : JvmVirtualFileFinderFactory {
     override fun create(scope: GlobalSearchScope): JvmVirtualFileFinder = JvmIDEVirtualFileFinder(scope)
 }
-
-class JsIDEVirtualFileFinderFactory : JsVirtualFileFinderFactory {
-    override fun create(scope: GlobalSearchScope): JsVirtualFileFinder = JsIDEVirtualFileFinder(scope)
-}

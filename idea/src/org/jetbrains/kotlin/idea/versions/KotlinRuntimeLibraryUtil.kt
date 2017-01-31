@@ -51,13 +51,13 @@ import org.jetbrains.kotlin.idea.framework.*
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
-import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinderFactory
+import org.jetbrains.kotlin.idea.vfilefinder.KotlinJavaScriptMetaFileIndex
+import org.jetbrains.kotlin.idea.vfilefinder.hasSomethingInPackage
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.addToStdlib.constant
 import java.io.File
 import java.io.IOException
 
@@ -167,7 +167,7 @@ fun findAllUsedLibraries(project: Project): MultiMap<Library, Module> {
     return libraries
 }
 
-private enum class LibraryJarDescriptor private constructor(val jarName: String, val shouldExist: Boolean) {
+private enum class LibraryJarDescriptor(val jarName: String, val shouldExist: Boolean) {
     RUNTIME_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JAR, true),
     REFLECT_JAR(PathUtil.KOTLIN_JAVA_REFLECT_JAR, false),
     SCRIPT_RUNTIME_JAR(PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR, true),
@@ -288,10 +288,12 @@ fun getKotlinJvmRuntimeMarkerClass(project: Project, scope: GlobalSearchScope): 
     }
 }
 
+private val KOTLIN_JS_FQ_NAME = FqName("kotlin.js")
+
 fun hasKotlinJsKjsmFile(project: Project, scope: GlobalSearchScope): Boolean {
     return runReadAction {
         project.runWithAlternativeResolveEnabled {
-            JsVirtualFileFinderFactory.SERVICE.getInstance(project).create(scope).hasPackage(constant { FqName("kotlin.js") })
+            KotlinJavaScriptMetaFileIndex.hasSomethingInPackage(KOTLIN_JS_FQ_NAME, scope)
         }
     }
 }
