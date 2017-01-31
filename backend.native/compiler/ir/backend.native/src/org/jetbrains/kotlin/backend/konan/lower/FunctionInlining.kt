@@ -10,13 +10,14 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrContainerExpressionBase
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.inlineStatement
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.types.KotlinType
 
 //-----------------------------------------------------------------------------//
 
@@ -26,7 +27,25 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
     //-------------------------------------------------------------------------//
 
-    fun evaluateExpressionParameters(callExpression: IrCall,
+    fun isLambda(value: IrExpression) : Boolean {
+        if (value !is IrContainerExpressionBase)      return false
+        if (value.origin != IrStatementOrigin.LAMBDA) return false
+        return true
+    }
+
+    //-------------------------------------------------------------------------//
+
+    fun getLambdaStatements(value: IrExpression) : MutableList<IrStatement> {
+
+        val statements = (value as IrContainerExpressionBase).statements
+        val lambdaFunction = statements[0] as IrFunction
+        val lambdaBody = lambdaFunction.body as IrBlockBody
+        return lambdaBody.statements
+    }
+
+    //-------------------------------------------------------------------------//
+
+    fun evaluateParameters(callExpression: IrCall,
         statements: MutableList<IrStatement>): List<Pair<ParameterDescriptor, IrExpression>> {
 
         val scope         = Scope(callExpression.descriptor as FunctionDescriptor)
@@ -35,6 +54,10 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
             val parameter = it.first
             val value     = it.second
             if (value is IrGetValue) return@map it                                          // If value is not an expression - do nothing.
+            if (isLambda(value)) {
+                val lambdaStatements = getLambdaStatements(value)
+                return@map it
+            }                     // If value is lambda - d
 
             val newVar = scope.createTemporaryVariable(value, "inline", false)              // Create new variable and init it with the expression.
             statements.add(0, newVar)                                                       // Add initialization of the new variable in statement list.
@@ -48,27 +71,34 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
     //-------------------------------------------------------------------------//
 
+    fun inlineFunction(irCall: IrCall): IrBlock {
+
+        val functionDescriptor = irCall.descriptor as FunctionDescriptor
+        val functionDeclaration = context.ir.moduleIndex.functions[functionDescriptor]      // Get FunctionDeclaration by FunctionDescriptor.
+        val copyFuncDeclaration = functionDeclaration!!.accept(DeepCopyIrTree(), null) as IrFunction // Create copy of the function.
+
+        val startOffset = copyFuncDeclaration.startOffset
+        val endOffset   = copyFuncDeclaration.endOffset
+        val returnType  = copyFuncDeclaration.descriptor.returnType!!
+        val inlineBody  = copyFuncDeclaration.body!! as IrBlockBody
+        val statements  = inlineBody.statements
+        val parameters  = evaluateParameters(irCall, statements)                            // Evaluate parameters representing expression.
+
+        val transformer = ParametersTransformer(parameters)
+        val irBlock     = IrInlineFunctionBody(startOffset, endOffset, returnType, null, statements)
+        irBlock.accept(transformer, null)                                                   // Replace parameters with expression.
+        return irBlock
+    }
+
+    //-------------------------------------------------------------------------//
+
     override fun visitCall(expression: IrCall): IrExpression {
         val functionDescriptor = expression.descriptor as FunctionDescriptor
         if (!functionDescriptor.isInline) return super.visitCall(expression)                // Function is not to be inlined - do nothing.
 
-        val functionDeclaration = context.ir.originalModuleIndex
-                .functions[functionDescriptor]                                              // Get FunctionDeclaration by FunctionDescriptor.
+        val functionDeclaration = context.ir.moduleIndex.functions[functionDescriptor]      // Get FunctionDeclaration by FunctionDescriptor.
         if (functionDeclaration == null) return super.visitCall(expression)                 // Function is declared in another module.
-        val copyFuncDeclaration = functionDeclaration.accept(DeepCopyIrTree(), null) as IrFunction // Create copy of the function.
-
-        val body        = copyFuncDeclaration.body!! as IrBlockBody
-        val startOffset = copyFuncDeclaration.startOffset
-        val endOffset   = copyFuncDeclaration.endOffset
-        val returnType  = copyFuncDeclaration.descriptor.returnType!!
-        val statements  = body.statements
-
-        val parameters  = evaluateExpressionParameters(expression, statements)              // Evaluate parameters representing expression.
-        val transformer = ParametersTransformer(parameters)
-        val irBlock     = IrInlineFunctionBody(startOffset, endOffset, returnType, null, statements)
-        irBlock.accept(transformer, null)                                                   // Replace parameters with expression.
-
-        return irBlock                                                                      // Return newly created IrBlock instead of IrCall.
+        return inlineFunction(expression)                                                   // Return newly created IrBlock instead of IrCall.
     }
 
     //-------------------------------------------------------------------------//
@@ -90,6 +120,8 @@ internal class ParametersTransformer(val parameterToExpression: List <Pair<Param
             return super.visitGetValue(expression)
         }
         val parExp = parameterToExpression.find { it.first == descriptor }                  // Find expression to replace this parameter.
-        return parExp?.let { parExp.second } ?: super.visitGetValue(expression)             // TODO should we proceed with IR iteration here?
+        if (parExp == null) return super.visitGetValue(expression)
+
+        return  parExp.second             // TODO should we proceed with IR iteration here?
     }
 }
