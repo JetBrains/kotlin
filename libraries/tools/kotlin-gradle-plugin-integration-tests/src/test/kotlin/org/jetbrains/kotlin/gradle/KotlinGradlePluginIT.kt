@@ -191,7 +191,6 @@ class KotlinGradleIT: BaseGradleIT() {
             assertReportExists("projB")
             assertContains(":projB:compileKotlin")
             assertNotContains("projB:compileKotlin UP-TO-DATE")
-            assertNotContains(DIR_AND_MODULE_ERROR_MESSAGE)
         }
     }
 
