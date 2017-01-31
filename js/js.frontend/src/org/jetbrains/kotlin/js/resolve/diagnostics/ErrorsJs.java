@@ -94,6 +94,8 @@ public interface ErrorsJs {
             ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<KtExpression> NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE = DiagnosticFactory0.create(
             ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtExpression> NESTED_CLASS_IN_EXTERNAL_INTERFACE = DiagnosticFactory0.create(
+            ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
 
     // Diagnostics about exposing implementation detail in external declarations
     DiagnosticFactory0<KtExpression> WRONG_BODY_OF_EXTERNAL_DECLARATION = DiagnosticFactory0.create(ERROR);

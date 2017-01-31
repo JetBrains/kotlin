@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.js.resolve.diagnostics.JsExternalChecker.DEFINED_EXTENRALLY_PROPERTY_NAMES
+import org.jetbrains.kotlin.js.resolve.diagnostics.JsExternalChecker.DEFINED_EXTERNALLY_PROPERTY_NAMES
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
 object JsDefinedExternallyCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        if (resolvedCall.resultingDescriptor.fqNameUnsafe !in DEFINED_EXTENRALLY_PROPERTY_NAMES) return
+        if (resolvedCall.resultingDescriptor.fqNameUnsafe !in DEFINED_EXTERNALLY_PROPERTY_NAMES) return
 
         val ownerDescriptor = context.scope.ownerDescriptor
         if (!AnnotationsUtils.isNativeObject(ownerDescriptor) && !AnnotationsUtils.isPredefinedObject(ownerDescriptor)) {

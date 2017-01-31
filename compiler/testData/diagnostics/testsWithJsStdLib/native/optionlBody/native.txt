@@ -45,15 +45,4 @@ public external interface T {
     public abstract fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-
-    public companion object Companion {
-        private constructor Companion()
-        public final val baz: kotlin.Int
-        public final val boo: kotlin.Int
-        public final fun bar(): kotlin.String
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final fun foo(): kotlin.Unit
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
 }

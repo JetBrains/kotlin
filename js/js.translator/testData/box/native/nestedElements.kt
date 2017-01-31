@@ -21,10 +21,6 @@ fun box(): String {
     assertEquals("Object.Class.b", Object.Class.b)
     assertEquals(142, Object.Class.test())
 
-    assertEquals("Object.Trait.a", Object.Trait.a)
-    assertEquals("Object.Trait.b", Object.Trait.b)
-    assertEquals(324, Object.Trait.test())
-
     assertEquals("Object.a.a", Object.a.a)
     assertEquals("Object.a.b", Object.a.b)
     assertEquals(34, Object.a.test())
@@ -44,38 +40,11 @@ fun box(): String {
     assertEquals("Class.Class.b", Class.Class.b)
     assertEquals(88, Class.Class.test())
 
-    assertEquals("Class.Trait.a", Class.Trait.a)
-    assertEquals("Class.Trait.b", Class.Trait.b)
-    assertEquals(55, Class.Trait.test())
-
     assertEquals("Class.a.a", Class.a.a)
     assertEquals("Class.a.b", Class.a.b)
     assertEquals(22, Class.a.test())
     assertEquals("Class.b", Class.b)
     assertEquals(77, Class.test())
-
-    // in trait
-
-    assertEquals("Trait.Object.a", Trait.Object.a)
-    assertEquals("Trait.Object.b", Trait.Object.b)
-    assertEquals(90, Trait.Object.test())
-
-    assertEquals("Trait.Class().a", Trait.Class("Trait.Class().a").a)
-    assertEquals("Trait.Class().b", Trait.Class("something").b)
-    assertEquals(66, Trait.Class("something").test())
-    assertEquals("Trait.Class.a", Trait.Class.a)
-    assertEquals("Trait.Class.b", Trait.Class.b)
-    assertEquals(88, Trait.Class.test())
-
-    assertEquals("Trait.Trait.a", Trait.Trait.a)
-    assertEquals("Trait.Trait.b", Trait.Trait.b)
-    assertEquals(55, Trait.Trait.test())
-
-    assertEquals("Trait.a.a", Trait.a.a)
-    assertEquals("Trait.a.b", Trait.a.b)
-    assertEquals(22, Trait.a.test())
-    assertEquals("Trait.b", Trait.b)
-    assertEquals(277, Trait.test())
 
     return "OK";
 }
@@ -116,12 +85,6 @@ external object Object {
         val a: String
         var b: String
         fun test(): Int
-
-        companion object {
-            val a: String = definedExternally
-            var b: String = definedExternally
-            fun test(): Int = definedExternally
-        }
     }
 
     val a: Trait = definedExternally
@@ -153,56 +116,10 @@ external class Class {
         val a: String
         var b: String
         fun test(): Int
-
-        companion object {
-            val a: String = definedExternally
-            var b: String = definedExternally
-            fun test(): Int = definedExternally
-        }
     }
 
     companion object {
         @JsName("aaa")
-        val a: Trait = definedExternally
-        var b: String = definedExternally
-        fun test(): Int = definedExternally
-    }
-}
-
-external interface Trait {
-    @JsName("SomeObject")
-    object Object {
-        val a: String = definedExternally
-        var b: String = definedExternally
-        fun test(): Int = definedExternally
-    }
-
-    class Class(a: String) {
-        val a: String
-        var b: String = definedExternally
-        fun test(): Int = definedExternally
-
-        companion object {
-            val a: String = definedExternally
-            var b: String = definedExternally
-            fun test(): Int = definedExternally
-        }
-    }
-
-    @JsName("SomeTrait")
-    interface Trait {
-        val a: String
-        var b: String
-        fun test(): Int
-
-        companion object {
-            val a: String = definedExternally
-            var b: String = definedExternally
-            fun test(): Int = definedExternally
-        }
-    }
-
-    companion object {
         val a: Trait = definedExternally
         var b: String = definedExternally
         fun test(): Int = definedExternally

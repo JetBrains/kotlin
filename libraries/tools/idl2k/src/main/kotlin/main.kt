@@ -58,6 +58,7 @@ fun main(args: Array<String>) {
             w.appendln(" */")
 
             w.appendln()
+            w.appendln("@file:Suppress(\"NESTED_CLASS_IN_EXTERNAL_INTERFACE\")")
             w.appendln("package $pkg")
             w.appendln()
 

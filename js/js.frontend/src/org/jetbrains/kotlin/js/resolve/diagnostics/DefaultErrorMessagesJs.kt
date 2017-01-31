@@ -89,6 +89,7 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.INLINE_EXTERNAL_DECLARATION, "Inline external declaration")
         put(ErrorsJs.NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE,
             "Only nullable properties of external interfaces are allowed to be non-abstract")
+        put(ErrorsJs.NESTED_CLASS_IN_EXTERNAL_INTERFACE, "Interface can't contain nested classes and objects")
 
         put(ErrorsJs.WRONG_BODY_OF_EXTERNAL_DECLARATION,
             "Wrong body of external declaration. Must be either ' = definedExternally' or { definedExternally }")

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 object JsExternalChecker : SimpleDeclarationChecker {
-    val DEFINED_EXTENRALLY_PROPERTY_NAMES = setOf(FqNameUnsafe("kotlin.js.noImpl"), FqNameUnsafe("kotlin.js.definedExternally"))
+    val DEFINED_EXTERNALLY_PROPERTY_NAMES = setOf(FqNameUnsafe("kotlin.js.noImpl"), FqNameUnsafe("kotlin.js.definedExternally"))
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink,
                        bindingContext: BindingContext) {
@@ -59,6 +59,12 @@ object JsExternalChecker : SimpleDeclarationChecker {
         }
         else if (isPrivateMemberOfExternalClass(descriptor)) {
             diagnosticHolder.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, "private member of class"))
+        }
+
+        if (descriptor is ClassDescriptor && descriptor.kind != ClassKind.INTERFACE &&
+            descriptor.containingDeclaration.let { it is ClassDescriptor && it.kind == ClassKind.INTERFACE }
+        ) {
+            diagnosticHolder.report(ErrorsJs.NESTED_CLASS_IN_EXTERNAL_INTERFACE.on(declaration))
         }
 
         if (descriptor !is PropertyAccessorDescriptor && descriptor.isExtension) {
@@ -213,6 +219,6 @@ object JsExternalChecker : SimpleDeclarationChecker {
     private fun KtExpression.isDefinedExternallyExpression(bindingContext: BindingContext): Boolean {
         val descriptor = getResolvedCall(bindingContext)?.resultingDescriptor as? PropertyDescriptor ?: return false
         val container = descriptor.containingDeclaration as? PackageFragmentDescriptor ?: return false
-        return DEFINED_EXTENRALLY_PROPERTY_NAMES.any { container.fqNameUnsafe == it.parent() && descriptor.name == it.shortName() }
+        return DEFINED_EXTERNALLY_PROPERTY_NAMES.any { container.fqNameUnsafe == it.parent() && descriptor.name == it.shortName() }
     }
 }

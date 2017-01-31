@@ -12,14 +12,6 @@ external interface T {
 
     fun foo()
     fun bar()
-
-    companion object {
-        val baz: Int
-        val boo: Int = definedExternally
-
-        fun foo()
-        fun bar(): String = definedExternally
-    }
 }
 
 external class C {
