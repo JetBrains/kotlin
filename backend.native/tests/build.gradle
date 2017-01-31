@@ -904,3 +904,18 @@ task inline3(type: RunKonanTest) {
     goldValue = "5\n"
     source = "codegen/inline/inline3.kt"
 }
+
+task inline4(type: RunKonanTest) {
+    goldValue = "3\n"
+    source = "codegen/inline/inline4.kt"
+}
+
+task inline5(type: RunKonanTest) {
+    goldValue = "34\n"
+    source = "codegen/inline/inline5.kt"
+}
+
+task inline9(type: RunKonanTest) {
+    goldValue = "hello\n6\n"
+    source = "codegen/inline/inline9.kt"
+}
