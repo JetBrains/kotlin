@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
+import ch.qos.logback.core.util.FileUtil
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputDirectory
@@ -23,6 +24,7 @@ import org.gradle.api.tasks.OutputFiles
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.api.tasks.incremental.InputFileDetails
+import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil.*
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import java.io.File
 import java.io.ObjectInputStream
@@ -55,6 +57,13 @@ import kotlin.properties.Delegates
 internal open class SyncOutputTask : DefaultTask() {
     @get:InputFiles
     var kotlinOutputDir: File by Delegates.notNull()
+
+    @get:InputFiles
+    var kaptClassesDir: File by Delegates.notNull()
+
+    private val classesDirs: List<File>
+            get() = listOf(kotlinOutputDir, kaptClassesDir).filter(File::exists)
+
     var javaOutputDir: File by Delegates.notNull()
     var kotlinTask: KotlinCompile by Delegates.notNull()
 
@@ -78,13 +87,14 @@ internal open class SyncOutputTask : DefaultTask() {
     @Suppress("unused")
     @TaskAction
     fun execute(inputs: IncrementalTaskInputs): Unit {
+        val sourceDirs = classesDirs.joinToString()
         if (inputs.isIncremental) {
-            logger.kotlinDebug { "Incremental copying files from $kotlinOutputDir to $javaOutputDir" }
+            logger.kotlinDebug { "Incremental copying files from $sourceDirs to $javaOutputDir" }
             inputs.outOfDate { processIncrementally(it) }
             inputs.removed { processIncrementally(it) }
         }
         else {
-            logger.kotlinDebug { "Non-incremental copying files from $kotlinOutputDir to $javaOutputDir" }
+            logger.kotlinDebug { "Non-incremental copying files from $sourceDirs to $javaOutputDir" }
             processNonIncrementally()
         }
 
@@ -103,14 +113,16 @@ internal open class SyncOutputTask : DefaultTask() {
         timestampsFile.delete()
         timestamps.clear()
 
-        kotlinOutputDir.walkTopDown().forEach {
-            copy(it, it.siblingInJavaDir)
+        for (dir in classesDirs) {
+            dir.walkTopDown().forEach {
+                copy(it, it.siblingInJavaDir(baseDir = dir))
+            }
         }
     }
 
     private fun processIncrementally(input: InputFileDetails) {
         val fileInKotlinDir = input.file
-        val fileInJavaDir = fileInKotlinDir.siblingInJavaDir
+        val fileInJavaDir = fileInKotlinDir.siblingInJavaDir()
 
         if (input.isRemoved) {
             // file was removed in kotlin dir, remove from java as well
@@ -146,8 +158,10 @@ internal open class SyncOutputTask : DefaultTask() {
         }
     }
 
-    private val File.siblingInJavaDir: File
-            get() = File(javaOutputDir, this.relativeTo(kotlinOutputDir).path)
+    private fun File.siblingInJavaDir(baseDir: File? = null): File {
+        val base = baseDir ?: classesDirs.find { isAncestor(it, this, true) }!!
+        return File(javaOutputDir, this.relativeTo(base).path)
+    }
 }
 
 private val TIMESTAMP_FILE_NAME = "kotlin-files-in-java-timestamps.bin"

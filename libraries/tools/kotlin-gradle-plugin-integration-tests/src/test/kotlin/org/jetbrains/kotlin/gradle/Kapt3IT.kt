@@ -270,4 +270,26 @@ class Kapt3IT : BaseGradleIT() {
             assertCompiledKotlinSources(project.relativize(allMainKotlinSrc))
         }
     }
+
+    @Test
+    fun testKaptClassesDirSync() {
+        val project = Project("autoService", GRADLE_VERSION, directoryPrefix = "kapt2")
+
+        project.build("build") {
+            assertSuccessful()
+            assertKaptSuccessful()
+            assertFileExists("processor/build/classes/main/META-INF/services/javax.annotation.processing.Processor")
+            assertFileExists("processor/build/classes/main/processor/MyProcessor.class")
+        }
+
+        project.projectDir.getFileByName("MyProcessor.kt").modify {
+            it.replace("@AutoService(Processor::class)", "")
+        }
+
+        project.build(":processor:build") {
+            assertSuccessful()
+            assertNoSuchFile("processor/build/classes/main/META-INF/services/javax.annotation.processing.Processor")
+            assertFileExists("processor/build/classes/main/processor/MyProcessor.class")
+        }
+    }
 }

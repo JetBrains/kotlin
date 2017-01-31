@@ -39,11 +39,16 @@ open class KaptTask : AbstractCompile() {
         return FileUtil.isAncestor(destinationDir, this, /* strict = */ false)
     }
 
+    lateinit var classesDir: File
+
     @TaskAction
     override fun compile() {
         /** Delete everything inside the [destinationDir] */
         destinationDir.deleteRecursively()
         destinationDir.mkdirs()
+
+        classesDir.deleteRecursively()
+        classesDir.mkdirs()
 
         val sourceRoots = SourceRoots.ForJvm.create(getSource(), rawSourceRoots)
         val compileClasspath = classpath.toList().filter(File::exists)
