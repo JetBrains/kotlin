@@ -152,10 +152,15 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
             assertSuccessful()
 
             val classesDir = File(project.projectDir, "build/classes/main")
-            val testClass = File(classesDir, "test/Test.class")
-            assertTrue(testClass.exists())
 
-            checkBytecodeContains(testClass, "public <init>()V")
+            fun checkClass(name: String) {
+                val testClass = File(classesDir, "test/$name.class")
+                assertTrue(testClass.exists())
+                checkBytecodeContains(testClass, "public <init>()V")
+            }
+
+            checkClass("Test")
+            checkClass("Test2")
         }
     }
 }

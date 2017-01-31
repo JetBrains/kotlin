@@ -46,7 +46,7 @@ object NoArgConfigurationKeys {
 
 class NoArgCommandLineProcessor : CommandLineProcessor {
     companion object {
-        val SUPPORTED_PRESETS = mapOf("jpa" to listOf("javax.persistence.Entity"))
+        val SUPPORTED_PRESETS = mapOf("jpa" to listOf("javax.persistence.Entity", "javax.persistence.Embeddable"))
 
         val ANNOTATION_OPTION = CliOption("annotation", "<fqname>", "Annotation qualified names",
                                           required = false, allowMultipleOccurrences = true)
