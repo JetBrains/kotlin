@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendererOptions
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.ClassDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
@@ -94,7 +95,7 @@ fun buildDecompiledTextForBuiltIns(builtInFile: VirtualFile): DecompiledText {
 sealed class BuiltInDefinitionFile {
     class Incompatible(val version: BuiltInsBinaryVersion) : BuiltInDefinitionFile()
 
-    class Compatible(val proto: BuiltInsProtoBuf.BuiltIns,
+    class Compatible(val proto: ProtoBuf.PackageFragment,
                      val packageDirectory: VirtualFile,
                      val isMetadata: Boolean) : BuiltInDefinitionFile() {
         val nameResolver = NameResolverImpl(proto.strings, proto.qualifiedNames)
@@ -133,7 +134,7 @@ sealed class BuiltInDefinitionFile {
                 return BuiltInDefinitionFile.Incompatible(version)
             }
 
-            val proto = BuiltInsProtoBuf.BuiltIns.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
+            val proto = ProtoBuf.PackageFragment.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
             val result = BuiltInDefinitionFile.Compatible(proto, file.parent, file.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION)
             val packageProto = result.proto.`package`
             if (result.classesToDecompile.isEmpty() &&

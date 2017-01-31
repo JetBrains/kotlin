@@ -21,15 +21,6 @@ import "core/deserialization/src/descriptors.proto";
 option java_outer_classname = "BuiltInsProtoBuf";
 option optimize_for = LITE_RUNTIME;
 
-message BuiltIns {
-  optional StringTable strings = 1;
-  optional QualifiedNameTable qualified_names = 2;
-
-  optional Package package = 3;
-
-  repeated Class class = 4;
-}
-
 extend Package {
   optional int32 package_fq_name = 151;
 }

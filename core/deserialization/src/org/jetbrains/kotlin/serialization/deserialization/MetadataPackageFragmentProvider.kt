@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.ClassData
 import org.jetbrains.kotlin.serialization.ClassDataWithSource
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
@@ -114,7 +113,7 @@ class MetadataPackageFragment(
         return true
     }
 
-    private fun readProto(stream: InputStream): Pair<BuiltInsProtoBuf.BuiltIns, NameResolverImpl> {
+    private fun readProto(stream: InputStream): Pair<ProtoBuf.PackageFragment, NameResolverImpl> {
         val version = BuiltInsBinaryVersion.readFrom(stream)
 
         if (!version.isCompatible()) {
@@ -126,7 +125,7 @@ class MetadataPackageFragment(
             )
         }
 
-        val message = BuiltInsProtoBuf.BuiltIns.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
+        val message = ProtoBuf.PackageFragment.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
         val nameResolver = NameResolverImpl(message.strings, message.qualifiedNames)
         return Pair(message, nameResolver)
     }

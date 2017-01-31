@@ -28,13 +28,13 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolveEverythingToKotli
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 
 class KotlinBuiltInDeserializerForDecompiler(
         packageFqName: FqName,
-        private val proto: BuiltInsProtoBuf.BuiltIns,
+        private val proto: ProtoBuf.PackageFragment,
         private val nameResolver: NameResolver
 ) : DeserializerForDecompilerBase(packageFqName) {
     override val targetPlatform: TargetPlatform get() = TargetPlatform.Default

@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsSerializerExtension
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment.Companion.DOT_METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable
@@ -145,7 +144,7 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
             packageFqName: FqName,
             private val destFile: File
     ) {
-        private val proto = BuiltInsProtoBuf.BuiltIns.newBuilder()
+        private val proto = ProtoBuf.PackageFragment.newBuilder()
         private val extension = BuiltInsSerializerExtension(packageFqName)
 
         fun run() {
