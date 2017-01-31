@@ -59,7 +59,7 @@ Kotlin.toString = function (o) {
     if (o == null) {
         return "null";
     }
-    else if (Array.isArray(o)) {
+    else if (Kotlin.isArrayish(o)) {
         return "[...]";
     }
     else {

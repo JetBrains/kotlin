@@ -71,6 +71,10 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("<path>")
     public String outputPostfix;
 
+    @GradleOption(DefaultValues.BooleanFalseDefault.class)
+    @Argument(value = "Xtypedarrays", description = "Translate primitive arrays to JS typed arrays")
+    public boolean typedArrays;
+
     @NotNull
     public static K2JSCompilerArguments createDefaultInstance() {
         K2JSCompilerArguments arguments = new K2JSCompilerArguments();

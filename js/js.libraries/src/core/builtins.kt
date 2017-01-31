@@ -15,21 +15,80 @@
  */
 
 @JsName("arrayIterator")
-internal fun arrayIterator(array: dynamic): MutableIterator<dynamic> {
-    return object : MutableIterator<dynamic> {
-        var index = 0;
-
-        override fun hasNext(): Boolean {
-            val length: Int = array.length
-            return index < length
-        }
-
-        override fun next() = array[index++]
-
-        override fun remove() {
-            array.splice(--index, 1)
+internal fun arrayIterator(array: dynamic, type: String?) = when (type) {
+    null -> {
+        val arr: Array<dynamic> = array
+        object : Iterator<dynamic> {
+            var index = 0
+            override fun hasNext() = index < arr.size
+            override fun next() = if (index < arr.size) arr[index++] else throw IndexOutOfBoundsException("$index")
         }
     }
+    "BooleanArray" -> booleanArrayIterator(array)
+    "ByteArray" -> byteArrayIterator(array)
+    "ShortArray" -> shortArrayIterator(array)
+    "CharArray" -> charArrayIterator(array)
+    "IntArray" -> intArrayIterator(array)
+    "LongArray" -> longArrayIterator(array)
+    "FloatArray" -> floatArrayIterator(array)
+    "DoubleArray" -> doubleArrayIterator(array)
+    else -> throw IllegalStateException("Unsupported type argument for arrayIterator: $type")
+}
+
+@JsName("booleanArrayIterator")
+internal fun booleanArrayIterator(array: BooleanArray) = object : BooleanIterator() {
+    var index = 0
+    override fun hasNext() = index < array.size
+    override fun nextBoolean() = if (index < array.size) array[index++] else throw IndexOutOfBoundsException("$index")
+}
+
+@JsName("byteArrayIterator")
+internal fun byteArrayIterator(array: ByteArray) = object : ByteIterator() {
+    var index = 0
+    override fun hasNext() = index < array.size
+    override fun nextByte() = if (index < array.size) array[index++] else throw IndexOutOfBoundsException("$index")
+}
+
+@JsName("shortArrayIterator")
+internal fun shortArrayIterator(array: ShortArray) = object : ShortIterator() {
+    var index = 0
+    override fun hasNext() = index < array.size
+    override fun nextShort() = if (index < array.size) array[index++] else throw IndexOutOfBoundsException("$index")
+}
+
+@JsName("charArrayIterator")
+internal fun charArrayIterator(array: CharArray) = object : CharIterator() {
+    var index = 0
+    override fun hasNext() = index < array.size
+    override fun nextChar() = if (index < array.size) array[index++] else throw IndexOutOfBoundsException("$index")
+}
+
+@JsName("intArrayIterator")
+internal fun intArrayIterator(array: IntArray) = object : IntIterator() {
+    var index = 0
+    override fun hasNext() = index < array.size
+    override fun nextInt() = if (index < array.size) array[index++] else throw IndexOutOfBoundsException("$index")
+}
+
+@JsName("floatArrayIterator")
+internal fun floatArrayIterator(array: FloatArray) = object : FloatIterator() {
+    var index = 0
+    override fun hasNext() = index < array.size
+    override fun nextFloat() = if (index < array.size) array[index++] else throw IndexOutOfBoundsException("$index")
+}
+
+@JsName("doubleArrayIterator")
+internal fun doubleArrayIterator(array: DoubleArray) = object : DoubleIterator() {
+    var index = 0
+    override fun hasNext() = index < array.size
+    override fun nextDouble() = if (index < array.size) array[index++] else throw IndexOutOfBoundsException("$index")
+}
+
+@JsName("longArrayIterator")
+internal fun longArrayIterator(array: LongArray) = object : LongIterator() {
+    var index = 0
+    override fun hasNext() = index < array.size
+    override fun nextLong() = if (index < array.size) array[index++] else throw IndexOutOfBoundsException("$index")
 }
 
 @JsName("PropertyMetadata")
@@ -96,23 +155,71 @@ internal class BoxedChar(val c: Char) : Comparable<Char> {
     }
 }
 
-/* For future binary compatibility with TypedArrays
- * TODO: concat normal Array's and TypedArrays into an Array
+internal inline fun <T> concat(args: Array<T>): T {
+    val typed = js("Array")(args.size)
+    for (i in 0..args.size - 1) {
+        val arr = args[i]
+        if (arr !is Array<*>) {
+            typed[i] = js("[]").slice.call(arr)
+        }
+        else {
+            typed[i] = arr
+        }
+    }
+    return js("[]").concat.apply(js("[]"), typed);
+}
+
+/** Concat regular Array's and TypedArray's into an Array.
  */
 @PublishedApi
 @JsName("arrayConcat")
 internal fun <T> arrayConcat(a: T, b: T): T {
-    return a.asDynamic().concat.apply(js("[]"), js("arguments"));
+    return concat(js("arguments"))
 }
 
-/* For future binary compatibility with TypedArrays
- * TODO: concat primitive arrays.
- *       For Byte-, Short-, Int-, Float-, and DoubleArray concat result into a TypedArray.
- *       For Boolean-, Char-, and LongArray return an Array with corresponding type property.
- *       Default to Array.prototype.concat for compatibility.
+/** Concat primitive arrays. Main use: prepare vararg arguments.
+ *  For compatibility with 1.1.0 the arguments may be a mixture of Array's and TypedArray's.
+ *
+ *  If the first argument is TypedArray (Byte-, Short-, Char-, Int-, Float-, and DoubleArray) returns a TypedArray, otherwise an Array.
+ *  If the first argument has the $type$ property (Boolean-, Char-, and LongArray) copy its value to result.$type$.
+ *  If the first argument is a regular Array without the $type$ property default to arrayConcat.
  */
 @PublishedApi
 @JsName("primitiveArrayConcat")
 internal fun <T> primitiveArrayConcat(a: T, b: T): T {
-    return a.asDynamic().concat.apply(js("[]"), js("arguments"));
+    val args: Array<T> = js("arguments")
+    if (a is Array<*> && a.asDynamic().`$type$` === undefined) {
+        return concat(args)
+    }
+    else {
+        var size = 0
+        for (i in 0..args.size - 1) {
+            size += args[i].asDynamic().length as Int
+        }
+        val result = js("new a.constructor(size)")
+        kotlin.copyArrayType(a, result)
+        size = 0
+        for (i in 0..args.size - 1) {
+            val arr = args[i].asDynamic()
+            for (j in 0..arr.length - 1) {
+                result[size++] = arr[j]
+            }
+        }
+        return result
+    }
+}
+
+@JsName("booleanArrayOf")
+internal fun booleanArrayOf() = withType("BooleanArray", js("[].slice.call(arguments)"))
+
+@JsName("charArrayOf") // The arguments have to be slice'd here because of Rhino (see KT-16974)
+internal fun charArrayOf() = withType("CharArray", js("new Uint16Array([].slice.call(arguments))"))
+
+@JsName("longArrayOf")
+internal fun longArrayOf() = withType("LongArray", js("[].slice.call(arguments)"))
+
+@JsName("withType")
+internal inline fun withType(type: String, array: dynamic): dynamic {
+    array.`$type$` = type
+    return array
 }

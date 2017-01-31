@@ -27,6 +27,7 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> SOURCE_MAP =
             CompilerConfigurationKey.create("generate source map");
+
     public static final CompilerConfigurationKey<Boolean> META_INFO =
             CompilerConfigurationKey.create("generate .meta.js and .kjsm files");
 
@@ -38,4 +39,7 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<ModuleKind> MODULE_KIND =
             CompilerConfigurationKey.create("module kind");
+
+    public static final CompilerConfigurationKey<Boolean> TYPED_ARRAYS_ENABLED =
+            CompilerConfigurationKey.create("TypedArrays enabled");
 }

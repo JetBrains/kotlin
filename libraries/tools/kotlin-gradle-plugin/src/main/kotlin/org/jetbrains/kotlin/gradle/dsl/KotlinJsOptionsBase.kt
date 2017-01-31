@@ -59,6 +59,11 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
         get() = targetField ?: "v5"
         set(value) { targetField = value }
 
+    private var typedArraysField: kotlin.Boolean? = null
+    override var typedArrays: kotlin.Boolean
+        get() = typedArraysField ?: false
+        set(value) { typedArraysField = value }
+
     internal open fun updateArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments) {
         apiVersionField?.let { args.apiVersion = it }
         languageVersionField?.let { args.languageVersion = it }
@@ -71,6 +76,7 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
         outputFileField?.let { args.outputFile = it }
         sourceMapField?.let { args.sourceMap = it }
         targetField?.let { args.target = it }
+        typedArraysField?.let { args.typedArrays = it }
     }
 }
 
@@ -86,4 +92,5 @@ internal fun org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments.fil
     outputFile = null
     sourceMap = false
     target = "v5"
+    typedArrays = false
 }

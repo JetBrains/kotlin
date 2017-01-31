@@ -48,4 +48,10 @@ interface KotlinJsOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
      * Default value: "v5"
      */
      var target: kotlin.String
+
+    /**
+     * Translate primitive arrays to JS typed arrays
+     * Default value: false
+     */
+     var typedArrays: kotlin.Boolean
 }

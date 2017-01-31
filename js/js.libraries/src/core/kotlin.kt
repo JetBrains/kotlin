@@ -71,8 +71,18 @@ internal fun <T> arrayOfNulls(reference: Array<out T>, size: Int): Array<T> {
     return arrayOfNulls<Any>(size).unsafeCast<Array<T>>()
 }
 
+internal fun fillFrom(src: dynamic, dst: dynamic): dynamic {
+    val srcLen: Int = src.length
+    val dstLen: Int = dst.length
+    var index: Int = 0
+    while (index < srcLen && index < dstLen) dst[index] = src[index++]
+    return dst
+}
+
+
 internal fun arrayCopyResize(source: dynamic, newSize: Int, defaultValue: Any?): dynamic {
     val result = source.slice(0, newSize)
+    copyArrayType(source, result)
     var index: Int = source.length
     if (newSize > index) {
         result.length = newSize
@@ -84,9 +94,22 @@ internal fun arrayCopyResize(source: dynamic, newSize: Int, defaultValue: Any?):
 internal fun <T> arrayPlusCollection(array: dynamic, collection: Collection<T>): dynamic {
     val result = array.slice()
     result.length += collection.size
+    copyArrayType(array, result)
     var index: Int = array.length
     for (element in collection) result[index++] = element
     return result
+}
+
+internal fun <T> fillFromCollection(dst: dynamic, startIndex: Int, collection: Collection<T>): dynamic {
+    var index = startIndex
+    for (element in collection) dst[index++] = element
+    return dst
+}
+
+internal inline fun copyArrayType(from: dynamic, to: dynamic) {
+    if (from.`$type$` !== undefined) {
+        to.`$type$` = from.`$type$`
+    }
 }
 
 // no singleton map implementation in js, return map as is
