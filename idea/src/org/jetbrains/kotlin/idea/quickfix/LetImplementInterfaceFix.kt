@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.containsStarProjections
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -70,11 +71,15 @@ class LetImplementInterfaceFix(
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile) =
             super.isAvailable(project, editor, file) && validExpectedType
 
+    override fun startInWriteAction() = false
+
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
         val superTypeEntry = KtPsiFactory(element).createSuperTypeEntry(expectedTypeNameSourceCode)
-        val entryElement = element.addSuperTypeListEntry(superTypeEntry)
-        ShortenReferences.DEFAULT.process(entryElement)
+        runWriteAction {
+            val entryElement = element.addSuperTypeListEntry(superTypeEntry)
+            ShortenReferences.DEFAULT.process(entryElement)
+        }
 
         val implementMembersHandler = ImplementMembersHandler()
         if (implementMembersHandler.collectMembersToGenerate(element).isEmpty()) return
