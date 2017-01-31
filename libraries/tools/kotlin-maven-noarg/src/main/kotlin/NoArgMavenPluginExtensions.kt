@@ -42,8 +42,7 @@ class KotlinNoArgMavenPluginExtension : KotlinMavenPluginExtension {
 @Component(role = KotlinMavenPluginExtension::class, hint = "jpa")
 class KotlinJpaMavenPluginExtension : KotlinMavenPluginExtension {
     private companion object {
-        val ANNOTATIONS_ARG_NAME = "annotation"
-        val JPA_ANNOTATIONS = listOf("javax.persistence.Entity")
+        val PRESET_ARG_NAME = "preset"
     }
 
     override fun getCompilerPluginId() = NOARG_COMPILER_PLUGIN_ID
@@ -55,6 +54,6 @@ class KotlinJpaMavenPluginExtension : KotlinMavenPluginExtension {
 
     override fun getPluginOptions(project: MavenProject, execution: MojoExecution): List<PluginOption> {
         logger.debug("Loaded Maven plugin " + javaClass.name)
-        return JPA_ANNOTATIONS.map { PluginOption(NOARG_COMPILER_PLUGIN_ID, ANNOTATIONS_ARG_NAME, it) }
+        return listOf(PluginOption("jpa", NOARG_COMPILER_PLUGIN_ID, PRESET_ARG_NAME, "jpa"))
     }
 }

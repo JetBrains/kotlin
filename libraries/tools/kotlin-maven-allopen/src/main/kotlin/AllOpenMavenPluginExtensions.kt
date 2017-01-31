@@ -42,14 +42,7 @@ class KotlinAllOpenMavenPluginExtension : KotlinMavenPluginExtension {
 @Component(role = KotlinMavenPluginExtension::class, hint = "spring")
 class KotlinSpringMavenPluginExtension : KotlinMavenPluginExtension {
     private companion object {
-        val ANNOTATIONS_ARG_NAME = "annotation"
-
-        val SPRING_ANNOTATIONS = listOf(
-                "org.springframework.stereotype.Component",
-                "org.springframework.transaction.annotation.Transactional",
-                "org.springframework.scheduling.annotation.Async",
-                "org.springframework.cache.annotation.Cacheable"
-        )
+        val PRESET_ARG_NAME = "preset"
     }
 
     override fun getCompilerPluginId() = ALLOPEN_COMPILER_PLUGIN_ID
@@ -61,6 +54,6 @@ class KotlinSpringMavenPluginExtension : KotlinMavenPluginExtension {
 
     override fun getPluginOptions(project: MavenProject, execution: MojoExecution): List<PluginOption> {
         logger.debug("Loaded Maven plugin " + javaClass.name)
-        return SPRING_ANNOTATIONS.map { PluginOption(ALLOPEN_COMPILER_PLUGIN_ID, ANNOTATIONS_ARG_NAME, it) }
+        return listOf(PluginOption("spring", ALLOPEN_COMPILER_PLUGIN_ID, PRESET_ARG_NAME, "spring"))
     }
 }
