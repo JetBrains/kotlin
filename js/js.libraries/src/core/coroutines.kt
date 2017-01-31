@@ -18,38 +18,14 @@ package kotlin.coroutines.experimental
 
 import kotlin.coroutines.experimental.intrinsics.*
 
-/**
- * Creates coroutine with receiver type [R] and result type [T].
- * This function creates a new, fresh instance of suspendable computation every time it is invoked.
- * To start executing the created coroutine, invoke `resume(Unit)` on the returned [Continuation] instance.
- * The [completion] continuation is invoked when coroutine completes with result of exception.
- */
-@SinceKotlin("1.1")
-public fun <R, T> (suspend R.() -> T).createCoroutine(
+internal fun <R, T> (suspend R.() -> T).createCoroutineInternal(
         receiver: R,
         completion: Continuation<T>
-): Continuation<Unit> =
-        SafeContinuation(
-                this.asDynamic()(receiver, completion, true),
-                COROUTINE_SUSPENDED
-        )
+): Continuation<Unit> = this.asDynamic()(receiver, completion, true)
 
-/**
- * Creates coroutine without receiver and with result type [T].
- * This function creates a new, fresh instance of suspendable computation every time it is invoked.
- * To start executing the created coroutine, invoke `resume(Unit)` on the returned [Continuation] instance.
- * The [completion] continuation is invoked when coroutine completes with result of exception.
- */
-@SinceKotlin("1.1")
-public fun <T> (suspend () -> T).createCoroutine(
+internal fun <T> (suspend () -> T).createCoroutineInternal(
         completion: Continuation<T>
-): Continuation<Unit> =
-        SafeContinuation(
-                this.asDynamic()(completion, true),
-                COROUTINE_SUSPENDED
-        )
-
-// ------- internal stuff -------
+): Continuation<Unit> = this.asDynamic()(completion, true)
 
 @JsName("CoroutineImpl")
 internal abstract class CoroutineImpl(private val resultContinuation: Continuation<Any?>) : Continuation<Any?> {

@@ -18,54 +18,32 @@
 @file:kotlin.jvm.JvmVersion
 package kotlin.coroutines.experimental
 
-import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
 import kotlin.coroutines.experimental.jvm.internal.CoroutineImpl
 import kotlin.coroutines.experimental.jvm.internal.interceptContinuationIfNeeded
 
-/**
- * Creates coroutine with receiver type [R] and result type [T].
- * This function creates a new, fresh instance of suspendable computation every time it is invoked.
- * To start executing the created coroutine, invoke `resume(Unit)` on the returned [Continuation] instance.
- * The [completion] continuation is invoked when coroutine completes with result or exception.
- */
 @SinceKotlin("1.1")
-@Suppress("UNCHECKED_CAST")
-public fun <R, T> (suspend R.() -> T).createCoroutine(
+internal fun <T> (suspend () -> T).createCoroutineInternal(
+        completion: Continuation<T>
+): Continuation<Unit> =
+        if (this !is CoroutineImpl)
+            buildContinuationByInvokeCall(completion) {
+                (this as Function1<Continuation<T>, Any?>).invoke(completion)
+            }
+        else
+            (this.create(completion) as CoroutineImpl).facade
+
+@SinceKotlin("1.1")
+internal fun <R, T> (suspend R.() -> T).createCoroutineInternal(
         receiver: R,
         completion: Continuation<T>
 ): Continuation<Unit> =
-    SafeContinuation(
         if (this !is CoroutineImpl)
             buildContinuationByInvokeCall(completion) {
                 (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
             }
         else
-            ((this as CoroutineImpl).create(receiver, completion) as CoroutineImpl).facade,
-        COROUTINE_SUSPENDED
-    )
+            ((this as CoroutineImpl).create(receiver, completion) as CoroutineImpl).facade
 
-/**
- * Creates coroutine without receiver and with result type [T].
- * This function creates a new, fresh instance of suspendable computation every time it is invoked.
- * To start executing the created coroutine, invoke `resume(Unit)` on the returned [Continuation] instance.
- * The [completion] continuation is invoked when coroutine completes with result or exception.
- */
-@SinceKotlin("1.1")
-@Suppress("UNCHECKED_CAST")
-public fun <T> (suspend () -> T).createCoroutine(
-        completion: Continuation<T>
-): Continuation<Unit> =
-    SafeContinuation(
-            if (this !is CoroutineImpl)
-                buildContinuationByInvokeCall(completion) {
-                    (this as Function1<Continuation<T>, Any?>).invoke(completion)
-                }
-            else
-                ((this as CoroutineImpl).create(completion) as CoroutineImpl).facade,
-            COROUTINE_SUSPENDED
-    )
-
-// INTERNAL DECLARATIONS
 
 private inline fun <T> buildContinuationByInvokeCall(
         completion: Continuation<T>,

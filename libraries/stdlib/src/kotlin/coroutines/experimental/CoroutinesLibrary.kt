@@ -31,7 +31,7 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
         receiver: R,
         completion: Continuation<T>
 ) {
-    createCoroutine(receiver, completion).resume(Unit)
+    createCoroutineInternal(receiver, completion).resume(Unit)
 }
 
 /**
@@ -44,8 +44,33 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
 public fun <T> (suspend  () -> T).startCoroutine(
         completion: Continuation<T>
 ) {
-    createCoroutine(completion).resume(Unit)
+    createCoroutineInternal(completion).resume(Unit)
 }
+
+/**
+ * Creates coroutine with receiver type [R] and result type [T].
+ * This function creates a new, fresh instance of suspendable computation every time it is invoked.
+ * To start executing the created coroutine, invoke `resume(Unit)` on the returned [Continuation] instance.
+ * The [completion] continuation is invoked when coroutine completes with result or exception.
+ */
+@SinceKotlin("1.1")
+@Suppress("UNCHECKED_CAST")
+public fun <R, T> (suspend R.() -> T).createCoroutine(
+        receiver: R,
+        completion: Continuation<T>
+): Continuation<Unit> = SafeContinuation(createCoroutineInternal(receiver, completion), COROUTINE_SUSPENDED)
+
+/**
+ * Creates coroutine without receiver and with result type [T].
+ * This function creates a new, fresh instance of suspendable computation every time it is invoked.
+ * To start executing the created coroutine, invoke `resume(Unit)` on the returned [Continuation] instance.
+ * The [completion] continuation is invoked when coroutine completes with result or exception.
+ */
+@SinceKotlin("1.1")
+@Suppress("UNCHECKED_CAST")
+public fun <T> (suspend () -> T).createCoroutine(
+        completion: Continuation<T>
+): Continuation<Unit> = SafeContinuation(createCoroutineInternal(completion), COROUTINE_SUSPENDED)
 
 /**
  * Obtains the current continuation instance inside suspend functions and suspends
