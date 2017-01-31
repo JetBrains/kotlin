@@ -67,7 +67,6 @@ class ClassFileToSourceStubConverter(
                 "java.lang.Synthetic",
                 "synthetic.kotlin.jvm.GeneratedByJvmOverloads", // kapt3-related annotation for marking JvmOverloads-generated methods
                 "java.lang.annotation.", // Java annotations
-                "org.jetbrains.annotations.", // Nullable/NotNull, ReadOnly, Mutable
                 "kotlin.jvm.", "kotlin.Metadata" // Kotlin annotations from runtime
         )
 

@@ -20,9 +20,11 @@ public enum Enum1 {
 public enum Enum2 {
     /*public static final*/ RED /* = new RED(null, 0) */,
     /*public static final*/ WHITE /* = new WHITE(null, 0) */;
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String col = null;
     private final int col2 = 0;
 
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String color() {
         return null;
     }
@@ -33,6 +35,7 @@ public enum Enum2 {
     public final void publicEnumFun() {
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String getCol() {
         return null;
     }
@@ -41,7 +44,8 @@ public enum Enum2 {
         return 0;
     }
 
-    Enum2(@Anno1(value = "first")
+    Enum2(@org.jetbrains.annotations.NotNull()
+    @Anno1(value = "first")
     java.lang.String col, @Anno1(value = "second")
     int col2) {
     }

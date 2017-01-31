@@ -1,8 +1,13 @@
 public abstract interface ABC {
 
-    public abstract <T extends java.lang.CharSequence>java.util.List<T> abc(T p0, java.util.List<? extends T> p1, T... p2);
+    @org.jetbrains.annotations.NotNull()
+    public abstract <T extends java.lang.CharSequence>java.util.List<T> abc(@org.jetbrains.annotations.NotNull()
+    T p0, @org.jetbrains.annotations.NotNull()
+    java.util.List<? extends T> p1, @org.jetbrains.annotations.NotNull()
+    T... p2);
 
-    public abstract <X extends java.lang.Object>int bcd(char... p0);
+    public abstract <X extends java.lang.Object>int bcd(@org.jetbrains.annotations.NotNull()
+    char... p0);
 }
 
 ////////////////////
@@ -31,8 +36,10 @@ public abstract interface Intf2<T extends java.util.List<? extends java.lang.Str
 
 
 public final class MyClass<M1 extends java.lang.Object, M2 extends java.lang.Object> extends BaseClass<java.lang.RuntimeException> implements Intf<java.lang.Object, java.util.Date>, OtherIntf<java.lang.String> {
+    @org.jetbrains.annotations.Nullable()
     private final java.util.List<java.util.Map<java.lang.String, M1>> fld = null;
 
+    @org.jetbrains.annotations.Nullable()
     public final java.util.List<java.util.Map<java.lang.String, M1>> getFld() {
         return null;
     }

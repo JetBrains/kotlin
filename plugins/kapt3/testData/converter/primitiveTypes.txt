@@ -27,8 +27,11 @@ public final class PrimitiveTypes {
     private static final double doubleNan = 0.0;
     private static final double doublePositiveInfinity = 0.0;
     private static final double doubleNegativeInfinity = 0.0;
+    @org.jetbrains.annotations.NotNull()
     public static final java.lang.String stringHelloWorld = "Hello, world!";
+    @org.jetbrains.annotations.NotNull()
     public static final java.lang.String stringQuotes = "quotes \" \'\'quotes";
+    @org.jetbrains.annotations.NotNull()
     public static final java.lang.String stringRN = "\r\n";
     public static final PrimitiveTypes INSTANCE = null;
 

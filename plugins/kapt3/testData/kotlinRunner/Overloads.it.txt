@@ -1,16 +1,10 @@
 package test;
 
-public abstract @interface MyAnnotation {
-}
-
-////////////////////
-
-package test;
-
 @MyAnnotation()
 public final class State {
     private final int someInt = 0;
     private final long someLong = 0L;
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String someString = null;
 
     public final int getSomeInt() {
@@ -21,17 +15,26 @@ public final class State {
         return 0L;
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String getSomeString() {
         return null;
     }
 
-    public State(int someInt, long someLong, java.lang.String someString) {
+    public State(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
+    java.lang.String someString) {
         super();
     }
 
     public State(int someInt, long someLong) {
         super();
     }
+}
+
+////////////////////
+
+package test;
+
+public abstract @interface MyAnnotation {
 }
 
 ////////////////////

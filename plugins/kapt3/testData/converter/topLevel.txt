@@ -16,10 +16,12 @@ public final class TopLevelKt {
     }
     private static final int topLevelProperty = 2;
 
+    @org.jetbrains.annotations.Nullable()
     public static final java.lang.String topLevelFunction() {
         return null;
     }
 
+    @org.jetbrains.annotations.Nullable()
     public static final <X extends java.lang.CharSequence, T extends java.util.List<? extends X>>T topLevelGenericFunction() {
         return null;
     }
@@ -28,13 +30,17 @@ public final class TopLevelKt {
         return 0;
     }
 
+    @org.jetbrains.annotations.NotNull()
     public static final java.lang.String getTopLevelProperty2() {
         return null;
     }
 
-    public static final void extensionFunction(@Anno(value = "rec")
-    java.lang.String $receiver, @Anno(value = "1")
-    java.lang.String a, @Anno(value = "2")
+    public static final void extensionFunction(@org.jetbrains.annotations.NotNull()
+    @Anno(value = "rec")
+    java.lang.String $receiver, @org.jetbrains.annotations.NotNull()
+    @Anno(value = "1")
+    java.lang.String a, @org.jetbrains.annotations.NotNull()
+    @Anno(value = "2")
     java.lang.String b) {
     }
 
@@ -42,13 +48,17 @@ public final class TopLevelKt {
     private static void extensionProperty$annotations(java.lang.Object p0) {
     }
 
-    public static final <T extends java.lang.Object>java.lang.String getExtensionProperty(@Anno(value = "propRec")
+    @org.jetbrains.annotations.NotNull()
+    public static final <T extends java.lang.Object>java.lang.String getExtensionProperty(@org.jetbrains.annotations.NotNull()
+    @Anno(value = "propRec")
     T $receiver) {
         return null;
     }
 
-    public static final <T extends java.lang.Object>void setExtensionProperty(@Anno(value = "propRec")
-    T $receiver, @Anno(value = "setparam")
+    public static final <T extends java.lang.Object>void setExtensionProperty(@org.jetbrains.annotations.NotNull()
+    @Anno(value = "propRec")
+    T $receiver, @org.jetbrains.annotations.NotNull()
+    @Anno(value = "setparam")
     java.lang.String setParamName) {
     }
 }

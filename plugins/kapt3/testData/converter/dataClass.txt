@@ -1,16 +1,19 @@
-
 public final class User {
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String firstName = null;
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String secondName = null;
     private final int age = 0;
 
     public final void procedure() {
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String getFirstName() {
         return null;
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String getSecondName() {
         return null;
     }
@@ -19,14 +22,18 @@ public final class User {
         return 0;
     }
 
-    public User(java.lang.String firstName, java.lang.String secondName, int age) {
+    public User(@org.jetbrains.annotations.NotNull()
+    java.lang.String firstName, @org.jetbrains.annotations.NotNull()
+    java.lang.String secondName, int age) {
         super();
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String component1() {
         return null;
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String component2() {
         return null;
     }
@@ -35,7 +42,10 @@ public final class User {
         return 0;
     }
 
-    public final User copy(java.lang.String firstName, java.lang.String secondName, int age) {
+    @org.jetbrains.annotations.NotNull()
+    public final User copy(@org.jetbrains.annotations.NotNull()
+    java.lang.String firstName, @org.jetbrains.annotations.NotNull()
+    java.lang.String secondName, int age) {
         return null;
     }
 

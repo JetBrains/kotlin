@@ -1,6 +1,7 @@
 public final class State {
     private final int someInt = 0;
     private final long someLong = 0L;
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String someString = null;
 
     public final int getSomeInt() {
@@ -11,11 +12,13 @@ public final class State {
         return 0L;
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String getSomeString() {
         return null;
     }
 
-    public State(int someInt, long someLong, java.lang.String someString) {
+    public State(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
+    java.lang.String someString) {
         super();
     }
 
@@ -30,9 +33,11 @@ public final class State {
 public final class State2 {
     public final int someInt = 0;
     public final long someLong = 0L;
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String someString = null;
 
-    public final int test(int someInt, long someLong, java.lang.String someString) {
+    public final int test(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
+    java.lang.String someString) {
         return 0;
     }
 
@@ -44,13 +49,15 @@ public final class State2 {
         return 0;
     }
 
-    public final void someMethod(java.lang.String str) {
+    public final void someMethod(@org.jetbrains.annotations.NotNull()
+    java.lang.String str) {
     }
 
     public final void methodWithoutArgs() {
     }
 
-    public State2(int someInt, long someLong, java.lang.String someString) {
+    public State2(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
+    java.lang.String someString) {
         super();
     }
 
