@@ -42,7 +42,7 @@ class KaptContext(
     val options: Options
 
     init {
-        KaptJavaLog.preRegister(context)
+        KaptJavaLog.preRegister(context, logger.messageCollector)
         JavacFileManager.preRegister(context)
         KaptTreeMaker.preRegister(context)
         KaptJavaCompiler.preRegister(context)
