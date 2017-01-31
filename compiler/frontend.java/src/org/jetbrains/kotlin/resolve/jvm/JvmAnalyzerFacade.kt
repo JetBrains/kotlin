@@ -99,7 +99,7 @@ object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
                 targetEnvironment,
                 LookupTracker.DO_NOTHING,
                 packagePartProvider,
-                languageSettingsProvider.getLanguageVersionSettings(moduleInfo),
+                languageSettingsProvider.getLanguageVersionSettings(moduleInfo, project),
                 useBuiltInsProvider = false, // TODO: load built-ins from module dependencies in IDE
                 useLazyResolve = true,
                 compilerConfiguration = compilerConfiguration

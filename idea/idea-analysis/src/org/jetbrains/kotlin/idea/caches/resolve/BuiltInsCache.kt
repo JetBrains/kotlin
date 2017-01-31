@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.TargetPlatform
@@ -52,7 +52,7 @@ class BuiltInsCache private constructor(
     }
 
     fun getBuiltIns(moduleInfo: ModuleInfo): KotlinBuiltIns {
-        val languageFeatureSettings = LanguageSettingsProvider.getInstance(project).getLanguageVersionSettings(moduleInfo)
+        val languageFeatureSettings = LanguageSettingsProvider.getInstance(project).getLanguageVersionSettings(moduleInfo, project)
         return cache.get(languageFeatureSettings.supportsFeature(LanguageFeature.AdditionalBuiltInsMembers))
     }
 
@@ -74,7 +74,7 @@ class BuiltInsCache private constructor(
             val builtInsCache = BuiltInsCache(project, platform, sdk, sdkModuleDescriptor, sdkContext)
 
             if (sdkBuiltIns is JvmBuiltIns) {
-                val isAdditionalBuiltInsFeatureSupported = LanguageVersionSettingsImpl.DEFAULT.supportsFeature(LanguageFeature.AdditionalBuiltInsMembers)
+                val isAdditionalBuiltInsFeatureSupported = project.languageVersionSettings.supportsFeature(LanguageFeature.AdditionalBuiltInsMembers)
                 sdkBuiltIns.initialize(
                         sdkModuleDescriptor!!, // sdk is not null for JvmBuiltIns because of calculateBuiltIns
                         isAdditionalBuiltInsFeatureSupported)

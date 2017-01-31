@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.compiler
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.LanguageSettingsProvider
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -26,8 +27,8 @@ import org.jetbrains.kotlin.idea.project.targetPlatform
 import org.jetbrains.kotlin.utils.DescriptionAware
 
 class LanguageVersionSettingsProviderImpl : LanguageSettingsProvider {
-    override fun getLanguageVersionSettings(moduleInfo: ModuleInfo): LanguageVersionSettings {
-        return (moduleInfo as? ModuleSourceInfo)?.module?.languageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT
+    override fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project): LanguageVersionSettings {
+        return (moduleInfo as? ModuleSourceInfo)?.module?.languageVersionSettings ?: project.languageVersionSettings
     }
 
     override fun getTargetPlatform(moduleInfo: ModuleInfo): DescriptionAware {

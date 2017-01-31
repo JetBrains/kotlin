@@ -259,12 +259,12 @@ private class DelegatingPackageFragmentProvider(
 }
 
 interface LanguageSettingsProvider {
-    fun getLanguageVersionSettings(moduleInfo: ModuleInfo): LanguageVersionSettings
+    fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project): LanguageVersionSettings
 
     fun getTargetPlatform(moduleInfo: ModuleInfo): DescriptionAware
 
     object Default : LanguageSettingsProvider {
-        override fun getLanguageVersionSettings(moduleInfo: ModuleInfo) = LanguageVersionSettingsImpl.DEFAULT
+        override fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project) = LanguageVersionSettingsImpl.DEFAULT
 
         override fun getTargetPlatform(moduleInfo: ModuleInfo): DescriptionAware = DescriptionAware.NoVersion
     }
