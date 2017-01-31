@@ -45,7 +45,8 @@ class KaptJavaLog(
                 "compiler.err.name.clash.same.erasure.no.override",
                 "compiler.err.name.clash.same.erasure.no.override.1",
                 "compiler.err.name.clash.same.erasure.no.hide",
-                "compiler.err.already.defined")
+                "compiler.err.already.defined",
+                "compiler.err.annotation.type.not.applicable")
 
         internal fun preRegister(context: Context, messageCollector: MessageCollector) {
             context.put(Log.logKey, Context.Factory<Log> {
