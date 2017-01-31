@@ -66,7 +66,8 @@ class AllOpenKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
         val ALLOPEN_GROUP_NAME = "org.jetbrains.kotlin"
         val ALLOPEN_ARTIFACT_NAME = "kotlin-allopen"
 
-        private val ANNOTATIONS_ARG_NAME = "annotation"
+        private val ANNOTATION_ARG_NAME = "annotation"
+        private val PRESET_ARG_NAME = "preset"
     }
 
     override fun isApplicable(project: Project, task: AbstractCompile) = AllOpenGradleSubplugin.isEnabled(project)
@@ -85,7 +86,11 @@ class AllOpenKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
         val options = mutableListOf<SubpluginOption>()
 
         for (anno in allOpenExtension.myAnnotations) {
-            options += SubpluginOption(ANNOTATIONS_ARG_NAME, anno)
+            options += SubpluginOption(ANNOTATION_ARG_NAME, anno)
+        }
+
+        for (preset in allOpenExtension.myPresets) {
+            options += SubpluginOption(PRESET_ARG_NAME, preset)
         }
 
         return options

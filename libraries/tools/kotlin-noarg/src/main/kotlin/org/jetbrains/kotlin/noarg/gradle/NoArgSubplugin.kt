@@ -67,7 +67,8 @@ class NoArgKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
         val NOARG_GROUP_NAME = "org.jetbrains.kotlin"
         val NOARG_ARTIFACT_NAME = "kotlin-noarg"
 
-        private val ANNOTATIONS_ARG_NAME = "annotation"
+        private val ANNOTATION_ARG_NAME = "annotation"
+        private val PRESET_ARG_NAME = "preset"
     }
 
     override fun isApplicable(project: Project, task: AbstractCompile) = NoArgGradleSubplugin.isEnabled(project)
@@ -86,7 +87,11 @@ class NoArgKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
         val options = mutableListOf<SubpluginOption>()
 
         for (anno in noArgExtension.myAnnotations) {
-            options += SubpluginOption(ANNOTATIONS_ARG_NAME, anno)
+            options += SubpluginOption(ANNOTATION_ARG_NAME, anno)
+        }
+
+        for (preset in noArgExtension.myPresets) {
+            options += SubpluginOption(PRESET_ARG_NAME, preset)
         }
 
         return options
