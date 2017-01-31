@@ -75,6 +75,18 @@ class DefaultParameterStubGenerator internal constructor(val context: Context): 
                 val params = mutableListOf<VariableDescriptor>()
                 val variables = mutableMapOf<VariableDescriptor, VariableDescriptor>()
 
+                val newExtensionReceiver =
+                        if (description.function.extensionReceiverParameter == null) {
+                            null
+                        } else {
+                            IrGetValueImpl(
+                                    startOffset = irFunction.startOffset,
+                                    endOffset = irFunction.endOffset,
+                                    descriptor = description.function.extensionReceiverParameter!!,
+                                    origin = null
+                            )
+                        }
+
                 for (valueParameter in functionDescriptor.valueParameters) {
                     val parameterDescriptor = description.function.valueParameters[valueParameter.index]
                     if (valueParameter.hasDefaultValue()) {
@@ -92,6 +104,8 @@ class DefaultParameterStubGenerator internal constructor(val context: Context): 
                         /* Use previously calculated values in next expression. */
                         exprBody.expression.transformChildrenVoid(object:IrElementTransformerVoid() {
                             override fun visitGetValue(expression: IrGetValue): IrExpression {
+                                if (expression.descriptor == functionDescriptor.extensionReceiverParameter)
+                                    return newExtensionReceiver!!
                                 if (!variables.containsKey(expression.descriptor))
                                     return expression
                                 return irGet(variables[expression.descriptor] as VariableDescriptor)
@@ -114,12 +128,7 @@ class DefaultParameterStubGenerator internal constructor(val context: Context): 
                             dispatchReceiver = irThis()
                         }
                         if (functionDescriptor.extensionReceiverParameter != null) {
-                            extensionReceiver = IrGetValueImpl(
-                                    startOffset = irFunction.startOffset,
-                                    endOffset = irFunction.endOffset,
-                                    descriptor = functionDescriptor.extensionReceiverParameter!!,
-                                    origin = null
-                            )
+                            extensionReceiver = newExtensionReceiver
                         }
                         params.forEachIndexed { i, variable ->
                             putValueArgument(i, irGet(variable))

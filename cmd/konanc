@@ -56,7 +56,7 @@ INTEROP_JAR="${KONAN_HOME}/konan/lib/Runtime.jar"
 NATIVE_LIB="${KONAN_HOME}/konan/nativelib"
 KONAN_CLASSPATH="$KOTLIN_JAR:$INTEROP_JAR:$KONAN_JAR"
 KONAN_COMPILER=org.jetbrains.kotlin.cli.bc.K2NativeKt
-
+JAVA_OPTS=-ea
 
 #
 # KONAN BACKEND INVOCATION

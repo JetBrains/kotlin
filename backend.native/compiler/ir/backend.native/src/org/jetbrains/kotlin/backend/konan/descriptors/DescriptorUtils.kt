@@ -134,16 +134,18 @@ internal fun KotlinType.isUnboundCallableReference(): Boolean {
 
 internal val CallableDescriptor.allValueParameters: List<ParameterDescriptor>
     get() {
-        val constructorReceiver = if (this is ConstructorDescriptor) {
-            this.constructedClass.thisAsReceiverParameter
-        } else {
-            null
-        }
+        val receivers = mutableListOf<ParameterDescriptor>()
 
-        val receivers = listOf(
-                constructorReceiver,
-                this.dispatchReceiverParameter,
-                this.extensionReceiverParameter).filterNotNull()
+        if (this is ConstructorDescriptor)
+            receivers.add(this.constructedClass.thisAsReceiverParameter)
+
+        val dispatchReceiverParameter = this.dispatchReceiverParameter
+        if (dispatchReceiverParameter != null)
+            receivers.add(dispatchReceiverParameter)
+
+        val extensionReceiverParameter = this.extensionReceiverParameter
+        if (extensionReceiverParameter != null)
+            receivers.add(extensionReceiverParameter)
 
         return receivers + this.valueParameters
     }

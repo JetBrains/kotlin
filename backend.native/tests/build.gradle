@@ -342,6 +342,26 @@ task enum_companionObject(type: RunKonanTest) {
     source = "codegen/enum/companionObject.kt"
 }
 
+task innerClass_simple(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/innerClass/simple.kt"
+}
+
+task innerClass_getOuterVal(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/innerClass/getOuterVal.kt"
+}
+
+task innerClass_generic(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/innerClass/generic.kt"
+}
+
+task innerClass_qualifiedThis(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/innerClass/qualifiedThis.kt"
+}
+
 task array0(type: RunKonanTest) {
     goldValue = "5\n6\n7\n8\n9\n10\n11\n12\n13\n"
     source = "runtime/collections/array0.kt"
