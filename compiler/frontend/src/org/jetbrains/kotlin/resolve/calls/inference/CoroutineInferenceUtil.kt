@@ -56,11 +56,15 @@ import javax.inject.Inject
 
 class TypeTemplate(
         val typeVariable: TypeVariable,
-        val coroutineInferenceData: CoroutineInferenceData
-) : FlexibleType(typeVariable.originalTypeParameter.builtIns.nothingType, typeVariable.originalTypeParameter.builtIns.nullableAnyType) {
+        val coroutineInferenceData: CoroutineInferenceData,
+        nullable: Boolean = true
+) : FlexibleType(
+        typeVariable.originalTypeParameter.builtIns.nothingType,
+        typeVariable.originalTypeParameter.builtIns.anyType.makeNullableAsSpecified(nullable)
+) {
     override fun replaceAnnotations(newAnnotations: Annotations) = this
 
-    override fun makeNullableAsSpecified(newNullability: Boolean) = this
+    override fun makeNullableAsSpecified(newNullability: Boolean) = TypeTemplate(typeVariable, coroutineInferenceData, newNullability)
 
     override val delegate: SimpleType
         get() = upperBound

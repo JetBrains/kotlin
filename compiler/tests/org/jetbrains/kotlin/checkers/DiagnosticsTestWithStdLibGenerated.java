@@ -853,6 +853,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 doTest(fileName);
             }
 
+            @TestMetadata("kt15516.kt")
+            public void testKt15516() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt15516.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("recursiveGenerators.kt")
             public void testRecursiveGenerators() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/recursiveGenerators.kt");
