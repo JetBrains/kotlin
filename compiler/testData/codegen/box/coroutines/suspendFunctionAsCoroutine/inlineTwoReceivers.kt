@@ -12,7 +12,7 @@ class MyTest {
     }
 }
 
-inline suspend fun <T> testAsync(routine: suspend MyTest.() -> T): T = routine(MyTest())
+inline suspend fun <T> testAsync(noinline routine: suspend MyTest.() -> T): T = routine(MyTest())
 
 inline suspend fun Iterable<String>.test() = testAsync {
     var sum = ""
