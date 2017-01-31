@@ -2,7 +2,7 @@
     <import file="common.xml" optional="false"/>
 
     <property name="automerge_dummy" value="This property is used to trick git merge. Do not delete empty lines around."/>
-    <property name="ideaVersion" value="171.2455.10"/>
+    <property name="ideaVersion" value="171.2613.7"/>
     <property name="idea.kotlin.branch" value="rc"/>
 
 
