@@ -35,10 +35,10 @@ sealed internal class RegexTaskToFriendTaskMapper(
         suffix: String,
         private val postfixReplacement: String
 ) : TaskToFriendTaskMapper() {
-    class Default : RegexTaskToFriendTaskMapper("compile", "TestKotlin", "Kotlin")
+    class Default : RegexTaskToFriendTaskMapper("compile", "TestKotlin(AfterJava)?", "Kotlin")
     class JavaScript : RegexTaskToFriendTaskMapper("compile", "TestKotlin2Js", "Kotlin2Js")
     class Common : RegexTaskToFriendTaskMapper("compile", "TestKotlinCommon", "KotlinCommon")
-    class Android : RegexTaskToFriendTaskMapper("compile", "(Unit|Android)TestKotlin", "Kotlin")
+    class Android : RegexTaskToFriendTaskMapper("compile", "(Unit|Android)TestKotlin(AfterJava)?", "Kotlin")
 
     private val regex = "$prefix(.*)$suffix".toRegex()
 
