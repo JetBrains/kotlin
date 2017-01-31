@@ -262,7 +262,9 @@ internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFix
 
     companion object MyFactory : Factory() {
         override fun createAction(diagnostic: Diagnostic) =
-                (diagnostic.psiElement as? KtSimpleNameExpression)?.let { ImportFix(it) }
+                (diagnostic.psiElement as? KtSimpleNameExpression)?.let {
+                    ImportFix(it).apply { computeSuggestions() }
+                }
     }
 }
 
@@ -287,7 +289,9 @@ internal class ImportConstructorReferenceFix(expression: KtSimpleNameExpression)
 
     companion object MyFactory : Factory() {
         override fun createAction(diagnostic: Diagnostic) =
-                (diagnostic.psiElement as? KtSimpleNameExpression)?.let(::ImportConstructorReferenceFix)
+                (diagnostic.psiElement as? KtSimpleNameExpression)?.let {
+                    ImportConstructorReferenceFix(it).apply { computeSuggestions() }
+                }
     }
 }
 
@@ -298,7 +302,9 @@ internal class InvokeImportFix(expression: KtExpression) : OrdinaryImportFixBase
 
     companion object MyFactory : Factory() {
         override fun createAction(diagnostic: Diagnostic) =
-                (diagnostic.psiElement as? KtExpression)?.let(::InvokeImportFix)
+                (diagnostic.psiElement as? KtExpression)?.let {
+                    InvokeImportFix(it).apply { computeSuggestions() }
+                }
     }
 }
 
@@ -327,7 +333,7 @@ internal open class ArrayAccessorImportFix(
 
             val element = diagnostic.psiElement
             if (element is KtArrayAccessExpression && element.arrayExpression != null) {
-                return ArrayAccessorImportFix(element, importName(diagnostic).singletonList(), true)
+                return ArrayAccessorImportFix(element, importName(diagnostic).singletonList(), true).apply { computeSuggestions() }
             }
 
             return null
@@ -364,7 +370,7 @@ internal class DelegateAccessorsImportFix(
 
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtExpression>? {
             return (diagnostic.psiElement as? KtExpression)?.let {
-                DelegateAccessorsImportFix(it, importNames(diagnostic.singletonList()), false)
+                DelegateAccessorsImportFix(it, importNames(diagnostic.singletonList()), false).apply { computeSuggestions() }
             }
         }
 
@@ -398,7 +404,7 @@ internal class ComponentsImportFix(
 
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtExpression>? {
             return (diagnostic.psiElement as? KtExpression)?.let {
-                ComponentsImportFix(it, importNames(diagnostic.singletonList()), false)
+                ComponentsImportFix(it, importNames(diagnostic.singletonList()), false).apply { computeSuggestions() }
             }
         }
 
@@ -467,7 +473,9 @@ internal class ImportMemberFix(expression: KtSimpleNameExpression) : ImportFixBa
     }
 
     companion object MyFactory : Factory() {
-        override fun createAction(diagnostic: Diagnostic) = (diagnostic.psiElement as? KtSimpleNameExpression)?.let(::ImportMemberFix)
+        override fun createAction(diagnostic: Diagnostic) = (diagnostic.psiElement as? KtSimpleNameExpression)?.let {
+            ImportMemberFix(it).apply { computeSuggestions() }
+        }
     }
 }
 
@@ -552,7 +560,7 @@ internal class ImportForMismatchingArgumentsFix(
             //TODO: not only KtCallExpression
             val callExpression = diagnostic.psiElement.getStrictParentOfType<KtCallExpression>() ?: return null
             val nameExpression = callExpression.calleeExpression as? KtNameReferenceExpression ?: return null
-            return ImportForMismatchingArgumentsFix(nameExpression)
+            return ImportForMismatchingArgumentsFix(nameExpression).apply { computeSuggestions() }
         }
     }
 }
