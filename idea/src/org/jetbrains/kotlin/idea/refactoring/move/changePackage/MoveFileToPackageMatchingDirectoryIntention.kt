@@ -29,6 +29,7 @@ import com.intellij.refactoring.util.RefactoringMessageUtil
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.refactoring.isInsideInjectedFragment
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtPackageDirective
 
 class MoveFileToPackageMatchingDirectoryIntention : SelfTargetingOffsetIndependentIntention<KtPackageDirective>(
@@ -43,6 +44,8 @@ class MoveFileToPackageMatchingDirectoryIntention : SelfTargetingOffsetIndepende
         text = "Move file to $dirName"
         return true
     }
+
+    override fun startInWriteAction() = false
 
     override fun applyTo(element: KtPackageDirective, editor: Editor?) {
         val file = element.getContainingKtFile()
@@ -67,6 +70,8 @@ class MoveFileToPackageMatchingDirectoryIntention : SelfTargetingOffsetIndepende
             return
         }
 
-        MoveFilesOrDirectoriesUtil.doMoveFile(file, targetDirectory)
+        runWriteAction {
+            MoveFilesOrDirectoriesUtil.doMoveFile(file, targetDirectory)
+        }
     }
 }
