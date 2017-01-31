@@ -1,5 +1,6 @@
 package test;
 
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @Anno(value = "anno-class")
 public abstract @interface Anno {
 
