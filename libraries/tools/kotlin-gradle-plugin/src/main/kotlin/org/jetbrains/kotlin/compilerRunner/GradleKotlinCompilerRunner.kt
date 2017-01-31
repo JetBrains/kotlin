@@ -57,12 +57,6 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
     ): ExitCode {
         val outputDir = args.destinationAsFile
 
-        if (environment !is GradleIncrementalCompilerEnvironment) {
-            log.debug("Removing all kotlin classes in $outputDir")
-            // we're free to delete all classes since only we know about that directory
-            outputDir.deleteRecursively()
-        }
-
         val moduleFile = makeModuleFile(
                 args.moduleName,
                 isTest = false,
