@@ -64,9 +64,6 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
         return nativePattern.test(input.toString())
     }
 
-    @Deprecated("Use containsMatchIn() or 'in' operator instead.", ReplaceWith("this in input"), level = DeprecationLevel.ERROR)
-    public fun hasMatch(input: CharSequence): Boolean = containsMatchIn(input)
-
     /** Returns the first match of a regular expression in the [input], beginning at the specified [startIndex].
      *
      * @param startIndex An index to start search with, by default 0. Must be not less than zero and not greater than `input.length()`
@@ -74,15 +71,9 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
      */
     public fun find(input: CharSequence, startIndex: Int = 0): MatchResult? = nativePattern.findNext(input.toString(), startIndex)
 
-    @Deprecated("Use find() instead.", ReplaceWith("find(input, startIndex)"), level = DeprecationLevel.ERROR)
-    public fun match(input: CharSequence, startIndex: Int = 0): MatchResult? = find(input, startIndex)
-
     /** Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
      */
     public fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = generateSequence({ find(input, startIndex) }, { match -> match.next() })
-
-    @Deprecated("Use findAll() instead.", ReplaceWith("findAll(input, startIndex)"), level = DeprecationLevel.ERROR)
-    public fun matchAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = findAll(input, startIndex)
 
     /**
      * Attempts to match the entire [input] CharSequence against the pattern.
