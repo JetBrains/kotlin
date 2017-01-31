@@ -1,6 +1,6 @@
 //KT-2997 Automatically cast error (Array)
-// IGNORE_BACKEND: JS
-// Unmute when JS implements primitive arrays via TypeArray
+// IGNORE_BACKEND_WITHOUT_CHECK: JS
+// Unmute when JS implements primitive arrays via TypedArray
 
 fun foo(a: Any): Int {
     if (a is IntArray) {

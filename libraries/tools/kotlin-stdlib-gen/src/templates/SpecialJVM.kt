@@ -211,33 +211,43 @@ object CommonArrays {
                 }
             }
 
-    fun f_plusCollection() = f("plus(elements: Collection<T>)") {
-        operator(true)
+    fun f_plusCollection() =
+            (listOf(InvariantArraysOfObjects to null) + PrimitiveType.defaultPrimitives.map { ArraysOfPrimitives to it }).map {
+                val (family, primitive) = it
+                f("plus(elements: Collection<T>)") {
+                    operator(true)
 
-        // TODO: inline arrayPlusCollection when @PublishedAPI is available
-//        inline(Platform.JS, Inline.Yes)
-//        annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
+                    only(family)
+                    if (family == InvariantArraysOfObjects) {
+                        only(Platform.JS, ArraysOfObjects)
+                    }
 
-        only(InvariantArraysOfObjects, ArraysOfPrimitives)
-        only(Platform.JS, ArraysOfObjects, ArraysOfPrimitives)
+                // TODO: inline arrayPlusCollection when @PublishedAPI is available
+//                    inline(Platform.JS, Inline.Yes)
+//                    annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
 
-        returns("SELF")
-        returns(Platform.JS, ArraysOfObjects) { "Array<T>" }
-        doc { "Returns an array containing all elements of the original array and then all elements of the given [elements] collection." }
-        body(Platform.JVM) {
-            """
-            var index = size
-            val result = java.util.Arrays.copyOf(this, index + elements.size)
-            for (element in elements) result[index++] = element
-            return result
-            """
-        }
-        body(Platform.JS) {
-            """
-            return arrayPlusCollection(this, elements)
-            """
-        }
-    }
+                    returns("SELF")
+                    returns(Platform.JS, ArraysOfObjects) { "Array<T>" }
+                    doc { "Returns an array containing all elements of the original array and then all elements of the given [elements] collection." }
+                    body(Platform.JVM) {
+                        """
+                        var index = size
+                        val result = java.util.Arrays.copyOf(this, index + elements.size)
+                        for (element in elements) result[index++] = element
+                        return result
+                        """
+                    }
+                    if (primitive != null) {
+                        only(primitive)
+                    }
+                    when (primitive) {
+                        null, PrimitiveType.Boolean, PrimitiveType.Long ->
+                            body(Platform.JS) { "return arrayPlusCollection(this, elements)" }
+                        else ->
+                            body(Platform.JS) { "return fillFromCollection(this.copyOf(size + elements.size), this.size, elements)" }
+                    }
+                }
+            }
 
     fun f_plusArray() = f("plus(elements: SELF)") {
         operator(true)
@@ -275,81 +285,110 @@ object CommonArrays {
 
     }
 
-    fun f_copyOfRange() = f("copyOfRange(fromIndex: Int, toIndex: Int)") {
-        inline(Platform.JVM, Inline.Only)
-        inline(Platform.JS, Inline.Yes)
-        annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
+    fun f_copyOfRange() = (listOf(InvariantArraysOfObjects to null) + PrimitiveType.defaultPrimitives.map { ArraysOfPrimitives to it }).map {
+        val (family, primitive) = it
+        f("copyOfRange(fromIndex: Int, toIndex: Int)") {
+            only(family)
+            if (family == InvariantArraysOfObjects) {
+                only(Platform.JS, ArraysOfObjects)
+            }
 
-        only(InvariantArraysOfObjects, ArraysOfPrimitives)
-        only(Platform.JS, ArraysOfObjects, ArraysOfPrimitives)
+            inline(Platform.JVM, Inline.Only)
 
-        doc { "Returns new array which is a copy of range of original array." }
-        returns("SELF")
-        returns(Platform.JS, ArraysOfObjects) { "Array<T>" }
-        body(Platform.JVM) {
-            "return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)"
-        }
-        body(Platform.JS) {
-            // TODO: Arguments checking as in java?
-            "return this.asDynamic().slice(fromIndex, toIndex)"
+            doc { "Returns new array which is a copy of range of original array." }
+            returns("SELF")
+            returns(Platform.JS, ArraysOfObjects) { "Array<T>" }
+            body(Platform.JVM) {
+                "return java.util.Arrays.copyOfRange(this, fromIndex, toIndex)"
+            }
+
+            if (primitive != null) {
+                only(primitive)
+            }
+            when (primitive) {
+                PrimitiveType.Char, PrimitiveType.Boolean, PrimitiveType.Long ->
+                    body(Platform.JS) { "return withType(\"${primitive}Array\", this.asDynamic().slice(fromIndex, toIndex))" }
+                else -> {
+                    annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
+                    inline(Platform.JS, Inline.Yes)
+                    body(Platform.JS) { "return this.asDynamic().slice(fromIndex, toIndex)" }
+                }
+            }
         }
     }
 
-    fun f_copyOf() = f("copyOf()") {
-        inline(Platform.JVM, Inline.Only)
-        inline(Platform.JS, Inline.Yes)
-        annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
+    fun f_copyOf() = (listOf(InvariantArraysOfObjects to null) + PrimitiveType.defaultPrimitives.map { ArraysOfPrimitives to it }).map {
+        val (family, primitive) = it
+        f("copyOf()") {
+            only(family)
+            if (family == InvariantArraysOfObjects) {
+                only(Platform.JS, ArraysOfObjects)
+            }
 
-        only(InvariantArraysOfObjects, ArraysOfPrimitives)
-        only(Platform.JS, ArraysOfObjects, ArraysOfPrimitives)
+            inline(Platform.JVM, Inline.Only)
 
-        only(InvariantArraysOfObjects, ArraysOfPrimitives)
-        doc { "Returns new array which is a copy of the original array." }
-        returns("SELF")
-        returns(Platform.JS, ArraysOfObjects) { "Array<T>" }
+            doc { "Returns new array which is a copy of the original array." }
+            returns("SELF")
+            returns(Platform.JS, ArraysOfObjects) { "Array<T>" }
 
-        body(Platform.JVM) {
-            "return java.util.Arrays.copyOf(this, size)"
-        }
-        body(Platform.JS) {
-            "return this.asDynamic().slice()"
+            body(Platform.JVM) {
+                "return java.util.Arrays.copyOf(this, size)"
+            }
+            body(Platform.JS) {
+                "return this.asDynamic().slice()"
+            }
+
+            if (primitive != null) {
+                only(primitive)
+            }
+            when (primitive) {
+                PrimitiveType.Char, PrimitiveType.Boolean, PrimitiveType.Long ->
+                    body(Platform.JS) { "return withType(\"${primitive}Array\", this.asDynamic().slice())" }
+                else -> {
+                    annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
+                    inline(Platform.JS, Inline.Yes)
+                    body(Platform.JS) { "return this.asDynamic().slice()" }
+                }
+            }
         }
     }
 
     fun f_copyOfResized() =
-        (PrimitiveType.defaultPrimitives.map { ArraysOfPrimitives to it } + (InvariantArraysOfObjects to null)).map {
-            val (family, primitive) = it
-            f("copyOf(newSize: Int)") {
-                only(family)
-                if (family == InvariantArraysOfObjects) {
-                    only(Platform.JS, ArraysOfObjects)
-                }
-
-                inline(Platform.JVM, Inline.Only)
-                doc { "Returns new array which is a copy of the original array, resized to the given [newSize]." }
-                val defaultValue: String
-                if (primitive != null) {
-                    only(primitive)
-                    returns("SELF")
-                    defaultValue = when (primitive) {
-                        PrimitiveType.Boolean -> false.toString()
-                        PrimitiveType.Char -> "0"
-                        else -> "ZERO"
+            (PrimitiveType.defaultPrimitives.map { ArraysOfPrimitives to it } + (InvariantArraysOfObjects to null)).map {
+                val (family, primitive) = it
+                f("copyOf(newSize: Int)") {
+                    only(family)
+                    if (family == InvariantArraysOfObjects) {
+                        only(Platform.JS, ArraysOfObjects)
                     }
-                } else {
-                    returns { "Array<T?>" }
-                    defaultValue = "null"
-                }
-                body(Platform.JVM) {
-                    "return java.util.Arrays.copyOf(this, newSize)"
-                }
-                body(Platform.JS) {
-                    """
-                    return arrayCopyResize(this, newSize, $defaultValue)
-                    """
+
+                    inline(Platform.JVM, Inline.Only)
+                    doc { "Returns new array which is a copy of the original array, resized to the given [newSize]." }
+
+                    if (primitive != null) {
+                        only(primitive)
+                        returns("SELF")
+                        when (primitive) {
+                            PrimitiveType.Boolean ->
+                                body(Platform.JS) { "return withType(\"BooleanArray\", arrayCopyResize(this, newSize, false))" }
+                            PrimitiveType.Char ->
+                                body(Platform.JS) { "return withType(\"CharArray\", fillFrom(this, ${primitive}Array(newSize)))" }
+                            PrimitiveType.Long ->
+                                body(Platform.JS) { "return withType(\"LongArray\", arrayCopyResize(this, newSize, ZERO))" }
+                            else ->
+                                body(Platform.JS) { "return fillFrom(this, ${primitive}Array(newSize))" }
+                        }
+                    }
+                    else {
+                        returns { "Array<T?>" }
+                        body(Platform.JS) { "return arrayCopyResize(this, newSize, null)" }
+                    }
+
+                    body(Platform.JVM) {
+                        "return java.util.Arrays.copyOf(this, newSize)"
+                    }
                 }
             }
-        }
 
     fun f_sortPrimitives() =
         (PrimitiveType.numericPrimitives + PrimitiveType.Char).map { primitive ->
@@ -481,12 +520,13 @@ object CommonArrays {
                         return result as Array<T>
                         """
                     }
-
-                    if (primitive == PrimitiveType.Char) {
-                        body(Platform.JS) { "return Array<Char>(size, { i -> this[i] })" }
-                    }
-                    else {
-                        body(Platform.JS) { "return copyOf().unsafeCast<Array<T>>()" }
+                    when (primitive) {
+                        PrimitiveType.Char ->
+                            body(Platform.JS) { "return Array<Char>(size, { i -> this[i] })" }
+                        PrimitiveType.Boolean, PrimitiveType.Long ->
+                            body(Platform.JS) { "return copyOf().unsafeCast<Array<T>>()" }
+                        else ->
+                            body(Platform.JS) { "return js(\"[]\").slice.call(this)" }
                     }
                 }
             }
@@ -496,7 +536,10 @@ object CommonArrays {
     fun templates() =
             listOf(f_plusElement()) +
             f_plusElementOperator() +
-            listOf(f_plusCollection(), f_plusArray(), f_copyOf(), f_copyOfRange()) +
+            f_plusCollection() +
+            listOf(f_plusArray()) +
+            f_copyOf() +
+            f_copyOfRange() +
             f_copyOfResized() +
             f_sortPrimitives() +
             listOf(f_sort(), f_sortWith(), f_asList()) +

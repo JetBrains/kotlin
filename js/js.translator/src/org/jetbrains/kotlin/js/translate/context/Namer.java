@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.translate.context;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
@@ -281,6 +282,16 @@ public final class Namer {
     @NotNull
     public JsExpression isCharSequence() {
         return kotlin(IS_CHAR_SEQUENCE);
+    }
+
+    @NotNull
+    public JsExpression isArray() {
+        return kotlin("isArray");
+    }
+
+    @NotNull
+    public JsExpression isPrimitiveArray(@NotNull PrimitiveType type) {
+        return kotlin("is" + type.getArrayTypeName().asString());
     }
 
     @NotNull

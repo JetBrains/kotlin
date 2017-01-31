@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.js.translate.utils;
 
-import org.jetbrains.kotlin.js.backend.ast.*;
-import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
-import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
 import com.intellij.util.SmartList;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.js.backend.ast.*;
+import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
+import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
@@ -573,6 +573,15 @@ public final class JsAstUtils {
     public static JsExpression stateMachineReceiver() {
         JsNameRef result = new JsNameRef("$this$");
         MetadataProperties.setCoroutineReceiver(result, true);
+        return result;
+    }
+
+    @NotNull
+    public static JsExpression comma(JsExpression first, JsExpression... tail) {
+        JsExpression result = first;
+        for (JsExpression e : tail) {
+            result = new JsBinaryOperation(JsBinaryOperator.COMMA, result, e);
+        }
         return result;
     }
 }

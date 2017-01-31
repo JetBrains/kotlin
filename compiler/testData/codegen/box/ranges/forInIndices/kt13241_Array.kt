@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_WITHOUT_CHECK: JS
 // WITH_RUNTIME
 
 import kotlin.test.assertEquals

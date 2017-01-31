@@ -46,3 +46,9 @@ abstract class AbstractJsCodegenBoxTest : BasicBoxTest(
         "compiler/testData/codegen/box/",
         BasicBoxTest.TEST_DATA_DIR_PATH + "out/codegen/box/"
 )
+
+abstract class AbstractJsTypedArraysBoxTest : BasicBoxTest(
+        "compiler/testData/codegen/box/arrays/",
+        BasicBoxTest.TEST_DATA_DIR_PATH + "out/codegen/box/arrays-typedarrays/",
+        typedArraysEnabled = true
+)

@@ -286,6 +286,10 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             ContainerUtil.addAllNotNull(libraries, arguments.libraries.split(File.pathSeparator));
         }
 
+        if (arguments.typedArrays) {
+            configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, true);
+        }
+
         configuration.put(JSConfigurationKeys.LIBRARIES, libraries);
 
         String moduleKindName = arguments.moduleKind;

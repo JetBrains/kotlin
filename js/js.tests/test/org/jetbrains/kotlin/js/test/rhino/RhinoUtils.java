@@ -191,6 +191,7 @@ public final class RhinoUtils {
     private static ScriptableObject initScope(@NotNull EcmaVersion version, @NotNull Context context, @NotNull List<String> jsLibraries) {
         ScriptableObject scope = context.initStandardObjects();
         try {
+            runFileWithRhino(DIST_DIR_JS_PATH + "../../js/js.translator/testData/rhino-polyfills.js", context, scope);
             runFileWithRhino(DIST_DIR_JS_PATH + "kotlin.js", context, scope);
             runFileWithRhino(DIST_DIR_JS_PATH + "../classes/kotlin-test-js/kotlin-test.js", context, scope);
 
