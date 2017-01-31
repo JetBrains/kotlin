@@ -5,6 +5,7 @@ public final class CrashMe {
         return 0;
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String getResources() {
         return null;
     }

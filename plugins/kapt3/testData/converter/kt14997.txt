@@ -16,14 +16,17 @@ public final class Kt14997Kt {
         super();
     }
 
+    @org.jetbrains.annotations.NotNull()
     public static final java.lang.Runnable a() {
         return null;
     }
 
+    @org.jetbrains.annotations.NotNull()
     public static final java.lang.Runnable b() {
         return null;
     }
 
+    @org.jetbrains.annotations.NotNull()
     public static final CrashMe c() {
         return null;
     }

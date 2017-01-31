@@ -19,31 +19,41 @@ public abstract interface InternalInterface {
 package modifiers;
 
 public final class Modifiers {
+    @org.jetbrains.annotations.NotNull()
     private final transient java.lang.String transientField = "";
+    @org.jetbrains.annotations.NotNull()
     private volatile java.lang.String volatileField;
 
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String getTransientField() {
         return null;
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String getVolatileField() {
         return null;
     }
 
-    public final void setVolatileField(java.lang.String p0) {
+    public final void setVolatileField(@org.jetbrains.annotations.NotNull()
+    java.lang.String p0) {
     }
 
     public final strictfp void strictFp() {
     }
 
-    public final java.lang.String overloads(java.lang.String a, int n) {
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String overloads(@org.jetbrains.annotations.NotNull()
+    java.lang.String a, int n) {
         return null;
     }
 
-    public final java.lang.String overloads(java.lang.String a) {
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String overloads(@org.jetbrains.annotations.NotNull()
+    java.lang.String a) {
         return null;
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String overloads() {
         return null;
     }

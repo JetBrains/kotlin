@@ -10,144 +10,197 @@ public final class MyType<T extends java.lang.Object> {
 
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class Test {
+    @org.jetbrains.annotations.NotNull()
     public ABC a;
+    @org.jetbrains.annotations.Nullable()
     private final ABC b = null;
+    @org.jetbrains.annotations.Nullable()
     private final java.util.List<ABC> c = null;
+    @org.jetbrains.annotations.Nullable()
     private final java.util.List<java.util.Map<BCD, ABC<? extends java.util.List<BCD>>>> d = null;
+    @org.jetbrains.annotations.NotNull()
     public java.util.List<? extends java.util.Map<? extends ABC, ? extends BCD>> e;
+    @org.jetbrains.annotations.NotNull()
     public ABC<?> f;
+    @org.jetbrains.annotations.NotNull()
     public java.util.List<?> g;
+    @org.jetbrains.annotations.NotNull()
     public ABC<java.lang.Integer, java.lang.String> h;
+    @org.jetbrains.annotations.NotNull()
     public Function2<ABC, java.util.List<BCD>, CDE> i;
+    @org.jetbrains.annotations.NotNull()
     public Function0<CDE> j;
+    @org.jetbrains.annotations.NotNull()
     public Function2<ABC, java.util.List<BCD>, CDE> k;
+    @org.jetbrains.annotations.NotNull()
     public ABC.BCD.EFG l;
+    @org.jetbrains.annotations.NotNull()
     private final error.NonExistentClass m = null;
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String n = "";
+    @org.jetbrains.annotations.NotNull()
     public java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends error.NonExistentClass>>>>>>>>>> o11;
+    @org.jetbrains.annotations.NotNull()
     public java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<ABC>>>>>>>>> o10;
+    @org.jetbrains.annotations.NotNull()
     public java.util.Calendar.Builder p;
 
+    @org.jetbrains.annotations.NotNull()
     public final ABC getA() {
         return null;
     }
 
-    public final void setA(ABC p0) {
+    public final void setA(@org.jetbrains.annotations.NotNull()
+    ABC p0) {
     }
 
+    @org.jetbrains.annotations.Nullable()
     public final ABC getB() {
         return null;
     }
 
+    @org.jetbrains.annotations.Nullable()
     public final java.util.List<ABC> getC() {
         return null;
     }
 
+    @org.jetbrains.annotations.Nullable()
     public final java.util.List<java.util.Map<BCD, ABC<? extends java.util.List<BCD>>>> getD() {
         return null;
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final java.util.List<? extends java.util.Map<? extends ABC, ? extends BCD>> getE() {
         return null;
     }
 
-    public final void setE(java.util.List<? extends java.util.Map<? extends ABC, ? extends BCD>> p0) {
+    public final void setE(@org.jetbrains.annotations.NotNull()
+    java.util.List<? extends java.util.Map<? extends ABC, ? extends BCD>> p0) {
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final ABC<?> getF() {
         return null;
     }
 
-    public final void setF(ABC<?> p0) {
+    public final void setF(@org.jetbrains.annotations.NotNull()
+    ABC<?> p0) {
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final java.util.List<?> getG() {
         return null;
     }
 
-    public final void setG(java.util.List<?> p0) {
+    public final void setG(@org.jetbrains.annotations.NotNull()
+    java.util.List<?> p0) {
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final ABC<java.lang.Integer, java.lang.String> getH() {
         return null;
     }
 
-    public final void setH(ABC<java.lang.Integer, java.lang.String> p0) {
+    public final void setH(@org.jetbrains.annotations.NotNull()
+    ABC<java.lang.Integer, java.lang.String> p0) {
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final Function2<ABC, java.util.List<BCD>, CDE> getI() {
         return null;
     }
 
-    public final void setI(Function2<ABC, java.util.List<BCD>, CDE> p0) {
+    public final void setI(@org.jetbrains.annotations.NotNull()
+    Function2<ABC, java.util.List<BCD>, CDE> p0) {
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final Function0<CDE> getJ() {
         return null;
     }
 
-    public final void setJ(Function0<CDE> p0) {
+    public final void setJ(@org.jetbrains.annotations.NotNull()
+    Function0<CDE> p0) {
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final Function2<ABC, java.util.List<BCD>, CDE> getK() {
         return null;
     }
 
-    public final void setK(Function2<ABC, java.util.List<BCD>, CDE> p0) {
+    public final void setK(@org.jetbrains.annotations.NotNull()
+    Function2<ABC, java.util.List<BCD>, CDE> p0) {
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final ABC.BCD.EFG getL() {
         return null;
     }
 
-    public final void setL(ABC.BCD.EFG p0) {
+    public final void setL(@org.jetbrains.annotations.NotNull()
+    ABC.BCD.EFG p0) {
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final error.NonExistentClass getM() {
         return null;
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String getN() {
         return null;
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<error.NonExistentClass>>>>>>>>>> getO11() {
         return null;
     }
 
-    public final void setO11(java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends error.NonExistentClass>>>>>>>>>> p0) {
+    public final void setO11(@org.jetbrains.annotations.NotNull()
+    java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends error.NonExistentClass>>>>>>>>>> p0) {
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<ABC>>>>>>>>> getO10() {
         return null;
     }
 
-    public final void setO10(java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<ABC>>>>>>>>> p0) {
+    public final void setO10(@org.jetbrains.annotations.NotNull()
+    java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<ABC>>>>>>>>> p0) {
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final java.util.Calendar.Builder getP() {
         return null;
     }
 
-    public final void setP(java.util.Calendar.Builder p0) {
+    public final void setP(@org.jetbrains.annotations.NotNull()
+    java.util.Calendar.Builder p0) {
     }
 
-    public final BCD f1(ABC a) {
+    @org.jetbrains.annotations.Nullable()
+    public final BCD f1(@org.jetbrains.annotations.NotNull()
+    ABC a) {
         return null;
     }
 
-    public final <T extends java.lang.Object>void f2(ABC<java.lang.String, java.lang.Integer, Function0<BCD>> a) {
+    public final <T extends java.lang.Object>void f2(@org.jetbrains.annotations.NotNull()
+    ABC<java.lang.String, java.lang.Integer, Function0<BCD>> a) {
     }
 
-    public final <T extends java.lang.Object>long f3(ABC a, int b) {
+    public final <T extends java.lang.Object>long f3(@org.jetbrains.annotations.NotNull()
+    ABC a, int b) {
         return 0L;
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final error.NonExistentClass f4() {
         return null;
     }
 
-    public final <T extends java.lang.Object>java.lang.Class<java.lang.Enum<?>> f5(MyType<T> $receiver) {
+    @org.jetbrains.annotations.Nullable()
+    public final <T extends java.lang.Object>java.lang.Class<java.lang.Enum<?>> f5(@org.jetbrains.annotations.NotNull()
+    MyType<T> $receiver) {
         return null;
     }
 
