@@ -4,6 +4,8 @@ import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 
+val DIR_AND_MODULE_ERROR_MESSAGE = "'-d' option with a directory destination is ignored because '-module' is specified"
+
 class ExecutionStrategyJsIT : ExecutionStrategyIT() {
     override fun setupProject(project: Project) {
         project.setupWorkingDir()
@@ -48,6 +50,7 @@ open class ExecutionStrategyIT : BaseGradleIT() {
             assertSuccessful()
             assertContains(finishMessage)
             checkOutput()
+            assertNotContains(DIR_AND_MODULE_ERROR_MESSAGE)
         }
 
         val fKt = project.projectDir.getFileByName("f.kt")

@@ -63,6 +63,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import java.util.logging.Level
 import java.util.logging.Logger
+import kotlin.collections.HashSet
 import kotlin.comparisons.compareByDescending
 import kotlin.concurrent.read
 import kotlin.concurrent.schedule
@@ -423,10 +424,13 @@ class CompileServiceImpl(
             }
             parsedModule
         }
-        val javaSourceRoots = parsedModule.modules.flatMapTo(HashSet()) { it.getJavaSourceRoots().map { File(it.path) } }
-        val allKotlinFiles = parsedModule.modules.flatMap { it.getSourceFiles().map(::File) }
-        k2jvmArgs.friendPaths = parsedModule.modules.flatMap(Module::getFriendPaths).toTypedArray()
 
+        assert(parsedModule.modules.size == 1) { "More than one module description in ${k2jvmArgs.module}" }
+        val module = parsedModule.modules.first()
+        val javaSourceRoots = module.getJavaSourceRoots().mapTo(HashSet()) { File(it.path) }
+        val allKotlinFiles = module.getSourceFiles().map(::File)
+        k2jvmArgs.friendPaths = module.getFriendPaths().toTypedArray()
+        k2jvmArgs.destination = module.getOutputDirectory()
         val changedFiles = if (incrementalCompilationOptions.areFileChangesKnown) {
             ChangedFiles.Known(incrementalCompilationOptions.modifiedFiles!!, incrementalCompilationOptions.deletedFiles!!)
         }
