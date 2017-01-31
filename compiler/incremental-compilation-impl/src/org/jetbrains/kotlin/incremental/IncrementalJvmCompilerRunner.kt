@@ -425,7 +425,6 @@ class IncrementalJvmCompilerRunner(
                 javaSourceRoots = javaSourceRoots,
                 classpath = classpath,
                 friendDirs = listOf())
-        args.destination = null
         args.module = moduleFile.absolutePath
         val outputItemCollector = OutputItemsCollectorImpl()
         @Suppress("NAME_SHADOWING")
