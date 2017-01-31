@@ -1919,11 +1919,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return asmType(varType);
     }
 
-    private static boolean isSharedVarType(@NotNull Type type) {
-        return type.getSort() == Type.OBJECT && type.getInternalName().startsWith(REF_TYPE_PREFIX);
-    }
-
-
     private void putDescriptorIntoFrameMap(@NotNull KtElement statement) {
         if (statement instanceof KtDestructuringDeclaration) {
             KtDestructuringDeclaration multiDeclaration = (KtDestructuringDeclaration) statement;

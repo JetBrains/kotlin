@@ -3767,6 +3767,63 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/closures/capturedVarsOptimization")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CapturedVarsOptimization extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInCapturedVarsOptimization() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/closures/capturedVarsOptimization"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("capturedInCrossinline.kt")
+            public void testCapturedInCrossinline() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturedVarsOptimization/capturedInCrossinline.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("capturedInInlineOnlyAssign.kt")
+            public void testCapturedInInlineOnlyAssign() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturedVarsOptimization/capturedInInlineOnlyAssign.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("capturedInInlineOnlyCAO.kt")
+            public void testCapturedInInlineOnlyCAO() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturedVarsOptimization/capturedInInlineOnlyCAO.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("capturedInInlineOnlyIncrDecr.kt")
+            public void testCapturedInInlineOnlyIncrDecr() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturedVarsOptimization/capturedInInlineOnlyIncrDecr.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("capturedInInlineOnlyIndexedCAO.kt")
+            public void testCapturedInInlineOnlyIndexedCAO() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturedVarsOptimization/capturedInInlineOnlyIndexedCAO.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("capturedVarsOfSize2.kt")
+            public void testCapturedVarsOfSize2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturedVarsOptimization/capturedVarsOfSize2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("sharedSlotsWithCapturedVars.kt")
+            public void testSharedSlotsWithCapturedVars() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturedVarsOptimization/sharedSlotsWithCapturedVars.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("withCoroutines.kt")
+            public void testWithCoroutines() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/capturedVarsOptimization/withCoroutines.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/closures/closureInsideClosure")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

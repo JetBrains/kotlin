@@ -648,6 +648,63 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeText/capturedVarsOptimization")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CapturedVarsOptimization extends AbstractBytecodeTextTest {
+        public void testAllFilesPresentInCapturedVarsOptimization() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/capturedVarsOptimization"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("capturedInChainOfInlineFuns.kt")
+        public void testCapturedInChainOfInlineFuns() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/capturedVarsOptimization/capturedInChainOfInlineFuns.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("capturedInInlineOnly.kt")
+        public void testCapturedInInlineOnly() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/capturedVarsOptimization/capturedInInlineOnly.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("capturedInLocalObject.kt")
+        public void testCapturedInLocalObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/capturedVarsOptimization/capturedInLocalObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("capturedInNoInlineOnly.kt")
+        public void testCapturedInNoInlineOnly() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/capturedVarsOptimization/capturedInNoInlineOnly.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("capturedInNoInlneInsideChainOfInlineFuns.kt")
+        public void testCapturedInNoInlneInsideChainOfInlineFuns() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/capturedVarsOptimization/capturedInNoInlneInsideChainOfInlineFuns.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("capturedVarsOfSize2.kt")
+        public void testCapturedVarsOfSize2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/capturedVarsOptimization/capturedVarsOfSize2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sharedSlotsWithCapturedVars.kt")
+        public void testSharedSlotsWithCapturedVars() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/capturedVarsOptimization/sharedSlotsWithCapturedVars.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withStackNormalization.kt")
+        public void testWithStackNormalization() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/capturedVarsOptimization/withStackNormalization.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeText/checkcast")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

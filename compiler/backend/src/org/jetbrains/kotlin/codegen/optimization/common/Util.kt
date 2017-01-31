@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.codegen.optimization.common
 
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Opcodes.*
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
 
 val AbstractInsnNode.isMeaningful: Boolean get() =
@@ -77,6 +79,62 @@ fun MethodNode.removeEmptyCatchBlocks() {
     }
 }
 
+fun MethodNode.removeUnusedLocalVariables() {
+    val used = BooleanArray(maxLocals) { false }
+    for (insn in instructions) {
+        when (insn) {
+            is VarInsnNode -> {
+                val varIndex = insn.`var`
+                used[varIndex] = true
+                if (insn.isSize2LoadStoreOperation()) {
+                    used[varIndex + 1] = true
+                }
+            }
+            is IincInsnNode ->
+                used[insn.`var`] = true
+        }
+    }
+    for (localVar in localVariables) {
+        val varIndex = localVar.index
+        used[varIndex] = true
+        val type = Type.getType(localVar.desc)
+        if (type.size == 2) {
+            used[varIndex + 1] = true
+        }
+    }
+
+    if (used.all { it }) return
+
+    val remapping = IntArray(maxLocals) { 0 }
+    var lastUnused = 0
+    for (i in remapping.indices) {
+        remapping[i] = lastUnused
+        if (used[i]) {
+            lastUnused++
+        }
+    }
+
+    remapLocalVariables(remapping)
+}
+
+private fun VarInsnNode.isSize2LoadStoreOperation() =
+        opcode == LLOAD || opcode == DLOAD || opcode == LSTORE || opcode == DSTORE
+
+fun MethodNode.remapLocalVariables(remapping: IntArray) {
+    for (insn in instructions.toArray()) {
+        when (insn) {
+            is VarInsnNode ->
+                insn.`var` = remapping[insn.`var`]
+            is IincInsnNode ->
+                insn.`var` = remapping[insn.`var`]
+        }
+    }
+
+    for (localVariableNode in localVariables) {
+        localVariableNode.index = remapping[localVariableNode.index]
+    }
+}
+
 inline fun AbstractInsnNode.findNextOrNull(predicate: (AbstractInsnNode) -> Boolean): AbstractInsnNode? {
     var finger = this.next
     while (finger != null && !predicate(finger)) {
@@ -125,3 +183,10 @@ fun AbstractInsnNode.isLoadOperation(): Boolean = getOpcode() in Opcodes.ILOAD..
 val AbstractInsnNode?.insnText get() = InlineCodegenUtil.getInsnText(this)
 val AbstractInsnNode?.debugText get() =
         if (this == null) "<null>" else "${this.javaClass.simpleName}: $insnText"
+
+internal inline fun <reified T : AbstractInsnNode> AbstractInsnNode.isInsn(opcode: Int, condition: T.() -> Boolean): Boolean =
+        takeInsnIf(opcode, condition) != null
+
+internal inline fun <reified T : AbstractInsnNode> AbstractInsnNode.takeInsnIf(opcode: Int, condition: T.() -> Boolean): T? =
+        takeIf { it.opcode == opcode }?.safeAs<T>()?.takeIf { it.condition() }
+

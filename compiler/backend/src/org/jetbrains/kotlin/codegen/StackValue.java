@@ -1359,9 +1359,7 @@ public abstract class StackValue {
             default:
                 PrimitiveType primitiveType = AsmUtil.asmPrimitiveTypeToLangPrimitiveType(type);
                 if (primitiveType == null) throw new UnsupportedOperationException();
-
-                String typeName = primitiveType.getTypeName().getIdentifier();
-                return Type.getObjectType(REF_TYPE_PREFIX + typeName + "Ref");
+                return sharedTypeForPrimitive(primitiveType);
         }
     }
 

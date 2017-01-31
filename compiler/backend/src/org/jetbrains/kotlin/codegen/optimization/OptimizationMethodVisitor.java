@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.TransformationMethodVisitor;
 import org.jetbrains.kotlin.codegen.optimization.boxing.RedundantBoxingMethodTransformer;
 import org.jetbrains.kotlin.codegen.optimization.boxing.RedundantCoercionToUnitTransformer;
+import org.jetbrains.kotlin.codegen.optimization.captured.CapturedVarsOptimizationMethodTransformer;
 import org.jetbrains.kotlin.codegen.optimization.common.UtilKt;
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.RedundantNullCheckMethodTransformer;
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer;
@@ -33,6 +34,7 @@ public class OptimizationMethodVisitor extends TransformationMethodVisitor {
     private static final MethodTransformer MANDATORY_METHOD_TRANSFORMER = new FixStackWithLabelNormalizationMethodTransformer();
 
     private static final MethodTransformer[] OPTIMIZATION_TRANSFORMERS = new MethodTransformer[] {
+            new CapturedVarsOptimizationMethodTransformer(),
             new RedundantNullCheckMethodTransformer(),
             new RedundantBoxingMethodTransformer(),
             new RedundantCoercionToUnitTransformer(),

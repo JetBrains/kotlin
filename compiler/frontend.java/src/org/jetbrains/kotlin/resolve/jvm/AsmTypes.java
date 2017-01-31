@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.jvm;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.HashMap;
@@ -81,6 +82,40 @@ public class AsmTypes {
     @NotNull
     private static Type reflect(@NotNull String className) {
         return Type.getObjectType("kotlin/reflect/" + className);
+    }
+
+    public static boolean isSharedVarType(@NotNull Type type) {
+        return type.getSort() == Type.OBJECT && type.getInternalName().startsWith(REF_TYPE_PREFIX);
+    }
+
+    @NotNull
+    public static Type sharedTypeForPrimitive(@NotNull PrimitiveType primitiveType) {
+        String typeName = primitiveType.getTypeName().getIdentifier();
+        return Type.getObjectType(REF_TYPE_PREFIX + typeName + "Ref");
+    }
+
+    @NotNull
+    public static Type valueTypeForPrimitive(PrimitiveType primitiveType) {
+        switch (primitiveType) {
+            case BOOLEAN:
+                return Type.BOOLEAN_TYPE;
+            case CHAR:
+                return Type.CHAR_TYPE;
+            case BYTE:
+                return Type.BYTE_TYPE;
+            case SHORT:
+                return Type.SHORT_TYPE;
+            case INT:
+                return Type.INT_TYPE;
+            case FLOAT:
+                return Type.FLOAT_TYPE;
+            case LONG:
+                return Type.LONG_TYPE;
+            case DOUBLE:
+                return Type.DOUBLE_TYPE;
+            default:
+                throw new UnsupportedOperationException();
+        }
     }
 
     @NotNull

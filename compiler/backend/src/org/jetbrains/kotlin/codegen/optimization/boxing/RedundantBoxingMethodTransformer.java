@@ -21,6 +21,7 @@ import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue;
+import org.jetbrains.kotlin.codegen.optimization.common.UtilKt;
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -48,7 +49,7 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
 
             adaptLocalVariableTableForBoxedValues(node, frames);
 
-            applyVariablesRemapping(node, buildVariablesRemapping(valuesToOptimize, node));
+            UtilKt.remapLocalVariables(node, buildVariablesRemapping(valuesToOptimize, node));
 
             adaptInstructionsForBoxedValues(node, valuesToOptimize);
         }
@@ -219,21 +220,6 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
         }
 
         return remapping;
-    }
-
-    private static void applyVariablesRemapping(@NotNull MethodNode node, @NotNull int[] remapping) {
-        for (AbstractInsnNode insn : node.instructions.toArray()) {
-            if (insn instanceof VarInsnNode) {
-                ((VarInsnNode) insn).var = remapping[((VarInsnNode) insn).var];
-            }
-            if (insn instanceof IincInsnNode) {
-                ((IincInsnNode) insn).var = remapping[((IincInsnNode) insn).var];
-            }
-        }
-
-        for (LocalVariableNode localVariableNode : node.localVariables) {
-            localVariableNode.index = remapping[localVariableNode.index];
-        }
     }
 
     private static void adaptInstructionsForBoxedValues(
