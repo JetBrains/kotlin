@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiFactory.ClassHeaderBuilder
@@ -78,6 +79,8 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
                 else /* open class */ -> "Create subclass"
             }
 
+    override fun startInWriteAction() = false
+
     override fun applyTo(element: KtClass, editor: Editor?) {
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
 
@@ -100,10 +103,12 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
 
     private fun createSealedSubclass(sealedClass: KtClass, sealedName: String, editor: Editor) {
         val project = sealedClass.project
-        val builder = buildClassHeader(targetNameWithoutConflicts(sealedName, sealedClass), sealedClass, sealedName)
-        val classFromText = KtPsiFactory(project).createClass(builder.asString())
-        val body = sealedClass.getOrCreateBody()
-        val klass = body.addBefore(classFromText, body.rBrace) as KtClass
+        val klass = runWriteAction {
+            val builder = buildClassHeader(targetNameWithoutConflicts(sealedName, sealedClass), sealedClass, sealedName)
+            val classFromText = KtPsiFactory(project).createClass(builder.asString())
+            val body = sealedClass.getOrCreateBody()
+            body.addBefore(classFromText, body.rBrace) as KtClass
+        }
         runInteractiveRename(klass, project, sealedClass, editor)
         chooseAndImplementMethods(project, klass, editor)
     }
@@ -134,18 +139,23 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
         if (container.containingClassOrObject == null && !ApplicationManager.getApplication().isUnitTestMode) {
             val dlg = chooseSubclassToCreate(baseClass, baseName) ?: return
             val targetName = dlg.className
-            val file = getOrCreateKotlinFile("$targetName.kt", dlg.targetDirectory)!!
-            val builder = buildClassHeader(targetName, baseClass, baseClass.fqName!!.asString())
-            file.add(factory.createClass(builder.asString()))
-            val klass = file.getChildOfType<KtClass>()!!
-            ShortenReferences.DEFAULT.process(klass)
+            val (file, klass) = runWriteAction {
+                val file = getOrCreateKotlinFile("$targetName.kt", dlg.targetDirectory)!!
+                val builder = buildClassHeader(targetName, baseClass, baseClass.fqName!!.asString())
+                file.add(factory.createClass(builder.asString()))
+                val klass = file.getChildOfType<KtClass>()!!
+                ShortenReferences.DEFAULT.process(klass)
+                file to klass
+            }
             chooseAndImplementMethods(project, klass, CodeInsightUtil.positionCursor(project, file, klass) ?: editor)
         }
         else {
-            val builder = buildClassHeader(targetNameWithoutConflicts(baseName, baseClass.containingClassOrObject),
-                                           baseClass, name, visibility)
-            val classFromText = factory.createClass(builder.asString())
-            val klass = container.parent.addAfter(classFromText, container) as KtClass
+            val klass = runWriteAction {
+                val builder = buildClassHeader(targetNameWithoutConflicts(baseName, baseClass.containingClassOrObject),
+                                               baseClass, name, visibility)
+                val classFromText = factory.createClass(builder.asString())
+                container.parent.addAfter(classFromText, container) as KtClass
+            }
             runInteractiveRename(klass, project, container, editor)
             chooseAndImplementMethods(project, klass, editor)
         }
