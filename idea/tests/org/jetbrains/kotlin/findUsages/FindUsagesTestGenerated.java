@@ -1609,6 +1609,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("MismatchedAccessor.0.java")
+            public void testMismatchedAccessor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaMethodUsages/MismatchedAccessor.0.java");
+                doTest(fileName);
+            }
+
             @TestMetadata("OverriddenMethodSyntheticAccessor.0.java")
             public void testOverriddenMethodSyntheticAccessor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaMethodUsages/OverriddenMethodSyntheticAccessor.0.java");

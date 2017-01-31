@@ -22,6 +22,8 @@ import com.intellij.psi.impl.search.MethodUsagesSearcher
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.UsageSearchContext
 import com.intellij.psi.search.searches.MethodReferencesSearch
+import com.intellij.psi.util.MethodSignatureUtil
+import com.intellij.psi.util.TypeConversionUtil
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
@@ -85,7 +87,19 @@ class KotlinOverridingMethodReferenceSearcher : MethodUsagesSearcher() {
 
                 if (refElement !is KtCallableDeclaration) {
                     if (isWrongAccessorReference()) return true
-                    return super.processInexactReference(ref, refElement, method, consumer)
+                    if (refElement !is PsiMethod) return true
+
+                    val refMethodClass = refElement.containingClass ?: return true
+                    val substitutor = TypeConversionUtil.getClassSubstitutor(myContainingClass, refMethodClass, PsiSubstitutor.EMPTY)
+                    if (substitutor != null) {
+                        val superSignature = method.getSignature(substitutor)
+                        val refSignature = refElement.getSignature(PsiSubstitutor.EMPTY)
+
+                        if (MethodSignatureUtil.isSubsignature(superSignature, refSignature)) {
+                            return super.processInexactReference(ref, refElement, method, consumer)
+                        }
+                    }
+                    return true
                 }
 
                 var lightMethods = refElement.toLightMethods()
