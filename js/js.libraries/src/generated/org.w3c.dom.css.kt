@@ -260,7 +260,7 @@ public external abstract class CSSStyleDeclaration {
     fun setPropertyPriority(property: String, priority: String): Unit
     fun removeProperty(property: String): String
 }
-inline operator fun CSSStyleDeclaration.get(index: Int): String? = asDynamic()[index]
+@kotlin.internal.InlineOnly inline operator fun CSSStyleDeclaration.get(index: Int): String? = asDynamic()[index]
 
 public external abstract class MediaList {
     open var mediaText: String
@@ -269,7 +269,7 @@ public external abstract class MediaList {
     fun appendMedium(medium: String): Unit
     fun deleteMedium(medium: String): Unit
 }
-inline operator fun MediaList.get(index: Int): String? = asDynamic()[index]
+@kotlin.internal.InlineOnly inline operator fun MediaList.get(index: Int): String? = asDynamic()[index]
 
 public external abstract class StyleSheet {
     open val type: String
@@ -292,7 +292,7 @@ public external abstract class StyleSheetList {
     open val length: Int
     fun item(index: Int): StyleSheet?
 }
-inline operator fun StyleSheetList.get(index: Int): StyleSheet? = asDynamic()[index]
+@kotlin.internal.InlineOnly inline operator fun StyleSheetList.get(index: Int): StyleSheet? = asDynamic()[index]
 
 public external interface LinkStyle {
     val sheet: StyleSheet?
@@ -302,7 +302,7 @@ public external abstract class CSSRuleList {
     open val length: Int
     fun item(index: Int): CSSRule?
 }
-inline operator fun CSSRuleList.get(index: Int): CSSRule? = asDynamic()[index]
+@kotlin.internal.InlineOnly inline operator fun CSSRuleList.get(index: Int): CSSRule? = asDynamic()[index]
 
 public external abstract class CSSRule {
     open val type: Short

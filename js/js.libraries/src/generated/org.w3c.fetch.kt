@@ -100,6 +100,7 @@ public external interface RequestInit {
         set(value) = definedExternally
 }
 
+@kotlin.internal.InlineOnly
 public inline fun RequestInit(method: String? = null, headers: dynamic = null, body: dynamic = null, referrer: String? = null, referrerPolicy: dynamic = null, mode: RequestMode? = null, credentials: RequestCredentials? = null, cache: RequestCache? = null, redirect: RequestRedirect? = null, integrity: String? = null, keepalive: Boolean? = null, window: Any? = null): RequestInit {
     val o = js("({})")
 
@@ -155,6 +156,7 @@ public external interface ResponseInit {
         set(value) = definedExternally
 }
 
+@kotlin.internal.InlineOnly
 public inline fun ResponseInit(status: Short? = 200, statusText: String? = "OK", headers: dynamic = null): ResponseInit {
     val o = js("({})")
 

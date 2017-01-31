@@ -76,6 +76,7 @@ public external interface RegistrationOptions {
         set(value) = definedExternally
 }
 
+@kotlin.internal.InlineOnly
 public inline fun RegistrationOptions(scope: String? = null, type: WorkerType? = WorkerType.CLASSIC): RegistrationOptions {
     val o = js("({})")
 
@@ -111,6 +112,7 @@ public external interface ServiceWorkerMessageEventInit : EventInit {
         set(value) = definedExternally
 }
 
+@kotlin.internal.InlineOnly
 public inline fun ServiceWorkerMessageEventInit(data: Any? = null, origin: String? = null, lastEventId: String? = null, source: UnionMessagePortOrServiceWorker? = null, ports: Array<MessagePort>? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ServiceWorkerMessageEventInit {
     val o = js("({})")
 
@@ -156,6 +158,7 @@ public external interface ClientQueryOptions {
         set(value) = definedExternally
 }
 
+@kotlin.internal.InlineOnly
 public inline fun ClientQueryOptions(includeUncontrolled: Boolean? = false, type: ClientType? = ClientType.WINDOW): ClientQueryOptions {
     val o = js("({})")
 
@@ -172,6 +175,7 @@ public external open class ExtendableEvent(type: String, eventInitDict: Extendab
 public external interface ExtendableEventInit : EventInit {
 }
 
+@kotlin.internal.InlineOnly
 public inline fun ExtendableEventInit(bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ExtendableEventInit {
     val o = js("({})")
 
@@ -195,6 +199,7 @@ public external interface ForeignFetchOptions {
         set(value) = definedExternally
 }
 
+@kotlin.internal.InlineOnly
 public inline fun ForeignFetchOptions(scopes: Array<String>?, origins: Array<String>?): ForeignFetchOptions {
     val o = js("({})")
 
@@ -223,6 +228,7 @@ public external interface FetchEventInit : ExtendableEventInit {
         set(value) = definedExternally
 }
 
+@kotlin.internal.InlineOnly
 public inline fun FetchEventInit(request: Request?, clientId: String? = null, isReload: Boolean? = false, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): FetchEventInit {
     val o = js("({})")
 
@@ -251,6 +257,7 @@ public external interface ForeignFetchEventInit : ExtendableEventInit {
         set(value) = definedExternally
 }
 
+@kotlin.internal.InlineOnly
 public inline fun ForeignFetchEventInit(request: Request?, origin: String? = "null", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ForeignFetchEventInit {
     val o = js("({})")
 
@@ -275,6 +282,7 @@ public external interface ForeignFetchResponse {
         set(value) = definedExternally
 }
 
+@kotlin.internal.InlineOnly
 public inline fun ForeignFetchResponse(response: Response?, origin: String? = null, headers: Array<String>? = null): ForeignFetchResponse {
     val o = js("({})")
 
@@ -311,6 +319,7 @@ public external interface ExtendableMessageEventInit : ExtendableEventInit {
         set(value) = definedExternally
 }
 
+@kotlin.internal.InlineOnly
 public inline fun ExtendableMessageEventInit(data: Any? = null, origin: String? = null, lastEventId: String? = null, source: UnionClientOrMessagePortOrServiceWorker? = null, ports: Array<MessagePort>? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ExtendableMessageEventInit {
     val o = js("({})")
 
@@ -351,6 +360,7 @@ public external interface CacheQueryOptions {
         set(value) = definedExternally
 }
 
+@kotlin.internal.InlineOnly
 public inline fun CacheQueryOptions(ignoreSearch: Boolean? = false, ignoreMethod: Boolean? = false, ignoreVary: Boolean? = false, cacheName: String? = null): CacheQueryOptions {
     val o = js("({})")
 
@@ -377,6 +387,7 @@ public external interface CacheBatchOperation {
         set(value) = definedExternally
 }
 
+@kotlin.internal.InlineOnly
 public inline fun CacheBatchOperation(type: String? = null, request: Request? = null, response: Response? = null, options: CacheQueryOptions? = null): CacheBatchOperation {
     val o = js("({})")
 
