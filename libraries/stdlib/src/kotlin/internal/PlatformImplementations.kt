@@ -15,12 +15,6 @@ internal open class PlatformImplementations {
     }
 }
 
-// TODO: drop before 1.1
-@SinceKotlin("1.1")
-@PublishedApi
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-internal fun platformCloseSuppressed(instance: Closeable, cause: Throwable) = instance.closeFinally(cause)
-
 
 @JvmField
 internal val IMPLEMENTATIONS: PlatformImplementations = run {

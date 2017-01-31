@@ -2044,10 +2044,6 @@ public final class kotlin/coroutines/experimental/jvm/internal/CoroutineIntrinsi
 	public static final fun normalizeContinuation (Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
 }
 
-public final class kotlin/internal/PlatformImplementationsKt {
-	public static final synthetic fun platformCloseSuppressed (Ljava/io/Closeable;Ljava/lang/Throwable;)V
-}
-
 public final class kotlin/io/AccessDeniedException : kotlin/io/FileSystemException {
 	public fun <init> (Ljava/io/File;Ljava/io/File;Ljava/lang/String;)V
 	public synthetic fun <init> (Ljava/io/File;Ljava/io/File;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
