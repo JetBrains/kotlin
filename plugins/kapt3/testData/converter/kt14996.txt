@@ -4,11 +4,15 @@ public final class Kt14996Kt {
         super();
     }
 
-    public static final java.lang.String crashMe(java.util.List<java.lang.String> values) {
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String crashMe(@org.jetbrains.annotations.NotNull()
+    java.util.List<java.lang.String> values) {
         return null;
     }
 
-    public static final java.lang.CharSequence crashMe(java.util.List<? extends java.lang.CharSequence> values) {
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.CharSequence crashMe(@org.jetbrains.annotations.NotNull()
+    java.util.List<? extends java.lang.CharSequence> values) {
         return null;
     }
 }

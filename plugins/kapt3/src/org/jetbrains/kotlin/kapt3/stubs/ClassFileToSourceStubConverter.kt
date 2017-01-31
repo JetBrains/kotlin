@@ -66,7 +66,6 @@ class ClassFileToSourceStubConverter(
                 "java.lang.Deprecated", "kotlin.Deprecated", // Deprecated annotations
                 "java.lang.Synthetic",
                 "synthetic.kotlin.jvm.GeneratedByJvmOverloads", // kapt3-related annotation for marking JvmOverloads-generated methods
-                "org.jetbrains.annotations.", // Nullable/NotNull, ReadOnly, Mutable
                 "kotlin.jvm.", "kotlin.Metadata" // Kotlin annotations from runtime
         )
 

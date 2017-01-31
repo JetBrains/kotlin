@@ -1,8 +1,10 @@
 public abstract class Base {
 
-    protected abstract void doJob(java.lang.String job, int delay);
+    protected abstract void doJob(@org.jetbrains.annotations.NotNull()
+    java.lang.String p0, int p1);
 
-    protected abstract <T extends java.lang.CharSequence>void doJobGeneric(T job, int delay);
+    protected abstract <T extends java.lang.CharSequence>void doJobGeneric(@org.jetbrains.annotations.NotNull()
+    T p0, int p1);
 
     public Base() {
         super();
@@ -15,11 +17,13 @@ public abstract class Base {
 public final class Impl extends Base {
 
     @java.lang.Override()
-    protected void doJob(java.lang.String job, int delay) {
+    protected void doJob(@org.jetbrains.annotations.NotNull()
+    java.lang.String job, int delay) {
     }
 
     @java.lang.Override()
-    protected <T extends java.lang.CharSequence>void doJobGeneric(T job, int delay) {
+    protected <T extends java.lang.CharSequence>void doJobGeneric(@org.jetbrains.annotations.NotNull()
+    T job, int delay) {
     }
 
     public Impl() {

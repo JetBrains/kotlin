@@ -1,4 +1,35 @@
+public abstract class BaseClass {
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract Result doJob();
+
+    public BaseClass(@org.jetbrains.annotations.NotNull()
+    Context context, int num, boolean bool) {
+        super();
+    }
+}
+
+////////////////////
+
+
 public abstract interface Context {
+}
+
+////////////////////
+
+
+public final class Inheritor extends BaseClass {
+
+    @org.jetbrains.annotations.NotNull()
+    @java.lang.Override()
+    public Result doJob() {
+        return null;
+    }
+
+    public Inheritor(@org.jetbrains.annotations.NotNull()
+    Context context) {
+        super(null, 0, false);
+    }
 }
 
 ////////////////////
@@ -9,32 +40,5 @@ public enum Result {
     /*public static final*/ ERROR /* = new ERROR() */;
 
     Result() {
-    }
-}
-
-////////////////////
-
-
-public abstract class BaseClass {
-
-    public abstract Result doJob();
-
-    public BaseClass(Context context, int num, boolean bool) {
-        super();
-    }
-}
-
-////////////////////
-
-
-public final class Inheritor extends BaseClass {
-
-    @java.lang.Override()
-    public Result doJob() {
-        return null;
-    }
-
-    public Inheritor(Context context) {
-        super(null, 0, false);
     }
 }

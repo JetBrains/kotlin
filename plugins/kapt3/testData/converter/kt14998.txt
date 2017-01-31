@@ -1,44 +1,58 @@
 public final class Outer {
 
-    public final void nonAbstract(java.lang.String s, int i) {
+    public final void nonAbstract(@org.jetbrains.annotations.NotNull()
+    java.lang.String s, int i) {
     }
 
-    public abstract void _abstract_(java.lang.String s, int i);
+    public abstract void _abstract_(@org.jetbrains.annotations.NotNull()
+    java.lang.String p0, int p1);
 
     public Outer() {
         super();
     }
 
     private final class Inner {
+        @org.jetbrains.annotations.NotNull()
         private final java.lang.String foo = null;
+        @org.jetbrains.annotations.NotNull()
         private final java.lang.String bar = null;
 
+        @org.jetbrains.annotations.NotNull()
         public final java.lang.String getFoo() {
             return null;
         }
 
+        @org.jetbrains.annotations.NotNull()
         public final java.lang.String getBar() {
             return null;
         }
 
-        public Inner(java.lang.String foo, java.lang.String bar) {
+        public Inner(@org.jetbrains.annotations.NotNull()
+        java.lang.String foo, @org.jetbrains.annotations.NotNull()
+        java.lang.String bar) {
             super();
         }
     }
 
     private static final class Nested {
+        @org.jetbrains.annotations.NotNull()
         private final java.lang.String foo = null;
+        @org.jetbrains.annotations.NotNull()
         private final java.lang.String bar = null;
 
+        @org.jetbrains.annotations.NotNull()
         public final java.lang.String getFoo() {
             return null;
         }
 
+        @org.jetbrains.annotations.NotNull()
         public final java.lang.String getBar() {
             return null;
         }
 
-        public Nested(java.lang.String foo, java.lang.String bar) {
+        public Nested(@org.jetbrains.annotations.NotNull()
+        java.lang.String foo, @org.jetbrains.annotations.NotNull()
+        java.lang.String bar) {
             super();
         }
     }

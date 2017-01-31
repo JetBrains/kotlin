@@ -11,37 +11,26 @@ public abstract @interface Anno {
 
 package test;
 
-@Anno(value = "clazz")
-public abstract class Test {
-    private java.lang.String v;
+public final class AnnotationsTest {
 
-    @Anno(value = "abstract-method")
-    public abstract java.lang.String abstractMethod();
-
-    @Anno(value = "abstract-val")
-    private static final void abstractVal$annotations() {
-    }
-
-    public abstract java.lang.String getAbstractVal();
-
-    @Anno(value = "v-property")
-    private static final void v$annotations() {
-    }
-
-    @Anno(value = "v-get")
-    public final java.lang.String getV() {
-        return null;
-    }
-
-    @Anno(value = "v-set")
-    public final void setV(@Anno(value = "v-setparam")
-    java.lang.String p0) {
-    }
-
-    @Anno(value = "test-constructor")
-    protected Test(@Anno(value = "v-param")
-    java.lang.String v) {
+    public AnnotationsTest() {
         super();
+    }
+
+    @Anno(value = "top-level-fun")
+    public static final void topLevelFun(@org.jetbrains.annotations.NotNull()
+    @Anno(value = "top-level-fun-receiver")
+    java.lang.String $receiver) {
+    }
+
+    @Anno(value = "top-level-val")
+    private static void topLevelVal$annotations(int p0) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver")
+    int $receiver) {
+        return null;
     }
 }
 
@@ -69,23 +58,42 @@ public enum Enum {
 
 package test;
 
-public final class AnnotationsTest {
+@Anno(value = "clazz")
+public abstract class Test {
+    @org.jetbrains.annotations.NotNull()
+    private java.lang.String v;
 
-    public AnnotationsTest() {
-        super();
+    @org.jetbrains.annotations.NotNull()
+    @Anno(value = "abstract-method")
+    public abstract java.lang.String abstractMethod();
+
+    @Anno(value = "abstract-val")
+    private static void abstractVal$annotations() {
     }
 
-    @Anno(value = "top-level-fun")
-    public static final void topLevelFun(@Anno(value = "top-level-fun-receiver")
-    java.lang.String $receiver) {
+    @org.jetbrains.annotations.NotNull()
+    public abstract java.lang.String getAbstractVal();
+
+    @Anno(value = "v-property")
+    private static void v$annotations() {
     }
 
-    @Anno(value = "top-level-val")
-    private static final void topLevelVal$annotations(int p0) {
-    }
-
-    public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver")
-    int $receiver) {
+    @org.jetbrains.annotations.NotNull()
+    @Anno(value = "v-get")
+    public final java.lang.String getV() {
         return null;
+    }
+
+    @Anno(value = "v-set")
+    public final void setV(@org.jetbrains.annotations.NotNull()
+    @Anno(value = "v-setparam")
+    java.lang.String p0) {
+    }
+
+    @Anno(value = "test-constructor")
+    protected Test(@org.jetbrains.annotations.NotNull()
+    @Anno(value = "v-param")
+    java.lang.String v) {
+        super();
     }
 }

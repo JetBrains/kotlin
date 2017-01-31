@@ -1,9 +1,11 @@
 public final class FunctionsTest {
 
+    @org.jetbrains.annotations.NotNull()
     public final kotlin.reflect.KProperty1<java.lang.String, java.lang.Integer> f() {
         return null;
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final kotlin.jvm.functions.Function2<java.lang.Integer, java.lang.Integer, java.lang.Boolean> f2() {
         return null;
     }

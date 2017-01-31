@@ -74,7 +74,8 @@ public enum E2 {
     E2(int n) {
     }
 
-    E2(java.lang.String s) {
+    E2(@org.jetbrains.annotations.NotNull()
+    java.lang.String s) {
     }
 }
 
@@ -84,13 +85,16 @@ public enum E2 {
 public enum E3 {
     /*public static final*/ X /* = new X(null) */,
     /*public static final*/ Y /* = new Y(null) */;
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
 
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String getA() {
         return null;
     }
 
-    E3(java.lang.String a) {
+    E3(@org.jetbrains.annotations.NotNull()
+    java.lang.String a) {
     }
 }
 
@@ -99,11 +103,13 @@ public enum E3 {
 
 public enum E4 {
     /*public static final*/ X /* = new X(null, 0, 0L, false) */;
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
     private final int b = 0;
     private final long c = 0L;
     private final boolean d = false;
 
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String getA() {
         return null;
     }
@@ -120,6 +126,7 @@ public enum E4 {
         return false;
     }
 
-    E4(java.lang.String a, int b, long c, boolean d) {
+    E4(@org.jetbrains.annotations.NotNull()
+    java.lang.String a, int b, long c, boolean d) {
     }
 }

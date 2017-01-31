@@ -63,11 +63,13 @@ public final class TestAnno {
 @Anno2(i = 6, s = "BCD", ii = {4, 5, 6}, ss = {"Z", "X"}, a = @Anno1(), color = Colors.WHITE, colors = {Colors.WHITE}, clazz = TestAnno.class, classes = {TestAnno.class, Anno1.class})
 @Anno3(value = "value")
 public final class TestAnno2 {
+    @org.jetbrains.annotations.NotNull()
     @Anno3(value = "field")
     private java.lang.String b;
 
     @Anno1()
-    public final void a(@Anno3(value = "param-pam-pam")
+    public final void a(@org.jetbrains.annotations.NotNull()
+    @Anno3(value = "param-pam-pam")
     java.lang.String param) {
     }
 
@@ -75,13 +77,15 @@ public final class TestAnno2 {
     private static final void b$annotations() {
     }
 
+    @org.jetbrains.annotations.NotNull()
     @Anno3(value = "getter")
     public final java.lang.String getB() {
         return null;
     }
 
     @Anno3(value = "setter")
-    public final void setB(@Anno3(value = "setparam")
+    public final void setB(@org.jetbrains.annotations.NotNull()
+    @Anno3(value = "setparam")
     java.lang.String p0) {
     }
 

@@ -1,14 +1,18 @@
 public final class My $ name {
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String (@\u2022@) = "";
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String \u041a\u043e\u0442\u043b\u0438\u043d-\u043a\u043e\u043c\u043f\u0438\u043b\u044f\u0442\u043e\u0440 = "";
 
     public final void (^_^)(int )))))) {
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String get(@\u2022@)() {
         return null;
     }
 
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String get\u041a\u043e\u0442\u043b\u0438\u043d-\u043a\u043e\u043c\u043f\u0438\u043b\u044f\u0442\u043e\u0440() {
         return null;
     }

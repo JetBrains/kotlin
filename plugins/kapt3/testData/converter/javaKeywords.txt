@@ -1,6 +1,8 @@
 public final class _default_ {
+    @org.jetbrains.annotations.NotNull()
     public java.lang.String _extends_;
 
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String getExtends() {
         return null;
     }
