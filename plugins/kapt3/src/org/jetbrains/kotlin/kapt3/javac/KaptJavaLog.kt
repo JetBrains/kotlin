@@ -19,8 +19,18 @@ package org.jetbrains.kotlin.kapt3.javac
 import com.sun.tools.javac.util.Context
 import com.sun.tools.javac.util.JCDiagnostic
 import com.sun.tools.javac.util.Log
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedWriter
+import java.io.PrintWriter
 
-class KaptJavaLog(context: Context?) : Log(context) {
+class KaptJavaLog(
+        context: Context?,
+        errWriter: PrintWriter,
+        warnWriter: PrintWriter,
+        noticeWriter: PrintWriter
+) : Log(context, errWriter, warnWriter, noticeWriter) {
     override fun report(diagnostic: JCDiagnostic) {
         if (diagnostic.type == JCDiagnostic.DiagnosticType.ERROR && diagnostic.code in IGNORED_DIAGNOSTICS) {
             return
@@ -37,8 +47,14 @@ class KaptJavaLog(context: Context?) : Log(context) {
                 "compiler.err.name.clash.same.erasure.no.hide",
                 "compiler.err.already.defined")
 
-        internal fun preRegister(context: Context) {
-            context.put(Log.logKey, Context.Factory<Log>(::KaptJavaLog))
+        internal fun preRegister(context: Context, messageCollector: MessageCollector) {
+            context.put(Log.logKey, Context.Factory<Log> {
+                fun makeWriter(severity: CompilerMessageSeverity) = PrintWriter(MessageCollectorBackedWriter(messageCollector, severity))
+                val errWriter = makeWriter(ERROR)
+                val warnWriter = makeWriter(STRONG_WARNING)
+                val noticeWriter = makeWriter(INFO)
+                KaptJavaLog(it, errWriter, warnWriter, noticeWriter)
+            })
         }
     }
 }

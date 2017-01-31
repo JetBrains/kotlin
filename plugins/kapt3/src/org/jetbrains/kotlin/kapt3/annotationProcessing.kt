@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.kapt3
 
-import com.sun.tools.javac.comp.CompileStates
 import com.sun.tools.javac.file.JavacFileManager
 import com.sun.tools.javac.main.Option
 import com.sun.tools.javac.processing.AnnotationProcessingError
@@ -64,17 +63,10 @@ fun KaptContext.doAnnotationProcessing(
         val parsedJavaFiles = compiler.parseFiles(javaFileObjects)
 
         val log = Log.instance(context)
-        if (compiler.shouldStop(CompileStates.CompileState.PARSE) || log.nerrors > 0) {
-            log.flush()
-            throw KaptError(KaptError.Kind.JAVA_FILE_PARSING_ERROR)
-        }
 
         val warningsBeforeAp: Int
         try {
             val analyzedFiles = compiler.enterTrees(parsedJavaFiles + additionalSources)
-            if (log.nerrors > 0) {
-                throw KaptError(KaptError.Kind.ERROR_WHILE_ANALYSIS)
-            }
 
             warningsBeforeAp = log.nwarnings
 
