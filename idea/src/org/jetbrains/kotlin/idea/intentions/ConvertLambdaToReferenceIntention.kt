@@ -87,6 +87,8 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
             if (calleeDescriptor.typeParameters.isNotEmpty()) return false
             // No references to Java synthetic properties
             if (calleeDescriptor is SyntheticJavaPropertyDescriptor) return false
+            // No suspend functions
+            if ((calleeDescriptor as? FunctionDescriptor)?.isSuspend ?: false) return false
             val descriptorHasReceiver = with(calleeDescriptor) {
                 // No references to both member / extension
                 if (dispatchReceiverParameter != null && extensionReceiverParameter != null) return false
