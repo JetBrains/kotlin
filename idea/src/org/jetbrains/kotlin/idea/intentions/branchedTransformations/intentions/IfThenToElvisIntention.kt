@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntent
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
 import org.jetbrains.kotlin.idea.intentions.getLeftMostReceiverExpression
 import org.jetbrains.kotlin.idea.intentions.replaceFirstReceiver
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -114,6 +115,8 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
         return this
     }
 
+    override fun startInWriteAction() = false
+
     override fun applyTo(element: KtIfExpression, editor: Editor?) {
         val condition = element.condition as KtOperationExpression
 
@@ -142,20 +145,22 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
                                               it.typeReference!!)
         }
         val checkedExpression = condition.checkedExpression()!!
-        val replacedLeft = if (left.evaluatesTo(checkedExpression)) {
-            if (condition is KtIsExpression) newReceiver!! else left
-        }
-        else {
-            if (condition is KtIsExpression) {
-                (left as KtDotQualifiedExpression).replaceFirstReceiver(
-                        factory, newReceiver!!, safeAccess = true)
+        val elvis = runWriteAction {
+            val replacedLeft = if (left.evaluatesTo(checkedExpression)) {
+                if (condition is KtIsExpression) newReceiver!! else left
             }
             else {
-                left.insertSafeCalls(factory)
+                if (condition is KtIsExpression) {
+                    (left as KtDotQualifiedExpression).replaceFirstReceiver(
+                            factory, newReceiver!!, safeAccess = true)
+                }
+                else {
+                    left.insertSafeCalls(factory)
+                }
             }
+            val newExpr = element.replaced(factory.createExpressionByPattern("$0 ?: $1", replacedLeft, right))
+            KtPsiUtil.deparenthesize(newExpr) as KtBinaryExpression
         }
-        val newExpr = element.replaced(factory.createExpressionByPattern("$0 ?: $1", replacedLeft, right))
-        val elvis = KtPsiUtil.deparenthesize(newExpr) as KtBinaryExpression
 
         if (editor != null) {
             elvis.inlineLeftSideIfApplicableWithPrompt(editor)
