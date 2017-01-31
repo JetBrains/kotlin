@@ -180,7 +180,7 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration>
                                              options: FindUsagesOptions,
                                              query: Query<PsiReference>): Query<PsiReference>
 
-    override fun isSearchForTextOccurencesAvailable(psiElement: PsiElement, isSingleFile: Boolean): Boolean = !isSingleFile
+    override fun isSearchForTextOccurencesAvailable(psiElement: PsiElement, isSingleFile: Boolean): Boolean = !isSingleFile && psiElement !is KtParameter
 
     override fun findReferencesToHighlight(target: PsiElement, searchScope: SearchScope): Collection<PsiReference> {
         val callableDescriptor = (target as? KtCallableDeclaration)?.resolveToDescriptorIfAny() as? CallableDescriptor
