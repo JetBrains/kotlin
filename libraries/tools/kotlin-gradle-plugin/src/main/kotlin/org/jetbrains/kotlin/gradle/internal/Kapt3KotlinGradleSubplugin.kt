@@ -157,8 +157,6 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         kaptClasspath.forEach { pluginOptions += SubpluginOption("apclasspath", it.absolutePath) }
 
-        javaCompile.source(generatedFilesDir)
-
         pluginOptions += SubpluginOption("sources", generatedFilesDir.canonicalPath)
         pluginOptions += SubpluginOption("classes", getKaptClasssesDir(project, sourceSetName).canonicalPath)
 
@@ -204,6 +202,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val kaptTaskName = kotlinCompile.name.replaceFirst("compile", "kapt")
         val kaptTask = project.tasks.create(kaptTaskName, KaptTask::class.java)
         kaptTask.kotlinCompileTask = kotlinCompile
+        kaptTask.javaCompileTask = javaCompile
         kotlinToKaptTasksMap[kotlinCompile] = kaptTask
 
         project.resolveSubpluginArtifacts(listOf(this@Kapt3KotlinGradleSubplugin)).flatMap { it.value }.forEach {
@@ -218,7 +217,6 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         // Add generated source dir as a source root for kotlinCompile and javaCompile
         kotlinCompile.source(sourcesOutputDir)
-        javaCompile.source(sourcesOutputDir)
         variantData?.let {
             if (AndroidGradleWrapper.isJackEnabled(it)) {
                 AndroidGradleWrapper.addSourceToJack(it, sourcesOutputDir)
