@@ -29,6 +29,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.SyncOutputTask
 import java.io.File
 
 // apply plugin: 'kotlin-kapt'
@@ -59,6 +60,9 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
 
         fun findMainKaptConfiguration(project: Project) = project.findKaptConfiguration(MAIN_KAPT_CONFIGURATION_NAME)
+
+        fun getKaptClasssesDir(project: Project, sourceSetName: String): File =
+                File(project.project.buildDir, "tmp/kapt3/classes/$sourceSetName")
     }
 
     private val kotlinToKaptTasksMap = mutableMapOf<KotlinCompile, KaptTask>()
@@ -156,7 +160,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         javaCompile.source(generatedFilesDir)
 
         pluginOptions += SubpluginOption("sources", generatedFilesDir.canonicalPath)
-        pluginOptions += SubpluginOption("classes", kotlinCompile.destinationDir.canonicalPath)
+        pluginOptions += SubpluginOption("classes", getKaptClasssesDir(project, sourceSetName).canonicalPath)
 
         val androidPlugin = variantData?.let {
             project.extensions.findByName("android") as? BaseExtension
@@ -193,6 +197,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
     private fun Kapt3SubpluginContext.createKaptKotlinTask() {
         val sourcesOutputDir = getKaptGeneratedDir(project, sourceSetName)
+        val classesOutputDir = getKaptClasssesDir(project, sourceSetName)
 
         // Replace compile*Kotlin to kapt*Kotlin
         assert(kotlinCompile.name.startsWith("compile"))
@@ -207,6 +212,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         kaptTask.mapClasspath { kotlinCompile.classpath }
         kaptTask.destinationDir = sourcesOutputDir
+        kaptTask.classesDir = classesOutputDir
         kaptTask.dependsOn(*(javaCompile.dependsOn.filter { it !== kotlinCompile }.toTypedArray()))
         kotlinCompile.dependsOn(kaptTask)
 

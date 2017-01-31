@@ -231,6 +231,12 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             }
         }
 
+        if (!incremental) {
+            logger.kotlinDebug { "Removing all kotlin classes in $destinationDir" }
+            destinationDir.deleteRecursively()
+            destinationDir.mkdirs()
+        }
+
         try {
             val exitCode = compilerRunner.runJvmCompiler(sourceRoots.kotlinSourceFiles, sourceRoots.javaSourceRoots, args, environment)
             processCompilerExitCode(exitCode)
