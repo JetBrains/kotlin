@@ -14,21 +14,46 @@
  * limitations under the License.
  */
 
+Kotlin.isBooleanArray = function (a) {
+    return Array.isArray(a) && a.$type$ === "BooleanArray"
+};
+
+Kotlin.isCharArray = function (a) {
+    return Array.isArray(a) && a.$type$ === "CharArray"
+};
+
+Kotlin.isLongArray = function (a) {
+    return Array.isArray(a) && a.$type$ === "LongArray"
+};
+
+Kotlin.isArray = function (a) {
+    return Array.isArray(a)
+           || a instanceof Int8Array
+           || a instanceof Int16Array
+           || a instanceof Int32Array
+           || a instanceof Float32Array
+           || a instanceof Float64Array;
+};
+
 Kotlin.arrayToString = function (a) {
     return "[" + a.map(Kotlin.toString).join(", ") + "]";
 };
 
 Kotlin.arrayDeepToString = function (a, visited) {
     visited = visited || [a];
-    return "[" + a.map(function(e) {
-            if (Array.isArray(e) && visited.indexOf(e) < 0) {
+    var toString = Kotlin.toString;
+    if (Kotlin.isCharArray(a)) {
+        toString = String.fromCharCode;
+    }
+    return "[" + a.map(function (e) {
+            if (Kotlin.isArray(e) && visited.indexOf(e) < 0) {
                 visited.push(e);
                 var result = Kotlin.arrayDeepToString(e, visited);
                 visited.pop();
                 return result;
             }
             else {
-                return Kotlin.toString(e);
+                return toString(e);
             }
         }).join(", ") + "]";
 };
@@ -37,7 +62,7 @@ Kotlin.arrayEquals = function (a, b) {
     if (a === b) {
         return true;
     }
-    if (!Array.isArray(b) || a.length !== b.length) {
+    if (!Kotlin.isArray(b) || a.length !== b.length) {
         return false;
     }
 
@@ -53,16 +78,17 @@ Kotlin.arrayDeepEquals = function (a, b) {
     if (a === b) {
         return true;
     }
-    if (!Array.isArray(b) || a.length !== b.length) {
+    if (!Kotlin.isArray(b) || a.length !== b.length) {
         return false;
     }
 
     for (var i = 0, n = a.length; i < n; i++) {
-        if (Array.isArray(a[i])) {
+        if (Kotlin.isArray(a[i])) {
             if (!Kotlin.arrayDeepEquals(a[i], b[i])) {
                 return false;
             }
-        } else if (!Kotlin.equals(a[i], b[i])) {
+        }
+        else if (!Kotlin.equals(a[i], b[i])) {
             return false;
         }
     }
@@ -81,11 +107,11 @@ Kotlin.arrayDeepHashCode = function (arr) {
     var result = 1;
     for (var i = 0, n = arr.length; i < n; i++) {
         var e = arr[i];
-        result = ((31 * result | 0) + (Array.isArray(e) ? Kotlin.arrayDeepHashCode(e) : Kotlin.hashCode(e))) | 0;
+        result = ((31 * result | 0) + (Kotlin.isArray(e) ? Kotlin.arrayDeepHashCode(e) : Kotlin.hashCode(e))) | 0;
     }
     return result;
 };
 
-Kotlin.primitiveArraySort = function(array) {
+Kotlin.primitiveArraySort = function (array) {
     array.sort(Kotlin.primitiveCompareTo)
 };

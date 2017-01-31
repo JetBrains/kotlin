@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.Translation
-import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.CompositeFIF
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.ArrayFIF
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.*
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getLoopRange
@@ -166,7 +166,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
 
     fun translateForOverArray(): JsStatement {
         val rangeExpression = context.defineTemporary(Translation.translateAsExpression(loopRange, context))
-        val length = CompositeFIF.LENGTH_PROPERTY_INTRINSIC.apply(rangeExpression, listOf<JsExpression>(), context)
+        val length = ArrayFIF.LENGTH_PROPERTY_INTRINSIC.apply(rangeExpression, listOf<JsExpression>(), context)
         val end = context.defineTemporary(length)
         val index = context.declareTemporary(context.program().getNumberLiteral(0))
 

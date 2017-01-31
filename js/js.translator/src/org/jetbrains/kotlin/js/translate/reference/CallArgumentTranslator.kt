@@ -264,7 +264,7 @@ class CallArgumentTranslator private constructor(
                 listOf(concatExpression)
             }
             else {
-                listOf(JsAstUtils.invokeMethod(list[0], "slice"))
+                listOf(JsAstUtils.invokeMethod(Namer.kotlinObject(), "copyTypedArray", list[0]))
             }
         }
 
@@ -305,12 +305,9 @@ class CallArgumentTranslator private constructor(
                 if (valueArgument.getSpreadElement() != null) {
                     if (lastArrayContent.size > 0) {
                         concatArguments.add(JsArrayLiteral(lastArrayContent).apply { sideEffects = SideEffectKind.DEPENDS_ON_STATE })
-                        concatArguments.add(expressionArgument)
                         lastArrayContent = mutableListOf<JsExpression>()
                     }
-                    else {
-                        concatArguments.add(expressionArgument)
-                    }
+                    concatArguments.add(expressionArgument)
                 }
                 else {
                     lastArrayContent.add(expressionArgument)

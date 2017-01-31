@@ -3,7 +3,7 @@ package foo
 
 // CHECK_CONTAINS_NO_CALLS: test1
 // CHECK_CONTAINS_NO_CALLS: test2
-// CHECK_CONTAINS_NO_CALLS: test3 except=slice
+// CHECK_CONTAINS_NO_CALLS: test3 except=copyTypedArray
 
 internal inline fun concat(vararg strings: String): String {
     var result = ""

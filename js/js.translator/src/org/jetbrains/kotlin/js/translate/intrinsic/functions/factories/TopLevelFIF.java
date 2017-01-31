@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.kotlin.js.backend.ast.JsInvocation;
 import org.jetbrains.kotlin.js.backend.ast.JsNameRef;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.patterns.DescriptorPredicate;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallInfo;
@@ -164,13 +166,14 @@ public final class TopLevelFIF extends CompositeFIF {
     public static final KotlinFunctionIntrinsic TO_STRING = new KotlinFunctionIntrinsic("toString");
 
     @NotNull
-    public static final FunctionIntrinsic CHAR_TO_STRING = new FunctionIntrinsic() {
+    public static final FunctionIntrinsic CHAR_TO_STRING = new FunctionIntrinsicWithReceiverComputed() {
         @NotNull
         @Override
         public JsExpression apply(
-                @NotNull CallInfo callInfo, @NotNull List<? extends JsExpression> arguments, @NotNull TranslationContext context
+                @Nullable JsExpression receiver, @NotNull List<? extends JsExpression> arguments, @NotNull TranslationContext context
         ) {
-            return JsAstUtils.charToString(callInfo.getDispatchReceiver());
+            assert receiver != null;
+            return JsAstUtils.charToString(receiver);
         }
     };
 

@@ -228,11 +228,10 @@ class ArraysTest {
         assertEquals(arr.asList().toString(), arr.contentToString())
     }
 
-//    @Ignore("KT-16056")
-//    @Test fun contentDeepToString() {
-//        val arr = arrayOf("aa", 1, null, charArrayOf('d'))
-//        assertEquals("[aa, 1, null, [d]]", arr.contentDeepToString())
-//    }
+    @Test fun contentDeepToString() {
+        val arr = arrayOf("aa", 1, null, charArrayOf('d'))
+        assertEquals("[aa, 1, null, [d]]", arr.contentDeepToString())
+    }
 
     @Test fun contentDeepToStringNoRecursion() {
         // a[b[a, b]]

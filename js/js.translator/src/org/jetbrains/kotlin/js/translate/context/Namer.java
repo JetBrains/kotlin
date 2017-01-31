@@ -89,7 +89,6 @@ public final class Namer {
     private static final String PROTOTYPE_NAME = "prototype";
     private static final String CAPTURED_VAR_FIELD = "v";
 
-    public static final JsNameRef IS_ARRAY_FUN_REF = new JsNameRef("isArray", "Array");
     public static final String DEFINE_INLINE_FUNCTION = "defineInlineFunction";
     public static final String DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX = "$default";
 
@@ -281,6 +280,26 @@ public final class Namer {
     @NotNull
     public JsExpression isCharSequence() {
         return kotlin(IS_CHAR_SEQUENCE);
+    }
+
+    @NotNull
+    public JsExpression isArray() {
+        return kotlin("isArray");
+    }
+
+    @NotNull
+    public JsExpression isBooleanArray() {
+        return kotlin("isBooleanArray");
+    }
+
+    @NotNull
+    public JsExpression isCharArray() {
+        return kotlin("isCharArray");
+    }
+
+    @NotNull
+    public JsExpression isLongArray() {
+        return kotlin("isLongArray");
     }
 
     @NotNull
