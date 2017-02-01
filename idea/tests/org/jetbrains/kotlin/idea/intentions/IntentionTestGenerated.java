@@ -8916,6 +8916,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("multipleConstructorsWithThis.kt")
+        public void testMultipleConstructorsWithThis() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/multipleConstructorsWithThis.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("propertyReassignment.kt")
         public void testPropertyReassignment() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/propertyReassignment.kt");
