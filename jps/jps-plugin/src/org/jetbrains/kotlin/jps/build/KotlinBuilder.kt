@@ -114,6 +114,13 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         if (targets.none { hasKotlin[it] == true }) return
 
+        checkCachesVersions(context, chunk)
+    }
+
+    private fun checkCachesVersions(context: CompileContext, chunk: ModuleChunk) {
+        val targets = chunk.targets
+        val dataManager = context.projectDescriptor.dataManager
+
         val cacheVersionsProvider = CacheVersionProvider(dataManager.dataPaths)
         val allVersions = cacheVersionsProvider.allVersions(targets)
         val actions = allVersions.map { it.checkVersion() }.toMutableSet()
@@ -151,7 +158,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val fsOperations = FSOperationsHelper(context, chunk, LOG)
         applyActionsOnCacheVersionChange(actions, cacheVersionsProvider, context, dataManager, targets, fsOperations)
     }
-
 
     override fun chunkBuildFinished(context: CompileContext?, chunk: ModuleChunk?) {
         super.chunkBuildFinished(context, chunk)
