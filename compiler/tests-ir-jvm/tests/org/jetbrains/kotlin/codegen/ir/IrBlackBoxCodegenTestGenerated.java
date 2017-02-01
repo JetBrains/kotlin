@@ -8339,6 +8339,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("equalsNullableFloat.kt")
+        public void testEqualsNullableFloat() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/equalsNullableFloat.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("explicitCompareCall.kt")
         public void testExplicitCompareCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/explicitCompareCall.kt");
@@ -8390,6 +8396,36 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("nullableAnyToReal.kt")
         public void testNullableAnyToReal() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/nullableAnyToReal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableDoubleEquals.kt")
+        public void testNullableDoubleEquals() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/nullableDoubleEquals.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableDoubleNotEquals.kt")
+        public void testNullableDoubleNotEquals() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/nullableDoubleNotEquals.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableFloatEquals.kt")
+        public void testNullableFloatEquals() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/nullableFloatEquals.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableFloatNotEquals.kt")
+        public void testNullableFloatNotEquals() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/nullableFloatNotEquals.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableIntEquals.kt")
+        public void testNullableIntEquals() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/nullableIntEquals.kt");
             doTest(fileName);
         }
 
