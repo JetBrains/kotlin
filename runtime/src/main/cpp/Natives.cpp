@@ -22,11 +22,6 @@ KInt Kotlin_Any_hashCode(KConstRef thiz) {
   return reinterpret_cast<uintptr_t>(thiz);
 }
 
-OBJ_GETTER(Kotlin_Any_toString, KConstRef thiz) {
-  // TODO: make it more sensible, such as address and type info.
-  return nullptr;
-}
-
 // io/Console.kt
 void Kotlin_io_Console_print(KString message) {
   RuntimeAssert(message->type_info() == theStringTypeInfo, "Must use a string");
@@ -61,8 +56,8 @@ OBJ_GETTER0(Kotlin_io_Console_readLine) {
 // String.kt
 KInt Kotlin_String_compareTo(KString thiz, KString other) {
   return memcmp(ByteArrayAddressOfElementAt(thiz, 0),
-                ByteArrayAddressOfElementAt(other, 0),
-                thiz->count_ < other->count_ ? thiz->count_ : other->count_);
+		ByteArrayAddressOfElementAt(other, 0),
+		thiz->count_ < other->count_ ? thiz->count_ : other->count_);
 }
 
 KChar Kotlin_String_get(KString thiz, KInt index) {
@@ -112,7 +107,7 @@ OBJ_GETTER(Kotlin_String_fromCharArray, KConstRef thiz, KInt start, KInt size) {
   ArrayHeader* result = ArrayContainer(theStringTypeInfo, size).GetPlace();
   for (KInt index = 0; index < size; ++index) {
     *ByteArrayAddressOfElementAt(result, index) =
-        *PrimitiveArrayAddressOfElementAt<KChar>(array, start + index);
+	*PrimitiveArrayAddressOfElementAt<KChar>(array, start + index);
   }
   RETURN_OBJ(result->obj());
 }
@@ -123,7 +118,7 @@ OBJ_GETTER(Kotlin_String_toCharArray, KString string) {
       theCharArrayTypeInfo, string->count_).GetPlace();
   for (int index = 0; index < string->count_; ++index) {
     *PrimitiveArrayAddressOfElementAt<KChar>(result, index) =
-        *ByteArrayAddressOfElementAt(string, index);
+	*ByteArrayAddressOfElementAt(string, index);
   }
   RETURN_OBJ(result->obj());
 }
@@ -156,8 +151,8 @@ KBoolean Kotlin_String_equals(KString thiz, KConstRef other) {
   if (thiz == otherString) return true;
   return thiz->count_ == otherString->count_ &&
       memcmp(ByteArrayAddressOfElementAt(thiz, 0),
-             ByteArrayAddressOfElementAt(otherString, 0),
-             thiz->count_) == 0;
+	     ByteArrayAddressOfElementAt(otherString, 0),
+	     thiz->count_) == 0;
 }
 
 KInt Kotlin_String_hashCode(KString thiz) {
@@ -178,8 +173,8 @@ OBJ_GETTER(Kotlin_String_subSequence, KString thiz, KInt startIndex, KInt endInd
   KInt length = endIndex - startIndex;
   ArrayHeader* result = ArrayContainer(theStringTypeInfo, length).GetPlace();
   memcpy(ByteArrayAddressOfElementAt(result, 0),
-         ByteArrayAddressOfElementAt(thiz, startIndex),
-         length);
+	 ByteArrayAddressOfElementAt(thiz, startIndex),
+	 length);
   RETURN_OBJ(result->obj());
 }
 
