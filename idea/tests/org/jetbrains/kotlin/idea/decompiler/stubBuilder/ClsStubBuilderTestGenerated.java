@@ -186,6 +186,12 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
         doTest(fileName);
     }
 
+    @TestMetadata("SuspendLambda")
+    public void testSuspendLambda() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/SuspendLambda/");
+        doTest(fileName);
+    }
+
     @TestMetadata("TopLevelMembersAnnotatedKt")
     public void testTopLevelMembersAnnotatedKt() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/TopLevelMembersAnnotatedKt/");
