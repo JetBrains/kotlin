@@ -134,7 +134,11 @@ class JoinDeclarationAndAssignmentIntention : SelfTargetingOffsetIndependentInte
 
         val first = assignments.firstOrNull() ?: return null
         if (assignments.any { it !== first && it.parent.parent is KtSecondaryConstructor}) return null
-        return first
+
+        if (propertyContainer !is KtClassBody) return first
+
+        val blockParent = first.parent as? KtBlockExpression ?: return null
+        return if (blockParent.statements.firstOrNull() == first) first else null
     }
 
     // a block that only contains comments is not empty
