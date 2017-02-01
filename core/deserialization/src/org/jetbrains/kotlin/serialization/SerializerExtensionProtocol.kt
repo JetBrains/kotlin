@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension
 
 open class SerializerExtensionProtocol(
         val extensionRegistry: ExtensionRegistryLite,
+        val packageFqName: GeneratedExtension<ProtoBuf.Package, Int>,
         val constructorAnnotation: GeneratedExtension<ProtoBuf.Constructor, List<ProtoBuf.Annotation>>,
         val classAnnotation: GeneratedExtension<ProtoBuf.Class, List<ProtoBuf.Annotation>>,
         val functionAnnotation: GeneratedExtension<ProtoBuf.Function, List<ProtoBuf.Annotation>>,

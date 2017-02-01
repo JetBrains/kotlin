@@ -19,14 +19,7 @@ package org.jetbrains.kotlin.serialization.builtins
 import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
-import org.jetbrains.kotlin.serialization.ProtoBuf
 
-class BuiltInsSerializerExtension(
-        private val packageFqName: FqName
-) : KotlinSerializerExtensionBase(BuiltInSerializerProtocol) {
+class BuiltInsSerializerExtension(packageFqName: FqName) : KotlinSerializerExtensionBase(BuiltInSerializerProtocol, packageFqName) {
     override fun shouldUseTypeTable(): Boolean = true
-
-    override fun serializePackage(proto: ProtoBuf.Package.Builder) {
-        proto.setExtension(BuiltInsProtoBuf.packageFqName, stringTable.getPackageFqNameIndex(packageFqName))
-    }
 }

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 
 object BuiltInSerializerProtocol : SerializerExtensionProtocol(
         ExtensionRegistryLite.newInstance().apply { BuiltInsProtoBuf.registerAllExtensions(this) },
+        BuiltInsProtoBuf.packageFqName,
         BuiltInsProtoBuf.constructorAnnotation, BuiltInsProtoBuf.classAnnotation, BuiltInsProtoBuf.functionAnnotation,
         BuiltInsProtoBuf.propertyAnnotation, BuiltInsProtoBuf.enumEntryAnnotation, BuiltInsProtoBuf.compileTimeValue,
         BuiltInsProtoBuf.parameterAnnotation, BuiltInsProtoBuf.typeAnnotation, BuiltInsProtoBuf.typeParameterAnnotation

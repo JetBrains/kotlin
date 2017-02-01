@@ -119,9 +119,7 @@ object KotlinJavascriptSerializationUtil {
         val members = fragments
                 .flatMap { fragment -> DescriptorUtils.getAllDescriptors(fragment.getMemberScope()) }
                 .filterNot(skip)
-        builder.`package` = serializer.packagePartProto(members).apply {
-            setExtension(JsProtoBuf.packageFqName, stringTable.getPackageFqNameIndex(fqName))
-        }.build()
+        builder.`package` = serializer.packagePartProto(members).build()
 
         builder.setExtension(
                 JsProtoBuf.packageFragmentFiles,
