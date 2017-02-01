@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.Type
@@ -100,7 +101,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             createTypeAnnotationStubs(parent, type, notExtensionAnnotations)
 
             val isExtension = extensionAnnotations.isNotEmpty()
-            createFunctionTypeStub(nullableTypeParent(parent, type), type, isExtension)
+            createFunctionTypeStub(nullableTypeParent(parent, type), type, isExtension, Flags.SUSPEND_TYPE.get(type.flags))
 
             return
         }
@@ -158,7 +159,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         Projection.STAR -> KtProjectionKind.STAR
     }
 
-    private fun createFunctionTypeStub(parent: StubElement<out PsiElement>, type: Type, isExtensionFunctionType: Boolean) {
+    private fun createFunctionTypeStub(parent: StubElement<out PsiElement>, type: Type, isExtensionFunctionType: Boolean, isSuspend: Boolean) {
         val typeArgumentList = type.argumentList
         val functionType = KotlinPlaceHolderStubImpl<KtFunctionType>(parent, KtStubElementTypes.FUNCTION_TYPE)
         if (isExtensionFunctionType) {
@@ -171,15 +172,35 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         val parameterList = KotlinPlaceHolderStubImpl<KtParameterList>(functionType, KtStubElementTypes.VALUE_PARAMETER_LIST)
         val typeArgumentsWithoutReceiverAndReturnType
                 = typeArgumentList.subList(if (isExtensionFunctionType) 1 else 0, typeArgumentList.size - 1)
-        typeArgumentsWithoutReceiverAndReturnType.forEach { argument ->
+        var suspendParameterType: Type? = null
+
+        for ((index, argument) in typeArgumentsWithoutReceiverAndReturnType.withIndex()) {
+            if (isSuspend && index == typeArgumentsWithoutReceiverAndReturnType.size - 1) {
+                val parameterType = argument.type(c.typeTable)!!
+                if (parameterType.hasClassName() && parameterType.argumentCount == 1) {
+                    val classId = c.nameResolver.getClassId(parameterType.className)
+                    val fqName = classId.asSingleFqName()
+                    if (fqName == DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME) {
+                        suspendParameterType = parameterType
+                        continue
+                    }
+                }
+            }
             val parameter = KotlinParameterStubImpl(
                     parameterList, fqName = null, name = null, isMutable = false, hasValOrVar = false, hasDefaultValue = false
             )
+
             createTypeReferenceStub(parameter, argument.type(c.typeTable)!!)
         }
 
-        val returnType = typeArgumentList.last().type(c.typeTable)!!
-        createTypeReferenceStub(functionType, returnType)
+
+        if (suspendParameterType == null) {
+            val returnType = typeArgumentList.last().type(c.typeTable)!!
+            createTypeReferenceStub(functionType, returnType)
+        }
+        else {
+            createTypeReferenceStub(functionType, suspendParameterType.getArgument(0).type)
+        }
     }
 
     fun createValueParameterListStub(
