@@ -24,7 +24,7 @@ import java.io.File
 
 private val NORMAL_VERSION = 8
 private val EXPERIMENTAL_VERSION = 4
-private val DATA_CONTAINER_VERSION = 1
+private val DATA_CONTAINER_VERSION = 2
 
 private val NORMAL_VERSION_FILE_NAME = "format-version.txt"
 private val EXPERIMENTAL_VERSION_FILE_NAME = "experimental-format-version.txt"
