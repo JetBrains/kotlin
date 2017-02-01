@@ -146,11 +146,16 @@ abstract class KonanTest extends DefaultTask {
 
         }
         if (goldValue != null && goldValue != out.toString()) {
-            throw new RuntimeException("test failed.")
+            throw new TestFailedException("test failed.")
         }
     }
 }
 
+class TestFailedException extends RuntimeException {
+    public TestFailedException(String s) {
+        super(s)
+    }
+}
 @ParallelizableTask
 class RunKonanTest extends KonanTest {
     void compileTest(List<String> filesToCompile, String exe) {
@@ -206,20 +211,26 @@ class RunExternalTestGroup extends RunKonanTest {
         goldValue = "OK"
     }
 
+    static enum TestStatus {
+        PASSED,
+        FAILED,
+        ERROR,
+        SKIPPED
+    }
     static class TestResult {
-        String status = null
+        TestStatus status = null
         String comment = null
 
-        TestResult(String status, String comment = ""){
+        TestResult(TestStatus status, String comment = ""){
             this.status = status;
             this.comment = comment;
         }
     }
-
     static class Statistics {
         int total = 0
         int passed = 0
         int failed = 0
+        int error = 0
         int skipped = 0
 
         void pass(int count = 1) {
@@ -237,10 +248,16 @@ class RunExternalTestGroup extends RunKonanTest {
             total += count
         }
 
+        void error(int count = 1) {
+            error += count
+            total += count
+        }
+
         void add(Statistics other) {
             total   += other.total
             passed  += other.passed
             failed  += other.failed
+            error  += other.error
             skipped += other.skipped
         }
     }
@@ -261,11 +278,22 @@ class RunExternalTestGroup extends RunKonanTest {
         }
         createLauncherFile("$outputDirectory/_launcher.kt", boxPackage)
         result.add("$outputDirectory/_launcher.kt")
+        result.add(project.file("testUtils.kt"))
         return result
     }
 
     void createLauncherFile(String file, String pkg) {
-        createFile(file, "fun main(args : Array<String>) { print(${pkg}box()) }")
+        createFile(file, """
+import kotlin.test.TestFailedException
+
+fun main(args : Array<String>) {
+  try { 
+    print(${pkg}box())
+  } catch (e:TestFailedException) {
+    print("FAIL")
+  }
+}
+""")
     }
 
     List<String> findLinesWithPrefixesRemoved(String text, String prefix) {
@@ -325,15 +353,19 @@ class RunExternalTestGroup extends RunKonanTest {
             if (isEnabledForNativeBackend(source)) {
                 try {
                     super.executeTest()
-                    currentResult = new TestResult("PASSED")
+                    currentResult = new TestResult(TestStatus.PASSED)
                     statistics.pass()
-                } catch (Exception ex) {
-                    currentResult = new TestResult("FAILED",
-                            "Exception: ${ex.getMessage()}. Cause: ${ex.getCause()?.getMessage()}")
+                } catch (TestFailedException e) {
+                    currentResult = new TestResult(TestStatus.FAILED,
+                            "Cause: ${e.getCause()?.getMessage()}")
                     statistics.fail()
+                } catch (Exception ex) {
+                    currentResult = new TestResult(TestStatus.ERROR,
+                            "Exception: ${ex.getMessage()}. Cause: ${ex.getCause()?.getMessage()}")
+                    statistics.error()
                 }
             } else {
-                currentResult = new TestResult("SKIPPED")
+                currentResult = new TestResult(TestStatus.SKIPPED)
                 statistics.skip()
             }
             println("TEST $currentResult.status\n")
