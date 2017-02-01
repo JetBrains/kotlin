@@ -55,7 +55,7 @@ private inline fun <T> buildContinuationByInvokeCall(
                     get() = completion.context
 
                 override fun resume(value: Unit) {
-                    processInvokeCallOnCoroutine(completion, block)
+                    processBareContinuationResume(completion, block)
                 }
 
                 override fun resumeWithException(exception: Throwable) {
