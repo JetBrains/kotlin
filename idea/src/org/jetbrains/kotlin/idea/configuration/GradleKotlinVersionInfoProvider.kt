@@ -20,7 +20,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.facet.KotlinVersionInfoProvider
-import org.jetbrains.kotlin.idea.facet.mavenLibraryId
+import org.jetbrains.kotlin.idea.facet.mavenLibraryIds
 import org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection
 import org.jetbrains.kotlin.idea.inspections.gradle.DifferentStdlibGradleVersionInspection
 import org.jetbrains.kotlin.idea.refactoring.toPsiFile
@@ -47,7 +47,7 @@ class GradleKotlinVersionInfoProvider : KotlinVersionInfoProvider {
     override fun getLibraryVersions(module: Module, targetPlatform: TargetPlatformKind<*>): Collection<String> {
         return runReadAction {
             getGradleFile(module)?.let {
-                DifferentStdlibGradleVersionInspection.getKotlinStdlibVersions(it, targetPlatform.mavenLibraryId)
+                DifferentStdlibGradleVersionInspection.getKotlinStdlibVersions(it, targetPlatform.mavenLibraryIds)
             }
         } ?: emptyList()
     }
