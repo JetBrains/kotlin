@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.ClosureContext;
+import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
@@ -468,7 +469,6 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             @NotNull CalculatedClosure closure,
             @NotNull Type ownerType
     ) {
-        BindingContext bindingContext = typeMapper.getBindingContext();
         List<FieldInfo> args = Lists.newArrayList();
         ClassDescriptor captureThis = closure.getCaptureThis();
         if (captureThis != null) {
@@ -480,23 +480,15 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             args.add(FieldInfo.createForHiddenField(ownerType, typeMapper.mapType(captureReceiverType), CAPTURED_RECEIVER_FIELD));
         }
 
-        for (DeclarationDescriptor descriptor : closure.getCaptureVariables().keySet()) {
-            if (descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) {
-                Type type = typeMapper.getSharedVarType(descriptor);
-                if (type == null && descriptor instanceof LocalVariableDescriptor) {
-                    KotlinType delegateType = JvmCodegenUtil.getPropertyDelegateType((LocalVariableDescriptor) descriptor, bindingContext);
-                    if (delegateType != null) {
-                        type = typeMapper.mapType(delegateType);
-                    }
-                }
-                if (type == null) {
-                    type = typeMapper.mapType((VariableDescriptor) descriptor);
-                }
-                args.add(FieldInfo.createForHiddenField(ownerType, type, "$" + descriptor.getName().asString()));
-            }
-            else if (ExpressionTypingUtils.isLocalFunction(descriptor)) {
-                Type classType = asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) descriptor);
-                args.add(FieldInfo.createForHiddenField(ownerType, classType, "$" + descriptor.getName().asString()));
+        for (EnclosedValueDescriptor enclosedValueDescriptor : closure.getCaptureVariables().values()) {
+            DeclarationDescriptor descriptor = enclosedValueDescriptor.getDescriptor();
+            if ((descriptor instanceof VariableDescriptor && !(descriptor instanceof PropertyDescriptor)) ||
+                ExpressionTypingUtils.isLocalFunction(descriptor)) {
+                args.add(
+                        FieldInfo.createForHiddenField(
+                                ownerType, enclosedValueDescriptor.getType(), enclosedValueDescriptor.getFieldName()
+                        )
+                );
             }
             else if (descriptor instanceof FunctionDescriptor) {
                 assert captureReceiverType != null;
