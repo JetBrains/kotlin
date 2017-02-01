@@ -39,7 +39,7 @@ public class KannotatorJpsTest extends AbstractKotlinJpsBuildTestCase {
 
     public void testMakeKannotator() throws IOException {
         initProject();
-        rebuildAll();
+        rebuildAllModules();
         FileUtil.copyDir(getOutDir(), getOutDirAfterRebuild());
         for (JpsModule module : myProject.getModules()) {
             for (JpsModuleSourceRoot sourceRoot : module.getSourceRoots()) {
@@ -71,7 +71,7 @@ public class KannotatorJpsTest extends AbstractKotlinJpsBuildTestCase {
             String path = root.getAbsolutePath();
             System.out.println("Change file: " + path);
             change(path);
-            makeAll().assertSuccessful();
+            buildAllModules().assertSuccessful();
             System.out.println("Make successful");
 
             System.out.println("Checking output directories after make and rebuild");
@@ -86,17 +86,17 @@ public class KannotatorJpsTest extends AbstractKotlinJpsBuildTestCase {
     }
 
     @Override
-    protected void rebuildAll() {
+    protected void rebuildAllModules() {
         System.out.println("'Rebuild all' started");
-        super.rebuildAll();
+        super.rebuildAllModules();
         System.out.println("'Rebuild all' finished");
     }
 
     @NotNull
     @Override
-    protected BuildResult makeAll() {
+    protected BuildResult buildAllModules() {
         System.out.println("'Make all' started");
-        BuildResult result = super.makeAll();
+        BuildResult result = super.buildAllModules();
         System.out.println("'Make all' finished");
         return result;
     }
