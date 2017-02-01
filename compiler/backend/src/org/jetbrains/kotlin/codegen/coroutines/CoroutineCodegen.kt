@@ -280,6 +280,10 @@ class CoroutineCodegen private constructor(
         val actualMethodStartLabel = Label()
         v.visitLabel(actualMethodStartLabel)
         context.setMethodStartLabel(actualMethodStartLabel)
+
+        if (isSuspendLambda) {
+            initializeVariablesForDestructuredLambdaParameters(this, originalSuspendFunctionDescriptor.valueParameters)
+        }
     }
 
     private fun allFunctionParameters() =
