@@ -22,10 +22,13 @@ import com.intellij.psi.ResolveScopeProvider
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
-import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.script.getScriptDefinition
 
 class KotlinScriptResolveScopeProvider : ResolveScopeProvider() {
+    companion object {
+        val USE_NULL_RESOLVE_SCOPE = "USE_NULL_RESOLVE_SCOPE"
+    }
+
     override fun getResolveScope(file: VirtualFile, project: Project): GlobalSearchScope? {
         val scriptDefinition = getScriptDefinition(file, project)
         // TODO: this should get this particular scripts dependencies
@@ -34,7 +37,12 @@ class KotlinScriptResolveScopeProvider : ResolveScopeProvider() {
             // This is a workaround for completion in scripts and REPL to provide module dependencies
             scriptDefinition.template == Any::class -> null
             scriptDefinition is KotlinScriptDefinitionFromAnnotatedTemplate -> // TODO: should include the file itself
-                KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspathScope()
+                if (scriptDefinition.environment?.containsKey(USE_NULL_RESOLVE_SCOPE) ?: false) {
+                    null
+                }
+                else {
+                    KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspathScope()
+                }
             else -> null
         }
     }

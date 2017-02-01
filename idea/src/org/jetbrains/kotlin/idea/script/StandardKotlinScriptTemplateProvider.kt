@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.ex.PathUtilEx
+import org.jetbrains.kotlin.idea.core.script.dependencies.KotlinScriptResolveScopeProvider
 import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
@@ -35,6 +36,7 @@ class StandardKotlinScriptTemplateProvider(val project: Project) : ScriptTemplat
 
     override val environment: Map<String, Any?>? get() {
         return mapOf(
+                KotlinScriptResolveScopeProvider.USE_NULL_RESOLVE_SCOPE to true,
                 "sdk" to getScriptSDK(project)
         )
     }
