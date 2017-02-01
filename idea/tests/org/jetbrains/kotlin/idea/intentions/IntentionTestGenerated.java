@@ -8621,6 +8621,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("notFirstInitLine.kt")
+        public void testNotFirstInitLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/notFirstInitLine.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notFirstSecondaryConstructorLine.kt")
+        public void testNotFirstSecondaryConstructorLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/notFirstSecondaryConstructorLine.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("propertyReassignment.kt")
         public void testPropertyReassignment() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/joinDeclarationAndAssignment/propertyReassignment.kt");
