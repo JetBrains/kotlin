@@ -2998,7 +2998,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @NotNull
     CallGenerator getOrCreateCallGenerator(@NotNull ResolvedCall<?> resolvedCall, @NotNull CallableDescriptor descriptor) {
-        Map<TypeParameterDescriptor, KotlinType> typeArguments = resolvedCall.getTypeArguments();
+        Map<TypeParameterDescriptor, KotlinType> typeArguments = getTypeArgumentsForResolvedCall(resolvedCall, descriptor);
+
         TypeParameterMappings mappings = new TypeParameterMappings();
         for (Map.Entry<TypeParameterDescriptor, KotlinType> entry : typeArguments.entrySet()) {
             TypeParameterDescriptor key = entry.getKey();
@@ -3023,7 +3024,36 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 );
             }
         }
+
         return getOrCreateCallGenerator(descriptor, resolvedCall.getCall().getCallElement(), mappings, false);
+    }
+
+    @NotNull
+    private static Map<TypeParameterDescriptor, KotlinType> getTypeArgumentsForResolvedCall(
+            @NotNull ResolvedCall<?> resolvedCall,
+            @NotNull CallableDescriptor descriptor
+    ) {
+        if (!(descriptor instanceof TypeAliasConstructorDescriptor)) {
+            return resolvedCall.getTypeArguments();
+        }
+
+        TypeAliasConstructorDescriptor typeAliasConstructorDescriptor = (TypeAliasConstructorDescriptor) descriptor;
+        ClassConstructorDescriptor underlyingConstructorDescriptor = typeAliasConstructorDescriptor.getUnderlyingConstructorDescriptor();
+        KotlinType resultingType = typeAliasConstructorDescriptor.getReturnType();
+        List<TypeProjection> typeArgumentsForReturnType = resultingType.getArguments();
+        List<TypeParameterDescriptor> typeParameters = underlyingConstructorDescriptor.getTypeParameters();
+
+        assert typeParameters.size() == typeArgumentsForReturnType.size() :
+                "Type parameters of the underlying constructor " + underlyingConstructorDescriptor +
+                "should correspond to type arguments for the resulting type " + resultingType;
+
+        Map<TypeParameterDescriptor, KotlinType> typeArgumentsMap = Maps.newHashMapWithExpectedSize(typeParameters.size());
+        for (TypeParameterDescriptor typeParameter: typeParameters) {
+            KotlinType typeArgument = typeArgumentsForReturnType.get(typeParameter.getIndex()).getType();
+            typeArgumentsMap.put(typeParameter, typeArgument);
+        }
+
+        return typeArgumentsMap;
     }
 
 

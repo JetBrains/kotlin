@@ -21771,6 +21771,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("genericTypeAliasConstructor2.kt")
+        public void testGenericTypeAliasConstructor2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/typealias/genericTypeAliasConstructor2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("innerClassTypeAliasConstructor.kt")
         public void testInnerClassTypeAliasConstructor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/typealias/innerClassTypeAliasConstructor.kt");
@@ -21810,6 +21816,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("typeAliasConstructorAccessor.kt")
         public void testTypeAliasConstructorAccessor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/typealias/typeAliasConstructorAccessor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeAliasConstructorForArray.kt")
+        public void testTypeAliasConstructorForArray() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/typealias/typeAliasConstructorForArray.kt");
             doTest(fileName);
         }
 

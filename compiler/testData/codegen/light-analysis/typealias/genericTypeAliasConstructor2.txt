@@ -1,0 +1,13 @@
+@kotlin.Metadata
+public final class GenericTypeAliasConstructor2Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Pair {
+    private final field x1: java.lang.Object
+    private final field x2: java.lang.Object
+    public method <init>(p0: java.lang.Object, p1: java.lang.Object): void
+    public final method getX1(): java.lang.Object
+    public final method getX2(): java.lang.Object
+}
