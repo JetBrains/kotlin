@@ -328,15 +328,46 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
             String pluginName = pluginEntry.getKey();
             KotlinMavenPluginExtension plugin = pluginEntry.getValue();
 
+            // applied plugin (...) to info()
             if (plugin.isApplicable(project, mojoExecution)) {
+                getLog().info("Applied plugin: '" + pluginName + "'");
                 List<PluginOption> optionsForPlugin = plugin.getPluginOptions(project, mojoExecution);
-                getLog().info("Options for plugin " + pluginName + ": " + optionsForPlugin);
-                pluginOptions.addAll(optionsForPlugin);
+                if (!optionsForPlugin.isEmpty()) {
+                    pluginOptions.addAll(optionsForPlugin);
+                }
             }
         }
 
         if (this.pluginOptions != null) {
             pluginOptions.addAll(parseUserProvidedPluginOptions(this.pluginOptions, plugins));
+        }
+
+        Map<String, List<PluginOption>> optionsByPluginName = new LinkedHashMap<String, List<PluginOption>>();
+        for (PluginOption option : pluginOptions) {
+            List<PluginOption> optionsForPlugin = optionsByPluginName.get(option.pluginName);
+            if (optionsForPlugin == null) {
+                optionsForPlugin = new ArrayList<PluginOption>();
+                optionsByPluginName.put(option.pluginName, optionsForPlugin);
+            }
+
+            optionsForPlugin.add(option);
+        }
+
+        for (Map.Entry<String, List<PluginOption>> entry : optionsByPluginName.entrySet()) {
+            assert !entry.getValue().isEmpty();
+
+            String pluginName = entry.getValue().get(0).pluginName;
+
+            StringBuilder renderedOptions = new StringBuilder("[");
+            for (PluginOption option : entry.getValue()) {
+                if (renderedOptions.length() > 1) {
+                    renderedOptions.append(", ");
+                }
+                renderedOptions.append(option.key).append(": ").append(option.value);
+            }
+            renderedOptions.append("]");
+
+            getLog().debug("Options for plugin " + pluginName + ": " + renderedOptions);
         }
 
         return pluginOptions;
@@ -363,7 +394,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
                 throw new PluginNotFoundException(pluginName);
             }
 
-            pluginOptions.add(new PluginOption(plugin.getCompilerPluginId(), key, value));
+            pluginOptions.add(new PluginOption(pluginName, plugin.getCompilerPluginId(), key, value));
         }
 
         return pluginOptions;

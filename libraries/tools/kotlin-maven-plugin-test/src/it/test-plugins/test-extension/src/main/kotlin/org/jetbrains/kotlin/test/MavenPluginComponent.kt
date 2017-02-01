@@ -23,6 +23,7 @@ class MavenPluginComponent : KotlinMavenPluginExtension {
         logger.info("Configuring test plugin with arguments")
 
         return listOf(PluginOption(
+                "test-me",
                 TestCommandLineProcessor.TestPluginId,
                 TestCommandLineProcessor.MyTestOption.name,
                 "my-special-value"))

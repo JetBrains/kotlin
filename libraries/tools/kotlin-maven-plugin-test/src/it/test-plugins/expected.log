@@ -1,14 +1,16 @@
 [INFO] Kotlin Compiler version @snapshot@
 [INFO] Compiling Kotlin sources from [/test-extension/src/main/kotlin]
 [INFO] Module name is test-extension
+[WARNING] Some JAR files in the classpath have the Kotlin Runtime library bundled into them. This may cause difficult to debug problems if there's a different version @snapshot@ the Kotlin Runtime library in the classpath. Consider removing these libraries from the classpath or use '-Xskip-runtime-version-check' to suppress this warning
+[WARNING] /local-repo/org/jetbrains/kotlin/kotlin-compiler/1.1-SNAPSHOT/kotlin-compiler-1.1-SNAPSHOT.jar: (-1, -1) Library has Kotlin runtime bundled into it
 [INFO] Kotlin Compiler version @snapshot@
 [WARNING] No sources found skipping Kotlin compile
 [INFO] Kotlin Compiler version @snapshot@
 [INFO] Compiling Kotlin sources from [/use-test-extension/src/main/kotlin]
 [INFO] Module name is use-test-extension
 [INFO] Applicability test for project use-test-extension
+[INFO] Applied plugin: 'test-me'
 [INFO] Configuring test plugin with arguments
-[INFO] Options for plugin test-me: [plugin:org.jetbrains.kotlin.test.test-plugin:test-option=my-special-value]
 [INFO] Plugin applied
 [INFO] Option value: my-special-value
 [INFO] Kotlin Compiler version @snapshot@
