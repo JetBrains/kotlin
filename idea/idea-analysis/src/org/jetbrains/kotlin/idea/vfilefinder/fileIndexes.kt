@@ -127,7 +127,7 @@ open class KotlinMetadataFileIndexBase<T>(classOfIndex: Class<T>, indexFunction:
     private val INDEXER = indexer { fileContent ->
         if (fileContent.fileType == KotlinBuiltInFileType && fileContent.fileName.endsWith(MetadataPackageFragment.DOT_METADATA_FILE_EXTENSION)) {
             val builtins = BuiltInDefinitionFile.read(fileContent.content, fileContent.file.parent)
-            (builtins as? BuiltInDefinitionFile.Compatible)?.let { builtinDefFile ->
+            (builtins as? BuiltInDefinitionFile)?.let { builtinDefFile ->
                 val proto = builtinDefFile.proto
                 proto.class_List.singleOrNull()?.let { cls ->
                     indexFunction(builtinDefFile.nameResolver.getClassId(cls.fqName))

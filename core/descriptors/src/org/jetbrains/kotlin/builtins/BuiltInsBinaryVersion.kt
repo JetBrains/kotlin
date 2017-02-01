@@ -31,6 +31,9 @@ class BuiltInsBinaryVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
         @JvmField
         val INSTANCE = BuiltInsBinaryVersion(1, 0, 0)
 
+        @JvmField
+        val INVALID_VERSION = BuiltInsBinaryVersion()
+
         fun readFrom(stream: InputStream): BuiltInsBinaryVersion {
             val dataInput = DataInputStream(stream)
             return BuiltInsBinaryVersion(*(1..dataInput.readInt()).map { dataInput.readInt() }.toIntArray())

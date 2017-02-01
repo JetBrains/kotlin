@@ -20,10 +20,11 @@ import com.intellij.psi.compiled.ClsStubBuilder
 import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
-import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
 import org.jetbrains.kotlin.idea.decompiler.common.AnnotationLoaderForStubBuilderImpl
+import org.jetbrains.kotlin.idea.decompiler.common.FileWithMetadata
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.*
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
+import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
@@ -35,13 +36,13 @@ class KotlinJavaScriptStubBuilder : ClsStubBuilder() {
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
         val virtualFile = content.file
         assert(virtualFile.fileType == KotlinJavaScriptMetaFileType) { "Unexpected file type ${virtualFile.fileType}" }
-        val file = KjsmFile.read(virtualFile) ?: return null
+        val file = KjsmFile.read(content.content) ?: return null
 
         when (file) {
-            is KjsmFile.Incompatible -> {
+            is FileWithMetadata.Incompatible -> {
                 return createIncompatibleAbiVersionFileStub()
             }
-            is KjsmFile.Compatible -> {
+            is FileWithMetadata.Compatible -> {
                 val packageProto = file.proto.`package`
                 val packageFqName = file.packageFqName
                 val nameResolver = file.nameResolver
