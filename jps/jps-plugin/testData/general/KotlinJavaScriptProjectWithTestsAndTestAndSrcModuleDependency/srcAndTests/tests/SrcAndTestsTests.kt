@@ -1,0 +1,3 @@
+fun testSrcAndTests() {
+    srcAndTests()
+}
