@@ -653,6 +653,11 @@ task catch7(type: RunKonanTest) {
     source = "runtime/exceptions/catch7.kt"
 }
 
+task extend_exception(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "runtime/exceptions/extend0.kt"
+}
+
 task catch3(type: RunKonanTest) {
     goldValue = "Before\nCaught Throwable\nDone\n"
     source = "codegen/try/catch3.kt"

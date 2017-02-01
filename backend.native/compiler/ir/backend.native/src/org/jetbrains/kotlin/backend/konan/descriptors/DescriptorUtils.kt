@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -210,8 +211,11 @@ fun ClassDescriptor.vtableIndex(function: FunctionDescriptor): Int {
 
 val ClassDescriptor.methodTableEntries: List<FunctionDescriptor>
     get() {
-        assert (!this.isAbstract())
-
-        return this.contributedMethods.filter { it.isOverridableOrOverrides }
+        assert(!this.isAbstract())
+        return this.contributedMethods.filter {
+            // We check that either method is open, or one of declarations it overrides
+            // is open.
+            it.isOverridable || DescriptorUtils.getAllOverriddenDeclarations(it).any { it.isOverridable }
+        }
         // TODO: probably method table should contain all accessible methods to improve binary compatibility
     }
