@@ -1,0 +1,8 @@
+@kotlin.Metadata
+public final class Kt8666Kt {
+    private final static @org.jetbrains.annotations.NotNull field MAX_LONG: java.lang.String
+    private final static @org.jetbrains.annotations.NotNull field PREFIX: java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getMAX_LONG(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getPREFIX(): java.lang.String
+}
