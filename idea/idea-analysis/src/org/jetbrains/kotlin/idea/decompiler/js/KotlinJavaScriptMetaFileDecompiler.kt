@@ -20,17 +20,23 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
+import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
+import org.jetbrains.kotlin.idea.decompiler.common.KotlinMetadataDeserializerForDecompiler
 import org.jetbrains.kotlin.idea.decompiler.common.createIncompatibleAbiVersionDecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendererOptions
+import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer
 import org.jetbrains.kotlin.serialization.js.JsProtoBuf
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.utils.JsMetadataVersion
@@ -73,7 +79,10 @@ fun buildDecompiledTextFromJsMetadata(kjsmFile: VirtualFile): DecompiledText {
         }
         is KjsmFile.Compatible -> {
             val packageFqName = file.packageFqName
-            val resolver = KotlinJavaScriptDeserializerForDecompiler(packageFqName, file.proto, file.nameResolver)
+            val resolver = KotlinMetadataDeserializerForDecompiler(
+                    packageFqName, file.proto, file.nameResolver,
+                    JsPlatform, JsSerializerProtocol, DynamicTypeDeserializer
+            )
             val declarations = arrayListOf<DeclarationDescriptor>()
             declarations.addAll(resolver.resolveDeclarationsInFacade(packageFqName))
             for (klass in file.classesToDecompile) {

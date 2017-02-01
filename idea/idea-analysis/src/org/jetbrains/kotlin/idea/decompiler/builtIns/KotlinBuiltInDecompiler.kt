@@ -27,15 +27,18 @@ import org.jetbrains.kotlin.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
+import org.jetbrains.kotlin.idea.decompiler.common.KotlinMetadataDeserializerForDecompiler
 import org.jetbrains.kotlin.idea.decompiler.common.createIncompatibleAbiVersionDecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendererOptions
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.ClassDeserializer
+import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
 import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -80,7 +83,10 @@ fun buildDecompiledTextForBuiltIns(builtInFile: VirtualFile): DecompiledText {
         }
         is BuiltInDefinitionFile.Compatible -> {
             val packageFqName = file.packageFqName
-            val resolver = KotlinBuiltInDeserializerForDecompiler(packageFqName, file.proto, file.nameResolver)
+            val resolver = KotlinMetadataDeserializerForDecompiler(
+                    packageFqName, file.proto, file.nameResolver,
+                    TargetPlatform.Default, BuiltInSerializerProtocol, FlexibleTypeDeserializer.ThrowException
+            )
             val declarations = arrayListOf<DeclarationDescriptor>()
             declarations.addAll(resolver.resolveDeclarationsInFacade(packageFqName))
             for (classProto in file.classesToDecompile) {

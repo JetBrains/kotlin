@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.decompiler.builtIns
+package org.jetbrains.kotlin.idea.decompiler.common
 
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
-import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -29,15 +27,18 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 
-class KotlinBuiltInDeserializerForDecompiler(
+class KotlinMetadataDeserializerForDecompiler(
         packageFqName: FqName,
         private val proto: ProtoBuf.PackageFragment,
-        private val nameResolver: NameResolver
+        private val nameResolver: NameResolver,
+        override val targetPlatform: TargetPlatform,
+        serializerProtocol: SerializerExtensionProtocol,
+        flexibleTypeDeserializer: FlexibleTypeDeserializer
 ) : DeserializerForDecompilerBase(packageFqName) {
-    override val targetPlatform: TargetPlatform get() = TargetPlatform.Default
     override val builtIns: KotlinBuiltIns get() = DefaultBuiltIns.Instance
 
     override val deserializationComponents: DeserializationComponents
@@ -47,9 +48,9 @@ class KotlinBuiltInDeserializerForDecompiler(
 
         deserializationComponents = DeserializationComponents(
                 storageManager, moduleDescriptor, DeserializationConfiguration.Default, ProtoBasedClassDataFinder(proto, nameResolver),
-                AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, BuiltInSerializerProtocol), packageFragmentProvider,
+                AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, serializerProtocol), packageFragmentProvider,
                 ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), LoggingErrorReporter(LOG),
-                LookupTracker.DO_NOTHING, FlexibleTypeDeserializer.ThrowException, emptyList(), notFoundClasses
+                LookupTracker.DO_NOTHING, flexibleTypeDeserializer, emptyList(), notFoundClasses
         )
     }
 
@@ -67,6 +68,6 @@ class KotlinBuiltInDeserializerForDecompiler(
     }
 
     companion object {
-        private val LOG = Logger.getInstance(KotlinBuiltInDeserializerForDecompiler::class.java)
+        private val LOG = Logger.getInstance(KotlinMetadataDeserializerForDecompiler::class.java)
     }
 }
