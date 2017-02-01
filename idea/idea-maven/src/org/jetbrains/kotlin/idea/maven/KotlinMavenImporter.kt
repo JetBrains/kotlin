@@ -144,7 +144,9 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
     }
 
     private fun detectPlatformByLibraries(mavenProject: MavenProject): TargetPlatformKind<*>? {
-        return TargetPlatformKind.ALL_PLATFORMS.firstOrNull { mavenProject.findDependencies(KOTLIN_PLUGIN_GROUP_ID, it.mavenLibraryId).isNotEmpty() }
+        return TargetPlatformKind.ALL_PLATFORMS.firstOrNull {
+            it.mavenLibraryIds.any { mavenProject.findDependencies(KOTLIN_PLUGIN_GROUP_ID, it).isNotEmpty() }
+        }
     }
 
     // TODO in theory it should work like this but it doesn't as it couldn't unmark source roots that are not roots anymore.

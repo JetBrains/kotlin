@@ -103,7 +103,7 @@ private fun detectPlatformByPlugin(moduleNode: DataNode<ModuleData>): TargetPlat
 }
 
 private fun detectPlatformByLibrary(moduleNode: DataNode<ModuleData>): TargetPlatformKind<*>? {
-    return TargetPlatformKind.ALL_PLATFORMS.firstOrNull { moduleNode.getResolvedKotlinStdlibVersionByModuleData(it.mavenLibraryId) != null }
+    return TargetPlatformKind.ALL_PLATFORMS.firstOrNull { moduleNode.getResolvedKotlinStdlibVersionByModuleData(it.mavenLibraryIds) != null }
 }
 
 private fun configureFacetByGradleModule(
