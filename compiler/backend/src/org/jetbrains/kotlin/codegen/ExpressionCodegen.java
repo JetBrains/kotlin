@@ -3604,18 +3604,32 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     /*tries to use IEEE 754 arithmetic*/
     private StackValue genEqualsForExpressionsPreferIEEE754Arithmetic(
-            @Nullable KtExpression left,
-            @Nullable KtExpression right,
-            @NotNull IElementType opToken,
+            @Nullable final KtExpression left,
+            @Nullable final KtExpression right,
+            @NotNull final IElementType opToken,
             @NotNull Type leftType,
             @NotNull Type rightType,
-            @Nullable StackValue pregeneratedLeft
+            @Nullable final StackValue pregeneratedLeft
     ) {
-        Type left754Type = calcTypeForIEEE754ArithmeticIfNeeded(left);
-        Type right754Type = calcTypeForIEEE754ArithmeticIfNeeded(right);
-        if (left754Type != null && right754Type != null && left754Type.equals(right754Type)) {
-            leftType = left754Type;
-            rightType = right754Type;
+        assert (opToken == KtTokens.EQEQ || opToken == KtTokens.EXCLEQ) : "Optoken should be '==' or '!=', but: " + opToken;
+
+        final TypeAndNullability left754Type = calcTypeForIEEE754ArithmeticIfNeeded(left);
+        final TypeAndNullability right754Type = calcTypeForIEEE754ArithmeticIfNeeded(right);
+        if (left754Type != null && right754Type != null && left754Type.type.equals(right754Type.type)) {
+            if (left754Type.isNullable || right754Type.isNullable) {
+                //check nullability cause there is some optimizations in codegen for non-nullable case
+                return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
+                    @Override
+                    public Unit invoke(InstructionAdapter v) {
+                        generate754EqualsForNullableTypes(v, opToken, pregeneratedLeft, left, left754Type, right, right754Type);
+                        return Unit.INSTANCE;
+                    }
+                });
+            }
+            else {
+                leftType = left754Type.type;
+                rightType = right754Type.type;
+            }
         }
 
         return genEqualsForExpressionsOnStack(
@@ -3623,6 +3637,99 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 pregeneratedLeft != null ? StackValue.coercion(pregeneratedLeft, leftType) : genLazy(left, leftType),
                 genLazy(right, rightType)
         );
+    }
+
+    private void generate754EqualsForNullableTypes(
+            InstructionAdapter v,
+            @NotNull IElementType opToken,
+            @Nullable StackValue pregeneratedLeft,
+            @Nullable KtExpression left,
+            TypeAndNullability left754Type,
+            @Nullable KtExpression right,
+            TypeAndNullability right754Type
+    ) {
+        int equals = opToken == KtTokens.EQEQ ? 1 : 0;
+        int notEquals = opToken != KtTokens.EQEQ ? 1 : 0;
+        Label end = new Label();
+        StackValue leftValue = pregeneratedLeft != null ? pregeneratedLeft : gen(left);
+        leftValue.put(leftValue.type, v);
+        leftValue = StackValue.onStack(leftValue.type);
+        Type leftType = left754Type.type;
+        Type rightType = right754Type.type;
+        if (left754Type.isNullable) {
+            leftValue.dup(v, false);
+            Label leftIsNull = new Label();
+            v.ifnull(leftIsNull);
+            StackValue.coercion(leftValue, leftType).put(leftType, v);
+            StackValue nonNullLeftValue = StackValue.onStack(leftType);
+
+            StackValue rightValue = gen(right);
+            rightValue.put(rightValue.type, v);
+            rightValue = StackValue.onStack(rightValue.type);
+            if (right754Type.isNullable) {
+                rightValue.dup(v, false);
+                Label rightIsNotNull = new Label();
+                v.ifnonnull(rightIsNotNull);
+                AsmUtil.pop(v, rightValue.type);
+                AsmUtil.pop(v, nonNullLeftValue.type);
+                v.aconst(notEquals);
+                v.goTo(end);
+                v.mark(rightIsNotNull);
+            }
+
+            StackValue.coercion(rightValue, rightType).put(rightType, v);
+            StackValue nonNullRightValue = StackValue.onStack(rightType);
+            StackValue.cmp(opToken, leftType, nonNullLeftValue, nonNullRightValue).put(Type.BOOLEAN_TYPE, v);
+            v.goTo(end);
+
+            //left is null case
+            v.mark(leftIsNull);
+            AsmUtil.pop(v, leftValue.type);//pop null left
+            rightValue = gen(right);
+            rightValue.put(rightValue.type, v);
+            rightValue = StackValue.onStack(rightValue.type);
+            if (right754Type.isNullable) {
+                Label rightIsNotNull = new Label();
+                v.ifnonnull(rightIsNotNull);
+                v.aconst(equals);
+                v.goTo(end);
+                v.mark(rightIsNotNull);
+                v.aconst(notEquals);
+                //v.goTo(end);
+            }
+            else {
+                AsmUtil.pop(v, rightValue.type);
+                v.aconst(notEquals);
+                //v.goTo(end);
+            }
+
+            v.mark(end);
+            return;
+        }
+        else {
+            StackValue.coercion(leftValue, leftType).put(leftType, v);
+            leftValue = StackValue.onStack(leftType);
+        }
+
+        //right is nullable cause left is not
+        StackValue rightValue = gen(right);
+        rightValue.put(rightValue.type, v);
+        rightValue = StackValue.onStack(rightValue.type);
+
+        rightValue.dup(v, false);
+        Label rightIsNotNull = new Label();
+        v.ifnonnull(rightIsNotNull);
+        AsmUtil.pop(v, rightValue.type);
+        AsmUtil.pop(v, leftValue.type);
+        v.aconst(notEquals);
+        v.goTo(end);
+
+        v.mark(rightIsNotNull);
+        StackValue.coercion(rightValue, rightType).put(rightType, v);
+        StackValue nonNullRightValue = StackValue.onStack(rightType);
+        StackValue.cmp(opToken, leftType, leftValue, nonNullRightValue).put(Type.BOOLEAN_TYPE, v);
+
+        v.mark(end);
     }
 
     private boolean isIntZero(KtExpression expr, Type exprType) {
@@ -3686,12 +3793,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         StackValue rightValue;
         Type leftType = expressionType(left);
         Type rightType = expressionType(right);
-        Type left754Type = calcTypeForIEEE754ArithmeticIfNeeded(left);
-        Type right754Type = calcTypeForIEEE754ArithmeticIfNeeded(right);
+        TypeAndNullability left754Type = calcTypeForIEEE754ArithmeticIfNeeded(left);
+        TypeAndNullability right754Type = calcTypeForIEEE754ArithmeticIfNeeded(right);
         Callable callable = resolveToCallable((FunctionDescriptor) resolvedCall.getResultingDescriptor(), false, resolvedCall);
-        boolean is754Arithmetic = left754Type != null && right754Type != null && left754Type.equals(right754Type);
+        boolean is754Arithmetic = left754Type != null && right754Type != null && left754Type.type.equals(right754Type.type);
         if (callable instanceof IntrinsicCallable && ((isPrimitive(leftType) && isPrimitive(rightType)) || is754Arithmetic)) {
-            type = is754Arithmetic ? left754Type : comparisonOperandType(leftType, rightType);
+            type = is754Arithmetic ? left754Type.type : comparisonOperandType(leftType, rightType);
             leftValue = gen(left);
             rightValue = gen(right);
         }
@@ -3703,7 +3810,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return StackValue.cmp(expression.getOperationToken(), type, leftValue, rightValue);
     }
 
-    private Type calcTypeForIEEE754ArithmeticIfNeeded(@Nullable KtExpression expression) {
+    private TypeAndNullability calcTypeForIEEE754ArithmeticIfNeeded(@Nullable KtExpression expression) {
         return CodegenUtilKt.calcTypeForIEEE754ArithmeticIfNeeded(expression, bindingContext, context.getFunctionDescriptor());
     }
 

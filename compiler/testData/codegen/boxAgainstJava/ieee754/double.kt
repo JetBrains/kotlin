@@ -35,8 +35,14 @@ fun box(): String {
 
     if (jClass.minus0() != jClass.plus0()) return "fail 5"
 
-    //TODO: KT-14989
-    //if (jClass.null0() != jClass.plus0()) return "fail 6"
+    var value = jClass.minus0() == jClass.plus0()
+    if (!value) return "fail 6"
+
+    if (jClass.null0() == jClass.plus0()) return "fail 7"
+    if (jClass.plus0() == jClass.null0()) return "fail 8"
+
+    value = jClass.null0() == jClass.null0()
+    if (!value) return "fail 9"
 
     return "OK"
 }

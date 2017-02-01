@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.org.objectweb.asm.Label
@@ -270,25 +271,27 @@ private fun CallableDescriptor.isJvmStaticIn(predicate: (DeclarationDescriptor) 
 fun Collection<VariableDescriptor>.filterOutDescriptorsWithSpecialNames() = filterNot { it.name.isSpecial }
 
 
-fun calcTypeForIEEE754ArithmeticIfNeeded(expression: KtExpression?, bindingContext: BindingContext, descriptor: DeclarationDescriptor): Type? {
+class TypeAndNullability(@JvmField val type: Type, @JvmField val isNullable: Boolean)
+
+fun calcTypeForIEEE754ArithmeticIfNeeded(expression: KtExpression?, bindingContext: BindingContext, descriptor: DeclarationDescriptor): TypeAndNullability? {
     val ktType = expression.kotlinType(bindingContext) ?: return null
 
     if (KotlinBuiltIns.isDoubleOrNullableDouble(ktType)) {
-        return Type.DOUBLE_TYPE
+        return TypeAndNullability(Type.DOUBLE_TYPE, TypeUtils.isNullableType(ktType))
     }
 
     if (KotlinBuiltIns.isFloatOrNullableFloat(ktType)) {
-        return Type.FLOAT_TYPE
+        return TypeAndNullability(Type.FLOAT_TYPE, TypeUtils.isNullableType(ktType))
     }
 
     val dataFlow = DataFlowValueFactory.createDataFlowValue(expression!!, ktType, bindingContext, descriptor)
     val stableTypes = bindingContext.getDataFlowInfoBefore(expression).getStableTypes(dataFlow)
     return stableTypes.firstNotNullResult {
         if (KotlinBuiltIns.isDoubleOrNullableDouble(it)) {
-            Type.DOUBLE_TYPE
+            TypeAndNullability(Type.DOUBLE_TYPE, TypeUtils.isNullableType(ktType))
         }
         else if (KotlinBuiltIns.isFloatOrNullableFloat(it)) {
-            Type.FLOAT_TYPE
+            TypeAndNullability(Type.FLOAT_TYPE, TypeUtils.isNullableType(ktType))
         }
         else {
             null
