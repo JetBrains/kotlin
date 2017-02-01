@@ -1009,3 +1009,7 @@ task inline3(type: RunKonanTest) {
     goldValue = "5\n"
     source = "codegen/inline/inline3.kt"
 }
+
+task vararg0(type: RunKonanTest) {
+    source = "lower/vararg.kt"
+}
