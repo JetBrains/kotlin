@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
+import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
@@ -451,6 +452,12 @@ class DescriptorSerializer private constructor(
             return lowerBound
         }
 
+        if (type.isSuspendFunctionType) {
+            val functionType = type(transformSuspendFunctionToRuntimeFunctionType(type))
+            functionType.flags = Flags.getTypeFlags(true)
+            return functionType
+        }
+
         val descriptor = type.constructor.declarationDescriptor
         when (descriptor) {
             is ClassDescriptor, is TypeAliasDescriptor -> {
@@ -489,25 +496,12 @@ class DescriptorSerializer private constructor(
     }
 
     private fun fillFromPossiblyInnerType(builder: ProtoBuf.Type.Builder, type: PossiblyInnerType) {
-        val classifierDescriptor: ClassifierDescriptorWithTypeParameters
-        val isSuspendType: Boolean
-
-        val originalClassifierDescriptor = type.classifierDescriptor
-        if (originalClassifierDescriptor.getFunctionalClassKind() == FunctionClassDescriptor.Kind.SuspendFunction) {
-            classifierDescriptor = originalClassifierDescriptor.builtIns.getFunction(originalClassifierDescriptor.declaredTypeParameters.size)
-            isSuspendType = true
-        }
-        else {
-            classifierDescriptor = originalClassifierDescriptor
-            isSuspendType = false
-        }
-
+        val classifierDescriptor = type.classifierDescriptor
         val classifierId = getClassifierId(classifierDescriptor)
         when (classifierDescriptor) {
             is ClassDescriptor -> builder.className = classifierId
             is TypeAliasDescriptor -> builder.typeAliasName = classifierId
         }
-        builder.flags = Flags.getTypeFlags(isSuspendType)
 
         for (projection in type.arguments) {
             builder.addArgument(typeArgument(projection))
