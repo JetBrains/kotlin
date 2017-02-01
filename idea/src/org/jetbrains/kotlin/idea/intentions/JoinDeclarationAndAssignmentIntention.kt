@@ -104,7 +104,15 @@ class JoinDeclarationAndAssignmentIntention : SelfTargetingOffsetIndependentInte
         val assignments = mutableListOf<KtBinaryExpression>()
         fun process(binaryExpr: KtBinaryExpression) {
             if (binaryExpr.operationToken != KtTokens.EQ) return
-            val leftReference = binaryExpr.left as? KtNameReferenceExpression ?: return
+            val left = binaryExpr.left
+            val leftReference = when (left) {
+                is KtNameReferenceExpression ->
+                    left
+                is KtDotQualifiedExpression ->
+                    if (left.receiverExpression is KtThisExpression) left.selectorExpression as? KtNameReferenceExpression else null
+                else ->
+                    null
+            } ?: return
             if (leftReference.getReferencedName() != property.name) return
             assignments += binaryExpr
         }
