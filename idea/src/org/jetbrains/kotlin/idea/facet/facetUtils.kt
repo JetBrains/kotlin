@@ -205,14 +205,14 @@ fun parseCompilerArgumentsToFacet(arguments: List<String>, kotlinFacet: KotlinFa
 
         when (versionInfo.targetPlatformKind) {
             is TargetPlatformKind.Jvm -> {
-                val jvmTarget = K2JVMCompilerArguments().apply { parseArguments(argumentArray, this) }.jvmTarget
+                val jvmTarget = K2JVMCompilerArguments().apply { parseArguments(argumentArray, this, ignoreInvalidArguments = true) }.jvmTarget
                 if (jvmTarget != null) {
                     versionInfo.targetPlatformKind = TargetPlatformKind.Jvm.JVM_PLATFORMS.firstOrNull {
                         VersionComparatorUtil.compare(it.version.description, jvmTarget) >= 0
                     } ?: TargetPlatformKind.Jvm.JVM_PLATFORMS.last()
                 }
             }
-            is TargetPlatformKind.JavaScript -> parseArguments(argumentArray, compilerInfo.k2jsCompilerArguments!!)
+            is TargetPlatformKind.JavaScript -> parseArguments(argumentArray, compilerInfo.k2jsCompilerArguments!!, ignoreInvalidArguments = true)
             else -> {}
         }
 
