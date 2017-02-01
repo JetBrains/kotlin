@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.binding;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -137,7 +138,7 @@ public final class MutableClosure implements CalculatedClosure {
         isSuspendLambda = true;
     }
 
-    public void recordField(String name, Type type) {
+    private void recordField(String name, Type type) {
         if (recordedFields == null) {
             recordedFields = new LinkedList<Pair<String, Type>>();
         }
@@ -145,6 +146,8 @@ public final class MutableClosure implements CalculatedClosure {
     }
 
     public void captureVariable(EnclosedValueDescriptor value) {
+        recordField(value.getFieldName(), value.getType());
+
         if (captureVariables == null) {
             captureVariables = new LinkedHashMap<DeclarationDescriptor, EnclosedValueDescriptor>();
         }
