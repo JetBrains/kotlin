@@ -94,11 +94,13 @@ abstract class AbstractClosureRecorder : IrElementVisitorVoid {
     }
 
     override fun visitVariableAccess(expression: IrValueAccessExpression) {
-        val closureBuilder = closuresStack.peek() ?: return
+        val closureBuilder = closuresStack.peek()
 
-        val variableDescriptor = expression.descriptor
-        if (variableDescriptor.containingDeclaration != closureBuilder.owner) {
-            closureBuilder.capturedValues.add(variableDescriptor)
+        if (closureBuilder != null) {
+            val variableDescriptor = expression.descriptor
+            if (variableDescriptor.containingDeclaration != closureBuilder.owner) {
+                closureBuilder.capturedValues.add(variableDescriptor)
+            }
         }
 
         expression.acceptChildrenVoid(this)
