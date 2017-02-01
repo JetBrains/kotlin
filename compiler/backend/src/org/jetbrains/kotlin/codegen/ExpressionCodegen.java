@@ -2497,14 +2497,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     public int lookupLocalIndex(DeclarationDescriptor descriptor) {
-        return myFrameMap.getIndex(getParameterSynonymOrThis(descriptor));
-    }
+        int index = myFrameMap.getIndex(descriptor);
+        if (index != -1) return index;
 
-    private DeclarationDescriptor getParameterSynonymOrThis(DeclarationDescriptor descriptor) {
-        if (!(descriptor instanceof ValueParameterDescriptor)) return descriptor;
-
+        if (!(descriptor instanceof ValueParameterDescriptor)) return -1;
         DeclarationDescriptor synonym = bindingContext.get(CodegenBinding.PARAMETER_SYNONYM, (ValueParameterDescriptor) descriptor);
-        return synonym != null ? synonym : descriptor;
+        if (synonym == null) return -1;
+
+        return myFrameMap.getIndex(synonym);
     }
 
     @NotNull

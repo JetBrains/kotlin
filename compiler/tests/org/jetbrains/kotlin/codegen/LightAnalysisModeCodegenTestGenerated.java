@@ -5042,6 +5042,21 @@ public class LightAnalysisModeCodegenTestGenerated extends AbstractLightAnalysis
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class FeatureIntersection extends AbstractLightAnalysisModeCodegenTest {
+            public void testAllFilesPresentInFeatureIntersection() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("tailrec.kt")
+            public void testTailrec() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

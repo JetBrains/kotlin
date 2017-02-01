@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
@@ -41,11 +40,10 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
+import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -114,7 +112,7 @@ class CoroutineCodegen private constructor(
         }
 
     override fun generateClosureBody() {
-        for (parameter in allLambdaParameters()) {
+        for (parameter in allFunctionParameters()) {
             val fieldInfo = parameter.getFieldInfoForCoroutineLambdaParameter()
             v.newField(
                     OtherOrigin(parameter),
@@ -153,7 +151,7 @@ class CoroutineCodegen private constructor(
                                            }
                                        })
 
-        if (allLambdaParameters().size <= 1) {
+        if (allFunctionParameters().size <= 1) {
             val delegate = typeMapper.mapSignatureSkipGeneric(createCoroutineDescriptor).asmMethod
 
             val bridgeParameters = (1..delegate.argumentTypes.size - 1).map { AsmTypes.OBJECT_TYPE } + delegate.argumentTypes.last()
@@ -239,7 +237,7 @@ class CoroutineCodegen private constructor(
             }
 
             // load resultContinuation
-            load(allLambdaParameters().map { typeMapper.mapType(it.type).size }.sum() + 1, AsmTypes.OBJECT_TYPE)
+            load(allFunctionParameters().map { typeMapper.mapType(it.type).size }.sum() + 1, AsmTypes.OBJECT_TYPE)
 
             invokespecial(owner.internalName, constructorToUseFromInvoke.name, constructorToUseFromInvoke.descriptor, false)
 
@@ -248,7 +246,7 @@ class CoroutineCodegen private constructor(
 
             // Pass lambda parameters to 'invoke' call on newly constructed object
             var index = 1
-            for (parameter in allLambdaParameters()) {
+            for (parameter in allFunctionParameters()) {
                 val fieldInfoForCoroutineLambdaParameter = parameter.getFieldInfoForCoroutineLambdaParameter()
                 load(index, fieldInfoForCoroutineLambdaParameter.fieldType)
                 AsmUtil.genAssignInstanceFieldFromParam(fieldInfoForCoroutineLambdaParameter, index, this, cloneIndex)
@@ -261,24 +259,32 @@ class CoroutineCodegen private constructor(
     }
 
     private fun ExpressionCodegen.initializeCoroutineParameters() {
-        for (parameter in allLambdaParameters()) {
-            val mappedType = typeMapper.mapType(parameter.type)
-            val newIndex = myFrameMap.enter(parameter, mappedType)
+        if (!isSuspendLambda && !originalSuspendFunctionDescriptor.isTailrec) return
+        for (parameter in allFunctionParameters()) {
+            val fieldStackValue =
+                    if (isSuspendLambda)
+                        StackValue.field(
+                                parameter.getFieldInfoForCoroutineLambdaParameter(), generateThisOrOuter(context.thisDescriptor, false)
+                        )
+                    else
+                        closureContext.lookupInContext(parameter, null, state, /* ignoreNoOuter = */ false)
 
-            generateLoadField(parameter.getFieldInfoForCoroutineLambdaParameter())
+            val mappedType = typeMapper.mapType(parameter.type)
+            fieldStackValue.put(mappedType, v)
+
+            val newIndex = myFrameMap.enter(parameter, mappedType)
             v.store(newIndex, mappedType)
         }
+
+        // necessary for proper tailrec codegen
+        val actualMethodStartLabel = Label()
+        v.visitLabel(actualMethodStartLabel)
+        context.setMethodStartLabel(actualMethodStartLabel)
     }
 
-    private fun allLambdaParameters() =
-            if (isSuspendLambda)
-                originalSuspendFunctionDescriptor.extensionReceiverParameter.singletonOrEmptyList() + originalSuspendFunctionDescriptor.valueParameters.orEmpty()
-            else
-                emptyList()
-
-    private fun ExpressionCodegen.generateLoadField(fieldInfo: FieldInfo) {
-        StackValue.field(fieldInfo, generateThisOrOuter(context.thisDescriptor, false)).put(fieldInfo.fieldType, v)
-    }
+    private fun allFunctionParameters() =
+                originalSuspendFunctionDescriptor.extensionReceiverParameter.singletonOrEmptyList() +
+                originalSuspendFunctionDescriptor.valueParameters.orEmpty()
 
     private fun ParameterDescriptor.getFieldInfoForCoroutineLambdaParameter() =
             createHiddenFieldInfo(type, COROUTINE_LAMBDA_PARAMETER_PREFIX + (this.safeAs<ValueParameterDescriptor>()?.index ?: ""))
