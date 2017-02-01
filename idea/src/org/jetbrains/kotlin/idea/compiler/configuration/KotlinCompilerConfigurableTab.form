@@ -21,12 +21,13 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="3b8d3" class="javax.swing.JCheckBox" binding="generateNoWarningsCheckBox" default-binding="true">
+          <component id="fc71f" class="com.intellij.util.ui.ThreeStateCheckBox" binding="generateNoWarningsCheckBox" default-binding="true">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <selected value="false"/>
+              <state value="NOT_SELECTED"/>
               <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.option.generate.no.warnings"/>
             </properties>
           </component>
@@ -48,11 +49,12 @@
               <dialogCaption resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.option.additional.command.line.parameters.dialog.title"/>
             </properties>
           </component>
-          <component id="c45a6" class="javax.swing.JCheckBox" binding="keepAliveCheckBox">
+          <component id="dae3f" class="com.intellij.util.ui.ThreeStateCheckBox" binding="keepAliveCheckBox">
             <constraints>
               <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <state value="NOT_SELECTED"/>
               <text value="Keep compiler process alive between invocations"/>
             </properties>
           </component>
@@ -222,12 +224,13 @@
         </clientProperties>
         <border type="etched" title-resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" title-key="kotlin.compiler.js.option.panel.title"/>
         <children>
-          <component id="1fbe0" class="javax.swing.JCheckBox" binding="generateSourceMapsCheckBox" default-binding="true">
+          <component id="e1cc8" class="com.intellij.util.ui.ThreeStateCheckBox" binding="generateSourceMapsCheckBox" default-binding="true">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.js.option.generate.sourcemaps"/>
+              <state value="NOT_SELECTED"/>
             </properties>
           </component>
           <component id="3ac8f" class="javax.swing.JLabel" binding="labelForOutputPrefixFile">
@@ -280,12 +283,13 @@
               <text value="lib"/>
             </properties>
           </component>
-          <component id="bb4ef" class="javax.swing.JCheckBox" binding="copyRuntimeFilesCheckBox">
+          <component id="97317" class="com.intellij.util.ui.ThreeStateCheckBox" binding="copyRuntimeFilesCheckBox">
             <constraints>
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.js.option.output.copy.files"/>
+              <state value="NOT_SELECTED"/>
             </properties>
           </component>
           <component id="915d" class="javax.swing.JLabel">
