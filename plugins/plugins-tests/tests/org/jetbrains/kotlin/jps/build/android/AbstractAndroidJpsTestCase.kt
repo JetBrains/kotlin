@@ -33,8 +33,8 @@ abstract class AbstractAndroidJpsTestCase : BaseKotlinJpsBuildTestCase() {
     fun doTest(path: String) {
         addJdkAndAndroidSdk()
         loadProject(path + getTestName(true) + ".ipr")
-        rebuildAll()
-        makeAll().assertSuccessful()
+        rebuildAllModules()
+        buildAllModules().assertSuccessful()
         FileUtil.delete(File(path + "/out"))
     }
 

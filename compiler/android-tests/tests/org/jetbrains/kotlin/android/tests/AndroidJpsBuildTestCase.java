@@ -29,8 +29,8 @@ public class AndroidJpsBuildTestCase extends BaseKotlinJpsBuildTestCase {
 
     public void doTest() {
         initProject();
-        rebuildAll();
-        makeAll().assertSuccessful();
+        rebuildAllModules();
+        buildAllModules().assertSuccessful();
     }
 
     @Override
