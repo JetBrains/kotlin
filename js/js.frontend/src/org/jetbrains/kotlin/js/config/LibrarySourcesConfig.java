@@ -139,6 +139,9 @@ public class LibrarySourcesConfig extends JsConfig {
 
             if (isOldKotlinJavascriptLibrary(filePath)) {
                 moduleName = LibraryUtils.getKotlinJsModuleName(filePath);
+                if (!modules.add(moduleName)) {
+                    report.warning("Module \"" + moduleName + "\" is defined in more, than one file");
+                }
             }
             else {
                 List<KotlinJavascriptMetadata> metadataList = KotlinJavascriptMetadataUtils.loadMetadata(filePath);
@@ -153,6 +156,9 @@ public class LibrarySourcesConfig extends JsConfig {
                                      "The binary version of its metadata is " + metadata.getVersion() +
                                      ", expected version is " + JsMetadataVersion.INSTANCE);
                         return true;
+                    }
+                    if (!modules.add(metadata.getModuleName())) {
+                        report.warning("Module \"" + metadata.getModuleName() + "\" is defined in more, than one file");
                     }
                 }
 

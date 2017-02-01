@@ -33,7 +33,6 @@ import org.jetbrains.jps.builders.CompileScopeTestBuilder
 import org.jetbrains.jps.builders.JpsBuildTestCase
 import org.jetbrains.jps.builders.TestProjectBuilderLogger
 import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
-import org.jetbrains.jps.builders.impl.logging.ProjectBuilderLoggerImpl
 import org.jetbrains.jps.builders.logging.BuildLoggingManager
 import org.jetbrains.jps.cmdline.ProjectDescriptor
 import org.jetbrains.jps.incremental.BuilderRegistry
@@ -50,13 +49,10 @@ import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.daemon.common.COMPILE_DAEMON_ENABLED_PROPERTY
 import org.jetbrains.kotlin.incremental.CacheVersion
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.withIC
 import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTest.LibraryDependency.*
-import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver
 import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver.Companion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
@@ -374,6 +370,26 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         makeAll().assertFailed()
 
         assertEquals(Collections.EMPTY_SET, contentOfOutputDir(PROJECT_NAME))
+    }
+
+    fun testKotlinJavaScriptProjectWithTests() {
+        initProject(JS_STDLIB)
+        makeAll().assertSuccessful()
+    }
+
+    fun testKotlinJavaScriptProjectWithTestsAndSeparateTestAndSrcModuleDependencies() {
+        initProject(JS_STDLIB)
+        makeAll().assertSuccessful()
+    }
+
+    fun testKotlinJavaScriptProjectWithTestsAndTestAndSrcModuleDependency() {
+        initProject(JS_STDLIB)
+        val buildResult = makeAll()
+        buildResult.assertSuccessful()
+
+        val warnings = buildResult.getMessages(BuildMessage.Kind.WARNING)
+        assertEquals("Warning about duplicate module definition: $warnings", 1, warnings.size)
+        assertEquals("Module \"srcAndTests\" is defined in more, than one file", warnings.first().messageText)
     }
 
     fun testExcludeFolderInSourceRoot() {
