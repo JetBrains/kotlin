@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.js.config;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.SmartList;
-import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
@@ -87,7 +85,12 @@ public abstract class JsConfig {
         return configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN);
     }
 
-    public abstract boolean checkLibFilesAndReportErrors(@NotNull Function1<String, Unit> report);
+    public static abstract class Reporter {
+        public void error(@NotNull String message) { /*Do nothing*/ }
+        public void warning(@NotNull String message) { /*Do nothing*/ }
+    }
+
+    public abstract boolean checkLibFilesAndReportErrors(@NotNull Reporter report);
 
     protected abstract void init(@NotNull List<KtFile> sourceFilesInLibraries, @NotNull List<KotlinJavascriptMetadata> metadata);
 

@@ -25,7 +25,6 @@ import com.intellij.psi.PsiManager;
 import com.intellij.util.PathUtil;
 import com.intellij.util.io.URLUtil;
 import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +38,9 @@ import org.jetbrains.kotlin.utils.LibraryUtils;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.kotlin.utils.LibraryUtils.isOldKotlinJavascriptLibrary;
 import static org.jetbrains.kotlin.utils.PathUtil.getKotlinPathsForDistDirectory;
@@ -69,9 +70,9 @@ public class LibrarySourcesConfig extends JsConfig {
 
         final PsiManager psiManager = PsiManager.getInstance(getProject());
 
-        Function1<String, Unit> report = new Function1<String, Unit>() {
+        JsConfig.Reporter report = new JsConfig.Reporter() {
             @Override
-            public Unit invoke(String message) {
+            public void error(@NotNull String message) {
                 throw new IllegalStateException(message);
             }
         };
@@ -98,11 +99,11 @@ public class LibrarySourcesConfig extends JsConfig {
     }
 
     @Override
-    public boolean checkLibFilesAndReportErrors(@NotNull Function1<String, Unit> report) {
+    public boolean checkLibFilesAndReportErrors(@NotNull JsConfig.Reporter report) {
         return checkLibFilesAndReportErrors(report, null);
     }
 
-    private boolean checkLibFilesAndReportErrors(@NotNull Function1<String, Unit> report, @Nullable Function2<String, VirtualFile, Unit> action) {
+    private boolean checkLibFilesAndReportErrors(@NotNull JsConfig.Reporter report, @Nullable Function2<String, VirtualFile, Unit> action) {
         List<String> libraries = getLibraries();
         if (libraries.isEmpty()) {
             return false;
@@ -111,12 +112,14 @@ public class LibrarySourcesConfig extends JsConfig {
         VirtualFileSystem fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
         VirtualFileSystem jarFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JAR_PROTOCOL);
 
+        Set<String> modules = new HashSet<String>();
+
         for (String path : libraries) {
             VirtualFile file;
 
             File filePath = new File(path);
             if (!filePath.exists()) {
-                report.invoke("Path '" + path + "' does not exist");
+                report.error("Path '" + path + "' does not exist");
                 return true;
             }
 
@@ -128,7 +131,7 @@ public class LibrarySourcesConfig extends JsConfig {
             }
 
             if (file == null) {
-                report.invoke("File '" + path + "' does not exist or could not be read");
+                report.error("File '" + path + "' does not exist or could not be read");
                 return true;
             }
 
@@ -136,20 +139,26 @@ public class LibrarySourcesConfig extends JsConfig {
 
             if (isOldKotlinJavascriptLibrary(filePath)) {
                 moduleName = LibraryUtils.getKotlinJsModuleName(filePath);
+                if (!modules.add(moduleName)) {
+                    report.warning("Module \"" + moduleName + "\" is defined in more, than one file");
+                }
             }
             else {
                 List<KotlinJavascriptMetadata> metadataList = KotlinJavascriptMetadataUtils.loadMetadata(filePath);
                 if (metadataList.isEmpty()) {
-                    report.invoke("'" + path + "' is not a valid Kotlin Javascript library");
+                    report.error("'" + path + "' is not a valid Kotlin Javascript library");
                     return true;
                 }
 
                 for (KotlinJavascriptMetadata metadata : metadataList) {
                     if (!metadata.getVersion().isCompatible()) {
-                        report.invoke("File '" + path + "' was compiled with an incompatible version of Kotlin. " +
-                                      "The binary version of its metadata is " + metadata.getVersion() +
-                                      ", expected version is " + JsMetadataVersion.INSTANCE);
+                        report.error("File '" + path + "' was compiled with an incompatible version of Kotlin. " +
+                                     "The binary version of its metadata is " + metadata.getVersion() +
+                                     ", expected version is " + JsMetadataVersion.INSTANCE);
                         return true;
+                    }
+                    if (!modules.add(metadata.getModuleName())) {
+                        report.warning("Module \"" + metadata.getModuleName() + "\" is defined in more, than one file");
                     }
                 }
 

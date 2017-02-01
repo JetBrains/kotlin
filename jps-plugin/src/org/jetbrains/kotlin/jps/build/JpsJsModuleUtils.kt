@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.jps.build
 import com.intellij.util.Consumer
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
 import org.jetbrains.jps.incremental.ModuleBuildTarget
+import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.java.JpsJavaModuleType
 import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.module.JpsModule
@@ -47,12 +48,21 @@ object JpsJsModuleUtils {
     fun getDependencyModulesAndSources(target: ModuleBuildTarget, result: MutableList<String>) {
         JpsUtils.getAllDependencies(target).processModules(object : Consumer<JpsModule> {
             override fun consume(module: JpsModule) {
-                if (module == target.module || module.moduleType != JpsJavaModuleType.INSTANCE) return
+                if (module.moduleType != JpsJavaModuleType.INSTANCE) return
 
-                val moduleBuildTarget = ModuleBuildTarget(module, JavaModuleBuildTargetType.PRODUCTION)
-                val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(moduleBuildTarget)
-                val metaInfoFile = getOutputMetaFile(outputDir, module.name)
-                result.add(metaInfoFile.absolutePath)
+                for (root in module.sourceRoots) {
+                    val isTestSource = root.rootType == JavaSourceRootType.TEST_SOURCE
+
+                    if (module == target.module && isTestSource == target.isTests) continue
+
+                    if (!isTestSource || target.isTests) {
+                        val targetType = if (isTestSource) JavaModuleBuildTargetType.TEST else JavaModuleBuildTargetType.PRODUCTION
+                        val moduleBuildTarget = ModuleBuildTarget(module, targetType)
+                        val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(moduleBuildTarget)
+                        val metaInfoFile = getOutputMetaFile(outputDir, module.name)
+                        result.add(metaInfoFile.absolutePath)
+                    }
+                }
             }
         })
     }
