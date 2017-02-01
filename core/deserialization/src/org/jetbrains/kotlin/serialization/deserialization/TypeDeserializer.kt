@@ -16,18 +16,19 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory
+import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.builtins.transformRuntimeFunctionTypeToSuspendFunction
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedAnnotationsWithPossibleTargets
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeParameterDescriptor
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
@@ -99,7 +100,12 @@ class TypeDeserializer(
             typeArgument(constructor.parameters.getOrNull(index), proto)
         }.toReadOnlyList()
 
-        val simpleType = KotlinTypeFactory.simpleType(annotations, constructor, arguments, proto.nullable)
+        val simpleType = if (Flags.SUSPEND_TYPE.get(proto.flags)) {
+            createSuspendFunctionType(annotations, constructor, arguments, proto.nullable)
+        }
+        else {
+            KotlinTypeFactory.simpleType(annotations, constructor, arguments, proto.nullable)
+        }
 
         val abbreviatedTypeProto = proto.abbreviatedType(c.typeTable) ?: return simpleType
         return simpleType.withAbbreviation(simpleType(abbreviatedTypeProto, additionalAnnotations))
@@ -108,13 +114,8 @@ class TypeDeserializer(
     private fun typeConstructor(proto: ProtoBuf.Type): TypeConstructor =
             when {
                 proto.hasClassName() -> {
-                    if (Flags.SUSPEND_TYPE.get(proto.flags)) {
-                        getSuspendFunctionTypeConstructor(proto)
-                    }
-                    else {
-                        classDescriptors(proto.className)?.typeConstructor
-                        ?: c.components.notFoundClasses.getClass(proto, c.nameResolver, c.typeTable)
-                    }
+                    classDescriptors(proto.className)?.typeConstructor
+                    ?: c.components.notFoundClasses.getClass(proto, c.nameResolver, c.typeTable)
                 }
                 proto.hasTypeParameter() ->
                     typeParameterTypeConstructor(proto.typeParameter)
@@ -132,14 +133,30 @@ class TypeDeserializer(
                 else -> ErrorUtils.createErrorTypeConstructor("Unknown type")
             }
 
-    private fun getSuspendFunctionTypeConstructor(proto: ProtoBuf.Type): TypeConstructor {
-        val classId = c.nameResolver.getClassId(proto.className)
-        val arity = BuiltInFictitiousFunctionClassFactory.getFunctionalClassArity(classId.shortClassName.asString(), classId.packageFqName)
-
-        return if (arity != null)
-            c.containingDeclaration.builtIns.getSuspendFunction(arity - 1).typeConstructor
-        else
-            ErrorUtils.createErrorTypeConstructor("Class is not a FunctionN ${classId.asString()}")
+    private fun createSuspendFunctionType(
+            annotations: Annotations,
+            functionTypeConstructor: TypeConstructor,
+            arguments: List<TypeProjection>,
+            nullable: Boolean
+    ): SimpleType {
+        val result = when (functionTypeConstructor.parameters.size - arguments.size) {
+            0 -> {
+                val functionType = KotlinTypeFactory.simpleType(annotations, functionTypeConstructor, arguments, nullable)
+                functionType.check { it.isFunctionType }?.let(::transformRuntimeFunctionTypeToSuspendFunction)
+            }
+            // This case for types written by eap compiler 1.1
+            1 -> {
+                val arity = arguments.size - 1
+                if (arity > 0) {
+                    KotlinTypeFactory.simpleType(annotations, functionTypeConstructor.builtIns.getSuspendFunction(arity).typeConstructor, arguments, nullable)
+                }
+                else {
+                    null
+                }
+            }
+            else -> null
+        }
+        return result ?: ErrorUtils.createErrorTypeWithArguments("Bad suspend function in metadata with constructor: $functionTypeConstructor", arguments)
     }
 
     private fun typeParameterTypeConstructor(typeParameterId: Int): TypeConstructor? =

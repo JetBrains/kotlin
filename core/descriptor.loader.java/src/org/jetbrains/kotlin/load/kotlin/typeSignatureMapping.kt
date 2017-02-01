@@ -64,22 +64,6 @@ interface TypeMappingConfiguration<out T : Any> {
 
 const val NON_EXISTENT_CLASS_NAME = "error/NonExistentClass"
 
-private val FAKE_CONTINUATION_CLASS_DESCRIPTOR =
-        MutableClassDescriptor(
-                ErrorUtils.getErrorModule(),
-                ClassKind.INTERFACE, /* isInner = */ false, /* isExternal = */ false,
-                DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME.shortName(), SourceElement.NO_SOURCE
-        ).apply {
-            modality = Modality.ABSTRACT
-            visibility = Visibilities.PUBLIC
-            setTypeParameterDescriptors(
-                TypeParameterDescriptorImpl.createWithDefaultBound(
-                      this, Annotations.EMPTY, false, Variance.IN_VARIANCE, Name.identifier("T"), 0
-                ).let(::listOf)
-            )
-            createTypeConstructor()
-        }
-
 private val CONTINUATION_INTERNAL_NAME =
         JvmClassName.byClassId(ClassId.topLevel(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME)).internalName
 
@@ -93,23 +77,7 @@ fun <T : Any> mapType(
 ): T {
     if (kotlinType.isSuspendFunctionType) {
         return mapType(
-                createFunctionType(
-                        kotlinType.builtIns,
-                        kotlinType.annotations,
-                        kotlinType.getReceiverTypeFromFunctionType(),
-                        kotlinType.getValueParameterTypesFromFunctionType().map(TypeProjection::getType) +
-                            KotlinTypeFactory.simpleType(
-                                    Annotations.EMPTY,
-                                    // Continuation interface is not a part of built-ins anymore, it has been moved to stdlib.
-                                    // While it must be somewhere in the dependencies, but here we don't have a reference to the module,
-                                    // and it's rather complicated to inject it by now, so we just use a fake class descriptor.
-                                    FAKE_CONTINUATION_CLASS_DESCRIPTOR.typeConstructor,
-                                    listOf(kotlinType.getReturnTypeFromFunctionType().asTypeProjection()), nullable = false
-                            ),
-                        // TODO: names
-                        null,
-                        kotlinType.builtIns.nullableAnyType
-                ),
+                transformSuspendFunctionToRuntimeFunctionType(kotlinType),
                 factory, mode, typeMappingConfiguration, descriptorTypeWriter,
                 writeGenericType
         )
