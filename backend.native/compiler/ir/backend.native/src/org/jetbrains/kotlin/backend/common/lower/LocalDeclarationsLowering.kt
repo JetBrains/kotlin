@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.AbstractClosureAnnotator
+import org.jetbrains.kotlin.backend.common.AbstractClosureRecorder
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.Closure
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.transformFlat
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
@@ -589,7 +586,7 @@ class LocalDeclarationsLowering(val context: BackendContext): DeclarationContain
 
 
         private fun collectClosures() {
-            memberFunction.acceptChildrenVoid(object : AbstractClosureAnnotator() {
+            memberFunction.acceptChildrenVoid(object : AbstractClosureRecorder() {
                 override fun recordFunctionClosure(functionDescriptor: FunctionDescriptor, closure: Closure) {
                     localFunctions[functionDescriptor]?.closure = closure
                 }
