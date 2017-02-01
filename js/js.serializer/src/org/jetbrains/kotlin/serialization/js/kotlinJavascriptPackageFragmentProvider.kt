@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.PackageFragmentProviderImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
@@ -30,14 +31,10 @@ fun createKotlinJavascriptPackageFragmentProvider(
         packageFragmentProtos: List<ProtoBuf.PackageFragment>,
         configuration: DeserializationConfiguration
 ): PackageFragmentProvider {
-    val packageFragments = packageFragmentProtos.map { proto ->
-        val nameResolver = NameResolverImpl(proto.strings, proto.qualifiedNames)
-        val fqName = when {
-            proto.hasPackage() -> nameResolver.getPackageFqName(proto.`package`.getExtension(JsProtoBuf.packageFqName))
-            proto.class_Count > 0 -> nameResolver.getClassId(proto.class_OrBuilderList.first().fqName).packageFqName
-            else -> throw IllegalStateException("Invalid library part: either a Package or a Class must be present")
+    val packageFragments = packageFragmentProtos.mapNotNull { proto ->
+        proto.fqName?.let { fqName ->
+            KotlinJavascriptPackageFragment(fqName, storageManager, module, proto)
         }
-        KotlinJavascriptPackageFragment(fqName, storageManager, module, proto)
     }
 
     val provider = PackageFragmentProviderImpl(packageFragments)
@@ -65,3 +62,13 @@ fun createKotlinJavascriptPackageFragmentProvider(
 
     return provider
 }
+
+private val ProtoBuf.PackageFragment.fqName: FqName?
+    get() {
+        val nameResolver = NameResolverImpl(strings, qualifiedNames)
+        return when {
+            hasPackage() -> nameResolver.getPackageFqName(`package`.getExtension(JsProtoBuf.packageFqName))
+            class_Count > 0 -> nameResolver.getClassId(class_OrBuilderList.first().fqName).packageFqName
+            else -> null
+        }
+    }
