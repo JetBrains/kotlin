@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.js.inline
 
-import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
+import com.google.common.collect.HashMultimap
 import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter
 import com.intellij.util.containers.SLRUCache
-import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
 import org.jetbrains.kotlin.js.inline.util.IdentitySet
 import org.jetbrains.kotlin.js.inline.util.isCallInvocation
@@ -51,22 +51,18 @@ private val DEFINE_MODULE_FIND_PATTERN = ".defineModule("
 
 class FunctionReader(private val context: TranslationContext) {
     /**
-     * Maps module name to .js file content, that contains this module definition.
-     * One file can contain more than one module definition.
+     * fileContent: .js file content, that contains this module definition.
+     *     One file can contain more than one module definition.
+     *
+     * moduleVariable: the variable used to call functions inside module.
+     *     The default variable is _, but it can be renamed by minifier.
+     *
+     * kotlinVariable: kotlin object variable.
+     *     The default variable is Kotlin, but it can be renamed by minifier.
      */
-    private val moduleJsDefinition = hashMapOf<String, String>()
+    data class ModuleInfo(val fileContent: String, val moduleVariable: String, val kotlinVariable: String)
 
-    /**
-     * Maps module name to variable, that is used to call functions inside module.
-     * The default variable is _, but it can be renamed by minifier.
-     */
-    private val moduleRootVariable = hashMapOf<String, String>()
-
-    /**
-     * Maps moduleName to kotlin object variable.
-     * The default variable is Kotlin, but it can be renamed by minifier.
-     */
-    private val moduleKotlinVariable = hashMapOf<String, String>()
+    private val moduleNameToInfo = HashMultimap.create<String, ModuleInfo>()
 
     init {
         val config = context.config as LibrarySourcesConfig
@@ -87,10 +83,7 @@ class FunctionReader(private val context: TranslationContext) {
                 val moduleName = preciseMatcher.group(3)
                 val moduleVariable = preciseMatcher.group(4)
                 val kotlinVariable = preciseMatcher.group(1)
-                assert(moduleName !in moduleJsDefinition) { "Module \"$moduleName\" is defined in more, than one file" }
-                moduleJsDefinition[moduleName] = fileContent
-                moduleRootVariable[moduleName] = moduleVariable
-                moduleKotlinVariable[moduleName] = kotlinVariable
+                moduleNameToInfo.put(moduleName, ModuleInfo(fileContent, moduleVariable, kotlinVariable))
             }
         }
     }
@@ -122,7 +115,7 @@ class FunctionReader(private val context: TranslationContext) {
     operator fun contains(descriptor: CallableDescriptor): Boolean {
         val moduleName = getExternalModuleName(descriptor)
         val currentModuleName = context.config.moduleId
-        return currentModuleName != moduleName && moduleName != null && moduleName in moduleJsDefinition
+        return currentModuleName != moduleName && moduleName != null && moduleName in moduleNameToInfo.keys()
     }
 
     operator fun get(descriptor: CallableDescriptor): JsFunction = functionCache.get(descriptor)
@@ -131,13 +124,17 @@ class FunctionReader(private val context: TranslationContext) {
         if (descriptor !in this) return null
 
         val moduleName = getExternalModuleName(descriptor)
-        val file = moduleJsDefinition[moduleName].sure { "Module $moduleName file have not been read" }
-        val function = readFunctionFromSource(descriptor, file)
-        function?.markInlineArguments(descriptor)
-        return function
+
+        for (info in moduleNameToInfo[moduleName]) {
+            val function = readFunctionFromSource(descriptor, info)
+            if (function != null) return function
+        }
+
+        return null
     }
 
-    private fun readFunctionFromSource(descriptor: CallableDescriptor, source: String): JsFunction? {
+    private fun readFunctionFromSource(descriptor: CallableDescriptor, info: ModuleInfo): JsFunction? {
+        val source = info.fileContent
         val tag = Namer.getFunctionTag(descriptor)
         val index = source.indexOf(tag)
         if (index < 0) return null
@@ -149,12 +146,12 @@ class FunctionReader(private val context: TranslationContext) {
         }
 
         val function = parseFunction(source, offset, ThrowExceptionOnErrorReporter, JsRootScope(JsProgram()))
-        val moduleName = getExternalModuleName(descriptor)!!
         val moduleReference = context.getModuleExpressionFor(descriptor) ?: getRootPackage()
 
-        val replacements = hashMapOf(moduleRootVariable[moduleName]!! to moduleReference,
-                                     moduleKotlinVariable[moduleName]!! to Namer.kotlinObject())
+        val replacements = hashMapOf(info.moduleVariable to moduleReference,
+                                     info.kotlinVariable to Namer.kotlinObject())
         replaceExternalNames(function, replacements)
+        function.markInlineArguments(descriptor)
         return function
     }
 
