@@ -20,15 +20,12 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationDeserializer
-import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragment
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragmentImpl
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.storage.StorageManager
@@ -38,11 +35,10 @@ class KotlinJavascriptPackageFragment(
         fqName: FqName,
         storageManager: StorageManager,
         module: ModuleDescriptor,
-        private val proto: ProtoBuf.PackageFragment,
-        private val nameResolver: NameResolver
-) : DeserializedPackageFragment(fqName, storageManager, module) {
+        proto: ProtoBuf.PackageFragment
+) : DeserializedPackageFragmentImpl(fqName, storageManager, module, proto) {
     private val fileMap: Map<Int, FileHolder> by storageManager.createLazyValue {
-        proto.getExtension(JsProtoBuf.packageFragmentFiles).fileList.withIndex().associate { (index, file) ->
+        this.proto.getExtension(JsProtoBuf.packageFragmentFiles).fileList.withIndex().associate { (index, file) ->
             (if (file.hasId()) file.id else index) to FileHolder(file.annotationList)
         }
     }
@@ -50,14 +46,6 @@ class KotlinJavascriptPackageFragment(
     private val annotationDeserializer: AnnotationDeserializer by storageManager.createLazyValue {
         AnnotationDeserializer(module, components.notFoundClasses)
     }
-
-    override val classDataFinder = KotlinJavascriptClassDataFinder(proto, nameResolver)
-
-    override fun computeMemberScope(): DeserializedPackageMemberScope =
-            DeserializedPackageMemberScope(
-                    this, proto.`package`, nameResolver, containerSource = null, components = components,
-                    classNames = { classDataFinder.allClassIds.filterNot(ClassId::isNestedClass).map { it.shortClassName } }
-            )
 
     fun getContainingFileAnnotations(descriptor: DeclarationDescriptor): List<AnnotationDescriptor> {
         if (DescriptorUtils.getParentOfType(descriptor, PackageFragmentDescriptor::class.java) != this) {

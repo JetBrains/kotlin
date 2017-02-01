@@ -37,7 +37,7 @@ fun createKotlinJavascriptPackageFragmentProvider(
             proto.class_Count > 0 -> nameResolver.getClassId(proto.class_OrBuilderList.first().fqName).packageFqName
             else -> throw IllegalStateException("Invalid library part: either a Package or a Class must be present")
         }
-        KotlinJavascriptPackageFragment(fqName, storageManager, module, proto, nameResolver)
+        KotlinJavascriptPackageFragment(fqName, storageManager, module, proto)
     }
 
     val provider = PackageFragmentProviderImpl(packageFragments)

@@ -21,7 +21,7 @@ import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
-import org.jetbrains.kotlin.builtins.BuiltInsClassDataFinder
+import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
 import org.jetbrains.kotlin.idea.decompiler.common.AnnotationLoaderForStubBuilderImpl
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.*
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
@@ -45,7 +45,7 @@ class KotlinBuiltInStubBuilder : ClsStubBuilder() {
                 val packageFqName = file.packageFqName
                 val nameResolver = file.nameResolver
                 val components = ClsStubBuilderComponents(
-                        BuiltInsClassDataFinder(file.proto, nameResolver),
+                        ProtoBasedClassDataFinder(file.proto, nameResolver),
                         AnnotationLoaderForStubBuilderImpl(BuiltInSerializerProtocol),
                         virtualFile
                 )

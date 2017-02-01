@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.decompiler.js
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DeserializerForDecompilerBase
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptClassDataFinder
 
 // TODO: deduplicate with KotlinBuiltInDeserializerForDecompiler
 class KotlinJavaScriptDeserializerForDecompiler(
@@ -49,7 +49,7 @@ class KotlinJavaScriptDeserializerForDecompiler(
         val notFoundClasses = NotFoundClasses(storageManager, moduleDescriptor)
 
         deserializationComponents = DeserializationComponents(
-                storageManager, moduleDescriptor, DeserializationConfiguration.Default, KotlinJavascriptClassDataFinder(proto, nameResolver),
+                storageManager, moduleDescriptor, DeserializationConfiguration.Default, ProtoBasedClassDataFinder(proto, nameResolver),
                 AnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, JsSerializerProtocol), packageFragmentProvider,
                 ResolveEverythingToKotlinAnyLocalClassifierResolver(builtIns), LoggingErrorReporter(LOG),
                 LookupTracker.DO_NOTHING, DynamicTypeDeserializer, emptyList(), notFoundClasses

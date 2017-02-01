@@ -20,13 +20,13 @@ import com.intellij.psi.compiled.ClsStubBuilder
 import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
+import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
 import org.jetbrains.kotlin.idea.decompiler.common.AnnotationLoaderForStubBuilderImpl
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.*
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptClassDataFinder
 
 // TODO: deduplicate code with KotlinBuiltInStubBuilder
 class KotlinJavaScriptStubBuilder : ClsStubBuilder() {
@@ -46,7 +46,7 @@ class KotlinJavaScriptStubBuilder : ClsStubBuilder() {
                 val packageFqName = file.packageFqName
                 val nameResolver = file.nameResolver
                 val components = ClsStubBuilderComponents(
-                        KotlinJavascriptClassDataFinder(file.proto, nameResolver),
+                        ProtoBasedClassDataFinder(file.proto, nameResolver),
                         AnnotationLoaderForStubBuilderImpl(JsSerializerProtocol),
                         virtualFile
                 )
