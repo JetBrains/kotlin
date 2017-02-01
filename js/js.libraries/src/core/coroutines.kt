@@ -15,7 +15,6 @@
  */
 
 package kotlin.coroutines.experimental
-
 import kotlin.coroutines.experimental.intrinsics.*
 
 internal fun <R, T> (suspend R.() -> T).createCoroutineInternal(
@@ -51,17 +50,7 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
     }
 
     protected fun doResumeWrapper() {
-        try {
-            result = doResume()
-            if (result !== COROUTINE_SUSPENDED) {
-                val data = result
-                result = COROUTINE_SUSPENDED
-                resultContinuation.resume(data)
-            }
-        }
-        catch (e: Throwable) {
-            resultContinuation.resumeWithException(e)
-        }
+        processBareContinuationResume(resultContinuation) { doResume() }
     }
 
     protected abstract fun doResume(): Any?

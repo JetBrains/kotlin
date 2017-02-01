@@ -90,11 +90,11 @@ public inline suspend fun <T> suspendCoroutine(crossinline block: (Continuation<
 
 // INTERNAL DECLARATIONS
 
-internal inline fun processInvokeCallOnCoroutine(completion: Continuation<*>, block: () -> Any?) {
+@kotlin.internal.InlineOnly
+internal inline fun processBareContinuationResume(completion: Continuation<*>, block: () -> Any?) {
     try {
         val result = block()
         if (result !== COROUTINE_SUSPENDED) {
-            @Suppress("UNCHECKED_CAST")
             (completion as Continuation<Any?>).resume(result)
         }
     } catch (t: Throwable) {
