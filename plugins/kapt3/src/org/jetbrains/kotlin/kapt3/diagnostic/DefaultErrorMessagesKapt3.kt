@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
 class DefaultErrorMessagesKapt3 : DefaultErrorMessages.Extension {
 
     private companion object {
-        val MAP = DiagnosticFactoryToRendererMap("AnnotationProcessing")
+        val MAP = DiagnosticFactoryToRendererMap("Kapt3")
 
         init {
             MAP.put(ErrorsKapt3.KAPT3_PROCESSING_ERROR,
