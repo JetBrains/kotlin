@@ -21,7 +21,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
-import com.intellij.psi.compiled.ClsStubBuilder
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
@@ -41,13 +40,15 @@ import java.io.IOException
 
 abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
         private val fileType: FileType,
-        private val stubBuilder: ClsStubBuilder,
         private val targetPlatform: TargetPlatform,
         private val serializerProtocol: SerializerExtensionProtocol,
         private val flexibleTypeDeserializer: FlexibleTypeDeserializer,
         private val expectedBinaryVersion: V,
-        private val invalidBinaryVersion: V
+        private val invalidBinaryVersion: V,
+        stubVersion: Int
 ) : ClassFileDecompilers.Full() {
+    private val stubBuilder = KotlinMetadataStubBuilder(stubVersion, fileType, serializerProtocol, this::readFile)
+
     private val renderer = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
 
     abstract fun readFile(bytes: ByteArray, file: VirtualFile): FileWithMetadata?

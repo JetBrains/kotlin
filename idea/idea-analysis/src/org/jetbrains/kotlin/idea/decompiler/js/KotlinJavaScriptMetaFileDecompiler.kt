@@ -20,6 +20,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.decompiler.common.FileWithMetadata
 import org.jetbrains.kotlin.idea.decompiler.common.KotlinMetadataDecompiler
 import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.js.DynamicTypeDeserializer
 import org.jetbrains.kotlin.serialization.js.JsProtoBuf
@@ -28,27 +29,20 @@ import org.jetbrains.kotlin.utils.JsMetadataVersion
 import java.io.ByteArrayInputStream
 
 class KotlinJavaScriptMetaFileDecompiler : KotlinMetadataDecompiler<JsMetadataVersion>(
-        KotlinJavaScriptMetaFileType, KotlinJavaScriptStubBuilder(), JsPlatform, JsSerializerProtocol, DynamicTypeDeserializer,
-        JsMetadataVersion.INSTANCE, JsMetadataVersion.INVALID_VERSION
+        KotlinJavaScriptMetaFileType, JsPlatform, JsSerializerProtocol, DynamicTypeDeserializer,
+        JsMetadataVersion.INSTANCE, JsMetadataVersion.INVALID_VERSION, KotlinStubVersions.JS_STUB_VERSION
 ) {
     override fun readFile(bytes: ByteArray, file: VirtualFile): FileWithMetadata? {
-        return KjsmFile.read(bytes)
-    }
-}
+        val stream = ByteArrayInputStream(bytes)
 
-class KjsmFile(proto: ProtoBuf.PackageFragment) : FileWithMetadata.Compatible(proto, JsSerializerProtocol) {
-    companion object {
-        fun read(bytes: ByteArray): FileWithMetadata? {
-            val stream = ByteArrayInputStream(bytes)
-
-            val version = JsMetadataVersion.readFrom(stream)
-            if (!version.isCompatible()) {
-                return FileWithMetadata.Incompatible(version)
-            }
-
-            JsProtoBuf.Header.parseDelimitedFrom(stream)
-
-            return KjsmFile(ProtoBuf.PackageFragment.parseFrom(stream, JsSerializerProtocol.extensionRegistry))
+        val version = JsMetadataVersion.readFrom(stream)
+        if (!version.isCompatible()) {
+            return FileWithMetadata.Incompatible(version)
         }
+
+        JsProtoBuf.Header.parseDelimitedFrom(stream)
+
+        val proto = ProtoBuf.PackageFragment.parseFrom(stream, JsSerializerProtocol.extensionRegistry)
+        return FileWithMetadata.Compatible(proto, JsSerializerProtocol)
     }
 }

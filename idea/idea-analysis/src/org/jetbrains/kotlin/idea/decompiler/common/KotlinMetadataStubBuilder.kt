@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,29 +14,32 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.decompiler.js
+package org.jetbrains.kotlin.idea.decompiler.common
 
+import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.compiled.ClsStubBuilder
 import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
-import org.jetbrains.kotlin.idea.decompiler.common.AnnotationLoaderForStubBuilderImpl
-import org.jetbrains.kotlin.idea.decompiler.common.FileWithMetadata
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.*
-import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
+import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
-import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 
-// TODO: deduplicate code with KotlinBuiltInStubBuilder
-class KotlinJavaScriptStubBuilder : ClsStubBuilder() {
-    override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + KotlinStubVersions.JS_STUB_VERSION
+open class KotlinMetadataStubBuilder(
+        private val version: Int,
+        private val fileType: FileType,
+        private val serializerProtocol: SerializerExtensionProtocol,
+        private val readFile: (ByteArray, VirtualFile) -> FileWithMetadata?
+) : ClsStubBuilder() {
+    override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + version
 
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
         val virtualFile = content.file
-        assert(virtualFile.fileType == KotlinJavaScriptMetaFileType) { "Unexpected file type ${virtualFile.fileType}" }
-        val file = KjsmFile.read(content.content) ?: return null
+        assert(virtualFile.fileType == fileType) { "Unexpected file type ${virtualFile.fileType}" }
+        val file = readFile(content.content, virtualFile) ?: return null
 
         when (file) {
             is FileWithMetadata.Incompatible -> {
@@ -48,7 +51,7 @@ class KotlinJavaScriptStubBuilder : ClsStubBuilder() {
                 val nameResolver = file.nameResolver
                 val components = ClsStubBuilderComponents(
                         ProtoBasedClassDataFinder(file.proto, nameResolver),
-                        AnnotationLoaderForStubBuilderImpl(JsSerializerProtocol),
+                        AnnotationLoaderForStubBuilderImpl(serializerProtocol),
                         virtualFile
                 )
                 val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))

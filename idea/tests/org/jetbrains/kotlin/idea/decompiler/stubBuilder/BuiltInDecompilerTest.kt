@@ -21,7 +21,7 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.builtins.BuiltInsBinaryVersion
-import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInStubBuilder
+import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInDecompiler
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.name.FqName
@@ -49,7 +49,7 @@ class BuiltInDecompilerTest : AbstractBuiltInDecompilerTest() {
         val dirInRuntime = findDir(packageFqName, project)
         val kotlinBuiltInsVirtualFile = dirInRuntime.children.single { it.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION }
         myFixture.configureFromExistingVirtualFile(kotlinBuiltInsVirtualFile)
-        return KotlinBuiltInStubBuilder().buildFileStub(FileContentImpl.createByFile(kotlinBuiltInsVirtualFile))!!
+        return KotlinBuiltInDecompiler().stubBuilder.buildFileStub(FileContentImpl.createByFile(kotlinBuiltInsVirtualFile))!!
     }
 
     fun testBuiltInStubTreeEqualToStubTreeFromDecompiledText() {
@@ -63,7 +63,7 @@ class BuiltInDecompilerForWrongAbiVersionTest : AbstractBuiltInDecompilerTest() 
 
     override fun configureAndBuildFileStub(packageFqName: String): PsiFileStub<*> {
         myFixture.configureByFile(testDataPath + BuiltInSerializerProtocol.getBuiltInsFilePath(FqName(packageFqName)))
-        return KotlinBuiltInStubBuilder().buildFileStub(FileContentImpl.createByFile(myFixture.file.virtualFile))!!
+        return KotlinBuiltInDecompiler().stubBuilder.buildFileStub(FileContentImpl.createByFile(myFixture.file.virtualFile))!!
     }
 
     fun testStubTreesEqualForIncompatibleAbiVersion() {
