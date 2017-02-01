@@ -47,17 +47,9 @@ class VarargInjectionLowering internal constructor(val context: Context): Functi
                             typeArguments = expression.descriptor.original.typeParameters.map { it to expression.getTypeArgument(it)!! }.toMap())
                     originalCall.dispatchReceiver  = expression.dispatchReceiver
                     originalCall.extensionReceiver = expression.extensionReceiver
-                    var parameterIndex = 0
-                    expression.acceptChildrenVoid(object:IrElementVisitorVoid{
-                        override fun visitElement(element: IrElement) {
-                            offset(expression, scope) {
-                                val parameter = if (element is IrVararg && varargToBlock.containsKey(element))
-                                    varargToBlock[element]!!
-                                else element
-                                originalCall.putValueArgument(parameterIndex++, parameter as IrExpression)
-                            }
-                        }
-                    })
+                    functionDescriptor.valueParameters.forEach {
+                        originalCall.putValueArgument(it.index, if (varargToBlock.containsKey(it)) varargToBlock[it] else expression.getValueArgument(it))
+                    }
                     return originalCall
                 }
             }
@@ -65,78 +57,84 @@ class VarargInjectionLowering internal constructor(val context: Context): Functi
     }
 
 
-    private fun blockPerVararg(expression: IrCall, owner: FunctionDescriptor): Map<IrVararg, IrBlock> {
-        val varargArgs = mutableMapOf<IrVararg, IrBlock>()
-        val arrayConstructor = kArrayType.constructors.find { it.valueParameters.size == 1 }
-        expression.acceptVoid(object : IrElementVisitorVoid {
-            val scope = owner.scope()
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
+    private fun blockPerVararg(expression: IrCall, owner: FunctionDescriptor): Map<ValueParameterDescriptor, IrBlock> {
+        val varargArgs = mutableMapOf<ValueParameterDescriptor, IrBlock>()
+        val arrayConstructor = kArrayType.constructors.find { it.valueParameters.size == 1 }!!
+        val scope = owner.scope()
+        val calleeDescriptor = expression.descriptor
+        calleeDescriptor.valueParameters
+                .filter{ it.varargElementType != null &&  expression.getValueArgument(it) is IrVararg?}
+                .forEach {
+            val type = it.varargElementType!!
+            val parameterExpression = expression.getValueArgument(it) as IrVararg?
+            offset(expression, scope) {
+                val hasSpreadElement = hasSpreadElement(parameterExpression)
+                if (!hasSpreadElement && parameterExpression?.elements?.all { it is IrConst<*> && KotlinBuiltIns.isString(it.type)}?:false) {
+                    log("skipped vararg expression because it's string array literal")
+                    return@forEach
+                }
+                val block = irBlock(kArrayType.defaultType)
+                val arrayConstructorCall = irCall(
+                        descriptor    = arrayConstructor,
+                        typeArguments = mapOf(arrayConstructor.typeParameters[0] to type))
 
-            override fun visitVararg(expression: IrVararg) {
-                offset(expression, scope) {
-                    val hasSpreadElement = hasSpreadElement(expression)
-                    val block = irBlock(kArrayType.defaultType)
-                    if (!hasSpreadElement && expression.elements.all { it is IrConst<*> && KotlinBuiltIns.isString(it.type)}) {
-                        log("skipped vararg expression because it's string array literal")
-                        return
-                    }
+                if (parameterExpression == null) {
+                    arrayConstructorCall.putValueArgument(0, kIntZero)
+                    block.statements.add(arrayConstructorCall)
+                    varargArgs.put(it, block)
+                    return@forEach
+                }
 
-                    val vars = expression.elements.map {
-                        val initVar = scope.createTemporaryVariable((it as? IrSpreadElement)?.expression ?: it as IrExpression, "__elem\$", true)
-                        block.statements.add(initVar)
-                        it to initVar
-                    }.toMap()
-                    val arrayConstructorCall = irCall(
-                            descriptor    = arrayConstructor!!,
-                            typeArguments = mapOf(arrayConstructor.typeParameters[0] to expression.varargElementType))
-                    arrayConstructorCall.putValueArgument(0,  calculateArraySize(hasSpreadElement, scope,  expression, vars))
-                    val arrayTmpVariable = scope.createTemporaryVariable(arrayConstructorCall, "__array\$", true)
-                    val indexTmpVariable = scope.createTemporaryVariable(kIntZero, "__index\$", true)
-                    block.statements.add(arrayTmpVariable)
-                    if (hasSpreadElement) {
-                        block.statements.add(indexTmpVariable)
-                    }
-                    expression.elements.forEachIndexed { i, element ->
-                        offset(expression, scope) {
-                            log("element:$i> ${ir2string(element)}")
-                            val dst = vars[element]!!
-                            if (element !is IrSpreadElement) {
-                                val setArrayElementCall = irCall(
-                                        descriptor    = kArraySetFunctionDescriptor,
-                                        typeArguments = null
-                                )
-                                setArrayElementCall.dispatchReceiver = irGet(arrayTmpVariable.descriptor)
-                                setArrayElementCall.putValueArgument(0, if (hasSpreadElement) irGet(indexTmpVariable.descriptor) else irConstInt(i))
-                                setArrayElementCall.putValueArgument(1, irGet(dst.descriptor))
-                                block.statements.add(setArrayElementCall)
-                                if (hasSpreadElement) {
-                                    block.statements.add(incrementVariable(indexTmpVariable.descriptor, kIntOne))
-                                }
-                            } else {
-                                val arraySizeVariable = scope.createTemporaryVariable(irArraySize(irGet(dst.descriptor)), "__length\$")
-                                block.statements.add(arraySizeVariable)
-                                val copyCall = irCall(kCopyRangeToDescriptor, null).apply {
-                                    extensionReceiver = irGet(dst.descriptor)
-                                    putValueArgument(0, irGet(arrayTmpVariable.descriptor))  /* destination */
-                                    putValueArgument(1, kIntZero)                            /* fromIndex */
-                                    putValueArgument(2, irGet(arraySizeVariable.descriptor)) /* toIndex */
-                                    putValueArgument(3, irGet(indexTmpVariable.descriptor))  /* destinationIndex */
-                                }
-                                block.statements.add(copyCall)
-                                block.statements.add(incrementVariable(indexTmpVariable.descriptor,
-                                        irGet(arraySizeVariable.descriptor)))
-                                log("element:$i:spread element> ${ir2string(element.expression)}")
+                val vars = parameterExpression.elements.map {
+                    val initVar = scope.createTemporaryVariable((it as? IrSpreadElement)?.expression ?: it as IrExpression, "__elem\$", true)
+                    block.statements.add(initVar)
+                    it to initVar
+                }.toMap()
+                arrayConstructorCall.putValueArgument(0,  calculateArraySize(hasSpreadElement, scope, parameterExpression, vars))
+                val arrayTmpVariable = scope.createTemporaryVariable(arrayConstructorCall, "__array\$", true)
+                val indexTmpVariable = scope.createTemporaryVariable(kIntZero, "__index\$", true)
+                block.statements.add(arrayTmpVariable)
+                if (hasSpreadElement) {
+                    block.statements.add(indexTmpVariable)
+                }
+                parameterExpression.elements.forEachIndexed { i, element ->
+                    offset(parameterExpression, scope) {
+                        log("element:$i> ${ir2string(element)}")
+                        val dst = vars[element]!!
+                        if (element !is IrSpreadElement) {
+                            val setArrayElementCall = irCall(
+                                    descriptor    = kArraySetFunctionDescriptor,
+                                    typeArguments = null
+                            )
+                            setArrayElementCall.dispatchReceiver = irGet(arrayTmpVariable.descriptor)
+                            setArrayElementCall.putValueArgument(0, if (hasSpreadElement) irGet(indexTmpVariable.descriptor) else irConstInt(i))
+                            setArrayElementCall.putValueArgument(1, irGet(dst.descriptor))
+                            block.statements.add(setArrayElementCall)
+                            if (hasSpreadElement) {
+                                block.statements.add(incrementVariable(indexTmpVariable.descriptor, kIntOne))
                             }
+                        } else {
+                            val arraySizeVariable = scope.createTemporaryVariable(irArraySize(irGet(dst.descriptor)), "__length\$")
+                            block.statements.add(arraySizeVariable)
+                            val copyCall = irCall(kCopyRangeToDescriptor, null).apply {
+                                extensionReceiver = irGet(dst.descriptor)
+                                putValueArgument(0, irGet(arrayTmpVariable.descriptor))  /* destination */
+                                putValueArgument(1, kIntZero)                            /* fromIndex */
+                                putValueArgument(2, irGet(arraySizeVariable.descriptor)) /* toIndex */
+                                putValueArgument(3, irGet(indexTmpVariable.descriptor))  /* destinationIndex */
+                            }
+                            block.statements.add(copyCall)
+                            block.statements.add(incrementVariable(indexTmpVariable.descriptor,
+                                    irGet(arraySizeVariable.descriptor)))
+                            log("element:$i:spread element> ${ir2string(element.expression)}")
                         }
                     }
-
-                    block.statements.add(irGet(arrayTmpVariable.descriptor))
-                    varargArgs.put(expression, block)
                 }
+
+                block.statements.add(irGet(arrayTmpVariable.descriptor))
+                varargArgs.put(it, block)
             }
-        })
+        }
         return varargArgs
     }
 
@@ -176,7 +174,7 @@ class VarargInjectionLowering internal constructor(val context: Context): Functi
     }
 
 
-    private fun hasSpreadElement(expression: IrVararg) = expression.elements.any { it is IrSpreadElement }
+    private fun hasSpreadElement(expression: IrVararg?) = expression?.elements?.any { it is IrSpreadElement }?:false
 
     private fun log(msg:String) {
         context.log("VARARG-INJECTOR:    $msg")
