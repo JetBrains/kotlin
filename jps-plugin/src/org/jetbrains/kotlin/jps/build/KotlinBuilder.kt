@@ -77,6 +77,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         val LOG = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
         const val JVM_BUILD_META_INFO_FILE_NAME = "jvm-build-meta-info.txt"
+        const val SKIP_CACHE_VERSION_CHECK_PROPERTY = "kotlin.jps.skip.cache.version.check"
     }
 
     private val statisticsLogger = TeamcityStatisticsLogger()
@@ -114,7 +115,9 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         if (targets.none { hasKotlin[it] == true }) return
 
-        checkCachesVersions(context, chunk)
+        if (System.getProperty(SKIP_CACHE_VERSION_CHECK_PROPERTY) == null) {
+            checkCachesVersions(context, chunk)
+        }
     }
 
     private fun checkCachesVersions(context: CompileContext, chunk: ModuleChunk) {
