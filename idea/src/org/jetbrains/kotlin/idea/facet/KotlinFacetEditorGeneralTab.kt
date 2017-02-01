@@ -19,8 +19,14 @@ package org.jetbrains.kotlin.idea.facet
 import com.intellij.facet.impl.ui.libraries.DelegatingLibrariesValidatorContext
 import com.intellij.facet.ui.*
 import com.intellij.facet.ui.libraries.FrameworkLibraryValidator
+import com.intellij.openapi.project.Project
 import com.intellij.util.ui.FormBuilder
+import com.intellij.util.ui.ThreeStateCheckBox
 import com.intellij.util.ui.UIUtil
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.config.KotlinCompilerInfo
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerConfigurableTab
@@ -32,13 +38,73 @@ class KotlinFacetEditorGeneralTab(
         private val editorContext: FacetEditorContext,
         validatorsManager: FacetValidatorsManager
 ) : FacetEditorTab() {
+    class EditorComponent(
+            project: Project,
+            configuration: KotlinFacetConfiguration?
+    ) : JPanel(BorderLayout()) {
+        private val isMultiEditor = configuration == null
+
+        private val compilerInfo = configuration?.settings?.compilerInfo
+                           ?: KotlinCompilerInfo()
+                                   .apply {
+                                       commonCompilerArguments = object : CommonCompilerArguments() {}
+                                       k2jsCompilerArguments = K2JSCompilerArguments()
+                                       compilerSettings = CompilerSettings()
+                                   }
+        val compilerConfigurable = with(compilerInfo) {
+            KotlinCompilerConfigurableTab(
+                    project,
+                    commonCompilerArguments,
+                    k2jsCompilerArguments,
+                    compilerSettings,
+                    null,
+                    null,
+                    false,
+                    isMultiEditor
+            )
+        }
+
+        val useProjectSettingsCheckBox = ThreeStateCheckBox("Use project settings").apply { isThirdStateEnabled = isMultiEditor }
+
+        val targetPlatformComboBox =
+                JComboBox<TargetPlatformKind<*>>(TargetPlatformKind.ALL_PLATFORMS.toTypedArray()).apply {
+                    setRenderer(DescriptionListCellRenderer())
+                }
+
+        init {
+            val contentPanel = FormBuilder
+                    .createFormBuilder()
+                    .addComponent(useProjectSettingsCheckBox)
+                    .addLabeledComponent("&Target platform: ", targetPlatformComboBox)
+                    .addComponent(compilerConfigurable.createComponent()!!)
+                    .panel
+            add(contentPanel, BorderLayout.NORTH)
+
+            useProjectSettingsCheckBox.addActionListener {
+                updateCompilerConfigurable()
+            }
+
+            targetPlatformComboBox.addActionListener {
+                updateCompilerConfigurable()
+            }
+        }
+
+        internal fun updateCompilerConfigurable() {
+            compilerConfigurable.setTargetPlatform(chosenPlatform)
+            UIUtil.setEnabled(compilerConfigurable.contentPane, !useProjectSettingsCheckBox.isSelected, true)
+        }
+
+        val chosenPlatform: TargetPlatformKind<*>?
+            get() = targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
+    }
+
     inner class VersionValidator : FacetEditorValidator() {
         override fun check(): ValidationResult {
-            val apiLevel = compilerConfigurable.apiVersionComboBox.selectedItem as? LanguageVersion?
+            val apiLevel = editor.compilerConfigurable.apiVersionComboBox.selectedItem as? LanguageVersion?
                            ?: return ValidationResult.OK
-            val languageLevel = compilerConfigurable.languageVersionComboBox.selectedItem as? LanguageVersion?
+            val languageLevel = editor.compilerConfigurable.languageVersionComboBox.selectedItem as? LanguageVersion?
                                 ?: return ValidationResult.OK
-            val targetPlatform = targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
+            val targetPlatform = editor.targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
             val libraryLevel = getLibraryLanguageLevel(editorContext.module, editorContext.rootModel, targetPlatform)
             if (languageLevel < apiLevel || libraryLevel < apiLevel) {
                 return ValidationResult("Language version/Runtime version may not be less than API version", null)
@@ -47,24 +113,7 @@ class KotlinFacetEditorGeneralTab(
         }
     }
 
-    private val compilerConfigurable = with(configuration.settings.compilerInfo) {
-        KotlinCompilerConfigurableTab(
-                editorContext.project,
-                commonCompilerArguments,
-                k2jsCompilerArguments,
-                compilerSettings,
-                null,
-                null,
-                false
-        )
-    }
-
-    private val useProjectSettingsCheckBox = JCheckBox("Use project settings")
-
-    private val targetPlatformComboBox =
-            JComboBox<TargetPlatformKind<*>>(TargetPlatformKind.ALL_PLATFORMS.toTypedArray()).apply {
-                setRenderer(DescriptionListCellRenderer())
-            }
+    val editor = EditorComponent(editorContext.project, configuration)
 
     private val libraryValidator: FrameworkLibraryValidator
     private val versionValidator = VersionValidator()
@@ -74,56 +123,46 @@ class KotlinFacetEditorGeneralTab(
                 DelegatingLibrariesValidatorContext(editorContext),
                 validatorsManager,
                 "kotlin"
-        ) { targetPlatformComboBox.selectedItem as TargetPlatformKind<*> }
+        ) { editor.targetPlatformComboBox.selectedItem as TargetPlatformKind<*> }
 
         validatorsManager.registerValidator(libraryValidator)
         validatorsManager.registerValidator(versionValidator)
 
-        useProjectSettingsCheckBox.addActionListener {
-            updateCompilerConfigurable()
-        }
-
-        compilerConfigurable.languageVersionComboBox.addActionListener {
+        editor.compilerConfigurable.languageVersionComboBox.addActionListener {
             validatorsManager.validate()
         }
 
-        compilerConfigurable.apiVersionComboBox.addActionListener {
+        editor.compilerConfigurable.apiVersionComboBox.addActionListener {
             validatorsManager.validate()
         }
 
-        targetPlatformComboBox.addActionListener {
+        editor.targetPlatformComboBox.addActionListener {
             validatorsManager.validate()
-            updateCompilerConfigurable()
         }
 
-        updateCompilerConfigurable()
+        editor.updateCompilerConfigurable()
 
         reset()
     }
 
-    private fun updateCompilerConfigurable() {
-        compilerConfigurable.setTargetPlatform(chosenPlatform)
-        UIUtil.setEnabled(compilerConfigurable.contentPane, !useProjectSettingsCheckBox.isSelected, true)
-    }
-
     override fun isModified(): Boolean {
-        if (useProjectSettingsCheckBox.isSelected != configuration.settings.useProjectSettings) return true
-        if (targetPlatformComboBox.selectedItem != configuration.settings.versionInfo.targetPlatformKind) return true
-        return !useProjectSettingsCheckBox.isSelected && compilerConfigurable.isModified
+        if (editor.useProjectSettingsCheckBox.isSelected != configuration.settings.useProjectSettings) return true
+        if (editor.targetPlatformComboBox.selectedItem != configuration.settings.versionInfo.targetPlatformKind) return true
+        return !editor.useProjectSettingsCheckBox.isSelected && editor.compilerConfigurable.isModified
     }
 
     override fun reset() {
-        useProjectSettingsCheckBox.isSelected = configuration.settings.useProjectSettings
-        targetPlatformComboBox.selectedItem = configuration.settings.versionInfo.targetPlatformKind
-        compilerConfigurable.reset()
-        updateCompilerConfigurable()
+        editor.useProjectSettingsCheckBox.isSelected = configuration.settings.useProjectSettings
+        editor.targetPlatformComboBox.selectedItem = configuration.settings.versionInfo.targetPlatformKind
+        editor.compilerConfigurable.reset()
+        editor.updateCompilerConfigurable()
     }
 
     override fun apply() {
-        compilerConfigurable.apply()
+        editor.compilerConfigurable.apply()
         with(configuration.settings) {
-            useProjectSettings = useProjectSettingsCheckBox.isSelected
-            versionInfo.targetPlatformKind = targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
+            useProjectSettings = editor.useProjectSettingsCheckBox.isSelected
+            versionInfo.targetPlatformKind = editor.targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
             versionInfo.languageLevel = LanguageVersion.fromVersionString(compilerInfo.commonCompilerArguments?.languageVersion)
             versionInfo.apiLevel = LanguageVersion.fromVersionString(compilerInfo.commonCompilerArguments?.apiVersion)
         }
@@ -135,18 +174,15 @@ class KotlinFacetEditorGeneralTab(
         val mainPanel = JPanel(BorderLayout())
         val contentPanel = FormBuilder
                 .createFormBuilder()
-                .addComponent(useProjectSettingsCheckBox)
-                .addLabeledComponent("&Target platform: ", targetPlatformComboBox)
-                .addComponent(compilerConfigurable.createComponent()!!)
+                .addComponent(editor.useProjectSettingsCheckBox)
+                .addLabeledComponent("&Target platform: ", editor.targetPlatformComboBox)
+                .addComponent(editor.compilerConfigurable.createComponent()!!)
                 .panel
         mainPanel.add(contentPanel, BorderLayout.NORTH)
         return mainPanel
     }
 
     override fun disposeUIResources() {
-        compilerConfigurable.disposeUIResources()
+        editor.compilerConfigurable.disposeUIResources()
     }
-
-    val chosenPlatform: TargetPlatformKind<*>?
-        get() = targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
 }

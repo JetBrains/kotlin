@@ -32,6 +32,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.util.text.VersionComparatorUtil;
+import com.intellij.util.ui.ThreeStateCheckBox;
 import kotlin.collections.ArraysKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
@@ -76,18 +77,18 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private final Project project;
     private final boolean isProjectSettings;
     private JPanel contentPane;
-    private JCheckBox generateNoWarningsCheckBox;
+    private ThreeStateCheckBox generateNoWarningsCheckBox;
     private RawCommandLineEditor additionalArgsOptionsField;
     private JLabel additionalArgsLabel;
-    private JCheckBox generateSourceMapsCheckBox;
+    private ThreeStateCheckBox generateSourceMapsCheckBox;
     private TextFieldWithBrowseButton outputPrefixFile;
     private TextFieldWithBrowseButton outputPostfixFile;
     private JLabel labelForOutputPrefixFile;
     private JLabel labelForOutputPostfixFile;
     private JLabel labelForOutputDirectory;
     private JTextField outputDirectory;
-    private JCheckBox copyRuntimeFilesCheckBox;
-    private JCheckBox keepAliveCheckBox;
+    private ThreeStateCheckBox copyRuntimeFilesCheckBox;
+    private ThreeStateCheckBox keepAliveCheckBox;
     private JCheckBox enablePreciseIncrementalCheckBox;
     private JComboBox moduleKindComboBox;
     private JTextField scriptTemplatesField;
@@ -110,7 +111,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
             CompilerSettings compilerSettings,
             @Nullable KotlinCompilerWorkspaceSettings compilerWorkspaceSettings,
             @Nullable K2JVMCompilerArguments k2jvmCompilerArguments,
-            boolean isProjectSettings
+            boolean isProjectSettings,
+            boolean isMultiEditor
     ) {
         this.project = project;
         this.commonCompilerArguments = commonCompilerArguments;
@@ -154,6 +156,11 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
             keepAliveCheckBox.setVisible(false);
             k2jvmPanel.setVisible(false);
         }
+
+        generateNoWarningsCheckBox.setThirdStateEnabled(isMultiEditor);
+        generateSourceMapsCheckBox.setThirdStateEnabled(isMultiEditor);
+        copyRuntimeFilesCheckBox.setThirdStateEnabled(isMultiEditor);
+        keepAliveCheckBox.setThirdStateEnabled(isMultiEditor);
     }
 
     @SuppressWarnings("unused")
@@ -164,7 +171,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
              KotlinCompilerSettings.getInstance(project).getSettings(),
              ServiceManager.getService(project, KotlinCompilerWorkspaceSettings.class),
              Kotlin2JvmCompilerArgumentsHolder.getInstance(project).getSettings(),
-             true);
+             true,
+             false);
     }
 
     @NotNull
@@ -437,11 +445,59 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         return contentPane;
     }
 
+    public ThreeStateCheckBox getGenerateNoWarningsCheckBox() {
+        return generateNoWarningsCheckBox;
+    }
+
+    public RawCommandLineEditor getAdditionalArgsOptionsField() {
+        return additionalArgsOptionsField;
+    }
+
+    public ThreeStateCheckBox getGenerateSourceMapsCheckBox() {
+        return generateSourceMapsCheckBox;
+    }
+
+    public TextFieldWithBrowseButton getOutputPrefixFile() {
+        return outputPrefixFile;
+    }
+
+    public TextFieldWithBrowseButton getOutputPostfixFile() {
+        return outputPostfixFile;
+    }
+
+    public JTextField getOutputDirectory() {
+        return outputDirectory;
+    }
+
+    public ThreeStateCheckBox getCopyRuntimeFilesCheckBox() {
+        return copyRuntimeFilesCheckBox;
+    }
+
+    public ThreeStateCheckBox getKeepAliveCheckBox() {
+        return keepAliveCheckBox;
+    }
+
+    public JComboBox getModuleKindComboBox() {
+        return moduleKindComboBox;
+    }
+
+    public JTextField getScriptTemplatesField() {
+        return scriptTemplatesField;
+    }
+
+    public JTextField getScriptTemplatesClasspathField() {
+        return scriptTemplatesClasspathField;
+    }
+
     public JComboBox getLanguageVersionComboBox() {
         return languageVersionComboBox;
     }
 
     public JComboBox getApiVersionComboBox() {
         return apiVersionComboBox;
+    }
+
+    public JComboBox getCoroutineSupportComboBox() {
+        return coroutineSupportComboBox;
     }
 }
