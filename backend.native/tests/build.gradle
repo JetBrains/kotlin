@@ -1010,7 +1010,6 @@ task inline3(type: RunKonanTest) {
     source = "codegen/inline/inline3.kt"
 }
 
-<<<<<<< HEAD
 task inline4(type: RunKonanTest) {
     goldValue = "3\n"
     source = "codegen/inline/inline4.kt"
@@ -1024,8 +1023,8 @@ task inline5(type: RunKonanTest) {
 task inline9(type: RunKonanTest) {
     goldValue = "hello\n6\n"
     source = "codegen/inline/inline9.kt"
-=======
-task vararg0(type: RunKonanTest) {
+}
+
+    task vararg0(type: RunKonanTest) {
     source = "lower/vararg.kt"
->>>>>>> b4ee0e86d2890b3aca7eab4e1910a90fedff2b55
 }
