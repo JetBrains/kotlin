@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
 import org.jetbrains.kotlin.resolve.findMemberWithMaxVisibility
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.addToStdlib.check
@@ -97,7 +98,8 @@ class ChangeMemberFunctionSignatureFix private constructor(
                 return emptyList()
             }
 
-            val functionDescriptor = functionElement.resolveToDescriptor() as FunctionDescriptor
+            val functionDescriptor = functionElement.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? FunctionDescriptor
+                                     ?: return emptyList()
             val superFunctions = getPossibleSuperFunctionsDescriptors(functionDescriptor)
 
             return superFunctions

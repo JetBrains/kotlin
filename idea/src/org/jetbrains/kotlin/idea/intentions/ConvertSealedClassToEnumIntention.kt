@@ -24,7 +24,7 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.RefactoringDescriptionLocation
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
@@ -37,14 +37,13 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(KtClass::class.java, "Convert to enum class") {
     override fun applicabilityRange(element: KtClass): TextRange? {
         val nameIdentifier = element.nameIdentifier ?: return null
         val sealedKeyword = element.modifierList?.getModifier(KtTokens.SEALED_KEYWORD) ?: return null
 
-        val classDescriptor = element.resolveToDescriptor(BodyResolveMode.PARTIAL) as ClassDescriptor
+        val classDescriptor = element.resolveToDescriptorIfAny() as? ClassDescriptor ?: return null
         if (classDescriptor.getSuperClassNotAny() != null) return null
 
         return TextRange(sealedKeyword.startOffset, nameIdentifier.endOffset)

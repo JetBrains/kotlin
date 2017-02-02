@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaOrKotlinMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinRequestResultProcessor
 import org.jetbrains.kotlin.idea.search.restrictToKotlinSources
@@ -198,9 +198,9 @@ abstract class OperatorReferenceSearcher<TReferenceElement : KtElement>(
         }
     }
 
-    open protected fun resolveTargetToDescriptor(): FunctionDescriptor? {
+    protected open fun resolveTargetToDescriptor(): FunctionDescriptor? {
         return when (targetDeclaration) {
-            is KtDeclaration -> targetDeclaration.resolveToDescriptor()
+            is KtDeclaration -> targetDeclaration.resolveToDescriptorIfAny(BodyResolveMode.FULL)
             is PsiMember -> targetDeclaration.getJavaOrKotlinMemberDescriptor()
             else -> null
         }  as? FunctionDescriptor

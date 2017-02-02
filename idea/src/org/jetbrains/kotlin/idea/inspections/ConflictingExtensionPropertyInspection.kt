@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
@@ -69,7 +70,7 @@ class ConflictingExtensionPropertyInspection : AbstractKotlinInspection(), Clean
 
                 if (property.receiverTypeReference != null) {
                     val nameElement = property.nameIdentifier ?: return
-                    val propertyDescriptor = property.resolveToDescriptor() as? PropertyDescriptor ?: return
+                    val propertyDescriptor = property.resolveToDescriptorIfAny() as? PropertyDescriptor ?: return
 
                     val syntheticScopes = resolutionFacade.frontendService<SyntheticScopes>()
                     val conflictingExtension = conflictingSyntheticExtension(propertyDescriptor, syntheticScopes) ?: return
