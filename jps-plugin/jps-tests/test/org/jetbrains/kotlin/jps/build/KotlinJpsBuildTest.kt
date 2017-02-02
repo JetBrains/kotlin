@@ -388,8 +388,18 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         buildResult.assertSuccessful()
 
         val warnings = buildResult.getMessages(BuildMessage.Kind.WARNING)
-        assertEquals("Warning about duplicate module definition: $warnings", 1, warnings.size)
-        assertEquals("Module \"srcAndTests\" is defined in more, than one file", warnings.first().messageText)
+        assertEquals("Warning about duplicate module definition: $warnings", 2, warnings.size)
+        assertEquals("Module \"srcAndTests\" is defined in more, than one file", warnings[0].messageText)
+        assertEquals("Module \"srcAndTests\" is defined in more, than one file", warnings[1].messageText)
+    }
+
+    fun testKotlinJavaScriptProjectWithTwoSrcModuleDependency() {
+        initProject(JS_STDLIB)
+        val buildResult = makeAll()
+        buildResult.assertSuccessful()
+
+        val warnings = buildResult.getMessages(BuildMessage.Kind.WARNING)
+        assertEquals("Warning about duplicate module definition: $warnings", 0, warnings.size)
     }
 
     fun testExcludeFolderInSourceRoot() {
