@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.backend.konan.KonanPlatformConfigurator
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
@@ -31,7 +32,6 @@ class KonanBuiltIns: KotlinBuiltIns {
     constructor(storageManager: StorageManager, withModule: Boolean) : this(storageManager) {
         if (withModule) createBuiltInsModule()
     }
-
 }
 
 object KonanPlatform : TargetPlatform("Konan") {

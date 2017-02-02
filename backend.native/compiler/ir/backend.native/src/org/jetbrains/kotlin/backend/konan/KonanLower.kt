@@ -17,6 +17,10 @@ internal class KonanLower(val context: Context) {
     fun lower(irFile: IrFile) {
         val phaser = PhaseManager(context)
 
+        // TODO: consider place of the pass.
+        phaser.phase(KonanPhase.LOWER_STRING_CONCAT) {
+            StringConcatenationLowering(context).lower(irFile)
+        }
         phaser.phase(KonanPhase.LOWER_INLINE) {
             //FunctionInlining(context).inline(irFile)
         }
