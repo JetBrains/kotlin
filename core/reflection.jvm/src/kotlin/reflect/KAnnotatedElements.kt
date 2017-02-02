@@ -15,11 +15,13 @@
  */
 
 @file:JvmName("KAnnotatedElements")
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 package kotlin.reflect
 
 /**
  * Returns an annotation of the given type on this element.
  */
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'findAnnotation' from kotlin.reflect.full package", ReplaceWith("this.findAnnotation<T>()", "kotlin.reflect.full.findAnnotation"), level = DeprecationLevel.ERROR)
 @SinceKotlin("1.1")
 inline fun <reified T : Annotation> KAnnotatedElement.findAnnotation(): T? =

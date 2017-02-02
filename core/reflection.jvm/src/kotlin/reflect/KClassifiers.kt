@@ -15,6 +15,7 @@
  */
 
 @file:JvmName("KClassifiers")
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 package kotlin.reflect
 
 import kotlin.reflect.full.createType
@@ -32,6 +33,7 @@ import kotlin.reflect.full.starProjectedType
  * not `inner`, or is declared on the top level.
  */
 @SinceKotlin("1.1")
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'createType' from kotlin.reflect.full package", ReplaceWith("this.createType(arguments, nullable, annotations)", "kotlin.reflect.full.createType"), level = DeprecationLevel.ERROR)
 inline fun KClassifier.createType(
         arguments: List<KTypeProjection> = emptyList(),
@@ -46,6 +48,7 @@ inline fun KClassifier.createType(
  * @see [KClassifier.createType]
  */
 @SinceKotlin("1.1")
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'starProjectedType' from kotlin.reflect.full package", ReplaceWith("this.starProjectedType", "kotlin.reflect.full.starProjectedType"), level = DeprecationLevel.ERROR)
 inline val KClassifier.starProjectedType: KType
     get() = this.starProjectedType
