@@ -91,7 +91,7 @@
                     </includes>
                     <replacements>
                         <replacement>
-                            <token>com\.intellij</token>
+                            <token>(?&lt;!\.)com\.intellij</token>
                             <value>org.jetbrains.kotlin.com.intellij</value>
                         </replacement>
                     </replacements>
