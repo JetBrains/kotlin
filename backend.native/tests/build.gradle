@@ -911,7 +911,7 @@ task inline4(type: RunKonanTest) {
 }
 
 task inline5(type: RunKonanTest) {
-    goldValue = "34\n"
+    goldValue = "33\n"
     source = "codegen/inline/inline5.kt"
 }
 

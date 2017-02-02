@@ -4,7 +4,7 @@ inline fun foo(i2: Int, body: () -> Int): Int {
 }
 
 fun bar(i1: Int): Int {
-    return foo(i1) { 33 }
+    return foo(i1) { return 33 }
 }
 
 fun main(args: Array<String>) {
