@@ -1,8 +1,11 @@
 @kotlin.Metadata
 public final class CallableReferencesKt {
+    private final static @org.jetbrains.annotations.NotNull field topLevelProp: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method checkEquals(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KCallable, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KCallable): void
     public final static method checkToString(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KCallable, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    public final static @org.jetbrains.annotations.NotNull method getTopLevelProp(): java.lang.String
+    public final static method topLevelFun(): void
 }
 
 @kotlin.Metadata

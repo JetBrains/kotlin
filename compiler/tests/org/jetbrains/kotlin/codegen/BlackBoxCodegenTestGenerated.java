@@ -14531,6 +14531,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/noReflectAtRuntime/methodsFromAny/classReference.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("delegatedProperty.kt")
+                public void testDelegatedProperty() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/noReflectAtRuntime/methodsFromAny/delegatedProperty.kt");
+                    doTest(fileName);
+                }
             }
         }
 

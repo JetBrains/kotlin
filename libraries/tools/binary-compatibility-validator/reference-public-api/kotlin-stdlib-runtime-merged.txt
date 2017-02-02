@@ -2659,6 +2659,15 @@ public class kotlin/jvm/internal/MutablePropertyReference2Impl : kotlin/jvm/inte
 	public fun set (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V
 }
 
+public final class kotlin/jvm/internal/PackageReference : kotlin/jvm/internal/ClassBasedDeclarationContainer {
+	public fun <init> (Ljava/lang/Class;Ljava/lang/String;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getJClass ()Ljava/lang/Class;
+	public fun getMembers ()Ljava/util/Collection;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract class kotlin/jvm/internal/PrimitiveSpreadBuilder {
 	public fun <init> (I)V
 	public final fun addSpread (Ljava/lang/Object;)V

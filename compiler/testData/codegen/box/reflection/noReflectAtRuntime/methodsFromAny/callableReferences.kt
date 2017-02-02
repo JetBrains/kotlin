@@ -11,6 +11,9 @@ class M {
     val bar = 1
 }
 
+fun topLevelFun() {}
+val topLevelProp = ""
+
 fun checkEquals(x: KCallable<*>, y: KCallable<*>) {
     assertEquals(x, y)
     assertEquals(y, x)
@@ -26,9 +29,15 @@ fun box(): String {
     checkEquals(M::bar, M::bar)
     checkEquals(::M, ::M)
 
+    checkEquals(::topLevelFun, ::topLevelFun)
+    checkEquals(::topLevelProp, ::topLevelProp)
+
     checkToString(M::foo, "function foo")
     checkToString(M::bar, "property bar")
     checkToString(::M, "constructor")
+
+    checkToString(::topLevelFun, "function topLevelFun")
+    checkToString(::topLevelProp, "property topLevelProp")
 
     return "OK"
 }

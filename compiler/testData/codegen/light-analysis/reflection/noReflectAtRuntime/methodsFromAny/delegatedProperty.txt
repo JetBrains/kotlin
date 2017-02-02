@@ -1,0 +1,18 @@
+@kotlin.Metadata
+public final class Delegate {
+    public final static field INSTANCE: Delegate
+    public static @org.jetbrains.annotations.NotNull field prop: kotlin.reflect.KProperty
+    private method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getProp(): kotlin.reflect.KProperty
+    public final method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): void
+    public final @org.jetbrains.annotations.NotNull method provideDelegate(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): Delegate
+    public final method setProp(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KProperty): void
+}
+
+@kotlin.Metadata
+public final class DelegatedPropertyKt {
+    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    private final static @org.jetbrains.annotations.NotNull field x$delegate: Delegate
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getX(): kotlin.Unit
+}

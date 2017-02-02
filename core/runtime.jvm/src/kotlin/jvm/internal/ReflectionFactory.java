@@ -30,7 +30,7 @@ public class ReflectionFactory {
     }
 
     public KDeclarationContainer getOrCreateKotlinPackage(Class javaClass, String moduleName) {
-        return null;
+        return new PackageReference(javaClass, moduleName);
     }
 
     public KClass getOrCreateKotlinClass(Class javaClass) {
