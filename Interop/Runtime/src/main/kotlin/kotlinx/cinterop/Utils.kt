@@ -187,7 +187,7 @@ fun CString.Companion.fromString(str: String?, placement: NativePlacement): CStr
 
     val bytes = encodeToUtf8(str) // TODO: encoding
     val len = bytes.size
-    val nativeBytes = nativeHeap.allocArray<CInt8Var>(len + 1)
+    val nativeBytes = placement.allocArray<CInt8Var>(len + 1)
 
     nativeMemUtils.putByteArray(bytes, nativeBytes[0], len)
     nativeBytes[len].value = 0
