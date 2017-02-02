@@ -3640,13 +3640,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     private void generate754EqualsForNullableTypes(
-            InstructionAdapter v,
+            @NotNull InstructionAdapter v,
             @NotNull IElementType opToken,
             @Nullable StackValue pregeneratedLeft,
             @Nullable KtExpression left,
-            TypeAndNullability left754Type,
+            @NotNull TypeAndNullability left754Type,
             @Nullable KtExpression right,
-            TypeAndNullability right754Type
+            @NotNull TypeAndNullability right754Type
     ) {
         int equals = opToken == KtTokens.EQEQ ? 1 : 0;
         int notEquals = opToken != KtTokens.EQEQ ? 1 : 0;
@@ -3672,7 +3672,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 v.ifnonnull(rightIsNotNull);
                 AsmUtil.pop(v, rightValue.type);
                 AsmUtil.pop(v, nonNullLeftValue.type);
-                v.aconst(notEquals);
+                v.iconst(notEquals);
                 v.goTo(end);
                 v.mark(rightIsNotNull);
             }
@@ -3691,15 +3691,15 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             if (right754Type.isNullable) {
                 Label rightIsNotNull = new Label();
                 v.ifnonnull(rightIsNotNull);
-                v.aconst(equals);
+                v.iconst(equals);
                 v.goTo(end);
                 v.mark(rightIsNotNull);
-                v.aconst(notEquals);
+                v.iconst(notEquals);
                 //v.goTo(end);
             }
             else {
                 AsmUtil.pop(v, rightValue.type);
-                v.aconst(notEquals);
+                v.iconst(notEquals);
                 //v.goTo(end);
             }
 
@@ -3721,7 +3721,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         v.ifnonnull(rightIsNotNull);
         AsmUtil.pop(v, rightValue.type);
         AsmUtil.pop(v, leftValue.type);
-        v.aconst(notEquals);
+        v.iconst(notEquals);
         v.goTo(end);
 
         v.mark(rightIsNotNull);
