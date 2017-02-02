@@ -20,7 +20,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.annotation.AnnotatedSimple;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedWithFakeAnnotations;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -58,7 +57,8 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.getDeprecatedAccessFlag;
 import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityForBackingField;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.FIELD_FOR_PROPERTY;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.SYNTHETIC_METHOD_FOR_PROPERTY;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
@@ -270,7 +270,7 @@ public class PropertyCodegen {
     }
 
     // Annotations on properties are stored in bytecode on an empty synthetic method. This way they're still
-    // accessible via reflection, and 'deprecated' and 'private' flags prevent this method from being called accidentally
+    // accessible via reflection, and 'deprecated' and 'synthetic' flags prevent this method from being called accidentally
     private void generateSyntheticMethodIfNeeded(@NotNull PropertyDescriptor descriptor, @NotNull Annotations annotations) {
         if (annotations.getAllAnnotations().isEmpty()) return;
 
@@ -278,15 +278,9 @@ public class PropertyCodegen {
         if (!isInterface(contextDescriptor) ||
             (FunctionCodegen.processInterface(contextDescriptor, kind, state) ||
              (kind == OwnerKind.DEFAULT_IMPLS && state.getGenerateDefaultImplsForJvm8()))) {
-            int flags = ACC_DEPRECATED | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC;
-            Method syntheticMethod = getSyntheticMethodSignature(descriptor);
-            MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(descriptor), flags, syntheticMethod.getName(),
-                                           syntheticMethod.getDescriptor(), null, null);
-            AnnotationCodegen.forMethod(mv, memberCodegen, typeMapper)
-                    .genAnnotations(new AnnotatedSimple(annotations), Type.VOID_TYPE, AnnotationUseSiteTarget.PROPERTY);
-            mv.visitCode();
-            mv.visitInsn(Opcodes.RETURN);
-            mv.visitEnd();
+            memberCodegen.generateSyntheticAnnotationsMethod(
+                    descriptor, getSyntheticMethodSignature(descriptor), annotations, AnnotationUseSiteTarget.PROPERTY
+            );
         }
     }
 

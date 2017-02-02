@@ -11,5 +11,5 @@ public final class X {
     public synthetic static method fn$default(p0: X, p1: java.lang.String, p2: int, p3: java.lang.Object): java.lang.String
     public final @org.jetbrains.annotations.NotNull method fn(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method getX(): java.lang.String
-    private synthetic deprecated static @kotlin.jvm.JvmStatic method x$annotations(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method x$annotations(): void
 }

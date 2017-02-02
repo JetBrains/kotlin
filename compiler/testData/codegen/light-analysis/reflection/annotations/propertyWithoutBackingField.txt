@@ -8,5 +8,5 @@ public annotation class Ann {
 public final class PropertyWithoutBackingFieldKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method getProperty(): java.lang.String
-    private synthetic deprecated static @Ann method property$annotations(): void
+    public synthetic deprecated static @Ann method property$annotations(): void
 }

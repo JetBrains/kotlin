@@ -15,7 +15,7 @@ public final class A {
 public final static class A/Companion {
     inner class A/Companion
     private method <init>(): void
-    private synthetic deprecated static @kotlin.jvm.JvmStatic method c$annotations(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method c$annotations(): void
     public final @org.jetbrains.annotations.NotNull method getB(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method getC(): java.lang.String
     public final @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method test1(): java.lang.String

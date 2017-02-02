@@ -21,5 +21,5 @@ public final static class TestApp/Companion {
     public synthetic final static method access$setValue$p(p0: TestApp.Companion, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
     public final @org.jetbrains.annotations.NotNull method getValue(): java.lang.String
     private final method setValue(p0: java.lang.String): void
-    private synthetic deprecated static @kotlin.jvm.JvmStatic method value$annotations(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method value$annotations(): void
 }

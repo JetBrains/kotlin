@@ -5,7 +5,7 @@ public final class A {
     private static field b: int
     private static field c: int
     private method <init>(): void
-    private synthetic deprecated static @kotlin.jvm.JvmStatic method a$annotations(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method a$annotations(): void
     public final static method getA(): int
     public final static @kotlin.jvm.JvmStatic method getB(): int
     public final method getC(): int

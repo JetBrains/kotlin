@@ -8,6 +8,6 @@ synthetic final class test/Foo__InlineOnlyPropertyMultifileKt {
     public final static method foo(): void
     private final static method getExtProp(p0: java.lang.Object): java.lang.String
     private final static method getProp(): java.lang.String
-    private synthetic deprecated static @kotlin.internal.InlineOnly method prop$annotations(): void
+    public synthetic deprecated static @kotlin.internal.InlineOnly method prop$annotations(): void
     private final static method setProp(p0: java.lang.String): void
 }

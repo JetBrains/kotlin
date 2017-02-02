@@ -16,7 +16,7 @@ public enum class A {
 public final static class A/Companion {
     inner class A/Companion
     private method <init>(): void
-    private synthetic deprecated static @kotlin.jvm.JvmStatic method bar$annotations(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method bar$annotations(): void
     public final @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method baz(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method getBar(): java.lang.String
 }

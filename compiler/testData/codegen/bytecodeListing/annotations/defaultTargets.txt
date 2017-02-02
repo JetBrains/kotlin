@@ -3,10 +3,10 @@ public final class A {
     private final @AnnField @AnnParameterField @AnnTypeField field a: int
     private final @AnnField @AnnTypeField field x: int
     public method <init>(@AnnParameterProperty @AnnParameterField p0: int): void
-    private synthetic deprecated static @AnnProperty @AnnFieldProperty @AnnParameterProperty method a$annotations(): void
+    public synthetic deprecated static @AnnProperty @AnnFieldProperty @AnnParameterProperty method a$annotations(): void
     public final method getA(): int
     public final method getX(): int
-    private synthetic deprecated static @AnnProperty @AnnFieldProperty method x$annotations(): void
+    public synthetic deprecated static @AnnProperty @AnnFieldProperty method x$annotations(): void
 }
 
 @kotlin.annotation.Target

@@ -67,7 +67,7 @@ public class SyntheticMethodForAnnotatedPropertyGenTest extends CodegenTestCase 
                 assertTrue(method.isSynthetic());
                 int modifiers = method.getModifiers();
                 assertTrue(Modifier.isStatic(modifiers));
-                assertTrue(Modifier.isPrivate(modifiers));
+                assertTrue(Modifier.isPublic(modifiers));
 
                 Annotation[] annotations = method.getDeclaredAnnotations();
                 assertSize(1, annotations);

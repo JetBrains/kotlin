@@ -9,7 +9,7 @@ public annotation class Ann {
 
 @kotlin.Metadata
 public final class AnnotationsOnTypeAliasesKt {
-    private synthetic deprecated static @Ann method TA$annotations(): void
+    public synthetic deprecated static @Ann method TA$annotations(): void
     public final static method assertHasDeclaredMethodWithAnn(@org.jetbrains.annotations.NotNull p0: java.lang.Class): void
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
 }

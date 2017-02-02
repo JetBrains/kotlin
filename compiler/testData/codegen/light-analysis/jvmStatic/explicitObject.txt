@@ -6,7 +6,7 @@ public final class AX {
     public final @org.jetbrains.annotations.NotNull method aNonStatic(): java.lang.String
     public final static @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method aStatic(): java.lang.String
     public final static @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method b(): java.lang.String
-    private synthetic deprecated static @kotlin.jvm.JvmStatic method c$annotations(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method c$annotations(): void
     public final static @org.jetbrains.annotations.NotNull method getC(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method getProperty(): java.lang.String
 }

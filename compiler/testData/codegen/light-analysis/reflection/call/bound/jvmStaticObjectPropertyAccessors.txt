@@ -10,10 +10,10 @@ public final class Host {
     public final static method getYy(): int
     public final static method setY(p0: int): void
     public final static method setYy(p0: int): void
-    private synthetic deprecated static @kotlin.jvm.JvmStatic method x$annotations(): void
-    private synthetic deprecated static @kotlin.jvm.JvmStatic method xx$annotations(): void
-    private synthetic deprecated static @kotlin.jvm.JvmStatic method y$annotations(): void
-    private synthetic deprecated static @kotlin.jvm.JvmStatic method yy$annotations(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method x$annotations(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method xx$annotations(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method y$annotations(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method yy$annotations(): void
 }
 
 @kotlin.Metadata

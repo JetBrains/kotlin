@@ -21,7 +21,7 @@ public final class Test {
     public final static @org.jetbrains.annotations.NotNull method getTestK(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method getTestO(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method getTestOK(): java.lang.String
-    private synthetic deprecated static @kotlin.jvm.JvmStatic method testK$annotations(): void
-    private synthetic deprecated static @kotlin.jvm.JvmStatic method testO$annotations(): void
-    private synthetic deprecated static @kotlin.jvm.JvmStatic method testOK$annotations(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method testK$annotations(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method testO$annotations(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method testOK$annotations(): void
 }

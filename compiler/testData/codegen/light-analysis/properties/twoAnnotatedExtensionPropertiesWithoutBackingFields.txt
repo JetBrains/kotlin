@@ -5,8 +5,8 @@ public annotation class Anno
 @kotlin.Metadata
 public final class TwoAnnotatedExtensionPropertiesWithoutBackingFieldsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    private synthetic deprecated static @Anno method foo$annotations(p0: int): void
-    private synthetic deprecated static @Anno method foo$annotations(p0: java.lang.String): void
+    public synthetic deprecated static @Anno method foo$annotations(p0: int): void
+    public synthetic deprecated static @Anno method foo$annotations(p0: java.lang.String): void
     public final static method getFoo(@org.jetbrains.annotations.NotNull p0: java.lang.String): int
     public final static method getFoo(p0: int): int
 }

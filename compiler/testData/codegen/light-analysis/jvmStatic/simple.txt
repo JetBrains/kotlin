@@ -4,7 +4,7 @@ public final class A {
     private final static @org.jetbrains.annotations.NotNull field b: java.lang.String
     private final static @org.jetbrains.annotations.NotNull field c: java.lang.String
     private method <init>(): void
-    private synthetic deprecated static @kotlin.jvm.JvmStatic method c$annotations(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method c$annotations(): void
     public final @org.jetbrains.annotations.NotNull method getB(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method getC(): java.lang.String
     public final static @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method test1(): java.lang.String

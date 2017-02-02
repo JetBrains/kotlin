@@ -9,6 +9,6 @@ public annotation class Simple {
 public final class SimpleValAnnotationKt {
     private final static field foo: int
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    private synthetic deprecated static @Simple method foo$annotations(): void
+    public synthetic deprecated static @Simple method foo$annotations(): void
     public final static method getFoo(): int
 }

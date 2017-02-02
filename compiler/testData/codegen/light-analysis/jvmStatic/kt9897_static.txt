@@ -19,6 +19,6 @@ public final class Test {
     public final static method setSomeProperty(@org.jetbrains.annotations.NotNull p0: java.lang.String, p1: int): void
     public final static method setSomeProperty(p0: long, p1: long): void
     public final method setZ(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
-    private synthetic deprecated static @kotlin.jvm.JvmStatic method someProperty$annotations(p0: java.lang.String): void
-    private synthetic deprecated static @kotlin.jvm.JvmStatic method someProperty$annotations(p0: long): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method someProperty$annotations(p0: java.lang.String): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method someProperty$annotations(p0: long): void
 }

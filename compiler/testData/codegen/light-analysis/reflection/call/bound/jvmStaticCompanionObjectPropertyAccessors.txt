@@ -23,10 +23,10 @@ public final static class Host/Companion {
     public final method getYy(): int
     public final method setY(p0: int): void
     public final method setYy(p0: int): void
-    private synthetic deprecated static @kotlin.jvm.JvmStatic method x$annotations(): void
-    private synthetic deprecated static @kotlin.jvm.JvmStatic method xx$annotations(): void
-    private synthetic deprecated static @kotlin.jvm.JvmStatic method y$annotations(): void
-    private synthetic deprecated static @kotlin.jvm.JvmStatic method yy$annotations(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method x$annotations(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method xx$annotations(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method y$annotations(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method yy$annotations(): void
 }
 
 @kotlin.Metadata

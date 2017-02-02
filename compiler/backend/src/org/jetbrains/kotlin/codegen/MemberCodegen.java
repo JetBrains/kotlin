@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.fileClasses.FileClasses;
@@ -237,14 +238,20 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         Annotations annotations = typeAliasDescriptor.getAnnotations();
         if (!isAnnotationsMethodOwner || annotations.getAllAnnotations().isEmpty()) return;
 
-        int flags = ACC_DEPRECATED | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC;
         String name = JvmAbi.getSyntheticMethodNameForAnnotatedTypeAlias(typeAliasDescriptor.getName());
-        String desc = "()V";
-        Method syntheticMethod = new Method(name, desc);
+        generateSyntheticAnnotationsMethod(typeAliasDescriptor, new Method(name, "()V"), annotations, null);
+    }
 
-        MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(typeAliasDescriptor), flags, syntheticMethod.getName(),
+    protected void generateSyntheticAnnotationsMethod(
+            @NotNull MemberDescriptor descriptor,
+            @NotNull Method syntheticMethod,
+            @NotNull Annotations annotations,
+            @Nullable AnnotationUseSiteTarget allowedTarget
+    ) {
+        int flags = ACC_DEPRECATED | ACC_STATIC | ACC_SYNTHETIC | AsmUtil.getVisibilityAccessFlag(descriptor);
+        MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(descriptor), flags, syntheticMethod.getName(),
                                        syntheticMethod.getDescriptor(), null, null);
-        AnnotationCodegen.forMethod(mv, this, typeMapper).genAnnotations(new AnnotatedSimple(annotations), Type.VOID_TYPE, null);
+        AnnotationCodegen.forMethod(mv, this, typeMapper).genAnnotations(new AnnotatedSimple(annotations), Type.VOID_TYPE, allowedTarget);
         mv.visitCode();
         mv.visitInsn(Opcodes.RETURN);
         mv.visitEnd();

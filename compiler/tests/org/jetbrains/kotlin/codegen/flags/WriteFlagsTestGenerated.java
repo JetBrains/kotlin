@@ -1022,6 +1022,33 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             }
         }
 
+        @TestMetadata("compiler/testData/writeFlags/property/syntheticAnnotationsMethod")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class SyntheticAnnotationsMethod extends AbstractWriteFlagsTest {
+            public void testAllFilesPresentInSyntheticAnnotationsMethod() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/property/syntheticAnnotationsMethod"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("privateProperty.kt")
+            public void testPrivateProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/syntheticAnnotationsMethod/privateProperty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("protectedProperty.kt")
+            public void testProtectedProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/syntheticAnnotationsMethod/protectedProperty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("publicProperty.kt")
+            public void testPublicProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/syntheticAnnotationsMethod/publicProperty.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/writeFlags/property/visibility")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -1045,6 +1072,36 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             @TestMetadata("public.kt")
             public void testPublic() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/visibility/public.kt");
+                doTest(fileName);
+            }
+        }
+    }
+
+    @TestMetadata("compiler/testData/writeFlags/typealias")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Typealias extends AbstractWriteFlagsTest {
+        public void testAllFilesPresentInTypealias() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/typealias"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("compiler/testData/writeFlags/typealias/syntheticAnnotationsMethod")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class SyntheticAnnotationsMethod extends AbstractWriteFlagsTest {
+            public void testAllFilesPresentInSyntheticAnnotationsMethod() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/typealias/syntheticAnnotationsMethod"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("privateTypealias.kt")
+            public void testPrivateTypealias() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/typealias/syntheticAnnotationsMethod/privateTypealias.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("publicTypealias.kt")
+            public void testPublicTypealias() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/typealias/syntheticAnnotationsMethod/publicTypealias.kt");
                 doTest(fileName);
             }
         }

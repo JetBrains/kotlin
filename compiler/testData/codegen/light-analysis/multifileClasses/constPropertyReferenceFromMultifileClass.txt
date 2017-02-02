@@ -10,7 +10,7 @@ public annotation class a/A
 @kotlin.Metadata
 public final class a/MultifileClass {
     public final static @org.jetbrains.annotations.NotNull field OK: java.lang.String
-    private synthetic deprecated static @a.A method OK$annotations(): void
+    public synthetic deprecated static @a.A method OK$annotations(): void
 }
 
 @kotlin.Metadata

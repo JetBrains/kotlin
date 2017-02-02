@@ -14,7 +14,7 @@ public final static class C/Companion {
     private method <init>(): void
     public final @kotlin.jvm.JvmStatic method f1(): int
     public final method getP1(): int
-    private synthetic deprecated static @kotlin.jvm.JvmStatic method p1$annotations(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method p1$annotations(): void
 }
 
 @kotlin.Metadata
@@ -29,5 +29,5 @@ public final class O {
     private method <init>(): void
     public final static @kotlin.jvm.JvmStatic method f(): int
     public final static method getP(): int
-    private synthetic deprecated static @kotlin.jvm.JvmStatic method p$annotations(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method p$annotations(): void
 }
