@@ -25,6 +25,7 @@ import com.intellij.util.ui.ThreeStateCheckBox
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.KotlinCompilerInfo
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -49,6 +50,7 @@ class KotlinFacetEditorGeneralTab(
                                    .apply {
                                        commonCompilerArguments = object : CommonCompilerArguments() {}
                                        k2jsCompilerArguments = K2JSCompilerArguments()
+                                       k2jvmCompilerArguments = K2JVMCompilerArguments()
                                        compilerSettings = CompilerSettings()
                                    }
         val compilerConfigurable = with(compilerInfo) {
@@ -58,7 +60,7 @@ class KotlinFacetEditorGeneralTab(
                     k2jsCompilerArguments,
                     compilerSettings,
                     null,
-                    null,
+                    k2jvmCompilerArguments,
                     false,
                     isMultiEditor
             )

@@ -25,6 +25,7 @@
           <element id="module-output" name="js.parser" />
           <element id="module-output" name="cli-common" />
           <element id="module-output" name="idea-jps-common" />
+          <element id="module-output" name="build-common" />
           <element id="module-output" name="preloader" />
           <element id="module-output" name="deserialization" />
           <element id="module-output" name="backend-common" />
