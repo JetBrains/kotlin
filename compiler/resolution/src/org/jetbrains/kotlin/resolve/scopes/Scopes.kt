@@ -80,6 +80,7 @@ enum class LexicalScopeKind(val withLocalDescriptors: Boolean) {
     PROPERTY_DELEGATE_METHOD(false),
 
     FUNCTION_HEADER(false),
+    FUNCTION_HEADER_FOR_DESTRUCTURING(false),
     FUNCTION_INNER_SCOPE(true),
 
     TYPE_ALIAS_HEADER(false),

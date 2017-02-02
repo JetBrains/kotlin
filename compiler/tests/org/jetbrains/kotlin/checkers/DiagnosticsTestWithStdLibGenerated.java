@@ -791,6 +791,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             doTest(fileName);
         }
 
+        @TestMetadata("suspendDestructuring.kt")
+        public void testSuspendDestructuring() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendDestructuring.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("suspendExternalFunctions.kt")
         public void testSuspendExternalFunctions() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendExternalFunctions.kt");

@@ -332,15 +332,15 @@ public class DescriptorResolver {
                 public List<VariableDescriptor> invoke() {
                     assert owner.getDispatchReceiverParameter() == null
                             : "Destructuring declarations are only be parsed for lambdas, and they must not have a dispatch receiver";
-                    LexicalScope scopeWithReceiver =
-                            ScopeUtilsKt.addImplicitReceiver(scope, owner.getExtensionReceiverParameter());
+                    LexicalScope scopeForDestructuring =
+                            ScopeUtilsKt.createScopeForDestructuring(scope, owner.getExtensionReceiverParameter());
 
                     List<VariableDescriptor> result =
                             destructuringDeclarationResolver.resolveLocalVariablesFromDestructuringDeclaration(
                                     scope,
                                     destructuringDeclaration, new TransientReceiver(type), /* initializer = */ null,
                                     ExpressionTypingContext.newContext(
-                                            trace, scopeWithReceiver, DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE
+                                            trace, scopeForDestructuring, DataFlowInfoFactory.EMPTY, TypeUtils.NO_EXPECTED_TYPE
                                     )
                             );
 

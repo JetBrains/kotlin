@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.coroutines.hasSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtExpression
@@ -41,6 +40,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object CoroutineSuspendCallChecker : CallChecker {
+    private val ALLOWED_SCOPE_KINDS = setOf(LexicalScopeKind.FUNCTION_INNER_SCOPE, LexicalScopeKind.FUNCTION_HEADER_FOR_DESTRUCTURING)
+
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val descriptor = resolvedCall.candidateDescriptor as? FunctionDescriptor ?: return
         if (!descriptor.isSuspend) return
@@ -48,7 +49,7 @@ object CoroutineSuspendCallChecker : CallChecker {
         val enclosingSuspendFunction =
                 context.scope
                         .parentsWithSelf.firstOrNull {
-                                it is LexicalScope && it.kind == LexicalScopeKind.FUNCTION_INNER_SCOPE &&
+                                it is LexicalScope && it.kind in ALLOWED_SCOPE_KINDS &&
                                     it.ownerDescriptor.safeAs<FunctionDescriptor>()?.isSuspend == true
                         }?.cast<LexicalScope>()?.ownerDescriptor?.cast<FunctionDescriptor>()
 
