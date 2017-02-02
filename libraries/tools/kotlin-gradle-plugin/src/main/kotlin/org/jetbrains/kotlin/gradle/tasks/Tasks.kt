@@ -334,7 +334,11 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
                 .filter { LibraryUtils.isKotlinJavascriptLibrary(it) }
                 .map { it.canonicalPath }
 
-        args.libraries = (dependencies + friendDependency.orEmpty()).joinToString(File.pathSeparator)
+        args.libraries = (dependencies + listOfNotNull(friendDependency)).let {
+            if (it.isNotEmpty())
+                it.joinToString(File.pathSeparator) else
+                null
+        }
 
         kotlinOptionsImpl.updateArguments(args)
         return args
