@@ -40,9 +40,11 @@ internal val IMPLEMENTATIONS: PlatformImplementations = run {
 
 private fun getJavaVersion(): Int {
     val default = 0x10006
-    val version = System.getProperty("java.version") ?: return default
+    val version = System.getProperty("java.specification.version") ?: return default
     val firstDot = version.indexOf('.')
-    if (firstDot < 0) return default
+    if (firstDot < 0)
+        return try { version.toInt() * 0x10000 } catch (e: NumberFormatException) { default }
+
     var secondDot = version.indexOf('.', firstDot + 1)
     if (secondDot < 0) secondDot = version.length
 
