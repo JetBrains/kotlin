@@ -288,10 +288,10 @@ fun calcTypeForIEEE754ArithmeticIfNeeded(expression: KtExpression?, bindingConte
     val stableTypes = bindingContext.getDataFlowInfoBefore(expression).getStableTypes(dataFlow)
     return stableTypes.firstNotNullResult {
         if (KotlinBuiltIns.isDoubleOrNullableDouble(it)) {
-            TypeAndNullability(Type.DOUBLE_TYPE, TypeUtils.isNullableType(ktType))
+            TypeAndNullability(Type.DOUBLE_TYPE, TypeUtils.isNullableType(it))
         }
         else if (KotlinBuiltIns.isFloatOrNullableFloat(it)) {
-            TypeAndNullability(Type.FLOAT_TYPE, TypeUtils.isNullableType(ktType))
+            TypeAndNullability(Type.FLOAT_TYPE, TypeUtils.isNullableType(it))
         }
         else {
             null
