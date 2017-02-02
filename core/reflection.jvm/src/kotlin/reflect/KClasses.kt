@@ -15,7 +15,7 @@
  */
 
 @file:JvmName("KClasses")
-@file:Suppress("UNCHECKED_CAST")
+@file:Suppress("UNCHECKED_CAST", "INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 
 package kotlin.reflect
 
@@ -50,6 +50,7 @@ import kotlin.reflect.full.superclasses
  * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/classes.html#constructors)
  * for more information.
  */
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'primaryConstructor' from kotlin.reflect.full package", ReplaceWith("this.primaryConstructor", "kotlin.reflect.full.primaryConstructor"), level = DeprecationLevel.WARNING)
 inline val <T : Any> KClass<T>.primaryConstructor: KFunction<T>?
     get() = this.primaryConstructor
@@ -59,6 +60,7 @@ inline val <T : Any> KClass<T>.primaryConstructor: KFunction<T>?
  * Returns a [KClass] instance representing the companion object of a given class,
  * or `null` if the class doesn't have a companion object.
  */
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'companionObject' from kotlin.reflect.full package", ReplaceWith("this.companionObject", "kotlin.reflect.full.companionObject"), level = DeprecationLevel.WARNING)
 inline val KClass<*>.companionObject: KClass<*>?
     get() = this.companionObject
@@ -67,6 +69,7 @@ inline val KClass<*>.companionObject: KClass<*>?
  * Returns an instance of the companion object of a given class,
  * or `null` if the class doesn't have a companion object.
  */
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'companionObjectInstance' from kotlin.reflect.full package", ReplaceWith("this.companionObjectInstance", "kotlin.reflect.full.companionObjectInstance"), level = DeprecationLevel.WARNING)
 inline val KClass<*>.companionObjectInstance: Any?
     get() = this.companionObjectInstance
@@ -76,6 +79,7 @@ inline val KClass<*>.companionObjectInstance: Any?
  * Returns a type corresponding to the given class with type parameters of that class substituted as the corresponding arguments.
  * For example, for class `MyMap<K, V>` [defaultType] would return the type `MyMap<K, V>`.
  */
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'defaultType' from kotlin.reflect.full package", ReplaceWith("this.defaultType", "kotlin.reflect.full.defaultType"), level = DeprecationLevel.WARNING)
 inline val KClass<*>.defaultType: KType
     get() = this.defaultType
@@ -86,6 +90,7 @@ inline val KClass<*>.defaultType: KType
  * Does not include members declared in supertypes.
  */
 @SinceKotlin("1.1")
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'declaredMembers' from kotlin.reflect.full package", ReplaceWith("this.declaredMembers", "kotlin.reflect.full.declaredMembers"), level = DeprecationLevel.ERROR)
 inline val KClass<*>.declaredMembers: Collection<KCallable<*>>
     get() = this.declaredMembers
@@ -94,6 +99,7 @@ inline val KClass<*>.declaredMembers: Collection<KCallable<*>>
  * Returns all functions declared in this class, including all non-static methods declared in the class
  * and the superclasses, as well as static methods declared in the class.
  */
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'functions' from kotlin.reflect.full package", ReplaceWith("this.functions", "kotlin.reflect.full.functions"), level = DeprecationLevel.WARNING)
 inline val KClass<*>.functions: Collection<KFunction<*>>
     get() = this.functions
@@ -101,6 +107,7 @@ inline val KClass<*>.functions: Collection<KFunction<*>>
 /**
  * Returns static functions declared in this class.
  */
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'staticFunctions' from kotlin.reflect.full package", ReplaceWith("this.staticFunctions", "kotlin.reflect.full.staticFunctions"), level = DeprecationLevel.WARNING)
 inline val KClass<*>.staticFunctions: Collection<KFunction<*>>
     get() = this.staticFunctions
@@ -108,6 +115,7 @@ inline val KClass<*>.staticFunctions: Collection<KFunction<*>>
 /**
  * Returns non-extension non-static functions declared in this class and all of its superclasses.
  */
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'memberFunctions' from kotlin.reflect.full package", ReplaceWith("this.memberFunctions", "kotlin.reflect.full.memberFunctions"), level = DeprecationLevel.WARNING)
 inline val KClass<*>.memberFunctions: Collection<KFunction<*>>
     get() = this.memberFunctions
@@ -115,6 +123,7 @@ inline val KClass<*>.memberFunctions: Collection<KFunction<*>>
 /**
  * Returns extension functions declared in this class and all of its superclasses.
  */
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'memberExtensionFunctions' from kotlin.reflect.full package", ReplaceWith("this.memberExtensionFunctions", "kotlin.reflect.full.memberExtensionFunctions"), level = DeprecationLevel.WARNING)
 inline val KClass<*>.memberExtensionFunctions: Collection<KFunction<*>>
     get() = this.memberExtensionFunctions
@@ -124,6 +133,7 @@ inline val KClass<*>.memberExtensionFunctions: Collection<KFunction<*>>
  * If this is a Java class, it includes all non-static methods (both extensions and non-extensions)
  * declared in the class and the superclasses, as well as static methods declared in the class.
  */
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'declaredFunctions' from kotlin.reflect.full package", ReplaceWith("this.declaredFunctions", "kotlin.reflect.full.declaredFunctions"), level = DeprecationLevel.WARNING)
 inline val KClass<*>.declaredFunctions: Collection<KFunction<*>>
     get() = this.declaredFunctions
@@ -131,6 +141,7 @@ inline val KClass<*>.declaredFunctions: Collection<KFunction<*>>
 /**
  * Returns non-extension non-static functions declared in this class.
  */
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'declaredMemberFunctions' from kotlin.reflect.full package", ReplaceWith("this.declaredMemberFunctions", "kotlin.reflect.full.declaredMemberFunctions"), level = DeprecationLevel.WARNING)
 inline val KClass<*>.declaredMemberFunctions: Collection<KFunction<*>>
     get() = this.declaredMemberFunctions
@@ -138,6 +149,7 @@ inline val KClass<*>.declaredMemberFunctions: Collection<KFunction<*>>
 /**
  * Returns extension functions declared in this class.
  */
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'declaredMemberExtensionFunctions' from kotlin.reflect.full package", ReplaceWith("this.declaredMemberExtensionFunctions", "kotlin.reflect.full.declaredMemberExtensionFunctions"), level = DeprecationLevel.WARNING)
 inline val KClass<*>.declaredMemberExtensionFunctions: Collection<KFunction<*>>
     get() = this.declaredMemberExtensionFunctions
@@ -146,6 +158,7 @@ inline val KClass<*>.declaredMemberExtensionFunctions: Collection<KFunction<*>>
  * Returns static properties declared in this class.
  * Only properties representing static fields of Java classes are considered static.
  */
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'staticProperties' from kotlin.reflect.full package", ReplaceWith("this.staticProperties", "kotlin.reflect.full.staticProperties"), level = DeprecationLevel.WARNING)
 inline val KClass<*>.staticProperties: Collection<KProperty0<*>>
     get() = this.staticProperties
@@ -153,6 +166,7 @@ inline val KClass<*>.staticProperties: Collection<KProperty0<*>>
 /**
  * Returns non-extension properties declared in this class and all of its superclasses.
  */
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'memberProperties' from kotlin.reflect.full package", ReplaceWith("this.memberProperties", "kotlin.reflect.full.memberProperties"), level = DeprecationLevel.WARNING)
 inline val <T : Any> KClass<T>.memberProperties: Collection<KProperty1<T, *>>
     get() = this.memberProperties
@@ -160,6 +174,7 @@ inline val <T : Any> KClass<T>.memberProperties: Collection<KProperty1<T, *>>
 /**
  * Returns extension properties declared in this class and all of its superclasses.
  */
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'memberExtensionProperties' from kotlin.reflect.full package", ReplaceWith("this.memberExtensionProperties", "kotlin.reflect.full.memberExtensionProperties"), level = DeprecationLevel.WARNING)
 inline val <T : Any> KClass<T>.memberExtensionProperties: Collection<KProperty2<T, *, *>>
     get() = this.memberExtensionProperties
@@ -167,6 +182,7 @@ inline val <T : Any> KClass<T>.memberExtensionProperties: Collection<KProperty2<
 /**
  * Returns non-extension properties declared in this class.
  */
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'declaredMemberProperties' from kotlin.reflect.full package", ReplaceWith("this.declaredMemberProperties", "kotlin.reflect.full.declaredMemberProperties"), level = DeprecationLevel.WARNING)
 inline val <T : Any> KClass<T>.declaredMemberProperties: Collection<KProperty1<T, *>>
     get() = this.declaredMemberProperties
@@ -174,6 +190,7 @@ inline val <T : Any> KClass<T>.declaredMemberProperties: Collection<KProperty1<T
 /**
  * Returns extension properties declared in this class.
  */
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'declaredMemberExtensionProperties' from kotlin.reflect.full package", ReplaceWith("this.declaredMemberExtensionProperties", "kotlin.reflect.full.declaredMemberExtensionProperties"), level = DeprecationLevel.WARNING)
 inline val <T : Any> KClass<T>.declaredMemberExtensionProperties: Collection<KProperty2<T, *, *>>
     get() = this.declaredMemberExtensionProperties
@@ -184,6 +201,7 @@ inline val <T : Any> KClass<T>.declaredMemberExtensionProperties: Collection<KPr
  * Includes superclasses and superinterfaces of the class, but does not include the class itself.
  */
 @SinceKotlin("1.1")
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'superclasses' from kotlin.reflect.full package", ReplaceWith("this.superclasses", "kotlin.reflect.full.superclasses"), level = DeprecationLevel.ERROR)
 inline val KClass<*>.superclasses: List<KClass<*>>
     get() = this.superclasses
@@ -193,6 +211,7 @@ inline val KClass<*>.superclasses: List<KClass<*>>
  * There is not more than one type in the returned collection that has any given classifier.
  */
 @SinceKotlin("1.1")
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'allSupertypes' from kotlin.reflect.full package", ReplaceWith("this.allSupertypes", "kotlin.reflect.full.allSupertypes"), level = DeprecationLevel.ERROR)
 inline val KClass<*>.allSupertypes: Collection<KType>
     get() = this.allSupertypes
@@ -202,6 +221,7 @@ inline val KClass<*>.allSupertypes: Collection<KType>
  * The returned collection does not contain more than one instance of any given class.
  */
 @SinceKotlin("1.1")
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'allSuperclasses' from kotlin.reflect.full package", ReplaceWith("this.allSuperclasses", "kotlin.reflect.full.allSuperclasses"), level = DeprecationLevel.ERROR)
 inline val KClass<*>.allSuperclasses: Collection<KClass<*>>
     get() = this.allSuperclasses
@@ -209,6 +229,7 @@ inline val KClass<*>.allSuperclasses: Collection<KClass<*>>
  * Returns `true` if `this` class is the same or is a (possibly indirect) subclass of [base], `false` otherwise.
  */
 @SinceKotlin("1.1")
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'isSubclassOf' from kotlin.reflect.full package", ReplaceWith("this.isSubclassOf(base)", "kotlin.reflect.full.isSubclassOf"), level = DeprecationLevel.ERROR)
 inline fun KClass<*>.isSubclassOf(base: KClass<*>): Boolean =
     this.isSubclassOf(base)
@@ -217,6 +238,7 @@ inline fun KClass<*>.isSubclassOf(base: KClass<*>): Boolean =
  * Returns `true` if `this` class is the same or is a (possibly indirect) superclass of [derived], `false` otherwise.
  */
 @SinceKotlin("1.1")
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'isSuperclassOf' from kotlin.reflect.full package", ReplaceWith("this.isSuperclassOf(derived)", "kotlin.reflect.full.isSuperclassOf"), level = DeprecationLevel.ERROR)
 inline fun KClass<*>.isSuperclassOf(derived: KClass<*>): Boolean =
         this.isSuperclassOf(derived)
@@ -230,6 +252,7 @@ inline fun KClass<*>.isSuperclassOf(derived: KClass<*>): Boolean =
  * @see [KClass.safeCast]
  */
 @SinceKotlin("1.1")
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'cast' from kotlin.reflect.full package", ReplaceWith("this.cast(value)", "kotlin.reflect.full.cast"), level = DeprecationLevel.ERROR)
 inline fun <T : Any> KClass<T>.cast(value: Any?): T {
     return this.cast(value)
@@ -243,6 +266,7 @@ inline fun <T : Any> KClass<T>.cast(value: Any?): T {
  * @see [KClass.cast]
  */
 @SinceKotlin("1.1")
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'safeCast' from kotlin.reflect.full package", ReplaceWith("this.safeCast(value)", "kotlin.reflect.full.safeCast"), level = DeprecationLevel.ERROR)
 inline fun <T : Any> KClass<T>.safeCast(value: Any?): T? {
     return this.safeCast(value)
@@ -254,6 +278,7 @@ inline fun <T : Any> KClass<T>.safeCast(value: Any?): T? {
  * (see [KParameter.isOptional]). If there are no or many such constructors, an exception is thrown.
  */
 @SinceKotlin("1.1")
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'createInstance' from kotlin.reflect.full package", ReplaceWith("this.createInstance()", "kotlin.reflect.full.createInstance"), level = DeprecationLevel.ERROR)
 inline fun <T : Any> KClass<T>.createInstance(): T {
     return this.createInstance()

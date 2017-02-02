@@ -15,6 +15,7 @@
  */
 
 @file:JvmName("KTypes")
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 package kotlin.reflect
 
 import kotlin.reflect.full.isSubtypeOf
@@ -25,6 +26,7 @@ import kotlin.reflect.full.withNullability
  * Returns a new type with the same classifier, arguments and annotations as the given type, and with the given nullability.
  */
 @SinceKotlin("1.1")
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'withNullability' from kotlin.reflect.full package", ReplaceWith("this.withNullability(nullable)", "kotlin.reflect.full.withNullability"), level = DeprecationLevel.ERROR)
 inline fun KType.withNullability(nullable: Boolean): KType = this.withNullability(nullable)
 
@@ -33,6 +35,7 @@ inline fun KType.withNullability(nullable: Boolean): KType = this.withNullabilit
  * Returns `true` if `this` type is the same or is a subtype of [other], `false` otherwise.
  */
 @SinceKotlin("1.1")
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'isSubtypeOf' from kotlin.reflect.full package", ReplaceWith("this.isSubtypeOf(other)", "kotlin.reflect.full.isSubtypeOf"), level = DeprecationLevel.ERROR)
 inline fun KType.isSubtypeOf(other: KType): Boolean = this.isSubtypeOf(other)
 
@@ -40,5 +43,6 @@ inline fun KType.isSubtypeOf(other: KType): Boolean = this.isSubtypeOf(other)
  * Returns `true` if `this` type is the same or is a supertype of [other], `false` otherwise.
  */
 @SinceKotlin("1.1")
+@kotlin.internal.LowPriorityInOverloadResolution
 @Deprecated("Use 'isSupertypeOf' from kotlin.reflect.full package", ReplaceWith("this.isSupertypeOf(other)", "kotlin.reflect.full.isSupertypeOf"), level = DeprecationLevel.ERROR)
 inline fun KType.isSupertypeOf(other: KType): Boolean = this.isSupertypeOf(other)
