@@ -229,6 +229,18 @@ class CoroutineTransformerMethodVisitor(
                             }
 
             for ((index, basicValue) in variablesToSpill) {
+                if (basicValue === StrictBasicValue.NULL_VALUE) {
+                    postponedActions.add {
+                        with(instructions) {
+                            insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
+                                aconst(null)
+                                store(index, AsmTypes.OBJECT_TYPE)
+                            })
+                        }
+                    }
+                    continue
+                }
+
                 val type = basicValue.type
                 val normalizedType = type.normalize()
 
