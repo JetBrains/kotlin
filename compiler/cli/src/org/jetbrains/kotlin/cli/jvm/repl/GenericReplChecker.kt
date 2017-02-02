@@ -61,7 +61,7 @@ open class GenericReplChecker(
             if (get(JVMConfigurationKeys.JVM_TARGET) == null) {
                 put(JVMConfigurationKeys.JVM_TARGET,
                     System.getProperty(KOTLIN_REPL_JVM_TARGET_PROPERTY)?.let { JvmTarget.fromString(it) }
-                    ?: if (getJavaVersion() >= 10008) JvmTarget.JVM_1_8 else JvmTarget.JVM_1_6)
+                    ?: if (getJavaVersion() >= 0x10008) JvmTarget.JVM_1_8 else JvmTarget.JVM_1_6)
             }
         }
         KotlinCoreEnvironment.createForProduction(disposable, compilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
@@ -108,20 +108,19 @@ open class GenericReplChecker(
     }
 }
 
-// Copypaste from libraries/stdlib/src/kotlin/internal/PlatformImplementations.kt
+// initially taken from libraries/stdlib/src/kotlin/internal/PlatformImplementations.kt
+// fixed according to JEP 223 - http://openjdk.java.net/jeps/223
 // TODO: consider to place it to some common place
 private fun getJavaVersion(): Int {
     val default = 0x10006
-    val version = System.getProperty("java.version") ?: return default
-    val firstDot = version.indexOf('.')
-    if (firstDot < 0) return default
-    var secondDot = version.indexOf('.', firstDot + 1)
-    if (secondDot < 0) secondDot = version.length
-
-    val firstPart = version.substring(0, firstDot)
-    val secondPart = version.substring(firstDot + 1, secondDot)
+    val version = System.getProperty("java.specification.version") ?: return default
+    val components = version.split('.')
     return try {
-        firstPart.toInt() * 0x10000 + secondPart.toInt()
+        when (components.size) {
+            0 -> default
+            1 -> components[0].toInt() * 0x10000
+            else -> components[0].toInt() * 0x10000 + components[1].toInt()
+        }
     } catch (e: NumberFormatException) {
         default
     }
