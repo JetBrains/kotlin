@@ -29,6 +29,7 @@ import android.os.Build.VERSION_CODES
 import android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH
 import android.os.Build.VERSION_CODES.JELLY_BEAN
 import android.os.Bundle
+import android.os.Parcelable
 import android.system.ErrnoException
 import android.widget.TextView
 
@@ -423,7 +424,7 @@ class ApiCallTest: Activity() {
         val linear = layout as LinearLayout // OK API 1
     }
 
-    class ErrorVectorDravable : <error descr="Class requires API level 21 (current min is 1): android.graphics.drawable.VectorDrawable">VectorDrawable</error>()
+    abstract class ErrorVectorDravable : <error descr="Class requires API level 21 (current min is 1): android.graphics.drawable.VectorDrawable">VectorDrawable</error>(), Parcelable
 
     @TargetApi(21)
     class MyVectorDravable : VectorDrawable()
