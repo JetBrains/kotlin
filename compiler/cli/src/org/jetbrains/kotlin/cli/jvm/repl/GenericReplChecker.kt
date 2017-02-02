@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.cli.jvm.repl.messages.DiagnosticMessageHolder
 import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplTerminalDiagnosticMessageHolder
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
@@ -41,6 +42,8 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
+
+const val KOTLIN_REPL_JVM_TARGET_PROPERTY = "kotlin.repl.jvm.target"
 
 open class GenericReplChecker(
         disposable: Disposable,
@@ -54,6 +57,12 @@ open class GenericReplChecker(
             add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
             put<MessageCollector>(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
             put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
+
+            if (get(JVMConfigurationKeys.JVM_TARGET) == null) {
+                put(JVMConfigurationKeys.JVM_TARGET,
+                    System.getProperty(KOTLIN_REPL_JVM_TARGET_PROPERTY)?.let { JvmTarget.fromString(it) }
+                    ?: if (getJavaVersion() >= 10008) JvmTarget.JVM_1_8 else JvmTarget.JVM_1_6)
+            }
         }
         KotlinCoreEnvironment.createForProduction(disposable, compilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
@@ -96,5 +105,24 @@ open class GenericReplChecker(
                 else -> ReplCheckResult.Ok()
             }
         }
+    }
+}
+
+// Copypaste from libraries/stdlib/src/kotlin/internal/PlatformImplementations.kt
+// TODO: consider to place it to some common place
+private fun getJavaVersion(): Int {
+    val default = 0x10006
+    val version = System.getProperty("java.version") ?: return default
+    val firstDot = version.indexOf('.')
+    if (firstDot < 0) return default
+    var secondDot = version.indexOf('.', firstDot + 1)
+    if (secondDot < 0) secondDot = version.length
+
+    val firstPart = version.substring(0, firstDot)
+    val secondPart = version.substring(firstDot + 1, secondDot)
+    return try {
+        firstPart.toInt() * 0x10000 + secondPart.toInt()
+    } catch (e: NumberFormatException) {
+        default
     }
 }
