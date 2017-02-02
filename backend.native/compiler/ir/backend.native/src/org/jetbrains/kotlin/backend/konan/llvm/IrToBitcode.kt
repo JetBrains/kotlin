@@ -1512,6 +1512,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         }
 
         override fun genReturn(target: CallableDescriptor, value: LLVMValueRef?) {
+            if (target == codegen.functionDescriptor) {
+                super.genReturn(target, value)
+                return
+            }
+
             if (KotlinBuiltIns.isUnit(inlineBody.type) == false) {
                 codegen.assignPhis(getResult()!! to value!!)
             }

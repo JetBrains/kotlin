@@ -35,7 +35,6 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     //-------------------------------------------------------------------------//
 
     fun getLambdaStatements(value: IrExpression) : MutableList<IrStatement> {
-
         val statements = (value as IrContainerExpressionBase).statements
         val lambdaFunction = statements[0] as IrFunction
         val lambdaBody = lambdaFunction.body as IrBlockBody
@@ -52,11 +51,11 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
     //-------------------------------------------------------------------------//
 
-    fun evaluateParameters(callExpression: IrCall,
+    fun evaluateParameters(irCall: IrCall,
         statements: MutableList<IrStatement>): List<Pair<ParameterDescriptor, IrExpression>> {
 
-        val scope          = Scope(callExpression.descriptor as FunctionDescriptor)
-        val parametersOld  = callExpression.getArguments()                                  // Create map inline_function_parameter -> containing_function_expression.
+        val scope          = Scope(irCall.descriptor as FunctionDescriptor)
+        val parametersOld  = irCall.getArguments()                                          // Create map inline_function_parameter -> containing_function_expression.
         val parametersNew  = parametersOld.map {
             val parameter  = it.first
             val expression = it.second
