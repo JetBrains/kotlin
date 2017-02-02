@@ -3,9 +3,11 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.AbstractValueUsageTransformer
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.ValueType
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalClass
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalFunctions
-import org.jetbrains.kotlin.backend.konan.descriptors.unboundCallableReferenceTypeOrNull
+import org.jetbrains.kotlin.backend.konan.notNullableIsRepresentedAs
+import org.jetbrains.kotlin.backend.konan.isRepresentedAs
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -15,14 +17,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 /**
- * Boxes and unboxes values of primitive types when necessary.
+ * Boxes and unboxes values of value types when necessary.
  */
 internal class Autoboxing(val context: Context) : FileLoweringPass {
 
@@ -40,27 +38,13 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     // is not equal to e.g. called function return type?
 
 
-    private val irBuiltins = context.irModule!!.irBuiltins
-
-    /**
-     * The list of primitive types to box and unbox.
-     */
-    private val primitiveTypes = with(context.builtIns) {
-        listOf(booleanType, byteType, shortType, charType, intType, longType, floatType, doubleType) +
-                unboundCallableReferenceTypeOrNull.singletonOrEmptyList()
-    }
-
     /**
      * @return type to use for runtime type checks instead of given one (e.g. `IntBox` instead of `Int`)
      */
     private fun getRuntimeReferenceType(type: KotlinType): KotlinType {
-        if (type.isSubtypeOf(builtIns.nullableNothingType)) return type
-
-        primitiveTypes.forEach {
-            listOf(it, it.makeNullable()).forEach { superType ->
-                if (type.isSubtypeOf(superType)) {
-                    return getBoxType(superType).makeNullableAsSpecified(superType.isMarkedNullable)
-                }
+        ValueType.values().forEach {
+            if (type.notNullableIsRepresentedAs(it)) {
+                return getBoxType(it).makeNullableAsSpecified(TypeUtils.isNullableType(type))
             }
         }
 
@@ -109,13 +93,13 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     }
 
     /**
-     * @return the element of [primitiveTypes] if given type is represented as primitive type in generated code,
+     * @return the [ValueType] given type represented in generated code as,
      * or `null` if represented as object reference.
      */
-    private fun getCustomRepresentation(type: KotlinType): KotlinType? {
-        if (type.isSubtypeOf(builtIns.nothingType)) return null
-
-        return primitiveTypes.firstOrNull { type.isSubtypeOf(it) }
+    private fun getValueType(type: KotlinType): ValueType? {
+        return ValueType.values().firstOrNull {
+            type.isRepresentedAs(it)
+        }
     }
 
     override fun IrExpression.useAs(type: KotlinType): IrExpression {
@@ -147,21 +131,21 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     }
 
     private fun IrExpression.adaptIfNecessary(actualType: KotlinType, expectedType: KotlinType): IrExpression {
-        val actualRepresentation = getCustomRepresentation(actualType)
-        val expectedRepresentation = getCustomRepresentation(expectedType)
+        val actualValueType = getValueType(actualType)
+        val expectedValueType = getValueType(expectedType)
 
         return when {
-            actualRepresentation == expectedRepresentation -> this
+            actualValueType == expectedValueType -> this
 
-            actualRepresentation == null && expectedRepresentation != null -> {
+            actualValueType == null && expectedValueType != null -> {
                 // This may happen in the following cases:
                 // 1.  `actualType` is `Nothing`;
                 // 2.  `actualType` is incompatible.
 
-                this.unbox(expectedRepresentation)
+                this.unbox(expectedValueType)
             }
 
-            actualRepresentation != null && expectedRepresentation == null -> this.box(actualRepresentation)
+            actualValueType != null && expectedValueType == null -> this.box(actualValueType)
 
             else -> throw IllegalArgumentException("actual type is $actualType, expected $expectedType")
         }
@@ -175,23 +159,24 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         return this
     }
 
-    private fun getBoxType(primitiveType: KotlinType): SimpleType {
-        val primitiveTypeClass = TypeUtils.getClassDescriptor(primitiveType)!!
-        return context.builtIns.getKonanInternalClass("${primitiveTypeClass.name}Box").defaultType
-    }
+    private val ValueType.shortName
+        get() = this.classFqName.shortName()
 
-    private fun IrExpression.box(primitiveType: KotlinType): IrExpression {
-        val primitiveTypeClass = TypeUtils.getClassDescriptor(primitiveType)!!
-        val boxFunction = context.builtIns.getKonanInternalFunctions("box${primitiveTypeClass.name}").singleOrNull() ?:
-                TODO(primitiveType.toString())
+    private fun getBoxType(valueType: ValueType) =
+            context.builtIns.getKonanInternalClass("${valueType.shortName}Box").defaultType
+
+    private fun IrExpression.box(valueType: ValueType): IrExpression {
+        val boxFunctionName = "box${valueType.shortName}"
+        val boxFunction = context.builtIns.getKonanInternalFunctions(boxFunctionName).singleOrNull() ?:
+                TODO(valueType.toString())
 
         return IrCallImpl(startOffset, endOffset, boxFunction).apply {
             putValueArgument(0, this@box)
         }.uncheckedCast(this.type) // Try not to bring new type incompatibilities.
     }
 
-    private fun IrExpression.unbox(primitiveType: KotlinType): IrExpression {
-        val boxGetter = getBoxType(primitiveType)
+    private fun IrExpression.unbox(valueType: ValueType): IrExpression {
+        val boxGetter = getBoxType(valueType)
                 .memberScope.getContributedDescriptors()
                 .filterIsInstance<PropertyDescriptor>()
                 .single { it.name.asString() == "value" }

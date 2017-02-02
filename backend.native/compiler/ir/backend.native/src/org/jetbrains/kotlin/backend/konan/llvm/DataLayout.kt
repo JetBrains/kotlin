@@ -1,26 +1,32 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.descriptors.isUnboundCallableReference
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.backend.konan.ValueType
+import org.jetbrains.kotlin.backend.konan.isRepresentedAs
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
-internal fun RuntimeAware.getLLVMType(type: KotlinType): LLVMTypeRef {
-    return when {
-        // Nullable types must be represented as objects for boxing.
-        type.isMarkedNullable -> this.kObjHeaderPtr
-        type.isUnboundCallableReference() -> int8TypePtr
-        KotlinBuiltIns.isBoolean(type) -> LLVMInt1Type()
-        KotlinBuiltIns.isByte(type) -> LLVMInt8Type()
-        KotlinBuiltIns.isShort(type) || KotlinBuiltIns.isChar(type) -> LLVMInt16Type()
-        KotlinBuiltIns.isInt(type) -> LLVMInt32Type()
-        KotlinBuiltIns.isLong(type) -> LLVMInt64Type()
-        KotlinBuiltIns.isFloat(type) -> LLVMFloatType()
-        KotlinBuiltIns.isDouble(type) -> LLVMDoubleType()
-        !KotlinBuiltIns.isPrimitiveType(type) -> this.kObjHeaderPtr
-        else -> throw NotImplementedError(type.toString() + " is not supported")
+private val valueTypes = ValueType.values().associate {
+    it to when (it) {
+        ValueType.BOOLEAN -> LLVMInt1Type()
+        ValueType.BYTE -> LLVMInt8Type()
+        ValueType.SHORT, ValueType.CHAR -> LLVMInt16Type()
+        ValueType.INT -> LLVMInt32Type()
+        ValueType.LONG -> LLVMInt64Type()
+        ValueType.FLOAT -> LLVMFloatType()
+        ValueType.DOUBLE -> LLVMDoubleType()
+        ValueType.UNBOUND_CALLABLE_REFERENCE -> int8TypePtr
     }!!
+}
+
+internal fun RuntimeAware.getLLVMType(type: KotlinType): LLVMTypeRef {
+    for ((valueType, llvmType) in valueTypes) {
+        if (type.isRepresentedAs(valueType)) {
+            return llvmType
+        }
+    }
+
+    return this.kObjHeaderPtr
 }
 
 internal fun RuntimeAware.getLLVMReturnType(type: KotlinType): LLVMTypeRef {
