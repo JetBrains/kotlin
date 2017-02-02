@@ -1,0 +1,4 @@
+@kotlin.Metadata
+public final class WhenNullableSmartCast10Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

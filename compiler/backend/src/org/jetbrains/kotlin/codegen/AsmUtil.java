@@ -587,6 +587,10 @@ public class AsmUtil {
         v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z", false);
     }
 
+    public static void genIEEE754EqualForNullableTypesCall(InstructionAdapter v, Type left, Type right) {
+        v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "areEqual", "(" + left.getDescriptor() + right.getDescriptor() + ")Z", false);
+    }
+
     public static void numConst(int value, Type type, InstructionAdapter v) {
         if (type == Type.FLOAT_TYPE) {
             v.fconst(value);
