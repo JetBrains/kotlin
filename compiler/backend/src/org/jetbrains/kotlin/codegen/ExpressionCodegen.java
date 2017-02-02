@@ -3652,7 +3652,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (left754Type != null && right754Type != null && left754Type.type.equals(right754Type.type)) {
             //check nullability cause there is some optimizations in codegen for non-nullable case
             if (left754Type.isNullable || right754Type.isNullable) {
-                if (state.getLanguageVersionSettings().getLanguageVersion() != LanguageVersion.KOTLIN_1_0 &&
+                // Using Intrinsics.areEqual is preferable here, but will result in NoSuchMethodError at runtime if the runtime
+                // of version 1.0 is used and the user forgot to explicitly specify language version / API version.
+                // This should be enabled when/if we decide to drop support for "-language-version 1.0" / "-api-version 1.0"
+                //noinspection ConstantConditions, PointlessBooleanExpression
+                if (false && state.getLanguageVersionSettings().getLanguageVersion() != LanguageVersion.KOTLIN_1_0 &&
                     state.getLanguageVersionSettings().getApiVersion().compareTo(apiVersion1_1) >= 0) {
                     return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
                         @Override
