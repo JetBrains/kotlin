@@ -1,0 +1,9 @@
+// "Make bar suspend" "true"
+
+suspend fun foo() {}
+
+open class A {
+    open suspend fun bar() {
+        foo()
+    }
+}

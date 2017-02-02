@@ -6770,6 +6770,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("open.kt")
+            public void testOpen() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/suspend/open.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("override.kt")
+            public void testOverride() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/suspend/override.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("public.kt")
+            public void testPublic() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/suspend/public.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("startCoroutine.kt")
             public void testStartCoroutine() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/modifiers/suspend/startCoroutine.kt");
