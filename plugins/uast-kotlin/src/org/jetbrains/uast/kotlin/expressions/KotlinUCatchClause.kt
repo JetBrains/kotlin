@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.psi.KtCatchClause
 import org.jetbrains.uast.UCatchClause
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UParameter
-import org.jetbrains.uast.expressions.UTypeReferenceExpression
+import org.jetbrains.uast.UTypeReferenceExpression
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.psi.PsiElementBacked
 

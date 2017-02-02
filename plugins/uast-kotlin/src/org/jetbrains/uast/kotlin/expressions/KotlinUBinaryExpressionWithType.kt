@@ -21,7 +21,6 @@ import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
 import org.jetbrains.uast.*
-import org.jetbrains.uast.expressions.UTypeReferenceExpression
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUBinaryExpressionWithType(

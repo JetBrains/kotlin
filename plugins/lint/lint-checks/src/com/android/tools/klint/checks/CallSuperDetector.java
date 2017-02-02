@@ -39,7 +39,7 @@ import com.intellij.psi.PsiMethod;
 import org.jetbrains.uast.UElement;
 import org.jetbrains.uast.UMethod;
 import org.jetbrains.uast.USuperExpression;
-import org.jetbrains.uast.expressions.UReferenceExpression;
+import org.jetbrains.uast.UReferenceExpression;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 

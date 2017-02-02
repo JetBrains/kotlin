@@ -40,8 +40,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.android.inspections.klint.IntellijLintUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
-import org.jetbrains.uast.expressions.UReferenceExpression;
-import org.jetbrains.uast.expressions.UTypeReferenceExpression;
 import org.jetbrains.uast.util.UastExpressionUtils;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
@@ -1325,9 +1323,7 @@ public class ApiDetector extends ResourceXmlDetector
 
         @Override
         public boolean visitTryExpression(@NotNull UTryExpression statement) {
-            List<PsiResourceListElement> resourceList = statement.getResources();
-            //noinspection VariableNotUsedInsideIf
-            if (resourceList != null && !resourceList.isEmpty()) {
+            if (statement.getHasResources()) {
                 int api = 19; // minSdk for try with resources
                 int minSdk = getMinSdk(mContext);
 

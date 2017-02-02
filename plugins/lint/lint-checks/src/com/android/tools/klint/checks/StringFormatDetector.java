@@ -78,7 +78,7 @@ import org.jetbrains.uast.UCallExpression;
 import org.jetbrains.uast.UExpression;
 import org.jetbrains.uast.ULiteralExpression;
 import org.jetbrains.uast.UMethod;
-import org.jetbrains.uast.expressions.UReferenceExpression;
+import org.jetbrains.uast.UReferenceExpression;
 import org.jetbrains.uast.util.UastExpressionUtils;
 import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Element;

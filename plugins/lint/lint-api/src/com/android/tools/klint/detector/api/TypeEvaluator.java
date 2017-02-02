@@ -56,7 +56,7 @@ import org.jetbrains.uast.UExpression;
 import org.jetbrains.uast.UMethod;
 import org.jetbrains.uast.UVariable;
 import org.jetbrains.uast.UastUtils;
-import org.jetbrains.uast.expressions.UReferenceExpression;
+import org.jetbrains.uast.UReferenceExpression;
 import org.jetbrains.uast.util.UastExpressionUtils;
 
 import java.util.ListIterator;

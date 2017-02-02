@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.uast.*
 import org.jetbrains.uast.java.AbstractJavaUClass
@@ -38,8 +39,14 @@ class KotlinUClass private constructor(
     override val uastAnchor: UElement
         get() = UIdentifier(psi.nameIdentifier, this)
 
-    override val uastNestedClasses: List<UClass> = super.uastNestedClasses.filter {
-        it.name != JvmAbi.DEFAULT_IMPLS_CLASS_NAME
+    override val uastNestedClasses: List<UClass> by lz {
+        // filter DefaultImpls to avoid processing same methods from original interface multiple times
+        // filter Enum entry classes to avoid duplication with PsiEnumConstant initializer class
+        psi.innerClasses.filter {
+            it.name != JvmAbi.DEFAULT_IMPLS_CLASS_NAME && !it.isEnumEntryLightClass()
+        }.map {
+            getLanguagePlugin().convert<UClass>(it, this)
+        }
     }
 
     override val uastMethods: List<UMethod> by lz {
@@ -81,6 +88,8 @@ class KotlinUClass private constructor(
                 .map(::createUMethod)
                 .toList()
     }
+
+    private fun PsiClass.isEnumEntryLightClass() = (this as? KtLightClass)?.kotlinOrigin is KtEnumEntry
 
     companion object {
         fun create(psi: KtLightClass, containingElement: UElement?): UClass {

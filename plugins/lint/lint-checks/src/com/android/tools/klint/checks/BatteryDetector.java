@@ -16,26 +16,12 @@
 
 package com.android.tools.klint.checks;
 
-import static com.android.SdkConstants.ANDROID_URI;
-import static com.android.SdkConstants.ATTR_NAME;
-import static com.android.SdkConstants.TAG_RECEIVER;
-
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.tools.klint.detector.api.Category;
-import com.android.tools.klint.detector.api.Detector;
-import com.android.tools.klint.detector.api.Implementation;
-import com.android.tools.klint.detector.api.Issue;
-import com.android.tools.klint.detector.api.JavaContext;
-import com.android.tools.klint.detector.api.ResourceXmlDetector;
-import com.android.tools.klint.detector.api.Scope;
-import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.XmlContext;
-import com.intellij.psi.JavaElementVisitor;
+import com.android.tools.klint.detector.api.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiField;
-
-import org.jetbrains.uast.expressions.UReferenceExpression;
+import org.jetbrains.uast.UReferenceExpression;
 import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -44,6 +30,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+
+import static com.android.SdkConstants.*;
 
 /**
  * Checks looking for issues that negatively affect battery life

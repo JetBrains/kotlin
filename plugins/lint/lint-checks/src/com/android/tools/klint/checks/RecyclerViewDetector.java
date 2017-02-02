@@ -40,7 +40,6 @@ import com.intellij.psi.PsiParameter;
 import com.intellij.psi.PsiVariable;
 
 import org.jetbrains.uast.*;
-import org.jetbrains.uast.expressions.UReferenceExpression;
 import org.jetbrains.uast.util.UastExpressionUtils;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 

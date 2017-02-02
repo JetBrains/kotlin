@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.psi.KtTryExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.UTryExpression
+import org.jetbrains.uast.UVariable
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUTryExpression(
@@ -31,10 +32,10 @@ class KotlinUTryExpression(
     override val catchClauses by lz { psi.catchClauses.map { KotlinUCatchClause(it, this) } }
     override val finallyClause by lz { psi.finallyBlock?.finalExpression?.let { KotlinConverter.convertExpression(it, this) } }
 
-    override val resources: List<PsiResourceListElement>?
-        get() = null
+    override val resourceVariables: List<UVariable>
+        get() = emptyList()
 
-    override val isResources: Boolean
+    override val hasResources: Boolean
         get() = false
 
     override val tryIdentifier: UIdentifier

@@ -24,10 +24,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
-import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
-import org.jetbrains.kotlin.asJava.elements.KtLightField
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.asJava.elements.KtLightParameter
+import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
@@ -190,6 +187,13 @@ internal object KotlinConverter {
             is KtContainerNode -> element.getExpression()?.let {
                 KotlinConverter.convertExpression(it, parent, requiredType)
             } ?: UastEmptyExpression
+            is KtLightAnnotation.LightExpressionValue<*> -> {
+                val expression = element.originalExpression
+                when (expression) {
+                    is KtExpression -> KotlinConverter.convertExpression(expression, parent, requiredType)
+                    else -> UastEmptyExpression
+                }
+            }
             else -> {
                 if (element is LeafPsiElement && element.elementType == KtTokens.IDENTIFIER) {
                     el<UIdentifier> { UIdentifier(element, parent) }
@@ -207,20 +211,6 @@ internal object KotlinConverter {
         val parentPsiElement = (parent as? PsiElementBacked)?.psi
         val variable = KotlinUVariable.create(UastKotlinPsiVariable.create(psi, parentPsiElement, parent!!), parent)
         return KotlinUDeclarationsExpression(parent).apply { declarations = listOf(variable) }
-    }
-    
-    private fun convertStringTemplateExpression(
-            expression: KtStringTemplateExpression,
-            parent: UElement?,
-            i: Int
-    ): UExpression {
-        return if (i == 1) KotlinStringTemplateUBinaryExpression(expression, parent).apply {
-            leftOperand = convert(expression.entries[0], this)
-            rightOperand = convert(expression.entries[1], this)
-        } else KotlinStringTemplateUBinaryExpression(expression, parent).apply {
-            leftOperand = convertStringTemplateExpression(expression, parent, i - 1)
-            rightOperand = convert(expression.entries[i], this)
-        }
     }
 
     internal fun convert(entry: KtStringTemplateEntry, parent: UElement?): UExpression = when (entry) {
@@ -241,7 +231,7 @@ internal object KotlinConverter {
                 else if (expression.entries.size == 1)
                     convert(expression.entries[0], parent)
                 else
-                    convertStringTemplateExpression(expression, parent, expression.entries.size - 1)
+                    KotlinStringTemplateUPolyadicExpression(expression, parent)
             }
             is KtDestructuringDeclaration -> expr<UDeclarationsExpression> {
                 KotlinUDeclarationsExpression(parent).apply {
