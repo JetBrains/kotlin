@@ -277,9 +277,9 @@ object JvmRuntimeVersionsConsistencyChecker {
         val runtimeComponent = manifest?.mainAttributes?.getValue(KOTLIN_RUNTIME_COMPONENT_ATTRIBUTE)
         return when (runtimeComponent) {
             KOTLIN_RUNTIME_COMPONENT_MAIN ->
-                FileKind.Runtime(manifest.getKotlinLanguageVersion(), isCoreComponent = false)
+                FileKind.Runtime(manifest!!.getKotlinLanguageVersion(), isCoreComponent = false)
             KOTLIN_RUNTIME_COMPONENT_CORE ->
-                FileKind.Runtime(manifest.getKotlinLanguageVersion(), isCoreComponent = true)
+                FileKind.Runtime(manifest!!.getKotlinLanguageVersion(), isCoreComponent = true)
             null -> when {
                 jarRoot.findFileByRelativePath(KOTLIN_STDLIB_MODULE) == null &&
                 jarRoot.findFileByRelativePath(KOTLIN_REFLECT_MODULE) == null -> FileKind.Irrelevant
