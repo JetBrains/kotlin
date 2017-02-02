@@ -87,7 +87,8 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
             val facetSettings = module.kotlinFacetExtension?.settings ?: return defaultArguments
             if (facetSettings.useProjectSettings) return defaultArguments
             val targetPlatform = facetSettings.versionInfo.targetPlatformKind as? TargetPlatformKind.Jvm ?: return defaultArguments
-            return copyBean(defaultArguments).apply {
+            val arguments = facetSettings.compilerInfo.k2jvmCompilerArguments ?: defaultArguments
+            return copyBean(arguments).apply {
                 jvmTarget = targetPlatform.version.description
             }
         }

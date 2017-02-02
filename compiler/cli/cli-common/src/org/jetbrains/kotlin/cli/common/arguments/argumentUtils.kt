@@ -37,16 +37,22 @@ import java.util.*
     }
 }
 
-fun <T : Any> copyBean(bean: T) = copyFields(bean, bean.javaClass.newInstance(), true)
+fun <T : Any> copyBean(bean: T) = copyFields(bean, bean.javaClass.newInstance(), true, collectFieldsToCopy(bean.javaClass, false))
 
 fun <From : Any, To : From> mergeBeans(from: From, to: To): To {
     // TODO: rewrite when updated version of com.intellij.util.xmlb is available on TeamCity
-    return copyFields(from, XmlSerializerUtil.createCopy(to), false)
+    return copyFields(from, XmlSerializerUtil.createCopy(to), false, collectFieldsToCopy(from.javaClass, false))
 }
 
-private fun <From : Any, To : From> copyFields(from: From, to: To, deepCopyWhenNeeded: Boolean = false): To {
-    val fromFields = collectFieldsToCopy(from.javaClass)
-    for (fromField in fromFields) {
+fun <From : Any, To : Any> copyInheritedFields(from: From, to: To) = copyFields(from, to, true, collectFieldsToCopy(from.javaClass, true))
+
+fun <From : Any, To : Any> copyFieldsSatisfying(from: From, to: To, predicate: (Field) -> Boolean) =
+        copyFields(from, to, true, collectFieldsToCopy(from.javaClass, false).filter(predicate))
+
+private fun <From : Any, To : Any> copyFields(from: From, to: To, deepCopyWhenNeeded: Boolean, fieldsToCopy: List<Field>): To {
+    if (from == to) return to
+
+    for (fromField in fieldsToCopy) {
         val toField = to.javaClass.getField(fromField.name)
         val fromValue = fromField.get(from)
         toField.set(to, if (deepCopyWhenNeeded) fromValue?.copyValueIfNeeded() else fromValue)
@@ -83,10 +89,10 @@ private fun Any.copyValueIfNeeded(): Any {
     }
 }
 
-private fun collectFieldsToCopy(clazz: Class<*>): List<Field> {
+private fun collectFieldsToCopy(clazz: Class<*>, inheritedOnly: Boolean): List<Field> {
     val fromFields = ArrayList<Field>()
 
-    var currentClass: Class<*>? = clazz
+    var currentClass: Class<*>? = if (inheritedOnly) clazz.superclass else clazz
     while (currentClass != null) {
         for (field in currentClass.declaredFields) {
             val modifiers = field.modifiers

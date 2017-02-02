@@ -25,11 +25,11 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.util.text.VersionComparatorUtil
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.copyBean
-import org.jetbrains.kotlin.cli.common.arguments.parseArguments
+import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
+import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
@@ -139,6 +139,10 @@ fun KotlinFacetSettings.initializeIfNeeded(module: Module, rootModel: ModuleRoot
         if (k2jsCompilerArguments == null) {
             k2jsCompilerArguments = copyBean(Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings)
         }
+
+        if (k2jvmCompilerArguments == null) {
+            k2jvmCompilerArguments = copyBean(Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings)
+        }
     }
 }
 
@@ -181,38 +185,80 @@ fun KotlinFacet.configureFacet(
     }
 }
 
+// Update these lists when facet/project settings UI changes
+private val commonExposedFields = listOf("languageVersion",
+                                         "apiVersion",
+                                         "suppressWarnings",
+                                         "coroutinesEnable",
+                                         "coroutinesWarn",
+                                         "coroutinesError")
+private val jvmExposedFields = commonExposedFields +
+                               listOf("jvmTarget")
+private val jsExposedFields = commonExposedFields +
+                              listOf("sourceMap",
+                                     "outputPrefix",
+                                     "outputPostfix",
+                                     "moduleKind")
+
+private val CommonCompilerArguments.exposedFields: List<String>
+    get() = when (this) {
+        is K2JVMCompilerArguments -> jvmExposedFields
+        is K2JSCompilerArguments -> jsExposedFields
+        else -> commonExposedFields
+    }
+
 fun parseCompilerArgumentsToFacet(arguments: List<String>, kotlinFacet: KotlinFacet) {
     val argumentArray = arguments.toTypedArray()
+
     with(kotlinFacet.configuration.settings) {
         // todo: merge common arguments with platform-specific ones in facet settings
-        compilerInfo.commonCompilerArguments!!.let { commonCompilerArguments ->
-            val oldCoroutineSupport = CoroutineSupport.byCompilerArguments(commonCompilerArguments)
-            commonCompilerArguments.coroutinesEnable = false
-            commonCompilerArguments.coroutinesWarn = false
-            commonCompilerArguments.coroutinesError = false
 
-            parseArguments(argumentArray, commonCompilerArguments, ignoreInvalidArguments = true)
-            if (!commonCompilerArguments.coroutinesEnable && !commonCompilerArguments.coroutinesWarn && !commonCompilerArguments.coroutinesError) {
-                compilerInfo.coroutineSupport = oldCoroutineSupport
-            }
+        val commonCompilerArguments = compilerInfo.commonCompilerArguments!!
+        val compilerArguments = when (versionInfo.targetPlatformKind) {
+            is TargetPlatformKind.Jvm -> compilerInfo.k2jvmCompilerArguments
+            is TargetPlatformKind.JavaScript -> compilerInfo.k2jsCompilerArguments
+            else -> commonCompilerArguments
+        }!!
 
-            versionInfo.apiLevel = LanguageVersion.fromVersionString(commonCompilerArguments.apiVersion)
-            versionInfo.languageLevel = LanguageVersion.fromVersionString(commonCompilerArguments.languageVersion)
+        val oldCoroutineSupport = CoroutineSupport.byCompilerArguments(commonCompilerArguments)
+        commonCompilerArguments.coroutinesEnable = false
+        commonCompilerArguments.coroutinesWarn = false
+        commonCompilerArguments.coroutinesError = false
+
+        parseArguments(argumentArray, compilerArguments, true)
+
+        if (!compilerArguments.coroutinesEnable && !compilerArguments.coroutinesWarn && !compilerArguments.coroutinesError) {
+            compilerInfo.coroutineSupport = oldCoroutineSupport
         }
 
-        when (versionInfo.targetPlatformKind) {
-            is TargetPlatformKind.Jvm -> {
-                val jvmTarget = K2JVMCompilerArguments().apply { parseArguments(argumentArray, this, ignoreInvalidArguments = true) }.jvmTarget
-                if (jvmTarget != null) {
-                    versionInfo.targetPlatformKind = TargetPlatformKind.Jvm.JVM_PLATFORMS.firstOrNull {
-                        VersionComparatorUtil.compare(it.version.description, jvmTarget) >= 0
-                    } ?: TargetPlatformKind.Jvm.JVM_PLATFORMS.last()
-                }
+        versionInfo.apiLevel = LanguageVersion.fromVersionString(compilerArguments.apiVersion)
+        versionInfo.languageLevel = LanguageVersion.fromVersionString(compilerArguments.languageVersion)
+
+        if (versionInfo.targetPlatformKind is TargetPlatformKind.Jvm) {
+            val jvmTarget = compilerInfo.k2jvmCompilerArguments!!.jvmTarget
+            if (jvmTarget != null) {
+                versionInfo.targetPlatformKind = TargetPlatformKind.Jvm.JVM_PLATFORMS.firstOrNull {
+                    VersionComparatorUtil.compare(it.version.description, jvmTarget) >= 0
+                } ?: TargetPlatformKind.Jvm.JVM_PLATFORMS.last()
             }
-            is TargetPlatformKind.JavaScript -> parseArguments(argumentArray, compilerInfo.k2jsCompilerArguments!!, ignoreInvalidArguments = true)
-            else -> {}
         }
 
-        compilerInfo.compilerSettings!!.additionalArguments = compilerInfo.commonCompilerArguments!!.freeArgs.joinToString(separator = " ")
+        // Retain only fields exposed in facet configuration editor.
+        // The rest is combined into string and stored in CompilerSettings.additionalArguments
+
+        val exposedFields = compilerArguments.exposedFields
+
+        val additionalArgumentsString = with(compilerArguments.javaClass.newInstance()) {
+            copyFieldsSatisfying(compilerArguments, this) { it.name !in exposedFields }
+            ArgumentUtils.convertArgumentsToStringList(this).joinToString(separator = " ")
+        }
+        compilerInfo.compilerSettings!!.additionalArguments =
+                if (additionalArgumentsString.isNotEmpty()) additionalArgumentsString else CompilerSettings.DEFAULT_ADDITIONAL_ARGUMENTS
+
+        with(compilerArguments.javaClass.newInstance()) {
+            copyFieldsSatisfying(this, compilerArguments) { it.name !in exposedFields }
+        }
+
+        copyInheritedFields(compilerArguments, commonCompilerArguments)
     }
 }
