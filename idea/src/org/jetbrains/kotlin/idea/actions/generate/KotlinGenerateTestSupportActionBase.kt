@@ -164,15 +164,16 @@ abstract class KotlinGenerateTestSupportActionBase(
             templateText = fileTemplate.text.replace(NAME_VAR, DUMMY_NAME)
         }
 
-        project.executeWriteCommand(commandName) {
-            try {
+        try {
+            var errorHint: String? = null
+            project.executeWriteCommand(commandName) {
                 PsiDocumentManager.getInstance(project).commitAllDocuments()
 
                 val factory = PsiElementFactory.SERVICE.getInstance(project)
                 val psiMethod = factory.createMethodFromText(templateText, null)
                 psiMethod.throwsList.referenceElements.forEach { it.delete() }
                 var function = psiMethod.j2k() as? KtNamedFunction ?: run {
-                    HintManager.getInstance().showErrorHint(editor, "Couldn't convert Java template to Kotlin")
+                    errorHint = "Couldn't convert Java template to Kotlin"
                     return@executeWriteCommand
                 }
                 name?.let {
@@ -196,9 +197,10 @@ abstract class KotlinGenerateTestSupportActionBase(
 
                 setupEditorSelection(editor, functionInPlace)
             }
-            catch (e: IncorrectOperationException) {
-                HintManager.getInstance().showErrorHint(editor, "Cannot generate method: " + e.message)
-            }
+            errorHint?.let { HintManager.getInstance().showErrorHint(editor, it) }
+        }
+        catch (e: IncorrectOperationException) {
+            HintManager.getInstance().showErrorHint(editor, "Cannot generate method: " + e.message)
         }
     }
 
