@@ -1983,6 +1983,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("constructorOfNestedClassInObject.kt")
+                public void testConstructorOfNestedClassInObject() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/constructorOfNestedClassInObject.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("differentPackageClass.kt")
                 public void testDifferentPackageClass() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/differentPackageClass.kt");
