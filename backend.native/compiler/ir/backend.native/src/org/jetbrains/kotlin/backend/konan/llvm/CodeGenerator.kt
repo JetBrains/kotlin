@@ -20,6 +20,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     var returnSlot: LLVMValueRef? = null
     var slotsPhi: LLVMValueRef? = null
     var slotCount = 0
+    var functionDescriptor: FunctionDescriptor? = null
 
     fun prologue(descriptor: FunctionDescriptor) {
         prologue(llvmFunction(descriptor),
@@ -27,6 +28,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         if (descriptor is ConstructorDescriptor) {
             constructedClass = descriptor.constructedClass
         }
+        functionDescriptor = descriptor
     }
 
     fun prologue(function:LLVMValueRef, returnType:LLVMTypeRef) {
