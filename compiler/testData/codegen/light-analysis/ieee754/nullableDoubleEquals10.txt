@@ -1,0 +1,8 @@
+@kotlin.Metadata
+public final class NullableDoubleEquals10Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method myEquals(@org.jetbrains.annotations.Nullable p0: java.lang.Double, @org.jetbrains.annotations.Nullable p1: java.lang.Double): boolean
+    public final static method myEquals0(p0: double, p1: double): boolean
+    public final static method myEquals1(@org.jetbrains.annotations.Nullable p0: java.lang.Double, p1: double): boolean
+    public final static method myEquals2(p0: double, @org.jetbrains.annotations.Nullable p1: java.lang.Double): boolean
+}

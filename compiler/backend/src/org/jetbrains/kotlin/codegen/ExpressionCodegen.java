@@ -50,6 +50,8 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
+import org.jetbrains.kotlin.config.ApiVersion;
+import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
@@ -142,6 +144,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     private int myLastLineNumber = -1;
     private boolean shouldMarkLineNumbers = true;
     private int finallyDepth = 0;
+
+    private static final ApiVersion apiVersion1_1 = ApiVersion.createByLanguageVersion(LanguageVersion.KOTLIN_1_1);
 
     public ExpressionCodegen(
             @NotNull MethodVisitor mv,
@@ -3646,15 +3650,27 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         final TypeAndNullability left754Type = calcTypeForIEEE754ArithmeticIfNeeded(left);
         final TypeAndNullability right754Type = calcTypeForIEEE754ArithmeticIfNeeded(right);
         if (left754Type != null && right754Type != null && left754Type.type.equals(right754Type.type)) {
+            //check nullability cause there is some optimizations in codegen for non-nullable case
             if (left754Type.isNullable || right754Type.isNullable) {
-                //check nullability cause there is some optimizations in codegen for non-nullable case
-                return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
-                    @Override
-                    public Unit invoke(InstructionAdapter v) {
-                        generate754EqualsForNullableTypes(v, opToken, pregeneratedLeft, left, left754Type, right, right754Type);
-                        return Unit.INSTANCE;
-                    }
-                });
+                if (state.getLanguageVersionSettings().getLanguageVersion() != LanguageVersion.KOTLIN_1_0 &&
+                    state.getLanguageVersionSettings().getApiVersion().compareTo(apiVersion1_1) >= 0) {
+                    return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
+                        @Override
+                        public Unit invoke(InstructionAdapter v) {
+                            generate754EqualsForNullableTypesViaIntrinsic(v, opToken, pregeneratedLeft, left, left754Type, right, right754Type);
+                            return Unit.INSTANCE;
+                        }
+                    });
+                }
+                else {
+                    return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
+                        @Override
+                        public Unit invoke(InstructionAdapter v) {
+                            generate754EqualsForNullableTypes(v, opToken, pregeneratedLeft, left, left754Type, right, right754Type);
+                            return Unit.INSTANCE;
+                        }
+                    });
+                }
             }
             else {
                 leftType = left754Type.type;
@@ -3667,6 +3683,33 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 pregeneratedLeft != null ? StackValue.coercion(pregeneratedLeft, leftType) : genLazy(left, leftType),
                 genLazy(right, rightType)
         );
+    }
+
+    private void generate754EqualsForNullableTypesViaIntrinsic(
+            @NotNull InstructionAdapter v,
+            @NotNull IElementType opToken,
+            @Nullable StackValue pregeneratedLeft,
+            @Nullable KtExpression left,
+            @NotNull TypeAndNullability left754Type,
+            @Nullable KtExpression right,
+            @NotNull TypeAndNullability right754Type
+    ) {
+        Type leftType = left754Type.isNullable ? AsmUtil.boxType(left754Type.type) : left754Type.type;
+
+        if (pregeneratedLeft != null)  {
+            StackValue.coercion(pregeneratedLeft, leftType).put(leftType, v);
+        }
+        else {
+            gen(left, leftType);
+        }
+        Type rightType = right754Type.isNullable ? AsmUtil.boxType(right754Type.type) : right754Type.type;
+        gen(right, rightType);
+
+        AsmUtil.genIEEE754EqualForNullableTypesCall(v, leftType, rightType);
+
+        if (opToken == KtTokens.EXCLEQ) {
+            genInvertBoolean(v);
+        }
     }
 
     private void generate754EqualsForNullableTypes(

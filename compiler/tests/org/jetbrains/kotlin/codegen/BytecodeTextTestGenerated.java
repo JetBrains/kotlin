@@ -1116,6 +1116,111 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeText/ieee754")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Ieee754 extends AbstractBytecodeTextTest {
+        public void testAllFilesPresentInIeee754() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/ieee754"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("nullableDoubleEquals.kt")
+        public void testNullableDoubleEquals() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ieee754/nullableDoubleEquals.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableDoubleEquals10.kt")
+        public void testNullableDoubleEquals10() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ieee754/nullableDoubleEquals10.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableDoubleNotEquals.kt")
+        public void testNullableDoubleNotEquals() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ieee754/nullableDoubleNotEquals.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableDoubleNotEquals10.kt")
+        public void testNullableDoubleNotEquals10() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ieee754/nullableDoubleNotEquals10.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableFloatEquals.kt")
+        public void testNullableFloatEquals() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ieee754/nullableFloatEquals.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableFloatEquals10.kt")
+        public void testNullableFloatEquals10() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ieee754/nullableFloatEquals10.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableFloatNotEquals.kt")
+        public void testNullableFloatNotEquals() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ieee754/nullableFloatNotEquals.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullableFloatNotEquals10.kt")
+        public void testNullableFloatNotEquals10() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ieee754/nullableFloatNotEquals10.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("smartCastsForDouble.kt")
+        public void testSmartCastsForDouble() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ieee754/smartCastsForDouble.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("smartCastsForDouble10.kt")
+        public void testSmartCastsForDouble10() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ieee754/smartCastsForDouble10.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("smartCastsForFloat.kt")
+        public void testSmartCastsForFloat() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ieee754/smartCastsForFloat.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("smartCastsForFloat10.kt")
+        public void testSmartCastsForFloat10() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ieee754/smartCastsForFloat10.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("when.kt")
+        public void testWhen() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ieee754/when.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("when10.kt")
+        public void testWhen10() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ieee754/when10.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("whenNullableSmartCast.kt")
+        public void testWhenNullableSmartCast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ieee754/whenNullableSmartCast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("whenNullableSmartCast10.kt")
+        public void testWhenNullableSmartCast10() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/ieee754/whenNullableSmartCast10.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeText/inline")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
