@@ -77,11 +77,13 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
             put(EXECUTABLE_FILE, 
                 arguments.outputFile ?: "program.kexe")
-            put(RUNTIME_FILE, 
-                arguments.runtimeFile ?: Distribution.runtime)
-            put(PROPERTY_FILE, 
-                arguments.propertyFile ?: Distribution.propertyFile)
-
+            if (arguments.runtimeFile != null) 
+                put(RUNTIME_FILE, arguments.runtimeFile)
+            if (arguments.propertyFile != null) 
+                put(PROPERTY_FILE, arguments.propertyFile)
+            if (arguments.target != null) 
+                put(TARGET, arguments.target)
+            put(LIST_TARGETS, arguments.listTargets)
             put(OPTIMIZATION, arguments.optimization)
 
             put(PRINT_IR, arguments.printIr)

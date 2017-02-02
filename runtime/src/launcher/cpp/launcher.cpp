@@ -8,13 +8,13 @@
 
 OBJ_GETTER(setupArgs, int argc, char** argv) {
   // The count is one less, because we skip argv[0] which is the binary name.
-  AllocArrayInstance(theArrayTypeInfo, SCOPE_GLOBAL, argc - 1, OBJ_RESULT);
-  ArrayHeader* array = (*OBJ_RESULT)->array();
+  ObjHeader* result = AllocArrayInstance(theArrayTypeInfo, argc - 1, OBJ_RESULT);
+  ArrayHeader* array = result->array();
   for (int index = 1; index < argc; index++) {
-    AllocStringInstance(SCOPE_GLOBAL, argv[index], strlen(argv[index]),
+    AllocStringInstance(argv[index], strlen(argv[index]),
                         ArrayAddressOfElementAt(array, index - 1));
   }
-  RETURN_OBJ_RESULT();
+  return result;
 }
 
 //--- main --------------------------------------------------------------------//

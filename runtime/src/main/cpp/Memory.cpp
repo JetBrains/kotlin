@@ -21,10 +21,15 @@
 #define TRACE_GC_PHASES 0
 
 ContainerHeader ObjHeader::theStaticObjectsContainer = {
-  CONTAINER_TAG_NOCOUNT | CONTAINER_TAG_INCREMENT
+  CONTAINER_TAG_PERMANENT | CONTAINER_TAG_INCREMENT
 };
 
 namespace {
+
+// Granularity of arena container chunks.
+constexpr container_size_t kContainerAlignment = 1024;
+// Single object alignment.
+constexpr container_size_t kObjectAlignment = 8;
 
 #if USE_GC
 // Collection threshold default (collect after having so many elements in the
@@ -63,10 +68,38 @@ struct MemoryState {
 
 MemoryState* memoryState = nullptr;
 
-#if USE_GC
-bool isPermanent(const ContainerHeader* header) {
-  return (header->ref_count_ & CONTAINER_TAG_MASK) == CONTAINER_TAG_NOCOUNT;
+// TODO: use those allocators for STL containers as well.
+template <typename T>
+inline T* allocMemory(container_size_t size) {
+  return reinterpret_cast<T*>(calloc(1, size));
 }
+
+inline void freeMemory(void* memory) {
+  free(memory);
+}
+
+inline bool isFreeable(const ContainerHeader* header) {
+  return (header->refCount_ & CONTAINER_TAG_MASK) < CONTAINER_TAG_PERMANENT;
+}
+
+inline bool isPermanent(const ContainerHeader* header) {
+  return (header->refCount_ & CONTAINER_TAG_MASK) == CONTAINER_TAG_PERMANENT;
+}
+
+inline container_size_t alignUp(container_size_t size, int alignment) {
+  return (size + alignment - 1) & ~(alignment - 1);
+}
+
+inline bool isArenaSlot(ObjHeader** slot) {
+  return (reinterpret_cast<uintptr_t>(slot) & ARENA_BIT) != 0;
+}
+
+inline ObjHeader** asArenaSlot(ObjHeader** slot) {
+  return reinterpret_cast<ObjHeader**>(
+      reinterpret_cast<uintptr_t>(slot) & ~ARENA_BIT);
+}
+
+#if USE_GC
 
 // Must be vector or map 'container -> number', to keep reference counters correct.
 ContainerHeaderList collectMutableReferred(ContainerHeader* header) {
@@ -98,8 +131,8 @@ ContainerHeaderList collectMutableReferred(ContainerHeader* header) {
 void dumpWorker(const char* prefix, ContainerHeader* header, ContainerHeaderSet* seen) {
   fprintf(stderr, "%s: %p (%08x): %d refs %s\n",
           prefix,
-          header, header->ref_count_, header->ref_count_ >> CONTAINER_TAG_SHIFT,
-          (header->ref_count_ & CONTAINER_TAG_SEEN) != 0 ? "X" : "-");
+          header, header->refCount_, header->refCount_ >> CONTAINER_TAG_SHIFT,
+          (header->refCount_ & CONTAINER_TAG_SEEN) != 0 ? "X" : "-");
   seen->insert(header);
   auto children = collectMutableReferred(header);
   for (auto child : children) {
@@ -117,22 +150,22 @@ void dumpReachable(const char* prefix, const ContainerHeaderSet* roots) {
 }
 
 void phase1(ContainerHeader* header) {
-  if ((header->ref_count_ & CONTAINER_TAG_SEEN) != 0)
+  if ((header->refCount_ & CONTAINER_TAG_SEEN) != 0)
     return;
-  header->ref_count_ |= CONTAINER_TAG_SEEN;
+  header->refCount_ |= CONTAINER_TAG_SEEN;
   auto containers = collectMutableReferred(header);
   for (auto container : containers) {
-      container->ref_count_ -= CONTAINER_TAG_INCREMENT;
+      container->refCount_ -= CONTAINER_TAG_INCREMENT;
       phase1(container);
   }
 }
 
 void phase2(ContainerHeader* header, ContainerHeaderSet* rootset) {
-  if ((header->ref_count_ & CONTAINER_TAG_SEEN) == 0)
+  if ((header->refCount_ & CONTAINER_TAG_SEEN) == 0)
     return;
-  if ((header->ref_count_ >> CONTAINER_TAG_SHIFT) != 0)
+  if ((header->refCount_ >> CONTAINER_TAG_SHIFT) != 0)
     rootset->insert(header);
-  header->ref_count_ &= ~CONTAINER_TAG_SEEN;
+  header->refCount_ &= ~CONTAINER_TAG_SEEN;
   auto containers = collectMutableReferred(header);
   for (auto container : containers) {
     phase2(container, rootset);
@@ -140,32 +173,32 @@ void phase2(ContainerHeader* header, ContainerHeaderSet* rootset) {
 }
 
 void phase3(ContainerHeader* header) {
-  if ((header->ref_count_ & CONTAINER_TAG_SEEN) != 0) {
+  if ((header->refCount_ & CONTAINER_TAG_SEEN) != 0) {
     return;
   }
-  header->ref_count_ |= CONTAINER_TAG_SEEN;
+  header->refCount_ |= CONTAINER_TAG_SEEN;
   auto containers = collectMutableReferred(header);
   for (auto container : containers) {
-    container->ref_count_ += CONTAINER_TAG_INCREMENT;
+    container->refCount_ += CONTAINER_TAG_INCREMENT;
     phase3(container);
   }
 }
 
 void phase4(ContainerHeader* header, ContainerHeaderSet* toRemove) {
-  auto ref_count = header->ref_count_ >> CONTAINER_TAG_SHIFT;
-  bool seen = (ref_count > 0 && (header->ref_count_ & CONTAINER_TAG_SEEN) == 0) ||
-      (ref_count == 0 && (header->ref_count_ & CONTAINER_TAG_SEEN) != 0);
+  auto refCount = header->refCount_ >> CONTAINER_TAG_SHIFT;
+  bool seen = (refCount > 0 && (header->refCount_ & CONTAINER_TAG_SEEN) == 0) ||
+      (refCount == 0 && (header->refCount_ & CONTAINER_TAG_SEEN) != 0);
   if (seen) return;
 
   // Add to toRemove set.
-  if (ref_count == 0)
+  if (refCount == 0)
     toRemove->insert(header);
 
   // Update seen bit.
-  if (ref_count == 0)
-    header->ref_count_ |= CONTAINER_TAG_SEEN;
+  if (refCount == 0)
+    header->refCount_ |= CONTAINER_TAG_SEEN;
   else
-    header->ref_count_ &= ~CONTAINER_TAG_SEEN;
+    header->refCount_ &= ~CONTAINER_TAG_SEEN;
   auto containers = collectMutableReferred(header);
   for (auto container : containers) {
     phase4(container, toRemove);
@@ -174,83 +207,104 @@ void phase4(ContainerHeader* header, ContainerHeaderSet* toRemove) {
 
 #endif // USE_GC
 
+// We use first slot as place to store frame-local arena container.
+// TODO: create ArenaContainer object on the stack, so that we don't
+// do two allocations per frame (ArenaContainer + actual container).
+inline ArenaContainer* initedArena(ObjHeader** auxSlot) {
+  ObjHeader* slotValue = *auxSlot;
+  if (slotValue) return reinterpret_cast<ArenaContainer*>(slotValue);
+  ArenaContainer* arena = allocMemory<ArenaContainer>(sizeof(ArenaContainer));
+  arena->Init();
+  *auxSlot = reinterpret_cast<ObjHeader*>(arena);
+  return arena;
+}
+
+// TODO: shall we do padding for alignment?
+inline container_size_t objectSize(const ObjHeader* obj) {
+  const TypeInfo* type_info = obj->type_info();
+  container_size_t size = type_info->instanceSize_ < 0 ?
+      // An array.
+      ArrayDataSizeBytes(obj->array()) + sizeof(ArrayHeader)
+      :
+      type_info->instanceSize_ + sizeof(ObjHeader);
+  return alignUp(size, kObjectAlignment);
+}
+
 }  // namespace
 
 ContainerHeader* AllocContainer(size_t size) {
-  ContainerHeader* result = reinterpret_cast<ContainerHeader*>(calloc(1, size));
+  ContainerHeader* result = allocMemory<ContainerHeader>(size);
 #if TRACE_MEMORY
-  fprintf(stderr, ">>> alloc %d -> %p\n", (int)size, result);
-   memoryState->containers->insert(result);
+  fprintf(stderr, ">>> alloc %d -> %p\n", static_cast<int>(size), result);
+  memoryState->containers->insert(result);
 #endif
   // TODO: atomic increment in concurrent case.
   memoryState->allocCount++;
   return result;
 }
 
+
+
 void FreeContainer(ContainerHeader* header) {
   RuntimeAssert(!isPermanent(header), "this kind of container shalln't be freed");
 #if TRACE_MEMORY
-  fprintf(stderr, "<<< free %p\n", header);
-  memoryState->containers->erase(header);
+  if (isFreeable(header)) {
+    fprintf(stderr, "<<< free %p\n", header);
+    memoryState->containers->erase(header);
+  }
 #endif
-  header->ref_count_ = CONTAINER_TAG_INVALID;
+
 #if USE_GC
-  if (memoryState->toFree)
+  if (memoryState->toFree && isFreeable(header))
     memoryState->toFree->erase(header);
 #endif
   // Now let's clean all object's fields in this container.
-  // TODO: this is gross hack, relying on the fact that we now only alloc
-  // ArenaContainer and ObjectContainer, which both have single element.
   ObjHeader* obj = reinterpret_cast<ObjHeader*>(header + 1);
-  const TypeInfo* typeInfo = obj->type_info();
 
-  // We use *local* versions as no other threads could see dead objects.
-  for (int index = 0; index < typeInfo->objOffsetsCount_; index++) {
-    ObjHeader** location = reinterpret_cast<ObjHeader**>(
-        reinterpret_cast<uintptr_t>(obj + 1) + typeInfo->objOffsets_[index]);
-    UpdateLocalRef(location, nullptr);
-  }
-  // Object arrays are *special*.
-  if (typeInfo == theArrayTypeInfo) {
-    ArrayHeader* array = obj->array();
-    ReleaseLocalRefs(ArrayAddressOfElementAt(array, 0), array->count_);
+  for (int index = 0; index < header->objectCount_; index++) {
+    const TypeInfo* typeInfo = obj->type_info();
+
+    // We use *local* versions as no other threads could see dead objects.
+    for (int index = 0; index < typeInfo->objOffsetsCount_; index++) {
+      ObjHeader** location = reinterpret_cast<ObjHeader**>(
+          reinterpret_cast<uintptr_t>(obj + 1) + typeInfo->objOffsets_[index]);
+      UpdateLocalRef(location, nullptr);
+    }
+    // Object arrays are *special*.
+    if (typeInfo == theArrayTypeInfo) {
+      ArrayHeader* array = obj->array();
+      ReleaseLocalRefs(ArrayAddressOfElementAt(array, 0), array->count_);
+    }
+    obj = reinterpret_cast<ObjHeader*>(
+      reinterpret_cast<uintptr_t>(obj) + objectSize(obj));
   }
 
   // And release underlying memory.
-  // TODO: atomic decrement in concurrent case.
+  if (isFreeable(header)) {
+    // TODO: atomic decrement in concurrent case.
 #if CONCURRENT
-  #error "Atomic update of allocCount"
+    #error "Atomic update of allocCount"
 #endif
-  memoryState->allocCount--;
-  free(header);
+    memoryState->allocCount--;
+    freeMemory(header);
+  }
 }
 
 #if USE_GC
 void FreeContainerNoRef(ContainerHeader* header) {
-  RuntimeAssert(!isPermanent(header), "this kind of container shalln't be freed");
+  RuntimeAssert(isFreeable(header), "this kind of container shalln't be freed");
 #if TRACE_MEMORY
   fprintf(stderr, "<<< free %p\n", header);
   memoryState->containers->erase(header);
 #endif
-  header->ref_count_ = CONTAINER_TAG_INVALID;
 #if USE_GC
   if (memoryState->toFree)
     memoryState->toFree->erase(header);
 #endif
   memoryState->allocCount--;
-  free(header);
+  freeMemory(header);
 }
 #endif
-
-ArenaContainer::ArenaContainer(uint32_t size) {
-    ArenaContainerHeader* header =
-        static_cast<ArenaContainerHeader*>(AllocContainer(size + sizeof(ArenaContainerHeader)));
-    header_ = header;
-    // header->ref_count_ is zero initialized by AllocContainer().
-    header->current_ =
-        reinterpret_cast<uint8_t*>(header_) + sizeof(ArenaContainerHeader);
-    header->end_ = header->current_ + size;
-}
 
 void ObjectContainer::Init(const TypeInfo* type_info) {
   RuntimeAssert(type_info->instanceSize_ >= 0, "Must be an object");
@@ -258,7 +312,9 @@ void ObjectContainer::Init(const TypeInfo* type_info) {
       sizeof(ContainerHeader) + sizeof(ObjHeader) + type_info->instanceSize_;
   header_ = AllocContainer(alloc_size);
   if (header_) {
-     // header->ref_count_ is zero initialized by AllocContainer().
+    // One object in this container.
+    header_->objectCount_ = 1;
+     // header->refCount_ is zero initialized by AllocContainer().
     SetMeta(GetPlace(), type_info);
 #if TRACE_MEMORY
     fprintf(stderr, "object at %p\n", GetPlace());
@@ -274,7 +330,9 @@ void ArrayContainer::Init(const TypeInfo* type_info, uint32_t elements) {
   header_ = AllocContainer(alloc_size);
   RuntimeAssert(header_ != nullptr, "Cannot alloc memory");
   if (header_) {
-    // header->ref_count_ is zero initialized by AllocContainer().
+    // One object in this container.
+    header_->objectCount_ = 1;
+    // header->refCount_ is zero initialized by AllocContainer().
     GetPlace()->count_ = elements;
     SetMeta(GetPlace()->obj(), type_info);
 #if TRACE_MEMORY
@@ -283,25 +341,74 @@ void ArrayContainer::Init(const TypeInfo* type_info, uint32_t elements) {
   }
 }
 
-ObjHeader* ArenaContainer::PlaceObject(const TypeInfo* type_info) {
-  RuntimeAssert(type_info->instanceSize_ >= 0, "must be an object");
-  uint32_t size = type_info->instanceSize_ + sizeof(ObjHeader);
-  ObjHeader* result = reinterpret_cast<ObjHeader*>(Place(size));
-  if (!result) {
-      return nullptr;
+void ArenaContainer::Init() {
+  allocContainer(1024);
+}
+
+void ArenaContainer::Deinit() {
+  auto chunk = currentChunk_;
+  while (chunk != nullptr) {
+    auto toRemove = chunk;
+    // FreeContainer() doesn't release memory when CONTAINER_TAG_STACK is set.
+    FreeContainer(chunk->asHeader());
+    chunk = chunk->next;
+    freeMemory(toRemove);
   }
-  SetMeta(result, type_info);
+}
+
+bool ArenaContainer::allocContainer(container_size_t minSize) {
+  auto size = minSize + sizeof(ContainerHeader) + sizeof(ContainerChunk);
+  size = alignUp(size, kContainerAlignment);
+  // TODO: keep simple cache of container chunks.
+  ContainerChunk* result = allocMemory<ContainerChunk>(size);
+  RuntimeAssert(result != nullptr, "Cannot alloc memory");
+  if (result == nullptr) return false;
+  result->next = currentChunk_;
+  result->asHeader()->refCount_ = (CONTAINER_TAG_STACK | CONTAINER_TAG_INCREMENT);
+  currentChunk_ = result;
+  current_ = reinterpret_cast<uint8_t*>(result->asHeader() + 1);
+  end_ = reinterpret_cast<uint8_t*>(result) + size;
+  return true;
+}
+
+void* ArenaContainer::place(container_size_t size) {
+  size = alignUp(size, kObjectAlignment);
+  // Fast path.
+  if (current_ + size < end_) {
+    void* result = current_;
+    current_ += size;
+    return result;
+  }
+  if (!allocContainer(size)) {
+    return nullptr;
+  }
+  void* result = current_;
+  current_ += size;
+  RuntimeAssert(current_ <= end_, "Must not overflow");
   return result;
 }
 
-ArrayHeader* ArenaContainer::PlaceArray(const TypeInfo* type_info, int count) {
+ObjHeader* ArenaContainer::PlaceObject(const TypeInfo* type_info) {
+  RuntimeAssert(type_info->instanceSize_ >= 0, "must be an object");
+  uint32_t size = type_info->instanceSize_ + sizeof(ObjHeader);
+  ObjHeader* result = reinterpret_cast<ObjHeader*>(place(size));
+  if (!result) {
+      return nullptr;
+  }
+  currentChunk_->asHeader()->objectCount_++;
+  setMeta(result, type_info);
+  return result;
+}
+
+ArrayHeader* ArenaContainer::PlaceArray(const TypeInfo* type_info, uint32_t count) {
   RuntimeAssert(type_info->instanceSize_ < 0, "must be an array");
-  uint32_t size = sizeof(ArrayHeader) - type_info->instanceSize_ * count;
-  ArrayHeader* result = reinterpret_cast<ArrayHeader*>(Place(size));
+  container_size_t size = sizeof(ArrayHeader) - type_info->instanceSize_ * count;
+  ArrayHeader* result = reinterpret_cast<ArrayHeader*>(place(size));
   if (!result) {
     return nullptr;
   }
-  SetMeta(result->obj(), type_info);
+  currentChunk_->asHeader()->objectCount_++;
+  setMeta(result->obj(), type_info);
   result->count_ = count;
   return result;
 }
@@ -384,6 +491,8 @@ void DeinitMemory() {
 
 #if USE_GC
   GarbageCollect();
+  delete memoryState->toFree;
+  memoryState->toFree = nullptr;
 #endif // USE_GC
 
   if (memoryState->allocCount > 0) {
@@ -399,20 +508,33 @@ void DeinitMemory() {
   memoryState = nullptr;
 }
 
-// Now we ignore all placement hints and always allocate heap space for new object.
-OBJ_GETTER(AllocInstance, const TypeInfo* type_info, PlacementHint hint) {
+OBJ_GETTER(AllocInstance, const TypeInfo* type_info) {
   RuntimeAssert(type_info->instanceSize_ >= 0, "must be an object");
+  if (isArenaSlot(OBJ_RESULT)) {
+    auto arena = initedArena(asArenaSlot(OBJ_RESULT));
+    auto result = arena->PlaceObject(type_info);
+#if TRACE_MEMORY
+    fprintf(stderr, "instace %p in arena: %p\n", result, arena);
+#endif
+    return result;
+  }
   RETURN_OBJ(ObjectContainer(type_info).GetPlace());
 }
 
-OBJ_GETTER(AllocArrayInstance,
-           const TypeInfo* type_info, PlacementHint hint, uint32_t elements) {
+OBJ_GETTER(AllocArrayInstance, const TypeInfo* type_info, uint32_t elements) {
   RuntimeAssert(type_info->instanceSize_ < 0, "must be an array");
+  if (isArenaSlot(OBJ_RESULT)) {
+    auto arena = initedArena(asArenaSlot(OBJ_RESULT));
+    auto result = arena->PlaceArray(type_info, elements)->obj();
+#if TRACE_MEMORY
+    fprintf(stderr, "array[%d] %p in arena: %p\n", elements, result, arena);
+#endif
+    return result;
+  }
   RETURN_OBJ(ArrayContainer(type_info, elements).GetPlace()->obj());
 }
 
-OBJ_GETTER(AllocStringInstance,
-  PlacementHint hint, const char* data, uint32_t length) {
+OBJ_GETTER(AllocStringInstance, const char* data, uint32_t length) {
   ArrayHeader* array = ArrayContainer(theStringTypeInfo, length).GetPlace();
   memcpy(
       ByteArrayAddressOfElementAt(array, 0),
@@ -422,8 +544,7 @@ OBJ_GETTER(AllocStringInstance,
 }
 
 OBJ_GETTER(InitInstance,
-    ObjHeader** location, const TypeInfo* type_info, PlacementHint hint,
-    void (*ctor)(ObjHeader*)) {
+    ObjHeader** location, const TypeInfo* type_info, void (*ctor)(ObjHeader*)) {
   ObjHeader* sentinel = reinterpret_cast<ObjHeader*>(1);
   ObjHeader* value;
   // Wait until other initializers.
@@ -438,22 +559,21 @@ OBJ_GETTER(InitInstance,
     RETURN_OBJ(value);
   }
 
-  AllocInstance(type_info, hint, OBJ_RESULT);
-  ObjHeader* object = *OBJ_RESULT;
+  ObjHeader* object = AllocInstance(type_info, OBJ_RESULT);
+  UpdateGlobalRef(location, object);
   try {
     ctor(object);
-    UpdateGlobalRef(location, object);
 #if CONCURRENT
     // TODO: locking or smth lock-free in MT case?
 #endif
 #if TRACE_MEMORY
     memoryState->globalObjects->push_back(location);
 #endif
-    RETURN_OBJ_RESULT();
+    return object;
   } catch (...) {
     UpdateLocalRef(OBJ_RESULT, nullptr);
     UpdateGlobalRef(location, nullptr);
-    RETURN_OBJ(nullptr);
+    throw;
   }
 }
 
@@ -480,7 +600,25 @@ void SetGlobalRef(ObjHeader** location, const ObjHeader* object) {
 #endif
 }
 
+void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
+  if (isArenaSlot(returnSlot)) return;
+  ObjHeader* old = *returnSlot;
+#if TRACE_MEMORY
+  fprintf(stderr, "UpdateReturnRef *%p: %p -> %p\n", returnSlot, old, object);
+#endif
+  if (old != object) {
+    if (object != nullptr) {
+      AddRef(object);
+    }
+    *const_cast<const ObjHeader**>(returnSlot) = object;
+    if (old > reinterpret_cast<ObjHeader*>(1)) {
+      ReleaseRef(old);
+    }
+  }
+}
+
 void UpdateLocalRef(ObjHeader** location, const ObjHeader* object) {
+  RuntimeAssert(!isArenaSlot(location), "must not be a slot");
   ObjHeader* old = *location;
 #if TRACE_MEMORY
   fprintf(stderr, "UpdateLocalRef *%p: %p -> %p\n", location, old, object);
@@ -497,6 +635,7 @@ void UpdateLocalRef(ObjHeader** location, const ObjHeader* object) {
 }
 
 void UpdateGlobalRef(ObjHeader** location, const ObjHeader* object) {
+  RuntimeAssert(!isArenaSlot(location), "Must not be an arena");
 #if CONCURRENT
   ObjHeader* old = *location;
 #if TRACE_MEMORY
@@ -521,6 +660,21 @@ void UpdateGlobalRef(ObjHeader** location, const ObjHeader* object) {
 #else
   UpdateLocalRef(location, object);
 #endif
+}
+
+void LeaveFrame(ObjHeader** start, int count) {
+#if TRACE_MEMORY
+    fprintf(stderr, "LeaveFrame %p .. %p\n", start, start + count);
+#endif
+  ReleaseLocalRefs(start + 1, count - 1);
+  if (*start != nullptr) {
+    auto arena = initedArena(start);
+#if TRACE_MEMORY
+    fprintf(stderr, "LeaveFrame: free arena %p\n", arena);
+#endif
+    arena->Deinit();
+    freeMemory(arena);
+  }
 }
 
 void ReleaseLocalRefs(ObjHeader** start, int count) {
@@ -623,7 +777,7 @@ void GarbageCollect() {
   memoryState->toFree->clear();
 
   for (auto header : toRemove) {
-    RuntimeAssert((header->ref_count_ & CONTAINER_TAG_SEEN) != 0, "Must be not seen");
+    RuntimeAssert((header->refCount_ & CONTAINER_TAG_SEEN) != 0, "Must be not seen");
     FreeContainerNoRef(header);
   }
 

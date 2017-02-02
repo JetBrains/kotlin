@@ -1,7 +1,5 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
-
-import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.*
@@ -52,18 +50,6 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                     Int32(fieldsCount)
             )
 
-    // TODO: probably it should be moved out of this class and shared.
-    private fun createStructFor(className: FqName, fields: List<PropertyDescriptor>): LLVMTypeRef? {
-        val classType = LLVMStructCreateNamed(LLVMGetModuleContext(context.llvmModule), "kclass:" + className)
-        val fieldTypes = fields.map { getLLVMType(it.returnType!!) }.toTypedArray()
-
-        memScoped {
-            val fieldTypesNativeArrayPtr = allocArrayOf(*fieldTypes)[0].ptr
-            LLVMStructSetBody(classType, fieldTypesNativeArrayPtr, fieldTypes.size, 0)
-        }
-        return classType
-    }
-
     private fun exportTypeInfoIfRequired(classDesc: ClassDescriptor, typeInfoGlobal: LLVMValueRef?) {
         val annot = classDesc.annotations.findAnnotation(FqName("konan.ExportTypeInfo"))
         if (annot != null) {
@@ -97,11 +83,13 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
         val className = classDesc.fqNameSafe
 
-        val classType = createStructFor(className, classDesc.fields)
+        val llvmDeclarations = context.llvmDeclarations.forClass(classDesc)
+
+        val bodyType = llvmDeclarations.bodyType
 
         val name = className.globalHash
 
-        val size = getInstanceSize(classType, className)
+        val size = getInstanceSize(bodyType, className)
 
         val superTypeOrAny = classDesc.getSuperClassOrAny()
         val superType = if (KotlinBuiltIns.isAny(classDesc)) NullPointer(runtime.typeInfoType)
@@ -111,50 +99,38 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val interfacesPtr = staticData.placeGlobalConstArray("kintf:$className",
                 pointerType(runtime.typeInfoType), interfaces)
 
-        val refFieldIndices = classDesc.fields.mapIndexedNotNull { index, field ->
-            val type = field.returnType!!
-            if (isObjectType(getLLVMType(type))) {
-                index
+        // TODO: reuse offsets obtained for 'fields' below
+        val objOffsets = getStructElements(bodyType).mapIndexedNotNull { index, type ->
+            if (isObjectType(type)) {
+                LLVMOffsetOfElement(llvmTargetData, bodyType, index)
             } else {
                 null
             }
         }
-        // TODO: reuse offsets obtained for 'fields' below
-        val objOffsets = refFieldIndices.map { LLVMOffsetOfElement(llvmTargetData, classType, it) }
+
         val objOffsetsPtr = staticData.placeGlobalConstArray("krefs:$className", int32Type,
                 objOffsets.map { Int32(it.toInt()) })
 
-        val fields = classDesc.fields.mapIndexed { index, field ->
+        val fields = llvmDeclarations.fields.mapIndexed { index, field ->
             // Note: using FQ name because a class may have multiple fields with the same name due to property overriding
             val nameSignature = field.fqNameSafe.localHash // FIXME: add signature
-            val fieldOffset = LLVMOffsetOfElement(llvmTargetData, classType, index)
+            val fieldOffset = LLVMOffsetOfElement(llvmTargetData, bodyType, index)
             FieldTableRecord(nameSignature, fieldOffset.toInt())
         }.sortedBy { it.nameSignature.value }
 
         val fieldsPtr = staticData.placeGlobalConstArray("kfields:$className",
                 runtime.fieldTableRecordType, fields)
 
-        val vtableEntries: List<ConstValue>
-        val methods: List<ConstValue>
-
-        if (!classDesc.isAbstract()) {
-            // TODO: compile-time resolution limits binary compatibility
-            vtableEntries = classDesc.vtableEntries.map { it.implementation.entryPointAddress }
-
-            methods = classDesc.methodTableEntries.map {
+        val methods = if (!classDesc.isAbstract()) {
+            classDesc.methodTableEntries.map {
                 val nameSignature = it.functionName.localHash
                 // TODO: compile-time resolution limits binary compatibility
-                val methodEntryPoint = it.implementation.entryPointAddress
+                val methodEntryPoint = it.resolveFakeOverride().original.entryPointAddress
                 MethodTableRecord(nameSignature, methodEntryPoint)
             }.sortedBy { it.nameSignature.value }
         } else {
-            vtableEntries = emptyList()
-            methods = emptyList()
+            emptyList()
         }
-
-        assert (vtableEntries.size == classDesc.vtableSize)
-
-        val vtable = ConstArray(int8TypePtr, vtableEntries)
 
         val methodsPtr = staticData.placeGlobalConstArray("kmethods:$className",
                 runtime.methodTableRecordType, methods)
@@ -166,9 +142,19 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 methodsPtr, methods.size,
                 fieldsPtr, if (classDesc.isInterface) -1 else fields.size)
 
-        val typeInfoGlobal = classDesc.typeInfoWithVtable.llvm // TODO: it is a hack
-        LLVMSetInitializer(typeInfoGlobal, Struct(typeInfo, vtable).llvm)
-        LLVMSetGlobalConstant(typeInfoGlobal, 1)
+        val typeInfoGlobal = llvmDeclarations.typeInfoGlobal
+
+        val typeInfoGlobalValue = if (classDesc.isAbstract()) {
+            typeInfo
+        } else {
+            // TODO: compile-time resolution limits binary compatibility
+            val vtableEntries = classDesc.vtableEntries.map { it.resolveFakeOverride().original.entryPointAddress }
+            val vtable = ConstArray(int8TypePtr, vtableEntries)
+            Struct(typeInfo, vtable)
+        }
+
+        typeInfoGlobal.setInitializer(typeInfoGlobalValue)
+        typeInfoGlobal.setConstant(true)
 
         exportTypeInfoIfRequired(classDesc, classDesc.llvmTypeInfoPtr)
     }

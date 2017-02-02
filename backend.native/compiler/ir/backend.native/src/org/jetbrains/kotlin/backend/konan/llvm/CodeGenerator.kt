@@ -17,14 +17,27 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     // TODO: remove, to make CodeGenerator descriptor-agnostic.
     var constructedClass: ClassDescriptor? = null
     val vars = VariableManager(this)
-    var returnSlot: LLVMValueRef? = null
-    var slotsPhi: LLVMValueRef? = null
-    var slotCount = 0
     var functionDescriptor: FunctionDescriptor? = null
+    private var returnSlot: LLVMValueRef? = null
+    private var slotsPhi: LLVMValueRef? = null
+    private var slotCount = 0
+    private var localAllocs = 0
+    private var arenaSlot: LLVMValueRef? = null
+
+    private val intPtrType = LLVMIntPtrType(llvmTargetData)!!
+    private val immOneIntPtrType = LLVMConstInt(intPtrType, 1, 1)!!
 
     fun prologue(descriptor: FunctionDescriptor) {
-        prologue(llvmFunction(descriptor),
+        val llvmFunction = llvmFunction(descriptor)
+
+        prologue(llvmFunction,
                 LLVMGetReturnType(getLlvmFunctionType(descriptor))!!)
+
+        if (!descriptor.isExported()) {
+            LLVMSetLinkage(llvmFunction, LLVMLinkage.LLVMInternalLinkage)
+            // (Cannot do this before the function body is created).
+        }
+
         if (descriptor is ConstructorDescriptor) {
             constructedClass = descriptor.constructedClass
         }
@@ -47,16 +60,21 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         cleanupLandingpad = LLVMAppendBasicBlock(function, "cleanup_landingpad")!!
         positionAtEnd(entryBb!!)
         slotsPhi = phi(kObjHeaderPtrPtr)
-        slotCount = 0
+        // First slot can be assigned to keep pointer to frame local arena.
+        slotCount = 1
+        localAllocs = 0
+        // Is removed by DCE trivially, if not needed.
+        arenaSlot = intToPtr(
+                or(ptrToInt(slotsPhi, intPtrType), immOneIntPtrType), kObjHeaderPtrPtr)
     }
 
     fun epilogue() {
         appendingTo(prologueBb!!) {
-            val slots = if (slotCount > 0)
+            val slots = if (needSlots)
                 LLVMBuildArrayAlloca(builder, kObjHeaderPtr, Int32(slotCount).llvm, "")!!
             else
                 kNullObjHeaderPtrPtr
-            if (slotCount > 0) {
+            if (needSlots) {
                 // Zero-init slots.
                 val slotsMem = bitcast(kInt8Ptr, slots)
                 val pointerSize = LLVMABISizeOfType(llvmTargetData, kObjHeaderPtr).toInt()
@@ -81,7 +99,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
                     val returnPhi = phi(returnType!!)
                     addPhiIncoming(returnPhi, *returns.toList().toTypedArray())
                     if (returnSlot != null) {
-                        updateLocalRef(returnPhi, returnSlot!!)
+                        updateReturnRef(returnPhi, returnSlot!!)
                     }
                     releaseVars()
                     LLVMBuildRet(builder, returnPhi)
@@ -104,9 +122,14 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         slotsPhi = null
     }
 
-    fun releaseVars() {
-        if (slotCount > 0) {
-            call(context.llvm.releaseLocalRefsFunction,
+    private val needSlots: Boolean
+        get() {
+            return slotCount > 1 || localAllocs > 0
+        }
+
+    private fun releaseVars() {
+        if (needSlots) {
+            call(context.llvm.leaveFrameFunction,
                     listOf(slotsPhi!!, Int32(slotCount).llvm))
         }
     }
@@ -125,6 +148,8 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     fun div   (arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildSDiv(builder, arg0, arg1, name)!!
     fun srem  (arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildSRem(builder, arg0, arg1, name)!!
 
+    fun or  (arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildOr (builder, arg0, arg1, name)!!
+
     /* integers comparisons */
     fun icmpEq(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntEQ,  arg0, arg1, name)!!
     fun icmpGt(arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildICmp(builder, LLVMIntPredicate.LLVMIntSGT, arg0, arg1, name)!!
@@ -140,7 +165,8 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     fun bitcast(type: LLVMTypeRef?, value: LLVMValueRef, name: String = "") = LLVMBuildBitCast(builder, value, type, name)!!
 
-    fun intToPtr(imm: LLVMValueRef?, DestTy: LLVMTypeRef, Name: String = "") = LLVMBuildIntToPtr(builder, imm, DestTy, Name)!!
+    fun intToPtr(value: LLVMValueRef?, DestTy: LLVMTypeRef, Name: String = "") = LLVMBuildIntToPtr(builder, value, DestTy, Name)!!
+    fun ptrToInt(value: LLVMValueRef?, DestTy: LLVMTypeRef, Name: String = "") = LLVMBuildPtrToInt(builder, value, DestTy, Name)!!
 
     fun alloca(type: LLVMTypeRef?, name: String = ""): LLVMValueRef {
         if (isObjectType(type!!)) {
@@ -150,6 +176,16 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
             return LLVMBuildAlloca(builder, type, name)!!
         }
     }
+
+    fun allocInstance(typeInfo: LLVMValueRef, lifetime: Lifetime) : LLVMValueRef {
+        return call(context.llvm.allocInstanceFunction, listOf(typeInfo), lifetime)
+    }
+
+    fun allocArray(
+          typeInfo: LLVMValueRef, count: LLVMValueRef, lifetime: Lifetime) : LLVMValueRef {
+        return call(context.llvm.allocArrayFunction, listOf(typeInfo, count), lifetime)
+    }
+
     fun load(value: LLVMValueRef, name: String = ""): LLVMValueRef {
         val result = LLVMBuildLoad(builder, value, name)!!
         // Use loadSlot() API for that.
@@ -191,6 +227,10 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         }
     }
 
+    fun updateReturnRef(value: LLVMValueRef, address: LLVMValueRef) {
+        call(context.llvm.updateReturnRefFunction, listOf(address, value))
+    }
+
     // Only use ignoreOld, when sure that memory is freshly inited and have no value.
     fun updateLocalRef(value: LLVMValueRef, address: LLVMValueRef, ignoreOld: Boolean = false) {
         call(if (ignoreOld) context.llvm.setLocalRefFunction else context.llvm.updateLocalRefFunction,
@@ -206,19 +246,44 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     //-------------------------------------------------------------------------//
 
-    fun callAtFunctionScope(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>, name: String = "") =
-            call(llvmFunction, args, this::cleanupLandingpad, name)
+    fun callAtFunctionScope(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
+                            lifetime: Lifetime) =
+            call(llvmFunction, args, lifetime, this::cleanupLandingpad)
 
     fun call(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
-             lazyLandingpad: () -> LLVMBasicBlockRef? = { null }, name: String = ""): LLVMValueRef {
+             resultLifetime: Lifetime = Lifetime.IRRELEVANT,
+             lazyLandingpad: () -> LLVMBasicBlockRef? = { null }): LLVMValueRef {
+        var callArgs = if (isObjectReturn(llvmFunction.type)) {
+            // If function returns an object - create slot for the returned value or give local arena.
+            // This allows appropriate rootset accounting by just looking at the stack slots,
+            // along with ability to allocate in appropriate arena.
+            val resultSlot = when (resultLifetime.slotType) {
+                SlotType.ARENA -> {
+                    localAllocs++
+                    arenaSlot!!
+                }
+                SlotType.RETURN -> returnSlot!!
+                // TODO: for RETURN_IF_ARENA choose between created slot and arenaSlot
+                // dynamically.
+                SlotType.ANONYMOUS, SlotType.RETURN_IF_ARENA -> vars.createAnonymousSlot()
+                else -> throw Error("Incorrect slot type")
+            }
+            args + resultSlot
+        } else {
+            args
+        }
+        return callRaw(llvmFunction, callArgs, lazyLandingpad)
+    }
 
+    private fun callRaw(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
+             lazyLandingpad: () -> LLVMBasicBlockRef?): LLVMValueRef {
         memScoped {
             val rargs = allocArrayOf(args)[0].ptr
 
             if (LLVMIsAFunction(llvmFunction) != null /* the function declaration */ &&
                     LLVMAttribute.LLVMNoUnwindAttribute in LLVMGetFunctionAttrSet(llvmFunction)) {
 
-                return LLVMBuildCall(builder, llvmFunction, rargs, args.size, name)!!
+                return LLVMBuildCall(builder, llvmFunction, rargs, args.size, "")!!
             } else {
                 val landingpad = lazyLandingpad()
 
@@ -232,7 +297,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
                 }
 
                 val success = basicBlock()
-                val result = LLVMBuildInvoke(builder, llvmFunction, rargs, args.size, success, landingpad, name)!!
+                val result = LLVMBuildInvoke(builder, llvmFunction, rargs, args.size, success, landingpad, "")!!
                 positionAtEnd(success)
                 return result
             }
@@ -264,7 +329,6 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     //-------------------------------------------------------------------------//
 
     /* to class descriptor */
-    fun classType(descriptor: ClassDescriptor): LLVMTypeRef = LLVMGetTypeByName(context.llvmModule, descriptor.symbolName)!!
     fun typeInfoValue(descriptor: ClassDescriptor): LLVMValueRef = descriptor.llvmTypeInfoPtr
 
     /**
@@ -277,9 +341,6 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         return LLVMGetParam(fn.llvmFunction, i)!!
     }
     fun countParams(fn: FunctionDescriptor) = LLVMCountParams(fn.llvmFunction)
-
-    fun indexInClass(p:PropertyDescriptor):Int = (p.containingDeclaration as ClassDescriptor).fields.indexOf(p)
-
 
     fun basicBlock(name: String = "label_"): LLVMBasicBlockRef {
         val currentBlock = this.currentBlock

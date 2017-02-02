@@ -10,7 +10,7 @@ abstract class NativeDep extends DefaultTask {
         }
     }
 
-    protected final String target = getCurrentHostTarget();
+    protected final String host = getCurrentHostTarget();
 
     @Input
     abstract String getFileName()
@@ -27,7 +27,7 @@ abstract class NativeDep extends DefaultTask {
 
     protected File download() {
         File result = new File(baseOutDir, fileName)
-	if (!result.exists())
+        if (!result.exists())
             ant.get(src: url, dest: result, usetimestamp: true)
         return result
     }
@@ -71,21 +71,29 @@ class TgzNativeDep extends NativeDep {
 
 
 task libffi(type: TgzNativeDep) {
-    baseName = "libffi-3.2.1-2-$target"
+    baseName = "libffi-3.2.1-2-$host"
 }
 
 task llvm(type: TgzNativeDep) {
-    baseName = "clang+llvm-3.8.0-$target"
+    baseName = "clang+llvm-3.8.0-$host"
 }
 
 if (isLinux()) {
     task gccToolchain(type: TgzNativeDep) {
-        baseName = "target-gcc-toolchain-3-$target"
+        baseName = "target-gcc-toolchain-3-$host"
     }
 } else {
-    task sysroot(type: TgzNativeDep) {
-        baseName = "target-sysroot-1-$target"
+    task hostSysroot(type: TgzNativeDep) {
+        baseName = "target-sysroot-1-$host"
     }
+    task iphoneSysroot(type: TgzNativeDep) {
+        baseName = "target-sysroot-1-darwin-ios"
+    }
+// TODO: re-enable when we known how to bring the simulator
+// sysroot to dependencies.
+//    task iphoneSimSysroot(type: TgzNativeDep) {
+//       baseName = "target-sysroot-1-darwin-ios-sim"
+//  }
 }
 
 

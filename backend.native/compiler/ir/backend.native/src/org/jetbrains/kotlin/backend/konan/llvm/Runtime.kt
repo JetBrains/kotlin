@@ -3,6 +3,10 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 
+interface RuntimeAware {
+    val runtime: Runtime
+}
+
 class Runtime(private val bitcodeFile: String) {
     val llvmModule: LLVMModuleRef
 
@@ -11,6 +15,7 @@ class Runtime(private val bitcodeFile: String) {
 
             val bufRef = alloc<LLVMMemoryBufferRefVar>()
             val errorRef = allocPointerTo<CInt8Var>()
+
             val res = LLVMCreateMemoryBufferWithContentsOfFile(bitcodeFile, bufRef.ptr, errorRef.ptr)
             if (res != 0) {
                 throw Error(errorRef.value?.asCString()?.toString())

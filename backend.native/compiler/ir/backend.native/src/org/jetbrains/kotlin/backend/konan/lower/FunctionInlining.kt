@@ -74,13 +74,13 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         return parametersNew
     }
 
-
     //-------------------------------------------------------------------------//
 
     fun inlineFunction(irCall: IrCall): IrBlock {
 
         val functionDescriptor = irCall.descriptor as FunctionDescriptor
-        val functionDeclaration = context.ir.moduleIndex.functions[functionDescriptor]      // Get FunctionDeclaration by FunctionDescriptor.
+        val functionDeclaration = context.ir.originalModuleIndex
+                .functions[functionDescriptor]                                              // Get FunctionDeclaration by FunctionDescriptor.
         val copyFuncDeclaration = functionDeclaration!!.accept(DeepCopyIrTree(), null) as IrFunction // Create copy of the function.
 
         val startOffset = copyFuncDeclaration.startOffset
@@ -111,11 +111,11 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
     override fun visitCall(expression: IrCall): IrExpression {
         val functionDescriptor = expression.descriptor as FunctionDescriptor
-        if (!functionDescriptor.isInline) return super.visitCall(expression)                // Function is not to be inlined - do nothing.
+        if (!functionDescriptor.isInline) return super.visitCall(expression)                   // Function is not to be inlined - do nothing.
 
-        val functionDeclaration = context.ir.moduleIndex.functions[functionDescriptor]      // Get FunctionDeclaration by FunctionDescriptor.
-        if (functionDeclaration == null) return super.visitCall(expression)                 // Function is declared in another module.
-        return inlineFunction(expression)                                                   // Return newly created IrBlock instead of IrCall.
+        val functionDeclaration = context.ir.originalModuleIndex.functions[functionDescriptor] // Get FunctionDeclaration by FunctionDescriptor.
+        if (functionDeclaration == null) return super.visitCall(expression)                    // Function is declared in another module.
+        return inlineFunction(expression)                                                      // Return newly created IrBlock instead of IrCall.
     }
 
     //-------------------------------------------------------------------------//

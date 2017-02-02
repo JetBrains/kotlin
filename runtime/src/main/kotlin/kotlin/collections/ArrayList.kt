@@ -5,7 +5,7 @@ class ArrayList<E> private constructor(
         private var offset: Int,
         private var length: Int,
         private val backing: ArrayList<E>?
-) : MutableList<E> {
+) : MutableList<E>, RandomAccess {
 
     constructor() : this(10)
 

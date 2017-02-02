@@ -22,28 +22,44 @@ allprojects {
         }
     }
 
-
-    convention.plugins.clangFlags = new ClangFlags(new PlatformInfo(), "$llvmDir")
     ext.clangPath = ["$llvmDir/bin"]
     ext.clangArgs = []
+    ext.targetArgs = [:]
     final String binDir
+
+    if (isLinux()) {
+        ext.targetArgs <<
+            ["host": ["--sysroot=${gccToolchainDir}/${gnuTriplet}/sysroot"]]
+     } else {
+         ext.targetArgs <<
+            ["host":
+                ["--sysroot=$hostSysrootDir"], 
+             "iphone":
+                ["-stdlib=libc++", "-arch", "arm64", "-isysroot", "$iphoneSysrootDir"],
+// TODO: re-enable after simulator sysroot is available in the dependencies
+//             "iphone_sim":
+//                ["-stdlib=libc++", "-isysroot", "$iphoneSimSysrootDir"],
+            ]
+     }
+     ext.targetList = ext.targetArgs.keySet() as List
+
     if (isLinux()) {
         binDir = "$gccToolchainDir/$gnuTriplet/bin"
         ext.clangArgs.addAll([
-                "--sysroot=$gccToolchainDir/$gnuTriplet/sysroot",
                 "--gcc-toolchain=$gccToolchainDir",
                 "-L$llvmDir/lib"
         ])
     } else {
-        binDir = "$sysrootDir/usr/bin"
-        ext.clangArgs << "--sysroot=$sysrootDir"
+        binDir = "$hostSysrootDir/usr/bin"
     }
     ext.clangArgs << "-B$binDir"
+    ext.hostClangArgs = ext.clangArgs.clone() 
+    ext.hostClangArgs.addAll(ext.targetArgs['host'])
+
     ext.clangPath << binDir
     ext.jvmArgs = ["-ea"]
-    ext.clangLinkArgs = libLink()
-    ext.clangOptArgs = optArgs()
     ext.globalArgs = project.hasProperty("konanc_flags") ? ext.konanc_flags.split(' ') : []
+
     convention.plugins.execClang = new org.jetbrains.kotlin.ExecClang(project)
 
     plugins.withType(NativeComponentPlugin) {
@@ -56,7 +72,7 @@ allprojects {
 
                     eachPlatform { // TODO: will not work when cross-compiling
                         [cCompiler, cppCompiler, linker].each {
-                            it.withArguments { it.addAll(clangArgs) }
+                            it.withArguments { it.addAll(hostClangArgs) }
                         }
 
                     }
@@ -65,56 +81,6 @@ allprojects {
         }
     }
 }
-
-class ClangFlags {
-
-    protected PlatformInfo platform
-    protected String llvmDir
-
-    private List<String> linkCppAbi, linkPlatform, optArgs
-
-    ClangFlags(platformInfo, llvm) {
-        platform = platformInfo
-        llvmDir = llvm
-
-        if (platform.isLinux()) {
-            linkCppAbi= ["-Wl,-Bstatic", "-lc++abi", "-Wl,-Bdynamic"]
-            linkPlatform= ["-ldl", "-lpthread", "-lm", "-rdynamic"]
-            optArgs = ["-O3", "-fuse-ld=gold", "-flto", "-ffunction-sections", "-Wl,--gc-sections"]
-        } else if (platform.isMac()) {
-            // Life is hard. MacOS linker is harder.
-            // This is how we force the linker to link statically.
-            linkCppAbi= ["${llvmDir}/lib/libc++abi.a"]
-            linkPlatform= []
-            optArgs = ["-O3", "-flto", "-Wl,-dead_strip"]
-        } else {
-            throw unsupportedPlatformException()
-        }
-
-    }
-
-    public List<String> linkCppAbi() {
-        return linkCppAbi
-    }
-
-    public List<String> linkPlatform() {
-        return linkPlatform
-    }
-
-    public List<String> optArgs() {
-        return optArgs
-    }
-
-
-    public List<String> libLink() {
-        def libs = []
-        libs.addAll(linkPlatform())
-        libs.addAll(linkCppAbi())
-        return libs
-    }
-}
-
-
 
 class PlatformInfo {
     private final String osName = System.properties['os.name']
@@ -170,13 +136,6 @@ task dist_compiler(type: Copy) {
         fileMode(0755)
         include('konanc')
         include('kotlinc-native')
-
-        def allClangArgs = "${clangArgs.join(' ')} ${clangLinkArgs.join(' ')}"
-
-        filter { line -> line.replaceAll("FILTER_CLANG_PLATFORM_ARGS", allClangArgs) }
-        filter { line -> line.replaceAll("FILTER_CLANG_PLATFORM_OPT", "${clangOptArgs.join(' ')}") }
-        filter { line -> line.replaceAll("FILTER_CLANG_BIN_PATH", "${project.llvmDir}/bin") }
-
         into('bin')
     }
 
@@ -190,18 +149,37 @@ task list_dist(type: Exec) {
 }
 
 task dist_runtime(type: Copy) {
-    dependsOn ':runtime:build', ':backend.native:stdlib', ':backend.native:start'
+    dependsOn ':runtime:hostRuntime'
+    dependsOn ':backend.native:hostStdlib'
+    dependsOn ':backend.native:hostStart'
 
     destinationDir file('dist')
 
     from(project(':runtime').file('build')) {
-        include('*.bc')
+        include('*/*.bc')
+        into('lib')
+    }
+}
+
+task cross_dist_runtime(type: Copy) {
+    dependsOn.addAll(targetList.collect { ":runtime:${it}Runtime" })
+    dependsOn.addAll(targetList.collect { ":backend.native:${it}Stdlib" })
+    dependsOn.addAll(targetList.collect { ":backend.native:${it}Start" })
+
+    destinationDir file('dist')
+
+    from(project(':runtime').file('build')) {
+        include('*/*.bc')
         into('lib')
     }
 }
 
 task dist {
     dependsOn 'dist_compiler', 'dist_runtime'
+}
+
+task cross_dist {
+    dependsOn 'cross_dist_runtime', 'dist_compiler'
 }
 
 task demo(type: Exec) {

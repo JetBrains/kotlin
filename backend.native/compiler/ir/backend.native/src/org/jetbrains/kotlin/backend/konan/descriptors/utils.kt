@@ -37,5 +37,7 @@ val PropertyDescriptor.backingField: PropertyDescriptor?
     }
 
 fun DeclarationDescriptor.deepPrint() {
-    this!!.accept(DeepPrintVisitor(PrintVisitor()), 0)
+    this.accept(DeepPrintVisitor(PrintVisitor()), 0)
 }
+
+internal val String.synthesizedName get() = Name.identifier("\$" + this)

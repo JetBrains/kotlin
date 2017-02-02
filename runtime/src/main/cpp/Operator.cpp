@@ -1,7 +1,18 @@
 #include <math.h>
 
 #include "Natives.h"
+#include "Exceptions.h"
 
+namespace {
+
+template<typename R, typename Ta, typename Tb> R div(Ta a, Tb b) {
+    if (__builtin_expect(b == 0, false)) {
+        ThrowArithmeticException();
+    }
+    return a / b;
+}
+
+}
 
 extern "C" {
 
@@ -16,7 +27,7 @@ KInt     Kotlin_Boolean_compareTo_Boolean(KBoolean a, KBoolean b) { if (a == b) 
 //--- Char --------------------------------------------------------------------//
 
 KInt    Kotlin_Char_compareTo_Char   (KChar a, KChar   b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
-KChar   Kotlin_Char_plus_Char        (KChar a, KInt    b) { return a + b; }
+KChar   Kotlin_Char_plus_Int         (KChar a, KInt    b) { return a + b; }
 KInt    Kotlin_Char_minus_Char       (KChar a, KChar   b) { return a - b; }
 KChar   Kotlin_Char_minus_Int        (KChar a, KInt    b) { return a - b; }
 KChar   Kotlin_Char_inc              (KChar a           ) { return a + 1; }
@@ -53,10 +64,10 @@ KLong   Kotlin_Byte_minus_Long       (KByte a, KLong   b) { return a - b; }
 KFloat  Kotlin_Byte_minus_Float      (KByte a, KFloat  b) { return a - b; }
 KDouble Kotlin_Byte_minus_Double     (KByte a, KDouble b) { return a - b; }
 
-KInt    Kotlin_Byte_div_Byte         (KByte a, KByte   b) { return a / b; }
-KInt    Kotlin_Byte_div_Short        (KByte a, KShort  b) { return a / b; }
-KInt    Kotlin_Byte_div_Int          (KByte a, KInt    b) { return a / b; }
-KLong   Kotlin_Byte_div_Long         (KByte a, KLong   b) { return a / b; }
+KInt    Kotlin_Byte_div_Byte         (KByte a, KByte   b) { return div<KInt>(a, b); }
+KInt    Kotlin_Byte_div_Short        (KByte a, KShort  b) { return div<KInt>(a, b); }
+KInt    Kotlin_Byte_div_Int          (KByte a, KInt    b) { return div<KInt>(a, b); }
+KLong   Kotlin_Byte_div_Long         (KByte a, KLong   b) { return div<KLong>(a, b); }
 KFloat  Kotlin_Byte_div_Float        (KByte a, KFloat  b) { return a / b; }
 KDouble Kotlin_Byte_div_Double       (KByte a, KDouble b) { return a / b; }
 
@@ -78,6 +89,11 @@ KByte   Kotlin_Byte_inc              (KByte a           ) { return ++a; }
 KByte   Kotlin_Byte_dec              (KByte a           ) { return --a; }
 KInt    Kotlin_Byte_unaryPlus        (KByte a           ) { return  +a; }
 KInt    Kotlin_Byte_unaryMinus       (KByte a           ) { return  -a; }
+
+KByte  Kotlin_Byte_or_Byte           (KByte a, KByte   b) { return a | b; }
+KByte  Kotlin_Byte_xor_Byte          (KByte a, KByte   b) { return a ^ b; }
+KByte  Kotlin_Byte_and_Byte          (KByte a, KByte   b) { return a & b; }
+KByte  Kotlin_Byte_inv               (KByte a           ) { return  ~a;   }
 
 KByte   Kotlin_Byte_toByte           (KByte a           ) { return a; }
 KChar   Kotlin_Byte_toChar           (KByte a           ) { return a; }
@@ -110,10 +126,10 @@ KLong   Kotlin_Short_minus_Long       (KShort a, KLong   b) { return a - b; }
 KFloat  Kotlin_Short_minus_Float      (KShort a, KFloat  b) { return a - b; }
 KDouble Kotlin_Short_minus_Double     (KShort a, KDouble b) { return a - b; }
 
-KInt    Kotlin_Short_div_Byte         (KShort a, KByte   b) { return a / b; }
-KInt    Kotlin_Short_div_Short        (KShort a, KShort  b) { return a / b; }
-KInt    Kotlin_Short_div_Int          (KShort a, KInt    b) { return a / b; }
-KLong   Kotlin_Short_div_Long         (KShort a, KLong   b) { return a / b; }
+KInt    Kotlin_Short_div_Byte         (KShort a, KByte   b) { return div<KInt>(a, b); }
+KInt    Kotlin_Short_div_Short        (KShort a, KShort  b) { return div<KInt>(a, b); }
+KInt    Kotlin_Short_div_Int          (KShort a, KInt    b) { return div<KInt>(a, b); }
+KLong   Kotlin_Short_div_Long         (KShort a, KLong   b) { return div<KLong>(a, b); }
 KFloat  Kotlin_Short_div_Float        (KShort a, KFloat  b) { return a / b; }
 KDouble Kotlin_Short_div_Double       (KShort a, KDouble b) { return a / b; }
 
@@ -135,6 +151,11 @@ KShort  Kotlin_Short_inc              (KShort a           ) { return ++a; }
 KShort  Kotlin_Short_dec              (KShort a           ) { return --a; }
 KInt    Kotlin_Short_unaryPlus        (KShort a           ) { return  +a; }
 KInt    Kotlin_Short_unaryMinus       (KShort a           ) { return  -a; }
+
+KShort  Kotlin_Short_or_Short         (KShort a, KShort  b) { return a | b; }
+KShort  Kotlin_Short_xor_Short        (KShort a, KShort  b) { return a ^ b; }
+KShort  Kotlin_Short_and_Short        (KShort a, KShort  b) { return a & b; }
+KShort  Kotlin_Short_inv              (KShort a           ) { return  ~a;   }
 
 KByte   Kotlin_Short_toByte           (KShort a           ) { return a; }
 KChar   Kotlin_Short_toChar           (KShort a           ) { return a; }
@@ -167,10 +188,10 @@ KLong   Kotlin_Int_minus_Long       (KInt a, KLong   b) { return a - b; }
 KFloat  Kotlin_Int_minus_Float      (KInt a, KFloat  b) { return a - b; }
 KDouble Kotlin_Int_minus_Double     (KInt a, KDouble b) { return a - b; }
 
-KInt    Kotlin_Int_div_Byte         (KInt a, KByte   b) { return a / b; }
-KInt    Kotlin_Int_div_Short        (KInt a, KShort  b) { return a / b; }
-KInt    Kotlin_Int_div_Int          (KInt a, KInt    b) { return a / b; }
-KLong   Kotlin_Int_div_Long         (KInt a, KLong   b) { return a / b; }
+KInt    Kotlin_Int_div_Byte         (KInt a, KByte   b) { return div<KInt>(a, b); }
+KInt    Kotlin_Int_div_Short        (KInt a, KShort  b) { return div<KInt>(a, b); }
+KInt    Kotlin_Int_div_Int          (KInt a, KInt    b) { return div<KInt>(a, b); }
+KLong   Kotlin_Int_div_Long         (KInt a, KLong   b) { return div<KLong>(a, b); }
 KFloat  Kotlin_Int_div_Float        (KInt a, KFloat  b) { return a / b; }
 KDouble Kotlin_Int_div_Double       (KInt a, KDouble b) { return a / b; }
 
@@ -196,10 +217,14 @@ KInt    Kotlin_Int_unaryMinus       (KInt a           ) { return  -a; }
 KInt    Kotlin_Int_or_Int           (KInt a, KInt   b)  { return a | b; }
 KInt    Kotlin_Int_xor_Int          (KInt a, KInt   b)  { return a ^ b; }
 KInt    Kotlin_Int_and_Int          (KInt a, KInt   b)  { return a & b; }
-KInt    Kotlin_Int_shl_Int          (KInt a, KInt   b)  { return a << b; }
-KInt    Kotlin_Int_shr_Int          (KInt a, KInt   b)  { return a >> b; }
+KInt    Kotlin_Int_inv              (KInt a          )  { return  ~a;   }
+
+// According to C++11 the result is undefined if the second operator is < 0 or >= <first operand bit length>.
+// We avoid it by using only the least significant bits
+KInt    Kotlin_Int_shl_Int          (KInt a, KInt   b)  { return a << (b & 31); }
+KInt    Kotlin_Int_shr_Int          (KInt a, KInt   b)  { return a >> (b & 31); }
 KInt    Kotlin_Int_ushr_Int         (KInt a, KInt   b) {
-  return static_cast<uint32_t>(a) >> b;
+  return static_cast<uint32_t>(a) >> (b & 31);
 }
 
 KByte   Kotlin_Int_toByte           (KInt a           ) { return a; }
@@ -233,10 +258,10 @@ KLong   Kotlin_Long_minus_Long       (KLong a, KLong   b) { return a - b; }
 KFloat  Kotlin_Long_minus_Float      (KLong a, KFloat  b) { return a - b; }
 KDouble Kotlin_Long_minus_Double     (KLong a, KDouble b) { return a - b; }
 
-KLong   Kotlin_Long_div_Byte         (KLong a, KByte   b) { return a / b; }
-KLong   Kotlin_Long_div_Short        (KLong a, KShort  b) { return a / b; }
-KLong   Kotlin_Long_div_Int          (KLong a, KInt    b) { return a / b; }
-KLong   Kotlin_Long_div_Long         (KLong a, KLong   b) { return a / b; }
+KLong   Kotlin_Long_div_Byte         (KLong a, KByte   b) { return div<KLong>(a, b); }
+KLong   Kotlin_Long_div_Short        (KLong a, KShort  b) { return div<KLong>(a, b); }
+KLong   Kotlin_Long_div_Int          (KLong a, KInt    b) { return div<KLong>(a, b); }
+KLong   Kotlin_Long_div_Long         (KLong a, KLong   b) { return div<KLong>(a, b); }
 KFloat  Kotlin_Long_div_Float        (KLong a, KFloat  b) { return a / b; }
 KDouble Kotlin_Long_div_Double       (KLong a, KDouble b) { return a / b; }
 
@@ -262,11 +287,14 @@ KLong   Kotlin_Long_unaryMinus       (KLong a           ) { return  -a; }
 KLong   Kotlin_Long_xor_Long         (KLong a, KLong   b) { return a ^ b; }
 KLong   Kotlin_Long_or_Long          (KLong a, KLong   b) { return a | b; }
 KLong   Kotlin_Long_and_Long         (KLong a, KLong   b) { return a & b; }
-KLong   Kotlin_Long_shr_Int          (KLong a, KInt    b) {
-  return a >> b;
-}
+KLong   Kotlin_Long_inv              (KLong a           ) { return  ~a;   }
+
+// According to C++11 the result is undefined if the second operator is < 0 or >= <first operand bit length>.
+// We avoid it by using only the least significant bits
+KLong   Kotlin_Long_shl_Int          (KLong a, KInt    b) { return a << (b & 63); }
+KLong   Kotlin_Long_shr_Int          (KLong a, KInt    b) { return a >> (b & 63); }
 KLong   Kotlin_Long_ushr_Int         (KLong a, KInt    b) {
-  return static_cast<uint64_t>(a) >> b;
+  return static_cast<uint64_t>(a) >> (b & 63);
 }
 
 KByte   Kotlin_Long_toByte           (KLong a           ) { return a; }
@@ -342,7 +370,11 @@ KInt   Kotlin_Float_bits              (KFloat a) {
   return alias.i;
 }
 
-//--- Double ------------------------------------------------------------------//
+KBoolean Kotlin_Float_isNaN           (KFloat a)          { return isnan(a); }
+KBoolean Kotlin_Float_isInfinite      (KFloat a)          { return isinf(a); }
+KBoolean Kotlin_Float_isFinite        (KFloat a)          { return isfinite(a); }
+
+  //--- Double ------------------------------------------------------------------//
 
 KInt    Kotlin_Double_compareTo_Byte   (KDouble a, KByte   b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
 KInt    Kotlin_Double_compareTo_Short  (KDouble a, KShort  b) { if (a == b) return 0; return (a < b) ? -1 : 1; }
@@ -406,5 +438,9 @@ KLong   Kotlin_Double_bits             (KDouble a) {
   alias.d = a;
   return alias.l;
 }
+
+KBoolean Kotlin_Double_isNaN           (KDouble a)          { return isnan(a); }
+KBoolean Kotlin_Double_isInfinite      (KDouble a)          { return isinf(a); }
+KBoolean Kotlin_Double_isFinite        (KDouble a)          { return isfinite(a); }
 
 }  // extern "C"

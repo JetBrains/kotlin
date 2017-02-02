@@ -83,3 +83,6 @@ class HashSet<K> internal constructor(
 
     private fun contentEquals(other: Set<K>): Boolean = size == other.size && containsAll(other)
 }
+
+// This hash set keeps insertion order.
+typealias LinkedHashSet<V> = HashSet<V>

@@ -1,3 +1,6 @@
+import groovy.json.JsonOutput
+import org.jetbrains.kotlin.*
+
 configurations {
     cli_bc
 }
@@ -6,107 +9,76 @@ dependencies {
     cli_bc project(path: ':backend.native', configuration: 'cli_bc')
 }
 
+def testOutputRoot = rootProject.file("test.output").absolutePath
+def externalTestsDir = project.file("external")
 
+allprojects {
+    // Root directories for test output (logs, compiled files, statistics etc). Only single path must be in each set.
+    sourceSets {
+        // backend.native/tests
+        testOutputLocal {
+           output.dir(rootProject.file("$testOutputRoot/local"))
+        }
 
-abstract class KonanTest extends DefaultTask {
-    protected String source
-    def backendNative = project.project(":backend.native")
-    def runtimeProject = project.project(":runtime")
-    def dist = project.parent.parent.file("dist")
-    def llvmLlc = llvmTool("llc")
-    def runtimeBc = new File("${dist.canonicalPath}/lib/runtime.bc").absolutePath
-    def launcherBc = new File("${dist.canonicalPath}/lib/launcher.bc").absolutePath
-    def startKtBc = new File("${dist.canonicalPath}/lib/start.kt.bc").absolutePath
-    def stdlibKtBc = new File("${dist.canonicalPath}/lib/stdlib.kt.bc").absolutePath
-    def mainC = 'main.c'
-    String goldValue = null
-    String testData = null
-    List<String> arguments = null
-
-    boolean enabled = true
-
-    public void setDisabled(boolean value) {
-        this.enabled = !value
-    }
-
-    public KonanTest(){
-        // TODO: that's a long reach up the project tree.
-        // May be we should reorganize a little.
-        dependsOn(project.parent.parent.tasks['dist'])
-    }
-
-    abstract void compileTest(String source, String exe)
-
-    protected void runCompiler(String source, String output, List<String> moreArgs) {
-        project.javaexec {
-            main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
-            classpath = project.configurations.cli_bc
-            jvmArgs "-ea",
-                "-Dkonan.home=${dist.canonicalPath}",
-                "-Djava.library.path=${dist.canonicalPath}/konan/nativelib"
-            args("-output", output,
-                 source,
-                 *moreArgs,
-                 *project.globalArgs)
+        // backend.native/tests/external
+        testOutputExternal {
+            output.dir(rootProject.file("$testOutputRoot/external"))
         }
     }
-
-    @TaskAction
-    void executeTest() {
-        def sourceKt = project.file(source).absolutePath
-        def exe = sourceKt.replace(".kt", ".kt.exe")
-
-        compileTest(sourceKt, exe)
-        println "execution :$exe"
-
-        def out = null
-        project.exec {
-            commandLine exe
-            if (arguments != null) {
-                args arguments
-            }
-            if (testData != null) {
-                standardInput = new ByteArrayInputStream(testData.bytes)
-            }
-            if (goldValue != null) {
-                out = new ByteArrayOutputStream()
-                standardOutput = out
-            }
-        }
-        if (goldValue != null && goldValue != out.toString())
-            throw new RuntimeException("test failed")
-    }
-
-    private String llvmTool(String tool) {
-        return "${project.llvmDir}/bin/${tool}"
-    }
-
-    protected List<String> clangLinkArgs() {
-        return project.clangLinkArgs
-    }
 }
 
-class RunKonanTest extends KonanTest {
-    void compileTest(String source, String exe) {
-        runCompiler(source, exe, [])
+task clean {
+    doLast {
+        delete(rootProject.file(testOutputRoot))
     }
 }
-
-class LinkKonanTest extends KonanTest {
-    protected String lib
-
-    void compileTest(String source, String exe) {
-        def libDir = project.file(lib).absolutePath
-        def libBc = "${libDir}.bc"
-
-        runCompiler(lib, libBc, ['-nolink', '-nostdlib'])
-        runCompiler(source, exe, ['-library', libBc])
-    }
-}
-
 
 task run() {
-    dependsOn(tasks.withType(KonanTest).matching { it.enabled })
+    dependsOn(tasks.withType(KonanTest).matching { !(it instanceof RunExternalTestGroup) && it.enabled })
+}
+
+task run_external () {
+    // TODO Consider test output directory cleaning before execution.
+    // TODO Consider using some logger instead of println
+    // Create tasks for external tests
+    externalTestsDir.eachDirRecurse {
+        // Skip build directory and directories without *.kt files.
+        if (it.name == "build" || it.listFiles().count {it.name.endsWith(".kt")} == 0) {
+            return
+        }
+
+        def taskDirectory = project.relativePath(it)
+        def taskName = taskDirectory.replaceAll("[-/]", '_')
+
+        task("$taskName", type: RunExternalTestGroup){
+            groupDirectory = "$taskDirectory"
+        }
+    }
+    def testTasks = tasks.withType(RunExternalTestGroup).matching { it.enabled }
+    dependsOn(testTasks)
+
+    doLast {
+        Map<String, Map<String, RunExternalTestGroup.TestResult>> results = [:]
+        def statistics = new RunExternalTestGroup.Statistics()
+        testTasks.matching { it.state.executed }.each {
+            results.put(it.name, it.results)
+            statistics.add(it.statistics)
+        }
+
+        def output = ["statistics" : statistics, "tests" : results]
+        def json = JsonOutput.toJson(output)
+        def reportFile = new File(sourceSets.testOutputExternal.output.getDirs().getSingleFile(), "results.json")
+        reportFile.write(JsonOutput.prettyPrint(json))
+        println("DONE.\n\n" +
+                "TOTAL: $statistics.total\n" +
+                "PASSED: $statistics.passed\n" +
+                "FAILED: $statistics.failed\n" +
+                "SKIPPED: $statistics.skipped")
+    }
+}
+
+task daily() {
+    dependsOn(run_external)
 }
 
 task sum (type:RunKonanTest) {
@@ -127,7 +99,6 @@ task fields1(type: RunKonanTest) {
 }
 
 task fields2(type: RunKonanTest) {
-    disabled = true
     goldValue =
             "Set global = 1\n" +
             "Set member = 42\n" +
@@ -166,6 +137,11 @@ task safe_cast(type: RunKonanTest) {
     source = "codegen/basics/safe_cast.kt"
 }
 
+task typealias1(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "codegen/basics/typealias1.kt"
+}
+
 task aritmetic(type: RunKonanTest) {
     source = "codegen/function/arithmetic.kt"
 }
@@ -202,13 +178,11 @@ task defaults4(type: RunKonanTest) {
 }
 
 task defaults5(type: RunKonanTest) {
-    disabled = true
     goldValue = "5\n6\n"
     source = "codegen/function/defaults5.kt"
 }
 
 task defaults6(type: RunKonanTest) {
-    disabled = true
     goldValue = "42\n"
     source = "codegen/function/defaults6.kt"
 }
@@ -229,6 +203,27 @@ task canonical_name(type: RunKonanTest) {
 
 task cast_simple(type: RunKonanTest) {
     source = "codegen/basics/cast_simple.kt"
+}
+
+task cast_null(type: RunKonanTest) {
+    goldValue = "Ok\n"
+    source = "codegen/basics/cast_null.kt"
+}
+
+task unchecked_cast1(type: RunKonanTest) {
+    goldValue = "17\n17\n42\n42\n"
+    source = "codegen/basics/unchecked_cast1.kt"
+}
+
+task unchecked_cast2(type: RunKonanTest) {
+    disabled = true
+    goldValue = "Ok\n"
+    source = "codegen/basics/unchecked_cast2.kt"
+}
+
+task unchecked_cast3(type: RunKonanTest) {
+    goldValue = "Ok\n"
+    source = "codegen/basics/unchecked_cast3.kt"
 }
 
 task null_check(type: RunKonanTest) {
@@ -297,6 +292,76 @@ task empty_substring(type: RunKonanTest) {
     source = "runtime/basic/empty_substring.kt"
 }
 
+task superFunCall(type: RunKonanTest) {
+    goldValue = "<fun:C><fun:C1>\n<fun:C><fun:C3>\n"
+    source = "codegen/basics/superFunCall.kt"
+}
+
+task superGetterCall(type: RunKonanTest) {
+    goldValue = "<prop:C><prop:C1>\n<prop:C><prop:C3>\n"
+    source = "codegen/basics/superGetterCall.kt"
+}
+
+task superSetterCall(type: RunKonanTest) {
+    goldValue = "<prop:C1><prop:C>zzz\n<prop:C3><prop:C>zzz\n"
+    source = "codegen/basics/superSetterCall.kt"
+}
+
+task enum0(type: RunKonanTest) {
+    goldValue = "VALUE\n"
+    source = "codegen/enum/test0.kt"
+}
+
+task enum1(type: RunKonanTest) {
+    goldValue = "z12\n"
+    source = "codegen/enum/test1.kt"
+}
+
+task enum_valueOf(type: RunKonanTest) {
+    goldValue = "E1\n"
+    source = "codegen/enum/valueOf.kt"
+}
+
+task enum_values(type: RunKonanTest) {
+    goldValue = "E2\n"
+    source = "codegen/enum/values.kt"
+}
+
+task enum_vCallNoEntryClass(type: RunKonanTest) {
+    goldValue = "('z3', 3)\n"
+    source = "codegen/enum/vCallNoEntryClass.kt"
+}
+
+task enum_vCallWithEntryClass(type: RunKonanTest) {
+    goldValue = "z1z2\n"
+    source = "codegen/enum/vCallWithEntryClass.kt"
+}
+
+task enum_companionObject(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/enum/companionObject.kt"
+}
+
+task innerClass_simple(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/innerClass/simple.kt"
+}
+
+task innerClass_getOuterVal(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/innerClass/getOuterVal.kt"
+}
+
+task innerClass_generic(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/innerClass/generic.kt"
+}
+
+task innerClass_qualifiedThis(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/innerClass/qualifiedThis.kt"
+}
+
 task array0(type: RunKonanTest) {
     goldValue = "5\n6\n7\n8\n9\n10\n11\n12\n13\n"
     source = "runtime/collections/array0.kt"
@@ -335,6 +400,11 @@ task when7(type: RunKonanTest) {
 task when8(type: RunKonanTest) {
     source = "codegen/branching/when8.kt"
     goldValue = "true\n"
+}
+
+task when9(type: RunKonanTest) {
+    goldValue = "Ok\n"
+    source = "codegen/branching/when9.kt"
 }
 
 task when_through(type: RunKonanTest) {
@@ -505,6 +575,17 @@ task boxing13(type: RunKonanTest) {
     source = "codegen/boxing/boxing13.kt"
 }
 
+task boxing14(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "codegen/boxing/boxing14.kt"
+}
+
+task boxing15(type: RunKonanTest) {
+    disabled = true
+    goldValue = "17\n"
+    source = "codegen/boxing/boxing15.kt"
+}
+
 task interface0(type: RunKonanTest) {
     goldValue = "PASSED\n"
     source = "runtime/basic/interface0.kt"
@@ -570,6 +651,11 @@ task catch2(type: RunKonanTest) {
 task catch7(type: RunKonanTest) {
     goldValue = "Error happens\n"
     source = "runtime/exceptions/catch7.kt"
+}
+
+task extend_exception(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "runtime/exceptions/extend0.kt"
 }
 
 task catch3(type: RunKonanTest) {
@@ -814,6 +900,21 @@ task lambda13(type: RunKonanTest) {
     source = "codegen/lambda/lambda13.kt"
 }
 
+task objectExpression1(type: RunKonanTest) {
+    goldValue = "aabb\n"
+    source = "codegen/objectExpression/1.kt"
+}
+
+task objectExpression2(type: RunKonanTest) {
+    goldValue = "a\n"
+    source = "codegen/objectExpression/2.kt"
+}
+
+task objectExpression3(type: RunKonanTest) {
+    goldValue = "\n1\n2\n"
+    source = "codegen/objectExpression/3.kt"
+}
+
 task initializers2(type: RunKonanTest) {
     goldValue = "init globalValue2\n" +
                 "init globalValue3\n" +
@@ -829,9 +930,13 @@ task initializers3(type: RunKonanTest) {
 }
 
 task initializers4(type: RunKonanTest) {
-    disabled = true
-    goldValue = "fixme\n"
+    goldValue = "1073741824\ntrue\n"
     source = "runtime/basic/initializers4.kt"
+}
+
+task initializers5(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "runtime/basic/initializers5.kt"
 }
 
 task expression_as_statement(type: RunKonanTest) {
@@ -905,6 +1010,7 @@ task inline3(type: RunKonanTest) {
     source = "codegen/inline/inline3.kt"
 }
 
+<<<<<<< HEAD
 task inline4(type: RunKonanTest) {
     goldValue = "3\n"
     source = "codegen/inline/inline4.kt"
@@ -918,4 +1024,8 @@ task inline5(type: RunKonanTest) {
 task inline9(type: RunKonanTest) {
     goldValue = "hello\n6\n"
     source = "codegen/inline/inline9.kt"
+=======
+task vararg0(type: RunKonanTest) {
+    source = "lower/vararg.kt"
+>>>>>>> b4ee0e86d2890b3aca7eab4e1910a90fedff2b55
 }

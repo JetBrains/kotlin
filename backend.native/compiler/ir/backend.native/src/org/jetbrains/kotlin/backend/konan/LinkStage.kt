@@ -10,8 +10,8 @@ typealias ExecutableFile = String
 
 // Use "clang -v -save-temps" to write linkCommand() method 
 // for another implementation of this class.
-internal abstract class PlatformFlags(val distrib: Distribution, 
-    val properties: KonanProperties) {
+internal abstract class PlatformFlags(val distribution: Distribution) {
+    val properties = distribution.properties
 
     abstract val llvmLtoFlags: List<String>
     abstract val llvmLlcFlags: List<String>
@@ -25,8 +25,8 @@ internal abstract class PlatformFlags(val distrib: Distribution,
 }
 
 
-internal class MacOSPlatform(distrib: Distribution, 
-    properties: KonanProperties) : PlatformFlags(distrib, properties) {
+internal open class MacOSPlatform(distribution: Distribution) 
+    : PlatformFlags(distribution) {
 
     override val llvmLtoFlags = properties.propertyList("llvmLtoFlags.osx")
     override val llvmLlcFlags = properties.propertyList("llvmLlcFlags.osx")
@@ -34,28 +34,49 @@ internal class MacOSPlatform(distrib: Distribution,
     override val linkerOptimizationFlags = 
         properties.propertyList("linkerOptimizationFlags.osx")
     override val linkerKonanFlags = properties.propertyList("linkerKonanFlags.osx")
-    override val linker = "${distrib.sysRoot}/usr/bin/ld" 
+    override val linker = "${distribution.sysRoot}/usr/bin/ld" 
+
+    open val arch = properties.propertyString("arch.osx")!!
+    open val osVersionMin = properties.propertyList("osVersionMin.osx")
+
+    open val sysRoot = distribution.sysRoot
+    open val targetSysRoot = sysRoot
+    open val llvmLib = distribution.llvmLib
 
     override fun linkCommand(objectFiles: List<String>, executable: String, optimize: Boolean): List<String> {
 
-        val sysRoot = distrib.sysRoot
-        val llvmLib = distrib.llvmLib
-        
         return mutableListOf<String>(linker, "-demangle") +
-            if (optimize) listOf("-object_path_lto", "temporary.o", "-lto_library", distrib.libLTO) else {listOf<String>()} +
-            listOf( "-dynamic", "-arch", "x86_64", "-macosx_version_min") +
-            properties.propertyList("macosVersionMin.osx") + 
-            listOf("-syslibroot", "$sysRoot", 
+            if (optimize) listOf("-object_path_lto", "temporary.o", "-lto_library", distribution.libLTO) else {listOf<String>()} +
+            listOf( "-dynamic", "-arch", arch) +
+            osVersionMin + 
+            listOf("-syslibroot", "$targetSysRoot", 
             "-o", executable) +
             objectFiles + 
             if (optimize) linkerOptimizationFlags else {listOf<String>()} +
             linkerKonanFlags +
-            listOf("-lSystem", "$llvmLib/clang/3.8.0/lib/darwin/libclang_rt.osx.a")
+            listOf("-lSystem")
     }
 }
 
-internal class LinuxPlatform(distrib: Distribution, 
-    properties: KonanProperties) : PlatformFlags(distrib, properties) {
+internal class IPhoneOSfromMacOSPlatform(distribution: Distribution) 
+    : MacOSPlatform(distribution) {
+
+    override val arch = properties.propertyString("arch.osx-ios")!!
+    override val osVersionMin = properties.propertyList("osVersionMin.osx-ios")
+    override val llvmLlcFlags = properties.propertyList("llvmLlcFlags.osx-ios")
+    override val targetSysRoot = "${distribution.dependencies}/${properties.propertyString("targetSysRoot.osx-ios")!!}"
+}
+
+internal class IPhoneSimulatorFromMacOSPlatform(distribution: Distribution) 
+    : MacOSPlatform(distribution) {
+
+    override val arch = properties.propertyString("arch.osx-ios-sim")!!
+    override val osVersionMin = properties.propertyList("osVersionMin.osx-ios-sim")
+    override val llvmLlcFlags = properties.propertyList("llvmLlcFlags.osx-ios-sim")
+    override val targetSysRoot = "${distribution.dependencies}/${properties.propertyString("targetSysRoot.osx-ios-sim")!!}"
+}
+internal class LinuxPlatform(distribution: Distribution) 
+    : PlatformFlags(distribution) {
 
     override val llvmLtoFlags = properties.propertyList("llvmLtoFlags.linux")
     override val llvmLlcFlags = properties.propertyList("llvmLlcFlags.linux")
@@ -63,16 +84,16 @@ internal class LinuxPlatform(distrib: Distribution,
     override val linkerOptimizationFlags = 
         properties.propertyList("linkerOptimizationFlags.linux")
     override val linkerKonanFlags = properties.propertyList("linkerKonanFlags.linux")
-    override val linker = "${distrib.sysRoot}/../bin/ld.gold" 
+    override val linker = "${distribution.sysRoot}/../bin/ld.gold" 
 
     val pluginOptimizationFlags = 
         properties.propertyList("pluginOptimizationFlags.linux")
 
     override fun linkCommand(objectFiles: List<String>, executable: String, optimize: Boolean): List<String> {
 
-        val sysRoot = distrib.sysRoot
-        val llvmLib = distrib.llvmLib
-        val libGcc = distrib.libGcc
+        val sysRoot = distribution.sysRoot
+        val llvmLib = distribution.llvmLib
+        val libGcc = distribution.libGcc
 
         // TODO: Can we extract more to the konan.properties?
         return mutableListOf<String>("$linker",
@@ -97,41 +118,40 @@ internal class LinuxPlatform(distrib: Distribution,
 
 
 internal class LinkStage(val context: Context) {
-    
-    private val javaOsName = System.getProperty("os.name")
-    private val javaArch = System.getProperty("os.arch")
-  
-    val os = when (javaOsName) {
-        "Mac OS X" -> "osx"
-        "Linux" -> "linux"
-        else -> error("Unknown operating system: ${javaOsName}") 
-    }
-    val arch = when (javaArch) {
-        "x86_64" -> "x86_64"
-        "amd64" -> "x86_64"
-        else -> error("Unknown hardware platform: ${javaArch}")
-    }
-
-    private val properties = KonanProperties(context.config.configuration)
-    private val distrib = Distribution(properties, os, arch)
-
-    val platform: PlatformFlags = when (os) {
-        "linux" -> LinuxPlatform(distrib, properties)
-        "osx" -> MacOSPlatform(distrib, properties)
-        else -> error("Could not tell the current platform")
-    }
 
     val config = context.config.configuration
+
+    val targetManager = TargetManager(config)
+    private val distribution = 
+        Distribution(context.config.configuration)
+    private val properties = distribution.properties
+
+    val platform: PlatformFlags = when (TargetManager.host) {
+        KonanTarget.LINUX -> LinuxPlatform(distribution)
+        KonanTarget.MACBOOK -> when (targetManager.current) {
+            KonanTarget.IPHONE_SIM
+                -> IPhoneSimulatorFromMacOSPlatform(distribution)
+            KonanTarget.IPHONE 
+                -> IPhoneOSfromMacOSPlatform(distribution)
+            KonanTarget.MACBOOK
+                -> MacOSPlatform(distribution)
+            else -> TODO("Target not implemented yet.")
+        }
+        else -> TODO("Target not implemented yet")
+    }
+    val suffix = targetManager.currentSuffix()
+
     val optimize = config.get(KonanConfigKeys.OPTIMIZATION) ?: false
     val emitted = config.get(KonanConfigKeys.BITCODE_FILE)!!
     val nostdlib = config.get(KonanConfigKeys.NOSTDLIB) ?: false
     val libraries = context.config.libraries
 
     fun llvmLto(files: List<BitcodeFile>): ObjectFile {
-        // TODO: Make it a temporary file.
-        val combined = "combined.o" 
+        val tmpCombined = File.createTempFile("combined", ".o")
+        tmpCombined.deleteOnExit()
+        val combined = tmpCombined.absolutePath
 
-        val tool = distrib.llvmLto
+        val tool = distribution.llvmLto
         val command = mutableListOf(tool, "-o", combined)
         if (optimize) {
             command.addAll(platform.llvmLtoFlags)
@@ -143,12 +163,13 @@ internal class LinkStage(val context: Context) {
     }
 
     fun llvmLlc(file: BitcodeFile): ObjectFile {
-        // TODO: Make it a temporary file.
-        val objectFile = "$file.o"
+        val tmpObjectFile = File.createTempFile(File(file).name, ".o")
+        tmpObjectFile.deleteOnExit()
+        val objectFile = tmpObjectFile.absolutePath
 
-        val tool = distrib.llvmLlc
-        val command = listOf(distrib.llvmLlc, "-o", objectFile, "-filetype=obj") +  
-            properties.propertyList("llvmLlcFlags.$os") + listOf(file)
+        val tool = distribution.llvmLlc
+        val command = listOf(distribution.llvmLlc, "-o", objectFile, "-filetype=obj") +
+                properties.propertyList("llvmLlcFlags.$suffix") + listOf(file)
         runTool(*command.toTypedArray())
 
         return objectFile
@@ -186,10 +207,10 @@ internal class LinkStage(val context: Context) {
     }
 
     fun linkStage() {
-        context.log("# Compiler root: ${Distribution.konanHome}")
+        context.log("# Compiler root: ${distribution.konanHome}")
 
-        val bitcodeFiles = listOf<BitcodeFile>(emitted, Distribution.start, Distribution.runtime, 
-            Distribution.launcher) + libraries
+        val bitcodeFiles = listOf<BitcodeFile>(emitted, distribution.start, distribution.runtime, 
+            distribution.launcher) + libraries
 
         val objectFiles = if (optimize) {
             listOf( llvmLto(bitcodeFiles ) )

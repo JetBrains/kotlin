@@ -37,7 +37,12 @@ class HashMap<K, V> private constructor(
     override fun containsKey(key: K): Boolean = findKey(key) >= 0
     override fun containsValue(value: V): Boolean = findValue(value) >= 0
 
-    override fun get(key: K): V? {
+
+    operator fun set(key: K, value: V): Unit {
+        put(key, value)
+    }
+
+    override operator fun get(key: K): V? {
         val index = findKey(key)
         if (index < 0) return null
         return valuesArray!![index]
@@ -671,3 +676,6 @@ internal class HashMapEntrySet<K, V> internal constructor(
         return size == other.size && backing.containsAllEntries(other as Collection<Map.Entry<*, *>>)
     }
 }
+
+// This hash map keeps insertion order.
+typealias LinkedHashMap<K, V> = HashMap<K, V>

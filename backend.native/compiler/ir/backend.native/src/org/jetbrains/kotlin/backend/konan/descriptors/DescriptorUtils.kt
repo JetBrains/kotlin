@@ -5,13 +5,20 @@ import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSubstitution
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -35,16 +42,16 @@ internal val ClassDescriptor.implementedInterfaces: List<ClassDescriptor>
  *
  * TODO: this method is actually a part of resolve and probably duplicates another one
  */
-internal val FunctionDescriptor.implementation: FunctionDescriptor
-    get() {
-        if (this.kind.isReal) {
-            return this
-        } else {
-            val overridden = OverridingUtil.getOverriddenDeclarations(this)
-            val filtered = OverridingUtil.filterOutOverridden(overridden)
-            return filtered.first { it.modality != Modality.ABSTRACT } as FunctionDescriptor
-        }
+internal fun FunctionDescriptor.resolveFakeOverride(): FunctionDescriptor {
+    if (this.kind.isReal) {
+        return this
+    } else {
+        val overridden = OverridingUtil.getOverriddenDeclarations(this)
+        val filtered = OverridingUtil.filterOutOverridden(overridden)
+        // TODO: is it correct to take first?
+        return filtered.first { it.modality != Modality.ABSTRACT } as FunctionDescriptor
     }
+}
 
 private val intrinsicAnnotation = FqName("konan.internal.Intrinsic")
 
@@ -128,16 +135,18 @@ internal fun KotlinType.isUnboundCallableReference(): Boolean {
 
 internal val CallableDescriptor.allValueParameters: List<ParameterDescriptor>
     get() {
-        val constructorReceiver = if (this is ConstructorDescriptor) {
-            this.constructedClass.thisAsReceiverParameter
-        } else {
-            null
-        }
+        val receivers = mutableListOf<ParameterDescriptor>()
 
-        val receivers = listOf(
-                constructorReceiver,
-                this.dispatchReceiverParameter,
-                this.extensionReceiverParameter).filterNotNull()
+        if (this is ConstructorDescriptor)
+            receivers.add(this.constructedClass.thisAsReceiverParameter)
+
+        val dispatchReceiverParameter = this.dispatchReceiverParameter
+        if (dispatchReceiverParameter != null)
+            receivers.add(dispatchReceiverParameter)
+
+        val extensionReceiverParameter = this.extensionReceiverParameter
+        if (extensionReceiverParameter != null)
+            receivers.add(extensionReceiverParameter)
 
         return receivers + this.valueParameters
     }
@@ -152,7 +161,7 @@ internal val FunctionDescriptor.isFunctionInvoke: Boolean
 
 internal fun ClassDescriptor.isUnit() = this.defaultType.isUnit()
 
-internal val ClassDescriptor.сontributedMethods: List<FunctionDescriptor>
+internal val ClassDescriptor.contributedMethods: List<FunctionDescriptor>
     get() {
         val contributedDescriptors = unsubstitutedMemberScope.getContributedDescriptors()
         // (includes declarations from supers)
@@ -171,6 +180,7 @@ internal val ClassDescriptor.сontributedMethods: List<FunctionDescriptor>
     }
 
 fun ClassDescriptor.isAbstract() = this.modality == Modality.SEALED || this.modality == Modality.ABSTRACT
+        || this.kind == ClassKind.ENUM_CLASS
 
 // TODO: optimize
 val ClassDescriptor.vtableEntries: List<FunctionDescriptor>
@@ -183,17 +193,14 @@ val ClassDescriptor.vtableEntries: List<FunctionDescriptor>
             this.getSuperClassOrAny().vtableEntries
         }
 
-        val methods = this.сontributedMethods
+        val methods = this.contributedMethods
 
         val inheritedVtableSlots = superVtableEntries.map { superMethod ->
-            methods.single { OverridingUtil.overrides(it, superMethod) }
+            methods.singleOrNull { OverridingUtil.overrides(it, superMethod) } ?: superMethod
         }
 
         return inheritedVtableSlots + (methods - inheritedVtableSlots).filter { it.isOverridable }
     }
-
-val ClassDescriptor.vtableSize: Int
-    get() = if (this.isAbstract()) 0 else this.vtableEntries.size
 
 fun ClassDescriptor.vtableIndex(function: FunctionDescriptor): Int {
     this.vtableEntries.forEachIndexed { index, functionDescriptor ->
@@ -204,8 +211,11 @@ fun ClassDescriptor.vtableIndex(function: FunctionDescriptor): Int {
 
 val ClassDescriptor.methodTableEntries: List<FunctionDescriptor>
     get() {
-        assert (!this.isAbstract())
-
-        return this.сontributedMethods.filter { it.isOverridableOrOverrides }
+        assert(!this.isAbstract())
+        return this.contributedMethods.filter {
+            // We check that either method is open, or one of declarations it overrides
+            // is open.
+            it.isOverridable || DescriptorUtils.getAllOverriddenDeclarations(it).any { it.isOverridable }
+        }
         // TODO: probably method table should contain all accessible methods to improve binary compatibility
     }

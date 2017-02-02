@@ -1,4 +1,5 @@
 package kotlin
+import konan.internal.ExportForCompiler
 
 // TODO: remove that, as RTTI shall be per instantiation.
 @ExportTypeInfo("theArrayTypeInfo")
@@ -11,6 +12,8 @@ public final class Array<T> : Cloneable {
             index++
         }
     }
+
+    @ExportForCompiler
     internal constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
     public val size: Int
@@ -46,12 +49,6 @@ private class IteratorImpl<T>(val collection: Array<T>) : Iterator<T> {
     }
 }
 
-public fun <T, C : MutableCollection<in T>> Array<out T>.toCollection(destination: C): C {
-    for (item in this) {
-        destination.add(item)
-    }
-    return destination
-}
 
 @kotlin.internal.InlineOnly
 public inline operator fun <T> Array<T>.plus(elements: Array<T>): Array<T> {

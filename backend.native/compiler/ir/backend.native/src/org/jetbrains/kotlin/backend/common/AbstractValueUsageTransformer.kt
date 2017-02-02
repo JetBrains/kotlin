@@ -37,6 +37,15 @@ abstract class AbstractValueUsageTransformer(val builtIns: KotlinBuiltIns): IrEl
     protected open fun IrExpression.useAsArgument(parameter: ParameterDescriptor): IrExpression =
             this.useAsValue(parameter)
 
+    protected open fun IrExpression.useAsDispatchReceiver(function: CallableDescriptor): IrExpression =
+            this.useAsArgument(function.dispatchReceiverParameter!!)
+
+    protected open fun IrExpression.useAsExtensionReceiver(function: CallableDescriptor): IrExpression =
+            this.useAsArgument(function.extensionReceiverParameter!!)
+
+    protected open fun IrExpression.useAsValueArgument(parameter: ValueParameterDescriptor): IrExpression =
+            this.useAsArgument(parameter)
+
     protected open fun IrExpression.useForVariable(variable: VariableDescriptor): IrExpression =
             this.useAsValue(variable)
 
@@ -55,12 +64,12 @@ abstract class AbstractValueUsageTransformer(val builtIns: KotlinBuiltIns): IrEl
         expression.transformChildrenVoid(this)
 
         with(expression) {
-            dispatchReceiver = dispatchReceiver?.useAsArgument(descriptor.dispatchReceiverParameter!!)
-            extensionReceiver = extensionReceiver?.useAsArgument(descriptor.extensionReceiverParameter!!)
+            dispatchReceiver = dispatchReceiver?.useAsDispatchReceiver(descriptor)
+            extensionReceiver = extensionReceiver?.useAsExtensionReceiver(descriptor)
             for (index in descriptor.valueParameters.indices) {
                 val argument = getValueArgument(index) ?: continue
                 val parameter = descriptor.valueParameters[index]
-                putValueArgument(index, argument.useAsArgument(parameter))
+                putValueArgument(index, argument.useAsValueArgument(parameter))
             }
         }
 
@@ -214,7 +223,7 @@ abstract class AbstractValueUsageTransformer(val builtIns: KotlinBuiltIns): IrEl
         declaration.descriptor.valueParameters.forEach { parameter ->
             val defaultValue = declaration.getDefault(parameter)
             if (defaultValue is IrExpressionBody) {
-                defaultValue.expression = defaultValue.expression.useAsArgument(parameter)
+                defaultValue.expression = defaultValue.expression.useAsValueArgument(parameter)
             }
         }
 

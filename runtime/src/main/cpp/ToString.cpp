@@ -11,8 +11,8 @@ namespace {
 
 OBJ_GETTER(makeString, const char* cstring) {
   uint32_t length = strlen(cstring);
-  ArrayHeader* result = ArrayContainer(
-      theStringTypeInfo, length).GetPlace();
+  ArrayHeader* result = AllocArrayInstance(
+      theStringTypeInfo, length, OBJ_RESULT)->array();
   memcpy(
       ByteArrayAddressOfElementAt(result, 0),
       cstring,
@@ -23,6 +23,14 @@ OBJ_GETTER(makeString, const char* cstring) {
 } // namespace
 
 extern "C" {
+
+OBJ_GETTER(Kotlin_Any_toString, KConstRef thiz) {
+  char cstring[80];
+  snprintf(cstring, sizeof(cstring), "%s %p type %p",
+	   IsArray(thiz) ? "array" : "object",
+	   thiz, thiz->type_info_);
+  RETURN_RESULT_OF(makeString, cstring);
+}
 
 OBJ_GETTER(Kotlin_Byte_toString, KByte value) {
   char cstring[8];

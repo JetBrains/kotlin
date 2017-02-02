@@ -1,7 +1,7 @@
 package konan.internal
 
 @ExportForCppRuntime
-internal fun ThrowNullPointerException(): Nothing {
+fun ThrowNullPointerException(): Nothing {
     throw NullPointerException()
 }
 
@@ -11,13 +11,31 @@ internal fun ThrowArrayIndexOutOfBoundsException(): Nothing {
 }
 
 @ExportForCppRuntime
-internal fun ThrowClassCastException(): Nothing {
+fun ThrowClassCastException(): Nothing {
     throw ClassCastException()
 }
 
-internal fun ThrowNoWhenBranchMatchedException(): Nothing {
+@ExportForCppRuntime
+internal fun ThrowArithmeticException() : Nothing {
+    throw ArithmeticException()
+}
+
+fun ThrowNoWhenBranchMatchedException(): Nothing {
     throw NoWhenBranchMatchedException()
 }
 
 @ExportForCppRuntime
 internal fun TheEmptyString() = ""
+
+fun <T: Enum<T>> valueOfForEnum(name: String, arr: Array<T>) : T
+{
+    for (x in arr)
+        if (x.name == name)
+            return x
+    throw Exception("Invalid enum name: $name")
+}
+
+fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T>
+{
+    return values.clone() as Array<T>
+}

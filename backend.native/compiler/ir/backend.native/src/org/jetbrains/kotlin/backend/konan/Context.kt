@@ -1,28 +1,47 @@
 package org.jetbrains.kotlin.backend.konan
 
-import llvm.*
-import org.jetbrains.kotlin.backend.konan.ir.Ir
-import org.jetbrains.kotlin.backend.konan.ir.ModuleIndex
-import org.jetbrains.kotlin.backend.konan.llvm.Runtime
-import org.jetbrains.kotlin.backend.konan.llvm.getFunctionType
-import org.jetbrains.kotlin.backend.konan.llvm.StaticData
-import org.jetbrains.kotlin.backend.konan.llvm.Llvm
-import org.jetbrains.kotlin.backend.konan.KonanBackendContext
-import org.jetbrains.kotlin.backend.konan.KonanPhase
-import org.jetbrains.kotlin.backend.konan.KonanConfig
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.resolve.BindingContext
+import llvm.LLVMDumpModule
+import llvm.LLVMModuleRef
+import org.jetbrains.kotlin.backend.jvm.descriptors.initialize
 import org.jetbrains.kotlin.backend.konan.descriptors.deepPrint
+import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
+import org.jetbrains.kotlin.backend.konan.ir.Ir
+import org.jetbrains.kotlin.backend.konan.llvm.Llvm
+import org.jetbrains.kotlin.backend.konan.llvm.LlvmDeclarations
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import java.lang.System.out
+
+internal class SpecialDescriptorsFactory {
+    private val outerThisDescriptors = mutableMapOf<ClassDescriptor, PropertyDescriptor>()
+
+    fun getOuterThisFieldDescriptor(innerClassDescriptor: ClassDescriptor): PropertyDescriptor =
+        if (!innerClassDescriptor.isInner) throw AssertionError("Class is not inner: $innerClassDescriptor")
+        else outerThisDescriptors.getOrPut(innerClassDescriptor) {
+            val outerClassDescriptor = DescriptorUtils.getContainingClass(innerClassDescriptor) ?:
+                    throw AssertionError("No containing class for inner class $innerClassDescriptor")
+
+            val receiver = ReceiverParameterDescriptorImpl(innerClassDescriptor, ImplicitClassReceiver(innerClassDescriptor))
+            PropertyDescriptorImpl.create(innerClassDescriptor, Annotations.EMPTY, Modality.FINAL, Visibilities.PRIVATE,
+                false, "this$0".synthesizedName, CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE,
+                false, false, false, false, false, false).initialize(outerClassDescriptor.defaultType, dispatchReceiverParameter = receiver)
+        }
+}
 
 internal final class Context(val config: KonanConfig) : KonanBackendContext() {
 
     var moduleDescriptor: ModuleDescriptor? = null
 
+    val specialDescriptorsFactory = SpecialDescriptorsFactory()
+
+    // TODO: make lateinit?
     var irModule: IrModuleFragment? = null
         set(module: IrModuleFragment?) {
             if (field != null) {
@@ -49,6 +68,7 @@ internal final class Context(val config: KonanConfig) : KonanBackendContext() {
         }
 
     lateinit var llvm: Llvm
+    lateinit var llvmDeclarations: LlvmDeclarations
 
     var phase: KonanPhase? = null
     var depth: Int = 0

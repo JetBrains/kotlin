@@ -3,32 +3,61 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.Distribution
 import org.jetbrains.kotlin.backend.konan.hash.GlobalHash
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jetbrains.kotlin.backend.konan.descriptors.backingField
-import org.jetbrains.kotlin.backend.konan.descriptors.vtableSize
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+
+internal enum class SlotType {
+    // Frame local arena slot can be used.
+    ARENA,
+    // Return slot can be used.
+    RETURN,
+    // Return slot, if it is an arena, can be used.
+    RETURN_IF_ARENA,
+    // Anonymous slot.
+    ANONYMOUS,
+    // Unknown slot type.
+    UNKNOWN
+}
+
+// Lifetimes class of reference, computed by escape analysis.
+internal enum class Lifetime(val slotType: SlotType) {
+    // If reference is frame-local (only obtained from some call and never leaves).
+    LOCAL(SlotType.ARENA),
+    // If reference is only returned.
+    RETURN_VALUE(SlotType.RETURN),
+    // If reference is set as field of references of class RETURN_VALUE or INDIRECT_RETURN_VALUE.
+    INDIRECT_RETURN_VALUE(SlotType.RETURN_IF_ARENA),
+    // If reference is stored to the field of an incoming parameters.
+    PARAMETER_FIELD(SlotType.ANONYMOUS),
+    // If reference refers to the global (either global object or global variable).
+    GLOBAL(SlotType.ANONYMOUS),
+    // If reference used to throw.
+    THROW(SlotType.ANONYMOUS),
+    // If reference used as an argument of outgoing function. Class can be improved by escape analysis
+    // of called function.
+    ARGUMENT(SlotType.ANONYMOUS),
+    // If reference class is unknown.
+    UNKNOWN(SlotType.UNKNOWN),
+    // If reference class is irrelevant.
+    IRRELEVANT(SlotType.UNKNOWN)
+}
 
 /**
  * Provides utility methods to the implementer.
  */
-internal interface ContextUtils {
+internal interface ContextUtils : RuntimeAware {
     val context: Context
 
-    val runtime: Runtime
+    override val runtime: Runtime
         get() = context.llvm.runtime
 
     /**
@@ -42,53 +71,7 @@ internal interface ContextUtils {
     val staticData: StaticData
         get() = context.llvm.staticData
 
-    /**
-     * All fields of the class instance.
-     * The order respects the class hierarchy, i.e. a class [fields] contains superclass [fields] as a prefix.
-     */
-    val ClassDescriptor.fields: List<PropertyDescriptor>
-        get() {
-            val superClass = this.getSuperClassNotAny() // TODO: what if Any has fields?
-            val superFields = if (superClass != null) superClass.fields else emptyList()
-
-            return superFields + this.declaredFields
-        }
-
-    /**
-     * Fields declared in the class.
-     */
-    val ClassDescriptor.declaredFields: List<PropertyDescriptor>
-        get() {
-            // TODO: Here's what is going on here:
-            // The existence of a backing field for a property is only described in the IR, 
-            // but not in the property descriptor.
-            // That works, while we process the IR, but not for deserialized descriptors.
-            //
-            // So to have something in deserialized descriptors, 
-            // while we still see the IR, we mark the property with an annotation.
-            //
-            // We could apply the annotation during IR rewite, but we still are not
-            // that far in the rewriting infrastructure. So we postpone
-            // the annotation until the serializer.
-            //
-            // In this function we check the presence of the backing filed
-            // two ways: first we check IR, then we check the annotation.
-
-            val irClass = context.ir.moduleIndex.classes[this.classId]
-            if (irClass != null) {
-                val irProperties = irClass.declarations
-
-                return irProperties.mapNotNull { 
-                    (it as? IrProperty)?.backingField?.descriptor 
-                }
-            } else {
-                val properties = this.unsubstitutedMemberScope.
-                    getContributedDescriptors().
-                    filterIsInstance<PropertyDescriptor>()
-
-                return properties.mapNotNull{ it.backingField }
-            }
-        }
+    fun isExternal(descriptor: DeclarationDescriptor) = descriptor.module != context.ir.irModule.descriptor
 
     /**
      * LLVM function generated from the Kotlin function.
@@ -97,13 +80,15 @@ internal interface ContextUtils {
     val FunctionDescriptor.llvmFunction: LLVMValueRef
         get() {
             assert (this.kind.isReal)
-            val globalName = this.symbolName
-            val module = context.llvmModule
+            if (this is TypeAliasConstructorDescriptor) {
+                return this.underlyingConstructorDescriptor.llvmFunction
+            }
 
-            val functionType = getLlvmFunctionType(this)
-
-            return LLVMGetNamedFunction(module, globalName) ?:
-                    LLVMAddFunction(module, globalName, functionType)!!
+            return if (isExternal(this)) {
+                context.llvm.externalFunction(this.symbolName, getLlvmFunctionType(this))
+            } else {
+                context.llvmDeclarations.forFunction(this).llvmFunction
+            }
         }
 
     /**
@@ -115,17 +100,14 @@ internal interface ContextUtils {
             return constValue(result)
         }
 
-    /**
-     * Pointer to struct { TypeInfo, vtable }.
-     */
-    val ClassDescriptor.typeInfoWithVtable: ConstPointer
-        get() {
-            val type = structType(runtime.typeInfoType, LLVMArrayType(int8TypePtr, this.vtableSize)!!)
-            return constPointer(externalGlobal(this.typeInfoSymbolName, type))
-        }
-
     val ClassDescriptor.typeInfoPtr: ConstPointer
-        get() = typeInfoWithVtable.getElementPtr(0)
+        get() {
+            return if (isExternal(this)) {
+                constPointer(externalGlobal(this.typeInfoSymbolName, runtime.typeInfoType))
+            } else {
+                context.llvmDeclarations.forClass(this).typeInfo
+            }
+        }
 
     /**
      * Pointer to type info for given class.
@@ -223,13 +205,14 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         }
     }
 
-    private fun externalFunction(name: String, type: LLVMTypeRef): LLVMValueRef {
-        val found = LLVMGetNamedFunction(context.llvmModule, name)
+    internal fun externalFunction(name: String, type: LLVMTypeRef): LLVMValueRef {
+        val found = LLVMGetNamedFunction(llvmModule, name)
         if (found != null) {
             assert (getFunctionType(found) == type)
+            assert (LLVMGetLinkage(found) == LLVMLinkage.LLVMExternalLinkage)
             return found
         } else {
-            return LLVMAddFunction(context.llvmModule, name, type)!!
+            return LLVMAddFunction(llvmModule, name, type)!!
         }
     }
 
@@ -241,7 +224,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
     val staticData = StaticData(context)
 
-    val runtimeFile = context.config.configuration.get(KonanConfigKeys.RUNTIME_FILE)!!
+    val runtimeFile = context.config.distribution.runtime
     val runtime = Runtime(runtimeFile) // TODO: dispose
 
     init {
@@ -254,13 +237,14 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     var globalInitIndex:Int = 0
 
     val allocInstanceFunction = importRtFunction("AllocInstance")
-    val initInstanceFunction = importRtFunction("InitInstance")
     val allocArrayFunction = importRtFunction("AllocArrayInstance")
+    val initInstanceFunction = importRtFunction("InitInstance")
+    val updateReturnRefFunction = importRtFunction("UpdateReturnRef")
     val setLocalRefFunction = importRtFunction("SetLocalRef")
     val setGlobalRefFunction = importRtFunction("SetGlobalRef")
     val updateLocalRefFunction = importRtFunction("UpdateLocalRef")
     val updateGlobalRefFunction = importRtFunction("UpdateGlobalRef")
-    val releaseLocalRefsFunction = importRtFunction("ReleaseLocalRefs")
+    val leaveFrameFunction = importRtFunction("LeaveFrame")
     val setArrayFunction = importRtFunction("Kotlin_Array_set")
     val copyImplArrayFunction = importRtFunction("Kotlin_Array_copyImpl")
     val lookupFieldOffset = importRtFunction("LookupFieldOffset")

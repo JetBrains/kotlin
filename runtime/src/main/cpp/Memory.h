@@ -5,30 +5,20 @@
 #include "Common.h"
 #include "TypeInfo.h"
 
-typedef enum {
-  // Allocation guaranteed to be frame local.
-  SCOPE_FRAME = 0,
-  // Allocation is generic global allocation.
-  SCOPE_GLOBAL = 1,
-  // Allocation shall take place in current arena.
-  SCOPE_ARENA = 2,
-  // Allocation is permanent.
-  SCOPE_PERMANENT = 3
-} PlacementHint;
-
 // Must fit in two bits.
 typedef enum {
   // Container is normal thread local container.
   CONTAINER_TAG_NORMAL = 0,
-  // Container shall not be refcounted (const data, frame locals).
-  CONTAINER_TAG_NOCOUNT = 1,
-  // Container shall be atomically refcounted.
-  CONTAINER_TAG_SHARED = 2,
-  // Container is no longer valid.
-  CONTAINER_TAG_INVALID = 3,
+   // Container shall be atomically refcounted.
+  CONTAINER_TAG_SHARED = 1,
+  // Those container tags shall not be refcounted.
+  // Permanent object, cannot refer to non-permanent objects, so no need to cleanup those.
+  CONTAINER_TAG_PERMANENT = 2,
+  // Stack objects, no need to free, children cleanup still shall be there.
+  CONTAINER_TAG_STACK = 3,
   // Container was seen during GC.
   CONTAINER_TAG_SEEN = 4,
-  // Shift to get actual counter..
+  // Shift to get actual counter.
   CONTAINER_TAG_SHIFT = 3,
   // Actual value to increment/decrement conatiner by. Tag is in lower bits.
   CONTAINER_TAG_INCREMENT = 1 << CONTAINER_TAG_SHIFT,
@@ -36,14 +26,17 @@ typedef enum {
   CONTAINER_TAG_MASK = ((CONTAINER_TAG_INCREMENT >> 1) - 1)
 } ContainerTag;
 
-// Could be made 64-bit for large memory configs.
 typedef uint32_t container_offset_t;
+typedef uint32_t container_size_t;
+
 
 // Header of all container objects. Contains reference counter.
 struct ContainerHeader {
   // Reference counter of container. Uses two lower bits of counter for
   // container type (for polymorphism in ::Release()).
-  volatile uint32_t ref_count_;
+  volatile uint32_t refCount_;
+  // Number of objects in the container.
+  uint32_t objectCount_;
 };
 
 struct ArrayHeader;
@@ -116,37 +109,25 @@ struct ArrayHeader {
   uint32_t count_;
 };
 
-struct ArenaContainerHeader : public ContainerHeader {
-  // Current allocation limit.
-  uint8_t* current_;
-  // Allocation end. Maybe consider having chunked backing storage
-  // at cost of smarter ::Release() polymorphic on container type.
-  uint8_t* end_;
-};
-
 inline uint32_t ArrayDataSizeBytes(const ArrayHeader* obj) {
   // Instance size is negative.
   return -obj->type_info()->instanceSize_ * obj->count_;
 }
-
-void FreeContainer(ContainerHeader* header);
 
 // TODO: those two operations can be implemented by translator when storing
 // reference to an object.
 inline void AddRef(ContainerHeader* header) {
   // Looking at container type we may want to skip AddRef() totally
   // (non-escaping stack objects, constant objects).
-  switch (header->ref_count_ & CONTAINER_TAG_MASK) {
-    case CONTAINER_TAG_NORMAL:
-      header->ref_count_ += CONTAINER_TAG_INCREMENT;
+  switch (header->refCount_ & CONTAINER_TAG_MASK) {
+    case CONTAINER_TAG_STACK:
+    case CONTAINER_TAG_PERMANENT:
       break;
-    case CONTAINER_TAG_NOCOUNT:
+    case CONTAINER_TAG_NORMAL:
+      header->refCount_ += CONTAINER_TAG_INCREMENT;
       break;
     case CONTAINER_TAG_SHARED:
-      __sync_fetch_and_add(&header->ref_count_, CONTAINER_TAG_INCREMENT);
-      break;
-    case CONTAINER_TAG_INVALID:
-      RuntimeAssert(false, "trying to addref invalid container");
+      __sync_fetch_and_add(&header->refCount_, CONTAINER_TAG_INCREMENT);
       break;
     default:
       RuntimeAssert(false, "unknown container type");
@@ -154,19 +135,22 @@ inline void AddRef(ContainerHeader* header) {
   }
 }
 
-// Release returns 'true' iff container cannot be part of cycle (either NOCOUNT
+void FreeContainer(ContainerHeader* header);
+
+// Release() returns 'true' iff container cannot be part of cycle (either NOCOUNT
 // object or container was fully released and will be collected).
 inline bool Release(ContainerHeader* header) {
-  switch (header->ref_count_ & CONTAINER_TAG_MASK) {
+  switch (header->refCount_ & CONTAINER_TAG_MASK) {
+      case CONTAINER_TAG_PERMANENT:
+      case CONTAINER_TAG_STACK:
+        // permanent/stack containers aren't loop candidates.
+        return true;
     case CONTAINER_TAG_NORMAL:
-      if ((header->ref_count_ -= CONTAINER_TAG_INCREMENT) == CONTAINER_TAG_NORMAL) {
+      if ((header->refCount_ -= CONTAINER_TAG_INCREMENT) == CONTAINER_TAG_NORMAL) {
         FreeContainer(header);
         return true;
       }
       break;
-    case CONTAINER_TAG_NOCOUNT:
-      // NOCOUNT containers aren't loop candidate.
-      return true;
     // Note that shared containers have potentially subtle race, if object holds a
     // reference to another object, stored in shorter living container. In this
     // case there's unlikely, but possible case, where one mutator takes reference,
@@ -182,13 +166,10 @@ inline bool Release(ContainerHeader* header) {
     //    probability even further.
     case CONTAINER_TAG_SHARED:
       if (__sync_sub_and_fetch(
-              &header->ref_count_, CONTAINER_TAG_INCREMENT) == CONTAINER_TAG_SHARED) {
+              &header->refCount_, CONTAINER_TAG_INCREMENT) == CONTAINER_TAG_SHARED) {
         FreeContainer(header);
         return true;
       }
-      break;
-    case CONTAINER_TAG_INVALID:
-      RuntimeAssert(false, "trying to release invalid container");
       break;
     default:
       RuntimeAssert(false, "unknown container type");
@@ -236,9 +217,9 @@ class ObjectContainer : public Container {
 
   // Object container shalln't have any dtor, as it's being freed by
   // ::Release().
+
   ObjHeader* GetPlace() const {
-    return reinterpret_cast<ObjHeader*>(
-        reinterpret_cast<uint8_t*>(header_) + sizeof(ContainerHeader));
+    return reinterpret_cast<ObjHeader*>(header_ + 1);
   }
 
  private:
@@ -253,41 +234,23 @@ class ArrayContainer : public Container {
   }
 
   // Array container shalln't have any dtor, as it's being freed by ::Release().
+
   ArrayHeader* GetPlace() const {
-    return reinterpret_cast<ArrayHeader*>(
-        reinterpret_cast<uint8_t*>(header_) + sizeof(ContainerHeader));
+    return reinterpret_cast<ArrayHeader*>(header_ + 1);
   }
 
  private:
   void Init(const TypeInfo* type_info, uint32_t elements);
 };
 
-
 // Class representing arena-style placement container.
-// Container is used for reference counting,
-// and it is assumed that objects with related placement will share container. Only
+// Container is used for reference counting, and it is assumed that objects
+// with related placement will share container. Only
 // whole container can be freed, individual objects are not taken into account.
-class ArenaContainer : public Container {
+class ArenaContainer {
  public:
-  explicit ArenaContainer(uint32_t size);
-
-  ~ArenaContainer() {
-    if (header_) {
-      RuntimeAssert(header_->ref_count_ == 0, "Non-zero refcount");
-      Dispose();
-    }
-  }
-
-  // Allocation function.
-  void* Place(int size) {
-    ArenaContainerHeader* header = reinterpret_cast<ArenaContainerHeader*>(header_);
-    if (header->current_ + size > header->end_) {
-      return nullptr;
-    }
-    void* result = header->current_;
-    header->current_ += size;
-    return result;
-  }
+  void Init();
+  void Deinit();
 
   // Place individual object in this container.
   ObjHeader* PlaceObject(const TypeInfo* type_info);
@@ -295,40 +258,72 @@ class ArenaContainer : public Container {
   // Places an array of certain type in this container. Note that array_type_info
   // is type info for an array, not for an individual element. Also note that exactly
   // same operation could be used to place strings.
-  ArrayHeader* PlaceArray(const TypeInfo* array_type_info, int count);
+  ArrayHeader* PlaceArray(const TypeInfo* array_type_info, container_size_t count);
 
-  // Dispose whole container ignoring non-zero refcount. Use with care.
-  void Dispose() {
-    if (header_) {
-      FreeContainer(header_);
-      header_ = nullptr;
+ private:
+  struct ContainerChunk {
+    ContainerChunk* next;
+    // Then we have ContainerHeader here.
+    ContainerHeader* asHeader() {
+      return reinterpret_cast<ContainerHeader*>(this + 1);
     }
+  };
+
+  void* place(container_size_t size);
+  bool allocContainer(container_size_t minSize);
+  void setMeta(ObjHeader* obj, const TypeInfo* type_info) {
+    obj->container_offset_negative_ =
+        reinterpret_cast<uintptr_t>(obj) - reinterpret_cast<uintptr_t>(currentChunk_->asHeader());
+    obj->set_type_info(type_info);
+    RuntimeAssert(obj->container() == currentChunk_->asHeader(), "Placement must match");
   }
+  ContainerChunk* currentChunk_;
+  uint8_t* current_;
+  uint8_t* end_;
 };
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+// Bit or'ed to slot pointer, marking the fact that allocation shall happen
+// in arena pointed by the slot.
+#define ARENA_BIT 1
 #define OBJ_RESULT __result__
 #define OBJ_GETTER0(name) ObjHeader* name(ObjHeader** OBJ_RESULT)
 #define OBJ_GETTER(name, ...) ObjHeader* name(__VA_ARGS__, ObjHeader** OBJ_RESULT)
-#define RETURN_OBJ(value) { ObjHeader* obj = value; UpdateLocalRef(OBJ_RESULT, obj); return obj; }
-#define RETURN_OBJ_RESULT() return *OBJ_RESULT;
-#define RETURN_RESULT_OF0(name) name(OBJ_RESULT); return *OBJ_RESULT;
-#define RETURN_RESULT_OF(name, ...) name(__VA_ARGS__, OBJ_RESULT); return *OBJ_RESULT;
+#define RETURN_OBJ(value) { ObjHeader* obj = value; \
+    UpdateReturnRef(OBJ_RESULT, obj);               \
+    return obj; }
+#define RETURN_RESULT_OF0(name) {       \
+    ObjHeader* obj = name(OBJ_RESULT);  \
+    return obj;                         \
+  }
+#define RETURN_RESULT_OF(name, ...) {                   \
+    ObjHeader* result = name(__VA_ARGS__, OBJ_RESULT);  \
+    return result;                                      \
+  }
 
 void InitMemory();
 void DeinitMemory();
 
-OBJ_GETTER(AllocInstance, const TypeInfo* type_info, PlacementHint hint);
-OBJ_GETTER(AllocArrayInstance,
-           const TypeInfo* type_info, PlacementHint hint, uint32_t elements);
-OBJ_GETTER(AllocStringInstance,
-           PlacementHint hint, const char* data, uint32_t length);
+//
+// Object allocation.
+//
+// Allocation can happen in either GLOBAL, FRAME or ARENA scope. Depending on that,
+// Alloc* or ArenaAlloc* is called. Regular alloc means allocation happens in the heap,
+// and each object gets its individual container. Otherwise, allocator uses aux slot in
+// an implementation-defined manner, current behavior is to keep arena pointer there.
+// Arena containers are not reference counted, and is explicitly freed when leaving
+// its owner frame.
+// Escape analysis algorithm is the provider of information for decision on exact aux slot
+// selection, and comes from upper bound esteemation of object lifetime.
+//
+OBJ_GETTER(AllocInstance, const TypeInfo* type_info) RUNTIME_NOTHROW;
+OBJ_GETTER(AllocArrayInstance, const TypeInfo* type_info, uint32_t elements) RUNTIME_NOTHROW;
+OBJ_GETTER(AllocStringInstance, const char* data, uint32_t length) RUNTIME_NOTHROW;
 OBJ_GETTER(InitInstance,
-           ObjHeader** location, const TypeInfo* type_info, PlacementHint hint,
-           void (*ctor)(ObjHeader*));
+             ObjHeader** location, const TypeInfo* type_info, void (*ctor)(ObjHeader*));
 
 //
 // Object reference management.
@@ -360,9 +355,12 @@ void SetGlobalRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW
 void UpdateLocalRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
 // Update potentially globally visible location.
 void UpdateGlobalRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
+// Update reference in return slot.
+void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) RUNTIME_NOTHROW;
 // Optimization: release all references in range.
 void ReleaseLocalRefs(ObjHeader** start, int count) RUNTIME_NOTHROW;
-void ReleaseGlobalRefs(ObjHeader** start, int count) RUNTIME_NOTHROW;
+// Called on frame leave, if it has object slots.
+void LeaveFrame(ObjHeader** start, int count) RUNTIME_NOTHROW;
 // Collect garbage, which cannot be found by reference counting (cycles).
 void GarbageCollect() RUNTIME_NOTHROW;
 

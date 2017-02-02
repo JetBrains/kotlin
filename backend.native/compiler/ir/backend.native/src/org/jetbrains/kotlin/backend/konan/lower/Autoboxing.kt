@@ -6,8 +6,9 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalClass
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalFunctions
 import org.jetbrains.kotlin.backend.konan.descriptors.unboundCallableReferenceTypeOrNull
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -128,8 +129,17 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         return this.adaptIfNecessary(actualType, type)
     }
 
-    override fun IrExpression.useAsArgument(parameter: ParameterDescriptor): IrExpression {
-        return this.useAsValue(parameter.original)
+    override fun IrExpression.useAsDispatchReceiver(function: CallableDescriptor): IrExpression {
+        return this.useAsArgument(function.original.dispatchReceiverParameter!!)
+    }
+
+    override fun IrExpression.useAsExtensionReceiver(function: CallableDescriptor): IrExpression {
+        return this.useAsArgument(function.original.extensionReceiverParameter!!)
+    }
+
+    override fun IrExpression.useAsValueArgument(parameter: ValueParameterDescriptor): IrExpression {
+        val function = parameter.containingDeclaration
+        return this.useAsArgument(function.original.valueParameters[parameter.index])
     }
 
     override fun IrExpression.useForField(field: PropertyDescriptor): IrExpression {
