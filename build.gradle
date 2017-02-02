@@ -112,7 +112,7 @@ class PlatformInfo {
 }
 
 task dist_compiler(type: Copy) {
-    dependsOn ':backend.native:jars', 'dist_runtime'
+    dependsOn ':backend.native:jars'
 
     destinationDir file('dist')
 
