@@ -581,7 +581,6 @@ task boxing14(type: RunKonanTest) {
 }
 
 task boxing15(type: RunKonanTest) {
-    disabled = true
     goldValue = "17\n"
     source = "codegen/boxing/boxing15.kt"
 }
