@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.context.*
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
@@ -682,6 +683,18 @@ class DoubleColonExpressionResolver(
                         "resolve bound callable reference", expressionReceiver, reference, c, mode
                 )
                 if (result != null) return result
+
+                if (lhs.isObject) {
+                    val classifier = lhsType.constructor.declarationDescriptor
+                    val calleeExpression = expression.receiverExpression?.getCalleeExpressionIfAny()
+                    if (calleeExpression is KtSimpleNameExpression && classifier is ClassDescriptor) {
+                        val qualifier = ClassQualifier(calleeExpression, classifier)
+                        val possibleStatic = tryResolveRHSWithReceiver(
+                                "resolve object callable reference in static scope", qualifier, reference, c, mode
+                        )
+                        if (possibleStatic != null) return possibleStatic
+                    }
+                }
             }
         }
 
