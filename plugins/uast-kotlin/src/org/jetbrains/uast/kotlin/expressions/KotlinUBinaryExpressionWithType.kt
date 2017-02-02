@@ -20,11 +20,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
-import org.jetbrains.uast.UBinaryExpressionWithType
-import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UExpression
-import org.jetbrains.uast.UastBinaryExpressionWithTypeKind
-import org.jetbrains.uast.expressions.UTypeReferenceExpression
+import org.jetbrains.uast.*
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUBinaryExpressionWithType(
@@ -37,7 +33,7 @@ class KotlinUBinaryExpressionWithType(
     override val type by lz { psi.right.toPsiType(this) }
     
     override val typeReference by lz { 
-        psi.right?.let { KotlinUTypeReferenceExpression(it.toPsiType(this), it, this) } 
+        psi.right?.let { LazyKotlinUTypeReferenceExpression(it, this) { it.toPsiType(this) } }
     }
     
     override val operationKind = when (psi.operationReference.getReferencedNameElementType()) {
@@ -57,9 +53,8 @@ class KotlinCustomUBinaryExpressionWithType(
     lateinit override var operationKind: UastBinaryExpressionWithTypeKind
         internal set
 
-    lateinit override var type: PsiType
-        internal set
-    
+    override val type: PsiType by lz { typeReference?.type ?: UastErrorType }
+
     override var typeReference: UTypeReferenceExpression? = null
         internal set
 }

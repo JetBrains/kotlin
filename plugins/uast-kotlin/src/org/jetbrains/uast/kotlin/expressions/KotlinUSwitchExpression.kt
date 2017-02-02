@@ -67,9 +67,9 @@ class KotlinUSwitchEntry(
                     else -> UastBinaryExpressionWithTypeKind.INSTANCE_CHECK
                 }
                 val typeRef = it.typeReference
-                val type = typeRef.toPsiType(this, boxed = true)
-                this.type = type
-                typeReference = typeRef?.let { KotlinUTypeReferenceExpression(type, it, this) }
+                typeReference = typeRef?.let {
+                    LazyKotlinUTypeReferenceExpression(it, this) { typeRef.toPsiType(this, boxed = true) }
+                }
             }
             is KtWhenConditionWithExpression -> KotlinConverter.convertOrEmpty(it.expression, this)
             else -> UastEmptyExpression

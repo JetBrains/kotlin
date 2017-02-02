@@ -20,13 +20,12 @@ import com.intellij.psi.PsiCodeBlock
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNameIdentifierOwner
-import org.jetbrains.kotlin.asJava.elements.KtLightElement
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
+import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.uast.*
 import org.jetbrains.uast.java.JavaUAnnotation
 import org.jetbrains.uast.java.annotations
@@ -54,7 +53,16 @@ open class KotlinUMethod(
 
 
     override val uastBody by lz {
-        val bodyExpression = (kotlinOrigin as? KtFunction)?.bodyExpression ?: return@lz null
+        val bodyExpression = when (kotlinOrigin) {
+            is KtFunction -> kotlinOrigin.bodyExpression
+            is KtProperty -> when {
+                psi.isGetter -> kotlinOrigin.getter?.bodyExpression
+                psi.isSetter -> kotlinOrigin.setter?.bodyExpression
+                else -> null
+            }
+            else -> null
+        } ?: return@lz null
+
         getLanguagePlugin().convertElement(bodyExpression, this) as? UExpression
     }
 
@@ -64,6 +72,10 @@ open class KotlinUMethod(
     override fun getBody(): PsiCodeBlock? = super.getBody()
 
     override fun getOriginalElement(): PsiElement? = super.getOriginalElement()
+
+    override fun equals(other: Any?) = other is KotlinUMethod && psi == other.psi
+
+    override fun hashCode() = psi.hashCode()
 
     companion object {
         fun create(psi: KtLightMethod, containingElement: UElement?) = when (psi) {

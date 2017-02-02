@@ -16,12 +16,18 @@
 
 package org.jetbrains.uast.kotlin
 
-import org.jetbrains.uast.UastBinaryExpressionWithTypeKind
+import org.jetbrains.kotlin.psi.KtStringTemplateExpression
+import org.jetbrains.uast.*
+import org.jetbrains.uast.psi.PsiElementBacked
 
-object KotlinBinaryExpressionWithTypeKinds {
-    @JvmField
-    val NEGATED_INSTANCE_CHECK = UastBinaryExpressionWithTypeKind.InstanceCheck("!is")
-
-    @JvmField
-    val SAFE_TYPE_CAST = UastBinaryExpressionWithTypeKind.TypeCast("as?")
+class KotlinStringTemplateUPolyadicExpression(
+        override val psi: KtStringTemplateExpression,
+        override val containingElement: UElement?
+) : KotlinAbstractUExpression(),
+        UPolyadicExpression,
+        PsiElementBacked,
+        KotlinUElementWithType,
+        KotlinEvaluatableUElement {
+    override val operands: List<UExpression> by lz { psi.entries.map { KotlinConverter.convert(it, this) } }
+    override val operator = UastBinaryOperator.PLUS
 }

@@ -40,8 +40,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.android.inspections.klint.IntellijLintUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
-import org.jetbrains.uast.expressions.UReferenceExpression;
-import org.jetbrains.uast.expressions.UTypeReferenceExpression;
 import org.jetbrains.uast.util.UastExpressionUtils;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
@@ -1028,6 +1026,10 @@ public class ApiDetector extends ResourceXmlDetector
                         }
                     }
                 }
+            } else {
+                for (UTypeReferenceExpression t : aClass.getUastSuperTypes()) {
+                    checkType(t.getType(), t);
+                }
             }
 
             return super.visitClass(aClass);
@@ -1320,8 +1322,8 @@ public class ApiDetector extends ResourceXmlDetector
         }
 
         @Override
-        public boolean visitTryExpression(UTryExpression statement) {
-            if (statement.isResources()) {
+        public boolean visitTryExpression(@NotNull UTryExpression statement) {
+            if (statement.getHasResources()) {
                 int api = 19; // minSdk for try with resources
                 int minSdk = getMinSdk(mContext);
 

@@ -63,7 +63,7 @@ import org.jetbrains.uast.UVariable;
 import org.jetbrains.uast.UWhileExpression;
 import org.jetbrains.uast.UastCallKind;
 import org.jetbrains.uast.UastUtils;
-import org.jetbrains.uast.expressions.UReferenceExpression;
+import org.jetbrains.uast.UReferenceExpression;
 import org.jetbrains.uast.util.UastExpressionUtils;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;

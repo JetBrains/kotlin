@@ -16,8 +16,12 @@
 
 package org.jetbrains.uast.kotlin
 
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor
+import org.jetbrains.kotlin.asJava.findFacadeClass
+import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.uast.*
 import java.util.*
@@ -40,5 +44,16 @@ class KotlinUFile(override val psi: KtFile, override val languagePlugin: UastLan
     }
     
     override val imports by lz { psi.importDirectives.map { KotlinUImportStatement(it, this) } }
-    override val classes by lz { psi.classes.map { languagePlugin.convert<UClass>(it, this) } }
+
+    override val classes by lz {
+        fun PsiClass.toUClass() = languagePlugin.convert<UClass>(this, this@KotlinUFile)
+
+        val classes = psi.findFacadeClass()?.let { mutableListOf(it.toUClass()) } ?: mutableListOf()
+
+        for (declaration in psi.declarations) {
+            (declaration as? KtClassOrObject)?.toLightClass()?.let { classes += it.toUClass() }
+        }
+
+        return@lz classes
+    }
 }

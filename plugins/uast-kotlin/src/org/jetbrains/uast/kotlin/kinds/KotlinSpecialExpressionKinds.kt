@@ -27,4 +27,7 @@ object KotlinSpecialExpressionKinds {
 
     @JvmField
     val CLASS_BODY = UastSpecialExpressionKind("class_body")
+
+    @JvmField
+    val ELVIS = UastSpecialExpressionKind("elvis")
 }

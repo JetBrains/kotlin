@@ -18,17 +18,13 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiVariable
+import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
-import org.jetbrains.kotlin.asJava.elements.KtLightField
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.asJava.elements.KtLightParameter
+import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
@@ -41,8 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.uast.*
 import org.jetbrains.uast.java.JavaUastLanguagePlugin
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
-import org.jetbrains.uast.kotlin.expressions.KotlinUBreakExpression
-import org.jetbrains.uast.kotlin.expressions.KotlinUContinueExpression
+import org.jetbrains.uast.kotlin.expressions.*
 import org.jetbrains.uast.kotlin.kinds.KotlinSpecialExpressionKinds
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
@@ -73,6 +68,7 @@ class KotlinUastLanguagePlugin(override val project: Project) : UastLanguagePlug
     override fun convertElementWithParent(element: PsiElement, requiredType: Class<out UElement>?): UElement? {
         if (element !is PsiElement) return null
         if (element is PsiFile) return convertDeclaration(element, null, requiredType)
+        if (element is KtLightClassForFacade) return convertDeclaration(element, null, requiredType)
 
         val parent = element.parent ?: return null
         val parentUElement = convertElementWithParent(parent, null) ?: return null
@@ -191,6 +187,13 @@ internal object KotlinConverter {
             is KtContainerNode -> element.getExpression()?.let {
                 KotlinConverter.convertExpression(it, parent, requiredType)
             } ?: UastEmptyExpression
+            is KtLightAnnotation.LightExpressionValue<*> -> {
+                val expression = element.originalExpression
+                when (expression) {
+                    is KtExpression -> KotlinConverter.convertExpression(expression, parent, requiredType)
+                    else -> UastEmptyExpression
+                }
+            }
             else -> {
                 if (element is LeafPsiElement && element.elementType == KtTokens.IDENTIFIER) {
                     el<UIdentifier> { UIdentifier(element, parent) }
@@ -208,20 +211,6 @@ internal object KotlinConverter {
         val parentPsiElement = (parent as? PsiElementBacked)?.psi
         val variable = KotlinUVariable.create(UastKotlinPsiVariable.create(psi, parentPsiElement, parent!!), parent)
         return KotlinUDeclarationsExpression(parent).apply { declarations = listOf(variable) }
-    }
-    
-    private fun convertStringTemplateExpression(
-            expression: KtStringTemplateExpression,
-            parent: UElement?,
-            i: Int
-    ): UExpression {
-        return if (i == 1) KotlinStringTemplateUBinaryExpression(expression, parent).apply {
-            leftOperand = convert(expression.entries[0], this)
-            rightOperand = convert(expression.entries[1], this)
-        } else KotlinStringTemplateUBinaryExpression(expression, parent).apply {
-            leftOperand = convertStringTemplateExpression(expression, parent, i - 1)
-            rightOperand = convert(expression.entries[i], this)
-        }
     }
 
     internal fun convert(entry: KtStringTemplateEntry, parent: UElement?): UExpression = when (entry) {
@@ -242,7 +231,7 @@ internal object KotlinConverter {
                 else if (expression.entries.size == 1)
                     convert(expression.entries[0], parent)
                 else
-                    convertStringTemplateExpression(expression, parent, expression.entries.size - 1)
+                    KotlinStringTemplateUPolyadicExpression(expression, parent)
             }
             is KtDestructuringDeclaration -> expr<UDeclarationsExpression> {
                 KotlinUDeclarationsExpression(parent).apply {
@@ -267,7 +256,12 @@ internal object KotlinConverter {
                 KotlinUSimpleReferenceExpression(expression, expression.getReferencedName(), parent) 
             }
             is KtCallExpression -> expr<UCallExpression> { KotlinUFunctionCallExpression(expression, parent) }
-            is KtBinaryExpression -> expr<UBinaryExpression> { KotlinUBinaryExpression(expression, parent) }
+            is KtBinaryExpression -> {
+                if (expression.operationToken == KtTokens.ELVIS) {
+                    expr<UExpressionList> { createElvisExpression(expression, parent) ?: UastEmptyExpression }
+                }
+                else expr<UBinaryExpression> { KotlinUBinaryExpression(expression, parent) }
+            }
             is KtParenthesizedExpression -> expr<UParenthesizedExpression> { KotlinUParenthesizedExpression(expression, parent) }
             is KtPrefixExpression -> expr<UPrefixExpression> { KotlinUPrefixExpression(expression, parent) }
             is KtPostfixExpression -> expr<UPostfixExpression> { KotlinUPostfixExpression(expression, parent) }
@@ -290,6 +284,20 @@ internal object KotlinConverter {
             is KtArrayAccessExpression -> expr<UArrayAccessExpression> { KotlinUArrayAccessExpression(expression, parent) }
             is KtLambdaExpression -> expr<ULambdaExpression> { KotlinULambdaExpression(expression, parent) }
             is KtBinaryExpressionWithTypeRHS -> expr<UBinaryExpressionWithType> { KotlinUBinaryExpressionWithType(expression, parent) }
+            is KtClassOrObject -> expr<UDeclarationsExpression> {
+                expression.toLightClass()?.let { lightClass ->
+                    KotlinUDeclarationsExpression(parent).apply {
+                        declarations = listOf(KotlinUClass.create(lightClass, this))
+                    }
+                } ?: UastEmptyExpression
+            }
+            is KtFunction -> if (expression.name.isNullOrEmpty()) {
+                expr<ULambdaExpression> { createLocalFunctionLambdaExpression(expression, parent) }
+            }
+            else {
+                expr<UDeclarationsExpression> { createLocalFunctionDeclaration(expression, parent) }
+            }
+
 
             else -> UnknownKotlinExpression(expression, parent)
         }}

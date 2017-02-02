@@ -60,7 +60,7 @@ import org.jetbrains.uast.USuperExpression;
 import org.jetbrains.uast.UThisExpression;
 import org.jetbrains.uast.UThrowExpression;
 import org.jetbrains.uast.UastUtils;
-import org.jetbrains.uast.expressions.UReferenceExpression;
+import org.jetbrains.uast.UReferenceExpression;
 import org.jetbrains.uast.util.UastExpressionUtils;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;

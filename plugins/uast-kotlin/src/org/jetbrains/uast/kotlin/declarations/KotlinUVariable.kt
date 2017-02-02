@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.uast.*
-import org.jetbrains.uast.expressions.UReferenceExpression
-import org.jetbrains.uast.expressions.UTypeReferenceExpression
 import org.jetbrains.uast.java.AbstractJavaUVariable
 import org.jetbrains.uast.java.JavaAbstractUExpression
 import org.jetbrains.uast.java.JavaUAnnotation
@@ -58,6 +56,9 @@ class KotlinUVariable(
 ) : AbstractKotlinUVariable(), UVariable, PsiVariable by psi {
     override val psi = unwrap<UVariable, PsiVariable>(psi)
 
+    override val annotations by lz { psi.annotations.map { JavaUAnnotation(it, this) } }
+    override val typeReference by lz { getLanguagePlugin().convertOpt<UTypeReferenceExpression>(psi.typeElement, this) }
+
     override fun getInitializer(): PsiExpression? {
         return super<AbstractKotlinUVariable>.getInitializer()
     }
@@ -65,9 +66,6 @@ class KotlinUVariable(
     override fun getOriginalElement(): PsiElement? {
         return super<AbstractKotlinUVariable>.getOriginalElement()
     }
-
-    override val annotations by lz { psi.annotations.map { JavaUAnnotation(it, this) } }
-    override val typeReference by lz { getLanguagePlugin().convertOpt<UTypeReferenceExpression>(psi.typeElement, this) }
 
     companion object {
         fun create(psi: PsiVariable, containingElement: UElement?): UVariable {
@@ -86,6 +84,7 @@ open class KotlinUParameter(
         psi: PsiParameter,
         override val containingElement: UElement?
 ) : AbstractKotlinUVariable(), UParameter, PsiParameter by psi {
+
     override val psi = unwrap<UParameter, PsiParameter>(psi)
 
     override fun getInitializer(): PsiExpression? {
@@ -95,13 +94,13 @@ open class KotlinUParameter(
     override fun getOriginalElement(): PsiElement? {
         return super<AbstractKotlinUVariable>.getOriginalElement()
     }
-
 }
 
 open class KotlinUField(
         psi: PsiField,
         override val containingElement: UElement?
 ) : AbstractKotlinUVariable(), UField, PsiField by psi {
+
     override val psi = unwrap<UField, PsiField>(psi)
 
     override fun getInitializer(): PsiExpression? {
@@ -111,13 +110,13 @@ open class KotlinUField(
     override fun getOriginalElement(): PsiElement? {
         return super<AbstractKotlinUVariable>.getOriginalElement()
     }
-
 }
 
 open class KotlinULocalVariable(
         psi: PsiLocalVariable,
         override val containingElement: UElement?
 ) : AbstractKotlinUVariable(), ULocalVariable, PsiLocalVariable by psi {
+
     override val psi = unwrap<ULocalVariable, PsiLocalVariable>(psi)
 
     override fun getInitializer(): PsiExpression? {
@@ -134,6 +133,8 @@ open class KotlinUEnumConstant(
         psi: PsiEnumConstant,
         override val containingElement: UElement?
 ) : AbstractKotlinUVariable(), UEnumConstant, PsiEnumConstant by psi {
+    override val initializingClass: UClass? by lz { getLanguagePlugin().convertOpt<UClass>(psi.initializingClass, this) }
+
     override val psi = unwrap<UEnumConstant, PsiEnumConstant>(psi)
 
     override fun getInitializer(): PsiExpression? {

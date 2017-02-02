@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.psi.KtCatchClause
 import org.jetbrains.uast.UCatchClause
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UParameter
-import org.jetbrains.uast.expressions.UTypeReferenceExpression
+import org.jetbrains.uast.UTypeReferenceExpression
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.psi.PsiElementBacked
 
@@ -37,8 +37,7 @@ class KotlinUCatchClause(
 
     override val typeReferences by lz {
         val parameter = psi.catchParameter ?: return@lz emptyList<UTypeReferenceExpression>()
-        val typeReference = parameter.typeReference
-        val type = typeReference.toPsiType(this, boxed = true)
-        listOf(KotlinUTypeReferenceExpression(type, typeReference, this))
+        val typeReference = parameter.typeReference ?: return@lz emptyList<UTypeReferenceExpression>()
+        listOf(LazyKotlinUTypeReferenceExpression(typeReference, this) { typeReference.toPsiType(this, boxed = true) } )
     }
 }

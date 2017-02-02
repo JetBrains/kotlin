@@ -16,6 +16,7 @@
 
 package org.jetbrains.uast.kotlin
 
+import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext.DOUBLE_COLON_LHS
 import org.jetbrains.uast.UCallableReferenceExpression
@@ -41,4 +42,9 @@ class KotlinUCallableReferenceExpression(
 
     override val callableName: String
         get() = psi.callableReference.getReferencedName()
+
+    override val resolvedName: String?
+        get() = (resolve() as? PsiNamedElement)?.name
+
+    override fun resolve() = psi.callableReference.resolveCallToDeclaration(this)
 }

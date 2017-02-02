@@ -16,13 +16,9 @@
 
 package com.android.tools.klint.client.api;
 
-import static com.android.SdkConstants.ANDROID_PKG;
-import static com.android.SdkConstants.R_CLASS;
-
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.annotations.VisibleForTesting;
-import com.android.resources.ResourceType;
 import com.android.tools.klint.detector.api.Detector;
 import com.android.tools.klint.detector.api.Detector.JavaPsiScanner;
 import com.android.tools.klint.detector.api.Detector.UastScanner;
@@ -35,30 +31,15 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.JavaElementVisitor;
-import com.intellij.psi.JavaRecursiveElementVisitor;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiJavaCodeReferenceElement;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiMethodCallExpression;
-import com.intellij.psi.PsiNewExpression;
-import com.intellij.psi.PsiReferenceExpression;
-import com.intellij.psi.PsiTypeParameter;
-
+import com.intellij.psi.*;
 import org.jetbrains.uast.*;
-import org.jetbrains.uast.expressions.UTypeReferenceExpression;
 import org.jetbrains.uast.util.UastExpressionUtils;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import static com.android.SdkConstants.ANDROID_PKG;
 
 /**
  * Specialized visitor for running detectors on a Java AST.

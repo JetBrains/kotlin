@@ -19,6 +19,7 @@ package org.jetbrains.uast.kotlin
 import org.jetbrains.kotlin.psi.KtIsExpression
 import org.jetbrains.uast.UBinaryExpressionWithType
 import org.jetbrains.uast.UElement
+import org.jetbrains.uast.UastBinaryExpressionWithTypeKind
 import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUTypeCheckExpression(
@@ -29,9 +30,13 @@ class KotlinUTypeCheckExpression(
     
     override val type by lz { psi.typeReference.toPsiType(this) }
     
-    override val typeReference by lz { 
-        psi.typeReference?.let { KotlinUTypeReferenceExpression(it.toPsiType(this), it, this) } 
+    override val typeReference = psi.typeReference?.let {
+        LazyKotlinUTypeReferenceExpression(it, this) { it.toPsiType(this) }
     }
     
-    override val operationKind = KotlinBinaryExpressionWithTypeKinds.NEGATED_INSTANCE_CHECK
+    override val operationKind =
+            if(psi.isNegated)
+                KotlinBinaryExpressionWithTypeKinds.NEGATED_INSTANCE_CHECK
+            else
+                UastBinaryExpressionWithTypeKind.INSTANCE_CHECK
 }
