@@ -65,6 +65,8 @@ internal fun IrMemberAccessExpression.addArguments(args: Map<ParameterDescriptor
 internal fun IrMemberAccessExpression.addArguments(args: List<Pair<ParameterDescriptor, IrExpression>>) =
         this.addArguments(args.toMap())
 
+internal fun IrExpression.isNullConst() = this is IrConst<*> && this.kind == IrConstKind.Null
+
 fun ir2string(ir: IrElement?): String = ir2stringWhole(ir).takeWhile { it != '\n' }
 
 fun ir2stringWhole(ir: IrElement?): String {

@@ -6,8 +6,10 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.ValueType
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalClass
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalFunctions
+import org.jetbrains.kotlin.backend.konan.ir.isNullConst
 import org.jetbrains.kotlin.backend.konan.notNullableIsRepresentedAs
 import org.jetbrains.kotlin.backend.konan.isRepresentedAs
+import org.jetbrains.kotlin.backend.konan.util.atMostOne
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -103,6 +105,10 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     }
 
     override fun IrExpression.useAs(type: KotlinType): IrExpression {
+        val interop = context.interopBuiltIns
+        if (this.isNullConst() && interop.nullableInteropValueTypes.any { type.isRepresentedAs(it) }) {
+            return IrCallImpl(startOffset, endOffset, interop.getNativeNullPtr).uncheckedCast(type)
+        }
 
         val actualType = when (this) {
             is IrCall -> this.descriptor.original.returnType ?: this.type
@@ -176,6 +182,14 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     }
 
     private fun IrExpression.unbox(valueType: ValueType): IrExpression {
+        val unboxFunctionName = "unbox${valueType.shortName}"
+
+        context.builtIns.getKonanInternalFunctions(unboxFunctionName).atMostOne()?.let {
+            return IrCallImpl(startOffset, endOffset, it).apply {
+                putValueArgument(0, this@unbox.uncheckedCast(it.valueParameters[0].type))
+            }.uncheckedCast(this.type)
+        }
+
         val boxGetter = getBoxType(valueType)
                 .memberScope.getContributedDescriptors()
                 .filterIsInstance<PropertyDescriptor>()
