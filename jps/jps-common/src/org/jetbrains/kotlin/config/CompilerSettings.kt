@@ -24,7 +24,7 @@ class CompilerSettings {
     @JvmField var outputDirectoryForJsLibraryFiles: String = DEFAULT_OUTPUT_DIRECTORY
 
     companion object {
-        private val DEFAULT_ADDITIONAL_ARGUMENTS = "-version"
+        val DEFAULT_ADDITIONAL_ARGUMENTS = "-version"
         private val DEFAULT_OUTPUT_DIRECTORY = "lib"
     }
 }

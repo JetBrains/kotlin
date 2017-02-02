@@ -23,6 +23,7 @@ import com.intellij.util.xmlb.annotations.Property
 import com.intellij.util.xmlb.annotations.Transient
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.utils.DescriptionAware
 
 sealed class TargetPlatformKind<out Version : DescriptionAware>(
@@ -96,6 +97,7 @@ class KotlinCompilerInfo {
             _commonCompilerArguments = value as? CommonCompilerArguments.DummyImpl
         }
     var k2jsCompilerArguments: K2JSCompilerArguments? = null
+    var k2jvmCompilerArguments: K2JVMCompilerArguments? = null
     var compilerSettings: CompilerSettings? = null
 
     @get:Transient var coroutineSupport: CoroutineSupport
