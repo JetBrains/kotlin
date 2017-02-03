@@ -2049,6 +2049,8 @@ public final class kotlin/coroutines/experimental/SequenceBuilderKt {
 }
 
 public final class kotlin/coroutines/experimental/intrinsics/IntrinsicsKt {
+	public static final fun createCoroutineUnchecked (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
+	public static final fun createCoroutineUnchecked (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
 	public static synthetic fun COROUTINE_SUSPENDED$annotations ()V
 	public static final fun getCOROUTINE_SUSPENDED ()Ljava/lang/Object;
 }

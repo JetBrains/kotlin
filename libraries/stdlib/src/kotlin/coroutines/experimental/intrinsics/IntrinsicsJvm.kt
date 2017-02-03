@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-@file:kotlin.jvm.JvmName("IntrinsicsJvmKt")
 @file:kotlin.jvm.JvmVersion
 package kotlin.coroutines.experimental.intrinsics
 import kotlin.coroutines.experimental.*

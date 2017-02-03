@@ -19,6 +19,8 @@
 package kotlin.coroutines.experimental.intrinsics
 
 import kotlin.coroutines.experimental.Continuation
+import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.experimental.processBareContinuationResume
 
 /**
  * Obtains the current continuation instance inside suspend functions and either suspend
@@ -48,3 +50,53 @@ public inline suspend fun <T> suspendCoroutineOrReturn(crossinline block: (Conti
 @SinceKotlin("1.1")
 public val COROUTINE_SUSPENDED: Any = Any()
 
+// JVM declarations
+
+@SinceKotlin("1.1")
+@kotlin.jvm.JvmVersion
+public fun <T> (suspend () -> T).createCoroutineUnchecked(
+        completion: Continuation<T>
+): Continuation<Unit> =
+        if (this !is kotlin.coroutines.experimental.jvm.internal.CoroutineImpl)
+            buildContinuationByInvokeCall(completion) {
+                (this as Function1<Continuation<T>, Any?>).invoke(completion)
+            }
+        else
+            (this.create(completion) as kotlin.coroutines.experimental.jvm.internal.CoroutineImpl).facade
+
+@SinceKotlin("1.1")
+@kotlin.jvm.JvmVersion
+public fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
+        receiver: R,
+        completion: Continuation<T>
+): Continuation<Unit> =
+        if (this !is kotlin.coroutines.experimental.jvm.internal.CoroutineImpl)
+            buildContinuationByInvokeCall(completion) {
+                (this as Function2<R, Continuation<T>, Any?>).invoke(receiver, completion)
+            }
+        else
+            (this.create(receiver, completion) as kotlin.coroutines.experimental.jvm.internal.CoroutineImpl).facade
+
+// INTERNAL DEFINITIONS
+
+@kotlin.jvm.JvmVersion
+private inline fun <T> buildContinuationByInvokeCall(
+        completion: Continuation<T>,
+        crossinline block: () -> Any?
+): Continuation<Unit> {
+    val continuation =
+            object : Continuation<Unit> {
+                override val context: CoroutineContext
+                    get() = completion.context
+
+                override fun resume(value: Unit) {
+                    processBareContinuationResume(completion, block)
+                }
+
+                override fun resumeWithException(exception: Throwable) {
+                    completion.resumeWithException(exception)
+                }
+            }
+
+    return kotlin.coroutines.experimental.jvm.internal.interceptContinuationIfNeeded(completion.context, continuation)
+}

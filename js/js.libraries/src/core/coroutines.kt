@@ -17,15 +17,6 @@
 package kotlin.coroutines.experimental
 import kotlin.coroutines.experimental.intrinsics.*
 
-internal fun <R, T> (suspend R.() -> T).createCoroutineInternal(
-        receiver: R,
-        completion: Continuation<T>
-): Continuation<Unit> = this.asDynamic()(receiver, completion, true)
-
-internal fun <T> (suspend () -> T).createCoroutineInternal(
-        completion: Continuation<T>
-): Continuation<Unit> = this.asDynamic()(completion, true)
-
 @JsName("CoroutineImpl")
 internal abstract class CoroutineImpl(private val resultContinuation: Continuation<Any?>) : Continuation<Any?> {
     protected var state = 0
