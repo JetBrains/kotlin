@@ -32,18 +32,6 @@ fun Node.ownerDocument(doc: Document? = null): Document = when {
     else -> doc ?: ownerDocument ?: throw IllegalArgumentException("Neither node contains nor parameter doc provides an owner document for $this")
 }
 
-/**
- * Adds a newly created text node to an element which either already has an owner Document or one must be provided as a parameter
- */
-@Deprecated("Use appendText() instead", ReplaceWith("appendText(text, doc)"), level = DeprecationLevel.ERROR)
-fun Element.addText(text: String, doc: Document? = null): Element = appendText(text, doc)
-
-/**
- * Adds a newly created text node to an element which either already has an owner Document or one must be provided as a parameter
- */
-@Deprecated("Use appendText() instead", ReplaceWith("appendText(text)"), level = DeprecationLevel.ERROR)
-fun Element.addText(text: String): Element = appendText(text)
-
 
 /**
  * Creates text node and append it to the element
