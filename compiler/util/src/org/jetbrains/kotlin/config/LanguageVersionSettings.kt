@@ -41,6 +41,7 @@ enum class LanguageFeature(val sinceVersion: LanguageVersion?, val hintUrl: Stri
     RefinedSamAdaptersPriority(KOTLIN_1_1),
     SafeCallBoundSmartCasts(KOTLIN_1_1),
     TypeInferenceOnGenericsForCallableReferences(KOTLIN_1_1),
+    NoDelegationToJavaDefaultInterfaceMembers(KOTLIN_1_1),
 
     // Experimental features
     MultiPlatformProjects(null),
@@ -89,8 +90,10 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware {
 interface LanguageVersionSettings {
     fun supportsFeature(feature: LanguageFeature): Boolean
 
-    val languageVersion: LanguageVersion
     val apiVersion: ApiVersion
+
+    // Please do not use this to enable/disable specific features/checks. Instead add a new LanguageFeature entry and call supportsFeature
+    val languageVersion: LanguageVersion
 }
 
 class LanguageVersionSettingsImpl @JvmOverloads constructor(

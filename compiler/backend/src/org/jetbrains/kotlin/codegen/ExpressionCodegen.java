@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.config.ApiVersion;
-import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
@@ -144,8 +143,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     private int myLastLineNumber = -1;
     private boolean shouldMarkLineNumbers = true;
     private int finallyDepth = 0;
-
-    private static final ApiVersion apiVersion1_1 = ApiVersion.createByLanguageVersion(LanguageVersion.KOTLIN_1_1);
 
     public ExpressionCodegen(
             @NotNull MethodVisitor mv,
@@ -3626,8 +3623,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 // of version 1.0 is used and the user forgot to explicitly specify language version / API version.
                 // This should be enabled when/if we decide to drop support for "-language-version 1.0" / "-api-version 1.0"
                 //noinspection ConstantConditions, PointlessBooleanExpression
-                if (false && state.getLanguageVersionSettings().getLanguageVersion() != LanguageVersion.KOTLIN_1_0 &&
-                    state.getLanguageVersionSettings().getApiVersion().compareTo(apiVersion1_1) >= 0) {
+                if (false && state.getLanguageVersionSettings().getApiVersion().compareTo(ApiVersion.KOTLIN_1_1) >= 0) {
                     return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
                         @Override
                         public Unit invoke(InstructionAdapter v) {
