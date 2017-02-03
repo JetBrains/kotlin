@@ -110,6 +110,7 @@ import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoTest
 import org.jetbrains.kotlin.idea.parameterInfo.AbstractParameterInfoTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixTest
+import org.jetbrains.kotlin.idea.refactoring.AbstractNameSuggestionProviderTest
 import org.jetbrains.kotlin.idea.refactoring.inline.AbstractInlineTest
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractExtractionTest
 import org.jetbrains.kotlin.idea.refactoring.move.AbstractMoveTest
@@ -159,13 +160,12 @@ import org.jetbrains.kotlin.resolve.calls.AbstractResolvedCallsTest
 import org.jetbrains.kotlin.resolve.calls.AbstractResolvedConstructorDelegationCallsTests
 import org.jetbrains.kotlin.resolve.constants.evaluate.AbstractCompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTest
+import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverScriptTest
+import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverTest
 import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
-import org.jetbrains.kotlin.idea.refactoring.AbstractNameSuggestionProviderTest
-import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverScriptTest
-import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverTest
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.util.*
@@ -234,10 +234,6 @@ fun main(args: Array<String>) {
         GenerateRangesCodegenTestData.main(arrayOf<String>())
 
         testClass<AbstractBlackBoxCodegenTest> {
-            model("codegen/box", targetBackend = TargetBackend.JVM)
-        }
-
-        testClass<AbstractLightAnalysisModeCodegenTest> {
             model("codegen/box", targetBackend = TargetBackend.JVM)
         }
 
