@@ -26,11 +26,15 @@ import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedWriter
 import java.io.PrintWriter
 
 class KaptJavaLog(
-        context: Context?,
+        context: Context,
         errWriter: PrintWriter,
         warnWriter: PrintWriter,
         noticeWriter: PrintWriter
 ) : Log(context, errWriter, warnWriter, noticeWriter) {
+    init {
+        context.put(Log.outKey, noticeWriter)
+    }
+
     override fun report(diagnostic: JCDiagnostic) {
         if (diagnostic.type == JCDiagnostic.DiagnosticType.ERROR && diagnostic.code in IGNORED_DIAGNOSTICS) {
             return
