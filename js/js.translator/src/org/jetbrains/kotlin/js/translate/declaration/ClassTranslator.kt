@@ -452,7 +452,7 @@ class ClassTranslator private constructor(
             instanceFun.body.statements += instanceCreatedGuard
 
             val objectRef = context().getInnerReference(descriptor)
-            instanceCreationBlock.statements += JsAstUtils.assignment(cachedInstanceName.makeRef(), JsNew(objectRef)).makeStmt()
+            instanceCreationBlock.statements += JsNew(objectRef).makeStmt()
         }
         else {
             instanceFun.body.statements += JsInvocation(pureFqn(enumInitializerName, null)).makeStmt()
