@@ -293,4 +293,29 @@ class Kapt3IT : BaseGradleIT() {
             assertFileExists("processor/build/classes/main/processor/MyProcessor.class")
         }
     }
+
+    /**
+     * Tests that compile arguments are properly copied from compileKotlin to kaptTask
+     */
+    @Test
+    fun testCopyCompileArguments() {
+        val project = Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")
+        project.setupWorkingDir()
+
+        val arg = "-Xskip-runtime-version-check"
+        project.projectDir.getFileByName("build.gradle").modify {
+            it + """
+                $SYSTEM_LINE_SEPARATOR
+                compileKotlin { kotlinOptions.freeCompilerArgs = ['$arg'] }
+            """.trimIndent()
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            assertKaptSuccessful()
+            val regex = "(?m)^.*Kotlin compiler args.*-P plugin:org\\.jetbrains\\.kotlin\\.kapt3.*$".toRegex()
+            val kaptArgs = regex.find(output)?.value ?: error("Kapt compiler arguments are not found!")
+            assert(kaptArgs.contains(arg)) { "Kapt compiler arguments should contain '$arg'" }
+        }
+    }
 }

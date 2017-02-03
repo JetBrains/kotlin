@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.incremental.ChangedFiles
 import java.io.File
 
 internal open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArguments>() {
-    override fun populateCompilerArguments(defaultsOnly: Boolean): K2MetadataCompilerArguments =
+    override fun createCompilerArgs(): K2MetadataCompilerArguments =
             K2MetadataCompilerArguments()
 
     override fun getSourceRoots(): SourceRoots =

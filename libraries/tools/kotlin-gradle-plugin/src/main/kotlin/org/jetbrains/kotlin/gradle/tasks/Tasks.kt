@@ -51,7 +51,7 @@ const val KOTLIN_BUILD_DIR_NAME = "kotlin"
 const val USING_EXPERIMENTAL_INCREMENTAL_MESSAGE = "Using experimental kotlin incremental compilation"
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCompile(), CompilerArgumentAware {
-    abstract protected fun populateCompilerArguments(defaultsOnly: Boolean = false): T
+    abstract protected fun createCompilerArgs(): T
 
     protected val additionalClasspath = arrayListOf<File>()
     protected val compileClasspath: Iterable<File>
@@ -60,15 +60,15 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
 
     override val serializedCompilerArguments: List<String>
         get() {
-            val arguments = populateCompilerArguments()
-            arguments.setupCommonCompilerArgs()
+            val arguments = createCompilerArgs()
+            setupCompilerArgs(arguments)
             return ArgumentUtils.convertArgumentsToStringList(arguments)
         }
 
     override val defaultSerializedCompilerArguments: List<String>
         get() {
-            val arguments = populateCompilerArguments(true)
-            arguments.setupCommonCompilerArgs()
+            val arguments = createCompilerArgs()
+            setupCompilerArgs(arguments, true)
             return ArgumentUtils.convertArgumentsToStringList(arguments)
         }
 
@@ -130,8 +130,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
         }
 
         sourceRoots.log(this.name, logger)
-        val args = populateCompilerArguments()
-        args.setupCommonCompilerArgs()
+        val args = createCompilerArgs()
+        setupCompilerArgs(args)
 
         compilerCalled = true
         callCompiler(args, sourceRoots, ChangedFiles(inputs))
@@ -140,15 +140,15 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     internal abstract fun getSourceRoots(): SourceRoots
     internal abstract fun callCompiler(args: T, sourceRoots: SourceRoots, changedFiles: ChangedFiles)
 
-    private fun CommonCompilerArguments.setupCommonCompilerArgs() {
+    open fun setupCompilerArgs(args: T, defaultsOnly: Boolean = false) {
         coroutines.let {
-            coroutinesEnable = it == Coroutines.ENABLE
-            coroutinesWarn =   it == Coroutines.WARN
-            coroutinesError =  it == Coroutines.ERROR
+            args.coroutinesEnable = it == Coroutines.ENABLE
+            args.coroutinesWarn =   it == Coroutines.WARN
+            args.coroutinesError =  it == Coroutines.ERROR
         }
 
         if (project.logger.isDebugEnabled) {
-            verbose = true
+            args.verbose = true
         }
     }
 }
@@ -185,8 +185,12 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     override fun findKotlinCompilerJar(project: Project): File? =
             findKotlinJvmCompilerJar(project)
 
-    override fun populateCompilerArguments(defaultsOnly: Boolean): K2JVMCompilerArguments {
-        val args = K2JVMCompilerArguments().apply { fillDefaultValues() }
+    override fun createCompilerArgs(): K2JVMCompilerArguments =
+            K2JVMCompilerArguments()
+
+    override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
+        super.setupCompilerArgs(args, defaultsOnly)
+        args.apply { fillDefaultValues() }
 
         handleKaptProperties()
         args.pluginClasspaths = pluginOptions.classpath.toTypedArray()
@@ -201,13 +205,14 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
         friendTaskName?.let { addFriendPathForTestTask(it, args) }
 
-        if (defaultsOnly) return args
+        if (defaultsOnly) return
 
+        args.classpathAsList = compileClasspath.toList()
+        args.destinationAsFile = destinationDir
         parentKotlinOptionsImpl?.updateArguments(args)
         kotlinOptionsImpl.updateArguments(args)
 
         logger.kotlinDebug { "$name destinationDir = $destinationDir" }
-        return args
     }
 
     internal fun addFriendPathForTestTask(friendKotlinTaskName: String, args: K2JVMCompilerArguments) {
@@ -223,8 +228,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         sourceRoots as SourceRoots.ForJvm
 
         val messageCollector = GradleMessageCollector(logger)
-        args.classpathAsList = compileClasspath.toList()
-        args.destinationAsFile = destinationDir
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = GradleCompilerRunner(project)
         val reporter = GradleICReporter(project.rootProject.projectDir)
@@ -324,15 +327,17 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
     override fun findKotlinCompilerJar(project: Project): File? =
             findKotlinJsCompilerJar(project)
 
-    override fun populateCompilerArguments(defaultsOnly: Boolean): K2JSCompilerArguments {
-        val args = K2JSCompilerArguments().apply { fillDefaultValues() }
+    override fun createCompilerArgs(): K2JSCompilerArguments =
+            K2JSCompilerArguments()
 
+    override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean) {
+        super.setupCompilerArgs(args, defaultsOnly)
+        args.apply { fillDefaultValues() }
         args.outputFile = outputFile
 
-        if (defaultsOnly) return args
+        if (defaultsOnly) return
 
         kotlinOptionsImpl.updateArguments(args)
-        return args
     }
 
     override fun getSourceRoots() = SourceRoots.KotlinOnly.create(getSource())

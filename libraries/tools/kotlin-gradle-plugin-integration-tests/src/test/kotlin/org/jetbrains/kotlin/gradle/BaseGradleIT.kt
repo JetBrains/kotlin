@@ -13,7 +13,7 @@ import java.io.File
 import java.util.regex.Pattern
 import kotlin.test.*
 
-private val SYSTEM_LINE_SEPARATOR = System.getProperty("line.separator")
+val SYSTEM_LINE_SEPARATOR: String = System.getProperty("line.separator")
 
 abstract class BaseGradleIT {
 

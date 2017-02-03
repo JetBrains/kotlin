@@ -20,7 +20,6 @@ import java.nio.charset.Charset
 
 open class KaptTask : AbstractCompile() {
     private val rawSourceRoots = FilteringSourceRootsContainer({ !it.isInsideDestinationDir() })
-    private val args = K2JVMCompilerArguments().apply { fillDefaultValues() }
 
     internal val pluginOptions = CompilerPluginOptions()
     internal lateinit var kotlinCompileTask: KotlinCompile
@@ -51,19 +50,13 @@ open class KaptTask : AbstractCompile() {
         classesDir.mkdirs()
 
         val sourceRoots = SourceRoots.ForJvm.create(getSource(), rawSourceRoots)
-        val compileClasspath = classpath.toList().filter(File::exists)
 
-        val pluginOptionsForKotlinCompile = kotlinCompileTask.pluginOptions
+        val args = K2JVMCompilerArguments()
+        kotlinCompileTask.setupCompilerArgs(args)
 
-        args.moduleName = kotlinCompileTask.moduleName
-        args.pluginClasspaths = (pluginOptions.classpath + pluginOptionsForKotlinCompile.classpath).toSet().toTypedArray()
-        args.pluginOptions = (pluginOptions.arguments + pluginOptionsForKotlinCompile.arguments).toTypedArray()
-        args.destinationAsFile = destinationDir
-        args.classpathAsList = compileClasspath
+        args.pluginClasspaths = (pluginOptions.classpath + args.pluginClasspaths).toSet().toTypedArray()
+        args.pluginOptions = (pluginOptions.arguments + args.pluginOptions).toTypedArray()
         args.verbose = project.hasProperty("kapt.verbose") && project.property("kapt.verbose").toString().toBoolean() == true
-        kotlinCompileTask.friendTaskName?.let { kotlinCompileTask.addFriendPathForTestTask(it, args) }
-        kotlinCompileTask.parentKotlinOptionsImpl?.updateArguments(args)
-        KotlinJvmOptionsImpl().updateArguments(args)
 
         val messageCollector = GradleMessageCollector(logger)
         val outputItemCollector = OutputItemsCollectorImpl()
