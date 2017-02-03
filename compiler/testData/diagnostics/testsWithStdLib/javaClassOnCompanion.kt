@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -DEPRECATION
 package test
 
 class A {

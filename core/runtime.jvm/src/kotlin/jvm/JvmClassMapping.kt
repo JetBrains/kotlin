@@ -92,6 +92,7 @@ public val <T : Any> Class<T>.kotlin: KClass<T>
 /**
  * Returns the runtime Java class of this object.
  */
+@Deprecated("Use 'instance::class.java' instead to get java class of the instance.", ReplaceWith("this::class.java"))
 public val <T: Any> T.javaClass : Class<T>
     @Suppress("UsePropertyAccessSyntax")
     get() = (this as java.lang.Object).getClass() as Class<T>
@@ -107,7 +108,7 @@ public val <T: Any> KClass<T>.javaClass: Class<KClass<T>>
  */
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
 public fun <reified T : Any> Array<*>.isArrayOf(): Boolean =
-        T::class.java.isAssignableFrom(this.javaClass.componentType)
+        T::class.java.isAssignableFrom(this::class.java.componentType)
 
 /**
  * Returns a [KClass] instance corresponding to the annotation type of this annotation.
