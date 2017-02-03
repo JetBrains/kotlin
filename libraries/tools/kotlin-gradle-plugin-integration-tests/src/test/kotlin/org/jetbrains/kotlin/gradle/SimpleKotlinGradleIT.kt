@@ -35,7 +35,7 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
         project.build("build") {
             assertSuccessful()
             assertContains(":compileKotlin")
-            assertNotContains("w:")
+            assertNotContains("""w: [^\r\n]*?\.kt""".toRegex())
         }
     }
 
