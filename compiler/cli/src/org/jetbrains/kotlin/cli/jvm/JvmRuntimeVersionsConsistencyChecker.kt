@@ -176,13 +176,13 @@ object JvmRuntimeVersionsConsistencyChecker {
             checkNotNewerThanCompiler(messageCollector, it)
         }.any { it }) return ClasspathConsistency.InconsistentWithCompilerVersion
 
-        if (runtimeJarsInfo.jars.map {
-            checkCompatibleWithApiVersion(messageCollector, it, apiVersion)
-        }.any { it }) return ClasspathConsistency.InconsistentWithApiVersion
-
         if (checkMatchingVersions(messageCollector, runtimeJarsInfo)) {
             return ClasspathConsistency.InconsistentBecauseOfRuntimesWithDifferentVersions
         }
+
+        if (runtimeJarsInfo.jars.map {
+            checkCompatibleWithApiVersion(messageCollector, it, apiVersion)
+        }.any { it }) return ClasspathConsistency.InconsistentWithApiVersion
 
         return ClasspathConsistency.Consistent
     }
