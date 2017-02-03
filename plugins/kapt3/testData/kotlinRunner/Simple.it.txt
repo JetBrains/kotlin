@@ -12,6 +12,7 @@ public enum EnumClass {
 
 package test;
 
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface MyAnnotation {
 }
 
