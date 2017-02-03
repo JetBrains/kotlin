@@ -41,7 +41,7 @@ abstract class CoroutineImpl(
     private var _facade: Continuation<Any?>? = null
 
     val facade: Continuation<Any?> get() {
-        if (_facade == null) _facade = _context!!.interceptContinuationIfNeeded(this)
+        if (_facade == null) _facade = interceptContinuationIfNeeded(_context!!, this)
         return _facade!!
     }
 

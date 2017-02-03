@@ -32,3 +32,14 @@ public inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn
         receiver: R,
         completion: Continuation<T>
 ): Any? = this.asDynamic()(receiver, completion, false)
+
+@SinceKotlin("1.1")
+public fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
+        receiver: R,
+        completion: Continuation<T>
+): Continuation<Unit> = this.asDynamic()(receiver, completion, true)
+
+@SinceKotlin("1.1")
+public fun <T> (suspend () -> T).createCoroutineUnchecked(
+        completion: Continuation<T>
+): Continuation<Unit> = this.asDynamic()(completion, true)

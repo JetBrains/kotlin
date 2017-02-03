@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-@file:JvmVersion
-@file:JvmName("CoroutineIntrinsics")
-package kotlin.coroutines.experimental.jvm.internal
+package kotlin.coroutines.experimental.intrinsics
 
 import kotlin.coroutines.experimental.Continuation
-import kotlin.coroutines.experimental.CoroutineContext
-import kotlin.coroutines.experimental.ContinuationInterceptor
-import kotlin.coroutines.experimental.jvm.internal.CoroutineImpl
 
-fun <T> normalizeContinuation(continuation: Continuation<T>): Continuation<T> =
-        (continuation as? CoroutineImpl)?.facade ?: continuation
+@SinceKotlin("1.1")
+public header fun <T> (suspend () -> T).createCoroutineUnchecked(
+        completion: Continuation<T>
+): Continuation<Unit>
 
-internal fun <T> interceptContinuationIfNeeded(
-        context: CoroutineContext,
-        continuation: Continuation<T>
-) = context[ContinuationInterceptor]?.interceptContinuation(continuation) ?: continuation
+@SinceKotlin("1.1")
+public header fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(
+        receiver: R,
+        completion: Continuation<T>
+): Continuation<Unit>

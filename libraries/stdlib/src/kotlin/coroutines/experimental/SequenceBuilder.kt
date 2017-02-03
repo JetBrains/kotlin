@@ -32,7 +32,7 @@ public fun <T> buildSequence(builderAction: suspend SequenceBuilder<T>.() -> Uni
 @SinceKotlin("1.1")
 public fun <T> buildIterator(builderAction: suspend SequenceBuilder<T>.() -> Unit): Iterator<T> {
     val iterator = SequenceBuilderIterator<T>()
-    iterator.nextStep = builderAction.createCoroutine(receiver = iterator, completion = iterator)
+    iterator.nextStep = builderAction.createCoroutineUnchecked(receiver = iterator, completion = iterator)
     return iterator
 }
 
