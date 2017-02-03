@@ -425,6 +425,8 @@ class IncrementalJvmCompilerRunner(
                 javaSourceRoots = javaSourceRoots,
                 classpath = classpath,
                 friendDirs = listOf())
+        val destination = args.destination
+        args.destination = null
         args.module = moduleFile.absolutePath
         val outputItemCollector = OutputItemsCollectorImpl()
         @Suppress("NAME_SHADOWING")
@@ -446,6 +448,7 @@ class IncrementalJvmCompilerRunner(
             return CompileChangedResults(exitCode, generatedFiles)
         }
         finally {
+            args.destination = destination
             moduleFile.delete()
         }
     }

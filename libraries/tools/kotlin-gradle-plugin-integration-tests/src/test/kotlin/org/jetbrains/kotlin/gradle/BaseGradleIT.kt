@@ -236,6 +236,15 @@ abstract class BaseGradleIT {
         assertNull(regex.find(output), "Output should not contain '$regex'")
     }
 
+    fun CompiledProject.assertNoWarnings() {
+        val warnings = "w: .*$".toRegex().findAll(output).map { it.groupValues[0] }
+
+        if (warnings.any()) {
+            val message = (listOf("Output should not contain any warnings:") + warnings).joinToString(SYSTEM_LINE_SEPARATOR)
+            throw IllegalStateException(message)
+        }
+    }
+
     fun CompiledProject.fileInWorkingDir(path: String) = File(File(workingDir, project.projectName), path)
 
     fun CompiledProject.assertReportExists(pathToReport: String = ""): CompiledProject {

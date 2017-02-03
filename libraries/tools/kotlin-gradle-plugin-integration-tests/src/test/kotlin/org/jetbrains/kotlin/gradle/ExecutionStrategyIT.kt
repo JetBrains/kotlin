@@ -48,6 +48,7 @@ open class ExecutionStrategyIT : BaseGradleIT() {
             assertSuccessful()
             assertContains(finishMessage)
             checkOutput()
+            assertNoWarnings()
         }
 
         val fKt = project.projectDir.getFileByName("f.kt")

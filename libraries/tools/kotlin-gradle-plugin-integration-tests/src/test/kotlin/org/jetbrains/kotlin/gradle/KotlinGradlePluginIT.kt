@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.tasks.USING_EXPERIMENTAL_INCREMENTAL_MESSAGE
 import org.jetbrains.kotlin.gradle.util.getFileByName
+import org.jetbrains.kotlin.gradle.util.getFilesByNames
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
@@ -156,6 +157,30 @@ class KotlinGradleIT: BaseGradleIT() {
             assertReportExists("subproject")
             assertContains(":subproject:compileKotlin", ":subproject:compileTestKotlin")
             checkKotlinGradleBuildServices()
+        }
+    }
+
+    @Test
+    fun testIncremental() {
+        val project = Project("kotlinProject", GRADLE_VERSION)
+        val options = defaultBuildOptions().copy(incremental = true)
+
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertNoWarnings()
+        }
+
+        val greeterKt = project.projectDir.getFileByName("Greeter.kt")
+        greeterKt.modify {
+            it.replace("greeting: String", "greeting: CharSequence")
+        }
+
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertNoWarnings()
+            val affectedSources = project.projectDir.getFilesByNames("Greeter.kt", "KotlinGreetingJoiner.kt",
+                    "TestGreeter.kt", "TestKotlinGreetingJoiner.kt")
+            assertCompiledKotlinSources(project.relativize(affectedSources), weakTesting = false)
         }
     }
 
