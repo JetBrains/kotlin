@@ -5765,6 +5765,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
             }
 
+            @TestMetadata("safeCallOnTwoReceivers.kt")
+            public void testSafeCallOnTwoReceivers() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/safeCallOnTwoReceivers.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("safeCallOnTwoReceiversLong.kt")
+            public void testSafeCallOnTwoReceiversLong() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/safeCallOnTwoReceiversLong.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("suspendDestructuringInLambdas.kt")
             public void testSuspendDestructuringInLambdas() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/suspendDestructuringInLambdas.kt");

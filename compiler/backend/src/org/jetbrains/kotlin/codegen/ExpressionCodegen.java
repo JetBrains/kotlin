@@ -2943,13 +2943,35 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             // The solution is to spill stack just after receiver is loaded (after IFNULL) in case of safe call.
             // But the problem is that we should leave the receiver itself on the stack, so we store it in a temporary variable.
             if (isSuspensionPoint && isSafeCallOrOnStack) {
-                int tmpVar = myFrameMap.enterTemp(receiver.type);
+                boolean bothReceivers =
+                        receiver instanceof StackValue.CallReceiver
+                        && ((StackValue.CallReceiver) receiver).getDispatchReceiver() != null
+                        && ((StackValue.CallReceiver) receiver).getExtensionReceiver() != null;
+                Type firstReceiverType =
+                        bothReceivers
+                        ? ((StackValue.CallReceiver) receiver).getDispatchReceiver().type
+                        : receiver.type;
 
-                v.store(tmpVar, receiver.type);
+                Type secondReceiverType = bothReceivers ? receiver.type : null;
+
+                int tmpVarForFirstReceiver = myFrameMap.enterTemp(firstReceiverType);
+                int tmpVarForSecondReceiver = -1;
+
+                if (secondReceiverType != null) {
+                    tmpVarForSecondReceiver = myFrameMap.enterTemp(secondReceiverType);
+                    v.store(tmpVarForSecondReceiver, secondReceiverType);
+                }
+                v.store(tmpVarForFirstReceiver, firstReceiverType);
+
                 addInlineMarker(v, true);
-                v.load(tmpVar, receiver.type);
 
-                myFrameMap.leaveTemp(receiver.type);
+                v.load(tmpVarForFirstReceiver, firstReceiverType);
+                if (secondReceiverType != null) {
+                    v.load(tmpVarForSecondReceiver, secondReceiverType);
+                    myFrameMap.leaveTemp(secondReceiverType);
+                }
+
+                myFrameMap.leaveTemp(firstReceiverType);
             }
 
             callableMethod.afterReceiverGeneration(v);
