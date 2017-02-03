@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.TestDataFile;
@@ -278,17 +279,22 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     }
 
     protected void loadMultiFiles(@NotNull List<TestFile> files) {
+        myFiles = loadMultiFiles(files, myEnvironment.getProject());
+    }
+
+    @NotNull
+    public static CodegenTestFiles loadMultiFiles(@NotNull List<TestFile> files, @NotNull Project project) {
         Collections.sort(files);
 
         List<KtFile> ktFiles = new ArrayList<KtFile>(files.size());
         for (TestFile file : files) {
             if (file.name.endsWith(".kt")) {
                 String content = CheckerTestUtil.parseDiagnosedRanges(file.content, new ArrayList<CheckerTestUtil.DiagnosedRange>(0));
-                ktFiles.add(KotlinTestUtils.createFile(file.name, content, myEnvironment.getProject()));
+                ktFiles.add(KotlinTestUtils.createFile(file.name, content, project));
             }
         }
 
-        myFiles = CodegenTestFiles.create(ktFiles);
+        return CodegenTestFiles.create(ktFiles);
     }
 
     @NotNull
