@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.asJava.elements
 
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiJavaCodeReferenceElement
 import com.intellij.psi.PsiReferenceList
@@ -56,6 +57,8 @@ class KtLightPsiReferenceList (
             val entry = kotlinOrigin ?: return
             superTypeList.removeEntry(entry)
         }
+
+        override fun getTextRange(): TextRange? = kotlinOrigin?.typeReference?.textRange ?: TextRange.EMPTY_RANGE
     }
 
     override val kotlinOrigin: KtSuperTypeList?

@@ -29,6 +29,7 @@ import android.os.Build.VERSION_CODES
 import android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH
 import android.os.Build.VERSION_CODES.JELLY_BEAN
 import android.os.Bundle
+import android.os.Parcelable
 import android.system.ErrnoException
 import android.widget.TextView
 
@@ -415,16 +416,15 @@ class ApiCallTest: Activity() {
         layout as? LinearLayout         // OK API 1
         layout as LinearLayout          // OK API 1
 
-        if (layout !is GridLayout) {} // TODO: should be error, fixed in uast > 1.0.8
-        layout as? GridLayout // TODO: should be error, fixed in uast > 1.0.8
-        layout as GridLayout // TODO: should be error, fixed in uast > 1.0.8
+        if (layout !is <error descr="Class requires API level 14 (current min is 1): android.widget.GridLayout">GridLayout</error>) {}
+        layout as? <error descr="Class requires API level 14 (current min is 1): android.widget.GridLayout">GridLayout</error>
+        layout as <error descr="Class requires API level 14 (current min is 1): android.widget.GridLayout">GridLayout</error>
 
-        val grid = layout as? GridLayout // TODO: should be error, fixed in uast > 1.0.8
+        val grid = layout as? <error descr="Class requires API level 14 (current min is 1): android.widget.GridLayout">GridLayout</error>
         val linear = layout as LinearLayout // OK API 1
     }
 
-    // TODO: should be error
-    class ErrorVectorDravable : VectorDrawable()
+    abstract class ErrorVectorDravable : <error descr="Class requires API level 21 (current min is 1): android.graphics.drawable.VectorDrawable">VectorDrawable</error>(), Parcelable
 
     @TargetApi(21)
     class MyVectorDravable : VectorDrawable()
