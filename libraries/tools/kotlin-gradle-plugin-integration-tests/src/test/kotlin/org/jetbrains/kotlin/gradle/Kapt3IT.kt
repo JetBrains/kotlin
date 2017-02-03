@@ -31,7 +31,7 @@ class Kapt3IT : BaseGradleIT() {
 
     private fun androidBuildOptions() =
             BuildOptions(withDaemon = true,
-                    androidHome = File("../../../dependencies/android-sdk-for-tests"),
+                    androidHome = File(ANDROID_HOME_PATH),
                     androidGradlePluginVersion = ANDROID_GRADLE_PLUGIN_VERSION,
                     freeCommandLineArgs = listOf("-Pkapt.verbose=true"))
 

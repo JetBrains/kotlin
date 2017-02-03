@@ -111,6 +111,7 @@
                     <arg path="${android.sdk.dir}/build-tools/@{android.build.tools.version}/aidl"/>
                     <arg path="${android.sdk.dir}/build-tools/@{android.build.tools.version}/dx"/>
                     <arg path="${android.sdk.dir}/build-tools/@{android.build.tools.version}/zipalign"/>
+                    <arg path="${android.sdk.dir}/tools/android"/>
                 </exec>
             </sequential>
         </sequential>

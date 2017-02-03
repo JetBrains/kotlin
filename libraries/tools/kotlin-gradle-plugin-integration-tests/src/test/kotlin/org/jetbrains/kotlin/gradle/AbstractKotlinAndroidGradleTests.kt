@@ -10,13 +10,15 @@ class KotlinAndroidGradleCLIOnly : AbstractKotlinAndroidGradleTests(gradleVersio
 
 class KotlinAndroidWithJackGradleCLIOnly : AbstractKotlinAndroidWithJackGradleTests(gradleVersion = "3.3", androidGradlePluginVersion = "2.3.+")
 
+const val ANDROID_HOME_PATH = "../../../dependencies/androidSDK"
+
 abstract class AbstractKotlinAndroidGradleTests(
         private val gradleVersion: String,
         private val androidGradlePluginVersion: String
 ) : BaseGradleIT() {
 
     override fun defaultBuildOptions() =
-            super.defaultBuildOptions().copy(androidHome = File("../../../dependencies/android-sdk-for-tests"),
+            super.defaultBuildOptions().copy(androidHome = File(ANDROID_HOME_PATH),
                                              androidGradlePluginVersion = androidGradlePluginVersion)
 
     @Test
@@ -78,7 +80,7 @@ abstract class AbstractKotlinAndroidGradleTests(
         val project = Project("AndroidIncrementalSingleModuleProject", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = true)
 
-        project.build("build", options = options) {
+        project.build("assembleDebug", options = options) {
             assertSuccessful()
         }
 
@@ -89,7 +91,7 @@ package foo
 fun getSomething() = 10
 """)
 
-        project.build("build", options = options) {
+        project.build("assembleDebug", options = options) {
             assertSuccessful()
             assertCompiledKotlinSources(listOf("app/src/main/kotlin/foo/KotlinActivity1.kt", "app/src/main/kotlin/foo/getSomething.kt"))
             assertCompiledJavaSources(listOf("app/src/main/java/foo/JavaActivity.java"), weakTesting = true)
@@ -191,7 +193,7 @@ fun getSomething() = 10
     fun testAndroidKaptChangingDependencies() {
         val project = Project("AndroidKaptChangingDependencies", gradleVersion)
 
-        project.build("build") {
+        project.build("assembleDebug") {
             assertSuccessful()
             assertNotContains("Changed dependencies of configuration .+ after it has been included in dependency resolution".toRegex())
         }
@@ -207,7 +209,7 @@ abstract class AbstractKotlinAndroidWithJackGradleTests(
     fun getEnvJDK_18() = System.getenv()["JDK_18"]
 
     override fun defaultBuildOptions() =
-            super.defaultBuildOptions().copy(androidHome = File("../../../dependencies/android-sdk-for-tests"),
+            super.defaultBuildOptions().copy(androidHome = File(ANDROID_HOME_PATH),
                     androidGradlePluginVersion = androidGradlePluginVersion, javaHome = File(getEnvJDK_18()))
 
     @Test
