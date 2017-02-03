@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
+import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.name.Name;
@@ -422,8 +423,7 @@ public class TranslationContext {
             }
             else {
                 ClassDescriptor objectDescriptor = (ClassDescriptor) descriptor.getContainingDeclaration();
-                JsExpression instanceFunctionRef = JsAstUtils.pureFqn(getNameForObjectInstance(objectDescriptor), null);
-                return new JsInvocation(instanceFunctionRef);
+                return ReferenceTranslator.translateAsValueReference(objectDescriptor, this);
             }
         }
 
@@ -450,7 +450,7 @@ public class TranslationContext {
             return descriptor == declarationDescriptor;
         }
         else {
-            return declarationDescriptor != null && descriptor == DescriptorUtils.getContainingClass(declarationDescriptor);
+            return declarationDescriptor != null && descriptor == DescriptorUtils.getContainingClassOrObject(declarationDescriptor);
         }
     }
 
