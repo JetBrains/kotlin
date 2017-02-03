@@ -1,6 +1,8 @@
 import groovy.json.JsonOutput
 import org.jetbrains.kotlin.*
 
+apply plugin: NativeInteropPlugin
+
 configurations {
     cli_bc
 }
@@ -1046,4 +1048,18 @@ task inline3(type: RunKonanTest) {
 
 task vararg0(type: RunKonanTest) {
     source = "lower/vararg.kt"
+}
+
+kotlinNativeInterop {
+    sysstat {
+        pkg 'sysstat'
+        headers 'sys/stat.h'
+        target 'native'
+    }
+}
+
+task interop0(type: RunInteropKonanTest) {
+    goldValue = "0\n0\n"
+    source = "interop/basics/0.kt"
+    interop = 'sysstat'
 }
