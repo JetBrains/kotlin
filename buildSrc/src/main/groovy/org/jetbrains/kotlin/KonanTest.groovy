@@ -159,6 +159,28 @@ class RunKonanTest extends KonanTest {
 }
 
 @ParallelizableTask
+class RunInteropKonanTest extends KonanTest {
+
+    private String interop
+    private NamedNativeInteropConfig interopConf
+
+    void setInterop(String value) {
+        this.interop = value
+        this.interopConf = project.kotlinNativeInterop[value]
+        this.dependsOn(this.interopConf.genTask)
+    }
+
+    void compileTest(List<String> filesToCompile, String exe) {
+        String interopBc = exe + "-interop.bc"
+        runCompiler([interopConf.generatedSrcDir.absolutePath], interopBc, ["-nolink"])
+
+        String interopStubsBc = new File(interopConf.nativeLibsDir, interop + "stubs.bc").absolutePath
+
+        runCompiler(filesToCompile, exe, ["-library", interopBc, "-nativelibrary", interopStubsBc])
+    }
+}
+
+@ParallelizableTask
 class LinkKonanTest extends KonanTest {
     protected String lib
 
