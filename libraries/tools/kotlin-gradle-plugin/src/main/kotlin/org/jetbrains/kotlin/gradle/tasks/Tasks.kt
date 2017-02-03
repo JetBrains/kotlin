@@ -323,6 +323,18 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
     override fun populateCompilerArguments(): K2JSCompilerArguments {
         val args = K2JSCompilerArguments().apply { fillDefaultValues() }
         args.outputFile = outputFile
+        kotlinOptionsImpl.updateArguments(args)
+        return args
+    }
+
+    override fun getSourceRoots() = SourceRoots.KotlinOnly.create(getSource())
+
+    override fun callCompiler(args: K2JSCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
+        sourceRoots as SourceRoots.KotlinOnly
+
+        logger.debug("Calling compiler")
+        destinationDir.mkdirs()
+        args.freeArgs = args.freeArgs + sourceRoots.kotlinSourceFiles.map { it.absolutePath }
 
         val friendDependency = friendTaskName
                 ?.let { project.getTasksByName(it, false).singleOrNull() as? Kotlin2JsCompile }
@@ -336,19 +348,6 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
                 .map { it.canonicalPath }
 
         args.libraries = (dependencies + friendDependency.orEmpty()).joinToString(File.pathSeparator)
-
-        kotlinOptionsImpl.updateArguments(args)
-        return args
-    }
-
-    override fun getSourceRoots() = SourceRoots.KotlinOnly.create(getSource())
-
-    override fun callCompiler(args: K2JSCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
-        sourceRoots as SourceRoots.KotlinOnly
-
-        logger.debug("Calling compiler")
-        destinationDir.mkdirs()
-        args.freeArgs = args.freeArgs + sourceRoots.kotlinSourceFiles.map { it.absolutePath }
 
         logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
 
