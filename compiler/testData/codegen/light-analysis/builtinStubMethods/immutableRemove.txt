@@ -21,7 +21,6 @@ public final class ImmutableCollectionmpl {
     public @org.jetbrains.annotations.NotNull method remove(p0: java.lang.Object): ImmutableCollection
     public method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
-    public method removeIf(p0: java.util.function.Predicate): boolean
     public method retainAll(p0: java.util.Collection): boolean
     public final method size(): int
     public method toArray(): java.lang.Object[]
