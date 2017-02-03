@@ -135,9 +135,9 @@ internal class ParametersTransformer(val parameterToExpression: List <Pair<Param
         if ((expression.descriptor as FunctionDescriptor).isFunctionInvoke) {               // If it is lambda call.
             if (expression.dispatchReceiver !is IrGetValue) super.visitCall(expression)     // Do not process such dispatch receiver.
             val getValue = expression.dispatchReceiver as IrGetValue                        //
-            val parExpr = parameterToExpression.find { it.first == getValue.descriptor }    // Find expression to replace this parameter.
-            if (parExpr == null) super.visitCall(expression)                                // It is not function parameter.
-            return parExpr!!.second                                                         // Replace call site with InlineFunctionBody.
+            val parameterExpression = parameterToExpression.find { it.first == getValue.descriptor }    // Find expression to replace this parameter.
+            if (parameterExpression == null) super.visitCall(expression)                                // It is not function parameter.
+            return parameterExpression!!.second                                                         // Replace call site with InlineFunctionBody.
         }
         return super.visitCall(expression)                                                  // Function is declared in another module.
     }
@@ -149,9 +149,9 @@ internal class ParametersTransformer(val parameterToExpression: List <Pair<Param
         if (descriptor !is ParameterDescriptor) {                                           // TODO do we need this check?
             return super.visitGetValue(expression)
         }
-        val parExp = parameterToExpression.find { it.first == descriptor }                  // Find expression to replace this parameter.
-        if (parExp == null) return super.visitGetValue(expression)
+        val parameterExpression = parameterToExpression.find { it.first == descriptor }                  // Find expression to replace this parameter.
+        if (parameterExpression == null) return super.visitGetValue(expression)
 
-        return  parExp.second                                                               // TODO should we proceed with IR iteration here?
+        return  parameterExpression.second                                                               // TODO should we proceed with IR iteration here?
     }
 }
