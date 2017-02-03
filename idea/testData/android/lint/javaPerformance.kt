@@ -15,7 +15,7 @@ import android.widget.Button
 class JavaPerformanceTest(context: Context, attrs: AttributeSet, defStyle: Int) : Button(context, attrs, defStyle) {
 
     private var cachedRect: Rect? = null
-    private var shader: Any? = null
+    private var shader: LinearGradient? = null
     private var lastHeight: Int = 0
     private var lastWidth: Int = 0
 
