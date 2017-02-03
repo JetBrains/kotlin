@@ -184,8 +184,34 @@ public final class JsDescriptorUtils {
         return element.getContainingFile().getUserData(LibrarySourcesConfig.EXTERNAL_MODULE_NAME);
     }
 
-    private static String getModuleNameFromDescriptorName(DeclarationDescriptor descriptor) {
-        ModuleDescriptor moduleDescriptor = DescriptorUtils.getContainingModule(descriptor);
+    @NotNull
+    public static DeclarationDescriptor findRealInlineDeclaration(@NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof FunctionDescriptor) {
+            FunctionDescriptor d = (FunctionDescriptor) descriptor;
+            if (d.getKind().isReal() || !d.isInline()) return descriptor;
+            CallableMemberDescriptor real = findRealDeclaration(d);
+            assert real != null : "Couldn't find definition of a fake inline descriptor " + descriptor;
+            return real;
+        }
+        return descriptor;
+    }
+
+    @Nullable
+    private static FunctionDescriptor findRealDeclaration(FunctionDescriptor descriptor) {
+        if (descriptor.getModality() == Modality.ABSTRACT) return null;
+        if (descriptor.getKind().isReal()) return descriptor;
+
+        for (FunctionDescriptor o : descriptor.getOverriddenDescriptors()) {
+            FunctionDescriptor child = findRealDeclaration(o);
+            if (child != null) {
+                return child;
+            }
+        }
+        return null;
+    }
+
+    private static String getModuleNameFromDescriptorName(@NotNull DeclarationDescriptor descriptor) {
+        ModuleDescriptor moduleDescriptor = DescriptorUtils.getContainingModule(findRealInlineDeclaration(descriptor));
         String moduleName = moduleDescriptor.getName().asString();
         return moduleName.substring(1, moduleName.length() - 1);
     }
