@@ -1512,15 +1512,15 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         }
 
         override fun genReturn(target: CallableDescriptor, value: LLVMValueRef?) {
-            if (target == codegen.functionDescriptor) {
-                super.genReturn(target, value)
+            if (target == codegen.functionDescriptor) {                         // It is "non local return".
+                super.genReturn(target, value)                                  // Generate real "return".
                 return
             }
-
-            if (KotlinBuiltIns.isUnit(inlineBody.type) == false) {
-                codegen.assignPhis(getResult()!! to value!!)
+                                                                                // It is local return.
+            if (KotlinBuiltIns.isUnit(inlineBody.type) == false) {              // If function returns more then "unit"
+                codegen.assignPhis(getResult()!! to value!!)                    // Assign return value to resilt PHI node
             }
-            codegen.br(getExit()!!)
+            codegen.br(getExit()!!)                                             // Generate branch on exit block.
         }
     }
 
