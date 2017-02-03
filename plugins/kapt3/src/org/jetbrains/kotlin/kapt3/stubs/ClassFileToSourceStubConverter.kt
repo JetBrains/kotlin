@@ -172,7 +172,7 @@ class ClassFileToSourceStubConverter(
             return null
         }
 
-        val simpleName = getClassName(clazz, descriptor, isDefaultImpls, packageFqName)
+        val simpleName = getValidIdentifierName(getClassName(clazz, descriptor, isDefaultImpls, packageFqName)) ?: return null
 
         val interfaces = mapJList(clazz.interfaces) {
             if (isAnnotation && it == "java/lang/annotation/Annotation") return@mapJList null
@@ -245,7 +245,7 @@ class ClassFileToSourceStubConverter(
 
         return treeMaker.ClassDef(
                 modifiers,
-                treeMaker.name(getNonKeywordName(simpleName)),
+                treeMaker.name(simpleName),
                 genericType.typeParameters,
                 if (hasSuperClass) genericType.superClass else null,
                 genericType.interfaces,
@@ -279,7 +279,7 @@ class ClassFileToSourceStubConverter(
         val descriptor = kaptContext.origins[field]?.descriptor
 
         val modifiers = convertModifiers(field.access, ElementKind.FIELD, packageFqName, field.visibleAnnotations, field.invisibleAnnotations)
-        val name = treeMaker.name(getNonKeywordName(field.name))
+        val name = getValidIdentifierName(field.name) ?: return null
         val type = Type.getType(field.desc)
 
         // Enum type must be an identifier (Javac requirement)
@@ -298,7 +298,7 @@ class ClassFileToSourceStubConverter(
                           ?: convertValueOfPrimitiveTypeOrString(value)
                           ?: if (isFinal(field.access)) convertLiteralExpression(getDefaultValue(type)) else null
 
-        return treeMaker.VarDef(modifiers, name, typeExpression, initializer)
+        return treeMaker.VarDef(modifiers, treeMaker.name(name), typeExpression, initializer)
     }
 
     private fun convertMethod(method: MethodNode, containingClass: ClassNode, packageFqName: String): JCMethodDecl? {
@@ -318,7 +318,7 @@ class ClassFileToSourceStubConverter(
         }
 
         val isConstructor = method.name == "<init>"
-        val name = treeMaker.name(getNonKeywordName(method.name))
+        val name = getValidIdentifierName(method.name, canBeConstructor = true) ?: return null
 
         val modifiers = convertModifiers(
                 if (containingClass.isEnum() && isConstructor)
@@ -344,7 +344,7 @@ class ClassFileToSourceStubConverter(
                     info.visibleAnnotations,
                     info.invisibleAnnotations)
 
-            val name = treeMaker.name(getNonKeywordName(info.name))
+            val name = treeMaker.name(getValidIdentifierName(info.name) ?: "p${index}_" + info.name.hashCode())
             val type = treeMaker.Type(info.type)
             treeMaker.VarDef(modifiers, name, type, null)
         }
@@ -388,7 +388,7 @@ class ClassFileToSourceStubConverter(
         }
 
         return treeMaker.MethodDef(
-                modifiers, name, returnType, genericSignature.typeParameters,
+                modifiers, treeMaker.name(name), returnType, genericSignature.typeParameters,
                 genericSignature.parameterTypes, genericSignature.exceptionTypes,
                 body, defaultValue)
     }
@@ -452,9 +452,21 @@ class ClassFileToSourceStubConverter(
         return ifNonError()
     }
 
-    private fun getNonKeywordName(name: String): String {
+    fun getValidIdentifierName(name: String, canBeConstructor: Boolean = false): String? {
+        if (canBeConstructor && name == "<init>") {
+            return name
+        }
+
         // In theory, this could lead to member/parameter name clashes, though it's supposed to be extremely rare.
         if (name in JAVA_KEYWORDS) return '_' + name + '_'
+
+        if (name.isEmpty()
+            || !Character.isJavaIdentifierStart(name[0])
+            || name.drop(1).any { !Character.isJavaIdentifierPart(it) }
+        ) {
+            return null
+        }
+
         return name
     }
 
@@ -532,7 +544,8 @@ class ClassFileToSourceStubConverter(
         val useSimpleName = '.' in fqName && fqName.substringBeforeLast('.', "") == packageFqName
         val name = if (useSimpleName) treeMaker.FqName(fqName.substring(packageFqName!!.length + 1)) else treeMaker.Type(annotationType)
         val values = mapPairedValuesJList<JCExpression>(annotation.values) { key, value ->
-            treeMaker.Assign(treeMaker.SimpleName(key), convertLiteralExpression(value))
+            val name = getValidIdentifierName(key) ?: return@mapPairedValuesJList null
+            treeMaker.Assign(treeMaker.SimpleName(name), convertLiteralExpression(value))
         }
         return treeMaker.Annotation(name, values)
     }
@@ -564,7 +577,7 @@ class ClassFileToSourceStubConverter(
             is Array<*> -> { // Two-element String array for enumerations ([desc, fieldName])
                 assert(value.size == 2)
                 val enumType = Type.getType(value[0] as String)
-                val valueName = value[1] as String
+                val valueName = getValidIdentifierName(value[1] as String) ?: "InvalidFieldName"
                 treeMaker.Select(treeMaker.Type(enumType), treeMaker.name(valueName))
             }
             is List<*> -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value) { convertLiteralExpression(it) })
