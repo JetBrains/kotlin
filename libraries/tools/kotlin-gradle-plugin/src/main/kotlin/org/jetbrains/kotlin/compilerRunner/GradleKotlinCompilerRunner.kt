@@ -58,17 +58,19 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             args: K2JVMCompilerArguments,
             environment: GradleCompilerEnvironment
     ): ExitCode {
-        val outputDir = args.destinationAsFile
-
         val moduleFile = makeModuleFile(
                 args.moduleName,
                 isTest = false,
-                outputDir = outputDir,
+                outputDir = args.destinationAsFile,
                 sourcesToCompile = sourcesToCompile,
                 javaSourceRoots = javaSourceRoots,
                 classpath = args.classpathAsList,
                 friendDirs = args.friendPaths?.map(::File) ?: emptyList())
         args.module = moduleFile.absolutePath
+
+        if (environment !is GradleIncrementalCompilerEnvironment) {
+            args.destination = null
+        }
 
         try {
             return runCompiler(K2JVM_COMPILER, args, environment)
