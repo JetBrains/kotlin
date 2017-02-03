@@ -1,6 +1,8 @@
 package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.backend.konan.KonanBuiltIns
+import org.jetbrains.kotlin.backend.konan.ValueType
+import org.jetbrains.kotlin.backend.konan.isRepresentedAs
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isFunctionType
@@ -118,20 +120,7 @@ internal fun KonanBuiltIns.getKonanInternalFunctions(name: String): List<Functio
     return konanInternal.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).toList()
 }
 
-private val UNBOUND_CALLABLE_REFERENCE = "UnboundCallableReference"
-
-/**
- * `konan.internal.UnboundCallableReference` type or `null` if it is not available.
- */
-internal val KonanBuiltIns.unboundCallableReferenceTypeOrNull: KotlinType?
-    get() = this.getKonanInternalClassOrNull(UNBOUND_CALLABLE_REFERENCE)?.defaultType
-
-internal fun KotlinType.isUnboundCallableReference(): Boolean {
-    val classDescriptor = TypeUtils.getClassDescriptor(this) ?: return false
-
-    return !this.isMarkedNullable &&
-            classDescriptor.fqNameUnsafe.asString() == "konan.internal.$UNBOUND_CALLABLE_REFERENCE"
-}
+internal fun KotlinType.isUnboundCallableReference() = this.isRepresentedAs(ValueType.UNBOUND_CALLABLE_REFERENCE)
 
 internal val CallableDescriptor.allValueParameters: List<ParameterDescriptor>
     get() {
