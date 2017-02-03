@@ -9,6 +9,9 @@ public external fun eval(expr: String): dynamic
 
 public external val undefined: Nothing?
 
+@Deprecated("Use toInt() instead.", ReplaceWith("s.toInt()"), level = DeprecationLevel.ERROR)
+public external fun parseInt(s: String): Int
+
 @Deprecated("Use toInt(radix) instead.", ReplaceWith("s.toInt(radix)"), level = DeprecationLevel.ERROR)
 public external fun parseInt(s: String, radix: Int = definedExternally): Int
 
