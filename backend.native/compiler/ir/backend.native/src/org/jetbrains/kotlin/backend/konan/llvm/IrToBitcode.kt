@@ -640,7 +640,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             is IrWhen                -> return evaluateWhen               (value)
             is IrThrow               -> return evaluateThrow              (value)
             is IrTry                 -> return evaluateTry                (value)
-            is IrStringConcatenation -> return evaluateStringConcatenation(value)
             is IrInlineFunctionBody  -> return evaluateInlineFunction     (value)
             is IrContainerExpression -> return evaluateContainerExpression(value)
             is IrWhileLoop           -> return evaluateWhileLoop          (value)
@@ -812,62 +811,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             }
         }
         return array
-    }
-
-    //-------------------------------------------------------------------------//
-
-    val kNameToString = Name.identifier("toString")
-    val kNameStringBuilder = Name.identifier("StringBuilder")
-    val kNameAppend  = Name.identifier("append")
-    val kKotlinTextFqName = FqName.fromSegments(listOf("kotlin", "text"))
-    val kNameLength = Name.identifier("length")
-    val kStringBuilder = context.irModule?.let {
-        it.descriptor.getPackage(kKotlinTextFqName)
-            .memberScope.getContributedClassifier(kNameStringBuilder, NoLookupLocation.FROM_BACKEND) as? ClassDescriptor
-    }
-    val kStringBuilderAppendStringFn = kStringBuilder.signature2Descriptor(kNameAppend, arrayOf(KonanPlatform.builtIns.stringType))
-    val kStringLength = KonanPlatform.builtIns.string.getter2Descriptor(kNameLength)
-    val kStringBuilderToString = kStringBuilder.signature2Descriptor(kNameToString)
-
-    //TODO: make it lowering pass.
-    private fun evaluateStringConcatenation(value: IrStringConcatenation): LLVMValueRef {
-        data class Element(val string: LLVMValueRef, val llvmLenght: LLVMValueRef?, val length: Int)
-
-        val stringsWithLengths = value.arguments.map {
-            val evaluationResult = evaluateExpression(it)
-            if (it is IrConst<*> && it.kind == IrConstKind.String) {
-                val string = it.value as String
-                return@map Element(codegen.staticData.kotlinStringLiteral(it as IrConst<String>).llvm, null, string.length)
-            } else {
-                val toStringDescriptor = getToString(it.type)
-                val string =
-                        if (KotlinBuiltIns.isString(it.type)) evaluationResult
-                        else evaluateSimpleFunctionCall(
-                                toStringDescriptor, listOf(evaluationResult), Lifetime.LOCAL)
-                val length = call(codegen.llvmFunction(kStringLength!!), listOf(string))
-                return@map Element(string, length, -1)
-            }
-        }
-        val constLen = stringsWithLengths
-                .filter { it.length != -1 }
-                .fold(0) { sum, (_, _, length) -> sum + length }
-        val totalLength = stringsWithLengths
-                .filter { it.length == -1 }
-                .fold(Int32(constLen).llvm) { sum, (_, length, _) -> codegen.plus(sum, length!!) }
-
-        val constructor = kStringBuilder!!.constructors
-                .firstOrNull { it -> it.valueParameters.size == 1 && KotlinBuiltIns.isInt(it.valueParameters[0].type) }!!
-        val stringBuilderObj = codegen.allocInstance(codegen.typeInfoValue(kStringBuilder), Lifetime.LOCAL)
-
-        call(codegen.llvmFunction(constructor), listOf(stringBuilderObj, totalLength))
-
-        stringsWithLengths.fold(stringBuilderObj) { sum, (string, _, _) ->
-            call(codegen.llvmFunction(kStringBuilderAppendStringFn!!), listOf(sum, string))
-            return@fold sum
-        }
-
-        return evaluateSimpleFunctionCall(kStringBuilderToString!!, listOf(stringBuilderObj),
-                Lifetime.GLOBAL /* TODO: fix */)
     }
 
     //-------------------------------------------------------------------------//
@@ -1830,13 +1773,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 TODO(descriptor.name.toString())
             }
         }
-    }
-
-    //-------------------------------------------------------------------------//
-
-    private fun getToString(type: KotlinType): SimpleFunctionDescriptor {
-        val descriptor = type.memberScope.getContributedFunctions(kNameToString, NoLookupLocation.FROM_BACKEND).first()
-        return descriptor
     }
 
     //-------------------------------------------------------------------------//
