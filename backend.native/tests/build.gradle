@@ -964,11 +964,6 @@ task memory_throw_cleanup(type: RunKonanTest) {
     source = "runtime/memory/throw_cleanup.kt"
 }
 
-task memory_collect_cycles(type: RunKonanTest) {
-    goldValue = "42\n"
-    source = "runtime/memory/cycles0.kt"
-}
-
 task unit1(type: RunKonanTest) {
     goldValue = "First\nkotlin.Unit\n"
     source = "codegen/basics/unit1.kt"
@@ -1011,4 +1006,19 @@ task inline3(type: RunKonanTest) {
 
 task vararg0(type: RunKonanTest) {
     source = "lower/vararg.kt"
+}
+
+task inline4(type: RunKonanTest) {
+    goldValue = "3\n"
+    source = "codegen/inline/inline4.kt"
+}
+
+task inline5(type: RunKonanTest) {
+    goldValue = "33\n"
+    source = "codegen/inline/inline5.kt"
+}
+
+task inline9(type: RunKonanTest) {
+    goldValue = "hello\n6\n"
+    source = "codegen/inline/inline9.kt"
 }

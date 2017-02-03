@@ -74,7 +74,6 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         return parametersNew
     }
 
-
     //-------------------------------------------------------------------------//
 
     fun inlineFunction(irCall: IrCall): IrBlock {
