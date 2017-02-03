@@ -35,6 +35,9 @@ class ApiVersion private constructor(
 
     companion object {
         @JvmField
+        val KOTLIN_1_1 = createByLanguageVersion(LanguageVersion.KOTLIN_1_1)
+
+        @JvmField
         val LATEST: ApiVersion = createByLanguageVersion(LanguageVersion.Companion.LATEST)
 
         @JvmStatic
