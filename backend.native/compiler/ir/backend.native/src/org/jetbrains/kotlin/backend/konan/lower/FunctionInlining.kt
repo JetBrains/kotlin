@@ -80,7 +80,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     fun inlineFunction(irCall: IrCall): IrBlock {
 
         val functionDescriptor = irCall.descriptor as FunctionDescriptor
-        val functionDeclaration = context.ir.moduleIndex.functions[functionDescriptor]      // Get FunctionDeclaration by FunctionDescriptor.
+        val functionDeclaration = context.ir.originalModuleIndex.functions[functionDescriptor]      // Get FunctionDeclaration by FunctionDescriptor.
         val copyFuncDeclaration = functionDeclaration!!.accept(DeepCopyIrTree(), null) as IrFunction // Create copy of the function.
 
         val startOffset = copyFuncDeclaration.startOffset
@@ -113,7 +113,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         val functionDescriptor = expression.descriptor as FunctionDescriptor
         if (!functionDescriptor.isInline) return super.visitCall(expression)                // Function is not to be inlined - do nothing.
 
-        val functionDeclaration = context.ir.moduleIndex.functions[functionDescriptor]      // Get FunctionDeclaration by FunctionDescriptor.
+        val functionDeclaration = context.ir.originalModuleIndex.functions[functionDescriptor]      // Get FunctionDeclaration by FunctionDescriptor.
         if (functionDeclaration == null) return super.visitCall(expression)                 // Function is declared in another module.
         return inlineFunction(expression)                                                   // Return newly created IrBlock instead of IrCall.
     }
