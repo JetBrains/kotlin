@@ -204,7 +204,7 @@ fun LexicalScope.replaceImportingScopes(importingScopeChain: ImportingScope?): L
 fun LexicalScope.createScopeForDestructuring(newReceiver: ReceiverParameterDescriptor?): LexicalScope {
     return LexicalScopeImpl(
             parent, ownerDescriptor, isOwnerDescriptorAccessibleByLabel,
-            newReceiver ?: implicitReceiver,
+            newReceiver,
             LexicalScopeKind.FUNCTION_HEADER_FOR_DESTRUCTURING
     )
 }
