@@ -20,7 +20,6 @@ class KaptError : RuntimeException {
     val kind: Kind
 
     enum class Kind(val message: String) {
-        JAVA_FILE_PARSING_ERROR("Java file parsing error"),
         ERROR_WHILE_ANALYSIS("Java file analysis error"),
         EXCEPTION("Exception while annotation processing"),
         ERROR_RAISED("Error while annotation processing"),

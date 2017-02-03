@@ -132,7 +132,7 @@ class JavaKaptContextTest {
         try {
             doAnnotationProcessing(File(TEST_DATA_DIR, "ParseError.java"), simpleProcessor(), TEST_DATA_DIR)
         } catch (e: KaptError) {
-            assertEquals(KaptError.Kind.JAVA_FILE_PARSING_ERROR, e.kind)
+            assertEquals(KaptError.Kind.ERROR_RAISED, e.kind)
             throw e
         }
     }
