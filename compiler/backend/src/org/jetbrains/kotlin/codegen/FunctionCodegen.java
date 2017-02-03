@@ -209,7 +209,11 @@ public class FunctionCodegen {
                                        getThrownExceptions(functionDescriptor, typeMapper));
 
         if (CodegenContextUtil.isImplClassOwner(owner)) {
-            v.getSerializationBindings().put(METHOD_FOR_FUNCTION, functionDescriptor, asmMethod);
+            v.getSerializationBindings().put(
+                    METHOD_FOR_FUNCTION,
+                    CodegenUtilKt.<FunctionDescriptor>unwrapFrontendVersion(functionDescriptor),
+                    asmMethod
+            );
         }
 
         generateMethodAnnotations(functionDescriptor, asmMethod, mv);

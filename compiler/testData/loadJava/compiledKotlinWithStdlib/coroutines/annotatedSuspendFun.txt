@@ -1,0 +1,9 @@
+package test
+
+@test.Anno(t = "foo") public suspend fun foo(): kotlin.Unit
+
+public final annotation class Anno : kotlin.Annotation {
+    /*primary*/ public constructor Anno(/*0*/ t: kotlin.String)
+    public final val t: kotlin.String
+        public final fun <get-t>(): kotlin.String
+}

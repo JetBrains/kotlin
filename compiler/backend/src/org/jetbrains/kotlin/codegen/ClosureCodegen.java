@@ -232,9 +232,10 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
     @Override
     protected void generateKotlinMetadataAnnotation() {
-        FunctionDescriptor freeLambdaDescriptor = createFreeLambdaDescriptor(funDescriptor);
-        Method method = v.getSerializationBindings().get(METHOD_FOR_FUNCTION, funDescriptor);
-        assert method != null : "No method for " + funDescriptor;
+        FunctionDescriptor frontendFunDescriptor = CodegenUtilKt.unwrapFrontendVersion(funDescriptor);
+        FunctionDescriptor freeLambdaDescriptor = createFreeLambdaDescriptor(frontendFunDescriptor);
+        Method method = v.getSerializationBindings().get(METHOD_FOR_FUNCTION, frontendFunDescriptor);
+        assert method != null : "No method for " + frontendFunDescriptor;
         v.getSerializationBindings().put(METHOD_FOR_FUNCTION, freeLambdaDescriptor, method);
 
         final DescriptorSerializer serializer =
