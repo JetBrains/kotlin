@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import java.io.File
 import java.io.Serializable
 import java.util.*
+import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.reflect.KClass
 
 data class ReplCodeLine(val no: Int, val code: String) : Serializable {
@@ -43,9 +44,14 @@ data class CompiledClassData(val path: String, val bytes: ByteArray) : Serializa
     }
 }
 
+interface CreateReplStageStateAction {
+    fun createState(lock: ReentrantReadWriteLock = ReentrantReadWriteLock()): IReplStageState<*>
+}
+
+// --- check
 
 interface ReplCheckAction {
-    fun check(codeLine: ReplCodeLine): ReplCheckResult
+    fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult
 }
 
 sealed class ReplCheckResult : Serializable {
@@ -63,40 +69,25 @@ sealed class ReplCheckResult : Serializable {
     }
 }
 
-interface ReplResettableCodeLine {
-    fun resetToLine(lineNumber: Int): List<ReplCodeLine>
-
-    fun resetToLine(line: ReplCodeLine): List<ReplCodeLine> = resetToLine(line.no)
-}
-
-interface ReplCodeLineHistory {
-    val history: List<ReplCodeLine>
-}
-
-interface ReplCombinedHistory {
-    val compiledHistory: List<ReplCodeLine>
-    val evaluatedHistory: List<ReplCodeLine>
-}
+// --- compile
 
 interface ReplCompileAction {
-    fun compile(codeLine: ReplCodeLine, verifyHistory: List<ReplCodeLine>? = null): ReplCompileResult
+    fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult
 }
 
-sealed class ReplCompileResult(val compiledHistory: List<ReplCodeLine>) : Serializable {
-    class CompiledClasses(compiledHistory: List<ReplCodeLine>,
-                          val compiledCodeLine: CompiledReplCodeLine,
-                          val generatedClassname: String,
+sealed class ReplCompileResult : Serializable {
+    class CompiledClasses(val lineId: LineId,
+                          val mainClassName: String,
                           val classes: List<CompiledClassData>,
                           val hasResult: Boolean,
-                          val classpathAddendum: List<File>) : ReplCompileResult(compiledHistory)
+                          val classpathAddendum: List<File>) : ReplCompileResult()
 
-    class Incomplete(compiledHistory: List<ReplCodeLine>) : ReplCompileResult(compiledHistory)
+    class Incomplete : ReplCompileResult()
 
-    class HistoryMismatch(compiledHistory: List<ReplCodeLine>, val lineNo: Int) : ReplCompileResult(compiledHistory)
+    class HistoryMismatch(val lineNo: Int) : ReplCompileResult()
 
-    class Error(compiledHistory: List<ReplCodeLine>,
-                val message: String,
-                val location: CompilerMessageLocation = CompilerMessageLocation.NO_LOCATION) : ReplCompileResult(compiledHistory) {
+    class Error(val message: String,
+                val location: CompilerMessageLocation = CompilerMessageLocation.NO_LOCATION) : ReplCompileResult() {
         override fun toString(): String = "Error(message = \"$message\""
     }
 
@@ -105,43 +96,35 @@ sealed class ReplCompileResult(val compiledHistory: List<ReplCodeLine>) : Serial
     }
 }
 
-interface ReplCompiler : ReplResettableCodeLine, ReplCodeLineHistory, ReplCompileAction, ReplCheckAction
+interface ReplCompiler : ReplCompileAction, ReplCheckAction, CreateReplStageStateAction
 
-typealias EvalHistoryType = Pair<CompiledReplCodeLine, EvalClassWithInstanceAndLoader>
-
-interface ReplEvaluatorExposedInternalHistory {
-    val lastEvaluatedScripts: List<EvalHistoryType>
-}
-
-interface ReplClasspath {
-    val currentClasspath: List<File>
-}
+// --- eval
 
 data class EvalClassWithInstanceAndLoader(val klass: KClass<*>, val instance: Any?, val classLoader: ClassLoader, val invokeWrapper: InvokeWrapper?)
 
 interface ReplEvalAction {
-    fun eval(compileResult: ReplCompileResult.CompiledClasses,
+    fun eval(state: IReplStageState<*>,
+             compileResult: ReplCompileResult.CompiledClasses,
              scriptArgs: ScriptArgsWithTypes? = null,
              invokeWrapper: InvokeWrapper? = null): ReplEvalResult
 }
 
-sealed class ReplEvalResult(val completedEvalHistory: List<ReplCodeLine>) : Serializable {
-    class ValueResult(completedEvalHistory: List<ReplCodeLine>, val value: Any?) : ReplEvalResult(completedEvalHistory) {
+sealed class ReplEvalResult : Serializable {
+    class ValueResult(val value: Any?) : ReplEvalResult() {
         override fun toString(): String = "Result: $value"
     }
 
-    class UnitResult(completedEvalHistory: List<ReplCodeLine>) : ReplEvalResult(completedEvalHistory)
+    class UnitResult : ReplEvalResult()
 
-    class Incomplete(completedEvalHistory: List<ReplCodeLine>) : ReplEvalResult(completedEvalHistory)
+    class Incomplete : ReplEvalResult()
 
-    class HistoryMismatch(completedEvalHistory: List<ReplCodeLine>, val lineNo: Int) : ReplEvalResult(completedEvalHistory)
+    class HistoryMismatch(val lineNo: Int) : ReplEvalResult()
 
-    sealed class Error(completedEvalHistory: List<ReplCodeLine>, val message: String) : ReplEvalResult(completedEvalHistory) {
-        class Runtime(completedEvalHistory: List<ReplCodeLine>, message: String, val cause: Exception? = null) : Error(completedEvalHistory, message)
+    sealed class Error(val message: String) : ReplEvalResult() {
+        class Runtime(message: String, val cause: Exception? = null) : Error(message)
 
-        class CompileTime(completedEvalHistory: List<ReplCodeLine>,
-                          message: String,
-                          val location: CompilerMessageLocation = CompilerMessageLocation.NO_LOCATION) : Error(completedEvalHistory, message)
+        class CompileTime(message: String,
+                          val location: CompilerMessageLocation = CompilerMessageLocation.NO_LOCATION) : Error(message)
 
         override fun toString(): String = "${this::class.simpleName}Error(message = \"$message\""
     }
@@ -151,42 +134,43 @@ sealed class ReplEvalResult(val completedEvalHistory: List<ReplCodeLine>) : Seri
     }
 }
 
-interface ReplEvaluator : ReplResettableCodeLine, ReplCodeLineHistory, ReplEvaluatorExposedInternalHistory, ReplEvalAction, ReplClasspath
+interface ReplEvaluator : ReplEvalAction, CreateReplStageStateAction
+
+// --- compileAdnEval
 
 interface ReplAtomicEvalAction {
-    fun compileAndEval(codeLine: ReplCodeLine,
+    fun compileAndEval(state: IReplStageState<*>,
+                       codeLine: ReplCodeLine,
                        scriptArgs: ScriptArgsWithTypes? = null,
-                       verifyHistory: List<ReplCodeLine>? = null,
                        invokeWrapper: InvokeWrapper? = null): ReplEvalResult
 }
 
-interface ReplAtomicEvaluator : ReplResettableCodeLine, ReplCombinedHistory, ReplEvaluatorExposedInternalHistory, ReplAtomicEvalAction, ReplCheckAction, ReplClasspath
+interface ReplAtomicEvaluator : ReplAtomicEvalAction, ReplCheckAction
 
 interface ReplDelayedEvalAction {
-    fun compileToEvaluable(codeLine: ReplCodeLine, defaultScriptArgs: ScriptArgsWithTypes? = null, verifyHistory: List<ReplCodeLine>?): Pair<ReplCompileResult, Evaluable?>
+    fun compileToEvaluable(state: IReplStageState<*>,
+                           codeLine: ReplCodeLine,
+                           defaultScriptArgs: ScriptArgsWithTypes? = null): Pair<ReplCompileResult, Evaluable?>
 }
+
+// other
 
 interface Evaluable {
     val compiledCode: ReplCompileResult.CompiledClasses
     fun eval(scriptArgs: ScriptArgsWithTypes? = null, invokeWrapper: InvokeWrapper? = null): ReplEvalResult
 }
 
-interface ReplFullEvaluator : ReplEvaluator, ReplAtomicEvaluator, ReplDelayedEvalAction, ReplCombinedHistory
+interface ReplFullEvaluator : ReplEvaluator, ReplAtomicEvaluator, ReplDelayedEvalAction
 
 /**
  * Keep args and arg types together, so as a whole they are present or absent
  */
 class ScriptArgsWithTypes(val scriptArgs: Array<out Any?>, val scriptArgsTypes: Array<out KClass<out Any>>) : Serializable {
+    init { assert(scriptArgs.size == scriptArgsTypes.size) }
     companion object {
         private val serialVersionUID: Long = 8529357500L
     }
 }
-
-interface ScriptTemplateEmptyArgsProvider {
-    val defaultEmptyArgs: ScriptArgsWithTypes?
-}
-
-class SimpleScriptTemplateEmptyArgsProvider(override val defaultEmptyArgs: ScriptArgsWithTypes? = null) : ScriptTemplateEmptyArgsProvider
 
 enum class ReplRepeatingMode {
     NONE,

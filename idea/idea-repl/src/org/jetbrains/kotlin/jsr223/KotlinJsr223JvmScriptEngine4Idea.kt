@@ -68,5 +68,5 @@ class KotlinJsr223JvmScriptEngine4Idea(
 
     val localEvaluator: ReplFullEvaluator by lazy { GenericReplCompilingEvaluator(replCompiler, templateClasspath, Thread.currentThread().contextClassLoader) }
 
-    override val replScriptEvaluator: ReplFullEvaluator get() = localEvaluator
+    override val replEvaluator: ReplFullEvaluator get() = localEvaluator
 }

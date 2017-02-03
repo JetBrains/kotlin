@@ -19,16 +19,17 @@ package org.jetbrains.kotlin.cli.common.repl
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import java.io.Reader
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.locks.ReentrantReadWriteLock
 import javax.script.*
 
-val KOTLIN_SCRIPT_HISTORY_BINDINGS_KEY = "kotlin.script.history"
+val KOTLIN_SCRIPT_STATE_BINDINGS_KEY = "kotlin.script.state"
 val KOTLIN_SCRIPT_LINE_NUMBER_BINDINGS_KEY = "kotlin.script.line.number"
 
 // TODO consider additional error handling
-var Bindings.kotlinScriptHistory: MutableList<ReplCodeLine>
+var Bindings.kotlinScriptState: IReplStageState<*>
     @Suppress("UNCHECKED_CAST")
-    get() = getOrPut(KOTLIN_SCRIPT_HISTORY_BINDINGS_KEY, { arrayListOf<ReplCodeLine>() }) as MutableList<ReplCodeLine>
-    set(v) { put(KOTLIN_SCRIPT_HISTORY_BINDINGS_KEY, v) }
+    get() = get(KOTLIN_SCRIPT_STATE_BINDINGS_KEY) as IReplStageState<*>
+    set(v) { put(KOTLIN_SCRIPT_STATE_BINDINGS_KEY, v) }
 
 val Bindings.kotlinScriptLineNumber: AtomicInteger
     @Suppress("UNCHECKED_CAST")
@@ -36,8 +37,8 @@ val Bindings.kotlinScriptLineNumber: AtomicInteger
 
 abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEngineFactory) : AbstractScriptEngine(), ScriptEngine, Compilable {
 
-    protected abstract val replCompiler: ReplCompileAction
-    protected abstract val replScriptEvaluator: ReplFullEvaluator
+    protected abstract val replCompiler: ReplCompiler
+    protected abstract val replEvaluator: ReplFullEvaluator
 
     override fun eval(script: String, context: ScriptContext): Any? = compileAndEval(script, context)
 
@@ -52,20 +53,18 @@ abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEn
     override fun getFactory(): ScriptEngineFactory = myFactory
 
     // the parameter could be used in the future when we decide to keep state completely in the context and solve appropriate problems (now e.g. replCompiler keeps separate state)
-    fun nextCodeLine(@Suppress("UNUSED_PARAMETER") context: ScriptContext, code: String) = ReplCodeLine(this.context.getBindings(ScriptContext.ENGINE_SCOPE).kotlinScriptLineNumber.incrementAndGet(), code)
+    fun nextCodeLine(context: ScriptContext, code: String) = ReplCodeLine(context.getBindings(ScriptContext.ENGINE_SCOPE).kotlinScriptLineNumber.incrementAndGet(), code)
 
-    private fun getCurrentHistory(@Suppress("UNUSED_PARAMETER") context: ScriptContext) = this.context.getBindings(ScriptContext.ENGINE_SCOPE).kotlinScriptHistory
+    protected open fun createState(lock: ReentrantReadWriteLock = ReentrantReadWriteLock()): IReplStageState<*> = AggregatedReplStageState(replCompiler.createState(lock), replEvaluator.createState(lock), lock)
 
-    private fun setContextHistory(@Suppress("UNUSED_PARAMETER") context: ScriptContext, history: ArrayList<ReplCodeLine>) {
-        this.context.getBindings(ScriptContext.ENGINE_SCOPE).kotlinScriptHistory = history
-    }
+    private fun getCurrentState(context: ScriptContext) = context.getBindings(ScriptContext.ENGINE_SCOPE).getOrPut(KOTLIN_SCRIPT_STATE_BINDINGS_KEY, { replEvaluator.createState() }) as IReplStageState<*>
 
     open fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? = null
 
     open fun compileAndEval(script: String, context: ScriptContext): Any? {
         val codeLine = nextCodeLine(context, script)
-        val history = getCurrentHistory(context)
-        val result = replScriptEvaluator.compileAndEval(codeLine, scriptArgs = overrideScriptArgs(context), verifyHistory = history)
+        val state = getCurrentState(context)
+        val result = replEvaluator.compileAndEval(state, codeLine, scriptArgs = overrideScriptArgs(context))
         val ret = when (result) {
             is ReplEvalResult.ValueResult -> result.value
             is ReplEvalResult.UnitResult -> null
@@ -73,29 +72,27 @@ abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEn
             is ReplEvalResult.Incomplete -> throw ScriptException("error: incomplete code")
             is ReplEvalResult.HistoryMismatch -> throw ScriptException("Repl history mismatch at line: ${result.lineNo}")
         }
-        setContextHistory(context, ArrayList(result.completedEvalHistory))
         return ret
     }
 
     open fun compile(script: String, context: ScriptContext): CompiledScript {
         val codeLine = nextCodeLine(context, script)
-        val history = getCurrentHistory(context)
+        val state = getCurrentState(context)
 
-        val result = replCompiler.compile(codeLine, history)
+        val result = replCompiler.compile(state, codeLine)
         val compiled = when (result) {
             is ReplCompileResult.Error -> throw ScriptException("Error${result.locationString()}: ${result.message}")
             is ReplCompileResult.Incomplete -> throw ScriptException("error: incomplete code")
             is ReplCompileResult.HistoryMismatch -> throw ScriptException("Repl history mismatch at line: ${result.lineNo}")
             is ReplCompileResult.CompiledClasses -> result
         }
-        // TODO: check if it is ok to keep compiled history in the same place as compiledEval one
-        setContextHistory(context, ArrayList(result.compiledHistory))
         return CompiledKotlinScript(this, codeLine, compiled)
     }
 
     open fun eval(compiledScript: CompiledKotlinScript, context: ScriptContext): Any? {
+        val state = getCurrentState(context)
         val result = try {
-            replScriptEvaluator.eval(compiledScript.compiledData, scriptArgs = overrideScriptArgs(context))
+            replEvaluator.eval(state, compiledScript.compiledData, scriptArgs = overrideScriptArgs(context))
         }
         catch (e: Exception) {
             throw ScriptException(e)
@@ -108,7 +105,6 @@ abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEn
             is ReplEvalResult.Incomplete -> throw ScriptException("error: incomplete code")
             is ReplEvalResult.HistoryMismatch -> throw ScriptException("Repl history mismatch at line: ${result.lineNo}")
         }
-        setContextHistory(context, ArrayList(result.completedEvalHistory))
         return ret
     }
 

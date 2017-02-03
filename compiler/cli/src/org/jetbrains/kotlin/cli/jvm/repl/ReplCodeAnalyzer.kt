@@ -21,7 +21,6 @@ package org.jetbrains.kotlin.cli.jvm.repl
 import org.jetbrains.kotlin.cli.common.repl.CompiledReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplHistory
-import org.jetbrains.kotlin.cli.common.repl.ReplResettableCodeLine
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -43,23 +42,18 @@ import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.resolve.scopes.utils.replaceImportingScopes
 import org.jetbrains.kotlin.script.ScriptPriorities
-import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.concurrent.read
-import kotlin.concurrent.write
 
-class GenericReplAnalyzer(environment: KotlinCoreEnvironment,
-                          protected val stateLock: ReentrantReadWriteLock = ReentrantReadWriteLock()) : ReplResettableCodeLine {
+class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
+
     private val topDownAnalysisContext: TopDownAnalysisContext
     private val topDownAnalyzer: LazyTopDownAnalyzer
     private val resolveSession: ResolveSession
     private val scriptDeclarationFactory: ScriptMutableDeclarationProviderFactory
-    private val replState = ResettableReplState()
+    private val replState = ResettableAnalyzerState()
 
     val module: ModuleDescriptorImpl
-        get() = stateLock.read { field }
 
     val trace: BindingTraceContext = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
-        get() = stateLock.read { field }
 
     init {
         // Module source scope is empty because all binary classes are in the dependency module, and all source classes are guaranteed
@@ -94,21 +88,15 @@ class GenericReplAnalyzer(environment: KotlinCoreEnvironment,
         }
     }
 
-    override fun resetToLine(lineNumber: Int): List<ReplCodeLine> {
-        return stateLock.write { replState.resetToLine(lineNumber) }
-    }
-
-    override fun resetToLine(line: ReplCodeLine): List<ReplCodeLine> = resetToLine(line.no)
+    fun resetToLine(lineNumber: Int): List<ReplCodeLine> = replState.resetToLine(lineNumber)
 
     fun analyzeReplLine(psiFile: KtFile, codeLine: ReplCodeLine): ReplLineAnalysisResult {
-        return stateLock.write {
-            topDownAnalysisContext.scripts.clear()
-            trace.clearDiagnostics()
+        topDownAnalysisContext.scripts.clear()
+        trace.clearDiagnostics()
 
-            psiFile.script!!.putUserData(ScriptPriorities.PRIORITY_KEY, codeLine.no)
+        psiFile.script!!.putUserData(ScriptPriorities.PRIORITY_KEY, codeLine.no)
 
-            doAnalyze(psiFile, codeLine)
-        }
+        return doAnalyze(psiFile, codeLine)
     }
 
     private fun doAnalyze(linePsi: KtFile, codeLine: ReplCodeLine): ReplLineAnalysisResult {
@@ -179,7 +167,8 @@ class GenericReplAnalyzer(environment: KotlinCoreEnvironment,
     }
 
     // TODO: merge with org.jetbrains.kotlin.resolve.repl.ReplState when switching to new REPL infrastruct everywhere
-    class ResettableReplState {
+    // TODO: review it's place in the extracted state infrastruct (now the analyzer itself is a part of the state
+    class ResettableAnalyzerState {
         private val successfulLines = ReplHistory<LineInfo.SuccessfulLine>()
         private val submittedLines = hashMapOf<KtFile, LineInfo>()
 
@@ -188,8 +177,6 @@ class GenericReplAnalyzer(environment: KotlinCoreEnvironment,
             removed.forEach { submittedLines.remove(it.second.linePsi) }
             return removed.map { it.first }
         }
-
-        fun resetToLine(line: ReplCodeLine): List<ReplCodeLine> = resetToLine(line.no)
 
         fun submitLine(ktFile: KtFile, codeLine: ReplCodeLine) {
             val line = LineInfo.SubmittedLine(ktFile, successfulLines.lastValue())

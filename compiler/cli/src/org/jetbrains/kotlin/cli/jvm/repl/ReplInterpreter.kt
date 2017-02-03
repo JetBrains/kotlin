@@ -64,7 +64,7 @@ class ReplInterpreter(
     }
 
     private val psiFileFactory: PsiFileFactoryImpl = PsiFileFactory.getInstance(environment.project) as PsiFileFactoryImpl
-    private val analyzerEngine = GenericReplAnalyzer(environment)
+    private val analyzerEngine = ReplCodeAnalyzer(environment)
 
     fun eval(line: String): LineResult {
         ++lineNumber
@@ -101,8 +101,8 @@ class ReplInterpreter(
         val analysisResult = analyzerEngine.analyzeReplLine(psiFile, ReplCodeLine(lineNumber, "fake line"))
         AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder)
         val scriptDescriptor = when (analysisResult) {
-            is GenericReplAnalyzer.ReplLineAnalysisResult.WithErrors -> return LineResult.Error.CompileTime(errorHolder.renderedDiagnostics)
-            is GenericReplAnalyzer.ReplLineAnalysisResult.Successful -> analysisResult.scriptDescriptor
+            is ReplCodeAnalyzer.ReplLineAnalysisResult.WithErrors -> return LineResult.Error.CompileTime(errorHolder.renderedDiagnostics)
+            is ReplCodeAnalyzer.ReplLineAnalysisResult.Successful -> analysisResult.scriptDescriptor
             else -> error("Unexpected result ${analysisResult.javaClass}")
         }
 

@@ -18,144 +18,111 @@ package org.jetbrains.kotlin.cli.common.repl
 
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
-import java.net.URLClassLoader
 import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.concurrent.read
 import kotlin.concurrent.write
 
-open class GenericReplEvaluator(baseClasspath: Iterable<File>,
-                                baseClassloader: ClassLoader?,
+open class GenericReplEvaluator(val baseClasspath: Iterable<File>,
+                                val baseClassloader: ClassLoader? = Thread.currentThread().contextClassLoader,
                                 protected val fallbackScriptArgs: ScriptArgsWithTypes? = null,
-                                protected val repeatingMode: ReplRepeatingMode = ReplRepeatingMode.REPEAT_ONLY_MOST_RECENT,
-                                protected val stateLock: ReentrantReadWriteLock = ReentrantReadWriteLock()
+                                protected val repeatingMode: ReplRepeatingMode = ReplRepeatingMode.REPEAT_ONLY_MOST_RECENT
 ) : ReplEvaluator {
 
-    private val topClassLoader: ReplClassLoader = makeReplClassLoader(baseClassloader, baseClasspath)
+//    private val evaluatedHistory = ReplHistory<EvalClassWithInstanceAndLoader>()
 
-    private val evaluatedHistory = ReplHistory<EvalClassWithInstanceAndLoader>()
+//    override val history: List<ReplCodeLine> get() = stateLock.read { evaluatedHistory.copySources() }
 
-    override fun resetToLine(lineNumber: Int): List<ReplCodeLine> {
-        return stateLock.write {
-            evaluatedHistory.resetToLine(lineNumber)
-        }.map { it.first }
-    }
+//    private class HistoryActions(
+//            val effectiveHistory: List<EvalClassWithInstanceAndLoader>,
+//                                 val verify: (compareHistory: SourceList?) -> Int?,
+//                                 val addPlaceholder: (line: CompiledReplCodeLine, value: EvalClassWithInstanceAndLoader) -> Unit,
+//                                 val removePlaceholder: (line: CompiledReplCodeLine) -> Boolean,
+//                                 val addFinal: (line: CompiledReplCodeLine, value: EvalClassWithInstanceAndLoader) -> Unit,
+//                                 val processClasses: (compileResult: ReplCompileResult.CompiledClasses) -> Pair<ClassLoader, Class<out Any>>
+//    )
 
-    override val history: List<ReplCodeLine> get() = stateLock.read { evaluatedHistory.copySources() }
+    override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = GenericReplEvaluatorState(baseClasspath, baseClassloader, lock)
 
-    override val currentClasspath: List<File> get() = stateLock.read {
-        evaluatedHistory.copyValues().lastOrNull()?.classLoader?.listAllUrlsAsFiles()
-        ?: topClassLoader.listAllUrlsAsFiles()
-    }
-
-    private class HistoryActions(val effectiveHistory: List<EvalClassWithInstanceAndLoader>,
-                                 val verify: (compareHistory: SourceList?) -> Int?,
-                                 val addPlaceholder: (line: CompiledReplCodeLine, value: EvalClassWithInstanceAndLoader) -> Unit,
-                                 val removePlaceholder: (line: CompiledReplCodeLine) -> Boolean,
-                                 val addFinal: (line: CompiledReplCodeLine, value: EvalClassWithInstanceAndLoader) -> Unit,
-                                 val processClasses: (compileResult: ReplCompileResult.CompiledClasses) -> Pair<ClassLoader, Class<out Any>>)
-
-    private fun prependClassLoaderWithNewClasses(effectiveHistory: List<EvalClassWithInstanceAndLoader>, compileResult: ReplCompileResult.CompiledClasses): Pair<ClassLoader, Class<out Any>> {
-        return stateLock.write {
-            var mainLineClassName: String? = null
-            val classLoader = makeReplClassLoader(effectiveHistory.lastOrNull()?.classLoader ?: topClassLoader, compileResult.classpathAddendum)
-            fun classNameFromPath(path: String) = JvmClassName.byInternalName(path.removeSuffix(".class"))
-            fun compiledClassesNames() = compileResult.classes.map { classNameFromPath(it.path).internalName.replace('/', '.') }
-            val expectedClassName = compileResult.generatedClassname
-            compileResult.classes.filter { it.path.endsWith(".class") }
-                    .forEach {
-                        val className = classNameFromPath(it.path)
-                        if (className.internalName == expectedClassName || className.internalName.endsWith("/$expectedClassName")) {
-                            mainLineClassName = className.internalName.replace('/', '.')
-                        }
-                        classLoader.addClass(className, it.bytes)
-                    }
-
-            val scriptClass = try {
-                classLoader.loadClass(mainLineClassName!!)
-            }
-            catch (t: Throwable) {
-                throw Exception("Error loading class $mainLineClassName: known classes: ${compiledClassesNames()}", t)
-            }
-            Pair(classLoader, scriptClass)
-        }
-    }
-
-    override fun eval(compileResult: ReplCompileResult.CompiledClasses,
+    override fun eval(state: IReplStageState<*>,
+                      compileResult: ReplCompileResult.CompiledClasses,
                       scriptArgs: ScriptArgsWithTypes?,
                       invokeWrapper: InvokeWrapper?): ReplEvalResult {
-        stateLock.write {
-            val verifyHistory = compileResult.compiledHistory.dropLast(1)
-            val defaultHistoryActor = HistoryActions(
-                    effectiveHistory = evaluatedHistory.copyValues(),
-                    verify = { line -> evaluatedHistory.firstMismatchingHistory(line) },
-                    addPlaceholder = { line, value -> evaluatedHistory.add(line, value) },
-                    removePlaceholder = { line -> evaluatedHistory.removeLast(line) },
-                    addFinal = { line, value -> evaluatedHistory.add(line, value) },
-                    processClasses = { compiled ->
-                        prependClassLoaderWithNewClasses(evaluatedHistory.copyValues(), compiled)
-                    })
+        state.lock.write {
+            val evalState = state.asState<GenericReplEvaluatorState>()
+//            val verifyHistory = compileResult.state.dropLast(1)
+//            val defaultHistoryActor = HistoryActions(
+//                    effectiveHistory = evalState.history.map { it.item },
+//                    verify = { line -> evalState.history.firstMismatchingHistory(line) },
+//                    addPlaceholder = { line, value -> evalState.history.add(line, value) },
+//                    removePlaceholder = { line -> evalState.history.removeLast(line) },
+//                    addFinal = { line, value -> evalState.history.add(line, value) },
+//                    processClasses = { compiled ->
+//                        prependClassLoaderWithNewClasses(evalState.history.copyValues(), compiled, )
+//                    })
 
-            val historyActor: HistoryActions = when (repeatingMode) {
-                ReplRepeatingMode.NONE -> defaultHistoryActor
+            val historyActor = when (repeatingMode) {
+                ReplRepeatingMode.NONE -> HistoryActionsForNoRepeat(evalState)
                 ReplRepeatingMode.REPEAT_ONLY_MOST_RECENT -> {
-                    val lastItem = evaluatedHistory.lastItem()
-                    if (lastItem == null || lastItem.first.source != compileResult.compiledCodeLine.source) {
-                        defaultHistoryActor
+                    val lastItem = evalState.history.peek()
+                    if (lastItem == null || lastItem.id != compileResult.lineId) {
+                        HistoryActionsForNoRepeat(evalState)
                     }
                     else {
-                        val trimmedHistory = ReplHistory(evaluatedHistory.copyAll().dropLast(1))
-                        HistoryActions(
-                                effectiveHistory = trimmedHistory.copyValues(),
-                                verify = { trimmedHistory.firstMismatchingHistory(it) },
-                                addPlaceholder = { _, _ -> NO_ACTION() },
-                                removePlaceholder = { NO_ACTION_THAT_RETURNS(true) },
-                                addFinal = { line, value ->
-                                    evaluatedHistory.removeLast(line)
-                                    evaluatedHistory.add(line, value)
-                                },
-                                processClasses = { _ ->
-                                    Pair(lastItem.second.classLoader, lastItem.second.klass.java)
-                                })
+                        HistoryActionsForRepeatRecentOnly(evalState)
+//                        val trimmedHistory = ReplHistory(evalState.history.copyAll().dropLast(1))
+//                        HistoryActions
+//                                effectiveHistory = trimmedHistory.copyValues(),
+//                                verify = { trimmedHistory.firstMismatchingHistory(it) },
+//                                addPlaceholder = { _, _ -> NO_ACTION() },
+//                                removePlaceholder = { NO_ACTION_THAT_RETURNS(true) },
+//                                addFinal = { line, value ->
+//                                    evalState.history.removeLast(line)
+//                                    evalState.history.add(line, value)
+//                                },
+//                                processClasses = { _ ->
+//                                    Pair(lastItem.second.classLoader, lastItem.second.klass.java)
+//                                })
                     }
                 }
                 ReplRepeatingMode.REPEAT_ANY_PREVIOUS -> {
-                    if (evaluatedHistory.isEmpty() || !evaluatedHistory.contains(compileResult.compiledCodeLine.source)) {
-                        defaultHistoryActor
+                    val matchingItem = evalState.history.firstOrNull { it.id == compileResult.lineId }
+                    if (matchingItem == null) {
+                        HistoryActionsForNoRepeat(evalState)
                     }
                     else {
-                        val historyCopy = evaluatedHistory.copyAll()
-                        val matchingItem = historyCopy.first { it.first.source == compileResult.compiledCodeLine.source }
-                        val trimmedHistory = ReplHistory(evaluatedHistory.copyAll().takeWhile { it != matchingItem })
-                        HistoryActions(
-                                effectiveHistory = trimmedHistory.copyValues(),
-                                verify = { trimmedHistory.firstMismatchingHistory(it) },
-                                addPlaceholder = { _, _ -> NO_ACTION() },
-                                removePlaceholder = { NO_ACTION_THAT_RETURNS(true) },
-                                addFinal = { line, value ->
-                                    val extraLines = evaluatedHistory.resetToLine(line)
-                                    evaluatedHistory.removeLast(line)
-                                    evaluatedHistory.add(line, value)
-                                    extraLines.forEach {
-                                        evaluatedHistory.add(it.first, it.second)
-                                    }
-                                },
-                                processClasses = { _ ->
-                                    Pair(matchingItem.second.classLoader, matchingItem.second.klass.java)
-                                })
+                        HistoryActionsForRepeatAny(evalState, matchingItem)
+//                        val historyCopy = evalState.history.copyAll()
+//                        val matchingItem = historyCopy.first { it.first.source == compileResult.compiledCodeLine.source }
+//                        val trimmedHistory = ReplHistory(evalState.history.copyAll().takeWhile { it != matchingItem })
+//                        HistoryActions(
+//                                effectiveHistory = trimmedHistory.copyValues(),
+//                                verify = { trimmedHistory.firstMismatchingHistory(it) },
+//                                addPlaceholder = { _, _ -> NO_ACTION() },
+//                                removePlaceholder = { NO_ACTION_THAT_RETURNS(true) },
+//                                addFinal = { line, value ->
+//                                    val extraLines = evalState.history.resetToLine(line)
+//                                    evalState.history.removeLast(line)
+//                                    evalState.history.add(line, value)
+//                                    extraLines.forEach {
+//                                        evalState.history.add(it.first, it.second)
+//                                    }
+//                                },
+//                                processClasses = { _ ->
+//                                    Pair(matchingItem.second.classLoader, matchingItem.second.klass.java)
+//                                })
                     }
                 }
             }
 
-            val firstMismatch = historyActor.verify(verifyHistory)
-            if (firstMismatch != null) {
-                return@eval ReplEvalResult.HistoryMismatch(evaluatedHistory.copySources(), firstMismatch)
-            }
+//            val firstMismatch = historyActor.firstMismatch(verifyHistory)
+//            if (firstMismatch != null) {
+//                return@eval ReplEvalResult.HistoryMismatch(firstMismatch)
+//            }
 
             val (classLoader, scriptClass) = try {
                 historyActor.processClasses(compileResult)
             }
             catch (e: Exception) {
-                return@eval ReplEvalResult.Error.Runtime(evaluatedHistory.copySources(), e.message ?: "unknown", e)
+                return@eval ReplEvalResult.Error.Runtime(e.message ?: "unknown", e)
             }
 
             val currentScriptArgs = scriptArgs ?: fallbackScriptArgs
@@ -170,7 +137,7 @@ open class GenericReplEvaluator(baseClasspath: Iterable<File>,
             // TODO: try/catch ?
             val scriptInstanceConstructor = scriptClass.getConstructor(*constructorParams)
 
-            historyActor.addPlaceholder(compileResult.compiledCodeLine, EvalClassWithInstanceAndLoader(scriptClass.kotlin, null, classLoader, invokeWrapper))
+            historyActor.addPlaceholder(compileResult.lineId, EvalClassWithInstanceAndLoader(scriptClass.kotlin, null, classLoader, invokeWrapper))
 
             val scriptInstance =
                     try {
@@ -178,33 +145,113 @@ open class GenericReplEvaluator(baseClasspath: Iterable<File>,
                         else scriptInstanceConstructor.newInstance(*constructorArgs)
                     }
                     catch (e: Throwable) {
-                        historyActor.removePlaceholder(compileResult.compiledCodeLine)
+                        historyActor.removePlaceholder(compileResult.lineId)
 
                         // ignore everything in the stack trace until this constructor call
-                        return@eval ReplEvalResult.Error.Runtime(evaluatedHistory.copySources(),
-                                                                 renderReplStackTrace(e.cause!!, startFromMethodName = "${scriptClass.name}.<init>"), e as? Exception)
+                        return@eval ReplEvalResult.Error.Runtime(renderReplStackTrace(e.cause!!, startFromMethodName = "${scriptClass.name}.<init>"), e as? Exception)
                     }
 
-            historyActor.removePlaceholder(compileResult.compiledCodeLine)
-            historyActor.addFinal(compileResult.compiledCodeLine, EvalClassWithInstanceAndLoader(scriptClass.kotlin, scriptInstance, classLoader, invokeWrapper))
+            historyActor.removePlaceholder(compileResult.lineId)
+            historyActor.addFinal(compileResult.lineId, EvalClassWithInstanceAndLoader(scriptClass.kotlin, scriptInstance, classLoader, invokeWrapper))
 
             val resultField = scriptClass.getDeclaredField(SCRIPT_RESULT_FIELD_NAME).apply { isAccessible = true }
             val resultValue: Any? = resultField.get(scriptInstance)
 
-            return if (compileResult.hasResult) ReplEvalResult.ValueResult(evaluatedHistory.copySources(), resultValue)
-            else ReplEvalResult.UnitResult(evaluatedHistory.copySources())
+            return if (compileResult.hasResult) ReplEvalResult.ValueResult(resultValue)
+            else ReplEvalResult.UnitResult()
         }
-    }
-
-    override val lastEvaluatedScripts: List<EvalHistoryType> get() {
-        return stateLock.read { evaluatedHistory.copyAll() }
     }
 
     companion object {
         private val SCRIPT_RESULT_FIELD_NAME = "\$\$result"
     }
 
-    private fun makeReplClassLoader(baseClassloader: ClassLoader?, baseClasspath: Iterable<File>) =
-            ReplClassLoader(URLClassLoader(baseClasspath.map { it.toURI().toURL() }.toTypedArray(), baseClassloader))
 }
 
+private open class HistoryActionsForNoRepeat(val state: GenericReplEvaluatorState) {
+
+    open val effectiveHistory: List<EvalClassWithInstanceAndLoader> get() = state.history.map { it.item }
+
+    open fun<OtherT> firstMismatch(other: IReplStageHistory<OtherT>): Pair<ReplHistoryRecord<EvalClassWithInstanceAndLoader>?, ReplHistoryRecord<OtherT>?>? = state.history.firstMismatch(other)
+
+    open fun addPlaceholder(lineId: ILineId, value: EvalClassWithInstanceAndLoader) { state.history.push(lineId, value) }
+
+    open fun removePlaceholder(lineId: ILineId): Boolean = state.history.verifiedPop(lineId) != null
+
+    open fun addFinal(lineId: ILineId, value: EvalClassWithInstanceAndLoader) { state.history.push(lineId, value) }
+
+    open fun processClasses(compileResult: ReplCompileResult.CompiledClasses): Pair<ClassLoader, Class<out Any>> = prependClassLoaderWithNewClasses(effectiveHistory, compileResult)
+
+    private fun prependClassLoaderWithNewClasses(effectiveHistory: List<EvalClassWithInstanceAndLoader>,
+                                                 compileResult: ReplCompileResult.CompiledClasses
+    ): Pair<ClassLoader, Class<out Any>> {
+        var mainLineClassName: String? = null
+        val classLoader = makeReplClassLoader(effectiveHistory.lastOrNull()?.classLoader ?: state.topClassLoader, compileResult.classpathAddendum)
+        fun classNameFromPath(path: String) = JvmClassName.byInternalName(path.removeSuffix(".class"))
+        fun compiledClassesNames() = compileResult.classes.map { classNameFromPath(it.path).internalName.replace('/', '.') }
+        val expectedClassName = compileResult.mainClassName
+        compileResult.classes.filter { it.path.endsWith(".class") }
+                .forEach {
+                    val className = classNameFromPath(it.path)
+                    if (className.internalName == expectedClassName || className.internalName.endsWith("/$expectedClassName")) {
+                        mainLineClassName = className.internalName.replace('/', '.')
+                    }
+                    classLoader.addClass(className, it.bytes)
+                }
+
+        val scriptClass = try {
+            classLoader.loadClass(mainLineClassName!!)
+        }
+        catch (t: Throwable) {
+            throw Exception("Error loading class $mainLineClassName: known classes: ${compiledClassesNames()}", t)
+        }
+        return Pair(classLoader, scriptClass)
+    }
+}
+
+private open class HistoryActionsForRepeatRecentOnly(state: GenericReplEvaluatorState) : HistoryActionsForNoRepeat(state) {
+
+    val currentLast = state.history.peek()!!
+
+    override val effectiveHistory: List<EvalClassWithInstanceAndLoader> get() = super.effectiveHistory.dropLast(1)
+
+    override fun<OtherT> firstMismatch(other: IReplStageHistory<OtherT>): Pair<ReplHistoryRecord<EvalClassWithInstanceAndLoader>?, ReplHistoryRecord<OtherT>?>? =
+            state.history.firstMismatchFiltered(other) { it.id != currentLast.id }
+
+    override fun addPlaceholder(lineId: ILineId, value: EvalClassWithInstanceAndLoader) {}
+
+    override fun removePlaceholder(lineId: ILineId): Boolean = true
+
+    override fun addFinal(lineId: ILineId, value: EvalClassWithInstanceAndLoader) {
+        state.history.pop()
+        state.history.push(lineId, value)
+    }
+
+    override fun processClasses(compileResult: ReplCompileResult.CompiledClasses): Pair<ClassLoader, Class<out Any>> =
+            currentLast.item.classLoader to currentLast.item.klass.java
+}
+
+private open class HistoryActionsForRepeatAny(state: GenericReplEvaluatorState, val matchingLine: ReplHistoryRecord<EvalClassWithInstanceAndLoader>): HistoryActionsForNoRepeat(state) {
+
+    override val effectiveHistory: List<EvalClassWithInstanceAndLoader> get() = state.history.takeWhile { it.id != matchingLine.id }.map { it.item }
+
+    override fun<OtherT> firstMismatch(other: IReplStageHistory<OtherT>): Pair<ReplHistoryRecord<EvalClassWithInstanceAndLoader>?, ReplHistoryRecord<OtherT>?>? =
+            state.history.firstMismatchWhile(other) { it.id != matchingLine.id }
+
+    override fun addPlaceholder(lineId: ILineId, value: EvalClassWithInstanceAndLoader) {}
+
+    override fun removePlaceholder(lineId: ILineId): Boolean = true
+
+    override fun addFinal(lineId: ILineId, value: EvalClassWithInstanceAndLoader) {
+        val extraLines = state.history.takeLastWhile { it.id == matchingLine.id }
+        state.history.resetTo(lineId)
+        state.history.pop()
+        state.history.push(lineId, value)
+        extraLines.forEach {
+            state.history.push(it.id, it.item)
+        }
+    }
+
+    override fun processClasses(compileResult: ReplCompileResult.CompiledClasses): Pair<ClassLoader, Class<out Any>> =
+            matchingLine.item.classLoader to matchingLine.item.klass.java
+}

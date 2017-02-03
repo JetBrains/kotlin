@@ -26,22 +26,18 @@ import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
-import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
-import org.jetbrains.kotlin.cli.common.repl.makeScriptBaseName
+import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.repl.messages.DiagnosticMessageHolder
 import org.jetbrains.kotlin.cli.jvm.repl.messages.ReplTerminalDiagnosticMessageHolder
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.concurrent.read
 import kotlin.concurrent.write
 
 const val KOTLIN_REPL_JVM_TARGET_PROPERTY = "kotlin.repl.jvm.target"
@@ -50,9 +46,9 @@ open class GenericReplChecker(
         disposable: Disposable,
         val scriptDefinition: KotlinScriptDefinition,
         val compilerConfiguration: CompilerConfiguration,
-        messageCollector: MessageCollector,
-        protected val stateLock: ReentrantReadWriteLock = ReentrantReadWriteLock()
-) {
+        messageCollector: MessageCollector
+) : ReplCheckAction {
+
     internal val environment = run {
         compilerConfiguration.apply {
             add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
@@ -70,21 +66,12 @@ open class GenericReplChecker(
 
     private val psiFileFactory: PsiFileFactoryImpl = PsiFileFactory.getInstance(environment.project) as PsiFileFactoryImpl
 
-    // "line" - is the unit of evaluation here, could in fact consists of several character lines
-    internal class LineState(
-            val codeLine: ReplCodeLine,
-            val psiFile: KtFile,
-            val errorHolder: DiagnosticMessageHolder)
+    internal fun createDiagnosticHolder() = ReplTerminalDiagnosticMessageHolder()
 
-    private var _lineState: LineState? = null
-
-    internal val lineState: LineState? get() = stateLock.read { _lineState }
-
-    fun createDiagnosticHolder() = ReplTerminalDiagnosticMessageHolder()
-
-    fun check(codeLine: ReplCodeLine, generation: Long): ReplCheckResult {
-        stateLock.write {
-            val scriptFileName = makeScriptBaseName(codeLine, generation)
+    override fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult {
+        state.lock.write {
+            val checkerState = state.asState<GenericReplCheckerState>()
+            val scriptFileName = makeScriptBaseName(codeLine, checkerState.generation.get())
             val virtualFile =
                     LightVirtualFile("$scriptFileName${KotlinParserDefinition.STD_SCRIPT_EXT}", KotlinLanguage.INSTANCE, StringUtil.convertLineSeparators(codeLine.code)).apply {
                         charset = CharsetToolkit.UTF8_CHARSET
@@ -97,7 +84,7 @@ open class GenericReplChecker(
             val syntaxErrorReport = AnalyzerWithCompilerReport.reportSyntaxErrors(psiFile, errorHolder)
 
             if (!syntaxErrorReport.isHasErrors) {
-                _lineState = LineState(codeLine, psiFile, errorHolder)
+                checkerState.lastLineState = GenericReplCheckerState.LineState(codeLine, psiFile, errorHolder)
             }
 
             return when {

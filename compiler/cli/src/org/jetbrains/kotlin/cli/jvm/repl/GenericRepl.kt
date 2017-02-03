@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import java.io.File
-import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantReadWriteLock
 
 open class GenericRepl protected constructor(
@@ -32,56 +30,22 @@ open class GenericRepl protected constructor(
         compilerConfiguration: CompilerConfiguration,
         messageCollector: MessageCollector,
         baseClassloader: ClassLoader?,
-        protected val fallbackScriptArgs: ScriptArgsWithTypes?,
-        protected val repeatingMode: ReplRepeatingMode = ReplRepeatingMode.NONE,
-        protected val stateLock: ReentrantReadWriteLock
+        protected val fallbackScriptArgs: ScriptArgsWithTypes? = null,
+        protected val repeatingMode: ReplRepeatingMode = ReplRepeatingMode.NONE
 ) : ReplCompiler, ReplEvaluator, ReplAtomicEvaluator {
-    constructor (
-            disposable: Disposable,
-            scriptDefinition: KotlinScriptDefinition,
-            compilerConfiguration: CompilerConfiguration,
-            messageCollector: MessageCollector,
-            baseClassloader: ClassLoader?,
-            fallbackScriptArgs: ScriptArgsWithTypes? = null
-    ) : this(disposable, scriptDefinition, compilerConfiguration, messageCollector, baseClassloader, fallbackScriptArgs, stateLock = ReentrantReadWriteLock())
 
-    protected val compiler: ReplCompiler by lazy { GenericReplCompiler(disposable, scriptDefinition, compilerConfiguration, messageCollector, stateLock) }
-    protected val evaluator: ReplFullEvaluator by lazy { GenericReplCompilingEvaluator(compiler, compilerConfiguration.jvmClasspathRoots, baseClassloader, fallbackScriptArgs, repeatingMode, stateLock) }
-    protected var codeLineNumber = AtomicInteger(0)
+    protected val compiler: ReplCompiler by lazy { GenericReplCompiler(disposable, scriptDefinition, compilerConfiguration, messageCollector) }
+    protected val evaluator: ReplFullEvaluator by lazy { GenericReplCompilingEvaluator(compiler, compilerConfiguration.jvmClasspathRoots, baseClassloader, fallbackScriptArgs, repeatingMode) }
 
-    override fun resetToLine(lineNumber: Int): List<ReplCodeLine> {
-        return evaluator.resetToLine(lineNumber)
-    }
+    override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = AggregatedReplStageState(compiler.createState(lock), evaluator.createState(lock), lock)
 
-    override fun resetToLine(line: ReplCodeLine): List<ReplCodeLine> {
-        return evaluator.resetToLine(line)
-    }
+    override fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult = compiler.check(state, codeLine)
 
-    override val history: List<ReplCodeLine> get() = evaluator.history
-    override val compiledHistory: List<ReplCodeLine> get() = compiler.history
-    override val evaluatedHistory: List<ReplCodeLine> get() = evaluator.history
+    override fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult = compiler.compile(state, codeLine)
 
-    override val currentClasspath: List<File>
-        get() = evaluator.currentClasspath
+    override fun eval(state: IReplStageState<*>, compileResult: ReplCompileResult.CompiledClasses, scriptArgs: ScriptArgsWithTypes?, invokeWrapper: InvokeWrapper?): ReplEvalResult =
+            evaluator.eval(state, compileResult, scriptArgs, invokeWrapper)
 
-    override val lastEvaluatedScripts: List<EvalHistoryType>
-        get() = evaluator.lastEvaluatedScripts
-
-    override fun check(codeLine: ReplCodeLine): ReplCheckResult {
-        return compiler.check(codeLine)
-    }
-
-    override fun compile(codeLine: ReplCodeLine, verifyHistory: List<ReplCodeLine>?): ReplCompileResult {
-        return compiler.compile(codeLine, verifyHistory)
-    }
-
-    override fun eval(compileResult: ReplCompileResult.CompiledClasses, scriptArgs: ScriptArgsWithTypes?, invokeWrapper: InvokeWrapper?): ReplEvalResult {
-        return evaluator.eval(compileResult, scriptArgs, invokeWrapper)
-    }
-
-    override fun compileAndEval(codeLine: ReplCodeLine, scriptArgs: ScriptArgsWithTypes?, verifyHistory: List<ReplCodeLine>?, invokeWrapper: InvokeWrapper?): ReplEvalResult {
-        return evaluator.compileAndEval(codeLine, scriptArgs, verifyHistory, invokeWrapper)
-    }
-
-    fun nextCodeLine(code: String) = ReplCodeLine(codeLineNumber.incrementAndGet(), code)
+    override fun compileAndEval(state: IReplStageState<*>, codeLine: ReplCodeLine, scriptArgs: ScriptArgsWithTypes?, invokeWrapper: InvokeWrapper?): ReplEvalResult =
+            evaluator.compileAndEval(state, codeLine, scriptArgs, invokeWrapper)
 }

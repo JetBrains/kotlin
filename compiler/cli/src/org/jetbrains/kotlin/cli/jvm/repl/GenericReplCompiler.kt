@@ -26,115 +26,83 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.KotlinScriptExternalDependencies
 import java.io.File
-import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.concurrent.read
 import kotlin.concurrent.write
+
+// WARNING: not thread safe, assuming external synchronization
 
 open class GenericReplCompiler(disposable: Disposable,
                                protected val scriptDefinition: KotlinScriptDefinition,
                                protected val compilerConfiguration: CompilerConfiguration,
-                               messageCollector: MessageCollector,
-                               protected val stateLock: ReentrantReadWriteLock = ReentrantReadWriteLock()) : ReplCompiler {
-    private val checker = GenericReplChecker(disposable, scriptDefinition, compilerConfiguration, messageCollector, stateLock)
+                               messageCollector: MessageCollector
+) : ReplCompiler {
 
-    private val analyzerEngine = GenericReplAnalyzer(checker.environment, stateLock)
+    private val checker = GenericReplChecker(disposable, scriptDefinition, compilerConfiguration, messageCollector)
 
-    private var lastDependencies: KotlinScriptExternalDependencies? = null
+    override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = GenericReplCompilerState(checker.environment, lock)
 
-    private val descriptorsHistory = ReplHistory<ScriptDescriptor>()
+    override fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult = checker.check(state, codeLine)
 
-    private val generation = AtomicLong(1)
+    override fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult {
+        state.lock.write {
+            val compilerState = state.asState<GenericReplCompilerState>()
 
-    override fun resetToLine(lineNumber: Int): List<ReplCodeLine> {
-        return stateLock.write {
-            generation.incrementAndGet()
-            val removedCompiledLines = descriptorsHistory.resetToLine(lineNumber)
-            val removedAnalyzedLines = analyzerEngine.resetToLine(lineNumber)
-
-            removedCompiledLines.zip(removedAnalyzedLines).forEach {
-                if (it.first.first != it.second) {
-                    throw IllegalStateException("History mismatch when resetting lines")
-                }
-            }
-
-            removedCompiledLines
-        }.map { it.first }
-    }
-
-    override val history: List<ReplCodeLine> get() = stateLock.read { descriptorsHistory.copySources() }
-
-    override fun check(codeLine: ReplCodeLine): ReplCheckResult = stateLock.read {
-        return checker.check(codeLine, generation.get())
-    }
-
-    override fun compile(codeLine: ReplCodeLine, verifyHistory: List<ReplCodeLine>?): ReplCompileResult {
-        stateLock.write {
-            val firstMismatch = descriptorsHistory.firstMismatchingHistory(verifyHistory)
-            if (firstMismatch != null) {
-                return@compile ReplCompileResult.HistoryMismatch(descriptorsHistory.copySources(), firstMismatch)
-            }
-
-            val currentGeneration = generation.get()
+            val currentGeneration = compilerState.generation.get()
 
             val (psiFile, errorHolder) = run {
-                if (checker.lineState == null || checker.lineState!!.codeLine != codeLine) {
-                    val res = checker.check(codeLine, currentGeneration)
+                if (compilerState.lastLineState == null || compilerState.lastLineState!!.codeLine != codeLine) {
+                    val res = checker.check(state, codeLine)
                     when (res) {
-                        is ReplCheckResult.Incomplete -> return@compile ReplCompileResult.Incomplete(descriptorsHistory.copySources())
-                        is ReplCheckResult.Error -> return@compile ReplCompileResult.Error(descriptorsHistory.copySources(), res.message, res.location)
+                        is ReplCheckResult.Incomplete -> return@compile ReplCompileResult.Incomplete()
+                        is ReplCheckResult.Error -> return@compile ReplCompileResult.Error(res.message, res.location)
                         is ReplCheckResult.Ok -> {} // continue
                     }
                 }
-                Pair(checker.lineState!!.psiFile, checker.lineState!!.errorHolder)
+                Pair(compilerState.lastLineState!!.psiFile, compilerState.lastLineState!!.errorHolder)
             }
 
-            val newDependencies = scriptDefinition.getDependenciesFor(psiFile, checker.environment.project, lastDependencies)
+            val newDependencies = scriptDefinition.getDependenciesFor(psiFile, checker.environment.project, compilerState.lastDependencies)
             var classpathAddendum: List<File>? = null
-            if (lastDependencies != newDependencies) {
-                lastDependencies = newDependencies
+            if (compilerState.lastDependencies != newDependencies) {
+                compilerState.lastDependencies = newDependencies
                 classpathAddendum = newDependencies?.let { checker.environment.updateClasspath(it.classpath.map(::JvmClasspathRoot)) }
             }
 
-            val analysisResult = analyzerEngine.analyzeReplLine(psiFile, codeLine)
+            val analysisResult = compilerState.analyzerEngine.analyzeReplLine(psiFile, codeLine)
             AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder)
             val scriptDescriptor = when (analysisResult) {
-                is GenericReplAnalyzer.ReplLineAnalysisResult.WithErrors -> return ReplCompileResult.Error(descriptorsHistory.copySources(), errorHolder.renderedDiagnostics)
-                is GenericReplAnalyzer.ReplLineAnalysisResult.Successful -> analysisResult.scriptDescriptor
+                is ReplCodeAnalyzer.ReplLineAnalysisResult.WithErrors -> return ReplCompileResult.Error(errorHolder.renderedDiagnostics)
+                is ReplCodeAnalyzer.ReplLineAnalysisResult.Successful -> analysisResult.scriptDescriptor
                 else -> error("Unexpected result ${analysisResult.javaClass}")
             }
 
-            val state = GenerationState(
+            val generationState = GenerationState(
                     psiFile.project,
                     ClassBuilderFactories.binaries(false),
-                    analyzerEngine.module,
-                    analyzerEngine.trace.bindingContext,
+                    compilerState.analyzerEngine.module,
+                    compilerState.analyzerEngine.trace.bindingContext,
                     listOf(psiFile),
                     compilerConfiguration
             )
-            state.replSpecific.scriptResultFieldName = SCRIPT_RESULT_FIELD_NAME
-            state.replSpecific.earlierScriptsForReplInterpreter = descriptorsHistory.copyValues()
-            state.beforeCompile()
+            generationState.replSpecific.scriptResultFieldName = SCRIPT_RESULT_FIELD_NAME
+            generationState.replSpecific.earlierScriptsForReplInterpreter = compilerState.history.map { it.item }
+            generationState.beforeCompile()
             KotlinCodegenFacade.generatePackage(
-                    state,
-                    psiFile.script!!.getContainingKtFile().packageFqName,
-                    setOf(psiFile.script!!.getContainingKtFile()),
+                    generationState,
+                    psiFile.script!!.containingKtFile.packageFqName,
+                    setOf(psiFile.script!!.containingKtFile),
                     org.jetbrains.kotlin.codegen.CompilationErrorHandler.THROW_EXCEPTION)
 
             val generatedClassname = makeScriptBaseName(codeLine, currentGeneration)
-            val compiledCodeLine = CompiledReplCodeLine(generatedClassname, codeLine)
-            descriptorsHistory.add(compiledCodeLine, scriptDescriptor)
+            compilerState.history.push(LineId(codeLine), scriptDescriptor)
 
-            return ReplCompileResult.CompiledClasses(descriptorsHistory.copySources(),
-                                                     compiledCodeLine,
+            return ReplCompileResult.CompiledClasses(LineId(codeLine),
                                                      generatedClassname,
-                                                     state.factory.asList().map { CompiledClassData(it.relativePath, it.asByteArray()) },
-                                                     state.replSpecific.hasResult,
-                                                       classpathAddendum ?: emptyList())
+                                                     generationState.factory.asList().map { CompiledClassData(it.relativePath, it.asByteArray()) },
+                                                     generationState.replSpecific.hasResult,
+                                                     classpathAddendum ?: emptyList())
         }
     }
 

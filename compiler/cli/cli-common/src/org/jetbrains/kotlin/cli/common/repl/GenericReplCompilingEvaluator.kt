@@ -22,27 +22,36 @@ import kotlin.concurrent.write
 
 class GenericReplCompilingEvaluator(val compiler: ReplCompiler,
                                     baseClasspath: Iterable<File>,
-                                    baseClassloader: ClassLoader?,
-                                    protected val fallbackScriptArgs: ScriptArgsWithTypes? = null,
-                                    repeatingMode: ReplRepeatingMode = ReplRepeatingMode.REPEAT_ONLY_MOST_RECENT,
-                                    protected val stateLock: ReentrantReadWriteLock = ReentrantReadWriteLock()
+                                    baseClassloader: ClassLoader? = Thread.currentThread().contextClassLoader,
+                                    private val fallbackScriptArgs: ScriptArgsWithTypes? = null,
+                                    repeatingMode: ReplRepeatingMode = ReplRepeatingMode.REPEAT_ONLY_MOST_RECENT
 ) : ReplFullEvaluator {
-    val evaluator = GenericReplEvaluator(baseClasspath, baseClassloader, fallbackScriptArgs, repeatingMode, stateLock)
+    val evaluator = GenericReplEvaluator(baseClasspath, baseClassloader, fallbackScriptArgs, repeatingMode)
 
-    override fun compileAndEval(codeLine: ReplCodeLine, scriptArgs: ScriptArgsWithTypes?, verifyHistory: List<ReplCodeLine>?, invokeWrapper: InvokeWrapper?): ReplEvalResult {
-        return stateLock.write {
-            val compiled = compiler.compile(codeLine, verifyHistory)
+    override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = AggregatedReplStageState(compiler.createState(lock), evaluator.createState(lock), lock)
+
+    override fun compileAndEval(state: IReplStageState<*>, codeLine: ReplCodeLine, scriptArgs: ScriptArgsWithTypes?, invokeWrapper: InvokeWrapper?): ReplEvalResult {
+        return state.lock.write {
+            val aggregatedState = state.asState<AggregatedReplStageState<*, *>>()
+            val compiled = compiler.compile(state, codeLine)
             when (compiled) {
-                is ReplCompileResult.Error -> ReplEvalResult.Error.CompileTime(compiled.compiledHistory, compiled.message, compiled.location)
-                is ReplCompileResult.HistoryMismatch -> ReplEvalResult.HistoryMismatch(compiled.compiledHistory, compiled.lineNo)
-                is ReplCompileResult.Incomplete -> ReplEvalResult.Incomplete(compiled.compiledHistory)
+                is ReplCompileResult.Error -> ReplEvalResult.Error.CompileTime(compiled.message, compiled.location)
+                is ReplCompileResult.HistoryMismatch -> ReplEvalResult.HistoryMismatch(compiled.lineNo)
+                is ReplCompileResult.Incomplete -> ReplEvalResult.Incomplete()
                 is ReplCompileResult.CompiledClasses -> {
-                    val result = eval(compiled, scriptArgs, invokeWrapper)
+                    val result = eval(state, compiled, scriptArgs, invokeWrapper)
                     when (result) {
                         is ReplEvalResult.Error,
                         is ReplEvalResult.HistoryMismatch,
                         is ReplEvalResult.Incomplete -> {
-                            result.completedEvalHistory.lastOrNull()?.let { compiler.resetToLine(it) }
+                            aggregatedState.apply {
+                                lock.write {
+                                    if (state1.history.size > state2.history.size) {
+                                        state2.history.peek()?.let { state1.history.resetTo(it.id) }
+                                        assert(state1.history.size == state2.history.size)
+                                    }
+                                }
+                            }
                             result
                         }
                         is ReplEvalResult.ValueResult,
@@ -56,49 +65,25 @@ class GenericReplCompilingEvaluator(val compiler: ReplCompiler,
         }
     }
 
-    override fun resetToLine(lineNumber: Int): List<ReplCodeLine> {
-        stateLock.write {
-            val removedCompiledLines = compiler.resetToLine(lineNumber)
-            val removedEvaluatorLines = evaluator.resetToLine(lineNumber)
+    override fun eval(state: IReplStageState<*>, compileResult: ReplCompileResult.CompiledClasses, scriptArgs: ScriptArgsWithTypes?, invokeWrapper: InvokeWrapper?): ReplEvalResult =
+            evaluator.eval(state, compileResult, scriptArgs, invokeWrapper)
 
-            removedCompiledLines.zip(removedEvaluatorLines).forEach {
-                if (it.first != it.second) {
-                    throw IllegalStateException("History mismatch when resetting lines")
-                }
-            }
+    override fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult = compiler.check(state, codeLine)
 
-            return removedCompiledLines
-        }
-    }
-
-    override fun resetToLine(line: ReplCodeLine): List<ReplCodeLine> = resetToLine(line.no)
-
-    override val lastEvaluatedScripts: List<EvalHistoryType> get() = evaluator.lastEvaluatedScripts
-    override val history: List<ReplCodeLine> get() = evaluator.history
-    override val currentClasspath: List<File> get() = evaluator.currentClasspath
-
-    override val compiledHistory: List<ReplCodeLine> get() = compiler.history
-    override val evaluatedHistory: List<ReplCodeLine> get() = evaluator.history
-
-    override fun eval(compileResult: ReplCompileResult.CompiledClasses, scriptArgs: ScriptArgsWithTypes?, invokeWrapper: InvokeWrapper?): ReplEvalResult =
-            evaluator.eval(compileResult, scriptArgs, invokeWrapper)
-
-    override fun check(codeLine: ReplCodeLine): ReplCheckResult = compiler.check(codeLine)
-
-    override fun compileToEvaluable(codeLine: ReplCodeLine, defaultScriptArgs: ScriptArgsWithTypes?, verifyHistory: List<ReplCodeLine>?): Pair<ReplCompileResult, Evaluable?> {
-        val compiled = compiler.compile(codeLine, verifyHistory)
+    override fun compileToEvaluable(state: IReplStageState<*>, codeLine: ReplCodeLine, defaultScriptArgs: ScriptArgsWithTypes?): Pair<ReplCompileResult, Evaluable?> {
+        val compiled = compiler.compile(state, codeLine)
         return when (compiled) {
-            is ReplCompileResult.CompiledClasses -> Pair(compiled, DelayedEvaluation(compiled, stateLock, evaluator, defaultScriptArgs ?: fallbackScriptArgs))
+            // TODO: seems usafe when delayed evaluation may happen after some more compileAndEval calls on the same state; check and fix or protect
+            is ReplCompileResult.CompiledClasses -> Pair(compiled, DelayedEvaluation(state, compiled, evaluator, defaultScriptArgs ?: fallbackScriptArgs))
             else -> Pair(compiled, null)
         }
     }
 
-    class DelayedEvaluation(override val compiledCode: ReplCompileResult.CompiledClasses,
-                            private val stateLock: ReentrantReadWriteLock,
+    class DelayedEvaluation(private val state: IReplStageState<*>,
+                            override val compiledCode: ReplCompileResult.CompiledClasses,
                             private val evaluator: ReplEvaluator,
                             private val defaultScriptArgs: ScriptArgsWithTypes?) : Evaluable {
-        override fun eval(scriptArgs: ScriptArgsWithTypes?, invokeWrapper: InvokeWrapper?): ReplEvalResult {
-            return stateLock.write { evaluator.eval(compiledCode, scriptArgs ?: defaultScriptArgs, invokeWrapper) }
-        }
+        override fun eval(scriptArgs: ScriptArgsWithTypes?, invokeWrapper: InvokeWrapper?): ReplEvalResult =
+                evaluator.eval(state, compiledCode, scriptArgs ?: defaultScriptArgs, invokeWrapper)
     }
 }
