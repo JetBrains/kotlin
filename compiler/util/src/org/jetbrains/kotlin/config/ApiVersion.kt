@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.config
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfo
 
 class ApiVersion private constructor(
-        private val version: MavenComparableVersion,
+        val version: MavenComparableVersion,
         val versionString: String
 ) : Comparable<ApiVersion> {
     override fun compareTo(other: ApiVersion): Int =
@@ -35,10 +35,13 @@ class ApiVersion private constructor(
 
     companion object {
         @JvmField
+        val KOTLIN_1_0 = createByLanguageVersion(LanguageVersion.KOTLIN_1_0)
+
+        @JvmField
         val KOTLIN_1_1 = createByLanguageVersion(LanguageVersion.KOTLIN_1_1)
 
         @JvmField
-        val LATEST: ApiVersion = createByLanguageVersion(LanguageVersion.Companion.LATEST)
+        val LATEST: ApiVersion = createByLanguageVersion(LanguageVersion.LATEST)
 
         @JvmStatic
         fun createByLanguageVersion(version: LanguageVersion): ApiVersion = parse(version.versionString)!!
