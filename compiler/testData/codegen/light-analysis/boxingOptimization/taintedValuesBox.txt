@@ -1,0 +1,9 @@
+@kotlin.Metadata
+public final class TaintedValuesBoxKt {
+    public final static field SIZE: int
+    private final static @org.jetbrains.annotations.NotNull field arr: int[]
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getArr(): int[]
+    public final static method put(p0: java.lang.Object, p1: int, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function1, @org.jetbrains.annotations.NotNull p3: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function1, @org.jetbrains.annotations.NotNull p5: kotlin.jvm.functions.Function2): boolean
+    public final static method putNonNegInt(p0: int): boolean
+}

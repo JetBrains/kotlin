@@ -29,7 +29,6 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.InsnList
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
-import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import java.util.*
 
@@ -39,14 +38,23 @@ open class BoxingInterpreter(private val insnList: InsnList) : OptimizationBasic
     protected open fun createNewBoxing(insn: AbstractInsnNode, type: Type, progressionIterator: ProgressionIteratorBasicValue?): BasicValue {
         val index = insnList.indexOf(insn)
         return boxingPlaces.getOrPut(index) {
-            val boxedBasicValue = BoxedBasicValue(type, insn, progressionIterator)
+            val boxedBasicValue = CleanBoxedValue(type, insn, progressionIterator)
             onNewBoxedValue(boxedBasicValue)
             boxedBasicValue
         }
     }
 
-    @Throws(AnalyzerException::class)
+    protected fun checkUsedValue(value: BasicValue) {
+        if (value is TaintedBoxedValue) {
+            onMergeFail(value)
+        }
+    }
+
     override fun naryOperation(insn: AbstractInsnNode, values: List<BasicValue>): BasicValue? {
+        values.forEach {
+            checkUsedValue(it)
+        }
+
         val value = super.naryOperation(insn, values)
         val firstArg = values.firstOrNull() ?: return value
 
@@ -80,36 +88,39 @@ open class BoxingInterpreter(private val insnList: InsnList) : OptimizationBasic
         }
     }
 
-    @Throws(AnalyzerException::class)
-    override fun unaryOperation(insn: AbstractInsnNode, value: BasicValue): BasicValue? =
-            if (insn.opcode == Opcodes.CHECKCAST && isExactValue(value))
-                value
-            else
-                super.unaryOperation(insn, value)
+    override fun unaryOperation(insn: AbstractInsnNode, value: BasicValue): BasicValue? {
+        checkUsedValue(value)
+
+        return if (insn.opcode == Opcodes.CHECKCAST && isExactValue(value))
+            value
+        else
+            super.unaryOperation(insn, value)
+    }
 
     protected open fun isExactValue(value: BasicValue) =
             value is ProgressionIteratorBasicValue ||
-            value is BoxedBasicValue ||
+            value is CleanBoxedValue ||
             value.type != null && isProgressionClass(value.type.internalName)
 
     override fun merge(v: BasicValue, w: BasicValue) =
             when {
-                v == StrictBasicValue.UNINITIALIZED_VALUE || w == StrictBasicValue.UNINITIALIZED_VALUE -> {
+                v == StrictBasicValue.UNINITIALIZED_VALUE || w == StrictBasicValue.UNINITIALIZED_VALUE ->
                     StrictBasicValue.UNINITIALIZED_VALUE
-                }
-                v is BoxedBasicValue && v.typeEquals(w) -> {
-                    onMergeSuccess(v, w as BoxedBasicValue)
-                    v
-                }
-                else -> {
-                    if (v is BoxedBasicValue) {
-                        onMergeFail(v)
+                v is BoxedBasicValue && w is BoxedBasicValue -> {
+                    onMergeSuccess(v, w)
+                    when {
+                        v is TaintedBoxedValue -> v
+                        w is TaintedBoxedValue -> w
+                        v.type != w.type -> v.taint()
+                        else -> v
                     }
-                    if (w is BoxedBasicValue) {
-                        onMergeFail(w)
-                    }
+                }
+                v is BoxedBasicValue ->
+                    v.taint()
+                w is BoxedBasicValue ->
+                    w.taint()
+                else ->
                     super.merge(v, w)
-                }
             }
 
     protected open fun onNewBoxedValue(value: BoxedBasicValue) {}
@@ -197,7 +208,5 @@ private fun isProgressionClass(internalClassName: String) =
         RangeCodegenUtil.isRangeOrProgression(buildFqNameByInternal(internalClassName))
 
 private fun getValuesTypeOfProgressionClass(progressionClassInternalName: String) =
-        RangeCodegenUtil.getPrimitiveRangeOrProgressionElementType(buildFqNameByInternal(progressionClassInternalName))?.let {
-            type ->
-            type.typeName.asString()
-        } ?: error("type should be not null")
+        RangeCodegenUtil.getPrimitiveRangeOrProgressionElementType(buildFqNameByInternal(progressionClassInternalName))
+                ?.typeName?.asString() ?: error("type should be not null")

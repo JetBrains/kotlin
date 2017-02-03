@@ -1160,6 +1160,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("taintedValues.kt")
+        public void testTaintedValues() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/boxingOptimization/taintedValues.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("taintedValuesBox.kt")
+        public void testTaintedValuesBox() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/boxingOptimization/taintedValuesBox.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("unsafeRemoving.kt")
         public void testUnsafeRemoving() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/boxingOptimization/unsafeRemoving.kt");

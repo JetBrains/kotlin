@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.codegen.optimization.boxing;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.intellij.openapi.util.Pair;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
@@ -38,9 +36,8 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
     @Override
     public void transform(@NotNull String internalClassName, @NotNull MethodNode node) {
         RedundantBoxingInterpreter interpreter = new RedundantBoxingInterpreter(node.instructions);
-        Frame<BasicValue>[] frames = analyze(
-                internalClassName, node, interpreter
-        );
+        Frame<BasicValue>[] frames = analyze(internalClassName, node, interpreter);
+
         interpretPopInstructionsForBoxedValues(interpreter, node, frames);
 
         RedundantBoxedValuesCollection valuesToOptimize = interpreter.getCandidatesBoxedValues();
@@ -99,32 +96,25 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
                 continue;
             }
 
-            List<BasicValue> usedValues = getValuesStoredOrLoadedToVariable(localVariableNode, node, frames);
+            List<BasicValue> variableValues = getValuesStoredOrLoadedToVariable(localVariableNode, node, frames);
 
-            Collection<BasicValue> boxed = Collections2.filter(usedValues, new Predicate<BasicValue>() {
+            Collection<BasicValue> boxed = CollectionsKt.filter(variableValues, new Function1<BasicValue, Boolean>() {
                 @Override
-                public boolean apply(BasicValue input) {
-                    return input instanceof BoxedBasicValue;
+                public Boolean invoke(BasicValue value) {
+                    return value instanceof BoxedBasicValue;
                 }
             });
 
             if (boxed.isEmpty()) continue;
 
-            final BoxedBasicValue firstBoxed = (BoxedBasicValue) boxed.iterator().next();
+            BoxedValueDescriptor firstBoxed = ((BoxedBasicValue) boxed.iterator().next()).getDescriptor();
+            if (isUnsafeToRemoveBoxingForConnectedValues(variableValues, firstBoxed.getUnboxedType())) {
+                for (BasicValue value : variableValues) {
+                    if (!(value instanceof BoxedBasicValue)) continue;
 
-            if (CollectionsKt.any(usedValues, new Function1<BasicValue, Boolean>() {
-                @Override
-                public Boolean invoke(BasicValue input) {
-                    if (input == StrictBasicValue.UNINITIALIZED_VALUE) return false;
-                    return input == null ||
-                           !(input instanceof BoxedBasicValue) ||
-                           !((BoxedBasicValue) input).isSafeToRemove() ||
-                           !((BoxedBasicValue) input).getPrimitiveType().equals(firstBoxed.getPrimitiveType());
-                }
-            })) {
-                for (BasicValue value : usedValues) {
-                    if (value instanceof BoxedBasicValue && ((BoxedBasicValue) value).isSafeToRemove()) {
-                        values.remove((BoxedBasicValue) value);
+                    BoxedValueDescriptor descriptor = ((BoxedBasicValue) value).getDescriptor();
+                    if (descriptor.isSafeToRemove()) {
+                        values.remove(descriptor);
                         needToRepeat = true;
                     }
                 }
@@ -134,6 +124,20 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
         return needToRepeat;
     }
 
+    private static boolean isUnsafeToRemoveBoxingForConnectedValues(List<BasicValue> usedValues, final Type unboxedType) {
+        return CollectionsKt.any(usedValues, new Function1<BasicValue, Boolean>() {
+            @Override
+            public Boolean invoke(BasicValue input) {
+                if (input == StrictBasicValue.UNINITIALIZED_VALUE) return false;
+                if (!(input instanceof BoxedBasicValue)) return true;
+
+                BoxedValueDescriptor descriptor = ((BoxedBasicValue) input).getDescriptor();
+                return !descriptor.isSafeToRemove() ||
+                       !(descriptor.getUnboxedType().equals(unboxedType));
+            }
+        });
+    }
+
     private static void adaptLocalVariableTableForBoxedValues(@NotNull MethodNode node, @NotNull Frame<BasicValue>[] frames) {
         for (LocalVariableNode localVariableNode : node.localVariables) {
             if (Type.getType(localVariableNode.desc).getSort() != Type.OBJECT) {
@@ -141,8 +145,11 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
             }
 
             for (BasicValue value : getValuesStoredOrLoadedToVariable(localVariableNode, node, frames)) {
-                if (value == null || !(value instanceof BoxedBasicValue) || !((BoxedBasicValue) value).isSafeToRemove()) continue;
-                localVariableNode.desc = ((BoxedBasicValue) value).getPrimitiveType().getDescriptor();
+                if (!(value instanceof BoxedBasicValue)) continue;
+
+                BoxedValueDescriptor descriptor = ((BoxedBasicValue) value).getDescriptor();
+                if (!descriptor.isSafeToRemove()) continue;
+                localVariableNode.desc = descriptor.getUnboxedType().getDescriptor();
             }
         }
     }
@@ -193,9 +200,9 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
     @NotNull
     private static int[] buildVariablesRemapping(@NotNull RedundantBoxedValuesCollection values, @NotNull MethodNode node) {
         Set<Integer> doubleSizedVars = new HashSet<Integer>();
-        for (BoxedBasicValue value : values) {
-            if (value.getPrimitiveType().getSize() == 2) {
-                doubleSizedVars.addAll(value.getVariablesIndexes());
+        for (BoxedValueDescriptor valueDescriptor : values) {
+            if (valueDescriptor.isDoubleSize()) {
+                doubleSizedVars.addAll(valueDescriptor.getVariablesIndexes());
             }
         }
 
@@ -233,12 +240,12 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
             @NotNull MethodNode node,
             @NotNull RedundantBoxedValuesCollection values
     ) {
-        for (BoxedBasicValue value : values) {
+        for (BoxedValueDescriptor value : values) {
             adaptInstructionsForBoxedValue(node, value);
         }
     }
 
-    private static void adaptInstructionsForBoxedValue(@NotNull MethodNode node, @NotNull BoxedBasicValue value) {
+    private static void adaptInstructionsForBoxedValue(@NotNull MethodNode node, @NotNull BoxedValueDescriptor value) {
         adaptBoxingInstruction(node, value);
 
         for (Pair<AbstractInsnNode, Type> cast : value.getUnboxingWithCastInsns()) {
@@ -250,7 +257,7 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
         }
     }
 
-    private static void adaptBoxingInstruction(@NotNull MethodNode node, @NotNull BoxedBasicValue value) {
+    private static void adaptBoxingInstruction(@NotNull MethodNode node, @NotNull BoxedValueDescriptor value) {
         if (!value.isFromProgressionIterator()) {
             node.instructions.remove(value.getBoxingInsn());
         }
@@ -280,12 +287,12 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
 
     private static void adaptCastInstruction(
             @NotNull MethodNode node,
-            @NotNull BoxedBasicValue value,
+            @NotNull BoxedValueDescriptor value,
             @NotNull Pair<AbstractInsnNode, Type> castWithType
     ) {
         AbstractInsnNode castInsn = castWithType.getFirst();
         MethodNode castInsnsListener = new MethodNode(Opcodes.ASM5);
-        new InstructionAdapter(castInsnsListener).cast(value.getPrimitiveType(), castWithType.getSecond());
+        new InstructionAdapter(castInsnsListener).cast(value.getUnboxedType(), castWithType.getSecond());
 
         for (AbstractInsnNode insn : castInsnsListener.instructions.toArray()) {
             node.instructions.insertBefore(castInsn, insn);
@@ -295,7 +302,7 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
     }
 
     private static void adaptInstruction(
-            @NotNull MethodNode node, @NotNull AbstractInsnNode insn, @NotNull BoxedBasicValue value
+            @NotNull MethodNode node, @NotNull AbstractInsnNode insn, @NotNull BoxedValueDescriptor value
     ) {
         boolean isDoubleSize = value.isDoubleSize();
 
@@ -322,7 +329,7 @@ public class RedundantBoxingMethodTransformer extends MethodTransformer {
                 node.instructions.set(
                         insn,
                         new VarInsnNode(
-                                value.getPrimitiveType().getOpcode(intVarOpcode),
+                                value.getUnboxedType().getOpcode(intVarOpcode),
                                 ((VarInsnNode) insn).var
                         )
                 );

@@ -22,25 +22,25 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class RedundantBoxedValuesCollection implements Iterable<BoxedBasicValue> {
-    private final Set<BoxedBasicValue> safeToDeleteValues = new HashSet<BoxedBasicValue>();
+public class RedundantBoxedValuesCollection implements Iterable<BoxedValueDescriptor> {
+    private final Set<BoxedValueDescriptor> safeToDeleteValues = new HashSet<BoxedValueDescriptor>();
 
-    public void add(@NotNull BoxedBasicValue value) {
-        safeToDeleteValues.add(value);
+    public void add(@NotNull BoxedValueDescriptor descriptor) {
+        safeToDeleteValues.add(descriptor);
     }
 
-    public void remove(@NotNull BoxedBasicValue value) {
-        if (safeToDeleteValues.contains(value)) {
-            safeToDeleteValues.remove(value);
-            value.markAsUnsafeToRemove();
+    public void remove(@NotNull BoxedValueDescriptor descriptor) {
+        if (safeToDeleteValues.contains(descriptor)) {
+            safeToDeleteValues.remove(descriptor);
+            descriptor.markAsUnsafeToRemove();
 
-            for (BoxedBasicValue mergedValue : value.getMergedWith()) {
-                remove(mergedValue);
+            for (BoxedValueDescriptor mergedValueDescriptor : descriptor.getMergedWith()) {
+                remove(mergedValueDescriptor);
             }
         }
     }
 
-    public void merge(@NotNull BoxedBasicValue v, @NotNull BoxedBasicValue w) {
+    public void merge(@NotNull BoxedValueDescriptor v, @NotNull BoxedValueDescriptor w) {
         v.addMergedWith(w);
         w.addMergedWith(v);
 
@@ -59,7 +59,7 @@ public class RedundantBoxedValuesCollection implements Iterable<BoxedBasicValue>
 
     @NotNull
     @Override
-    public Iterator<BoxedBasicValue> iterator() {
+    public Iterator<BoxedValueDescriptor> iterator() {
         return safeToDeleteValues.iterator();
     }
 }

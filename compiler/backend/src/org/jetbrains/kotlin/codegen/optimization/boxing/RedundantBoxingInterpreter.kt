@@ -23,30 +23,12 @@ import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.InsnList
 import org.jetbrains.org.objectweb.asm.tree.TypeInsnNode
 import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
-import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 
 internal class RedundantBoxingInterpreter(insnList: InsnList) : BoxingInterpreter(insnList) {
 
     val candidatesBoxedValues = RedundantBoxedValuesCollection()
 
-    @Throws(AnalyzerException::class)
-    override fun binaryOperation(insn: AbstractInsnNode, value1: BasicValue, value2: BasicValue): BasicValue? {
-        processOperationWithBoxedValue(value1, insn)
-        processOperationWithBoxedValue(value2, insn)
-
-        return super.binaryOperation(insn, value1, value2)
-    }
-
-    @Throws(AnalyzerException::class)
-    override fun ternaryOperation(insn: AbstractInsnNode, value1: BasicValue, value2: BasicValue, value3: BasicValue): BasicValue? {
-        // in a valid code only aastore could happen with boxed value
-        processOperationWithBoxedValue(value3, insn)
-
-        return super.ternaryOperation(insn, value1, value2, value3)
-    }
-
-    @Throws(AnalyzerException::class)
     override fun unaryOperation(insn: AbstractInsnNode, value: BasicValue): BasicValue? {
         if ((insn.opcode == Opcodes.CHECKCAST || insn.opcode == Opcodes.INSTANCEOF) && value is BoxedBasicValue) {
             val typeInsn = insn as TypeInsnNode
@@ -61,10 +43,23 @@ internal class RedundantBoxingInterpreter(insnList: InsnList) : BoxingInterprete
         return super.unaryOperation(insn, value)
     }
 
-    @Throws(AnalyzerException::class)
+    override fun binaryOperation(insn: AbstractInsnNode, value1: BasicValue, value2: BasicValue): BasicValue? {
+        processOperationWithBoxedValue(value1, insn)
+        processOperationWithBoxedValue(value2, insn)
+
+        return super.binaryOperation(insn, value1, value2)
+    }
+
+    override fun ternaryOperation(insn: AbstractInsnNode, value1: BasicValue, value2: BasicValue, value3: BasicValue): BasicValue? {
+        // in a valid code only aastore could happen with boxed value
+        processOperationWithBoxedValue(value3, insn)
+
+        return super.ternaryOperation(insn, value1, value2, value3)
+    }
+
     override fun copyOperation(insn: AbstractInsnNode, value: BasicValue): BasicValue {
-        if (value is BoxedBasicValue && insn.opcode === Opcodes.ASTORE) {
-            value.addVariableIndex((insn as VarInsnNode).`var`)
+        if (value is BoxedBasicValue && insn.opcode == Opcodes.ASTORE) {
+            value.descriptor.addVariableIndex((insn as VarInsnNode).`var`)
         }
 
         processOperationWithBoxedValue(value, insn)
@@ -77,15 +72,15 @@ internal class RedundantBoxingInterpreter(insnList: InsnList) : BoxingInterprete
     }
 
     override fun onNewBoxedValue(value: BoxedBasicValue) {
-        candidatesBoxedValues.add(value)
+        candidatesBoxedValues.add(value.descriptor)
     }
 
     override fun onUnboxing(insn: AbstractInsnNode, value: BoxedBasicValue, resultType: Type) {
-        if (value.primitiveType == resultType) {
-            addAssociatedInsn(value, insn)
-        }
-        else {
-            value.addUnboxingWithCastTo(insn, resultType)
+        value.descriptor.run {
+            if (unboxedType == resultType)
+                addAssociatedInsn(value, insn)
+            else
+                addUnboxingWithCastTo(insn, resultType)
         }
     }
 
@@ -98,11 +93,13 @@ internal class RedundantBoxingInterpreter(insnList: InsnList) : BoxingInterprete
     }
 
     override fun onMergeSuccess(v: BoxedBasicValue, w: BoxedBasicValue) {
-        candidatesBoxedValues.merge(v, w)
+        candidatesBoxedValues.merge(v.descriptor, w.descriptor)
     }
 
     private fun processOperationWithBoxedValue(value: BasicValue?, insnNode: AbstractInsnNode) {
         if (value is BoxedBasicValue) {
+            checkUsedValue(value)
+
             if (!PERMITTED_OPERATIONS_OPCODES.contains(insnNode.opcode)) {
                 markValueAsDirty(value)
             }
@@ -113,7 +110,7 @@ internal class RedundantBoxingInterpreter(insnList: InsnList) : BoxingInterprete
     }
 
     private fun markValueAsDirty(value: BoxedBasicValue) {
-        candidatesBoxedValues.remove(value)
+        candidatesBoxedValues.remove(value.descriptor)
     }
 
     companion object {
@@ -127,17 +124,15 @@ internal class RedundantBoxingInterpreter(insnList: InsnList) : BoxingInterprete
                 when (targetInternalName) {
                     Type.getInternalName(Any::class.java) ->
                         true
-                    Type.getInternalName(Number::class.java) -> {
-                        PRIMITIVE_TYPES_SORTS_WITH_WRAPPER_EXTENDS_NUMBER.contains(
-                                value.primitiveType.sort)
-                    }
+                    Type.getInternalName(Number::class.java) ->
+                        PRIMITIVE_TYPES_SORTS_WITH_WRAPPER_EXTENDS_NUMBER.contains(value.descriptor.unboxedType.sort)
                     else ->
-                        value.type.internalName.equals(targetInternalName)
+                        value.type.internalName == targetInternalName
                 }
 
         private fun addAssociatedInsn(value: BoxedBasicValue, insn: AbstractInsnNode) {
-            if (value.isSafeToRemove) {
-                value.addInsn(insn)
+            value.descriptor.run {
+                if (isSafeToRemove) addInsn(insn)
             }
         }
     }
