@@ -29,6 +29,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     private val loadedDescriptors = loadLibMetadata(libraries)
 
+    internal val librariesToLink: List<String>
+        get() = libraries + configuration.getList(KonanConfigKeys.NATIVE_LIBRARY_FILES)
+
     val moduleId: String
         get() = configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)
 

@@ -21,6 +21,10 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("<path>")
     public String[] libraries;
 
+    @Argument(value = "nativelibrary", alias = "nl", description = "Link with the native library")
+    @ValueDescription("<path>")
+    public String[] nativeLibraries;
+
     @Argument(value = "nolink", description = "Don't link, just produce a bitcode file")
     public boolean nolink;
 

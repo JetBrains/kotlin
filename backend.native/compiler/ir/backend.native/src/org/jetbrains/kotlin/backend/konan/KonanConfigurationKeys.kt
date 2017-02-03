@@ -7,6 +7,8 @@ class KonanConfigKeys {
     companion object {
         val LIBRARY_FILES: CompilerConfigurationKey<List<String>> 
                 = CompilerConfigurationKey.create("library file paths")
+        val NATIVE_LIBRARY_FILES: CompilerConfigurationKey<List<String>>
+                = CompilerConfigurationKey.create("native library file paths")
         val BITCODE_FILE: CompilerConfigurationKey<String> 
                 = CompilerConfigurationKey.create("emitted bitcode file path")
         val EXECUTABLE_FILE: CompilerConfigurationKey<String> 
