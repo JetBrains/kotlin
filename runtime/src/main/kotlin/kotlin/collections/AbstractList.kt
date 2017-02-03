@@ -8,20 +8,15 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
     abstract override val size: Int
     abstract override fun get(index: Int): E
 
-    // TODO: fix once have inner classes.
-    @FixmeInner
-    override fun iterator(): Iterator<E> =  TODO() // IteratorImpl()
+    override fun iterator(): Iterator<E> = IteratorImpl()
 
     override fun indexOf(element: @UnsafeVariance E): Int = indexOfFirst { it == element }
 
     override fun lastIndexOf(element: @UnsafeVariance E): Int = indexOfLast { it == element }
 
-    // TODO: fix once have inner classes.
-    @FixmeInner
-    override fun listIterator(): ListIterator<E> = TODO() // ListIteratorImpl(0)
+    override fun listIterator(): ListIterator<E> = ListIteratorImpl(0)
 
-    @FixmeInner
-    override fun listIterator(index: Int): ListIterator<E> = TODO() // ListIteratorImpl(index)
+    override fun listIterator(index: Int): ListIterator<E> = ListIteratorImpl(index)
 
     override fun subList(fromIndex: Int, toIndex: Int): List<E> = SubList(this, fromIndex, toIndex)
 
@@ -52,8 +47,7 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
 
     override fun hashCode(): Int = orderedHashCode(this)
 
-    // TODO: enable, once have inner classes.
-/*
+
     private open inner class IteratorImpl : Iterator<E> {
         /** the index of the item that will be returned on the next call to [next]`()` */
         protected var index = 0
@@ -86,7 +80,7 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
         }
 
         override fun previousIndex(): Int = index - 1
-    } */
+    }
 
     internal companion object {
         internal fun checkElementIndex(index: Int, size: Int) {

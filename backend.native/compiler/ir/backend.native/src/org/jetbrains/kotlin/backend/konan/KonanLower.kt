@@ -20,11 +20,6 @@ internal class KonanLower(val context: Context) {
         phaser.phase(KonanPhase.LOWER_ENUMS) {
             EnumClassLowering(context).run(irFile)
         }
-
-        phaser.phase(KonanPhase.LOWER_INNER_CLASSES) {
-            InnerClassLowering(context).runOnFilePostfix(irFile)
-        }
-
         phaser.phase(KonanPhase.LOWER_VARARG) {
             VarargInjectionLowering(context).runOnFilePostfix(irFile)
         }
@@ -43,6 +38,9 @@ internal class KonanLower(val context: Context) {
         }
         phaser.phase(KonanPhase.LOWER_LOCAL_FUNCTIONS) {
             LocalDeclarationsLowering(context).runOnFilePostfix(irFile)
+        }
+        phaser.phase(KonanPhase.LOWER_INNER_CLASSES) {
+            InnerClassLowering(context).runOnFilePostfix(irFile)
         }
         phaser.phase(KonanPhase.LOWER_CALLABLES) {
             CallableReferenceLowering(context).runOnFilePostfix(irFile)

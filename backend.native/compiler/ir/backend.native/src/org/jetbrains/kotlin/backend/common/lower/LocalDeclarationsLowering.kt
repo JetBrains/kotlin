@@ -16,28 +16,32 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.AbstractClosureRecorder
 import org.jetbrains.kotlin.backend.common.BackendContext
-import org.jetbrains.kotlin.backend.common.Closure
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.*
+import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-class LocalDeclarationsLowering(val context: BackendContext): DeclarationContainerLoweringPass {
+class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContainerLoweringPass {
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         if (irDeclarationContainer is IrDeclaration &&
                 irDeclarationContainer.descriptor.parents.any { it is CallableDescriptor }) {
@@ -51,10 +55,13 @@ class LocalDeclarationsLowering(val context: BackendContext): DeclarationContain
         lambdasCount = 0
 
         irDeclarationContainer.declarations.transformFlat { memberDeclaration ->
-            if (memberDeclaration is IrFunction)
-                LocalDeclarationsTransformer(memberDeclaration).lowerLocalDeclarations()
-            else
-                null
+            // TODO: may be do the opposite - specify the list of IR elements which need not to be transformed
+            when (memberDeclaration) {
+                is IrFunction -> LocalDeclarationsTransformer(memberDeclaration).lowerLocalDeclarations()
+                is IrProperty -> LocalDeclarationsTransformer(memberDeclaration).lowerLocalDeclarations()
+                is IrAnonymousInitializer -> LocalDeclarationsTransformer(memberDeclaration).lowerLocalDeclarations()
+                else -> null
+            }
         }
     }
 
@@ -117,7 +124,7 @@ class LocalDeclarationsLowering(val context: BackendContext): DeclarationContain
             val fieldDescriptor = capturedValueToField[descriptor] ?: return null
 
             return IrGetFieldImpl(startOffset, endOffset, fieldDescriptor,
-                receiver = IrGetValueImpl(startOffset, endOffset, this.descriptor.thisAsReceiverParameter)
+                    receiver = IrGetValueImpl(startOffset, endOffset, this.descriptor.thisAsReceiverParameter)
             )
         }
 
@@ -125,7 +132,7 @@ class LocalDeclarationsLowering(val context: BackendContext): DeclarationContain
                 "LocalClassContext for ${descriptor}"
     }
 
-    private inner class LocalDeclarationsTransformer(val memberFunction: IrFunction) {
+    private inner class LocalDeclarationsTransformer(val memberDeclaration: IrDeclaration) {
         val localFunctions: MutableMap<FunctionDescriptor, LocalFunctionContext> = LinkedHashMap()
         val localClasses: MutableMap<ClassDescriptor, LocalClassContext> = LinkedHashMap()
         val localClassConstructors: MutableMap<ClassConstructorDescriptor, LocalClassConstructorContext> = LinkedHashMap()
@@ -155,7 +162,7 @@ class LocalDeclarationsLowering(val context: BackendContext): DeclarationContain
 
         private fun collectRewrittenDeclarations(): ArrayList<IrDeclaration> =
                 ArrayList<IrDeclaration>(localFunctions.size + localClasses.size + 1).apply {
-                    add(memberFunction)
+                    add(memberDeclaration)
 
                     localFunctions.values.mapTo(this) {
                         val original = it.declaration
@@ -174,8 +181,12 @@ class LocalDeclarationsLowering(val context: BackendContext): DeclarationContain
         private inner class FunctionBodiesRewriter(val localContext: LocalContext?) : IrElementTransformerVoid() {
 
             override fun visitClass(declaration: IrClass): IrStatement {
-                // Replace local class definition with an empty composite.
-                return IrCompositeImpl(declaration.startOffset, declaration.endOffset, context.builtIns.unitType)
+                if (declaration.descriptor in localClasses) {
+                    // Replace local class definition with an empty composite.
+                    return IrCompositeImpl(declaration.startOffset, declaration.endOffset, context.builtIns.unitType)
+                } else {
+                    return super.visitClass(declaration)
+                }
             }
 
             override fun visitFunction(declaration: IrFunction): IrStatement {
@@ -183,18 +194,20 @@ class LocalDeclarationsLowering(val context: BackendContext): DeclarationContain
                     // Replace local function definition with an empty composite.
                     return IrCompositeImpl(declaration.startOffset, declaration.endOffset, context.builtIns.unitType)
                 } else {
-                    declaration.transformChildrenVoid(this)
-                    return declaration
+                    return super.visitFunction(declaration)
                 }
             }
 
             override fun visitConstructor(declaration: IrConstructor): IrStatement {
                 // Body is transformed separately.
 
-                val transformedDescriptor = localClassConstructors[declaration.descriptor]!!.transformedDescriptor
-
-                return IrConstructorImpl(declaration.startOffset, declaration.endOffset, declaration.origin,
-                        transformedDescriptor, declaration.body!!)
+                val transformedDescriptor = localClassConstructors[declaration.descriptor]?.transformedDescriptor
+                if (transformedDescriptor != null) {
+                    return IrConstructorImpl(declaration.startOffset, declaration.endOffset, declaration.origin,
+                            transformedDescriptor, declaration.body!!)
+                } else {
+                    return super.visitConstructor(declaration)
+                }
             }
 
             override fun visitGetValue(expression: IrGetValue): IrExpression {
@@ -222,6 +235,21 @@ class LocalDeclarationsLowering(val context: BackendContext): DeclarationContain
                 return newCall
             }
 
+            override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
+                expression.transformChildrenVoid(this)
+
+                val oldCallee = expression.descriptor.original
+                val newCallee = transformedDescriptors[oldCallee] as ClassConstructorDescriptor? ?: return expression
+
+                val newExpression = IrDelegatingConstructorCallImpl(
+                        expression.startOffset, expression.endOffset,
+                        newCallee,
+                        remapTypeArguments(expression, newCallee)
+                ).fillArguments(expression)
+
+                return newExpression
+            }
+
             private fun <T : IrMemberAccessExpression> T.fillArguments(oldExpression: IrMemberAccessExpression): T {
 
                 mapValueParameters { newValueParameterDescriptor ->
@@ -233,7 +261,7 @@ class LocalDeclarationsLowering(val context: BackendContext): DeclarationContain
                         // The callee expects captured value as argument.
                         val capturedValueDescriptor =
                                 newParameterToCaptured[newValueParameterDescriptor] ?:
-                                throw AssertionError("Non-mapped parameter $newValueParameterDescriptor")
+                                        throw AssertionError("Non-mapped parameter $newValueParameterDescriptor")
 
                         localContext?.irGet(
                                 oldExpression.startOffset, oldExpression.endOffset,
@@ -292,8 +320,8 @@ class LocalDeclarationsLowering(val context: BackendContext): DeclarationContain
             }
         }
 
-        private fun rewriteFunctionBody(irFunction: IrFunction, localContext: LocalContext?) {
-            irFunction.transformChildrenVoid(FunctionBodiesRewriter(localContext))
+        private fun rewriteFunctionBody(irDeclaration: IrDeclaration, localContext: LocalContext?) {
+            irDeclaration.transformChildrenVoid(FunctionBodiesRewriter(localContext))
         }
 
         private object DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE :
@@ -339,7 +367,7 @@ class LocalDeclarationsLowering(val context: BackendContext): DeclarationContain
                 rewriteClassMembers(it.declaration, it)
             }
 
-            rewriteFunctionBody(memberFunction, null)
+            rewriteFunctionBody(memberDeclaration, null)
         }
 
         private fun createNewCall(oldCall: IrCall, newCallee: CallableDescriptor) =
@@ -395,12 +423,12 @@ class LocalDeclarationsLowering(val context: BackendContext): DeclarationContain
                                 .toList().reversed()
                                 .map { suggestLocalName(it) }
                                 .joinToString(separator = "$")
-                        )
+                )
 
         private fun createLiftedDescriptor(localFunctionContext: LocalFunctionContext) {
             val oldDescriptor = localFunctionContext.descriptor
 
-            val memberOwner = memberFunction.descriptor.containingDeclaration
+            val memberOwner = memberDeclaration.descriptor.containingDeclaration!!
             val newDescriptor = SimpleFunctionDescriptorImpl.create(
                     memberOwner,
                     oldDescriptor.annotations,
@@ -480,7 +508,15 @@ class LocalDeclarationsLowering(val context: BackendContext): DeclarationContain
             // Do not substitute type parameters for now.
             val newTypeParameters = oldDescriptor.typeParameters
 
-            val capturedValues = localClassContext.closure.capturedValues
+            val capturedValues = mutableListOf<ValueDescriptor>()
+            var classDescriptor = oldDescriptor.containingDeclaration
+            while (true) {
+                // Capture all values from the hierarchy since we need to call constructor of super class
+                // with his captured values.
+                val context = localClasses[classDescriptor] ?: break
+                capturedValues.addAll(context.closure.capturedValues)
+                classDescriptor = classDescriptor.getSuperClassOrAny()
+            }
 
             val newValueParameters = createTransformedValueParameters(localFunctionContext, capturedValues)
 
@@ -560,8 +596,7 @@ class LocalDeclarationsLowering(val context: BackendContext): DeclarationContain
                 if (valueDescriptor.name.isSpecial) {
                     val oldNameStr = valueDescriptor.name.asString()
                     Name.identifier("$" + oldNameStr.substring(1, oldNameStr.length - 1))
-                }
-                else
+                } else
                     valueDescriptor.name
 
         private fun createUnsubstitutedCapturedValueParameter(
@@ -586,7 +621,7 @@ class LocalDeclarationsLowering(val context: BackendContext): DeclarationContain
 
 
         private fun collectClosures() {
-            memberFunction.acceptChildrenVoid(object : AbstractClosureRecorder() {
+            memberDeclaration.acceptChildrenVoid(object : AbstractClosureAnnotator() {
                 override fun recordFunctionClosure(functionDescriptor: FunctionDescriptor, closure: Closure) {
                     localFunctions[functionDescriptor]?.closure = closure
                 }
@@ -598,16 +633,17 @@ class LocalDeclarationsLowering(val context: BackendContext): DeclarationContain
         }
 
         private fun collectLocalDeclarations() {
-            memberFunction.acceptChildrenVoid(object : IrElementVisitorVoid {
+            memberDeclaration.acceptChildrenVoid(object : IrElementVisitorVoid {
 
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
                 }
 
-                private fun DeclarationDescriptor.isClassMember() = when (this.containingDeclaration) {
-                    is CallableDescriptor -> false
-                    is ClassDescriptor -> true
-                    else -> TODO(this.toString())
+                private fun DeclarationDescriptor.declaredInFunction() = when (this.containingDeclaration) {
+                    is CallableDescriptor -> true
+                    is ClassDescriptor -> false
+                    is PackageFragmentDescriptor -> false
+                    else -> TODO(this.toString() + "\n" + this.containingDeclaration.toString())
                 }
 
                 override fun visitFunction(declaration: IrFunction) {
@@ -615,7 +651,7 @@ class LocalDeclarationsLowering(val context: BackendContext): DeclarationContain
 
                     val descriptor = declaration.descriptor
 
-                    if (!descriptor.isClassMember()) {
+                    if (descriptor.declaredInFunction()) {
                         val localFunctionContext = LocalFunctionContext(declaration)
 
                         localFunctions[descriptor] = localFunctionContext
@@ -631,7 +667,9 @@ class LocalDeclarationsLowering(val context: BackendContext): DeclarationContain
                     declaration.acceptChildrenVoid(this)
 
                     val descriptor = declaration.descriptor
-                    assert (descriptor.isClassMember())
+                    assert(!descriptor.declaredInFunction())
+
+                    if (descriptor.constructedClass.isInner) return
 
                     localClassConstructors[descriptor] = LocalClassConstructorContext(declaration)
                 }
@@ -641,12 +679,13 @@ class LocalDeclarationsLowering(val context: BackendContext): DeclarationContain
 
                     val descriptor = declaration.descriptor
 
-                    if (descriptor.isClassMember()) {
-                        assert (descriptor.isInner)
-                    } else {
-                        val localClassContext = LocalClassContext(declaration)
-                        localClasses[descriptor] = localClassContext
-                    }
+                    if (descriptor.isInner) return
+
+                    // Local nested classes can only be inner.
+                    assert(descriptor.declaredInFunction())
+
+                    val localClassContext = LocalClassContext(declaration)
+                    localClasses[descriptor] = localClassContext
                 }
             })
         }

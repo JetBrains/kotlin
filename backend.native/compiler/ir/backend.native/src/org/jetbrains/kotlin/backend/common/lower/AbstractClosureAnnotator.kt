@@ -1,38 +1,22 @@
-/*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package org.jetbrains.kotlin.backend.common
+package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import java.util.*
 
-abstract class AbstractClosureRecorder : IrElementVisitorVoid {
+// TODO: synchronize with JVM BE
+class Closure(val capturedValues: List<ValueDescriptor>)
+
+abstract class AbstractClosureAnnotator : IrElementVisitorVoid {
     protected abstract fun recordFunctionClosure(functionDescriptor: FunctionDescriptor, closure: Closure)
     protected abstract fun recordClassClosure(classDescriptor: ClassDescriptor, closure: Closure)
 
-    private class ClosureBuilder(val owner: DeclarationDescriptor) {
+    private abstract class ClosureBuilder(open val owner: DeclarationDescriptor) {
         val capturedValues = mutableSetOf<ValueDescriptor>()
 
         fun buildClosure() = Closure(capturedValues.toList())
@@ -43,12 +27,39 @@ abstract class AbstractClosureRecorder : IrElementVisitorVoid {
 
         private fun <T : CallableDescriptor> fillInNestedClosure(destination: MutableSet<T>, nested: List<T>) {
             nested.filterTo(destination) {
-                it.containingDeclaration != owner
+                isExternal(it)
             }
         }
+
+        abstract fun <T : CallableDescriptor> isExternal(valueDescriptor: T): Boolean
     }
 
-    private val closuresStack = ArrayDeque<ClosureBuilder>()
+    private class FunctionClosureBuilder(override val owner: FunctionDescriptor) : ClosureBuilder(owner) {
+
+        override fun <T : CallableDescriptor> isExternal(valueDescriptor: T): Boolean =
+                valueDescriptor.containingDeclaration != owner && valueDescriptor != owner.dispatchReceiverParameter
+    }
+
+    private class ClassClosureBuilder(override val owner: ClassDescriptor) : ClosureBuilder(owner) {
+
+        override fun <T : CallableDescriptor> isExternal(valueDescriptor: T): Boolean {
+            // TODO: replace with 'return valueDescriptor.containingDeclaration != owner' after constructors lowering.
+            var declaration: DeclarationDescriptor? = valueDescriptor.containingDeclaration
+            while (declaration != null && declaration != owner) {
+                declaration = declaration.containingDeclaration
+            }
+            return declaration != owner
+        }
+
+    }
+
+    private val closuresStack = mutableListOf<ClosureBuilder>()
+
+    private fun <E> MutableList<E>.push(element: E) = this.add(element)
+
+    private fun <E> MutableList<E>.pop() = this.removeAt(size - 1)
+
+    private fun <E> MutableList<E>.peek(): E? = if (size == 0) null else this[size - 1]
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
@@ -56,7 +67,7 @@ abstract class AbstractClosureRecorder : IrElementVisitorVoid {
 
     override fun visitClass(declaration: IrClass) {
         val classDescriptor = declaration.descriptor
-        val closureBuilder = ClosureBuilder(classDescriptor)
+        val closureBuilder = ClassClosureBuilder(classDescriptor)
 
         closuresStack.push(closureBuilder)
         declaration.acceptChildrenVoid(this)
@@ -73,7 +84,7 @@ abstract class AbstractClosureRecorder : IrElementVisitorVoid {
 
     override fun visitFunction(declaration: IrFunction) {
         val functionDescriptor = declaration.descriptor
-        val closureBuilder = ClosureBuilder(functionDescriptor)
+        val closureBuilder = FunctionClosureBuilder(functionDescriptor)
 
         closuresStack.push(closureBuilder)
         declaration.acceptChildrenVoid(this)
@@ -98,7 +109,7 @@ abstract class AbstractClosureRecorder : IrElementVisitorVoid {
 
         if (closureBuilder != null) {
             val variableDescriptor = expression.descriptor
-            if (variableDescriptor.containingDeclaration != closureBuilder.owner) {
+            if (closureBuilder.isExternal(variableDescriptor)) {
                 closureBuilder.capturedValues.add(variableDescriptor)
             }
         }
