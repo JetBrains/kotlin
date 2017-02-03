@@ -1,6 +1,9 @@
+// IGNORE_BACKEND: JS
 // WITH_REFLECT
 
-fun doStuff(fn: String.() -> String) = "ok".fn()
+import kotlin.reflect.KFunction1
+
+fun doStuff(fn: KFunction1<String, String>) = fn.call("ok")
 
 fun box(): String {
     return doStuff(String::toUpperCase)

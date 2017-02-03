@@ -20,22 +20,26 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.components.RuntimeSourceElementFactory
 import org.jetbrains.kotlin.load.java.reflect.tryLoadClass
 import org.jetbrains.kotlin.load.java.structure.reflect.ReflectJavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.reflect.ReflectJavaClass
 import org.jetbrains.kotlin.load.java.structure.reflect.safeClassLoader
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.reflect.ReflectAnnotationSource
 import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
-import kotlin.reflect.full.IllegalCallableAccessException
 import kotlin.reflect.KVisibility
+import kotlin.reflect.full.IllegalCallableAccessException
 
 internal val JVM_STATIC = FqName("kotlin.jvm.JvmStatic")
 
@@ -117,3 +121,27 @@ internal fun Any?.asKPropertyImpl(): KPropertyImpl<*>? =
 
 internal fun Any?.asKCallableImpl(): KCallableImpl<*>? =
         this as? KCallableImpl<*> ?: asKFunctionImpl() ?: asKPropertyImpl()
+
+internal val ReflectKotlinClass.packageModuleName: String?
+    get() {
+        val header = classHeader
+        if (!header.metadataVersion.isCompatible()) return null
+
+        return when (header.kind) {
+            KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
+                // TODO: avoid reading and parsing metadata twice (here and later in KPackageImpl#descriptor)
+                val (nameResolver, proto) = JvmProtoBufUtil.readPackageDataFrom(header.data!!, header.strings!!)
+                // If no packageModuleName extension is written, the name is assumed to be JvmAbi.DEFAULT_MODULE_NAME
+                // (see JvmSerializerExtension.serializePackage)
+                if (proto.hasExtension(JvmProtoBuf.packageModuleName))
+                    nameResolver.getString(proto.getExtension(JvmProtoBuf.packageModuleName))
+                else JvmAbi.DEFAULT_MODULE_NAME
+            }
+            KotlinClassHeader.Kind.MULTIFILE_CLASS -> {
+                val partName = header.multifilePartNames.firstOrNull() ?: return null
+                ReflectKotlinClass.create(klass.classLoader.loadClass(partName.replace('/', '.')))?.packageModuleName
+            }
+            else -> null
+        }
+    }
+

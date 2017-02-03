@@ -396,6 +396,9 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         }
         else if (container instanceof PackageFragmentDescriptor) {
             iv.aconst(state.getTypeMapper().mapOwner(descriptor));
+            // Note that this name is not used in reflection. There should be the name of the referenced declaration's module instead,
+            // but there's no nice API to obtain that name here yet
+            // TODO: write the referenced declaration's module name and use it in reflection
             iv.aconst(state.getModuleName());
             iv.invokestatic(REFLECTION, "getOrCreateKotlinPackage",
                             Type.getMethodDescriptor(K_DECLARATION_CONTAINER_TYPE, getType(Class.class), getType(String.class)), false);

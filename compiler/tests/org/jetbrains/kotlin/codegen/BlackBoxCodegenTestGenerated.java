@@ -14380,6 +14380,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("functionFromStdlibMultiFileFacade.kt")
+            public void testFunctionFromStdlibMultiFileFacade() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/methodsFromAny/functionFromStdlibMultiFileFacade.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("functionFromStdlibSingleFileFacade.kt")
+            public void testFunctionFromStdlibSingleFileFacade() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/methodsFromAny/functionFromStdlibSingleFileFacade.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("functionToString.kt")
             public void testFunctionToString() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/methodsFromAny/functionToString.kt");

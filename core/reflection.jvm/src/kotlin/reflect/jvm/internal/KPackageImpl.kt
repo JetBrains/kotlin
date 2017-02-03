@@ -28,20 +28,27 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import kotlin.reflect.KCallable
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
 
-internal class KPackageImpl(override val jClass: Class<*>, val moduleName: String) : KDeclarationContainerImpl() {
+internal class KPackageImpl(
+        override val jClass: Class<*>,
+        @Suppress("unused") val usageModuleName: String? = null // may be useful for debug
+) : KDeclarationContainerImpl() {
     private inner class Data : KDeclarationContainerImpl.Data() {
+        val kotlinClass: ReflectKotlinClass? by ReflectProperties.lazySoft {
+            // TODO: do not read ReflectKotlinClass multiple times
+            ReflectKotlinClass.create(jClass)
+        }
+
         val descriptor: PackageViewDescriptor by ReflectProperties.lazySoft {
             with(moduleData) {
-                packagePartProvider.registerModule(moduleName)
+                kotlinClass?.packageModuleName?.let(packagePartProvider::registerModule)
                 module.getPackage(jClass.classId.packageFqName)
             }
         }
 
         val methodOwner: Class<*> by ReflectProperties.lazy {
-            val facadeName = ReflectKotlinClass.create(jClass)?.classHeader?.multifileClassName
+            val facadeName = kotlinClass?.classHeader?.multifileClassName
             // We need to check isNotEmpty because this is the value read from the annotation which cannot be null.
             // The default value for 'xs' is empty string, as declared in kotlin.Metadata
-            // TODO: do not read ReflectKotlinClass multiple times, obtain facade name from descriptor
             if (facadeName != null && facadeName.isNotEmpty()) {
                 jClass.classLoader.loadClass(facadeName.replace('/', '.'))
             }
