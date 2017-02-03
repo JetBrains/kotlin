@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -132,13 +133,18 @@ class JoinDeclarationAndAssignmentIntention : SelfTargetingOffsetIndependentInte
 
         if (assignments.any { it.parent.invalidParent() }) return null
 
-        val first = assignments.firstOrNull() ?: return null
-        if (assignments.any { it !== first && it.parent.parent is KtSecondaryConstructor}) return null
+        val firstAssignment = assignments.firstOrNull() ?: return null
+        if (assignments.any { it !== firstAssignment && it.parent.parent is KtSecondaryConstructor}) return null
 
-        if (propertyContainer !is KtClassBody) return first
+        val context = firstAssignment.analyze()
+        val propertyDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, property] ?: return null
+        val assignedDescriptor = firstAssignment.left.getResolvedCall(context)?.candidateDescriptor ?: return null
+        if (propertyDescriptor != assignedDescriptor) return null
 
-        val blockParent = first.parent as? KtBlockExpression ?: return null
-        return if (blockParent.statements.firstOrNull() == first) first else null
+        if (propertyContainer !is KtClassBody) return firstAssignment
+
+        val blockParent = firstAssignment.parent as? KtBlockExpression ?: return null
+        return if (blockParent.statements.firstOrNull() == firstAssignment) firstAssignment else null
     }
 
     // a block that only contains comments is not empty
