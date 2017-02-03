@@ -20,17 +20,10 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNameIdentifierOwner
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.uast.*
-import org.jetbrains.uast.java.JavaUAnnotation
-import org.jetbrains.uast.java.annotations
 import org.jetbrains.uast.java.internal.JavaUElementWithComments
-import org.jetbrains.uast.kotlin.KotlinUParameter
-import org.jetbrains.uast.kotlin.lz
-import org.jetbrains.uast.kotlin.unwrap
+import org.jetbrains.uast.kotlin.*
 
 open class KotlinUMethod(
         psi: KtLightMethod,
@@ -39,7 +32,9 @@ open class KotlinUMethod(
     override val psi: KtLightMethod = unwrap<UMethod, KtLightMethod>(psi)
     private val kotlinOrigin = (psi.originalElement as KtLightElement<*, *>).kotlinOrigin
 
-    override val annotations by lz { psi.annotations.map { JavaUAnnotation(it, this) } }
+    override val annotations by lz {
+        (kotlinOrigin as? KtDeclaration)?.annotationEntries?.map { KotlinUAnnotation(it, this) } ?: emptyList()
+    }
 
     override val uastParameters by lz {
         psi.parameterList.parameters.map { KotlinUParameter(it, this) }
