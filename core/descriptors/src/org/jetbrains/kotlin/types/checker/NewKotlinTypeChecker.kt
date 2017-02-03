@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
+import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructor
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.TypeCheckerContext.SupertypesPolicy
@@ -101,14 +102,16 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
     }
 
     fun transformToNewType(type: SimpleType): SimpleType {
-        if (type is CapturedType) {
-            val lowerType = type.typeProjection.check { it.projectionKind == Variance.IN_VARIANCE }?.type?.unwrap()
+        // Type itself can be just SimpleTypeImpl, not CapturedType. see KT-16147
+        if (type.constructor is CapturedTypeConstructor) {
+            val constructor = type.constructor as CapturedTypeConstructor
+            val lowerType = constructor.typeProjection.check { it.projectionKind == Variance.IN_VARIANCE }?.type?.unwrap()
 
             // it is incorrect calculate this type directly because of recursive star projections
-            if (type.constructor.newTypeConstructor == null) {
-                type.constructor.newTypeConstructor = NewCapturedTypeConstructor(type.typeProjection, type.constructor.supertypes.map { it.unwrap() })
+            if (constructor.newTypeConstructor == null) {
+                constructor.newTypeConstructor = NewCapturedTypeConstructor(constructor.typeProjection, constructor.supertypes.map { it.unwrap() })
             }
-            val newCapturedType = NewCapturedType(CaptureStatus.FOR_SUBTYPING, type.constructor.newTypeConstructor!!,
+            val newCapturedType = NewCapturedType(CaptureStatus.FOR_SUBTYPING, constructor.newTypeConstructor!!,
                                                   lowerType, type.annotations, type.isMarkedNullable)
             return newCapturedType
         }
