@@ -4944,6 +4944,21 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             }
         }
 
+        @TestMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/coroutines")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Coroutines extends AbstractLoadJavaTest {
+            public void testAllFilesPresentInCoroutines() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/coroutines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("annotatedSuspendFun.kt")
+            public void testAnnotatedSuspendFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/coroutines/annotatedSuspendFun.kt");
+                doTestCompiledKotlinWithStdlib(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/loadJava/compiledKotlinWithStdlib/mutability")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

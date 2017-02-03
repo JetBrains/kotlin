@@ -35,13 +35,11 @@ import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.psi.KtElement;
-import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
@@ -64,7 +62,6 @@ import java.util.List;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConst;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE;
-import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
@@ -233,9 +230,10 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
     @Override
     protected void generateKotlinMetadataAnnotation() {
-        FunctionDescriptor freeLambdaDescriptor = createFreeLambdaDescriptor(funDescriptor);
-        Method method = v.getSerializationBindings().get(METHOD_FOR_FUNCTION, funDescriptor);
-        assert method != null : "No method for " + funDescriptor;
+        FunctionDescriptor frontendFunDescriptor = CodegenUtilKt.unwrapFrontendVersion(funDescriptor);
+        FunctionDescriptor freeLambdaDescriptor = createFreeLambdaDescriptor(frontendFunDescriptor);
+        Method method = v.getSerializationBindings().get(METHOD_FOR_FUNCTION, frontendFunDescriptor);
+        assert method != null : "No method for " + frontendFunDescriptor;
         v.getSerializationBindings().put(METHOD_FOR_FUNCTION, freeLambdaDescriptor, method);
 
         final DescriptorSerializer serializer =

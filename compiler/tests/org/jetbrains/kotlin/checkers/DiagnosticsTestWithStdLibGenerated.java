@@ -791,6 +791,18 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             doTest(fileName);
         }
 
+        @TestMetadata("suspendCoroutineUnavailableWithNewAPI.kt")
+        public void testSuspendCoroutineUnavailableWithNewAPI() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendCoroutineUnavailableWithNewAPI.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("suspendCoroutineUnavailableWithOldAPI.kt")
+        public void testSuspendCoroutineUnavailableWithOldAPI() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendCoroutineUnavailableWithOldAPI.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("suspendDestructuring.kt")
         public void testSuspendDestructuring() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspendDestructuring.kt");

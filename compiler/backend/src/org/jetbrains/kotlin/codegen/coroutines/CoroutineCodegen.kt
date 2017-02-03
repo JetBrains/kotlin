@@ -108,6 +108,8 @@ class CoroutineCodegen private constructor(
             setReturnType(
                     funDescriptor.module.getContinuationOfTypeOrAny(builtIns.unitType)
             )
+            // 'create' method should not inherit initial descriptor for suspend function from original descriptor
+            putUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION, null)
             setVisibility(Visibilities.PUBLIC)
         }
 
