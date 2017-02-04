@@ -5592,6 +5592,81 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/convertToApply")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertToApply extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertToApply() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToApply"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("methodChain.kt")
+        public void testMethodChain() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToApply/methodChain.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodChainWithItParameter.kt")
+        public void testMethodChainWithItParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToApply/methodChainWithItParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodChainWithThisParameter.kt")
+        public void testMethodChainWithThisParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToApply/methodChainWithThisParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("normal.kt")
+        public void testNormal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToApply/normal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("normal2.kt")
+        public void testNormal2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToApply/normal2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("normal3.kt")
+        public void testNormal3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToApply/normal3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("thisParameter.kt")
+        public void testThisParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToApply/thisParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("thisParameter2.kt")
+        public void testThisParameter2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToApply/thisParameter2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("untilThisParameter.kt")
+        public void testUntilThisParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToApply/untilThisParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("var.kt")
+        public void testVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToApply/var.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withCommentAndSpaces.kt")
+        public void testWithCommentAndSpaces() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToApply/withCommentAndSpaces.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/convertToBlockBody")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -6273,6 +6348,81 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/convertToRun")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertToRun extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertToRun() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToRun"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("itReceiver.kt")
+        public void testItReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToRun/itReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodChain.kt")
+        public void testMethodChain() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToRun/methodChain.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodChainWithItParameter.kt")
+        public void testMethodChainWithItParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToRun/methodChainWithItParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodChainWithThisParameter.kt")
+        public void testMethodChainWithThisParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToRun/methodChainWithThisParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("normal.kt")
+        public void testNormal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToRun/normal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("normal2.kt")
+        public void testNormal2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToRun/normal2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("normal3.kt")
+        public void testNormal3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToRun/normal3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("thisParameter.kt")
+        public void testThisParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToRun/thisParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("thisReceiver.kt")
+        public void testThisReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToRun/thisReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("untilThisParameter.kt")
+        public void testUntilThisParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToRun/untilThisParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withCommentAndSpaces.kt")
+        public void testWithCommentAndSpaces() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToRun/withCommentAndSpaces.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/convertToStringTemplate")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -6509,6 +6659,81 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+    }
+
+    @TestMetadata("idea/testData/intentions/convertToWith")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertToWith extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertToWith() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToWith"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("itReceiver.kt")
+        public void testItReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToWith/itReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodChain.kt")
+        public void testMethodChain() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToWith/methodChain.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodChainWithItParameter.kt")
+        public void testMethodChainWithItParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToWith/methodChainWithItParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodChainWithThisParameter.kt")
+        public void testMethodChainWithThisParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToWith/methodChainWithThisParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("normal.kt")
+        public void testNormal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToWith/normal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("normal2.kt")
+        public void testNormal2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToWith/normal2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("normal3.kt")
+        public void testNormal3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToWith/normal3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("thisParameter.kt")
+        public void testThisParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToWith/thisParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("thisReceiver.kt")
+        public void testThisReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToWith/thisReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("untilThisParameter.kt")
+        public void testUntilThisParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToWith/untilThisParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withCommentAndSpaces.kt")
+        public void testWithCommentAndSpaces() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertToWith/withCommentAndSpaces.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/intentions/convertTryFinallyToUseCall")
