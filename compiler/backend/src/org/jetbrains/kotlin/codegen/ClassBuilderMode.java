@@ -55,7 +55,13 @@ public class ClassBuilderMode {
             /* metadata = */ false,
             /* sourceRetention = */ true,
             /* generateMultiFileFacadePartClasses = */ false);
-    
+
+    public final static ClassBuilderMode LIGHT = new ClassBuilderMode(
+            false,
+            true,
+            false,
+            true);
+
     /**
      * Function signatures + metadata (to support incremental compilation with kapt)
      */
