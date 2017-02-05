@@ -22,10 +22,9 @@ import java.net.URI
 import javax.tools.JavaFileObject
 import javax.tools.SimpleJavaFileObject
 
-class KotlinLightClass(val binaryName: String, val byteCode: ByteArray) :
-        SimpleJavaFileObject(URI(binaryName), JavaFileObject.Kind.CLASS) {
-
-    val packageName = binaryName.substringBeforeLast(".")
+class KotlinLightClass(val binaryName: String,
+                       val packageName: String,
+                       val byteCode: ByteArray) : SimpleJavaFileObject(URI(binaryName), JavaFileObject.Kind.CLASS) {
 
     override fun openOutputStream() = ByteArrayOutputStream()
 

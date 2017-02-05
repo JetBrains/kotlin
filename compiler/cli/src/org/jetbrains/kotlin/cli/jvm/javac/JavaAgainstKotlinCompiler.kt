@@ -103,31 +103,15 @@ object JavaAgainstKotlinCompiler {
         return generationState.factory.getClassFiles()
     }
 
-    private fun getCorrectBinaryNames(outputFiles: Iterable<OutputFile>): Map<String, String> {
-        val relativeToBinaryMap = hashMapOf<String, String>()
+    private fun Iterable<OutputFile>.toKotlinLightClasses(ktFiles: List<KtFile>) = ktFiles.flatMap { ktFile ->
+        filter { it.sourceFiles.firstOrNull()?.canonicalPath == ktFile.originalFile.virtualFile.canonicalPath }
+                .map {
+                    val packageFqName = ktFile.packageFqName.asString()
+                    val binaryName = packageFqName + "." +
+                                     it.relativePath.replace("/", ".").substringBeforeLast(".").substring(packageFqName.length)
 
-        val fqNames = outputFiles.map { it.relativePath.replace("/", ".").substringBeforeLast(".") }
-                .sorted()
-
-        for (fqName in fqNames) {
-            val names = fqNames.filter { it.startsWith(fqName) }
-
-            for (name in names) {
-                if (name == fqName) {
-                    if (!relativeToBinaryMap.containsKey(name)) {
-                        relativeToBinaryMap.put(name, name)
-                    }
-                    continue
+                    KotlinLightClass(binaryName, packageFqName, it.asByteArray())
                 }
-
-                val binaryName = fqName + name.substring(fqName.length).replace(".", "$")
-                if (!relativeToBinaryMap.containsKey(name)) {
-                    relativeToBinaryMap.put(name, binaryName)
-                }
-            }
-        }
-
-        return relativeToBinaryMap
     }
 
     @JvmStatic
@@ -145,14 +129,7 @@ object JavaAgainstKotlinCompiler {
         val outDir = File(destination).apply { mkdirs() }
 
         val javac = ToolProvider.getSystemJavaCompiler()
-        val outputFiles = environment.compileKotlinFiles()
-
-        val relativeToBinaryMap = getCorrectBinaryNames(outputFiles)
-        val lightClasses = outputFiles
-                .map {
-                    val fqName = it.relativePath.replace("/", ".").substringBeforeLast(".")
-                    KotlinLightClass(relativeToBinaryMap[fqName]!!, it.asByteArray())
-                }
+        val lightClasses = environment.compileKotlinFiles().toKotlinLightClasses(environment.getSourceFiles())
 
         val diagnosticCollector = DiagnosticCollector<JavaFileObject>()
         val fileManager = KotlinFileManager(
@@ -201,14 +178,7 @@ object JavaAgainstKotlinCompiler {
         }
 
         val outputFiles = environment.compileKotlinFiles(ktFiles)
-
-        val relativeToBinaryMap = getCorrectBinaryNames(outputFiles)
-
-        val lightClasses = outputFiles
-                .map {
-                    val fqName = it.relativePath.replace("/", ".").substringBeforeLast(".")
-                    KotlinLightClass(relativeToBinaryMap[fqName]!!, it.asByteArray())
-                }
+        val lightClasses = outputFiles.toKotlinLightClasses(ktFiles)
 
         val diagnosticCollector = DiagnosticCollector<JavaFileObject>()
         val fileManager = KotlinFileManager(
