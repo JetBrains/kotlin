@@ -38,8 +38,7 @@ class KotlinFileManager(val standardFileManager: StandardJavaFileManager,
 
     override fun inferBinaryName(location: JavaFileManager.Location,
                                  file: JavaFileObject): String {
-        val inferredBinaryName = (file as? KotlinLightClass)?.binaryName ?: standardFileManager.inferBinaryName(location, file)
-        return inferredBinaryName
+        return (file as? KotlinLightClass)?.binaryName ?: standardFileManager.inferBinaryName(location, file)
     }
 
     override fun list(location: JavaFileManager.Location,

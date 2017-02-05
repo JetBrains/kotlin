@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.io.File
 import java.io.StringWriter
 import java.nio.charset.Charset
@@ -68,35 +69,30 @@ object JavaAgainstKotlinCompiler {
 
     private fun KotlinCoreEnvironment.enablePartialAnalysis() = AnalysisHandlerExtension.registerExtension(project, PartialAnalysisHandlerExtension())
 
-    private fun analyze(files: Collection<KtFile>,
-                        environment: KotlinCoreEnvironment): AnalysisResult {
+    private fun KotlinCoreEnvironment.analyze(files: Collection<KtFile> = getSourceFiles()): AnalysisResult {
         files.forEach { AnalyzingUtils.checkForSyntacticErrors(it) }
 
         return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                environment.project, files, CliLightClassGenerationSupport.CliBindingTrace(),
-                environment.configuration, { scope ->
-                    JvmPackagePartProvider(environment, scope)
+                project, files, CliLightClassGenerationSupport.CliBindingTrace(),
+                configuration, { scope ->
+                    JvmPackagePartProvider(this, scope)
                 }
         ).apply {
             AnalyzingUtils.throwExceptionOnErrors(bindingContext)
         }
     }
 
-    private fun getClassFileFactory(environment: KotlinCoreEnvironment,
-                                    ktFiles: Collection<KtFile>): ClassFileFactory {
+    private fun KotlinCoreEnvironment.compileKotlinFiles(ktFiles: List<KtFile> = getSourceFiles()): Iterable<OutputFile> {
+        enablePartialAnalysis()
 
-        environment.enablePartialAnalysis()
-
-        val analysisResult = analyze(ktFiles, environment)
-        analysisResult.throwIfError()
-
+        val analysisResult = analyze(ktFiles).apply { throwIfError() }
         val generationState = GenerationState(
-                environment.project,
+                project,
                 ClassBuilderFactories.LIGHT,
                 analysisResult.moduleDescriptor,
                 analysisResult.bindingContext,
-                ktFiles.toList(),
-                environment.configuration
+                ktFiles,
+                configuration
         )
 
         if (analysisResult.shouldGenerateCode) {
@@ -104,7 +100,7 @@ object JavaAgainstKotlinCompiler {
         }
         AnalyzingUtils.throwExceptionOnErrors(generationState.collectedExtraJvmDiagnostics)
 
-        return generationState.factory
+        return generationState.factory.getClassFiles()
     }
 
     private fun getCorrectBinaryNames(outputFiles: Iterable<OutputFile>): Map<String, String> {
@@ -141,19 +137,17 @@ object JavaAgainstKotlinCompiler {
                          classpath: List<File>,
                          destination: String) {
 
-        val javaFiles = environment.javaFiles
-        if (javaFiles.isEmpty()) return
+        messageCollector.report(CompilerMessageSeverity.INFO,
+                                "Parallel Java against Kotlin compiler",
+                                CompilerMessageLocation.NO_LOCATION)
 
-        val outDir = File(destination)
-        outDir.mkdirs()
+        val javaFiles = environment.javaFiles.check { it.isNotEmpty() } ?: return
+        val outDir = File(destination).apply { mkdirs() }
 
         val javac = ToolProvider.getSystemJavaCompiler()
-
-        val outputFiles = getClassFileFactory(environment, environment.getSourceFiles())
-                .getClassFiles()
+        val outputFiles = environment.compileKotlinFiles()
 
         val relativeToBinaryMap = getCorrectBinaryNames(outputFiles)
-
         val lightClasses = outputFiles
                 .map {
                     val fqName = it.relativePath.replace("/", ".").substringBeforeLast(".")
@@ -167,7 +161,6 @@ object JavaAgainstKotlinCompiler {
         )
 
         val javaFileObjects = fileManager.standardFileManager.getJavaFileObjectsFromFiles(javaFiles)
-
 
         fileManager.standardFileManager.setLocation(StandardLocation.CLASS_PATH, classpath)
         fileManager.standardFileManager.setLocation(StandardLocation.CLASS_OUTPUT, listOf(outDir))
@@ -207,8 +200,7 @@ object JavaAgainstKotlinCompiler {
             createKtFile(it.name, FileUtil.loadFile(it, true), environment.project)
         }
 
-        val outputFiles = getClassFileFactory(environment, ktFiles)
-                .getClassFiles()
+        val outputFiles = environment.compileKotlinFiles(ktFiles)
 
         val relativeToBinaryMap = getCorrectBinaryNames(outputFiles)
 
