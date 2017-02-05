@@ -51,6 +51,23 @@ import javax.tools.ToolProvider
 
 object JavaAgainstKotlinCompiler {
 
+    private val VirtualFile.javaFiles: List<VirtualFile>
+        get() = children.filter { it.extension == "java" }
+                .toMutableList()
+                .apply {
+                    children
+                            .filter(VirtualFile::isDirectory)
+                            .forEach { dir -> addAll(dir.javaFiles) }
+                }
+
+    private val KotlinCoreEnvironment.javaFiles
+        get() = configuration.kotlinSourceRoots
+                .mapNotNull { findLocalDirectory(it) }
+                .flatMap { it.javaFiles }
+                .map { File(it.canonicalPath) }
+
+    private fun KotlinCoreEnvironment.enablePartialAnalysis() = AnalysisHandlerExtension.registerExtension(project, PartialAnalysisHandlerExtension())
+
     private fun analyze(files: Collection<KtFile>,
                         environment: KotlinCoreEnvironment): AnalysisResult {
         files.forEach { AnalyzingUtils.checkForSyntacticErrors(it) }
@@ -67,7 +84,9 @@ object JavaAgainstKotlinCompiler {
 
     private fun getClassFileFactory(environment: KotlinCoreEnvironment,
                                     ktFiles: Collection<KtFile>): ClassFileFactory {
-        setupEnvironment(environment)
+
+        environment.enablePartialAnalysis()
+
         val analysisResult = analyze(ktFiles, environment)
         analysisResult.throwIfError()
 
@@ -86,26 +105,6 @@ object JavaAgainstKotlinCompiler {
         AnalyzingUtils.throwExceptionOnErrors(generationState.collectedExtraJvmDiagnostics)
 
         return generationState.factory
-    }
-
-    private fun createKtFile(name: String, text: String, project: Project): KtFile {
-        val shortName = name.substringAfterLast("/").substringAfterLast("\\")
-
-        val virtualFile = object : LightVirtualFile(shortName, KotlinLanguage.INSTANCE, text) {
-            override fun getPath() = "/$name"
-        }
-        virtualFile.charset = CharsetToolkit.UTF8_CHARSET
-
-        val factory = PsiFileFactory.getInstance(project) as PsiFileFactoryImpl
-
-        return factory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile
-    }
-
-    private fun createKtFiles(kotlinFiles: List<File>,
-                              environment: KotlinCoreEnvironment): Collection<KtFile> {
-        return kotlinFiles.map {
-            createKtFile(it.name, FileUtil.loadFile(it, true), environment.project)
-        }
     }
 
     private fun getCorrectBinaryNames(outputFiles: Iterable<OutputFile>): Map<String, String> {
@@ -135,27 +134,6 @@ object JavaAgainstKotlinCompiler {
         return relativeToBinaryMap
     }
 
-    private fun getJavaFilesFromDir(dir: VirtualFile): List<VirtualFile> {
-        val javaFiles = arrayListOf<VirtualFile>()
-
-        javaFiles.addAll(dir.children.filter { it.extension == "java" })
-
-        dir.children.filter { it.isDirectory }
-                .forEach { javaFiles.addAll(getJavaFilesFromDir(it)) }
-
-        return javaFiles
-    }
-
-    private fun getJavaFiles(environment: KotlinCoreEnvironment): List<File> {
-        val javaFiles = arrayListOf<VirtualFile>()
-        for (sourceRoot in environment.configuration.kotlinSourceRoots) {
-            val sourceDir = environment.findLocalDirectory(sourceRoot) ?: continue
-            javaFiles.addAll(getJavaFilesFromDir(sourceDir))
-        }
-
-        return javaFiles.map { File(it.canonicalPath) }
-    }
-
     @JvmStatic
     fun compileJavaFiles(environment: KotlinCoreEnvironment,
                          options: List<String>,
@@ -163,11 +141,7 @@ object JavaAgainstKotlinCompiler {
                          classpath: List<File>,
                          destination: String) {
 
-        messageCollector.report(CompilerMessageSeverity.INFO,
-                                "MY COMPILER",
-                                CompilerMessageLocation.NO_LOCATION)
-
-        val javaFiles = getJavaFiles(environment)
+        val javaFiles = environment.javaFiles
         if (javaFiles.isEmpty()) return
 
         val outDir = File(destination)
@@ -214,8 +188,24 @@ object JavaAgainstKotlinCompiler {
                          kotlinFiles: List<File>,
                          environment: KotlinCoreEnvironment,
                          outDir: File) {
+
+        fun createKtFile(name: String, text: String, project: Project): KtFile {
+            val shortName = name.substringAfterLast("/").substringAfterLast("\\")
+
+            val virtualFile = object : LightVirtualFile(shortName, KotlinLanguage.INSTANCE, text) {
+                override fun getPath() = "/$name"
+            }
+            virtualFile.charset = CharsetToolkit.UTF8_CHARSET
+
+            val factory = PsiFileFactory.getInstance(project) as PsiFileFactoryImpl
+
+            return factory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile
+        }
+
         val javac = ToolProvider.getSystemJavaCompiler()
-        val ktFiles = createKtFiles(kotlinFiles, environment)
+        val ktFiles = kotlinFiles.map {
+            createKtFile(it.name, FileUtil.loadFile(it, true), environment.project)
+        }
 
         val outputFiles = getClassFileFactory(environment, ktFiles)
                 .getClassFiles()
@@ -243,11 +233,6 @@ object JavaAgainstKotlinCompiler {
                 println("Diagnostics: " + diagnosticCollector.diagnostics.map { it.getMessage(Locale.ENGLISH) })
             }
         }
-
-    }
-
-    private fun setupEnvironment(environment: KotlinCoreEnvironment) {
-        AnalysisHandlerExtension.registerExtension(environment.project, PartialAnalysisHandlerExtension())
     }
 
 }
