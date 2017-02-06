@@ -72,6 +72,12 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("hiddenByMoreSpecificDeclaration.kt")
+    public void testHiddenByMoreSpecificDeclaration() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/hiddenByMoreSpecificDeclaration.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("InterfaceInExpression.kt")
     public void testInterfaceInExpression() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/InterfaceInExpression.kt");
@@ -81,6 +87,12 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     @TestMetadata("JavaStaticMethod.kt")
     public void testJavaStaticMethod() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/JavaStaticMethod.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("KotlinRepeat.kt")
+    public void testKotlinRepeat() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/KotlinRepeat.kt");
         doTest(fileName);
     }
 
@@ -209,6 +221,12 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         @TestMetadata("SAMConstructorFromLambda.kt")
         public void testSAMConstructorFromLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/SAMConstructorFromLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("String.kt")
+        public void testString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/constructor/String.kt");
             doTest(fileName);
         }
 

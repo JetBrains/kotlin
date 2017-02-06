@@ -186,6 +186,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("StringFakeConstructor.kt")
+    public void testStringFakeConstructor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/StringFakeConstructor.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("SuperMethod.kt")
     public void testSuperMethod() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/SuperMethod.kt");
