@@ -13,6 +13,8 @@ public final class cases/special/HiddenClass {
 	public final synthetic fun getHiddenVar ()I
 	public final synthetic fun getVarWithHiddenAccessors ()Ljava/lang/String;
 	public final synthetic fun hiddenFun ()V
+	public static synthetic fun hiddenVal$annotations ()V
+	public static synthetic fun hiddenVar$annotations ()V
 	public final synthetic fun setHiddenVar (I)V
 	public final synthetic fun setVarWithHiddenAccessors (Ljava/lang/String;)V
 }
