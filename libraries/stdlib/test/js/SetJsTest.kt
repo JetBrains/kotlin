@@ -147,6 +147,10 @@ abstract class SetJsTest {
         assertFalse(data.add("baz"))
         assertEquals(3, data.size)
         assertTrue(data.containsAll(arrayListOf("foo", "bar", "baz")))
+
+        val nullableSet = createEmptyMutableSetWithNullableValues()
+        assertTrue(nullableSet.add(null))
+        assertFalse(nullableSet.add(null))
     }
 
     @Test
@@ -157,6 +161,12 @@ abstract class SetJsTest {
         assertFalse(data.remove("foo"))
         assertEquals(1, data.size)
         assertTrue(data.contains("bar"))
+
+        val nullableSet = createEmptyMutableSetWithNullableValues()
+        nullableSet.add(null)
+
+        assertTrue(nullableSet.remove(null))
+        assertFalse(nullableSet.remove(null))
     }
 
     @Test
@@ -181,9 +191,11 @@ abstract class SetJsTest {
         assertTrue(data.removeAll(arrayListOf("foo", "bar")))
         assertEquals(0, data.size)
 
-        val data2 = createTestMutableSet()
         assertFalse(data.removeAll(arrayListOf("foo", "bar", "baz")))
-        assertTrue(data.isEmpty())
+
+        val data2 = createTestMutableSet()
+        assertTrue(data2.removeAll(arrayListOf("foo", "bar", "baz")))
+        assertTrue(data2.isEmpty())
     }
 
     @Test
