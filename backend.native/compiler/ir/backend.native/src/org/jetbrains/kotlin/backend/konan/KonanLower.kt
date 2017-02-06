@@ -17,6 +17,9 @@ internal class KonanLower(val context: Context) {
     fun lower(irFile: IrFile) {
         val phaser = PhaseManager(context)
 
+        phaser.phase(KonanPhase.LOWER_INLINE) {
+            FunctionInlining(context).inline(irFile)
+        }
         phaser.phase(KonanPhase.LOWER_ENUMS) {
             EnumClassLowering(context).run(irFile)
         }
@@ -47,13 +50,6 @@ internal class KonanLower(val context: Context) {
         }
         phaser.phase(KonanPhase.AUTOBOX) {
             Autoboxing(context).lower(irFile)
-        }
-        phaser.phase(KonanPhase.LOWER_INLINE) {
-            //FunctionInlining(context).inline(irFile)
-        }
-
-        phaser.phase(KonanPhase.LOWER_INTEROP) {
-            InteropLowering(context).runOnFilePostfix(irFile)
         }
     }
 }

@@ -17,6 +17,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     // TODO: remove, to make CodeGenerator descriptor-agnostic.
     var constructedClass: ClassDescriptor? = null
     val vars = VariableManager(this)
+    var functionDescriptor: FunctionDescriptor? = null
     private var returnSlot: LLVMValueRef? = null
     private var slotsPhi: LLVMValueRef? = null
     private var slotCount = 0
@@ -40,6 +41,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
         if (descriptor is ConstructorDescriptor) {
             constructedClass = descriptor.constructedClass
         }
+        functionDescriptor = descriptor
     }
 
     fun prologue(function:LLVMValueRef, returnType:LLVMTypeRef) {

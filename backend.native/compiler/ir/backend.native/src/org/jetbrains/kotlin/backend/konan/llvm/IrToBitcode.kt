@@ -33,9 +33,9 @@ internal fun emitLLVM(context: Context) {
 
         val irModule = context.irModule!!
         // Note that we don't set module target explicitly.
-        // It is determined by the target of runtime.bc 
+        // It is determined by the target of runtime.bc
         // (see Llvm class in ContextUtils)
-        // Which in turn is determined by the clang flags 
+        // Which in turn is determined by the clang flags
         // used to compile runtime.bc.
         val llvmModule = LLVMModuleCreateWithName("out")!! // TODO: dispose
         context.llvmModule = llvmModule
@@ -1511,10 +1511,15 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         }
 
         override fun genReturn(target: CallableDescriptor, value: LLVMValueRef?) {
-            if (KotlinBuiltIns.isUnit(inlineBody.type) == false) {
-                codegen.assignPhis(getResult()!! to value!!)
+            if (target == codegen.functionDescriptor) {                         // It is "non local return".
+                super.genReturn(target, value)                                  // Generate real "return".
+                return
             }
-            codegen.br(getExit()!!)
+                                                                                // It is local return.
+            if (KotlinBuiltIns.isUnit(inlineBody.type) == false) {              // If function returns more then "unit"
+                codegen.assignPhis(getResult()!! to value!!)                    // Assign return value to result PHI node.
+            }
+            codegen.br(getExit()!!)                                             // Generate branch on exit block.
         }
     }
 
