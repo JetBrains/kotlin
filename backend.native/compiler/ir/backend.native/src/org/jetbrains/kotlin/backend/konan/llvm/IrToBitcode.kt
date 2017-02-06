@@ -1884,6 +1884,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     fun callVirtual(descriptor: FunctionDescriptor, args: List<LLVMValueRef>,
                     resultLifetime: Lifetime): LLVMValueRef {
+        assert(LLVMTypeOf(args[0]) == codegen.kObjHeaderPtr)
         val typeInfoPtrPtr  = LLVMBuildStructGEP(codegen.builder, args[0], 0 /* type_info */, "")!!
         val typeInfoPtr     = codegen.load(typeInfoPtrPtr)
         assert (typeInfoPtr.type == codegen.kTypeInfoPtr)
