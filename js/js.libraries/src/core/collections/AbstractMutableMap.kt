@@ -33,7 +33,7 @@ public abstract class AbstractMutableMap<K, V> protected constructor() : Abstrac
     /**
      * A mutable [Map.Entry] shared by several [Map] implementations.
      */
-    open class SimpleEntry<K, V>(override val key: K, value: V) : MutableMap.MutableEntry<K, V> {
+    internal open class SimpleEntry<K, V>(override val key: K, value: V) : MutableMap.MutableEntry<K, V> {
         constructor(entry: Map.Entry<K, V>) : this(entry.key, entry.value)
 
         private var _value = value
