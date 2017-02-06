@@ -6,7 +6,9 @@
       <xy x="20" y="20" width="828" height="622"/>
     </constraints>
     <properties/>
-    <border type="none"/>
+    <border type="empty">
+      <size top="4" left="4" bottom="4" right="4"/>
+    </border>
     <children>
       <vspacer id="c5558">
         <constraints>
@@ -23,20 +25,14 @@
         <children>
           <component id="fc71f" class="com.intellij.util.ui.ThreeStateCheckBox" binding="generateNoWarningsCheckBox" default-binding="true">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="209" height="24"/>
+              </grid>
             </constraints>
             <properties>
               <selected value="false"/>
               <state value="NOT_SELECTED"/>
               <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.option.generate.no.warnings"/>
-            </properties>
-          </component>
-          <component id="ba279" class="javax.swing.JLabel" binding="additionalArgsLabel">
-            <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.option.additional.command.line.parameters"/>
             </properties>
           </component>
           <component id="7a827" class="com.intellij.ui.RawCommandLineEditor" binding="additionalArgsOptionsField">
@@ -60,16 +56,18 @@
           </component>
           <component id="ae60b" class="javax.swing.JLabel" binding="scriptTemplatesLabel">
             <constraints>
-              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
+              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false">
+                <preferred-size width="209" height="16"/>
+              </grid>
             </constraints>
             <properties>
               <labelFor value="71c3f"/>
-              <text value="Script &amp;Template Classes"/>
+              <text value="Script &amp;template classes"/>
             </properties>
           </component>
           <component id="71c3f" class="javax.swing.JTextField" binding="scriptTemplatesField">
             <constraints>
-              <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="1" use-parent-layout="false">
+              <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
@@ -77,16 +75,18 @@
           </component>
           <component id="56390" class="javax.swing.JLabel" binding="scriptTemplatesClasspathLabel">
             <constraints>
-              <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
+              <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="1" use-parent-layout="false">
+                <preferred-size width="209" height="16"/>
+              </grid>
             </constraints>
             <properties>
               <labelFor value="644d9"/>
-              <text value="Script Templates Class&amp;path"/>
+              <text value="Script templates class&amp;path"/>
             </properties>
           </component>
           <component id="644d9" class="javax.swing.JTextField" binding="scriptTemplatesClasspathField">
             <constraints>
-              <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="1" use-parent-layout="false">
+              <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
@@ -95,7 +95,7 @@
           <grid id="a9492" binding="languageVersionPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="true"/>
             </constraints>
             <properties/>
             <border type="none"/>
@@ -103,11 +103,11 @@
               <component id="f4063" class="javax.swing.JLabel">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                    <preferred-size width="201" height="16"/>
+                    <preferred-size width="227" height="16"/>
                   </grid>
                 </constraints>
                 <properties>
-                  <text value="&amp;Language Version"/>
+                  <text value="&amp;Language version"/>
                 </properties>
               </component>
               <component id="d931b" class="javax.swing.JComboBox" binding="languageVersionComboBox">
@@ -121,7 +121,7 @@
           <grid id="6b551" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="true"/>
             </constraints>
             <properties/>
             <border type="none"/>
@@ -129,7 +129,7 @@
               <component id="12453" class="javax.swing.JLabel">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                    <preferred-size width="201" height="16"/>
+                    <preferred-size width="221" height="16"/>
                   </grid>
                 </constraints>
                 <properties>
@@ -147,7 +147,7 @@
           <grid id="d8cd" binding="apiVersionPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="true"/>
             </constraints>
             <properties/>
             <border type="none"/>
@@ -159,7 +159,7 @@
                   </grid>
                 </constraints>
                 <properties>
-                  <text value="AP&amp;I Version"/>
+                  <text value="AP&amp;I version"/>
                 </properties>
               </component>
               <component id="ab3e4" class="javax.swing.JComboBox" binding="apiVersionComboBox">
@@ -170,6 +170,16 @@
               </component>
             </children>
           </grid>
+          <component id="ba279" class="javax.swing.JLabel" binding="additionalArgsLabel">
+            <constraints>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="209" height="16"/>
+              </grid>
+            </constraints>
+            <properties>
+              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.option.additional.command.line.parameters"/>
+            </properties>
+          </component>
         </children>
       </grid>
       <grid id="2f977" binding="k2jvmPanel" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -192,7 +202,7 @@
               </grid>
             </constraints>
             <properties>
-              <text value="Target &amp;JVM Version"/>
+              <text value="Target &amp;JVM version"/>
             </properties>
           </component>
           <component id="d8f92" class="javax.swing.JCheckBox" binding="enablePreciseIncrementalCheckBox">
@@ -229,8 +239,8 @@
               <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.js.option.generate.sourcemaps"/>
               <state value="NOT_SELECTED"/>
+              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.js.option.generate.sourcemaps"/>
             </properties>
           </component>
           <component id="3ac8f" class="javax.swing.JLabel" binding="labelForOutputPrefixFile">
@@ -288,8 +298,8 @@
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.js.option.output.copy.files"/>
               <state value="NOT_SELECTED"/>
+              <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.js.option.output.copy.files"/>
             </properties>
           </component>
           <component id="915d" class="javax.swing.JLabel">
