@@ -1,6 +1,6 @@
 package foo.bar
 
-/*p:foo.bar*/fun testOther(a: /*p:foo.bar*/A, b: /*p:foo.bar*/Int, c: /*p:foo.bar*/Any, na: /*p:foo.bar*/A?) {
+/*p:foo.bar*/fun testOther(a: /*p:foo.bar*/A, b: /*p:foo.bar p:kotlin*/Int, c: /*p:foo.bar p:kotlin*/Any, na: /*p:foo.bar*/A?) {
     /*p:foo.bar(A) c:foo.bar.A(set) c:foo.bar.A(getSet) c:foo.bar.A(getSET) p:foo.bar(set)*/a[1] = /*p:foo.bar(A) c:foo.bar.A(get) p:kotlin(Int)*/a[2]
 
     /*p:kotlin(Int) p:kotlin(Boolean)*/b /*c:foo.bar.A(contains)*/in /*p:foo.bar(A)*/a

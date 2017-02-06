@@ -1,7 +1,7 @@
 package foo.bar
 
-import /*p:<root>*/JavaClass
-import foo./*p:foo*/KotlinClass
+/*p:<root>(JavaClass)*/import JavaClass
+/*p:foo(KotlinClass)*/import foo.KotlinClass
 
 /*p:foo.bar*/fun test() {
     val j = /*p:<root>*/JavaClass()
