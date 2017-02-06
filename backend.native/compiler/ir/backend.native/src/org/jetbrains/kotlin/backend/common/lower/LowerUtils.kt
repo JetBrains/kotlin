@@ -18,16 +18,22 @@ import org.jetbrains.kotlin.utils.Printer
 
 class IrLoweringContext(backendContext: BackendContext) : IrGeneratorContext(backendContext.irBuiltIns)
 
-class FunctionIrBuilder(backendContext: BackendContext, functionDescriptor: FunctionDescriptor) :
+class DeclarationIrBuilder(backendContext: BackendContext,
+                           declarationDescriptor: DeclarationDescriptor,
+                           startOffset : Int = UNDEFINED_OFFSET,
+                           endOffset : Int = UNDEFINED_OFFSET) :
         IrBuilderWithScope(
                 IrLoweringContext(backendContext),
-                Scope(functionDescriptor),
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET
+                Scope(declarationDescriptor),
+                startOffset,
+                endOffset
         )
 
-fun BackendContext.createFunctionIrBuilder(functionDescriptor: FunctionDescriptor) =
-        FunctionIrBuilder(this, functionDescriptor)
+fun BackendContext.createIrBuilder(declarationDescriptor: DeclarationDescriptor,
+                                   startOffset : Int = UNDEFINED_OFFSET,
+                                   endOffset : Int = UNDEFINED_OFFSET) =
+        DeclarationIrBuilder(this, declarationDescriptor, startOffset, endOffset)
+
 
 fun <T : IrBuilder> T.at(element: IrElement) = this.at(element.startOffset, element.endOffset)
 

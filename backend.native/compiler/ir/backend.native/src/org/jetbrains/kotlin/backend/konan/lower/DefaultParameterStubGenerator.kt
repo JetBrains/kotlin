@@ -2,7 +2,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.createFunctionIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanPlatform
@@ -70,7 +70,7 @@ class DefaultParameterStubGenerator internal constructor(val context: Context): 
         functionDescriptor.overriddenDescriptors.forEach { context.log("DEFAULT-REPLACER: $it") }
         if (bodies.isNotEmpty()) {
             val description = functionDescriptor.getOrCreateDefaultsDescription(context)
-            val builder = context.createFunctionIrBuilder(description.function)
+            val builder = context.createIrBuilder(description.function)
             val body = builder.irBlockBody(irFunction) {
                 val params = mutableListOf<VariableDescriptor>()
                 val variables = mutableMapOf<VariableDescriptor, VariableDescriptor>()

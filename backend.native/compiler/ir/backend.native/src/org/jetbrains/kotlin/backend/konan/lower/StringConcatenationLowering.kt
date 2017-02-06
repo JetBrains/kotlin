@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.signature2Descriptor
 import org.jetbrains.kotlin.backend.konan.ir.irLetSequence
@@ -92,7 +93,7 @@ private class StringConcatenationTransformer(val lower: StringConcatenationLower
     override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
         with(declaration) {
             buildersStack.add(
-                    IrBlockBuilder(IrGeneratorContext(context.irBuiltIns), Scope(descriptor), startOffset, endOffset)
+                    context.createIrBuilder(declaration.descriptor, startOffset, endOffset)
             )
             transformChildrenVoid(this@StringConcatenationTransformer)
             buildersStack.removeAt(buildersStack.lastIndex)

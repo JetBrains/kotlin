@@ -2,7 +2,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.at
-import org.jetbrains.kotlin.backend.common.lower.createFunctionIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.ValueType
 import org.jetbrains.kotlin.backend.konan.isRepresentedAs
@@ -38,7 +38,7 @@ internal class InteropLowering(val context: Context) : FunctionLoweringPass {
 
 private class InteropTransformer(val context: Context, val function: FunctionDescriptor) : IrElementTransformerVoid() {
 
-    val builder = context.createFunctionIrBuilder(function)
+    val builder = context.createIrBuilder(function)
     val interop = context.interopBuiltIns
 
     private fun MemberScope.getSingleContributedFunction(name: String,

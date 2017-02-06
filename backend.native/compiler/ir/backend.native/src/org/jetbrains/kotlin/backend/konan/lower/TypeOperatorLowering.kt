@@ -34,7 +34,7 @@ internal class TypeOperatorLowering(val context: Context) : FunctionLoweringPass
 
 private class TypeOperatorTransformer(val context: Context, val function: FunctionDescriptor) : IrElementTransformerVoid() {
 
-    private val builder = context.createFunctionIrBuilder(function)
+    private val builder = context.createIrBuilder(function)
 
     val throwClassCastException by lazy {
         context.builtIns.getKonanInternalFunctions("ThrowClassCastException").single()

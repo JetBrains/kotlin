@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.createFunctionIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
@@ -136,7 +136,7 @@ private class CallableReferencesUnbinder(val lower: CallableReferenceLowering,
         // Create new function descriptor:
         val newDescriptor = createSimpleFunctionImplTargetDescriptor(descriptor, unboundParams)
 
-        val builder = lower.context.createFunctionIrBuilder(newDescriptor)
+        val builder = lower.context.createIrBuilder(newDescriptor)
         val blockBody = builder.irBlockBody(startOffset, endOffset) {
             val boundArgsGet = irCall(simpleFunctionImplBoundArgsGetter).apply {
                 dispatchReceiver = irGet(newDescriptor.valueParameters[0])
