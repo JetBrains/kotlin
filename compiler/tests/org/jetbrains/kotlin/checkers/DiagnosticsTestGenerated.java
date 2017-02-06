@@ -12519,6 +12519,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("arrayInAnnotationArgumentType.kt")
+                public void testArrayInAnnotationArgumentType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/const/arrayInAnnotationArgumentType.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("constInteraction.kt")
                 public void testConstInteraction() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/const/constInteraction.kt");
