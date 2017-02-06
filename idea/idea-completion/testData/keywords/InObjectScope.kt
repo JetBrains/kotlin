@@ -20,7 +20,7 @@ object Test {
 // EXIST:  init
 // EXIST:  operator
 // EXIST:  infix
-// EXIST:  sealed
+// EXIST:  sealed class
 // EXIST:  lateinit
 // EXIST:  data
 // EXIST:  inline

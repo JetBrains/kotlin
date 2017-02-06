@@ -1,6 +1,6 @@
 class MouseMovedEventArgs
 {
-  public val X : int = 0
+  public val X : Int = 0
   <caret>
 }
 
@@ -32,7 +32,7 @@ class MouseMovedEventArgs
 // EXIST:  companion object
 // EXIST:  operator
 // EXIST:  infix
-// EXIST:  sealed
+// EXIST:  sealed class
 // EXIST:  lateinit
 // EXIST:  data
 // EXIST:  inline
