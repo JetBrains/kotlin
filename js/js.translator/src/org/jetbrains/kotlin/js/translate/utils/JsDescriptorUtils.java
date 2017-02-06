@@ -185,7 +185,7 @@ public final class JsDescriptorUtils {
     }
 
     @NotNull
-    public static DeclarationDescriptor findRealDeclarationIfNeeded(@NotNull DeclarationDescriptor descriptor) {
+    public static DeclarationDescriptor findRealInlineDeclaration(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof FunctionDescriptor) {
             FunctionDescriptor d = (FunctionDescriptor) descriptor;
             if (d.getKind().isReal() || !d.isInline()) return descriptor;
@@ -211,7 +211,7 @@ public final class JsDescriptorUtils {
     }
 
     private static String getModuleNameFromDescriptorName(@NotNull DeclarationDescriptor descriptor) {
-        ModuleDescriptor moduleDescriptor = DescriptorUtils.getContainingModule(findRealDeclarationIfNeeded(descriptor));
+        ModuleDescriptor moduleDescriptor = DescriptorUtils.getContainingModule(findRealInlineDeclaration(descriptor));
         String moduleName = moduleDescriptor.getName().asString();
         return moduleName.substring(1, moduleName.length() - 1);
     }

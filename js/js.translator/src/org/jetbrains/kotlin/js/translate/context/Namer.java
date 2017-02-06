@@ -114,7 +114,7 @@ public final class Namer {
 
     @NotNull
     public static String getFunctionTag(@NotNull CallableDescriptor functionDescriptor) {
-        functionDescriptor = (CallableDescriptor) JsDescriptorUtils.findRealDeclarationIfNeeded(functionDescriptor);
+        functionDescriptor = (CallableDescriptor) JsDescriptorUtils.findRealInlineDeclaration(functionDescriptor);
         String moduleName = getModuleName(functionDescriptor);
         FqNameUnsafe fqNameParent = DescriptorUtils.getFqName(functionDescriptor).parent();
         String qualifier = null;
