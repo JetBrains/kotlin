@@ -31,8 +31,11 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.kotlinSourceRoots
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtFile
@@ -63,6 +66,10 @@ object JavaAgainstKotlinCompiler {
                 .mapNotNull { findLocalDirectory(it) }
                 .flatMap { it.javaFiles }
                 .map { File(it.canonicalPath) }
+
+    private val CompilerConfiguration.javacOptions: List<String>
+        get() = listOf("-target", this[JVMConfigurationKeys.JVM_TARGET]?.name ?: "1.8")
+
 
     private fun KotlinCoreEnvironment.enablePartialAnalysis() = AnalysisHandlerExtension.registerExtension(project, PartialAnalysisHandlerExtension())
 
@@ -116,17 +123,20 @@ object JavaAgainstKotlinCompiler {
 
     @JvmStatic
     fun compileJavaFiles(environment: KotlinCoreEnvironment,
-                         options: List<String>,
                          messageCollector: MessageCollector,
-                         classpath: List<File>,
                          destination: String) {
 
         messageCollector.report(CompilerMessageSeverity.INFO,
                                 "Parallel Java against Kotlin compiler",
                                 CompilerMessageLocation.NO_LOCATION)
 
+        val configuration = environment.configuration
+        val classpath = configuration.jvmClasspathRoots
+
         val javaFiles = environment.javaFiles.check { it.isNotEmpty() } ?: return
         val outDir = File(destination).apply { mkdirs() }
+
+        val options = configuration.javacOptions
 
         val javac = ToolProvider.getSystemJavaCompiler()
         val lightClasses = environment.compileKotlinFiles().toKotlinLightClasses(environment.getSourceFiles())
@@ -162,7 +172,6 @@ object JavaAgainstKotlinCompiler {
                 }
             }
         }
-
     }
 
     // for tests only
@@ -204,9 +213,7 @@ object JavaAgainstKotlinCompiler {
         fileManager.use { fileManager ->
             val compilationTask = javac.getTask(StringWriter(), fileManager, diagnosticCollector,
                                                 listOf("-d", outDir.absolutePath), null, javaFileObjects)
-            if (!compilationTask.call()) {
-                println("Diagnostics: " + diagnosticCollector.diagnostics.map { it.getMessage(Locale.ENGLISH) })
-            }
+            compilationTask.call()
         }
     }
 

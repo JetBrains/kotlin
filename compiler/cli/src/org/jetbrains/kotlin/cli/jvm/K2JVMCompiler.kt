@@ -206,9 +206,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
                 val javac = thread {
                     JavaAgainstKotlinCompiler.compileJavaFiles(environmentForJavac,
-                                                               listOf<String>(),
                                                                messageCollector,
-                                                               classpath,
                                                                destination)
                 }
 
