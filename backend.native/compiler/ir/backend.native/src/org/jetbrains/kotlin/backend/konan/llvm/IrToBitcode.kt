@@ -1518,7 +1518,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             }
                                                                                 // It is local return.
             if (KotlinBuiltIns.isUnit(inlineBody.type) == false) {              // If function returns more then "unit"
-                codegen.assignPhis(getResult()!! to value!!)                    // Assign return value to resilt PHI node
+                codegen.assignPhis(getResult()!! to value!!)                    // Assign return value to result PHI node.
             }
             codegen.br(getExit()!!)                                             // Generate branch on exit block.
         }
