@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.android
 
 import com.intellij.codeInsight.TargetElementUtil
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl
+import com.intellij.testFramework.PlatformTestUtil
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
 abstract class AbstractAndroidRenameTest : KotlinAndroidTestCase() {
@@ -27,22 +29,19 @@ abstract class AbstractAndroidRenameTest : KotlinAndroidTestCase() {
     private val NEW_ID_NAME = "@+id/$NEW_NAME"
 
     fun doTest(path: String) {
-        val f = myFixture!!
         getResourceDirs(path).forEach { myFixture.copyDirectoryToProject(it.name, it.name) }
-        val virtualFile = f.copyFileToProject(path + getTestName(true) + ".kt", "src/" + getTestName(true) + ".kt")
-        f.configureFromExistingVirtualFile(virtualFile)
-
-        val completionEditor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(f.editor, f.file)
-
-        val element = TargetElementUtil.findTargetElement(
-                completionEditor,
-                TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED or TargetElementUtil.ELEMENT_NAME_ACCEPTED) as XmlAttributeValueImpl
-
-        RenameProcessor(f.project, element, NEW_ID_NAME, false, true).run()
-
-        val expression = TargetElementUtil.findReference(f.editor, f.caretOffset)!!.element as KtNameReferenceExpression
-        assertEquals(NEW_NAME, expression.getReferencedName())
+        val virtualFile = myFixture.copyFileToProject("$path${getTestName(true)}.kt", "src/${getTestName(true)}.kt")
+        myFixture.configureFromExistingVirtualFile(virtualFile)
+        myFixture.renameElement(myFixture.elementAtCaret, NEW_ID_NAME)
+        myFixture.checkResultByFile("expected/${getTestName(true)}.kt")
+        assertResourcesEqual("$path/expected/res")
     }
+
+    fun assertResourcesEqual(expectedPath: String) {
+        PlatformTestUtil.assertDirectoriesEqual(LocalFileSystem.getInstance().findFileByPath(expectedPath), getResourceDirectory())
+    }
+
+    fun getResourceDirectory() = LocalFileSystem.getInstance().findFileByPath(myFixture.tempDirPath + "/res")
 
     override fun getTestDataPath() = KotlinAndroidTestCaseBase.getPluginTestDataPathBase() + "/rename/" + getTestName(true) + "/"
 }

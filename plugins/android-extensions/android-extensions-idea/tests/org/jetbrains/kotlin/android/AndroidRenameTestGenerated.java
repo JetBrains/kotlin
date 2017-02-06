@@ -36,6 +36,12 @@ public class AndroidRenameTestGenerated extends AbstractAndroidRenameTest {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-idea/testData/android/rename"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
 
+    @TestMetadata("commonElementId")
+    public void testCommonElementId() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/rename/commonElementId/");
+        doTest(fileName);
+    }
+
     @TestMetadata("fqNameInAttr")
     public void testFqNameInAttr() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-idea/testData/android/rename/fqNameInAttr/");

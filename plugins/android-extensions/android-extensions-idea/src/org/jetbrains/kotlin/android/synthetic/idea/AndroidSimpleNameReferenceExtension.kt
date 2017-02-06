@@ -25,15 +25,10 @@ import org.jetbrains.kotlin.android.synthetic.androidIdToName
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 class AndroidSimpleNameReferenceExtension : SimpleNameReferenceExtension {
-
-    override fun isReferenceTo(reference: KtSimpleNameReference, element: PsiElement) = when {
-        element is ValueResourceElementWrapper && AndroidResourceUtil.isIdDeclaration(element) -> true
-        isLayoutPackageIdentifier(reference) -> true
-        else -> false
-    }
 
     private fun isLayoutPackageIdentifier(reference: KtSimpleNameReference): Boolean {
         val probablyVariant = reference.element?.parent as? KtDotQualifiedExpression ?: return false
