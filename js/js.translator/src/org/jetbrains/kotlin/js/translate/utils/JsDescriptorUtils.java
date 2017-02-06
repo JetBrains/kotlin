@@ -186,23 +186,23 @@ public final class JsDescriptorUtils {
 
     @NotNull
     public static DeclarationDescriptor findRealDeclarationIfNeeded(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof CallableMemberDescriptor) {
-            CallableMemberDescriptor d = (CallableMemberDescriptor)descriptor;
-            if (d.getKind().isReal() || d.getModality() == Modality.ABSTRACT) return descriptor;
-            CallableMemberDescriptor real = findRealDefinition(d);
-            assert real != null : "Couldn't find definition of fake/abstract descriptor " + descriptor;
+        if (descriptor instanceof FunctionDescriptor) {
+            FunctionDescriptor d = (FunctionDescriptor) descriptor;
+            if (d.getKind().isReal() || !d.isInline()) return descriptor;
+            CallableMemberDescriptor real = findRealDeclaration(d);
+            assert real != null : "Couldn't find definition of a fake inline descriptor " + descriptor;
             return real;
         }
         return descriptor;
     }
 
     @Nullable
-    private static CallableMemberDescriptor findRealDefinition(CallableMemberDescriptor descriptor) {
+    private static FunctionDescriptor findRealDeclaration(FunctionDescriptor descriptor) {
         if (descriptor.getModality() == Modality.ABSTRACT) return null;
         if (descriptor.getKind().isReal()) return descriptor;
 
-        for (CallableMemberDescriptor o : descriptor.getOverriddenDescriptors()) {
-            CallableMemberDescriptor child = findRealDefinition(o);
+        for (FunctionDescriptor o : descriptor.getOverriddenDescriptors()) {
+            FunctionDescriptor child = findRealDeclaration(o);
             if (child != null) {
                 return child;
             }
