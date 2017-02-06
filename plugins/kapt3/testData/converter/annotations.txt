@@ -77,7 +77,7 @@ public final class TestAnno2 {
     }
 
     @Anno3(value = "property")
-    private static void b$annotations() {
+    public static void b$annotations() {
     }
 
     @org.jetbrains.annotations.NotNull()

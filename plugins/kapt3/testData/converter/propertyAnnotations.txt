@@ -20,7 +20,7 @@ public final class Test {
 
     @Anno2()
     @Anno()
-    private static void prop$annotations() {
+    public static void prop$annotations() {
     }
 
     @org.jetbrains.annotations.NotNull()

@@ -306,8 +306,7 @@ class ClassFileToSourceStubConverter(
         val descriptor = kaptContext.origins[method]?.descriptor as? CallableDescriptor ?: return null
 
         val isAnnotationHolderForProperty = descriptor is PropertyDescriptor && isSynthetic(method.access)
-                                            && isPrivate(method.access) && isStatic(method.access)
-                                            && method.name.endsWith("\$annotations")
+                                            && isStatic(method.access) && method.name.endsWith("\$annotations")
 
         if (isSynthetic(method.access) && !isAnnotationHolderForProperty) return null
 
