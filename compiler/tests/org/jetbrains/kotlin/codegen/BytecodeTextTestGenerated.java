@@ -138,6 +138,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
+    @TestMetadata("inlineJavaConstantFromSubclass.kt")
+    public void testInlineJavaConstantFromSubclass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineJavaConstantFromSubclass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inlineJavaStaticFields.kt")
     public void testInlineJavaStaticFields() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inlineJavaStaticFields.kt");

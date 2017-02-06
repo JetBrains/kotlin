@@ -9,7 +9,7 @@ public open class C : I {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public const final override /*1*/ /*fake_override*/ val a: kotlin.Int
+    public const final override /*1*/ /*fake_override*/ val a: kotlin.Int = 1
     public/*package*/ final var b: kotlin.Int
     public/*package*/ open fun bar(): kotlin.Unit
 }

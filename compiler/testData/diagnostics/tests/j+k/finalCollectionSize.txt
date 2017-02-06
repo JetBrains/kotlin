@@ -47,8 +47,8 @@ public abstract class A : java.util.ArrayList<kotlin.String!> {
     invisible_fake open override /*1*/ /*fake_override*/ fun writeObject(/*0*/ p0: java.io.ObjectOutputStream!): kotlin.Unit
 
     // Static members
-    invisible_fake const final override /*1*/ /*fake_override*/ val MAX_ARRAY_SIZE: kotlin.Int
-    invisible_fake const final override /*1*/ /*fake_override*/ val serialVersionUID: kotlin.Long
+    invisible_fake const final override /*1*/ /*fake_override*/ val MAX_ARRAY_SIZE: kotlin.Int = 2147483639
+    invisible_fake const final override /*1*/ /*fake_override*/ val serialVersionUID: kotlin.Long = 8683452581122892189.toLong()
     invisible_fake open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> finishToArray(/*0*/ p0: kotlin.Array<(out) T!>!, /*1*/ p1: kotlin.collections.(Mutable)Iterator<*>!): kotlin.Array<(out) T!>!
     invisible_fake open override /*1*/ /*fake_override*/ fun hugeCapacity(/*0*/ p0: kotlin.Int): kotlin.Int
     invisible_fake open override /*1*/ /*fake_override*/ fun subListRangeCheck(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int): kotlin.Unit

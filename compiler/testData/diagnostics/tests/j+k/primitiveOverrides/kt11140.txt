@@ -55,11 +55,11 @@ public open class A : java.util.HashMap<kotlin.Int!, kotlin.Double!>, B<kotlin.I
     invisible_fake open override /*1*/ /*fake_override*/ fun writeObject(/*0*/ p0: java.io.ObjectOutputStream!): kotlin.Unit
 
     // Static members
-    invisible_fake const final override /*1*/ /*fake_override*/ val ALTERNATIVE_HASHING_THRESHOLD_DEFAULT: kotlin.Int
-    invisible_fake const final override /*1*/ /*fake_override*/ val DEFAULT_INITIAL_CAPACITY: kotlin.Int
-    invisible_fake const final override /*1*/ /*fake_override*/ val DEFAULT_LOAD_FACTOR: kotlin.Float
-    invisible_fake const final override /*1*/ /*fake_override*/ val MAXIMUM_CAPACITY: kotlin.Int
-    invisible_fake const final override /*1*/ /*fake_override*/ val serialVersionUID: kotlin.Long
+    invisible_fake const final override /*1*/ /*fake_override*/ val ALTERNATIVE_HASHING_THRESHOLD_DEFAULT: kotlin.Int = 2147483647
+    invisible_fake const final override /*1*/ /*fake_override*/ val DEFAULT_INITIAL_CAPACITY: kotlin.Int = 16
+    invisible_fake const final override /*1*/ /*fake_override*/ val DEFAULT_LOAD_FACTOR: kotlin.Float = 0.75.toFloat()
+    invisible_fake const final override /*1*/ /*fake_override*/ val MAXIMUM_CAPACITY: kotlin.Int = 1073741824
+    invisible_fake const final override /*1*/ /*fake_override*/ val serialVersionUID: kotlin.Long = 362498820763181265.toLong()
     invisible_fake open override /*1*/ /*fake_override*/ fun eq(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!): kotlin.Boolean
     invisible_fake open override /*1*/ /*fake_override*/ fun indexFor(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.Int
 }

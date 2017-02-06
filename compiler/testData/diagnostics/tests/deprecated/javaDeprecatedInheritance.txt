@@ -34,6 +34,6 @@ public open class C : A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    @kotlin.Deprecated(message = "Deprecated in Java") public const final override /*1*/ /*fake_override*/ val D: kotlin.String
+    @kotlin.Deprecated(message = "Deprecated in Java") public const final override /*1*/ /*fake_override*/ val D: kotlin.String = "d"
     @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun bar(): kotlin.Unit
 }

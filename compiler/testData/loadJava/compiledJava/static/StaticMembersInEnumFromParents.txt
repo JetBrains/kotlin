@@ -26,11 +26,11 @@ public/*package*/ final enum class StaticMembersInEnum : kotlin.Enum<test.Static
     public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.StaticMembersInEnum!>!
 
     // Static members
-    public const final override /*1*/ /*fake_override*/ val a: kotlin.Int
+    public const final override /*1*/ /*fake_override*/ val a: kotlin.Int = 1
     public final var b: kotlin.Int
     public final var c: kotlin.Int
     public final var d: kotlin.Int
-    public const final override /*1*/ /*fake_override*/ val e: kotlin.Int
+    public const final override /*1*/ /*fake_override*/ val e: kotlin.Int = 2
     public open fun foo(): kotlin.Unit
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.StaticMembersInEnum
     public final /*synthesized*/ fun values(): kotlin.Array<test.StaticMembersInEnum>

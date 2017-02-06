@@ -27,7 +27,7 @@ public open class E : A, B {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public const final override /*1*/ /*fake_override*/ val field: kotlin.Int
+    public const final override /*1*/ /*fake_override*/ val field: kotlin.Int = 1
     public const final override /*1*/ /*fake_override*/ val field: kotlin.String
 }
 
