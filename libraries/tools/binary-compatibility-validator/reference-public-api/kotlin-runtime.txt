@@ -53,6 +53,22 @@ public abstract interface annotation class kotlin/Suppress : java/lang/annotatio
 	public abstract fun names ()[Ljava/lang/String;
 }
 
+public final class kotlin/TypeAliasesKt {
+	public static synthetic fun AssertionError$annotations ()V
+	public static synthetic fun ClassCastException$annotations ()V
+	public static synthetic fun Comparator$annotations ()V
+	public static synthetic fun Error$annotations ()V
+	public static synthetic fun Exception$annotations ()V
+	public static synthetic fun IllegalArgumentException$annotations ()V
+	public static synthetic fun IllegalStateException$annotations ()V
+	public static synthetic fun IndexOutOfBoundsException$annotations ()V
+	public static synthetic fun NoSuchElementException$annotations ()V
+	public static synthetic fun NullPointerException$annotations ()V
+	public static synthetic fun NumberFormatException$annotations ()V
+	public static synthetic fun RuntimeException$annotations ()V
+	public static synthetic fun UnsupportedOperationException$annotations ()V
+}
+
 public class kotlin/TypeCastException : java/lang/ClassCastException {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;)V
@@ -187,6 +203,8 @@ public final class kotlin/jvm/JvmClassMappingKt {
 	public static final fun getJavaPrimitiveType (Lkotlin/reflect/KClass;)Ljava/lang/Class;
 	public static final fun getKotlinClass (Ljava/lang/Class;)Lkotlin/reflect/KClass;
 	public static final fun getRuntimeClassOfKClassInstance (Lkotlin/reflect/KClass;)Ljava/lang/Class;
+	public static synthetic fun java$annotations (Lkotlin/reflect/KClass;)V
+	public static synthetic fun javaClass$annotations (Lkotlin/reflect/KClass;)V
 }
 
 public abstract interface annotation class kotlin/jvm/JvmField : java/lang/annotation/Annotation {
@@ -533,6 +551,12 @@ public final class kotlin/jvm/internal/IntSpreadBuilder : kotlin/jvm/internal/Pr
 }
 
 public class kotlin/jvm/internal/Intrinsics {
+	public static fun areEqual (DLjava/lang/Double;)Z
+	public static fun areEqual (FLjava/lang/Float;)Z
+	public static fun areEqual (Ljava/lang/Double;D)Z
+	public static fun areEqual (Ljava/lang/Double;Ljava/lang/Double;)Z
+	public static fun areEqual (Ljava/lang/Float;F)Z
+	public static fun areEqual (Ljava/lang/Float;Ljava/lang/Float;)Z
 	public static fun areEqual (Ljava/lang/Object;Ljava/lang/Object;)Z
 	public static fun checkExpressionValueIsNotNull (Ljava/lang/Object;Ljava/lang/String;)V
 	public static fun checkFieldIsNotNull (Ljava/lang/Object;Ljava/lang/String;)V
@@ -1074,6 +1098,14 @@ public abstract interface class kotlin/reflect/KCallable : kotlin/reflect/KAnnot
 	public abstract fun isOpen ()Z
 }
 
+public final class kotlin/reflect/KCallable$DefaultImpls {
+	public static synthetic fun isAbstract$annotations ()V
+	public static synthetic fun isFinal$annotations ()V
+	public static synthetic fun isOpen$annotations ()V
+	public static synthetic fun typeParameters$annotations ()V
+	public static synthetic fun visibility$annotations ()V
+}
+
 public abstract interface class kotlin/reflect/KClass : kotlin/reflect/KAnnotatedElement, kotlin/reflect/KClassifier, kotlin/reflect/KDeclarationContainer {
 	public abstract fun equals (Ljava/lang/Object;)Z
 	public abstract fun getConstructors ()Ljava/util/Collection;
@@ -1096,6 +1128,19 @@ public abstract interface class kotlin/reflect/KClass : kotlin/reflect/KAnnotate
 	public abstract fun isSealed ()Z
 }
 
+public final class kotlin/reflect/KClass$DefaultImpls {
+	public static synthetic fun isAbstract$annotations ()V
+	public static synthetic fun isCompanion$annotations ()V
+	public static synthetic fun isData$annotations ()V
+	public static synthetic fun isFinal$annotations ()V
+	public static synthetic fun isInner$annotations ()V
+	public static synthetic fun isOpen$annotations ()V
+	public static synthetic fun isSealed$annotations ()V
+	public static synthetic fun supertypes$annotations ()V
+	public static synthetic fun typeParameters$annotations ()V
+	public static synthetic fun visibility$annotations ()V
+}
+
 public abstract interface class kotlin/reflect/KClassifier {
 }
 
@@ -1109,6 +1154,14 @@ public abstract interface class kotlin/reflect/KFunction : kotlin/Function, kotl
 	public abstract fun isInline ()Z
 	public abstract fun isOperator ()Z
 	public abstract fun isSuspend ()Z
+}
+
+public final class kotlin/reflect/KFunction$DefaultImpls {
+	public static synthetic fun isExternal$annotations ()V
+	public static synthetic fun isInfix$annotations ()V
+	public static synthetic fun isInline$annotations ()V
+	public static synthetic fun isOperator$annotations ()V
+	public static synthetic fun isSuspend$annotations ()V
 }
 
 public abstract interface class kotlin/reflect/KMutableProperty : kotlin/reflect/KProperty {
@@ -1151,6 +1204,10 @@ public abstract interface class kotlin/reflect/KParameter : kotlin/reflect/KAnno
 	public abstract fun isVararg ()Z
 }
 
+public final class kotlin/reflect/KParameter$DefaultImpls {
+	public static synthetic fun isVararg$annotations ()V
+}
+
 public final class kotlin/reflect/KParameter$Kind : java/lang/Enum {
 	public static final field EXTENSION_RECEIVER Lkotlin/reflect/KParameter$Kind;
 	public static final field INSTANCE Lkotlin/reflect/KParameter$Kind;
@@ -1167,6 +1224,11 @@ public abstract interface class kotlin/reflect/KProperty : kotlin/reflect/KCalla
 
 public abstract interface class kotlin/reflect/KProperty$Accessor {
 	public abstract fun getProperty ()Lkotlin/reflect/KProperty;
+}
+
+public final class kotlin/reflect/KProperty$DefaultImpls {
+	public static synthetic fun isConst$annotations ()V
+	public static synthetic fun isLateinit$annotations ()V
 }
 
 public abstract interface class kotlin/reflect/KProperty$Getter : kotlin/reflect/KFunction, kotlin/reflect/KProperty$Accessor {
@@ -1203,6 +1265,11 @@ public abstract interface class kotlin/reflect/KType {
 	public abstract fun getArguments ()Ljava/util/List;
 	public abstract fun getClassifier ()Lkotlin/reflect/KClassifier;
 	public abstract fun isMarkedNullable ()Z
+}
+
+public final class kotlin/reflect/KType$DefaultImpls {
+	public static synthetic fun arguments$annotations ()V
+	public static synthetic fun classifier$annotations ()V
 }
 
 public abstract interface class kotlin/reflect/KTypeParameter : kotlin/reflect/KClassifier {
@@ -1248,5 +1315,10 @@ public final class kotlin/reflect/KVisibility : java/lang/Enum {
 	public static final field PUBLIC Lkotlin/reflect/KVisibility;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/reflect/KVisibility;
 	public static fun values ()[Lkotlin/reflect/KVisibility;
+}
+
+public final class kotlin/text/TypeAliasesKt {
+	public static synthetic fun Appendable$annotations ()V
+	public static synthetic fun StringBuilder$annotations ()V
 }
 
