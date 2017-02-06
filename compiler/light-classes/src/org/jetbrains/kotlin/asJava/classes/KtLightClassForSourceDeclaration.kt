@@ -388,21 +388,15 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
         }
 
         fun getLightClassCachedValue(classOrObject: KtClassOrObject): CachedValue<WithFileStubAndExtraDiagnostics> {
-            val outermostClassOrObject = getOutermostClassOrObject(classOrObject)
-            var value = outermostClassOrObject.getUserData(JAVA_API_STUB)
+            var value =
+                    getOutermostClassOrObject(classOrObject).getUserData(JAVA_API_STUB) // stub computed for outer class can be used for inner/nested
+                    ?: classOrObject.getUserData (JAVA_API_STUB)
             if (value == null) {
                 value = CachedValuesManager.getManager(classOrObject.project).createCachedValue(
-                        LightClassDataProviderForClassOrObject(outermostClassOrObject), false)
-                value = outermostClassOrObject.putUserDataIfAbsent(JAVA_API_STUB, value)
+                        LightClassDataProviderForClassOrObject(classOrObject), false)
+                value = classOrObject.putUserDataIfAbsent(JAVA_API_STUB, value)
             }
             return value
-        }
-
-        private fun getOutermostClassOrObject(classOrObject: KtClassOrObject): KtClassOrObject {
-            val outermostClass = KtPsiUtil.getOutermostClassOrObject(classOrObject) ?:
-                throw IllegalStateException("Attempt to build a light class for a local class: " + classOrObject.text)
-
-            return outermostClass
         }
 
         private fun checkSuperTypeByFQName(classDescriptor: ClassDescriptor, qualifiedName: String, deep: Boolean): Boolean {
@@ -441,3 +435,11 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
     override val originKind: LightClassOriginKind
         get() = LightClassOriginKind.SOURCE
 }
+
+fun getOutermostClassOrObject(classOrObject: KtClassOrObject): KtClassOrObject {
+    val outermostClass = KtPsiUtil.getOutermostClassOrObject(classOrObject) ?:
+                         throw IllegalStateException("Attempt to build a light class for a local class: " + classOrObject.text)
+
+    return outermostClass
+}
+

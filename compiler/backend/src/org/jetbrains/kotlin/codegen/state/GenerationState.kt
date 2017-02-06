@@ -71,6 +71,7 @@ class GenerationState @JvmOverloads constructor(
         abstract fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean
         abstract fun shouldGeneratePackagePart(jetFile: KtFile): Boolean
         abstract fun shouldGenerateScript(script: KtScript): Boolean
+        open fun shouldGenerateClassMembers(processingClassOrObject: KtClassOrObject) = shouldGenerateClass(processingClassOrObject)
 
         companion object {
             @JvmField val GENERATE_ALL: GenerateClassFilter = object : GenerateClassFilter() {

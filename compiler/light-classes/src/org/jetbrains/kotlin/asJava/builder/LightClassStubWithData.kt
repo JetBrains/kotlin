@@ -55,11 +55,5 @@ data class InnerKotlinClassLightClassData(
 data class OutermostKotlinClassLightClassData(
         override val javaFileStub: PsiJavaFileStub,
         override val extraDiagnostics: Diagnostics,
-        override val classOrObject: KtClassOrObject,
-        val allInnerClasses: Map<KtClassOrObject, InnerKotlinClassLightClassData>
-): LightClassDataForKotlinClass, WithFileStubAndExtraDiagnostics {
-
-    fun dataForClass(cls: KtClassOrObject): LightClassDataForKotlinClass? =
-            if (cls == classOrObject) this else allInnerClasses[cls]
-
-}
+        override val classOrObject: KtClassOrObject
+): LightClassDataForKotlinClass, WithFileStubAndExtraDiagnostics

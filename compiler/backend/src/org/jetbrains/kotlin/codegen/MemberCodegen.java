@@ -127,7 +127,10 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
         generateBody();
 
-        generateSyntheticParts();
+        if (!(element instanceof KtClassOrObject) ||
+            state.getGenerateDeclaredClassFilter().shouldGenerateClassMembers((KtClassOrObject) element)) {
+            generateSyntheticParts();
+        }
 
         if (state.getClassBuilderMode().generateMetadata) {
             generateKotlinMetadataAnnotation();
