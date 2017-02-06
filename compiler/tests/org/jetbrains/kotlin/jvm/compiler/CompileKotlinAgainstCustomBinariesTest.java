@@ -39,11 +39,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.KotlinCompilerVersion;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
-import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver;
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -69,6 +67,7 @@ import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 import java.util.zip.ZipOutputStream;
 
+import static org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
 import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile;
 
@@ -284,20 +283,20 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
         File library;
         try {
-            DeserializedDescriptorResolver.Companion.setIS_PRE_RELEASE(true);
+            System.setProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY, "true");
             library = compileLibrary(libraryName);
         }
         finally {
-            DeserializedDescriptorResolver.Companion.setIS_PRE_RELEASE(KotlinCompilerVersion.IS_PRE_RELEASE);
+            System.clearProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY);
         }
 
         Pair<String, ExitCode> output;
         try {
-            DeserializedDescriptorResolver.Companion.setIS_PRE_RELEASE(false);
+            System.setProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY, "false");
             output = compileKotlin("source.kt", tmpdir, Arrays.asList(additionalOptions), library);
         }
         finally {
-            DeserializedDescriptorResolver.Companion.setIS_PRE_RELEASE(KotlinCompilerVersion.IS_PRE_RELEASE);
+            System.clearProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY);
         }
 
         KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));

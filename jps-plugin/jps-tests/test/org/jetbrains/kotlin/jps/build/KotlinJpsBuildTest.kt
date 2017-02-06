@@ -49,11 +49,11 @@ import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY
 import org.jetbrains.kotlin.incremental.CacheVersion
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.withIC
 import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTest.LibraryDependency.*
-import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver.Companion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.KotlinTestUtils

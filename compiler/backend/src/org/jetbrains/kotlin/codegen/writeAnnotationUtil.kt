@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
-import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
@@ -37,7 +37,7 @@ fun writeKotlinMetadata(
     av.visit(JvmAnnotationNames.BYTECODE_VERSION_FIELD_NAME, JvmBytecodeBinaryVersion.INSTANCE.toArray())
     av.visit(JvmAnnotationNames.KIND_FIELD_NAME, kind.id)
     var flags = extraFlags
-    if (DeserializedDescriptorResolver.IS_PRE_RELEASE && state.languageVersionSettings.languageVersion == LanguageVersion.LATEST) {
+    if (KotlinCompilerVersion.isPreRelease() && state.languageVersionSettings.languageVersion == LanguageVersion.LATEST) {
         flags = flags or JvmAnnotationNames.METADATA_PRE_RELEASE_FLAG
     }
     if (flags != 0) {

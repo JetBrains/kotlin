@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
-import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
-import org.jetbrains.kotlin.build.deserializeFromPlainText
-import org.jetbrains.kotlin.build.serializeToPlainText
 
 /**
  * If you want to add a new field, check its type is supported by [serializeToPlainText], [deserializeFromPlainText]
@@ -62,7 +59,7 @@ data class JvmBuildMetaInfo(
 }
 
 fun JvmBuildMetaInfo(args: CommonCompilerArguments): JvmBuildMetaInfo =
-        JvmBuildMetaInfo(isEAP = DeserializedDescriptorResolver.IS_PRE_RELEASE,
+        JvmBuildMetaInfo(isEAP = KotlinCompilerVersion.isPreRelease(),
                          compilerBuildVersion = KotlinCompilerVersion.VERSION,
                          languageVersionString = args.languageVersion ?: LanguageVersion.LATEST.versionString,
                          apiVersionString = args.apiVersion ?: ApiVersion.LATEST.versionString,
