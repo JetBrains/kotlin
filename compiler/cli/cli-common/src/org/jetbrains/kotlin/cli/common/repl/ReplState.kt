@@ -77,7 +77,9 @@ interface IReplStageState<T> {
 
     val lock: ReentrantReadWriteLock
 
-    fun <StateT : IReplStageState<*>> asState(): StateT = (this as? StateT) ?: throw IllegalArgumentException("$this is not an expected instance of IReplStageState")
+    fun <StateT : IReplStageState<*>> asState(target: Class<out StateT>): StateT =
+            if (target.isAssignableFrom(this::class.java)) this as StateT
+            else throw IllegalArgumentException("$this is not an expected instance of IReplStageState")
 }
 
 

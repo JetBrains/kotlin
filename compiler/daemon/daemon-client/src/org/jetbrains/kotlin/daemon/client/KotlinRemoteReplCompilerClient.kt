@@ -26,7 +26,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 
 // TODO: reduce number of ports used then SOCKET_ANY_FREE_PORT is passed (same problem with other calls)
 
-open class KotlinRemoteReplClient(
+open class KotlinRemoteReplCompilerClient(
         protected val compileService: CompileService,
         clientAliveFlagFile: File?,
         targetPlatform: CompileService.TargetPlatform,
@@ -68,8 +68,8 @@ open class KotlinRemoteReplClient(
             RemoteReplCompilerState(compileService.replCreateState(sessionId).get(), lock)
 
     override fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult =
-            compileService.replCheck(sessionId, state.asState<RemoteReplCompilerState>().replStateFacade.id, codeLine).get()
+            compileService.replCheck(sessionId, state.asState(RemoteReplCompilerState::class.java).replStateFacade.id, codeLine).get()
 
     override fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult =
-            compileService.replCompile(sessionId, state.asState<RemoteReplCompilerState>().replStateFacade.id, codeLine).get()
+            compileService.replCompile(sessionId, state.asState(RemoteReplCompilerState::class.java).replStateFacade.id, codeLine).get()
 }

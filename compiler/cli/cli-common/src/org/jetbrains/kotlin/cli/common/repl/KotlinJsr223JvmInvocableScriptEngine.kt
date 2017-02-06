@@ -29,10 +29,11 @@ import kotlin.reflect.full.safeCast
 @Suppress("unused") // used externally (kotlin.script.utils)
 interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
 
-    val replScriptEvaluator: ReplEvaluatorExposedInternalHistory
+    val state: IReplStageState<*> // The Invokable interface do not allow Context/Bindings substitution, so state is supplied via property
 
     private fun prioritizedHistory(receiverClass: KClass<*>?, receiverInstance: Any?): List<EvalClassWithInstanceAndLoader> {
-        return replScriptEvaluator.lastEvaluatedScripts.map { it.second }.filter { it.instance != null }.reversed().ensureNotEmpty("no script ").let { history ->
+        val evalState = state.asState(GenericReplEvaluatorState::class.java)
+        return evalState.history.map { it.item }.filter { it.instance != null }.reversed().ensureNotEmpty("no script ").let { history ->
             if (receiverInstance != null) {
                 val receiverKlass = receiverClass ?: receiverInstance.javaClass.kotlin
                 val receiverInHistory = history.find { it.instance == receiverInstance } ?:
@@ -94,7 +95,7 @@ interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
     }
 
     private fun <T : Any> proxyInterface(thiz: Any?, clasz: Class<T>?): T? {
-        replScriptEvaluator.lastEvaluatedScripts.ensureNotEmpty("no script")
+        if (state.history.size == 0) throw IllegalStateException("no script")
         val priority = prioritizedHistory(thiz?.javaClass?.kotlin, thiz)
 
         if (clasz == null) throw IllegalArgumentException("class object cannot be null")

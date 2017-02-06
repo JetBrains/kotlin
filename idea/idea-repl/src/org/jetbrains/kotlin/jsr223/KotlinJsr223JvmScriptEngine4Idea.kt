@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
-import org.jetbrains.kotlin.daemon.client.KotlinRemoteReplClient
+import org.jetbrains.kotlin.daemon.client.KotlinRemoteReplCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
@@ -59,14 +59,14 @@ class KotlinJsr223JvmScriptEngine4Idea(
 
     override val replCompiler: ReplCompiler by lazy {
         daemon.let {
-            KotlinRemoteReplClient(it,
-                                   makeAutodeletingFlagFile("idea-jsr223-repl-session"),
-                                   CompileService.TargetPlatform.JVM,
-                                   emptyArray(),
-                                   messageCollector,
-                                   templateClasspath,
-                                   templateClassName,
-                                   ScriptArgsWithTypes(emptyArray(), emptyArray()))
+            KotlinRemoteReplCompilerClient(it,
+                                           makeAutodeletingFlagFile("idea-jsr223-repl-session"),
+                                           CompileService.TargetPlatform.JVM,
+                                           emptyArray(),
+                                           messageCollector,
+                                           templateClasspath,
+                                           templateClassName,
+                                           ScriptArgsWithTypes(emptyArray(), emptyArray()))
         }
     }
 

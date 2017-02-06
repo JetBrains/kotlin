@@ -47,7 +47,7 @@ open class GenericReplCompiler(disposable: Disposable,
 
     override fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult {
         state.lock.write {
-            val compilerState = state.asState<GenericReplCompilerState>()
+            val compilerState = state.asState(GenericReplCompilerState::class.java)
 
             val currentGeneration = compilerState.generation.get()
 

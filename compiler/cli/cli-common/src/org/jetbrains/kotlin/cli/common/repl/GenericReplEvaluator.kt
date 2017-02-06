@@ -47,7 +47,7 @@ open class GenericReplEvaluator(val baseClasspath: Iterable<File>,
                       scriptArgs: ScriptArgsWithTypes?,
                       invokeWrapper: InvokeWrapper?): ReplEvalResult {
         state.lock.write {
-            val evalState = state.asState<GenericReplEvaluatorState>()
+            val evalState = state.asState(GenericReplEvaluatorState::class.java)
 //            val verifyHistory = compileResult.state.dropLast(1)
 //            val defaultHistoryActor = HistoryActions(
 //                    effectiveHistory = evalState.history.map { it.item },

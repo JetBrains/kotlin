@@ -32,7 +32,7 @@ class GenericReplCompilingEvaluator(val compiler: ReplCompiler,
 
     override fun compileAndEval(state: IReplStageState<*>, codeLine: ReplCodeLine, scriptArgs: ScriptArgsWithTypes?, invokeWrapper: InvokeWrapper?): ReplEvalResult {
         return state.lock.write {
-            val aggregatedState = state.asState<AggregatedReplStageState<*, *>>()
+            val aggregatedState = state.asState(AggregatedReplStageState::class.java)
             val compiled = compiler.compile(state, codeLine)
             when (compiled) {
                 is ReplCompileResult.Error -> ReplEvalResult.Error.CompileTime(compiled.message, compiled.location)

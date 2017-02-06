@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.junit.Test
 import java.io.File
 import java.net.URLClassLoader
+import java.util.concurrent.locks.ReentrantReadWriteLock
 
 class GenericReplTest : TestCase() {
     @Test
@@ -44,37 +45,39 @@ class GenericReplTest : TestCase() {
                             listOf(File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-runtime.jar")),
                             "kotlin.script.templates.standard.ScriptTemplateWithArgs")
 
-        val res1 = repl.replCompiler?.check(ReplCodeLine(0, "val x ="))
+        val state = repl.createState()
+
+        val res1 = repl.replCompiler.check(state, ReplCodeLine(0, "val x ="))
         TestCase.assertTrue("Unexpected check results: $res1", res1 is ReplCheckResult.Incomplete)
 
         val codeLine0 = ReplCodeLine(0, "val l1 = listOf(1 + 2)\nl1.first()")
-        val res2 = repl.replCompiler?.compile(codeLine0, emptyList())
+        val res2 = repl.replCompiler.compile(state, codeLine0)
         val res2c = res2 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res2", res2c)
 
-        val res21 = repl.compiledEvaluator.eval(res2c!!)
+        val res21 = repl.compiledEvaluator.eval(state, res2c!!)
         val res21e = res21 as? ReplEvalResult.ValueResult
         TestCase.assertNotNull("Unexpected eval result: $res21", res21e)
         TestCase.assertEquals(3, res21e!!.value)
 
         val codeLine1 = ReplCodeLine(1, "val x = 5")
-        val res3 = repl.replCompiler?.compile(codeLine1, listOf(codeLine0))
+        val res3 = repl.replCompiler.compile(state, codeLine1)
         val res3c = res3 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res3", res3c)
 
-        val res31 = repl.compiledEvaluator.eval(res3c!!)
+        val res31 = repl.compiledEvaluator.eval(state, res3c!!)
         val res31e = res31 as? ReplEvalResult.UnitResult
         TestCase.assertNotNull("Unexpected eval result: $res31", res31e)
 
         val codeLine2 = ReplCodeLine(2, "x + 2")
-        val res4x = repl.replCompiler?.compile(codeLine2, listOf(codeLine1))
+        val res4x = repl.replCompiler.compile(state, codeLine2)
         TestCase.assertNotNull("Unexpected compile result: $res4x", res4x as? ReplCompileResult.HistoryMismatch)
 
-        val res4 = repl.replCompiler?.compile(codeLine2, listOf(codeLine0, codeLine1))
+        val res4 = repl.replCompiler.compile(state, codeLine2)
         val res4c = res4 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res4", res4c)
 
-        val res41 = repl.compiledEvaluator.eval(res4c!!)
+        val res41 = repl.compiledEvaluator.eval(state, res4c!!)
         val res41e = res41 as? ReplEvalResult.ValueResult
         TestCase.assertNotNull("Unexpected eval result: $res41", res41e)
         TestCase.assertEquals(7, res41e!!.value)
@@ -108,22 +111,24 @@ class GenericReplTest : TestCase() {
                             listOf(File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-runtime.jar")),
                             "kotlin.script.templates.standard.ScriptTemplateWithArgs")
 
+        val state = repl.createState()
+
         val codeLine1 = ReplCodeLine(0, "package mypackage\n\nval x = 1\nx+2")
-        val res1 = repl.replCompiler?.compile(codeLine1, emptyList())
+        val res1 = repl.replCompiler.compile(state, codeLine1)
         val res1c = res1 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res1", res1c)
 
-        val res11 = repl.compiledEvaluator.eval(res1c!!)
+        val res11 = repl.compiledEvaluator.eval(state, res1c!!)
         val res11e = res11 as? ReplEvalResult.ValueResult
         TestCase.assertNotNull("Unexpected eval result: $res11", res11e)
         TestCase.assertEquals(3, res11e!!.value)
         
         val codeLine2 = ReplCodeLine(1, "x+4")
-        val res2 = repl.replCompiler?.compile(codeLine2, listOf(codeLine1))
+        val res2 = repl.replCompiler.compile(state, codeLine2)
         val res2c = res2 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res2", res2c)
 
-        val res21 = repl.compiledEvaluator.eval(res2c!!)
+        val res21 = repl.compiledEvaluator.eval(state, res2c!!)
         val res21e = res21 as? ReplEvalResult.ValueResult
         TestCase.assertNotNull("Unexpected eval result: $res21", res21e)
         TestCase.assertEquals(5, res21e!!.value)
@@ -151,12 +156,15 @@ internal class TestRepl(
 
     private val scriptDef = makeScriptDefinition(templateClasspath, templateClassName)
 
-    val replCompiler : GenericReplCompiler? by lazy {
+    val replCompiler : GenericReplCompiler by lazy {
         GenericReplCompiler(disposable, scriptDef, configuration, PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false))
     }
 
     val compiledEvaluator: ReplEvaluator by lazy {
         GenericReplEvaluator(configuration.jvmClasspathRoots, null, emptyScriptArgs, ReplRepeatingMode.NONE)
     }
+
+    fun createState(lock: ReentrantReadWriteLock = ReentrantReadWriteLock()): IReplStageState<*> =
+            AggregatedReplStageState(replCompiler.createState(lock), compiledEvaluator.createState(lock), lock)
 }
 
