@@ -25,8 +25,6 @@ import com.intellij.util.Function;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
@@ -140,11 +138,15 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         configuration.put(CommonConfigurationKeys.MODULE_NAME, FileUtil.getNameWithoutExtension(outputFile));
 
         JsConfig config = new LibrarySourcesConfig(project, configuration);
-        if (config.checkLibFilesAndReportErrors(new Function1<String, Unit>() {
+        if (config.checkLibFilesAndReportErrors(new JsConfig.Reporter() {
             @Override
-            public Unit invoke(String message) {
+            public void error(@NotNull String message) {
                 messageCollector.report(CompilerMessageSeverity.ERROR, message, CompilerMessageLocation.NO_LOCATION);
-                return Unit.INSTANCE;
+            }
+
+            @Override
+            public void warning(@NotNull String message) {
+                messageCollector.report(CompilerMessageSeverity.STRONG_WARNING, message, CompilerMessageLocation.NO_LOCATION);
             }
         })) {
             return COMPILATION_ERROR;
