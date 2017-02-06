@@ -146,8 +146,8 @@ public class LibrarySourcesConfig extends JsConfig {
             else {
                 List<KotlinJavascriptMetadata> metadataList = KotlinJavascriptMetadataUtils.loadMetadata(filePath);
                 if (metadataList.isEmpty()) {
-                    report.error("'" + path + "' is not a valid Kotlin Javascript library");
-                    return true;
+                    report.warning("'" + path + "' is not a valid Kotlin Javascript library");
+                    continue;
                 }
 
                 for (KotlinJavascriptMetadata metadata : metadataList) {

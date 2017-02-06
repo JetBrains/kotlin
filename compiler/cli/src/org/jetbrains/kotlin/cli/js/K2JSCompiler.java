@@ -146,7 +146,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
             @Override
             public void warning(@NotNull String message) {
-                messageCollector.report(CompilerMessageSeverity.WARNING, message, CompilerMessageLocation.NO_LOCATION);
+                messageCollector.report(CompilerMessageSeverity.STRONG_WARNING, message, CompilerMessageLocation.NO_LOCATION);
             }
         })) {
             return COMPILATION_ERROR;
