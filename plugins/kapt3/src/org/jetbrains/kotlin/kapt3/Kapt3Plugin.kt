@@ -44,8 +44,11 @@ import org.jetbrains.kotlin.kapt3.util.KaptLogger
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
+import java.io.ByteArrayInputStream
 import java.io.File
+import java.io.ObjectInputStream
 import java.util.*
+import javax.xml.bind.DatatypeConverter
 
 object Kapt3ConfigurationKeys {
     val SOURCE_OUTPUT_DIR: CompilerConfigurationKey<String> =
@@ -63,8 +66,8 @@ object Kapt3ConfigurationKeys {
     val ANNOTATION_PROCESSOR_CLASSPATH: CompilerConfigurationKey<List<String>> =
             CompilerConfigurationKey.create<List<String>>("annotation processor classpath")
 
-    val APT_OPTIONS: CompilerConfigurationKey<List<String>> =
-            CompilerConfigurationKey.create<List<String>>("annotation processing options")
+    val APT_OPTIONS: CompilerConfigurationKey<String> =
+            CompilerConfigurationKey.create<String>("annotation processing options")
 
     val VERBOSE_MODE: CompilerConfigurationKey<String> =
             CompilerConfigurationKey.create<String>("verbose mode")
@@ -100,8 +103,8 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
                           required = false, allowMultipleOccurrences = true)
 
         val APT_OPTIONS_OPTION: CliOption =
-                CliOption("apoption", "<key>:<value>", "Annotation processor option",
-                          required = false, allowMultipleOccurrences = true)
+                CliOption("apoptions", "options map", "Encoded annotation processor options",
+                          required = false, allowMultipleOccurrences = false)
 
         val VERBOSE_MODE_OPTION: CliOption =
                 CliOption("verbose", "true | false", "Enable verbose output", required = false)
@@ -132,7 +135,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
             ANNOTATION_PROCESSOR_CLASSPATH_OPTION -> configuration.appendList(ANNOTATION_PROCESSOR_CLASSPATH, value)
-            APT_OPTIONS_OPTION -> configuration.appendList(APT_OPTIONS, value)
+            APT_OPTIONS_OPTION -> configuration.put(Kapt3ConfigurationKeys.APT_OPTIONS, value)
             SOURCE_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.SOURCE_OUTPUT_DIR, value)
             CLASS_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.CLASS_OUTPUT_DIR, value)
             STUBS_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.STUBS_OUTPUT_DIR, value)
@@ -147,6 +150,24 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
 }
 
 class Kapt3ComponentRegistrar : ComponentRegistrar {
+    fun decodeAnnotationProcessingOptions(options: String): Map<String, String> {
+        val map = LinkedHashMap<String, String>()
+
+        val decodedBytes = DatatypeConverter.parseBase64Binary(options)
+        val bis = ByteArrayInputStream(decodedBytes)
+        val ois = ObjectInputStream(bis)
+
+        val n = ois.readInt()
+
+        repeat(n) {
+            val k = ois.readUTF()
+            val v = ois.readUTF()
+            map[k] = v
+        }
+
+        return map
+    }
+
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val isAptOnly = configuration.get(Kapt3ConfigurationKeys.APT_ONLY) == "true"
         val isVerbose = configuration.get(Kapt3ConfigurationKeys.VERBOSE_MODE) == "true"
@@ -176,11 +197,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
             return
         }
 
-        val apOptions = (configuration.get(APT_OPTIONS) ?: listOf())
-                .map { it.split(':', limit = 2) }
-                .filter { it.isNotEmpty() }
-                .map { it[0] to it.getOrElse(1) { "" } }
-                .toMap()
+        val apOptions = configuration.get(APT_OPTIONS)?.let { decodeAnnotationProcessingOptions(it) } ?: emptyMap()
 
         sourcesOutputDir.mkdirs()
 

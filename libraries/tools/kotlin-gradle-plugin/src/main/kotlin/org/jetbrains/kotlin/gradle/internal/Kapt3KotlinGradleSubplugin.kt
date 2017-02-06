@@ -29,8 +29,11 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.SyncOutputTask
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.ObjectOutputStream
+import javax.xml.bind.DatatypeConverter
+import javax.xml.bind.DatatypeConverter.printBase64Binary
 
 // apply plugin: 'kotlin-kapt'
 class Kapt3GradleSubplugin : Plugin<Project> {
@@ -171,13 +174,25 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         val apOptions = kaptExtension.getAdditionalArguments(project, variantData, androidPlugin) + androidOptions
 
-        for ((key, value) in apOptions) {
-            pluginOptions += SubpluginOption("apoption", "$key:$value")
-        }
+        SubpluginOption("apoptions", encodeAnnotationProcessingOptions(apOptions))
 
         addMiscOptions(pluginOptions)
 
         return pluginOptions
+    }
+
+    fun encodeAnnotationProcessingOptions(options: Map<String, String>): String {
+        val os = ByteArrayOutputStream()
+        val oos = ObjectOutputStream(os)
+
+        oos.writeInt(options.size)
+        for ((k, v) in options.entries) {
+            oos.writeUTF(k)
+            oos.writeUTF(v)
+        }
+
+        oos.flush()
+        return printBase64Binary(os.toByteArray())
     }
 
     private fun Kapt3SubpluginContext.addMiscOptions(pluginOptions: MutableList<SubpluginOption>) {
