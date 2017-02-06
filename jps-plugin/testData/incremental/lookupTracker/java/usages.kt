@@ -1,6 +1,6 @@
 package foo
 
-import bar./*p:bar*/C
+/*p:bar(C)*/import bar.C
 import baz.*
 
 /*p:foo*/fun usages() {
@@ -11,16 +11,16 @@ import baz.*
     /*p:bar(C)*/c./*c:bar.C*/func()
     /*p:bar(C) c:bar.C(B)*/c./*c:bar.C*/B()
 
-    /*p:foo p:baz p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm p:kotlin(String)*/C./*c:bar.C*/sfield
-    /*p:foo p:baz p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm p:kotlin(String)*/C./*c:bar.C*/sfield = /*p:kotlin(String)*/"new"
-    /*p:foo p:baz p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm*/C./*c:bar.C*/sfunc()
-    /*p:foo p:baz p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm c:bar.C(S)*/C./*c:bar.C*/S()
+    /*p:bar p:foo p:baz p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm p:kotlin(String)*/C./*c:bar.C*/sfield
+    /*p:bar p:foo p:baz p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm p:kotlin(String)*/C./*c:bar.C*/sfield = /*p:kotlin(String)*/"new"
+    /*p:bar p:foo p:baz p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm*/C./*c:bar.C*/sfunc()
+    /*p:bar p:foo p:baz p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm c:bar.C(S)*/C./*c:bar.C*/S()
 
     // inherited from I
     /*p:bar(C)*/c./*c:bar.C*/ifunc()
-    /*p:foo p:baz p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm p:kotlin(String)*/C./*c:bar.C*/isfield
+    /*p:bar p:foo p:baz p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm p:kotlin(String)*/C./*c:bar.C*/isfield
     // expected error: Unresolved reference: IS
-    /*p:foo p:baz p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm*/C./*c:bar.C*/IS()
+    /*p:bar p:foo p:baz p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:java.lang p:kotlin.jvm*/C./*c:bar.C*/IS()
 
 
     val i: /*p:foo*/I = /*p:bar(C)*/c
@@ -35,10 +35,10 @@ import baz.*
 }
 
 /*p:foo*/fun classifiers(
-    c: C,
-    b: C./*c:bar.C*/B,
-    s: C./*c:bar.C*/S,
-    cis: C./*c:bar.C*/IS,
+    c: /*p:bar*/C,
+    b: /*p:bar*/C./*c:bar.C*/B,
+    s: /*p:bar*/C./*c:bar.C*/S,
+    cis: /*p:bar*/C./*c:bar.C*/IS,
     i: /*p:foo*/I,
     iis: /*p:foo*/I./*c:foo.I*/IS,
     e: /*p:foo p:baz*/E

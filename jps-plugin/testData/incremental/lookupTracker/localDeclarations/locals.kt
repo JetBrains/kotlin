@@ -2,16 +2,16 @@ package local.declarations
 
 import bar.*
 
-/*p:local.declarations*/fun f(p: /*p:local.declarations*/Any) /*p:kotlin(Int)*/{
+/*p:local.declarations*/fun f(p: /*p:local.declarations p:kotlin*/Any) /*p:kotlin(Int)*/{
     /*p:kotlin(Any) p:kotlin(String)*/p.toString()
 
     val a = /*p:kotlin(Int)*/1
     val b = /*p:kotlin(Int)*/a
     fun localFun() = /*p:kotlin(Int)*/b
-    fun /*p:local.declarations*/Int.localExtFun() = /*p:kotlin(Int)*/localFun()
+    fun /*p:local.declarations p:kotlin*/Int.localExtFun() = /*p:kotlin(Int)*/localFun()
 
     abstract class LocalI {
-        abstract var a: /*p:local.declarations*/Int
+        abstract var a: /*p:local.declarations p:kotlin*/Int
         abstract fun foo()
     }
 

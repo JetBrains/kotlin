@@ -1,0 +1,47 @@
+package
+
+package com {
+
+    package com.winterbe {
+
+        package com.winterbe.domain {
+            public /*synthesized*/ fun IEntity(/*0*/ function: () -> com.winterbe.observer.ObserverSupport<(raw) com.winterbe.domain.IEntity>!): com.winterbe.domain.IEntity
+
+            public interface IEntity {
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public abstract fun getObserverSupport(): com.winterbe.observer.ObserverSupport<(raw) com.winterbe.domain.IEntity>!
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+
+        package com.winterbe.observer {
+
+            public abstract class Observer : kotlin.collections.List<com.winterbe.domain.IEntity> {
+                public constructor Observer()
+                public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
+                public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ element: com.winterbe.domain.IEntity): kotlin.Boolean
+                public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<com.winterbe.domain.IEntity>): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ index: kotlin.Int): com.winterbe.domain.IEntity
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public abstract override /*1*/ /*fake_override*/ fun indexOf(/*0*/ element: com.winterbe.domain.IEntity): kotlin.Int
+                public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+                public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.collections.Iterator<com.winterbe.domain.IEntity>
+                public abstract override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ element: com.winterbe.domain.IEntity): kotlin.Int
+                public abstract override /*1*/ /*fake_override*/ fun listIterator(): kotlin.collections.ListIterator<com.winterbe.domain.IEntity>
+                public abstract override /*1*/ /*fake_override*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.collections.ListIterator<com.winterbe.domain.IEntity>
+                public abstract override /*1*/ /*fake_override*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.collections.List<com.winterbe.domain.IEntity>
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            public final class ObserverSupport</*0*/ T : com.winterbe.domain.IEntity> {
+                public constructor ObserverSupport</*0*/ T : com.winterbe.domain.IEntity>(/*0*/ observers: kotlin.collections.List<com.winterbe.observer.Observer>)
+                private final val observers: kotlin.collections.List<com.winterbe.observer.Observer>
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+    }
+}

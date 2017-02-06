@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.isWithoutValueArguments
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
 class QualifiedExpressionResolver {
@@ -107,7 +106,7 @@ class QualifiedExpressionResolver {
         val lastPart = qualifierPartList.last()
         val classifier = when (qualifier) {
             is PackageViewDescriptor -> qualifier.memberScope.getContributedClassifier(lastPart.name, lastPart.location)
-            is ClassDescriptor ->  {
+            is ClassDescriptor -> {
                 val descriptor = qualifier.unsubstitutedInnerClassesScope.getContributedClassifier(lastPart.name, lastPart.location)
                 checkNotEnumEntry(descriptor, trace, lastPart.expression)
                 descriptor
@@ -207,7 +206,7 @@ class QualifiedExpressionResolver {
             path: List<QualifierPart>,
             lastPart: QualifierPart,
             packageFragmentForVisibilityCheck: PackageFragmentDescriptor?
-    ): SingleImportScope? {
+    ): ImportingScope? {
         val aliasName = KtPsiUtil.getAliasName(importDirective)
         if (aliasName == null) {
             // import kotlin.
@@ -220,58 +219,16 @@ class QualifiedExpressionResolver {
                 packageFragmentForVisibilityCheck, scopeForFirstPart = null, position = QualifierPosition.IMPORT
         ) ?: return null
 
-        val candidates = collectCandidateDescriptors(lastPart, packageOrClassDescriptor)
-        if (candidates.isNotEmpty()) {
-            storeResult(trace, lastPart.expression, candidates, packageFragmentForVisibilityCheck, position = QualifierPosition.IMPORT, isQualifier = false)
-        }
-        else {
-            tryResolveDescriptorsWhichCannotBeImported(trace, moduleDescriptor, packageOrClassDescriptor, lastPart)
-            return null
-        }
+        return LazyExplicitImportScope(packageOrClassDescriptor, packageFragmentForVisibilityCheck, lastPart.name, aliasName) {
+            candidates ->
 
-        val importedDescriptors = candidates.filter { isVisible(it, packageFragmentForVisibilityCheck, position = QualifierPosition.IMPORT) }.
-                check { it.isNotEmpty() } ?: candidates
-
-        return SingleImportScope(aliasName, importedDescriptors)
-    }
-
-    private fun collectCandidateDescriptors(lastPart: QualifierPart, packageOrClassDescriptor: DeclarationDescriptor): SmartList<DeclarationDescriptor> {
-        val descriptors = SmartList<DeclarationDescriptor>()
-
-        val lastName = lastPart.name
-        val location = lastPart.location
-        when (packageOrClassDescriptor) {
-            is PackageViewDescriptor -> {
-                val packageScope = packageOrClassDescriptor.memberScope
-                descriptors.addIfNotNull(packageScope.getContributedClassifier(lastName, location))
-                descriptors.addAll(packageScope.getContributedVariables(lastName, location))
-                descriptors.addAll(packageScope.getContributedFunctions(lastName, location))
+            if (candidates.isNotEmpty()) {
+                storeResult(trace, lastPart.expression, candidates, packageFragmentForVisibilityCheck, position = QualifierPosition.IMPORT, isQualifier = false)
             }
-
-            is ClassDescriptor -> {
-                descriptors.addIfNotNull(
-                        packageOrClassDescriptor.unsubstitutedInnerClassesScope.getContributedClassifier(lastName, location)
-                )
-                val staticClassScope = packageOrClassDescriptor.staticScope
-                descriptors.addAll(staticClassScope.getContributedFunctions(lastName, location))
-                descriptors.addAll(staticClassScope.getContributedVariables(lastName, location))
-
-                if (packageOrClassDescriptor.kind == ClassKind.OBJECT) {
-                    descriptors.addAll(
-                            packageOrClassDescriptor.unsubstitutedMemberScope.getContributedFunctions(lastName, location)
-                                    .map { it.asImportedFromObject() }
-                    )
-                    descriptors.addAll(
-                            packageOrClassDescriptor.unsubstitutedMemberScope.getContributedVariables(lastName, location)
-                                    .filterIsInstance<PropertyDescriptor>()
-                                    .map { it.asImportedFromObject() }
-                    )
-                }
+            else {
+                tryResolveDescriptorsWhichCannotBeImported(trace, moduleDescriptor, packageOrClassDescriptor, lastPart)
             }
-
-            else -> throw IllegalStateException("Should be class or package: $packageOrClassDescriptor")
         }
-        return descriptors
     }
 
     private fun tryResolveDescriptorsWhichCannotBeImported(
@@ -344,9 +301,6 @@ class QualifiedExpressionResolver {
         val location = KotlinLookupLocation(expression)
     }
 
-    private enum class QualifierPosition {
-        PACKAGE_HEADER, IMPORT, TYPE, EXPRESSION
-    }
 
     private fun resolveToPackageOrClass(
             path: List<QualifierPart>,
@@ -403,7 +357,7 @@ class QualifiedExpressionResolver {
                     moduleDescriptor.quickResolveToPackage(path, trace, position)
 
         var currentDescriptor: DeclarationDescriptor? = prefixDescriptor
-        for (qualifierPartIndex in nextIndexAfterPrefix .. path.size - 1) {
+        for (qualifierPartIndex in nextIndexAfterPrefix..path.size - 1) {
             val qualifierPart = path[qualifierPartIndex]
 
             val nextPackageOrClassDescriptor =
@@ -499,7 +453,7 @@ class QualifiedExpressionResolver {
         )
 
         if (result == null) return QualifiedExpressionResolveResult.UNRESOLVED
-        return when(index) {
+        return when (index) {
             path.size -> QualifiedExpressionResolveResult(result, null)
             path.size - 1 -> QualifiedExpressionResolveResult(result, path[index].name)
             else -> QualifiedExpressionResolveResult.UNRESOLVED
@@ -640,12 +594,12 @@ class QualifiedExpressionResolver {
 
         if (descriptor is DeclarationDescriptorWithVisibility) {
             val fromToCheck =
-                if (shouldBeVisibleFrom is PackageFragmentDescriptor && shouldBeVisibleFrom.source == SourceElement.NO_SOURCE && referenceExpression.containingFile !is DummyHolder) {
-                    PackageFragmentWithCustomSource(shouldBeVisibleFrom, KotlinSourceElement(referenceExpression.getContainingKtFile()))
-                }
-                else {
-                    shouldBeVisibleFrom
-                }
+                    if (shouldBeVisibleFrom is PackageFragmentDescriptor && shouldBeVisibleFrom.source == SourceElement.NO_SOURCE && referenceExpression.containingFile !is DummyHolder) {
+                        PackageFragmentWithCustomSource(shouldBeVisibleFrom, KotlinSourceElement(referenceExpression.getContainingKtFile()))
+                    }
+                    else {
+                        shouldBeVisibleFrom
+                    }
             if (!isVisible(descriptor, fromToCheck, position)) {
                 trace.report(Errors.INVISIBLE_REFERENCE.on(referenceExpression, descriptor, descriptor.visibility, descriptor))
             }
@@ -671,21 +625,25 @@ class QualifiedExpressionResolver {
 
         return qualifier
     }
+}
 
-    private fun isVisible(
-            descriptor: DeclarationDescriptor,
-            shouldBeVisibleFrom: DeclarationDescriptor?,
-            position: QualifierPosition
-    ): Boolean {
-        if (descriptor !is DeclarationDescriptorWithVisibility || shouldBeVisibleFrom == null) return true
+internal fun isVisible(
+        descriptor: DeclarationDescriptor,
+        shouldBeVisibleFrom: DeclarationDescriptor?,
+        position: QualifierPosition
+): Boolean {
+    if (descriptor !is DeclarationDescriptorWithVisibility || shouldBeVisibleFrom == null) return true
 
-        val visibility = descriptor.visibility
-        if (position == QualifierPosition.IMPORT) {
-            if (Visibilities.isPrivate(visibility)) return false
-            if (!visibility.mustCheckInImports()) return true
-        }
-        return Visibilities.isVisibleIgnoringReceiver(descriptor, shouldBeVisibleFrom)
+    val visibility = descriptor.visibility
+    if (position == QualifierPosition.IMPORT) {
+        if (Visibilities.isPrivate(visibility)) return false
+        if (!visibility.mustCheckInImports()) return true
     }
+    return Visibilities.isVisibleIgnoringReceiver(descriptor, shouldBeVisibleFrom)
+}
+
+internal enum class QualifierPosition {
+    PACKAGE_HEADER, IMPORT, TYPE, EXPRESSION
 }
 
 /*

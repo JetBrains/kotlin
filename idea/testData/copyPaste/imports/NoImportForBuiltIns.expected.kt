@@ -1,7 +1,7 @@
 // ERROR: Cannot access 'd': it is private in file
+// ERROR: Cannot access 'b': it is private in file
+// ERROR: Cannot access 'b': it is private in file
 // ERROR: Cannot access 'd': it is private in file
-// ERROR: Cannot access 'b': it is private in file
-// ERROR: Cannot access 'b': it is private in file
 package to
 
 import a.b

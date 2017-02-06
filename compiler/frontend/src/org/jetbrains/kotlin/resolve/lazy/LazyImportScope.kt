@@ -88,13 +88,20 @@ class LazyImportResolver(
 
         qualifiedExpressionResolver.processImportReference(
                 directive, moduleDescriptor, traceForImportResolve, excludedImportNames, packageFragment
-        )?.apply {
-            if (!directive.isAllUnder) {
-                PlatformClassesMappedToKotlinChecker.checkPlatformClassesMappedToKotlin(
-                        platformToKotlinClassMap, traceForImportResolve, directive, getContributedDescriptors()
-                )
-            }
+        )
+    }
+
+    private val forceResolveImportDirective = storageManager.createMemoizedFunction {
+        directive: KtImportDirective ->
+        val scope = importedScopesProvider(directive)
+        if (scope is LazyExplicitImportScope) {
+            val allDescriptors = scope.storeReferencesToDescriptors()
+            PlatformClassesMappedToKotlinChecker.checkPlatformClassesMappedToKotlin(
+                    platformToKotlinClassMap, traceForImportResolve, directive, allDescriptors
+            )
         }
+
+        Unit
     }
 
     override fun forceResolveAllImports() {
@@ -140,7 +147,7 @@ class LazyImportResolver(
     }
 
     override fun forceResolveImport(importDirective: KtImportDirective) {
-        getImportScope(importDirective)
+        forceResolveImportDirective(importDirective)
     }
 
     fun <D : DeclarationDescriptor> selectSingleFromImports(

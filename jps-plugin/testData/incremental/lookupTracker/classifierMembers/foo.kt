@@ -6,10 +6,10 @@ import bar.*
     val a = /*p:kotlin(Int)*/1
     var b = /*p:kotlin(String)*/""
 
-    val c: /*c:foo.A c:foo.A.Companion p:foo*/String
+    val c: /*c:foo.A c:foo.A.Companion p:foo p:kotlin*/String
         get() = /*c:foo.A p:kotlin(String)*/b
 
-    var d: /*c:foo.A c:foo.A.Companion p:foo*/String = /*p:kotlin(String)*/"ddd"
+    var d: /*c:foo.A c:foo.A.Companion p:foo p:kotlin*/String = /*p:kotlin(String)*/"ddd"
         get() = /*p:kotlin(String)*/field
         set(v) { /*p:kotlin(String)*/field = /*p:kotlin(String)*/v }
 
@@ -27,7 +27,7 @@ import bar.*
         val a = /*p:kotlin(Int)*/1
 
         companion object CO {
-            fun bar(a: /*c:foo.A.B.CO c:foo.A.B c:foo.A c:foo.A.Companion p:foo*/Int) {}
+            fun bar(a: /*c:foo.A.B.CO c:foo.A.B c:foo.A c:foo.A.Companion p:foo p:kotlin*/Int) {}
         }
     }
 
@@ -44,7 +44,7 @@ import bar.*
 }
 
 /*p:foo*/interface I {
-    var a: /*c:foo.I p:foo*/Int
+    var a: /*c:foo.I p:foo p:kotlin*/Int
     fun foo()
 
     class NI

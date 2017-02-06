@@ -1,6 +1,6 @@
 package foo.bar
 
-/*p:foo.bar*/fun testOperators(a: /*p:foo.bar*/A, b: /*p:foo.bar*/Int) {
+/*p:foo.bar*/fun testOperators(a: /*p:foo.bar*/A, b: /*p:foo.bar p:kotlin*/Int) {
     var d = /*p:foo.bar(A)*/a
 
     /*p:foo.bar(A)*/d/*c:foo.bar.A(inc)*/++

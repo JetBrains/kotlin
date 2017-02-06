@@ -16129,6 +16129,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt16086.kt")
+            public void testKt16086() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/kt16086.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt16086_2.kt")
+            public void testKt16086_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/kt16086_2.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt1639-JFrame.kt")
             public void testKt1639_JFrame() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/kt1639-JFrame.kt");
