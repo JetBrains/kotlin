@@ -3611,6 +3611,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("lateinit.kt")
+        public void testLateinit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/initialize/lateinit.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("propertyInitializationOrder.kt")
         public void testPropertyInitializationOrder() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/initialize/propertyInitializationOrder.kt");
