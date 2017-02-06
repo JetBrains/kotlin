@@ -58,14 +58,14 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.NESTED_JS_MODULE_PROHIBITED, "@JsModule and @JsNonModule can't appear on here since the file is already " +
                                                   "marked by either @JsModule or @JsNonModule")
         put(ErrorsJs.CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM,
-            "Can't access {0} marked with @JsModule annotation from non-modular project", Renderers.DECLARATION_NAME_WITH_KIND)
+            "Can''t access {0} marked with @JsModule annotation from non-modular project", Renderers.DECLARATION_NAME_WITH_KIND)
         put(ErrorsJs.CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM,
-            "Can't access {0} marked with @JsNonModule annotation from modular project", Renderers.DECLARATION_NAME_WITH_KIND)
+            "Can''t access {0} marked with @JsNonModule annotation from modular project", Renderers.DECLARATION_NAME_WITH_KIND)
         put(ErrorsJs.CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE, "When accessing module declarations from UMD, " +
                                                                         "they must be marked by both @JsModule and @JsNonModule")
 
         put(ErrorsJs.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
-            "Can't put non-external declarations in file marked with {0} annotation", RENDER_TYPE)
+            "Can''t put non-external declarations in file marked with {0} annotation", RENDER_TYPE)
         put(ErrorsJs.WRONG_JS_QUALIFIER, "Qualifier contains illegal characters")
 
         put(ErrorsJs.CANNOT_CHECK_FOR_NATIVE_INTERFACE, "Cannot check for native interface: {0}", RENDER_TYPE)
