@@ -35,9 +35,9 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         val lhs = getOrFail(BindingContext.DOUBLE_COLON_LHS, ktArgument)
         val resultType = getInferredTypeWithImplicitCastsOrFail(ktClassLiteral)
 
-        return if (lhs is DoubleColonLHS.Expression && !lhs.isObject) {
+        return if (lhs is DoubleColonLHS.Expression && !lhs.isObjectQualifier) {
             IrGetClassImpl(ktClassLiteral.startOffset, ktClassLiteral.endOffset, resultType,
-                                                               statementGenerator.generateExpression(ktArgument))
+                           statementGenerator.generateExpression(ktArgument))
         }
         else {
             val typeConstructorDeclaration = lhs.type.constructor.declarationDescriptor

@@ -3393,7 +3393,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @Override
             public Unit invoke(InstructionAdapter v) {
                 KotlinType type = lhs.getType();
-                if (lhs instanceof DoubleColonLHS.Expression && !((DoubleColonLHS.Expression) lhs).isObject()) {
+                if (lhs instanceof DoubleColonLHS.Expression && !((DoubleColonLHS.Expression) lhs).isObjectQualifier()) {
                     JavaClassProperty.INSTANCE.generateImpl(v, gen(receiverExpression));
                 }
                 else {

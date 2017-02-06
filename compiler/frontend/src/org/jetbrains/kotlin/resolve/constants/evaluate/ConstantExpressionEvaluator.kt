@@ -140,7 +140,7 @@ class ConstantExpressionEvaluator(
                 val lhsExpression = argumentExpression.receiverExpression
                 if (lhsExpression != null) {
                     val doubleColonLhs = trace.bindingContext.get(BindingContext.DOUBLE_COLON_LHS, lhsExpression)
-                    if (doubleColonLhs is DoubleColonLHS.Expression && !doubleColonLhs.isObject) {
+                    if (doubleColonLhs is DoubleColonLHS.Expression && !doubleColonLhs.isObjectQualifier) {
                         trace.report(Errors.ANNOTATION_PARAMETER_MUST_BE_KCLASS_LITERAL.on(argumentExpression))
                     }
                 }

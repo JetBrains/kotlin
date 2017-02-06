@@ -839,7 +839,7 @@ class ExpressionCodegen(
             wrapIntoKClass: Boolean,
             data: BlockInfo
     ) {
-        if (receiverExpression !is IrClassReference /* && DescriptorUtils.isObject(receiverExpression.descriptor)*/) {
+        if (receiverExpression !is IrClassReference /* && DescriptorUtils.isObjectQualifier(receiverExpression.descriptor)*/) {
             JavaClassProperty.generateImpl(mv, gen(receiverExpression, data))
         }
         else {

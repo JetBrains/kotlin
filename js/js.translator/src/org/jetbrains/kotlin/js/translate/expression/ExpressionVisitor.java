@@ -236,7 +236,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         DoubleColonLHS lhs = context.bindingContext().get(DOUBLE_COLON_LHS, receiverExpression);
         assert lhs != null : "Class literal expression should have LHS resolved";
 
-        if (lhs instanceof DoubleColonLHS.Expression && !((DoubleColonLHS.Expression) lhs).isObject()) {
+        if (lhs instanceof DoubleColonLHS.Expression && !((DoubleColonLHS.Expression) lhs).isObjectQualifier()) {
             JsExpression receiver = translateAsExpression(receiverExpression, context);
             return new JsInvocation(context.namer().kotlin(GET_KCLASS_FROM_EXPRESSION), receiver);
         }
