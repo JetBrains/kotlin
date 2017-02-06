@@ -74,6 +74,9 @@ object Kapt3ConfigurationKeys {
 
     val USE_LIGHT_ANALYSIS: CompilerConfigurationKey<String> =
             CompilerConfigurationKey.create<String>("do not analyze declaration bodies if can")
+
+    val CORRECT_ERROR_TYPES: CompilerConfigurationKey<String> =
+            CompilerConfigurationKey.create<String>("replace error types with ones from the declaration sources")
 }
 
 class Kapt3CommandLineProcessor : CommandLineProcessor {
@@ -108,13 +111,17 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
 
         val USE_LIGHT_ANALYSIS_OPTION: CliOption =
                 CliOption("useLightAnalysis", "true | false", "Do not analyze declaration bodies if can", required = false)
+
+        val CORRECT_ERROR_TYPES_OPTION: CliOption =
+                CliOption("correctErrorTypes", "true | false", "Replace generated or error types with ones from the generated sources", required = false)
     }
 
     override val pluginId: String = ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID
 
     override val pluginOptions: Collection<CliOption> =
             listOf(SOURCE_OUTPUT_DIR_OPTION, ANNOTATION_PROCESSOR_CLASSPATH_OPTION, APT_OPTIONS_OPTION,
-                   CLASS_OUTPUT_DIR_OPTION, VERBOSE_MODE_OPTION, STUBS_OUTPUT_DIR_OPTION, APT_ONLY_OPTION, USE_LIGHT_ANALYSIS_OPTION)
+                   CLASS_OUTPUT_DIR_OPTION, VERBOSE_MODE_OPTION, STUBS_OUTPUT_DIR_OPTION, APT_ONLY_OPTION,
+                   USE_LIGHT_ANALYSIS_OPTION, CORRECT_ERROR_TYPES_OPTION)
 
     private fun <T> CompilerConfiguration.appendList(option: CompilerConfigurationKey<List<T>>, value: T) {
         val paths = getList(option).toMutableList()
@@ -133,6 +140,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             VERBOSE_MODE_OPTION -> configuration.put(Kapt3ConfigurationKeys.VERBOSE_MODE, value)
             APT_ONLY_OPTION -> configuration.put(Kapt3ConfigurationKeys.APT_ONLY, value)
             USE_LIGHT_ANALYSIS_OPTION -> configuration.put(Kapt3ConfigurationKeys.USE_LIGHT_ANALYSIS, value)
+            CORRECT_ERROR_TYPES_OPTION -> configuration.put(Kapt3ConfigurationKeys.CORRECT_ERROR_TYPES, value)
             else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
         }
     }
@@ -183,12 +191,15 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
         val javaSourceRoots = contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file }
 
         val useLightAnalysis = configuration.get(Kapt3ConfigurationKeys.USE_LIGHT_ANALYSIS) == "true"
+        val correctErrorTypes = configuration.get(Kapt3ConfigurationKeys.CORRECT_ERROR_TYPES) == "true"
 
         Extensions.getRootArea().getExtensionPoint(DefaultErrorMessages.Extension.EP_NAME).registerExtension(DefaultErrorMessagesKapt3())
 
         if (isVerbose) {
             logger.info("Kapt3 is enabled.")
             logger.info("Do annotation processing only: $isAptOnly")
+            logger.info("Use light analysis: $useLightAnalysis")
+            logger.info("Correct error types: $correctErrorTypes")
             logger.info("Source output directory: $sourcesOutputDir")
             logger.info("Classes output directory: $classFilesOutputDir")
             logger.info("Stubs output directory: $stubsOutputDir")
@@ -202,7 +213,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
         val kapt3AnalysisCompletedHandlerExtension = ClasspathBasedKapt3Extension(
                 compileClasspath, apClasspath, javaSourceRoots, sourcesOutputDir, classFilesOutputDir,
                 stubsOutputDir, incrementalDataOutputDir, apOptions,
-                isAptOnly, useLightAnalysis, System.currentTimeMillis(), logger)
+                isAptOnly, useLightAnalysis, correctErrorTypes, System.currentTimeMillis(), logger)
         AnalysisHandlerExtension.registerExtension(project, kapt3AnalysisCompletedHandlerExtension)
     }
 

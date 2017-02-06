@@ -1,0 +1,56 @@
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+public final class NonExistentType {
+    @org.jetbrains.annotations.Nullable()
+    private static final error.NonExistentClass a = null;
+    @org.jetbrains.annotations.Nullable()
+    private static final java.util.List<error.NonExistentClass> b = null;
+    @org.jetbrains.annotations.NotNull()
+    private static final kotlin.jvm.functions.Function1<error.NonExistentClass, kotlin.Unit> c = null;
+    @org.jetbrains.annotations.Nullable()
+    private static final error.NonExistentClass d = null;
+    public static final NonExistentType INSTANCE = null;
+
+    @org.jetbrains.annotations.Nullable()
+    public final error.NonExistentClass getA() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.List<error.NonExistentClass> getB() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.jvm.functions.Function1<error.NonExistentClass, kotlin.Unit> getC() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.Nullable()
+    public final error.NonExistentClass getD() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final error.NonExistentClass a(@org.jetbrains.annotations.NotNull()
+    error.NonExistentClass a, @org.jetbrains.annotations.NotNull()
+    java.lang.String s) {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final error.NonExistentClass b(@org.jetbrains.annotations.NotNull()
+    java.lang.String s) {
+        return null;
+    }
+
+    private NonExistentType() {
+        super();
+    }
+}
+
+////////////////////
+
+package error;
+
+public final class NonExistentClass {
+}
