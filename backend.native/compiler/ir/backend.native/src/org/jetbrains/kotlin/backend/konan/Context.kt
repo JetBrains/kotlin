@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.backend.konan
 import llvm.LLVMDumpModule
 import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.backend.jvm.descriptors.initialize
+import org.jetbrains.kotlin.backend.konan.InteropBuiltIns
 import org.jetbrains.kotlin.backend.konan.descriptors.deepPrint
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.Ir
@@ -56,6 +57,10 @@ internal final class Context(val config: KonanConfig) : KonanBackendContext() {
 
     override val irBuiltIns
         get() = ir.irModule.irBuiltins
+
+    val interopBuiltIns by lazy {
+        InteropBuiltIns(this.builtIns)
+    }
 
     var llvmModule: LLVMModuleRef? = null
         set(module: LLVMModuleRef?) {

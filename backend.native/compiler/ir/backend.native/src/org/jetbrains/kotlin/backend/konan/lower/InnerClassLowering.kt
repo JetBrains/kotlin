@@ -69,7 +69,7 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
             if (instanceInitializerIndex >= 0) {
                 // Initializing constructor: initialize 'this.this$0' with '$outer'.
                 blockBody.statements.add(
-                        instanceInitializerIndex,
+                        0,
                         IrSetFieldImpl(
                                 startOffset, endOffset, outerThisFieldDescriptor,
                                 IrGetValueImpl(startOffset, endOffset, classDescriptor.thisAsReceiverParameter),
@@ -117,7 +117,7 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
                         val outerThisField = context.specialDescriptorsFactory.getOuterThisFieldDescriptor(innerClass)
                         irThis = IrGetFieldImpl(startOffset, endOffset, outerThisField, irThis, origin)
 
-                        val outer = classDescriptor.containingDeclaration
+                        val outer = innerClass.containingDeclaration
                         innerClass = outer as? ClassDescriptor ?:
                                 throw AssertionError("Unexpected containing declaration for inner class $innerClass: $outer")
                     }

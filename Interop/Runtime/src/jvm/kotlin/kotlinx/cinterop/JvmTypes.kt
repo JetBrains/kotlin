@@ -8,7 +8,7 @@ val nativeNullPtr: NativePtr = 0L
 
 // TODO: the functions below should eventually be intrinsified
 
-inline fun <reified T : CVariable> CVariable.Type.Companion.of() = T::class.companionObjectInstance as CVariable.Type
+inline fun <reified T : CVariable> typeOf() = T::class.companionObjectInstance as CVariable.Type
 
 /**
  * Returns interpretation of entity with given pointer.
@@ -28,3 +28,5 @@ inline fun <reified T : NativePointed> interpretPointed(ptr: NativePtr): T {
 
 inline fun <reified T : CAdaptedFunctionType<*>> CAdaptedFunctionType.Companion.getInstanceOf(): T =
         T::class.objectInstance!!
+
+internal fun CPointer<*>.cPointerToString() = "CPointer(raw=0x%x)".format(rawValue)

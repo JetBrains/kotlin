@@ -144,7 +144,7 @@ internal class LinkStage(val context: Context) {
     val optimize = config.get(KonanConfigKeys.OPTIMIZATION) ?: false
     val emitted = config.get(KonanConfigKeys.BITCODE_FILE)!!
     val nostdlib = config.get(KonanConfigKeys.NOSTDLIB) ?: false
-    val libraries = context.config.libraries
+    val libraries = context.config.librariesToLink
 
     fun llvmLto(files: List<BitcodeFile>): ObjectFile {
         val tmpCombined = File.createTempFile("combined", ".o")

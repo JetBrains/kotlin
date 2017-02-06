@@ -1,6 +1,8 @@
 import groovy.json.JsonOutput
 import org.jetbrains.kotlin.*
 
+apply plugin: NativeInteropPlugin
+
 configurations {
     cli_bc
 }
@@ -357,9 +359,44 @@ task innerClass_generic(type: RunKonanTest) {
     source = "codegen/innerClass/generic.kt"
 }
 
+task innerClass_doubleInner(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/innerClass/doubleInner.kt"
+}
+
 task innerClass_qualifiedThis(type: RunKonanTest) {
     goldValue = "OK\n"
     source = "codegen/innerClass/qualifiedThis.kt"
+}
+
+task innerClass_superOuter(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/innerClass/superOuter.kt"
+}
+
+task localClass_localHierarchy(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/localClass/localHierarchy.kt"
+}
+
+task localClass_objectExpressionInProperty(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/localClass/objectExpressionInProperty.kt"
+}
+
+task localClass_objectExpressionInInitializer(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/localClass/objectExpressionInInitializer.kt"
+}
+
+task localClass_innerWithCapture(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/localClass/innerWithCapture.kt"
+}
+
+task localClass_innerTakesCapturedFromOuter(type: RunKonanTest) {
+    goldValue = "0\n1\n"
+    source = "codegen/localClass/innerTakesCapturedFromOuter.kt"
 }
 
 task array0(type: RunKonanTest) {
@@ -1023,10 +1060,6 @@ task inline9(type: RunKonanTest) {
     source = "codegen/inline/inline9.kt"
 }
 
-    task vararg0(type: RunKonanTest) {
-    source = "lower/vararg.kt"
-}
-
 task inline6(type: RunKonanTest) {
     goldValue = "hello1\nhello2\nhello3\nhello4\n"
     source = "codegen/inline/inline6.kt"
@@ -1040,4 +1073,18 @@ task inline7(type: RunKonanTest) {
 task inline8(type: RunKonanTest) {
     goldValue = "8\n"
     source = "codegen/inline/inline8.kt"
+}
+
+kotlinNativeInterop {
+    sysstat {
+        pkg 'sysstat'
+        headers 'sys/stat.h'
+        target 'native'
+    }
+}
+
+task interop0(type: RunInteropKonanTest) {
+    goldValue = "0\n0\n"
+    source = "interop/basics/0.kt"
+    interop = 'sysstat'
 }

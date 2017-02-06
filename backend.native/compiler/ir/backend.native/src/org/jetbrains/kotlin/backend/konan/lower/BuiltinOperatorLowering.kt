@@ -3,6 +3,8 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalFunctions
+import org.jetbrains.kotlin.backend.konan.ir.isNullConst
+import org.jetbrains.kotlin.backend.konan.util.atMostOne
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -69,9 +71,15 @@ private class BuiltinOperatorTransformer(val context: Context) : IrElementTransf
         // and thus can be declared synthetically in the compiler instead of explicitly in the runtime.
 
         // Find a type-compatible `konan.internal.areEqualByValue` intrinsic:
-        val equals = builtIns.getKonanInternalFunctions("areEqualByValue").firstOrNull {
+        val equals = builtIns.getKonanInternalFunctions("areEqualByValue").atMostOne {
             lhs.type.isSubtypeOf(it.valueParameters[0].type) && rhs.type.isSubtypeOf(it.valueParameters[1].type)
-        } ?: builtIns.getKonanInternalFunctions("areEqual").single() // or use the general implementation.
+        } ?: if (lhs.isNullConst() || rhs.isNullConst()) {
+            // or compare by reference if left or right part is `null`:
+            irBuiltins.eqeqeq
+        } else {
+            // or use the general implementation:
+            builtIns.getKonanInternalFunctions("areEqual").single()
+        }
 
         return IrCallImpl(startOffset, endOffset, equals).apply {
             putValueArgument(0, lhs)

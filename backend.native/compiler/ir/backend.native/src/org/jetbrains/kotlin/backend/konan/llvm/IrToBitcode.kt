@@ -625,7 +625,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     private fun evaluateExpression(value: IrExpression): LLVMValueRef {
         when (value) {
-            is IrSetterCallImpl      -> return evaluateSetterCall         (value)
             is IrTypeOperatorCall    -> return evaluateTypeOperator       (value)
             is IrCall                -> return evaluateCall               (value)
             is IrDelegatingConstructorCall ->
@@ -1743,18 +1742,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     //-------------------------------------------------------------------------//
-
-    private fun evaluateSetterCall(value: IrSetterCallImpl): LLVMValueRef {
-        val descriptor = value.descriptor as FunctionDescriptor
-        val args       = mutableListOf<LLVMValueRef>()
-        if (descriptor.dispatchReceiverParameter != null)
-            args.add(evaluateExpression(value.dispatchReceiver!!))         //add this ptr
-        args.add(evaluateExpression(value.getValueArgument(0)!!))
-        return evaluateSimpleFunctionCall(
-                descriptor, args, Lifetime.IRRELEVANT, value.superQualifier)
-    }
-
-    //-------------------------------------------------------------------------//
     private fun resultLifetime(callee: IrMemberAccessExpression): Lifetime {
         return resultLifetimes.getOrElse(callee) { Lifetime.GLOBAL }
     }
@@ -1779,16 +1766,16 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private fun evaluateIntrinsicCall(callee: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
-        val descriptor = callee.descriptor
+        val descriptor = callee.descriptor.original
         val name = descriptor.fqNameUnsafe.asString()
 
-        return when (name) {
+        when (name) {
             "konan.internal.areEqualByValue" -> {
                 val arg0 = args[0]
                 val arg1 = args[1]
                 assert (arg0.type == arg1.type)
 
-                when (LLVMGetTypeKind(arg0.type)) {
+                return when (LLVMGetTypeKind(arg0.type)) {
                     LLVMTypeKind.LLVMFloatTypeKind, LLVMTypeKind.LLVMDoubleTypeKind ->
                         codegen.fcmpEq(arg0, arg1)
 
@@ -1796,8 +1783,28 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                         codegen.icmpEq(arg0, arg1)
                 }
             }
+        }
 
-            else -> TODO(name)
+        val interop = context.interopBuiltIns
+
+        return when (descriptor) {
+            in interop.readPrimitive -> {
+                val pointerType = pointerType(codegen.getLLVMType(descriptor.returnType!!))
+                val rawPointer = args.last()
+                val pointer = codegen.bitcast(pointerType, rawPointer)
+                codegen.load(pointer)
+            }
+            in interop.writePrimitive -> {
+                val pointerType = pointerType(codegen.getLLVMType(descriptor.valueParameters.last().type))
+                val rawPointer = args[1]
+                val pointer = codegen.bitcast(pointerType, rawPointer)
+                codegen.store(args[2], pointer)
+                codegen.theUnitInstanceRef.llvm
+            }
+            interop.nativePtrPlusLong -> codegen.gep(args[0], args[1])
+            interop.getNativeNullPtr -> kNullInt8Ptr
+            interop.getPointerSize -> Int32(LLVMPointerSize(codegen.llvmTargetData)).llvm
+            else -> TODO(callee.descriptor.original.toString())
         }
     }
 

@@ -154,3 +154,12 @@ public class NoWhenBranchMatchedException : RuntimeException {
     constructor(s: String) : super(s) {
     }
 }
+
+public class OutOfMemoryError : Error {
+
+    constructor() : super() {
+    }
+
+    constructor(s: String) : super(s) {
+    }
+}

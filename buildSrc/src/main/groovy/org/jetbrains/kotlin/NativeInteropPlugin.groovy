@@ -18,21 +18,29 @@ class NamedNativeInteropConfig implements Named {
     private final Project project
     final String name
 
-    private final SourceSet interopStubs
-    private final JavaExec genTask
+
+    private String interopStubsName
+    private SourceSet interopStubs
+    final JavaExec genTask
+
+    private String target = "jvm"
 
     private String defFile
 
     private String pkg;
 
     private List<String> compilerOpts = []
-    private FileCollection headers;
+    private List<String> headers;
     private String linker
     private List<String> linkerOpts = []
     private FileCollection linkFiles;
     private List<String> linkTasks = []
 
     Configuration configuration
+
+    void target(String value) {
+        target = value
+    }
 
     void defFile(String value) {
         defFile = value
@@ -49,7 +57,11 @@ class NamedNativeInteropConfig implements Named {
 
     void headers(FileCollection files) {
         dependsOnFiles(files)
-        headers = headers + files
+        headers = headers + files.toSet().collect { it.absolutePath }
+    }
+
+    void headers(String... values) {
+        headers = headers + values.toList()
     }
 
     void linker(String value) {
@@ -107,11 +119,11 @@ class NamedNativeInteropConfig implements Named {
         compilerOpts.addAll(values.collect {"-I$it"})
     }
 
-    private File getNativeLibsDir() {
+    File getNativeLibsDir() {
         return new File(project.buildDir, "nativelibs")
     }
 
-    private File getGeneratedSrcDir() {
+    File getGeneratedSrcDir() {
         return new File(project.buildDir, "nativeInteropStubs/$name/kotlin")
     }
 
@@ -119,25 +131,31 @@ class NamedNativeInteropConfig implements Named {
         this.name = name
         this.project = project
 
-        this.headers = project.files()
+        this.headers = []
         this.linkFiles = project.files()
 
-        interopStubs = project.sourceSets.create(name + "InteropStubs")
-        genTask = project.task(interopStubs.getTaskName("gen", ""), type: JavaExec)
-        configuration = project.configurations.create(interopStubs.name)
+        interopStubsName = name + "InteropStubs"
+        genTask = project.task("gen" + interopStubsName.capitalize(), type: JavaExec)
 
         this.configure()
     }
 
     private void configure() {
-        project.tasks.getByName(interopStubs.getTaskName("compile", "Kotlin")) {
-            dependsOn genTask
-        }
+        if (project.plugins.hasPlugin("kotlin")) {
+            interopStubs = project.sourceSets.create(interopStubsName)
+            configuration = project.configurations.create(interopStubs.name)
+            project.tasks.getByName(interopStubs.getTaskName("compile", "Kotlin")) {
+                dependsOn genTask
+            }
 
-        interopStubs.kotlin.srcDirs generatedSrcDir
+            interopStubs.kotlin.srcDirs generatedSrcDir
 
-        project.dependencies {
-            add interopStubs.getCompileConfigurationName(), project(path: ':Interop:Runtime')
+            project.dependencies {
+                add interopStubs.getCompileConfigurationName(), project(path: ':Interop:Runtime')
+            }
+
+            this.configuration.extendsFrom project.configurations[interopStubs.runtimeConfigurationName]
+            project.dependencies.add(this.configuration.name, interopStubs.output)
         }
 
         genTask.configure {
@@ -166,6 +184,9 @@ class NamedNativeInteropConfig implements Named {
                 linkerOpts += linkFiles.files
 
                 args = [generatedSrcDir, nativeLibsDir]
+
+                args "-target:" + this.target
+
                 if (defFile != null) {
                     args "-def:" + project.file(defFile)
                 }
@@ -188,7 +209,7 @@ class NamedNativeInteropConfig implements Named {
                 args compilerOpts.collect { "-copt:$it" }
                 args linkerOpts.collect { "-lopt:$it" }
 
-                headers.files.each {
+                headers.each {
                     args "-h:$it"
                 }
 
@@ -198,9 +219,6 @@ class NamedNativeInteropConfig implements Named {
 
             }
         }
-
-        this.configuration.extendsFrom project.configurations[interopStubs.runtimeConfigurationName]
-        project.dependencies.add(this.configuration.name, interopStubs.output)
     }
 }
 

@@ -20,22 +20,22 @@ object nativeHeap : NativeFreeablePlacement {
 // TODO: implement optimally
 class Arena(private val parent: NativeFreeablePlacement = nativeHeap) : NativePlacement {
 
-    private val allocatedChunks = mutableListOf<NativePointed>()
+    private val allocatedChunks = ArrayList<NativePointed>()
 
     override fun alloc(size: Long, align: Int): NativePointed {
-        val res = nativeHeap.alloc(size, align)
+        val res = parent.alloc(size, align)
         try {
             allocatedChunks.add(res)
             return res
         } catch (e: Throwable) {
-            nativeHeap.free(res)
+            parent.free(res)
             throw e
         }
     }
 
     fun clear() {
         allocatedChunks.forEach {
-            nativeHeap.free(it)
+            parent.free(it)
         }
 
         allocatedChunks.clear()
@@ -51,7 +51,7 @@ fun NativePlacement.alloc(size: Int, align: Int) = alloc(size.toLong(), align)
  * @param T must not be abstract
  */
 inline fun <reified T : CVariable> NativePlacement.alloc(): T =
-        alloc(CVariable.sizeOf<T>(), CVariable.alignOf<T>()).reinterpret()
+        alloc(sizeOf<T>(), alignOf<T>()).reinterpret()
 
 /**
  * Allocates C array of given elements type and length.
@@ -59,7 +59,7 @@ inline fun <reified T : CVariable> NativePlacement.alloc(): T =
  * @param T must not be abstract
  */
 inline fun <reified T : CVariable> NativePlacement.allocArray(length: Long): CArray<T> =
-        alloc(CVariable.sizeOf<T>() * length, CVariable.alignOf<T>()).reinterpret()
+        alloc(sizeOf<T>() * length, alignOf<T>()).reinterpret()
 
 /**
  * Allocates C array of given elements type and length.
@@ -78,7 +78,7 @@ inline fun <reified T : CVariable> NativePlacement.allocArray(length: Long,
                                                               initializer: T.(index: Long)->Unit): CArray<T> {
     val res = allocArray<T>(length)
 
-    (0 until length).forEach { index ->
+    (0 .. length - 1).forEach { index ->
         res[index].initializer(index)
     }
 
@@ -112,7 +112,7 @@ fun <T : CPointed> NativePlacement.allocArrayOfPointersTo(elements: List<T?>): C
  * Allocates C array of pointers to given elements.
  */
 fun <T : CPointed> NativePlacement.allocArrayOfPointersTo(vararg elements: T?) =
-        allocArrayOfPointersTo(elements.toList())
+        allocArrayOfPointersTo(listOf(*elements))
 
 /**
  * Allocates C array of given values.
@@ -120,7 +120,7 @@ fun <T : CPointed> NativePlacement.allocArrayOfPointersTo(vararg elements: T?) =
 inline fun <reified T : CPointer<*>>
         NativePlacement.allocArrayOf(vararg elements: T?): CArray<CPointerVarWithValueMappedTo<T>> {
 
-    return allocArrayOf(elements.toList())
+    return allocArrayOf(listOf(*elements))
 }
 
 /**
@@ -139,8 +139,9 @@ inline fun <reified T : CPointer<*>>
 
 fun NativePlacement.allocArrayOf(elements: ByteArray): CArray<CInt8Var> {
     val res = allocArray<CInt8Var>(elements.size)
-    elements.forEachIndexed { i, byte ->
-        res[i].value = byte
+    var index = 0
+    for (byte in elements) {
+        res[index++].value = byte
     }
     return res
 }
@@ -173,7 +174,7 @@ class CString private constructor(override val rawPtr: NativePtr) : CPointed {
         val bytes = ByteArray(len)
 
         nativeMemUtils.getByteArray(array[0], bytes, len)
-        return String(bytes) // TODO: encoding
+        return decodeFromUtf8(bytes) // TODO: encoding
     }
 
     fun asCharPtr() = reinterpret<CInt8Var>()
@@ -184,9 +185,9 @@ fun CString.Companion.fromString(str: String?, placement: NativePlacement): CStr
         return null
     }
 
-    val bytes = str.toByteArray() // TODO: encoding
+    val bytes = encodeToUtf8(str) // TODO: encoding
     val len = bytes.size
-    val nativeBytes = nativeHeap.allocArray<CInt8Var>(len + 1)
+    val nativeBytes = placement.allocArray<CInt8Var>(len + 1)
 
     nativeMemUtils.putByteArray(bytes, nativeBytes[0], len)
     nativeBytes[len].value = 0
@@ -197,20 +198,16 @@ fun CString.Companion.fromString(str: String?, placement: NativePlacement): CStr
 fun CPointer<CInt8Var>.asCString() = CString.fromArray(this.reinterpret<CArray<CInt8Var>>().pointed)
 fun String.toCString(placement: NativePlacement) = CString.fromString(this, placement)
 
-class MemScope private constructor(private val arena: Arena) : NativePlacement by arena {
+class MemScope : NativePlacement {
+
+    private val arena = Arena()
+
+    override fun alloc(size: Long, align: Int) = arena.alloc(size, align)
+
+    fun clear() = arena.clear()
+
     val memScope: NativePlacement
         get() = this
-
-    companion object {
-        internal inline fun <R> use(block: MemScope.()->R): R {
-            val memScope = MemScope(Arena())
-            try {
-                return memScope.block()
-            } finally {
-                memScope.arena.clear()
-            }
-        }
-    }
 }
 
 /**
@@ -218,6 +215,10 @@ class MemScope private constructor(private val arena: Arena) : NativePlacement b
  * which will be automatically disposed at the end of this scope.
  */
 inline fun <R> memScoped(block: MemScope.()->R): R {
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE") // TODO: it is a hack
-    return MemScope.use(block)
+    val memScope = MemScope()
+    try {
+        return memScope.block()
+    } finally {
+        memScope.clear()
+    }
 }

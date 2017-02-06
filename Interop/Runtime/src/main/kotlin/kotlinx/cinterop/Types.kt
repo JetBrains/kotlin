@@ -83,9 +83,7 @@ class CPointer<T : CPointed> private constructor(val rawValue: NativePtr) {
         return rawValue.hashCode()
     }
 
-    override fun toString(): String {
-        return "CPointer(raw=0x%x)".format(rawValue)
-    }
+    override fun toString() = this.cPointerToString()
 }
 
 /**
@@ -141,17 +139,14 @@ interface CVariable : CPointed {
     open class Type(val size: Long, val align: Int) {
 
         init {
-            assert (size % align == 0L)
+            require(size % align == 0L)
         }
 
-        companion object
-    }
-
-    companion object {
-        inline fun <reified T : CVariable> sizeOf() = Type.of<T>().size
-        inline fun <reified T : CVariable> alignOf() = Type.of<T>().align
     }
 }
+
+inline fun <reified T : CVariable> sizeOf() = typeOf<T>().size
+inline fun <reified T : CVariable> alignOf() = typeOf<T>().align
 
 /**
  * The C data which is composed from several members.
@@ -177,7 +172,7 @@ abstract class CStructVar : CVariable, CAggregate {
  */
 sealed class CPrimitiveVar : CVariable {
     // aligning by size is obviously enough
-    open class Type(size: Int, align: Int = size) : CVariable.Type(size.toLong(), align)
+    open class Type(size: Int) : CVariable.Type(size.toLong(), align = size)
 }
 
 abstract class CEnumVar : CPrimitiveVar()
@@ -256,8 +251,8 @@ typealias CPointerVar<T> = CPointerVarWithValueMappedTo<CPointer<T>>
  * The value of this variable.
  */
 inline var <reified P : CPointer<*>> CPointerVarWithValueMappedTo<P>.value: P?
-    get() = CPointer.createNullable<CPointed>(nativeMemUtils.getPtr(this)) as P?
-    set(value) = nativeMemUtils.putPtr(this, value.rawValue)
+    get() = CPointer.createNullable<CPointed>(nativeMemUtils.getNativePtr(this)) as P?
+    set(value) = nativeMemUtils.putNativePtr(this, value.rawValue)
 
 /**
  * The code or data pointed by the value of this variable.
@@ -275,7 +270,7 @@ class CArray<T : CVariable>(override val rawPtr: NativePtr) : CAggregate
 inline fun <reified T : CVariable> CArray<T>.elementOffset(index: Long) = if (index == 0L) {
     0L // optimization for JVM impl which uses reflection for now.
 } else {
-    index * CVariable.sizeOf<T>()
+    index * sizeOf<T>()
 }
 
 inline operator fun <reified T : CVariable> CArray<T>.get(index: Long): T = memberAt(elementOffset(index))

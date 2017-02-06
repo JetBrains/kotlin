@@ -6,7 +6,7 @@
 
 open class Outer(vararg val chars: Char) {
     open inner class Inner(val s: String): Outer(s[0], s[1]) {
-        fun concat() = java.lang.String.valueOf(chars)
+        fun concat() = fromCharArrays(chars, 0, chars.size)
     }
 
     fun value() = Inner("OK").concat()
