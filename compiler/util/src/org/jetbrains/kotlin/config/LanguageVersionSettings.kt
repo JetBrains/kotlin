@@ -42,6 +42,7 @@ enum class LanguageFeature(val sinceVersion: LanguageVersion?, val hintUrl: Stri
     SafeCallBoundSmartCasts(KOTLIN_1_1),
     TypeInferenceOnGenericsForCallableReferences(KOTLIN_1_1),
     NoDelegationToJavaDefaultInterfaceMembers(KOTLIN_1_1),
+    DefaultImportOfPackageKotlinComparisons(KOTLIN_1_1),
 
     // Experimental features
     MultiPlatformProjects(null),

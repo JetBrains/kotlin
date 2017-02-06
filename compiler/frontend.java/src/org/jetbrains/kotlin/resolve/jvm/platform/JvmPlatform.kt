@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.platform
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -24,8 +25,8 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.util.*
 
 object JvmPlatform : TargetPlatform("JVM") {
-    override val defaultImports: List<ImportPath> = ArrayList<ImportPath>().apply {
-        addAll(Default.defaultImports)
+    override fun getDefaultImports(languageVersionSettings: LanguageVersionSettings): List<ImportPath> = ArrayList<ImportPath>().apply {
+        addAll(Default.getDefaultImports(languageVersionSettings))
 
         add(ImportPath("java.lang.*"))
         add(ImportPath("kotlin.jvm.*"))
