@@ -108,7 +108,10 @@ object JavaAgainstKotlinCompiler {
                 .map {
                     val packageFqName = ktFile.packageFqName.asString()
                     val binaryName = packageFqName + "." +
-                                     it.relativePath.replace("/", ".").substringBeforeLast(".").substring(packageFqName.length)
+                                     it.relativePath.replace("/", ".")
+                                             .substringBeforeLast(".")
+                                             .substring(packageFqName.length + 1)
+                                             .replace(".", "$")
 
                     KotlinLightClass(binaryName, packageFqName, it.asByteArray())
                 }
