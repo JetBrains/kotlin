@@ -124,8 +124,7 @@
 
     <extensionPoints>
         <extensionPoint qualifiedName="org.jetbrains.uast.uastLanguagePlugin"
-                        interface="org.jetbrains.uast.UastLanguagePlugin"
-                        area="IDEA_PROJECT"/>
+                        interface="org.jetbrains.uast.UastLanguagePlugin"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.uast">

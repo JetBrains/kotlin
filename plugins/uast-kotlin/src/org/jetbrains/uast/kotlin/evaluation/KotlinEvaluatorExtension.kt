@@ -1,7 +1,7 @@
 package org.jetbrains.uast.kotlin.evaluation
 
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.uast.UastBinaryOperator
+import org.jetbrains.uast.UBinaryExpression
 import org.jetbrains.uast.UastPostfixOperator
 import org.jetbrains.uast.evaluation.UEvaluationInfo
 import org.jetbrains.uast.evaluation.UEvaluationState
@@ -16,8 +16,8 @@ class KotlinEvaluatorExtension : UEvaluatorExtension {
         override fun toString() = "$from..$to"
     }
 
-    private class UClosedRangeConstant(override val value: Range) : UAbstractConstant() {
-        constructor(from: UValue, to: UValue): this(Range(from, to))
+    private class UClosedRangeConstant(override val value: Range, override val source: UBinaryExpression?) : UAbstractConstant() {
+        constructor(from: UValue, to: UValue, source: UBinaryExpression): this(Range(from, to), source)
     }
 
     override val language: KotlinLanguage = KotlinLanguage.INSTANCE
@@ -43,15 +43,15 @@ class KotlinEvaluatorExtension : UEvaluatorExtension {
     }
 
     override fun evaluateBinary(
-            operator: UastBinaryOperator,
+            binaryExpression: UBinaryExpression,
             leftValue: UValue,
             rightValue: UValue,
             state: UEvaluationState
     ): UEvaluationInfo {
-        return when (operator) {
+        return when (binaryExpression.operator) {
             KotlinBinaryOperators.IN -> rightValue.contains(leftValue)
             KotlinBinaryOperators.NOT_IN -> !rightValue.contains(leftValue)
-            KotlinBinaryOperators.RANGE_TO -> UClosedRangeConstant(leftValue, rightValue)
+            KotlinBinaryOperators.RANGE_TO -> UClosedRangeConstant(leftValue, rightValue, binaryExpression)
             else -> UUndeterminedValue
         } to state
     }

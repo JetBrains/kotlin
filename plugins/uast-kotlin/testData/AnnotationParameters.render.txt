@@ -1,0 +1,9 @@
+public final class AnnotationParametersKt {
+    @IntRange(from = 10, to = 0)
+    public static final fun foo() : int = 5
+}
+
+public abstract annotation IntRange {
+    public abstract fun from() : long = UastEmptyExpression
+    public abstract fun to() : long = UastEmptyExpression
+}

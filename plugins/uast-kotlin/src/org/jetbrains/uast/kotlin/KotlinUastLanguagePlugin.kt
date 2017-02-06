@@ -17,8 +17,9 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.lang.Language
-import com.intellij.openapi.project.Project
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiVariable
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil
@@ -48,10 +49,10 @@ interface KotlinUastBindingContextProviderService {
     fun getTypeMapper(element: KtElement): KotlinTypeMapper?
 }
 
-class KotlinUastLanguagePlugin(override val project: Project) : UastLanguagePlugin {
+class KotlinUastLanguagePlugin : UastLanguagePlugin {
     override val priority = 10
 
-    private val javaPlugin by lz { UastLanguagePlugin.getInstances(project).first { it is JavaUastLanguagePlugin } }
+    private val javaPlugin by lz { UastLanguagePlugin.getInstances().first { it is JavaUastLanguagePlugin } }
 
     override val language: Language
         get() = KotlinLanguage.INSTANCE

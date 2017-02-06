@@ -1,0 +1,7 @@
+public abstract interface Foo {
+    public abstract fun bar() : java.lang.String = "Hello!"
+}
+
+public final class Baz : Foo {
+    public fun Baz() = UastEmptyExpression
+}

@@ -1,0 +1,37 @@
+UFile (package = )
+    UClass (name = ElvisKt)
+        UAnnotationMethod (name = foo)
+            UParameter (name = bar)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            ULiteralExpression (value = null)
+        UAnnotationMethod (name = baz)
+            UBlockExpression
+                UReturnExpression
+                    UExpressionList (elvis)
+                        UDeclarationsExpression
+                            ULocalVariable (name = var243c4e1a)
+                                UExpressionList (elvis)
+                                    UDeclarationsExpression
+                                        ULocalVariable (name = varc4aef1e3)
+                                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                                                UIdentifier (Identifier (foo))
+                                                USimpleNameReferenceExpression (identifier = foo)
+                                                ULiteralExpression (value = "Lorem ipsum")
+                                    UIfExpression
+                                        UBinaryExpression (operator = !=)
+                                            USimpleNameReferenceExpression (identifier = varc4aef1e3)
+                                            ULiteralExpression (value = null)
+                                        USimpleNameReferenceExpression (identifier = varc4aef1e3)
+                                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                                            UIdentifier (Identifier (foo))
+                                            USimpleNameReferenceExpression (identifier = foo)
+                                            ULiteralExpression (value = "dolor sit amet")
+                        UIfExpression
+                            UBinaryExpression (operator = !=)
+                                USimpleNameReferenceExpression (identifier = var243c4e1a)
+                                ULiteralExpression (value = null)
+                            USimpleNameReferenceExpression (identifier = var243c4e1a)
+                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                                UIdentifier (Identifier (foo))
+                                USimpleNameReferenceExpression (identifier = foo)
+                                ULiteralExpression (value = "consectetuer adipiscing elit")

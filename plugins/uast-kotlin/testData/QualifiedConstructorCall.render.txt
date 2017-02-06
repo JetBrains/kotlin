@@ -1,0 +1,12 @@
+package A.B.C
+
+public final class Foo {
+    public fun Foo() = UastEmptyExpression
+}
+
+public final class Bar {
+    public final fun getFoo() : A.B.C.Foo {
+        return A.B.C.<init>()
+    }
+    public fun Bar() = UastEmptyExpression
+}

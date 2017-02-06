@@ -1,0 +1,28 @@
+UFile (package = ) [public final class LocalDeclarationsKt {...]
+    UClass (name = LocalDeclarationsKt) [public final class LocalDeclarationsKt {...}]
+        UAnnotationMethod (name = foo) [public static final fun foo() : boolean {...}]
+            UBlockExpression [{...}] = Nothing
+                UDeclarationsExpression [public static final class Local {...}] = Undetermined
+                    UClass (name = Local) [public static final class Local {...}]
+                        UAnnotationMethod (name = LocalDeclarationsKt$foo$Local) [public fun LocalDeclarationsKt$foo$Local() = UastEmptyExpression]
+                UDeclarationsExpression [var bar: <ErrorType> = fun () {...}] = Undetermined
+                    UVariable (name = bar) [var bar: <ErrorType> = fun () {...}]
+                        ULambdaExpression [fun () {...}] = Undetermined
+                            UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()] = external <init>()()
+                                UIdentifier (Identifier (Local)) [UIdentifier (Identifier (Local))]
+                                USimpleNameReferenceExpression (identifier = <init>) [<init>] = external <init>()
+                UDeclarationsExpression [var baz: <ErrorType> = fun () {...}] = Undetermined
+                    ULocalVariable (name = baz) [var baz: <ErrorType> = fun () {...}]
+                        ULambdaExpression [fun () {...}] = Undetermined
+                            UBlockExpression [{...}] = external <init>()()
+                                UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()] = external <init>()()
+                                    UIdentifier (Identifier (Local)) [UIdentifier (Identifier (Local))]
+                                    USimpleNameReferenceExpression (identifier = <init>) [<init>] = external <init>()
+                UReturnExpression [return bar() == <init>()] = Nothing
+                    UBinaryExpression (operator = ==) [bar() == <init>()] = Undetermined
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [bar()] = external bar()()
+                            UIdentifier (Identifier (bar)) [UIdentifier (Identifier (bar))]
+                            USimpleNameReferenceExpression (identifier = bar) [bar] = external bar()
+                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()] = external <init>()()
+                            UIdentifier (Identifier (Local)) [UIdentifier (Identifier (Local))]
+                            USimpleNameReferenceExpression (identifier = <init>) [<init>] = external <init>()

@@ -1,0 +1,13 @@
+UFile (package = )
+    UClass (name = Simple)
+        UField (name = property)
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            ULiteralExpression (value = "Mary")
+        UAnnotationMethod (name = method)
+            UBlockExpression
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                    UIdentifier (Identifier (println))
+                    USimpleNameReferenceExpression (identifier = println)
+                    ULiteralExpression (value = "Hello, world!")
+        UAnnotationMethod (name = getProperty)
+        UAnnotationMethod (name = Simple)

@@ -1,0 +1,23 @@
+UFile (package = )
+    UClass (name = AnnotationParametersKt)
+        UAnnotationMethod (name = foo)
+            UAnnotation (fqName = IntRange)
+                UNamedExpression (name = from)
+                    ULiteralExpression (value = 10)
+                UNamedExpression (name = to)
+                    ULiteralExpression (value = 0)
+            ULiteralExpression (value = 5)
+    UClass (name = IntRange)
+        UAnnotation (fqName = java.lang.annotation.Retention)
+            UNamedExpression (name = )
+                UQualifiedReferenceExpression
+                    UQualifiedReferenceExpression
+                        UQualifiedReferenceExpression
+                            UQualifiedReferenceExpression
+                                USimpleNameReferenceExpression (identifier = java)
+                                USimpleNameReferenceExpression (identifier = lang)
+                            USimpleNameReferenceExpression (identifier = annotation)
+                        USimpleNameReferenceExpression (identifier = RetentionPolicy)
+                    USimpleNameReferenceExpression (identifier = RUNTIME)
+        UAnnotationMethod (name = from)
+        UAnnotationMethod (name = to)
