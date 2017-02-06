@@ -25,7 +25,7 @@ import kotlin.coroutines.experimental.CoroutineContext.*
 public abstract class AbstractCoroutineContextElement(public override val key: Key<*>) : Element {
     @Suppress("UNCHECKED_CAST")
     public override operator fun <E : Element> get(key: Key<E>): E? =
-            if (this.key == key) this as E else null
+            if (this.key === key) this as E else null
 
     public override fun <R> fold(initial: R, operation: (R, Element) -> R): R =
             operation(initial, this)
@@ -34,7 +34,7 @@ public abstract class AbstractCoroutineContextElement(public override val key: K
             plusImpl(context)
 
     public override fun minusKey(key: Key<*>): CoroutineContext =
-            if (this.key == key) EmptyCoroutineContext else this
+            if (this.key === key) EmptyCoroutineContext else this
 }
 
 /**
@@ -77,9 +77,9 @@ private class CombinedContext(val left: CoroutineContext, val element: Element) 
     public override fun minusKey(key: Key<*>): CoroutineContext {
         element[key]?.let { return left }
         val newLeft = left.minusKey(key)
-        return when (newLeft) {
-            left -> this
-            EmptyCoroutineContext -> element
+        return when {
+            newLeft === left -> this
+            newLeft === EmptyCoroutineContext -> element
             else -> CombinedContext(newLeft, element)
         }
     }
@@ -115,15 +115,15 @@ private class CombinedContext(val left: CoroutineContext, val element: Element) 
 }
 
 private fun CoroutineContext.plusImpl(context: CoroutineContext): CoroutineContext =
-        if (context == EmptyCoroutineContext) this else // fast path -- avoid lambda creation
+        if (context === EmptyCoroutineContext) this else // fast path -- avoid lambda creation
             context.fold(this) { acc, element ->
                 val removed = acc.minusKey(element.key)
-                if (removed == EmptyCoroutineContext) element else {
+                if (removed === EmptyCoroutineContext) element else {
                     // make sure interceptor is always last in the context (and thus is fast to get when present)
                     val interceptor = removed[ContinuationInterceptor]
                     if (interceptor == null) CombinedContext(removed, element) else {
                         val left = removed.minusKey(ContinuationInterceptor)
-                        if (left == EmptyCoroutineContext) CombinedContext(element, interceptor) else
+                        if (left === EmptyCoroutineContext) CombinedContext(element, interceptor) else
                             CombinedContext(CombinedContext(left, element), interceptor)
                     }
                 }
