@@ -31,5 +31,6 @@ kapt {
         arg("startsWithEquals", "=a")
         arg("endsWithColon", "a:")
         arg("endsWithEquals", "a:")
+        arg("withSpace", "a b c") // key doesn't support spaces
     }
 }
