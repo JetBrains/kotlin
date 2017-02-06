@@ -2526,6 +2526,12 @@ public final class kotlin/jvm/internal/IntSpreadBuilder : kotlin/jvm/internal/Pr
 }
 
 public class kotlin/jvm/internal/Intrinsics {
+	public static fun areEqual (DLjava/lang/Double;)Z
+	public static fun areEqual (FLjava/lang/Float;)Z
+	public static fun areEqual (Ljava/lang/Double;D)Z
+	public static fun areEqual (Ljava/lang/Double;Ljava/lang/Double;)Z
+	public static fun areEqual (Ljava/lang/Float;F)Z
+	public static fun areEqual (Ljava/lang/Float;Ljava/lang/Float;)Z
 	public static fun areEqual (Ljava/lang/Object;Ljava/lang/Object;)Z
 	public static fun checkExpressionValueIsNotNull (Ljava/lang/Object;Ljava/lang/String;)V
 	public static fun checkFieldIsNotNull (Ljava/lang/Object;Ljava/lang/String;)V
