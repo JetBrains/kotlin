@@ -1569,6 +1569,39 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class NullCheckOptimization extends AbstractBytecodeTextTest {
+        public void testAllFilesPresentInNullCheckOptimization() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/nullCheckOptimization"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("ifNullEqualsNull.kt")
+        public void testIfNullEqualsNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/ifNullEqualsNull.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifNullEqualsNullInline.kt")
+        public void testIfNullEqualsNullInline() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/ifNullEqualsNullInline.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifUnitEqualsNull.kt")
+        public void testIfUnitEqualsNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/ifUnitEqualsNull.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifUnitEqualsNullInline.kt")
+        public void testIfUnitEqualsNullInline() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/ifUnitEqualsNullInline.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeText/ranges")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

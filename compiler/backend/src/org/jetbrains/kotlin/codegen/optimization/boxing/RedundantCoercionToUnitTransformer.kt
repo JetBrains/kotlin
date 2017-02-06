@@ -63,7 +63,7 @@ class RedundantCoercionToUnitTransformer : MethodTransformer() {
         private val frames by lazy { analyzeMethodBody() }
 
         fun transform() {
-            if (!insns.any { it.isUnitOrNull() }) return
+            if (!insns.any { it.isUnitInstanceOrNull() }) return
 
             computeTransformations()
             for ((insn, transformation) in transformations.entries) {
@@ -158,7 +158,7 @@ class RedundantCoercionToUnitTransformer : MethodTransformer() {
                     transformations[insn] = replaceWithPopTransformation(boxedValueSize)
                 }
 
-                insn.isUnitOrNull() -> {
+                insn.isUnitInstanceOrNull() -> {
                     transformations[insn] = replaceWithNopTransformation()
                 }
 
@@ -232,7 +232,7 @@ class RedundantCoercionToUnitTransformer : MethodTransformer() {
                 it.isPrimitiveBoxing() && (it as MethodInsnNode).owner == resultType
 
         private fun isTransformablePopOperand(insn: AbstractInsnNode) =
-                insn.opcode == Opcodes.CHECKCAST || insn.isPrimitiveBoxing() || insn.isUnitOrNull()
+                insn.opcode == Opcodes.CHECKCAST || insn.isPrimitiveBoxing() || insn.isUnitInstanceOrNull()
 
         private fun isDontTouch(insn: AbstractInsnNode) =
                 dontTouchInsnIndices[insnList.indexOf(insn)]
@@ -240,6 +240,9 @@ class RedundantCoercionToUnitTransformer : MethodTransformer() {
 
 }
 
-fun AbstractInsnNode.isUnitOrNull() =
-        opcode == Opcodes.ACONST_NULL ||
-        opcode == Opcodes.GETSTATIC && this is FieldInsnNode && owner == "kotlin/Unit" && name == "INSTANCE"
+fun AbstractInsnNode.isUnitInstanceOrNull() =
+        opcode == Opcodes.ACONST_NULL || isUnitInstance()
+
+fun AbstractInsnNode.isUnitInstance() =
+        opcode == Opcodes.GETSTATIC &&
+        this is FieldInsnNode && owner == "kotlin/Unit" && name == "INSTANCE"

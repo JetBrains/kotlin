@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,40 +14,26 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.optimization.boxing
+package org.jetbrains.kotlin.codegen.optimization.nullCheck
 
+import org.jetbrains.kotlin.codegen.optimization.boxing.isUnitInstance
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.InsnList
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
-
-class NullabilityInterpreter(insns: InsnList) : BoxingInterpreter(insns) {
-    override fun unaryOperation(insn: AbstractInsnNode, value: BasicValue) = makeNotNullIfNeeded(insn, super.unaryOperation(insn, value))
-
-    override fun newOperation(insn: AbstractInsnNode) = makeNotNullIfNeeded(insn, super.newOperation(insn))
-
-    override fun isExactValue(value: BasicValue) = super.isExactValue(value) || value is NotNullBasicValue
-
-    override fun createNewBoxing(insn: AbstractInsnNode, type: Type, progressionIterator: ProgressionIteratorBasicValue?) =
-            NotNullBasicValue(type)
-}
-
-private fun makeNotNullIfNeeded(insn: AbstractInsnNode, value: BasicValue?): BasicValue? =
-    when (insn.opcode) {
-        Opcodes.ANEWARRAY, Opcodes.NEWARRAY, Opcodes.LDC, Opcodes.NEW ->
-            if (value?.type?.sort == Type.OBJECT || value?.type?.sort == Type.ARRAY)
-                NotNullBasicValue(value.type)
-            else
-                value
-
-        else -> value
-    }
 
 class NotNullBasicValue(type: Type?) : StrictBasicValue(type) {
     override fun equals(other: Any?): Boolean = other is NotNullBasicValue
     // We do not differ not-nullable values, so we should always return the same hashCode
     // Actually it doesn't really matter because analyzer is not supposed to store values in hashtables
     override fun hashCode() = 0
+
+    companion object {
+        val NOT_NULL_REFERENCE_VALUE = NotNullBasicValue(StrictBasicValue.REFERENCE_VALUE.type)
+    }
 }
+
+object NullBasicValue : StrictBasicValue(AsmTypes.OBJECT_TYPE)
+

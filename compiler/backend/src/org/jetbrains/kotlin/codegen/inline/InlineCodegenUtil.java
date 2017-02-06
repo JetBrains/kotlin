@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.tree.*;
+import org.jetbrains.org.objectweb.asm.util.Printer;
 import org.jetbrains.org.objectweb.asm.util.Textifier;
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 
@@ -388,6 +389,11 @@ public class InlineCodegenUtil {
         textifier.print(new PrintWriter(sw));
         sw.flush();
         return sw.toString().trim();
+    }
+
+    @NotNull
+    public static String getInsnOpcodeText(@Nullable AbstractInsnNode node) {
+        return node == null ? "null" : Printer.OPCODES[node.getOpcode()];
     }
 
     @NotNull
