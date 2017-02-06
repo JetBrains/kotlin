@@ -4487,6 +4487,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("typeAlias.kt")
+        public void testTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/typeAlias.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeAliasGenericInstance.kt")
+        public void testTypeAliasGenericInstance() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/typeAliasGenericInstance.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("typeFromJava.kt")
         public void testTypeFromJava() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/typeFromJava.kt");
