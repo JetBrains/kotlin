@@ -1,3 +1,5 @@
+import java.util.Calendar;
+
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class Test {
     @org.jetbrains.annotations.NotNull()
@@ -201,6 +203,8 @@ public final class Test {
 
 ////////////////////
 
+
+import java.util.Calendar;
 
 public final class MyType<T extends java.lang.Object> {
 

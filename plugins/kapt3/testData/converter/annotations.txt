@@ -1,3 +1,4 @@
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno1 {
 }
 
@@ -15,6 +16,7 @@ public enum Colors {
 ////////////////////
 
 
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno2 {
 
     public abstract int i() default 5;
@@ -39,6 +41,7 @@ public abstract @interface Anno2 {
 ////////////////////
 
 
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno3 {
 
     public abstract java.lang.String value();

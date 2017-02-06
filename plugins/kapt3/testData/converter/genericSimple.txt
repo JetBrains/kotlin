@@ -1,13 +1,16 @@
-public abstract interface ABC {
+public abstract interface Intf<I1 extends java.lang.Object, I2 extends java.io.Serializable> {
+}
 
-    @org.jetbrains.annotations.NotNull()
-    public abstract <T extends java.lang.CharSequence>java.util.List<T> abc(@org.jetbrains.annotations.NotNull()
-    T p0, @org.jetbrains.annotations.NotNull()
-    java.util.List<? extends T> p1, @org.jetbrains.annotations.NotNull()
-    T... p2);
+////////////////////
 
-    public abstract <X extends java.lang.Object>int bcd(@org.jetbrains.annotations.NotNull()
-    char... p0);
+
+public abstract interface Intf2<T extends java.util.List<? extends java.lang.String>, M extends T> {
+}
+
+////////////////////
+
+
+public abstract interface OtherIntf<O extends java.lang.CharSequence> {
 }
 
 ////////////////////
@@ -18,18 +21,6 @@ public class BaseClass<B extends java.lang.Object> {
     public BaseClass() {
         super();
     }
-}
-
-////////////////////
-
-
-public abstract interface Intf<I1 extends java.lang.Object, I2 extends java.io.Serializable> {
-}
-
-////////////////////
-
-
-public abstract interface Intf2<T extends java.util.List<? extends java.lang.String>, M extends T> {
 }
 
 ////////////////////
@@ -52,5 +43,14 @@ public final class MyClass<M1 extends java.lang.Object, M2 extends java.lang.Obj
 ////////////////////
 
 
-public abstract interface OtherIntf<O extends java.lang.CharSequence> {
+public abstract interface ABC {
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract <T extends java.lang.CharSequence>java.util.List<T> abc(@org.jetbrains.annotations.NotNull()
+    T item, @org.jetbrains.annotations.NotNull()
+    java.util.List<? extends T> items, @org.jetbrains.annotations.NotNull()
+    T... otherItems);
+
+    public abstract <X extends java.lang.Object>int bcd(@org.jetbrains.annotations.NotNull()
+    char... a);
 }

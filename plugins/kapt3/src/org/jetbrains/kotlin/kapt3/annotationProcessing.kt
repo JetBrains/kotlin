@@ -65,6 +65,7 @@ fun KaptContext.doAnnotationProcessing(
         val parsedJavaFiles = compiler.parseFiles(javaFileObjects)
 
         compilerAfterAP = try {
+            javaLog.interceptorData.files = parsedJavaFiles.map { it.sourceFile to it }.toMap()
             val analyzedFiles = compiler.stopIfErrorOccurred(
                     CompileStates.CompileState.PARSE, compiler.enterTrees(parsedJavaFiles + additionalSources))
             compiler.processAnnotations(analyzedFiles)

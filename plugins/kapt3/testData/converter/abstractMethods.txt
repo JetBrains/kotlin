@@ -1,10 +1,10 @@
 public abstract class Base {
 
     protected abstract void doJob(@org.jetbrains.annotations.NotNull()
-    java.lang.String p0, int p1);
+    java.lang.String job, int delay);
 
     protected abstract <T extends java.lang.CharSequence>void doJobGeneric(@org.jetbrains.annotations.NotNull()
-    T p0, int p1);
+    T job, int delay);
 
     public Base() {
         super();

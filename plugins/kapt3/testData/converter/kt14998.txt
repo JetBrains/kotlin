@@ -5,7 +5,7 @@ public final class Outer {
     }
 
     public abstract void _abstract_(@org.jetbrains.annotations.NotNull()
-    java.lang.String p0, int p1);
+    java.lang.String s, int i);
 
     public Outer() {
         super();

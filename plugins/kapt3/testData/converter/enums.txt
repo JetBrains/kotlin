@@ -9,6 +9,7 @@ public enum Enum1 {
 ////////////////////
 
 
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno1 {
 
     public abstract java.lang.String value();

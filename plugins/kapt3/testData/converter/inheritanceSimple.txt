@@ -1,3 +1,20 @@
+public abstract interface Context {
+}
+
+////////////////////
+
+
+public enum Result {
+    /*public static final*/ SUCCESS /* = new SUCCESS() */,
+    /*public static final*/ ERROR /* = new ERROR() */;
+
+    Result() {
+    }
+}
+
+////////////////////
+
+
 public abstract class BaseClass {
 
     @org.jetbrains.annotations.NotNull()
@@ -7,12 +24,6 @@ public abstract class BaseClass {
     Context context, int num, boolean bool) {
         super();
     }
-}
-
-////////////////////
-
-
-public abstract interface Context {
 }
 
 ////////////////////
@@ -29,16 +40,5 @@ public final class Inheritor extends BaseClass {
     public Inheritor(@org.jetbrains.annotations.NotNull()
     Context context) {
         super(null, 0, false);
-    }
-}
-
-////////////////////
-
-
-public enum Result {
-    /*public static final*/ SUCCESS /* = new SUCCESS() */,
-    /*public static final*/ ERROR /* = new ERROR() */;
-
-    Result() {
     }
 }

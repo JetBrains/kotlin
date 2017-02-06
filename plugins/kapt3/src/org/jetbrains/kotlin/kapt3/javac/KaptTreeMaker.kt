@@ -25,7 +25,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Type.*
 
 class KaptTreeMaker(context: Context) : TreeMaker(context) {
-    private val nameTable = Names.instance(context).table
+    val nameTable = Names.instance(context).table
 
     fun Type(type: Type): JCTree.JCExpression {
         convertBuiltinType(type)?.let { return it }

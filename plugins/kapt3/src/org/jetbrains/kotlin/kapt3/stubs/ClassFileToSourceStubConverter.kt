@@ -29,7 +29,9 @@ import org.jetbrains.kotlin.kapt3.*
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.util.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
@@ -131,7 +133,7 @@ class ClassFileToSourceStubConverter(
 
         val classDeclaration = convertClass(clazz, packageName, true) ?: return null
 
-        val imports = JavacList.nil<JCTree>()
+        val imports = if (correctErrorTypes) convertImports(ktFile, classDeclaration) else JavacList.nil()
         val classes = JavacList.of<JCTree>(classDeclaration)
 
         val topLevel = treeMaker.TopLevel(packageAnnotations, packageClause, imports + classes)
@@ -142,6 +144,44 @@ class ClassFileToSourceStubConverter(
         }
 
         return topLevel
+    }
+
+    private fun convertImports(file: KtFile, classDeclaration: JCClassDecl): JavacList<JCTree> {
+        val imports = mutableListOf<JCTree>()
+
+        for (importDirective in file.importDirectives) {
+            // Qualified name should be valid Java fq-name
+            val importedFqName = importDirective.importedFqName ?: continue
+            if (!isValidQualifiedName(importedFqName)) continue
+
+            val shortName = importedFqName.shortName()
+            if (shortName.asString() == classDeclaration.simpleName.toString()) continue
+
+            // If alias is specified, it also should be valid Java name
+            val aliasName = importDirective.aliasName
+            if (aliasName != null /*TODO support aliases */ /*&& getValidIdentifierName(aliasName) == null*/) continue
+
+            val importedReference = getReferenceExpression(importDirective.importedReference)
+                    ?.let { kaptContext.bindingContext[BindingContext.REFERENCE_TARGET, it] }
+
+            if (importedReference is CallableDescriptor) continue
+
+            val importedExpr = treeMaker.FqName(importedFqName.asString())
+
+            imports += if (importDirective.isAllUnder) {
+                treeMaker.Import(treeMaker.Select(importedExpr, treeMaker.nameTable.names.asterisk), false)
+            } else {
+                treeMaker.Import(importedExpr, false)
+            }
+        }
+
+        return JavacList.from(imports)
+    }
+
+    private tailrec fun getReferenceExpression(expression: KtExpression?): KtReferenceExpression? = when (expression) {
+        is KtReferenceExpression -> expression
+        is KtQualifiedExpression -> getReferenceExpression(expression.selectorExpression)
+        else -> null
     }
 
     /**
@@ -455,6 +495,10 @@ class ClassFileToSourceStubConverter(
         }
 
         return ifNonError()
+    }
+
+    private fun isValidQualifiedName(name: FqName): Boolean {
+        return name.pathSegments().all { getValidIdentifierName(it.asString(), false) != null }
     }
 
     fun getValidIdentifierName(name: String, canBeConstructor: Boolean = false): String? {
