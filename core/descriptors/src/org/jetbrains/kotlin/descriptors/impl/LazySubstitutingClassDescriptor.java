@@ -217,6 +217,11 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     }
 
     @Override
+    public boolean isProtocol() {
+        return original.isProtocol();
+    }
+
+    @Override
     public boolean isExternal() {
         return original.isExternal();
     }

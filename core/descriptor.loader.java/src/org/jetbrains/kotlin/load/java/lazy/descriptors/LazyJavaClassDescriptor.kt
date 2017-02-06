@@ -103,6 +103,7 @@ class LazyJavaClassDescriptor(
 
     override fun isInner() = isInner
     override fun isData() = false
+    override fun isProtocol() = false
     override fun isCompanionObject() = false
     override fun isHeader() = false
     override fun isImpl() = false

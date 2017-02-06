@@ -86,6 +86,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final boolean isData;
     private final boolean isHeader;
     private final boolean isImpl;
+    private final boolean isProtocol;
 
     private final Annotations annotations;
     private final Annotations danglingAnnotations;
@@ -161,6 +162,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         this.isData = modifierList != null && modifierList.hasModifier(KtTokens.DATA_KEYWORD);
         this.isHeader = modifierList != null && modifierList.hasModifier(KtTokens.HEADER_KEYWORD);
         this.isImpl = modifierList != null && modifierList.hasModifier(KtTokens.IMPL_KEYWORD);
+        this.isProtocol = modifierList != null && modifierList.hasModifier(KtTokens.PROTOCOL_KEYWORD);
 
         // Annotation entries are taken from both own annotations (if any) and object literal annotations (if any)
         List<KtAnnotationEntry> annotationEntries = new ArrayList<>();
@@ -472,6 +474,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @Override
     public boolean isData() {
         return isData;
+    }
+
+    @Override
+    public boolean isProtocol() {
+        return isProtocol;
     }
 
     @Override

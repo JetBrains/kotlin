@@ -148,6 +148,11 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     }
 
     @Override
+    public boolean isProtocol() {
+        return false;
+    }
+
+    @Override
     public boolean isInner() {
         return false;
     }
