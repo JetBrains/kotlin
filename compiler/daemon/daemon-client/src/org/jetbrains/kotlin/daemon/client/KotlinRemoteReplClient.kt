@@ -16,45 +16,42 @@
 
 package org.jetbrains.kotlin.daemon.client
 
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
-import org.jetbrains.kotlin.daemon.common.CompileService
-import org.jetbrains.kotlin.daemon.common.RemoteOperationsTracer
-import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
+import org.jetbrains.kotlin.daemon.common.*
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
+import java.util.concurrent.locks.ReentrantReadWriteLock
 
 // TODO: reduce number of ports used then SOCKET_ANY_FREE_PORT is passed (same problem with other calls)
 
-open class KotlinRemoteReplClientBase(
+open class KotlinRemoteReplClient(
         protected val compileService: CompileService,
         clientAliveFlagFile: File?,
         targetPlatform: CompileService.TargetPlatform,
+        args: Array<out String>,
+        messageCollector: MessageCollector,
         templateClasspath: List<File>,
         templateClassName: String,
-        scriptArgs: Array<out Any?>? = null,
-        scriptArgsTypes: Array<out Class<out Any>>? = null,
-        compilerMessagesOutputStream: OutputStream = System.err,
-        evalOutputStream: OutputStream? = null,
-        evalErrorStream: OutputStream? = null,
-        evalInputStream: InputStream? = null,
-        port: Int = SOCKET_ANY_FREE_PORT,
-        operationsTracer: RemoteOperationsTracer? = null
-) {
+        scriptArgsWithTypes: ScriptArgsWithTypes,
+        port: Int = SOCKET_ANY_FREE_PORT
+) : ReplCompiler {
+    val services = BasicCompilerServicesWithResultsFacadeServer(messageCollector, null, port)
 
     val sessionId = compileService.leaseReplSession(
             clientAliveFlagFile?.absolutePath,
-            targetPlatform,
-            CompilerCallbackServicesFacadeServer(port = port),
+            args,
+            CompilationOptions(
+                    CompilerMode.NON_INCREMENTAL_COMPILER,
+                    targetPlatform,
+                    arrayOf(ReportCategory.COMPILER_MESSAGE.code, ReportCategory.DAEMON_MESSAGE.code, ReportCategory.EXCEPTION.code, ReportCategory.OUTPUT_MESSAGE.code),
+                    ReportSeverity.INFO.code,
+                    emptyArray()),
+            services,
             templateClasspath,
             templateClassName,
-            scriptArgs,
-            scriptArgsTypes,
-            RemoteOutputStreamServer(compilerMessagesOutputStream, port),
-            evalOutputStream?.let { RemoteOutputStreamServer(it, port) },
-            evalErrorStream?.let { RemoteOutputStreamServer(it, port) },
-            evalInputStream?.let { RemoteInputStreamServer(it, port) },
-            operationsTracer
+            scriptArgsWithTypes
     ).get()
 
     // dispose should be called at the end of the repl lifetime to free daemon repl session and appropriate resources
@@ -66,89 +63,13 @@ open class KotlinRemoteReplClientBase(
             // assuming that communication failed and daemon most likely is already down
         }
     }
-}
 
-class KotlinRemoteReplCompiler(
-        compileService: CompileService,
-        clientAliveFlagFile: File?,
-        targetPlatform: CompileService.TargetPlatform,
-        templateClasspath: List<File>,
-        templateClassName: String,
-        compilerMessagesOutputStream: OutputStream,
-        port: Int = SOCKET_ANY_FREE_PORT,
-        operationsTracer: RemoteOperationsTracer? = null
-) : KotlinRemoteReplClientBase(
-        compileService = compileService,
-        clientAliveFlagFile = clientAliveFlagFile,
-        targetPlatform = targetPlatform,
-        templateClasspath = templateClasspath,
-        templateClassName = templateClassName,
-        compilerMessagesOutputStream = compilerMessagesOutputStream,
-        evalOutputStream = null,
-        evalErrorStream = null,
-        evalInputStream = null,
-        port = port,
-        operationsTracer = operationsTracer
-), ReplCompiler, ReplCheckAction {
-    override fun resetToLine(lineNumber: Int): List<ReplCodeLine> {
-        return emptyList() // TODO: not implemented, no current need
-    }
+    override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> =
+            RemoteReplCompilerState(compileService.replCreateState(sessionId).get(), lock)
 
-    override val history: List<ReplCodeLine>
-        get() = emptyList() // TODO: not implemented, no current need
+    override fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult =
+            compileService.replCheck(sessionId, state.asState<RemoteReplCompilerState>().replStateFacade.id, codeLine).get()
 
-    override fun check(codeLine: ReplCodeLine): ReplCheckResult {
-        return compileService.remoteReplLineCheck(sessionId, codeLine).get()
-    }
-
-    override fun compile(codeLine: ReplCodeLine, verifyHistory: List<ReplCodeLine>?): ReplCompileResult {
-        return compileService.remoteReplLineCompile(sessionId, codeLine, verifyHistory).get()
-    }
-}
-
-// TODO: consider removing daemon eval completely - it is not required now and has questionable security. This will simplify daemon interface as well
-class KotlinRemoteReplEvaluator(
-        compileService: CompileService,
-        clientAliveFlagFile: File?,
-        targetPlatform: CompileService.TargetPlatform,
-        templateClasspath: List<File>,
-        templateClassName: String,
-        scriptArgs: Array<out Any?>? = null,
-        scriptArgsTypes: Array<out Class<out Any>>? = null,
-        compilerMessagesOutputStream: OutputStream,
-        evalOutputStream: OutputStream?,
-        evalErrorStream: OutputStream?,
-        evalInputStream: InputStream?,
-        port: Int = SOCKET_ANY_FREE_PORT,
-        operationsTracer: RemoteOperationsTracer? = null
-) : KotlinRemoteReplClientBase(
-        compileService = compileService,
-        clientAliveFlagFile = clientAliveFlagFile,
-        targetPlatform = targetPlatform,
-        templateClasspath = templateClasspath,
-        templateClassName = templateClassName,
-        scriptArgs = scriptArgs,
-        scriptArgsTypes = scriptArgsTypes,
-        compilerMessagesOutputStream = compilerMessagesOutputStream,
-        evalOutputStream = evalOutputStream,
-        evalErrorStream = evalErrorStream,
-        evalInputStream = evalInputStream,
-        port = port,
-        operationsTracer = operationsTracer
-), ReplAtomicEvalAction, ReplEvaluatorExposedInternalHistory, ReplCheckAction {
-
-    override val lastEvaluatedScripts: List<EvalHistoryType> = emptyList() // not implemented, no need so far
-
-    // TODO: invokeWrapper is ignored here, and in the daemon the session wrapper is used instead; So consider to make it per call (avoid performance penalties though)
-    // TODO: scriptArgs are ignored here, they should be passed through
-    override fun compileAndEval(codeLine: ReplCodeLine,
-                                scriptArgs: ScriptArgsWithTypes?,
-                                verifyHistory: List<ReplCodeLine>?,
-                                invokeWrapper: InvokeWrapper?): ReplEvalResult {
-        return compileService.remoteReplLineEval(sessionId, codeLine, verifyHistory).get()
-    }
-
-    override fun check(codeLine: ReplCodeLine): ReplCheckResult {
-        return compileService.remoteReplLineCheck(sessionId, codeLine).get()
-    }
+    override fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult =
+            compileService.replCompile(sessionId, state.asState<RemoteReplCompilerState>().replStateFacade.id, codeLine).get()
 }

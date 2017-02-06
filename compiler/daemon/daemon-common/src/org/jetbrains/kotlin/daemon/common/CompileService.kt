@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.daemon.common
 
-import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
-import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
-import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
-import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
+import org.jetbrains.kotlin.cli.common.repl.*
 import java.io.File
 import java.io.Serializable
 import java.rmi.Remote
@@ -37,8 +34,6 @@ interface CompileService : Remote {
         JS,
         METADATA
     }
-
-
 
     companion object {
         val NO_SESSION: Int = 0
@@ -107,6 +102,7 @@ interface CompileService : Remote {
 
     // TODO: consider adding async version of shutdown and release
 
+    @Deprecated("The usages should be replaced with `compile` method", ReplaceWith("compile"))
     @Throws(RemoteException::class)
     fun remoteCompile(
             sessionId: Int,
@@ -119,6 +115,7 @@ interface CompileService : Remote {
             operationsTracer: RemoteOperationsTracer?
     ): CallResult<Int>
 
+    @Deprecated("The usages should be replaced with `compile` method", ReplaceWith("compile"))
     @Throws(RemoteException::class)
     fun remoteIncrementalCompile(
             sessionId: Int,
@@ -143,6 +140,7 @@ interface CompileService : Remote {
     @Throws(RemoteException::class)
     fun clearJarCache()
 
+    @Deprecated("The usages should be replaced with other `leaseReplSession` method", ReplaceWith("leaseReplSession"))
     @Throws(RemoteException::class)
     fun leaseReplSession(
             aliveFlagPath: String?,
@@ -162,12 +160,14 @@ interface CompileService : Remote {
     @Throws(RemoteException::class)
     fun releaseReplSession(sessionId: Int): CallResult<Nothing>
 
+    @Deprecated("The usages should be replaced with `replCheck` method", ReplaceWith("replCheck"))
     @Throws(RemoteException::class)
     fun remoteReplLineCheck(
             sessionId: Int,
             codeLine: ReplCodeLine
     ): CallResult<ReplCheckResult>
 
+    @Deprecated("The usages should be replaced with `replCompile` method", ReplaceWith("replCompile"))
     @Throws(RemoteException::class)
     fun remoteReplLineCompile(
             sessionId: Int,
@@ -175,10 +175,39 @@ interface CompileService : Remote {
             history: List<ReplCodeLine>?
     ): CallResult<ReplCompileResult>
 
+    @Deprecated("Evaluation on daemon is not supported")
     @Throws(RemoteException::class)
     fun remoteReplLineEval(
             sessionId: Int,
             codeLine: ReplCodeLine,
             history: List<ReplCodeLine>?
     ): CallResult<ReplEvalResult>
+
+    @Throws(RemoteException::class)
+    fun leaseReplSession(
+            aliveFlagPath: String?,
+            compilerArguments: Array<out String>,
+            compilationOptions: CompilationOptions,
+            servicesFacade: CompilerServicesFacadeBase,
+            templateClasspath: List<File>,
+            templateClassName: String,
+            scriptArgsWithTypes: ScriptArgsWithTypes?
+    ): CallResult<Int>
+
+    @Throws(RemoteException::class)
+    fun replCreateState(sessionId: Int): CallResult<ReplStateFacade>
+
+    @Throws(RemoteException::class)
+    fun replCheck(
+            sessionId: Int,
+            replStateId: Int,
+            codeLine: ReplCodeLine
+    ): CallResult<ReplCheckResult>
+
+    @Throws(RemoteException::class)
+    fun replCompile(
+            sessionId: Int,
+            replStateId: Int,
+            codeLine: ReplCodeLine
+    ): CallResult<ReplCompileResult>
 }

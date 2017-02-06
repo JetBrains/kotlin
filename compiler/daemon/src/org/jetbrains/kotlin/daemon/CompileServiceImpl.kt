@@ -63,7 +63,6 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import java.util.logging.Level
 import java.util.logging.Logger
-import kotlin.comparisons.compareByDescending
 import kotlin.concurrent.read
 import kotlin.concurrent.schedule
 import kotlin.concurrent.write
@@ -102,6 +101,7 @@ class CompileServiceImpl(
         val timer: Timer,
         val onShutdown: () -> Unit
 ) : CompileService {
+
     init {
         System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
     }
@@ -133,24 +133,13 @@ class CompileServiceImpl(
         private val lock = ReentrantReadWriteLock()
         private val sessions: MutableMap<Int, ClientOrSessionProxy<Any>> = hashMapOf()
         private val sessionsIdCounter = AtomicInteger(0)
-        private val internalRng = Random()
 
-        fun<T: Any> leaseSession(session: ClientOrSessionProxy<T>): Int {
-            // fighting hypothetical integer wrapping
-            var newId = sessionsIdCounter.incrementAndGet()
-            for (attempt in 1..100) {
-                if (newId != CompileService.NO_SESSION) {
-                    lock.write {
-                        if (!sessions.containsKey(newId)) {
-                            sessions.put(newId, session)
-                            return newId
-                        }
-                    }
-                }
-                // assuming wrap, jumping to random number to reduce probability of further clashes
-                newId = sessionsIdCounter.addAndGet(internalRng.nextInt())
+        fun<T: Any> leaseSession(session: ClientOrSessionProxy<T>): Int = lock.write {
+            val newId = getValidId(sessionsIdCounter) {
+                it != CompileService.NO_SESSION && !sessions.containsKey(it)
             }
-            throw IllegalStateException("Invalid state or algorithm error")
+            sessions.put(newId, session)
+            newId
         }
 
         fun isEmpty(): Boolean = lock.read { sessions.isEmpty() }
@@ -463,9 +452,11 @@ class CompileServiceImpl(
             CompileService.CallResult.Error("Sorry, only JVM target platform is supported now")
         else {
             val disposable = Disposer.newDisposable()
-            val repl = KotlinJvmReplService(disposable, templateClasspath, templateClassName,
+            val compilerMessagesStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(compilerMessagesOutputStream, DummyProfiler()), REMOTE_STREAM_BUFFER_SIZE))
+            val messageCollector = KeepFirstErrorMessageCollector(compilerMessagesStream)
+            val repl = KotlinJvmReplService(disposable, port, templateClasspath, templateClassName,
                                             scriptArgs?.let { ScriptArgsWithTypes(it, scriptArgsTypes?.map { it.kotlin }?.toTypedArray() ?: emptyArray()) },
-                                            compilerMessagesOutputStream, operationsTracer)
+                                            messageCollector, operationsTracer)
             val sessionId = state.sessions.leaseSession(ClientOrSessionProxy(aliveFlagPath, repl, disposable))
 
             CompileService.CallResult.Good(sessionId)
@@ -478,14 +469,14 @@ class CompileServiceImpl(
     override fun remoteReplLineCheck(sessionId: Int, codeLine: ReplCodeLine): CompileService.CallResult<ReplCheckResult> =
             ifAlive(minAliveness = Aliveness.Alive) {
                 withValidRepl(sessionId) {
-                    check(codeLine)
+                    CompileService.CallResult.Good(check(codeLine))
                 }
             }
 
     override fun remoteReplLineCompile(sessionId: Int, codeLine: ReplCodeLine, history: List<ReplCodeLine>?): CompileService.CallResult<ReplCompileResult> =
             ifAlive(minAliveness = Aliveness.Alive) {
                 withValidRepl(sessionId) {
-                    compile(codeLine, history)
+                    CompileService.CallResult.Good(compile(codeLine, history))
                 }
             }
 
@@ -496,10 +487,57 @@ class CompileServiceImpl(
     ): CompileService.CallResult<ReplEvalResult> =
             ifAlive(minAliveness = Aliveness.Alive) {
                 withValidRepl(sessionId) {
-                    compileAndEval(codeLine, verifyHistory = history)
+                    CompileService.CallResult.Good(compileAndEval(codeLine, verifyHistory = history))
                 }
             }
 
+    override fun leaseReplSession(aliveFlagPath: String?,
+                                  compilerArguments: Array<out String>,
+                                  compilationOptions: CompilationOptions,
+                                  servicesFacade: CompilerServicesFacadeBase,
+                                  templateClasspath: List<File>,
+                                  templateClassName: String,
+                                  scriptArgsWithTypes: ScriptArgsWithTypes?
+    ): CompileService.CallResult<Int> = ifAlive(minAliveness = Aliveness.Alive)  {
+        if (compilationOptions.targetPlatform != CompileService.TargetPlatform.JVM)
+            CompileService.CallResult.Error("Sorry, only JVM target platform is supported now")
+        else {
+            val disposable = Disposer.newDisposable()
+            val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
+            val repl = KotlinJvmReplService(disposable, port, templateClasspath, templateClassName,
+                                            scriptArgsWithTypes, messageCollector, null)
+            val sessionId = state.sessions.leaseSession(ClientOrSessionProxy(aliveFlagPath, repl, disposable))
+
+            CompileService.CallResult.Good(sessionId)
+        }
+    }
+
+    override fun replCreateState(sessionId: Int): CompileService.CallResult<ReplStateFacade> =
+            ifAlive(minAliveness = Aliveness.Alive) {
+                withValidRepl(sessionId) {
+                    CompileService.CallResult.Good(createRemoteState(port))
+                }
+            }
+
+    override fun replCheck(sessionId: Int, replStateId: Int, codeLine: ReplCodeLine): CompileService.CallResult<ReplCheckResult> =
+            ifAlive(minAliveness = Aliveness.Alive) {
+                withValidRepl(sessionId) {
+                    withValidReplState(replStateId) { state ->
+                        check(state, codeLine)
+                    }
+                }
+            }
+
+    override fun replCompile(sessionId: Int, replStateId: Int, codeLine: ReplCodeLine): CompileService.CallResult<ReplCompileResult> =
+            ifAlive(minAliveness = Aliveness.Alive) {
+                withValidRepl(sessionId) {
+                    withValidReplState(replStateId) { state ->
+                        compile(state, codeLine)
+                    }
+                }
+            }
+
+    // -----------------------------------------------------------------------
     // internal implementation stuff
 
     // TODO: consider matching compilerId coming from outside with actual one
@@ -852,13 +890,20 @@ class CompileServiceImpl(
         finally {
             _lastUsedSeconds = nowSeconds()
         }
-
     }
 
     private inline fun<R> withValidRepl(sessionId: Int, body: KotlinJvmReplService.() -> R): CompileService.CallResult<R> =
             withValidClientOrSessionProxy(sessionId) { session ->
                 (session?.data as? KotlinJvmReplService?)?.let {
                     CompileService.CallResult.Good(it.body())
+                } ?: CompileService.CallResult.Error("Not a REPL session $sessionId")
+            }
+
+    @JvmName("withValidRepl1")
+    private inline fun<R> withValidRepl(sessionId: Int, body: KotlinJvmReplService.() -> CompileService.CallResult<R>): CompileService.CallResult<R> =
+            withValidClientOrSessionProxy(sessionId) { session ->
+                (session?.data as? KotlinJvmReplService?)?.let {
+                    it.body()
                 } ?: CompileService.CallResult.Error("Not a REPL session $sessionId")
             }
 }
