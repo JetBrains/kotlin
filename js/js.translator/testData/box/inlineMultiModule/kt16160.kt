@@ -1,6 +1,8 @@
 // MODULE: main(module2)
 // FILE: main.kt
 
+// CHECK_CONTAINS_NO_CALLS: box except=foo;bar;toString
+
 import A.test
 
 fun box(): String {

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtCallExpression;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
+import org.jetbrains.kotlin.resolve.FunctionImportedFromObject;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
@@ -69,7 +70,9 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
     }
 
     public static boolean shouldBeInlined(@NotNull CallableDescriptor descriptor) {
-        if (descriptor instanceof SimpleFunctionDescriptor || descriptor instanceof PropertyAccessorDescriptor) {
+        if (descriptor instanceof SimpleFunctionDescriptor ||
+            descriptor instanceof PropertyAccessorDescriptor ||
+            descriptor instanceof FunctionImportedFromObject) {
             return InlineUtil.isInline(descriptor);
         }
 
