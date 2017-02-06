@@ -96,6 +96,7 @@ abstract class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3T
 
         val javaFiles = convert(kaptRunner, typeMapper, generateNonExistentClass, correctErrorTypes)
 
+        kaptRunner.javaLog.interceptorData.files = javaFiles.map { it.sourceFile to it }.toMap()
         if (validate) kaptRunner.compiler.enterTrees(javaFiles)
 
         val actualRaw = javaFiles.sortedBy { it.sourceFile.name }.joinToString (FILE_SEPARATOR)
