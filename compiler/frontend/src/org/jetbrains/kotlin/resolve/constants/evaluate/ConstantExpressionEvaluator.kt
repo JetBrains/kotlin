@@ -166,23 +166,24 @@ class ConstantExpressionEvaluator(
             trace: BindingTrace
     ): Pair<List<KtExpression>, KotlinType?>? {
         val resolvedCall = expression.getResolvedCall(trace.bindingContext)
-        if (resolvedCall == null || !CompileTimeConstantUtils.isArrayMethodCall(resolvedCall)) {
+        if (resolvedCall == null || !CompileTimeConstantUtils.isArrayFunctionCall(resolvedCall)) {
             return null
         }
 
-        val argumentEntry = resolvedCall.valueArguments.entries.single()
-
-        val elementType = argumentEntry.key.varargElementType ?: return null
+        val returnType = resolvedCall.resultingDescriptor.returnType ?: return null
+        val componentType = builtIns.getArrayElementType(returnType)
 
         val result = arrayListOf<KtExpression>()
-        for (valueArgument in argumentEntry.value.arguments) {
-            val valueArgumentExpression = valueArgument.getArgumentExpression()
-            if (valueArgumentExpression != null) {
-                result.add(valueArgumentExpression)
+        for ((_, resolvedValueArgument) in resolvedCall.valueArguments) {
+            for (valueArgument in resolvedValueArgument.arguments) {
+                val valueArgumentExpression = valueArgument.getArgumentExpression()
+                if (valueArgumentExpression != null) {
+                    result.add(valueArgumentExpression)
+                }
             }
         }
 
-        return Pair<List<KtExpression>, KotlinType>(result, elementType)
+        return Pair<List<KtExpression>, KotlinType>(result, componentType)
     }
 
     private fun hasSpread(argument: ResolvedValueArgument): Boolean {
@@ -646,13 +647,14 @@ private class ConstantExpressionEvaluatorVisitor(
 
         val resultingDescriptor = call.resultingDescriptor
 
-        // arrayOf()
-        if (CompileTimeConstantUtils.isArrayMethodCall(call)) {
-            val varargType = resultingDescriptor.valueParameters.first().varargElementType!!
+        // arrayOf() or emptyArray()
+        if (CompileTimeConstantUtils.isArrayFunctionCall(call)) {
+            val returnType = resultingDescriptor.returnType ?: return null
+            val componentType = constantExpressionEvaluator.builtIns.getArrayElementType(returnType)
 
-            val arguments = call.valueArguments.values.flatMap { resolveArguments(it.arguments, varargType) }
+            val arguments = call.valueArguments.values.flatMap { resolveArguments(it.arguments, componentType) }
 
-            return factory.createArrayValue(arguments.map { it.toConstantValue(varargType) }, resultingDescriptor.returnType!!).
+            return factory.createArrayValue(arguments.map { it.toConstantValue(componentType) }, resultingDescriptor.returnType!!).
                     wrap(
                             usesVariableAsConstant = arguments.any { it.usesVariableAsConstant },
                             usesNonConstValAsConstant = arguments.any { it.usesNonConstValAsConstant }

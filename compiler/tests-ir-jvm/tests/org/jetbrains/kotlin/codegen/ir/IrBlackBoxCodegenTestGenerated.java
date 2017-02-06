@@ -5845,6 +5845,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 doTest(fileName);
             }
 
+            @TestMetadata("annotationWithEmptyArray.kt")
+            public void testAnnotationWithEmptyArray() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/constructor/annotationWithEmptyArray.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("checkIfConstructorIsSynthetic.kt")
             public void testCheckIfConstructorIsSynthetic() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/defaultArguments/constructor/checkIfConstructorIsSynthetic.kt");

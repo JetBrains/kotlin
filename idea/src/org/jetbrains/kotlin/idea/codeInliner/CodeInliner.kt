@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -500,7 +500,7 @@ class CodeInliner<TCallElement : KtElement>(
                 val argumentExpression = argument.getArgumentExpression() ?: return@forEachDescendantOfType
                 val resolvedCall = argumentExpression.getResolvedCall(argumentExpression.analyze(BodyResolveMode.PARTIAL)) ?: return@forEachDescendantOfType
                 val callExpression = resolvedCall.call.callElement as? KtCallExpression ?: return@forEachDescendantOfType
-                if (CompileTimeConstantUtils.isArrayMethodCall(resolvedCall)) {
+                if (CompileTimeConstantUtils.isArrayFunctionCall(resolvedCall)) {
                     argumentsToExpand.add(argument to callExpression.valueArguments)
                 }
             }
