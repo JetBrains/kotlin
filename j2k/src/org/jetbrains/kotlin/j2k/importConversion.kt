@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.j2k.ast.Import
 import org.jetbrains.kotlin.j2k.ast.ImportList
@@ -160,7 +161,8 @@ private fun convertNonStaticImport(fqName: FqName, isOnDemand: Boolean, target: 
 private fun renderImportName(fqName: FqName, isOnDemand: Boolean)
         = if (isOnDemand) fqName.render() + ".*" else fqName.render()
 
-private val DEFAULT_IMPORTS_SET: Set<FqName> = JvmPlatform.defaultImports
+// TODO: use the correct LanguageVersionSettings instance here
+private val DEFAULT_IMPORTS_SET: Set<FqName> = JvmPlatform.getDefaultImports(LanguageVersionSettingsImpl.DEFAULT)
         .filter { it.isAllUnder }
         .map { it.fqnPart() }
         .toSet()

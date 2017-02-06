@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.resolve
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
@@ -25,7 +26,8 @@ import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
 object JsPlatform : TargetPlatform("JS") {
-    override val defaultImports: List<ImportPath> = Default.defaultImports + ImportPath("kotlin.js.*")
+    override fun getDefaultImports(languageVersionSettings: LanguageVersionSettings): List<ImportPath> =
+            Default.getDefaultImports(languageVersionSettings) + ImportPath("kotlin.js.*")
 
     override val platformConfigurator: PlatformConfigurator = JsPlatformConfigurator
 

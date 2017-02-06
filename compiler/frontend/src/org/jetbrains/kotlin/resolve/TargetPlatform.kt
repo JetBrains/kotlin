@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.composeContainer
 import org.jetbrains.kotlin.container.useInstance
@@ -34,21 +36,24 @@ abstract class TargetPlatform(val platformName: String) {
     override fun toString() = platformName
 
     abstract val platformConfigurator: PlatformConfigurator
-    abstract val defaultImports: List<ImportPath>
+    abstract fun getDefaultImports(languageVersionSettings: LanguageVersionSettings): List<ImportPath>
     open val excludedImports: List<FqName> get() = emptyList()
 
     abstract val multiTargetPlatform: MultiTargetPlatform
 
     object Default : TargetPlatform("Default") {
-        override val defaultImports: List<ImportPath> = ArrayList<ImportPath>().apply {
+        override fun getDefaultImports(languageVersionSettings: LanguageVersionSettings): List<ImportPath> = ArrayList<ImportPath>().apply {
             add(ImportPath("kotlin.*"))
             add(ImportPath("kotlin.annotation.*"))
             add(ImportPath("kotlin.collections.*"))
             add(ImportPath("kotlin.ranges.*"))
             add(ImportPath("kotlin.sequences.*"))
             add(ImportPath("kotlin.text.*"))
-            add(ImportPath("kotlin.comparisons.*"))
             add(ImportPath("kotlin.io.*"))
+
+            if (languageVersionSettings.supportsFeature(LanguageFeature.DefaultImportOfPackageKotlinComparisons)) {
+                add(ImportPath("kotlin.comparisons.*"))
+            }
         }
 
         override val platformConfigurator =
