@@ -45,7 +45,8 @@ import com.sun.tools.javac.util.List as JavacList
 class ClassFileToSourceStubConverter(
         val kaptContext: KaptContext,
         val typeMapper: KotlinTypeMapper,
-        val generateNonExistentClass: Boolean
+        val generateNonExistentClass: Boolean,
+        val correctErrorTypes: Boolean
 ) {
     private companion object {
         private val VISIBILITY_MODIFIERS = (Opcodes.ACC_PUBLIC or Opcodes.ACC_PRIVATE or Opcodes.ACC_PROTECTED).toLong()
@@ -441,6 +442,10 @@ class ClassFileToSourceStubConverter(
             ktTypeProvider: () -> KtTypeReference?,
             ifNonError: () -> T
     ): T {
+        if (!correctErrorTypes) {
+            return ifNonError()
+        }
+
         if (type?.containsErrorTypes() ?: false) {
             val ktType = ktTypeProvider()
             if (ktType != null) {

@@ -68,8 +68,13 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         }
     }
 
-    protected fun convert(kaptRunner: KaptContext, typeMapper: KotlinTypeMapper, generateNonExistentClass: Boolean): JavacList<JCCompilationUnit> {
-        val converter = ClassFileToSourceStubConverter(kaptRunner, typeMapper, generateNonExistentClass)
+    protected fun convert(
+            kaptRunner: KaptContext,
+            typeMapper: KotlinTypeMapper,
+            generateNonExistentClass: Boolean,
+            correctErrorTypes: Boolean
+    ): JavacList<JCCompilationUnit> {
+        val converter = ClassFileToSourceStubConverter(kaptRunner, typeMapper, generateNonExistentClass, correctErrorTypes)
         return converter.convert()
     }
 
@@ -85,9 +90,10 @@ abstract class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3T
         fun isOptionSet(name: String) = wholeFile.useLines { lines -> lines.any { it.trim() == "// $name" } }
 
         val generateNonExistentClass = isOptionSet("NON_EXISTENT_CLASS")
+        val correctErrorTypes = isOptionSet("CORRECT_ERROR_TYPES")
         val validate = !isOptionSet("NO_VALIDATION")
 
-        val javaFiles = convert(kaptRunner, typeMapper, generateNonExistentClass)
+        val javaFiles = convert(kaptRunner, typeMapper, generateNonExistentClass, correctErrorTypes)
 
         if (validate) kaptRunner.compiler.enterTrees(javaFiles)
 
@@ -104,7 +110,7 @@ abstract class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3T
 
 abstract class AbstractKotlinKaptContextTest : AbstractKotlinKapt3Test() {
     override fun check(kaptRunner: KaptContext, typeMapper: KotlinTypeMapper, txtFile: File, wholeFile: File) {
-        val compilationUnits = convert(kaptRunner, typeMapper, generateNonExistentClass = false)
+        val compilationUnits = convert(kaptRunner, typeMapper, generateNonExistentClass = false, correctErrorTypes = true)
         val sourceOutputDir = Files.createTempDirectory("kaptRunner").toFile()
         try {
             kaptRunner.doAnnotationProcessing(emptyList(), listOf(JavaKaptContextTest.simpleProcessor()),

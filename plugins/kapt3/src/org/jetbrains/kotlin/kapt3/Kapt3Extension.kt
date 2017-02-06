@@ -52,10 +52,12 @@ class ClasspathBasedKapt3Extension(
         options: Map<String, String>,
         aptOnly: Boolean,
         val useLightAnalysis: Boolean,
+        correctErrorTypes: Boolean,
         pluginInitializedTime: Long,
         logger: KaptLogger
 ) : AbstractKapt3Extension(compileClasspath, annotationProcessingClasspath, javaSourceRoots, sourcesOutputDir,
-                           classFilesOutputDir, stubsOutputDir, incrementalDataOutputDir, options, aptOnly, pluginInitializedTime, logger) {
+                           classFilesOutputDir, stubsOutputDir, incrementalDataOutputDir, options,
+                           aptOnly, pluginInitializedTime, logger, correctErrorTypes) {
     override val analyzePartially: Boolean
         get() = useLightAnalysis
 
@@ -101,7 +103,8 @@ abstract class AbstractKapt3Extension(
         val options: Map<String, String>,
         val aptOnly: Boolean,
         val pluginInitializedTime: Long,
-        val logger: KaptLogger
+        val logger: KaptLogger,
+        val correctErrorTypes: Boolean
 ) : PartialAnalysisHandlerExtension() {
     val compileClasspath = compileClasspath.distinct()
     val annotationProcessingClasspath = annotationProcessingClasspath.distinct()
@@ -203,7 +206,8 @@ abstract class AbstractKapt3Extension(
     }
 
     private fun generateKotlinSourceStubs(kaptContext: KaptContext, generationState: GenerationState) {
-        val converter = ClassFileToSourceStubConverter(kaptContext, generationState.typeMapper, generateNonExistentClass = true)
+        val converter = ClassFileToSourceStubConverter(kaptContext, generationState.typeMapper,
+                                                       generateNonExistentClass = true, correctErrorTypes = correctErrorTypes)
 
         val (stubGenerationTime, kotlinSourceStubs) = measureTimeMillis {
             converter.convert()

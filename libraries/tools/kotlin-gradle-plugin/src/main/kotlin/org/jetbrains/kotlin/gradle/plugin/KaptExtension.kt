@@ -28,6 +28,8 @@ open class KaptExtension {
 
     open var useLightAnalysis: Boolean = true
 
+    open var correctErrorTypes: Boolean = false
+
     private var closure: Closure<*>? = null
 
     open fun arguments(closure: Closure<*>) {
