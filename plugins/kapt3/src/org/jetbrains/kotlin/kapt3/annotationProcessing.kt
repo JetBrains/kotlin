@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.kapt3
 
+import com.sun.tools.javac.comp.CompileStates
 import com.sun.tools.javac.file.JavacFileManager
+import com.sun.tools.javac.main.JavaCompiler
 import com.sun.tools.javac.main.Option
 import com.sun.tools.javac.processing.AnnotationProcessingError
 import com.sun.tools.javac.processing.JavacFiler
 import com.sun.tools.javac.processing.JavacProcessingEnvironment
 import com.sun.tools.javac.tree.JCTree
-import com.sun.tools.javac.util.Log
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
 import java.io.File
 import javax.annotation.processing.Processor
@@ -56,28 +57,26 @@ fun KaptContext.doAnnotationProcessing(
     val fileManager = context.get(JavaFileManager::class.java) as JavacFileManager
     val processingEnvironment = JavacProcessingEnvironment.instance(context)
 
+    val compilerAfterAP: JavaCompiler
     try {
         compiler.initProcessAnnotations(processors)
 
         val javaFileObjects = fileManager.getJavaFileObjectsFromFiles(javaSourceFiles)
         val parsedJavaFiles = compiler.parseFiles(javaFileObjects)
 
-        val log = Log.instance(context)
-
-        val warningsBeforeAp: Int
-        try {
-            val analyzedFiles = compiler.enterTrees(parsedJavaFiles + additionalSources)
-
-            warningsBeforeAp = log.nwarnings
-
+        compilerAfterAP = try {
+            val analyzedFiles = compiler.stopIfErrorOccurred(
+                    CompileStates.CompileState.PARSE, compiler.enterTrees(parsedJavaFiles + additionalSources))
             compiler.processAnnotations(analyzedFiles)
         } catch (e: AnnotationProcessingError) {
             throw KaptError(KaptError.Kind.EXCEPTION, e.cause ?: e)
         }
 
+        val log = compilerAfterAP.log
+
         val filer = processingEnvironment.filer as JavacFiler
         val errorCount = log.nerrors
-        val warningCount = log.nwarnings - warningsBeforeAp
+        val warningCount = log.nwarnings
 
         logger.info { "Annotation processing complete, errors: $errorCount, warnings: $warningCount" }
         if (logger.isVerbose) {
