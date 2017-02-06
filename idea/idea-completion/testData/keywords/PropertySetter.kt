@@ -29,7 +29,7 @@ class Some {
 // EXIST:  companion object
 // EXIST:  operator
 // EXIST:  infix
-// EXIST:  sealed
+// EXIST:  sealed class
 // EXIST:  lateinit
 // EXIST:  data
 // EXIST:  inline

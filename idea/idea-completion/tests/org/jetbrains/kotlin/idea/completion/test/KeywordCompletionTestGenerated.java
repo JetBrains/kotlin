@@ -546,6 +546,18 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("SuspendInsideTypeArguments.kt")
+    public void testSuspendInsideTypeArguments() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/SuspendInsideTypeArguments.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("SuspendInsideTypeArguments1.kt")
+    public void testSuspendInsideTypeArguments1() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/SuspendInsideTypeArguments1.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("This.kt")
     public void testThis() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/This.kt");

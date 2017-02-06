@@ -57,7 +57,8 @@ object KeywordCompletion {
     private val COMPOUND_KEYWORDS = mapOf<KtKeywordToken, KtKeywordToken>(
             COMPANION_KEYWORD to OBJECT_KEYWORD,
             ENUM_KEYWORD to CLASS_KEYWORD,
-            ANNOTATION_KEYWORD to CLASS_KEYWORD
+            ANNOTATION_KEYWORD to CLASS_KEYWORD,
+            SEALED_KEYWORD to CLASS_KEYWORD
     )
 
     private val KEYWORD_CONSTRUCTS = mapOf<KtKeywordToken, String>(
@@ -228,29 +229,42 @@ object KeywordCompletion {
                         return buildFilterWithContext("val v = ", default!!, position)
                     }
                 }
-            }
 
-            if (parent is KtDeclaration) {
-                val scope = parent.parent
-                when (scope) {
-                    is KtClassOrObject -> {
-                        if (parent is KtPrimaryConstructor) {
-                            return buildFilterWithReducedContext("class X ", parent, position)
+                is KtDeclaration -> {
+                    val scope = parent.parent
+                    when (scope) {
+                        is KtClassOrObject -> {
+                            if (parent is KtPrimaryConstructor) {
+                                return buildFilterWithReducedContext("class X ", parent, position)
+                            }
+                            else {
+                                return buildFilterWithReducedContext("class X { ", parent, position)
+                            }
                         }
-                        else {
-                            return buildFilterWithReducedContext("class X { ", parent, position)
-                        }
+
+                        is KtFile -> return buildFilterWithReducedContext("", parent, position)
                     }
-
-                    is KtFile -> return buildFilterWithReducedContext("", parent, position)
                 }
             }
+
 
             prevParent = parent
             parent = parent.parent
         }
 
         return buildFilterWithReducedContext("", null, position)
+    }
+
+    fun computeKeywordApplications(prefixText: String, keyword: KtKeywordToken): Sequence<String> {
+        return when (keyword) {
+            SUSPEND_KEYWORD -> sequenceOf("suspend () -> Unit>", "suspend X")
+            else -> {
+                if (prefixText.endsWith("@"))
+                    sequenceOf(keyword.value + ":X Y.Z")
+                else
+                    sequenceOf(keyword.value + " X")
+            }
+        }
     }
 
     private fun buildFilterWithContext(prefixText: String,
@@ -270,11 +284,15 @@ object KeywordCompletion {
     }
 
 
+    private fun buildFilesWithKeywordApplication(keywordTokenType: KtKeywordToken, prefixText: String, psiFactory: KtPsiFactory): Sequence<KtFile> {
+        return computeKeywordApplications(prefixText, keywordTokenType)
+                .map { application -> psiFactory.createFile(prefixText + application) }
+    }
+
+
     private fun buildFilterByText(prefixText: String, position: PsiElement): (KtKeywordToken) -> Boolean {
         val psiFactory = KtPsiFactory(position.project)
-        return fun (keywordTokenType): Boolean {
-            val postfix = if (prefixText.endsWith("@")) ":X Y.Z" else " X"
-            val file = psiFactory.createFile(prefixText + keywordTokenType.value + postfix)
+        fun isKeywordCorrectlyApplied(keywordTokenType: KtKeywordToken, file: KtFile): Boolean {
             val elementAt = file.findElementAt(prefixText.length)!!
 
             when {
@@ -340,6 +358,11 @@ object KeywordCompletion {
                     return true
                 }
             }
+        }
+
+        return fun (keywordTokenType): Boolean {
+            val files = buildFilesWithKeywordApplication(keywordTokenType, prefixText, psiFactory)
+            return files.any { file -> isKeywordCorrectlyApplied(keywordTokenType, file); }
         }
     }
 
