@@ -40,6 +40,7 @@ class KaptContext(
     val compiler: KaptJavaCompiler
     val fileManager: JavacFileManager
     val options: Options
+    val javaLog: KaptJavaLog
 
     init {
         KaptJavaLog.preRegister(context, logger.messageCollector)
@@ -49,6 +50,8 @@ class KaptContext(
 
         fileManager = context.get(JavaFileManager::class.java) as JavacFileManager
         compiler = JavaCompiler.instance(context) as KaptJavaCompiler
+
+        javaLog = compiler.log as KaptJavaLog
 
         options = Options.instance(context)
         for ((key, value) in processorOptions) {
