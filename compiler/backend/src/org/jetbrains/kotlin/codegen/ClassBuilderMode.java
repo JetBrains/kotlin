@@ -58,7 +58,7 @@ public class ClassBuilderMode {
 
     public final static ClassBuilderMode LIGHT = new ClassBuilderMode(
             false,
-            true,
+            false,
             false,
             true);
 

@@ -45,10 +45,7 @@ import java.io.File
 import java.io.StringWriter
 import java.nio.charset.Charset
 import java.util.*
-import javax.tools.DiagnosticCollector
-import javax.tools.JavaFileObject
-import javax.tools.StandardLocation
-import javax.tools.ToolProvider
+import javax.tools.*
 
 object JavaAgainstKotlinCompiler {
 
@@ -140,16 +137,29 @@ object JavaAgainstKotlinCompiler {
                 lightClasses
         )
 
-        val javaFileObjects = fileManager.standardFileManager.getJavaFileObjectsFromFiles(javaFiles)
+        with (fileManager) {
+            val javaFileObjects = standardFileManager.getJavaFileObjectsFromFiles(javaFiles)
 
-        fileManager.standardFileManager.setLocation(StandardLocation.CLASS_PATH, classpath)
-        fileManager.standardFileManager.setLocation(StandardLocation.CLASS_OUTPUT, listOf(outDir))
+            standardFileManager.setLocation(StandardLocation.CLASS_PATH, classpath)
+            standardFileManager.setLocation(StandardLocation.CLASS_OUTPUT, listOf(outDir))
 
-        fileManager.use { fileManager ->
-            val compilationTask = javac.getTask(StringWriter(), fileManager, diagnosticCollector,
-                                                options, null, javaFileObjects)
-            if (!compilationTask.call()) {
-                println("Diagnostics: " + diagnosticCollector.diagnostics.map { it.getMessage(Locale.ENGLISH) })
+            use { fileManager ->
+                val compilationTask = javac.getTask(StringWriter(), fileManager, diagnosticCollector,
+                                                    options, null, javaFileObjects)
+                if (!compilationTask.call()) {
+                    diagnosticCollector.diagnostics.forEach {
+                        val severity = when (it.kind) {
+                            Diagnostic.Kind.ERROR -> CompilerMessageSeverity.ERROR
+                            Diagnostic.Kind.WARNING -> CompilerMessageSeverity.WARNING
+                            Diagnostic.Kind.MANDATORY_WARNING -> CompilerMessageSeverity.STRONG_WARNING
+                            Diagnostic.Kind.NOTE -> CompilerMessageSeverity.INFO
+                            else -> CompilerMessageSeverity.LOGGING
+                        }
+
+                        val message = "${it.source.name} [${it.lineNumber}, ${it.columnNumber}]: ${it.getMessage(Locale.ENGLISH)}"
+                        messageCollector.report(severity, message, CompilerMessageLocation.NO_LOCATION)
+                    }
+                }
             }
         }
 
