@@ -84,7 +84,8 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
         ReifiedTypeParameterAnnotationChecker(),
         DynamicReceiverChecker,
         DelegationChecker(),
-        KClassWithIncorrectTypeArgumentChecker
+        KClassWithIncorrectTypeArgumentChecker,
+        SuspendOperatorsCheckers
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(

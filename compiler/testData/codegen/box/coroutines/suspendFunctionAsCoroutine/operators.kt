@@ -44,6 +44,16 @@ class A(val x: String) {
         x.resume(Unit)
         COROUTINE_SUSPENDED
     }
+// See KT-16221
+//    operator suspend fun contains(y: String): Boolean = suspendCoroutineOrReturn { x ->
+//        x.resume(y == "56")
+//        COROUTINE_SUSPENDED
+//    }
+
+    operator suspend fun compareTo(y: String): Int = suspendCoroutineOrReturn { x ->
+        x.resume("56".compareTo(y))
+        COROUTINE_SUSPENDED
+    }
 }
 
 fun builder(c: suspend () -> Unit) {
@@ -94,6 +104,22 @@ suspend fun foo7() {
     if (!y.isIncCalled) throw RuntimeException("fail 8")
 }
 
+//suspend fun foo8() {
+//    if ("1" in a) throw RuntimeException("fail 9")
+//    if (!("1" !in a)) throw RuntimeException("fail 9")
+//
+//    if ("56" in a) throw RuntimeException("fail 10")
+//    if (!("56" !in a)) throw RuntimeException("fail 11")
+//}
+
+suspend fun checkCompareTo(v: String) = (a < v) == ("56" < v)
+
+suspend fun foo9() {
+    if (!checkCompareTo("55")) throw RuntimeException("fail 12")
+    if (!checkCompareTo("56")) throw RuntimeException("fail 13")
+    if (!checkCompareTo("57")) throw RuntimeException("fail 14")
+}
+
 fun box(): String {
 
     builder {
@@ -104,6 +130,8 @@ fun box(): String {
         //foo5()
         foo6()
         foo7()
+        //foo8()
+        foo9()
     }
 
     return "OK"

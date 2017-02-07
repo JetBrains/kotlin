@@ -6,6 +6,7 @@ public final class A {
     private field isSetValueCalled: boolean
     private final @org.jetbrains.annotations.NotNull field x: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public final @org.jetbrains.annotations.Nullable method compareTo(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method component1(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public final @org.jetbrains.annotations.NotNull method getX(): java.lang.String
@@ -55,12 +56,14 @@ public final class OperatorsKt {
     private static @org.jetbrains.annotations.NotNull field a: A
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
+    public final static @org.jetbrains.annotations.Nullable method checkCompareTo(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method foo1(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method foo2(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method foo3(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method foo4(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method foo6(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method foo7(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method foo9(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.experimental.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.NotNull method getA(): A
     public final static method setA(@org.jetbrains.annotations.NotNull p0: A): void
     public final static @org.jetbrains.annotations.Nullable method suspendThere(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
