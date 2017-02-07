@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.javac
 
+import org.jetbrains.kotlin.psi.KtFile
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.net.URI
@@ -24,7 +25,11 @@ import javax.tools.SimpleJavaFileObject
 
 class KotlinLightClass(val binaryName: String,
                        val packageName: String,
-                       val byteCode: ByteArray) : SimpleJavaFileObject(URI(binaryName), JavaFileObject.Kind.CLASS) {
+                       val ktFile: KtFile,
+                       val compiler: JavaAgainstKotlinCompiler) : SimpleJavaFileObject(URI(binaryName), JavaFileObject.Kind.CLASS) {
+
+    val byteCode: ByteArray
+        get() = compiler.getByteCode(this)
 
     override fun openOutputStream() = ByteArrayOutputStream()
 
