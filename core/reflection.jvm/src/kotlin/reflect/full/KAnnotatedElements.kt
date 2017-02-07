@@ -22,6 +22,7 @@ import kotlin.reflect.*
 /**
  * Returns an annotation of the given type on this element.
  */
-@Suppress("UNCHECKED_CAST")
+@SinceKotlin("1.1")
 inline fun <reified T : Annotation> KAnnotatedElement.findAnnotation(): T? =
+        @Suppress("UNCHECKED_CAST")
         annotations.firstOrNull { it is T } as T?

@@ -38,6 +38,7 @@ class IllegalCallableAccessException(cause: IllegalAccessException) : kotlin.ref
  * @see [kotlin.reflect.KProperty2.getDelegate]
  * @see [kotlin.reflect.jvm.isAccessible]
  */
+@SinceKotlin("1.1")
 class IllegalPropertyDelegateAccessException(cause: IllegalAccessException) : Exception(
         "Cannot obtain the delegate of a non-accessible property. Use \"isAccessible = true\" to make the property accessible",
         cause
