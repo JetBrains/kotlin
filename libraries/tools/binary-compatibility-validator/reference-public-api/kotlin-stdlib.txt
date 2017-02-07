@@ -1,7 +1,6 @@
 public final class kotlin/ExceptionsKt {
 	public static final fun addSuppressed (Ljava/lang/Throwable;Ljava/lang/Throwable;)V
 	public static final fun getStackTrace (Ljava/lang/Throwable;)[Ljava/lang/StackTraceElement;
-	public static synthetic fun stackTrace$annotations (Ljava/lang/Throwable;)V
 }
 
 public final class kotlin/KotlinVersion : java/lang/Comparable {
@@ -87,7 +86,6 @@ public final class kotlin/TuplesKt {
 
 public final class kotlin/_Assertions {
 	public static final field INSTANCE Lkotlin/_Assertions;
-	public static synthetic fun ENABLED$annotations ()V
 }
 
 public abstract class kotlin/collections/AbstractCollection : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
@@ -1730,15 +1728,6 @@ public final class kotlin/collections/SetsKt {
 	public static final fun sortedSetOf ([Ljava/lang/Object;)Ljava/util/TreeSet;
 }
 
-public final class kotlin/collections/TypeAliasesKt {
-	public static synthetic fun ArrayList$annotations ()V
-	public static synthetic fun HashMap$annotations ()V
-	public static synthetic fun HashSet$annotations ()V
-	public static synthetic fun LinkedHashMap$annotations ()V
-	public static synthetic fun LinkedHashSet$annotations ()V
-	public static synthetic fun RandomAccess$annotations ()V
-}
-
 public final class kotlin/comparisons/ComparisonsKt {
 	public static final fun compareBy ([Lkotlin/jvm/functions/Function1;)Ljava/util/Comparator;
 	public static final fun compareValues (Ljava/lang/Comparable;Ljava/lang/Comparable;)I
@@ -1852,9 +1841,6 @@ public final class kotlin/coroutines/experimental/SequenceBuilderKt {
 }
 
 public final class kotlin/coroutines/experimental/intrinsics/IntrinsicsKt {
-	public static synthetic fun COROUTINE_SUSPENDED$annotations ()V
-	public static final fun createCoroutineUnchecked (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
-	public static final fun createCoroutineUnchecked (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/experimental/Continuation;)Lkotlin/coroutines/experimental/Continuation;
 	public static final fun getCOROUTINE_SUSPENDED ()Ljava/lang/Object;
 }
 

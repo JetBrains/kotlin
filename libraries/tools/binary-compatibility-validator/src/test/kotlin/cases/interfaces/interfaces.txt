@@ -25,7 +25,3 @@ public abstract interface class cases/interfaces/EmptyImpls {
 	public abstract fun getProperty ()Ljava/lang/String;
 }
 
-public final class cases/interfaces/EmptyImpls$DefaultImpls {
-	public static synthetic fun property$annotations ()V
-}
-
