@@ -16,7 +16,6 @@
 
 package org.jetbrains.uast.kotlin
 
-import com.intellij.psi.PsiResourceListElement
 import org.jetbrains.kotlin.psi.KtTryExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UIdentifier
@@ -28,7 +27,7 @@ class KotlinUTryExpression(
         override val psi: KtTryExpression,
         override val containingElement: UElement?
 ) : KotlinAbstractUExpression(), UTryExpression, PsiElementBacked, KotlinUElementWithType {
-    override val tryClause by lz { KotlinConverter.convertExpression(psi.tryBlock, this) }
+    override val tryClause by lz { KotlinConverter.convertOrEmpty(psi.tryBlock, this) }
     override val catchClauses by lz { psi.catchClauses.map { KotlinUCatchClause(it, this) } }
     override val finallyClause by lz { psi.finallyBlock?.finalExpression?.let { KotlinConverter.convertExpression(it, this) } }
 

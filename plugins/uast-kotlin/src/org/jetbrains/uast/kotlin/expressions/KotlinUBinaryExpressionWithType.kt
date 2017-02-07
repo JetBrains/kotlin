@@ -29,7 +29,7 @@ class KotlinUBinaryExpressionWithType(
 ) : KotlinAbstractUExpression(), UBinaryExpressionWithType, PsiElementBacked, 
         KotlinUElementWithType, KotlinEvaluatableUElement {
     
-    override val operand by lz { KotlinConverter.convertExpression(psi.left, this) }
+    override val operand by lz { KotlinConverter.convertOrEmpty(psi.left, this) }
     override val type by lz { psi.right.toPsiType(this) }
     
     override val typeReference by lz { 

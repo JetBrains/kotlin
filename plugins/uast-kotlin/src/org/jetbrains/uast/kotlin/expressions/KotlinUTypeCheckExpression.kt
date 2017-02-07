@@ -26,7 +26,7 @@ class KotlinUTypeCheckExpression(
         override val psi: KtIsExpression,
         override val containingElement: UElement?
 ) : KotlinAbstractUExpression(), UBinaryExpressionWithType, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
-    override val operand by lz { KotlinConverter.convertExpression(psi.leftHandSide, this) }
+    override val operand by lz { KotlinConverter.convertOrEmpty(psi.leftHandSide, this) }
     
     override val type by lz { psi.typeReference.toPsiType(this) }
     

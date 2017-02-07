@@ -26,5 +26,5 @@ class KotlinUArrayAccessExpression(
         override val containingElement: UElement?
 ) : KotlinAbstractUExpression(), UArrayAccessExpression, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val receiver by lz { KotlinConverter.convertOrEmpty(psi.arrayExpression, this) }
-    override val indices by lz { psi.indexExpressions.map { KotlinConverter.convertExpression(it, this) } }
+    override val indices by lz { psi.indexExpressions.map { KotlinConverter.convertOrEmpty(it, this) } }
 }

@@ -86,7 +86,7 @@ class KotlinUSwitchEntry(
         }.apply {
             val exprPsi = this@KotlinUSwitchEntry.psi.expression
             val userExpressions = when (exprPsi) {
-                is KtBlockExpression -> exprPsi.statements.map { KotlinConverter.convertExpression(it, this) }
+                is KtBlockExpression -> exprPsi.statements.map { KotlinConverter.convertOrEmpty(it, this) }
                 else -> listOf(KotlinConverter.convertOrEmpty(exprPsi, this))
             }
             containingElement
