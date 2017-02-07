@@ -27,6 +27,5 @@ fun box(): String {
     return "OK"
 }
 
-/*
- 2 areEqual \(DLjava/lang/Double;\)Z
- 2 areEqual*/
+// 2 areEqual \(DLjava/lang/Double;\)Z
+// 2 areEqual
