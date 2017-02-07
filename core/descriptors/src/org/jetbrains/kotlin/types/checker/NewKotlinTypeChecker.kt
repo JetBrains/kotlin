@@ -102,29 +102,31 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
     }
 
     fun transformToNewType(type: SimpleType): SimpleType {
-        // Type itself can be just SimpleTypeImpl, not CapturedType. see KT-16147
-        if (type.constructor is CapturedTypeConstructor) {
-            val constructor = type.constructor as CapturedTypeConstructor
-            val lowerType = constructor.typeProjection.check { it.projectionKind == Variance.IN_VARIANCE }?.type?.unwrap()
+        val constructor = type.constructor
+        when (constructor) {
+            // Type itself can be just SimpleTypeImpl, not CapturedType. see KT-16147
+            is CapturedTypeConstructor -> {
+                val lowerType = constructor.typeProjection.check { it.projectionKind == Variance.IN_VARIANCE }?.type?.unwrap()
 
-            // it is incorrect calculate this type directly because of recursive star projections
-            if (constructor.newTypeConstructor == null) {
-                constructor.newTypeConstructor = NewCapturedTypeConstructor(constructor.typeProjection, constructor.supertypes.map { it.unwrap() })
+                // it is incorrect calculate this type directly because of recursive star projections
+                if (constructor.newTypeConstructor == null) {
+                    constructor.newTypeConstructor = NewCapturedTypeConstructor(constructor.typeProjection, constructor.supertypes.map { it.unwrap() })
+                }
+                val newCapturedType = NewCapturedType(CaptureStatus.FOR_SUBTYPING, constructor.newTypeConstructor!!,
+                                                      lowerType, type.annotations, type.isMarkedNullable)
+                return newCapturedType
             }
-            val newCapturedType = NewCapturedType(CaptureStatus.FOR_SUBTYPING, constructor.newTypeConstructor!!,
-                                                  lowerType, type.annotations, type.isMarkedNullable)
-            return newCapturedType
-        }
 
-        if (type.constructor is IntersectionTypeConstructor && type.isMarkedNullable) {
-            val newSuperTypes = type.constructor.supertypes.map { it.makeNullable() }
-            val newConstructor = IntersectionTypeConstructor(newSuperTypes)
-            return KotlinTypeFactory.simpleType(type.annotations, newConstructor, listOf(), false, newConstructor.createScopeForKotlinType())
-        }
+            is IntegerValueTypeConstructor -> {
+                val newConstructor = IntersectionTypeConstructor(constructor.supertypes.map { TypeUtils.makeNullableAsSpecified(it, type.isMarkedNullable) })
+                return KotlinTypeFactory.simpleType(type.annotations, newConstructor, listOf(), false, type.memberScope)
+            }
 
-        if (type.constructor is IntegerValueTypeConstructor) {
-            val newConstructor = IntersectionTypeConstructor(type.constructor.supertypes.map { TypeUtils.makeNullableAsSpecified(it, type.isMarkedNullable) })
-            return KotlinTypeFactory.simpleType(type.annotations, newConstructor, listOf(), false, type.memberScope)
+            is IntersectionTypeConstructor -> if (type.isMarkedNullable) {
+                val newSuperTypes = constructor.supertypes.map { it.makeNullable() }
+                val newConstructor = IntersectionTypeConstructor(newSuperTypes)
+                return KotlinTypeFactory.simpleType(type.annotations, newConstructor, listOf(), false, newConstructor.createScopeForKotlinType())
+            }
         }
 
         return type
