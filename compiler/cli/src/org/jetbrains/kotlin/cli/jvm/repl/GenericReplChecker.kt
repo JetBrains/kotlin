@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.cli.jvm.repl
 
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
@@ -85,7 +86,7 @@ open class GenericReplChecker(
         stateLock.write {
             val scriptFileName = makeScriptBaseName(codeLine, generation)
             val virtualFile =
-                    LightVirtualFile("$scriptFileName${KotlinParserDefinition.STD_SCRIPT_EXT}", KotlinLanguage.INSTANCE, codeLine.code).apply {
+                    LightVirtualFile("$scriptFileName${KotlinParserDefinition.STD_SCRIPT_EXT}", KotlinLanguage.INSTANCE, StringUtil.convertLineSeparators(codeLine.code)).apply {
                         charset = CharsetToolkit.UTF8_CHARSET
                     }
             val psiFile: KtFile = psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile?

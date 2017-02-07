@@ -83,6 +83,23 @@ class GenericReplTest : TestCase() {
     }
 
     @Test
+    fun testReplCodeFormat() {
+
+        val disposable = Disposer.newDisposable()
+
+        val repl = TestRepl(disposable,
+                            listOf(File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-runtime.jar")),
+                            "kotlin.script.templates.standard.ScriptTemplateWithArgs")
+
+        val codeLine0 = ReplCodeLine(0, "val l1 = 1\r\nl1\r\n")
+        val res0 = repl.replCompiler?.check(codeLine0)
+        val res0c = res0 as? ReplCheckResult.Ok
+        TestCase.assertNotNull("Unexpected compile result: $res0", res0c)
+
+        Disposer.dispose(disposable)
+    }
+
+    @Test
     fun testRepPackage() {
 
         val disposable = Disposer.newDisposable()
