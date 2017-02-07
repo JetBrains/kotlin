@@ -2945,8 +2945,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             if (isSuspensionPoint && isSafeCallOrOnStack) {
                 boolean bothReceivers =
                         receiver instanceof StackValue.CallReceiver
-                        && ((StackValue.CallReceiver) receiver).getDispatchReceiver() != null
-                        && ((StackValue.CallReceiver) receiver).getExtensionReceiver() != null;
+                        && ((StackValue.CallReceiver) receiver).getDispatchReceiver().type.getSort() != Type.VOID
+                        && ((StackValue.CallReceiver) receiver).getExtensionReceiver().type.getSort() != Type.VOID;
                 Type firstReceiverType =
                         bothReceivers
                         ? ((StackValue.CallReceiver) receiver).getDispatchReceiver().type
