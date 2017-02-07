@@ -623,7 +623,7 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
 
 
         private fun collectClosures() {
-            memberDeclaration.acceptChildrenVoid(object : AbstractClosureAnnotator() {
+            object : AbstractClosureAnnotator() {
                 override fun recordFunctionClosure(functionDescriptor: FunctionDescriptor, closure: Closure) {
                     localFunctions[functionDescriptor]?.closure = closure
                 }
@@ -631,7 +631,7 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
                 override fun recordClassClosure(classDescriptor: ClassDescriptor, closure: Closure) {
                     localClasses[classDescriptor]?.closure = closure
                 }
-            })
+            }.annotate(memberDeclaration)
         }
 
         private fun collectLocalDeclarations() {
