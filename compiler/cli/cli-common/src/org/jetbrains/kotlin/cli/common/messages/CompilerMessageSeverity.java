@@ -23,6 +23,8 @@ import java.util.EnumSet;
 public enum CompilerMessageSeverity {
     EXCEPTION,
     ERROR,
+    // Unlike a normal warning, a strong warning is not discarded when there are compilation errors.
+    // Use it for problems related to configuration, not the diagnostics
     STRONG_WARNING,
     WARNING,
     INFO,
