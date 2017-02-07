@@ -4,7 +4,7 @@ import org.junit.Test
 import example.MyProductionClass
 
 class MyTest {
-    @Test
+	@Test
     fun mySimpleTest() {
         MyProductionClass().i = 10
     }
