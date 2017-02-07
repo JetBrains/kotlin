@@ -21,5 +21,6 @@
     <orderEntry type="module" module-name="tests-common" scope="TEST" />
     <orderEntry type="module" module-name="idea-core" />
     <orderEntry type="module" module-name="lint-idea" scope="TEST" />
+    <orderEntry type="library" name="uast-java" level="project" />
   </component>
 </module>

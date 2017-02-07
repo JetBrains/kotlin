@@ -27,6 +27,8 @@
         <codeInsight.unresolvedReferenceQuickFixProvider
             implementation="org.jetbrains.kotlin.android.inspection.KotlinAndroidResourceQuickFixProvider"/>
 
+        <lang.foldingBuilder language="kotlin" implementationClass="org.jetbrains.kotlin.android.folding.ResourceFoldingBuilder" />
+
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">

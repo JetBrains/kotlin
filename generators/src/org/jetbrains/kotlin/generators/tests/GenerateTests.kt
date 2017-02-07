@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.addImport.AbstractAddImportTest
 import org.jetbrains.kotlin.allopen.AbstractBytecodeListingTestForAllOpen
 import org.jetbrains.kotlin.android.*
 import org.jetbrains.kotlin.android.configure.AbstractConfigureProjectTest
+import org.jetbrains.kotlin.android.folding.AbstractAndroidResourceFoldingTest
 import org.jetbrains.kotlin.android.intentions.AbstractAndroidIntentionTest
 import org.jetbrains.kotlin.android.intentions.AbstractAndroidResourceIntentionTest
 import org.jetbrains.kotlin.android.lint.AbstractKotlinLintTest
@@ -1221,6 +1222,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractAndroidIntentionTest> {
             model("android/intentions", pattern = "^([\\w\\-_]+)\\.kt$")
+        }
+
+        testClass<AbstractAndroidResourceFoldingTest> {
+            model("android/folding")
         }
     }
 
