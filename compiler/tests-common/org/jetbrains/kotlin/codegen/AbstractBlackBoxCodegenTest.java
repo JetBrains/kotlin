@@ -78,9 +78,10 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
             try {
                 doLightAnalysisModeTest(wholeFile, files, javaFilesDir);
             }
-            catch (Throwable lightAnalysisError) {
-                throw ExceptionUtilsKt.rethrow(boxError);
+            catch (Throwable ignored) {
             }
+
+            throw ExceptionUtilsKt.rethrow(boxError);
         }
 
         doLightAnalysisModeTest(wholeFile, files, javaFilesDir);
