@@ -1081,10 +1081,34 @@ kotlinNativeInterop {
         headers 'sys/stat.h'
         target 'native'
     }
+
+    cstdlib {
+        pkg 'cstdlib'
+        headers 'stdlib.h'
+        target 'native'
+    }
+
+    cstdio {
+        defFile 'interop/basics/cstdio.def'
+        target 'native'
+        compilerOpts '-D_POSIX_SOURCE' // Exclude Darwin extensions causing link errors.
+    }
 }
 
 task interop0(type: RunInteropKonanTest) {
     goldValue = "0\n0\n"
     source = "interop/basics/0.kt"
     interop = 'sysstat'
+}
+
+task interop1(type: RunInteropKonanTest) {
+    goldValue = "257\n"
+    source = "interop/basics/1.kt"
+    interop = 'cstdlib'
+}
+
+task interop2(type: RunInteropKonanTest) {
+    goldValue = "Hello\n"
+    source = "interop/basics/2.kt"
+    interop = 'cstdio'
 }
