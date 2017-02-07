@@ -63,12 +63,6 @@ fun Document?.elements(namespaceUri: String, localName: String): List<Element> {
 // END OF DEPRECATED
 
 /**
- * Returns a view of this [NodeList] as a list of nodes.
- */
-//@Deprecated(W)
-public fun NodeList.asList(): List<Node> = NodeListAsList(this)
-
-/**
  * Returns a view of this [NodeList] as a list of elements assuming that it contains only elements.
  *
  * An attempt to get an element with [List.get] indexed accessor of the returned list
@@ -95,14 +89,6 @@ public fun List<Node>.filterElements(): List<Element> {
 public fun NodeList.filterElements(): List<Element> = asList().filterElements()
 
 
-private class NodeListAsList(private val delegate: NodeList) : AbstractList<Node>() {
-    override val size: Int get() = delegate.length
-
-    override fun get(index: Int): Node = when {
-        index in 0..size - 1 -> delegate.item(index)!!
-        else -> throw IndexOutOfBoundsException("index $index is not in range [0 .. ${size - 1})")
-    }
-}
 
 private class ElementListAsList(private val nodeList: NodeList) : AbstractList<Element>() {
     override fun get(index: Int): Element {
