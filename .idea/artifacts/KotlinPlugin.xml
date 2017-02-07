@@ -102,7 +102,6 @@
         <element id="archive" name="kotlin-gradle-tooling.jar">
           <element id="module-output" name="kotlin-gradle-tooling" />
         </element>
-        <element id="library" level="project" name="uast-java" />
         <element id="library" level="project" name="kotlinx-coroutines-core" />
         <element id="library" level="project" name="javaslang" />
       </element>
