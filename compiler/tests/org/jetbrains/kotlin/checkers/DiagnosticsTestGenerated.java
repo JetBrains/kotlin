@@ -7378,6 +7378,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("infixFunOverBuiltinMemberInConst.kt")
+            public void testInfixFunOverBuiltinMemberInConst() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/evaluate/infixFunOverBuiltinMemberInConst.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("intOverflow.kt")
             public void testIntOverflow() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/evaluate/intOverflow.kt");

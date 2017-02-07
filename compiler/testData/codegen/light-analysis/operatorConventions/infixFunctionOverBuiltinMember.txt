@@ -1,0 +1,6 @@
+@kotlin.Metadata
+public final class InfixFunctionOverBuiltinMemberKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method minus(p0: int, p1: int): int
+    public final static method rem(p0: int, p1: int): int
+}

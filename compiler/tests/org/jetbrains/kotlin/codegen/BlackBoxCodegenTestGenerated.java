@@ -11141,6 +11141,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("infixFunctionOverBuiltinMember.kt")
+        public void testInfixFunctionOverBuiltinMember() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/operatorConventions/infixFunctionOverBuiltinMember.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt14201.kt")
         public void testKt14201() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/operatorConventions/kt14201.kt");
