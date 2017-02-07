@@ -57,9 +57,9 @@ data class MethodBinarySignature(
 
     override fun isEffectivelyPublic(classAccess: AccessFlags, classVisibility: ClassVisibility?)
             = super.isEffectivelyPublic(classAccess, classVisibility)
-            && !isAccessMethod()
+            && !isAccessOrAnnotationsMethod()
 
-    private fun isAccessMethod() = access.isSynthetic && name.startsWith("access\$")
+    private fun isAccessOrAnnotationsMethod() = access.isSynthetic && (name.startsWith("access\$") || name.endsWith("\$annotations"))
 }
 
 data class FieldBinarySignature(
