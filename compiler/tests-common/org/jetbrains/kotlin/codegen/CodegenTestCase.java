@@ -164,7 +164,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
         if (explicitLanguageVersion != null) {
              configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS,
-                               new LanguageVersionSettingsImpl(explicitLanguageVersion, ApiVersion.LATEST));
+                               new LanguageVersionSettingsImpl(explicitLanguageVersion, ApiVersion.createByLanguageVersion(explicitLanguageVersion)));
         }
 
         updateConfigurationWithFlags(configuration, kotlinConfigurationFlags);
