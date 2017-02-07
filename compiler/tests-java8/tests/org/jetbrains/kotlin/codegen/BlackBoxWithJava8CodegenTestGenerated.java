@@ -120,6 +120,12 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
         doTest(fileName);
     }
 
+    @TestMetadata("streamBackwardCompatibility.kt")
+    public void testStreamBackwardCompatibility() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/streamBackwardCompatibility.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("useStream.kt")
     public void testUseStream() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/useStream.kt");

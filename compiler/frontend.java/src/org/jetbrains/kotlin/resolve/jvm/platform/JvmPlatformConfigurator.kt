@@ -44,7 +44,6 @@ object JvmPlatformConfigurator : PlatformConfigurator(
                 TypeParameterBoundIsNotArrayChecker(),
                 JvmSyntheticApplicabilityChecker(),
                 StrictfpApplicabilityChecker(),
-                AdditionalBuiltInsMemberOverrideDeclarationChecker,
                 HeaderImplDeclarationChecker()
         ),
 
@@ -57,8 +56,7 @@ object JvmPlatformConfigurator : PlatformConfigurator(
                 SuperCallWithDefaultArgumentsChecker(),
                 MissingDependencyClassChecker,
                 ProtectedSyntheticExtensionCallChecker,
-                ReifiedTypeParameterSubstitutionChecker(),
-                AdditionalBuiltInsMembersCallChecker
+                ReifiedTypeParameterSubstitutionChecker()
         ),
 
         additionalTypeCheckers = listOf(

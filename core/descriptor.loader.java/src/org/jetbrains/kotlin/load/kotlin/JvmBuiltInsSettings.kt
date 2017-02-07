@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.builtins.CloneableClassScope
 import org.jetbrains.kotlin.builtins.JvmBuiltInClassDescriptorFactory
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.annotations.createDeprecatedAnnotation
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
@@ -36,7 +34,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.platform.createMappedTypeParametersSubstitution
 import org.jetbrains.kotlin.resolve.OverridingUtil
-import org.jetbrains.kotlin.resolve.descriptorUtil.LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_FQ_NAME
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
@@ -53,7 +50,6 @@ import org.jetbrains.kotlin.types.LazyWrappedType
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.check
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.io.Serializable
 import java.util.*
 
@@ -80,22 +76,6 @@ open class JvmBuiltInsSettings(
         moduleDescriptor.builtIns.createDeprecatedAnnotation(
                 "This member is not fully supported by Kotlin compiler, so it may be absent or have different signature in next major version"
         ).let { AnnotationsImpl(listOf(it)) }
-    }
-
-    private val lowPriorityAnnotation: Annotations by storageManager.createLazyValue {
-        // We use both LowPriorityInOverloadResolution to achieve the following goal:
-        // If there is something to resolve to beside an additional built-in member, it's *almost* always will win
-        val lowPriorityAnnotation =
-                ClassDescriptorImpl(
-                        moduleDescriptor.getPackage(LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_FQ_NAME.parent()), LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_FQ_NAME.shortName(),
-                        Modality.FINAL, ClassKind.ANNOTATION_CLASS, moduleDescriptor.builtIns.anyType.singletonList(),
-                        SourceElement.NO_SOURCE, /* isExternal = */ false
-                ).run {
-                    initialize(MemberScope.Empty, emptySet(), null)
-                    AnnotationDescriptorImpl(defaultType, emptyMap(), SourceElement.NO_SOURCE)
-                }
-
-        AnnotationsImpl(listOf(lowPriorityAnnotation))
     }
 
     private fun StorageManager.createMockJavaIoSerializableType(): KotlinType {
@@ -131,6 +111,8 @@ open class JvmBuiltInsSettings(
             ))
         }
 
+        if (!isAdditionalBuiltInsFeatureSupported) return emptyList()
+
         return getAdditionalFunctions(classDescriptor) {
             it.getContributedFunctions(name, NoLookupLocation.FROM_BUILTINS)
         }.mapNotNull {
@@ -156,31 +138,24 @@ open class JvmBuiltInsSettings(
                     }
 
                     JDKMemberStatus.NOT_CONSIDERED -> {
-                        if (!isAdditionalBuiltInsFeatureSupported) {
-                            setAdditionalAnnotations(lowPriorityAnnotation)
-                        }
-                        else {
-                            setAdditionalAnnotations(notConsideredDeprecation)
-                        }
+                        setAdditionalAnnotations(notConsideredDeprecation)
                     }
 
                     JDKMemberStatus.DROP -> return@mapNotNull null
 
-                    JDKMemberStatus.WHITE_LIST -> {
-                        if (!isAdditionalBuiltInsFeatureSupported) {
-                            setAdditionalAnnotations(lowPriorityAnnotation)
-                        }
-                    }
+                    JDKMemberStatus.WHITE_LIST -> Unit // Do nothing
                 }
 
             }.build()!!
         }
     }
 
-    override fun getFunctionsNames(classDescriptor: DeserializedClassDescriptor): Set<Name> =
-            // NB: It's just an approximation that could be calculated relatively fast
-            // More precise computation would look like `getAdditionalFunctions` (and the measurements show that it would be rather slow)
-            classDescriptor.getJavaAnalogue()?.unsubstitutedMemberScope?.getFunctionNames() ?: emptySet()
+    override fun getFunctionsNames(classDescriptor: DeserializedClassDescriptor): Set<Name> {
+        if (!isAdditionalBuiltInsFeatureSupported) return emptySet()
+        // NB: It's just an approximation that could be calculated relatively fast
+        // More precise computation would look like `getAdditionalFunctions` (and the measurements show that it would be rather slow)
+        return classDescriptor.getJavaAnalogue()?.unsubstitutedMemberScope?.getFunctionNames() ?: emptySet()
+    }
 
     private fun getAdditionalFunctions(
             classDescriptor: DeserializedClassDescriptor,
@@ -287,7 +262,7 @@ open class JvmBuiltInsSettings(
     }
 
     override fun getConstructors(classDescriptor: DeserializedClassDescriptor): Collection<ClassConstructorDescriptor> {
-        if (classDescriptor.kind != ClassKind.CLASS) return emptyList()
+        if (classDescriptor.kind != ClassKind.CLASS || !isAdditionalBuiltInsFeatureSupported) return emptyList()
 
         val javaAnalogueDescriptor = classDescriptor.getJavaAnalogue() ?: return emptyList()
 
@@ -314,11 +289,7 @@ open class JvmBuiltInsSettings(
                 setReturnType(classDescriptor.defaultType)
                 setPreserveSourceElement()
                 setSubstitution(substitutor.substitution)
-
-                if (!isAdditionalBuiltInsFeatureSupported) {
-                    setAdditionalAnnotations(lowPriorityAnnotation)
-                }
-                else if (SignatureBuildingComponents.signature(javaAnalogueDescriptor, javaConstructor.computeJvmDescriptor()) !in WHITE_LIST_CONSTRUCTOR_SIGNATURES) {
+                if (SignatureBuildingComponents.signature(javaAnalogueDescriptor, javaConstructor.computeJvmDescriptor()) !in WHITE_LIST_CONSTRUCTOR_SIGNATURES) {
                     setAdditionalAnnotations(notConsideredDeprecation)
                 }
 
