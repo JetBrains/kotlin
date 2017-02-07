@@ -67,7 +67,7 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
         }
         else if (JsDescriptorUtils.isSimpleFinalProperty(descriptor)) {
             JsNameRef propRef = new JsNameRef(context.getNameForDescriptor(descriptor), JsLiteral.THIS);
-            JsExpression defaultValue = generateDefaultValue(descriptor, context, propRef.deepCopy());
+            JsExpression defaultValue = generateDefaultValue(descriptor, context, propRef);
             statement = JsAstUtils.assignment(propRef, defaultValue).makeStmt();
         }
 
@@ -83,7 +83,7 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
             @NotNull PropertyDescriptor property,
             @NotNull TranslationContext context,
             @NotNull JsExpression lateInitDefault) {
-        if (property.isLateInit()) return lateInitDefault;
+        if (property.isLateInit()) return lateInitDefault.deepCopy();
 
         KotlinType type = property.getType();
         if (KotlinBuiltIns.isInt(type) || KotlinBuiltIns.isFloat(type) || KotlinBuiltIns.isDouble(type) ||
