@@ -3,6 +3,74 @@
 <!-- Find: ([^\`/\[])(KT-\d+) -->
 <!-- Replace: $1[`$2`](https://youtrack.jetbrains.com/issue/$2) -->
 
+## 1.0.7
+
+### Compiler
+#### Analysis & diagnostics
+- [`KT-12044`](https://youtrack.jetbrains.com/issue/KT-12044) Assertion "Rewrite at slice LEXICAL_SCOPE" for 'if' with property references
+- [`KT-13859`](https://youtrack.jetbrains.com/issue/KT-13859) Wrong error about using unrepeatable annotation when mix implicit and explicit targets
+- [`KT-14376`](https://youtrack.jetbrains.com/issue/KT-14376) ClassCastException from object with vals
+- [`KT-15464`](https://youtrack.jetbrains.com/issue/KT-15464) Regression: compilation error "Supertypes of the following classes cannot be resolved..."
+- [`KT-15334`](https://youtrack.jetbrains.com/issue/KT-15334) Incorrect compilation error "val cannot be reassigned" inside do-while
+- [`KT-15995`](https://youtrack.jetbrains.com/issue/KT-15995) Do not report error on libraries that bundle Kotlin runtime in classpath
+- Some warnings are now reported even if there are compilation errors
+- Add hint to use "-language-version", when applicable
+
+#### JVM backend
+- [`KT-15473`](https://youtrack.jetbrains.com/issue/KT-15473) Invalid KFunction byte code signature for callable references
+
+### IDE
+#### Issues fixed
+- [`KT-13001`](https://youtrack.jetbrains.com/issue/KT-13001) "Go to Type Declaration" is broken for stdlib types
+- [`KT-15329`](https://youtrack.jetbrains.com/issue/KT-15329) Regex is not inspected properly for Java character classes
+- [`KT-15448`](https://youtrack.jetbrains.com/issue/KT-15448) Kotlin facet adds the same sub-elements into pluginClasspaths element inside .iml on every Maven synchronization
+
+#### Inspections, Intentions and Quickfixes
+- [`KT-6217`](https://youtrack.jetbrains.com/issue/KT-6217) Add inspection for unused equals expression
+- [`KT-5045`](https://youtrack.jetbrains.com/issue/KT-5045) Add intention to convert between two comparisons and range check and vice versa
+- [`KT-15564`](https://youtrack.jetbrains.com/issue/KT-15564) Add quickfix for changing primitive cast to primitive conversion method
+
+##### Issues fixed
+- [`KT-15227`](https://youtrack.jetbrains.com/issue/KT-15227) "Replace if with elvis operator" silently changes semantics
+- [`KT-14889`](https://youtrack.jetbrains.com/issue/KT-14889) "Replace if with elvis operator" produces red code when result is referenced in 'if'
+- [`KT-13593`](https://youtrack.jetbrains.com/issue/KT-13593) Do not report "Right operand of elvis operator (?:) is useless if it is null" for left argument with platform type
+- [`KT-15501`](https://youtrack.jetbrains.com/issue/KT-15501) Incorrect "Add names to call arguments" when the only argument is a trailing lambda
+- [`KT-14630`](https://youtrack.jetbrains.com/issue/KT-14630) Improve diagnostic message for platform type inspection
+- [`KT-15412`](https://youtrack.jetbrains.com/issue/KT-15412) "Join declaration and assignment" can break code with smart casts
+- [`KT-14815`](https://youtrack.jetbrains.com/issue/KT-14815) "Add import" does not work with constructor reference is not working
+- [`KT-15141`](https://youtrack.jetbrains.com/issue/KT-15141) Bogus import popup for when function call cannot be resolved fully
+- [`KT-14745`](https://youtrack.jetbrains.com/issue/KT-14745) NPE in "Convert primary constructor to secondary"
+- [`KT-15406`](https://youtrack.jetbrains.com/issue/KT-15406) "Convert to secondary constructor" for enum class should put new members after enum values
+
+#### Debugger
+##### Issues fixed
+- [`KT-15282`](https://youtrack.jetbrains.com/issue/KT-15282) Debugger does not hit breakpoints in `crossinline` lambdas on Android
+
+#### Android support
+##### Issues fixed
+- [`KT-14358`](https://youtrack.jetbrains.com/issue/KT-14358) Kotlin extensions: rename layout file: Throwable: "PSI and index do not match"
+- [`KT-14920`](https://youtrack.jetbrains.com/issue/KT-14920) Kotlin Lint: "Android Lint for Kotlin | Incorrect support annotation usage" inspection does not report problems
+
+### Tools
+
+#### Gradle
+- [`KT-15218`](https://youtrack.jetbrains.com/issue/KT-15218) Fix compatibility with Gradle 3.2+ distributions by isolating compiler process
+- [`KT-13275`](https://youtrack.jetbrains.com/issue/KT-13275) Support compiling with Jack&Jill enabled (Android)
+
+#### Kapt
+
+##### Issues fixed
+- [`KT-15814`](https://youtrack.jetbrains.com/issue/KT-15814) Regression: Kapt is not working in 1.0.6
+
+##### Experimental kapt
+- [`KT-15433`](https://youtrack.jetbrains.com/issue/KT-15433) Kapt error messages are not being displayed in the console when compilation fails
+- [`KT-15459`](https://youtrack.jetbrains.com/issue/KT-15459) Kapt doesn't generate code in test module
+- [`KT-15841`](https://youtrack.jetbrains.com/issue/KT-15841) Kapt fails to build the project with StackOverflowError
+- [`KT-15838`](https://youtrack.jetbrains.com/issue/KT-15838) KaptError: Java file parsing error
+- [`KT-15675`](https://youtrack.jetbrains.com/issue/KT-15675) Support using kapt with Java-only projects
+- [`KT-15803`](https://youtrack.jetbrains.com/issue/KT-15803) Generate enum values with bodies properly
+- [`KT-15915`](https://youtrack.jetbrains.com/issue/KT-15915) Fix annotation processors writing to classes dir with kapt
+
 ## 1.0.6
 
 ### Compiler
