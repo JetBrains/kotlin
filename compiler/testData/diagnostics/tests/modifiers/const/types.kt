@@ -10,3 +10,8 @@ enum class MyEnum { A }
 <!TYPE_CANT_BE_USED_FOR_CONST_VAL!>const<!> val enumConst: MyEnum = MyEnum.A
 <!TYPE_CANT_BE_USED_FOR_CONST_VAL!>const<!> val arrayConst: Array<String> = arrayOf("1")
 <!TYPE_CANT_BE_USED_FOR_CONST_VAL!>const<!> val intArrayConst: IntArray = intArrayOf()
+
+const val unresolvedConst1 = <!UNRESOLVED_REFERENCE!>Unresolved<!>
+<!WRONG_MODIFIER_TARGET!>const<!> var unresolvedConst2 = <!UNRESOLVED_REFERENCE!>Unresolved<!>
+const val unresolvedConst3 = <!UNRESOLVED_REFERENCE, PROPERTY_INITIALIZER_NO_BACKING_FIELD!>Unresolved<!>
+<!CONST_VAL_WITH_GETTER!>get() = 10<!>

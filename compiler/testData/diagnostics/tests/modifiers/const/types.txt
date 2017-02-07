@@ -7,6 +7,9 @@ public const val intArrayConst: kotlin.IntArray
 public const val intConst: kotlin.Int = 1
 public const val longConst: kotlin.Long = 1.toLong()
 public const val stringConst: kotlin.String = "empty"
+public const val unresolvedConst1: [ERROR : Type for Unresolved]
+public const var unresolvedConst2: [ERROR : Type for Unresolved]
+public const val unresolvedConst3: [ERROR : Type for Unresolved]
 
 public final enum class MyEnum : kotlin.Enum<MyEnum> {
     enum entry A
