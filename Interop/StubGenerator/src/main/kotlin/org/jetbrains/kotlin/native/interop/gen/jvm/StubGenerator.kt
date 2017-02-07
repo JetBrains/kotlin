@@ -937,10 +937,15 @@ class StubGenerator(
 
         val params = func.parameters.mapIndexed { i, parameter ->
             val cType = parameter.type.getStringRepresentation()
-            if (parameter.type.unwrapTypedefs() is RecordType) {
-                "*($cType*)${paramNames[i]}"
-            } else {
-                "($cType)${paramNames[i]}"
+            val name = paramNames[i]
+            val unwrappedType = parameter.type.unwrapTypedefs()
+            when (unwrappedType) {
+                is RecordType -> "*($cType*)$name"
+                is ArrayType -> {
+                    val pointerCType = PointerType(unwrappedType.elemType).getStringRepresentation()
+                    "($pointerCType)$name"
+                }
+                else -> "($cType)$name"
             }
         }.joinToString(", ")
 
