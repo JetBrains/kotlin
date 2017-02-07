@@ -83,6 +83,11 @@ task daily() {
     dependsOn(run_external)
 }
 
+
+task slackReport(type:Reporter) {
+    reportHome = rootProject.file("test.output").absoluteFile
+}
+
 task sum (type:RunKonanTest) {
     source = "codegen/function/sum.kt"
 }
