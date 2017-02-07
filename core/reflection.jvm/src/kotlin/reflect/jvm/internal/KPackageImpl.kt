@@ -32,7 +32,7 @@ internal class KPackageImpl(override val jClass: Class<*>, val moduleName: Strin
     private inner class Data : KDeclarationContainerImpl.Data() {
         val descriptor: PackageViewDescriptor by ReflectProperties.lazySoft {
             with(moduleData) {
-                packageFacadeProvider.registerModule(moduleName)
+                packagePartProvider.registerModule(moduleName)
                 module.getPackage(jClass.classId.packageFqName)
             }
         }

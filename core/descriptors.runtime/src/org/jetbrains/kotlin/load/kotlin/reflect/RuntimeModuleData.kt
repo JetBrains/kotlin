@@ -38,7 +38,10 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfigu
 import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-class RuntimeModuleData private constructor(val deserialization: DeserializationComponents, val packageFacadeProvider: RuntimePackagePartProvider) {
+class RuntimeModuleData private constructor(
+        val deserialization: DeserializationComponents,
+        val packagePartProvider: RuntimePackagePartProvider
+) {
     val module: ModuleDescriptor get() = deserialization.moduleDescriptor
 
     companion object {
@@ -50,13 +53,13 @@ class RuntimeModuleData private constructor(val deserialization: Deserialization
             val reflectKotlinClassFinder = ReflectKotlinClassFinder(classLoader)
             val deserializedDescriptorResolver = DeserializedDescriptorResolver()
             val singleModuleClassResolver = SingleModuleClassResolver()
-            val runtimePackageFacadeProvider = RuntimePackagePartProvider(classLoader)
+            val runtimePackagePartProvider = RuntimePackagePartProvider(classLoader)
             val javaResolverCache = JavaResolverCache.EMPTY
             val globalJavaResolverContext = JavaResolverComponents(
                     storageManager, ReflectJavaClassFinder(classLoader), reflectKotlinClassFinder, deserializedDescriptorResolver,
                     ExternalAnnotationResolver.EMPTY, SignaturePropagator.DO_NOTHING, RuntimeErrorReporter, javaResolverCache,
                     JavaPropertyInitializerEvaluator.DoNothing, SamConversionResolver, RuntimeSourceElementFactory, singleModuleClassResolver,
-                    runtimePackageFacadeProvider, SupertypeLoopChecker.EMPTY, LookupTracker.DO_NOTHING, module, ReflectionTypes(module)
+                    runtimePackagePartProvider, SupertypeLoopChecker.EMPTY, LookupTracker.DO_NOTHING, module, ReflectionTypes(module)
             )
 
             val lazyJavaPackageFragmentProvider = LazyJavaPackageFragmentProvider(globalJavaResolverContext)
@@ -81,7 +84,7 @@ class RuntimeModuleData private constructor(val deserialization: Deserialization
             module.setDependencies(module, builtIns.builtInsModule)
             module.initialize(javaDescriptorResolver.packageFragmentProvider)
 
-            return RuntimeModuleData(deserializationComponentsForJava.components, runtimePackageFacadeProvider)
+            return RuntimeModuleData(deserializationComponentsForJava.components, runtimePackagePartProvider)
         }
     }
 }
