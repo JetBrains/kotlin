@@ -16,6 +16,7 @@
 
 package kotlin.jvm.internal;
 
+import kotlin.SinceKotlin;
 import kotlin.reflect.KCallable;
 import kotlin.reflect.KProperty1;
 
@@ -23,6 +24,7 @@ public abstract class PropertyReference1 extends PropertyReference implements KP
     public PropertyReference1() {
     }
 
+    @SinceKotlin(version = "1.1")
     public PropertyReference1(Object receiver) {
         super(receiver);
     }
@@ -43,6 +45,7 @@ public abstract class PropertyReference1 extends PropertyReference implements KP
     }
 
     @Override
+    @SinceKotlin(version = "1.1")
     public Object getDelegate(Object receiver) {
         return ((KProperty1) getReflected()).getDelegate(receiver);
     }

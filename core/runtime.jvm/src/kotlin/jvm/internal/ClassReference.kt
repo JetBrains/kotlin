@@ -40,35 +40,46 @@ public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassB
     override val objectInstance: Any?
         get() = error()
 
+    @SinceKotlin("1.1")
     override fun isInstance(value: Any?): Boolean = error()
 
+    @SinceKotlin("1.1")
     override val typeParameters: List<KTypeParameter>
         get() = error()
 
+    @SinceKotlin("1.1")
     override val supertypes: List<KType>
         get() = error()
 
+    @SinceKotlin("1.1")
     override val visibility: KVisibility?
         get() = error()
 
+    @SinceKotlin("1.1")
     override val isFinal: Boolean
         get() = error()
 
+    @SinceKotlin("1.1")
     override val isOpen: Boolean
         get() = error()
 
+    @SinceKotlin("1.1")
     override val isAbstract: Boolean
         get() = error()
 
+    @SinceKotlin("1.1")
     override val isSealed: Boolean
         get() = error()
 
+    @SinceKotlin("1.1")
     override val isData: Boolean
         get() = error()
 
+    @SinceKotlin("1.1")
     override val isInner: Boolean
         get() = error()
 
+    @SinceKotlin("1.1")
     override val isCompanion: Boolean
         get() = error()
 

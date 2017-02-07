@@ -16,6 +16,7 @@
 
 package kotlin.jvm.internal;
 
+import kotlin.SinceKotlin;
 import kotlin.jvm.KotlinReflectionNotSupportedError;
 import kotlin.reflect.*;
 import org.jetbrains.annotations.NotNull;
@@ -46,16 +47,19 @@ public abstract class CallableReference implements KCallable {
         this(NO_RECEIVER);
     }
 
+    @SinceKotlin(version = "1.1")
     protected CallableReference(Object receiver) {
         this.receiver = receiver;
     }
 
     protected abstract KCallable computeReflected();
 
+    @SinceKotlin(version = "1.1")
     public Object getBoundReceiver() {
         return receiver;
     }
 
+    @SinceKotlin(version = "1.1")
     public KCallable compute() {
         KCallable result = reflected;
         if (result == null) {
@@ -65,6 +69,7 @@ public abstract class CallableReference implements KCallable {
         return result;
     }
 
+    @SinceKotlin(version = "1.1")
     protected KCallable getReflected() {
         KCallable result = compute();
         if (result == this) {
@@ -123,6 +128,7 @@ public abstract class CallableReference implements KCallable {
 
     @NotNull
     @Override
+    @SinceKotlin(version = "1.1")
     public List<KTypeParameter> getTypeParameters() {
         return getReflected().getTypeParameters();
     }
@@ -139,21 +145,25 @@ public abstract class CallableReference implements KCallable {
 
     @Nullable
     @Override
+    @SinceKotlin(version = "1.1")
     public KVisibility getVisibility() {
         return getReflected().getVisibility();
     }
 
     @Override
+    @SinceKotlin(version = "1.1")
     public boolean isFinal() {
         return getReflected().isFinal();
     }
 
     @Override
+    @SinceKotlin(version = "1.1")
     public boolean isOpen() {
         return getReflected().isOpen();
     }
 
     @Override
+    @SinceKotlin(version = "1.1")
     public boolean isAbstract() {
         return getReflected().isAbstract();
     }

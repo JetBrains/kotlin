@@ -16,6 +16,7 @@
 
 package kotlin.jvm.internal;
 
+import kotlin.SinceKotlin;
 import kotlin.reflect.KCallable;
 import kotlin.reflect.KMutableProperty0;
 import kotlin.reflect.KProperty0;
@@ -24,6 +25,7 @@ public abstract class MutablePropertyReference0 extends MutablePropertyReference
     public MutablePropertyReference0() {
     }
 
+    @SinceKotlin(version = "1.1")
     public MutablePropertyReference0(Object receiver) {
         super(receiver);
     }
@@ -49,6 +51,7 @@ public abstract class MutablePropertyReference0 extends MutablePropertyReference
     }
 
     @Override
+    @SinceKotlin(version = "1.1")
     public Object getDelegate() {
         return ((KMutableProperty0) getReflected()).getDelegate();
     }

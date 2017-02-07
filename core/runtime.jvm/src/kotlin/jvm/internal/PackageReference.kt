@@ -18,7 +18,8 @@ package kotlin.jvm.internal
 
 import kotlin.reflect.KCallable
 
-class PackageReference(
+@SinceKotlin("1.1")
+public class PackageReference(
         override val jClass: Class<*>,
         @Suppress("unused") private val moduleName: String
 ) : ClassBasedDeclarationContainer {

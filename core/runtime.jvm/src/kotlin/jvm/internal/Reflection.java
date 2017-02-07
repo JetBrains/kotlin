@@ -16,6 +16,7 @@
 
 package kotlin.jvm.internal;
 
+import kotlin.SinceKotlin;
 import kotlin.reflect.*;
 
 /**
@@ -74,6 +75,7 @@ public class Reflection {
         return kClasses;
     }
 
+    @SinceKotlin(version = "1.1")
     public static String renderLambdaToString(Lambda lambda) {
         return factory.renderLambdaToString(lambda);
     }
