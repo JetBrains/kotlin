@@ -23,13 +23,12 @@ import kotlin.concurrent.write
 
 interface ILineId : Comparable<ILineId> {
     val no: Int
+    val generation: Int
 }
 
 data class ReplHistoryRecord<out T> (val id: ILineId, val item: T)
 
 interface IReplStageHistory<T> : List<ReplHistoryRecord<T>> {
-
-    fun backwardIterator(): Iterator<ReplHistoryRecord<T>> = lock.read { asReversed().iterator() } // TODO: check perf
 
     fun peek(): ReplHistoryRecord<T>? = lock.read { lastOrNull() }
 
@@ -44,31 +43,6 @@ interface IReplStageHistory<T> : List<ReplHistoryRecord<T>> {
 
     fun resetTo(id: ILineId): Iterable<ILineId>
 
-    fun <OtherT> firstMismatch(other: IReplStageHistory<OtherT>): Pair<ReplHistoryRecord<T>?, ReplHistoryRecord<OtherT>?>? =
-            lock.read { other.lock.read {
-                iterator().asSequence().zip(other.asSequence()).firstOrNull { it.first.id != it.second.id }?.let { it.first to it.second }
-            } }
-
-    fun<OtherT> firstMismatchFiltered(other: IReplStageHistory<OtherT>, predicate: (ReplHistoryRecord<T>) -> Boolean): Pair<ReplHistoryRecord<T>?, ReplHistoryRecord<OtherT>?>? =
-            lock.read { other.lock.read {
-                iterator().asSequence().filter(predicate).zip(other.asSequence()).firstOrNull { it.first.id != it.second.id }?.let { it.first to it.second }
-            } }
-
-    fun<OtherT> firstMismatchWhile(other: IReplStageHistory<OtherT>, predicate: (ReplHistoryRecord<T>) -> Boolean): Pair<ReplHistoryRecord<T>?, ReplHistoryRecord<OtherT>?>? =
-            lock.read { other.lock.read {
-                iterator().asSequence().takeWhile(predicate).zip(other.asSequence()).firstOrNull { it.first.id != it.second.id }?.let { it.first to it.second }
-            } }
-
-    fun <OtherT> matches(other: IReplStageHistory<OtherT>): Boolean =
-            lock.read { other.lock.read {
-                size == other.size && firstMismatch(other) == null
-            } }
-
-    fun <OtherT> isProperPrefix(other: IReplStageHistory<OtherT>): Boolean =
-            lock.read { other.lock.read {
-                size == other.size - 1 && firstMismatch(other) == null
-            } }
-
     val lock: ReentrantReadWriteLock
 }
 
@@ -77,9 +51,28 @@ interface IReplStageState<T> {
 
     val lock: ReentrantReadWriteLock
 
+    val currentGeneration: Int
+
+    fun getNextLineNo(): Int = history.peek()?.id?.no?.let { it + 1 } ?: REPL_CODE_LINE_FIRST_NO // TODO: it should be more robust downstream (e.g. use atomic)
+
     fun <StateT : IReplStageState<*>> asState(target: Class<out StateT>): StateT =
             if (target.isAssignableFrom(this::class.java)) this as StateT
             else throw IllegalArgumentException("$this is not an expected instance of IReplStageState")
 }
 
+
+fun <T> IReplStageHistory<T>.firstMismatch(other: Sequence<ILineId>): Pair<ReplHistoryRecord<T>?, ILineId?>? =
+        lock.read {
+            iterator().asSequence().zip(other.asSequence()).firstOrNull { it.first.id != it.second }?.let { it.first to it.second }
+        }
+
+fun<T> IReplStageHistory<T>.firstMismatchFiltered(other: Sequence<ILineId>, predicate: (ReplHistoryRecord<T>) -> Boolean): Pair<ReplHistoryRecord<T>?, ILineId?>? =
+        lock.read {
+            iterator().asSequence().filter(predicate).zip(other.asSequence()).firstOrNull { it.first.id != it.second }?.let { it.first to it.second }
+        }
+
+fun<T> IReplStageHistory<T>.firstMismatchWhile(other: Sequence<ILineId>, predicate: (ReplHistoryRecord<T>) -> Boolean): Pair<ReplHistoryRecord<T>?, ILineId?>? =
+        lock.read {
+            iterator().asSequence().takeWhile(predicate).zip(other.asSequence()).firstOrNull { it.first.id != it.second }?.let { it.first to it.second }
+        }
 

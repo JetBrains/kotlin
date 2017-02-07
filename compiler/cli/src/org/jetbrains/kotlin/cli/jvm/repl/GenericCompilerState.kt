@@ -28,7 +28,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 class ReplCompilerStageHistory(private val state: GenericReplCompilerState) : BasicReplStageHistory<ScriptDescriptor>(state.lock) {
 
     override fun resetTo(id: ILineId): Iterable<ILineId> {
-        state.generation.incrementAndGet()
         val removedCompiledLines = super.resetTo(id)
         val removedAnalyzedLines = state.analyzerEngine.resetToLine(id.no)
 
@@ -49,13 +48,14 @@ abstract class GenericReplCheckerState: IReplStageState<ScriptDescriptor> {
             val psiFile: KtFile,
             val errorHolder: DiagnosticMessageHolder)
 
-    val generation = AtomicLong(1)
     var lastLineState: LineState? = null // for transferring state to the compiler in most typical case
 }
 
 class GenericReplCompilerState(environment: KotlinCoreEnvironment, override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()) : IReplStageState<ScriptDescriptor>, GenericReplCheckerState() {
 
-    override val history: IReplStageHistory<ScriptDescriptor> = ReplCompilerStageHistory(this)
+    override val history = ReplCompilerStageHistory(this)
+
+    override val currentGeneration: Int get() = (history as BasicReplStageHistory<*>).currentGeneration.get()
 
     val analyzerEngine = ReplCodeAnalyzer(environment)
 

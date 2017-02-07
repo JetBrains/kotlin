@@ -49,8 +49,6 @@ open class GenericReplCompiler(disposable: Disposable,
         state.lock.write {
             val compilerState = state.asState(GenericReplCompilerState::class.java)
 
-            val currentGeneration = compilerState.generation.get()
-
             val (psiFile, errorHolder) = run {
                 if (compilerState.lastLineState == null || compilerState.lastLineState!!.codeLine != codeLine) {
                     val res = checker.check(state, codeLine)
@@ -95,10 +93,11 @@ open class GenericReplCompiler(disposable: Disposable,
                     setOf(psiFile.script!!.containingKtFile),
                     org.jetbrains.kotlin.codegen.CompilationErrorHandler.THROW_EXCEPTION)
 
-            val generatedClassname = makeScriptBaseName(codeLine, currentGeneration)
+            val generatedClassname = makeScriptBaseName(codeLine)
             compilerState.history.push(LineId(codeLine), scriptDescriptor)
 
             return ReplCompileResult.CompiledClasses(LineId(codeLine),
+                                                     compilerState.history.map { it.id },
                                                      generatedClassname,
                                                      generationState.factory.asList().map { CompiledClassData(it.relativePath, it.asByteArray()) },
                                                      generationState.replSpecific.hasResult,

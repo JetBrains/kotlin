@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.daemon.client
 
-import org.jetbrains.kotlin.cli.common.repl.ILineId
-import org.jetbrains.kotlin.cli.common.repl.IReplStageHistory
-import org.jetbrains.kotlin.cli.common.repl.IReplStageState
-import org.jetbrains.kotlin.cli.common.repl.ReplHistoryRecord
+import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.daemon.common.ReplStateFacade
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantReadWriteLock
 
 // NOTE: the lock is local
@@ -39,12 +37,20 @@ class RemoteReplCompilerStateHistory(private val state: RemoteReplCompilerState)
         throw NotImplementedError("pop from remote history is not supported")
     }
 
-    override fun resetTo(id: ILineId): Iterable<ILineId> = state.replStateFacade.historyResetTo(id)
+    override fun resetTo(id: ILineId): Iterable<ILineId> = state.replStateFacade.historyResetTo(id).apply {
+        if (isNotEmpty()) {
+            currentGeneration.incrementAndGet()
+        }
+    }
+
+    val currentGeneration = AtomicInteger(REPL_CODE_LINE_FIRST_GEN)
 
     override val lock: ReentrantReadWriteLock get() = state.lock
 }
 
 class RemoteReplCompilerState(internal val replStateFacade: ReplStateFacade, override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()) : IReplStageState<Unit> {
+
+    override val currentGeneration: Int get() = (history as RemoteReplCompilerStateHistory).currentGeneration.get()
 
     override val history: IReplStageHistory<Unit> = RemoteReplCompilerStateHistory(this)
 }

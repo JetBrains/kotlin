@@ -569,10 +569,10 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val compilerState = replCompiler.createState()
         val evaluatorState = localEvaluator.createState()
 
-        val res0 = replCompiler.check(compilerState, ReplCodeLine(0, "val x ="))
+        val res0 = replCompiler.check(compilerState, ReplCodeLine(0, 0, "val x ="))
         TestCase.assertTrue("Unexpected check results: $res0", res0 is ReplCheckResult.Incomplete)
 
-        val codeLine1 = ReplCodeLine(1, "val lst = listOf(1)\nval x = 5")
+        val codeLine1 = ReplCodeLine(1, 0, "val lst = listOf(1)\nval x = 5")
         val res1 = replCompiler.compile(compilerState, codeLine1)
         val res1c = res1 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res1", res1c)
@@ -581,10 +581,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val res11e = res11 as? ReplEvalResult.UnitResult
         TestCase.assertNotNull("Unexpected eval result: $res11", res11e)
 
-        val codeLine2 = ReplCodeLine(2, "x + 2")
-        val res2x = replCompiler.compile(compilerState, codeLine2)
-        TestCase.assertNotNull("Unexpected compile result: $res2x", res2x as? ReplCompileResult.HistoryMismatch)
-
+        val codeLine2 = ReplCodeLine(2, 0, "x + 2")
         val res2 = replCompiler.compile(compilerState, codeLine2)
         val res2c = res2 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res2", res2c)
@@ -619,7 +616,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             // use repl compiler for >> 1s, making sure that idle/unused timeouts are not firing
             for (attempts in 1..10) {
-                val codeLine1 = ReplCodeLine(attempts, "3 + 5")
+                val codeLine1 = ReplCodeLine(attempts, 0, "3 + 5")
                 val res1 = replCompiler.compile(compilerState, codeLine1)
                 val res1c = res1 as? ReplCompileResult.CompiledClasses
                 TestCase.assertNotNull("Unexpected compile result: $res1", res1c)

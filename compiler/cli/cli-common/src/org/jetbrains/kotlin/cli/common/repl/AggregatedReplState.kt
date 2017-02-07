@@ -80,5 +80,9 @@ open class AggregatedReplStageState<T1, T2>(val state1: IReplStageState<T1>, val
                 target.isAssignableFrom(state2::class.java) -> state2 as StateT
                 else -> super.asState(target)
             }
+
+    override fun getNextLineNo() = state1.getNextLineNo()
+
+    override val currentGeneration: Int get() = state1.currentGeneration
 }
 

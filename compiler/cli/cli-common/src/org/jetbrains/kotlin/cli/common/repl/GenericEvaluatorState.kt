@@ -26,6 +26,8 @@ open class GenericReplEvaluatorState(baseClasspath: Iterable<File>, baseClassloa
 {
     override val history: IReplStageHistory<EvalClassWithInstanceAndLoader> = BasicReplStageHistory(lock)
 
+    override val currentGeneration: Int get() = (history as BasicReplStageHistory<*>).currentGeneration.get()
+
     val topClassLoader: ReplClassLoader = makeReplClassLoader(baseClassloader, baseClasspath)
 
     val currentClasspath: List<File> get() = lock.read {

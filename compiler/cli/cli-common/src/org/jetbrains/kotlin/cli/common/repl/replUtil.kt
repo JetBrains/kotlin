@@ -20,8 +20,8 @@ import com.google.common.base.Throwables
 import java.io.File
 import java.net.URLClassLoader
 
-fun makeScriptBaseName(codeLine: ReplCodeLine, generation: Long) =
-        "Line_${codeLine.no}${if (generation > 1) "_gen_$generation" else ""}"
+fun makeScriptBaseName(codeLine: ReplCodeLine) =
+        "Line_${codeLine.no}${if (codeLine.generation > REPL_CODE_LINE_FIRST_GEN) "_gen_${codeLine.generation}" else ""}"
 
 fun renderReplStackTrace(cause: Throwable, startFromMethodName: String): String {
     val newTrace = arrayListOf<StackTraceElement>()

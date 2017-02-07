@@ -47,10 +47,10 @@ class GenericReplTest : TestCase() {
 
         val state = repl.createState()
 
-        val res1 = repl.replCompiler.check(state, ReplCodeLine(0, "val x ="))
+        val res1 = repl.replCompiler.check(state, ReplCodeLine(0, 0, "val x ="))
         TestCase.assertTrue("Unexpected check results: $res1", res1 is ReplCheckResult.Incomplete)
 
-        val codeLine0 = ReplCodeLine(0, "val l1 = listOf(1 + 2)\nl1.first()")
+        val codeLine0 = ReplCodeLine(0, 0, "val l1 = listOf(1 + 2)\nl1.first()")
         val res2 = repl.replCompiler.compile(state, codeLine0)
         val res2c = res2 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res2", res2c)
@@ -60,7 +60,7 @@ class GenericReplTest : TestCase() {
         TestCase.assertNotNull("Unexpected eval result: $res21", res21e)
         TestCase.assertEquals(3, res21e!!.value)
 
-        val codeLine1 = ReplCodeLine(1, "val x = 5")
+        val codeLine1 = ReplCodeLine(1, 0, "val x = 5")
         val res3 = repl.replCompiler.compile(state, codeLine1)
         val res3c = res3 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res3", res3c)
@@ -69,10 +69,7 @@ class GenericReplTest : TestCase() {
         val res31e = res31 as? ReplEvalResult.UnitResult
         TestCase.assertNotNull("Unexpected eval result: $res31", res31e)
 
-        val codeLine2 = ReplCodeLine(2, "x + 2")
-        val res4x = repl.replCompiler.compile(state, codeLine2)
-        TestCase.assertNotNull("Unexpected compile result: $res4x", res4x as? ReplCompileResult.HistoryMismatch)
-
+        val codeLine2 = ReplCodeLine(2, 0, "x + 2")
         val res4 = repl.replCompiler.compile(state, codeLine2)
         val res4c = res4 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res4", res4c)
@@ -113,7 +110,7 @@ class GenericReplTest : TestCase() {
 
         val state = repl.createState()
 
-        val codeLine1 = ReplCodeLine(0, "package mypackage\n\nval x = 1\nx+2")
+        val codeLine1 = ReplCodeLine(0, 0, "package mypackage\n\nval x = 1\nx+2")
         val res1 = repl.replCompiler.compile(state, codeLine1)
         val res1c = res1 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res1", res1c)
@@ -123,7 +120,7 @@ class GenericReplTest : TestCase() {
         TestCase.assertNotNull("Unexpected eval result: $res11", res11e)
         TestCase.assertEquals(3, res11e!!.value)
         
-        val codeLine2 = ReplCodeLine(1, "x+4")
+        val codeLine2 = ReplCodeLine(1, 0, "x+4")
         val res2 = repl.replCompiler.compile(state, codeLine2)
         val res2c = res2 as? ReplCompileResult.CompiledClasses
         TestCase.assertNotNull("Unexpected compile result: $res2", res2c)

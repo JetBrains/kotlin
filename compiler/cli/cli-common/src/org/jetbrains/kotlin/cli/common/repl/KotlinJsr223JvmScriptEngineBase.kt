@@ -23,17 +23,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import javax.script.*
 
 val KOTLIN_SCRIPT_STATE_BINDINGS_KEY = "kotlin.script.state"
-val KOTLIN_SCRIPT_LINE_NUMBER_BINDINGS_KEY = "kotlin.script.line.number"
-
-// TODO consider additional error handling
-var Bindings.kotlinScriptState: IReplStageState<*>
-    @Suppress("UNCHECKED_CAST")
-    get() = get(KOTLIN_SCRIPT_STATE_BINDINGS_KEY) as IReplStageState<*>
-    set(v) { put(KOTLIN_SCRIPT_STATE_BINDINGS_KEY, v) }
-
-val Bindings.kotlinScriptLineNumber: AtomicInteger
-    @Suppress("UNCHECKED_CAST")
-    get() = getOrPut(KOTLIN_SCRIPT_LINE_NUMBER_BINDINGS_KEY, { AtomicInteger(0) }) as AtomicInteger
 
 abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEngineFactory) : AbstractScriptEngine(), ScriptEngine, Compilable {
 
@@ -53,7 +42,7 @@ abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEn
     override fun getFactory(): ScriptEngineFactory = myFactory
 
     // the parameter could be used in the future when we decide to keep state completely in the context and solve appropriate problems (now e.g. replCompiler keeps separate state)
-    fun nextCodeLine(context: ScriptContext, code: String) = ReplCodeLine(context.getBindings(ScriptContext.ENGINE_SCOPE).kotlinScriptLineNumber.incrementAndGet(), code)
+    fun nextCodeLine(context: ScriptContext, code: String) = getCurrentState(context).let { ReplCodeLine(it.getNextLineNo(), it.currentGeneration, code) }
 
     protected open fun createState(lock: ReentrantReadWriteLock = ReentrantReadWriteLock()): IReplStageState<*> = AggregatedReplStageState(replCompiler.createState(lock), replEvaluator.createState(lock), lock)
 
@@ -83,7 +72,6 @@ abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEn
         val compiled = when (result) {
             is ReplCompileResult.Error -> throw ScriptException("Error${result.locationString()}: ${result.message}")
             is ReplCompileResult.Incomplete -> throw ScriptException("error: incomplete code")
-            is ReplCompileResult.HistoryMismatch -> throw ScriptException("Repl history mismatch at line: ${result.lineNo}")
             is ReplCompileResult.CompiledClasses -> result
         }
         return CompiledKotlinScript(this, codeLine, compiled)

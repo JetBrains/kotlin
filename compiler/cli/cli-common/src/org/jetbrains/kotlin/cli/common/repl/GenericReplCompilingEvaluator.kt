@@ -36,7 +36,6 @@ class GenericReplCompilingEvaluator(val compiler: ReplCompiler,
             val compiled = compiler.compile(state, codeLine)
             when (compiled) {
                 is ReplCompileResult.Error -> ReplEvalResult.Error.CompileTime(compiled.message, compiled.location)
-                is ReplCompileResult.HistoryMismatch -> ReplEvalResult.HistoryMismatch(compiled.lineNo)
                 is ReplCompileResult.Incomplete -> ReplEvalResult.Incomplete()
                 is ReplCompileResult.CompiledClasses -> {
                     val result = eval(state, compiled, scriptArgs, invokeWrapper)

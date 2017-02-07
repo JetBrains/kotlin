@@ -18,18 +18,19 @@ package org.jetbrains.kotlin.cli.common.repl
 
 import java.io.Serializable
 import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
 
-data class LineId(override val no: Int, private val codeHash: Int) : ILineId, Serializable {
+data class LineId(override val no: Int, override val generation: Int, private val codeHash: Int) : ILineId, Serializable {
 
-    constructor(no: Int, code: String): this(no, code.hashCode())
-    constructor(codeLine: ReplCodeLine): this(codeLine.no, codeLine.code.hashCode())
+    constructor(no: Int, generation: Int, code: String): this(no, generation, code.hashCode())
+    constructor(codeLine: ReplCodeLine): this(codeLine.no, codeLine.generation, codeLine.code.hashCode())
 
     override fun compareTo(other: ILineId): Int = (other as? LineId)?.let {
-        val c = no.compareTo(it.no)
-        if (c == 0) codeHash.compareTo(it.codeHash)
-        else c
+        no.compareTo(it.no).takeIf { it != 0 }
+        ?: generation.compareTo(it.generation).takeIf { it != 0 }
+        ?: codeHash.compareTo(it.codeHash)
     } ?: -1 // TODO: check if it doesn't break something
 
     companion object {
@@ -38,6 +39,8 @@ data class LineId(override val no: Int, private val codeHash: Int) : ILineId, Se
 }
 
 open class BasicReplStageHistory<T>(override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()) : IReplStageHistory<T>, ArrayList<ReplHistoryRecord<T>>() {
+
+    val currentGeneration = AtomicInteger(REPL_CODE_LINE_FIRST_GEN)
 
     override fun push(id: ILineId, item: T) {
         lock.write {
@@ -54,6 +57,7 @@ open class BasicReplStageHistory<T>(override val lock: ReentrantReadWriteLock = 
             if (idx < lastIndex) {
                 val removed = asSequence().drop(idx + 1).map { it.id }.toList()
                 removeRange(idx + 1, lastIndex)
+                currentGeneration.incrementAndGet()
                 return removed
             }
             else return emptyList()
@@ -61,7 +65,9 @@ open class BasicReplStageHistory<T>(override val lock: ReentrantReadWriteLock = 
     }
 }
 
-class BasicReplStageState<HistoryItemT>: IReplStageState<HistoryItemT> {
+open class BasicReplStageState<HistoryItemT>: IReplStageState<HistoryItemT> {
+
+    override val currentGeneration: Int get() = history.currentGeneration.get()
 
     override val lock = ReentrantReadWriteLock()
 

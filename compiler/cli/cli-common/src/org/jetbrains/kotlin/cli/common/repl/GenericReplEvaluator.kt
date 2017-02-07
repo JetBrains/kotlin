@@ -113,10 +113,10 @@ open class GenericReplEvaluator(val baseClasspath: Iterable<File>,
                 }
             }
 
-//            val firstMismatch = historyActor.firstMismatch(verifyHistory)
-//            if (firstMismatch != null) {
-//                return@eval ReplEvalResult.HistoryMismatch(firstMismatch)
-//            }
+            val firstMismatch = historyActor.firstMismatch(compileResult.previousLines.asSequence())
+            if (firstMismatch != null) {
+                return@eval ReplEvalResult.HistoryMismatch(firstMismatch.first?.id?.no ?: firstMismatch.second?.no ?: -1 /* means error? */)
+            }
 
             val (classLoader, scriptClass) = try {
                 historyActor.processClasses(compileResult)
@@ -172,7 +172,7 @@ private open class HistoryActionsForNoRepeat(val state: GenericReplEvaluatorStat
 
     open val effectiveHistory: List<EvalClassWithInstanceAndLoader> get() = state.history.map { it.item }
 
-    open fun<OtherT> firstMismatch(other: IReplStageHistory<OtherT>): Pair<ReplHistoryRecord<EvalClassWithInstanceAndLoader>?, ReplHistoryRecord<OtherT>?>? = state.history.firstMismatch(other)
+    open fun firstMismatch(other: Sequence<ILineId>): Pair<ReplHistoryRecord<EvalClassWithInstanceAndLoader>?, ILineId?>? = state.history.firstMismatch(other)
 
     open fun addPlaceholder(lineId: ILineId, value: EvalClassWithInstanceAndLoader) { state.history.push(lineId, value) }
 
@@ -215,7 +215,7 @@ private open class HistoryActionsForRepeatRecentOnly(state: GenericReplEvaluator
 
     override val effectiveHistory: List<EvalClassWithInstanceAndLoader> get() = super.effectiveHistory.dropLast(1)
 
-    override fun<OtherT> firstMismatch(other: IReplStageHistory<OtherT>): Pair<ReplHistoryRecord<EvalClassWithInstanceAndLoader>?, ReplHistoryRecord<OtherT>?>? =
+    override fun firstMismatch(other: Sequence<ILineId>): Pair<ReplHistoryRecord<EvalClassWithInstanceAndLoader>?, ILineId?>? =
             state.history.firstMismatchFiltered(other) { it.id != currentLast.id }
 
     override fun addPlaceholder(lineId: ILineId, value: EvalClassWithInstanceAndLoader) {}
@@ -235,7 +235,7 @@ private open class HistoryActionsForRepeatAny(state: GenericReplEvaluatorState, 
 
     override val effectiveHistory: List<EvalClassWithInstanceAndLoader> get() = state.history.takeWhile { it.id != matchingLine.id }.map { it.item }
 
-    override fun<OtherT> firstMismatch(other: IReplStageHistory<OtherT>): Pair<ReplHistoryRecord<EvalClassWithInstanceAndLoader>?, ReplHistoryRecord<OtherT>?>? =
+    override fun firstMismatch(other: Sequence<ILineId>): Pair<ReplHistoryRecord<EvalClassWithInstanceAndLoader>?, ILineId?>? =
             state.history.firstMismatchWhile(other) { it.id != matchingLine.id }
 
     override fun addPlaceholder(lineId: ILineId, value: EvalClassWithInstanceAndLoader) {}
