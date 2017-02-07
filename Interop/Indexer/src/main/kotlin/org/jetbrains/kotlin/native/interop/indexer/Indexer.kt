@@ -99,12 +99,38 @@ private class NativeIndexImpl : NativeIndex() {
         return res
     }
 
-    fun getTypedef(type: CXType): Type {
+    private fun builtinVaListType(type: CXType, name: String, underlying: Type): Type {
         assert (type.kind.value == CXType_Typedef)
+        val declarationId = DeclarationID("c:@T@$name")
+
+        val structDeclaration = structById.getOrPut(declarationId) {
+            StructDeclImpl(name).apply {
+                val size = clang_Type_getSizeOf(type)
+                val align = clang_Type_getAlignOf(type).toInt()
+                val def = StructDefImpl(size, align, this, hasNaturalLayout = false)
+                this.def = def
+            }
+        }
+
+        assert (underlying is ConstArrayType)
+        // So the result must feel like array:
+        return ConstArrayType(RecordType(structDeclaration), 1)
+    }
+
+    fun getTypedef(type: CXType): Type {
         val declCursor = clang_getTypeDeclaration(type, arena)
         val name = clang_getCursorSpelling(declCursor, arena).convertAndDispose()
 
         val underlying = convertType(clang_getTypedefDeclUnderlyingType(declCursor, arena))
+
+        if (name == "__builtin_va_list") {
+            // On some platforms (e.g. macOS) libclang reports `__builtin_va_list` to be defined as array using
+            //   typedef struct __va_list_tag __builtin_va_list[1]
+            // while `struct __va_list_tag` is incomplete.
+            // So `__builtin_va_list` gets declared as incorrect type, and requires some dirty hacks:
+            return builtinVaListType(type, name, underlying)
+        }
+
         if ((underlying is RecordType && underlying.decl.spelling.split(' ').last() == name) ||
                 (underlying is EnumType && underlying.def.spelling.split(' ').last() == name)) {
 
