@@ -7372,6 +7372,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("floatLiteralOutOfRange.kt")
+            public void testFloatLiteralOutOfRange() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/evaluate/floatLiteralOutOfRange.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("intOverflow.kt")
             public void testIntOverflow() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/evaluate/intOverflow.kt");

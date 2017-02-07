@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -534,6 +534,8 @@ public class DefaultErrorMessages {
         MAP.put(INT_LITERAL_OUT_OF_RANGE, "The value is out of range");
         MAP.put(WRONG_LONG_SUFFIX, "Use 'L' instead of 'l'");
         MAP.put(FLOAT_LITERAL_OUT_OF_RANGE, "The value is out of range");
+        MAP.put(FLOAT_LITERAL_CONFORMS_INFINITY, "Floating point number conforms to infinity");
+        MAP.put(FLOAT_LITERAL_CONFORMS_ZERO, "Floating point number conforms to zero");
         MAP.put(INCORRECT_CHARACTER_LITERAL, "Incorrect character literal");
         MAP.put(EMPTY_CHARACTER_LITERAL, "Empty character literal");
         MAP.put(ILLEGAL_UNDERSCORE, "Illegal underscore");

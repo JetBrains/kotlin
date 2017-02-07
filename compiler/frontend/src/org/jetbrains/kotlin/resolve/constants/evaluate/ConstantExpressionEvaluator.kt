@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.constants.evaluate
 
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.TypeConversionUtil
 import com.intellij.util.text.LiteralFormatUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -313,8 +314,26 @@ private class ConstantExpressionEvaluatorVisitor(
                                else -> throw IllegalArgumentException("Unsupported constant: " + expression)
                            } ?: return null
 
-        fun isLongWithSuffix() = nodeElementType == KtNodeTypes.INTEGER_CONSTANT && hasLongSuffix(text)
-        return createConstant(result, expectedType, CompileTimeConstant.Parameters(true, !isLongWithSuffix(), false, usesNonConstValAsConstant = false))
+        if (result is Double) {
+            if (result.isInfinite()) {
+                trace.report(Errors.FLOAT_LITERAL_CONFORMS_INFINITY.on(expression))
+            }
+            if (result == 0.0 && !TypeConversionUtil.isFPZero(text)) {
+                trace.report(Errors.FLOAT_LITERAL_CONFORMS_ZERO.on(expression))
+            }
+        }
+
+        if (result is Float) {
+            if (result.isInfinite()) {
+                trace.report(Errors.FLOAT_LITERAL_CONFORMS_INFINITY.on(expression))
+            }
+            if (result == 0.0f && !TypeConversionUtil.isFPZero(text)) {
+                trace.report(Errors.FLOAT_LITERAL_CONFORMS_ZERO.on(expression))
+            }
+        }
+
+        val isLongWithSuffix = nodeElementType == KtNodeTypes.INTEGER_CONSTANT && hasLongSuffix(text)
+        return createConstant(result, expectedType, CompileTimeConstant.Parameters(true, !isLongWithSuffix, false, usesNonConstValAsConstant = false))
     }
 
     override fun visitParenthesizedExpression(expression: KtParenthesizedExpression, expectedType: KotlinType?): CompileTimeConstant<*>? {
