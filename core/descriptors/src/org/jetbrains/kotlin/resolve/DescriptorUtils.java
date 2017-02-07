@@ -213,19 +213,9 @@ public class DescriptorUtils {
 
     @Nullable
     public static ClassDescriptor getContainingClass(@NotNull DeclarationDescriptor descriptor) {
-        return getContainingClassImpl(descriptor, true);
-    }
-
-    @Nullable
-    public static ClassDescriptor getContainingClassOrObject(@NotNull DeclarationDescriptor descriptor) {
-        return getContainingClassImpl(descriptor, false);
-    }
-
-    @Nullable
-    private static ClassDescriptor getContainingClassImpl(@NotNull DeclarationDescriptor descriptor, boolean rejectCompanion) {
         DeclarationDescriptor containing = descriptor.getContainingDeclaration();
         while (containing != null) {
-            if (containing instanceof ClassDescriptor && !(rejectCompanion && isCompanionObject(containing))) {
+            if (containing instanceof ClassDescriptor && !isCompanionObject(containing)) {
                 return (ClassDescriptor) containing;
             }
             containing = containing.getContainingDeclaration();

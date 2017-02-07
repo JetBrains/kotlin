@@ -450,7 +450,8 @@ public class TranslationContext {
             return descriptor == declarationDescriptor;
         }
         else {
-            return declarationDescriptor != null && descriptor == DescriptorUtils.getContainingClassOrObject(declarationDescriptor);
+            return declarationDescriptor != null &&
+                   descriptor == DescriptorUtils.getParentOfType(declarationDescriptor, ClassDescriptor.class);
         }
     }
 
