@@ -17,6 +17,7 @@
 package kotlin.jvm.internal;
 
 import kotlin.KotlinNullPointerException;
+import kotlin.SinceKotlin;
 import kotlin.UninitializedPropertyAccessException;
 
 import java.util.Arrays;
@@ -163,26 +164,32 @@ public class Intrinsics {
         return first == null ? second == null : first.equals(second);
     }
 
+    @SinceKotlin(version = "1.1")
     public static boolean areEqual(Double first, Double second) {
         return first == null ? second == null : second != null && first.doubleValue() == second.doubleValue();
     }
 
+    @SinceKotlin(version = "1.1")
     public static boolean areEqual(Double first, double second) {
         return first != null && first.doubleValue() == second;
     }
 
+    @SinceKotlin(version = "1.1")
     public static boolean areEqual(double first, Double second) {
         return second != null && first == second.doubleValue();
     }
 
+    @SinceKotlin(version = "1.1")
     public static boolean areEqual(Float first, Float second) {
         return first == null ? second == null : second != null && first.floatValue() == second.floatValue();
     }
 
+    @SinceKotlin(version = "1.1")
     public static boolean areEqual(Float first, float second) {
         return first != null && first.floatValue() == second;
     }
 
+    @SinceKotlin(version = "1.1")
     public static boolean areEqual(float first, Float second) {
         return second != null && first == second.floatValue();
     }

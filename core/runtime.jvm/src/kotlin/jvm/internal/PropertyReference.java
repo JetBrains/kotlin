@@ -16,6 +16,7 @@
 
 package kotlin.jvm.internal;
 
+import kotlin.SinceKotlin;
 import kotlin.reflect.KCallable;
 import kotlin.reflect.KProperty;
 
@@ -24,21 +25,25 @@ public abstract class PropertyReference extends CallableReference implements KPr
         super();
     }
 
+    @SinceKotlin(version = "1.1")
     public PropertyReference(Object receiver) {
         super(receiver);
     }
 
     @Override
+    @SinceKotlin(version = "1.1")
     protected KProperty getReflected() {
         return (KProperty) super.getReflected();
     }
 
     @Override
+    @SinceKotlin(version = "1.1")
     public boolean isLateinit() {
         return getReflected().isLateinit();
     }
 
     @Override
+    @SinceKotlin(version = "1.1")
     public boolean isConst() {
         return getReflected().isConst();
     }

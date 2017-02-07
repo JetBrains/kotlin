@@ -16,6 +16,7 @@
 
 package kotlin.jvm.internal;
 
+import kotlin.SinceKotlin;
 import kotlin.reflect.KCallable;
 import kotlin.reflect.KFunction;
 
@@ -26,6 +27,7 @@ public class FunctionReference extends CallableReference implements FunctionImpl
         this.arity = arity;
     }
 
+    @SinceKotlin(version = "1.1")
     public FunctionReference(int arity, Object receiver) {
         super(receiver);
         this.arity = arity;
@@ -37,36 +39,43 @@ public class FunctionReference extends CallableReference implements FunctionImpl
     }
 
     @Override
+    @SinceKotlin(version = "1.1")
     protected KFunction getReflected() {
         return (KFunction) super.getReflected();
     }
 
     @Override
+    @SinceKotlin(version = "1.1")
     protected KCallable computeReflected() {
         return Reflection.function(this);
     }
 
     @Override
+    @SinceKotlin(version = "1.1")
     public boolean isInline() {
         return getReflected().isInline();
     }
 
     @Override
+    @SinceKotlin(version = "1.1")
     public boolean isExternal() {
         return getReflected().isExternal();
     }
 
     @Override
+    @SinceKotlin(version = "1.1")
     public boolean isOperator() {
         return getReflected().isOperator();
     }
 
     @Override
+    @SinceKotlin(version = "1.1")
     public boolean isInfix() {
         return getReflected().isInfix();
     }
 
     @Override
+    @SinceKotlin(version = "1.1")
     public boolean isSuspend() {
         return getReflected().isSuspend();
     }

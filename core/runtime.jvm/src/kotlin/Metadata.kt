@@ -63,5 +63,6 @@ internal annotation class Metadata(
          * 1 - this class file is compiled by a pre-release version of Kotlin and is not visible to release versions.
          * 2 - this class file is a compiled Kotlin script source file (.kts).
          */
+        @SinceKotlin("1.1")
         val xi: Int = 0
 )
