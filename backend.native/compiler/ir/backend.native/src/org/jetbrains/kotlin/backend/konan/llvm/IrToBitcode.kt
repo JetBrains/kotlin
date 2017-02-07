@@ -352,103 +352,31 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     override fun visitConstructor(constructorDeclaration: IrConstructor) {
+        context.log("visitConstructor            : ${ir2string(constructorDeclaration)}")
         if (constructorDeclaration.descriptor.containingDeclaration.isIntrinsic) {
             // Do not generate any ctors for intrinsic classes.
             return
         }
 
-
-        codegen.prologue(constructorDeclaration.descriptor)
-
         val constructorDescriptor = constructorDeclaration.descriptor
         val classDescriptor = constructorDescriptor.constructedClass
+        if (constructorDescriptor.isPrimary) {
+            if (DescriptorUtils.isObject(classDescriptor)) {
+                if (!classDescriptor.isUnit()) {
+                    val objectPtr = objectPtrByName(classDescriptor)
 
-        using(FunctionScope(constructorDeclaration)) {
-
-            val thisPtr = currentCodeContext.genGetValue(classDescriptor.thisAsReceiverParameter)
-
-            /**
-             * IR for kotlin.Any is:
-             * BLOCK_BODY
-             *   DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
-             *   INSTANCE_INITIALIZER_CALL classDescriptor='Any'
-             *
-             *   to avoid possible recursion we manually reject body generation for Any.
-             */
-
-            if (!skipConstructorBodyGeneration(constructorDeclaration)) {
-                constructorDeclaration.body?.let {
-                    generateBody(it)
+                    LLVMSetInitializer(objectPtr, codegen.kNullObjHeaderPtr)
                 }
-            }
-
-            if (constructorDescriptor.isPrimary) {
-                if (DescriptorUtils.isObject(classDescriptor)) {
-                    if (!classDescriptor.isUnit()) {
-                        val objectPtr = objectPtrByName(classDescriptor)
-
-                        LLVMSetInitializer(objectPtr, codegen.kNullObjHeaderPtr)
-                    }
-                }
-                val irOfCurrentClass = context.ir.moduleIndexForCodegen.classes[classDescriptor]
-                irOfCurrentClass!!.acceptChildrenVoid(object : IrElementVisitorVoid {
-                    override fun visitElement(element: IrElement) {
-                        element.acceptChildrenVoid(this)
-                    }
-
-                    override fun visitField(fieldDeclaration: IrField) {
-
-                        val fieldDescriptor = fieldDeclaration.descriptor
-                        fieldDeclaration.initializer?.let {
-                            val value = evaluateExpression(it.expression)
-                            val fieldPtr = fieldPtrOfClass(thisPtr, fieldDescriptor)
-                            codegen.storeAnyGlobal(value, fieldPtr)
-                        }
-                    }
-
-                    override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
-                        generateBlockBody(declaration.body)
-                    }
-
-                    override fun visitClass(declaration: IrClass) {
-                        return
-                    }
-
-                    override fun visitConstructor(declaration: IrConstructor) {
-                        return
-                    }
-                })
             }
         }
 
-        codegen.ret(null)
-        codegen.epilogue()
-        context.log("visitConstructor            : ${ir2string(constructorDeclaration)}")
+        visitFunction(constructorDeclaration)
     }
 
     //-------------------------------------------------------------------------//
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
         context.log("visitAnonymousInitializer  : ${ir2string(declaration)}")
-    }
-
-    //-------------------------------------------------------------------------//
-
-    private fun generateBlockBody(body: IrBlockBody) {
-        using(VariableScope()) {
-            body.statements.forEach {
-                generateStatement(it)
-            }
-            // TODO: write it properly!
-            if (codegen.constructedClass == null && !codegen.isAfterTerminator()) {
-                if (codegen.returnType == voidType) {
-                    codegen.ret(null)
-                } else {
-                    codegen.unreachable()
-                }
-            }
-        }
-        context.log("generateBlockBody             : ${ir2string(body)}")
     }
 
     //-------------------------------------------------------------------------//
@@ -559,14 +487,29 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     override fun visitFunction(declaration: IrFunction) {
         context.log("visitFunction                  : ${ir2string(declaration)}")
         val body = declaration.body
-        if (declaration.descriptor.modality == Modality.ABSTRACT || body == null)
-            return
 
+        if (declaration.descriptor.modality == Modality.ABSTRACT || declaration.descriptor.isExternal || body == null)
+            return
 
         codegen.prologue(declaration.descriptor)
 
         using(FunctionScope(declaration)) {
-            generateBody(body)
+            using(VariableScope()) {
+                context.log("generateBlockBody             : ${ir2string(body)}")
+                when (body) {
+                    is IrBlockBody -> body.statements.forEach { generateStatement(it) }
+                    is IrExpressionBody -> generateStatement(body.expression)
+                    is IrSyntheticBody -> throw AssertionError("Synthetic body ${body.kind} has not been lowered")
+                    else -> TODO(ir2string(body))
+                }
+            }
+        }
+
+        if (!codegen.isAfterTerminator()) {
+            if (codegen.returnType == voidType)
+                codegen.ret(null)
+            else
+                codegen.unreachable()
         }
 
         codegen.epilogue()
@@ -664,13 +607,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     private fun IrStatement.generate() = generateStatement(this)
-
-    private fun generateBody(body: IrBody) {
-        when (body) {
-            is IrBlockBody -> generateBlockBody(body)
-            else -> TODO(ir2string(body))
-        }
-    }
 
     //-------------------------------------------------------------------------//
 
@@ -1891,22 +1827,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         return callDirect(descriptor, listOf(thisPtrArg) + args,
                 Lifetime.IRRELEVANT /* no value returned */)
-    }
-
-    //-------------------------------------------------------------------------//
-
-    private fun skipConstructorBodyGeneration(declaration: IrConstructor): Boolean {
-        var  skipBody = false
-        declaration.acceptChildrenVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-
-            override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
-                skipBody = expression.descriptor == declaration.descriptor
-            }
-        })
-        return skipBody
     }
 
     //-------------------------------------------------------------------------//

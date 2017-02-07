@@ -5,6 +5,8 @@ import org.jetbrains.kotlin.backend.konan.ValueType
 import org.jetbrains.kotlin.backend.konan.isRepresentedAs
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -140,9 +142,22 @@ internal val CallableDescriptor.allValueParameters: List<ParameterDescriptor>
         return receivers + this.valueParameters
     }
 
+internal val KotlinType.isFunctionOrKFunctionType: Boolean
+    get() {
+        val kind = constructor.declarationDescriptor?.getFunctionalClassKind()
+        return kind == FunctionClassDescriptor.Kind.Function || kind == FunctionClassDescriptor.Kind.KFunction
+    }
+
+internal val KotlinType.isKFunctionType: Boolean
+    get() {
+        val kind = constructor.declarationDescriptor?.getFunctionalClassKind()
+        return kind == FunctionClassDescriptor.Kind.KFunction
+    }
+
 internal val FunctionDescriptor.isFunctionInvoke: Boolean
     get() {
         val dispatchReceiver = dispatchReceiverParameter ?: return false
+        assert (!dispatchReceiver.type.isKFunctionType)
 
         return dispatchReceiver.type.isFunctionType &&
                 this.isOperator && this.name == OperatorNameConventions.INVOKE

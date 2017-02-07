@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -86,7 +87,7 @@ private class CallableReferencesUnbinder(val lower: CallableReferenceLowering,
     }
 
     override fun visitCallableReference(expression: IrCallableReference): IrExpression {
-        assert (expression.type.isFunctionType)
+        assert (expression.type.isFunctionOrKFunctionType)
 
         val descriptor = expression.descriptor
         val boundArgs = expression.getArguments()
