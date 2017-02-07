@@ -126,6 +126,12 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest(fileName);
     }
 
+    @TestMetadata("illegalSuspendCall.kt")
+    public void testIllegalSuspendCall() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/illegalSuspendCall.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("invisibleMember.kt")
     public void testInvisibleMember() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/invisibleMember.kt");
