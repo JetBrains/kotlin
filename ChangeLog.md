@@ -59,6 +59,7 @@
 - [`KT-5897`](https://youtrack.jetbrains.com/issue/KT-5897) Pressing `Enter` after binary operations places the caret at the wrong indentation
 - [`KT-10828`](https://youtrack.jetbrains.com/issue/KT-10828) Support empty Unit function formatting on one line
 - [`KT-15123`](https://youtrack.jetbrains.com/issue/KT-15123) Do indent adjustment on the fly only for the first element in the line
+- [`KT-15128`](https://youtrack.jetbrains.com/issue/KT-15128) Do not assign type parameters from original proto if type is substituted with Any
 
 #### Inspections, Intentions and Quickfixes
 - [`KT-12095`](https://youtrack.jetbrains.com/issue/KT-12095) Implement "Join Declaration and Assignment" intention
@@ -99,6 +100,7 @@
 - [`KT-13443`](https://youtrack.jetbrains.com/issue/KT-13443) Do not try to calculate icon for invalid PSI elements (fix PsiInvalidElementAccessException)
 - [`KT-15074`](https://youtrack.jetbrains.com/issue/KT-15074) Fix occasional freezes on startup (remove unnecessary cyclic dependency between KtStubElementTypes and KtNodeTypes)
 - [`KT-14732`](https://youtrack.jetbrains.com/issue/KT-14732) Fix Slow typing, copy-pasting, highlighting in Kotlin files due to auto-import suggestion calculation
+- [`KT-15227`](https://youtrack.jetbrains.com/issue/KT-15227) "Replace if with elvis" silently changed semantics
 
 #### Refactorings
 
@@ -145,6 +147,7 @@
 - [`KT-15018`](https://youtrack.jetbrains.com/issue/KT-15018) Lint: Fix PluginException at `IntellijLintUtils.getLocation()`
 - [`KT-14067`](https://youtrack.jetbrains.com/issue/KT-14067) Android Extensions: Remove obsolete JPS plugin
 - [`KT-12741`](https://youtrack.jetbrains.com/issue/KT-12741) Android Extensions: Enable IDE integration only if it is enabled in the `build.gradle` file (apply plugin: 'kotlin-android-extensions')
+- [`KT-14308`](https://youtrack.jetbrains.com/issue/KT-14308) Fix hangs in IDEA/Android Studio on unresolved references (Data Binding)
 
 ### Tools
 
@@ -160,7 +163,7 @@
 - [`KT-13767`](https://youtrack.jetbrains.com/issue/KT-13767) Property-targeted annotations did not appear in kapt elements
 
 ### Other
-- [`KT-12149`](https://youtrack.jetbrains.com/issue/KT-12149) Provide a way to avoid mandatory open qualifier for proxy classes (all-open plugin for Maven and Gradle) 
+- [`KT-12149`](https://youtrack.jetbrains.com/issue/KT-12149) Provide a way to avoid mandatory open qualifier for proxy classes (all-open plugin for Maven and Gradle)
 
 ## 1.0.5
 
