@@ -388,7 +388,7 @@ class StubGenerator(
      * Constructs [OutValueBinding] for the value of given C type.
      */
     fun getOutValueBinding(type: Type): OutValueBinding {
-        if (type is ArrayType) {
+        if (type.unwrapTypedefs() is ArrayType) {
             // array-typed C function argument or return value is actually a pointer to array.
             return getOutValueBinding(PointerType(type))
         }
@@ -435,7 +435,7 @@ class StubGenerator(
      * Constructs [InValueBinding] for the value of given C type.
      */
     fun getInValueBinding(type: Type): InValueBinding  {
-        if (type is ArrayType) {
+        if (type.unwrapTypedefs() is ArrayType) {
             // array-typed C function argument or return value is actually a pointer to array.
             return getInValueBinding(PointerType(type))
         }
@@ -910,11 +910,17 @@ class StubGenerator(
         }
     }
 
+    private tailrec fun Type.unwrapTypedefs(): Type = if (this is Typedef) {
+        this.def.aliased.unwrapTypedefs()
+    } else {
+        this
+    }
+
     /**
      * Produces to [out] the implementation of JNI function used in Kotlin binding for given C function.
      */
     private fun generateCJniFunction(func: FunctionDecl) {
-        val funcReturnType = func.returnType
+        val funcReturnType = func.returnType.unwrapTypedefs()
         val paramNames = paramNames(func)
         val paramBindings = paramBindings(func)
         val retValBinding = retValBinding(func)
@@ -931,7 +937,7 @@ class StubGenerator(
 
         val params = func.parameters.mapIndexed { i, parameter ->
             val cType = parameter.type.getStringRepresentation()
-            if (parameter.type is RecordType) {
+            if (parameter.type.unwrapTypedefs() is RecordType) {
                 "*($cType*)${paramNames[i]}"
             } else {
                 "($cType)${paramNames[i]}"
