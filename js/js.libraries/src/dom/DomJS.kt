@@ -6,11 +6,15 @@ import org.w3c.dom.HTMLCollection
 import org.w3c.dom.HTMLElement
 
 /** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */
+@Deprecated("Use querySelectorAll instead", level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 operator fun Document?.get(selector: String): List<Element> {
     return this?.querySelectorAll(selector)?.asList()?.filterElements() ?: emptyList()
 }
 
 /** Searches for elements using the element name, an element ID (if prefixed with dot) or element class (if prefixed with #) */
+@Deprecated("Use querySelectorAll instead", level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 operator fun Element.get(selector: String): List<Element> {
     return querySelectorAll(selector).asList().filterElements()
 }
@@ -25,6 +29,7 @@ private class HTMLCollectionListView(val collection: HTMLCollection) : AbstractL
             }
 }
 
+//@Deprecated(W)
 public fun HTMLCollection.asList(): List<HTMLElement> = HTMLCollectionListView(this)
 
 private class DOMTokenListView(val delegate: DOMTokenList) : AbstractList<String>() {
@@ -37,5 +42,5 @@ private class DOMTokenListView(val delegate: DOMTokenList) : AbstractList<String
             }
 }
 
+//@Deprecated(W)
 public fun DOMTokenList.asList(): List<String> = DOMTokenListView(this)
-internal fun HTMLCollection.asElementList(): List<Element> = asList()

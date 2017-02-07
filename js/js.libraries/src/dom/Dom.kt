@@ -13,59 +13,87 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+@file:Suppress("DEPRECATION_ERROR")
 package kotlin.dom
 
 import org.w3c.dom.*
-import kotlin.dom.*
 import kotlin.collections.*
 
-// Properties
+// DEPRECATED in 1.1-RC, drop after 1.1
 
 /** Returns the children of the element as a list */
+@Deprecated("Use childNodes() function with safe call", ReplaceWith("this?.childNodes()?.asList().orEmpty()", "org.w3c.dom.asList"), level = DeprecationLevel.ERROR)
 fun Element?.children(): List<Node> {
     return this?.childNodes?.asList() ?: emptyList()
 }
 
 /** Returns the child elements of this element */
+@Deprecated("Use childNodes() function with safe call and filter it after", level = DeprecationLevel.ERROR)
 fun Element?.childElements(): List<Element> = this?.childNodes?.filterElements() ?: emptyList()
 
-/** Returns the child elements of this element with the given name */
+/** Returns the child elements of this element with the given name. */
+@Deprecated("Use childNodes() function with safe call and filter it after", level = DeprecationLevel.ERROR)
 fun Element?.childElements(name: String): List<Element> = this?.childNodes?.filterElements()?.filter { it.nodeName == name } ?: emptyList()
 
-/** Returns all the descendant elements given the local element name */
+/** Returns all the descendant elements given the local element name. */
+@Deprecated("Use getElementsByTagName() instead", ReplaceWith("getElementsByTagName(localName).asList()", "org.w3c.dom.asList"), level = DeprecationLevel.ERROR)
 fun Element.elements(localName: String = "*"): List<Element> {
-    return this.getElementsByTagName(localName).asElementList()
+    return this.getElementsByTagName(localName).asList()
 }
 
 /** Returns all the descendant elements given the local element name */
 @JsName("deprecated_document_elements")
+@Deprecated("Use getElementsByTagName() function with safe call", ReplaceWith("this?.getElementsByTagName(localName)?.asList().orEmpty()", "org.w3c.dom.asList"), level = DeprecationLevel.ERROR)
 fun Document?.elements(localName: String = "*"): List<Element> {
-    return this?.getElementsByTagName(localName)?.asElementList() ?: emptyList()
+    return this?.elements(localName).orEmpty()
+}
+
+/** Returns all the descendant elements given the namespace URI and local element name. */
+@Deprecated("Use getElementsByTagNameNS() function instead", ReplaceWith("this?.getElementsByTagNameNS(namespaceUri, localName)?.asList().orEmpty()", "org.w3c.dom.asList"), level = DeprecationLevel.ERROR)
+public fun Element.elements(namespaceUri: String, localName: String): List<Element> {
+    return this.getElementsByTagNameNS(namespaceUri, localName).asList()
 }
 
 /** Returns all the descendant elements given the namespace URI and local element name */
-fun Element.elements(namespaceUri: String, localName: String): List<Element> {
-    return this.getElementsByTagNameNS(namespaceUri, localName).asElementList()
-}
-
-/** Returns all the descendant elements given the namespace URI and local element name */
+@Deprecated("Use getElementsByTagNameNS() function with safe call", ReplaceWith("this?.getElementsByTagNameNS(namespaceUri, localName)?.asList().orEmpty()", "org.w3c.dom.asList"), level = DeprecationLevel.ERROR)
 fun Document?.elements(namespaceUri: String, localName: String): List<Element> {
-    return this?.getElementsByTagNameNS(namespaceUri, localName)?.asElementList() ?: emptyList()
+    return this?.getElementsByTagNameNS(namespaceUri, localName)?.asList() ?: emptyList()
 }
 
-fun NodeList.asList(): List<Node> = NodeListAsList(this)
+// END OF DEPRECATED
 
 /**
- * Returns view with assumption that it contains only elements. Will crash in runtime if there are non-element nodes in
- * the list during access such items. So [filterElements] would be better solution.
+ * Returns a view of this [NodeList] as a list of nodes.
  */
-fun NodeList.asElementList(): List<Element> = if (length == 0) emptyList() else ElementListAsList(this)
+//@Deprecated(W)
+public fun NodeList.asList(): List<Node> = NodeListAsList(this)
 
-@Suppress("UNCHECKED_CAST")
-fun List<Node>.filterElements(): List<Element> = filter { it.isElement } as List<Element>
+/**
+ * Returns a view of this [NodeList] as a list of elements assuming that it contains only elements.
+ *
+ * An attempt to get an element with [List.get] indexed accessor of the returned list
+ * will result in [ClassCastException] being thrown if that node is not an element.
+ *
+ * If you want to get a snapshot filtered to contain elements only it's better to use [filterElements] function.
+ */
+@Deprecated("This API is going to be removed", level = DeprecationLevel.WARNING)
+public fun NodeList.asElementList(): List<Element> = ElementListAsList(this)
 
-fun NodeList.filterElements(): List<Element> = asList().filterElements()
+/**
+ * Returns a list containing only [Element] nodes.
+ */
+@Deprecated("Use filter function instead", ReplaceWith("filter { it.isElement } as List<Element>"), level = DeprecationLevel.ERROR)
+public fun List<Node>.filterElements(): List<Element> {
+    @Suppress("UNCHECKED_CAST")
+    return filter { it.isElement } as List<Element>
+}
+
+/**
+ * Returns a list containing only [Element] nodes.
+ */
+@Deprecated("Use filter function instead", ReplaceWith("asList().filter { it.isElement } as List<Element>", "org.w3c.dom.asList"), level = DeprecationLevel.ERROR)
+public fun NodeList.filterElements(): List<Element> = asList().filterElements()
+
 
 private class NodeListAsList(private val delegate: NodeList) : AbstractList<Node>() {
     override val size: Int get() = delegate.length
@@ -84,15 +112,16 @@ private class ElementListAsList(private val nodeList: NodeList) : AbstractList<E
         } else if (node.nodeType == Node.ELEMENT_NODE) {
             return node as Element
         } else {
-            throw IllegalArgumentException("Node is not an Element as expected but is $node")
+            throw ClassCastException("Node is not an Element as expected but is $node")
         }
     }
 
     override val size: Int get() = nodeList.length
 }
 
-/** Returns an [Iterator] over the next siblings of this node */
-fun Node.nextSiblings(): Iterable<Node> = NextSiblings(this)
+/** Returns an [Iterator] over the next siblings of this node. */
+@Deprecated("This API is going to be removed", level = DeprecationLevel.ERROR)
+public fun Node.nextSiblings(): Iterable<Node> = NextSiblings(this)
 
 private class NextSiblings(private var node: Node) : Iterable<Node> {
     override fun iterator(): Iterator<Node> = object : AbstractIterator<Node>() {
@@ -108,8 +137,9 @@ private class NextSiblings(private var node: Node) : Iterable<Node> {
     }
 }
 
-/** Returns an [Iterator] over the next siblings of this node */
-fun Node.previousSiblings(): Iterable<Node> = PreviousSiblings(this)
+/** Returns an [Iterator] over the next siblings of this node. */
+@Deprecated("This API is going to be removed", level = DeprecationLevel.ERROR)
+public fun Node.previousSiblings(): Iterable<Node> = PreviousSiblings(this)
 
 private class PreviousSiblings(private var node: Node) : Iterable<Node> {
     override fun iterator(): Iterator<Node> = object : AbstractIterator<Node>() {
@@ -126,14 +156,14 @@ private class PreviousSiblings(private var node: Node) : Iterable<Node> {
 }
 
 /**
- * it is *true* when [Node.nodeType] is TEXT_NODE or CDATA_SECTION_NODE
+ * Gets a value indicating whether this node is a TEXT_NODE or a CDATA_SECTION_NODE.
  */
-val Node.isText: Boolean
+public val Node.isText: Boolean
     get() = nodeType == Node.TEXT_NODE || nodeType == Node.CDATA_SECTION_NODE
 
 
 /**
- * `true` if it's an element node
+ * Gets a value indicating whether this node is an [Element].
  */
-val Node.isElement: Boolean
+public val Node.isElement: Boolean
     get() = nodeType == Node.ELEMENT_NODE
