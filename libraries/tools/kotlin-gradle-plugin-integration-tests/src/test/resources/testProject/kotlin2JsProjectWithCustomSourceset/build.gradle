@@ -1,0 +1,42 @@
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin2js'
+
+repositories {
+    mavenLocal()
+}
+
+sourceSets {
+    integrationTest
+}
+
+task integrationTest(type: Test) {
+    testClassesDir = sourceSets.integrationTest.output.classesDir
+    classpath = sourceSets.integrationTest.runtimeClasspath
+}
+
+compileIntegrationTestKotlin2Js.dependsOn compileKotlin2Js
+
+compileKotlin2Js.kotlinOptions.outputFile = "${buildDir}/kotlin2js/main/module.js"
+compileIntegrationTestKotlin2Js.kotlinOptions.outputFile = "${buildDir}/kotlin2js/integrationTest/module-inttests.js"
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+    integrationTestCompile files(file(compileKotlin2Js.kotlinOptions.outputFile).parent)
+    integrationTestCompile "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
+}
+
+task jarSources(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'source'
+}
+artifacts {
+    compile jarSources
+}

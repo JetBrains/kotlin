@@ -55,6 +55,11 @@ const val USING_EXPERIMENTAL_INCREMENTAL_MESSAGE = "Using experimental kotlin in
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCompile(), CompilerArgumentAware {
     abstract protected fun populateCompilerArguments(): T
 
+    protected val additionalClasspath = arrayListOf<File>()
+    protected val compileClasspath: Iterable<File>
+        get() = (classpath + additionalClasspath)
+                .filterTo(LinkedHashSet(), File::exists)
+
     override val serializedCompilerArguments: List<String>
         get() {
             val arguments = populateCompilerArguments()
@@ -166,10 +171,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         }
 
     private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null
-    private val additionalClasspath = arrayListOf<File>()
-    private val compileClasspath: Iterable<File>
-            get() = (classpath + additionalClasspath)
-                    .filterTo(LinkedHashSet(), File::exists)
 
     internal val kaptOptions = KaptOptions()
     internal val pluginOptions = CompilerPluginOptions()
@@ -342,7 +343,7 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
                 ?.let { if (LibraryUtils.isKotlinJavascriptLibrary(it)) it else null }
                 ?.absolutePath
 
-        val dependencies = project.configurations.getByName("compile")
+        val dependencies = compileClasspath
                 .filter { LibraryUtils.isKotlinJavascriptLibrary(it) }
                 .map { it.canonicalPath }
 
