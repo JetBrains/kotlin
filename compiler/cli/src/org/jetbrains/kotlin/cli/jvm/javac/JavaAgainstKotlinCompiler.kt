@@ -178,19 +178,20 @@ class JavaAgainstKotlinCompiler(private val environment: KotlinCoreEnvironment) 
             use { fileManager ->
                 val compilationTask = javac.getTask(StringWriter(), fileManager, diagnosticCollector,
                                                     options, null, javaFileObjects)
-                if (!compilationTask.call()) {
-                    diagnosticCollector.diagnostics.forEach {
-                        val severity = when (it.kind) {
-                            Diagnostic.Kind.ERROR -> CompilerMessageSeverity.ERROR
-                            Diagnostic.Kind.WARNING -> CompilerMessageSeverity.WARNING
-                            Diagnostic.Kind.MANDATORY_WARNING -> CompilerMessageSeverity.STRONG_WARNING
-                            Diagnostic.Kind.NOTE -> CompilerMessageSeverity.INFO
-                            else -> CompilerMessageSeverity.LOGGING
-                        }
+                compilationTask.call()
 
-                        val message = "${it.source.name} [${it.lineNumber}, ${it.columnNumber}]: ${it.getMessage(Locale.ENGLISH)}"
-                        messageCollector?.report(severity, message, CompilerMessageLocation.NO_LOCATION)
+                diagnosticCollector.diagnostics.forEach {
+                    val severity = when (it.kind) {
+                        Diagnostic.Kind.ERROR -> CompilerMessageSeverity.ERROR
+                        Diagnostic.Kind.WARNING -> CompilerMessageSeverity.WARNING
+                        Diagnostic.Kind.MANDATORY_WARNING -> CompilerMessageSeverity.STRONG_WARNING
+                        Diagnostic.Kind.NOTE -> CompilerMessageSeverity.INFO
+                        else -> CompilerMessageSeverity.LOGGING
                     }
+                    val position = if (it.lineNumber.toInt() != -1) " [${it.lineNumber}, ${it.columnNumber}]" else ""
+                    val message = "${it.source.name}$position: ${it.getMessage(Locale.ENGLISH)}"
+
+                    messageCollector?.report(severity, message, CompilerMessageLocation.NO_LOCATION)
                 }
             }
         }
