@@ -446,13 +446,7 @@ public class TranslationContext {
     }
 
     private boolean isConstructorOrDirectScope(DeclarationDescriptor descriptor) {
-        if (declarationDescriptor instanceof ClassDescriptor) {
-            return descriptor == declarationDescriptor;
-        }
-        else {
-            return declarationDescriptor != null &&
-                   descriptor == DescriptorUtils.getParentOfType(declarationDescriptor, ClassDescriptor.class);
-        }
+        return descriptor == DescriptorUtils.getParentOfType(declarationDescriptor, ClassDescriptor.class, false);
     }
 
     @NotNull
