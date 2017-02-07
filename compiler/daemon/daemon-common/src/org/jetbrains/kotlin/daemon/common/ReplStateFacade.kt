@@ -18,13 +18,19 @@ package org.jetbrains.kotlin.daemon.common
 
 import org.jetbrains.kotlin.cli.common.repl.ILineId
 import java.rmi.Remote
+import java.rmi.RemoteException
 
 interface ReplStateFacade : Remote {
-    val id: Int
 
-    val historySize: Int
+    @Throws(RemoteException::class)
+    fun getId(): Int
 
+    @Throws(RemoteException::class)
+    fun getHistorySize(): Int
+
+    @Throws(RemoteException::class)
     fun historyGet(index: Int): ILineId
 
+    @Throws(RemoteException::class)
     fun historyResetTo(id: ILineId): List<ILineId>
 }

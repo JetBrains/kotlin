@@ -25,7 +25,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 // TODO: verify that locla lock doesn't lead to any synch problems
 class RemoteReplCompilerStateHistory(private val state: RemoteReplCompilerState) : IReplStageHistory<Unit>, AbstractList<ReplHistoryRecord<Unit>>() {
     override val size: Int
-        get() = state.replStateFacade.historySize
+        get() = state.replStateFacade.getHistorySize()
 
     override fun get(index: Int): ReplHistoryRecord<Unit> = ReplHistoryRecord(state.replStateFacade.historyGet(index), Unit)
 

@@ -23,13 +23,15 @@ import org.jetbrains.kotlin.daemon.common.ReplStateFacade
 import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
 import java.rmi.server.UnicastRemoteObject
 
-class RemoteReplStateFacadeServer(override val id: Int,
+class RemoteReplStateFacadeServer(val _id: Int,
                                   val state: GenericReplCompilerState,
                                   port: Int = SOCKET_ANY_FREE_PORT
 ) : ReplStateFacade,
     UnicastRemoteObject(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory)
 {
-    override val historySize: Int = state.history.size
+    override fun getId(): Int = _id
+
+    override fun getHistorySize(): Int = state.history.size
 
     override fun historyGet(index: Int): ILineId = state.history[index].id
 

@@ -150,14 +150,14 @@ open class KotlinJvmReplService(
     fun compileAndEval(codeLine: ReplCodeLine, verifyHistory: List<ReplCodeLine>?): ReplEvalResult = ReplEvalResult.Error.Runtime("Eval is not supported on daemon")
 
     fun createRemoteState(port: Int = portForServers): RemoteReplStateFacadeServer = statesLock.write {
-        val id = getValidId(stateIdCounter) { id -> states.none { it.key.id == id} }
+        val id = getValidId(stateIdCounter) { id -> states.none { it.key.getId() == id} }
         val stateFacade = RemoteReplStateFacadeServer(id, createState().asState(GenericReplCompilerState::class.java), port)
         states.put(stateFacade, true)
         stateFacade
     }
 
     fun<R> withValidReplState(stateId: Int, body: (IReplStageState<*>) -> R): CompileService.CallResult<R> = statesLock.read {
-        states.keys.firstOrNull { it.id == stateId }?.let {
+        states.keys.firstOrNull { it.getId() == stateId }?.let {
             CompileService.CallResult.Good(body(it.state))
         }
         ?: CompileService.CallResult.Error("No REPL state with id $stateId found")
