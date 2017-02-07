@@ -46,7 +46,7 @@ abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEn
 
     protected open fun createState(lock: ReentrantReadWriteLock = ReentrantReadWriteLock()): IReplStageState<*> = AggregatedReplStageState(replCompiler.createState(lock), replEvaluator.createState(lock), lock)
 
-    private fun getCurrentState(context: ScriptContext) = context.getBindings(ScriptContext.ENGINE_SCOPE).getOrPut(KOTLIN_SCRIPT_STATE_BINDINGS_KEY, { replEvaluator.createState() }) as IReplStageState<*>
+    protected fun getCurrentState(context: ScriptContext) = context.getBindings(ScriptContext.ENGINE_SCOPE).getOrPut(KOTLIN_SCRIPT_STATE_BINDINGS_KEY, { replEvaluator.createState() }) as IReplStageState<*>
 
     open fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? = null
 

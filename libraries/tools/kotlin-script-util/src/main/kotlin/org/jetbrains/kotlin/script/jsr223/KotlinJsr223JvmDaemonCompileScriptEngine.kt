@@ -17,14 +17,17 @@
 package org.jetbrains.kotlin.script.jsr223
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
-import org.jetbrains.kotlin.daemon.client.KotlinRemoteReplCompiler
+import org.jetbrains.kotlin.daemon.client.KotlinRemoteReplCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
 import java.io.File
 import java.io.OutputStream
+import java.io.PrintStream
 import javax.script.ScriptContext
 import javax.script.ScriptEngineFactory
 import javax.script.ScriptException
@@ -47,20 +50,24 @@ class KotlinJsr223JvmDaemonCompileScriptEngine(
 
     override val replCompiler by lazy {
         daemon.let {
-            KotlinRemoteReplCompiler(
+            KotlinRemoteReplCompilerClient(
                     it,
                     makeAutodeletingFlagFile("jsr223-repl-session"),
                     CompileService.TargetPlatform.JVM,
+                    emptyArray(),
+                    PrintingMessageCollector(PrintStream(compilerOut), MessageRenderer.WITHOUT_PATHS, false),
                     templateClasspath,
                     templateClassName,
-                    compilerOut)
+                    getScriptArgs(context, scriptArgsTypes)!!)
         }
     }
 
     // TODO: bindings passing works only once on the first eval, subsequent setContext/setBindings call have no effect. Consider making it dynamic, but take history into account
     val localEvaluator by lazy { GenericReplCompilingEvaluator(replCompiler, templateClasspath, Thread.currentThread().contextClassLoader, getScriptArgs(getContext(), scriptArgsTypes)) }
 
-    override val replScriptEvaluator: ReplFullEvaluator get() = localEvaluator
+    override val replEvaluator: ReplFullEvaluator get() = localEvaluator
+
+    override val state: IReplStageState<*> get() = getCurrentState(getContext())
 
     override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? = getScriptArgs(context, scriptArgsTypes)
 
