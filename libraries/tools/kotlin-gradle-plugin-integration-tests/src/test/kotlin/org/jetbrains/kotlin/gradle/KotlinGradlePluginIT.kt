@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.gradle.tasks.USING_EXPERIMENTAL_INCREMENTAL_MESSAGE
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.getFilesByNames
@@ -45,6 +46,29 @@ class KotlinGradleIT: BaseGradleIT() {
         project.build("compileDeployKotlin", "build") {
             assertSuccessful()
             assertContains(":compileKotlin UP-TO-DATE", ":compileTestKotlin UP-TO-DATE", ":compileDeployKotlin UP-TO-DATE", ":compileJava UP-TO-DATE")
+        }
+    }
+
+    @Test
+    fun testRunningInDifferentDir() {
+        val wd0 = workingDir
+        val wd1 = File(wd0, "subdir").apply { mkdirs() }
+        workingDir = wd1
+        val project1 = Project("kotlinJavaProject", "3.3")
+
+        project1.build("assemble") {
+            assertSuccessful()
+        }
+
+        val wd2 = FileUtil.createTempDirectory("testRunningInDifferentDir", null)
+        wd1.copyRecursively(wd2)
+        wd1.deleteRecursively()
+        assert(!wd1.exists())
+        wd0.setWritable(false)
+        workingDir = wd2
+
+        project1.build("test") {
+            assertSuccessful()
         }
     }
 

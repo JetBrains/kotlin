@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
-import ch.qos.logback.core.util.FileUtil
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.OutputFiles
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.api.tasks.incremental.InputFileDetails
@@ -70,19 +68,32 @@ internal open class SyncOutputTask : DefaultTask() {
     // OutputDirectory needed for task to be incremental
     @get:OutputDirectory
     val workingDir: File by lazy {
-        File(kotlinTask.taskBuildDirectory, "sync").apply { mkdirs() }
+        File(kotlinTask.taskBuildDirectory, "sync")
     }
     private val timestampsFile: File by lazy {
         File(workingDir, TIMESTAMP_FILE_NAME)
     }
     private val timestamps: MutableMap<File, Long> by lazy {
-        readTimestamps(timestampsFile)
+        readTimestamps(timestampsFile, javaOutputDir)
     }
 
-    @Suppress("unused")
-    @get:OutputFiles
-    val kotlinClassesInJavaOutputDir: Collection<File>
-            get() = timestamps.keys
+    init {
+        outputs.upToDateWhen {
+            for ((file, ts) in timestamps) {
+                if (!file.exists()) {
+                    logger.kotlinDebug { "$file does not exist" }
+                    return@upToDateWhen false
+                }
+
+                if (file.lastModified() != ts) {
+                    logger.kotlinDebug { "$file ts is different" }
+                    return@upToDateWhen false
+                }
+            }
+
+            return@upToDateWhen true
+        }
+    }
 
     @Suppress("unused")
     @TaskAction
@@ -98,7 +109,7 @@ internal open class SyncOutputTask : DefaultTask() {
             processNonIncrementally()
         }
 
-        saveTimestamps(timestampsFile, timestamps)
+        saveTimestamps(timestampsFile, timestamps, javaOutputDir)
     }
 
     private fun processNonIncrementally() {
@@ -166,24 +177,24 @@ internal open class SyncOutputTask : DefaultTask() {
 
 private val TIMESTAMP_FILE_NAME = "kotlin-files-in-java-timestamps.bin"
 
-private fun readTimestamps(file: File): MutableMap<File, Long> {
+private fun readTimestamps(tsFile: File, filesBaseDir: File): MutableMap<File, Long> {
     val result = HashMap<File, Long>()
-    if (!file.isFile) return result
+    if (!tsFile.isFile) return result
 
-    ObjectInputStream(file.inputStream()).use { input ->
+    ObjectInputStream(tsFile.inputStream()).use { input ->
         val size = input.readInt()
 
         repeat(size) {
             val path = input.readUTF()
             val timestamp = input.readLong()
-            result[File(path)] = timestamp
+            result[File(filesBaseDir, path)] = timestamp
         }
     }
 
     return result
 }
 
-private fun saveTimestamps(snapshotFile: File, timestamps: Map<File, Long>) {
+private fun saveTimestamps(snapshotFile: File, timestamps: Map<File, Long>, filesBaseDir: File) {
     if (!snapshotFile.exists()) {
         snapshotFile.parentFile.mkdirs()
         snapshotFile.createNewFile()
@@ -196,7 +207,7 @@ private fun saveTimestamps(snapshotFile: File, timestamps: Map<File, Long>) {
         out.writeInt(timestamps.size)
 
         for ((file, timestamp) in timestamps) {
-            out.writeUTF(file.canonicalPath)
+            out.writeUTF(file.relativeTo(filesBaseDir).path)
             out.writeLong(timestamp)
         }
     }
