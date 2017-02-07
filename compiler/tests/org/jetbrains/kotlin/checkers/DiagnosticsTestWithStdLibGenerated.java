@@ -827,6 +827,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             doTest(fileName);
         }
 
+        @TestMetadata("suspesionInDefaultValue.kt")
+        public void testSuspesionInDefaultValue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/suspesionInDefaultValue.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("tryCatchLambda.kt")
         public void testTryCatchLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/coroutines/tryCatchLambda.kt");
