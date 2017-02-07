@@ -1,7 +1,7 @@
 // IGNORE_BACKEND: JS
 // WITH_REFLECT
 
-import kotlin.reflect.findAnnotation
+import kotlin.reflect.full.findAnnotation
 import kotlin.test.assertNull
 
 annotation class Yes(val value: String)
