@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 
 class ProtoBasedClassDataFinder(
         proto: ProtoBuf.PackageFragment,
-        private val nameResolver: NameResolver
+        private val nameResolver: NameResolver,
+        private val classSource: (ClassId) -> SourceElement = { SourceElement.NO_SOURCE }
 ) : ClassDataFinder {
     private val classIdToProto =
             proto.class_List.associateBy { klass ->
@@ -35,6 +36,6 @@ class ProtoBasedClassDataFinder(
 
     override fun findClassData(classId: ClassId): ClassDataWithSource? {
         val classProto = classIdToProto[classId] ?: return null
-        return ClassDataWithSource(ClassData(nameResolver, classProto), SourceElement.NO_SOURCE)
+        return ClassDataWithSource(ClassData(nameResolver, classProto), classSource(classId))
     }
 }

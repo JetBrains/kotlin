@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.js
 
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -44,7 +45,10 @@ object KotlinJavascriptSerializationUtil {
             metadata: ByteArray, storageManager: StorageManager, module: ModuleDescriptor, configuration: DeserializationConfiguration
     ): JsModuleDescriptor<PackageFragmentProvider?> {
         val jsModule = metadata.deserializeToLibraryParts(module.name.asString())
-        return jsModule.copy(createKotlinJavascriptPackageFragmentProvider(storageManager, module, jsModule.data, configuration))
+        val (header, packageFragmentProtos) = jsModule.data
+        return jsModule.copy(createKotlinJavascriptPackageFragmentProvider(
+                storageManager, module, header, packageFragmentProtos, configuration
+        ))
     }
 
     private fun serializeMetadata(
@@ -185,7 +189,10 @@ object KotlinJavascriptSerializationUtil {
             header.packageFqName = packageFqName.asString()
         }
 
-        // TODO: write pre-release flag if needed
+        if (KotlinCompilerVersion.isPreRelease()) {
+            header.flags = 1
+        }
+
         // TODO: write JS code binary version
 
         return header.build()
@@ -220,15 +227,15 @@ object KotlinJavascriptSerializationUtil {
         }.toByteArray()
     }
 
-    private fun ByteArray.deserializeToLibraryParts(name: String): JsModuleDescriptor<List<ProtoBuf.PackageFragment>> {
-        val content = GZIPInputStream(ByteArrayInputStream(this)).use { stream ->
-            JsProtoBuf.Header.parseDelimitedFrom(stream, JsSerializerProtocol.extensionRegistry)
+    private fun ByteArray.deserializeToLibraryParts(name: String): JsModuleDescriptor<Pair<JsProtoBuf.Header, List<ProtoBuf.PackageFragment>>> {
+        val (header, content) = GZIPInputStream(ByteArrayInputStream(this)).use { stream ->
+            JsProtoBuf.Header.parseDelimitedFrom(stream, JsSerializerProtocol.extensionRegistry) to
             JsProtoBuf.Library.parseFrom(stream, JsSerializerProtocol.extensionRegistry)
         }
 
         return JsModuleDescriptor(
                 name = name,
-                data = content.packageFragmentList,
+                data = header to content.packageFragmentList,
                 kind = when (content.kind) {
                     null, JsProtoBuf.Library.Kind.PLAIN -> ModuleKind.PLAIN
                     JsProtoBuf.Library.Kind.AMD -> ModuleKind.AMD

@@ -45,6 +45,7 @@ interface DeserializedMemberDescriptor : MemberDescriptor {
         get() = SinceKotlinInfo.create(proto, nameResolver, sinceKotlinInfoTable)
 
     // Information about the origin of this callable's container (class or package part on JVM) or null if there's no such information.
+    // TODO: merge with sourceElement of containingDeclaration
     val containerSource: DeserializedContainerSource?
 }
 

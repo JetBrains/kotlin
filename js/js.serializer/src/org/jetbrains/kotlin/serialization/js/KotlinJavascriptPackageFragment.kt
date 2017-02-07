@@ -16,16 +16,20 @@
 
 package org.jetbrains.kotlin.serialization.js
 
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragmentImpl
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.storage.StorageManager
@@ -35,8 +39,9 @@ class KotlinJavascriptPackageFragment(
         fqName: FqName,
         storageManager: StorageManager,
         module: ModuleDescriptor,
-        proto: ProtoBuf.PackageFragment
-) : DeserializedPackageFragmentImpl(fqName, storageManager, module, proto) {
+        proto: ProtoBuf.PackageFragment,
+        header: JsProtoBuf.Header
+) : DeserializedPackageFragmentImpl(fqName, storageManager, module, proto, JsContainerSource(fqName, header)) {
     private val fileMap: Map<Int, FileHolder> by storageManager.createLazyValue {
         this.proto.getExtension(JsProtoBuf.packageFragmentFiles).fileList.withIndex().associate { (index, file) ->
             (if (file.hasId()) file.id else index) to FileHolder(file.annotationList)
@@ -65,5 +70,22 @@ class KotlinJavascriptPackageFragment(
         val annotations: List<AnnotationDescriptor> by storageManager.createLazyValue {
             annotationsProto.map { annotationDeserializer.deserializeAnnotation(it, nameResolver) }
         }
+    }
+
+    private class JsContainerSource(private val fqName: FqName, private val header: JsProtoBuf.Header) : DeserializedContainerSource {
+        // TODO
+        override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
+
+        // This is null because we look for incompatible libraries in dependencies in the beginning of the compilation anyway,
+        // and refuse to compile against them completely
+        override val incompatibility: IncompatibleVersionErrorData<*>?
+            get() = null
+
+        override val isPreReleaseInvisible: Boolean
+            get() = (header.flags and 1) != 0 && !KotlinCompilerVersion.isPreRelease()
+
+        // TODO: this is not a class
+        override val presentableString: String
+            get() = "Package '$fqName'"
     }
 }

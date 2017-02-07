@@ -41,4 +41,4 @@ class BuiltInsPackageFragment(
     }
 
     ProtoBuf.PackageFragment.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
-})
+}, containerSource = null)

@@ -92,11 +92,13 @@ private val DEFAULT_CALL_CHECKERS = listOf(
         CapturingInClosureChecker(), InlineCheckerWrapper(), SafeCallChecker(),
         DeprecatedCallChecker, CallReturnsArrayOfNothingChecker(), InfixCallChecker(), OperatorCallChecker(),
         ConstructorHeaderCallChecker, ProtectedConstructorCallChecker, ApiVersionCallChecker,
-        CoroutineSuspendCallChecker, BuilderFunctionsCallChecker, DslScopeViolationCallChecker,
+        CoroutineSuspendCallChecker, BuilderFunctionsCallChecker, DslScopeViolationCallChecker, MissingDependencyClassChecker,
         CallableReferenceCompatibilityChecker()
 )
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
-private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(DeprecatedClassifierUsageChecker(), ApiVersionClassifierUsageChecker)
+private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(
+        DeprecatedClassifierUsageChecker(), ApiVersionClassifierUsageChecker, MissingDependencyClassChecker.ClassifierUsage
+)
 
 
 abstract class PlatformConfigurator(

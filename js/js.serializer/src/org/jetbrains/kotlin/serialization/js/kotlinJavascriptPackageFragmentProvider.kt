@@ -28,12 +28,13 @@ import org.jetbrains.kotlin.storage.StorageManager
 fun createKotlinJavascriptPackageFragmentProvider(
         storageManager: StorageManager,
         module: ModuleDescriptor,
+        header: JsProtoBuf.Header,
         packageFragmentProtos: List<ProtoBuf.PackageFragment>,
         configuration: DeserializationConfiguration
 ): PackageFragmentProvider {
     val packageFragments = packageFragmentProtos.mapNotNull { proto ->
         proto.fqName?.let { fqName ->
-            KotlinJavascriptPackageFragment(fqName, storageManager, module, proto)
+            KotlinJavascriptPackageFragment(fqName, storageManager, module, proto, header)
         }
     }
 
