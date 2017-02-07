@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.cli.jvm.javac
 
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.kotlinSourceRoots
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclarationContainer
 import org.jetbrains.kotlin.psi.KtFile
@@ -110,7 +112,13 @@ class JavaAgainstKotlinCompiler(private val environment: KotlinCoreEnvironment) 
             .also { list ->
                 when {
                     this is KtFile -> list.add(javaFileFacadeFqName.asString())
-                    this is KtClassOrObject -> list.add(fqName?.asString())
+                    this is KtClassOrObject -> {
+                        if (this is KtClass && hasInterfaceDefaultImpls) {
+                            list.add("${fqName?.asString()}\$DefaultImpls")
+                        }
+
+                        list.add(fqName?.asString())
+                    }
                 }
 
                 declarations
