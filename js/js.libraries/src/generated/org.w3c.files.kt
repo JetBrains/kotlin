@@ -63,9 +63,9 @@ public inline fun FilePropertyBag(lastModified: Int? = null, type: String? = "")
     return o
 }
 
-public external abstract class FileList {
-    open val length: Int
-    fun item(index: Int): File?
+public external abstract class FileList : ItemArrayLike<File> {
+    override open val length: Int
+    override fun item(index: Int): File?
 }
 inline operator fun FileList.get(index: Int): File? = asDynamic()[index]
 

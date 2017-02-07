@@ -18,29 +18,3 @@ operator fun Document?.get(selector: String): List<Element> {
 operator fun Element.get(selector: String): List<Element> {
     return querySelectorAll(selector).asList().filterElements()
 }
-
-private class HTMLCollectionListView(val collection: HTMLCollection) : AbstractList<HTMLElement>() {
-    override val size: Int get() = collection.length
-
-    override fun get(index: Int): HTMLElement =
-            when {
-                index in 0..size - 1 -> collection.item(index) as HTMLElement
-                else -> throw IndexOutOfBoundsException("index $index is not in range [0 .. ${size - 1})")
-            }
-}
-
-//@Deprecated(W)
-public fun HTMLCollection.asList(): List<HTMLElement> = HTMLCollectionListView(this)
-
-private class DOMTokenListView(val delegate: DOMTokenList) : AbstractList<String>() {
-    override val size: Int get() = delegate.length
-
-    override fun get(index: Int) =
-            when {
-                index in 0..size - 1 -> delegate.item(index)!!
-                else -> throw IndexOutOfBoundsException("index $index is not in range [0 .. ${size - 1})")
-            }
-}
-
-//@Deprecated(W)
-public fun DOMTokenList.asList(): List<String> = DOMTokenListView(this)

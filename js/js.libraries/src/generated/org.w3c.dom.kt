@@ -2475,15 +2475,15 @@ public external interface Slotable {
     val assignedSlot: HTMLSlotElement?
 }
 
-public external abstract class NodeList {
-    open val length: Int
-    fun item(index: Int): Node?
+public external abstract class NodeList : ItemArrayLike<Node> {
+    override open val length: Int
+    override fun item(index: Int): Node?
 }
 inline operator fun NodeList.get(index: Int): Node? = asDynamic()[index]
 
-public external abstract class HTMLCollection : UnionElementOrHTMLCollection {
-    open val length: Int
-    fun item(index: Int): Element?
+public external abstract class HTMLCollection : UnionElementOrHTMLCollection, ItemArrayLike<Element> {
+    override open val length: Int
+    override fun item(index: Int): Element?
     fun namedItem(name: String): Element?
 }
 inline operator fun HTMLCollection.get(index: Int): Element? = asDynamic()[index]
@@ -2747,9 +2747,9 @@ public inline fun ShadowRootInit(mode: ShadowRootMode?): ShadowRootInit {
     return o
 }
 
-public external abstract class NamedNodeMap {
-    open val length: Int
-    fun item(index: Int): Attr?
+public external abstract class NamedNodeMap : ItemArrayLike<Attr> {
+    override open val length: Int
+    override fun item(index: Int): Attr?
     fun getNamedItem(qualifiedName: String): Attr?
     fun getNamedItemNS(namespace: String?, localName: String): Attr?
     fun setNamedItem(attr: Attr): Attr?
@@ -2907,10 +2907,10 @@ public external interface NodeFilter {
     }
 }
 
-public external abstract class DOMTokenList {
-    open val length: Int
+public external abstract class DOMTokenList : ItemArrayLike<String> {
+    override open val length: Int
     open var value: String
-    fun item(index: Int): String?
+    override fun item(index: Int): String?
     fun contains(token: String): Boolean
     fun add(vararg tokens: String): Unit
     fun remove(vararg tokens: String): Unit
@@ -3007,9 +3007,9 @@ public inline fun DOMRectInit(x: Double? = 0.0, y: Double? = 0.0, width: Double?
     return o
 }
 
-public external interface DOMRectList {
-    val length: Int
-    fun item(index: Int): DOMRect?
+public external interface DOMRectList : ItemArrayLike<DOMRect> {
+    override val length: Int
+    override fun item(index: Int): DOMRect?
 }
 inline operator fun DOMRectList.get(index: Int): DOMRect? = asDynamic()[index]
 
