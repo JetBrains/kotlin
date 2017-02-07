@@ -626,15 +626,12 @@
 
         <cleandir dir="${output}/classes/compiler"/>
 
-        <javac2 destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
-                source="${java.target}" target="${java.target}">
-            <withKotlin modulename="kotlin-compiler">
-                <compilerarg value="-version"/>
-            </withKotlin>
-            <skip pattern="kotlin/Metadata"/>
+        <kotlinc output="${output}/classes/compiler" printVersion="true">
+            <compilerarg line="-jvm-target ${java.target}"/>
             <src refid="compilerSources.path"/>
             <classpath refid="classpath"/>
-        </javac2>
+<!--            <skip pattern="kotlin/Metadata"/> -->
+        </kotlinc>
 
         <pack-compiler jarfile="${output}/kotlin-compiler-before-shrink.jar"/>
 
