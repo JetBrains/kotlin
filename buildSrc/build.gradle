@@ -1,5 +1,11 @@
 apply plugin: 'groovy'
+
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     compile gradleApi()
     compile localGroovy()
+    compile group: 'com.ullink.slack', name: 'simpleslackapi', version: '0.6.0'
 }
