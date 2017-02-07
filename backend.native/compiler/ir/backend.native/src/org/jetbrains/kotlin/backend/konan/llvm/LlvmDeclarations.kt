@@ -99,10 +99,10 @@ private fun getDeclaredFields(context: Context, classDescriptor: ClassDescriptor
     // two ways: first we check IR, then we check the annotation.
 
     val irClass = context.ir.moduleIndexForCodegen.classes[classDescriptor]
-    if (irClass != null) {
+    val fields = if (irClass != null) {
         val declarations = irClass.declarations
 
-        return declarations.mapNotNull {
+        declarations.mapNotNull {
             when (it) {
                 is IrProperty -> it.backingField?.descriptor
                 is IrField -> it.descriptor
@@ -114,7 +114,10 @@ private fun getDeclaredFields(context: Context, classDescriptor: ClassDescriptor
                 getContributedDescriptors().
                 filterIsInstance<PropertyDescriptor>()
 
-        return properties.mapNotNull { it.backingField }
+        properties.mapNotNull { it.backingField }
+    }
+    return fields.sortedBy {
+        it.name.hashCode()
     }
 }
 
