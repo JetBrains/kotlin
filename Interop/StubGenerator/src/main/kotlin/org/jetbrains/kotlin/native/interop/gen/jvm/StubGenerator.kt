@@ -27,11 +27,23 @@ class StubGenerator(
         (functionNames + fieldNames).toSet()
     }
 
+    val StructDecl.isAnonymous: Boolean
+        get() = spelling.contains("(anonymous ") // TODO: it is a hack
+
+    val anonymousStructKotlinNames = mutableMapOf<StructDecl, String>()
+
     /**
      * The name to be used for this struct in Kotlin
      */
     val StructDecl.kotlinName: String
         get() {
+            if (this.isAnonymous) {
+                val names = anonymousStructKotlinNames
+                return names.getOrPut(this) {
+                    "anonymousStruct${names.size + 1}"
+                }
+            }
+
             val strippedCName = if (spelling.startsWith("struct ") || spelling.startsWith("union ")) {
                 spelling.substringAfter(' ')
             } else {
