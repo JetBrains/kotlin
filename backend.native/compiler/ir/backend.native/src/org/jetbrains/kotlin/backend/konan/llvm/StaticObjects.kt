@@ -108,8 +108,9 @@ internal fun StaticData.createArrayList(elementType: TypeProjection, array: Cons
     // FIXME: properly import body type from stdlib
 
     val body = Struct(
-            array, // array: Array<E>
+            // Sorted by the hashCode() of the name.
             Int32(0), // offset: Int
+            array, // array: Array<E>
             Int32(length), // length: Int
             NullPointer(kObjHeader) // backing: ArrayList<E>?
     )
