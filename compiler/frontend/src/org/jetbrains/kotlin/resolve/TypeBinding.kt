@@ -116,12 +116,9 @@ private class AbbreviatedTypeBinding(
     override val isInAbbreviation: Boolean get() = true
 
     override val arguments: List<TypeArgumentBinding<KtTypeElement>?>
-        get() = type.arguments.mapIndexed { index, argument ->
-            TypeArgumentBindingImpl(
-                    argument,
-                    type.constructor.parameters[index],
-                    AbbreviatedTypeBinding(argument.type, psiElement)
-            )
+        get() = createTypeArgumentBindingsWithSinglePsiElement(type) {
+            argumentType ->
+            AbbreviatedTypeBinding(argumentType, psiElement)
         }
 }
 
@@ -133,16 +130,22 @@ private class NoTypeElementBinding<out P : PsiElement>(
     override val isInAbbreviation: Boolean get() = false
 
     override val arguments: List<TypeArgumentBinding<P>?>
-        get() {
-            val isErrorBinding = type.isError || type.constructor.parameters.size != type.arguments.size
-            return type.arguments.indices.map {
-                val typeProjection = type.arguments[it]
-                TypeArgumentBindingImpl(
-                        typeProjection,
-                        if (isErrorBinding) null else type.constructor.parameters[it],
-                        NoTypeElementBinding(trace, psiElement, typeProjection.type)
-                )
-            }
+        get() = createTypeArgumentBindingsWithSinglePsiElement(type) {
+            argumentType ->
+            NoTypeElementBinding(trace, psiElement, argumentType)
         }
 }
 
+internal fun <P : PsiElement> createTypeArgumentBindingsWithSinglePsiElement(
+        type: KotlinType,
+        createBinding: (KotlinType) -> TypeBinding<P>
+) : List<TypeArgumentBinding<P>> {
+    val isErrorBinding = type.isError || type.constructor.parameters.size != type.arguments.size
+    return type.arguments.mapIndexed { index, typeProjection ->
+        TypeArgumentBindingImpl(
+                typeProjection,
+                if (isErrorBinding) null else type.constructor.parameters[index],
+                createBinding(typeProjection.type)
+        )
+    }
+}
