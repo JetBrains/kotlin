@@ -39,10 +39,8 @@ class Usage {
             for (Field field : clazz.getDeclaredFields()) {
                 String usage = fieldUsage(field, extraHelp);
                 if (usage != null) {
-                    boolean coroutinesUsage = usage.contains("Xcoroutines");
-                    if (coroutinesUsage && coroutinesUsagePrinted) {
-                        continue;
-                    } else if (coroutinesUsage) {
+                    if (usage.contains("Xcoroutines")) {
+                        if (coroutinesUsagePrinted) continue;
                         coroutinesUsagePrinted = true;
                     }
                     target.println(usage);
@@ -89,6 +87,7 @@ class Usage {
         if (isXCoroutinesKey) {
             sb.append(" ");
             sb.append(coroutinesKeyDescription);
+            return sb.toString();
         }
 
         int width = OPTION_NAME_PADDING_WIDTH - 1;
