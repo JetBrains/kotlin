@@ -3,7 +3,9 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetterCallImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -80,6 +82,13 @@ abstract class AbstractClosureAnnotator : IrElementVisitorVoid {
         }
 
         closuresStack.peek()?.addNested(closure)
+    }
+
+    // TODO: remove as soon as bug in IrSetterCallImpl is fixed.
+    override fun visitCall(expression: IrCall) {
+        super.visitCall(expression)
+        if (expression is IrSetterCallImpl)
+            visitElement(expression.getValueArgument(0)!!)
     }
 
     override fun visitFunction(declaration: IrFunction) {

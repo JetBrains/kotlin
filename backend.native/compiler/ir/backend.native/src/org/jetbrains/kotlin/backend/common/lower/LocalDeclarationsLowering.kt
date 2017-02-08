@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
+import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
@@ -327,6 +328,9 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
         private object DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE :
                 IrDeclarationOriginImpl("FIELD_FOR_CAPTURED_VALUE") {}
 
+        private object STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE :
+                IrStatementOriginImpl("INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE") {}
+
         private fun rewriteClassMembers(irClass: IrClass, localClassContext: LocalClassContext) {
             irClass.transformChildrenVoid(FunctionBodiesRewriter(localClassContext))
 
@@ -334,23 +338,25 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
                     TODO("local classes without primary constructor")
 
             val primaryConstructorContext = localClassConstructors[primaryConstructor]!!
+            val primaryConstructorBody = primaryConstructorContext.declaration.body as? IrBlockBody
+                    ?: throw AssertionError("Unexpected constructor body: ${primaryConstructorContext.declaration.body}")
 
             localClassContext.capturedValueToField.forEach { capturedValue, fieldDescriptor ->
-
-                val capturedValueExpression =
-                        primaryConstructorContext.irGet(irClass.startOffset, irClass.endOffset, capturedValue)!!
-
+                val startOffset = irClass.startOffset
+                val endOffset = irClass.endOffset
                 irClass.declarations.add(
                         IrFieldImpl(
-                                irClass.startOffset, irClass.endOffset,
+                                startOffset, endOffset,
                                 DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE,
-                                fieldDescriptor,
-                                IrExpressionBodyImpl(
-                                        irClass.startOffset, irClass.endOffset,
-                                        capturedValueExpression
-                                )
+                                fieldDescriptor
                         )
                 )
+
+                val capturedValueExpression = primaryConstructorContext.irGet(startOffset, endOffset, capturedValue)!!
+                val capturedValueInitializer = IrSetFieldImpl(startOffset, endOffset, fieldDescriptor,
+                        IrGetValueImpl(startOffset, endOffset, irClass.descriptor.thisAsReceiverParameter),
+                        capturedValueExpression, STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE)
+                primaryConstructorBody.statements.add(0, capturedValueInitializer)
             }
         }
 
@@ -595,7 +601,7 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
         private fun suggestNameForCapturedValue(valueDescriptor: ValueDescriptor): Name =
                 if (valueDescriptor.name.isSpecial) {
                     val oldNameStr = valueDescriptor.name.asString()
-                    Name.identifier("$" + oldNameStr.substring(1, oldNameStr.length - 1))
+                    oldNameStr.substring(1, oldNameStr.length - 1).synthesizedName
                 } else
                     valueDescriptor.name
 
@@ -637,6 +643,13 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
 
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
+                }
+
+                // TODO: remove as soon as bug in IrSetterCallImpl is fixed.
+                override fun visitCall(expression: IrCall) {
+                    super.visitCall(expression)
+                    if (expression is IrSetterCallImpl)
+                        visitElement(expression.getValueArgument(0)!!)
                 }
 
                 private fun DeclarationDescriptor.declaredInFunction() = when (this.containingDeclaration) {

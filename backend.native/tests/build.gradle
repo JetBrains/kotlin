@@ -404,6 +404,21 @@ task localClass_innerTakesCapturedFromOuter(type: RunKonanTest) {
     source = "codegen/localClass/innerTakesCapturedFromOuter.kt"
 }
 
+task localClass_virtualCallFromConstructor(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/localClass/virtualCallFromConstructor.kt"
+}
+
+task initializers_correctOrder1(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "codegen/initializers/correctOrder1.kt"
+}
+
+task initializers_correctOrder2(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "codegen/initializers/correctOrder2.kt"
+}
+
 task array0(type: RunKonanTest) {
     goldValue = "5\n6\n7\n8\n9\n10\n11\n12\n13\n"
     source = "runtime/collections/array0.kt"
