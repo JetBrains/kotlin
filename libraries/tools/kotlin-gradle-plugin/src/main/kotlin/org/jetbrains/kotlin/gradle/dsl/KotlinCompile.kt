@@ -21,6 +21,7 @@ import org.gradle.api.Task
 
 interface CompilerArgumentAware {
     val serializedCompilerArguments: List<String>
+    val defaultSerializedCompilerArguments: List<String>
 }
 
 interface KotlinCompile<T : KotlinCommonOptions> : Task, CompilerArgumentAware {
