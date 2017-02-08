@@ -1,0 +1,5 @@
+@kotlin.Metadata
+public final class Kt15196Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method foo(): void
+}
