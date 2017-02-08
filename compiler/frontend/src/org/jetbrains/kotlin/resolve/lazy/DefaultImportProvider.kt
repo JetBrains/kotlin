@@ -39,7 +39,7 @@ class DefaultImportProvider(
         private val languageVersionSettings: LanguageVersionSettings
 ) {
     val defaultImports: List<ImportPath>
-        get() = targetPlatform.getDefaultImports(languageVersionSettings)
+            by storageManager.createLazyValue { targetPlatform.getDefaultImports(languageVersionSettings) }
 
     val excludedImports: List<FqName> by storageManager.createLazyValue {
         val packagesWithAliases = listOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.TEXT_PACKAGE_FQ_NAME)
