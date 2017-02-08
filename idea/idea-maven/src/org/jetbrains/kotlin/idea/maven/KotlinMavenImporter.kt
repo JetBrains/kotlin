@@ -127,8 +127,8 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         with(kotlinFacet.configuration.settings) {
             versionInfo.apiLevel = apiVersion
         }
-        parseCompilerArgumentsToFacet(sharedArguments, kotlinFacet)
-        parseCompilerArgumentsToFacet(executionArguments, kotlinFacet)
+        parseCompilerArgumentsToFacet(sharedArguments, emptyList(), kotlinFacet)
+        parseCompilerArgumentsToFacet(executionArguments, emptyList(), kotlinFacet)
         MavenProjectImportHandler.getInstances(module.project).forEach { it(kotlinFacet, mavenProject) }
     }
 

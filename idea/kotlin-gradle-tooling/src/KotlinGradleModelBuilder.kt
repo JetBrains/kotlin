@@ -25,13 +25,15 @@ import java.lang.Exception
 
 interface KotlinGradleModel : Serializable {
     val implements: String?
-    val serializedCompilerArguments: List<String>?
+    val currentCompilerArguments: List<String>?
+    val defaultCompilerArguments: List<String>?
     val coroutines: String?
 }
 
 class KotlinGradleModelImpl(
         override val implements: String?,
-        override val serializedCompilerArguments: List<String>?,
+        override val currentCompilerArguments: List<String>?,
+        override val defaultCompilerArguments: List<String>?,
         override val coroutines: String?
 ) : KotlinGradleModel
 
@@ -56,11 +58,11 @@ class KotlinGradleModelBuilder : ModelBuilderService {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun getCompilerArguments(project: Project): List<String>? {
+    private fun getCompilerArguments(project: Project, methodName: String): List<String>? {
         val compileTask = compileTasks.mapNotNull { project.getTasksByName(it, false).firstOrNull() }.firstOrNull() ?: return null
         val taskClass = compileTask.javaClass
         return try {
-            taskClass.getDeclaredMethod("getSerializedCompilerArguments").invoke(compileTask) as List<String>
+            taskClass.getDeclaredMethod(methodName).invoke(compileTask) as List<String>
         }
         catch (e : NoSuchMethodException) {
             null
@@ -85,5 +87,10 @@ class KotlinGradleModelBuilder : ModelBuilderService {
     }
 
     override fun buildAll(modelName: String?, project: Project) =
-            KotlinGradleModelImpl(getImplements(project), getCompilerArguments(project), getCoroutines(project))
+            KotlinGradleModelImpl(
+                    getImplements(project),
+                    getCompilerArguments(project, "getSerializedCompilerArguments"),
+                    getCompilerArguments(project, "getDefaultSerializedCompilerArguments"),
+                    getCoroutines(project)
+            )
 }

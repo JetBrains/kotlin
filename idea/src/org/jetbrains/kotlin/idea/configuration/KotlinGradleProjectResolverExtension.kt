@@ -33,7 +33,8 @@ import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil.getModuleId
 
-var DataNode<ModuleData>.serializedCompilerArguments by UserDataProperty(Key.create<List<String>>("SERIALIZED_COMPILER_ARGUMENTS"))
+var DataNode<ModuleData>.currentCompilerArguments by UserDataProperty(Key.create<List<String>>("CURRENT_COMPILER_ARGUMENTS"))
+var DataNode<ModuleData>.defaultCompilerArguments by UserDataProperty(Key.create<List<String>>("DEFAULT_COMPILER_ARGUMENTS"))
 var DataNode<ModuleData>.coroutines by UserDataProperty(Key.create<String>("KOTLIN_COROUTINES"))
 
 class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() {
@@ -60,7 +61,8 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
             }
         }
 
-        ideModule.serializedCompilerArguments = gradleModel.serializedCompilerArguments
+        ideModule.currentCompilerArguments = gradleModel.currentCompilerArguments
+        ideModule.defaultCompilerArguments = gradleModel.defaultCompilerArguments
         ideModule.coroutines = gradleModel.coroutines
 
         super.populateModuleDependencies(gradleModule, ideModule, ideProject)
