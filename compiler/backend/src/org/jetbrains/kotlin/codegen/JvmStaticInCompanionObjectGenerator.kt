@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.Synthetic
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
-class JvmStaticGenerator(
+class JvmStaticInCompanionObjectGenerator(
         val descriptor: FunctionDescriptor,
         val declarationOrigin: JvmDeclarationOrigin,
         val state: GenerationState,

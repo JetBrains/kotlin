@@ -231,7 +231,7 @@ public class FunctionCodegen {
         boolean staticInCompanionObject = CodegenUtilKt.isJvmStaticInCompanionObject(functionDescriptor);
         if (staticInCompanionObject) {
             ImplementationBodyCodegen parentBodyCodegen = (ImplementationBodyCodegen) memberCodegen.getParentCodegen();
-            parentBodyCodegen.addAdditionalTask(new JvmStaticGenerator(functionDescriptor, origin, state, parentBodyCodegen));
+            parentBodyCodegen.addAdditionalTask(new JvmStaticInCompanionObjectGenerator(functionDescriptor, origin, state, parentBodyCodegen));
         }
 
         if (!state.getClassBuilderMode().generateBodies || isAbstractMethod(functionDescriptor, contextKind, state)) {
@@ -256,7 +256,8 @@ public class FunctionCodegen {
         else if (staticInCompanionObject) {
             // native @JvmStatic foo() in companion object should delegate to the static native function moved to the outer class
             mv.visitCode();
-            FunctionDescriptor staticFunctionDescriptor = JvmStaticGenerator.createStaticFunctionDescriptor(functionDescriptor);
+            FunctionDescriptor staticFunctionDescriptor = JvmStaticInCompanionObjectGenerator
+                    .createStaticFunctionDescriptor(functionDescriptor);
             Method accessorMethod =
                     typeMapper.mapAsmMethod(memberCodegen.getContext().accessibleDescriptor(staticFunctionDescriptor, null));
             Type owningType = typeMapper.mapClass((ClassifierDescriptor) staticFunctionDescriptor.getContainingDeclaration());
