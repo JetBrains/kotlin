@@ -1504,4 +1504,13 @@ public class KotlinTypeMapper {
 
         return null;
     }
+
+    @NotNull
+    public String classInternalName(@NotNull ClassDescriptor classDescriptor) {
+        Type recordedType = typeMappingConfiguration.getPredefinedTypeForClass(classDescriptor);
+        if (recordedType != null) {
+            return recordedType.getInternalName();
+        }
+        return TypeSignatureMappingKt.computeInternalName(classDescriptor, typeMappingConfiguration);
+    }
 }

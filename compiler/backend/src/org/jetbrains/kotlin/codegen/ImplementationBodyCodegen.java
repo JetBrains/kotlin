@@ -88,6 +88,7 @@ import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.
 import static org.jetbrains.kotlin.types.Variance.INVARIANT;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isLocalFunction;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
+import static org.jetbrains.org.objectweb.asm.Type.getObjectType;
 
 public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private static final String ENUM_VALUES_FIELD_NAME = "$VALUES";
@@ -113,7 +114,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             boolean isLocal
     ) {
         super(aClass, context, v, state, parentCodegen);
-        this.classAsmType = typeMapper.mapClass(descriptor);
+        this.classAsmType = getObjectType(typeMapper.classInternalName(descriptor));
         this.isLocal = isLocal;
         delegationFieldsInfo = getDelegationFieldsInfo(myClass.getSuperTypeListEntries());
     }
@@ -332,7 +333,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         for (String kotlinMarkerInterface : kotlinMarkerInterfaces) {
             sw.writeInterface();
-            sw.writeAsmType(Type.getObjectType(kotlinMarkerInterface));
+            sw.writeAsmType(getObjectType(kotlinMarkerInterface));
             sw.writeInterfaceEnd();
         }
 

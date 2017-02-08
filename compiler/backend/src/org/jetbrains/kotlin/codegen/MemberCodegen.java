@@ -349,10 +349,10 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         DeclarationDescriptor containing = innerClass.getContainingDeclaration();
         String outerClassInternalName = null;
         if (containing instanceof ClassDescriptor) {
-            outerClassInternalName = typeMapper.mapClass((ClassDescriptor) containing).getInternalName();
+            outerClassInternalName = typeMapper.classInternalName((ClassDescriptor) containing);
         }
         String innerName = innerClass.getName().isSpecial() ? null : innerClass.getName().asString();
-        String innerClassInternalName = typeMapper.mapClass(innerClass).getInternalName();
+        String innerClassInternalName = typeMapper.classInternalName(innerClass);
         v.visitInnerClass(innerClassInternalName, outerClassInternalName, innerName, calculateInnerClassAccessFlags(innerClass));
     }
 

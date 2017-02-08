@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.builtins.FAKE_CONTINUATION_CLASS_DESCRIPTOR
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
+import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionType
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.MutableClassDescriptor
-import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
-import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.utils.DO_NOTHING_3
 
@@ -148,11 +146,19 @@ fun <T : Any> mapType(
 
         descriptor is ClassDescriptor -> {
             val jvmType =
-                    if (mode.isForAnnotationParameter && KotlinBuiltIns.isKClass(descriptor))
+                    if (mode.isForAnnotationParameter && KotlinBuiltIns.isKClass(descriptor)) {
                         factory.javaLangClassType
-                    else
+                    }
+                    else {
                         typeMappingConfiguration.getPredefinedTypeForClass(descriptor.original)
-                        ?: factory.createObjectType(computeInternalName(descriptor.original, typeMappingConfiguration))
+                        ?: run {
+                            // refer to enum entries by enum type in bytecode unless ASM_TYPE is written
+                            val enumClassIfEnumEntry = if (descriptor.kind == ClassKind.ENUM_ENTRY)
+                                descriptor.containingDeclaration as ClassDescriptor
+                            else descriptor
+                            factory.createObjectType(computeInternalName(enumClassIfEnumEntry.original, typeMappingConfiguration))
+                        }
+                    }
 
             writeGenericType(kotlinType, jvmType, mode)
 
@@ -211,7 +217,7 @@ private fun <T : Any> mapBuiltInType(
     return null
 }
 
-internal fun computeInternalName(
+fun computeInternalName(
         klass: ClassDescriptor,
         typeMappingConfiguration: TypeMappingConfiguration<*> = TypeMappingConfigurationImpl
 ): String {
@@ -229,8 +235,7 @@ internal fun computeInternalName(
     val containerInternalName =
             typeMappingConfiguration.getPredefinedInternalNameForClass(containerClass) ?:
             computeInternalName(containerClass, typeMappingConfiguration)
-    return if (klass.kind == ClassKind.ENUM_ENTRY) containerInternalName
-        else typeMappingConfiguration.innerClassNameFactory(containerInternalName, name)
+    return typeMappingConfiguration.innerClassNameFactory(containerInternalName, name)
 }
 
 private fun getRepresentativeUpperBound(descriptor: TypeParameterDescriptor): KotlinType {
