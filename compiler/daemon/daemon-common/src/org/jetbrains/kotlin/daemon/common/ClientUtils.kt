@@ -40,29 +40,47 @@ fun makePortFromRunFilenameExtractor(digest: String): (String) -> Int? {
     }
 }
 
+private const val ORPHANED_RUN_FILE_AGE_THRESHOLD_MS = 1000000L
+
+data class DaemonWithMetadata(val daemon: CompileService, val runFile: File, val jvmOptions: DaemonJVMOptions)
 
 fun walkDaemons(registryDir: File,
                 compilerId: CompilerId,
-                filter: (File, Int) -> Boolean = { f, p -> true },
-                report: (DaemonReportCategory, String) -> Unit = { cat, msg -> }
-): Sequence<CompileService> {
+                fileToCompareTimestamp: File,
+                filter: (File, Int) -> Boolean = { _, _ -> true },
+                report: (DaemonReportCategory, String) -> Unit = { _, _ -> }
+): Sequence<DaemonWithMetadata> {
     val classPathDigest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString()
     val portExtractor = makePortFromRunFilenameExtractor(classPathDigest)
     return registryDir.walk()
             .map { Pair(it, portExtractor(it.name)) }
             .filter { it.second != null && filter(it.first, it.second!!) }
-            .mapNotNull {
-                assert(it.second!! > 0 && it.second!! < MAX_PORT_NUMBER)
-                report(DaemonReportCategory.DEBUG, "found daemon on port ${it.second}, trying to connect")
-                val daemon = tryConnectToDaemon(it.second!!, report)
+            .mapNotNull { fileWithPort ->
+                assert(fileWithPort.second!! in 1..(MAX_PORT_NUMBER - 1))
+                val relativeAge = fileToCompareTimestamp.lastModified() - fileWithPort.first.lastModified()
+                report(DaemonReportCategory.DEBUG, "found daemon on port ${fileWithPort.second} ($relativeAge ms old), trying to connect")
+                val daemon = tryConnectToDaemon(fileWithPort.second!!, report)
                 // cleaning orphaned file; note: daemon should shut itself down if it detects that the run file is deleted
-                if (daemon == null && !it.first.delete()) {
-                    report(DaemonReportCategory.INFO, "WARNING: unable to delete seemingly orphaned file '${it.first.absolutePath}', cleanup recommended")
+                if (daemon == null) {
+                    if (relativeAge - ORPHANED_RUN_FILE_AGE_THRESHOLD_MS <= 0) {
+                        report(DaemonReportCategory.DEBUG, "found fresh run file '${fileWithPort.first.absolutePath}' ($relativeAge ms old), but no daemon, ignoring it")
+                    }
+                    else {
+                        report(DaemonReportCategory.DEBUG, "found seemingly orphaned run file '${fileWithPort.first.absolutePath}' ($relativeAge ms old), deleting it")
+                        if (!fileWithPort.first.delete()) {
+                            report(DaemonReportCategory.INFO, "WARNING: unable to delete seemingly orphaned file '${fileWithPort.first.absolutePath}', cleanup recommended")
+                        }
+                    }
                 }
-                daemon
+                try {
+                    daemon?.let { DaemonWithMetadata(it, fileWithPort.first, it.getDaemonJVMOptions().get()) }
+                }
+                catch (e: Exception) {
+                    report(DaemonReportCategory.INFO, "ERROR: unable to retrieve daemon JVM options, assuming daemon is dead: ${e.message}")
+                    null
+                }
             }
 }
-
 
 private inline fun tryConnectToDaemon(port: Int, report: (DaemonReportCategory, String) -> Unit): CompileService? {
 
@@ -88,4 +106,18 @@ fun makeAutodeletingFlagFile(keyword: String = "compiler-client", baseDir: File?
                                        baseDir?.let { if (it.isDirectory && it.exists()) it else null })
     flagFile.deleteOnExit()
     return flagFile
+}
+
+// Comparator for reliable choice between daemons
+class FileAgeComparator : Comparator<File> {
+    override fun compare(left: File, right: File): Int {
+        val leftTS = left.lastModified()
+        val rightTS = right.lastModified()
+        return when {
+            leftTS == 0L || rightTS == 0L -> 0 // cannot read any file timestamp, => undecidable
+            leftTS > rightTS -> -1
+            leftTS < rightTS -> 1
+            else -> compareValues(left.canonicalPath, right.canonicalPath)
+        }
+    }
 }

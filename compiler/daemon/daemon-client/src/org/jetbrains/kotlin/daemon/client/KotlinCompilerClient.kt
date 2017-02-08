@@ -291,17 +291,23 @@ object KotlinCompilerClient {
     }
 
     private fun tryFindSuitableDaemonOrNewOpts(registryDir: File, compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, report: (DaemonReportCategory, String) -> Unit): Pair<CompileService?, DaemonJVMOptions> {
-        val aliveWithOpts = walkDaemons(registryDir, compilerId, report = report)
-                .map { Pair(it, it.getDaemonJVMOptions()) }
-                .filter { it.second.isGood }
-                .sortedWith(compareByDescending(DaemonJVMOptionsMemoryComparator(), { it.second.get() }))
+        registryDir.mkdirs()
+        val timestampMarker = createTempFile("kotlin-daemon-client-tsmarker", directory = registryDir)
+        val aliveWithMetadata = try {
+            walkDaemons(registryDir, compilerId, timestampMarker, report = report).toList()
+        }
+        finally {
+            timestampMarker.delete()
+        }
+        val comparator = compareByDescending<DaemonWithMetadata, DaemonJVMOptions>(DaemonJVMOptionsMemoryComparator(), { it.jvmOptions })
+                .thenBy(FileAgeComparator()) { it.runFile }
         val optsCopy = daemonJVMOptions.copy()
         // if required options fit into fattest running daemon - return the daemon and required options with memory params set to actual ones in the daemon
-        return aliveWithOpts.firstOrNull()?.check { daemonJVMOptions memorywiseFitsInto it.second.get() }?.let {
-                Pair(it.first, optsCopy.updateMemoryUpperBounds(it.second.get()))
+        return aliveWithMetadata.maxWith(comparator)?.takeIf { daemonJVMOptions memorywiseFitsInto it.jvmOptions }?.let {
+                Pair(it.daemon, optsCopy.updateMemoryUpperBounds(it.jvmOptions))
             }
             // else combine all options from running daemon to get fattest option for a new daemon to run
-            ?: Pair(null, aliveWithOpts.fold(optsCopy, { opts, d -> opts.updateMemoryUpperBounds(d.second.get()) }))
+            ?: Pair(null, aliveWithMetadata.fold(optsCopy, { opts, d -> opts.updateMemoryUpperBounds(d.jvmOptions) }))
     }
 
 
