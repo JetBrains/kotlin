@@ -11,8 +11,9 @@ public abstract class AbstractCollection<out E> protected constructor() : Collec
 
     override fun isEmpty(): Boolean = size == 0
 
-    /*
-    override fun toString(): String = joinToString(", ", "[", "]") {
-        if (it === this) "(this Collection)" else it.toString()
-    } */
+
+    @Fixme
+    override fun toString(): String = TODO() // joinToString(", ", "[", "]") {
+    // if (it === this) "(this Collection)" else it.toString()
+    // }
 }

@@ -168,7 +168,7 @@ internal interface CodeContext {
 internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid {
 
     val codegen = CodeGenerator(context)
-    val resultLifetimes = mutableMapOf<IrMemberAccessExpression, Lifetime>()
+    val resultLifetimes = mutableMapOf<IrElement, Lifetime>()
 
     //-------------------------------------------------------------------------//
 
@@ -237,7 +237,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     override fun visitModuleFragment(module: IrModuleFragment) {
         context.log("visitModule                  : ${ir2string(module)}")
 
-        computeLifetimes(module, resultLifetimes)
+        computeLifetimes(module, this.codegen, resultLifetimes)
 
         module.acceptChildrenVoid(this)
         appendLlvmUsed(context.llvm.usedFunctions)
@@ -476,11 +476,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
      */
     private fun bindParameters(descriptor: FunctionDescriptor?): Map<ParameterDescriptor, LLVMValueRef> {
         if (descriptor == null) return emptyMap()
-        val paramDescriptors = descriptor.allValueParameters
-        return paramDescriptors.mapIndexed { i, paramDescriptor ->
-            val param = codegen.param(descriptor, i)
-            assert(codegen.getLLVMType(paramDescriptor.type) == param.type)
-            paramDescriptor to param
+        val parameterDescriptors = descriptor.allValueParameters
+        return parameterDescriptors.mapIndexed { i, parameterDescriptor ->
+            val parameter = codegen.param(descriptor, i)
+            assert(codegen.getLLVMType(parameterDescriptor.type) == parameter.type)
+            parameterDescriptor to parameter
         }.toMap()
     }
 
@@ -1081,7 +1081,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         }
 
 
-        assert (loop.type.isUnit())
+        assert(loop.type.isUnit())
         return codegen.theUnitInstanceRef.llvm
     }
 
@@ -1104,7 +1104,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             codegen.positionAtEnd(loopScope.loopExit)
         }
 
-        assert (loop.type.isUnit())
+        assert(loop.type.isUnit())
         return codegen.theUnitInstanceRef.llvm
     }
 
@@ -1119,11 +1119,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     private fun evaluateSetVariable(value: IrSetVariable): LLVMValueRef {
         context.log("evaluateSetVariable        : ${ir2string(value)}")
-        val ret = evaluateExpression(value.value)
+        val result = evaluateExpression(value.value)
         val variable = currentCodeContext.getDeclaredVariable(value.descriptor)
-        codegen.vars.store(ret, variable)
+        codegen.vars.store(result, variable)
 
-        assert (value.type.isUnit())
+        assert(value.type.isUnit())
         return codegen.theUnitInstanceRef.llvm
     }
 
@@ -1131,8 +1131,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     private fun generateVariable(value: IrVariable) {
         context.log("generateVariable           : ${ir2string(value)}")
-        val ret = value.initializer?.let { evaluateExpression(it) }
-        currentCodeContext.genDeclareVariable(value.descriptor, ret)
+        val result = value.initializer?.let { evaluateExpression(it) }
+        currentCodeContext.genDeclareVariable(value.descriptor, result)
     }
 
     //-------------------------------------------------------------------------//
@@ -1454,7 +1454,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 }
             }
 
-            assert (value.type.isUnit())
+            assert(value.type.isUnit())
             return codegen.theUnitInstanceRef.llvm
         }
     }
@@ -1621,8 +1621,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     //-------------------------------------------------------------------------//
-    private fun resultLifetime(callee: IrMemberAccessExpression): Lifetime {
-        return resultLifetimes.getOrElse(callee) { Lifetime.GLOBAL }
+    private fun resultLifetime(callee: IrElement): Lifetime {
+        return resultLifetimes.getOrElse(callee) { /* TODO: make IRRELEVANT */ Lifetime.GLOBAL }
     }
 
     private fun evaluateConstructorCall(callee: IrCall, args: List<LLVMValueRef>): LLVMValueRef {

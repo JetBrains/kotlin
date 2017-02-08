@@ -70,17 +70,13 @@ internal class VariableManager(val codegen: CodeGenerator) {
     }
 
     // Creates anonymous mutable variable.
-    fun createAnonymousMutable(type: KotlinType, value: LLVMValueRef? = null) : Int {
-        return createAnonymousMutable(codegen.getLLVMType(type), value)
-    }
-
     // Think of slot reuse.
     fun createAnonymousSlot(value: LLVMValueRef? = null) : LLVMValueRef {
         val index = createAnonymousMutable(codegen.kObjHeaderPtr, value)
         return addressOf(index)
     }
 
-    fun createAnonymousMutable(type: LLVMTypeRef, value: LLVMValueRef? = null) : Int {
+    private fun createAnonymousMutable(type: LLVMTypeRef, value: LLVMValueRef? = null) : Int {
         val index = variables.size
         val slot = codegen.alloca(type)
         if (value != null)
@@ -91,9 +87,8 @@ internal class VariableManager(val codegen: CodeGenerator) {
 
     fun createImmutable(scoped: Pair<ValueDescriptor, CodeContext>, value: LLVMValueRef) : Int {
         val scopedVariable = ScopedVariable(scoped)
-        if(contextVariablesToIndex.containsKey(scopedVariable))
+        if (contextVariablesToIndex.containsKey(scopedVariable))
             throw Error("${scopedVariable.descriptor} is already defined")
-        assert(!contextVariablesToIndex.containsKey(scopedVariable))
         val index = variables.size
         variables.add(ValueRecord(value, scopedVariable.descriptor.name))
         contextVariablesToIndex[scopedVariable] = index

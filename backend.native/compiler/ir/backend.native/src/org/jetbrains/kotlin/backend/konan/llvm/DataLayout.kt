@@ -4,6 +4,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.ValueType
 import org.jetbrains.kotlin.backend.konan.isRepresentedAs
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 private val valueTypes = ValueType.values().associate {
@@ -39,3 +40,5 @@ internal fun RuntimeAware.getLLVMReturnType(type: KotlinType): LLVMTypeRef {
         else -> getLLVMType(type)
     }
 }
+
+fun RuntimeAware.isObjectType(type: KotlinType) : Boolean = isObjectType(getLLVMType(type))

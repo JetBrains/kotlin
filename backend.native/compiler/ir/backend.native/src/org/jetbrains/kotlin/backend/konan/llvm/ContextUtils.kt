@@ -29,7 +29,7 @@ internal enum class SlotType {
 }
 
 // Lifetimes class of reference, computed by escape analysis.
-internal enum class Lifetime(val slotType: SlotType) {
+enum class Lifetime(val slotType: SlotType) {
     // If reference is frame-local (only obtained from some call and never leaves).
     LOCAL(SlotType.ARENA),
     // If reference is only returned.
