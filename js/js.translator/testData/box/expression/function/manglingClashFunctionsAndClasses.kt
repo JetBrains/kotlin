@@ -57,7 +57,7 @@ fun callInternalFunctions() {
 package foo
 
 private val currentPackage: dynamic
-    get() = js("\$module\$lib").foo
+    get() = eval("\$module\$lib").foo
 
 private fun instantiate(classRef: dynamic, param: dynamic = js("undefined")) = js("new classRef(param)")
 

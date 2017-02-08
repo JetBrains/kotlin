@@ -28,7 +28,7 @@ open class A {
 fun foo() {}
 
 fun box(): String {
-    val aBody = js("A").toString()
+    val aBody = eval("A").toString()
     val expectedRegex = build {
         property("a")
         field("b")

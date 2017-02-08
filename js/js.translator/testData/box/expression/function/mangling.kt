@@ -15,7 +15,7 @@ internal external fun internal_baz(a: String) {
     definedExternally
 }
 
-private fun getCurrentPackage(): dynamic = js("_").foo
+private fun getCurrentPackage(): dynamic = eval("_").foo
 
 private fun private_baz(i: Int) {
 }

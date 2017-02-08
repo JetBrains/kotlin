@@ -25,7 +25,7 @@ fun box(): String {
     if (!hasProp(b, "foo")) return "B hasn't foo"
     if (!hasProp(b, "boo")) return "B hasn't boo"
 
-    val PREFIX = "JS_TESTS.foo"
+    val PREFIX = "_.foo"
     if (eval("$PREFIX.A") == null) return "$PREFIX.A not found"
     if (eval("$PREFIX.B") == null) return "$PREFIX.B not found"
     if (eval("$PREFIX.A === $PREFIX.B") as Boolean) return "A and B refer to the same object"
