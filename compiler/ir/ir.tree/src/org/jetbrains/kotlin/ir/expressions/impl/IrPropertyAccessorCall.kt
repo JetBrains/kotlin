@@ -121,4 +121,9 @@ class IrSetterCallImpl(
         super.transformChildren(transformer, data)
         argumentImpl = argumentImpl?.transform(transformer, data)
     }
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        super.acceptChildren(visitor, data)
+        argumentImpl?.accept(visitor, data)
+    }
 }
