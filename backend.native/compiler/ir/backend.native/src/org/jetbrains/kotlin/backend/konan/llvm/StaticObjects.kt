@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.replace
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 private fun StaticData.objHeader(typeInfo: ConstPointer): Struct {
     val containerOffsetNegative = 0 // Static object mark.
@@ -105,15 +106,22 @@ internal fun StaticData.createArrayList(elementType: TypeProjection, array: Cons
     // type is ArrayList<elementType>:
     val type = arrayListClass.defaultType.replace(listOf(elementType))
 
-    // FIXME: properly import body type from stdlib
+    val arrayListFqName = arrayListClass.fqNameSafe
+    val arrayListFields = mapOf(
+        "$arrayListFqName.array" to array,
+        "$arrayListFqName.offset" to Int32(0),
+        "$arrayListFqName.length" to Int32(length),
+        "$arrayListFqName.backing" to NullPointer(kObjHeader))
 
-    val body = Struct(
-            // Sorted by the hashCode() of the name.
-            Int32(0), // offset: Int
-            array, // array: Array<E>
-            Int32(length), // length: Int
-            NullPointer(kObjHeader) // backing: ArrayList<E>?
-    )
+    // Now sort these values according to the order of fields returned by getFields()
+    // to match the sorting order of the real ArrayList().
+    val sorted = linkedMapOf<String, ConstValue>()
+    getFields(arrayListClass).forEach {
+        val fqName = it.fqNameSafe.asString()
+        sorted.put(fqName, arrayListFields[fqName]!!)
+    }
+        
+    val body = Struct(*(sorted.values.toTypedArray()))
 
     return createKotlinObject(type, body)
 }
