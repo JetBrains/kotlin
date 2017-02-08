@@ -9740,6 +9740,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("propertyGetterDelegatesToAnother.kt")
+        public void testPropertyGetterDelegatesToAnother() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/jvmStatic/propertyGetterDelegatesToAnother.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/jvmStatic/simple.kt");

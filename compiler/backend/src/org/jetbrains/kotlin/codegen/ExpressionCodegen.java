@@ -3192,7 +3192,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         boolean isSingleton = calleeContainingClass.getKind().isSingleton();
         if (isSingleton) {
             if (calleeContainingClass.equals(context.getThisDescriptor()) &&
-                !CodegenUtilKt.isJvmStaticInObjectOrClass(context.getContextDescriptor())) {
+                !CodegenUtilKt.isJvmStaticInObjectOrClass(context.getFunctionDescriptor())) {
                 return StackValue.local(0, typeMapper.mapType(calleeContainingClass));
             }
             else if (isEnumEntry(calleeContainingClass)) {

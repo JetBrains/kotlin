@@ -1,0 +1,12 @@
+@kotlin.Metadata
+public final class ObjectThisTest {
+    public final static field INSTANCE: ObjectThisTest
+    private method <init>(): void
+    public final static @kotlin.jvm.JvmStatic @org.jetbrains.annotations.NotNull method getTestValue(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method getTestValue2(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class PropertyGetterDelegatesToAnotherKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
