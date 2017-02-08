@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.codegen.ExpressionCodegen;
 import org.jetbrains.kotlin.codegen.MemberCodegen;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
@@ -59,6 +60,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.ListIterator;
+
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.ENUM_TYPE;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_CLASS_TYPE;
 
 public class InlineCodegenUtil {
     public static final boolean GENERATE_SMAP = true;
@@ -530,7 +534,7 @@ public class InlineCodegenUtil {
         if (!(containingDeclaration instanceof PackageFragmentDescriptor)) {
             return false;
         }
-        if (!containingDeclaration.getName().equals(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) {
+        if (!((PackageFragmentDescriptor) containingDeclaration).getFqName().equals(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)) {
             return false;
         }
         if (functionDescriptor.getTypeParameters().size() != 1) {
@@ -548,23 +552,30 @@ public class InlineCodegenUtil {
             @NotNull KotlinType type,
             @NotNull KotlinTypeMapper typeMapper
     ) {
-        boolean isEnumValues = "enumValues".equals(name);
+        boolean isValueOf = "enumValueOf".equals(name);
         Type invokeType = typeMapper.mapType(type);
-        String desc = getSpecialEnumFunDescriptor(invokeType, isEnumValues);
-
+        String desc = getSpecialEnumFunDescriptor(invokeType, isValueOf);
         MethodNode node = new MethodNode(API, Opcodes.ACC_STATIC, "fake", desc, null, null);
-        if (!isEnumValues) {
-            node.visitVarInsn(Opcodes.ALOAD, 0);
-        }
         codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.ENUM_REIFIED, new InstructionAdapter(node));
-        node.visitMethodInsn(Opcodes.INVOKESTATIC, invokeType.getInternalName(), isEnumValues ? "values" : "valueOf", desc, false);
+        if (isValueOf) {
+            node.visitInsn(Opcodes.ACONST_NULL);
+            node.visitVarInsn(Opcodes.ALOAD, 0);
+
+            node.visitMethodInsn(Opcodes.INVOKESTATIC, ENUM_TYPE.getInternalName(), "valueOf",
+                                 Type.getMethodDescriptor(ENUM_TYPE, JAVA_CLASS_TYPE, AsmTypes.JAVA_STRING_TYPE), false);
+        }
+        else {
+            node.visitInsn(Opcodes.ICONST_0);
+            node.visitTypeInsn(Opcodes.ANEWARRAY, ENUM_TYPE.getInternalName());
+        }
         node.visitInsn(Opcodes.ARETURN);
-        node.visitMaxs(isEnumValues ? 2 : 3, isEnumValues ? 0 : 1);
+        node.visitMaxs(isValueOf ? 3 : 2, isValueOf ? 1 : 0);
         return node;
     }
 
-    public static String getSpecialEnumFunDescriptor(@NotNull Type type, boolean isEnumValues) {
-        return (isEnumValues ? "()[" : "(Ljava/lang/String;)") + "L" + type.getInternalName() + ";";
+    @NotNull
+    public static String getSpecialEnumFunDescriptor(@NotNull Type type, boolean isValueOf) {
+        return isValueOf ? Type.getMethodDescriptor(type, AsmTypes.JAVA_STRING_TYPE) : Type.getMethodDescriptor(AsmUtil.getArrayType(type));
     }
 }
 

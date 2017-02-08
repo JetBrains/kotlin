@@ -239,12 +239,12 @@ public class InlineCodegen extends CallGenerator {
             assert resolvedCall != null : "Resolved call for " + functionDescriptor + " should be not null";
             Map<TypeParameterDescriptor, KotlinType> arguments = resolvedCall.getTypeArguments();
             assert arguments.size() == 1 : "Resolved call for " + functionDescriptor + " should have 1 type argument";
-            KotlinType type = arguments.values().iterator().next();
+
             MethodNode node =
                     InlineCodegenUtil.createSpecialEnumMethodBody(
                             codegen,
                             functionDescriptor.getName().asString(),
-                            type,
+                            arguments.keySet().iterator().next().getDefaultType(),
                             codegen.getState().getTypeMapper()
                     );
             return new SMAPAndMethodNode(node, SMAPParser.parseOrCreateDefault(null, null, "fake", -1, -1));

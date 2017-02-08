@@ -168,6 +168,11 @@ public class AsmUtil {
         return Type.getType(internalName.substring(1));
     }
 
+    @NotNull
+    public static Type getArrayType(@NotNull Type componentType) {
+        return Type.getType("[" + componentType.getDescriptor());
+    }
+
     @Nullable
     public static PrimitiveType asmPrimitiveTypeToLangPrimitiveType(Type type) {
         JvmPrimitiveType jvmPrimitiveType = primitiveTypeByAsmSort.get(type.getSort());
