@@ -17,6 +17,9 @@
 package org.jetbrains.kotlin.serialization.deserialization
 
 interface DeserializationConfiguration {
+    val skipMetadataVersionCheck: Boolean
+        get() = false
+
     val typeAliasesAllowed: Boolean
         get() = true
 

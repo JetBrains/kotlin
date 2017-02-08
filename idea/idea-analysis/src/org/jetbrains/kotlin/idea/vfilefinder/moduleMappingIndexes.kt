@@ -22,6 +22,7 @@ import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.PackageParts
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import java.io.DataInput
 import java.io.DataOutput
 
@@ -77,7 +78,7 @@ object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>(
             val content = inputData.content
             val file = inputData.file
             try {
-                val moduleMapping = ModuleMapping.create(content, file.toString())
+                val moduleMapping = ModuleMapping.create(content, file.toString(), DeserializationConfiguration.Default)
                 return@DataIndexer moduleMapping.packageFqName2Parts
             }
             catch(e: Exception) {

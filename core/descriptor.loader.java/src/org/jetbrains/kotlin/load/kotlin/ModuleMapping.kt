@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable
 import java.io.ByteArrayInputStream
 import java.io.DataInputStream
-import kotlin.comparisons.nullsLast
 
 class ModuleMapping private constructor(val packageFqName2Parts: Map<String, PackageParts>, private val debugName: String) {
     fun findPackageParts(packageFqName: String): PackageParts? {
@@ -35,7 +35,11 @@ class ModuleMapping private constructor(val packageFqName2Parts: Map<String, Pac
         @JvmField
         val EMPTY: ModuleMapping = ModuleMapping(emptyMap(), "EMPTY")
 
-        fun create(bytes: ByteArray?, debugName: String?): ModuleMapping {
+        fun create(
+                bytes: ByteArray?,
+                debugName: String,
+                configuration: DeserializationConfiguration
+        ): ModuleMapping {
             if (bytes == null) {
                 return EMPTY
             }
@@ -43,7 +47,7 @@ class ModuleMapping private constructor(val packageFqName2Parts: Map<String, Pac
             val stream = DataInputStream(ByteArrayInputStream(bytes))
             val version = JvmMetadataVersion(*IntArray(stream.readInt()) { stream.readInt() })
 
-            if (version.isCompatible()) {
+            if (configuration.skipMetadataVersionCheck || version.isCompatible()) {
                 val table = JvmPackageTable.PackageTable.parseFrom(stream) ?: return EMPTY
                 val result = linkedMapOf<String, PackageParts>()
 
@@ -60,7 +64,7 @@ class ModuleMapping private constructor(val packageFqName2Parts: Map<String, Pac
                     proto.classNameList.forEach(packageParts::addMetadataPart)
                 }
 
-                return ModuleMapping(result, debugName ?: "<unknown>")
+                return ModuleMapping(result, debugName)
             }
             else {
                 // TODO: consider reporting "incompatible ABI version" error for package parts

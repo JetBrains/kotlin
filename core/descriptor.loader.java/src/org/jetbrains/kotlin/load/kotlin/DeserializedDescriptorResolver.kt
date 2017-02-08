@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationCompone
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import javax.inject.Inject
 
 class DeserializedDescriptorResolver {
@@ -38,6 +37,9 @@ class DeserializedDescriptorResolver {
     fun setComponents(components: DeserializationComponentsForJava) {
         this.components = components.components
     }
+
+    private val skipMetadataVersionCheck: Boolean
+        get() = components.configuration.skipMetadataVersionCheck
 
     fun resolveClass(kotlinClass: KotlinJvmBinaryClass): ClassDescriptor? {
         val classData = readClassData(kotlinClass) ?: return null
@@ -69,18 +71,18 @@ class DeserializedDescriptorResolver {
 
     private val KotlinJvmBinaryClass.incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>?
         get() {
-            if (classHeader.metadataVersion.isCompatible()) return null
+            if (skipMetadataVersionCheck || classHeader.metadataVersion.isCompatible()) return null
             return IncompatibleVersionErrorData(classHeader.metadataVersion, JvmMetadataVersion.INSTANCE, location, classId)
         }
 
     private val KotlinJvmBinaryClass.isPreReleaseInvisible: Boolean
-        get() = !JvmMetadataVersion.skipCheck &&
+        get() = !skipMetadataVersionCheck &&
                 !KotlinCompilerVersion.isPreRelease() &&
                 (classHeader.isPreRelease || classHeader.metadataVersion == KOTLIN_1_1_EAP_METADATA_VERSION)
 
     internal fun readData(kotlinClass: KotlinJvmBinaryClass, expectedKinds: Set<KotlinClassHeader.Kind>): Array<String>? {
         val header = kotlinClass.classHeader
-        return (header.data ?: header.incompatibleData)?.check { header.kind in expectedKinds }
+        return (header.data ?: header.incompatibleData)?.takeIf { header.kind in expectedKinds }
     }
 
     private inline fun <T : Any> parseProto(klass: KotlinJvmBinaryClass, block: () -> T): T? {
@@ -93,11 +95,12 @@ class DeserializedDescriptorResolver {
             }
         }
         catch (e: Throwable) {
-            if (!klass.classHeader.metadataVersion.isCompatible()) {
-                // TODO: log.warn
-                return null
+            if (skipMetadataVersionCheck || klass.classHeader.metadataVersion.isCompatible()) {
+                throw e
             }
-            throw e
+
+            // TODO: log.warn
+            return null
         }
     }
 

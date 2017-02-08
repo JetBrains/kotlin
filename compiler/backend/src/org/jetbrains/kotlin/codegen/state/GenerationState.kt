@@ -41,12 +41,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.BindingTraceFilter
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.io.File
 
@@ -94,6 +92,7 @@ class GenerationState @JvmOverloads constructor(
     val incrementalCacheForThisTarget: IncrementalCache?
     val packagesWithObsoleteParts: Set<FqName>
     val obsoleteMultifileClasses: List<FqName>
+    val deserializationConfiguration: DeserializationConfiguration = CompilerDeserializationConfiguration(configuration)
 
     init {
         val icComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)

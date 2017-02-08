@@ -417,14 +417,9 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         doTestPreReleaseKotlinLibrary("library");
     }
 
-    /*
-    // This test should pass but is commented out because the compiler flag is implemented via mutation of the public field,
-    // which may cause subsequent tests to behave unexpectedly
-    // TODO: refactor and uncomment
     public void testReleaseCompilerAgainstPreReleaseLibrarySkipVersionCheck() throws Exception {
         doTestPreReleaseKotlinLibrary("library", "-Xskip-metadata-version-check");
     }
-    */
 
     public void testWrongMetadataVersion() throws Exception {
         doTestKotlinLibraryWithWrongMetadataVersion("library", null);
@@ -466,12 +461,9 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         );
     }
 
-    /*
-    // TODO: refactor and uncomment
     public void testWrongMetadataVersionSkipVersionCheck() throws Exception {
         doTestKotlinLibraryWithWrongMetadataVersion("library", null, "-Xskip-metadata-version-check");
     }
-    */
 
     /*test source mapping generation when source info is absent*/
     public void testInlineFunWithoutDebugInfo() throws Exception {

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
@@ -38,7 +39,10 @@ class JvmPackageTableTest : KtUsefulTestCase() {
         System.err.println(output) // normally output is empty
         assertEquals("Compilation should complete successfully", ExitCode.OK, exitCode)
 
-        val mapping = ModuleMapping.create(File(tmpdir, "META-INF/$moduleName.${ModuleMapping.MAPPING_FILE_EXT}").readBytes(), "test")
+        val mapping = ModuleMapping.create(
+                File(tmpdir, "META-INF/$moduleName.${ModuleMapping.MAPPING_FILE_EXT}").readBytes(), "test",
+                DeserializationConfiguration.Default
+        )
         val result = buildString {
             for ((fqName, packageParts) in mapping.packageFqName2Parts) {
                 appendln(fqName)

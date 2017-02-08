@@ -23,6 +23,9 @@ public class CommonConfigurationKeys {
     public static final CompilerConfigurationKey<LanguageVersionSettings> LANGUAGE_VERSION_SETTINGS =
             CompilerConfigurationKey.create("language version settings");
 
+    public static final CompilerConfigurationKey<Boolean> SKIP_METADATA_VERSION_CHECK =
+            CompilerConfigurationKey.create("skip metadata version check");
+
     public static final CompilerConfigurationKey<Boolean> DISABLE_INLINE =
             CompilerConfigurationKey.create("disable inline");
 

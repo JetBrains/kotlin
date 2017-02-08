@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.PackageParts
+import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import java.io.EOFException
 
 class JvmPackagePartProvider(
@@ -31,6 +32,8 @@ class JvmPackagePartProvider(
         private val scope: GlobalSearchScope
 ) : PackagePartProvider {
     private data class ModuleMappingInfo(val root: VirtualFile, val mapping: ModuleMapping)
+
+    private val deserializationConfiguration = CompilerDeserializationConfiguration(env.configuration)
 
     private val notLoadedRoots by lazy(LazyThreadSafetyMode.NONE) {
         env.configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS)
@@ -96,7 +99,7 @@ class JvmPackagePartProvider(
             val moduleFiles = metaInf.children.filter { it.name.endsWith(ModuleMapping.MAPPING_FILE_EXT) }
             for (moduleFile in moduleFiles) {
                 val mapping = try {
-                    ModuleMapping.create(moduleFile.contentsToByteArray(), moduleFile.toString())
+                    ModuleMapping.create(moduleFile.contentsToByteArray(), moduleFile.toString(), deserializationConfiguration)
                 }
                 catch (e: EOFException) {
                     throw RuntimeException("Error on reading package parts for '$packageFqName' package in '$moduleFile', " +

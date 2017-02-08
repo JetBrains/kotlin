@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtens
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.StorageManager
 import java.util.*
 
@@ -173,18 +174,22 @@ object TopDownAnalyzerFacadeForJVM {
         }
         else null
 
+        val partProvider = packagePartProvider(sourceScope).let { fragment ->
+            if (targetIds == null || incrementalComponents == null) fragment
+            else IncrementalPackagePartProvider(fragment, targetIds.map(incrementalComponents::getIncrementalCache), storageManager)
+        }
+
         // Note that it's necessary to create container for sources _after_ creation of container for dependencies because
         // CliLightClassGenerationSupport#initialize is invoked when container is created, so only the last module descriptor is going
         // to be stored in CliLightClassGenerationSupport, and it better be the source one (otherwise light classes would not be found)
         // TODO: get rid of duplicate invocation of CodeAnalyzerInitializer#initialize, or refactor CliLightClassGenerationSupport
         val container = createContainerForTopDownAnalyzerForJvm(
                 moduleContext, trace, declarationProviderFactory(storageManager, files), sourceScope, lookupTracker,
-                IncrementalPackagePartProvider.create(
-                        packagePartProvider(sourceScope), targetIds, incrementalComponents, storageManager
-                ),
-                languageVersionSettings, moduleClassResolver, configuration
+                partProvider, languageVersionSettings, moduleClassResolver, configuration
         ).apply {
             initJvmBuiltInsForTopDownAnalysis(module, languageVersionSettings)
+            (partProvider as? IncrementalPackagePartProvider)?.deserializationConfiguration = get<DeserializationConfiguration>()
+
             StorageComponentContainerContributor.getInstances(project).forEach { it.onContainerComposed(this, null) }
         }
 

@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
@@ -129,9 +128,7 @@ public abstract class JsConfig {
         );
 
         JsModuleDescriptor<PackageFragmentProvider> rawDescriptor = KotlinJavascriptSerializationUtil.readModule(
-                metadata.getBody(), storageManager, moduleDescriptor, new CompilerDeserializationConfiguration(
-                        configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl.DEFAULT)
-                )
+                metadata.getBody(), storageManager, moduleDescriptor, new CompilerDeserializationConfiguration(configuration)
         );
 
         PackageFragmentProvider provider = rawDescriptor.getData();

@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.compiler.plugin.PluginCliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.cliPluginUsageString
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.script.StandardScriptDefinition
@@ -112,10 +111,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         if (arguments.module == null && arguments.freeArgs.isEmpty() && !arguments.version) {
             ReplFromTerminal.run(rootDisposable, configuration)
             return ExitCode.OK
-        }
-
-        if (arguments.skipMetadataVersionCheck) {
-            JvmMetadataVersion.skipCheck = true
         }
 
         if (arguments.includeRuntime) {
@@ -317,6 +312,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             configuration.put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, arguments.noOptimize)
             configuration.put(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, arguments.inheritMultifileParts)
             configuration.put(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK, arguments.skipRuntimeVersionCheck)
+            configuration.put(CommonConfigurationKeys.SKIP_METADATA_VERSION_CHECK, arguments.skipMetadataVersionCheck)
             configuration.put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)
             configuration.put(CLIConfigurationKeys.REPORT_PERF, arguments.reportPerf)
             configuration.put(JVMConfigurationKeys.USE_SINGLE_MODULE, arguments.singleModule)

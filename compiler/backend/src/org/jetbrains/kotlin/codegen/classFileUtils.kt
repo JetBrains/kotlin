@@ -40,7 +40,7 @@ private fun Iterable<PackageParts>.addCompiledParts(state: GenerationState): Lis
     val incrementalCache = state.incrementalCacheForThisTarget ?: return this.toList()
     val moduleMappingData = incrementalCache.getModuleMappingData() ?: return this.toList()
 
-    val mapping = ModuleMapping.create(moduleMappingData, "<incremental>")
+    val mapping = ModuleMapping.create(moduleMappingData, "<incremental>", state.deserializationConfiguration)
 
     incrementalCache.getObsoletePackageParts().forEach { internalName ->
         val qualifier = internalName.substringBeforeLast('/', "").replace('/', '.')
