@@ -17,6 +17,7 @@
 @file:JvmName("ReflectJvmMapping")
 package kotlin.reflect.jvm
 
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import java.lang.reflect.*
 import java.util.*
@@ -101,7 +102,11 @@ val Field.kotlinProperty: KProperty<*>?
 
 
 private fun Member.getKPackage(): KDeclarationContainer? =
-        if (ReflectKotlinClass.create(declaringClass) != null) KPackageImpl(declaringClass) else null
+        when (ReflectKotlinClass.create(declaringClass)?.classHeader?.kind) {
+            KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART ->
+                KPackageImpl(declaringClass)
+            else -> null
+        }
 
 /**
  * Returns a [KFunction] instance corresponding to the given Java [Method] instance,
