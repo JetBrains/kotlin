@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.rmi.server.UnicastRemoteObject
@@ -385,12 +387,61 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             tracer.startSignal.countDown()
             val succeeded = tracer.doneSignal.await(PARALLEL_WAIT_TIMEOUT_S, TimeUnit.SECONDS)
-            assertTrue("parallel compilation failed to complete in $PARALLEL_WAIT_TIMEOUT_S ms, ${tracer.doneSignal.count} unfinished threads", succeeded)
+            assertTrue("parallel compilation failed to complete in $PARALLEL_WAIT_TIMEOUT_S s, ${tracer.doneSignal.count} unfinished threads", succeeded)
 
             localEndSignal.await(PARALLEL_WAIT_TIMEOUT_S, TimeUnit.SECONDS)
             (1..PARALLEL_THREADS_TO_COMPILE).forEach {
                 assertEquals("Compilation on thread $it failed:\n${outStreams[it - 1]}", 0, resultCodes[it - 1])
             }
+        }
+    }
+
+    fun testParallelDaemonStart() {
+
+        val PARALLEL_THREADS_TO_START = 10
+
+        val startLatch = CountDownLatch(1)
+        val doneLatch = CountDownLatch(PARALLEL_THREADS_TO_START)
+
+        val clients = Array(PARALLEL_THREADS_TO_START, { hashSetOf<String>() } )
+        val resultCodes = arrayOfNulls<Int>(PARALLEL_THREADS_TO_START)
+        val outStreams = Array(PARALLEL_THREADS_TO_START, { ByteArrayOutputStream() })
+
+        fun connectThread(threadNo: Int) = thread {
+            withFlagFile(getTestName(true), ".alive") { flagFile ->
+                val daemonOptions = DaemonOptions(runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
+                val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = true, inheritAdditionalProperties = false)
+                startLatch.await()
+                try {
+                    val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
+                    assertNotNull("failed to connect daemon", daemon)
+                    val jar = tmpdir.absolutePath + File.separator + "hello.$threadNo.jar"
+                    val res = KotlinCompilerClient.compile(
+                            daemon!!,
+                            CompileService.NO_SESSION,
+                            CompileService.TargetPlatform.JVM,
+                            arrayOf("-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
+                            outStreams[threadNo])
+                    daemon.getClients().get().let { clients[threadNo].addAll(it) }
+                    resultCodes[threadNo] = res
+                }
+                finally {
+                    doneLatch.countDown()
+                }
+            }
+        }
+
+        (1..PARALLEL_THREADS_TO_START).forEach { connectThread(it - 1) }
+
+        startLatch.countDown()
+
+        val succeeded = doneLatch.await(PARALLEL_WAIT_TIMEOUT_S, TimeUnit.SECONDS)
+        assertTrue("parallel daemons start failed to complete in $PARALLEL_WAIT_TIMEOUT_S s, ${doneLatch.count} unfinished threads", succeeded)
+
+        (2..PARALLEL_THREADS_TO_START).forEach {
+            assertEquals("daemon ${it - 1} has ${clients[it - 1].size} clients, while first daemon has ${clients[0].size}", clients[0].size, clients[it - 1].size)
+            KtUsefulTestCase.assertSameElements(clients[0], clients[it - 1])
+            assertEquals("Compilation on thread $it failed:\n${outStreams[it - 1]}", 0, resultCodes[it - 1])
         }
     }
 
