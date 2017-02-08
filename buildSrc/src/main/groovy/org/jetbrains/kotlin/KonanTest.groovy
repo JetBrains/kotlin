@@ -263,7 +263,7 @@ class RunExternalTestGroup extends RunKonanTest {
     }
 
     List<String> buildCompileList() {
-        def packagePattern = ~/(?m)package\s*([a-zA-z-][a-zA-Z0-9.-]*)/  //TODO check the regex
+        def packagePattern = ~/(?m)package\s*([a-zA-z-][a-zA-Z0-9._-]*)/
         def boxPattern = ~/(?m)fun\s*box\s*\(\s*\)/
         def boxPackage = ""
 
