@@ -740,7 +740,7 @@ class CompileServiceImpl(
                           operationsTracer: RemoteOperationsTracer?,
                           body: (PrintStream, EventManager, Profiler) -> ExitCode): CompileService.CallResult<Int> =
             ifAlive {
-                withValidClientOrSessionProxy(sessionId) { session ->
+                withValidClientOrSessionProxy(sessionId) { _ ->
                     operationsTracer?.before("compile")
                     val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
                     val eventManger = EventManagerImpl()
@@ -770,7 +770,7 @@ class CompileServiceImpl(
                           tracer: RemoteOperationsTracer?,
                           body: (EventManager, Profiler) -> ExitCode): CompileService.CallResult<Int> =
             ifAlive {
-                withValidClientOrSessionProxy(sessionId) { session ->
+                withValidClientOrSessionProxy(sessionId) { _ ->
                     tracer?.before("compile")
                     val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
                     val eventManger = EventManagerImpl()

@@ -185,7 +185,7 @@ class ReplInterpreter(
         private fun renderStackTrace(cause: Throwable, startFromMethodName: String): String {
             val newTrace = arrayListOf<StackTraceElement>()
             var skip = true
-            for ((i, element) in cause.stackTrace.withIndex().reversed()) {
+            for ((_, element) in cause.stackTrace.withIndex().reversed()) {
                 if ("${element.className}.${element.methodName}" == startFromMethodName) {
                     skip = false
                 }
@@ -214,8 +214,8 @@ class ReplInterpreter(
             state.beforeCompile()
             KotlinCodegenFacade.generatePackage(
                     state,
-                    script.getContainingKtFile().packageFqName,
-                    setOf(script.getContainingKtFile()),
+                    script.containingKtFile.packageFqName,
+                    setOf(script.containingKtFile),
                     errorHandler
             )
         }

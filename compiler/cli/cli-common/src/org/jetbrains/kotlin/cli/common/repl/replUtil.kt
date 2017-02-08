@@ -26,7 +26,7 @@ fun makeScriptBaseName(codeLine: ReplCodeLine) =
 fun renderReplStackTrace(cause: Throwable, startFromMethodName: String): String {
     val newTrace = arrayListOf<StackTraceElement>()
     var skip = true
-    for ((i, element) in cause.stackTrace.withIndex().reversed()) {
+    for ((_, element) in cause.stackTrace.withIndex().reversed()) {
         if ("${element.className}.${element.methodName}" == startFromMethodName) {
             skip = false
         }
@@ -42,10 +42,6 @@ fun renderReplStackTrace(cause: Throwable, startFromMethodName: String): String 
 
     return Throwables.getStackTraceAsString(cause)
 }
-
-fun NO_ACTION(): Unit = Unit
-fun <T> NO_ACTION_THAT_RETURNS(v: T): T = v
-
 
 internal fun ClassLoader.listAllUrlsAsFiles(): List<File> {
     val parents = generateSequence(this) { loader -> loader.parent }.filterIsInstance(URLClassLoader::class.java)

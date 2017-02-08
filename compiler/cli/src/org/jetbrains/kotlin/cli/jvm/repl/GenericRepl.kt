@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import java.util.concurrent.locks.ReentrantReadWriteLock
 
+// TODO: remove if unused after switching old repl to the new infrastruct
 open class GenericRepl protected constructor(
         disposable: Disposable,
         scriptDefinition: KotlinScriptDefinition,

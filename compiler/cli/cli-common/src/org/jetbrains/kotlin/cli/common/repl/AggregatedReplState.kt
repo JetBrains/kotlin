@@ -69,7 +69,7 @@ open class AggregatedReplStateHistory<T1, T2>(val history1: IReplStageHistory<T1
     }
 }
 
-open class AggregatedReplStageState<T1, T2>(val state1: IReplStageState<T1>, val state2: IReplStageState<T2>, override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock())
+open class AggregatedReplStageState<T1, T2>(val state1: IReplStageState<T1>, val state2: IReplStageState<T2>, final override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock())
     : IReplStageState<Pair<T1, T2>>
 {
     override val history: IReplStageHistory<Pair<T1, T2>> = AggregatedReplStateHistory(state1.history, state2.history, lock)

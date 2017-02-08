@@ -24,7 +24,6 @@ import kotlin.concurrent.write
 
 data class LineId(override val no: Int, override val generation: Int, private val codeHash: Int) : ILineId, Serializable {
 
-    constructor(no: Int, generation: Int, code: String): this(no, generation, code.hashCode())
     constructor(codeLine: ReplCodeLine): this(codeLine.no, codeLine.generation, codeLine.code.hashCode())
 
     override fun compareTo(other: ILineId): Int = (other as? LineId)?.let {
@@ -65,11 +64,9 @@ open class BasicReplStageHistory<T>(override val lock: ReentrantReadWriteLock = 
     }
 }
 
-open class BasicReplStageState<HistoryItemT>: IReplStageState<HistoryItemT> {
+open class BasicReplStageState<HistoryItemT>(override final val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()): IReplStageState<HistoryItemT> {
 
     override val currentGeneration: Int get() = history.currentGeneration.get()
-
-    override val lock = ReentrantReadWriteLock()
 
     override val history: BasicReplStageHistory<HistoryItemT> = BasicReplStageHistory(lock)
 }

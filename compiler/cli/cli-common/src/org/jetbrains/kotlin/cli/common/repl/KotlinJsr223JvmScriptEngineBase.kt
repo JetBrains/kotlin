@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cli.common.repl
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import java.io.Reader
-import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import javax.script.*
 

@@ -60,10 +60,10 @@ interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
     private fun invokeImpl(prioritizedCallOrder: List<EvalClassWithInstanceAndLoader>, name: String, args: Array<out Any?>): Any? {
         // TODO: cache the method lookups?
 
-        val (fn, mapping, invokeWrapper) = prioritizedCallOrder.asSequence().map { attempt ->
-            val candidates = attempt.klass.functions.filter { it.name == name }
-            candidates.findMapping(listOf<Any?>(attempt.instance) + args)?.let {
-                Triple(it.first, it.second, attempt.invokeWrapper)
+        val (fn, mapping, invokeWrapper) = prioritizedCallOrder.asSequence().map { (klass, instance, _, invokeWrapper) ->
+            val candidates = klass.functions.filter { it.name == name }
+            candidates.findMapping(listOf(instance) + args)?.let {
+                Triple(it.first, it.second, invokeWrapper)
             }
         }.filterNotNull().firstOrNull() ?: throw NoSuchMethodException("no suitable function '$name' found")
 
@@ -108,33 +108,6 @@ interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
         }
         return clasz.kotlin.safeCast(proxy)
     }
-}
-
-private fun invokeImpl(prioritizedCallOrder: List<EvalClassWithInstanceAndLoader>, name: String, args: Array<out Any?>): Any? {
-    // TODO: cache the method lookups?
-
-    val (fn, mapping, invokeWrapper) = prioritizedCallOrder.asSequence().map { attempt ->
-        val candidates = attempt.klass.functions.filter { it.name == name }
-        candidates.findMapping(listOf<Any?>(attempt.instance) + args)?.let {
-            Triple(it.first, it.second, attempt.invokeWrapper)
-        }
-    }.filterNotNull().firstOrNull() ?: throw NoSuchMethodException("no suitable function '$name' found")
-
-    val res = try {
-        if (invokeWrapper != null) {
-            invokeWrapper.invoke {
-                fn.callBy(mapping)
-            }
-        }
-        else {
-            fn.callBy(mapping)
-        }
-    }
-    catch (e: Throwable) {
-        // ignore everything in the stack trace until this constructor call
-        throw ScriptException(renderReplStackTrace(e.cause!!, startFromMethodName = fn.name))
-    }
-    return if (fn.returnType.classifier == Unit::class) Unit else res
 }
 
 private fun Iterable<KFunction<*>>.findMapping(args: List<Any?>): Pair<KFunction<*>, Map<KParameter, Any?>>? {

@@ -27,19 +27,6 @@ open class GenericReplEvaluator(val baseClasspath: Iterable<File>,
                                 protected val repeatingMode: ReplRepeatingMode = ReplRepeatingMode.REPEAT_ONLY_MOST_RECENT
 ) : ReplEvaluator {
 
-//    private val evaluatedHistory = ReplHistory<EvalClassWithInstanceAndLoader>()
-
-//    override val history: List<ReplCodeLine> get() = stateLock.read { evaluatedHistory.copySources() }
-
-//    private class HistoryActions(
-//            val effectiveHistory: List<EvalClassWithInstanceAndLoader>,
-//                                 val verify: (compareHistory: SourceList?) -> Int?,
-//                                 val addPlaceholder: (line: CompiledReplCodeLine, value: EvalClassWithInstanceAndLoader) -> Unit,
-//                                 val removePlaceholder: (line: CompiledReplCodeLine) -> Boolean,
-//                                 val addFinal: (line: CompiledReplCodeLine, value: EvalClassWithInstanceAndLoader) -> Unit,
-//                                 val processClasses: (compileResult: ReplCompileResult.CompiledClasses) -> Pair<ClassLoader, Class<out Any>>
-//    )
-
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = GenericReplEvaluatorState(baseClasspath, baseClassloader, lock)
 
     override fun eval(state: IReplStageState<*>,
@@ -48,17 +35,6 @@ open class GenericReplEvaluator(val baseClasspath: Iterable<File>,
                       invokeWrapper: InvokeWrapper?): ReplEvalResult {
         state.lock.write {
             val evalState = state.asState(GenericReplEvaluatorState::class.java)
-//            val verifyHistory = compileResult.state.dropLast(1)
-//            val defaultHistoryActor = HistoryActions(
-//                    effectiveHistory = evalState.history.map { it.item },
-//                    verify = { line -> evalState.history.firstMismatchingHistory(line) },
-//                    addPlaceholder = { line, value -> evalState.history.add(line, value) },
-//                    removePlaceholder = { line -> evalState.history.removeLast(line) },
-//                    addFinal = { line, value -> evalState.history.add(line, value) },
-//                    processClasses = { compiled ->
-//                        prependClassLoaderWithNewClasses(evalState.history.copyValues(), compiled, )
-//                    })
-
             val historyActor = when (repeatingMode) {
                 ReplRepeatingMode.NONE -> HistoryActionsForNoRepeat(evalState)
                 ReplRepeatingMode.REPEAT_ONLY_MOST_RECENT -> {
@@ -68,19 +44,6 @@ open class GenericReplEvaluator(val baseClasspath: Iterable<File>,
                     }
                     else {
                         HistoryActionsForRepeatRecentOnly(evalState)
-//                        val trimmedHistory = ReplHistory(evalState.history.copyAll().dropLast(1))
-//                        HistoryActions
-//                                effectiveHistory = trimmedHistory.copyValues(),
-//                                verify = { trimmedHistory.firstMismatchingHistory(it) },
-//                                addPlaceholder = { _, _ -> NO_ACTION() },
-//                                removePlaceholder = { NO_ACTION_THAT_RETURNS(true) },
-//                                addFinal = { line, value ->
-//                                    evalState.history.removeLast(line)
-//                                    evalState.history.add(line, value)
-//                                },
-//                                processClasses = { _ ->
-//                                    Pair(lastItem.second.classLoader, lastItem.second.klass.java)
-//                                })
                     }
                 }
                 ReplRepeatingMode.REPEAT_ANY_PREVIOUS -> {
@@ -90,25 +53,6 @@ open class GenericReplEvaluator(val baseClasspath: Iterable<File>,
                     }
                     else {
                         HistoryActionsForRepeatAny(evalState, matchingItem)
-//                        val historyCopy = evalState.history.copyAll()
-//                        val matchingItem = historyCopy.first { it.first.source == compileResult.compiledCodeLine.source }
-//                        val trimmedHistory = ReplHistory(evalState.history.copyAll().takeWhile { it != matchingItem })
-//                        HistoryActions(
-//                                effectiveHistory = trimmedHistory.copyValues(),
-//                                verify = { trimmedHistory.firstMismatchingHistory(it) },
-//                                addPlaceholder = { _, _ -> NO_ACTION() },
-//                                removePlaceholder = { NO_ACTION_THAT_RETURNS(true) },
-//                                addFinal = { line, value ->
-//                                    val extraLines = evalState.history.resetToLine(line)
-//                                    evalState.history.removeLast(line)
-//                                    evalState.history.add(line, value)
-//                                    extraLines.forEach {
-//                                        evalState.history.add(it.first, it.second)
-//                                    }
-//                                },
-//                                processClasses = { _ ->
-//                                    Pair(matchingItem.second.classLoader, matchingItem.second.klass.java)
-//                                })
                     }
                 }
             }
