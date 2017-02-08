@@ -270,6 +270,9 @@ class CoroutineCodegen private constructor(
             generateLoadField(parameter.getFieldInfoForCoroutineLambdaParameter())
             v.store(newIndex, mappedType)
         }
+        if (isSuspendLambda) {
+            initializeVariablesForDestructuredLambdaParameters(this, originalSuspendFunctionDescriptor.valueParameters)
+        }
     }
 
     private fun allLambdaParameters() =
