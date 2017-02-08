@@ -235,6 +235,8 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             configuration.put(CLIConfigurationKeys.COMPILER_JAR_LOCATOR, locator);
         }
 
+        configuration.put(CommonConfigurationKeys.SKIP_METADATA_VERSION_CHECK, arguments.skipMetadataVersionCheck);
+
         setupLanguageVersionSettings(configuration, arguments);
     }
 

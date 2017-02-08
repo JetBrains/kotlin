@@ -312,7 +312,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             configuration.put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, arguments.noOptimize)
             configuration.put(JVMConfigurationKeys.INHERIT_MULTIFILE_PARTS, arguments.inheritMultifileParts)
             configuration.put(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK, arguments.skipRuntimeVersionCheck)
-            configuration.put(CommonConfigurationKeys.SKIP_METADATA_VERSION_CHECK, arguments.skipMetadataVersionCheck)
             configuration.put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)
             configuration.put(CLIConfigurationKeys.REPORT_PERF, arguments.reportPerf)
             configuration.put(JVMConfigurationKeys.USE_SINGLE_MODULE, arguments.singleModule)

@@ -63,6 +63,9 @@ public abstract class CommonCompilerArguments implements Serializable {
     @ValueDescription("<count>")
     public String repeat;
 
+    @Argument(value = "Xskip-metadata-version-check", description = "Load classes with bad metadata version anyway (incl. pre-release classes)")
+    public boolean skipMetadataVersionCheck;
+
     @Argument(value = "Xallow-kotlin-package", description = "Allow compiling code in package 'kotlin'")
     public boolean allowKotlinPackage;
 
