@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
 import org.jetbrains.kotlin.idea.versions.*
+import java.lang.reflect.Field
 
 private fun getRuntimeLibraryVersions(
         module: Module,
@@ -207,7 +208,7 @@ private val CommonCompilerArguments.exposedFields: List<String>
         else -> commonExposedFields
     }
 
-fun parseCompilerArgumentsToFacet(arguments: List<String>, kotlinFacet: KotlinFacet) {
+fun parseCompilerArgumentsToFacet(arguments: List<String>, defaultArguments: List<String>, kotlinFacet: KotlinFacet) {
     val argumentArray = arguments.toTypedArray()
 
     with(kotlinFacet.configuration.settings) {
@@ -219,6 +220,9 @@ fun parseCompilerArgumentsToFacet(arguments: List<String>, kotlinFacet: KotlinFa
             is TargetPlatformKind.JavaScript -> compilerInfo.k2jsCompilerArguments
             else -> commonCompilerArguments
         }!!
+
+        val defaultCompilerArguments = compilerArguments.javaClass.newInstance()
+        parseArguments(defaultArguments.toTypedArray(), defaultCompilerArguments, true)
 
         val oldCoroutineSupport = CoroutineSupport.byCompilerArguments(commonCompilerArguments)
         commonCompilerArguments.coroutinesEnable = false
@@ -248,15 +252,17 @@ fun parseCompilerArgumentsToFacet(arguments: List<String>, kotlinFacet: KotlinFa
 
         val exposedFields = compilerArguments.exposedFields
 
+        fun exposeAsAdditionalArgument(field: Field) = field.name !in exposedFields && field.get(compilerArguments) != field.get(defaultCompilerArguments)
+
         val additionalArgumentsString = with(compilerArguments.javaClass.newInstance()) {
-            copyFieldsSatisfying(compilerArguments, this) { it.name !in exposedFields }
+            copyFieldsSatisfying(compilerArguments, this, ::exposeAsAdditionalArgument)
             ArgumentUtils.convertArgumentsToStringList(this).joinToString(separator = " ")
         }
         compilerInfo.compilerSettings!!.additionalArguments =
                 if (additionalArgumentsString.isNotEmpty()) additionalArgumentsString else CompilerSettings.DEFAULT_ADDITIONAL_ARGUMENTS
 
         with(compilerArguments.javaClass.newInstance()) {
-            copyFieldsSatisfying(this, compilerArguments) { it.name !in exposedFields }
+            copyFieldsSatisfying(this, compilerArguments, ::exposeAsAdditionalArgument)
         }
 
         copyInheritedFields(compilerArguments, commonCompilerArguments)

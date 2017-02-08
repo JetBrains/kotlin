@@ -28,6 +28,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     private val facetSettings: KotlinFacetSettings
         get() = KotlinFacet.get(getModule("project_main"))!!.configuration.settings
 
+    // TODO: Update this test to 1.1-RC when it's available
     @Test
     fun testJvmImport() {
         createProjectSubFile("build.gradle", """

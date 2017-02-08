@@ -121,7 +121,11 @@ private fun configureFacetByGradleModule(
     val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider, false)
     kotlinFacet.configureFacet(compilerVersion, coroutinesProperty, platformKind, modelsProvider)
 
-    moduleNode.serializedCompilerArguments?.let { parseCompilerArgumentsToFacet(it, kotlinFacet) }
+    val currentCompilerArguments = moduleNode.currentCompilerArguments
+    val defaultCompilerArguments = moduleNode.defaultCompilerArguments ?: emptyList()
+    if (currentCompilerArguments != null) {
+        parseCompilerArgumentsToFacet(currentCompilerArguments, defaultCompilerArguments, kotlinFacet)
+    }
 
     return kotlinFacet
 }
