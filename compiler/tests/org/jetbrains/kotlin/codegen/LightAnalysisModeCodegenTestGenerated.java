@@ -4655,6 +4655,12 @@ public class LightAnalysisModeCodegenTestGenerated extends AbstractLightAnalysis
             doTest(fileName);
         }
 
+        @TestMetadata("createCoroutineSafe.kt")
+        public void testCreateCoroutineSafe() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/createCoroutineSafe.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("createCoroutinesOnManualInstances.kt")
         public void testCreateCoroutinesOnManualInstances() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/createCoroutinesOnManualInstances.kt");
@@ -5055,6 +5061,18 @@ public class LightAnalysisModeCodegenTestGenerated extends AbstractLightAnalysis
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/destructuringInLambdas.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("safeCallOnTwoReceivers.kt")
+            public void testSafeCallOnTwoReceivers() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/safeCallOnTwoReceivers.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("safeCallOnTwoReceiversLong.kt")
+            public void testSafeCallOnTwoReceiversLong() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/safeCallOnTwoReceiversLong.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling")
@@ -5122,6 +5140,33 @@ public class LightAnalysisModeCodegenTestGenerated extends AbstractLightAnalysis
             @TestMetadata("usedInVarStore.kt")
             public void testUsedInVarStore() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/usedInVarStore.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/coroutines/intrinsicSemantics")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class IntrinsicSemantics extends AbstractLightAnalysisModeCodegenTest {
+            public void testAllFilesPresentInIntrinsicSemantics() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines/intrinsicSemantics"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("startCoroutine.kt")
+            public void testStartCoroutine() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intrinsicSemantics/startCoroutine.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("startCoroutineUninterceptedOrReturn.kt")
+            public void testStartCoroutineUninterceptedOrReturn() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intrinsicSemantics/startCoroutineUninterceptedOrReturn.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("startCoroutineUninterceptedOrReturnInterception.kt")
+            public void testStartCoroutineUninterceptedOrReturnInterception() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/intrinsicSemantics/startCoroutineUninterceptedOrReturnInterception.kt");
                 doTest(fileName);
             }
         }

@@ -5061,6 +5061,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/destructuringInLambdas.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("safeCallOnTwoReceivers.kt")
+            public void testSafeCallOnTwoReceivers() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/safeCallOnTwoReceivers.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("safeCallOnTwoReceiversLong.kt")
+            public void testSafeCallOnTwoReceiversLong() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/safeCallOnTwoReceiversLong.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling")

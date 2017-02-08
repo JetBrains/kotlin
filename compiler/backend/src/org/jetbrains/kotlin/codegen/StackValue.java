@@ -1596,6 +1596,14 @@ public abstract class StackValue {
         public void dup(@NotNull InstructionAdapter v, boolean withReceiver) {
             AsmUtil.dup(v, extensionReceiver.type, dispatchReceiver.type);
         }
+
+        public StackValue getDispatchReceiver() {
+            return dispatchReceiver;
+        }
+
+        public StackValue getExtensionReceiver() {
+            return extensionReceiver;
+        }
     }
 
     public abstract static class StackValueWithSimpleReceiver extends StackValue {
