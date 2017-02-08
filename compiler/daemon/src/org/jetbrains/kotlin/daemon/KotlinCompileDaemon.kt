@@ -30,9 +30,7 @@ import java.net.URLClassLoader
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.jar.Manifest
-import java.util.logging.Level
-import java.util.logging.LogManager
-import java.util.logging.Logger
+import java.util.logging.*
 import kotlin.concurrent.schedule
 
 val DAEMON_PERIODIC_CHECK_INTERVAL_MS = 1000L
@@ -55,7 +53,6 @@ class LogStream(name: String) : OutputStream() {
     }
 }
 
-
 object KotlinCompileDaemon {
 
     init {
@@ -71,7 +68,7 @@ object KotlinCompileDaemon {
                 "java.util.logging.FileHandler.count     = ${if (fileIsGiven) 1 else 3}\n" +
                 "java.util.logging.FileHandler.append    = $fileIsGiven\n" +
                 "java.util.logging.FileHandler.pattern   = ${if (fileIsGiven) logPath else (logPath + File.separator + "${COMPILE_DAEMON_DEFAULT_FILES_PREFIX}.$logTime.%u%g.log")}\n" +
-                "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s\\n\n"
+                "java.util.logging.SimpleFormatter.format = %1\$tF %1\$tT.%1\$tL [%3\$s] %4\$s: %5\$s%n\n"
 
         LogManager.getLogManager().readConfiguration(cfg.byteInputStream())
     }
@@ -96,6 +93,7 @@ object KotlinCompileDaemon {
         log.info("Kotlin compiler daemon version " + (loadVersionFromResource() ?: "<unknown>"))
         log.info("daemon JVM args: " + ManagementFactory.getRuntimeMXBean().inputArguments.joinToString(" "))
         log.info("daemon args: " + args.joinToString(" "))
+        log.info("daemon process name: " + ManagementFactory.getRuntimeMXBean().name)
 
         val compilerId = CompilerId()
         val daemonOptions = DaemonOptions()
@@ -158,6 +156,8 @@ object KotlinCompileDaemon {
 
             if (daemonOptions.runFilesPath.isNotEmpty())
                 println(daemonOptions.runFilesPath)
+
+            log.info("daemon is listening on port: $port")
 
             // this supposed to stop redirected streams reader(s) on the client side and prevent some situations with hanging threads, but doesn't work reliably
             // TODO: implement more reliable scheme

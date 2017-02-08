@@ -267,20 +267,19 @@ class CompileServiceImpl(
             ifAlive { CompileService.CallResult.Good(usedMemory(withGC = true)) }
 
     override fun shutdown(): CompileService.CallResult<Nothing> = ifAliveExclusive(minAliveness = Aliveness.LastSession, ignoreCompilerChanged = true) {
-        shutdownImpl()
+        shutdownWithDelay()
         CompileService.CallResult.Ok()
     }
 
     override fun scheduleShutdown(graceful: Boolean): CompileService.CallResult<Boolean> = ifAlive(minAliveness = Aliveness.Alive) {
         CompileService.CallResult.Good(
                 if (!graceful || state.alive.compareAndSet(Aliveness.Alive.ordinal, Aliveness.LastSession.ordinal)) {
-                    timer.schedule(0) {
+                    timer.schedule(1) {
                         ifAliveExclusive(minAliveness = Aliveness.LastSession, ignoreCompilerChanged = true) {
-                            if (!graceful || state.sessions.isEmpty()) {
-                                shutdownImpl()
-                            }
-                            else {
-                                log.info("Some sessions are active, waiting for them to finish")
+                            when {
+                                !graceful -> shutdownImpl()
+                                state.sessions.isEmpty() -> shutdownWithDelay()
+                                else -> log.info("Some sessions are active, waiting for them to finish")
                             }
                             CompileService.CallResult.Ok()
                         }
@@ -529,7 +528,7 @@ class CompileServiceImpl(
         val stub = UnicastRemoteObject.exportObject(this, port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory) as CompileService
         registry.rebind (COMPILER_SERVICE_RMI_NAME, stub)
 
-        timer.schedule(0) {
+        timer.schedule(100) {
             initiateElections()
         }
         timer.schedule(delay = DAEMON_PERIODIC_CHECK_INTERVAL_MS, period = DAEMON_PERIODIC_CHECK_INTERVAL_MS) {
@@ -552,7 +551,7 @@ class CompileServiceImpl(
             // 1. check if unused for a timeout - shutdown
             if (shutdownCondition({ daemonOptions.autoshutdownUnusedSeconds != COMPILE_DAEMON_TIMEOUT_INFINITE_S && compilationsCounter.get() == 0 && nowSeconds() - lastUsedSeconds > daemonOptions.autoshutdownUnusedSeconds },
                                   "Unused timeout exceeded ${daemonOptions.autoshutdownUnusedSeconds}s, shutting down")) {
-                shutdown()
+                scheduleShutdown(true)
             }
             else {
                 var anyDead = state.sessions.cleanDead()
@@ -561,7 +560,7 @@ class CompileServiceImpl(
 
                 // 3. check if in graceful shutdown state and all sessions are closed
                 if (shutdownCondition({ state.alive.get() == Aliveness.LastSession.ordinal && state.sessions.isEmpty() }, "All sessions finished, shutting down")) {
-                    shutdown()
+                    shutdownWithDelay()
                     shuttingDown = true
                 }
 
@@ -587,7 +586,7 @@ class CompileServiceImpl(
                     // TODO: could be too expensive anyway, consider removing this check
                     shutdownCondition({ classpathWatcher.isChanged }, "Compiler changed"))
                 {
-                    shutdown()
+                    scheduleShutdown(true)
                     shuttingDown = true
                 }
 
@@ -604,35 +603,44 @@ class CompileServiceImpl(
 
         ifAlive {
 
-            val aliveWithOpts = walkDaemons(File(daemonOptions.runFilesPathOrDefault), compilerId, filter = { f, p -> p != port }, report = { lvl, msg -> log.info(msg) })
-                    .map { Pair(it, it.getDaemonJVMOptions()) }
-                    .filter { it.second.isGood }
-                    .sortedWith(compareByDescending(DaemonJVMOptionsMemoryComparator(), { it.second.get() }))
-            if (aliveWithOpts.any()) {
-                val fattestOpts = aliveWithOpts.first().second.get()
+            val aliveWithOpts = walkDaemons(File(daemonOptions.runFilesPathOrDefault), compilerId, runFile, filter = { f, p -> p != port }, report = { _, msg -> log.info(msg) }).toList()
+            val comparator = compareByDescending<DaemonWithMetadata, DaemonJVMOptions>(DaemonJVMOptionsMemoryComparator(), { it.jvmOptions })
+                    .thenBy(FileAgeComparator()) { it.runFile }
+            aliveWithOpts.maxWith(comparator)?.let { bestDaemonWithMetadata ->
+                val fattestOpts = bestDaemonWithMetadata.jvmOptions
                 // second part of the condition means that we prefer other daemon if is "equal" to the current one
-                if (fattestOpts memorywiseFitsInto daemonJVMOptions && !(daemonJVMOptions memorywiseFitsInto fattestOpts)) {
+                if (fattestOpts memorywiseFitsInto daemonJVMOptions && FileAgeComparator().compare(bestDaemonWithMetadata.runFile, runFile) < 0 ) {
                     // all others are smaller that me, take overs' clients and shut them down
+                    log.info("Assuming other daemons have lower prio, taking clients from them and schedule them to shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
                     aliveWithOpts.forEach {
-                        it.first.getClients().check { it.isGood }?.let {
-                            it.get().forEach { registerClient(it) }
+                        try {
+                            it.daemon.getClients().check { it.isGood }?.let {
+                                it.get().forEach { registerClient(it) }
+                            }
+                            it.daemon.scheduleShutdown(true)
                         }
-                        it.first.scheduleShutdown(true)
+                        catch (e: Exception) {
+                            log.info("Cannot connect to a daemon, assuming dying ('${it.runFile.canonicalPath}'): ${e.message}")
+                        }
                     }
                 }
-                else if (daemonJVMOptions memorywiseFitsInto fattestOpts) {
+                else if (daemonJVMOptions memorywiseFitsInto fattestOpts && FileAgeComparator().compare(bestDaemonWithMetadata.runFile, runFile) > 0) {
                     // there is at least one bigger, handover my clients to it and shutdown
+                    log.info("Assuming other daemons have higher prio, handover clients to it and schedule shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
                     scheduleShutdown(true)
-                    aliveWithOpts.first().first.let { fattest ->
+                    aliveWithOpts.first().daemon.let { fattest ->
                         getClients().check { it.isGood }?.let {
                             it.get().forEach { fattest.registerClient(it) }
                         }
                     }
                 }
-                // else - do nothing, all daemons are staying
-                // TODO: implement some behaviour here, e.g.:
-                //   - shutdown/takeover smaller daemon
-                //   - run (or better persuade client to run) a bigger daemon (in fact may be even simple shutdown will do, because of client's daemon choosing logic)
+                else {
+                    // undecided, do nothing
+                    log.info("Assuming other daemon(s) have equal prio, continue: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
+                    // TODO: implement some behaviour here, e.g.:
+                    //   - shutdown/takeover smaller daemon
+                    //   - run (or better persuade client to run) a bigger daemon (in fact may be even simple shutdown will do, because of client's daemon choosing logic)
+                }
             }
             CompileService.CallResult.Ok()
         }
@@ -653,8 +661,11 @@ class CompileServiceImpl(
         timer.schedule(daemonOptions.shutdownDelayMilliseconds) {
             state.delayedShutdownQueued.set(false)
             if (currentCompilationsCount == compilationsCounter.get()) {
-                log.fine("Execute delayed shutdown")
-                shutdown()
+                ifAliveExclusive(minAliveness = Aliveness.LastSession, ignoreCompilerChanged = true) {
+                    log.fine("Execute delayed shutdown")
+                    shutdownImpl()
+                    CompileService.CallResult.Ok()
+                }
             }
             else {
                 log.info("Cancel delayed shutdown due to new client")
@@ -801,7 +812,7 @@ class CompileServiceImpl(
             state.alive.get() < minAliveness.ordinal -> CompileService.CallResult.Dying()
             !ignoreCompilerChanged && classpathWatcher.isChanged -> {
                 log.info("Compiler changed, scheduling shutdown")
-                timer.schedule(0) { shutdown() }
+                shutdownWithDelay()
                 CompileService.CallResult.Dying()
             }
             else -> {
