@@ -20,19 +20,19 @@ import com.intellij.facet.impl.ui.libraries.DelegatingLibrariesValidatorContext
 import com.intellij.facet.ui.*
 import com.intellij.facet.ui.libraries.FrameworkLibraryValidator
 import com.intellij.openapi.project.Project
+import com.intellij.ui.DocumentAdapter
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.ThreeStateCheckBox
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.config.CompilerSettings
-import org.jetbrains.kotlin.config.KotlinCompilerInfo
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.cli.common.arguments.parseArguments
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerConfigurableTab
 import java.awt.BorderLayout
 import javax.swing.*
+import javax.swing.event.DocumentEvent
 
 class KotlinFacetEditorGeneralTab(
         private val configuration: KotlinFacetConfiguration,
@@ -115,10 +115,31 @@ class KotlinFacetEditorGeneralTab(
         }
     }
 
+    inner class CoroutineContradictionValidator : FacetEditorValidator() {
+        override fun check(): ValidationResult {
+            val selectedOption = editor.compilerConfigurable.coroutineSupportComboBox.selectedItem as? CoroutineSupport
+                                 ?: return ValidationResult.OK
+            val parsedArguments = configuration.settings.compilerInfo.commonCompilerArguments?.javaClass?.newInstance()
+                                  ?: return ValidationResult.OK
+            parseArguments(
+                    editor.compilerConfigurable.additionalArgsOptionsField.text.split(Regex("\\s")).toTypedArray(),
+                    parsedArguments,
+                    true
+            )
+            val parsedOption = CoroutineSupport.byCompilerArgumentsOrNull(parsedArguments) ?: return ValidationResult.OK
+            if (parsedOption != selectedOption) {
+                return ValidationResult("Coroutine support setting specified as an additional argument differs from the one in \"Coroutines\" field", null)
+            }
+
+            return ValidationResult.OK
+        }
+    }
+
     val editor = EditorComponent(editorContext.project, configuration)
 
     private val libraryValidator: FrameworkLibraryValidator
     private val versionValidator = VersionValidator()
+    private val coroutineValidator = CoroutineContradictionValidator()
 
     init {
         libraryValidator = FrameworkLibraryValidatorWithDynamicDescription(
@@ -129,6 +150,7 @@ class KotlinFacetEditorGeneralTab(
 
         validatorsManager.registerValidator(libraryValidator)
         validatorsManager.registerValidator(versionValidator)
+        validatorsManager.registerValidator(coroutineValidator)
 
         editor.compilerConfigurable.languageVersionComboBox.addActionListener {
             validatorsManager.validate()
@@ -141,6 +163,21 @@ class KotlinFacetEditorGeneralTab(
         editor.targetPlatformComboBox.addActionListener {
             validatorsManager.validate()
         }
+
+        editor.compilerConfigurable.coroutineSupportComboBox.addActionListener {
+            validatorsManager.validate()
+        }
+
+        editor.compilerConfigurable.additionalArgsOptionsField.textField.document.addDocumentListener(
+                object : DocumentAdapter() {
+                    override fun textChanged(e: DocumentEvent) {
+                        val text = e.document.getText(0, e.document.length)
+                        if (text.contains("-Xcoroutine")) {
+                            validatorsManager.validate()
+                        }
+                    }
+                }
+        )
 
         editor.updateCompilerConfigurable()
 

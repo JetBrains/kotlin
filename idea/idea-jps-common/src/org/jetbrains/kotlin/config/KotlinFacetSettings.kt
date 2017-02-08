@@ -74,12 +74,14 @@ enum class CoroutineSupport(
     companion object {
         val DEFAULT = ENABLED_WITH_WARNING
 
-        @JvmStatic fun byCompilerArguments(arguments: CommonCompilerArguments?) = when {
-            arguments == null -> DEFAULT
+        @JvmStatic fun byCompilerArguments(arguments: CommonCompilerArguments?) = byCompilerArgumentsOrNull(arguments) ?: DEFAULT
+
+        fun byCompilerArgumentsOrNull(arguments: CommonCompilerArguments?) = when {
+            arguments == null -> null
             arguments.coroutinesEnable -> ENABLED
             arguments.coroutinesWarn -> ENABLED_WITH_WARNING
             arguments.coroutinesError -> DISABLED
-            else -> DEFAULT
+            else -> null
         }
 
         fun byCompilerArgument(argument: String): CoroutineSupport {
