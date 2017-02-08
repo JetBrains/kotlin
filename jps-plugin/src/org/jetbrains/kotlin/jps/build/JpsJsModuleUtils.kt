@@ -50,22 +50,12 @@ object JpsJsModuleUtils {
             override fun consume(module: JpsModule) {
                 if (module.moduleType != JpsJavaModuleType.INSTANCE) return
 
-                var yieldProduction = module != target.module || target.isTests
-                var yieldTests = module != target.module
+                if ((module != target.module || target.isTests) && module.sourceRoots.any { it.rootType == JavaSourceRootType.SOURCE}) {
+                    addTarget(module, JavaModuleBuildTargetType.PRODUCTION)
+                }
 
-                module.sourceRoots.forEach {
-                    if (it.rootType == JavaSourceRootType.SOURCE) {
-                        if (yieldProduction) {
-                            addTarget(module, JavaModuleBuildTargetType.PRODUCTION)
-                            yieldProduction = false
-                        }
-                    }
-                    else {
-                        if (yieldTests) {
-                            addTarget(module, JavaModuleBuildTargetType.TEST)
-                            yieldTests = false
-                        }
-                    }
+                if (module != target.module && target.isTests && module.sourceRoots.any { it.rootType == JavaSourceRootType.TEST_SOURCE}) {
+                    addTarget(module, JavaModuleBuildTargetType.TEST)
                 }
             }
 
