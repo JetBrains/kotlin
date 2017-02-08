@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 internal fun createLlvmDeclarations(context: Context): LlvmDeclarations {
     val generator = DeclarationsGeneratorVisitor(context)
@@ -72,17 +73,17 @@ internal class StaticFieldLlvmDeclarations(val storage: LLVMValueRef)
  * All fields of the class instance.
  * The order respects the class hierarchy, i.e. a class [fields] contains superclass [fields] as a prefix.
  */
-private fun getFields(context: Context, classDescriptor: ClassDescriptor): List<PropertyDescriptor> {
+internal fun ContextUtils.getFields(classDescriptor: ClassDescriptor): List<PropertyDescriptor> {
     val superClass = classDescriptor.getSuperClassNotAny() // TODO: what if Any has fields?
-    val superFields = if (superClass != null) getFields(context, superClass) else emptyList()
+    val superFields = if (superClass != null) getFields(superClass) else emptyList()
 
-    return superFields + getDeclaredFields(context, classDescriptor)
+    return superFields + getDeclaredFields(classDescriptor)
 }
 
 /**
  * Fields declared in the class.
  */
-private fun getDeclaredFields(context: Context, classDescriptor: ClassDescriptor): List<PropertyDescriptor> {
+private fun ContextUtils.getDeclaredFields(classDescriptor: ClassDescriptor): List<PropertyDescriptor> {
     // TODO: Here's what is going on here:
     // The existence of a backing field for a property is only described in the IR,
     // but not in the property descriptor.
@@ -117,7 +118,7 @@ private fun getDeclaredFields(context: Context, classDescriptor: ClassDescriptor
         properties.mapNotNull { it.backingField }
     }
     return fields.sortedBy {
-        it.name.hashCode()
+        it.fqNameSafe.localHash.value
     }
 }
 
@@ -212,7 +213,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
 
         val internalName = qualifyInternalName(descriptor)
 
-        val fields = getFields(context, descriptor)
+        val fields = getFields(descriptor)
         val bodyType = createClassBodyType("kclassbody:$internalName", fields)
 
         val typeInfoPtr: ConstPointer
