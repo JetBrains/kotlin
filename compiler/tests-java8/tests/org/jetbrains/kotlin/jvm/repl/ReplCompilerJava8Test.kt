@@ -134,7 +134,8 @@ class ReplCompilerJava8Test : TestCase() {
 
     private fun runTest(configuration: CompilerConfiguration): ReplCompileResult {
         val replCompiler = GenericReplCompiler(disposable!!, StandardScriptDefinition, configuration, PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false))
+        val state = replCompiler.createState()
 
-        return replCompiler.compile(ReplCodeLine(0, script))
+        return replCompiler.compile(state, ReplCodeLine(0, 0, script))
     }
 }
