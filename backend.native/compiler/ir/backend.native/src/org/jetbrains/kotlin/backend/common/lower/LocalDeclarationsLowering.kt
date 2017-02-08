@@ -645,13 +645,6 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
                     element.acceptChildrenVoid(this)
                 }
 
-                // TODO: remove as soon as bug in IrSetterCallImpl is fixed.
-                override fun visitCall(expression: IrCall) {
-                    super.visitCall(expression)
-                    if (expression is IrSetterCallImpl)
-                        visitElement(expression.getValueArgument(0)!!)
-                }
-
                 private fun DeclarationDescriptor.declaredInFunction() = when (this.containingDeclaration) {
                     is CallableDescriptor -> true
                     is ClassDescriptor -> false

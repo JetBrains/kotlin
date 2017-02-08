@@ -84,13 +84,6 @@ abstract class AbstractClosureAnnotator : IrElementVisitorVoid {
         closuresStack.peek()?.addNested(closure)
     }
 
-    // TODO: remove as soon as bug in IrSetterCallImpl is fixed.
-    override fun visitCall(expression: IrCall) {
-        super.visitCall(expression)
-        if (expression is IrSetterCallImpl)
-            visitElement(expression.getValueArgument(0)!!)
-    }
-
     override fun visitFunction(declaration: IrFunction) {
         val functionDescriptor = declaration.descriptor
         val closureBuilder = FunctionClosureBuilder(functionDescriptor)
