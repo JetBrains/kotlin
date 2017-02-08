@@ -24,6 +24,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.builtins.JvmBuiltInsPackageFragmentProvider
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -56,7 +57,6 @@ import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.TopDownAnalysisMode
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
@@ -253,6 +253,7 @@ object TopDownAnalyzerFacadeForJVM {
     fun createContextWithSealedModule(project: Project, configuration: CompilerConfiguration): MutableModuleContext =
             createModuleContext(project, configuration, false).apply {
                 setDependencies(module, module.builtIns.builtInsModule)
+                (module.builtIns as JvmBuiltIns).initialize(module, configuration.get(LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl.DEFAULT))
             }
 
     private fun createModuleContext(
