@@ -53,7 +53,7 @@ const val KOTLIN_BUILD_DIR_NAME = "kotlin"
 const val USING_EXPERIMENTAL_INCREMENTAL_MESSAGE = "Using experimental kotlin incremental compilation"
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCompile(), CompilerArgumentAware {
-    abstract protected fun populateCompilerArguments(): T
+    abstract protected fun populateCompilerArguments(defaultsOnly: Boolean = false): T
 
     protected val additionalClasspath = arrayListOf<File>()
     protected val compileClasspath: Iterable<File>
@@ -63,6 +63,13 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     override val serializedCompilerArguments: List<String>
         get() {
             val arguments = populateCompilerArguments()
+            arguments.setupCommonCompilerArgs()
+            return ArgumentUtils.convertArgumentsToStringList(arguments)
+        }
+
+    override val defaultSerializedCompilerArguments: List<String>
+        get() {
+            val arguments = populateCompilerArguments(true)
             arguments.setupCommonCompilerArgs()
             return ArgumentUtils.convertArgumentsToStringList(arguments)
         }
@@ -180,8 +187,10 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     override fun findKotlinCompilerJar(project: Project): File? =
             findKotlinJvmCompilerJar(project)
 
-    override fun populateCompilerArguments(): K2JVMCompilerArguments {
+    override fun populateCompilerArguments(defaultsOnly: Boolean): K2JVMCompilerArguments {
         val args = K2JVMCompilerArguments().apply { fillDefaultValues() }
+
+        if (defaultsOnly) return args
 
         handleKaptProperties()
         args.pluginClasspaths = pluginOptions.classpath.toTypedArray()
@@ -320,8 +329,11 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
     override fun findKotlinCompilerJar(project: Project): File? =
             findKotlinJsCompilerJar(project)
 
-    override fun populateCompilerArguments(): K2JSCompilerArguments {
+    override fun populateCompilerArguments(defaultsOnly: Boolean): K2JSCompilerArguments {
         val args = K2JSCompilerArguments().apply { fillDefaultValues() }
+
+        if (defaultsOnly) return args
+
         args.outputFile = outputFile
         kotlinOptionsImpl.updateArguments(args)
         return args
