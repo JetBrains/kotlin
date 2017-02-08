@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.backend.konan.KonanPlatformConfigurator
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
@@ -36,12 +37,13 @@ class KonanBuiltIns: KotlinBuiltIns {
 
 object KonanPlatform : TargetPlatform("Konan") {
     override val multiTargetPlatform = MultiTargetPlatform.Specific(platformName)
-    override val defaultImports: List<ImportPath> = Default.defaultImports + listOf(
-            ImportPath("kotlin.*"),
-            ImportPath("kotlin.collections.*"),
-            ImportPath("kotlin.io.*"),
-            ImportPath("konan.*")
-    )
+    override fun getDefaultImports(languageVersionSettings: LanguageVersionSettings): List<ImportPath> =
+            Default.getDefaultImports(languageVersionSettings) + listOf(
+                    ImportPath("kotlin.*"),
+                    ImportPath("kotlin.collections.*"),
+                    ImportPath("kotlin.io.*"),
+                    ImportPath("konan.*")
+            )
 
     override val platformConfigurator: PlatformConfigurator = KonanPlatformConfigurator
 
