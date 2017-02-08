@@ -1122,6 +1122,11 @@ kotlinNativeInterop {
         target 'native'
         compilerOpts '-D_POSIX_SOURCE' // Exclude Darwin extensions causing link errors.
     }
+
+    sockets {
+        defFile 'interop/basics/sockets.def'
+        target 'native'
+    }
 }
 
 task interop0(type: RunInteropKonanTest) {
@@ -1140,4 +1145,12 @@ task interop2(type: RunInteropKonanTest) {
     goldValue = "Hello\n"
     source = "interop/basics/2.kt"
     interop = 'cstdio'
+}
+
+task interop_echo_server(type: RunInteropKonanTest) {
+    if (isLinux()) {
+        disabled = true
+    }
+    source = "interop/basics/echo_server.kt"
+    interop = 'sockets'
 }
