@@ -352,24 +352,20 @@ fun main(args : Array<String>) {
         statistics = new Statistics()
         ktFiles.each {
             source = project.relativePath(it)
+            def testCase = testCase(it.name, statistics)
             println("TEST: $it.name ($statistics.total/${ktFiles.size()}, passed: $statistics.passed, skipped: $statistics.skipped)")
+            testCase.start()
             if (isEnabledForNativeBackend(source)) {
                 try {
                     super.executeTest()
-                    currentResult = new TestResult(TestStatus.PASSED)
-                    statistics.pass()
+                    currentResult = testCase.pass()
                 } catch (TestFailedException e) {
-                    currentResult = new TestResult(TestStatus.FAILED,
-                            "Cause: ${e.getCause()?.getMessage()}")
-                    statistics.fail()
+                    currentResult = testCase.fail(e)
                 } catch (Exception ex) {
-                    currentResult = new TestResult(TestStatus.ERROR,
-                            "Exception: ${ex.getMessage()}. Cause: ${ex.getCause()?.getMessage()}")
-                    statistics.error()
+                    currentResult = testCase.error(ex)
                 }
             } else {
-                currentResult = new TestResult(TestStatus.SKIPPED)
-                statistics.skip()
+                currentResult = testCase.skip()
             }
             println("TEST $currentResult.status\n")
             results.put(it.name, currentResult)
@@ -380,5 +376,87 @@ fun main(args : Array<String>) {
         def json = JsonOutput.toJson(["statistics" : statistics, "tests" : results])
         reportFile.write(JsonOutput.prettyPrint(json))
         println("TOTAL PASSED: $statistics.passed/$statistics.total (SKIPPED: $statistics.skipped)")
+    }
+
+    KonanTestCase testCase(String name, Statistics statistics) {
+        if (System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE") != null)
+            return new TeamcityKonanTestCase(name, statistics)
+        return new KonanTestCase(name, statistics)
+    }
+
+    class KonanTestCase {
+        protected name;
+        protected statistics;
+        KonanTestCase(String name, Statistics statistics) {
+            this.name       = name
+            this.statistics = statistics
+        }
+
+        void start(){}
+
+        TestResult pass() {
+            statistics.pass()
+            return new TestResult(TestStatus.PASSED)
+        }
+
+        TestResult fail(TestFailedException e) {
+            statistics.fail()
+            return new TestResult(TestStatus.FAILED, "Cause: ${e.getCause()?.getMessage()}")
+        }
+
+        TestResult error(Exception e) {
+            statistics.error()
+            return new TestResult(TestStatus.ERROR, "Exception: ${e.getMessage()}. Cause: ${e.getCause()?.getMessage()}")
+        }
+
+        TestResult skip() {
+            return new TestResult(TestStatus.SKIPPED)
+        }
+    }
+
+    class TeamcityKonanTestCase extends KonanTestCase {
+        TeamcityKonanTestCase(String name, Statistics statistics) {
+            super(name, statistics)
+        }
+
+        private teamcityReport(String msg) {
+            println("##teamcity[$msg]")
+        }
+
+        private teamcityFinish() {
+            teamcityReport("testFinished name='$name'")
+        }
+
+        void start() {
+            teamcityReport("testStarted name='$name'")
+        }
+
+        TestResult pass() {
+            teamcityFinish()
+            return super.pass()
+        }
+
+
+        TestResult fail(TestFailedException e) {
+            teamcityReport("testFailed type='comparisonFailure' name='$name' message='${e.getMessage()}'")
+            teamcityFinish()
+            return super.fail(e)
+        }
+
+        TestResult error(Exception e) {
+            def writer = new StringWriter()
+            e.printStackTrace(new PrintWriter(writer))
+            def rawString  = writer.toString()
+            def formatedString = rawString.replaceAll("\r","|r").replaceAll("\n", "|n")
+            teamcityReport("testFailed name='$name' message='${e.getMessage()}' details='${formatedString}'")
+            teamcityFinish()
+            return super.error(e)
+        }
+
+        TestResult skip() {
+            teamcityReport("testIgnored name='$name'")
+            teamcityFinish()
+            return super.skip()
+        }
     }
 }
