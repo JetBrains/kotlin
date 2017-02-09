@@ -188,8 +188,8 @@ class JavaAgainstKotlinCompiler(private val environment: KotlinCoreEnvironment) 
                         Diagnostic.Kind.NOTE -> CompilerMessageSeverity.INFO
                         else -> CompilerMessageSeverity.LOGGING
                     }
-                    val position = if (it.lineNumber.toInt() != -1) " [${it.lineNumber}, ${it.columnNumber}]" else ""
-                    val message = "${it.source.name}$position: ${it.getMessage(Locale.ENGLISH)}"
+                    val position = if (it.lineNumber != -1L) " [${it.lineNumber}, ${it.columnNumber}]" else ""
+                    val message = "${it.source?.name}$position: ${it.getMessage(Locale.ENGLISH)}"
 
                     messageCollector?.report(severity, message, CompilerMessageLocation.NO_LOCATION)
                 }

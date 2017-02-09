@@ -193,8 +193,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
                 val environment = createEnvironmentWithScriptingSupport(rootDisposable, configuration, arguments, messageCollector)
                                   ?: return COMPILATION_ERROR
-                val environmentForJavac = createEnvironmentWithScriptingSupport(rootDisposable, configuration, arguments, messageCollector)
-                                          ?: return COMPILATION_ERROR
 
                 if (environment.getSourceFiles().isEmpty()) {
                     if (arguments.version) {
@@ -204,14 +202,18 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     return COMPILATION_ERROR
                 }
 
-                val javac = thread {
-                    JavaAgainstKotlinCompiler(environmentForJavac)
-                            .compileJavaFiles(destination = destination, messageCollector = messageCollector)
-                }
+                val javac = if (arguments.parallelMode) {
+                    val environmentForJavac = createEnvironmentWithScriptingSupport(rootDisposable, configuration, arguments, messageCollector)
+                                              ?: return COMPILATION_ERROR
+                    thread {
+                        JavaAgainstKotlinCompiler(environmentForJavac)
+                                .compileJavaFiles(destination = destination, messageCollector = messageCollector)
+                    }
+                } else null
 
                 KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment)
 
-                javac.join()
+                javac?.join()
             }
 
             if (arguments.reportPerf) {

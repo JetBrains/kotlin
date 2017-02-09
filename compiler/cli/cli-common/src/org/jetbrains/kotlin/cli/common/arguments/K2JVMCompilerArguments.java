@@ -69,6 +69,9 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "module-name", description = "Module name")
     public String moduleName;
 
+    @Argument(value = "enable-parallel-mode", description = "Compile Kotlin and Java sources in parallel mode")
+    public boolean parallelMode;
+
     @GradleOption(DefaultValues.JvmTargetVersions.class)
     @Argument(value = "jvm-target", description = "Target version of the generated JVM bytecode (1.6 or 1.8), default is 1.6")
     @ValueDescription("<version>")
