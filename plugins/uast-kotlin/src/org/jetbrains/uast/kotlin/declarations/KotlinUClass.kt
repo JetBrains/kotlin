@@ -69,6 +69,9 @@ class KotlinUClass private constructor(
                         val containingMethod = this
 
                         object : UBlockExpression {
+                            override val psi: PsiElement?
+                                 get() = null
+
                             override val containingElement: UElement?
                                 get() = containingMethod
 

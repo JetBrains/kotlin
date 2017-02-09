@@ -19,11 +19,10 @@ package org.jetbrains.uast.kotlin
 import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UReturnExpression
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUReturnExpression(
         override val psi: KtReturnExpression,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UReturnExpression, PsiElementBacked, KotlinUElementWithType {
+) : KotlinAbstractUExpression(), UReturnExpression, KotlinUElementWithType {
     override val returnExpression by lz { KotlinConverter.convertOrNull(psi.returnedExpression, this) }
 }

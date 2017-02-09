@@ -9,7 +9,7 @@ UFile (package = )
             ULiteralExpression (value = 5)
     UClass (name = IntRange)
         UAnnotation (fqName = java.lang.annotation.Retention)
-            UNamedExpression (name = )
+            UNamedExpression (name = null)
                 UQualifiedReferenceExpression
                     UQualifiedReferenceExpression
                         UQualifiedReferenceExpression

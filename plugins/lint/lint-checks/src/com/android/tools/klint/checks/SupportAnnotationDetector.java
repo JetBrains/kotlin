@@ -16,37 +16,6 @@
 
 package com.android.tools.klint.checks;
 
-import static com.android.SdkConstants.ANDROID_URI;
-import static com.android.SdkConstants.ATTR_NAME;
-import static com.android.SdkConstants.ATTR_VALUE;
-import static com.android.SdkConstants.CLASS_INTENT;
-import static com.android.SdkConstants.CLASS_VIEW;
-import static com.android.SdkConstants.INT_DEF_ANNOTATION;
-import static com.android.SdkConstants.STRING_DEF_ANNOTATION;
-import static com.android.SdkConstants.SUPPORT_ANNOTATIONS_PREFIX;
-import static com.android.SdkConstants.TAG_PERMISSION;
-import static com.android.SdkConstants.TAG_USES_PERMISSION;
-import static com.android.SdkConstants.TAG_USES_PERMISSION_SDK_23;
-import static com.android.SdkConstants.TAG_USES_PERMISSION_SDK_M;
-import static com.android.SdkConstants.TYPE_DEF_FLAG_ATTRIBUTE;
-import static com.android.resources.ResourceType.COLOR;
-import static com.android.resources.ResourceType.DIMEN;
-import static com.android.resources.ResourceType.DRAWABLE;
-import static com.android.resources.ResourceType.MIPMAP;
-import static com.android.tools.klint.checks.PermissionFinder.Operation.ACTION;
-import static com.android.tools.klint.checks.PermissionFinder.Operation.READ;
-import static com.android.tools.klint.checks.PermissionFinder.Operation.WRITE;
-import static com.android.tools.klint.checks.PermissionRequirement.ATTR_PROTECTION_LEVEL;
-import static com.android.tools.klint.checks.PermissionRequirement.VALUE_DANGEROUS;
-import static com.android.tools.klint.checks.PermissionRequirement.getAnnotationBooleanValue;
-import static com.android.tools.klint.checks.PermissionRequirement.getAnnotationDoubleValue;
-import static com.android.tools.klint.checks.PermissionRequirement.getAnnotationLongValue;
-import static com.android.tools.klint.checks.PermissionRequirement.getAnnotationStringValue;
-import static com.android.tools.klint.detector.api.ResourceEvaluator.COLOR_INT_ANNOTATION;
-import static com.android.tools.klint.detector.api.ResourceEvaluator.PX_ANNOTATION;
-import static com.android.tools.klint.detector.api.ResourceEvaluator.RES_SUFFIX;
-import static org.jetbrains.uast.UastUtils.getQualifiedParentOrThis;
-
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.resources.ResourceType;
@@ -58,35 +27,11 @@ import com.android.tools.klint.client.api.ExternalReferenceExpression;
 import com.android.tools.klint.client.api.JavaEvaluator;
 import com.android.tools.klint.client.api.LintClient;
 import com.android.tools.klint.client.api.UastLintUtils;
-import com.android.tools.klint.detector.api.Category;
-import com.android.tools.klint.detector.api.ConstantEvaluator;
-import com.android.tools.klint.detector.api.Detector;
-import com.android.tools.klint.detector.api.Implementation;
-import com.android.tools.klint.detector.api.Issue;
-import com.android.tools.klint.detector.api.JavaContext;
-import com.android.tools.klint.detector.api.Project;
-import com.android.tools.klint.detector.api.ResourceEvaluator;
-import com.android.tools.klint.detector.api.Scope;
-import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.TextFormat;
+import com.android.tools.klint.detector.api.*;
 import com.android.utils.XmlUtils;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiArrayType;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiClassType;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiJavaCodeReferenceElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiModifier;
-import com.intellij.psi.PsiModifierList;
-import com.intellij.psi.PsiParameter;
-import com.intellij.psi.PsiParameterList;
-import com.intellij.psi.PsiType;
-import com.intellij.psi.PsiVariable;
-
+import com.intellij.psi.*;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.java.JavaUAnnotation;
 import org.jetbrains.uast.util.UastExpressionUtils;
@@ -98,13 +43,14 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
+
+import static com.android.SdkConstants.*;
+import static com.android.resources.ResourceType.*;
+import static com.android.tools.klint.checks.PermissionFinder.Operation.*;
+import static com.android.tools.klint.checks.PermissionRequirement.*;
+import static com.android.tools.klint.detector.api.ResourceEvaluator.*;
+import static org.jetbrains.uast.UastUtils.getQualifiedParentOrThis;
 
 /**
  * Looks up annotations on method calls and enforces the various things they
@@ -1710,15 +1656,11 @@ public class SupportAnnotationDetector extends Detector implements Detector.Uast
 
     @Nullable
     private static UExpression getAnnotationValue(@NonNull UAnnotation annotation) {
-        UNamedExpression value = annotation.findDeclaredAttributeValue(ATTR_VALUE);
+        UExpression value = annotation.findDeclaredAttributeValue(ATTR_VALUE);
         if (value == null) {
             value = annotation.findDeclaredAttributeValue(null);
         }
-        if (value == null) {
-            return null;
-        }
-
-        return value.getExpression();
+        return value;
     }
 
     private static String listAllowedValues(@NonNull UElement context,

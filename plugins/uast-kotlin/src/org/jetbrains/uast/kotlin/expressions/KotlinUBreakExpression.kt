@@ -20,12 +20,11 @@ import org.jetbrains.kotlin.psi.KtBreakExpression
 import org.jetbrains.uast.UBreakExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.kotlin.KotlinAbstractUExpression
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUBreakExpression(
         override val psi: KtBreakExpression,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UBreakExpression, PsiElementBacked {
+) : KotlinAbstractUExpression(), UBreakExpression {
     override val label: String?
         get() = psi.getLabelName()
 }

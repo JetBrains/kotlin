@@ -19,11 +19,10 @@ package org.jetbrains.uast.kotlin
 import org.jetbrains.kotlin.psi.KtParenthesizedExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UParenthesizedExpression
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUParenthesizedExpression(
         override val psi: KtParenthesizedExpression,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UParenthesizedExpression, PsiElementBacked, KotlinUElementWithType {
+) : KotlinAbstractUExpression(), UParenthesizedExpression, KotlinUElementWithType {
     override val expression by lz { KotlinConverter.convertOrEmpty(psi.expression, this) }
 }

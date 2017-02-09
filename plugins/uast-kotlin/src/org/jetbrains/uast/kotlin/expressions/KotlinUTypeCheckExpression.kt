@@ -20,12 +20,11 @@ import org.jetbrains.kotlin.psi.KtIsExpression
 import org.jetbrains.uast.UBinaryExpressionWithType
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UastBinaryExpressionWithTypeKind
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUTypeCheckExpression(
         override val psi: KtIsExpression,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UBinaryExpressionWithType, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
+) : KotlinAbstractUExpression(), UBinaryExpressionWithType, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val operand by lz { KotlinConverter.convertOrEmpty(psi.leftHandSide, this) }
     
     override val type by lz { psi.typeReference.toPsiType(this) }

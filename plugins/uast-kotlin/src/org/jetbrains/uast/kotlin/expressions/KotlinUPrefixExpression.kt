@@ -23,12 +23,11 @@ import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.UPrefixExpression
 import org.jetbrains.uast.UastPrefixOperator
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUPrefixExpression(
         override val psi: KtPrefixExpression,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UPrefixExpression, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
+) : KotlinAbstractUExpression(), UPrefixExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val operand by lz { KotlinConverter.convertOrEmpty(psi.baseExpression, this) }
 
     override val operatorIdentifier: UIdentifier?

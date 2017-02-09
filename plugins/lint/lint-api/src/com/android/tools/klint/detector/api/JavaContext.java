@@ -16,10 +16,6 @@
 
 package com.android.tools.klint.detector.api;
 
-import static com.android.SdkConstants.CLASS_CONTEXT;
-import static com.android.tools.klint.client.api.JavaParser.ResolvedNode;
-import static com.android.tools.klint.client.api.JavaParser.TypeDescriptor;
-
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.tools.klint.client.api.JavaEvaluator;
@@ -31,46 +27,19 @@ import com.google.common.collect.Iterators;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiAnonymousClass;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiEnumConstant;
-import com.intellij.psi.PsiExpression;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiJavaCodeReferenceElement;
-import com.intellij.psi.PsiJavaFile;
-import com.intellij.psi.PsiLabeledStatement;
-import com.intellij.psi.PsiMember;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiMethodCallExpression;
-import com.intellij.psi.PsiNameIdentifierOwner;
-import com.intellij.psi.PsiNewExpression;
-import com.intellij.psi.PsiReferenceExpression;
-import com.intellij.psi.PsiSwitchStatement;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
-
+import lombok.ast.*;
+import lombok.ast.Position;
 import org.jetbrains.uast.*;
-import org.jetbrains.uast.psi.PsiElementBacked;
 import org.jetbrains.uast.psi.UElementWithLocation;
 
 import java.io.File;
 import java.util.Iterator;
 
-import lombok.ast.AnnotationElement;
-import lombok.ast.AnnotationMethodDeclaration;
-import lombok.ast.ClassDeclaration;
-import lombok.ast.ConstructorDeclaration;
-import lombok.ast.ConstructorInvocation;
-import lombok.ast.EnumConstant;
-import lombok.ast.Expression;
-import lombok.ast.LabelledStatement;
-import lombok.ast.MethodDeclaration;
-import lombok.ast.MethodInvocation;
-import lombok.ast.Node;
-import lombok.ast.Position;
-import lombok.ast.TypeDeclaration;
-import lombok.ast.VariableReference;
+import static com.android.SdkConstants.CLASS_CONTEXT;
+import static com.android.tools.klint.client.api.JavaParser.ResolvedNode;
+import static com.android.tools.klint.client.api.JavaParser.TypeDescriptor;
 
 /**
  * A {@link Context} used when checking Java files.
@@ -252,8 +221,8 @@ public class JavaContext extends Context {
             UElementWithLocation segment = (UElementWithLocation) node;
             return Location.create(ioFile, file.getPsi().getText(),
                     segment.getStartOffset(), segment.getEndOffset());
-        } else if (node instanceof PsiElementBacked) {
-            PsiElement psiElement = ((PsiElementBacked) node).getPsi();
+        } else {
+            PsiElement psiElement = node.getPsi();
             if (psiElement != null) {
                 TextRange range = psiElement.getTextRange();
                 UFile containingFile = getUFile();
@@ -478,10 +447,7 @@ public class JavaContext extends Context {
     }
 
     public boolean isSuppressedWithComment(@NonNull UElement scope, @NonNull Issue issue) {
-        if (!(scope instanceof PsiElementBacked)) {
-            return false;
-        }
-        PsiElement psi = ((PsiElementBacked) scope).getPsi();
+        PsiElement psi = scope.getPsi();
         return psi != null && isSuppressedWithComment(psi, issue);
 
     }

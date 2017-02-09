@@ -20,12 +20,11 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtPostfixExpression
 import org.jetbrains.uast.*
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUPostfixExpression(
         override val psi: KtPostfixExpression,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UPostfixExpression, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement, UResolvable {
+) : KotlinAbstractUExpression(), UPostfixExpression, KotlinUElementWithType, KotlinEvaluatableUElement, UResolvable {
     override val operand by lz { KotlinConverter.convertOrEmpty(psi.baseExpression, this) }
 
     override val operator = when (psi.operationToken) {

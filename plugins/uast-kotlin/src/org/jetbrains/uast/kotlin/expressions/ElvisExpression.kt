@@ -12,6 +12,7 @@ import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
 private fun createVariableReferenceExpression(variable: UVariable, containingElement: UElement?) =
         object : USimpleNameReferenceExpression {
+            override val psi: PsiElement? = null
             override fun resolve(): PsiElement? = variable
             override val containingElement: UElement? = containingElement
             override val resolvedName: String? = variable.name
@@ -21,6 +22,7 @@ private fun createVariableReferenceExpression(variable: UVariable, containingEle
 
 private fun createNullLiteralExpression(containingElement: UElement?) =
         object : ULiteralExpression {
+            override val psi: PsiElement? = null
             override val containingElement: UElement? = containingElement
             override val value: Any? = null
             override val annotations: List<UAnnotation> = emptyList()
@@ -28,6 +30,7 @@ private fun createNullLiteralExpression(containingElement: UElement?) =
 
 private fun createNotEqWithNullExpression(variable: UVariable, containingElement: UElement?) =
         object : UBinaryExpression {
+            override val psi: PsiElement? = null
             override val containingElement: UElement? = containingElement
             override val leftOperand: UExpression by lz { createVariableReferenceExpression(variable, this) }
             override val rightOperand: UExpression by lz { createNullLiteralExpression(this) }
@@ -49,6 +52,7 @@ private fun createElvisExpressions(
     declaration.declarations = listOf(tempVariable)
 
     val ifExpression = object : UIfExpression {
+        override val psi: PsiElement? = null
         override val containingElement: UElement? = containingElement
         override val condition: UExpression by lz { createNotEqWithNullExpression(tempVariable, this) }
         override val thenExpression: UExpression? by lz { createVariableReferenceExpression(tempVariable, this) }

@@ -1263,34 +1263,28 @@ public class ApiDetector extends ResourceXmlDetector
         }
 
         @Override
-        public boolean visitVariable(@NotNull UVariable node) {
-            if (node instanceof ULocalVariable) {
-                visitLocalVariable((ULocalVariable) node);
-            }
-            return super.visitVariable(node);
-        }
-
-        private void visitLocalVariable(ULocalVariable variable) {
+        public boolean visitLocalVariable(ULocalVariable variable) {
             UExpression initializer = variable.getUastInitializer();
             if (initializer == null) {
-                return;
+                return true;
             }
 
             PsiType initializerType = initializer.getExpressionType();
             if (!(initializerType instanceof PsiClassType)) {
-                return;
+                return true;
             }
 
             PsiType interfaceType = variable.getType();
             if (initializerType.equals(interfaceType)) {
-                return;
+                return true;
             }
 
             if (!(interfaceType instanceof PsiClassType)) {
-                return;
+                return true;
             }
 
             checkCast(initializer, (PsiClassType)initializerType, (PsiClassType)interfaceType);
+            return true;
         }
 
         @Override

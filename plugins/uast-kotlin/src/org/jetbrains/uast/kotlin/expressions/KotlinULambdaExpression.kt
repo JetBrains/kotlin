@@ -21,13 +21,12 @@ import org.jetbrains.uast.UBlockExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.ULambdaExpression
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
-import org.jetbrains.uast.psi.PsiElementBacked
 import org.jetbrains.uast.withMargin
 
 class KotlinULambdaExpression(
         override val psi: KtLambdaExpression,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), ULambdaExpression, PsiElementBacked, KotlinUElementWithType {
+) : KotlinAbstractUExpression(), ULambdaExpression, KotlinUElementWithType {
     override val body by lz { KotlinConverter.convertOrEmpty(psi.bodyExpression, this) }
     
     override val valueParameters by lz {

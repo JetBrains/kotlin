@@ -20,12 +20,11 @@ import org.jetbrains.kotlin.psi.KtContinueExpression
 import org.jetbrains.uast.UContinueExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.kotlin.KotlinAbstractUExpression
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUContinueExpression(
         override val psi: KtContinueExpression,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UContinueExpression, PsiElementBacked {
+) : KotlinAbstractUExpression(), UContinueExpression {
     override val label: String?
         get() = psi.getLabelName()
 }

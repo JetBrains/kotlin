@@ -21,12 +21,11 @@ import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.UTryExpression
 import org.jetbrains.uast.UVariable
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUTryExpression(
         override val psi: KtTryExpression,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UTryExpression, PsiElementBacked, KotlinUElementWithType {
+) : KotlinAbstractUExpression(), UTryExpression, KotlinUElementWithType {
     override val tryClause by lz { KotlinConverter.convertOrEmpty(psi.tryBlock, this) }
     override val catchClauses by lz { psi.catchClauses.map { KotlinUCatchClause(it, this) } }
     override val finallyClause by lz { psi.finallyBlock?.finalExpression?.let { KotlinConverter.convertExpression(it, this) } }

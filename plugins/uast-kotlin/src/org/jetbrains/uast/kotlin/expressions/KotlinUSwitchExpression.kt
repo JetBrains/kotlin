@@ -16,15 +16,15 @@
 
 package org.jetbrains.uast.kotlin
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.kinds.KotlinSpecialExpressionKinds
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUSwitchExpression(
         override val psi: KtWhenExpression,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), USwitchExpression, PsiElementBacked, KotlinUElementWithType {
+) : KotlinAbstractUExpression(), USwitchExpression, KotlinUElementWithType {
     override val expression by lz { KotlinConverter.convertOrNull(psi.subjectExpression, this) }
 
     override val body: UExpressionList by lz {
@@ -49,7 +49,7 @@ class KotlinUSwitchExpression(
 class KotlinUSwitchEntry(
         override val psi: KtWhenEntry,
         override val containingElement: UExpression
-) : KotlinAbstractUExpression(), USwitchClauseExpressionWithBody, PsiElementBacked {
+) : KotlinAbstractUExpression(), USwitchClauseExpressionWithBody {
     override val caseValues by lz {
         psi.conditions.map { when (it) {
             is KtWhenConditionInRange -> KotlinCustomUBinaryExpression(it, this).apply {
@@ -91,6 +91,8 @@ class KotlinUSwitchEntry(
             }
             containingElement
             expressions = userExpressions + object : UBreakExpression {
+                override val psi: PsiElement?
+                    get() = null
                 override val label: String?
                     get() = null
                 override val containingElement: UElement?

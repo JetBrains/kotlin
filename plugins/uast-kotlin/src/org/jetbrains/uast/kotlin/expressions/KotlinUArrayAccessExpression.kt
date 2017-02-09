@@ -19,12 +19,11 @@ package org.jetbrains.uast.kotlin
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.uast.UArrayAccessExpression
 import org.jetbrains.uast.UElement
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUArrayAccessExpression(
         override val psi: KtArrayAccessExpression,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UArrayAccessExpression, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
+) : KotlinAbstractUExpression(), UArrayAccessExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val receiver by lz { KotlinConverter.convertOrEmpty(psi.arrayExpression, this) }
     override val indices by lz { psi.indexExpressions.map { KotlinConverter.convertOrEmpty(it, this) } }
 }

@@ -2,6 +2,7 @@ package org.jetbrains.uast.test.kotlin
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -21,6 +22,12 @@ import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.uast.UastLanguagePlugin
+import org.jetbrains.uast.evaluation.UEvaluatorExtension
+import org.jetbrains.uast.kotlin.KotlinUastBindingContextProviderService
+import org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin
+import org.jetbrains.uast.kotlin.evaluation.KotlinEvaluatorExtension
+import org.jetbrains.uast.kotlin.internal.CliKotlinUastBindingContextProviderService
 import org.jetbrains.uast.kotlin.internal.UastAnalysisHandlerExtension
 import org.jetbrains.uast.test.env.AbstractCoreEnvironment
 import org.jetbrains.uast.test.env.AbstractUastTest
@@ -40,6 +47,8 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
 
         super.initializeEnvironment(testFile)
 
+        initializeKotlinEnvironment()
+
         val trace = CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace()
 
         val kotlinCoreEnvironment = kotlinCoreEnvironment!!
@@ -58,6 +67,18 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
         ideaProject.baseDir = vfs.findFileByPath(projectDir.canonicalPath)
 
         return vfs.findFileByPath(testFile.canonicalPath)!!
+    }
+
+    private fun initializeKotlinEnvironment() {
+        val area = Extensions.getRootArea()
+        area.getExtensionPoint(UastLanguagePlugin.extensionPointName)
+                .registerExtension(KotlinUastLanguagePlugin())
+        area.getExtensionPoint(UEvaluatorExtension.EXTENSION_POINT_NAME)
+                .registerExtension(KotlinEvaluatorExtension())
+
+        project.registerService(
+                KotlinUastBindingContextProviderService::class.java,
+                CliKotlinUastBindingContextProviderService::class.java)
     }
 
     override fun createEnvironment(source: File): AbstractCoreEnvironment {
@@ -102,6 +123,10 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
     private class KotlinCoreEnvironmentWrapper(val environment: KotlinCoreEnvironment,
                                                val parentDisposable: Disposable) : AbstractCoreEnvironment() {
         override fun addJavaSourceRoot(root: File) {
+            TODO("not implemented")
+        }
+
+        override fun addJar(root: File) {
             TODO("not implemented")
         }
 

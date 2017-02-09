@@ -30,14 +30,13 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.uast.*
 import org.jetbrains.uast.internal.acceptList
-import org.jetbrains.uast.psi.PsiElementBacked
 import org.jetbrains.uast.visitor.UastVisitor
 
 class KotlinUFunctionCallExpression(
         override val psi: KtCallExpression,
         override val containingElement: UElement?,
         private val _resolvedCall: ResolvedCall<*>? = null
-) : KotlinAbstractUExpression(), UCallExpression, PsiElementBacked, KotlinUElementWithType {
+) : KotlinAbstractUExpression(), UCallExpression, KotlinUElementWithType {
     companion object {
         fun resolveSource(descriptor: DeclarationDescriptor, source: PsiElement?): PsiMethod? {
             if (descriptor is ConstructorDescriptor && descriptor.isPrimary

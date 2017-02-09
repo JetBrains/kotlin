@@ -20,13 +20,12 @@ import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.psi.KtSafeQualifiedExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UQualifiedReferenceExpression
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUSafeQualifiedExpression(
         override val psi: KtSafeQualifiedExpression,
         override val containingElement: UElement?
 ) : KotlinAbstractUExpression(), UQualifiedReferenceExpression, 
-        PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
+        KotlinUElementWithType, KotlinEvaluatableUElement {
     override val receiver by lz { KotlinConverter.convertOrEmpty(psi.receiverExpression, this) }
     override val selector by lz { KotlinConverter.convertOrEmpty(psi.selectorExpression, this) }
     override val accessType = KotlinQualifiedExpressionAccessTypes.SAFE

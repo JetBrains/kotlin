@@ -19,11 +19,10 @@ package org.jetbrains.uast.kotlin
 import org.jetbrains.kotlin.psi.KtThrowExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UThrowExpression
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUThrowExpression(
         override val psi: KtThrowExpression,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UThrowExpression, PsiElementBacked, KotlinUElementWithType {
+) : KotlinAbstractUExpression(), UThrowExpression, KotlinUElementWithType {
     override val thrownExpression by lz { KotlinConverter.convertOrEmpty(psi.thrownExpression, this) }
 }

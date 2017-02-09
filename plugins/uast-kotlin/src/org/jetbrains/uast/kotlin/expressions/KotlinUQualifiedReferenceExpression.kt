@@ -25,13 +25,12 @@ import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
 import org.jetbrains.uast.UQualifiedReferenceExpression
 import org.jetbrains.uast.UastQualifiedExpressionAccessType
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUQualifiedReferenceExpression(
         override val psi: KtDotQualifiedExpression,
         override val containingElement: UElement?
 ) : KotlinAbstractUExpression(), UQualifiedReferenceExpression,
-        PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
+        KotlinUElementWithType, KotlinEvaluatableUElement {
     override val receiver by lz { KotlinConverter.convertOrEmpty(psi.receiverExpression, this) }
     override val selector by lz { KotlinConverter.convertOrEmpty(psi.selectorExpression, this) }
     override val accessType = UastQualifiedExpressionAccessType.SIMPLE
@@ -46,7 +45,7 @@ class KotlinUComponentQualifiedReferenceExpression(
         override val psi: KtDestructuringDeclarationEntry,
         override val containingElement: UElement?
 ) : KotlinAbstractUExpression(), UQualifiedReferenceExpression, 
-        PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
+        KotlinUElementWithType, KotlinEvaluatableUElement {
     override val accessType = UastQualifiedExpressionAccessType.SIMPLE
     
     override lateinit var receiver: UExpression

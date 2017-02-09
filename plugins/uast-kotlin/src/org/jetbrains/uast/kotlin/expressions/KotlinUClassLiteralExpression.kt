@@ -21,12 +21,11 @@ import org.jetbrains.kotlin.resolve.BindingContext.DOUBLE_COLON_LHS
 import org.jetbrains.uast.UClassLiteralExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUClassLiteralExpression(
         override val psi: KtClassLiteralExpression,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UClassLiteralExpression, PsiElementBacked, KotlinUElementWithType {
+) : KotlinAbstractUExpression(), UClassLiteralExpression, KotlinUElementWithType {
     override val type by lz {
         val ktType = psi.analyze()[DOUBLE_COLON_LHS, psi.receiverExpression]?.type ?: return@lz null
         ktType.toPsiType(this, psi, boxed = true)

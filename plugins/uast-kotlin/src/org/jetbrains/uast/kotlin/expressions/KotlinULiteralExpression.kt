@@ -22,12 +22,11 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtConstantExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.ULiteralExpression
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinULiteralExpression(
         override val psi: KtConstantExpression,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), ULiteralExpression, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
+) : KotlinAbstractUExpression(), ULiteralExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val isNull: Boolean
         get() = psi.unwrapBlockOrParenthesis().node?.elementType == KtNodeTypes.NULL
 
@@ -38,7 +37,7 @@ class KotlinStringULiteralExpression(
         override val psi: PsiElement,
         override val containingElement: UElement?,
         val text: String? = null
-) : KotlinAbstractUExpression(), ULiteralExpression, PsiElementBacked, KotlinUElementWithType{
+) : KotlinAbstractUExpression(), ULiteralExpression, KotlinUElementWithType{
     override val value: String
         get() = text ?: StringUtil.unescapeStringCharacters(psi.text)
 

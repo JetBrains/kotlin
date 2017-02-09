@@ -24,13 +24,12 @@ import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
 import org.jetbrains.uast.UExpressionList
 import org.jetbrains.uast.UastSpecialExpressionKind
-import org.jetbrains.uast.psi.PsiElementBacked
 
 open class KotlinUExpressionList(
         override val psi: PsiElement?,
         override val kind: UastSpecialExpressionKind, // original element
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UExpressionList, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
+) : KotlinAbstractUExpression(), UExpressionList, KotlinUElementWithType, KotlinEvaluatableUElement {
     override lateinit var expressions: List<UExpression>
         internal set
 

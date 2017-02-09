@@ -21,9 +21,8 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.uast.UExpression
-import org.jetbrains.uast.psi.PsiElementBacked
 
-interface KotlinUElementWithType : UExpression, PsiElementBacked {
+interface KotlinUElementWithType : UExpression {
     override fun getExpressionType(): PsiType? {
         val ktElement = psi as? KtExpression ?: return null
         val ktType = ktElement.analyze()[BindingContext.EXPRESSION_TYPE_INFO, ktElement]?.type ?: return null
@@ -31,7 +30,7 @@ interface KotlinUElementWithType : UExpression, PsiElementBacked {
     }
 }
 
-interface KotlinEvaluatableUElement : UExpression, PsiElementBacked {
+interface KotlinEvaluatableUElement : UExpression {
     override fun evaluate(): Any? {
         val ktElement = psi as? KtExpression ?: return null
         

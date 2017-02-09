@@ -416,13 +416,11 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
             if (condition != null && PsiType.INT.equals(condition.getExpressionType())) {
                 UAnnotation annotation = findIntDefAnnotation(condition);
                 if (annotation != null) {
-                    UNamedExpression namedValue =
+                    UExpression value =
                             annotation.findDeclaredAttributeValue(ATTR_VALUE);
-                    if (namedValue == null) {
-                        namedValue = annotation.findDeclaredAttributeValue(null);
+                    if (value == null) {
+                        value = annotation.findDeclaredAttributeValue(null);
                     }
-
-                    UExpression value = (namedValue != null) ? namedValue.getExpression() : null;
 
                     if (UastExpressionUtils.isArrayInitializer(value)) {
                         List<UExpression> allowedValues =
@@ -514,14 +512,10 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
         }
 
         private void ensureUniqueValues(@NonNull UAnnotation node) {
-            UNamedExpression namedValue = node.findAttributeValue(ATTR_VALUE);
-            if (namedValue == null) {
-                namedValue = node.findAttributeValue(null);
+            UExpression value = node.findAttributeValue(ATTR_VALUE);
+            if (value == null) {
+                value = node.findAttributeValue(null);
             }
-            if (namedValue == null) {
-                return;
-            }
-            UExpression value = namedValue.getExpression();
 
             if (!(UastExpressionUtils.isArrayInitializer(value))) {
                 return;

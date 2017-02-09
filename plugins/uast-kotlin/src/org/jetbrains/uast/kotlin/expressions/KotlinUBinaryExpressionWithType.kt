@@ -21,12 +21,11 @@ import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
 import org.jetbrains.uast.*
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUBinaryExpressionWithType(
         override val psi: KtBinaryExpressionWithTypeRHS,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UBinaryExpressionWithType, PsiElementBacked, 
+) : KotlinAbstractUExpression(), UBinaryExpressionWithType,
         KotlinUElementWithType, KotlinEvaluatableUElement {
     
     override val operand by lz { KotlinConverter.convertOrEmpty(psi.left, this) }
@@ -46,7 +45,7 @@ class KotlinUBinaryExpressionWithType(
 class KotlinCustomUBinaryExpressionWithType(
         override val psi: PsiElement,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UBinaryExpressionWithType, PsiElementBacked {
+) : KotlinAbstractUExpression(), UBinaryExpressionWithType {
     lateinit override var operand: UExpression
         internal set
 

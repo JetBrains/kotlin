@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UImportStatement
 import org.jetbrains.uast.USimpleNameReferenceExpression
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUImportStatement(
         override val psi: KtImportDirective,
@@ -50,7 +49,7 @@ class KotlinUImportStatement(
             override val identifier: String,
             override val containingElement: UElement?,
             private val importDirective: KtImportDirective
-    ) : KotlinAbstractUExpression(), USimpleNameReferenceExpression, PsiElementBacked {
+    ) : KotlinAbstractUExpression(), USimpleNameReferenceExpression {
         override val resolvedName: String?
             get() = identifier
 

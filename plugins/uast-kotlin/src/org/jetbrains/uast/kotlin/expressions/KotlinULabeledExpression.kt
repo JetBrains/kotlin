@@ -20,12 +20,11 @@ import org.jetbrains.kotlin.psi.KtLabeledExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.ULabeledExpression
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinULabeledExpression(
         override val psi: KtLabeledExpression,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), ULabeledExpression, PsiElementBacked {
+) : KotlinAbstractUExpression(), ULabeledExpression {
     override val label: String
         get() = psi.getLabelName().orAnonymous("label")
 

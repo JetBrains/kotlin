@@ -17,15 +17,16 @@
 package org.jetbrains.uast.kotlin
 
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
-import org.jetbrains.uast.*
-import org.jetbrains.uast.psi.PsiElementBacked
+import org.jetbrains.uast.UElement
+import org.jetbrains.uast.UExpression
+import org.jetbrains.uast.UPolyadicExpression
+import org.jetbrains.uast.UastBinaryOperator
 
 class KotlinStringTemplateUPolyadicExpression(
         override val psi: KtStringTemplateExpression,
         override val containingElement: UElement?
 ) : KotlinAbstractUExpression(),
         UPolyadicExpression,
-        PsiElementBacked,
         KotlinUElementWithType,
         KotlinEvaluatableUElement {
     override val operands: List<UExpression> by lz { psi.entries.map { KotlinConverter.convert(it, this) } }

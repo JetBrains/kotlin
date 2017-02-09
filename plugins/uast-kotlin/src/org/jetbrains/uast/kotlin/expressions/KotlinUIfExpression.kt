@@ -20,12 +20,11 @@ import org.jetbrains.kotlin.psi.KtIfExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.UIfExpression
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUIfExpression(
         override val psi: KtIfExpression,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UIfExpression, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
+) : KotlinAbstractUExpression(), UIfExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val condition by lz { KotlinConverter.convertOrEmpty(psi.condition, this) }
     override val thenExpression by lz { KotlinConverter.convertOrNull(psi.then, this) }
     override val elseExpression by lz { KotlinConverter.convertOrNull(psi.`else`, this) }

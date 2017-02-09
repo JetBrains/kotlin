@@ -22,12 +22,11 @@ import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UParameter
 import org.jetbrains.uast.UTypeReferenceExpression
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUCatchClause(
         override val psi: KtCatchClause,
         override val containingElement: UElement?
-) : KotlinAbstractUElement(), UCatchClause, PsiElementBacked {
+) : KotlinAbstractUElement(), UCatchClause {
     override val body by lz { KotlinConverter.convertOrEmpty(psi.catchBody, this) }
     
     override val parameters by lz {

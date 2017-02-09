@@ -21,12 +21,11 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.USuperExpression
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUSuperExpression(
         override val psi: KtSuperExpression,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), USuperExpression, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
+) : KotlinAbstractUExpression(), USuperExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val label: String?
         get() = psi.getLabelName()
 

@@ -22,12 +22,11 @@ import org.jetbrains.kotlin.resolve.BindingContext.DOUBLE_COLON_LHS
 import org.jetbrains.uast.UCallableReferenceExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUCallableReferenceExpression(
         override val psi: KtCallableReferenceExpression,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UCallableReferenceExpression, PsiElementBacked, KotlinUElementWithType {
+) : KotlinAbstractUExpression(), UCallableReferenceExpression, KotlinUElementWithType {
     override val qualifierExpression: UExpression?
         get() {
             if (qualifierType != null) return null

@@ -19,11 +19,10 @@ package org.jetbrains.uast.kotlin
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.uast.UBlockExpression
 import org.jetbrains.uast.UElement
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUBlockExpression(
         override val psi: KtBlockExpression,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UBlockExpression, PsiElementBacked, KotlinUElementWithType {
+) : KotlinAbstractUExpression(), UBlockExpression, KotlinUElementWithType {
     override val expressions by lz { psi.statements.map { KotlinConverter.convertOrEmpty(it, this) } }
 }

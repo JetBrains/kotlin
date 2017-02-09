@@ -42,7 +42,6 @@ import org.jetbrains.uast.kotlin.expressions.*
 import org.jetbrains.uast.kotlin.kinds.KotlinSpecialExpressionKinds
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
-import org.jetbrains.uast.psi.PsiElementBacked
 
 interface KotlinUastBindingContextProviderService {
     fun getBindingContext(element: KtElement): BindingContext
@@ -159,7 +158,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         return when (element) {
             is KotlinUSimpleReferenceExpression.KotlinAccessorCallExpression -> element.setterValue != null
             is KotlinAbstractUExpression -> {
-                val ktElement = ((element as? PsiElementBacked)?.psi as? KtElement) ?: return false
+                val ktElement = element.psi as? KtElement ?: return false
                 ktElement.analyze()[BindingContext.USED_AS_EXPRESSION, ktElement] ?: false
             }
             else -> false
@@ -227,7 +226,7 @@ internal object KotlinConverter {
             psi: KtVariableDeclaration, 
             parent: UElement?
     ): UDeclarationsExpression {
-        val parentPsiElement = (parent as? PsiElementBacked)?.psi
+        val parentPsiElement = parent?.psi
         val variable = KotlinUVariable.create(UastKotlinPsiVariable.create(psi, parentPsiElement, parent!!), parent)
         return KotlinUDeclarationsExpression(parent).apply { declarations = listOf(variable) }
     }

@@ -3,14 +3,14 @@ package org.jetbrains.uast.kotlin.evaluation
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.uast.UBinaryExpression
 import org.jetbrains.uast.UastPostfixOperator
+import org.jetbrains.uast.evaluation.AbstractEvaluatorExtension
 import org.jetbrains.uast.evaluation.UEvaluationInfo
 import org.jetbrains.uast.evaluation.UEvaluationState
-import org.jetbrains.uast.evaluation.UEvaluatorExtension
 import org.jetbrains.uast.kotlin.KotlinBinaryOperators
 import org.jetbrains.uast.kotlin.KotlinPostfixOperators
 import org.jetbrains.uast.values.*
 
-class KotlinEvaluatorExtension : UEvaluatorExtension {
+class KotlinEvaluatorExtension : AbstractEvaluatorExtension(KotlinLanguage.INSTANCE) {
 
     private data class Range(val from: UValue, val to: UValue) {
         override fun toString() = "$from..$to"
@@ -19,8 +19,6 @@ class KotlinEvaluatorExtension : UEvaluatorExtension {
     private class UClosedRangeConstant(override val value: Range, override val source: UBinaryExpression?) : UAbstractConstant() {
         constructor(from: UValue, to: UValue, source: UBinaryExpression): this(Range(from, to), source)
     }
-
-    override val language: KotlinLanguage = KotlinLanguage.INSTANCE
 
     override fun evaluatePostfix(
             operator: UastPostfixOperator,

@@ -31,7 +31,7 @@
         <os family="windows"/>
     </condition>
 
-    <property name="uast.version" value="1.0.10"/>
+    <property name="uast.version" value="1.0.11"/>
 
     <property name="generators" value="${basedir}/generators"/>
 

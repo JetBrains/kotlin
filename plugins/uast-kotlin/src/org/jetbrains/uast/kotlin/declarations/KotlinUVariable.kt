@@ -27,7 +27,6 @@ import org.jetbrains.uast.java.JavaUAnnotation
 import org.jetbrains.uast.java.annotations
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
-import org.jetbrains.uast.psi.PsiElementBacked
 
 abstract class AbstractKotlinUVariable : AbstractJavaUVariable() {
     override val uastInitializer: UExpression?
@@ -179,7 +178,7 @@ open class KotlinUEnumConstant(
     private class KotlinEnumConstantClassReference(
             override val psi: PsiEnumConstant,
             override val containingElement: UElement?
-    ) : JavaAbstractUExpression(), USimpleNameReferenceExpression, PsiElementBacked {
+    ) : JavaAbstractUExpression(), USimpleNameReferenceExpression {
         override fun resolve() = psi.containingClass
         override val resolvedName: String?
             get() = psi.containingClass?.name

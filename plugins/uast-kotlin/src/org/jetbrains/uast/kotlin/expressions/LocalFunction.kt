@@ -6,7 +6,6 @@ import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.*
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
-import org.jetbrains.uast.psi.PsiElementBacked
 
 
 private class KotlinLocalFunctionUVariable(
@@ -29,7 +28,7 @@ private class KotlinLocalFunctionUVariable(
 private class KotlinLocalFunctionULambdaExpression(
         override val psi: KtFunction,
         override val containingElement: UElement?
-): KotlinAbstractUExpression(), ULambdaExpression, PsiElementBacked {
+): KotlinAbstractUExpression(), ULambdaExpression {
 
     override val body by lz { KotlinConverter.convertOrEmpty(psi.bodyExpression, this) }
 

@@ -20,12 +20,11 @@ import org.jetbrains.kotlin.psi.KtDoWhileExpression
 import org.jetbrains.uast.UDoWhileExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UIdentifier
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUDoWhileExpression(
         override val psi: KtDoWhileExpression,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UDoWhileExpression, PsiElementBacked {
+) : KotlinAbstractUExpression(), UDoWhileExpression {
     override val condition by lz { KotlinConverter.convertOrEmpty(psi.condition, this) }
     override val body by lz { KotlinConverter.convertOrEmpty(psi.body, this) }
 

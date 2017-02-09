@@ -22,13 +22,12 @@ import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UForEachExpression
 import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
-import org.jetbrains.uast.psi.PsiElementBacked
 import org.jetbrains.uast.psi.UastPsiParameterNotResolved
 
 class KotlinUForEachExpression(
         override val psi: KtForExpression,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UForEachExpression, PsiElementBacked {
+) : KotlinAbstractUExpression(), UForEachExpression {
     override val iteratedValue by lz { KotlinConverter.convertOrEmpty(psi.loopRange, this) }
     override val body by lz { KotlinConverter.convertOrEmpty(psi.body, this) }
     

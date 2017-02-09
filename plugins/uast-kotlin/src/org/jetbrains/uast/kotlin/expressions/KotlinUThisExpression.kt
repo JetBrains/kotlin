@@ -21,12 +21,11 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.UThisExpression
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUThisExpression(
         override val psi: KtThisExpression,
         override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UThisExpression, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
+) : KotlinAbstractUExpression(), UThisExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val label: String?
         get() = psi.getLabelName()
 
