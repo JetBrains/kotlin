@@ -1102,6 +1102,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 doExtractFunctionTest(fileName);
             }
 
+            @TestMetadata("suspendCallWithExtractedParameter.kt")
+            public void testSuspendCallWithExtractedParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/suspendCallWithExtractedParameter.kt");
+                doExtractFunctionTest(fileName);
+            }
+
             @TestMetadata("topLevelValUnderSmartCast.kt")
             public void testTopLevelValUnderSmartCast() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/topLevelValUnderSmartCast.kt");
