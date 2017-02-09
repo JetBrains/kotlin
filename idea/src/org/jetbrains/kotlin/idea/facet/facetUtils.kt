@@ -183,6 +183,8 @@ fun KotlinFacet.configureFacet(
             }
         }
         compilerInfo.coroutineSupport = coroutineSupport
+        compilerInfo.commonCompilerArguments?.languageVersion = versionInfo.languageLevel!!.versionString
+        compilerInfo.commonCompilerArguments?.apiVersion = versionInfo.apiLevel!!.versionString
     }
 }
 
