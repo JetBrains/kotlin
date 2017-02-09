@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.*;
+import org.jetbrains.kotlin.types.WrappedTypeFactory;
 import org.jetbrains.kotlin.utils.SmartList;
 
 import javax.inject.Inject;
@@ -82,6 +83,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private SupertypeLoopChecker supertypeLoopsResolver;
     private LanguageVersionSettings languageVersionSettings;
     private DelegationFilter delegationFilter;
+    private WrappedTypeFactory wrappedTypeFactory;
 
     private final SyntheticResolveExtension syntheticResolveExtension;
 
@@ -139,6 +141,11 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Inject
     public void setDelegationFilter(@NotNull  DelegationFilter delegationFilter) {
         this.delegationFilter = delegationFilter;
+    }
+
+    @Inject
+    public void setWrappedTypeFactory(WrappedTypeFactory wrappedTypeFactory) {
+        this.wrappedTypeFactory = wrappedTypeFactory;
     }
 
     // Only calls from injectors expected
@@ -462,5 +469,11 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Override
     public SyntheticResolveExtension getSyntheticResolveExtension() {
         return syntheticResolveExtension;
+    }
+
+    @NotNull
+    @Override
+    public WrappedTypeFactory getWrappedTypeFactory() {
+        return wrappedTypeFactory;
     }
 }

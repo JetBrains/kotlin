@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findFirstFromMeAndParent
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.typeUtil.containsTypeAliasParameters
@@ -63,11 +62,11 @@ class TypeResolver(
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         private val moduleDescriptor: ModuleDescriptor,
         private val typeTransformerForTests: TypeTransformerForTests,
-        private val storageManager: StorageManager,
         private val lazinessToken: TypeLazinessToken,
         private val dynamicTypesSettings: DynamicTypesSettings,
         private val dynamicCallableDescriptors: DynamicCallableDescriptors,
         private val identifierChecker: IdentifierChecker,
+        private val wrappedTypeFactory: WrappedTypeFactory,
         private val platformToKotlinClassMap: PlatformToKotlinClassMap,
         private val languageVersionSettings: LanguageVersionSettings
 ) {
@@ -119,7 +118,7 @@ class TypeResolver(
         if (!c.allowBareTypes && !c.forceResolveLazyTypes && lazinessToken.isLazy()) {
             // Bare types can be allowed only inside expressions; lazy type resolution is only relevant for declarations
 
-            val lazyKotlinType = LazyWrappedType(storageManager) {
+            val lazyKotlinType = wrappedTypeFactory.createLazyWrappedType {
                 doResolvePossiblyBareType(c, typeReference).actualType
             }
             c.trace.record(resolvedTypeSlice, typeReference, lazyKotlinType)

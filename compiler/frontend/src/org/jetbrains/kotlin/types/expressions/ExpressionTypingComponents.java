@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.checkers.RttiExpressionChecker;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
+import org.jetbrains.kotlin.types.WrappedTypeFactory;
 
 import javax.inject.Inject;
 
@@ -60,6 +61,7 @@ public class ExpressionTypingComponents {
     /*package*/ OverloadChecker overloadChecker;
     /*package*/ LanguageVersionSettings languageVersionSettings;
     /*package*/ Iterable<RttiExpressionChecker> rttiExpressionCheckers;
+    /*package*/ WrappedTypeFactory wrappedTypeFactory;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -199,5 +201,10 @@ public class ExpressionTypingComponents {
     @Inject
     public void setRttiExpressionCheckers(@NotNull Iterable<RttiExpressionChecker> rttiExpressionCheckers) {
         this.rttiExpressionCheckers = rttiExpressionCheckers;
+    }
+
+    @Inject
+    public void setWrappedTypeFactory(WrappedTypeFactory wrappedTypeFactory) {
+        this.wrappedTypeFactory = wrappedTypeFactory;
     }
 }

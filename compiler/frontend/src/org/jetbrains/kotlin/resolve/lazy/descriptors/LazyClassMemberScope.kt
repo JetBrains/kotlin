@@ -368,7 +368,7 @@ open class LazyClassMemberScope(
     }
 
     protected fun setDeferredReturnType(descriptor: ClassConstructorDescriptorImpl) {
-        descriptor.returnType = DeferredType.create(c.storageManager, trace, { thisDescriptor.defaultType })
+        descriptor.returnType = c.wrappedTypeFactory.createDeferredType(trace, { thisDescriptor.defaultType })
     }
 
     override fun recordLookup(name: Name, from: LookupLocation) {

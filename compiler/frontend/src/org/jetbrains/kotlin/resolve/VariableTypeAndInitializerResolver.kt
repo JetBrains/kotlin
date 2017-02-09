@@ -28,10 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.DeferredType
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 
@@ -40,7 +37,8 @@ class VariableTypeAndInitializerResolver(
         private val expressionTypingServices: ExpressionTypingServices,
         private val typeResolver: TypeResolver,
         private val constantExpressionEvaluator: ConstantExpressionEvaluator,
-        private val delegatedPropertyResolver: DelegatedPropertyResolver
+        private val delegatedPropertyResolver: DelegatedPropertyResolver,
+        private val wrappedTypeFactory: WrappedTypeFactory
 ) {
     companion object {
         @JvmField
@@ -82,8 +80,7 @@ class VariableTypeAndInitializerResolver(
 
             variable.hasInitializer() -> when {
                 !local ->
-                    DeferredType.createRecursionIntolerant(
-                            storageManager,
+                    wrappedTypeFactory.createRecursionIntolerantDeferredType(
                             trace
                     ) {
                         PreliminaryDeclarationVisitor.createForDeclaration(variable, trace)
@@ -133,7 +130,7 @@ class VariableTypeAndInitializerResolver(
             scopeForInitializer: LexicalScope,
             dataFlowInfo: DataFlowInfo,
             trace: BindingTrace
-    ) = DeferredType.createRecursionIntolerant(storageManager, trace) {
+    ) = wrappedTypeFactory.createRecursionIntolerantDeferredType(trace) {
         val delegateExpression = property.delegateExpression!!
         val type = delegatedPropertyResolver.resolveDelegateExpression(
                 delegateExpression, property, variableDescriptor, scopeForInitializer, trace, dataFlowInfo)

@@ -85,6 +85,7 @@ public class DescriptorResolver {
     private final FunctionsTypingVisitor functionsTypingVisitor;
     private final DestructuringDeclarationResolver destructuringDeclarationResolver;
     private final ModifiersChecker modifiersChecker;
+    private final WrappedTypeFactory wrappedTypeFactory;
     private final SyntheticResolveExtension syntheticResolveExtension;
 
     public DescriptorResolver(
@@ -100,6 +101,7 @@ public class DescriptorResolver {
             @NotNull FunctionsTypingVisitor functionsTypingVisitor,
             @NotNull DestructuringDeclarationResolver destructuringDeclarationResolver,
             @NotNull ModifiersChecker modifiersChecker,
+            @NotNull WrappedTypeFactory wrappedTypeFactory,
             @NotNull Project project
     ) {
         this.annotationResolver = annotationResolver;
@@ -114,6 +116,7 @@ public class DescriptorResolver {
         this.functionsTypingVisitor = functionsTypingVisitor;
         this.destructuringDeclarationResolver = destructuringDeclarationResolver;
         this.modifiersChecker = modifiersChecker;
+        this.wrappedTypeFactory = wrappedTypeFactory;
         this.syntheticResolveExtension = SyntheticResolveExtension.Companion.getInstance(project);
     }
 
@@ -928,7 +931,7 @@ public class DescriptorResolver {
     }
 
 
-    @Nullable
+    @NotNull
     /*package*/ static KotlinType transformAnonymousTypeIfNeeded(
             @NotNull DeclarationDescriptorWithVisibility descriptor,
             @NotNull KtDeclaration declaration,
@@ -1104,14 +1107,14 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    /*package*/ DeferredType inferReturnTypeFromExpressionBody(
+    /*package*/ KotlinType inferReturnTypeFromExpressionBody(
             @NotNull final BindingTrace trace,
             @NotNull final LexicalScope scope,
             @NotNull final DataFlowInfo dataFlowInfo,
             @NotNull final KtDeclarationWithBody function,
             @NotNull final FunctionDescriptor functionDescriptor
     ) {
-        return DeferredType.createRecursionIntolerant(storageManager, trace, new Function0<KotlinType>() {
+        return wrappedTypeFactory.createRecursionIntolerantDeferredType(trace, new Function0<KotlinType>() {
             @Override
             public KotlinType invoke() {
                 PreliminaryDeclarationVisitor.Companion.createForDeclaration(function, trace);

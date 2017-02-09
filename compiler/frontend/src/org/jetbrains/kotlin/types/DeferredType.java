@@ -45,7 +45,7 @@ public class DeferredType extends WrappedType {
     };
 
     @NotNull
-    public static DeferredType create(
+    /*package private*/ static DeferredType create(
             @NotNull StorageManager storageManager,
             @NotNull BindingTrace trace,
             @NotNull Function0<KotlinType> compute
@@ -56,7 +56,7 @@ public class DeferredType extends WrappedType {
     }
     
     @NotNull
-    public static DeferredType createRecursionIntolerant(
+    /*package private*/ static DeferredType createRecursionIntolerant(
             @NotNull StorageManager storageManager,
             @NotNull BindingTrace trace,
             @NotNull Function0<KotlinType> compute
