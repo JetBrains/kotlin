@@ -11,8 +11,16 @@ import org.gradle.api.tasks.TaskAction
  */
 class Reporter extends DefaultTask {
 
-    String buildLogUrlTemplate(String buildId, String buildTypeId) {
-        return "http://buildserver.labs.intellij.net/viewLog.html?buildId=${buildId}&buildTypeId=${buildTypeId}&tab=buildLog"
+    private String buildLogUrlTab(String buildId, String buildTypeId) {
+        return tabUrl(buildId, buildTypeId, "buildLog")
+    }
+
+    private String tabUrl(String buildId, String buildTypeId, tab) {
+        return "http://buildserver.labs.intellij.net/viewLog.html?buildId=${buildId}&buildTypeId=${buildTypeId}&tab=${tab}"
+    }
+
+    private String testReportUrl(String buildId, String buildTypeId) {
+        return tabUrl(buildId, buildTypeId,"testsInfo")
     }
     def reportHome
     @TaskAction
@@ -36,8 +44,9 @@ class Reporter extends DefaultTask {
         if (teamcityConfig != null) {
             def buildProperties = new Properties()
             buildProperties.load(new FileInputStream(teamcityConfig))
-            def logUrl = buildLogUrlTemplate(buildProperties.'teamcity.build.id', buildProperties.'teamcity.buildType.id')
-            epilog = "\nlog url:$logUrl"
+            def logUrl = buildLogUrlTab(buildProperties.'teamcity.build.id', buildProperties.'teamcity.buildType.id')
+            def testReportUrl = testReportUrl(buildProperties.'teamcity.build.id', buildProperties.'teamcity.buildType.id')
+            epilog = "\nlog url: $logUrl\ntest report url: $testReportUrl"
         }
 
         def report = "total: ${stats.total}\npassed: ${stats.passed}\nfailed: ${stats.failed}\nerror:${stats.error}\nskipped:${stats.skipped} ${epilog}"
