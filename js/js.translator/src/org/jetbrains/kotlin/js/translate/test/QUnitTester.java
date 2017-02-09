@@ -19,8 +19,13 @@ package org.jetbrains.kotlin.js.translate.test;
 import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.kotlin.js.backend.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 
 public final class QUnitTester extends CommonUnitTester {
+    public QUnitTester(@NotNull TranslationContext context) {
+        super(context);
+    }
+
     @NotNull
     private static final JsNameRef TEST_FUN_REF = new JsNameRef("test", "QUnit");
 

@@ -274,6 +274,20 @@ public final class Translation {
             merger.addFragment(staticContext.getFragment());
         }
 
+        JsProgramFragment testFragment = mayBeGenerateTests(files, config, bindingTrace, moduleDescriptor);
+        fragments.add(testFragment);
+        merger.addFragment(testFragment);
+        rootFunction.getParameters().add(new JsParameter(internalModuleName));
+
+        if (mainCallParameters.shouldBeGenerated()) {
+            JsProgramFragment mainCallFragment = generateCallToMain(
+                    bindingTrace, config, moduleDescriptor, files, mainCallParameters.arguments());
+            if (mainCallFragment != null) {
+                fragments.add(mainCallFragment);
+                merger.addFragment(mainCallFragment);
+            }
+        }
+
         merger.merge();
 
         JsBlock rootBlock = rootFunction.getBody();
@@ -285,9 +299,6 @@ public final class Translation {
             defineModule(program, statements, config.getModuleId());
         }
 
-        //mayBeGenerateTests(files, rootBlock, context);
-        rootFunction.getParameters().add(new JsParameter(internalModuleName));
-
         // Invoke function passing modules as arguments
         // This should help minifier tool to recognize references to these modules as local variables and make them shorter.
         List<JsImportedModule> importedModuleList = merger.getImportedModules();
@@ -295,15 +306,6 @@ public final class Translation {
         for (JsImportedModule importedModule : importedModuleList) {
             rootFunction.getParameters().add(new JsParameter(importedModule.getInternalName()));
         }
-
-        /*
-        if (mainCallParameters.shouldBeGenerated()) {
-            JsStatement statement = generateCallToMain(context, files, mainCallParameters.arguments());
-            if (statement != null) {
-                statements.add(statement);
-            }
-        }
-        */
 
         statements.add(new JsReturn(internalModuleName.makeRef()));
 
@@ -355,20 +357,27 @@ public final class Translation {
         }
     }
 
-    private static void mayBeGenerateTests(
-            @NotNull Collection<KtFile> files, @NotNull JsBlock rootBlock, @NotNull TranslationContext context
+    @NotNull
+    private static JsProgramFragment mayBeGenerateTests(
+            @NotNull Collection<KtFile> files, @NotNull JsConfig config, @NotNull BindingTrace trace,
+            @NotNull ModuleDescriptor moduleDescriptor
     ) {
-        JSTester tester = new QUnitTester();
-        tester.initialize(context, rootBlock);
+        StaticContext staticContext = new StaticContext(trace, config, moduleDescriptor);
+        TranslationContext context = TranslationContext.rootContext(staticContext);
+        JSTester tester = new QUnitTester(context);
         JSTestGenerator.generateTestCalls(context, files, tester);
-        tester.deinitialize();
+
+        return staticContext.getFragment();
     }
 
     //TODO: determine whether should throw exception
     @Nullable
-    private static JsStatement generateCallToMain(
-            @NotNull TranslationContext context, @NotNull Collection<KtFile> files, @NotNull List<String> arguments
+    private static JsProgramFragment generateCallToMain(
+            @NotNull BindingTrace trace, @NotNull JsConfig config, @NotNull ModuleDescriptor moduleDescriptor,
+            @NotNull Collection<KtFile> files, @NotNull List<String> arguments
     ) {
+        StaticContext staticContext = new StaticContext(trace, config, moduleDescriptor);
+        TranslationContext context = TranslationContext.rootContext(staticContext);
         MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(context.bindingContext());
         KtNamedFunction mainFunction = mainFunctionDetector.getMainFunction(files);
         if (mainFunction == null) {
@@ -376,6 +385,8 @@ public final class Translation {
         }
         FunctionDescriptor functionDescriptor = getFunctionDescriptor(context.bindingContext(), mainFunction);
         JsArrayLiteral argument = new JsArrayLiteral(toStringLiteralList(arguments, context.program()));
-        return CallTranslator.INSTANCE.buildCall(context, functionDescriptor, Collections.singletonList(argument), null).makeStmt();
+        JsExpression call = CallTranslator.INSTANCE.buildCall(context, functionDescriptor, Collections.singletonList(argument), null);
+        context.addTopLevelStatement(call.makeStmt());
+        return staticContext.getFragment();
     }
 }
