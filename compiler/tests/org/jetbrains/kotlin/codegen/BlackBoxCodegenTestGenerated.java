@@ -9563,6 +9563,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("noRedundantVarargs.kt")
+        public void testNoRedundantVarargs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/jvmOverloads/noRedundantVarargs.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nonDefaultParameter.kt")
         public void testNonDefaultParameter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/jvmOverloads/nonDefaultParameter.kt");

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -129,11 +128,13 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
     ) {
         val typeMapper = state.typeMapper
         val isStatic = AsmUtil.isStaticMethod(contextKind, functionDescriptor)
-        val flags = AsmUtil.getCommonCallableFlags(functionDescriptor) or
-                (if (isStatic) Opcodes.ACC_STATIC else 0) or
-                (if (functionDescriptor.modality == Modality.FINAL && functionDescriptor !is ConstructorDescriptor) Opcodes.ACC_FINAL else 0)
-
+        val baseMethodFlags = AsmUtil.getCommonCallableFlags(functionDescriptor) and Opcodes.ACC_VARARGS.inv()
         val remainingParameters = getRemainingParameters(functionDescriptor.original, substituteCount)
+        val flags =
+                baseMethodFlags or
+                (if (isStatic) Opcodes.ACC_STATIC else 0) or
+                (if (functionDescriptor.modality == Modality.FINAL && functionDescriptor !is ConstructorDescriptor) Opcodes.ACC_FINAL else 0) or
+                (if (remainingParameters.lastOrNull()?.varargElementType != null) Opcodes.ACC_VARARGS else 0)
         val signature = typeMapper.mapSignature(functionDescriptor, contextKind, remainingParameters, false)
         val mv = classBuilder.newMethod(OtherOrigin(methodElement, functionDescriptor), flags,
                                         signature.asmMethod.name,
