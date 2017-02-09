@@ -214,10 +214,12 @@ class QualifiedExpressionResolver {
             return null
         }
 
-        val packageOrClassDescriptor = resolveToPackageOrClass(
+        val resolvedDescriptor = resolveToPackageOrClass(
                 path.subList(0, path.size - 1), moduleDescriptor, trace,
                 packageFragmentForVisibilityCheck, scopeForFirstPart = null, position = QualifierPosition.IMPORT
         ) ?: return null
+
+        val packageOrClassDescriptor = (resolvedDescriptor as? TypeAliasDescriptor)?.let { it.classDescriptor ?: return null } ?: resolvedDescriptor
 
         return LazyExplicitImportScope(packageOrClassDescriptor, packageFragmentForVisibilityCheck, lastPart.name, aliasName) {
             candidates ->
