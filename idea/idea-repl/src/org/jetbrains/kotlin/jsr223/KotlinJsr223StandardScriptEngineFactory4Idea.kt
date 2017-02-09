@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.jsr223
 
-import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineFactoryBase
 import org.jetbrains.kotlin.cli.common.repl.ScriptArgsWithTypes
 import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.PathUtil.*
+import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR
+import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_JAVA_STDLIB_JAR
 import java.io.File
 import java.io.FileNotFoundException
 import java.net.URL
@@ -33,7 +33,6 @@ class KotlinJsr223StandardScriptEngineFactory4Idea : KotlinJsr223JvmScriptEngine
 
     override fun getScriptEngine(): ScriptEngine =
             KotlinJsr223JvmScriptEngine4Idea(
-                    Disposer.newDisposable(),
                     this,
                     scriptCompilationClasspathFromContext(Thread.currentThread().contextClassLoader),
                     "kotlin.script.templates.standard.ScriptTemplateWithBindings",

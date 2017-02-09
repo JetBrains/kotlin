@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.daemon.client
 
-import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
 import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
 import org.jetbrains.kotlin.daemon.common.RmiFriendlyCompilationCanceledException
@@ -27,7 +26,9 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompil
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.utils.rethrow
 import java.rmi.server.UnicastRemoteObject
+import kotlin.reflect.full.allSuperclasses
 
 
 open class CompilerCallbackServicesFacadeServer(
@@ -83,10 +84,12 @@ open class CompilerCallbackServicesFacadeServer(
         try {
             compilationCanceledStatus!!.checkCanceled()
         }
-        catch (e: ProcessCanceledException) {
+        catch (e: Exception) {
             // avoid passing exceptions that may have different serialVersionUID on across rmi border
-            // TODO: doublecheck whether we need to distinguish different cancellation exceptions
-            throw RmiFriendlyCompilationCanceledException()
+            // removing dependency from openapi (this is obsolete part anyway, and will be removed soon)
+            if ((e::class.allSuperclasses + e::class).any { it.qualifiedName == "com.intellij.openapi.progress.ProcessCanceledException" })
+                throw RmiFriendlyCompilationCanceledException()
+            else throw e
         }
     }
 }

@@ -30,6 +30,8 @@ import javax.script.ScriptEngineFactory
 import javax.script.ScriptException
 import kotlin.reflect.KClass
 
+// TODO: need to manage resources here, i.e. call replCompiler.dispose when engine is collected
+
 class KotlinJsr223JvmDaemonCompileScriptEngine(
         disposable: Disposable,
         factory: ScriptEngineFactory,
@@ -46,7 +48,6 @@ class KotlinJsr223JvmDaemonCompileScriptEngine(
     override val replCompiler by lazy {
         daemon.let {
             KotlinRemoteReplCompiler(
-                    disposable,
                     it,
                     makeAutodeletingFlagFile("jsr223-repl-session"),
                     CompileService.TargetPlatform.JVM,

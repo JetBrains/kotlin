@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.daemon
 
-import com.intellij.openapi.Disposable
-import com.intellij.openapi.util.Disposer
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.repl.*
@@ -480,32 +478,30 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     fun testDaemonReplLocalEvalNoParams() {
         withDaemon { daemon ->
-            withDisposable { disposable ->
-                val repl = KotlinRemoteReplCompiler(disposable, daemon!!, null, CompileService.TargetPlatform.JVM,
-                                                    classpathFromClassloader(),
-                                                    ScriptWithNoParam::class.qualifiedName!!,
-                                                    System.err)
+            val repl = KotlinRemoteReplCompiler(daemon, null, CompileService.TargetPlatform.JVM,
+                                                classpathFromClassloader(),
+                                                ScriptWithNoParam::class.qualifiedName!!,
+                                                System.err)
 
-                val localEvaluator = GenericReplEvaluator(emptyList(), Thread.currentThread().contextClassLoader)
+            val localEvaluator = GenericReplEvaluator(emptyList(), Thread.currentThread().contextClassLoader)
 
-                doReplTestWithLocalEval(repl, localEvaluator)
-            }
+            doReplTestWithLocalEval(repl, localEvaluator)
+            repl.dispose()
         }
     }
 
     fun testDaemonReplLocalEvalStandardTemplate() {
         withDaemon { daemon ->
-            withDisposable { disposable ->
-                val repl = KotlinRemoteReplCompiler(disposable, daemon!!, null, CompileService.TargetPlatform.JVM,
-                                                    classpathFromClassloader(),
-                                                    "kotlin.script.templates.standard.ScriptTemplateWithArgs",
-                                                    System.err)
+            val repl = KotlinRemoteReplCompiler(daemon, null, CompileService.TargetPlatform.JVM,
+                                                classpathFromClassloader(),
+                                                "kotlin.script.templates.standard.ScriptTemplateWithArgs",
+                                                System.err)
 
-                val localEvaluator = GenericReplEvaluator(emptyList(), Thread.currentThread().contextClassLoader,
-                                                          ScriptArgsWithTypes(arrayOf(emptyArray<String>()), arrayOf(Array<String>::class)))
+            val localEvaluator = GenericReplEvaluator(emptyList(), Thread.currentThread().contextClassLoader,
+                                                      ScriptArgsWithTypes(arrayOf(emptyArray<String>()), arrayOf(Array<String>::class)))
 
-                doReplTestWithLocalEval(repl, localEvaluator)
-            }
+            doReplTestWithLocalEval(repl, localEvaluator)
+            repl.dispose()
         }
     }
 
@@ -538,36 +534,34 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     fun testDaemonReplRemoteEval() {
         withDaemon { daemon ->
-            withDisposable { disposable ->
+            val evalOut = ByteArrayOutputStream()
+            val evalErr = ByteArrayOutputStream()
+            val evalIn = ByteArrayInputStream("42\n".toByteArray())
 
-                val evalOut = ByteArrayOutputStream()
-                val evalErr = ByteArrayOutputStream()
-                val evalIn = ByteArrayInputStream("42\n".toByteArray())
+            val repl = KotlinRemoteReplEvaluator(daemon, null, CompileService.TargetPlatform.JVM,
+                                                 listOf(File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-runtime.jar")),
+                                                 "kotlin.script.templates.standard.ScriptTemplateWithArgs",
+                                                 arrayOf(emptyArray<String>()),
+                                                 arrayOf(Array<String>::class.java),
+                                                 System.err, evalOut, evalErr, evalIn)
 
-                val repl = KotlinRemoteReplEvaluator(disposable, daemon!!, null, CompileService.TargetPlatform.JVM,
-                                                     listOf(File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-runtime.jar")),
-                                                     "kotlin.script.templates.standard.ScriptTemplateWithArgs",
-                                                     arrayOf(emptyArray<String>()),
-                                                     arrayOf(Array<String>::class.java),
-                                                     System.err, evalOut, evalErr, evalIn)
+            val res0 = repl.check(ReplCodeLine(0, "val x ="))
+            TestCase.assertTrue("Unexpected check results: $res0", res0 is ReplCheckResult.Incomplete)
 
-                val res0 = repl.check(ReplCodeLine(0, "val x ="))
-                TestCase.assertTrue("Unexpected check results: $res0", res0 is ReplCheckResult.Incomplete)
+            val codeLine1 = ReplCodeLine(1, "val x = 5")
+            val res1 = repl.compileAndEval(codeLine1, verifyHistory = emptyList())
+            val res1e = res1 as? ReplEvalResult.UnitResult
+            TestCase.assertNotNull("Unexpected eval result: $res1", res1e)
 
-                val codeLine1 = ReplCodeLine(1, "val x = 5")
-                val res1 = repl.compileAndEval(codeLine1, verifyHistory = emptyList())
-                val res1e = res1 as? ReplEvalResult.UnitResult
-                TestCase.assertNotNull("Unexpected eval result: $res1", res1e)
+            val codeLine2 = ReplCodeLine(2, "x + 2")
+            val res2x = repl.compileAndEval(codeLine2, verifyHistory = listOf(codeLine2))
+            TestCase.assertNotNull("Unexpected compile result: $res2x", res2x as? ReplEvalResult.HistoryMismatch)
 
-                val codeLine2 = ReplCodeLine(2, "x + 2")
-                val res2x = repl.compileAndEval(codeLine2, verifyHistory = listOf(codeLine2))
-                TestCase.assertNotNull("Unexpected compile result: $res2x", res2x as? ReplEvalResult.HistoryMismatch)
-
-                val res2 = repl.compileAndEval(codeLine2, verifyHistory = listOf(codeLine1))
-                val res2e = res2 as? ReplEvalResult.ValueResult
-                TestCase.assertNotNull("Unexpected eval result: $res2", res2e)
-                TestCase.assertEquals(7, res2e!!.value)
-            }
+            val res2 = repl.compileAndEval(codeLine2, verifyHistory = listOf(codeLine1))
+            val res2e = res2 as? ReplEvalResult.ValueResult
+            TestCase.assertNotNull("Unexpected eval result: $res2", res2e)
+            TestCase.assertEquals(7, res2e!!.value)
+            repl.dispose()
         }
     }
 
@@ -584,8 +578,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
             assertNotNull("failed to connect daemon", daemon)
 
-            val disposable = Disposer.newDisposable()
-            val repl = KotlinRemoteReplCompiler(disposable, daemon!!, null, CompileService.TargetPlatform.JVM,
+            val repl = KotlinRemoteReplCompiler(daemon!!, null, CompileService.TargetPlatform.JVM,
                                                 classpathFromClassloader(),
                                                 ScriptWithNoParam::class.qualifiedName!!,
                                                 System.err)
@@ -604,7 +597,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 if (logFile.isLogContainsSequence("Idle timeout exceeded 1s")) break
                 Thread.sleep(200)
             }
-            Disposer.dispose(disposable)
+            repl.dispose()
 
             Thread.sleep(200)
             logFile.assertLogContainsSequence("Idle timeout exceeded 1s",
@@ -685,16 +678,6 @@ internal inline fun withFlagFile(prefix: String, suffix: String? = null, body: (
     }
     finally {
         file.delete()
-    }
-}
-
-internal inline fun withDisposable(body: (Disposable) -> Unit) {
-    val disposable = Disposer.newDisposable()
-    try {
-        body(disposable)
-    }
-    finally {
-        Disposer.dispose(disposable)
     }
 }
 
