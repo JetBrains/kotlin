@@ -402,6 +402,12 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             doTest(fileName);
         }
 
+        @TestMetadata("delegatedPropertyToInlineFunWithCrossinlineArg")
+        public void testDelegatedPropertyToInlineFunWithCrossinlineArg() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/delegatedPropertyToInlineFunWithCrossinlineArg/");
+            doTest(fileName);
+        }
+
         @TestMetadata("dependencyClassReferenced")
         public void testDependencyClassReferenced() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/dependencyClassReferenced/");
