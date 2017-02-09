@@ -69,6 +69,13 @@ public inline fun <T, R> T.let(block: (T) -> R): R = block(this)
 public inline fun <T> T.takeIf(predicate: (T) -> Boolean): T? = if (predicate(this)) this else null
 
 /**
+ * Returns `this` value if it _does not_ satisfy the given [predicate] or `null`, if it does.
+ */
+@kotlin.internal.InlineOnly
+@SinceKotlin("1.1")
+public inline fun <T> T.takeUnless(predicate: (T) -> Boolean): T? = if (!predicate(this)) this else null
+
+/**
  * Executes the given function [action] specified number of [times].
  *
  * A zero-based index of current iteration is passed as a parameter to [action].
