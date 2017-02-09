@@ -269,7 +269,8 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
                                 capturedValueDescriptor
                         ) ?:
                                 // Captured value is directly available for the caller.
-                                IrGetValueImpl(oldExpression.startOffset, oldExpression.endOffset, capturedValueDescriptor)
+                                IrGetValueImpl(oldExpression.startOffset, oldExpression.endOffset,
+                                        oldParameterToNew[capturedValueDescriptor] ?: capturedValueDescriptor)
                     }
 
                 }
@@ -334,12 +335,11 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
         private fun rewriteClassMembers(irClass: IrClass, localClassContext: LocalClassContext) {
             irClass.transformChildrenVoid(FunctionBodiesRewriter(localClassContext))
 
-            val primaryConstructor = irClass.descriptor.unsubstitutedPrimaryConstructor ?:
-                    TODO("local classes without primary constructor")
-
-            val primaryConstructorContext = localClassConstructors[primaryConstructor]!!
-            val primaryConstructorBody = primaryConstructorContext.declaration.body as? IrBlockBody
-                    ?: throw AssertionError("Unexpected constructor body: ${primaryConstructorContext.declaration.body}")
+            val classDescriptor = irClass.descriptor
+            val constructorsCallingSuper = classDescriptor.constructors
+                    .map { localClassConstructors[it]!! }
+                    .filter { it.declaration.callsSuper() }
+            assert(constructorsCallingSuper.any(), { "Expected at least one constructor calling super; class: $classDescriptor" })
 
             localClassContext.capturedValueToField.forEach { capturedValue, fieldDescriptor ->
                 val startOffset = irClass.startOffset
@@ -352,11 +352,15 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
                         )
                 )
 
-                val capturedValueExpression = primaryConstructorContext.irGet(startOffset, endOffset, capturedValue)!!
-                val capturedValueInitializer = IrSetFieldImpl(startOffset, endOffset, fieldDescriptor,
-                        IrGetValueImpl(startOffset, endOffset, irClass.descriptor.thisAsReceiverParameter),
-                        capturedValueExpression, STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE)
-                primaryConstructorBody.statements.add(0, capturedValueInitializer)
+                for (constructorContext in constructorsCallingSuper) {
+                    val blockBody = constructorContext.declaration.body as? IrBlockBody
+                            ?: throw AssertionError("Unexpected constructor body: ${constructorContext.declaration.body}")
+                    val capturedValueExpression = constructorContext.irGet(startOffset, endOffset, capturedValue)!!
+                    blockBody.statements.add(0,
+                            IrSetFieldImpl(startOffset, endOffset, fieldDescriptor,
+                                    IrGetValueImpl(startOffset, endOffset, classDescriptor.thisAsReceiverParameter),
+                                    capturedValueExpression, STATEMENT_ORIGIN_INITIALIZER_OF_FIELD_FOR_CAPTURED_VALUE))
+                }
             }
         }
 
@@ -514,15 +518,7 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
             // Do not substitute type parameters for now.
             val newTypeParameters = oldDescriptor.typeParameters
 
-            val capturedValues = mutableListOf<ValueDescriptor>()
-            var classDescriptor = oldDescriptor.containingDeclaration
-            while (true) {
-                // Capture all values from the hierarchy since we need to call constructor of super class
-                // with his captured values.
-                val context = localClasses[classDescriptor] ?: break
-                capturedValues.addAll(context.closure.capturedValues)
-                classDescriptor = classDescriptor.getSuperClassOrAny()
-            }
+            val capturedValues = localClasses[oldDescriptor.containingDeclaration]!!.closure.capturedValues
 
             val newValueParameters = createTransformedValueParameters(localFunctionContext, capturedValues)
 

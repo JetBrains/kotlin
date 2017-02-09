@@ -43,14 +43,14 @@ internal class KonanLower(val context: Context) {
         phaser.phase(KonanPhase.LOWER_SHARED_VARIABLES) {
             SharedVariablesLowering(context).runOnFilePostfix(irFile)
         }
+        phaser.phase(KonanPhase.LOWER_INITIALIZERS) {
+            InitializersLowering(context).runOnFilePostfix(irFile)
+        }
         phaser.phase(KonanPhase.LOWER_LOCAL_FUNCTIONS) {
             LocalDeclarationsLowering(context).runOnFilePostfix(irFile)
         }
         phaser.phase(KonanPhase.LOWER_INNER_CLASSES) {
             InnerClassLowering(context).runOnFilePostfix(irFile)
-        }
-        phaser.phase(KonanPhase.LOWER_INITIALIZERS) {
-            InitializersLowering(context).runOnFilePostfix(irFile)
         }
         phaser.phase(KonanPhase.LOWER_CALLABLES) {
             CallableReferenceLowering(context).runOnFilePostfix(irFile)

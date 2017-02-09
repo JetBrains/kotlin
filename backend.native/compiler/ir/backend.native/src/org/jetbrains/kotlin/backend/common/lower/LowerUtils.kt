@@ -6,11 +6,17 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.NonReportingOverrideStrategy
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.types.KotlinType
@@ -91,4 +97,31 @@ class SimpleMemberScope(val members: List<DeclarationDescriptor>) : MemberScopeI
 
     override fun printScopeStructure(p: Printer) = TODO("not implemented")
 
+}
+
+fun IrConstructor.callsSuper(): Boolean {
+    val constructedClass = descriptor.constructedClass
+    val superClass = constructedClass.getSuperClassOrAny()
+    var callsSuper = false
+    var numberOfCalls = 0
+    acceptChildrenVoid(object : IrElementVisitorVoid {
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitClass(declaration: IrClass) {
+            // Skip nested
+        }
+
+        override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
+            assert(++numberOfCalls == 1, { "More than one delegating constructor call: $descriptor" })
+            if (expression.descriptor.constructedClass == superClass)
+                callsSuper = true
+            else if (expression.descriptor.constructedClass != constructedClass)
+                throw AssertionError("Expected either call to another constructor of the class being constructed or" +
+                        " call to super class constructor. But was: ${expression.descriptor.constructedClass}")
+        }
+    })
+    assert(numberOfCalls == 1, { "Expected exactly one delegating constructor call but none encountered: $descriptor" })
+    return callsSuper
 }

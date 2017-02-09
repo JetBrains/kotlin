@@ -128,7 +128,6 @@ task objectInitialization(type: RunKonanTest) {
 }
 
 task objectInitialization1(type: RunKonanTest) {
-    disabled = true
     goldValue = "init\nfield\nconstructor1\ninit\nfield\nconstructor1\nconstructor2\n"
     source = "codegen/object/initialization1.kt"
 }
@@ -379,6 +378,11 @@ task innerClass_superOuter(type: RunKonanTest) {
     source = "codegen/innerClass/superOuter.kt"
 }
 
+task innerClass_noPrimaryConstructor(type: RunKonanTest) {
+    goldValue = "OK\nOK\n"
+    source = "codegen/innerClass/noPrimaryConstructor.kt"
+}
+
 task localClass_localHierarchy(type: RunKonanTest) {
     goldValue = "OK\n"
     source = "codegen/localClass/localHierarchy.kt"
@@ -407,6 +411,11 @@ task localClass_innerTakesCapturedFromOuter(type: RunKonanTest) {
 task localClass_virtualCallFromConstructor(type: RunKonanTest) {
     goldValue = "OK\n"
     source = "codegen/localClass/virtualCallFromConstructor.kt"
+}
+
+task localClass_noPrimaryConstructor(type: RunKonanTest) {
+    goldValue = "OKOK\n"
+    source = "codegen/localClass/noPrimaryConstructor.kt"
 }
 
 task initializers_correctOrder1(type: RunKonanTest) {
