@@ -655,9 +655,6 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
         return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(paramsInfo.errorMessage!!))
     }
 
-    val virtualContext = virtualBlock.analyze(BodyResolveMode.PARTIAL)
-    val isSuspendExpected = virtualContext.diagnostics.all().any { it.factory == Errors.ILLEGAL_SUSPEND_FUNCTION_CALL }
-
     val messages = ArrayList<ErrorMessage>()
 
     val modifiedVarDescriptorsForControlFlow = HashMap(modifiedVarDescriptorsWithExpressions)
@@ -703,20 +700,32 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     val receiverParameter = if (receiverCandidates.size == 1 && !options.canWrapInWith) receiverCandidates.first() else null
     receiverParameter?.let { adjustedParameters.remove(it) }
 
+    var descriptor = ExtractableCodeDescriptor(
+            this,
+            bindingContext,
+            suggestFunctionNames(returnType),
+            getDefaultVisibility(),
+            adjustedParameters.sortedBy { it.name },
+            receiverParameter,
+            paramsInfo.typeParameters.sortedBy { it.originalDeclaration.name!! },
+            paramsInfo.replacementMap,
+            if (messages.isEmpty()) controlFlow else controlFlow.toDefault(),
+            returnType,
+            emptyList()
+    )
+
+    val body = ExtractionGeneratorConfiguration(
+            descriptor,
+            ExtractionGeneratorOptions(inTempFile = true, allowExpressionBody = false)
+    ).generateDeclaration().declaration.getGeneratedBody()
+    val virtualContext = body.analyzeFully()
+    if (virtualContext.diagnostics.all().any { it.factory == Errors.ILLEGAL_SUSPEND_FUNCTION_CALL }) {
+        descriptor = descriptor.copy(modifiers = listOf(KtTokens.SUSPEND_KEYWORD))
+    }
+
+
     return AnalysisResult(
-            ExtractableCodeDescriptor(
-                    this,
-                    bindingContext,
-                    suggestFunctionNames(returnType),
-                    getDefaultVisibility(),
-                    adjustedParameters.sortedBy { it.name },
-                    receiverParameter,
-                    paramsInfo.typeParameters.sortedBy { it.originalDeclaration.name!! },
-                    paramsInfo.replacementMap,
-                    if (messages.isEmpty()) controlFlow else controlFlow.toDefault(),
-                    returnType,
-                    if (isSuspendExpected) listOf(KtTokens.SUSPEND_KEYWORD) else emptyList()
-            ),
+            descriptor,
             if (messages.isEmpty()) Status.SUCCESS else Status.NON_CRITICAL_ERROR,
             messages
     )
