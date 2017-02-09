@@ -3617,6 +3617,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("refsAreSerializable.kt")
+        public void testRefsAreSerializable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/refsAreSerializable.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("simplestClosure.kt")
         public void testSimplestClosure() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/closures/simplestClosure.kt");

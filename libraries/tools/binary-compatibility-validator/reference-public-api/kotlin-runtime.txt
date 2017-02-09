@@ -759,55 +759,55 @@ public class kotlin/jvm/internal/PropertyReference2Impl : kotlin/jvm/internal/Pr
 public class kotlin/jvm/internal/Ref {
 }
 
-public final class kotlin/jvm/internal/Ref$BooleanRef {
+public final class kotlin/jvm/internal/Ref$BooleanRef : java/io/Serializable {
 	public field element Z
 	public fun <init> ()V
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class kotlin/jvm/internal/Ref$ByteRef {
+public final class kotlin/jvm/internal/Ref$ByteRef : java/io/Serializable {
 	public field element B
 	public fun <init> ()V
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class kotlin/jvm/internal/Ref$CharRef {
+public final class kotlin/jvm/internal/Ref$CharRef : java/io/Serializable {
 	public field element C
 	public fun <init> ()V
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class kotlin/jvm/internal/Ref$DoubleRef {
+public final class kotlin/jvm/internal/Ref$DoubleRef : java/io/Serializable {
 	public field element D
 	public fun <init> ()V
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class kotlin/jvm/internal/Ref$FloatRef {
+public final class kotlin/jvm/internal/Ref$FloatRef : java/io/Serializable {
 	public field element F
 	public fun <init> ()V
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class kotlin/jvm/internal/Ref$IntRef {
+public final class kotlin/jvm/internal/Ref$IntRef : java/io/Serializable {
 	public field element I
 	public fun <init> ()V
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class kotlin/jvm/internal/Ref$LongRef {
+public final class kotlin/jvm/internal/Ref$LongRef : java/io/Serializable {
 	public field element J
 	public fun <init> ()V
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class kotlin/jvm/internal/Ref$ObjectRef {
+public final class kotlin/jvm/internal/Ref$ObjectRef : java/io/Serializable {
 	public field element Ljava/lang/Object;
 	public fun <init> ()V
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class kotlin/jvm/internal/Ref$ShortRef {
+public final class kotlin/jvm/internal/Ref$ShortRef : java/io/Serializable {
 	public field element S
 	public fun <init> ()V
 	public fun toString ()Ljava/lang/String;
