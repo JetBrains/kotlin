@@ -617,13 +617,6 @@
     </target>
 
     <target name="compiler">
-        <taskdef resource="proguard/ant/task.properties">
-            <classpath>
-                <pathelement path="${dependencies}/proguard.jar"/>
-                <pathelement path="${dependencies}/proguard-anttask.jar"/>
-            </classpath>
-        </taskdef>
-
         <cleandir dir="${output}/classes/compiler"/>
 
         <javac2 destdir="${output}/classes/compiler" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
@@ -645,17 +638,32 @@
               unless:true="${shrink}" />
 
         <sequential if:true="${shrink}">
+            <shrink configuration="${basedir}/compiler/compiler.pro"/>
+        </sequential>
+
+        <pack-compiler-for-maven/>
+    </target>
+
+    <macrodef name="shrink">
+        <attribute name="configuration"/>
+
+        <sequential>
+            <taskdef resource="proguard/ant/task.properties">
+                <classpath>
+                    <pathelement path="${dependencies}/proguard.jar"/>
+                    <pathelement path="${dependencies}/proguard-anttask.jar"/>
+                </classpath>
+            </taskdef>
+
             <available property="rtjar" value="${java.home}/lib/rt.jar" file="${java.home}/lib/rt.jar"/>
             <available property="rtjar" value="${java.home}/../Classes/classes.jar" file="${java.home}/../Classes/classes.jar"/>
 
             <available property="jssejar" value="${java.home}/lib/jsse.jar" file="${java.home}/lib/jsse.jar"/>
             <available property="jssejar" value="${java.home}/../Classes/jsse.jar" file="${java.home}/../Classes/jsse.jar"/>
 
-            <proguard configuration="${basedir}/compiler/compiler.pro"/>
+            <proguard configuration="@{configuration}"/>
         </sequential>
-
-        <pack-compiler-for-maven/>
-    </target>
+    </macrodef>
 
     <macrodef name="pack-compiler-for-maven">
         <sequential>
@@ -1224,11 +1232,10 @@
             </manifest>
         </jar>
 
-        <delete file="${output}/kotlin-reflect-jarjar.jar" failonerror="false"/>
-
         <sequential if:true="${obfuscate.reflect}">
             <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="dependencies/jarjar.jar"/>
-            <jarjar jarfile="${output}/kotlin-reflect-jarjar.jar" filesonly="true" filesetmanifest="merge">
+            <delete file="${output}/kotlin-reflect-after-jarjar.jar" failonerror="false"/>
+            <jarjar jarfile="${output}/kotlin-reflect-after-jarjar.jar" filesonly="true" filesetmanifest="merge">
                 <zipfileset src="${output}/kotlin-reflect-before-jarjar.jar"/>
                 <rule pattern="org.jetbrains.kotlin.**" result="kotlin.reflect.jvm.internal.impl.@1"/>
                 <rule pattern="javax.inject.**" result="kotlin.reflect.jvm.internal.impl.javax.inject.@1"/>
@@ -1239,17 +1246,18 @@
                 <compilerarg value="-script"/>
                 <compilerarg value="kotlin/Metadata"/> <!-- Annotation to strip -->
                 <compilerarg value="kotlin/reflect/jvm/internal/impl/.*"/> <!-- Classes to strip from -->
-                <compilerarg value="${output}/kotlin-reflect-jarjar.jar"/>
-                <compilerarg value="${kotlin-home}/lib/kotlin-reflect.jar"/>
+                <compilerarg value="${output}/kotlin-reflect-after-jarjar.jar"/>
+                <compilerarg value="${output}/kotlin-reflect-before-proguard.jar"/>
                 <classpath>
                     <pathelement location="${idea.sdk}/lib/asm-all.jar"/>
                 </classpath>
             </kotlinc>
+
+            <shrink configuration="${basedir}/core/reflection.jvm/reflection.pro"/>
         </sequential>
 
         <sequential unless:true="${obfuscate.reflect}">
             <echo message="Obfuscation of kotlin-reflect is disabled"/>
-            <copy file="${output}/kotlin-reflect-before-jarjar.jar" tofile="${output}/kotlin-reflect-jarjar.jar" overwrite="true"/>
             <copy file="${output}/kotlin-reflect-before-jarjar.jar" tofile="${kotlin-home}/lib/kotlin-reflect.jar" overwrite="true"/>
         </sequential>
     </target>
