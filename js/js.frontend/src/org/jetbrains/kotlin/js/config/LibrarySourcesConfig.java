@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.*;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.PathUtil;
+import com.intellij.util.containers.MultiMap;
 import com.intellij.util.io.URLUtil;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function2;
@@ -37,10 +38,7 @@ import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils;
 import org.jetbrains.kotlin.utils.LibraryUtils;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.kotlin.utils.LibraryUtils.isOldKotlinJavascriptLibrary;
 import static org.jetbrains.kotlin.utils.PathUtil.getKotlinPathsForDistDirectory;
@@ -112,7 +110,7 @@ public class LibrarySourcesConfig extends JsConfig {
         VirtualFileSystem fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
         VirtualFileSystem jarFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JAR_PROTOCOL);
 
-        Set<String> modules = new HashSet<String>();
+        MultiMap<String, String> moduleNameToPath = MultiMap.create();
 
         for (String path : libraries) {
             VirtualFile file;
@@ -139,9 +137,7 @@ public class LibrarySourcesConfig extends JsConfig {
 
             if (isOldKotlinJavascriptLibrary(filePath)) {
                 moduleName = LibraryUtils.getKotlinJsModuleName(filePath);
-                if (!modules.add(moduleName)) {
-                    report.warning("Module \"" + moduleName + "\" is defined in more, than one file");
-                }
+                moduleNameToPath.putValue(moduleName, path);
             }
             else {
                 List<KotlinJavascriptMetadata> metadataList = KotlinJavascriptMetadataUtils.loadMetadata(filePath);
@@ -157,9 +153,7 @@ public class LibrarySourcesConfig extends JsConfig {
                                      ", expected version is " + JsMetadataVersion.INSTANCE);
                         return true;
                     }
-                    if (!modules.add(metadata.getModuleName())) {
-                        report.warning("Module \"" + metadata.getModuleName() + "\" is defined in more, than one file");
-                    }
+                    moduleNameToPath.putValue(metadata.getModuleName(), path);
                 }
 
                 moduleName = null;
@@ -167,6 +161,26 @@ public class LibrarySourcesConfig extends JsConfig {
 
             if (action != null) {
                 action.invoke(moduleName, file);
+            }
+        }
+
+        // Report warnings on multiple definitions
+        for (Map.Entry<String, Collection<String>> e : moduleNameToPath.entrySet()) {
+            Collection<String> paths = e.getValue();
+            if (paths.size() > 1) {
+                String moduleName = e.getKey();
+                StringBuilder msgBuilder = new StringBuilder()
+                        .append("Module \"").append(moduleName).append("\" is defined in multiple files (");
+                boolean first = true;
+                for (String path : paths) {
+                    if (!first) {
+                        msgBuilder.append(";");
+                    }
+                    first = false;
+                    msgBuilder.append(path);
+                }
+                msgBuilder.append(").");
+                report.warning(msgBuilder.toString());
             }
         }
 
