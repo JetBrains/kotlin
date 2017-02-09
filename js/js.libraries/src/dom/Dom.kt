@@ -70,7 +70,7 @@ fun Document?.elements(namespaceUri: String, localName: String): List<Element> {
  *
  * If you want to get a snapshot filtered to contain elements only it's better to use [filterElements] function.
  */
-@Deprecated("This API is going to be removed", level = DeprecationLevel.WARNING)
+@Deprecated("This API is going to be removed, use asList() as a close replacement instead.", ReplaceWith("asList() as List<Element>", "org.w3c.dom.asList"), level = DeprecationLevel.ERROR)
 public fun NodeList.asElementList(): List<Element> = ElementListAsList(this)
 
 /**

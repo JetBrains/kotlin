@@ -29,6 +29,6 @@ public fun <T> ItemArrayLike<T>.asList(): List<T> = object : AbstractList<T>() {
 
     override fun get(index: Int): T = when {
         index in 0..lastIndex -> this@asList.item(index) as T
-        else -> throw IndexOutOfBoundsException("index $index is not in range [0..$lastIndex)")
+        else -> throw IndexOutOfBoundsException("index $index is not in range [0..$lastIndex]")
     }
 }
