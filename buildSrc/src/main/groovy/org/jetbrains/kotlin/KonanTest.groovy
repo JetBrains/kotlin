@@ -282,6 +282,9 @@ class RunExternalTestGroup extends RunKonanTest {
         return result
     }
 
+    /**
+     * There are tests that require non-trivial 'package foo' in test launcher.
+     */
     void createLauncherFile(String file, String pkg) {
         createFile(file, """
 import kotlin.test.TestFailedException
