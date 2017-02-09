@@ -59,16 +59,19 @@
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-aether</artifactId>
             <version>0.10.1</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.sonatype.aether</groupId>
             <artifactId>aether-api</artifactId>
             <version>1.13.1</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
             <version>3.0.3</version>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
