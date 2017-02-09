@@ -26,15 +26,30 @@ abstract class AbstractClosureAnnotator  {
 
     private class ClosureBuilder {
         val capturedValues = mutableSetOf<ValueDescriptor>()
+        private val nestedBuilders = mutableSetOf<ClosureBuilder>()
         private val declaredValues = mutableSetOf<ValueDescriptor>()
 
-        fun buildClosure() = Closure(capturedValues.toList())
-
-        fun addNested(closure: Closure) {
-            fillInNestedClosure(capturedValues, closure.capturedValues)
+        fun buildClosure() : Closure {
+            val processed = mutableSetOf<ClosureBuilder>(this)
+            val builderStack = mutableListOf<ClosureBuilder>().apply { addAll(nestedBuilders) }
+            while (builderStack.isNotEmpty()) {
+                val builder = builderStack.pop()
+                if (!processed.contains(builder)) {
+                    processed.add(builder)
+                    builderStack.addAll(builder.nestedBuilders)
+                    fillInNestedClosure(capturedValues, builder.capturedValues)
+                }
+            }
+            // TODO: Save the closure and reuse it.
+            return Closure(capturedValues.toList())
         }
 
-        private fun fillInNestedClosure(destination: MutableSet<ValueDescriptor>, nested: List<ValueDescriptor>) {
+        fun addNested(builder: ClosureBuilder) {
+            nestedBuilders.add(builder)
+            declaredValues.addAll(builder.declaredValues)
+        }
+
+        private fun fillInNestedClosure(destination: MutableSet<ValueDescriptor>, nested: Collection<ValueDescriptor>) {
             nested.filterTo(destination) { isExternal(it) }
         }
 
@@ -53,21 +68,25 @@ abstract class AbstractClosureAnnotator  {
         }
     }
 
-    val functionClosures = mutableMapOf<FunctionDescriptor, Closure>()
+    private val closureBuilders = mutableMapOf<DeclarationDescriptor, ClosureBuilder>()
 
     fun annotate(declaration: IrDeclaration) {
-        // First pass - collect all closures for classes and functions.
+        // First pass - collect all closures for classes and functions. Collect call graph
         declaration.acceptChildrenVoid(ClosureCollectorVisitor())
-        // Second pass - add callees' closures for callers' ones.
-        declaration.acceptChildrenVoid(CallsCollectorVisitor())
+        // Second pass - build closures on basis of calls.
+        closureBuilders.forEach { descriptor, builder ->
+            when(descriptor) {
+                is FunctionDescriptor -> recordFunctionClosure(descriptor, builder.buildClosure())
+                is ClassDescriptor -> recordClassClosure(descriptor, builder.buildClosure())
+                else -> throw AssertionError("Unexpected descriptor type.")
+            }
+        }
     }
 
-    private abstract class ClosureCollectorVisitorBase : IrElementVisitorVoid {
-        open protected fun recordFunctionClosure(functionDescriptor: FunctionDescriptor, closure: Closure) {}
-        open protected fun recordClassClosure(classDescriptor: ClassDescriptor, closure: Closure) {}
+    private inner class ClosureCollectorVisitor : IrElementVisitorVoid {
 
         protected val closuresStack = mutableListOf<ClosureBuilder>()
-        protected val classClosures = mutableMapOf<ClassDescriptor, Closure>()
+        protected val classClosures = mutableMapOf<ClassDescriptor, ClosureBuilder>()
 
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
@@ -76,6 +95,7 @@ abstract class AbstractClosureAnnotator  {
         override fun visitClass(declaration: IrClass) {
             val classDescriptor = declaration.descriptor
             val closureBuilder = ClosureBuilder()
+            closureBuilders[declaration.descriptor] = closureBuilder
 
             closureBuilder.declareVariable(classDescriptor.thisAsReceiverParameter)
             if (classDescriptor.isInner)
@@ -92,19 +112,17 @@ abstract class AbstractClosureAnnotator  {
                 closureBuilder.addNested(superClassClosure)
             }
 
-            val closure = closureBuilder.buildClosure()
-
             if (DescriptorUtils.isLocal(classDescriptor)) {
-                recordClassClosure(classDescriptor, closure)
-                classClosures[classDescriptor] = closure
+                classClosures[classDescriptor] = closureBuilder
             }
 
-            closuresStack.peek()?.addNested(closure)
+            closuresStack.peek()?.addNested(closureBuilder)
         }
 
         override fun visitFunction(declaration: IrFunction) {
             val functionDescriptor = declaration.descriptor
             val closureBuilder = ClosureBuilder()
+            closureBuilders[declaration.descriptor] = closureBuilder
 
             functionDescriptor.valueParameters.forEach { closureBuilder.declareVariable(it) }
             closureBuilder.declareVariable(functionDescriptor.dispatchReceiverParameter)
@@ -116,13 +134,7 @@ abstract class AbstractClosureAnnotator  {
             declaration.acceptChildrenVoid(this)
             closuresStack.pop()
 
-            val closure = closureBuilder.buildClosure()
-
-            if (DescriptorUtils.isLocal(functionDescriptor)) {
-                recordFunctionClosure(functionDescriptor, closure)
-            }
-
-            closuresStack.peek()?.addNested(closure)
+            closuresStack.peek()?.addNested(closureBuilder)
         }
 
         override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) {
@@ -139,29 +151,14 @@ abstract class AbstractClosureAnnotator  {
             closuresStack.peek()?.declareVariable(declaration.descriptor)
             super.visitVariable(declaration)
         }
-    }
-
-    private inner class ClosureCollectorVisitor : ClosureCollectorVisitorBase() {
-        override fun recordFunctionClosure(functionDescriptor: FunctionDescriptor, closure: Closure) {
-            functionClosures[functionDescriptor] = closure
-        }
-
-        override fun recordClassClosure(classDescriptor: ClassDescriptor, closure: Closure) =
-                this@AbstractClosureAnnotator.recordClassClosure(classDescriptor, closure)
-    }
-
-    private inner class CallsCollectorVisitor : ClosureCollectorVisitorBase() {
-        override fun recordFunctionClosure(functionDescriptor: FunctionDescriptor, closure: Closure) =
-                this@AbstractClosureAnnotator.recordFunctionClosure(functionDescriptor, closure)
-
 
         override fun visitCall(expression: IrCall) {
             expression.acceptChildrenVoid(this)
             val descriptor = expression.descriptor
-            if (descriptor is FunctionDescriptor && DescriptorUtils.isLocal(descriptor)) {
-                val callClosure = functionClosures[descriptor]
-                callClosure?.let {
-                    closuresStack.peek()?.addNested(callClosure)
+            if (DescriptorUtils.isLocal(descriptor)) {
+                val builder = closureBuilders[descriptor]
+                builder?.let {
+                    closuresStack.peek()?.addNested(builder)
                 }
             }
         }
