@@ -37,16 +37,16 @@ class KotlinFileManager(val standardFileManager: StandardJavaFileManager,
     }
 
     override fun inferBinaryName(location: JavaFileManager.Location,
-                                 file: JavaFileObject): String {
-        return (file as? KotlinLightClass)?.binaryName ?: standardFileManager.inferBinaryName(location, file)
-    }
+                                 file: JavaFileObject): String =  (file as? KotlinLightClass)?.binaryName ?: standardFileManager.inferBinaryName(location, file)
 
     override fun list(location: JavaFileManager.Location,
                       packageName: String,
                       kinds: MutableSet<JavaFileObject.Kind>,
                       recurse: Boolean): Iterable<JavaFileObject> {
+        val predicate = if (recurse) { it: String -> it.startsWith(packageName) } else { it: String -> it == packageName }
+
         return if (location == StandardLocation.CLASS_PATH && kinds.contains(JavaFileObject.Kind.CLASS)) {
-            kotlinLightClasses.filter { it.packageName == packageName }
+            kotlinLightClasses.filter { predicate(it.packageName) }
                     .toMutableList<JavaFileObject>()
                     .apply { addAll(standardFileManager.list(location, packageName, kinds, recurse)) }
 

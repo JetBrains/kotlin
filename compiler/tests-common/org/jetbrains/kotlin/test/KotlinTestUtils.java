@@ -554,71 +554,39 @@ public class KotlinTestUtils {
 
     public static void compileKotlinWithJava(
             @NotNull final List<File> javaFiles,
-            @NotNull final List<File> ktFiles,
+            @NotNull final List<File> kotlinFiles,
             @NotNull final File outDir,
             @NotNull final Disposable disposable,
             @Nullable File javaErrorFile
     ) throws IOException {
 
-        final KotlinCoreEnvironment env = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable);
-        final KotlinCoreEnvironment env1 = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable);
+        final KotlinCoreEnvironment envForKotlin = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable);
+        final KotlinCoreEnvironment envForJava = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable);
 
-        if (!outDir.exists()) outDir.mkdirs();
-
-
-        Thread kotlinc = new Thread() {
-            @Override
-            public void run() {
-                if (!ktFiles.isEmpty()) {
-                    LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, env);
-                }
-            }
-
-        };
+        final List<KtFile> ktFiles = new ArrayList<KtFile>();
+        for (File file : kotlinFiles) {
+            ktFiles.add(createFile(file.getName(), FileUtil.loadFile(file, true), envForKotlin.getProject()));
+        }
 
         Thread javac = new Thread() {
             @Override
             public void run() {
-                if (!javaFiles.isEmpty()) {
-                    JavaAgainstKotlinCompiler.compileJavaFiles(javaFiles, ktFiles, env1, outDir);
-                }
+                new JavaAgainstKotlinCompiler(envForJava).compileJavaFiles(javaFiles, ktFiles, outDir.getPath(), null, null);
             }
         };
-
         javac.start();
-        kotlinc.start();
+
+        if (!ktFiles.isEmpty()) {
+            LoadDescriptorUtil.compileKotlinToDirAndGetModule(kotlinFiles, outDir, envForKotlin);
+        }
 
         try {
             javac.join();
-            kotlinc.join();
         }
         catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
-
-    //public static void compileKotlinWithJava(
-    //        @NotNull List<File> javaFiles,
-    //        @NotNull List<File> ktFiles,
-    //        @NotNull File outDir,
-    //        @NotNull Disposable disposable,
-    //        @Nullable File javaErrorFile
-    //) throws IOException {
-    //    if (!ktFiles.isEmpty()) {
-    //        KotlinCoreEnvironment environment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable);
-    //        LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment);
-    //    }
-    //    else {
-    //        boolean mkdirs = outDir.mkdirs();
-    //        assert mkdirs : "Not created: " + outDir;
-    //    }
-    //    if (!javaFiles.isEmpty()) {
-    //        compileJavaFiles(javaFiles, Arrays.asList(
-    //                "-classpath", outDir.getPath() + File.pathSeparator + ForTestCompileRuntime.runtimeJarForTests(),
-    //                "-d", outDir.getPath()
-    //        ), javaErrorFile);
-    //    }
-    //}
 
     public interface TestFileFactory<M, F> {
         F createFile(@Nullable M module, @NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives);

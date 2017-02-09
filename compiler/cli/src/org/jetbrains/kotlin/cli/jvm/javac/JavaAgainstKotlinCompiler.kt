@@ -16,14 +16,9 @@
 
 package org.jetbrains.kotlin.cli.jvm.javac
 
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.impl.PsiFileFactoryImpl
-import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -34,10 +29,11 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.kotlinSourceRoots
-import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDeclarationContainer
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
@@ -50,7 +46,11 @@ import java.nio.charset.Charset
 import java.util.*
 import javax.tools.*
 
-object JavaAgainstKotlinCompiler {
+class JavaAgainstKotlinCompiler(private val environment: KotlinCoreEnvironment) {
+
+    private val outputFiles = hashMapOf<KtFile, Iterable<OutputFile>>()
+
+    private lateinit var analysisResult: AnalysisResult
 
     private val VirtualFile.javaFiles: List<VirtualFile>
         get() = children.filter { it.extension == "java" }
@@ -67,11 +67,28 @@ object JavaAgainstKotlinCompiler {
                 .flatMap { it.javaFiles }
                 .map { File(it.canonicalPath) }
 
-    private val CompilerConfiguration.javacOptions: List<String>
-        get() = listOf("-target", this[JVMConfigurationKeys.JVM_TARGET]?.name ?: "1.8")
-
-
     private fun KotlinCoreEnvironment.enablePartialAnalysis() = AnalysisHandlerExtension.registerExtension(project, PartialAnalysisHandlerExtension())
+
+    private fun KotlinLightClass.toByteCode(): Iterable<OutputFile> {
+        val generationState = GenerationState(
+                environment.project,
+                ClassBuilderFactories.LIGHT,
+                analysisResult.moduleDescriptor,
+                analysisResult.bindingContext,
+                listOf(ktFile),
+                environment.configuration
+        )
+
+        if (analysisResult.shouldGenerateCode) {
+            KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
+        }
+        AnalyzingUtils.throwExceptionOnErrors(generationState.collectedExtraJvmDiagnostics)
+
+        return generationState.factory.getClassFiles().let {
+            outputFiles.put(ktFile, it)
+            it
+        }
+    }
 
     private fun KotlinCoreEnvironment.analyze(files: Collection<KtFile> = getSourceFiles()): AnalysisResult {
         files.forEach { AnalyzingUtils.checkForSyntacticErrors(it) }
@@ -86,60 +103,60 @@ object JavaAgainstKotlinCompiler {
         }
     }
 
-    private fun KotlinCoreEnvironment.compileKotlinFiles(ktFiles: List<KtFile> = getSourceFiles()): Iterable<OutputFile> {
-        enablePartialAnalysis()
+    private fun KtDeclarationContainer.getAllClassesFqNames(): List<String> = arrayListOf<String?>()
+            .also { list ->
+                when {
+                    this is KtFile -> list.add(javaFileFacadeFqName.asString())
+                    this is KtClassOrObject -> {
+                        if (this is KtClass && hasInterfaceDefaultImpls) {
+                            list.add("${fqName?.asString()}\$DefaultImpls")
+                        }
 
-        val analysisResult = analyze(ktFiles).apply { throwIfError() }
-        val generationState = GenerationState(
-                project,
-                ClassBuilderFactories.LIGHT,
-                analysisResult.moduleDescriptor,
-                analysisResult.bindingContext,
-                ktFiles,
-                configuration
-        )
-
-        if (analysisResult.shouldGenerateCode) {
-            KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
-        }
-        AnalyzingUtils.throwExceptionOnErrors(generationState.collectedExtraJvmDiagnostics)
-
-        return generationState.factory.getClassFiles()
-    }
-
-    private fun Iterable<OutputFile>.toKotlinLightClasses(ktFiles: List<KtFile>) = ktFiles.flatMap { ktFile ->
-        filter { it.sourceFiles.firstOrNull()?.canonicalPath == ktFile.originalFile.virtualFile.canonicalPath }
-                .map {
-                    val packageFqName = ktFile.packageFqName.asString()
-                    val binaryName = packageFqName + "." +
-                                     it.relativePath.replace("/", ".")
-                                             .substringBeforeLast(".")
-                                             .substring(packageFqName.length + 1)
-                                             .replace(".", "$")
-
-                    KotlinLightClass(binaryName, packageFqName, it.asByteArray())
+                        list.add(fqName?.asString())
+                    }
                 }
-    }
 
-    @JvmStatic
-    fun compileJavaFiles(environment: KotlinCoreEnvironment,
-                         messageCollector: MessageCollector,
-                         destination: String) {
+                declarations
+                        .filterIsInstance<KtClassOrObject>()
+                        .forEach {
+                            list.addAll(it.getAllClassesFqNames())
+                        }
+            }.filterNotNull()
 
-        messageCollector.report(CompilerMessageSeverity.INFO,
+    private fun toKotlinLightClasses(ktFile: KtFile) = ktFile.getAllClassesFqNames()
+            .map {
+                val packageFqName = ktFile.packageFqName.asString()
+                val binaryName = packageFqName + "." +
+                                 it.substring(packageFqName.length + 1).replace(".", "$")
+
+                KotlinLightClass(binaryName, packageFqName, ktFile, this)
+            }
+
+    fun getByteCode(lightClass: KotlinLightClass) = (outputFiles[lightClass.ktFile] ?: lightClass.toByteCode())
+            .first { lightClass.binaryName == it.relativePath.replace("/", ".").substringBeforeLast('.') }
+            .asByteArray()
+
+    fun compileJavaFiles(javaFiles: List<File>? = environment.javaFiles.check { it.isNotEmpty() },
+                         ktFiles: List<KtFile> = environment.getSourceFiles(),
+                         destination: String,
+                         javacArguments: List<String>?,
+                         messageCollector: MessageCollector?) {
+        javaFiles ?: return
+
+        messageCollector?.report(CompilerMessageSeverity.INFO,
                                 "Parallel Java against Kotlin compiler",
                                 CompilerMessageLocation.NO_LOCATION)
 
+        environment.enablePartialAnalysis()
+
         val configuration = environment.configuration
         val classpath = configuration.jvmClasspathRoots
-
-        val javaFiles = environment.javaFiles.check { it.isNotEmpty() } ?: return
         val outDir = File(destination).apply { mkdirs() }
 
-        val options = configuration.javacOptions
+        analysisResult = environment.analyze(ktFiles)
 
         val javac = ToolProvider.getSystemJavaCompiler()
-        val lightClasses = environment.compileKotlinFiles().toKotlinLightClasses(environment.getSourceFiles())
+        val lightClasses = ktFiles.flatMap { toKotlinLightClasses(it) }
 
         val diagnosticCollector = DiagnosticCollector<JavaFileObject>()
         val fileManager = KotlinFileManager(
@@ -147,7 +164,7 @@ object JavaAgainstKotlinCompiler {
                 lightClasses
         )
 
-        with (fileManager) {
+        with(fileManager) {
             val javaFileObjects = standardFileManager.getJavaFileObjectsFromFiles(javaFiles)
 
             standardFileManager.setLocation(StandardLocation.CLASS_PATH, classpath)
@@ -155,65 +172,23 @@ object JavaAgainstKotlinCompiler {
 
             use { fileManager ->
                 val compilationTask = javac.getTask(StringWriter(), fileManager, diagnosticCollector,
-                                                    options, null, javaFileObjects)
-                if (!compilationTask.call()) {
-                    diagnosticCollector.diagnostics.forEach {
-                        val severity = when (it.kind) {
-                            Diagnostic.Kind.ERROR -> CompilerMessageSeverity.ERROR
-                            Diagnostic.Kind.WARNING -> CompilerMessageSeverity.WARNING
-                            Diagnostic.Kind.MANDATORY_WARNING -> CompilerMessageSeverity.STRONG_WARNING
-                            Diagnostic.Kind.NOTE -> CompilerMessageSeverity.INFO
-                            else -> CompilerMessageSeverity.LOGGING
-                        }
+                                                    javacArguments, null, javaFileObjects)
+                compilationTask.call()
 
-                        val message = "${it.source.name} [${it.lineNumber}, ${it.columnNumber}]: ${it.getMessage(Locale.ENGLISH)}"
-                        messageCollector.report(severity, message, CompilerMessageLocation.NO_LOCATION)
+                diagnosticCollector.diagnostics.forEach {
+                    val severity = when (it.kind) {
+                        Diagnostic.Kind.ERROR -> CompilerMessageSeverity.ERROR
+                        Diagnostic.Kind.WARNING -> CompilerMessageSeverity.WARNING
+                        Diagnostic.Kind.MANDATORY_WARNING -> CompilerMessageSeverity.STRONG_WARNING
+                        Diagnostic.Kind.NOTE -> CompilerMessageSeverity.INFO
+                        else -> CompilerMessageSeverity.LOGGING
                     }
+                    val position = if (it.lineNumber != -1L) " [${it.lineNumber}, ${it.columnNumber}]" else ""
+                    val message = "${it.source?.name}$position: ${it.getMessage(Locale.ENGLISH)}"
+
+                    messageCollector?.report(severity, message, CompilerMessageLocation.NO_LOCATION)
                 }
             }
-        }
-    }
-
-    // for tests only
-    @JvmStatic
-    fun compileJavaFiles(javaFiles: List<File>,
-                         kotlinFiles: List<File>,
-                         environment: KotlinCoreEnvironment,
-                         outDir: File) {
-
-        fun createKtFile(name: String, text: String, project: Project): KtFile {
-            val shortName = name.substringAfterLast("/").substringAfterLast("\\")
-
-            val virtualFile = object : LightVirtualFile(shortName, KotlinLanguage.INSTANCE, text) {
-                override fun getPath() = "/$name"
-            }
-            virtualFile.charset = CharsetToolkit.UTF8_CHARSET
-
-            val factory = PsiFileFactory.getInstance(project) as PsiFileFactoryImpl
-
-            return factory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile
-        }
-
-        val javac = ToolProvider.getSystemJavaCompiler()
-        val ktFiles = kotlinFiles.map {
-            createKtFile(it.name, FileUtil.loadFile(it, true), environment.project)
-        }
-
-        val outputFiles = environment.compileKotlinFiles(ktFiles)
-        val lightClasses = outputFiles.toKotlinLightClasses(ktFiles)
-
-        val diagnosticCollector = DiagnosticCollector<JavaFileObject>()
-        val fileManager = KotlinFileManager(
-                javac.getStandardFileManager(diagnosticCollector, Locale.ENGLISH, Charset.forName("utf-8")),
-                lightClasses
-        )
-
-        val javaFileObjects = fileManager.standardFileManager.getJavaFileObjectsFromFiles(javaFiles)
-
-        fileManager.use { fileManager ->
-            val compilationTask = javac.getTask(StringWriter(), fileManager, diagnosticCollector,
-                                                listOf("-d", outDir.absolutePath), null, javaFileObjects)
-            compilationTask.call()
         }
     }
 
