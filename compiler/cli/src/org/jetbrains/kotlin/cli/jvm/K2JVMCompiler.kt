@@ -203,11 +203,15 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 }
 
                 val javac = if (arguments.parallelMode) {
+                    val javacArguments = arguments.javacArgs?.toList()
+
                     val environmentForJavac = createEnvironmentWithScriptingSupport(rootDisposable, configuration, arguments, messageCollector)
                                               ?: return COMPILATION_ERROR
                     thread {
                         JavaAgainstKotlinCompiler(environmentForJavac)
-                                .compileJavaFiles(destination = destination, messageCollector = messageCollector)
+                                .compileJavaFiles(destination = destination,
+                                                  javacArguments = javacArguments,
+                                                  messageCollector = messageCollector)
                     }
                 } else null
 

@@ -29,8 +29,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.kotlinSourceRoots
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.psi.KtClass
@@ -68,9 +66,6 @@ class JavaAgainstKotlinCompiler(private val environment: KotlinCoreEnvironment) 
                 .mapNotNull { findLocalDirectory(it) }
                 .flatMap { it.javaFiles }
                 .map { File(it.canonicalPath) }
-
-    private val CompilerConfiguration.javacOptions: List<String>
-        get() = this[JVMConfigurationKeys.JVM_TARGET]?.name?.let { listOf("-target", it) } ?: emptyList()
 
     private fun KotlinCoreEnvironment.enablePartialAnalysis() = AnalysisHandlerExtension.registerExtension(project, PartialAnalysisHandlerExtension())
 
@@ -144,6 +139,7 @@ class JavaAgainstKotlinCompiler(private val environment: KotlinCoreEnvironment) 
     fun compileJavaFiles(javaFiles: List<File>? = environment.javaFiles.check { it.isNotEmpty() },
                          ktFiles: List<KtFile> = environment.getSourceFiles(),
                          destination: String,
+                         javacArguments: List<String>?,
                          messageCollector: MessageCollector?) {
         javaFiles ?: return
 
@@ -156,7 +152,6 @@ class JavaAgainstKotlinCompiler(private val environment: KotlinCoreEnvironment) 
         val configuration = environment.configuration
         val classpath = configuration.jvmClasspathRoots
         val outDir = File(destination).apply { mkdirs() }
-        val options = configuration.javacOptions
 
         analysisResult = environment.analyze(ktFiles)
 
@@ -177,7 +172,7 @@ class JavaAgainstKotlinCompiler(private val environment: KotlinCoreEnvironment) 
 
             use { fileManager ->
                 val compilationTask = javac.getTask(StringWriter(), fileManager, diagnosticCollector,
-                                                    options, null, javaFileObjects)
+                                                    javacArguments, null, javaFileObjects)
                 compilationTask.call()
 
                 diagnosticCollector.diagnostics.forEach {

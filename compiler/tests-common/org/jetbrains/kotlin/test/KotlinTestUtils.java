@@ -571,7 +571,7 @@ public class KotlinTestUtils {
         Thread javac = new Thread() {
             @Override
             public void run() {
-                new JavaAgainstKotlinCompiler(envForJava).compileJavaFiles(javaFiles, ktFiles, outDir.getPath(), null);
+                new JavaAgainstKotlinCompiler(envForJava).compileJavaFiles(javaFiles, ktFiles, outDir.getPath(), null, null);
             }
         };
         javac.start();
