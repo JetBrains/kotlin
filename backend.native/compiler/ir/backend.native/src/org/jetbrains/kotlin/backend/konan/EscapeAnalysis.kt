@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
-val DEBUG = false
+val DEBUG = 0
 
 // Roles in which particular object reference is being used. Lifetime is computed from
 // all roles reference.
@@ -159,11 +159,16 @@ internal class ParameterRoles {
             val entry = call.data as Pair<ParameterDescriptor, CallableDescriptor>
             val argument = entry.first
             val callee = entry.second
-            // Virtual dispatch.
-            if (callee is FunctionDescriptor && callee.isOverridable) return false
-            if (DEBUG) println("passed as ${argument}")
+            if (callee is FunctionDescriptor) {
+                // Virtual dispatch.
+                if (callee.isOverridable) return false
+                // Calling external function.
+                // TODO: add list of pure external functions in stdlib.
+                if (callee.isExternal) return false
+            }
+            if (DEBUG > 1) println("passed as ${argument}")
             val rolesInCallee = elementData[argument] ?: return false
-            if (DEBUG) println("In callee is: $rolesInCallee")
+            if (DEBUG > 1) println("In callee is: $rolesInCallee")
             // TODO: make recursive computation here.
             if (rolesInCallee.escapes()) return false
         }
@@ -181,11 +186,11 @@ internal class ParameterRoles {
 
     fun propagateCallArguments(expressionToRoles: MutableMap<IrExpression, Roles>) {
         expressionToRoles.forEach {
-            if (propagateCallArguments(it.value) && DEBUG)
+            if (propagateCallArguments(it.value) && DEBUG > 0)
                 println("unescaped expression ${it.key}")
         }
         elementData.forEach {
-            if (propagateCallArguments(it.value) && DEBUG)
+            if (propagateCallArguments(it.value) && DEBUG > 0)
                 println("unescaped paramater ${it.key}")
         }
     }
@@ -362,6 +367,14 @@ internal class RoleAssignerVisitor(
         super.visitCall(expression)
     }
 
+    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
+        for (argument in expression.getArguments()) {
+            assignRole(argument.second, Role.CALL_ARGUMENT,
+                    RoleInfoEntry(Pair(argument.first, expression.descriptor)))
+        }
+        super.visitDelegatingConstructorCall(expression)
+    }
+
     override fun visitSetField(expression: IrSetField) {
         assignRole(expression.value, Role.WRITTEN_TO_FIELD, RoleInfoEntry(expression))
         super.visitSetField(expression)
@@ -462,17 +475,18 @@ fun computeLifetimes(irModule: IrModuleFragment, context: RuntimeAware,
     parameterRoles.propagateCallArguments(expressionToRoles)
 
     expressionToRoles.forEach { expression, roles ->
-        if (DEBUG)
+        if (DEBUG > 1)
             println("for ${expression} roles are ${roles.data.keys.joinToString(", ")}")
         var role = rolesToLifetime(roles)
         if (role == Lifetime.LOCAL) {
-            println("arena alloc for ${ir2string(expression)} in ${findContext(irModule, expression)}")
+            if (DEBUG > 0)
+                println("arena alloc for ${ir2string(expression)} in ${findContext(irModule, expression)}")
             // Not yet enabled.
             role = Lifetime.GLOBAL
         }
         lifetimes[expression] = role
     }
-    if (DEBUG) {
+    if (DEBUG > 1) {
         variableValues.elementData.forEach { variable, expressions ->
             println("variable $variable could be ${expressions.joinToString(", ")}") }
         parameterRoles.elementData.forEach { parameter, roles ->
