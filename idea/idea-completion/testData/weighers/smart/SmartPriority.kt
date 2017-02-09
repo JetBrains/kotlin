@@ -23,4 +23,6 @@ class C {
 // ORDER: nullableX
 // ORDER: takeIf
 // ORDER: takeIf
+// ORDER: takeUnless
+// ORDER: takeUnless
 // ORDER: C
