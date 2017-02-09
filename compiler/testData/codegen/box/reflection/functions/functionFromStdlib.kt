@@ -1,7 +1,11 @@
+// IGNORE_BACKEND: JS
 // WITH_REFLECT
 
-fun doStuff(fn: String.() -> String) = "ok".fn()
+import kotlin.reflect.KFunction1
+import kotlin.reflect.jvm.isAccessible
+
+fun doStuff(fn: KFunction1<String, String>) = fn.call("oK")
 
 fun box(): String {
-    return doStuff(String::toUpperCase)
+    return doStuff(String::capitalize.apply { isAccessible = true })
 }
