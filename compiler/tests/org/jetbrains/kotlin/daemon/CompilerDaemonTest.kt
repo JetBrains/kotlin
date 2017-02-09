@@ -192,10 +192,12 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             logFile2.assertLogContainsSequence("Starting compilation with args: ")
 
             KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
+            Thread.sleep(100)
             logFile1.assertLogContainsSequence("Shutdown complete")
             logFile1.delete()
 
             KotlinCompilerClient.shutdownCompileService(compilerId2, daemonOptions)
+            Thread.sleep(100)
             logFile2.assertLogContainsSequence("Shutdown complete")
             logFile2.delete()
         }
