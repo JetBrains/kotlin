@@ -1,0 +1,10 @@
+// "Create interface 'Foo'" "true"
+ class Test{
+    fun doSth(){
+        Foo::class.java
+    }
+}
+
+<caret>interface Foo {
+
+}

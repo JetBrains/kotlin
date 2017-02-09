@@ -87,6 +87,10 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
                         }
                     }
         }
+        val parent = element.parent
+        if (parent is KtClassLiteralExpression && parent.receiverExpression == element) {
+            return listOf(ClassKind.PLAIN_CLASS, ClassKind.ENUM_CLASS, ClassKind.INTERFACE, ClassKind.ANNOTATION_CLASS, ClassKind.OBJECT)
+        }
 
         if (fullCallExpr.getAssignmentByLHS() != null) return Collections.emptyList()
 

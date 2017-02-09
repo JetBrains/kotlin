@@ -1,0 +1,10 @@
+// "Create class 'Foo'" "true"
+ class Test{
+    fun doSth(){
+        Foo::class.java
+    }
+}
+
+<caret>class Foo {
+
+}
