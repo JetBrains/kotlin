@@ -32,7 +32,6 @@ open class KotlinRemoteReplCompilerClient(
         messageCollector: MessageCollector,
         templateClasspath: List<File>,
         templateClassName: String,
-        scriptArgsWithTypes: ScriptArgsWithTypes,
         port: Int = SOCKET_ANY_FREE_PORT
 ) : ReplCompiler {
     val services = BasicCompilerServicesWithResultsFacadeServer(messageCollector, null, port)
@@ -48,8 +47,7 @@ open class KotlinRemoteReplCompilerClient(
                     emptyArray()),
             services,
             templateClasspath,
-            templateClassName,
-            scriptArgsWithTypes
+            templateClassName
     ).get()
 
     // dispose should be called at the end of the repl lifetime to free daemon repl session and appropriate resources

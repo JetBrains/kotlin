@@ -65,8 +65,7 @@ class KotlinJsr223JvmScriptEngine4Idea(
                                            emptyArray(),
                                            messageCollector,
                                            templateClasspath,
-                                           templateClassName,
-                                           ScriptArgsWithTypes(emptyArray(), emptyArray()))
+                                           templateClassName)
         }
     }
 

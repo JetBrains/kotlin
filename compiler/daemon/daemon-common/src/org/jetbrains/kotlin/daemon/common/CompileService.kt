@@ -190,8 +190,7 @@ interface CompileService : Remote {
             compilationOptions: CompilationOptions,
             servicesFacade: CompilerServicesFacadeBase,
             templateClasspath: List<File>,
-            templateClassName: String,
-            scriptArgsWithTypes: ScriptArgsWithTypes?
+            templateClassName: String
     ): CallResult<Int>
 
     @Throws(RemoteException::class)

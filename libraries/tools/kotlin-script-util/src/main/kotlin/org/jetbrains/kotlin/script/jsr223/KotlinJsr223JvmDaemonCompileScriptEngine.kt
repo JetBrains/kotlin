@@ -57,8 +57,7 @@ class KotlinJsr223JvmDaemonCompileScriptEngine(
                     emptyArray(),
                     PrintingMessageCollector(PrintStream(compilerOut), MessageRenderer.WITHOUT_PATHS, false),
                     templateClasspath,
-                    templateClassName,
-                    getScriptArgs(context, scriptArgsTypes)!!)
+                    templateClassName)
         }
     }
 

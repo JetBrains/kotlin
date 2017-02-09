@@ -455,7 +455,6 @@ class CompileServiceImpl(
             val compilerMessagesStream = PrintStream(BufferedOutputStream(RemoteOutputStreamClient(compilerMessagesOutputStream, DummyProfiler()), REMOTE_STREAM_BUFFER_SIZE))
             val messageCollector = KeepFirstErrorMessageCollector(compilerMessagesStream)
             val repl = KotlinJvmReplService(disposable, port, templateClasspath, templateClassName,
-                                            scriptArgs?.let { ScriptArgsWithTypes(it, scriptArgsTypes?.map { it.kotlin }?.toTypedArray() ?: emptyArray()) },
                                             messageCollector, operationsTracer)
             val sessionId = state.sessions.leaseSession(ClientOrSessionProxy(aliveFlagPath, repl, disposable))
 
@@ -486,9 +485,7 @@ class CompileServiceImpl(
             history: List<ReplCodeLine>?
     ): CompileService.CallResult<ReplEvalResult> =
             ifAlive(minAliveness = Aliveness.Alive) {
-                withValidRepl(sessionId) {
-                    CompileService.CallResult.Good(compileAndEval(codeLine, verifyHistory = history))
-                }
+                CompileService.CallResult.Error("Eval on daemon is not supported")
             }
 
     override fun leaseReplSession(aliveFlagPath: String?,
@@ -496,8 +493,7 @@ class CompileServiceImpl(
                                   compilationOptions: CompilationOptions,
                                   servicesFacade: CompilerServicesFacadeBase,
                                   templateClasspath: List<File>,
-                                  templateClassName: String,
-                                  scriptArgsWithTypes: ScriptArgsWithTypes?
+                                  templateClassName: String
     ): CompileService.CallResult<Int> = ifAlive(minAliveness = Aliveness.Alive)  {
         if (compilationOptions.targetPlatform != CompileService.TargetPlatform.JVM)
             CompileService.CallResult.Error("Sorry, only JVM target platform is supported now")
@@ -505,7 +501,7 @@ class CompileServiceImpl(
             val disposable = Disposer.newDisposable()
             val messageCollector = CompileServicesFacadeMessageCollector(servicesFacade, compilationOptions)
             val repl = KotlinJvmReplService(disposable, port, templateClasspath, templateClassName,
-                                            scriptArgsWithTypes, messageCollector, null)
+                                            messageCollector, null)
             val sessionId = state.sessions.leaseSession(ClientOrSessionProxy(aliveFlagPath, repl, disposable))
 
             CompileService.CallResult.Good(sessionId)

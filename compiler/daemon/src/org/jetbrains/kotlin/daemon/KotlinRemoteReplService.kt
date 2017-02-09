@@ -44,11 +44,10 @@ open class KotlinJvmReplService(
         val portForServers: Int,
         templateClasspath: List<File>,
         templateClassName: String,
-        protected val fallbackScriptArgs: ScriptArgsWithTypes?,
         protected val messageCollector: MessageCollector,
         @Deprecated("drop it")
         protected val operationsTracer: RemoteOperationsTracer?
-) : ReplCompileAction, ReplAtomicEvalAction, ReplCheckAction, CreateReplStageStateAction {
+) : ReplCompileAction, ReplCheckAction, CreateReplStageStateAction {
 
     protected val configuration = CompilerConfiguration().apply {
         addJvmClasspathRoots(PathUtil.getJdkClassesRoots())
@@ -90,12 +89,6 @@ open class KotlinJvmReplService(
         else GenericReplCompiler(disposable, scriptDef, configuration, messageCollector)
     }
 
-    private val replEvaluator: ReplFullEvaluator? by lazy {
-        replCompiler?.let { compiler ->
-            GenericReplCompilingEvaluator(compiler, configuration.jvmClasspathRoots, null, fallbackScriptArgs, ReplRepeatingMode.NONE)
-        }
-    }
-
     protected val statesLock = ReentrantReadWriteLock()
     // TODO: consider using values here for session cleanup
     protected val states = WeakHashMap<RemoteReplStateFacadeServer, Boolean>() // used as (missing) WeakHashSet
@@ -128,26 +121,11 @@ open class KotlinJvmReplService(
         }
     }
 
-    @Deprecated("eval is not supported on daemon")
-    override fun compileAndEval(state: IReplStageState<*>, codeLine: ReplCodeLine, scriptArgs: ScriptArgsWithTypes?, invokeWrapper: InvokeWrapper?): ReplEvalResult {
-        operationsTracer?.before("eval")
-        try {
-            return replEvaluator?.compileAndEval(state, codeLine, scriptArgs ?: fallbackScriptArgs, invokeWrapper)
-                   ?: ReplEvalResult.Error.Runtime("Initialization error")
-        }
-        finally {
-            operationsTracer?.after("eval")
-        }
-    }
-
     @Deprecated("Use check(state, line) instead")
     fun check(codeLine: ReplCodeLine): ReplCheckResult = check(defaultStateFacade.state, codeLine)
 
     @Deprecated("Use compile(state, line) instead")
     fun compile(codeLine: ReplCodeLine, verifyHistory: List<ReplCodeLine>?): ReplCompileResult = compile(defaultStateFacade.state, codeLine)
-
-    @Deprecated("eval is not supported on daemon")
-    fun compileAndEval(codeLine: ReplCodeLine, verifyHistory: List<ReplCodeLine>?): ReplEvalResult = ReplEvalResult.Error.Runtime("Eval is not supported on daemon")
 
     fun createRemoteState(port: Int = portForServers): RemoteReplStateFacadeServer = statesLock.write {
         val id = getValidId(stateIdCounter) { id -> states.none { it.key.getId() == id} }

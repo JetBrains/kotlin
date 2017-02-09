@@ -534,12 +534,12 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     fun testDaemonReplLocalEvalNoParams() {
         withDaemon { daemon ->
-            val repl = KotlinRemoteReplCompilerClient(daemon!!, null, CompileService.TargetPlatform.JVM,
-                                                      emptyArray(),
-                                                      TestMessageCollector(),
-                                                      classpathFromClassloader(),
-                                                      ScriptWithNoParam::class.qualifiedName!!,
-                                                      ScriptArgsWithTypes(emptyArray(), emptyArray()))
+            withDisposable { disposable ->
+                val repl = KotlinRemoteReplCompilerClient(daemon!!, null, CompileService.TargetPlatform.JVM,
+                                                          emptyArray(),
+                                                          TestMessageCollector(),
+                                                          classpathFromClassloader(),
+                                                          ScriptWithNoParam::class.qualifiedName!!)
 
             val localEvaluator = GenericReplEvaluator(emptyList(), Thread.currentThread().contextClassLoader)
 
@@ -550,11 +550,11 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     fun testDaemonReplLocalEvalStandardTemplate() {
         withDaemon { daemon ->
-            val repl = KotlinRemoteReplCompilerClient(disposable, daemon!!, null, CompileService.TargetPlatform.JVM, emptyArray(),
-                                                      TestMessageCollector(),
-                                                      classpathFromClassloader(),
-                                                      "kotlin.script.templates.standard.ScriptTemplateWithArgs",
-                                                      ScriptArgsWithTypes(emptyArray(), emptyArray()))
+            withDisposable { disposable ->
+                val repl = KotlinRemoteReplCompilerClient(daemon!!, null, CompileService.TargetPlatform.JVM, emptyArray(),
+                                                          TestMessageCollector(),
+                                                          classpathFromClassloader(),
+                                                          "kotlin.script.templates.standard.ScriptTemplateWithArgs")
 
             val localEvaluator = GenericReplEvaluator(emptyList(), Thread.currentThread().contextClassLoader,
                                                       ScriptArgsWithTypes(arrayOf(emptyArray<String>()), arrayOf(Array<String>::class)))
@@ -609,8 +609,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                                                               emptyArray(),
                                                               TestMessageCollector(),
                                                               classpathFromClassloader(),
-                                                              ScriptWithNoParam::class.qualifiedName!!,
-                                                              ScriptArgsWithTypes(emptyArray(), emptyArray()))
+                                                              ScriptWithNoParam::class.qualifiedName!!)
 
             val compilerState = replCompiler.createState()
 
