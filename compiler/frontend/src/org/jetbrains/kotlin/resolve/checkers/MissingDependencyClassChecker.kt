@@ -59,10 +59,10 @@ object MissingDependencyClassChecker : CallChecker {
         if (source is DeserializedContainerSource) {
             val incompatibility = source.incompatibility
             if (incompatibility != null) {
-                return INCOMPATIBLE_CLASS.on(reportOn, source.presentableFqName, incompatibility)
+                return INCOMPATIBLE_CLASS.on(reportOn, source.presentableString, incompatibility)
             }
             if (source.isPreReleaseInvisible) {
-                return PRE_RELEASE_CLASS.on(reportOn, source.presentableFqName)
+                return PRE_RELEASE_CLASS.on(reportOn, source.presentableString)
             }
         }
 

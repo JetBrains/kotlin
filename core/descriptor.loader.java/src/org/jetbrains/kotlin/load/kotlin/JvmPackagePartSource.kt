@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
@@ -43,14 +42,14 @@ class JvmPackagePartSource(
             isPreReleaseInvisible
     )
 
-    override val presentableFqName: FqName
-        get() = classId.asSingleFqName()
+    override val presentableString: String
+        get() = "Class '${classId.asSingleFqName().asString()}'"
 
     val simpleName: Name get() = Name.identifier(className.internalName.substringAfterLast('/'))
 
     val classId: ClassId get() = ClassId(className.packageFqName, simpleName)
 
-    override fun toString() = "${javaClass.simpleName}: $className"
+    override fun toString() = "${this::class.java.simpleName}: $className"
 
     override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 }
