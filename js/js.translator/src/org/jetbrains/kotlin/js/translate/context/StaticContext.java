@@ -41,12 +41,14 @@ import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.SignatureUtilsKt;
+import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.serialization.deserialization.FindClassInModuleKt;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
@@ -484,7 +486,7 @@ public final class StaticContext {
         JsName name;
         String tag = getTag(descriptor);
         boolean isNative =  AnnotationsUtils.isNativeObject(descriptor) || AnnotationsUtils.isLibraryObject(descriptor);
-        if (module != currentModule || isNative) {
+        if (module != currentModule && !isLocallyRedeclaredBuiltin(descriptor) || isNative) {
             assert tag != null : "Can't import declaration without tag: " + descriptor;
             JsNameRef result = getQualifiedReference(descriptor);
             if (isNative && result.getQualifier() == null && result.getName() != null) {
@@ -503,6 +505,18 @@ public final class StaticContext {
         }
         MetadataProperties.setDescriptor(name, descriptor);
         return name;
+    }
+
+    // When compiling stdlib, we may have sources for built-in declaration. In this case we have two distinct descriptors
+    // for declaration with one signature. One descriptor is from current module, another descriptor is from built-in module.
+    // Different declarations refer different descriptors. This may cause single name to be both imported and declared locally,
+    // which in turn causes runtime error. We avoid this by detecting this case and turning off import.
+    private boolean isLocallyRedeclaredBuiltin(@NotNull DeclarationDescriptor descriptor) {
+        if (!(descriptor instanceof ClassDescriptor)) return false;
+        FqName fqName = DescriptorUtils.getFqNameSafe(descriptor);
+        ClassId classId = ClassId.topLevel(fqName);
+        ClassDescriptor localDescriptor = FindClassInModuleKt.findClassAcrossModuleDependencies(currentModule, classId);
+        return localDescriptor != null && DescriptorUtils.getContainingModule(localDescriptor) == currentModule;
     }
 
     private final class InnerNameGenerator extends Generator<JsName> {
