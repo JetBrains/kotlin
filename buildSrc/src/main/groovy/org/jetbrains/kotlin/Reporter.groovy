@@ -11,6 +11,9 @@ import org.gradle.api.tasks.TaskAction
  */
 class Reporter extends DefaultTask {
 
+    String buildLogUrlTemplate(String buildId, String buildTypeId) {
+        return "http://buildserver.labs.intellij.net/viewLog.html?buildId=${buildId}&buildTypeId=${buildTypeId}&tab=buildLog"
+    }
     def reportHome
     @TaskAction
     public void report() {
@@ -27,7 +30,17 @@ class Reporter extends DefaultTask {
             }
             FileVisitResult.CONTINUE
         }
-        def report = "total: ${stats.total}\npassed: ${stats.passed}\nfailed: ${stats.failed}\nerror:${stats.error}\nskipped:${stats.skipped}"
+
+        def epilog = ""
+        def teamcityConfig = System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE")
+        if (teamcityConfig != null) {
+            def buildProperties = new Properties()
+            buildProperties.load(new FileInputStream(teamcityConfig))
+            def logUrl = buildLogUrlTemplate(buildProperties.'teamcity.build.id', buildProperties.'teamcity.buildType.id')
+            epilog = "\nlog url:$logUrl"
+        }
+
+        def report = "total: ${stats.total}\npassed: ${stats.passed}\nfailed: ${stats.failed}\nerror:${stats.error}\nskipped:${stats.skipped} ${epilog}"
         println(report)
         def session = new SlackSessionFactory().createWebSocketSlackSession("xoxb-137371102001-DaYxLJEmbhOZQiR4XFRLZuHG")
         session.connect()
