@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.jsr223
 
-import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
@@ -30,8 +29,9 @@ import javax.script.ScriptEngineFactory
 import javax.script.ScriptException
 import kotlin.reflect.KClass
 
+// TODO: need to manage resources here, i.e. call replCompiler.dispose when engine is collected
+
 class KotlinJsr223JvmScriptEngine4Idea(
-        disposable: Disposable,
         factory: ScriptEngineFactory,
         templateClasspath: List<File>,
         templateClassName: String,
@@ -54,8 +54,7 @@ class KotlinJsr223JvmScriptEngine4Idea(
 
     override val replCompiler: ReplCompiler by lazy {
         daemon.let {
-            KotlinRemoteReplCompiler(disposable,
-                                     it,
+            KotlinRemoteReplCompiler(it,
                                      makeAutodeletingFlagFile("idea-jsr223-repl-session"),
                                      CompileService.TargetPlatform.JVM,
                                      templateClasspath,
