@@ -40,7 +40,10 @@ public abstract class CallableReference implements KCallable {
     //    objects are written to it. The latter is guaranteed because both KFunctionImpl and KPropertyImpl have at least one final field.
     private KCallable reflected;
 
+    @SinceKotlin(version = "1.1")
     protected final Object receiver;
+
+    @SinceKotlin(version = "1.1")
     public static final Object NO_RECEIVER = new Object();
 
     public CallableReference() {

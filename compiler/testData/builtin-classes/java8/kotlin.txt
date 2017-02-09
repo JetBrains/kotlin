@@ -705,7 +705,7 @@ public final class ShortArray : kotlin.Any, kotlin.Cloneable, java.io.Serializab
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Short): kotlin.Unit
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented public final annotation class SinceKotlin : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented public final annotation class SinceKotlin : kotlin.Annotation {
     /*primary*/ public constructor SinceKotlin(/*0*/ version: kotlin.String)
     public final val version: kotlin.String
         public final fun <get-version>(): kotlin.String

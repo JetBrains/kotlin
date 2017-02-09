@@ -103,7 +103,7 @@ public annotation class UnsafeVariance
  * @property version the version in the following formats: `<major>.<minor>` or `<major>.<minor>.<patch>`, where major, minor and patch
  * are non-negative integer numbers without leading zeros.
  */
-@Target(CLASS, PROPERTY, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS)
+@Target(CLASS, PROPERTY, FIELD, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 public annotation class SinceKotlin(val version: String)
