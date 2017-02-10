@@ -137,6 +137,15 @@ fun collectNamedFunctions(scope: JsNode) = collectNamedFunctionsAndMetadata(scop
 
 fun collectNamedFunctionsOrMetadata(scope: JsNode) = collectNamedFunctionsAndMetadata(scope).mapValues { it.value.second }
 
+fun collectNamedFunctions(fragments: List<JsProgramFragment>): Map<JsName, JsFunction> {
+    val result = mutableMapOf<JsName, JsFunction>()
+    for (fragment in fragments) {
+        result += collectNamedFunctions(fragment.declarationBlock)
+        result += collectNamedFunctions(fragment.initializerBlock)
+    }
+    return result
+}
+
 fun collectNamedFunctionsAndMetadata(scope: JsNode): Map<JsName, Pair<JsFunction, JsExpression>> {
     val namedFunctions = mutableMapOf<JsName, Pair<JsFunction, JsExpression>>()
 
@@ -198,6 +207,14 @@ fun collectAccessors(scope: JsNode): Map<String, JsFunction> {
     })
 
     return accessors
+}
+
+fun collectAccessors(fragments: List<JsProgramFragment>): Map<String, JsFunction> {
+    val result = mutableMapOf<String, JsFunction>()
+    for (fragment in fragments) {
+        result += collectAccessors(fragment.declarationBlock)
+    }
+    return result
 }
 
 fun <T : JsNode> collectInstances(klass: Class<T>, scope: JsNode): List<T> {

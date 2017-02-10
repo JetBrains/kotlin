@@ -39,13 +39,12 @@ public class VariableAccessTranslator extends AbstractTranslator implements Acce
             @NotNull KtReferenceExpression referenceExpression,
             @Nullable JsExpression receiver
     ) {
-        ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(referenceExpression, context.bindingContext());
+        ResolvedCall<? extends VariableDescriptor> resolvedCall =
+                CallUtilKt.getVariableResolvedCallWithAssert(referenceExpression, context.bindingContext());
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             resolvedCall = ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall();
         }
-        assert resolvedCall.getResultingDescriptor() instanceof VariableDescriptor;
-        return new VariableAccessTranslator(context, referenceExpression, (ResolvedCall<? extends VariableDescriptor>) resolvedCall,
-                                            receiver);
+        return new VariableAccessTranslator(context, referenceExpression, resolvedCall, receiver);
     }
 
 
@@ -75,7 +74,7 @@ public class VariableAccessTranslator extends AbstractTranslator implements Acce
             if (InlineUtil.isInline(getter)) {
                 if (e instanceof JsNameRef) {
                     // Get was translated as a name reference
-                    setInlineCallMetadata((JsNameRef) e, referenceExpression, getter);
+                    setInlineCallMetadata((JsNameRef) e, referenceExpression, getter, context());
                 } else {
                     setInlineCallMetadata(e, referenceExpression, getter, context());
                 }
@@ -94,7 +93,7 @@ public class VariableAccessTranslator extends AbstractTranslator implements Acce
             if (InlineUtil.isInline(setter)) {
                 if (e instanceof JsBinaryOperation && ((JsBinaryOperation) e).getOperator().isAssignment()) {
                     // Set was translated as an assignment
-                    setInlineCallMetadata((JsNameRef) (((JsBinaryOperation) e).getArg1()), referenceExpression, setter);
+                    setInlineCallMetadata((JsNameRef) (((JsBinaryOperation) e).getArg1()), referenceExpression, setter, context());
                 } else {
                     setInlineCallMetadata(e, referenceExpression, setter, context());
                 }

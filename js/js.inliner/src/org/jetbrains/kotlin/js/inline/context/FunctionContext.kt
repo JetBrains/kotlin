@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.js.inline.util.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 
 abstract class FunctionContext(
-        private val function: JsFunction,
+        private val scope: JsScope,
         private val functionReader: FunctionReader
 ) {
     protected abstract fun lookUpStaticFunction(functionName: JsName?): JsFunction?
@@ -40,7 +40,7 @@ abstract class FunctionContext(
     }
 
     fun getScope(): JsScope {
-        return function.scope
+        return scope
     }
 
     /**

@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.callUtil
 
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -208,6 +205,15 @@ fun KtExpression.getPropertyResolvedCallWithAssert(context: BindingContext): Res
     }
     @Suppress("UNCHECKED_CAST")
     return resolvedCall as ResolvedCall<out PropertyDescriptor>
+}
+
+fun KtExpression.getVariableResolvedCallWithAssert(context: BindingContext): ResolvedCall<out VariableDescriptor> {
+    val resolvedCall = getResolvedCallWithAssert(context)
+    assert(resolvedCall.resultingDescriptor is VariableDescriptor) {
+        "ResolvedCall for this expression must be ResolvedCall<? extends PropertyDescriptor>: ${this.getTextWithLocation()}"
+    }
+    @Suppress("UNCHECKED_CAST")
+    return resolvedCall as ResolvedCall<out VariableDescriptor>
 }
 
 fun KtExpression.getType(context: BindingContext): KotlinType? {

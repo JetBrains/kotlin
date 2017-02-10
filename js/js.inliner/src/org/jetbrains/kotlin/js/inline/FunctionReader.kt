@@ -27,9 +27,7 @@ import org.jetbrains.kotlin.js.inline.util.IdentitySet
 import org.jetbrains.kotlin.js.inline.util.isCallInvocation
 import org.jetbrains.kotlin.js.parser.parseFunction
 import org.jetbrains.kotlin.js.translate.context.Namer
-import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getModuleName
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
@@ -48,7 +46,7 @@ private val JS_IDENTIFIER="[$JS_IDENTIFIER_START][$JS_IDENTIFIER_PART]*"
 private val DEFINE_MODULE_PATTERN = ("($JS_IDENTIFIER)\\.defineModule\\(\\s*(['\"])([^'\"]+)\\2\\s*,\\s*(\\w+)\\s*\\)").toRegex().toPattern()
 private val DEFINE_MODULE_FIND_PATTERN = ".defineModule("
 
-class FunctionReader(private val context: TranslationContext) {
+class FunctionReader(private val config: LibrarySourcesConfig, private val currentModuleName: JsName, fragments: List<JsProgramFragment>) {
     /**
      * fileContent: .js file content, that contains this module definition.
      *     One file can contain more than one module definition.
@@ -63,8 +61,12 @@ class FunctionReader(private val context: TranslationContext) {
 
     private val moduleNameToInfo = HashMultimap.create<String, ModuleInfo>()
 
+    private val moduleNameMap: Map<String, JsExpression>
+
     init {
-        val libs = context.config.libraries.map(::File)
+        val libs = config.libraries.map(::File)
+
+        moduleNameMap = buildModuleNameMap(fragments)
 
         JsLibraryUtils.traverseJsLibraries(libs) { fileContent, _ ->
             var current = 0
@@ -84,6 +86,13 @@ class FunctionReader(private val context: TranslationContext) {
                 moduleNameToInfo.put(moduleName, ModuleInfo(fileContent, moduleVariable, kotlinVariable))
             }
         }
+    }
+
+    // Since we compile each source file in its own context (and we may loose these context when performing incremental compilation)
+    // we don't use contexts to generate proper names for modules. Instead, we generate all necessary information during
+    // translation and rely on it here.
+    private fun buildModuleNameMap(fragments: List<JsProgramFragment>): Map<String, JsExpression> {
+        return fragments.flatMap { it.inlineModuleMap.entries }.associate { (k, v) -> k to v }
     }
 
     private fun rewindToIdentifierStart(text: String, index: Int): Int {
@@ -112,7 +121,7 @@ class FunctionReader(private val context: TranslationContext) {
 
     operator fun contains(descriptor: CallableDescriptor): Boolean {
         val moduleName = getModuleName(descriptor)
-        val currentModuleName = context.config.moduleId
+        val currentModuleName = config.moduleId
         return currentModuleName != moduleName && moduleName in moduleNameToInfo.keys()
     }
 
@@ -144,18 +153,13 @@ class FunctionReader(private val context: TranslationContext) {
         }
 
         val function = parseFunction(source, offset, ThrowExceptionOnErrorReporter, JsRootScope(JsProgram()))
-        val moduleReference = context.getModuleExpressionFor(descriptor) ?: getRootPackage()
+        val moduleReference = moduleNameMap[tag] ?: currentModuleName.makeRef()
 
         val replacements = hashMapOf(info.moduleVariable to moduleReference,
                                      info.kotlinVariable to Namer.kotlinObject())
         replaceExternalNames(function, replacements)
         function.markInlineArguments(descriptor)
         return function
-    }
-
-    private fun getRootPackage(): JsExpression {
-        val rootName = context.program().rootScope.declareName(Namer.getRootPackageName())
-        return JsAstUtils.pureFqn(rootName, null)
     }
 }
 

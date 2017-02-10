@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.js.translate.general
 
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
-class Merger(private val rootFunction: JsFunction, val internalModuleName: JsName) {
+class Merger(private val rootFunction: JsFunction, val internalModuleName: JsName, val module: ModuleDescriptor) {
     // Maps unique signature (see generateSignature) to names
     private val nameTable = mutableMapOf<String, JsName>()
     private val importedModuleTable = mutableMapOf<JsImportedModuleKey, JsName>()
@@ -114,6 +115,7 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
             this += importBlock.statements
             addClassPrototypes(this)
             this += declarationBlock.statements
+            this += exportBlock.statements
             this += initializerBlock.statements
         }
     }

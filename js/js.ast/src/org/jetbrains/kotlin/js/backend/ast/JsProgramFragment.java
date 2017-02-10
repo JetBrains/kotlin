@@ -17,6 +17,7 @@ public class JsProgramFragment {
     private final JsGlobalBlock initializerBlock = new JsGlobalBlock();
     private final List<JsNameBinding> nameBindings = new ArrayList<JsNameBinding>();
     private final Map<JsName, JsClassModel> classes = new LinkedHashMap<JsName, JsClassModel>();
+    private final Map<String, JsExpression> inlineModuleMap = new LinkedHashMap<String, JsExpression>();
 
     public JsProgramFragment(@NotNull JsScope scope) {
         this.scope = scope;
@@ -60,5 +61,10 @@ public class JsProgramFragment {
     @NotNull
     public Map<JsName, JsClassModel> getClasses() {
         return classes;
+    }
+
+    @NotNull
+    public Map<String, JsExpression> getInlineModuleMap() {
+        return inlineModuleMap;
     }
 }

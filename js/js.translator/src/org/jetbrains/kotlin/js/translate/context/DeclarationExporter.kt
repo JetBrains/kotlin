@@ -34,7 +34,8 @@ internal class DeclarationExporter(val context: StaticContext) {
     private val objectLikeKinds = setOf(ClassKind.OBJECT, ClassKind.ENUM_ENTRY)
     private val exportedDeclarations = mutableSetOf<MemberDescriptor>()
     private val localPackageNames = mutableMapOf<FqName, JsName>()
-    val statements = mutableListOf<JsStatement>()
+    private val statements: MutableList<JsStatement>
+        get() = context.fragment.exportBlock.statements
 
     fun export(descriptor: MemberDescriptor, force: Boolean) {
         if (exportedDeclarations.contains(descriptor)) return

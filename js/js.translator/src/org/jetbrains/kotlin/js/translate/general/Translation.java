@@ -234,7 +234,7 @@ public final class Translation {
     }
 
     @NotNull
-    public static JsProgram generateAst(
+    public static AstGenerationResult generateAst(
             @NotNull BindingTrace bindingTrace,
             @NotNull Collection<KtFile> files,
             @NotNull MainCallParameters mainCallParameters,
@@ -253,7 +253,7 @@ public final class Translation {
     }
 
     @NotNull
-    private static JsProgram doGenerateAst(
+    private static AstGenerationResult doGenerateAst(
             @NotNull BindingTrace bindingTrace,
             @NotNull Collection<KtFile> files,
             @NotNull MainCallParameters mainCallParameters,
@@ -263,7 +263,7 @@ public final class Translation {
         JsProgram program = new JsProgram();
         JsFunction rootFunction = new JsFunction(program.getRootScope(), new JsBlock(), "root function");
         JsName internalModuleName = program.getScope().declareName("_");
-        Merger merger = new Merger(rootFunction, internalModuleName);
+        Merger merger = new Merger(rootFunction, internalModuleName, moduleDescriptor);
 
         List<JsProgramFragment> fragments = new ArrayList<JsProgramFragment>();
         for (KtFile file : files) {
@@ -280,15 +280,13 @@ public final class Translation {
 
         List<JsStatement> statements = rootBlock.getStatements();
 
-        //staticContext.postProcess();
         statements.add(0, program.getStringLiteral("use strict").makeStmt());
         if (!isBuiltinModule(fragments)) {
             defineModule(program, statements, config.getModuleId());
         }
 
         //mayBeGenerateTests(files, rootBlock, context);
-        JsName rootPackageName = program.getScope().declareName(Namer.getRootPackageName());
-        rootFunction.getParameters().add(new JsParameter((rootPackageName)));
+        rootFunction.getParameters().add(new JsParameter(internalModuleName));
 
         // Invoke function passing modules as arguments
         // This should help minifier tool to recognize references to these modules as local variables and make them shorter.
@@ -307,13 +305,13 @@ public final class Translation {
         }
         */
 
-        statements.add(new JsReturn(rootPackageName.makeRef()));
+        statements.add(new JsReturn(internalModuleName.makeRef()));
 
         JsBlock block = program.getGlobalBlock();
         block.getStatements().addAll(wrapIfNecessary(config.getModuleId(), rootFunction, importedModuleList, program,
                                                      config.getModuleKind()));
 
-        return program;
+        return new AstGenerationResult(program, internalModuleName, fragments, importedModuleList);
     }
 
     private static boolean isBuiltinModule(@NotNull List<JsProgramFragment> fragments) {

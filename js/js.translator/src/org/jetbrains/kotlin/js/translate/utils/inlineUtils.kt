@@ -64,6 +64,8 @@ fun setInlineCallMetadata(
     }
 
     visitor.accept(expression)
+
+    context.addInlineCall(descriptor)
 }
 
 fun setInlineCallMetadata(
@@ -76,11 +78,14 @@ fun setInlineCallMetadata(
 fun setInlineCallMetadata(
         nameRef: JsNameRef,
         psiElement: KtExpression,
-        descriptor: CallableDescriptor
+        descriptor: CallableDescriptor,
+        context: TranslationContext
 ) {
     nameRef.descriptor = descriptor
     nameRef.inlineStrategy = InlineStrategy.IN_PLACE
     nameRef.psiElement = psiElement
+
+    context.addInlineCall(descriptor)
 }
 
 fun TranslationContext.aliasedName(descriptor: CallableDescriptor): JsName {

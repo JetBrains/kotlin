@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
+import org.jetbrains.kotlin.js.config.JsConfig;
+import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor;
 import org.jetbrains.kotlin.js.inline.clean.RemoveUnusedFunctionDefinitionsKt;
 import org.jetbrains.kotlin.js.inline.clean.RemoveUnusedLocalFunctionDeclarationsKt;
@@ -37,7 +39,6 @@ import org.jetbrains.kotlin.js.inline.context.NamingContext;
 import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
 import org.jetbrains.kotlin.js.inline.util.CollectionUtilsKt;
 import org.jetbrains.kotlin.js.inline.util.NamingUtilsKt;
-import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy;
 
 import java.util.*;
@@ -61,15 +62,34 @@ public class JsInliner extends JsVisitorWithContextImpl {
     private final Function1<JsNode, Boolean> canBeExtractedByInliner =
             node -> node instanceof JsInvocation && hasToBeInlined((JsInvocation) node);
 
-    public static JsProgram process(@NotNull TranslationContext context) {
-        JsProgram program = context.program();
-        Map<JsName, JsFunction> functions = CollectUtilsKt.collectNamedFunctions(program);
-        Map<String, JsFunction> accessors = CollectUtilsKt.collectAccessors(program);
-        new DummyAccessorInvocationTransformer().accept(program);
-        JsInliner inliner = new JsInliner(functions, accessors, new FunctionReader(context), context.bindingTrace());
-        inliner.accept(program);
-        RemoveUnusedFunctionDefinitionsKt.removeUnusedFunctionDefinitions(program, functions);
-        return program;
+    public static void process(
+            @NotNull JsConfig config,
+            @NotNull DiagnosticSink trace,
+            @NotNull JsName currentModuleName,
+            @NotNull List<JsProgramFragment> fragments,
+            @NotNull List<JsProgramFragment> fragmentsToProcess
+    ) {
+        Map<JsName, JsFunction> functions = CollectUtilsKt.collectNamedFunctions(fragments);
+        Map<String, JsFunction> accessors = CollectUtilsKt.collectAccessors(fragments);
+        DummyAccessorInvocationTransformer accessorInvocationTransformer = new DummyAccessorInvocationTransformer();
+        for (JsProgramFragment fragment : fragmentsToProcess) {
+            accessorInvocationTransformer.accept(fragment.getDeclarationBlock());
+            accessorInvocationTransformer.accept(fragment.getInitializerBlock());
+        }
+        FunctionReader functionReader = new FunctionReader((LibrarySourcesConfig) config, currentModuleName, fragments);
+        JsInliner inliner = new JsInliner(functions, accessors, functionReader, trace);
+        for (JsProgramFragment fragment : fragmentsToProcess) {
+            inliner.inliningContexts.push(inliner.new JsInliningContext(null, fragment.getScope()));
+            inliner.accept(fragment.getDeclarationBlock());
+
+            // There can be inlined function in top-level initializers, we need to optimize them as well
+            JsFunction fakeInitFunction = new JsFunction(JsDynamicScope.INSTANCE, fragment.getInitializerBlock(), "");
+            inliner.accept(fakeInitFunction);
+
+            inliner.inliningContexts.pop();
+            JsBlock block = new JsBlock(fragment.getDeclarationBlock(), fragment.getInitializerBlock(), fragment.getExportBlock());
+            RemoveUnusedFunctionDefinitionsKt.removeUnusedFunctionDefinitions(block, functions);
+        }
     }
 
     private JsInliner(
@@ -86,7 +106,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
     @Override
     public boolean visit(@NotNull JsFunction function, @NotNull JsContext context) {
-        inliningContexts.push(new JsInliningContext(function));
+        inliningContexts.push(new JsInliningContext(function, function.getScope()));
         assert !inProcessFunctions.contains(function): "Inliner has revisited function";
         inProcessFunctions.add(function);
 
@@ -266,8 +286,8 @@ public class JsInliner extends JsVisitorWithContextImpl {
     private class JsInliningContext implements InliningContext {
         private final FunctionContext functionContext;
 
-        JsInliningContext(@NotNull JsFunction function) {
-            functionContext = new FunctionContext(function, functionReader) {
+        JsInliningContext(@NotNull JsScope scope) {
+            functionContext = new FunctionContext(scope) {
                 @Nullable
                 @Override
                 protected JsFunction lookUpStaticFunction(@Nullable JsName functionName) {
