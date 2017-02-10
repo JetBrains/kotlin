@@ -47,7 +47,7 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
 
         val functionContext = invokingContext
                 .newFunctionBodyWithUsageTracker(lambda, descriptor)
-                .translateAndAliasParameters(descriptor, lambda.parameters)
+                .translateAndAliasParameters(descriptor, lambda.parameters, false)
 
         descriptor.valueParameters.forEach {
             if (it is ValueParameterDescriptorImpl.WithDestructuringDeclaration) {

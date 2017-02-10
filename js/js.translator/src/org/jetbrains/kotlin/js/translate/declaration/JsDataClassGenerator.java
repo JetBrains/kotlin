@@ -72,7 +72,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
                     context.bindingContext(), BindingContext.VALUE_PARAMETER_AS_PROPERTY, parameterDescriptor);
 
             JsName fieldName = context.getNameForDescriptor(propertyDescriptor);
-            JsName paramName = context.getNameForDescriptor(parameterDescriptor);
+            JsName paramName = JsScope.declareTemporaryName(context.getNameForDescriptor(parameterDescriptor).getIdent());
 
             functionObj.getParameters().add(new JsParameter(paramName));
 

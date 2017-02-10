@@ -240,7 +240,7 @@ private class PropertyTranslator(
     private fun translateCustomAccessor(expression: KtPropertyAccessor): JsPropertyInitializer {
         val descriptor = BindingUtils.getFunctionDescriptor(bindingContext(), expression)
         val function = JsFunction(context().getScopeForDescriptor(descriptor), JsBlock(), descriptor.toString())
-        context().translateAndAliasParameters(descriptor, function.parameters).translateFunction(expression, function)
+        context().translateAndAliasParameters(descriptor, function.parameters, false).translateFunction(expression, function)
         return translateFunctionAsEcma5PropertyDescriptor(function, descriptor, context())
     }
 

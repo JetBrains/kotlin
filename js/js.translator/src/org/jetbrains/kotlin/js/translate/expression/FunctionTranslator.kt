@@ -39,7 +39,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 
 fun TranslationContext.translateAndAliasParameters(
         descriptor: FunctionDescriptor,
-        targetList: MutableList<JsParameter>
+        targetList: MutableList<JsParameter>,
+        aliasValueParams: Boolean
 ): TranslationContext {
     val aliases = mutableMapOf<DeclarationDescriptor, JsExpression>()
 
@@ -62,7 +63,10 @@ fun TranslationContext.translateAndAliasParameters(
     }
 
     for (valueParameter in descriptor.valueParameters) {
-        targetList += JsParameter(getNameForDescriptor(valueParameter)).apply { hasDefaultValue = valueParameter.hasDefaultValue() }
+        val name = getNameForDescriptor(valueParameter)
+        val tmpName = if (aliasValueParams) JsScope.declareTemporaryName(name.ident) else name
+        aliases[valueParameter] = JsAstUtils.pureFqn(tmpName, null)
+        targetList += JsParameter(tmpName).apply { hasDefaultValue = valueParameter.hasDefaultValue() }
     }
 
     val continuationDescriptor = continuationParameterDescriptor

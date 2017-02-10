@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.expression.LocalFunctionCollector;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
+import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -78,7 +79,7 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
         for (ValueParameterDescriptor valueParameter : valueParameters) {
             if (!valueParameter.declaresDefaultValue()) continue;
 
-            JsNameRef jsNameRef = functionBodyContext.getNameForDescriptor(valueParameter).makeRef();
+            JsExpression jsNameRef = ReferenceTranslator.translateAsValueReference(valueParameter, functionBodyContext);
             KtExpression defaultArgument = getDefaultArgument(valueParameter);
             JsBlock defaultArgBlock = new JsBlock();
             JsExpression defaultValue = Translation.translateAsExpression(defaultArgument, functionBodyContext, defaultArgBlock);
