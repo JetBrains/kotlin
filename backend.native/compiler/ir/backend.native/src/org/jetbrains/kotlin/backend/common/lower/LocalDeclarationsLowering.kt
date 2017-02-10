@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
@@ -505,14 +504,14 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
             return newValueParameters
         }
 
-        private fun createTransformedConstructorDescriptor(localFunctionContext: LocalClassConstructorContext) {
-            val oldDescriptor = localFunctionContext.descriptor
+        private fun createTransformedConstructorDescriptor(constructorContext: LocalClassConstructorContext) {
+            val oldDescriptor = constructorContext.descriptor
             val localClassContext = localClasses[oldDescriptor.containingDeclaration]!!
             val newDescriptor = ClassConstructorDescriptorImpl.create(
                     localClassContext.descriptor,
                     Annotations.EMPTY, oldDescriptor.isPrimary, oldDescriptor.source)
 
-            localFunctionContext.transformedDescriptor = newDescriptor
+            constructorContext.transformedDescriptor = newDescriptor
             transformedDescriptors[oldDescriptor] = newDescriptor
 
             // Do not substitute type parameters for now.
@@ -520,7 +519,7 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
 
             val capturedValues = localClasses[oldDescriptor.containingDeclaration]!!.closure.capturedValues
 
-            val newValueParameters = createTransformedValueParameters(localFunctionContext, capturedValues)
+            val newValueParameters = createTransformedValueParameters(constructorContext, capturedValues)
 
             newDescriptor.initialize(
                     newValueParameters,
@@ -623,15 +622,14 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
 
 
         private fun collectClosures() {
-            object : AbstractClosureAnnotator() {
-                override fun recordFunctionClosure(functionDescriptor: FunctionDescriptor, closure: Closure) {
-                    localFunctions[functionDescriptor]?.closure = closure
-                }
+            val annotator = ClosureAnnotator(memberDeclaration)
+            localFunctions.forEach { descriptor, context ->
+                context.closure = annotator.getFunctionClosure(descriptor)
+            }
 
-                override fun recordClassClosure(classDescriptor: ClassDescriptor, closure: Closure) {
-                    localClasses[classDescriptor]?.closure = closure
-                }
-            }.annotate(memberDeclaration)
+            localClasses.forEach { descriptor, context ->
+                context.closure = annotator.getClassClosure(descriptor)
+            }
         }
 
         private fun collectLocalDeclarations() {
