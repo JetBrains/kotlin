@@ -80,7 +80,7 @@ class CallCompleter(
             temporaryTrace.commit()
         }
 
-        if (resolvedCall != null) {
+        if (resolvedCall != null && context.trace.wantsDiagnostics()) {
             val calleeExpression = if (resolvedCall is VariableAsFunctionResolvedCall)
                 resolvedCall.variableCall.call.calleeExpression
             else
@@ -89,10 +89,12 @@ class CallCompleter(
                     if (calleeExpression != null && !calleeExpression.isFakeElement) calleeExpression
                     else resolvedCall.call.callElement
 
-            if (context.trace.wantsDiagnostics()) {
-                val callCheckerContext = CallCheckerContext(context, languageVersionSettings)
-                for (callChecker in callCheckers) {
-                    callChecker.check(resolvedCall, reportOn, callCheckerContext)
+            val callCheckerContext = CallCheckerContext(context, languageVersionSettings)
+            for (callChecker in callCheckers) {
+                callChecker.check(resolvedCall, reportOn, callCheckerContext)
+
+                if (resolvedCall is VariableAsFunctionResolvedCall) {
+                    callChecker.check(resolvedCall.variableCall, reportOn, callCheckerContext)
                 }
             }
         }
