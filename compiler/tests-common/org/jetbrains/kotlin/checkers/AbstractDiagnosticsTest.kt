@@ -24,10 +24,8 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.common.DefaultAnalyzerFacade
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.SimpleGlobalContext
@@ -260,17 +258,12 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     ): AnalysisResult {
         @Suppress("NAME_SHADOWING")
         var files = files
-        @Suppress("NAME_SHADOWING")
-        var languageVersionSettings = languageVersionSettings
-        val configuration: CompilerConfiguration
-        if (languageVersionSettings != null) {
-            configuration = environment.configuration.copy()
-            configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, languageVersionSettings)
-        }
-        else {
-            configuration = environment.configuration
-            languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
-        }
+
+        val configuration =
+                if (languageVersionSettings != null)
+                    environment.configuration.copy().apply { put(LANGUAGE_VERSION_SETTINGS, languageVersionSettings) }
+                else
+                    environment.configuration
 
         // New JavaDescriptorResolver is created for each module, which is good because it emulates different Java libraries for each module,
         // albeit with same class names
@@ -318,11 +311,10 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 moduleContentScope,
                 LookupTracker.DO_NOTHING,
                 JvmPackagePartProvider(environment, moduleContentScope),
-                languageVersionSettings,
                 moduleClassResolver,
                 configuration
         )
-        container.initJvmBuiltInsForTopDownAnalysis(moduleDescriptor, languageVersionSettings)
+        container.initJvmBuiltInsForTopDownAnalysis()
         moduleClassResolver.resolver = container.get<JavaDescriptorResolver>()
 
         moduleDescriptor.initialize(CompositePackageFragmentProvider(listOf(

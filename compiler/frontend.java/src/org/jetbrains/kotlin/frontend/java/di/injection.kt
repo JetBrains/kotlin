@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.frontend.java.di
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.JvmBuiltInsPackageFragmentProvider
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.LazyResolveToken
 import org.jetbrains.kotlin.context.ModuleContext
@@ -46,11 +44,10 @@ import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 
-fun StorageComponentContainer.configureJavaTopDownAnalysis(
+private fun StorageComponentContainer.configureJavaTopDownAnalysis(
         moduleContentScope: GlobalSearchScope,
         project: Project,
-        lookupTracker: LookupTracker,
-        languageVersionSettings: LanguageVersionSettings
+        lookupTracker: LookupTracker
 ) {
     useInstance(moduleContentScope)
     useInstance(lookupTracker)
@@ -75,7 +72,6 @@ fun StorageComponentContainer.configureJavaTopDownAnalysis(
     useImpl<JavaSourceElementFactoryImpl>()
     useInstance(InternalFlexibleTypeTransformer)
 
-    useInstance(languageVersionSettings)
     useImpl<CompilerDeserializationConfiguration>()
 }
 
@@ -88,18 +84,19 @@ fun createContainerForLazyResolveWithJava(
         targetEnvironment: TargetEnvironment,
         lookupTracker: LookupTracker,
         packagePartProvider: PackagePartProvider,
-        languageVersionSettings: LanguageVersionSettings,
+        compilerConfiguration: CompilerConfiguration,
         useBuiltInsProvider: Boolean,
-        useLazyResolve: Boolean,
-        compilerConfiguration: CompilerConfiguration
+        useLazyResolve: Boolean
 ): StorageComponentContainer = createContainer("LazyResolveWithJava", JvmPlatform) {
     configureModule(moduleContext, JvmPlatform, bindingTrace)
-    configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, lookupTracker, languageVersionSettings)
+    configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project, lookupTracker)
 
     useInstance(compilerConfiguration)
     useInstance(packagePartProvider)
     useInstance(moduleClassResolver)
     useInstance(declarationProviderFactory)
+
+    useInstance(compilerConfiguration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl.DEFAULT))
 
     if (useBuiltInsProvider) {
         useInstance((moduleContext.module.builtIns as JvmBuiltIns).settings)
@@ -123,18 +120,17 @@ fun createContainerForTopDownAnalyzerForJvm(
         moduleContentScope: GlobalSearchScope,
         lookupTracker: LookupTracker,
         packagePartProvider: PackagePartProvider,
-        languageVersionSettings: LanguageVersionSettings,
         moduleClassResolver: ModuleClassResolver,
         compilerConfiguration: CompilerConfiguration
 ): ComponentProvider = createContainerForLazyResolveWithJava(
         moduleContext, bindingTrace, declarationProviderFactory, moduleContentScope, moduleClassResolver,
-        CompilerEnvironment, lookupTracker, packagePartProvider, languageVersionSettings,
-        useBuiltInsProvider = true, useLazyResolve = false, compilerConfiguration = compilerConfiguration
+        CompilerEnvironment, lookupTracker, packagePartProvider, compilerConfiguration,
+        useBuiltInsProvider = true, useLazyResolve = false
 )
 
 
-fun ComponentProvider.initJvmBuiltInsForTopDownAnalysis(module: ModuleDescriptor, languageVersionSettings: LanguageVersionSettings) {
-    get<JvmBuiltIns>().initialize(module, languageVersionSettings)
+fun ComponentProvider.initJvmBuiltInsForTopDownAnalysis() {
+    get<JvmBuiltIns>().initialize(get<ModuleDescriptor>(), get<LanguageVersionSettings>())
 }
 
 internal fun JvmBuiltIns.initialize(module: ModuleDescriptor, languageVersionSettings: LanguageVersionSettings) {
