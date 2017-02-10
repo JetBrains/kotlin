@@ -54,26 +54,26 @@ fun walkDaemons(registryDir: File,
     val portExtractor = makePortFromRunFilenameExtractor(classPathDigest)
     return registryDir.walk()
             .map { Pair(it, portExtractor(it.name)) }
-            .filter { it.second != null && filter(it.first, it.second!!) }
-            .mapNotNull { fileWithPort ->
-                assert(fileWithPort.second!! in 1..(MAX_PORT_NUMBER - 1))
-                val relativeAge = fileToCompareTimestamp.lastModified() - fileWithPort.first.lastModified()
-                report(DaemonReportCategory.DEBUG, "found daemon on port ${fileWithPort.second} ($relativeAge ms old), trying to connect")
-                val daemon = tryConnectToDaemon(fileWithPort.second!!, report)
+            .filter { (file, port) -> port != null && filter(file, port) }
+            .mapNotNull { (file, port) ->
+                assert(port!! in 1..(MAX_PORT_NUMBER - 1))
+                val relativeAge = fileToCompareTimestamp.lastModified() - file.lastModified()
+                report(DaemonReportCategory.DEBUG, "found daemon on port $port ($relativeAge ms old), trying to connect")
+                val daemon = tryConnectToDaemon(port, report)
                 // cleaning orphaned file; note: daemon should shut itself down if it detects that the run file is deleted
                 if (daemon == null) {
                     if (relativeAge - ORPHANED_RUN_FILE_AGE_THRESHOLD_MS <= 0) {
-                        report(DaemonReportCategory.DEBUG, "found fresh run file '${fileWithPort.first.absolutePath}' ($relativeAge ms old), but no daemon, ignoring it")
+                        report(DaemonReportCategory.DEBUG, "found fresh run file '${file.absolutePath}' ($relativeAge ms old), but no daemon, ignoring it")
                     }
                     else {
-                        report(DaemonReportCategory.DEBUG, "found seemingly orphaned run file '${fileWithPort.first.absolutePath}' ($relativeAge ms old), deleting it")
-                        if (!fileWithPort.first.delete()) {
-                            report(DaemonReportCategory.INFO, "WARNING: unable to delete seemingly orphaned file '${fileWithPort.first.absolutePath}', cleanup recommended")
+                        report(DaemonReportCategory.DEBUG, "found seemingly orphaned run file '${file.absolutePath}' ($relativeAge ms old), deleting it")
+                        if (!file.delete()) {
+                            report(DaemonReportCategory.INFO, "WARNING: unable to delete seemingly orphaned file '${file.absolutePath}', cleanup recommended")
                         }
                     }
                 }
                 try {
-                    daemon?.let { DaemonWithMetadata(it, fileWithPort.first, it.getDaemonJVMOptions().get()) }
+                    daemon?.let { DaemonWithMetadata(it, file, it.getDaemonJVMOptions().get()) }
                 }
                 catch (e: Exception) {
                     report(DaemonReportCategory.INFO, "ERROR: unable to retrieve daemon JVM options, assuming daemon is dead: ${e.message}")
@@ -121,3 +121,5 @@ class FileAgeComparator : Comparator<File> {
         }
     }
 }
+
+const val LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE = "Assuming other daemons have"

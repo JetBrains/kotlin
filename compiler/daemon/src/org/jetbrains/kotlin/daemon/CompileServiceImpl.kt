@@ -485,6 +485,7 @@ class CompileServiceImpl(
     }
 
 
+    // TODO: handover should include mechanism for client to switch to a new daemon then previous "handed over responsibilities" and shot down
     private fun initiateElections() {
 
         ifAlive {
@@ -494,35 +495,47 @@ class CompileServiceImpl(
                     .thenBy(FileAgeComparator()) { it.runFile }
             aliveWithOpts.maxWith(comparator)?.let { bestDaemonWithMetadata ->
                 val fattestOpts = bestDaemonWithMetadata.jvmOptions
-                // second part of the condition means that we prefer other daemon if is "equal" to the current one
                 if (fattestOpts memorywiseFitsInto daemonJVMOptions && FileAgeComparator().compare(bestDaemonWithMetadata.runFile, runFile) < 0 ) {
                     // all others are smaller that me, take overs' clients and shut them down
-                    log.info("Assuming other daemons have lower prio, taking clients from them and schedule them to shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
-                    aliveWithOpts.forEach {
+                    log.info("$LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE lower prio, taking clients from them and schedule them to shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
+                    aliveWithOpts.forEach { (daemon, runFile, _) ->
                         try {
-                            it.daemon.getClients().check { it.isGood }?.let {
-                                it.get().forEach { registerClient(it) }
+                            daemon.getClients().takeIf { it.isGood }?.let {
+                                it.get().forEach { clientAliveFile -> registerClient(clientAliveFile) }
                             }
-                            it.daemon.scheduleShutdown(true)
+                            daemon.scheduleShutdown(true)
                         }
                         catch (e: Exception) {
-                            log.info("Cannot connect to a daemon, assuming dying ('${it.runFile.canonicalPath}'): ${e.message}")
+                            log.info("Cannot connect to a daemon, assuming dying ('${runFile.canonicalPath}'): ${e.message}")
                         }
                     }
                 }
+                // TODO: seems that the second part of condition is incorrect, reconsider:
+                // the comment by @tsvtkv from review:
+                //    Algorithm in plain english:
+                //    (1) If the best daemon fits into me and the best daemon is younger than me, then I take over all other daemons clients.
+                //    (2) If I fit into the best daemon and the best daemon is older than me, then I give my clients to that daemon.
+                //
+                //    For example:
+                //
+                //    daemon A starts with params: maxMem=100, codeCache=50
+                //    daemon B starts with params: maxMem=200, codeCache=50
+                //    daemon C starts with params: maxMem=150, codeCache=100
+                //    A performs election: (1) is false because neither B nor C does not fit into A, (2) is false because both B and C are younger than A.
+                //    B performs election: (1) is false because neither A nor C does not fit into B, (2) is false because B does not fit into neither A nor C.
+                //    C performs election: (1) is false because B is better than A and B does not fit into C, (2) is false C does not fit into neither A nor B.
+                //    Result: all daemons are alive and well.
                 else if (daemonJVMOptions memorywiseFitsInto fattestOpts && FileAgeComparator().compare(bestDaemonWithMetadata.runFile, runFile) > 0) {
                     // there is at least one bigger, handover my clients to it and shutdown
-                    log.info("Assuming other daemons have higher prio, handover clients to it and schedule shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
-                    scheduleShutdown(true)
-                    aliveWithOpts.first().daemon.let { fattest ->
-                        getClients().check { it.isGood }?.let {
-                            it.get().forEach { fattest.registerClient(it) }
-                        }
+                    log.info("$LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE higher prio, handover clients to it and schedule shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
+                    getClients().takeIf { it.isGood }?.let {
+                        it.get().forEach { bestDaemonWithMetadata.daemon.registerClient(it) }
                     }
+                    scheduleShutdown(true)
                 }
                 else {
                     // undecided, do nothing
-                    log.info("Assuming other daemon(s) have equal prio, continue: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
+                    log.info("$LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE equal prio, continue: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
                     // TODO: implement some behaviour here, e.g.:
                     //   - shutdown/takeover smaller daemon
                     //   - run (or better persuade client to run) a bigger daemon (in fact may be even simple shutdown will do, because of client's daemon choosing logic)
