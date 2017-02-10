@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.inspections.gradle
 
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID_JRE8
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.plugins.gradle.codeInspection.GradleBaseInspection
-import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.groovy.codeInspection.BaseInspectionVisitor
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFileBase
 import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElement
@@ -117,13 +117,11 @@ class DifferentStdlibGradleVersionInspection : GradleBaseInspection() {
 }
 
 internal fun DataNode<*>.getResolvedKotlinStdlibVersionByModuleData(libraryIds: List<String>): String? {
-    for (sourceSetData in findAll(GradleSourceSetData.KEY).filter { it.data.internalName.endsWith("main") }) {
-        for (libraryDependencyData in sourceSetData.node.findAll(ProjectKeys.LIBRARY_DEPENDENCY)) {
-            for (libraryId in libraryIds) {
-                val libraryNameMarker = "org.jetbrains.kotlin:$libraryId:"
-                if (libraryDependencyData.data.externalName.startsWith(libraryNameMarker)) {
-                    return libraryDependencyData.data.externalName.substringAfter(libraryNameMarker)
-                }
+    for (libraryDependencyData in ExternalSystemApiUtil.findAllRecursively(this, ProjectKeys.LIBRARY_DEPENDENCY)) {
+        for (libraryId in libraryIds) {
+            val libraryNameMarker = "org.jetbrains.kotlin:$libraryId:"
+            if (libraryDependencyData.data.externalName.startsWith(libraryNameMarker)) {
+                return libraryDependencyData.data.externalName.substringAfter(libraryNameMarker)
             }
         }
     }
