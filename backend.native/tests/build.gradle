@@ -431,6 +431,31 @@ task localClass_noPrimaryConstructor(type: RunKonanTest) {
     source = "codegen/localClass/noPrimaryConstructor.kt"
 }
 
+task localClass_localFunctionCallFromLocalClass(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/localClass/localFunctionCallFromLocalClass.kt"
+}
+
+task localClass_localFunctionInLocalClass(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/localClass/localFunctionInLocalClass.kt"
+}
+
+task function_localFunction(type : RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/function/localFunction.kt"
+}
+
+task function_localFunction2(type : RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/function/localFunction2.kt"
+}
+
+task function_localFunction3(type : RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/function/localFunction3.kt"
+}
+
 task initializers_correctOrder1(type: RunKonanTest) {
     goldValue = "42\n"
     source = "codegen/initializers/correctOrder1.kt"
