@@ -30,6 +30,7 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
     private val initializerBlock = JsGlobalBlock()
     private val exportBlock = JsGlobalBlock()
     private val declaredImports = mutableSetOf<String>()
+    private val classes = mutableMapOf<JsName, JsClassModel>()
 
     // Add declaration and initialization statements from program fragment to resulting single program
     fun addFragment(fragment: JsProgramFragment) {
@@ -94,9 +95,40 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
     fun merge() {
         rootFunction.body.statements.apply {
             this += importBlock.statements
+            addClassPrototypes(this)
             this += declarationBlock.statements
             this += initializerBlock.statements
         }
         rootFunction.body.resolveTemporaryNames()
+    }
+
+    private fun addClassPrototypes(statements: MutableList<JsStatement>) {
+        val visited = mutableSetOf<JsName>()
+        for (cls in classes.keys) {
+            addClassPrototypes(cls, visited, statements)
+        }
+    }
+
+    private fun addClassPrototypes(
+            name: JsName,
+            visited: MutableSet<JsName>,
+            statements: MutableList<JsStatement>
+    ) {
+        if (!visited.add(name)) return
+        val cls = classes[name] ?: return
+        val superName = cls.superName ?: return
+
+        addClassPrototypes(superName, visited, statements)
+
+        val superclassRef = superName.makeRef()
+        val superPrototype = JsAstUtils.prototypeOf(superclassRef)
+        val superPrototypeInstance = JsInvocation(JsNameRef("create", "Object"), superPrototype)
+
+        val classRef = name.makeRef()
+        val prototype = JsAstUtils.prototypeOf(classRef)
+        statements += JsAstUtils.assignment(prototype, superPrototypeInstance).makeStmt()
+
+        val constructorRef = JsNameRef("constructor", prototype.deepCopy())
+        statements += JsAstUtils.assignment(constructorRef, classRef.deepCopy()).makeStmt()
     }
 }

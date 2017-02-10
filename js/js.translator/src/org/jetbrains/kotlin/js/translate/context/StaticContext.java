@@ -729,7 +729,9 @@ public final class StaticContext {
     }
 
     public void addClass(@NotNull ClassDescriptor classDescriptor) {
-        fragment.getClasses().put(getInnerNameForDescriptor(classDescriptor), classModelGenerator.generateClassModel(classDescriptor));
+        if (!AnnotationsUtils.isNativeObject(classDescriptor) && !AnnotationsUtils.isLibraryObject(classDescriptor)) {
+            fragment.getClasses().put(getInnerNameForDescriptor(classDescriptor), classModelGenerator.generateClassModel(classDescriptor));
+        }
     }
 
     public void export(@NotNull MemberDescriptor descriptor, boolean force) {
@@ -753,42 +755,5 @@ public final class StaticContext {
         rootFunction.getBody().getStatements().addAll(declarationStatements);
         rootFunction.getBody().getStatements().addAll(exporter.getStatements());
         rootFunction.getBody().getStatements().addAll(topLevelStatements);
-    }*/
-
-    /*private void addClassPrototypes() {
-        Set<ClassDescriptor> visited = new HashSet<>();
-        for (ClassDescriptor cls : classes) {
-            addClassPrototypes(cls, visited);
-        }
-    }*/
-
-    /*private void addClassPrototypes(@NotNull ClassDescriptor cls, @NotNull Set<ClassDescriptor> visited) {
-        if (!visited.add(cls)) return;
-        if (DescriptorUtilsKt.getModule(cls) != currentModule) return;
-        if (isNativeObject(cls) || isLibraryObject(cls)) return;
-
-        ClassDescriptor superclass = DescriptorUtilsKt.getSuperClassNotAny(cls);
-        if (superclass != null) {
-            addClassPrototypes(superclass, visited);
-
-            List<JsStatement> statements = rootFunction.getBody().getStatements();
-
-            JsNameRef superclassRef;
-            if (isNativeObject(superclass) || isLibraryObject(superclass)) {
-                superclassRef = getQualifiedReference(superclass);
-            }
-            else {
-                superclassRef = getInnerNameForDescriptor(superclass).makeRef();
-            }
-
-            JsExpression superPrototype = JsAstUtils.prototypeOf(superclassRef);
-            JsExpression superPrototypeInstance = new JsInvocation(new JsNameRef("create", "Object"), superPrototype);
-            JsExpression classRef = new JsNameRef(getInnerNameForDescriptor(cls));
-            JsExpression prototype = JsAstUtils.prototypeOf(classRef);
-            statements.add(JsAstUtils.assignment(prototype, superPrototypeInstance).makeStmt());
-
-            JsExpression constructorRef = new JsNameRef("constructor", prototype.deepCopy());
-            statements.add(JsAstUtils.assignment(constructorRef, classRef.deepCopy()).makeStmt());
-        }
     }*/
 }
