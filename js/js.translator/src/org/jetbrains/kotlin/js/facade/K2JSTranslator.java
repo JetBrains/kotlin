@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.js.inline.clean.RemoveUnusedImportsKt;
 import org.jetbrains.kotlin.js.inline.clean.ResolveTemporaryNamesKt;
 import org.jetbrains.kotlin.js.translate.general.AstGenerationResult;
 import org.jetbrains.kotlin.js.translate.general.Translation;
+import org.jetbrains.kotlin.js.translate.utils.ExpandIsCallsKt;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -93,7 +94,7 @@ public final class K2JSTranslator {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
         if (hasError(diagnostics)) return new TranslationResult.Fail(diagnostics);
 
-        //expandIsCalls(program, context);
+        ExpandIsCallsKt.expandIsCalls(translationResult.getFragments());
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
         List<String> importedModules = new ArrayList<>();

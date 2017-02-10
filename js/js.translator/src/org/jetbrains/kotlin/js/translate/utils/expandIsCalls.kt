@@ -20,15 +20,19 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.TypeCheck
 import org.jetbrains.kotlin.js.backend.ast.metadata.typeCheck
 import org.jetbrains.kotlin.js.inline.util.IdentitySet
-import org.jetbrains.kotlin.js.translate.context.TranslationContext
+import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import java.util.*
 
-fun expandIsCalls(node: JsNode, context: TranslationContext) {
-    TypeCheckRewritingVisitor(context).accept(node)
+fun expandIsCalls(fragments: List<JsProgramFragment>) {
+    val visitor = TypeCheckRewritingVisitor()
+    for (fragment in fragments) {
+        visitor.accept(fragment.declarationBlock)
+        visitor.accept(fragment.initializerBlock)
+    }
 }
 
-private class TypeCheckRewritingVisitor(private val context: TranslationContext) : JsVisitorWithContextImpl() {
+private class TypeCheckRewritingVisitor : JsVisitorWithContextImpl() {
 
     private val scopes = Stack<JsScope>()
     private val localVars = Stack<MutableSet<JsName>>().apply { push(mutableSetOf()) }
@@ -78,7 +82,7 @@ private class TypeCheckRewritingVisitor(private val context: TranslationContext)
 
             TypeCheck.INSTANCEOF -> {
                 // `Kotlin.isInstanceOf(calleeArgument)(argument)` -> `argument instanceof calleeArgument`
-                if (calleeArguments.size == 1) context.namer().isInstanceOf(argument, calleeArguments[0]) else null
+                if (calleeArguments.size == 1) Namer.isInstanceOf(argument, calleeArguments[0]) else null
             }
 
             TypeCheck.OR_NULL -> {
