@@ -34,7 +34,7 @@ fun generateSignature(descriptor: DeclarationDescriptor): String? {
     if (DescriptorUtils.isDescriptorWithLocalVisibility(descriptor)) return null
     if (descriptor is DeclarationDescriptorWithVisibility && descriptor.visibility == Visibilities.PRIVATE &&
         !AnnotationsUtils.isNativeObject(descriptor) && !AnnotationsUtils.isLibraryObject(descriptor)
-            ) {
+    ) {
         return null
     }
     return when (descriptor) {

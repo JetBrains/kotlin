@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
 import org.jetbrains.kotlin.js.inline.clean.resolveTemporaryNames
 import org.jetbrains.kotlin.js.translate.context.Namer
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 class Merger(private val rootFunction: JsFunction, val internalModuleName: JsName) {
     // Maps unique signature (see generateSignature) to names
@@ -28,11 +29,19 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
     private val declarationBlock = JsGlobalBlock()
     private val initializerBlock = JsGlobalBlock()
     private val exportBlock = JsGlobalBlock()
+    private val declaredImports = mutableSetOf<String>()
 
     // Add declaration and initialization statements from program fragment to resulting single program
     fun addFragment(fragment: JsProgramFragment) {
         val nameMap = buildNameMap(fragment)
         nameMap.rename(fragment)
+
+        for ((key, importExpr) in fragment.imports) {
+            if (declaredImports.add(key)) {
+                val name = nameTable[key]!!
+                importBlock.statements += JsAstUtils.newVar(nameMap.rename(name), nameMap.rename(importExpr))
+            }
+        }
 
         declarationBlock.statements += fragment.declarationBlock
         initializerBlock.statements += fragment.initializerBlock

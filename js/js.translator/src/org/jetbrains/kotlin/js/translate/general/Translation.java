@@ -262,7 +262,8 @@ public final class Translation {
     ) {
         JsProgram program = new JsProgram();
         JsFunction rootFunction = new JsFunction(program.getRootScope(), new JsBlock(), "root function");
-        Merger merger = new Merger(rootFunction);
+        JsName internalModuleName = program.getScope().declareName("_");
+        Merger merger = new Merger(rootFunction, internalModuleName);
 
         List<JsProgramFragment> fragments = new ArrayList<JsProgramFragment>();
         for (KtFile file : files) {
@@ -278,8 +279,6 @@ public final class Translation {
         JsBlock rootBlock = rootFunction.getBody();
 
         List<JsStatement> statements = rootBlock.getStatements();
-
-        program.getScope().declareName("_");
 
         //staticContext.postProcess();
         statements.add(0, program.getStringLiteral("use strict").makeStmt());
