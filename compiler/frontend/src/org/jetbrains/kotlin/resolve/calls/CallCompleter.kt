@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
-import org.jetbrains.kotlin.types.expressions.FakeCallResolver
 import java.util.*
 
 class CallCompleter(
@@ -62,7 +61,6 @@ class CallCompleter(
         private val dataFlowAnalyzer: DataFlowAnalyzer,
         private val callCheckers: Iterable<CallChecker>,
         private val builtIns: KotlinBuiltIns,
-        private val fakeCallResolver: FakeCallResolver,
         private val languageVersionSettings: LanguageVersionSettings,
         private val compilerConfiguration: CompilerConfiguration
 ) {
@@ -86,7 +84,7 @@ class CallCompleter(
             temporaryTrace.commit()
         }
 
-        if (resolvedCall != null) {
+        if (resolvedCall != null && context.trace.wantsDiagnostics()) {
             val calleeExpression = if (resolvedCall is VariableAsFunctionResolvedCall)
                 resolvedCall.variableCall.call.calleeExpression
             else
@@ -95,10 +93,12 @@ class CallCompleter(
                     if (calleeExpression != null && !calleeExpression.isFakeElement) calleeExpression
                     else resolvedCall.call.callElement
 
-            if (context.trace.wantsDiagnostics()) {
-                val callCheckerContext = CallCheckerContext(context, languageVersionSettings, compilerConfiguration)
-                for (callChecker in callCheckers) {
-                    callChecker.check(resolvedCall, reportOn, callCheckerContext)
+            val callCheckerContext = CallCheckerContext(context, languageVersionSettings, compilerConfiguration)
+            for (callChecker in callCheckers) {
+                callChecker.check(resolvedCall, reportOn, callCheckerContext)
+
+                if (resolvedCall is VariableAsFunctionResolvedCall) {
+                    callChecker.check(resolvedCall.variableCall, reportOn, callCheckerContext)
                 }
             }
         }

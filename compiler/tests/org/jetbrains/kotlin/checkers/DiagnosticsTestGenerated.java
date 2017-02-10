@@ -6340,6 +6340,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("propertyWithInvoke.kt")
+            public void testPropertyWithInvoke() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/propertyWithInvoke.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("typeUsage.kt")
             public void testTypeUsage() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/typeUsage.kt");
