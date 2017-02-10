@@ -7,6 +7,21 @@
 #include "Natives.h"
 #include "Types.h"
 
+template<typename T>
+static inline void copyImpl(KConstRef thiz, KInt fromIndex,
+                KRef destination, KInt toIndex, KInt count) {
+  const ArrayHeader* array = thiz->array();
+  ArrayHeader* destinationArray = destination->array();
+  if (fromIndex < 0 || fromIndex + count > array->count_ ||
+        toIndex < 0 || toIndex + count > destinationArray->count_) {
+      ThrowArrayIndexOutOfBoundsException();
+  }
+
+  memmove(PrimitiveArrayAddressOfElementAt<T>(destinationArray, toIndex),
+          PrimitiveArrayAddressOfElementAt<T>(array, fromIndex),
+             count * sizeof(T));
+}
+
 extern "C" {
 
 // TODO: those must be compiler intrinsics afterwards.
@@ -226,18 +241,41 @@ void Kotlin_IntArray_fillImpl(KRef thiz, KInt fromIndex, KInt toIndex, KInt valu
   }
 }
 
+void Kotlin_ByteArray_copyImpl(KConstRef thiz, KInt fromIndex,
+                              KRef destination, KInt toIndex, KInt count) {
+  copyImpl<KByte>(thiz, fromIndex, destination, toIndex, count);
+}
+
+void Kotlin_ShortArray_copyImpl(KConstRef thiz, KInt fromIndex,
+                              KRef destination, KInt toIndex, KInt count) {
+  copyImpl<KShort>(thiz, fromIndex, destination, toIndex, count);
+}
+
+void Kotlin_CharArray_copyImpl(KConstRef thiz, KInt fromIndex,
+                              KRef destination, KInt toIndex, KInt count) {
+  copyImpl<KChar>(thiz, fromIndex, destination, toIndex, count);
+}
+
 void Kotlin_IntArray_copyImpl(KConstRef thiz, KInt fromIndex,
                               KRef destination, KInt toIndex, KInt count) {
-  const ArrayHeader* array = thiz->array();
-  ArrayHeader* destinationArray = destination->array();
-  if (fromIndex < 0 || fromIndex + count > array->count_ ||
-      toIndex < 0 || toIndex + count > destinationArray->count_) {
-    ThrowArrayIndexOutOfBoundsException();
-  }
-  memmove(PrimitiveArrayAddressOfElementAt<KInt>(destinationArray, toIndex),
-          PrimitiveArrayAddressOfElementAt<KInt>(array, fromIndex),
-          count * sizeof(KInt));
+  copyImpl<KInt>(thiz, fromIndex, destination, toIndex, count);
 }
+
+void Kotlin_LongArray_copyImpl(KConstRef thiz, KInt fromIndex,
+                              KRef destination, KInt toIndex, KInt count) {
+  copyImpl<KLong>(thiz, fromIndex, destination, toIndex, count);
+}
+
+void Kotlin_FloatArray_copyImpl(KConstRef thiz, KInt fromIndex,
+                              KRef destination, KInt toIndex, KInt count) {
+  copyImpl<KFloat>(thiz, fromIndex, destination, toIndex, count);
+}
+
+void Kotlin_DoubleArray_copyImpl(KConstRef thiz, KInt fromIndex,
+                              KRef destination, KInt toIndex, KInt count) {
+  copyImpl<KDouble>(thiz, fromIndex, destination, toIndex, count);
+}
+
 
 KLong Kotlin_LongArray_get(KConstRef thiz, KInt index) {
   const ArrayHeader* array = thiz->array();
