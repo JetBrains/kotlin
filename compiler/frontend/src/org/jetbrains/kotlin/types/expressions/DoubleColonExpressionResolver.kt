@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
+import org.jetbrains.kotlin.psi.psiUtil.checkReservedYield
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.CallResolver
@@ -632,6 +633,8 @@ class DoubleColonExpressionResolver(
             outerContext: ResolutionContext<*>,
             resolutionMode: ResolveArgumentsMode
     ): OverloadResolutionResults<CallableDescriptor>? {
+        checkReservedYield(reference, outerContext.trace)
+
         // we should preserve information about `call` because callable references are analyzed two times,
         // otherwise there will be not completed calls in trace
         val call = outerContext.trace[BindingContext.CALL, reference] ?: CallMaker.makeCall(reference, receiver, null, reference, emptyList())

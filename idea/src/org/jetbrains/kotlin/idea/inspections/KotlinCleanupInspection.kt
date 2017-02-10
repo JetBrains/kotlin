@@ -98,7 +98,8 @@ class KotlinCleanupInspection : LocalInspectionTool(), CleanupLocalInspectionToo
             Errors.DEPRECATED_TYPE_PARAMETER_SYNTAX,
             Errors.MISPLACED_TYPE_PARAMETER_CONSTRAINTS,
             Errors.COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT,
-            ErrorsJs.WRONG_EXTERNAL_DECLARATION
+            ErrorsJs.WRONG_EXTERNAL_DECLARATION,
+            Errors.YIELD_IS_RESERVED
     )
 
     private fun Diagnostic.isObsoleteLabel(): Boolean {

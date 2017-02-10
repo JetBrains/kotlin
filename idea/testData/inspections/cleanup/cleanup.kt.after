@@ -66,3 +66,48 @@ val x = C() willBeInfix 1
 fun infixTest() {
     arrayListOf(1, 2, 3).map { it }
 }
+
+
+fun bar(yield: Int = 4) {}
+
+fun yield(yield: Int) {
+    "$`yield`"
+    "${`yield`}"
+
+    `yield`
+    val foo = `yield` + `yield`
+    val foo2 = `yield`
+
+    bar(`yield` = 5)
+
+    yield(4)
+    yield() {}
+
+    class yield<T: `yield`<T>>
+
+    return@`yield`
+    return@`yield` Unit
+
+    val foo5: `yield`<*>
+}
+
+fun yield(i: (Int) -> Unit) {}
+
+annotation class yield
+
+@`yield`()
+fun test2(p: Int) {
+    `yield`@ p
+
+    @`yield` fun f() {}
+}
+
+object X {
+    fun yield() {}
+
+    fun test3(yield: Int) {
+        X::`yield`
+
+        `yield`::toInt
+    }
+}
