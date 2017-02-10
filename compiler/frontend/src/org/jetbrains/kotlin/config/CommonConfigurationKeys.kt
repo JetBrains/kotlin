@@ -29,3 +29,7 @@ object CommonConfigurationKeys {
     @JvmField
     val MODULE_NAME = CompilerConfigurationKey<String>("module name")
 }
+
+var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings
+    get() = get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl.DEFAULT)
+    set(value) = put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, value)

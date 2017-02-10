@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.common.DefaultAnalyzerFacade
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
-import org.jetbrains.kotlin.config.CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.SimpleGlobalContext
@@ -261,7 +261,9 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
         val configuration =
                 if (languageVersionSettings != null)
-                    environment.configuration.copy().apply { put(LANGUAGE_VERSION_SETTINGS, languageVersionSettings) }
+                    environment.configuration.copy().apply {
+                        this.languageVersionSettings = languageVersionSettings
+                    }
                 else
                     environment.configuration
 

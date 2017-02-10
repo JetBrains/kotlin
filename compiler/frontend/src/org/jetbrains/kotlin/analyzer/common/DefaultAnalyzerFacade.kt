@@ -50,9 +50,9 @@ import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmen
  */
 object DefaultAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
     private val compilerConfiguration = CompilerConfiguration().apply {
-        put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl(
+        languageVersionSettings = LanguageVersionSettingsImpl(
                 LanguageVersion.LATEST, ApiVersion.LATEST, setOf(LanguageFeature.MultiPlatformProjects)
-        ))
+        )
     }
 
     private class SourceModuleInfo(

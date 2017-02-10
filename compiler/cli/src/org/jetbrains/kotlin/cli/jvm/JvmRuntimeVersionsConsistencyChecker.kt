@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.cli.jvm
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -32,19 +31,16 @@ import java.util.jar.Manifest
 object JvmRuntimeVersionsConsistencyChecker {
     private val LOG = Logger.getInstance(JvmRuntimeVersionsConsistencyChecker::class.java)
 
-    private fun fatal(message: String): Nothing {
-        LOG.error(message)
-        throw AssertionError(message)
-    }
-
-    private fun <T> T?.assertNotNull(message: () -> String): T =
-            if (this == null) fatal(message()) else this
+    private fun <T> T?.assertNotNull(lazyMessage: () -> String): T =
+            this ?: lazyMessage().let { message ->
+                LOG.error(message)
+                throw AssertionError(message)
+            }
 
     private const val META_INF = "META-INF"
     private const val MANIFEST_MF = "$META_INF/MANIFEST.MF"
 
     private const val MANIFEST_KOTLIN_VERSION_ATTRIBUTE = "manifest.impl.attribute.kotlin.version"
-    private const val MANIFEST_KOTLIN_VERSION_VALUE = "manifest.impl.value.kotlin.version"
     private const val MANIFEST_KOTLIN_RUNTIME_COMPONENT = "manifest.impl.attribute.kotlin.runtime.component"
     private const val MANIFEST_KOTLIN_RUNTIME_COMPONENT_CORE = "manifest.impl.value.kotlin.runtime.component.core"
     private const val MANIFEST_KOTLIN_RUNTIME_COMPONENT_MAIN = "manifest.impl.value.kotlin.runtime.component.main"
@@ -57,8 +53,6 @@ object JvmRuntimeVersionsConsistencyChecker {
     )
 
     private val KOTLIN_VERSION_ATTRIBUTE: String
-    private val CURRENT_COMPILER_VERSION: MavenComparableVersion
-
     private val KOTLIN_RUNTIME_COMPONENT_ATTRIBUTE: String
     private val KOTLIN_RUNTIME_COMPONENT_CORE: String
     private val KOTLIN_RUNTIME_COMPONENT_MAIN: String
@@ -76,18 +70,6 @@ object JvmRuntimeVersionsConsistencyChecker {
 
         KOTLIN_VERSION_ATTRIBUTE = manifestProperties.getProperty(MANIFEST_KOTLIN_VERSION_ATTRIBUTE)
                 .assertNotNull { "$MANIFEST_KOTLIN_VERSION_ATTRIBUTE not found in kotlinManifest.properties" }
-
-        CURRENT_COMPILER_VERSION = run {
-            val kotlinVersionString = manifestProperties.getProperty(MANIFEST_KOTLIN_VERSION_VALUE)
-                    .assertNotNull { "$MANIFEST_KOTLIN_VERSION_VALUE not found in kotlinManifest.properties" }
-
-            MavenComparableVersion(kotlinVersionString)
-        }
-
-        if (CURRENT_COMPILER_VERSION != ApiVersion.LATEST.version) {
-            fatal("Kotlin compiler version $CURRENT_COMPILER_VERSION in kotlinManifest.properties doesn't match ${ApiVersion.LATEST}")
-        }
-
         KOTLIN_RUNTIME_COMPONENT_ATTRIBUTE = manifestProperties.getProperty(MANIFEST_KOTLIN_RUNTIME_COMPONENT)
                 .assertNotNull { "$MANIFEST_KOTLIN_RUNTIME_COMPONENT not found in kotlinManifest.properties" }
         KOTLIN_RUNTIME_COMPONENT_CORE = manifestProperties.getProperty(MANIFEST_KOTLIN_RUNTIME_COMPONENT_CORE)
@@ -118,8 +100,8 @@ object JvmRuntimeVersionsConsistencyChecker {
         val runtimeJarsInfo = collectRuntimeJarsInfo(classpathJarRoots)
         if (runtimeJarsInfo.jars.isEmpty()) return
 
-        val languageVersionSettings = configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)
-        val apiVersion = languageVersionSettings?.apiVersion?.version ?: CURRENT_COMPILER_VERSION
+        val languageVersionSettings = configuration.languageVersionSettings
+        val apiVersion = languageVersionSettings.apiVersion.version
 
         val consistency = checkCompilerClasspathConsistency(messageCollector, apiVersion, runtimeJarsInfo)
         if (consistency is ClasspathConsistency.InconsistentWithApiVersion) {
@@ -137,29 +119,20 @@ object JvmRuntimeVersionsConsistencyChecker {
 
             val actualApi = ApiVersion.parse(actualRuntimeVersion.toString())
             if (actualApi != null) {
-                val newSettings = if (languageVersionSettings == null) {
-                    LanguageVersionSettingsImpl(
-                            LanguageVersionSettingsImpl.DEFAULT.languageVersion,
-                            actualApi,
-                            listOf(LanguageFeature.WarnOnCoroutines)
-                    )
-                }
-                else {
-                    val inferredApiVersion =
-                            if (@Suppress("DEPRECATION") languageVersionSettings.isApiVersionExplicit)
-                                languageVersionSettings.apiVersion
-                            else
-                                minOf(languageVersionSettings.apiVersion, actualApi)
+                val inferredApiVersion =
+                        if (@Suppress("DEPRECATION") languageVersionSettings.isApiVersionExplicit)
+                            languageVersionSettings.apiVersion
+                        else
+                            minOf(languageVersionSettings.apiVersion, actualApi)
 
-                    // "minOf" is needed in case when API version was inferred from language version and it's older than actualApi.
-                    // For example, in "kotlinc-1.2 -language-version 1.0 -cp kotlin-runtime-1.1.jar" we should still infer API = 1.0
-                    LanguageVersionSettingsImpl(
-                            languageVersionSettings.languageVersion,
-                            inferredApiVersion,
-                            languageVersionSettings.additionalFeatures,
-                            isApiVersionExplicit = false
-                    )
-                }
+                // "minOf" is needed in case when API version was inferred from language version and it's older than actualApi.
+                // For example, in "kotlinc-1.2 -language-version 1.0 -cp kotlin-runtime-1.1.jar" we should still infer API = 1.0
+                val newSettings = LanguageVersionSettingsImpl(
+                        languageVersionSettings.languageVersion,
+                        inferredApiVersion,
+                        languageVersionSettings.additionalFeatures,
+                        isApiVersionExplicit = false
+                )
 
                 messageCollector.issue(null, "Old runtime has been found in the classpath. " +
                                              "Initial language version settings: $languageVersionSettings. " +
@@ -228,10 +201,10 @@ object JvmRuntimeVersionsConsistencyChecker {
     }
 
     private fun checkNotNewerThanCompiler(messageCollector: MessageCollector, jar: KotlinLibraryFile): Boolean {
-        if (jar.version > CURRENT_COMPILER_VERSION) {
+        if (jar.version > ApiVersion.LATEST.version) {
             messageCollector.issue(
                     jar.file,
-                    "Runtime JAR file has version ${jar.version} which is newer than compiler version $CURRENT_COMPILER_VERSION",
+                    "Runtime JAR file has version ${jar.version} which is newer than compiler version ${ApiVersion.LATEST.version}",
                     CompilerMessageSeverity.ERROR
             )
             return true

@@ -20,10 +20,8 @@ import com.intellij.openapi.roots.OrderRootType
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.analyzer.*
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
@@ -61,8 +59,7 @@ object JsAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
 
         // TODO: deduplicate this with JvmAnalyzerFacade
         val configuration = CompilerConfiguration().apply {
-            val languageSettingsProvider = LanguageSettingsProvider.getInstance(project)
-            put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, languageSettingsProvider.getLanguageVersionSettings(moduleInfo, project))
+            languageVersionSettings = LanguageSettingsProvider.getInstance(project).getLanguageVersionSettings(moduleInfo, project)
             isReadOnly = true
         }
 

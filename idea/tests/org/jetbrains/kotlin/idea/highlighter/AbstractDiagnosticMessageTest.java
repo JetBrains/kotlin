@@ -24,7 +24,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.config.*;
+import org.jetbrains.kotlin.config.CommonConfigurationKeysKt;
+import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.LanguageVersion;
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
@@ -79,8 +82,10 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnviro
     protected AnalysisResult analyze(@NotNull KtFile file, @Nullable LanguageVersion explicitLanguageVersion) {
         CompilerConfiguration configuration = getEnvironment().getConfiguration();
         if (explicitLanguageVersion != null) {
-            configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS,
-                              new LanguageVersionSettingsImpl(explicitLanguageVersion, ApiVersion.LATEST));
+            CommonConfigurationKeysKt.setLanguageVersionSettings(
+                    configuration,
+                    new LanguageVersionSettingsImpl(explicitLanguageVersion, LanguageVersionSettingsImpl.DEFAULT.getApiVersion())
+            );
         }
         return JvmResolveUtil.analyze(Collections.singleton(file), getEnvironment(), configuration);
     }

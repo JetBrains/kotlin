@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.resolve.jvm
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
@@ -84,7 +84,7 @@ object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
 
         val configuration = CompilerConfiguration().apply {
             val languageSettingsProvider = LanguageSettingsProvider.getInstance(project)
-            put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, languageSettingsProvider.getLanguageVersionSettings(moduleInfo, project))
+            languageVersionSettings = languageSettingsProvider.getLanguageVersionSettings(moduleInfo, project)
 
             val platform = languageSettingsProvider.getTargetPlatform(moduleInfo)
             if (platform is JvmTarget) {

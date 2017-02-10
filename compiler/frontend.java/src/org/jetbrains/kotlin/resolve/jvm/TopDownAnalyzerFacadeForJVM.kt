@@ -24,10 +24,9 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.builtins.JvmBuiltInsPackageFragmentProvider
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ContextForNewModule
@@ -136,13 +135,10 @@ object TopDownAnalyzerFacadeForJVM {
         val sourceScope = if (separateModules) sourceModuleSearchScope else GlobalSearchScope.allScope(project)
         val moduleClassResolver = SourceOrBinaryModuleClassResolver(sourceScope)
 
-        val languageVersionSettings =
-                configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl.DEFAULT)
-
         val optionalBuiltInsModule =
                 if (configuration.getBoolean(JVMConfigurationKeys.ADD_BUILT_INS_FROM_COMPILER_TO_DEPENDENCIES)) {
                     if (createBuiltInsFromModule)
-                        JvmBuiltIns(storageManager).apply { initialize(module, languageVersionSettings) }.builtInsModule
+                        JvmBuiltIns(storageManager).apply { initialize(module, configuration.languageVersionSettings) }.builtInsModule
                     else module.builtIns.builtInsModule
                 }
                 else null
@@ -258,7 +254,7 @@ object TopDownAnalyzerFacadeForJVM {
     fun createContextWithSealedModule(project: Project, configuration: CompilerConfiguration): MutableModuleContext =
             createModuleContext(project, configuration, false).apply {
                 setDependencies(module, module.builtIns.builtInsModule)
-                (module.builtIns as JvmBuiltIns).initialize(module, configuration.get(LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl.DEFAULT))
+                (module.builtIns as JvmBuiltIns).initialize(module, configuration.languageVersionSettings)
             }
 
     private fun createModuleContext(

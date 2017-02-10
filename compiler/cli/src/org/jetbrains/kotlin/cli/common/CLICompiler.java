@@ -22,10 +22,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.concurrency.AppScheduledExecutorService;
-import com.sampullara.cli.Args;
-import kotlin.Pair;
 import kotlin.collections.ArraysKt;
-import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.fusesource.jansi.AnsiConsole;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +41,6 @@ import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -279,8 +275,8 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             extraLanguageFeatures.add(coroutinesApplicabilityLevel);
         }
 
-        configuration.put(
-                CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS,
+        CommonConfigurationKeysKt.setLanguageVersionSettings(
+                configuration,
                 new LanguageVersionSettingsImpl(
                         languageVersion,
                         ApiVersion.createByLanguageVersion(apiVersion),

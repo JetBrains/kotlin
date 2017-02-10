@@ -134,8 +134,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                 configuration.put(JVMConfigurationKeys.IR, true);
             }
 
-            LanguageVersionSettings languageVersionSettings = PlatformKt.getLanguageVersionSettings(ktFile);
-            configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, languageVersionSettings);
+            CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, PlatformKt.getLanguageVersionSettings(ktFile));
 
             return getBytecodeForFile(ktFile, configuration);
         }

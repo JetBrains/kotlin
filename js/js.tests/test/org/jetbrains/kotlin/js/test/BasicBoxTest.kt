@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js.test
 
-import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
@@ -31,6 +30,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.js.JavaScript
+import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
@@ -255,8 +255,9 @@ abstract class BasicBoxTest(
         val configuration = environment.configuration.copy()
 
         configuration.put(CommonConfigurationKeys.DISABLE_INLINE, module.inliningDisabled)
-        module.languageVersion?.let {
-            configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl(it, ApiVersion.LATEST))
+        module.languageVersion?.let { languageVersion ->
+            configuration.languageVersionSettings =
+                    LanguageVersionSettingsImpl(languageVersion, LanguageVersionSettingsImpl.DEFAULT.apiVersion)
         }
 
         configuration.put(JSConfigurationKeys.LIBRARIES, LibrarySourcesConfig.JS_STDLIB + LibrarySourcesConfig.JS_KOTLIN_TEST + dependencies)

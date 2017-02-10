@@ -16,9 +16,8 @@
 
 package org.jetbrains.kotlin.frontend.di
 
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.useImpl
@@ -69,7 +68,7 @@ fun StorageComponentContainer.configureModule(
 
 fun StorageComponentContainer.configureCommon(configuration: CompilerConfiguration) {
     useInstance(configuration)
-    useInstance(configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl.DEFAULT))
+    useInstance(configuration.languageVersionSettings)
 }
 
 fun createContainerForBodyResolve(
