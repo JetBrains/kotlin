@@ -259,15 +259,13 @@ class NewResolutionOldInference(
 
             if (resolvedCall.status.possibleTransformToSuccess()) {
                 for (error in status.diagnostics) {
-                    if (error is UnsupportedInnerClassCall) {
-                        resolvedCall.trace.report(Errors.UNSUPPORTED.on(resolvedCall.call.callElement, error.message))
-                    }
-                    else if (error is NestedClassViaInstanceReference) {
-                        tracing.nestedClassAccessViaInstanceReference(resolvedCall.trace, error.classDescriptor, resolvedCall.explicitReceiverKind)
-                    }
-                    else if (error is ErrorDescriptorDiagnostic) {
-                        // todo
-                        //  return@map null
+                    when (error) {
+                        is UnsupportedInnerClassCall -> resolvedCall.trace.report(Errors.UNSUPPORTED.on(resolvedCall.call.callElement, error.message))
+                        is NestedClassViaInstanceReference -> tracing.nestedClassAccessViaInstanceReference(resolvedCall.trace, error.classDescriptor, resolvedCall.explicitReceiverKind)
+                        is ErrorDescriptorDiagnostic -> {
+                            // todo
+                            //  return@map null
+                        }
                     }
                 }
             }
