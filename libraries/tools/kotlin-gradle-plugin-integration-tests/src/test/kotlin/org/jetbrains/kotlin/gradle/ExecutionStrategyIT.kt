@@ -9,11 +9,11 @@ class ExecutionStrategyJsIT : ExecutionStrategyIT() {
         project.setupWorkingDir()
         val buildGradle = project.projectDir.getFileByName("build.gradle")
         buildGradle.modify { it.replace("apply plugin: \"kotlin\"", "apply plugin: \"kotlin2js\"") +
-                "\ncompileKotlin2Js.kotlinOptions.outputFile = \"out.js\"" }
+                "\ncompileKotlin2Js.kotlinOptions.outputFile = \"web/js/out.js\"" }
     }
 
     override fun CompiledProject.checkOutput() {
-        assertFileExists("out.js")
+        assertFileExists("web/js/out.js")
     }
 }
 
