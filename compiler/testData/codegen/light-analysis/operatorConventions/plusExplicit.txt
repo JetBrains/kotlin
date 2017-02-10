@@ -1,0 +1,7 @@
+@kotlin.Metadata
+public final class PlusExplicitKt {
+    public final static @org.jetbrains.annotations.NotNull method bar1(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method bar2(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method bar3(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

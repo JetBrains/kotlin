@@ -47,12 +47,12 @@ class Concat : IntrinsicMethod() {
             codegen.invokeAppend(element.right)
         }
         else {
-            // LHS?.plus(RHS)
-            receiver.put(AsmTypes.OBJECT_TYPE, v)
+            // Explicit plus call LHS?.plus(RHS) or LHS.plus(RHS)
+            receiver.put(AsmTypes.JAVA_STRING_TYPE, v)
             genStringBuilderConstructor(v)
             v.swap()
             genInvokeAppendMethod(v, returnType)
-            codegen.invokeAppend(arguments.get(0))
+            codegen.invokeAppend(arguments[0])
         }
 
         v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)

@@ -11207,6 +11207,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("plusExplicit.kt")
+        public void testPlusExplicit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/operatorConventions/plusExplicit.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("remAssignmentOperation.kt")
         public void testRemAssignmentOperation() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/operatorConventions/remAssignmentOperation.kt");
