@@ -73,16 +73,6 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     private fun run(logName: String, vararg args: String): Int = runJava(getTestBaseDir(), logName, *args)
 
-    override fun setUp() {
-        super.setUp()
-        System.setProperty("COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY", "true")
-    }
-
-    override fun tearDown() {
-        System.clearProperty("COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY")
-        super.tearDown()
-    }
-
     fun testHelloApp() {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
             val daemonOptions = DaemonOptions(runFilesPath = File(tmpdir, getTestName(true)).absolutePath,
@@ -415,12 +405,11 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
         val PARALLEL_THREADS_TO_START = 10
 
-        val startLatch = CountDownLatch(1)
         val doneLatch = CountDownLatch(PARALLEL_THREADS_TO_START)
 
         val resultCodes = arrayOfNulls<Int>(PARALLEL_THREADS_TO_START)
         val outStreams = Array(PARALLEL_THREADS_TO_START, { ByteArrayOutputStream() })
-        val logFiles = kotlin.arrayOfNulls<File>(PARALLEL_THREADS_TO_START)
+        val logFiles = arrayOfNulls<File>(PARALLEL_THREADS_TO_START)
 
         fun connectThread(threadNo: Int) = thread(name = "daemonConnect$threadNo") {
             try {
@@ -450,18 +439,19 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
         (1..PARALLEL_THREADS_TO_START).forEach { connectThread(it - 1) }
 
-        val succeeded = doneLatch.await(PARALLEL_WAIT_TIMEOUT_S * 2, TimeUnit.SECONDS)
+        val succeeded = doneLatch.await(PARALLEL_WAIT_TIMEOUT_S, TimeUnit.SECONDS)
         assertTrue("parallel daemons start failed to complete in $PARALLEL_WAIT_TIMEOUT_S s, ${doneLatch.count} unfinished threads", succeeded)
 
         Thread.sleep(100) // Wait for processes to finish and close log files
 
-        val electionLogs = logFiles.map { it to it?.readLines()?.find { it.contains("Assuming other daemons have") } }
+        val electionLogs = logFiles.map { it to it?.readLines()?.find { it.contains(LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE) } }
 
-        assertTrue("No daemon elected: \n${electionLogs.joinToString("\n")}", electionLogs.any { it.second?.let { it.contains("lower prio") || it.contains("equal prio") } ?: false })
+        assertTrue("No daemon elected: \n${electionLogs.joinToString("\n")}",
+                   electionLogs.any { (_, electionLine) -> electionLine != null && (electionLine.contains("lower prio") || electionLine.contains("equal prio")) })
 
-        electionLogs.forEach { it.first?.delete() }
+        electionLogs.forEach { (logFile, _) -> logFile?.delete() }
 
-        (2..PARALLEL_THREADS_TO_START).forEach {
+        (1..PARALLEL_THREADS_TO_START).forEach {
             assertEquals("Compilation on thread $it failed:\n${outStreams[it - 1]}", 0, resultCodes[it - 1])
         }
     }
