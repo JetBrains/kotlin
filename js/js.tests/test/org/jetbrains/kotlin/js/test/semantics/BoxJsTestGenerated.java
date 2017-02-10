@@ -6008,6 +6008,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("privateExternal.kt")
+        public void testPrivateExternal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/privateExternal.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("safeCastToNativeInterface.kt")
         public void testSafeCastToNativeInterface() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/native/safeCastToNativeInterface.kt");
