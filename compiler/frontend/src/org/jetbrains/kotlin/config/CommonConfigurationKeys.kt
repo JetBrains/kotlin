@@ -14,26 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.config;
+package org.jetbrains.kotlin.config
 
-import com.intellij.openapi.util.Key;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+object CommonConfigurationKeys {
+    @JvmField
+    val LANGUAGE_VERSION_SETTINGS = CompilerConfigurationKey<LanguageVersionSettings>("language version settings")
 
-public class CompilerConfigurationKey<T> {
-    Key<T> ideaKey;
+    @JvmField
+    val SKIP_METADATA_VERSION_CHECK = CompilerConfigurationKey<Boolean>("skip metadata version check")
 
-    public CompilerConfigurationKey(@NotNull @NonNls String name) {
-        ideaKey = Key.create(name);
-    }
+    @JvmField
+    val DISABLE_INLINE = CompilerConfigurationKey<Boolean>("disable inline")
 
-    @NotNull
-    public static <T> CompilerConfigurationKey<T> create(@NotNull @NonNls String name) {
-        return new CompilerConfigurationKey<T>(name);
-    }
-
-    @Override
-    public String toString() {
-        return ideaKey.toString();
-    }
+    @JvmField
+    val MODULE_NAME = CompilerConfigurationKey<String>("module name")
 }
