@@ -20,7 +20,7 @@ import com.intellij.openapi.editor.impl.DocumentImpl
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -62,7 +62,7 @@ abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment() {
                 CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
                 JvmPlatform,
                 targetEnvironment,
-                LanguageVersionSettingsImpl.DEFAULT
+                CompilerConfiguration.EMPTY
         )
 
         val resolveSession = container.get<ResolveSession>()
@@ -148,12 +148,10 @@ abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment() {
         val renderedDescriptors = descriptors.map { renderer.render(it) }.joinToString(separator = "\n")
 
         val document = DocumentImpl(psiFile.text)
-        KtUsefulTestCase.assertSameLines(KotlinTestUtils.getLastCommentedLines(document), renderedDescriptors.toString())
+        KtUsefulTestCase.assertSameLines(KotlinTestUtils.getLastCommentedLines(document), renderedDescriptors)
     }
 
     override fun createEnvironment(): KotlinCoreEnvironment {
         return createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY)
     }
 }
-
-

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.frontend.di
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.useImpl
@@ -27,9 +28,11 @@ import org.jetbrains.kotlin.context.LazyResolveToken
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
+import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.types.expressions.DeclarationScopeProviderForLocalClassifierAnalyzer
 import org.jetbrains.kotlin.types.expressions.LocalClassDescriptorHolder
 import org.jetbrains.kotlin.types.expressions.LocalLazyDeclarationResolver
@@ -137,17 +140,15 @@ fun createContainerForLazyResolve(
         bindingTrace: BindingTrace,
         platform: TargetPlatform,
         targetEnvironment: TargetEnvironment,
-        languageVersionSettings: LanguageVersionSettings
+        compilerConfiguration: CompilerConfiguration
 ): StorageComponentContainer = createContainer("LazyResolve", platform) {
     configureModule(moduleContext, platform, bindingTrace)
 
     useInstance(declarationProviderFactory)
     useInstance(LookupTracker.DO_NOTHING)
-    useInstance(languageVersionSettings)
-    //TODO: need to propagate full CompilerConfiguration to frontend
-    useInstance(CompilerConfiguration().apply {
-        put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, languageVersionSettings)
-    })
+    useInstance(compilerConfiguration)
+
+    useInstance(compilerConfiguration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl.DEFAULT))
 
     useImpl<FileScopeProviderImpl>()
     useImpl<CompilerDeserializationConfiguration>()
@@ -157,14 +158,12 @@ fun createContainerForLazyResolve(
     useImpl<ResolveSession>()
 }
 
-@JvmOverloads
-fun createLazyResolveSession(
-        moduleContext: ModuleContext,
-        declarationProviderFactory: DeclarationProviderFactory,
-        bindingTrace: BindingTrace,
-        platform: TargetPlatform,
-        languageVersionSettings: LanguageVersionSettings,
-        targetEnvironment: TargetEnvironment = CompilerEnvironment
-): ResolveSession = createContainerForLazyResolve(
-        moduleContext, declarationProviderFactory, bindingTrace, platform, targetEnvironment, languageVersionSettings
-).get<ResolveSession>()
+fun createLazyResolveSession(moduleContext: ModuleContext, files: Collection<KtFile>): ResolveSession =
+        createContainerForLazyResolve(
+                moduleContext,
+                FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
+                BindingTraceContext(),
+                TargetPlatform.Default,
+                CompilerEnvironment,
+                CompilerConfiguration.EMPTY
+        ).get<ResolveSession>()

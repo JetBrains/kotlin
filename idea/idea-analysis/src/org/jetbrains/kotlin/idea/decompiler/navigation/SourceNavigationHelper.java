@@ -42,7 +42,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.context.ContextKt;
 import org.jetbrains.kotlin.context.MutableModuleContext;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
@@ -55,11 +54,8 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingTraceContext;
-import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
-import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -235,26 +231,12 @@ public class SourceNavigationHelper {
             @NotNull Collection<KtNamedDeclaration> candidates,
             @NotNull Project project
     ) {
-        MutableModuleContext newModuleContext = ContextKt.ContextForNewModule(
+        MutableModuleContext context = ContextKt.ContextForNewModule(
                 ContextKt.ProjectContext(project), Name.special("<library module>"), DefaultBuiltIns.getInstance(), null
         );
-
-        newModuleContext.setDependencies(newModuleContext.getModule(), newModuleContext.getModule().getBuiltIns().getBuiltInsModule());
-
-        FileBasedDeclarationProviderFactory providerFactory = new FileBasedDeclarationProviderFactory(
-                newModuleContext.getStorageManager(),
-                getContainingFiles(candidates)
-        );
-
-        ResolveSession resolveSession = InjectionKt.createLazyResolveSession(
-                newModuleContext,
-                providerFactory,
-                new BindingTraceContext(),
-                TargetPlatform.Default.INSTANCE,
-                LanguageVersionSettingsImpl.DEFAULT
-        );
-
-        newModuleContext.initializeModuleContents(resolveSession.getPackageFragmentProvider());
+        context.setDependencies(context.getModule(), context.getModule().getBuiltIns().getBuiltInsModule());
+        ResolveSession resolveSession = InjectionKt.createLazyResolveSession(context, getContainingFiles(candidates));
+        context.initializeModuleContents(resolveSession.getPackageFragmentProvider());
         return resolveSession;
     }
 
@@ -453,7 +435,7 @@ public class SourceNavigationHelper {
     }
 
     @NotNull
-    public static KtDeclaration navigateToDeclaration(
+    private static KtDeclaration navigateToDeclaration(
             @NotNull KtDeclaration from,
             @NotNull NavigationKind navigationKind
     ) {
