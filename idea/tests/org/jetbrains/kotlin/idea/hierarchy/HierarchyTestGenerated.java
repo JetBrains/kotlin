@@ -227,9 +227,21 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             doSuperClassHierarchyTest(fileName);
         }
 
+        @TestMetadata("MultiTypeAlias")
+        public void testMultiTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/super/MultiTypeAlias/");
+            doSuperClassHierarchyTest(fileName);
+        }
+
         @TestMetadata("TwoTraits")
         public void testTwoTraits() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/super/TwoTraits/");
+            doSuperClassHierarchyTest(fileName);
+        }
+
+        @TestMetadata("TypeAlias")
+        public void testTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/super/TypeAlias/");
             doSuperClassHierarchyTest(fileName);
         }
     }
@@ -266,6 +278,12 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             doSubClassHierarchyTest(fileName);
         }
 
+        @TestMetadata("MultiTypeAlias")
+        public void testMultiTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/MultiTypeAlias/");
+            doSubClassHierarchyTest(fileName);
+        }
+
         @TestMetadata("ObjectFromClass")
         public void testObjectFromClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/ObjectFromClass/");
@@ -287,6 +305,12 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         @TestMetadata("TraitFromTrait")
         public void testTraitFromTrait() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/TraitFromTrait/");
+            doSubClassHierarchyTest(fileName);
+        }
+
+        @TestMetadata("TypeAlias")
+        public void testTypeAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/class/sub/TypeAlias/");
             doSubClassHierarchyTest(fileName);
         }
     }
