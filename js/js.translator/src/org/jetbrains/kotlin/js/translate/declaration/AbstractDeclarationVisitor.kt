@@ -106,7 +106,6 @@ abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
             }
         }
 
-        innerContext.getInnerNameForDescriptor(descriptor)
         if (!descriptor.isOverridable) {
             function.body.statements += FunctionBodyTranslator.setDefaultValueForArguments(descriptor, innerContext)
         }
