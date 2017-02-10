@@ -26,18 +26,12 @@ class Reporter extends DefaultTask {
     @TaskAction
     public void report() {
         def stats = new RunExternalTestGroup.Statistics()
-        reportHome.traverse {
-            println("$it $it.name")
-            if (it.name == 'results.json') {
-                def obj = new JsonSlurper().parse(it)
-                stats.total   += obj.statistics.total
-                stats.passed  += obj.statistics.passed
-                stats.failed  += obj.statistics.failed
-                stats.error   += obj.statistics.error
-                stats.skipped += obj.statistics.skipped
-            }
-            FileVisitResult.CONTINUE
-        }
+        def obj = new JsonSlurper().parse(new File(reportHome, "results.json"))
+        stats.total   = obj.statistics.total
+        stats.passed  = obj.statistics.passed
+        stats.failed  = obj.statistics.failed
+        stats.error   = obj.statistics.error
+        stats.skipped = obj.statistics.skipped
 
         def epilog = ""
         def teamcityConfig = System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE")
