@@ -2199,6 +2199,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("privateStaticAndPublicMember.kt")
+                public void testPrivateStaticAndPublicMember() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/privateStaticAndPublicMember.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("renameOnImport.kt")
                 public void testRenameOnImport() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/renameOnImport.kt");

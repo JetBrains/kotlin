@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.utils
 
 import java.util.*
+import kotlin.coroutines.experimental.SequenceBuilder
 
 fun <K, V> Iterable<K>.keysToMap(value: (K) -> V): Map<K, V> {
     return associateBy({ it }, value)
@@ -62,6 +63,8 @@ fun <T: Any> emptyOrSingletonList(item: T?): List<T> = listOfNotNull(item)
 fun <T: Any> MutableCollection<T>.addIfNotNull(t: T?) {
     if (t != null) add(t)
 }
+
+suspend fun <T: Any> SequenceBuilder<in T>.yieldIfNotNull(t: T?) = if (t != null) yield(t) else Unit
 
 fun <K, V> newHashMapWithExpectedSize(expectedSize: Int): HashMap<K, V> =
         HashMap(capacity(expectedSize))
