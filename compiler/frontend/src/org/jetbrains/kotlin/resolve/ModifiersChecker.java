@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.checkers.UnderscoreChecker;
 import java.util.*;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.NESTED_CLASS_NOT_ALLOWED;
+import static org.jetbrains.kotlin.diagnostics.Errors.NESTED_OBJECT_NOT_ALLOWED;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 import static org.jetbrains.kotlin.psi.KtStubbedPsiUtil.getContainingDeclaration;
 
@@ -219,8 +220,18 @@ public class ModifiersChecker {
 
         public void checkModifiersForDeclaration(@NotNull KtDeclaration modifierListOwner, @NotNull MemberDescriptor descriptor) {
             checkNestedClassAllowed(modifierListOwner, descriptor);
+            checkObjectInsideInnerClass(modifierListOwner, descriptor);
             checkTypeParametersModifiers(modifierListOwner);
             checkModifierListCommon(modifierListOwner, descriptor);
+        }
+
+        private void checkObjectInsideInnerClass(@NotNull KtDeclaration modifierListOwner, @NotNull MemberDescriptor descriptor) {
+            if (modifierListOwner instanceof KtObjectDeclaration) {
+                KtObjectDeclaration ktObject = (KtObjectDeclaration) modifierListOwner;
+                if (!ktObject.isLocal() && !ktObject.isCompanion() && isIllegalNestedClass(descriptor)) {
+                    trace.report(NESTED_OBJECT_NOT_ALLOWED.on(ktObject));
+                }
+            }
         }
 
         private void checkModifierListCommon(@NotNull KtDeclaration modifierListOwner, @NotNull DeclarationDescriptor descriptor) {

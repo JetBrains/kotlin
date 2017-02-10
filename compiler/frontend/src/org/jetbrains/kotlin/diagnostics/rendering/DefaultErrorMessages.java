@@ -437,6 +437,7 @@ public class DefaultErrorMessages {
 
         MAP.put(INACCESSIBLE_OUTER_CLASS_EXPRESSION, "Expression is inaccessible from a nested class ''{0}'', use ''inner'' keyword to make the class inner", NAME);
         MAP.put(NESTED_CLASS_NOT_ALLOWED, "Nested class is not allowed here, use 'inner' keyword to make the class inner");
+        MAP.put(NESTED_OBJECT_NOT_ALLOWED, "Objects inside inner classes are prohibited");
 
         MAP.put(HAS_NEXT_MISSING, "hasNext() cannot be called on iterator() of type ''{0}''", RENDER_TYPE);
         MAP.put(HAS_NEXT_FUNCTION_AMBIGUITY, "hasNext() is ambiguous for iterator() of type ''{0}''", RENDER_TYPE);
