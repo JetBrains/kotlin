@@ -33,18 +33,17 @@ import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.StaticContext;
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
-import org.jetbrains.kotlin.js.translate.declaration.PackageDeclarationTranslator;
+import org.jetbrains.kotlin.js.translate.declaration.FileDeclarationVisitor;
 import org.jetbrains.kotlin.js.translate.expression.ExpressionVisitor;
 import org.jetbrains.kotlin.js.translate.expression.PatternTranslator;
 import org.jetbrains.kotlin.js.translate.test.JSTestGenerator;
 import org.jetbrains.kotlin.js.translate.test.JSTester;
 import org.jetbrains.kotlin.js.translate.test.QUnitTester;
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.mutator.AssignToExpressionMutator;
-import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtNamedFunction;
-import org.jetbrains.kotlin.psi.KtUnaryExpression;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
@@ -71,6 +70,7 @@ import static org.jetbrains.kotlin.js.translate.utils.mutator.LastExpressionMuta
  * Goal is to simplify interaction between translators.
  */
 public final class Translation {
+    private static final String ENUM_SIGNATURE = "kotlin$Enum";
 
     private Translation() {
     }
@@ -234,7 +234,7 @@ public final class Translation {
     }
 
     @NotNull
-    public static TranslationContext generateAst(
+    public static JsProgram generateAst(
             @NotNull BindingTrace bindingTrace,
             @NotNull Collection<KtFile> files,
             @NotNull MainCallParameters mainCallParameters,
@@ -253,38 +253,49 @@ public final class Translation {
     }
 
     @NotNull
-    private static TranslationContext doGenerateAst(
+    private static JsProgram doGenerateAst(
             @NotNull BindingTrace bindingTrace,
             @NotNull Collection<KtFile> files,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull ModuleDescriptor moduleDescriptor,
             @NotNull JsConfig config
     ) {
-        StaticContext staticContext = StaticContext.generateStaticContext(bindingTrace, config, moduleDescriptor);
-        JsProgram program = staticContext.getProgram();
-        JsName rootPackageName = program.getRootScope().declareName(Namer.getRootPackageName());
+        JsProgram program = new JsProgram();
+        JsFunction rootFunction = new JsFunction(program.getRootScope(), new JsBlock(), "root function");
+        Merger merger = new Merger(rootFunction);
 
-        JsFunction rootFunction = staticContext.getRootFunction();
+        List<JsProgramFragment> fragments = new ArrayList<JsProgramFragment>();
+        for (KtFile file : files) {
+            StaticContext staticContext = new StaticContext(bindingTrace, config, moduleDescriptor);
+            TranslationContext context = TranslationContext.rootContext(staticContext);
+            translateFile(context, file);
+            fragments.add(staticContext.getFragment());
+            merger.addFragment(staticContext.getFragment());
+        }
+
+        merger.merge();
+
         JsBlock rootBlock = rootFunction.getBody();
+
         List<JsStatement> statements = rootBlock.getStatements();
 
         program.getScope().declareName("_");
 
-        TranslationContext context = TranslationContext.rootContext(staticContext, rootFunction);
-        PackageDeclarationTranslator.translateFiles(files, context);
-        staticContext.postProcess();
+        //staticContext.postProcess();
         statements.add(0, program.getStringLiteral("use strict").makeStmt());
-        if (!staticContext.isBuiltinModule()) {
-            defineModule(context, statements, config.getModuleId());
+        if (!isBuiltinModule(fragments)) {
+            defineModule(program, statements, config.getModuleId());
         }
 
-        mayBeGenerateTests(files, rootBlock, context);
+        //mayBeGenerateTests(files, rootBlock, context);
+        JsName rootPackageName = program.getScope().declareName(Namer.getRootPackageName());
         rootFunction.getParameters().add(new JsParameter((rootPackageName)));
 
         // Invoke function passing modules as arguments
         // This should help minifier tool to recognize references to these modules as local variables and make them shorter.
         List<JsImportedModule> importedModuleList = new ArrayList<>();
 
+        /*
         for (JsImportedModule importedModule : staticContext.getImportedModules()) {
             rootFunction.getParameters().add(new JsParameter(importedModule.getInternalName()));
             importedModuleList.add(importedModule);
@@ -296,6 +307,7 @@ public final class Translation {
                 statements.add(statement);
             }
         }
+        */
 
         statements.add(new JsReturn(rootPackageName.makeRef()));
 
@@ -303,13 +315,46 @@ public final class Translation {
         block.getStatements().addAll(wrapIfNecessary(config.getModuleId(), rootFunction, importedModuleList, program,
                                                      config.getModuleKind()));
 
-        return context;
+        return program;
     }
 
-    private static void defineModule(@NotNull TranslationContext context, @NotNull List<JsStatement> statements, @NotNull String moduleId) {
-        JsName rootPackageName = context.scope().findName(Namer.getRootPackageName());
+    private static boolean isBuiltinModule(@NotNull List<JsProgramFragment> fragments) {
+        for (JsProgramFragment fragment : fragments) {
+            for (JsNameBinding nameBinding : fragment.getNameBindings()) {
+                if (nameBinding.getKey().equals(ENUM_SIGNATURE) && !fragment.getImports().containsKey(ENUM_SIGNATURE)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static void translateFile(@NotNull TranslationContext context, @NotNull KtFile file) {
+        FileDeclarationVisitor fileVisitor = new FileDeclarationVisitor(context);
+
+        try {
+            for (KtDeclaration declaration : file.getDeclarations()) {
+                if (!AnnotationsUtils.isPredefinedObject(BindingUtils.getDescriptorForElement(context.bindingContext(), declaration))) {
+                    declaration.accept(fileVisitor, context);
+                }
+            }
+        }
+        catch (TranslationRuntimeException e) {
+            throw e;
+        }
+        catch (RuntimeException e) {
+            throw new TranslationRuntimeException(file, e);
+        }
+        catch (AssertionError e) {
+            throw new TranslationRuntimeException(file, e);
+        }
+    }
+
+    private static void defineModule(@NotNull JsProgram program, @NotNull List<JsStatement> statements, @NotNull String moduleId) {
+        JsName rootPackageName = program.getScope().findName(Namer.getRootPackageName());
         if (rootPackageName != null) {
-            statements.add(new JsInvocation(context.namer().kotlin("defineModule"), context.program().getStringLiteral(moduleId),
+            Namer namer = Namer.newInstance(program.getScope());
+            statements.add(new JsInvocation(namer.kotlin("defineModule"), program.getStringLiteral(moduleId),
                                             rootPackageName.makeRef()).makeStmt());
         }
     }

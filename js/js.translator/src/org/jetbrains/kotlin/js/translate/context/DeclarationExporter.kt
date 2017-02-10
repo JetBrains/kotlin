@@ -98,7 +98,7 @@ internal class DeclarationExporter(val context: StaticContext) {
 
         val getterBody: JsExpression = if (simpleProperty) {
             val accessToField = JsReturn(context.getInnerNameForDescriptor(declaration).makeRef())
-            JsFunction(context.rootFunction.scope, JsBlock(accessToField), "$declaration getter")
+            JsFunction(context.fragment.scope, JsBlock(accessToField), "$declaration getter")
         }
         else {
             context.getInnerNameForDescriptor(declaration.getter!!).makeRef()
@@ -108,7 +108,7 @@ internal class DeclarationExporter(val context: StaticContext) {
         if (declaration.isVar) {
             val setterBody: JsExpression = if (simpleProperty) {
                 val statements = mutableListOf<JsStatement>()
-                val function = JsFunction(context.rootFunction.scope, JsBlock(statements), "$declaration setter")
+                val function = JsFunction(context.fragment.scope, JsBlock(statements), "$declaration setter")
                 val valueName = function.scope.declareTemporaryName("value")
                 function.parameters += JsParameter(valueName)
                 statements += assignment(context.getInnerNameForDescriptor(declaration).makeRef(), valueName.makeRef()).makeStmt()
@@ -125,11 +125,11 @@ internal class DeclarationExporter(val context: StaticContext) {
 
     private fun getLocalPackageReference(packageName: FqName): JsExpression {
         if (packageName.isRoot) {
-            return context.rootFunction.scope.declareName(Namer.getRootPackageName()).makeRef()
+            return context.fragment.scope.declareName(Namer.getRootPackageName()).makeRef()
         }
         var name = localPackageNames[packageName]
         if (name == null) {
-            name = context.rootFunction.scope.declareTemporaryName("package$" + packageName.shortName().asString())
+            name = context.fragment.scope.declareTemporaryName("package$" + packageName.shortName().asString())
             localPackageNames.put(packageName, name)
 
             val parentRef = getLocalPackageReference(packageName.parent())

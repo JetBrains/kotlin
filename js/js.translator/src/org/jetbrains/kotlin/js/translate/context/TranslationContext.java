@@ -69,9 +69,9 @@ public class TranslationContext {
     private final VariableDescriptor continuationParameterDescriptor;
 
     @NotNull
-    public static TranslationContext rootContext(@NotNull StaticContext staticContext, @NotNull JsFunction rootFunction) {
-        JsBlock block = new JsBlock(staticContext.getTopLevelStatements());
-        DynamicContext rootDynamicContext = DynamicContext.rootContext(rootFunction.getScope(), block);
+    public static TranslationContext rootContext(@NotNull StaticContext staticContext) {
+        DynamicContext rootDynamicContext = DynamicContext.rootContext(
+                staticContext.getFragment().getScope(), staticContext.getFragment().getInitializerBlock());
         AliasingContext rootAliasingContext = AliasingContext.getCleanContext();
         return new TranslationContext(null, staticContext, rootDynamicContext, rootAliasingContext, null, null);
     }
@@ -544,7 +544,7 @@ public class TranslationContext {
         if (result == null &&
             classOrConstructor instanceof ConstructorDescriptor &&
             ((ConstructorDescriptor) classOrConstructor).isPrimary()
-                ) {
+        ) {
             result = staticContext.getClassOrConstructorClosure((ClassDescriptor) classOrConstructor.getContainingDeclaration());
         }
         return result;
@@ -645,7 +645,7 @@ public class TranslationContext {
 
     @NotNull
     public JsName createGlobalName(@NotNull String suggestedName) {
-        return staticContext.getRootFunction().getScope().declareTemporaryName(suggestedName);
+        return staticContext.getFragment().getScope().declareTemporaryName(suggestedName);
     }
 
     @NotNull
@@ -655,7 +655,7 @@ public class TranslationContext {
 
     @NotNull
     public JsFunction createRootScopedFunction(@NotNull String description) {
-        return new JsFunction(staticContext.getRootFunction().getScope(), new JsBlock(), description);
+        return new JsFunction(staticContext.getFragment().getScope(), new JsBlock(), description);
     }
 
     public void addClass(@NotNull ClassDescriptor classDescriptor) {

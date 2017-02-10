@@ -100,7 +100,7 @@ var JsName.imported by MetadataProperty(default = false)
 
 var JsFunction.coroutineMetadata: CoroutineMetadata? by MetadataProperty(default = null)
 
-class CoroutineMetadata(
+data class CoroutineMetadata(
         val doResumeName: JsName,
         val stateName: JsName,
         val exceptionStateName: JsName,
