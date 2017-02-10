@@ -17,8 +17,7 @@ import java.util.Map;
  * A JavaScript program.
  */
 public final class JsProgram extends SourceInfoAwareJsNode {
-
-    private JsProgramFragment[] fragments;
+    private final JsGlobalBlock globalBlock = new JsGlobalBlock();
 
     private final TDoubleObjectHashMap<JsDoubleLiteral> doubleLiteralMap = new TDoubleObjectHashMap<JsDoubleLiteral>();
     private final TIntObjectHashMap<JsIntLiteral> intLiteralMap = new TIntObjectHashMap<JsIntLiteral>();
@@ -30,18 +29,10 @@ public final class JsProgram extends SourceInfoAwareJsNode {
     public JsProgram() {
         rootScope = new JsRootScope(this);
         topScope = new JsObjectScope(rootScope, "Global");
-        setFragmentCount(1);
     }
 
-    public JsBlock getFragmentBlock(int fragment) {
-        if (fragment < 0 || fragment >= fragments.length) {
-            throw new IllegalArgumentException("Invalid fragment: " + fragment);
-        }
-        return fragments[fragment].getGlobalBlock();
-    }
-
-    public JsBlock getGlobalBlock() {
-        return getFragmentBlock(0);
+    public JsGlobalBlock getGlobalBlock() {
+        return globalBlock;
     }
 
     public JsNumberLiteral getNumberLiteral(double value) {
@@ -94,13 +85,6 @@ public final class JsProgram extends SourceInfoAwareJsNode {
         return literal;
     }
 
-    public void setFragmentCount(int fragments) {
-        this.fragments = new JsProgramFragment[fragments];
-        for (int i = 0; i < fragments; i++) {
-            this.fragments[i] = new JsProgramFragment();
-        }
-    }
-
     @Override
     public void accept(JsVisitor v) {
         v.visitProgram(this);
@@ -108,17 +92,13 @@ public final class JsProgram extends SourceInfoAwareJsNode {
 
     @Override
     public void acceptChildren(JsVisitor visitor) {
-        for (JsProgramFragment fragment : fragments) {
-            visitor.accept(fragment);
-        }
+        visitor.accept(globalBlock);
     }
 
     @Override
     public void traverse(JsVisitorWithContext v, JsContext ctx) {
         if (v.visit(this, ctx)) {
-            for (JsProgramFragment fragment : fragments) {
-                v.accept(fragment);
-            }
+            v.accept(globalBlock);
         }
         v.endVisit(this, ctx);
     }

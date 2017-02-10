@@ -152,9 +152,6 @@ public abstract class JsVisitorWithContext {
     public void endVisit(@NotNull JsProgram x, @NotNull JsContext ctx) {
     }
 
-    public void endVisit(@NotNull JsProgramFragment x, @NotNull JsContext ctx) {
-    }
-
     public void endVisit(@NotNull JsPropertyInitializer x, @NotNull JsContext ctx) {
     }
 
@@ -309,10 +306,6 @@ public abstract class JsVisitorWithContext {
     }
 
     public boolean visit(@NotNull JsProgram x, @NotNull JsContext ctx) {
-        return true;
-    }
-
-    public boolean visit(@NotNull JsProgramFragment x, @NotNull JsContext ctx) {
         return true;
     }
 

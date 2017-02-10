@@ -126,7 +126,7 @@ public class TranslationContext {
     }
 
     @NotNull
-    public Collection<StaticContext.ImportedModule> getImportedModules() {
+    public Collection<JsImportedModule> getImportedModules() {
         return staticContext.getImportedModules();
     }
 
@@ -544,7 +544,7 @@ public class TranslationContext {
         if (result == null &&
             classOrConstructor instanceof ConstructorDescriptor &&
             ((ConstructorDescriptor) classOrConstructor).isPrimary()
-        ) {
+                ) {
             result = staticContext.getClassOrConstructorClosure((ClassDescriptor) classOrConstructor.getContainingDeclaration());
         }
         return result;

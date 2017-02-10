@@ -6,41 +6,59 @@ package org.jetbrains.kotlin.js.backend.ast;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * One independently loadable fragment of a {@link JsProgram}.
- */
-public class JsProgramFragment extends SourceInfoAwareJsNode {
-    private final JsGlobalBlock globalBlock;
+import java.util.*;
 
-    public JsProgramFragment() {
-        globalBlock = new JsGlobalBlock();
-    }
+public class JsProgramFragment {
+    private final JsScope scope;
+    private final List<JsImportedModule> importedModules = new ArrayList<JsImportedModule>();
+    private final Map<String, JsExpression> imports = new LinkedHashMap<String, JsExpression>();
+    private final JsGlobalBlock declarationBlock = new JsGlobalBlock();
+    private final JsGlobalBlock exportBlock = new JsGlobalBlock();
+    private final JsGlobalBlock initializerBlock = new JsGlobalBlock();
+    private final List<JsNameBinding> nameBindings = new ArrayList<JsNameBinding>();
+    private final Map<JsName, JsClassModel> classes = new LinkedHashMap<JsName, JsClassModel>();
 
-    public JsBlock getGlobalBlock() {
-        return globalBlock;
-    }
-
-    @Override
-    public void accept(JsVisitor v) {
-        v.visitProgramFragment(this);
-    }
-
-    @Override
-    public void acceptChildren(JsVisitor visitor) {
-        visitor.accept(globalBlock);
-    }
-
-    @Override
-    public void traverse(JsVisitorWithContext v, JsContext ctx) {
-        if (v.visit(this, ctx)) {
-            v.acceptStatement(globalBlock);
-        }
-        v.endVisit(this, ctx);
+    public JsProgramFragment(@NotNull JsScope scope) {
+        this.scope = scope;
     }
 
     @NotNull
-    @Override
-    public JsProgramFragment deepCopy() {
-        throw new UnsupportedOperationException();
+    public JsScope getScope() {
+        return scope;
+    }
+
+    @NotNull
+    public List<JsImportedModule> getImportedModules() {
+        return importedModules;
+    }
+
+    @NotNull
+    public Map<String, JsExpression> getImports() {
+        return imports;
+    }
+
+    @NotNull
+    public JsBlock getDeclarationBlock() {
+        return declarationBlock;
+    }
+
+    @NotNull
+    public JsGlobalBlock getExportBlock() {
+        return exportBlock;
+    }
+
+    @NotNull
+    public JsGlobalBlock getInitializerBlock() {
+        return initializerBlock;
+    }
+
+    @NotNull
+    public List<JsNameBinding> getNameBindings() {
+        return nameBindings;
+    }
+
+    @NotNull
+    public Map<JsName, JsClassModel> getClasses() {
+        return classes;
     }
 }

@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.js.facade;
 
+import org.jetbrains.kotlin.js.backend.ast.JsImportedModule;
+import org.jetbrains.kotlin.js.backend.ast.JsProgram;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
@@ -97,7 +99,7 @@ public final class K2JSTranslator {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
         List<String> importedModules = new ArrayList<>();
-        for (StaticContext.ImportedModule module : context.getImportedModules()) {
+        for (JsImportedModule module : context.getImportedModules()) {
             importedModules.add(module.getExternalName());
         }
         return new TranslationResult.Success(config, files, program, diagnostics, importedModules, moduleDescriptor,

@@ -38,11 +38,6 @@ public class JsSourceGenerationVisitor extends JsToStringGenerationVisitor imple
     }
 
     @Override
-    public void visitProgramFragment(@NotNull JsProgramFragment x) {
-        x.acceptChildren(this);
-    }
-
-    @Override
     public void newLined() {
         if (sourceMapBuilder != null) {
             sourceMapBuilder.newLine();

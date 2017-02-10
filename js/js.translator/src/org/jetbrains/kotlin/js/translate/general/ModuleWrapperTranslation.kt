@@ -18,13 +18,12 @@ package org.jetbrains.kotlin.js.translate.general
 
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.context.Namer
-import org.jetbrains.kotlin.js.translate.context.StaticContext
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 object ModuleWrapperTranslation {
     @JvmStatic fun wrapIfNecessary(
-            moduleId: String, function: JsExpression, importedModules: List<StaticContext.ImportedModule>,
+            moduleId: String, function: JsExpression, importedModules: List<JsImportedModule>,
             program: JsProgram, kind: ModuleKind
     ): List<JsStatement> {
         return when (kind) {
@@ -37,7 +36,7 @@ object ModuleWrapperTranslation {
 
     private fun wrapUmd(
             moduleId: String, function: JsExpression,
-            importedModules: List<StaticContext.ImportedModule>, program: JsProgram
+            importedModules: List<JsImportedModule>, program: JsProgram
     ): List<JsStatement> {
         val scope = program.scope
         val defineName = scope.declareName("define")
@@ -79,7 +78,7 @@ object ModuleWrapperTranslation {
 
     private fun wrapAmd(
             function: JsExpression,
-            importedModules: List<StaticContext.ImportedModule>, program: JsProgram
+            importedModules: List<JsImportedModule>, program: JsProgram
     ): List<JsStatement> {
         val scope = program.scope
         val defineName = scope.declareName("define")
@@ -94,7 +93,7 @@ object ModuleWrapperTranslation {
 
     private fun wrapCommonJs(
             function: JsExpression,
-            importedModules: List<StaticContext.ImportedModule>,
+            importedModules: List<JsImportedModule>,
             program: JsProgram
     ): List<JsStatement> {
         val scope = program.scope
@@ -108,7 +107,7 @@ object ModuleWrapperTranslation {
 
     private fun wrapPlain(
             moduleId: String, function: JsExpression,
-            importedModules: List<StaticContext.ImportedModule>, program: JsProgram
+            importedModules: List<JsImportedModule>, program: JsProgram
     ): List<JsStatement> {
         val invocation = makePlainInvocation(moduleId, function, importedModules, program)
         val statements = mutableListOf<JsStatement>()
@@ -130,7 +129,7 @@ object ModuleWrapperTranslation {
     private fun addModuleValidation(
             currentModuleId: String,
             program: JsProgram,
-            module: StaticContext.ImportedModule
+            module: JsImportedModule
     ): JsStatement {
         val moduleRef = makePlainModuleRef(module, program)
         val moduleExistsCond = JsAstUtils.typeOfIs(moduleRef, program.getStringLiteral("undefined"))
@@ -144,7 +143,7 @@ object ModuleWrapperTranslation {
     private fun makePlainInvocation(
             moduleId: String,
             function: JsExpression,
-            importedModules: List<StaticContext.ImportedModule>,
+            importedModules: List<JsImportedModule>,
             program: JsProgram
     ): JsInvocation {
         val invocationArgs = importedModules.map { makePlainModuleRef(it, program) }
@@ -155,7 +154,7 @@ object ModuleWrapperTranslation {
         return JsInvocation(function, listOf(selfArg) + invocationArgs)
     }
 
-    private fun makePlainModuleRef(module: StaticContext.ImportedModule, program: JsProgram): JsExpression {
+    private fun makePlainModuleRef(module: JsImportedModule, program: JsProgram): JsExpression {
         return module.plainReference ?: makePlainModuleRef(module.externalName, program)
     }
 

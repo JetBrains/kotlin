@@ -120,9 +120,6 @@ abstract class JsVisitor {
     open fun visitProgram(x: JsProgram): Unit =
             visitElement(x)
 
-    open fun visitProgramFragment(x: JsProgramFragment): Unit =
-            visitElement(x)
-
     open fun visitPropertyInitializer(x: JsPropertyInitializer): Unit =
             visitElement(x)
 

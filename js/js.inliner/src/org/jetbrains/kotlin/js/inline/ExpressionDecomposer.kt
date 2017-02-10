@@ -399,7 +399,6 @@ internal open class JsExpressionVisitor() : JsVisitorWithContextImpl() {
     override fun visit(x: JsFunction, ctx: JsContext<JsNode>): Boolean = false
     override fun visit(x: JsObjectLiteral, ctx: JsContext<JsNode>): Boolean = false
     override fun visit(x: JsPropertyInitializer, ctx: JsContext<JsNode>): Boolean = false
-    override fun visit(x: JsProgramFragment, ctx: JsContext<JsNode>): Boolean = false
     override fun visit(x: JsProgram, ctx: JsContext<JsNode>): Boolean = false
     override fun visit(x: JsParameter, ctx: JsContext<JsNode>): Boolean = false
     override fun visit(x: JsCatch, ctx: JsContext<JsNode>): Boolean = false

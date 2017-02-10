@@ -125,9 +125,9 @@ public final class StaticContext {
     private final Map<DeclarationDescriptor, JsExpression> fqnCache = new HashMap<>();
 
     @NotNull
-    private final Map<ImportedModuleKey, ImportedModule> importedModules = new LinkedHashMap<>();
+    private final Map<JsImportedModuleKey, JsImportedModule> importedModules = new LinkedHashMap<>();
 
-    private Collection<ImportedModule> readOnlyImportedModules;
+    private Collection<JsImportedModule> readOnlyImportedModules;
 
     @NotNull
     private final JsScope rootPackageScope;
@@ -175,8 +175,8 @@ public final class StaticContext {
         rootPackageScope = new JsObjectScope(rootScope, "<root package>");
 
         JsName kotlinName = rootScope.declareName(Namer.KOTLIN_NAME);
-        importedModules.put(new ImportedModuleKey(Namer.KOTLIN_LOWER_NAME, null),
-                            new ImportedModule(Namer.KOTLIN_LOWER_NAME, kotlinName, null));
+        importedModules.put(new JsImportedModuleKey(Namer.KOTLIN_LOWER_NAME, null),
+                            new JsImportedModule(Namer.KOTLIN_LOWER_NAME, kotlinName, null));
     }
 
     @NotNull
@@ -205,7 +205,7 @@ public final class StaticContext {
     }
 
     @NotNull
-    public Collection<ImportedModule> getImportedModules() {
+    public Collection<JsImportedModule> getImportedModules() {
         if (readOnlyImportedModules == null) {
             readOnlyImportedModules = Collections.unmodifiableCollection(importedModules.values());
         }
@@ -286,7 +286,7 @@ public final class StaticContext {
         if (config.getModuleKind() != ModuleKind.PLAIN) {
             String moduleName = AnnotationsUtils.getModuleName(suggested.getDescriptor());
             if (moduleName != null) {
-                return JsAstUtils.pureFqn(getImportedModule(moduleName, suggested.getDescriptor()).internalName, null);
+                return JsAstUtils.pureFqn(getImportedModule(moduleName, suggested.getDescriptor()).getInternalName(), null);
             }
         }
 
@@ -308,7 +308,7 @@ public final class StaticContext {
         if (isNativeObject(suggested.getDescriptor()) && DescriptorUtils.isTopLevelDeclaration(suggested.getDescriptor())) {
             String fileModuleName = AnnotationsUtils.getFileModuleName(getBindingContext(), suggested.getDescriptor());
             if (fileModuleName != null) {
-                JsName moduleJsName = getImportedModule(fileModuleName, null).internalName;
+                JsName moduleJsName = getImportedModule(fileModuleName, null).getInternalName();
                 expression = pureFqn(moduleJsName, expression);
             }
 
@@ -484,8 +484,8 @@ public final class StaticContext {
     private JsName localOrImportedName(@NotNull DeclarationDescriptor descriptor, @NotNull String suggestedName) {
         ModuleDescriptor module = DescriptorUtilsKt.getModule(descriptor);
         JsName name = module != currentModule ?
-                importDeclaration(suggestedName, getQualifiedReference(descriptor)) :
-                rootFunction.getScope().declareTemporaryName(suggestedName);
+                      importDeclaration(suggestedName, getQualifiedReference(descriptor)) :
+                      rootFunction.getScope().declareTemporaryName(suggestedName);
         MetadataProperties.setDescriptor(name, descriptor);
         return name;
     }
@@ -667,15 +667,14 @@ public final class StaticContext {
     }
 
     @NotNull
-    private ImportedModule getImportedModule(@NotNull String baseName, @Nullable DeclarationDescriptor descriptor) {
-        JsName plainName = descriptor != null && config.getModuleKind() == ModuleKind.UMD ?
-                           rootScope.declareName(getPlainId(descriptor)) : null;
-        ImportedModuleKey key = new ImportedModuleKey(baseName, plainName);
+    private JsImportedModule getImportedModule(@NotNull String baseName, @Nullable DeclarationDescriptor descriptor) {
+        String plainName = descriptor != null && config.getModuleKind() == ModuleKind.UMD ? getPlainId(descriptor) : null;
+        JsImportedModuleKey key = new JsImportedModuleKey(baseName, plainName);
 
-        ImportedModule module = importedModules.get(key);
+        JsImportedModule module = importedModules.get(key);
         if (module == null) {
             JsName internalName = rootScope.declareTemporaryName(Namer.LOCAL_MODULE_PREFIX + Namer.suggestedModuleName(baseName));
-            module = new ImportedModule(baseName, internalName, plainName != null ? pureFqn(plainName, null) : null);
+            module = new JsImportedModule(baseName, internalName, plainName != null ? pureFqn(plainName, null) : null);
             importedModules.put(key, module);
         }
         return module;
@@ -692,7 +691,7 @@ public final class StaticContext {
         if (descriptor instanceof FunctionDescriptor ||
             descriptor instanceof PackageFragmentDescriptor ||
             descriptor instanceof ClassDescriptor
-        ) {
+                ) {
             MetadataProperties.setSideEffects(expression, SideEffectKind.PURE);
         }
         return expression;
@@ -804,70 +803,5 @@ public final class StaticContext {
             }
         }
         return false;
-    }
-
-    public static class ImportedModule {
-        @NotNull
-        private final String externalName;
-
-        @NotNull
-        private final JsName internalName;
-
-        @Nullable
-        private final JsExpression plainReference;
-
-        ImportedModule(@NotNull String externalName, @NotNull JsName internalName, @Nullable JsExpression plainReference) {
-            this.externalName = externalName;
-            this.internalName = internalName;
-            this.plainReference = plainReference;
-        }
-
-        @NotNull
-        public String getExternalName() {
-            return externalName;
-        }
-
-        @NotNull
-        public JsName getInternalName() {
-            return internalName;
-        }
-
-        @Nullable
-        public JsExpression getPlainReference() {
-            return plainReference;
-        }
-    }
-
-    private static class ImportedModuleKey {
-        @NotNull
-        private final String baseName;
-
-        @Nullable
-        private final JsName plainName;
-
-        public ImportedModuleKey(@NotNull String baseName, @Nullable JsName plainName) {
-            this.baseName = baseName;
-            this.plainName = plainName;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            ImportedModuleKey key = (ImportedModuleKey) o;
-
-            if (!baseName.equals(key.baseName)) return false;
-            if (plainName != null ? !plainName.equals(key.plainName) : key.plainName != null) return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = baseName.hashCode();
-            result = 31 * result + (plainName != null ? plainName.hashCode() : 0);
-            return result;
-        }
     }
 }
