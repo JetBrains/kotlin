@@ -7,6 +7,7 @@ import com.android.build.gradle.internal.variant.BaseVariantData
 import com.android.build.gradle.internal.variant.BaseVariantOutputData
 import com.android.builder.model.SourceProvider
 import groovy.lang.Closure
+import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -20,16 +21,18 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
+import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
-import org.jetbrains.kotlin.gradle.internal.*
+import org.jetbrains.kotlin.gradle.internal.AnnotationProcessingManager
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
+import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion.getKaptClasssesDir
+import org.jetbrains.kotlin.gradle.internal.initKapt
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.plugin.android.KotlinJillTask
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.incremental.configureMultiProjectIncrementalCompilation
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProviderAndroidWrapper
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import java.net.URL
 import java.util.*
@@ -186,18 +189,30 @@ internal class Kotlin2JsSourceSetProcessor(
         taskDescription = "Compiles the kotlin sources in $sourceSet to JavaScript.",
         compileTaskNameSuffix = "kotlin2Js"
 ) {
-    private val clean = project.tasks.findByName("clean")
-    private val build = project.tasks.findByName("build")
 
     override fun doCreateTask(project: Project, taskName: String): Kotlin2JsCompile =
             tasksProvider.createKotlinJSTask(project, taskName, sourceSet.name)
 
     override fun doTargetSpecificProcessing() {
-        val taskName = kotlinTask.name
-        build?.dependsOn(taskName)
-        clean?.dependsOn("clean" + taskName.capitalize())
+        project.tasks.findByName(sourceSet.classesTaskName).dependsOn(kotlinTask)
         kotlinTask.source(kotlinSourceSet.kotlin)
         createCleanSourceMapTask()
+
+        // outputFile can be set later during the configuration phase, get it only after the phase:
+        project.afterEvaluate {
+            kotlinTask.kotlinOptions.outputFile = File(kotlinTask.outputFile).absolutePath
+            val outputDir = File(kotlinTask.outputFile).parentFile
+
+            if (FileUtil.isAncestor(outputDir, project.rootDir, false))
+                throw InvalidUserDataException(
+                        "The output directory '$outputDir' (defined by outputFile of $kotlinTask) contains or " +
+                        "matches the project root directory '${project.rootDir}'.\n" +
+                        "Gradle will not be able to build the project because of the root directory lock.\n" +
+                        "To fix this, consider using the default outputFile location instead of providing it explicitly.")
+
+            sourceSet.output.setClassesDir(outputDir)
+            kotlinTask.destinationDir = outputDir
+        }
     }
 
     private fun createCleanSourceMapTask() {
@@ -207,7 +222,7 @@ internal class Kotlin2JsSourceSetProcessor(
         task.delete(object : Closure<String>(this) {
             override fun call(): String? = (kotlinTask.property("outputFile") as String) + ".map"
         })
-        clean?.dependsOn(taskName)
+        project.tasks.findByName("clean")?.dependsOn(taskName)
     }
 }
 

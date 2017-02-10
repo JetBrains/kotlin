@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.codehaus.groovy.runtime.MethodClosure
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.logging.Logger
@@ -44,7 +43,6 @@ import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistry
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
 import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
-import java.rmi.Remote
 import java.util.*
 import kotlin.properties.Delegates
 
@@ -322,10 +320,6 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
     val outputFile: String
         get() = kotlinOptions.outputFile ?: defaultOutputFile.canonicalPath
 
-    init {
-        @Suppress("LeakingThis")
-        outputs.file(MethodClosure(this, "getOutputFile"))
-    }
 
     override fun findKotlinCompilerJar(project: Project): File? =
             findKotlinJsCompilerJar(project)
@@ -348,7 +342,6 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
 
         logger.debug("Calling compiler")
         destinationDir.mkdirs()
-        args.freeArgs = args.freeArgs + sourceRoots.kotlinSourceFiles.map { it.absolutePath }
 
         val friendDependency = friendTaskName
                 ?.let { project.getTasksByName(it, false).singleOrNull() as? Kotlin2JsCompile }

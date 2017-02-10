@@ -33,6 +33,13 @@ dependencies {
     integrationTestCompile "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
 }
 
+task integrationTestJar(type: Jar) {
+    from sourceSets.integrationTest.output
+    classifier = 'inttests'
+}
+
+build.dependsOn integrationTestJar
+
 task jarSources(type: Jar) {
     from sourceSets.main.allSource
     classifier = 'source'
