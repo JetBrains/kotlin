@@ -596,6 +596,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ReserveYield.kt")
+        public void testReserveYield() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/ReserveYield.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ReserveYield2.kt")
+        public void testReserveYield2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/ReserveYield2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ResolveOfJavaGenerics.kt")
         public void testResolveOfJavaGenerics() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/ResolveOfJavaGenerics.kt");

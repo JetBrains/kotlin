@@ -10575,4 +10575,25 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/quickfix/yieldUnsupported")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class YieldUnsupported extends AbstractQuickFixTest {
+        public void testAllFilesPresentInYieldUnsupported() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/yieldUnsupported"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("yieldAsSimpleName.kt")
+        public void testYieldAsSimpleName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/yieldUnsupported/yieldAsSimpleName.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("yieldBeforeLambda.kt")
+        public void testYieldBeforeLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/yieldUnsupported/yieldBeforeLambda.kt");
+            doTest(fileName);
+        }
+    }
 }

@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
@@ -138,6 +139,8 @@ public class LabelResolver {
             @NotNull ResolutionContext context
     ) {
         KtSimpleNameExpression labelElement = expression.getTargetLabel();
+        KtPsiUtilKt.checkReservedYield(labelElement, context.trace);
+
         Name labelName = expression.getLabelNameAsName();
         if (labelElement == null || labelName == null) return null;
 

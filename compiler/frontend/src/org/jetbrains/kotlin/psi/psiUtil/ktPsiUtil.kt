@@ -461,6 +461,25 @@ fun checkReservedPrefixWord(sink: DiagnosticSink, element: PsiElement, word: Str
     }
 }
 
+fun checkReservedYield(expression: KtSimpleNameExpression?, sink: DiagnosticSink) {
+    // do not force identifier calculation for elements from stubs.
+    if (expression?.getReferencedName() != "yield") return
+
+    val identifier = expression.getIdentifier() ?: return
+
+    if (identifier.node.elementType == KtTokens.IDENTIFIER && "yield" == identifier.text) {
+        sink.report(Errors.YIELD_IS_RESERVED.on(identifier, "Identifier 'yield' is reserved. You ca call it via `yield`"))
+    }
+}
+
+val MESSAGE_FOR_YIELD_BEFORE_LAMBDA = "Reserved yield block/lambda. Use 'yield() { ... }' or 'yield(fun...)'"
+
+fun checkReservedYieldBeforeLambda(element: PsiElement, sink: DiagnosticSink) {
+    KtPsiUtil.getPreviousWord(element, "yield")?.let {
+        sink.report(Errors.YIELD_IS_RESERVED.on(it, MESSAGE_FOR_YIELD_BEFORE_LAMBDA))
+    }
+}
+
 fun KtElement.nonStaticOuterClasses(): Sequence<KtClass> {
     return generateSequence(containingClass()) { if (it.isInner()) it.containingClass() else null }
 }

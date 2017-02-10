@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.OverrideResolver;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.*;
@@ -185,7 +186,9 @@ public class ValueArgumentsToParametersMapper {
                 ValueArgumentName argumentName = argument.getArgumentName();
                 assert argumentName != null;
                 ValueParameterDescriptor valueParameterDescriptor = parameterByName.get(argumentName.getAsName());
-                KtReferenceExpression nameReference = argumentName.getReferenceExpression();
+                KtSimpleNameExpression nameReference = argumentName.getReferenceExpression();
+
+                KtPsiUtilKt.checkReservedYield(nameReference, candidateCall.getTrace());
                 if (!candidate.hasStableParameterNames() && nameReference != null) {
                     report(NAMED_ARGUMENTS_NOT_ALLOWED.on(
                             nameReference,

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.debugText.getDebugText
+import org.jetbrains.kotlin.psi.psiUtil.checkReservedYield
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.resolve.PossiblyBareType.bare
 import org.jetbrains.kotlin.resolve.PossiblyBareType.type
@@ -227,6 +228,8 @@ class TypeResolver(
                 }
 
                 val referenceExpression = type.referenceExpression ?: return
+
+                checkReservedYield(referenceExpression, c.trace)
                 c.trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classifier)
 
                 result = resolveTypeForClassifier(c, classifier, qualifierResolutionResult, type, annotations)
