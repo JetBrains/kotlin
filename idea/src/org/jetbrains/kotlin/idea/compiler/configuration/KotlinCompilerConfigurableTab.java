@@ -103,6 +103,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private JComboBox coroutineSupportComboBox;
     private JPanel apiVersionPanel;
     private JComboBox apiVersionComboBox;
+    private JPanel scriptPanel;
 
     public KotlinCompilerConfigurableTab(
             Project project,
