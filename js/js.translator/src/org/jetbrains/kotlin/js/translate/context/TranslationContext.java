@@ -158,13 +158,13 @@ public class TranslationContext {
     @NotNull
     public TranslationContext newFunctionBodyWithUsageTracker(@NotNull JsFunction fun, @NotNull MemberDescriptor descriptor) {
         DynamicContext dynamicContext = DynamicContext.newContext(fun.getScope(), fun.getBody());
-        UsageTracker usageTracker = new UsageTracker(this.usageTracker, descriptor, fun.getScope());
+        UsageTracker usageTracker = new UsageTracker(this.usageTracker, descriptor);
         return new TranslationContext(this, this.staticContext, dynamicContext, this.aliasingContext.inner(), usageTracker, descriptor);
     }
 
     @NotNull
-    public TranslationContext innerWithUsageTracker(@NotNull JsScope scope, @NotNull MemberDescriptor descriptor) {
-        UsageTracker usageTracker = new UsageTracker(this.usageTracker, descriptor, scope);
+    public TranslationContext innerWithUsageTracker(@NotNull MemberDescriptor descriptor) {
+        UsageTracker usageTracker = new UsageTracker(this.usageTracker, descriptor);
         return new TranslationContext(this, staticContext, dynamicContext, aliasingContext.inner(), usageTracker, descriptor);
     }
 
@@ -650,11 +650,6 @@ public class TranslationContext {
 
     public void addTopLevelStatement(@NotNull JsStatement statement) {
         staticContext.getTopLevelStatements().add(statement);
-    }
-
-    @NotNull
-    public JsName createGlobalName(@NotNull String suggestedName) {
-        return staticContext.getFragment().getScope().declareTemporaryName(suggestedName);
     }
 
     @NotNull

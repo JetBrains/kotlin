@@ -32,7 +32,7 @@ fun aliasArgumentsIfNeeded(
     for ((arg, param) in arguments.zip(parameters)) {
         val paramName = param.name
 
-        val replacement = context.getTemporaryName(paramName.ident).apply {
+        val replacement = JsScope.declareTemporaryName(paramName.ident).apply {
             staticRef = arg
             context.newVar(this, arg.deepCopy())
         }.makeRef()
@@ -43,7 +43,7 @@ fun aliasArgumentsIfNeeded(
     val defaultParams = parameters.subList(arguments.size, parameters.size)
     for (defaultParam in defaultParams) {
         val paramName = defaultParam.name
-        val freshName = context.getTemporaryName(paramName.ident)
+        val freshName = JsScope.declareTemporaryName(paramName.ident)
         context.newVar(freshName)
 
         context.replaceName(paramName, freshName.makeRef())
@@ -58,7 +58,7 @@ fun renameLocalNames(
         function: JsFunction
 ) {
     for (name in collectDefinedNames(function.body)) {
-        val temporaryName = context.getTemporaryName(name.ident).apply { staticRef = name.staticRef }
+        val temporaryName = JsScope.declareTemporaryName(name.ident).apply { staticRef = name.staticRef }
         context.replaceName(name, temporaryName.makeRef())
     }
 }

@@ -100,7 +100,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
         context.getNameForElement(loopParameter)
     }
     else {
-        context.scope().declareTemporary()
+        JsScope.declareTemporary()
     }
 
     fun translateBody(itemValue: JsExpression?): JsStatement? {

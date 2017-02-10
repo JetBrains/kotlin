@@ -68,7 +68,7 @@ class NameResolutionTest {
                 if (node is HasName) {
                     node.name = node.name?.let { name ->
                         if (name.ident.startsWith("$")) {
-                            cache.getOrPut(name) { JsDynamicScope.declareTemporaryName("x") }
+                            cache.getOrPut(name) { JsScope.declareTemporaryName("x") }
                         }
                         else {
                             name

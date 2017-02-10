@@ -396,7 +396,7 @@ public final class StaticContext {
                 if (suggested.getDescriptor() instanceof LocalVariableDescriptor ||
                     suggested.getDescriptor() instanceof ValueParameterDescriptor
                         ) {
-                    name = scope.declareTemporaryName(baseName);
+                    name = JsScope.declareTemporaryName(baseName);
                 }
                 else {
                     if (!DescriptorUtils.isDescriptorWithLocalVisibility(suggested.getDescriptor())) {
@@ -461,7 +461,7 @@ public final class StaticContext {
         // since local scope inherited from global scope.
         // TODO: remove prefix when problem with scopes is solved
 
-        JsName result = fragment.getScope().declareTemporaryName(suggestedName);
+        JsName result = JsScope.declareTemporaryName(suggestedName);
         MetadataProperties.setImported(result, true);
         fragment.getImports().put(tag, declaration);
         return result;
@@ -477,7 +477,7 @@ public final class StaticContext {
             name = importDeclaration(suggestedName, tag, getQualifiedReference(descriptor));
         }
         else {
-            name = fragment.getScope().declareTemporaryName(suggestedName);
+            name = JsScope.declareTemporaryName(suggestedName);
         }
         if (tag != null) {
             fragment.getNameBindings().add(new JsNameBinding(tag, name));
@@ -674,7 +674,7 @@ public final class StaticContext {
 
         JsImportedModule module = importedModules.get(key);
         if (module == null) {
-            JsName internalName = rootScope.declareTemporaryName(Namer.LOCAL_MODULE_PREFIX + Namer.suggestedModuleName(baseName));
+            JsName internalName = JsScope.declareTemporaryName(Namer.LOCAL_MODULE_PREFIX + Namer.suggestedModuleName(baseName));
             module = createImportedModule(key, baseName, internalName, plainName != null ? pureFqn(plainName, null) : null);
         }
         return module;

@@ -46,7 +46,7 @@ class EnumTranslator(
     private fun generateValueOfFunction() {
         val function = createFunction(DescriptorUtils.getFunctionByName(descriptor.staticScope, DescriptorUtils.ENUM_VALUE_OF))
 
-        val nameParam = function.scope.declareTemporaryName("name")
+        val nameParam = JsScope.declareTemporaryName("name")
         function.parameters += JsParameter(nameParam)
 
         val clauses = entries.map { entry ->

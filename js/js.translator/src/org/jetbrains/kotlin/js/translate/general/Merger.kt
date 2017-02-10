@@ -68,7 +68,7 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
         val nameMap = mutableMapOf<JsName, JsName>()
         for (nameBinding in fragment.nameBindings) {
             nameMap[nameBinding.name] = nameTable.getOrPut(nameBinding.key) {
-                fragment.scope.declareTemporaryName(nameBinding.name.ident).also { it.copyMetadataFrom(nameBinding.name) }
+                JsScope.declareTemporaryName(nameBinding.name.ident).also { it.copyMetadataFrom(nameBinding.name) }
             }
         }
         fragment.scope.findName(Namer.getRootPackageName())?.let { nameMap[it] = internalModuleName }
@@ -77,7 +77,7 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
             nameMap[importedModule.internalName] = importedModuleTable.getOrPut(importedModule.key) {
                 val scope = rootFunction.scope
                 val newName = importedModule.internalName.let {
-                    if (it.isTemporary) scope.declareTemporaryName(it.ident) else scope.declareName(it.ident)
+                    if (it.isTemporary) JsScope.declareTemporaryName(it.ident) else scope.declareName(it.ident)
                 }
                 newName.also {
                     importedModulesImpl += JsImportedModule(importedModule.externalName, it, importedModule.plainReference)

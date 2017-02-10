@@ -365,7 +365,7 @@ internal class ExpressionDecomposer private constructor(
     }
 
     private inner class Temporary(val value: JsExpression? = null) {
-        val name: JsName = scope.declareTemporary()
+        val name: JsName = JsScope.declareTemporary()
 
         val variable: JsVars = newVar(name, value).apply {
             synthetic = true

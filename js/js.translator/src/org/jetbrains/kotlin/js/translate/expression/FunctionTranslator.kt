@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.JsParameter
+import org.jetbrains.kotlin.js.backend.ast.JsScope
 import org.jetbrains.kotlin.js.backend.ast.metadata.functionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.metadata.hasDefaultValue
 import org.jetbrains.kotlin.js.translate.context.Namer
@@ -48,14 +49,14 @@ fun TranslationContext.translateAndAliasParameters(
             targetList += JsParameter(paramNameForType)
 
             val suggestedName = Namer.isInstanceSuggestedName(type)
-            val paramName = scope().declareTemporaryName(suggestedName)
+            val paramName = JsScope.declareTemporaryName(suggestedName)
             targetList += JsParameter(paramName)
             aliases[type] = paramName.makeRef()
         }
     }
 
     if (descriptor.requiresExtensionReceiverParameter) {
-        val receiverParameterName = scope().declareTemporaryName(Namer.getReceiverParameterName())
+        val receiverParameterName = JsScope.declareTemporaryName(Namer.getReceiverParameterName())
         aliases[descriptor.extensionReceiverParameter!!] = receiverParameterName.makeRef()
         targetList += JsParameter(receiverParameterName)
     }

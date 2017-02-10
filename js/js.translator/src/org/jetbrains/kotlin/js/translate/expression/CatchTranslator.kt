@@ -97,7 +97,7 @@ class CatchTranslator(
 
         val additionalStatements = mutableListOf<JsStatement>()
         val parameterRef = if (parameterName.ident != initialCatchParameterRef.ident) {
-            val parameterAlias = context.scope().declareTemporaryName(parameterName.ident)
+            val parameterAlias = JsScope.declareTemporaryName(parameterName.ident)
             additionalStatements += JsAstUtils.newVar(parameterAlias, initialCatchParameterRef)
             val ref = JsAstUtils.pureFqn(parameterAlias, null)
             ref

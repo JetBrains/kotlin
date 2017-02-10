@@ -12,10 +12,6 @@ import org.jetbrains.annotations.NotNull;
  * An abstract base class for named JavaScript objects.
  */
 public class JsName extends HasMetadata implements Symbol {
-  private static int ordinalGenerator;
-  private final JsScope enclosing;
-  private final int ordinal;
-
   @NotNull
   private final String ident;
 
@@ -24,19 +20,9 @@ public class JsName extends HasMetadata implements Symbol {
   /**
    * @param ident the unmangled ident to use for this name
    */
-  JsName(JsScope enclosing, @NotNull String ident, boolean temporary) {
-    this.enclosing = enclosing;
+  JsName(@NotNull String ident, boolean temporary) {
     this.ident = ident;
     this.temporary = temporary;
-    ordinal = temporary ? ordinalGenerator++ : 0;
-  }
-
-  public int getOrdinal() {
-    return ordinal;
-  }
-
-  public JsScope getEnclosing() {
-    return enclosing;
   }
 
   public boolean isTemporary() {

@@ -135,7 +135,7 @@ class DelegationTranslator(
                                         "setter for " + setterDescriptor.name.asString())
 
             assert(setterDescriptor.valueParameters.size == 1) { "Setter must have 1 parameter" }
-            val defaultParameter = JsParameter(jsFunction.scope.declareTemporary())
+            val defaultParameter = JsParameter(JsScope.declareTemporary())
             val defaultParameterRef = defaultParameter.name.makeRef()
 
             val delegateRef = JsNameRef(delegateName, JsLiteral.THIS)

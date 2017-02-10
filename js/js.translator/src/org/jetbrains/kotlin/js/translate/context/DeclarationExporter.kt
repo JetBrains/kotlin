@@ -110,7 +110,7 @@ internal class DeclarationExporter(val context: StaticContext) {
             val setterBody: JsExpression = if (simpleProperty) {
                 val statements = mutableListOf<JsStatement>()
                 val function = JsFunction(context.fragment.scope, JsBlock(statements), "$declaration setter")
-                val valueName = function.scope.declareTemporaryName("value")
+                val valueName = JsScope.declareTemporaryName("value")
                 function.parameters += JsParameter(valueName)
                 statements += assignment(context.getInnerNameForDescriptor(declaration).makeRef(), valueName.makeRef()).makeStmt()
                 function
@@ -130,7 +130,7 @@ internal class DeclarationExporter(val context: StaticContext) {
         }
         var name = localPackageNames[packageName]
         if (name == null) {
-            name = context.fragment.scope.declareTemporaryName("package$" + packageName.shortName().asString())
+            name = JsScope.declareTemporaryName("package$" + packageName.shortName().asString())
             localPackageNames.put(packageName, name)
 
             val parentRef = getLocalPackageReference(packageName.parent())

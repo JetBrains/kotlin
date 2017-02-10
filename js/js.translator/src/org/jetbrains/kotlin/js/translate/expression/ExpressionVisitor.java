@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
-import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.declaration.ClassTranslator;
 import org.jetbrains.kotlin.js.translate.declaration.PropertyTranslatorKt;
@@ -114,7 +113,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         KtExpression jetInitializer = multiDeclaration.getInitializer();
         assert jetInitializer != null : "Initializer for multi declaration must be not null";
         JsExpression initializer = Translation.translateAsExpression(jetInitializer, context);
-        return DestructuringDeclarationTranslator.translate(multiDeclaration, context.scope().declareTemporary(), initializer, context);
+        return DestructuringDeclarationTranslator.translate(multiDeclaration, JsScope.declareTemporary(), initializer, context);
     }
 
     @Override
@@ -125,7 +124,11 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         // TODO: add related descriptor to context and use it here
         KtDeclarationWithBody parent = PsiTreeUtil.getParentOfType(jetReturnExpression, KtDeclarationWithBody.class);
         if (parent instanceof KtSecondaryConstructor) {
-            return new JsReturn(new JsNameRef(Namer.ANOTHER_THIS_PARAMETER_NAME)).source(jetReturnExpression);
+            ClassDescriptor classDescriptor = context.getClassDescriptor();
+            assert classDescriptor != null : "Missing class descriptor in context while translating constructor: " +
+                    PsiUtilsKt.getTextWithLocation(jetReturnExpression);
+            JsExpression ref = ReferenceTranslator.translateAsValueReference(classDescriptor.getThisAsReceiverParameter(), context);
+            return new JsReturn(ref.source(jetReturnExpression));
         }
 
         JsReturn jsReturn;
@@ -602,8 +605,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             @NotNull ClassDescriptor descriptor,
             @NotNull TranslationContext context
     ) {
-        JsScope scope = context.getScopeForDescriptor(descriptor);
-        TranslationContext classContext = context.innerWithUsageTracker(scope, descriptor);
+        TranslationContext classContext = context.innerWithUsageTracker(descriptor);
         ClassTranslator.translate(declaration, classContext, null);
     }
 }

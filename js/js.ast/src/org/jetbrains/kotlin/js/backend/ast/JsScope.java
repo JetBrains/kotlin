@@ -4,9 +4,9 @@
 
 package org.jetbrains.kotlin.js.backend.ast;
 
-import org.jetbrains.kotlin.js.util.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.js.util.Maps;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -43,8 +43,6 @@ public abstract class JsScope {
     @NotNull
     private final String description;
     private Map<String, JsName> names = Collections.emptyMap();
-    private Map<JsName, Object> temporaryNames;
-    private Set<JsName> readonlyTemporaryNames = null;
     private final JsScope parent;
 
     private static final Pattern FRESH_NAME_SUFFIX = Pattern.compile("[\\$_]\\d+$");
@@ -57,16 +55,6 @@ public abstract class JsScope {
     protected JsScope(@NotNull String description) {
         this.description = description;
         parent = null;
-    }
-
-    public Set<JsName> getTemporaryNames() {
-        if (temporaryNames == null) {
-            return Collections.emptySet();
-        }
-        if (readonlyTemporaryNames == null) {
-            readonlyTemporaryNames = Collections.unmodifiableSet(temporaryNames.keySet());
-        }
-        return readonlyTemporaryNames;
     }
 
     @NotNull
@@ -103,14 +91,9 @@ public abstract class JsScope {
     }
 
     @NotNull
-    public JsName declareTemporaryName(@NotNull String suggestedName) {
+    public static JsName declareTemporaryName(@NotNull String suggestedName) {
         assert !suggestedName.isEmpty();
-        JsName name = new JsName(this, suggestedName, true);
-        if (temporaryNames == null) {
-            temporaryNames = new WeakHashMap<JsName, Object>();
-        }
-        temporaryNames.put(name, this);
-        return name;
+        return new JsName(suggestedName, true);
     }
 
     /**
@@ -120,7 +103,7 @@ public abstract class JsScope {
      * Future declarations of variables might however clash with the temporary.
      */
     @NotNull
-    public JsName declareTemporary() {
+    public static JsName declareTemporary() {
         return declareTemporaryName("tmp$");
     }
 
@@ -171,7 +154,7 @@ public abstract class JsScope {
     }
 
     public void copyOwnNames(JsScope other) {
-        names = new HashMap<String, JsName>(names);
+        names = new HashMap<>(names);
         names.putAll(other.names);
     }
 
@@ -182,7 +165,7 @@ public abstract class JsScope {
 
     @NotNull
     protected JsName doCreateName(@NotNull String ident) {
-        JsName name = new JsName(this, ident, false);
+        JsName name = new JsName(ident, false);
         names = Maps.put(names, ident, name);
         return name;
     }

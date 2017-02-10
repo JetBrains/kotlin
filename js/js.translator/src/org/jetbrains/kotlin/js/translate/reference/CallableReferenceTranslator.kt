@@ -97,7 +97,7 @@ object CallableReferenceTranslator {
 
         val function = JsFunction(context.scope(), JsBlock(), "")
         val receiverParam = if (descriptor.dispatchReceiverParameter != null || descriptor.extensionReceiverParameter != null) {
-            val paramName = function.scope.declareTemporaryName(Namer.getReceiverParameterName())
+            val paramName = JsScope.declareTemporaryName(Namer.getReceiverParameterName())
             function.parameters += JsParameter(paramName)
             paramName.makeRef()
         }
@@ -107,7 +107,7 @@ object CallableReferenceTranslator {
 
         val aliases = mutableMapOf<KtExpression, JsExpression>()
         for ((index, valueArg) in fakeCall.valueArguments.withIndex()) {
-            val paramName = function.scope.declareTemporaryName(descriptor.valueParameters[index].name.asString())
+            val paramName = JsScope.declareTemporaryName(descriptor.valueParameters[index].name.asString())
             function.parameters += JsParameter(paramName)
             aliases[valueArg.getArgumentExpression()!!] = paramName.makeRef()
         }
@@ -162,7 +162,7 @@ object CallableReferenceTranslator {
         val accessorFunction = JsFunction(context.scope(), JsBlock(), "")
         val accessorContext = context.innerBlock(accessorFunction.body)
         val receiverParam = if (descriptor.dispatchReceiverParameter != null || descriptor.extensionReceiverParameter != null) {
-            val name = accessorFunction.scope.declareTemporaryName(Namer.getReceiverParameterName())
+            val name = JsScope.declareTemporaryName(Namer.getReceiverParameterName())
             accessorFunction.parameters += JsParameter(name)
             name.makeRef()
         }
@@ -171,7 +171,7 @@ object CallableReferenceTranslator {
         }
 
         val valueParam = if (isSetter) {
-            val name = accessorFunction.scope.declareTemporaryName("value")
+            val name = JsScope.declareTemporaryName("value")
             accessorFunction.parameters += JsParameter(name)
             name.makeRef()
         }

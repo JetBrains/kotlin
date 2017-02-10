@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.js.translate.context
 
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.JsScope
-import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
 import org.jetbrains.kotlin.js.descriptorUtils.isCoroutineLambda
 import org.jetbrains.kotlin.js.naming.NameSuggestion
@@ -30,8 +30,7 @@ private val CAPTURED_RECEIVER_NAME_PREFIX : String = "this$"
 
 class UsageTracker(
         private val parent: UsageTracker?,
-        val containingDescriptor: MemberDescriptor,
-        private val scope: JsScope
+        val containingDescriptor: MemberDescriptor
 ) {
 
     private val captured = linkedMapOf<DeclarationDescriptor, JsName>()
@@ -172,7 +171,7 @@ class UsageTracker(
             }
         }
 
-        return scope.declareTemporaryName(suggestedName).apply { descriptor = this@getJsNameForCapturedDescriptor }
+        return JsScope.declareTemporaryName(suggestedName).apply { descriptor = this@getJsNameForCapturedDescriptor }
     }
 }
 

@@ -50,9 +50,6 @@ class NamingContext(
 
     fun getFreshName(candidate: String): JsName = scope.declareFreshName(candidate)
 
-
-    fun getTemporaryName(candidate: String): JsName = scope.declareTemporaryName(candidate)
-
     fun newVar(name: JsName, value: JsExpression? = null) {
         val vars = JsAstUtils.newVar(name, value)
         vars.synthetic = true

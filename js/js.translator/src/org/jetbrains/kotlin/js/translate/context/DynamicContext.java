@@ -62,7 +62,7 @@ public final class DynamicContext {
             currentBlock.getStatements().add(vars);
         }
 
-        JsName temporaryName = currentScope.declareTemporary();
+        JsName temporaryName = JsScope.declareTemporary();
         JsVar var = new JsVar(temporaryName, null);
         MetadataProperties.setSynthetic(var, true);
         vars.add(var);

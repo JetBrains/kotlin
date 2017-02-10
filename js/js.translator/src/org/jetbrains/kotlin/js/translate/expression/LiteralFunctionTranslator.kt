@@ -209,8 +209,7 @@ private fun moveCapturedLocalInside(capturingFunction: JsFunction, capturedName:
 private fun moveCapturedLocalInside(capturingFunction: JsFunction, capturedName: JsName, localFunAlias: JsInvocation): CapturedArgsParams {
     val capturedArgs = localFunAlias.arguments
 
-    val scope = capturingFunction.getInnerFunction()?.scope!!
-    val freshNames = getTemporaryNamesInScope(scope, capturedArgs)
+    val freshNames = getTemporaryNamesInScope(capturedArgs)
 
     val aliasCallArguments = freshNames.map(JsName::makeRef)
     val alias = JsInvocation(localFunAlias.qualifier, aliasCallArguments)
@@ -225,7 +224,7 @@ private fun declareAliasInsideFunction(function: JsFunction, name: JsName, alias
     function.getInnerFunction()?.addDeclaration(name, alias)
 }
 
-private fun getTemporaryNamesInScope(scope: JsScope, suggested: List<JsExpression>): List<JsName> {
+private fun getTemporaryNamesInScope(suggested: List<JsExpression>): List<JsName> {
     val freshNames = arrayListOf<JsName>()
 
     for (suggestion in suggested) {
@@ -234,7 +233,7 @@ private fun getTemporaryNamesInScope(scope: JsScope, suggested: List<JsExpressio
         }
 
         val ident = suggestion.ident
-        val name = scope.declareTemporaryName(ident)
+        val name = JsScope.declareTemporaryName(ident)
         freshNames.add(name)
     }
 

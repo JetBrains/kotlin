@@ -67,7 +67,6 @@ class ClassTranslator private constructor(
     private fun isTrait(): Boolean = descriptor.kind == ClassKind.INTERFACE
 
     private fun translate() {
-        val scope = context().getScopeForDescriptor(descriptor)
         val context = context().newDeclaration(descriptor)
 
         val constructorFunction = descriptor.unsubstitutedPrimaryConstructor?.let { context.getFunctionObject(it) } ?:
@@ -76,7 +75,7 @@ class ClassTranslator private constructor(
         context.addDeclarationStatement(constructorFunction.makeStmt())
         val enumInitFunction = if (descriptor.kind == ClassKind.ENUM_CLASS) createEnumInitFunction() else null
 
-        val nonConstructorContext = context.withUsageTrackerIfNecessary(scope, descriptor)
+        val nonConstructorContext = context.withUsageTrackerIfNecessary(descriptor)
         nonConstructorContext.startDeclaration()
         val delegationTranslator = DelegationTranslator(classDeclaration, nonConstructorContext)
         translatePropertiesAsConstructorParameters(nonConstructorContext)
@@ -117,9 +116,9 @@ class ClassTranslator private constructor(
         }
     }
 
-    private fun TranslationContext.withUsageTrackerIfNecessary(scope: JsScope, innerDescriptor: MemberDescriptor): TranslationContext {
+    private fun TranslationContext.withUsageTrackerIfNecessary(innerDescriptor: MemberDescriptor): TranslationContext {
         return if (isLocalClass) {
-            innerWithUsageTracker(scope, innerDescriptor)
+            innerWithUsageTracker(innerDescriptor)
         }
         else {
             inner(innerDescriptor)
@@ -135,7 +134,7 @@ class ClassTranslator private constructor(
             delegationTranslator: DelegationTranslator
     ) {
         if (!isTrait()) {
-            val constructorContext = classContext.innerWithUsageTracker(constructorFunction.scope, descriptor)
+            val constructorContext = classContext.innerWithUsageTracker(descriptor)
             if (isObjectLike()) {
                 addObjectCache(constructorFunction.body.statements)
             }
@@ -152,7 +151,7 @@ class ClassTranslator private constructor(
 
     private fun createEnumInitFunction(): JsFunction {
         val function = context().createRootScopedFunction(descriptor)
-        function.name = context().createGlobalName(StaticContext.getSuggestedName(descriptor) + "_initFields")
+        function.name = JsScope.declareTemporaryName(StaticContext.getSuggestedName(descriptor) + "_initFields")
         val emptyFunction = context().createRootScopedFunction(descriptor)
         function.body.statements += JsAstUtils.assignment(JsAstUtils.pureFqn(function.name, null), emptyFunction).makeStmt()
         context().addDeclarationStatement(function.makeStmt())
@@ -194,14 +193,12 @@ class ClassTranslator private constructor(
                 as ClassConstructorDescriptor
         val classDescriptor = constructorDescriptor.containingDeclaration
 
-        val constructorScope = classContext.getScopeForDescriptor(constructorDescriptor)
-
-        val thisName = constructorScope.declareName(Namer.ANOTHER_THIS_PARAMETER_NAME)
+        val thisName = JsScope.declareTemporaryName(Namer.ANOTHER_THIS_PARAMETER_NAME)
         val thisNameRef = thisName.makeRef()
         val receiverDescriptor = classDescriptor.thisAsReceiverParameter
 
         var context = classContext
-                .innerWithUsageTracker(constructorScope, constructorDescriptor)
+                .innerWithUsageTracker(constructorDescriptor)
                 .innerContextWithAliased(receiverDescriptor, thisNameRef)
 
         val outerClassName = context.getOuterClassReference(classDescriptor)
@@ -234,8 +231,8 @@ class ClassTranslator private constructor(
         val leadingArgs = mutableListOf<JsExpression>()
 
         if (descriptor.kind == ClassKind.ENUM_CLASS) {
-            val nameParamName = constructorInitializer.scope.declareTemporaryName("name")
-            val ordinalParamName = constructorInitializer.scope.declareTemporaryName("ordinal")
+            val nameParamName = JsScope.declareTemporaryName("name")
+            val ordinalParamName = JsScope.declareTemporaryName("ordinal")
             constructorInitializer.parameters.addAll(0, listOf(JsParameter(nameParamName), JsParameter(ordinalParamName)))
             leadingArgs += listOf(nameParamName.makeRef(), ordinalParamName.makeRef())
         }
@@ -434,7 +431,7 @@ class ClassTranslator private constructor(
     }
 
     private fun addObjectCache(statements: MutableList<JsStatement>) {
-        cachedInstanceName = context().createGlobalName(StaticContext.getSuggestedName(descriptor) + Namer.OBJECT_INSTANCE_VAR_SUFFIX)
+        cachedInstanceName = JsScope.declareTemporaryName(StaticContext.getSuggestedName(descriptor) + Namer.OBJECT_INSTANCE_VAR_SUFFIX)
         statements += JsAstUtils.assignment(cachedInstanceName.makeRef(), JsObjectLiteral.THIS).makeStmt()
     }
 

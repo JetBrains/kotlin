@@ -66,7 +66,7 @@ class DeclarationBodyVisitor(
         }
         else {
             val enumName = context.getInnerNameForDescriptor(descriptor)
-            val enumInstanceName = context.createGlobalName(enumName.ident + "_instance")
+            val enumInstanceName = JsScope.declareTemporaryName(enumName.ident + "_instance")
 
             assert(supertypes.size == 1) { "Simple Enum entry must have one supertype" }
             val jsEnumEntryCreation = ClassInitializerTranslator.generateEnumEntryInstanceCreation(context, enumEntry, enumEntryOrdinal)
@@ -118,7 +118,7 @@ class DeclarationBodyVisitor(
                         .translateAndAliasParameters(descriptor, caller.parameters)
                         .innerBlock(caller.body)
 
-                val callbackName = caller.scope.declareTemporaryName("callback" + Namer.DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX)
+                val callbackName = JsScope.declareTemporaryName("callback" + Namer.DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX)
                 val callee = JsNameRef(bodyName, JsLiteral.THIS)
 
                 val defaultInvocation = JsInvocation(callee, listOf<JsExpression>())

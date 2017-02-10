@@ -134,8 +134,7 @@ private class TypeCheckRewritingVisitor : JsVisitorWithContextImpl() {
     }
 
     private fun generateAlias(argument: JsExpression): Pair<JsExpression, JsExpression> {
-        val currentScope = scopes.peek()
-        val tmp = currentScope.declareTemporary()
+        val tmp = JsScope.declareTemporary()
         val statementContext = lastStatementLevelContext
         statementContext.addPrevious(newVar(tmp, null))
         return Pair(assignment(tmp.makeRef(), argument), tmp.makeRef())

@@ -15,7 +15,7 @@ public class JsCatchScope extends JsDeclarationScope {
 
     public JsCatchScope(JsScope parent, @NotNull String ident) {
         super(parent, "Catch scope", true);
-        name = new JsName(this, ident, false);
+        name = new JsName(ident, false);
     }
 
     @Override
