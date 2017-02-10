@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.js.translate.reference;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.kotlin.js.backend.ast.JsInvocation;
 import org.jetbrains.kotlin.js.backend.ast.JsName;
 import org.jetbrains.kotlin.js.backend.ast.JsNameRef;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
@@ -48,6 +48,10 @@ public final class ReferenceTranslator {
 
     @NotNull
     public static JsExpression translateAsValueReference(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
+        if (AnnotationsUtils.isNativeObject(descriptor) || AnnotationsUtils.isLibraryObject(descriptor)) {
+            return context.getInnerReference(descriptor);
+        }
+
         JsExpression alias = context.getAliasForDescriptor(descriptor);
         if (alias != null) return alias;
 
@@ -82,8 +86,8 @@ public final class ReferenceTranslator {
 
     @NotNull
     public static JsExpression translateAsTypeReference(@NotNull ClassDescriptor descriptor, @NotNull TranslationContext context) {
-        if (AnnotationsUtils.isNativeObject(descriptor)) {
-            return context.getQualifiedReference(descriptor);
+        if (AnnotationsUtils.isNativeObject(descriptor) || AnnotationsUtils.isLibraryObject(descriptor)) {
+            return context.getInnerReference(descriptor);
         }
         if (!shouldTranslateAsFQN(descriptor, context)) {
             if (DescriptorUtils.isObject(descriptor) || DescriptorUtils.isEnumEntry(descriptor)) {
@@ -116,10 +120,7 @@ public final class ReferenceTranslator {
     }
 
     private static boolean shouldTranslateAsFQN(@NotNull DeclarationDescriptor descriptor, @NotNull TranslationContext context) {
-        return isLocalVarOrFunction(descriptor) ||
-                AnnotationsUtils.isNativeObject(descriptor) ||
-                AnnotationsUtils.isLibraryObject(descriptor) ||
-                context.isPublicInlineFunction();
+        return isLocalVarOrFunction(descriptor) || context.isPublicInlineFunction();
     }
 
     private static boolean isLocalVarOrFunction(DeclarationDescriptor descriptor) {

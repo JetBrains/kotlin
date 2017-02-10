@@ -45,8 +45,6 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt.isCoroutineLambda;
 import static org.jetbrains.kotlin.js.translate.context.UsageTrackerKt.getNameForCapturedDescriptor;
-import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isLibraryObject;
-import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDescriptorForElement;
 
 /**
@@ -277,10 +275,6 @@ public class TranslationContext {
 
     @NotNull
     public JsNameRef getInnerReference(@NotNull DeclarationDescriptor descriptor) {
-        if (isNativeObject(descriptor) || isLibraryObject(descriptor)) {
-            return getQualifiedReference(descriptor);
-        }
-
         return JsAstUtils.pureFqn(getInnerNameForDescriptor(descriptor), null);
     }
 

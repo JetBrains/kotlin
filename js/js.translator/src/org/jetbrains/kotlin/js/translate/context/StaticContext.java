@@ -472,7 +472,7 @@ public final class StaticContext {
         ModuleDescriptor module = DescriptorUtilsKt.getModule(descriptor);
         JsName name;
         String tag = getTag(descriptor);
-        if (module != currentModule) {
+        if (module != currentModule || AnnotationsUtils.isNativeObject(descriptor) || AnnotationsUtils.isLibraryObject(descriptor)) {
             assert tag != null : "Can't import declaration without fqname: " + descriptor;
             name = importDeclaration(suggestedName, tag, getQualifiedReference(descriptor));
         }
