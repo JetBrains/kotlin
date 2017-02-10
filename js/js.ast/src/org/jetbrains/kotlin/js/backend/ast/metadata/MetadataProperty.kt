@@ -25,6 +25,11 @@ class MetadataProperty<in T : HasMetadata, R>(val default: R) {
     }
 
     operator fun setValue(thisRef: T, desc: KProperty<*>, value: R) {
-        thisRef.setData(desc.name, value)
+        if (value == default) {
+            thisRef.removeData(desc.name)
+        }
+        else {
+            thisRef.setData(desc.name, value)
+        }
     }
 }
