@@ -18,7 +18,10 @@ package org.jetbrains.kotlin.types.expressions
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.context.withModule
@@ -60,7 +63,7 @@ class LocalClassifierAnalyzer(
         private val platform: TargetPlatform,
         private val lookupTracker: LookupTracker,
         private val supertypeLoopChecker: SupertypeLoopChecker,
-        private val languageVersionSettings: LanguageVersionSettings,
+        private val compilerConfiguration: CompilerConfiguration,
         private val delegationFilter: DelegationFilter
 ) {
     fun processClassOrObject(
@@ -77,7 +80,7 @@ class LocalClassifierAnalyzer(
                 context.trace,
                 platform,
                 lookupTracker,
-                languageVersionSettings,
+                compilerConfiguration,
                 context.statementFilter,
                 LocalClassDescriptorHolder(
                         scope,
@@ -91,7 +94,7 @@ class LocalClassifierAnalyzer(
                         typeResolver,
                         annotationResolver,
                         supertypeLoopChecker,
-                        languageVersionSettings,
+                        compilerConfiguration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl.DEFAULT),
                         SyntheticResolveExtension.getInstance(project),
                         delegationFilter
                 )
