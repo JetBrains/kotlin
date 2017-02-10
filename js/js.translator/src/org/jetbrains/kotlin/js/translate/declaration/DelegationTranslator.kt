@@ -89,7 +89,7 @@ class DelegationTranslator(
     }
 
     private fun getSuperClass(specifier: KtSuperTypeListEntry): ClassDescriptor =
-        CodegenUtil.getSuperClassBySuperTypeListEntry(specifier, bindingContext())
+            CodegenUtil.getSuperClassBySuperTypeListEntry(specifier, bindingContext())
 
     private fun generateDelegates(toClass: ClassDescriptor, field: Field) {
         for ((descriptor, overriddenDescriptor) in DelegationResolver.getDelegates(classDescriptor, toClass)) {
@@ -174,10 +174,12 @@ class DelegationTranslator(
         // TODO: same logic as in AbstractDeclarationVisitor
         if (descriptor.isExtensionProperty || TranslationUtils.shouldAccessViaFunctions(descriptor)) {
             val getter = descriptor.getter!!
-            context().addFunctionToPrototype(classDescriptor, getter, generateDelegateGetterFunction(getter))
+            context().addFunctionToPrototype(classDescriptor, getter, generateDelegateGetterFunction(getter),
+                                             context().declarationStatementConsumer)
             if (descriptor.isVar) {
                 val setter = descriptor.setter!!
-                context().addFunctionToPrototype(classDescriptor, setter, generateDelegateSetterFunction(setter))
+                context().addFunctionToPrototype(classDescriptor, setter, generateDelegateSetterFunction(setter),
+                                                 context().declarationStatementConsumer)
             }
         }
         else {
@@ -194,6 +196,7 @@ class DelegationTranslator(
             delegateName: JsName
     ) {
         val delegateRef = JsNameRef(delegateName, JsLiteral.THIS)
-        generateDelegateCall(classDescriptor, descriptor, overriddenDescriptor, delegateRef, context())
+        generateDelegateCall(classDescriptor, descriptor, overriddenDescriptor, delegateRef, context(),
+                             context().declarationStatementConsumer)
     }
 }

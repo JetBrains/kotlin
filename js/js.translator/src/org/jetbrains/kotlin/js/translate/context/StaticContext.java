@@ -752,13 +752,4 @@ public final class StaticContext {
         String tag = Namer.getFunctionTag(descriptor);
         fragment.getInlineModuleMap().put(tag, getModuleExpressionFor(descriptor));
     }
-
-    /*public void postProcess() {
-        addInterfaceDefaultMethods();
-        rootFunction.getBody().getStatements().addAll(importStatements);
-        addClassPrototypes();
-        rootFunction.getBody().getStatements().addAll(declarationStatements);
-        rootFunction.getBody().getStatements().addAll(exporter.getStatements());
-        rootFunction.getBody().getStatements().addAll(topLevelStatements);
-    }*/
 }

@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.js.translate.context;
 
 import com.intellij.psi.PsiElement;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -631,6 +633,19 @@ public class TranslationContext {
 
     public void addDeclarationStatement(@NotNull JsStatement statement) {
         staticContext.getDeclarationStatements().add(statement);
+    }
+
+    private final Function1<JsStatement, Unit> declarationStatementConsumer = new Function1<JsStatement, Unit>() {
+        @Override
+        public Unit invoke(JsStatement statement) {
+            addDeclarationStatement(statement);
+            return Unit.INSTANCE;
+        }
+    };
+
+    @NotNull
+    public Function1<JsStatement, Unit> getDeclarationStatementConsumer() {
+        return declarationStatementConsumer;
     }
 
     public void addTopLevelStatement(@NotNull JsStatement statement) {

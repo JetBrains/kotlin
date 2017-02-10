@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.js.translate.declaration
 
-import org.jetbrains.kotlin.backend.common.CodegenUtil
-import org.jetbrains.kotlin.backend.common.bridges.Bridge
-import org.jetbrains.kotlin.backend.common.bridges.generateBridgesForFunctionDescriptor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
@@ -50,7 +47,6 @@ import org.jetbrains.kotlin.types.CommonSupertypes.topologicallySortSuperclasses
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.kotlin.utils.identity
 
 /**
  * Generates a definition of a single class.
@@ -69,8 +65,6 @@ class ClassTranslator private constructor(
     private val metadataLiteral = JsObjectLiteral(true)
 
     private fun isTrait(): Boolean = descriptor.kind == ClassKind.INTERFACE
-
-    private fun isAnnotation(): Boolean = descriptor.kind == ClassKind.ANNOTATION_CLASS
 
     private fun translate() {
         val scope = context().getScopeForDescriptor(descriptor)
@@ -104,8 +98,6 @@ class ClassTranslator private constructor(
         context.addClass(descriptor)
         addSuperclassReferences()
         classDeclaration.secondaryConstructors.forEach { generateSecondaryConstructor(context, it) }
-
-        generatedBridgeMethods()
 
         if (descriptor.isData) {
             JsDataClassGenerator(classDeclaration, context).generate()
@@ -489,54 +481,6 @@ class ClassTranslator private constructor(
             literal.propertyInitializers += JsPropertyInitializer(context.program().getStringLiteral("get"), getterFunction)
             context.addAccessorsToPrototype(descriptor, property, literal)
         }
-    }
-
-    private fun generatedBridgeMethods() {
-        if (isAnnotation()) return
-
-        generateBridgesToTraitImpl()
-
-        generateOtherBridges()
-    }
-
-    private fun generateBridgesToTraitImpl() {
-        for ((key, value) in CodegenUtil.getNonPrivateTraitMethods(descriptor)) {
-            if (!areNamesEqual(key, value)) {
-                generateDelegateCall(descriptor, value, key, JsLiteral.THIS, context())
-            }
-        }
-    }
-
-    private fun generateOtherBridges() {
-        for (memberDescriptor in descriptor.defaultType.memberScope.getContributedDescriptors()) {
-            if (memberDescriptor is FunctionDescriptor) {
-                val bridgesToGenerate = generateBridgesForFunctionDescriptor(memberDescriptor, identity()) {
-                    //There is no DefaultImpls in js backend so if method non-abstract it should be recognized as non-abstract on bridges calculation
-                    false
-                }
-
-                for (bridge in bridgesToGenerate) {
-                    generateBridge(bridge)
-                }
-            }
-        }
-    }
-
-    private fun generateBridge(bridge: Bridge<FunctionDescriptor>) {
-        val fromDescriptor = bridge.from
-        val toDescriptor = bridge.to
-        if (areNamesEqual(fromDescriptor, toDescriptor)) return
-
-        if (fromDescriptor.kind.isReal && fromDescriptor.modality != Modality.ABSTRACT && !toDescriptor.kind.isReal)
-            return
-
-        generateDelegateCall(descriptor, fromDescriptor, toDescriptor, JsLiteral.THIS, context())
-    }
-
-    private fun areNamesEqual(first: FunctionDescriptor, second: FunctionDescriptor): Boolean {
-        val firstName = context().getNameForDescriptor(first)
-        val secondName = context().getNameForDescriptor(second)
-        return firstName.ident == secondName.ident
     }
 
     companion object {

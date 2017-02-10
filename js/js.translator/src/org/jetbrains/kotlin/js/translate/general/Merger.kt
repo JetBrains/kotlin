@@ -49,6 +49,13 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
         declarationBlock.statements += fragment.declarationBlock
         initializerBlock.statements += fragment.initializerBlock
         exportBlock.statements += fragment.exportBlock
+
+        classes += fragment.classes.values.map { cls ->
+            val name = nameMap.rename(cls.name)
+            name to JsClassModel(name, cls.superName?.let { nameMap.rename(it) }).also { copy ->
+                copy.postDeclarationBlock.statements += cls.postDeclarationBlock.statements.map { nameMap.rename(it) }
+            }
+        }
     }
 
     val importedModules: List<JsImportedModule>
@@ -116,6 +123,7 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
             addClassPrototypes(this)
             this += declarationBlock.statements
             this += exportBlock.statements
+            addClassPostDeclarations(this)
             this += initializerBlock.statements
         }
     }
@@ -148,5 +156,26 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
 
         val constructorRef = JsNameRef("constructor", prototype.deepCopy())
         statements += JsAstUtils.assignment(constructorRef, classRef.deepCopy()).makeStmt()
+    }
+
+    private fun addClassPostDeclarations(statements: MutableList<JsStatement>) {
+        val visited = mutableSetOf<JsName>()
+        for (cls in classes.keys) {
+            addClassPostDeclarations(cls, visited, statements)
+        }
+    }
+
+    private fun addClassPostDeclarations(
+            name: JsName,
+            visited: MutableSet<JsName>,
+            statements: MutableList<JsStatement>
+    ) {
+        if (!visited.add(name)) return
+        val cls = classes[name] ?: return
+        val superName = cls.superName
+        if (superName != null) {
+            addClassPostDeclarations(superName, visited, statements)
+        }
+        statements += cls.postDeclarationBlock.statements
     }
 }
