@@ -125,11 +125,6 @@ public class TranslationContext {
         return null;
     }
 
-    @NotNull
-    public Collection<JsImportedModule> getImportedModules() {
-        return staticContext.getImportedModules();
-    }
-
     @Nullable
     public UsageTracker usageTracker() {
         return usageTracker;

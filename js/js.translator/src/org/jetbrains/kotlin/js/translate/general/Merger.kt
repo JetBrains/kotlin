@@ -18,19 +18,20 @@ package org.jetbrains.kotlin.js.translate.general
 
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
-import org.jetbrains.kotlin.js.inline.clean.resolveTemporaryNames
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 class Merger(private val rootFunction: JsFunction, val internalModuleName: JsName) {
     // Maps unique signature (see generateSignature) to names
     private val nameTable = mutableMapOf<String, JsName>()
+    private val importedModuleTable = mutableMapOf<JsImportedModuleKey, JsName>()
     private val importBlock = JsGlobalBlock()
     private val declarationBlock = JsGlobalBlock()
     private val initializerBlock = JsGlobalBlock()
     private val exportBlock = JsGlobalBlock()
     private val declaredImports = mutableSetOf<String>()
     private val classes = mutableMapOf<JsName, JsClassModel>()
+    private val importedModulesImpl = mutableListOf<JsImportedModule>()
 
     // Add declaration and initialization statements from program fragment to resulting single program
     fun addFragment(fragment: JsProgramFragment) {
@@ -49,6 +50,9 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
         exportBlock.statements += fragment.exportBlock
     }
 
+    val importedModules: List<JsImportedModule>
+        get() = importedModulesImpl
+
     private fun Map<JsName, JsName>.rename(name: JsName): JsName = getOrElse(name) { name }
 
     // Builds mapping to map names from different fragments into single name when they denote single declaration
@@ -60,6 +64,19 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
             }
         }
         fragment.scope.findName(Namer.getRootPackageName())?.let { nameMap[it] = internalModuleName }
+
+        for (importedModule in fragment.importedModules) {
+            nameMap[importedModule.internalName] = importedModuleTable.getOrPut(importedModule.key) {
+                val scope = rootFunction.scope
+                val newName = importedModule.internalName.let {
+                    if (it.isTemporary) scope.declareTemporaryName(it.ident) else scope.declareName(it.ident)
+                }
+                newName.also {
+                    importedModulesImpl += JsImportedModule(importedModule.externalName, it, importedModule.plainReference)
+                    it.copyMetadataFrom(importedModule.internalName)
+                }
+            }
+        }
 
         return nameMap
     }
@@ -99,7 +116,6 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
             this += declarationBlock.statements
             this += initializerBlock.statements
         }
-        rootFunction.body.resolveTemporaryNames()
     }
 
     private fun addClassPrototypes(statements: MutableList<JsStatement>) {

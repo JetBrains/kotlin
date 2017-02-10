@@ -292,14 +292,13 @@ public final class Translation {
 
         // Invoke function passing modules as arguments
         // This should help minifier tool to recognize references to these modules as local variables and make them shorter.
-        List<JsImportedModule> importedModuleList = new ArrayList<>();
+        List<JsImportedModule> importedModuleList = merger.getImportedModules();
 
-        /*
-        for (JsImportedModule importedModule : staticContext.getImportedModules()) {
+        for (JsImportedModule importedModule : importedModuleList) {
             rootFunction.getParameters().add(new JsParameter(importedModule.getInternalName()));
-            importedModuleList.add(importedModule);
         }
 
+        /*
         if (mainCallParameters.shouldBeGenerated()) {
             JsStatement statement = generateCallToMain(context, files, mainCallParameters.arguments());
             if (statement != null) {
