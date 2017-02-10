@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.search.ideaExtensions
 
 import com.intellij.openapi.application.QueryExecutorBase
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.DirectClassInheritorsSearch
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.idea.decompiler.navigation.SourceNavigationHelper
 import org.jetbrains.kotlin.idea.search.fileScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinSuperClassIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasByExpansionShortNameIndex
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 open class KotlinDirectInheritorsSearcher : QueryExecutorBase<PsiClass, DirectClassInheritorsSearch.SearchParameters>(true) {
@@ -36,13 +38,35 @@ open class KotlinDirectInheritorsSearcher : QueryExecutorBase<PsiClass, DirectCl
         val originalScope = queryParameters.scope
         val scope = originalScope as? GlobalSearchScope ?: baseClass.containingFile?.fileScope() ?: return
 
+        val file = baseClass.containingFile
+
+        val names = mutableSetOf(name)
+        val project = file.project
+
+        val typeAliasIndex = KotlinTypeAliasByExpansionShortNameIndex.getInstance()
+
+        fun searchForTypeAliasesRecursively(typeName: String) {
+            ProgressManager.checkCanceled()
+            typeAliasIndex[typeName, project, scope].asSequence()
+                    .map { it.name }
+                    .filterNotNull()
+                    .filter { it !in names }
+                    .onEach { names.add(it) }
+                    .forEach(::searchForTypeAliasesRecursively)
+        }
+
+        searchForTypeAliasesRecursively(name)
+
         runReadAction {
             val noLibrarySourceScope = KotlinSourceFilterScope.projectSourceAndClassFiles(scope, baseClass.project)
-            KotlinSuperClassIndex.getInstance()
-                    .get(name, baseClass.project, noLibrarySourceScope).asSequence()
-                    .mapNotNull { candidate -> SourceNavigationHelper.getOriginalPsiClassOrCreateLightClass(candidate) }
-                    .filter { candidate -> candidate.isInheritor(baseClass, false) }
-                    .forEach { candidate -> consumer.process(candidate) }
+
+            names.forEach { name ->
+                KotlinSuperClassIndex.getInstance()
+                        .get(name, baseClass.project, noLibrarySourceScope).asSequence()
+                        .mapNotNull { candidate -> SourceNavigationHelper.getOriginalPsiClassOrCreateLightClass(candidate) }
+                        .filter { candidate -> candidate.isInheritor(baseClass, false) }
+                        .forEach { candidate -> consumer.process(candidate) }
+            }
         }
     }
 }
