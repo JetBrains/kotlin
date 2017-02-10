@@ -169,6 +169,13 @@ object ModifierCheckerCore {
         result += compatibilityForClassesRegister(PRIVATE_KEYWORD, ABSTRACT_KEYWORD)
 
         result += incompatibilityRegister(CROSSINLINE_KEYWORD, NOINLINE_KEYWORD)
+
+        // 1. subclasses contained inside a sealed class can not be instantiated, because their constructors needs
+        // an instance of an outer sealed (effectively abstract) class
+        // 2. subclasses of a non-top-level sealed class must be declared inside the class
+        // (see the KEEP https://github.com/Kotlin/KEEP/blob/master/proposals/sealed-class-inheritance.md)
+        result += incompatibilityRegister(SEALED_KEYWORD, INNER_KEYWORD)
+
         return result
     }
 
