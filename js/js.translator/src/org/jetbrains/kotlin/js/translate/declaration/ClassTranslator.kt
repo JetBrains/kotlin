@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getClassDescriptorForType
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getClassDescriptorForTypeConstructor
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.types.CommonSupertypes.topologicallySortSuperclassesAndRecordAllInstances
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeConstructor
@@ -114,6 +115,10 @@ class ClassTranslator private constructor(
         if (descriptor.kind == ClassKind.ENUM_CLASS) {
             generateEnumStandardMethods(bodyVisitor.enumEntries)
         }
+
+        // We don't use generated name. However, by generating the name, we generate corresponding entry in inter-fragment import table.
+        // This is required to properly merge fragments when one contains super-class and another contains derived class.
+        descriptor.getSuperClassNotAny()?.let { ReferenceTranslator.translateAsTypeReference(it, context) }
     }
 
     private fun TranslationContext.withUsageTrackerIfNecessary(innerDescriptor: MemberDescriptor): TranslationContext {
