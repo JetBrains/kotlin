@@ -55,7 +55,7 @@ open class BasicReplStageHistory<T>(override val lock: ReentrantReadWriteLock = 
             if (idx < 0) throw java.util.NoSuchElementException("Cannot rest to inexistent line ${id.no}")
             if (idx < lastIndex) {
                 val removed = asSequence().drop(idx + 1).map { it.id }.toList()
-                removeRange(idx + 1, lastIndex)
+                removeRange(idx + 1, size)
                 currentGeneration.incrementAndGet()
                 return removed
             }

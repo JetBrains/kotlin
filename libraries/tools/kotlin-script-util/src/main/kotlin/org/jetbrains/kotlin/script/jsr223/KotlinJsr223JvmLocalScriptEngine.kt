@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.net.URLClassLoader
+import java.util.concurrent.locks.ReentrantReadWriteLock
 import javax.script.ScriptContext
 import javax.script.ScriptEngineFactory
 import kotlin.reflect.KClass
@@ -55,6 +56,8 @@ class KotlinJsr223JvmLocalScriptEngine(
     override val replEvaluator: ReplFullEvaluator get() = localEvaluator
 
     override val state: IReplStageState<*> get() = getCurrentState(getContext())
+
+    override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = replEvaluator.createState(lock)
 
     override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? = getScriptArgs(context, scriptArgsTypes)
 

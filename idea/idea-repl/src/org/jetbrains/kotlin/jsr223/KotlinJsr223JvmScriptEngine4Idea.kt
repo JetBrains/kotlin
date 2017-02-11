@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.daemon.client.KotlinRemoteReplCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
+import java.util.concurrent.locks.ReentrantReadWriteLock
 import javax.script.ScriptContext
 import javax.script.ScriptEngineFactory
 import javax.script.ScriptException
@@ -75,6 +76,8 @@ class KotlinJsr223JvmScriptEngine4Idea(
     val localEvaluator: ReplFullEvaluator by lazy { GenericReplCompilingEvaluator(replCompiler, templateClasspath, Thread.currentThread().contextClassLoader) }
 
     override val replEvaluator: ReplFullEvaluator get() = localEvaluator
+
+    override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = replEvaluator.createState(lock)
 
     private class MyMessageCollector : MessageCollector {
 

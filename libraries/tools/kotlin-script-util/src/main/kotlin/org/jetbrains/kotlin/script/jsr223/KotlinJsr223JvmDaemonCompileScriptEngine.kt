@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.daemon.common.*
 import java.io.File
 import java.io.OutputStream
 import java.io.PrintStream
+import java.util.concurrent.locks.ReentrantReadWriteLock
 import javax.script.ScriptContext
 import javax.script.ScriptEngineFactory
 import javax.script.ScriptException
@@ -67,6 +68,8 @@ class KotlinJsr223JvmDaemonCompileScriptEngine(
     override val replEvaluator: ReplFullEvaluator get() = localEvaluator
 
     override val state: IReplStageState<*> get() = getCurrentState(getContext())
+
+    override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = replEvaluator.createState(lock)
 
     override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? = getScriptArgs(context, scriptArgsTypes)
 

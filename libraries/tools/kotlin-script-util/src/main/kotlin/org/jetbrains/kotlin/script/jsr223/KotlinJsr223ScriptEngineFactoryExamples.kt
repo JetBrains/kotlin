@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.script.util.manifestClassPath
 import org.jetbrains.kotlin.utils.PathUtil.*
 import java.io.File
 import java.io.FileNotFoundException
+import javax.script.Bindings
 import javax.script.ScriptContext
 import javax.script.ScriptEngine
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
@@ -39,10 +40,10 @@ class KotlinJsr223JvmLocalScriptEngineFactory : KotlinJsr223JvmScriptEngineFacto
             KotlinJsr223JvmLocalScriptEngine(
                     Disposer.newDisposable(),
                     this,
-                    scriptCompilationClasspathFromContext(),
-                    "kotlin.script.templates.standard.ScriptTemplateWithBindings",
+                    scriptCompilationClasspathFromContext("kotlin-script-util.jar"),
+                    KotlinStandardJsr223ScriptTemplate::class.qualifiedName!!,
                     { ctx, types -> ScriptArgsWithTypes(arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)), types ?: emptyArray()) },
-                    arrayOf(Map::class)
+                    arrayOf(Bindings::class)
             )
 }
 
@@ -53,10 +54,10 @@ class KotlinJsr223JvmDaemonLocalEvalScriptEngineFactory : KotlinJsr223JvmScriptE
                     Disposer.newDisposable(),
                     this,
                     kotlinCompilerJar,
-                    scriptCompilationClasspathFromContext(),
-                    "kotlin.script.templates.standard.ScriptTemplateWithBindings",
+                    scriptCompilationClasspathFromContext("kotlin-script-util.jar"),
+                    KotlinStandardJsr223ScriptTemplate::class.qualifiedName!!,
                     { ctx, types -> ScriptArgsWithTypes(arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)), types ?: emptyArray()) },
-                    arrayOf(Map::class)
+                    arrayOf(Bindings::class)
             )
 }
 
@@ -77,9 +78,9 @@ private fun contextClasspath(keyName: String, classLoader: ClassLoader): List<Fi
         )?.toList()
 
 
-private fun scriptCompilationClasspathFromContext(classLoader: ClassLoader = Thread.currentThread().contextClassLoader): List<File> =
+private fun scriptCompilationClasspathFromContext(keyName: String, classLoader: ClassLoader = Thread.currentThread().contextClassLoader): List<File> =
         (System.getProperty("kotlin.script.classpath")?.split(File.pathSeparator)?.map(::File)
-          ?: classpathFromClassloader(classLoader)
+          ?: contextClasspath(keyName, classLoader)
         ).let {
             it?.plus(kotlinScriptStandardJars) ?: kotlinScriptStandardJars
         }

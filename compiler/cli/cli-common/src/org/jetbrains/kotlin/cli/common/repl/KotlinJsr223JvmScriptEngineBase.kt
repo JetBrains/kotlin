@@ -21,7 +21,8 @@ import java.io.Reader
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import javax.script.*
 
-val KOTLIN_SCRIPT_STATE_BINDINGS_KEY = "kotlin.script.state"
+const val KOTLIN_SCRIPT_STATE_BINDINGS_KEY = "kotlin.script.state"
+const val KOTLIN_SCRIPT_ENGINE_BINDINGS_KEY = "kotlin.script.engine"
 
 abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEngineFactory) : AbstractScriptEngine(), ScriptEngine, Compilable {
 
@@ -36,16 +37,22 @@ abstract class KotlinJsr223JvmScriptEngineBase(protected val myFactory: ScriptEn
 
     override fun compile(script: Reader): CompiledScript = compile(script.readText(), getContext())
 
-    override fun createBindings(): Bindings = SimpleBindings()
+    override fun createBindings(): Bindings = SimpleBindings().apply { put(KOTLIN_SCRIPT_ENGINE_BINDINGS_KEY, this) }
 
     override fun getFactory(): ScriptEngineFactory = myFactory
 
     // the parameter could be used in the future when we decide to keep state completely in the context and solve appropriate problems (now e.g. replCompiler keeps separate state)
     fun nextCodeLine(context: ScriptContext, code: String) = getCurrentState(context).let { ReplCodeLine(it.getNextLineNo(), it.currentGeneration, code) }
 
-    protected open fun createState(lock: ReentrantReadWriteLock = ReentrantReadWriteLock()): IReplStageState<*> = AggregatedReplStageState(replCompiler.createState(lock), replEvaluator.createState(lock), lock)
+    protected abstract fun createState(lock: ReentrantReadWriteLock = ReentrantReadWriteLock()): IReplStageState<*>
 
-    protected fun getCurrentState(context: ScriptContext) = context.getBindings(ScriptContext.ENGINE_SCOPE).getOrPut(KOTLIN_SCRIPT_STATE_BINDINGS_KEY, { replEvaluator.createState() }) as IReplStageState<*>
+    protected fun getCurrentState(context: ScriptContext) =
+            context.getBindings(ScriptContext.ENGINE_SCOPE)
+                    .getOrPut(KOTLIN_SCRIPT_STATE_BINDINGS_KEY, {
+                        // TODO: check why createBinding is not called on creating default context, so the engine is not set
+                        context.getBindings(ScriptContext.ENGINE_SCOPE).put(KOTLIN_SCRIPT_ENGINE_BINDINGS_KEY, this@KotlinJsr223JvmScriptEngineBase)
+                        createState()
+                    }) as IReplStageState<*>
 
     open fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? = null
 

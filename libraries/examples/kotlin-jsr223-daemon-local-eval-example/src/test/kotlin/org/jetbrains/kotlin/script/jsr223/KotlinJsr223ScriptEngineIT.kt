@@ -111,6 +111,17 @@ obj
         })
         Assert.assertEquals(111, result2)
     }
+
+    @Test
+    fun testSimpleEvalInEval() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        val res1 = engine.eval("val x = 3")
+        Assert.assertNull(res1)
+        val res2 = engine.eval("eval(\"\$x + 2\")")
+        Assert.assertEquals(5, res2)
+        val res3 = engine.eval("x + 4")
+        Assert.assertEquals(7, res3)
+    }
 }
 
 fun assertThrows(exceptionClass: Class<*>, body: () -> Unit) {
