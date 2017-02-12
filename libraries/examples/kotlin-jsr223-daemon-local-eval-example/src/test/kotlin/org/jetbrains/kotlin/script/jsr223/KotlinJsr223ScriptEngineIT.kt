@@ -17,14 +17,17 @@
 package org.jetbrains.kotlin.script.jsr223
 
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.daemon.common.threadCpuTime
 import org.junit.Assert
 import org.junit.Test
+import java.lang.management.ManagementFactory
+import java.util.concurrent.TimeUnit
 import javax.script.Invocable
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
 import javax.script.SimpleBindings
 
-class KotlinJsr223ScriptEngineIT {
+class KotlinJsr223DaemonCompileScriptEngineIT {
 
     @Test
     fun testEngineFactory() {
@@ -117,10 +120,40 @@ obj
         val engine = ScriptEngineManager().getEngineByExtension("kts")!!
         val res1 = engine.eval("val x = 3")
         Assert.assertNull(res1)
-        val res2 = engine.eval("val y = eval(\"\$x + 2\")\ny")
+        val res2 = engine.eval("val y = eval(\"\$x + 2\") as Int\ny")
         Assert.assertEquals(5, res2)
         val res3 = engine.eval("y + 2")
         Assert.assertEquals(7, res3)
+    }
+
+
+    @Test
+    fun testEvalInEvalBench() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+
+        val script = "val x = 3\nx + 10"
+
+        val mxBeans = ManagementFactory.getThreadMXBean()
+
+        engine.eval("val bnd = createBindings()")
+
+        val times = generateSequence {
+            val t0 = mxBeans.threadCpuTime()
+
+            val res1 = engine.eval(script)
+            val t1 = mxBeans.threadCpuTime()
+
+            val res2 = engine.eval("eval(\"\"\"$script\"\"\", bnd)")
+            val t2 = mxBeans.threadCpuTime()
+
+            Triple(t1 - t0, t2 - t1, t2 - t1)
+        }.take(10).toList()
+
+        val adjustedMaxDiff = times.sortedByDescending { (_, _, diff) -> diff }.drop(2).first()
+
+        fun Long.ms() = TimeUnit.NANOSECONDS.toMillis(this)
+        Assert.assertTrue("eval in eval is too long: ${times.joinToString { "(${it.first.ms()}, ${it.second.ms()})" }} (expecting no more than 5x difference)",
+                adjustedMaxDiff.third < 10 || adjustedMaxDiff.first * 5 > adjustedMaxDiff.second )
     }
 }
 
