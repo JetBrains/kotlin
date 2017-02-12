@@ -26,7 +26,7 @@ class Reporter extends DefaultTask {
     @TaskAction
     public void report() {
         def stats = new RunExternalTestGroup.Statistics()
-        def obj = new JsonSlurper().parse(new File(reportHome, "results.json"))
+        def obj = new JsonSlurper().parse(new File(reportHome, "external/results.json"))
         stats.total   = obj.statistics.total
         stats.passed  = obj.statistics.passed
         stats.failed  = obj.statistics.failed
