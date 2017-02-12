@@ -117,9 +117,9 @@ obj
         val engine = ScriptEngineManager().getEngineByExtension("kts")!!
         val res1 = engine.eval("val x = 3")
         Assert.assertNull(res1)
-        val res2 = engine.eval("eval(\"\$x + 2\")")
+        val res2 = engine.eval("val y = eval(\"\$x + 2\")\ny")
         Assert.assertEquals(5, res2)
-        val res3 = engine.eval("x + 4")
+        val res3 = engine.eval("y + 2")
         Assert.assertEquals(7, res3)
     }
 }

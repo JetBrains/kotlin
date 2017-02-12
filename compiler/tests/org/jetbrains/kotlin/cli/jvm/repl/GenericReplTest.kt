@@ -91,8 +91,10 @@ class GenericReplTest : TestCase() {
                             listOf(File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-runtime.jar")),
                             "kotlin.script.templates.standard.ScriptTemplateWithArgs")
 
-        val codeLine0 = ReplCodeLine(0, "val l1 = 1\r\nl1\r\n")
-        val res0 = repl.replCompiler?.check(codeLine0)
+        val state = repl.createState()
+
+        val codeLine0 = ReplCodeLine(0, 0, "val l1 = 1\r\nl1\r\n")
+        val res0 = repl.replCompiler?.check(state, codeLine0)
         val res0c = res0 as? ReplCheckResult.Ok
         TestCase.assertNotNull("Unexpected compile result: $res0", res0c)
 
