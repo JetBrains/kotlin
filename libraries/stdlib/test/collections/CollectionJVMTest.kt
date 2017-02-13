@@ -10,6 +10,8 @@ import kotlin.comparisons.*
 import java.util.*
 
 import org.junit.Test
+import test.io.deserializeFromHex
+import test.io.serializeAndDeserialize
 
 class CollectionJVMTest {
 
@@ -196,19 +198,6 @@ class CollectionJVMTest {
         assertTrue(value === result)
     }
 
-    private fun <T> serializeAndDeserialize(value: T): T {
-        val outputStream = ByteArrayOutputStream()
-        val objectOutputStream = ObjectOutputStream(outputStream)
-
-        objectOutputStream.writeObject(value)
-        objectOutputStream.close()
-        outputStream.close()
-
-        val inputStream = ByteArrayInputStream(outputStream.toByteArray())
-        val inputObjectStream = ObjectInputStream(inputStream)
-        return inputObjectStream.readObject() as T
-    }
-
     @Test fun deserializeEmptyList() = testPersistedDeserialization(
             "ac ed 00 05 73 72 00 1c 6b 6f 74 6c 69 6e 2e 63 6f 6c 6c 65 63 74 69 6f 6e 73 2e 45 6d 70 74 79 4c 69 73 74 99 6f c7 d0 a7 e0 60 32 02 00 00 78 70",
             emptyList<Any>())
@@ -224,14 +213,6 @@ class CollectionJVMTest {
     private fun testPersistedDeserialization(hexValue: String, expected: Any) {
         val actual = deserializeFromHex<Any>(hexValue)
         assertEquals(expected, actual)
-    }
-
-    private fun hexToBytes(value: String): ByteArray = value.split(" ").map { Integer.parseInt(it, 16).toByte() }.toByteArray()
-
-    private fun <T> deserializeFromHex(value: String) = hexToBytes(value).let {
-        val inputStream = ByteArrayInputStream(it)
-        val inputObjectStream = ObjectInputStream(inputStream)
-        inputObjectStream.readObject() as T
     }
 }
 
