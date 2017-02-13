@@ -16,10 +16,11 @@
 
 package org.jetbrains.kotlin.js.translate.context
 
-import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.isInlineOnlyOrReifiable
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.exportedPackage
+import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isLibraryObject
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject
@@ -137,7 +138,7 @@ internal class DeclarationExporter(val context: StaticContext) {
             val selfRef = JsNameRef(packageName.shortName().asString(), parentRef)
             val rhs = JsAstUtils.or(selfRef, assignment(selfRef.deepCopy(), JsObjectLiteral(false)))
 
-            statements.add(JsAstUtils.newVar(name, rhs))
+            statements.add(JsAstUtils.newVar(name, rhs).apply { exportedPackage = packageName.asString() })
         }
         return name.makeRef()
     }

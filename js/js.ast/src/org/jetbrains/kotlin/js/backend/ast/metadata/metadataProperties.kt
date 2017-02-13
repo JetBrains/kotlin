@@ -52,6 +52,8 @@ var JsInvocation.typeCheck: TypeCheck? by MetadataProperty(default = null)
 
 var JsInvocation.boxing: Boolean by MetadataProperty(default = false)
 
+var JsVars.exportedPackage: String? by MetadataProperty(default = null)
+
 /**
  * For function and lambda bodies indicates what declaration corresponds to.
  * When absent (`null`) on body of a named function, this function is from external JS module.

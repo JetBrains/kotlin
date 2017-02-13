@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.translate.general
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
+import org.jetbrains.kotlin.js.backend.ast.metadata.exportedPackage
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
@@ -33,6 +34,7 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
     private val declaredImports = mutableSetOf<String>()
     private val classes = mutableMapOf<JsName, JsClassModel>()
     private val importedModulesImpl = mutableListOf<JsImportedModule>()
+    private val exportedPackages = mutableMapOf<String, JsName>()
 
     // Add declaration and initialization statements from program fragment to resulting single program
     fun addFragment(fragment: JsProgramFragment) {
@@ -48,7 +50,7 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
 
         declarationBlock.statements += fragment.declarationBlock
         initializerBlock.statements += fragment.initializerBlock
-        exportBlock.statements += fragment.exportBlock
+        addExportStatements(fragment)
 
         classes += fragment.classes.values.map { cls ->
             val name = nameMap.rename(cls.name)
@@ -87,6 +89,24 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
         }
 
         return nameMap
+    }
+
+    private fun addExportStatements(fragment: JsProgramFragment) {
+        val nameMap = mutableMapOf<JsName, JsName>()
+        for (statement in fragment.exportBlock.statements) {
+            if (statement is JsVars && statement.exportedPackage != null) {
+                val exportedPackage = statement.exportedPackage!!
+                val localName = statement.vars[0].name
+                if (exportedPackage in exportedPackages) {
+                    nameMap[localName] = exportedPackages[exportedPackage]!!
+                    continue
+                }
+                else {
+                    exportedPackages[exportedPackage] = localName
+                }
+            }
+            exportBlock.statements += nameMap.rename(statement)
+        }
     }
 
     private fun Map<JsName, JsName>.rename(fragment: JsProgramFragment) {
