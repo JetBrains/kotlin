@@ -1359,6 +1359,12 @@ task interop2(type: RunInteropKonanTest) {
     interop = 'cstdio'
 }
 
+task interop3(type: RunInteropKonanTest) {
+    goldValue = "8 9 12 13 14 \n"
+    source = "interop/basics/3.kt"
+    interop = 'cstdlib'
+}
+
 task interop_echo_server(type: RunInteropKonanTest) {
     if (isLinux()) {
         disabled = true
