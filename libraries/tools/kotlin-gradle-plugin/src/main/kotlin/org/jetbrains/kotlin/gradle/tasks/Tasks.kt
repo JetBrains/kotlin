@@ -190,8 +190,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     override fun populateCompilerArguments(defaultsOnly: Boolean): K2JVMCompilerArguments {
         val args = K2JVMCompilerArguments().apply { fillDefaultValues() }
 
-        if (defaultsOnly) return args
-
         handleKaptProperties()
         args.pluginClasspaths = pluginOptions.classpath.toTypedArray()
         args.pluginOptions = pluginOptions.arguments.toTypedArray()
@@ -204,6 +202,9 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         }
 
         friendTaskName?.let { addFriendPathForTestTask(it, args) }
+
+        if (defaultsOnly) return args
+
         parentKotlinOptionsImpl?.updateArguments(args)
         kotlinOptionsImpl.updateArguments(args)
 
@@ -332,9 +333,10 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
     override fun populateCompilerArguments(defaultsOnly: Boolean): K2JSCompilerArguments {
         val args = K2JSCompilerArguments().apply { fillDefaultValues() }
 
+        args.outputFile = outputFile
+
         if (defaultsOnly) return args
 
-        args.outputFile = outputFile
         kotlinOptionsImpl.updateArguments(args)
         return args
     }
