@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.resolve.AnnotationResolver
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity
@@ -144,7 +141,7 @@ class LazyAnnotationDescriptor(
 
     private fun computeValueArguments(): Map<ValueParameterDescriptor, ConstantValue<*>> {
         val resolutionResults = c.annotationResolver.resolveAnnotationCall(annotationEntry, scope, c.trace)
-        AnnotationResolver.checkAnnotationType(annotationEntry, c.trace, resolutionResults)
+        AnnotationResolverImpl.checkAnnotationType(annotationEntry, c.trace, resolutionResults)
 
         if (!resolutionResults.isSingleResult) return mapOf()
 

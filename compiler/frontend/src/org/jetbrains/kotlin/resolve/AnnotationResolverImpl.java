@@ -44,13 +44,13 @@ import java.util.List;
 import static org.jetbrains.kotlin.diagnostics.Errors.NOT_AN_ANNOTATION_CLASS;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
-public class AnnotationResolver {
+public class AnnotationResolverImpl extends AnnotationResolver {
     @NotNull private final CallResolver callResolver;
     @NotNull private final StorageManager storageManager;
     @NotNull private TypeResolver typeResolver;
     @NotNull private final ConstantExpressionEvaluator constantExpressionEvaluator;
 
-    public AnnotationResolver(
+    public AnnotationResolverImpl(
             @NotNull CallResolver callResolver,
             @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
             @NotNull StorageManager storageManager
@@ -67,56 +67,10 @@ public class AnnotationResolver {
         this.typeResolver = typeResolver;
     }
 
-    @NotNull
-    public Annotations resolveAnnotationsWithoutArguments(
-            @NotNull LexicalScope scope,
-            @Nullable KtModifierList modifierList,
-            @NotNull BindingTrace trace
-    ) {
-        return resolveAnnotations(scope, modifierList, trace, false);
-    }
 
     @NotNull
-    public Annotations resolveAnnotationsWithArguments(
-            @NotNull LexicalScope scope,
-            @Nullable KtModifierList modifierList,
-            @NotNull BindingTrace trace
-    ) {
-        return resolveAnnotations(scope, modifierList, trace, true);
-    }
-
-    @NotNull
-    public Annotations resolveAnnotationsWithoutArguments(
-            @NotNull LexicalScope scope,
-            @NotNull List<KtAnnotationEntry> annotationEntries,
-            @NotNull BindingTrace trace
-    ) {
-        return resolveAnnotationEntries(scope, annotationEntries, trace, false);
-    }
-
-    @NotNull
-    public Annotations resolveAnnotationsWithArguments(
-            @NotNull LexicalScope scope,
-            @NotNull List<KtAnnotationEntry> annotationEntries,
-            @NotNull BindingTrace trace
-    ) {
-        return resolveAnnotationEntries(scope, annotationEntries, trace, true);
-    }
-
-    private Annotations resolveAnnotations(
-            @NotNull LexicalScope scope,
-            @Nullable KtModifierList modifierList,
-            @NotNull BindingTrace trace,
-            boolean shouldResolveArguments
-    ) {
-        if (modifierList == null) {
-            return Annotations.Companion.getEMPTY();
-        }
-
-        return resolveAnnotationEntries(scope, modifierList.getAnnotationEntries(), trace, shouldResolveArguments);
-    }
-
-    private Annotations resolveAnnotationEntries(
+    @Override
+    public Annotations resolveAnnotationEntries(
             @NotNull LexicalScope scope,
             @NotNull List<KtAnnotationEntry> annotationEntryElements,
             @NotNull BindingTrace trace,
@@ -145,8 +99,13 @@ public class AnnotationResolver {
         return AnnotationsImpl.create(result);
     }
 
+    @Override
     @NotNull
-    public KotlinType resolveAnnotationType(@NotNull LexicalScope scope, @NotNull KtAnnotationEntry entryElement, @NotNull BindingTrace trace) {
+    public KotlinType resolveAnnotationType(
+            @NotNull LexicalScope scope,
+            @NotNull KtAnnotationEntry entryElement,
+            @NotNull BindingTrace trace
+    ) {
         KtTypeReference typeReference = entryElement.getTypeReference();
         if (typeReference == null) {
             return ErrorUtils.createErrorType("No type reference: " + entryElement.getText());
@@ -180,11 +139,12 @@ public class AnnotationResolver {
         }
     }
 
+    @Override
     @NotNull
     public OverloadResolutionResults<FunctionDescriptor> resolveAnnotationCall(
-            KtAnnotationEntry annotationEntry,
-            LexicalScope scope,
-            BindingTrace trace
+            @NotNull KtAnnotationEntry annotationEntry,
+            @NotNull LexicalScope scope,
+            @NotNull BindingTrace trace
     ) {
         return callResolver.resolveFunctionCall(
                 trace, scope,
@@ -204,6 +164,7 @@ public class AnnotationResolver {
         }
     }
 
+    @Override
     @Nullable
     public ConstantValue<?> getAnnotationArgumentValue(
             @NotNull BindingTrace trace,

@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.resolve.DescriptorResolver
-import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver
-import org.jetbrains.kotlin.resolve.TypeResolver
-import org.jetbrains.kotlin.resolve.createContainer
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.FakeCallResolver
@@ -40,6 +37,7 @@ fun createContainerForTests(project: Project, module: ModuleDescriptor): Contain
         configureModule(ModuleContext(module, project), JvmPlatform, JvmTarget.JVM_1_6)
         useInstance(LookupTracker.DO_NOTHING)
         useInstance(LanguageVersionSettingsImpl.DEFAULT)
+        useImpl<AnnotationResolverImpl>()
         useImpl<ExpressionTypingServices>()
     })
 }
