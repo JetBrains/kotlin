@@ -5,7 +5,9 @@ import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.ValueType
+import org.jetbrains.kotlin.backend.konan.ir.getArguments
 import org.jetbrains.kotlin.backend.konan.isRepresentedAs
+import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.builders.IrBuilder
@@ -14,11 +16,13 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallableReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -29,12 +33,12 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
  */
 internal class InteropLowering(val context: Context) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        val transformer = InteropTransformer(context)
+        val transformer = InteropTransformer(context, irFile)
         irFile.transformChildrenVoid(transformer)
     }
 }
 
-private class InteropTransformer(val context: Context) : IrBuildingTransformer(context) {
+private class InteropTransformer(val context: Context, val irFile: IrFile) : IrBuildingTransformer(context) {
 
     val interop = context.interopBuiltIns
 
@@ -209,6 +213,29 @@ private class InteropTransformer(val context: Context) : IrBuildingTransformer(c
                     builder.irDouble(doubleValue)
                 } else {
                     expression
+                }
+            }
+
+            interop.staticCFunction -> {
+                val argument = expression.getValueArgument(0)!!
+                if (argument !is IrCallableReference || argument.getArguments().isNotEmpty()) {
+                    context.reportCompilationError(
+                            "${interop.staticCFunction.fqNameSafe} must take an unbound, non-capturing function",
+                            irFile, expression
+                    )
+                    // TODO: should probably be reported during analysis.
+                }
+
+                val cFunctionType = expression.getTypeArgument(descriptor.typeParameters[1])!!
+
+                if (interop.isTriviallyAdaptedFunctionType(cFunctionType)) {
+                    IrCallableReferenceImpl(
+                            builder.startOffset, builder.endOffset,
+                            expression.type,
+                            argument.descriptor,
+                            typeArguments = null)
+                } else {
+                    TODO("$cFunctionType requiring non-trivial C adapter")
                 }
             }
 

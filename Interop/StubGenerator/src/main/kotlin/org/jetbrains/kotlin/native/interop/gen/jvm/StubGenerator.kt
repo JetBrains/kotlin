@@ -731,13 +731,27 @@ class StubGenerator(
 
     private fun getRetValFfiType(type: Type) = getArgFfiType(type)
 
-    private fun generateFunctionType(type: FunctionType, name: String) {
-        val kotlinFunctionType = getKotlinFunctionType(type)
+    private fun generateFunctionType(type: FunctionType, name: String) = when (platform) {
+        KotlinPlatform.JVM -> generateJvmFunctionType(type, name)
+        KotlinPlatform.NATIVE -> generateNativeFunctionType(type, name)
+    }
 
-        if (platform == KotlinPlatform.NATIVE) {
+    private fun requiresAdapterOnNative(type: FunctionType): Boolean {
+        assert (platform == KotlinPlatform.NATIVE)
+        return (type.parameterTypes + type.returnType).any { it.unwrapTypedefs() is RecordType }
+    }
+
+    private fun generateNativeFunctionType(type: FunctionType, name: String) {
+        if (requiresAdapterOnNative(type)) {
             out("object $name : CFunctionType {}")
-            return
+        } else {
+            val kotlinFunctionType = getKotlinFunctionType(type)
+            out("object $name : CTriviallyAdaptedFunctionType<$kotlinFunctionType>()")
         }
+    }
+
+    private fun generateJvmFunctionType(type: FunctionType, name: String) {
+        val kotlinFunctionType = getKotlinFunctionType(type)
 
         val constructorArgs = listOf(getRetValFfiType(type.returnType)) +
                 type.parameterTypes.map { getArgFfiType(it) }

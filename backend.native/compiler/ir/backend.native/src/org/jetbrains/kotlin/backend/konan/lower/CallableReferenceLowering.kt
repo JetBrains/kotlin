@@ -100,7 +100,10 @@ private class CallableReferencesUnbinder(val lower: CallableReferenceLowering,
     }
 
     override fun visitCallableReference(expression: IrCallableReference): IrExpression {
-        assert (expression.type.isFunctionOrKFunctionType)
+        if (!expression.type.isFunctionOrKFunctionType) {
+            // Not a subject of this lowering.
+            return expression
+        }
 
         val descriptor = expression.descriptor
         val boundArgs = expression.getArguments()

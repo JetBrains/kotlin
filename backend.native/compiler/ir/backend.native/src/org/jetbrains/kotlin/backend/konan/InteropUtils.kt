@@ -6,7 +6,11 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.StarProjectionImpl
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.replace
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 private val cPointerName = "CPointer"
 private val nativePointedName = "NativePointed"
@@ -34,7 +38,7 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     private val nativePointed = packageScope.getContributedClassifier(nativePointedName) as ClassDescriptor
 
-    private val cPointer = this.packageScope.getContributedClassifier(cPointerName) as ClassDescriptor
+    val cPointer = this.packageScope.getContributedClassifier(cPointerName) as ClassDescriptor
 
     val cPointerRawValue = cPointer.unsubstitutedMemberScope.getContributedVariables("rawValue").single()
 
@@ -112,6 +116,20 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val bitsToDouble = packageScope.getContributedFunctions("bitsToDouble").single()
 
+    val staticCFunction = packageScope.getContributedFunctions("staticCFunction").single()
+
+    private val triviallyAdaptedFunctionTypeClass =
+            packageScope.getContributedClassifier("CTriviallyAdaptedFunctionType") as ClassDescriptor
+
+    private val trivallyAdaptedFunctionTypeType =
+            triviallyAdaptedFunctionTypeClass.defaultType.replace(
+                    newArguments = listOf(
+                            StarProjectionImpl(triviallyAdaptedFunctionTypeClass.declaredTypeParameters.single())
+                    )
+            )
+
+    fun isTriviallyAdaptedFunctionType(type: KotlinType): Boolean =
+            type.isSubtypeOf(trivallyAdaptedFunctionTypeType)
 }
 
 private fun MemberScope.getContributedVariables(name: String) =

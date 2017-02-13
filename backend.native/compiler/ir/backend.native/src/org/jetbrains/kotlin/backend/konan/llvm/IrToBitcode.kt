@@ -1540,9 +1540,16 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private fun evaluateCallableReference(expression: IrCallableReference): LLVMValueRef {
-        assert (expression.type.isUnboundCallableReference())
+        // TODO: consider creating separate IR element for pointer to function.
+        assert (expression.type.isUnboundCallableReference() ||
+                TypeUtils.getClassDescriptor(expression.type) == context.interopBuiltIns.cPointer)
+
         assert (expression.getArguments().isEmpty())
-        val entry = codegen.functionEntryPointAddress(expression.descriptor as FunctionDescriptor)
+
+        val descriptor = expression.descriptor
+        assert (descriptor.dispatchReceiverParameter == null)
+
+        val entry = codegen.functionEntryPointAddress(descriptor as FunctionDescriptor)
         return entry
     }
 
