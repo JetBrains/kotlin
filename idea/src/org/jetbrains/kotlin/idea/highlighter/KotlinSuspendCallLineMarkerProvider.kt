@@ -26,7 +26,10 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
+import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
@@ -49,6 +52,13 @@ class KotlinSuspendCallLineMarkerProvider : LineMarkerProvider {
 
     override fun getLineMarkerInfo(element: PsiElement) = null
 
+    private fun isValidCandidateExpression(expression: KtExpression): Boolean {
+        if (expression is KtOperationReferenceExpression) return true
+        val parent = expression.parent
+        if (parent is KtCallExpression && parent.calleeExpression == expression) return true
+        return false
+    }
+
     override fun collectSlowLineMarkers(
             elements: MutableList<PsiElement>,
             result: MutableCollection<LineMarkerInfo<*>>
@@ -58,7 +68,8 @@ class KotlinSuspendCallLineMarkerProvider : LineMarkerProvider {
         for (element in elements) {
             ProgressManager.checkCanceled()
 
-            if (element !is KtElement) continue
+            if (element !is KtExpression) continue
+            if (!isValidCandidateExpression(element)) continue
 
             val lineNumber = element.getLineNumber()
             if (lineNumber in markedLineNumbers) continue
