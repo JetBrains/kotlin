@@ -85,11 +85,11 @@ sealed class ChangeCoroutineSupportFix(
         override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
             val newCoroutineSupports = when (diagnostic.factory) {
                 Errors.EXPERIMENTAL_FEATURE_ERROR -> {
-                    if (Errors.EXPERIMENTAL_FEATURE_ERROR.cast(diagnostic).a != LanguageFeature.Coroutines) return emptyList()
+                    if (Errors.EXPERIMENTAL_FEATURE_ERROR.cast(diagnostic).a.first != LanguageFeature.Coroutines) return emptyList()
                     listOf(CoroutineSupport.ENABLED_WITH_WARNING, CoroutineSupport.ENABLED)
                 }
                 Errors.EXPERIMENTAL_FEATURE_WARNING -> {
-                    if (Errors.EXPERIMENTAL_FEATURE_WARNING.cast(diagnostic).a != LanguageFeature.Coroutines) return emptyList()
+                    if (Errors.EXPERIMENTAL_FEATURE_WARNING.cast(diagnostic).a.first != LanguageFeature.Coroutines) return emptyList()
                     listOf(CoroutineSupport.ENABLED, CoroutineSupport.DISABLED)
                 }
                 else -> return emptyList()

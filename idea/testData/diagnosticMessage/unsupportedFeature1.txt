@@ -1,2 +1,0 @@
-<!-- unsupportedFeature1 -->
-The feature is only available since Kotlin 1.1: destructuring lambda parameters

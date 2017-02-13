@@ -44,6 +44,12 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("apiVersion1.0.args")
+        public void testApiVersion1_0() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/apiVersion1.0.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("apiVersionAndSinceNewerKotlin.args")
         public void testApiVersionAndSinceNewerKotlin() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/apiVersionAndSinceNewerKotlin.args");
@@ -116,9 +122,21 @@ public class CliTestGenerated extends AbstractCliTest {
             doJvmTest(fileName);
         }
 
+        @TestMetadata("coroutinesEnable.args")
+        public void testCoroutinesEnable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/coroutinesEnable.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("coroutinesEnableWarnAndErrorClash.args")
         public void testCoroutinesEnableWarnAndErrorClash() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/coroutinesEnableWarnAndErrorClash.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("coroutinesError.args")
+        public void testCoroutinesError() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/coroutinesError.args");
             doJvmTest(fileName);
         }
 
@@ -137,6 +155,12 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("coroutinesWarnAndErrorClash.args")
         public void testCoroutinesWarnAndErrorClash() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/coroutinesWarnAndErrorClash.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("coroutinesWarninig.args")
+        public void testCoroutinesWarninig() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/coroutinesWarninig.args");
             doJvmTest(fileName);
         }
 

@@ -104,8 +104,10 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             override val apiVersion: ApiVersion,
             override val languageVersion: LanguageVersion
     ) : LanguageVersionSettings {
+        private val delegate = LanguageVersionSettingsImpl(languageVersion, apiVersion)
+
         override fun supportsFeature(feature: LanguageFeature): Boolean =
-                languageFeatures[feature] ?: LanguageVersionSettingsImpl.DEFAULT.supportsFeature(feature)
+                languageFeatures[feature] ?: delegate.supportsFeature(feature)
     }
 
     inner class TestFile(

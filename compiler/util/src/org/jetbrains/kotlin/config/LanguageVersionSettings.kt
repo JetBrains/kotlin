@@ -19,13 +19,17 @@ package org.jetbrains.kotlin.config
 import org.jetbrains.kotlin.config.LanguageVersion.KOTLIN_1_1
 import org.jetbrains.kotlin.utils.DescriptionAware
 
-enum class LanguageFeature(val sinceVersion: LanguageVersion?, val hintUrl: String? = null) {
+enum class LanguageFeature(
+        val sinceVersion: LanguageVersion?,
+        val sinceApiVersion: ApiVersion = ApiVersion.KOTLIN_1_0,
+        val hintUrl: String? = null
+) {
     // Note: names of these entries are also used in diagnostic tests and in user-visible messages (see presentableText below)
     TypeAliases(KOTLIN_1_1),
-    BoundCallableReferences(KOTLIN_1_1),
-    LocalDelegatedProperties(KOTLIN_1_1),
+    BoundCallableReferences(KOTLIN_1_1, ApiVersion.KOTLIN_1_1),
+    LocalDelegatedProperties(KOTLIN_1_1, ApiVersion.KOTLIN_1_1),
     TopLevelSealedInheritance(KOTLIN_1_1),
-    Coroutines(KOTLIN_1_1, "https://kotlinlang.org/docs/diagnostics/experimental-coroutines"),
+    Coroutines(KOTLIN_1_1, ApiVersion.KOTLIN_1_1, "https://kotlinlang.org/docs/diagnostics/experimental-coroutines"),
     AdditionalBuiltInsMembers(KOTLIN_1_1),
     DataClassInheritance(KOTLIN_1_1),
     InlineProperties(KOTLIN_1_1),
@@ -106,7 +110,7 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
 
     override fun supportsFeature(feature: LanguageFeature): Boolean {
         val since = feature.sinceVersion
-        return (since != null && languageVersion >= since) || feature in additionalFeatures
+        return (since != null && languageVersion >= since && apiVersion >= feature.sinceApiVersion) || feature in additionalFeatures
     }
 
     override fun toString() = buildString {

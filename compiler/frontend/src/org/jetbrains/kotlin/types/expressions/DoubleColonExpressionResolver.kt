@@ -198,7 +198,7 @@ class DoubleColonExpressionResolver(
 
     private fun reportUnsupportedIfNeeded(expression: KtDoubleColonExpression, c: ExpressionTypingContext) {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.BoundCallableReferences)) {
-            c.trace.report(UNSUPPORTED_FEATURE.on(expression.receiverExpression!!, LanguageFeature.BoundCallableReferences))
+            c.trace.report(UNSUPPORTED_FEATURE.on(expression.receiverExpression!!, LanguageFeature.BoundCallableReferences to languageVersionSettings))
         }
     }
 

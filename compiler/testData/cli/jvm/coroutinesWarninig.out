@@ -1,0 +1,4 @@
+compiler/testData/cli/jvm/coroutines.kt:1:1: warning: the feature "coroutines" is experimental (see: https://kotlinlang.org/docs/diagnostics/experimental-coroutines)
+suspend fun simple() = 5
+^
+OK

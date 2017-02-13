@@ -237,7 +237,6 @@ public class DefaultErrorMessages {
         MAP.put(ABSTRACT_DELEGATED_PROPERTY, "Delegated property cannot be abstract");
         MAP.put(ACCESSOR_FOR_DELEGATED_PROPERTY, "Delegated property cannot have accessors with non-default implementations");
         MAP.put(DELEGATED_PROPERTY_IN_INTERFACE, "Delegated properties are not allowed in interfaces");
-        MAP.put(LOCAL_VARIABLE_WITH_DELEGATE, "Local variables are not allowed to have delegates");
 
         MAP.put(INAPPLICABLE_LATEINIT_MODIFIER, "''lateinit'' modifier {0}", STRING);
 
@@ -598,30 +597,11 @@ public class DefaultErrorMessages {
         MAP.put(UNSAFE_IMPLICIT_INVOKE_CALL, "Reference has a nullable type ''{0}'', use explicit ''?.invoke()'' to make a function-like call instead", RENDER_TYPE);
         MAP.put(AMBIGUOUS_LABEL, "Ambiguous label");
         MAP.put(UNSUPPORTED, "Unsupported [{0}]", STRING);
-        MAP.put(UNSUPPORTED_FEATURE, "The feature is {0}", new DiagnosticParameterRenderer<LanguageFeature>() {
-            @NotNull
-            @Override
-            public String render(LanguageFeature feature, @NotNull RenderingContext renderingContext) {
-                LanguageVersion version = feature.getSinceVersion();
-                return version != null
-                       ? "only available since Kotlin " + version.getVersionString() + ": " + feature.getPresentableText()
-                       : "experimental and should be turned on explicitly via a command line option or in IDE settings: " + feature.getPresentableText();
-            }
-        });
-        MAP.put(EXPERIMENTAL_FEATURE_WARNING, "The feature is experimental: {0}", new DiagnosticParameterRenderer<LanguageFeature>() {
-            @NotNull
-            @Override
-            public String render(LanguageFeature feature, @NotNull RenderingContext renderingContext) {
-                return feature.getPresentableText();
-            }
-        });
-        MAP.put(EXPERIMENTAL_FEATURE_ERROR, "The experimental feature is disabled: {0}", new DiagnosticParameterRenderer<LanguageFeature>() {
-            @NotNull
-            @Override
-            public String render(LanguageFeature feature, @NotNull RenderingContext renderingContext) {
-                return feature.getPresentableText();
-            }
-        });
+
+        MAP.put(UNSUPPORTED_FEATURE, "{0}", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.UNSUPPORTED));
+        MAP.put(EXPERIMENTAL_FEATURE_WARNING, "{0}", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.WARNING));
+        MAP.put(EXPERIMENTAL_FEATURE_ERROR, "{0}", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.ERROR));
+
         MAP.put(EXCEPTION_FROM_ANALYZER, "Internal Error occurred while analyzing this expression:\n{0}", THROWABLE);
         MAP.put(UNNECESSARY_SAFE_CALL, "Unnecessary safe call on a non-null receiver of type {0}", RENDER_TYPE);
         MAP.put(UNEXPECTED_SAFE_CALL, "Safe-call is not allowed here");

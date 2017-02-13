@@ -277,6 +277,7 @@ object ModifierCheckerCore {
         val errorOnDependencyFeature = errorOnFeature[dependency]?.let { languageVersionSettings.supportsFeature(it) } ?: false
         val supportsFeature = languageVersionSettings.supportsFeature(dependency)
 
+        val diagnosticData = dependency to languageVersionSettings
         if (!supportsFeature || errorOnDependencyFeature) {
             val restrictedTargets = featureDependenciesTargets[dependency]
             if (restrictedTargets != null && actualTargets.intersect(restrictedTargets).isEmpty()) {
@@ -284,17 +285,17 @@ object ModifierCheckerCore {
             }
 
             if (!supportsFeature) {
-                trace.report(Errors.UNSUPPORTED_FEATURE.on(node.psi, dependency))
+                trace.report(Errors.UNSUPPORTED_FEATURE.on(node.psi, diagnosticData))
             }
             else if (errorOnDependencyFeature) {
-                trace.report(Errors.EXPERIMENTAL_FEATURE_ERROR.on(node.psi, dependency))
+                trace.report(Errors.EXPERIMENTAL_FEATURE_ERROR.on(node.psi, diagnosticData))
             }
             return false
         }
 
         val pairedWarningFeature = warningOnFeature[dependency]
         if (pairedWarningFeature != null && languageVersionSettings.supportsFeature(pairedWarningFeature)) {
-            trace.report(Errors.EXPERIMENTAL_FEATURE_WARNING.on(node.psi, dependency))
+            trace.report(Errors.EXPERIMENTAL_FEATURE_WARNING.on(node.psi, diagnosticData))
         }
 
         return true

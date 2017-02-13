@@ -1,2 +1,0 @@
-<!-- urlMultiproject1 -->
-The feature is experimental and should be turned on explicitly via a command line option or in IDE settings: multi platform projects (See: https://kotlinlang.org/docs/diagnostics/experimental-multitraget-projects)

@@ -88,14 +88,15 @@ object BuilderFunctionsCallChecker : CallChecker {
 }
 
 fun checkCoroutinesFeature(languageVersionSettings: LanguageVersionSettings, diagnosticHolder: DiagnosticSink, reportOn: PsiElement) {
+    val diagnosticData = LanguageFeature.Coroutines to languageVersionSettings
     if (!languageVersionSettings.supportsFeature(LanguageFeature.Coroutines)) {
-        diagnosticHolder.report(Errors.UNSUPPORTED_FEATURE.on(reportOn, LanguageFeature.Coroutines))
+        diagnosticHolder.report(Errors.UNSUPPORTED_FEATURE.on(reportOn, diagnosticData))
     }
     else if (languageVersionSettings.supportsFeature(LanguageFeature.ErrorOnCoroutines)) {
-        diagnosticHolder.report(Errors.EXPERIMENTAL_FEATURE_ERROR.on(reportOn, LanguageFeature.Coroutines))
+        diagnosticHolder.report(Errors.EXPERIMENTAL_FEATURE_ERROR.on(reportOn, diagnosticData))
     }
     else if (languageVersionSettings.supportsFeature(LanguageFeature.WarnOnCoroutines)) {
-        diagnosticHolder.report(Errors.EXPERIMENTAL_FEATURE_WARNING.on(reportOn, LanguageFeature.Coroutines))
+        diagnosticHolder.report(Errors.EXPERIMENTAL_FEATURE_WARNING.on(reportOn, diagnosticData))
     }
 }
 
