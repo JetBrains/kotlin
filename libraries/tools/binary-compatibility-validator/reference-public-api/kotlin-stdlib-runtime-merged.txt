@@ -2364,7 +2364,7 @@ public final class kotlin/jvm/internal/ByteSpreadBuilder : kotlin/jvm/internal/P
 	public final fun toArray ()[B
 }
 
-public abstract class kotlin/jvm/internal/CallableReference : kotlin/reflect/KCallable {
+public abstract class kotlin/jvm/internal/CallableReference : java/io/Serializable, kotlin/reflect/KCallable {
 	public static final field NO_RECEIVER Ljava/lang/Object;
 	protected final field receiver Ljava/lang/Object;
 	public fun <init> ()V

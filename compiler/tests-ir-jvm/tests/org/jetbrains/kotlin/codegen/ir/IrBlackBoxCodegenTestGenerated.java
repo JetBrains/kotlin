@@ -2242,6 +2242,45 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 doTest(fileName);
             }
         }
+
+        @TestMetadata("compiler/testData/codegen/box/callableReference/serializability")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Serializability extends AbstractIrBlackBoxCodegenTest {
+            public void testAllFilesPresentInSerializability() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/callableReference/serializability"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("boundWithNotSerializableReceiver.kt")
+            public void testBoundWithNotSerializableReceiver() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/serializability/boundWithNotSerializableReceiver.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("boundWithSerializableReceiver.kt")
+            public void testBoundWithSerializableReceiver() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/serializability/boundWithSerializableReceiver.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noReflect.kt")
+            public void testNoReflect() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/serializability/noReflect.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("reflectedIsNotSerialized.kt")
+            public void testReflectedIsNotSerialized() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/serializability/reflectedIsNotSerialized.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("withReflect.kt")
+            public void testWithReflect() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/serializability/withReflect.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/casts")

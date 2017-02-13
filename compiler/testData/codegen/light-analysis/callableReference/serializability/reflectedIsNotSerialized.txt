@@ -1,0 +1,5 @@
+@kotlin.Metadata
+public final class ReflectedIsNotSerializedKt {
+    public final static method bar(): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

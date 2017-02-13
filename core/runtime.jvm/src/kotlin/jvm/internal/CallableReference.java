@@ -22,6 +22,8 @@ import kotlin.reflect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Map;
@@ -33,18 +35,27 @@ import java.util.Map;
  * and stored in the {@link CallableReference#reflected} field.
  */
 @SuppressWarnings({"unchecked", "NullableProblems"})
-public abstract class CallableReference implements KCallable {
+public abstract class CallableReference implements KCallable, Serializable {
     // This field is not volatile intentionally:
     // 1) It's fine if the value is computed multiple times in different threads;
     // 2) An uninitialized value cannot be observed in this field from other thread because only already initialized or safely initialized
     //    objects are written to it. The latter is guaranteed because both KFunctionImpl and KPropertyImpl have at least one final field.
-    private KCallable reflected;
+    private transient KCallable reflected;
 
     @SinceKotlin(version = "1.1")
     protected final Object receiver;
 
     @SinceKotlin(version = "1.1")
-    public static final Object NO_RECEIVER = new Object();
+    public static final Object NO_RECEIVER = NoReceiver.INSTANCE;
+
+    @SinceKotlin(version = "1.2")
+    private static class NoReceiver implements Serializable {
+        private static final NoReceiver INSTANCE = new NoReceiver();
+
+        private Object readResolve() throws ObjectStreamException {
+            return INSTANCE;
+        }
+    }
 
     public CallableReference() {
         this(NO_RECEIVER);

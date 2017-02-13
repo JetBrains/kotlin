@@ -1,0 +1,17 @@
+@kotlin.Metadata
+public final class BoundWithSerializableReceiverKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Foo {
+    private final @org.jetbrains.annotations.NotNull field value: java.lang.String
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public final @org.jetbrains.annotations.NotNull method component1(): java.lang.String
+    public synthetic static method copy$default(p0: Foo, p1: java.lang.String, p2: int, p3: java.lang.Object): Foo
+    public final @org.jetbrains.annotations.NotNull method copy(@org.jetbrains.annotations.NotNull p0: java.lang.String): Foo
+    public method equals(p0: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.NotNull method getValue(): java.lang.String
+    public method hashCode(): int
+    public method toString(): java.lang.String
+}
