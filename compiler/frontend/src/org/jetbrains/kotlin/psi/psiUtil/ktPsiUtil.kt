@@ -468,7 +468,7 @@ fun checkReservedYield(expression: KtSimpleNameExpression?, sink: DiagnosticSink
     val identifier = expression.getIdentifier() ?: return
 
     if (identifier.node.elementType == KtTokens.IDENTIFIER && "yield" == identifier.text) {
-        sink.report(Errors.YIELD_IS_RESERVED.on(identifier, "Identifier 'yield' is reserved. You ca call it via `yield`"))
+        sink.report(Errors.YIELD_IS_RESERVED.on(identifier, "Identifier 'yield' is reserved. Use backticks to call it: `yield`"))
     }
 }
 
