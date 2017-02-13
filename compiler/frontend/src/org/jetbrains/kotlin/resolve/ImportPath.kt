@@ -14,97 +14,77 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve;
+package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.renderer.RenderingUtilsKt;
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.renderer.*
 
-public final class ImportPath {
-    private final @NotNull FqName fqName;
-    private final @Nullable Name alias;
-    private final boolean isAllUnder;
+class ImportPath {
+    private val fqName: FqName
+    val alias: Name?
+    val isAllUnder: Boolean
 
-    public ImportPath(@NotNull FqName fqName, boolean isAllUnder) {
-        this(fqName, isAllUnder, null);
+    @JvmOverloads constructor(fqName: FqName, isAllUnder: Boolean, alias: Name? = null) {
+        this.fqName = fqName
+        this.isAllUnder = isAllUnder
+        this.alias = alias
     }
 
-    public ImportPath(@NotNull FqName fqName, boolean isAllUnder, @Nullable Name alias) {
-        this.fqName = fqName;
-        this.isAllUnder = isAllUnder;
-        this.alias = alias;
-    }
-
-    public ImportPath(@NotNull String pathStr) {
+    constructor(pathStr: String) {
         if (pathStr.endsWith(".*")) {
-            this.isAllUnder = true;
-            this.fqName = new FqName(pathStr.substring(0, pathStr.length() - 2));
+            this.isAllUnder = true
+            this.fqName = FqName(pathStr.substring(0, pathStr.length - 2))
         }
         else {
-            this.isAllUnder = false;
-            this.fqName = new FqName(pathStr);
+            this.isAllUnder = false
+            this.fqName = FqName(pathStr)
         }
 
-        alias = null;
+        alias = null
     }
 
-    public String getPathStr() {
-        return RenderingUtilsKt.render(fqName.toUnsafe()) + (isAllUnder ? ".*" : "");
+    val pathStr: String
+        get() = fqName.toUnsafe().render() + if (isAllUnder) ".*" else ""
+
+    override fun toString(): String {
+        return pathStr + if (alias != null) " as " + alias.asString() else ""
     }
 
-    @Override
-    public String toString() {
-        return getPathStr() + (alias != null ? " as " + alias.asString() : "");
+    fun fqnPart(): FqName {
+        return fqName
     }
 
-    @NotNull
-    public FqName fqnPart() {
-        return fqName;
+    fun hasAlias(): Boolean {
+        return alias != null
     }
 
-    @Nullable
-    public Name getAlias() {
-        return alias;
-    }
+    val importedName: Name?
+        get() {
+            if (!isAllUnder) {
+                return alias ?: fqName.shortName()
+            }
 
-    public boolean hasAlias() {
-        return alias != null;
-    }
-
-    public boolean isAllUnder() {
-        return isAllUnder;
-    }
-
-    @Nullable
-    public Name getImportedName() {
-        if (!isAllUnder()) {
-            return alias != null ? alias : fqName.shortName();
+            return null
         }
 
-        return null;
+    override fun equals(o: Any?): Boolean {
+        if (this === o) return true
+        if (o == null || javaClass != o.javaClass) return false
+
+        val path = o as ImportPath?
+
+        if (isAllUnder != path!!.isAllUnder) return false
+        if (if (alias != null) alias != path.alias else path.alias != null) return false
+        if (fqName != path.fqName) return false
+
+        return true
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ImportPath path = (ImportPath) o;
-
-        if (isAllUnder != path.isAllUnder) return false;
-        if (alias != null ? !alias.equals(path.alias) : path.alias != null) return false;
-        if (!fqName.equals(path.fqName)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = fqName.hashCode();
-        result = 31 * result + (alias != null ? alias.hashCode() : 0);
-        result = 31 * result + (isAllUnder ? 1 : 0);
-        return result;
+    override fun hashCode(): Int {
+        var result = fqName.hashCode()
+        result = 31 * result + (alias?.hashCode() ?: 0)
+        result = 31 * result + if (isAllUnder) 1 else 0
+        return result
     }
 }
