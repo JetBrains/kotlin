@@ -94,3 +94,24 @@ public class BoxedChar(val c: Char) : Comparable<Char> {
         return js("this.c")
     }
 }
+
+/* For future binary compatibility with TypedArrays
+ * TODO: concat normal Array's and TypedArrays into an Array
+ */
+@PublishedApi
+@JsName("arrayConcat")
+internal fun <T> arrayConcat(a: T, b: Array<T>): T {
+    return js("a.concat.apply(a, b)");
+}
+
+/* For future binary compatibility with TypedArrays
+ * TODO: concat primitive arrays.
+ *       For Byte-, Short-, Int-, Float-, and DoubleArray concat result into a TypedArray.
+ *       For Boolean-, Char-, and LongArray return an Array with corresponding type property.
+ *       Default to Array.prototype.concat for compatibility.
+ */
+@PublishedApi
+@JsName("typedArrayConcat")
+internal fun <T> typedArrayConcat(a: T, b: Array<T>): T {
+    return js("a.concat.apply(a, b)");
+}

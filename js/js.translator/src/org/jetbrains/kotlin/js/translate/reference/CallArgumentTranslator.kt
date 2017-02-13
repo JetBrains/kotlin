@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.js.translate.reference
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
 import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TemporaryConstVariable
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -83,6 +83,7 @@ class CallArgumentTranslator private constructor(
         var argsBeforeVararg: List<JsExpression>? = null
         var concatArguments: MutableList<JsExpression>? = null
         val argsToJsExpr = translateUnresolvedArguments(context(), resolvedCall)
+        var isVarargTypePrimitive: Boolean? = null
 
         for (parameterDescriptor in valueParameters) {
             val actualArgument = valueArgumentsByIndex[parameterDescriptor.index]
@@ -95,6 +96,8 @@ class CallArgumentTranslator private constructor(
                     hasSpreadOperator = arguments.any { it.getSpreadElement() != null }
                 }
 
+                isVarargTypePrimitive = KotlinBuiltIns.isPrimitiveType(parameterDescriptor.varargElementType!!)
+
                 if (hasSpreadOperator) {
                     if (isNativeFunctionCall) {
                         argsBeforeVararg = result
@@ -102,7 +105,10 @@ class CallArgumentTranslator private constructor(
                         concatArguments = prepareConcatArguments(arguments, translateResolvedArgument(actualArgument, argsToJsExpr))
                     }
                     else {
-                        result.addAll(translateVarargArgument(actualArgument, argsToJsExpr, actualArgument.arguments.size > 1))
+                        result.addAll(translateVarargArgument(actualArgument,
+                                                              argsToJsExpr,
+                                                              actualArgument.arguments.size > 1,
+                                                              isVarargTypePrimitive))
                     }
                 }
                 else {
@@ -110,7 +116,7 @@ class CallArgumentTranslator private constructor(
                         result.addAll(translateResolvedArgument(actualArgument, argsToJsExpr))
                     }
                     else {
-                        result.addAll(translateVarargArgument(actualArgument, argsToJsExpr, true))
+                        result.addAll(translateVarargArgument(actualArgument, argsToJsExpr, true, isVarargTypePrimitive))
                     }
                 }
             }
@@ -123,13 +129,15 @@ class CallArgumentTranslator private constructor(
             assert(argsBeforeVararg != null) { "argsBeforeVararg should not be null" }
             assert(concatArguments != null) { "concatArguments should not be null" }
 
-            concatArguments!!.addAll(result)
-
-            if (!argsBeforeVararg!!.isEmpty()) {
-                concatArguments.add(0, JsArrayLiteral(argsBeforeVararg).apply { sideEffects = SideEffectKind.DEPENDS_ON_STATE })
+            if (!result.isEmpty()) {
+                concatArguments!!.add(JsArrayLiteral(result))
             }
 
-            result = mutableListOf(concatArgumentsIfNeeded(concatArguments))
+            if (!argsBeforeVararg!!.isEmpty()) {
+                concatArguments!!.add(0, JsArrayLiteral(argsBeforeVararg).apply { sideEffects = SideEffectKind.DEPENDS_ON_STATE })
+            }
+
+            result = mutableListOf(concatArgumentsIfNeeded(concatArguments!!, isVarargTypePrimitive!!, true))
 
             if (receiver != null) {
                 cachedReceiver = context().getOrDeclareTemporaryConstVariable(receiver)
@@ -235,7 +243,8 @@ class CallArgumentTranslator private constructor(
         private fun translateVarargArgument(
                 resolvedArgument: ResolvedValueArgument,
                 translatedArgs: Map<ValueArgument, JsExpression>,
-                shouldWrapVarargInArray: Boolean
+                shouldWrapVarargInArray: Boolean,
+                isVarargTypePrimitive: Boolean
         ): List<JsExpression> {
             val arguments = resolvedArgument.arguments
             if (arguments.isEmpty()) {
@@ -251,7 +260,7 @@ class CallArgumentTranslator private constructor(
 
             return if (shouldWrapVarargInArray) {
                 val concatArguments = prepareConcatArguments(arguments, list)
-                val concatExpression = concatArgumentsIfNeeded(concatArguments)
+                val concatExpression = concatArgumentsIfNeeded(concatArguments, isVarargTypePrimitive, false)
                 listOf(concatExpression)
             }
             else {
@@ -259,12 +268,22 @@ class CallArgumentTranslator private constructor(
             }
         }
 
-        private fun concatArgumentsIfNeeded(concatArguments: List<JsExpression>): JsExpression {
+        private fun concatArgumentsIfNeeded(
+                concatArguments: List<JsExpression>,
+                isVarargTypePrimitive: Boolean,
+                isMixed: Boolean
+        ): JsExpression {
             assert(concatArguments.isNotEmpty()) { "concatArguments.size should not be 0" }
 
             if (concatArguments.size > 1) {
-                return JsInvocation(JsNameRef("concat", concatArguments[0]), concatArguments.subList(1, concatArguments.size))
-
+                if (isVarargTypePrimitive) {
+                    val method = if (isMixed) "arrayConcat" else "typedArrayConcat"
+                    return JsAstUtils.invokeKotlinFunction(method, concatArguments[0],
+                                                           JsArrayLiteral(concatArguments.subList(1, concatArguments.size)))
+                }
+                else {
+                    return JsInvocation(JsNameRef("concat", concatArguments[0]), concatArguments.subList(1, concatArguments.size))
+                }
             }
             else {
                 return concatArguments[0]

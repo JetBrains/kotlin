@@ -13168,7 +13168,7 @@ public inline operator fun <T> Array<out T>.plus(element: T): Array<T> {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun ByteArray.plus(element: Byte): ByteArray {
-    return this.asDynamic().concat(arrayOf(element))
+    return plus(byteArrayOf(element))
 }
 
 /**
@@ -13176,7 +13176,7 @@ public inline operator fun ByteArray.plus(element: Byte): ByteArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun ShortArray.plus(element: Short): ShortArray {
-    return this.asDynamic().concat(arrayOf(element))
+    return plus(shortArrayOf(element))
 }
 
 /**
@@ -13184,7 +13184,7 @@ public inline operator fun ShortArray.plus(element: Short): ShortArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun IntArray.plus(element: Int): IntArray {
-    return this.asDynamic().concat(arrayOf(element))
+    return plus(intArrayOf(element))
 }
 
 /**
@@ -13192,7 +13192,7 @@ public inline operator fun IntArray.plus(element: Int): IntArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun LongArray.plus(element: Long): LongArray {
-    return this.asDynamic().concat(arrayOf(element))
+    return plus(longArrayOf(element))
 }
 
 /**
@@ -13200,7 +13200,7 @@ public inline operator fun LongArray.plus(element: Long): LongArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun FloatArray.plus(element: Float): FloatArray {
-    return this.asDynamic().concat(arrayOf(element))
+    return plus(floatArrayOf(element))
 }
 
 /**
@@ -13208,7 +13208,7 @@ public inline operator fun FloatArray.plus(element: Float): FloatArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun DoubleArray.plus(element: Double): DoubleArray {
-    return this.asDynamic().concat(arrayOf(element))
+    return plus(doubleArrayOf(element))
 }
 
 /**
@@ -13216,7 +13216,7 @@ public inline operator fun DoubleArray.plus(element: Double): DoubleArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun BooleanArray.plus(element: Boolean): BooleanArray {
-    return this.asDynamic().concat(arrayOf(element))
+    return plus(booleanArrayOf(element))
 }
 
 /**
@@ -13224,7 +13224,7 @@ public inline operator fun BooleanArray.plus(element: Boolean): BooleanArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun CharArray.plus(element: Char): CharArray {
-    return this.asDynamic().concat(arrayOf(element))
+    return plus(charArrayOf(element))
 }
 
 /**
@@ -13303,7 +13303,7 @@ public inline operator fun <T> Array<out T>.plus(elements: Array<out T>): Array<
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun ByteArray.plus(elements: ByteArray): ByteArray {
-    return this.asDynamic().concat(elements)
+    return typedArrayConcatProxy(this, arrayOf(elements))
 }
 
 /**
@@ -13311,7 +13311,7 @@ public inline operator fun ByteArray.plus(elements: ByteArray): ByteArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun ShortArray.plus(elements: ShortArray): ShortArray {
-    return this.asDynamic().concat(elements)
+    return typedArrayConcatProxy(this, arrayOf(elements))
 }
 
 /**
@@ -13319,7 +13319,7 @@ public inline operator fun ShortArray.plus(elements: ShortArray): ShortArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun IntArray.plus(elements: IntArray): IntArray {
-    return this.asDynamic().concat(elements)
+    return typedArrayConcatProxy(this, arrayOf(elements))
 }
 
 /**
@@ -13327,7 +13327,7 @@ public inline operator fun IntArray.plus(elements: IntArray): IntArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun LongArray.plus(elements: LongArray): LongArray {
-    return this.asDynamic().concat(elements)
+    return typedArrayConcatProxy(this, arrayOf(elements))
 }
 
 /**
@@ -13335,7 +13335,7 @@ public inline operator fun LongArray.plus(elements: LongArray): LongArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun FloatArray.plus(elements: FloatArray): FloatArray {
-    return this.asDynamic().concat(elements)
+    return typedArrayConcatProxy(this, arrayOf(elements))
 }
 
 /**
@@ -13343,7 +13343,7 @@ public inline operator fun FloatArray.plus(elements: FloatArray): FloatArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun DoubleArray.plus(elements: DoubleArray): DoubleArray {
-    return this.asDynamic().concat(elements)
+    return typedArrayConcatProxy(this, arrayOf(elements))
 }
 
 /**
@@ -13351,7 +13351,7 @@ public inline operator fun DoubleArray.plus(elements: DoubleArray): DoubleArray 
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun BooleanArray.plus(elements: BooleanArray): BooleanArray {
-    return this.asDynamic().concat(elements)
+    return typedArrayConcatProxy(this, arrayOf(elements))
 }
 
 /**
@@ -13359,7 +13359,7 @@ public inline operator fun BooleanArray.plus(elements: BooleanArray): BooleanArr
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun CharArray.plus(elements: CharArray): CharArray {
-    return this.asDynamic().concat(elements)
+    return typedArrayConcatProxy(this, arrayOf(elements))
 }
 
 /**
