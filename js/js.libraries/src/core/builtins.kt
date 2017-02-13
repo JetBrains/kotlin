@@ -101,7 +101,7 @@ public class BoxedChar(val c: Char) : Comparable<Char> {
 @PublishedApi
 @JsName("arrayConcat")
 internal fun <T> arrayConcat(a: T, b: Array<T>): T {
-    return js("a.concat.apply(a, b)");
+    return a.asDynamic().concat.apply(a, b);
 }
 
 /* For future binary compatibility with TypedArrays
@@ -111,7 +111,7 @@ internal fun <T> arrayConcat(a: T, b: Array<T>): T {
  *       Default to Array.prototype.concat for compatibility.
  */
 @PublishedApi
-@JsName("typedArrayConcat")
-internal fun <T> typedArrayConcat(a: T, b: Array<T>): T {
-    return js("a.concat.apply(a, b)");
+@JsName("primitiveArrayConcat")
+internal fun <T> primitiveArrayConcat(a: T, b: Array<T>): T {
+    return a.asDynamic().concat.apply(a, b);
 }

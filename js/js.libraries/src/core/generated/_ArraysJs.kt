@@ -9,7 +9,7 @@ package kotlin.collections
 //
 
 import kotlin.js.*
-import typedArrayConcat
+import primitiveArrayConcat
 import kotlin.comparisons.*
 
 /**
@@ -13304,7 +13304,7 @@ public inline operator fun <T> Array<out T>.plus(elements: Array<out T>): Array<
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun ByteArray.plus(elements: ByteArray): ByteArray {
-    return typedArrayConcat(this, arrayOf(elements))
+    return primitiveArrayConcat(this, arrayOf(elements))
 }
 
 /**
@@ -13312,7 +13312,7 @@ public inline operator fun ByteArray.plus(elements: ByteArray): ByteArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun ShortArray.plus(elements: ShortArray): ShortArray {
-    return typedArrayConcat(this, arrayOf(elements))
+    return primitiveArrayConcat(this, arrayOf(elements))
 }
 
 /**
@@ -13320,7 +13320,7 @@ public inline operator fun ShortArray.plus(elements: ShortArray): ShortArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun IntArray.plus(elements: IntArray): IntArray {
-    return typedArrayConcat(this, arrayOf(elements))
+    return primitiveArrayConcat(this, arrayOf(elements))
 }
 
 /**
@@ -13328,7 +13328,7 @@ public inline operator fun IntArray.plus(elements: IntArray): IntArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun LongArray.plus(elements: LongArray): LongArray {
-    return typedArrayConcat(this, arrayOf(elements))
+    return primitiveArrayConcat(this, arrayOf(elements))
 }
 
 /**
@@ -13336,7 +13336,7 @@ public inline operator fun LongArray.plus(elements: LongArray): LongArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun FloatArray.plus(elements: FloatArray): FloatArray {
-    return typedArrayConcat(this, arrayOf(elements))
+    return primitiveArrayConcat(this, arrayOf(elements))
 }
 
 /**
@@ -13344,7 +13344,7 @@ public inline operator fun FloatArray.plus(elements: FloatArray): FloatArray {
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun DoubleArray.plus(elements: DoubleArray): DoubleArray {
-    return typedArrayConcat(this, arrayOf(elements))
+    return primitiveArrayConcat(this, arrayOf(elements))
 }
 
 /**
@@ -13352,7 +13352,7 @@ public inline operator fun DoubleArray.plus(elements: DoubleArray): DoubleArray 
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun BooleanArray.plus(elements: BooleanArray): BooleanArray {
-    return typedArrayConcat(this, arrayOf(elements))
+    return primitiveArrayConcat(this, arrayOf(elements))
 }
 
 /**
@@ -13360,7 +13360,7 @@ public inline operator fun BooleanArray.plus(elements: BooleanArray): BooleanArr
  */
 @Suppress("NOTHING_TO_INLINE")
 public inline operator fun CharArray.plus(elements: CharArray): CharArray {
-    return typedArrayConcat(this, arrayOf(elements))
+    return primitiveArrayConcat(this, arrayOf(elements))
 }
 
 /**

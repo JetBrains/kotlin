@@ -102,7 +102,7 @@ private fun List<ConcreteFunction>.writeTo(file: File, sourceFile: SourceFile, p
         if (platform == Platform.JS) {
             writer.appendln("import kotlin.js.*")
             if (sourceFile == SourceFile.Arrays) {
-                writer.appendln("import typedArrayConcat")
+                writer.appendln("import primitiveArrayConcat")
             }
         }
         writer.append("import kotlin.comparisons.*\n\n")
