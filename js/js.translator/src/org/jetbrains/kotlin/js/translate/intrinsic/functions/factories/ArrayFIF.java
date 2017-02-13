@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories;
 
 import com.google.common.collect.Lists;
-import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
+import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.patterns.DescriptorPredicate;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.translate.context.Namer;

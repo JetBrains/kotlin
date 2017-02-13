@@ -56,6 +56,12 @@ external fun sumFunValuesOnParameters(x: Int, y: Int, vararg a: Int, f: (Int) ->
 
 external fun <T> idArrayVarArg(vararg a: Array<T>): Array<T> = definedExternally
 
+@JsName("paramCount")
+external fun oneMoreParamCount(before: IntArray, vararg middle: Int, after: IntArray): Int
+
+@JsName("paramCount")
+external fun <T> oneMoreGenericParamCount(before: Array<T>, vararg middle: T, after: Array<T>): Int
+
 fun box(): String {
     if (paramCount() != 0)
         return "failed when call native function without args"
@@ -138,5 +144,7 @@ fun box(): String {
     assertEquals(3, idArrayVarArg(arrayOf(1, 2), *arrayOf(arrayOf(3, 4), arrayOf(5, 6))).size)
     assertEquals(6, idArrayVarArg(arrayOf(1, 2), *arrayOf(arrayOf(3, 4), arrayOf(5, 6)), arrayOf(7), *arrayOf(arrayOf(8, 9), arrayOf(10, 11))).size)
 
+    assertEquals(6, oneMoreParamCount(intArrayOf(1, 2), 3, *intArrayOf(4, 5), 6, after = intArrayOf(7, 8)))
+    assertEquals(6, oneMoreGenericParamCount(arrayOf("1", "2"), "3", *arrayOf("4", "5"), "6", after = arrayOf("7", "8")))
     return "OK"
 }
