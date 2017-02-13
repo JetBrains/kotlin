@@ -43,7 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
-    // Set to 'false' to speed up black box tests locally
+    // Set to 'true' to speed up black box tests locally
     private static final boolean SKIP_LIGHT_ANALYSIS_MODE_TESTS = false;
 
     private boolean addRuntime = false;
