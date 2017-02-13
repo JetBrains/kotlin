@@ -64,3 +64,7 @@ internal fun <T : Any> getOrCreateKotlinClass(jClass: Class<T>): KClassImpl<T> {
     K_CLASS_CACHE = K_CLASS_CACHE.plus(name, WeakReference(newKClass))
     return newKClass
 }
+
+internal fun clearKClassCache() {
+    K_CLASS_CACHE = HashPMap.empty()
+}

@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
+import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
@@ -159,6 +160,23 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
                 System.out.println(generateToText());
                 throw ExceptionUtilsKt.rethrow(e);
             }
+            finally {
+                clearReflectionCache(generatedClassLoader);
+            }
+        }
+    }
+
+    private static void clearReflectionCache(@NotNull ClassLoader classLoader) {
+        try {
+            Class<?> klass = classLoader.loadClass(JvmAbi.REFLECTION_FACTORY_IMPL.asSingleFqName().asString());
+            Method method = klass.getDeclaredMethod("clearCaches");
+            method.invoke(null);
+        }
+        catch (ClassNotFoundException e) {
+            // This is OK for a test without kotlin-reflect in the dependencies
+        }
+        catch (Exception e) {
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
