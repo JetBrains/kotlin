@@ -345,7 +345,9 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     }
 
     private void writeInnerClass(@NotNull ClassDescriptor innerClass) {
-        writeInnerClass(innerClass, typeMapper, v);
+        if (!ErrorUtils.isError(innerClass)) {
+            writeInnerClass(innerClass, typeMapper, v);
+        }
     }
 
     public static void writeInnerClass(@NotNull ClassDescriptor innerClass, @NotNull KotlinTypeMapper typeMapper, @NotNull ClassBuilder v) {
