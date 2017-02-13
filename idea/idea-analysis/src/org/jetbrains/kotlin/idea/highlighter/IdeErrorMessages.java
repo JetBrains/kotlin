@@ -171,6 +171,10 @@ public class IdeErrorMessages {
 
         MAP.put(ErrorsJs.JSCODE_ERROR, "<html>JavaScript: {0}</html>", JsCallDataHtmlRenderer.INSTANCE);
         MAP.put(ErrorsJs.JSCODE_WARNING, "<html>JavaScript: {0}</html>", JsCallDataHtmlRenderer.INSTANCE);
+        MAP.put(UNSUPPORTED_FEATURE, "<html>{0}</html>", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.UNSUPPORTED, true));
+        MAP.put(EXPERIMENTAL_FEATURE_WARNING, "<html>{0}</html>", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.WARNING, true));
+        MAP.put(EXPERIMENTAL_FEATURE_ERROR, "<html>{0}</html>", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.ERROR, true));
+
         MAP.setImmutable();
     }
 

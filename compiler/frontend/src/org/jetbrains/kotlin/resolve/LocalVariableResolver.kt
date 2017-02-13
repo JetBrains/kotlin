@@ -77,7 +77,7 @@ class LocalVariableResolver(
         val delegateExpression = property.delegateExpression
         if (delegateExpression != null) {
             if (!languageVersionSettings.supportsFeature(LanguageFeature.LocalDelegatedProperties)) {
-                context.trace.report(LOCAL_VARIABLE_WITH_DELEGATE.on(property.delegate!!))
+                context.trace.report(UNSUPPORTED_FEATURE.on(property.delegate!!, LanguageFeature.LocalDelegatedProperties to languageVersionSettings))
             }
 
             if (propertyDescriptor is VariableDescriptorWithAccessors) {

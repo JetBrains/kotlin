@@ -79,7 +79,7 @@ sealed class EnableUnsupportedFeatureFix(
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): EnableUnsupportedFeatureFix? {
-            val targetVersion = Errors.UNSUPPORTED_FEATURE.cast(diagnostic).a.sinceVersion ?: return null
+            val targetVersion = Errors.UNSUPPORTED_FEATURE.cast(diagnostic).a.first.sinceVersion ?: return null
             val module = ModuleUtilCore.findModuleForPsiElement(diagnostic.psiElement) ?: return null
             if (KotlinPluginUtil.isMavenModule(module)) return null
             if (!KotlinPluginUtil.isGradleModule(module)) {

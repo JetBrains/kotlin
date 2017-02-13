@@ -22,6 +22,7 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import kotlin.Pair;
+import kotlin.TuplesKt;
 import kotlin.collections.CollectionsKt;
 import kotlin.collections.SetsKt;
 import kotlin.jvm.functions.Function0;
@@ -324,7 +325,8 @@ public class DescriptorResolver {
         Function0<List<VariableDescriptor>> destructuringVariables;
         if (destructuringDeclaration != null) {
             if (!languageVersionSettings.supportsFeature(LanguageFeature.DestructuringLambdaParameters)) {
-                trace.report(Errors.UNSUPPORTED_FEATURE.on(valueParameter, LanguageFeature.DestructuringLambdaParameters));
+                trace.report(Errors.UNSUPPORTED_FEATURE.on(valueParameter,
+                                                           TuplesKt.to(LanguageFeature.DestructuringLambdaParameters, languageVersionSettings)));
             }
 
             destructuringVariables = new Function0<List<VariableDescriptor>>() {
@@ -742,7 +744,8 @@ public class DescriptorResolver {
         else if (!languageVersionSettings.supportsFeature(LanguageFeature.TypeAliases)) {
             typeResolver.resolveAbbreviatedType(scopeWithTypeParameters, typeReference, trace);
             PsiElement typeAliasKeyword = typeAlias.getTypeAliasKeyword();
-            trace.report(UNSUPPORTED_FEATURE.on(typeAliasKeyword != null ? typeAliasKeyword : typeAlias, LanguageFeature.TypeAliases));
+            trace.report(UNSUPPORTED_FEATURE.on(typeAliasKeyword != null ? typeAliasKeyword : typeAlias,
+                                                TuplesKt.to(LanguageFeature.TypeAliases, languageVersionSettings)));
             typeAliasDescriptor.initialize(
                     typeParameterDescriptors,
                     ErrorUtils.createErrorType(name.asString()),

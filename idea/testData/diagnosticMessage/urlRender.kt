@@ -1,5 +1,5 @@
 // !DIAGNOSTICS_NUMBER: 1
 // !DIAGNOSTICS: UNSUPPORTED_FEATURE
-// !MESSAGE_TYPE: TEXT
+// LANGUAGE_VERSION: 1.0
 
-impl fun test() {}
+suspend fun test() {}

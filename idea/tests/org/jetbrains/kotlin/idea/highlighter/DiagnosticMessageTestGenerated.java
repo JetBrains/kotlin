@@ -324,9 +324,9 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest(fileName);
     }
 
-    @TestMetadata("urlMultiproject.kt")
-    public void testUrlMultiproject() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/urlMultiproject.kt");
+    @TestMetadata("urlRender.kt")
+    public void testUrlRender() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/urlRender.kt");
         doTest(fileName);
     }
 }

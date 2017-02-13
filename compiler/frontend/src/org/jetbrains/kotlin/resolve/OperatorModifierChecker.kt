@@ -66,7 +66,7 @@ object OperatorModifierChecker {
 
     private fun checkSupportsFeature(feature: LanguageFeature, languageVersionSettings: LanguageVersionSettings, diagnosticHolder: DiagnosticSink, modifier: PsiElement) {
         if (!languageVersionSettings.supportsFeature(feature)) {
-            diagnosticHolder.report(Errors.UNSUPPORTED_FEATURE.on(modifier, feature))
+            diagnosticHolder.report(Errors.UNSUPPORTED_FEATURE.on(modifier, feature to languageVersionSettings))
         }
     }
 }

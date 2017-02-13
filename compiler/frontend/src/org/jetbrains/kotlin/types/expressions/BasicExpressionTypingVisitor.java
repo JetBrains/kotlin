@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.TuplesKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -238,7 +239,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (!text.contains("_")) return;
 
         if (!components.languageVersionSettings.supportsFeature(LanguageFeature.UnderscoresInNumericLiterals)) {
-            context.trace.report(Errors.UNSUPPORTED_FEATURE.on(expression, LanguageFeature.UnderscoresInNumericLiterals));
+            context.trace.report(Errors.UNSUPPORTED_FEATURE.on(expression,
+                                                               TuplesKt.to(LanguageFeature.UnderscoresInNumericLiterals, components.languageVersionSettings)));
             return;
         }
 

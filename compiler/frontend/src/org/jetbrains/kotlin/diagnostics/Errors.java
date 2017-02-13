@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cfg.WhenMissingCase;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersion;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
@@ -63,11 +64,11 @@ public interface Errors {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     DiagnosticFactory1<PsiElement, String> UNSUPPORTED = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<PsiElement, LanguageFeature> UNSUPPORTED_FEATURE = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, Pair<LanguageFeature, LanguageVersionSettings>> UNSUPPORTED_FEATURE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, Throwable> EXCEPTION_FROM_ANALYZER = DiagnosticFactory1.create(ERROR);
 
-    DiagnosticFactory1<PsiElement, LanguageFeature> EXPERIMENTAL_FEATURE_WARNING = DiagnosticFactory1.create(WARNING);
-    DiagnosticFactory1<PsiElement, LanguageFeature> EXPERIMENTAL_FEATURE_ERROR = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, Pair<LanguageFeature, LanguageVersionSettings>> EXPERIMENTAL_FEATURE_WARNING = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory1<PsiElement, Pair<LanguageFeature, LanguageVersionSettings>> EXPERIMENTAL_FEATURE_ERROR = DiagnosticFactory1.create(ERROR);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -453,7 +454,6 @@ public interface Errors {
     DiagnosticFactory0<KtPropertyDelegate> ABSTRACT_DELEGATED_PROPERTY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtPropertyAccessor> ACCESSOR_FOR_DELEGATED_PROPERTY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtPropertyDelegate> DELEGATED_PROPERTY_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtPropertyDelegate> LOCAL_VARIABLE_WITH_DELEGATE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtProperty> PROPERTY_WITH_NO_TYPE_NO_INITIALIZER = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
