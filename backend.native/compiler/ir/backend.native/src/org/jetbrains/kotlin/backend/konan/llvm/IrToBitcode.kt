@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isNothing
+import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
@@ -1170,7 +1171,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         context.log("evaluateCast               : ${ir2string(value)}")
         val type = value.typeOperand
         assert(!KotlinBuiltIns.isPrimitiveType(type) && !KotlinBuiltIns.isPrimitiveType(value.argument.type))
-
+        assert(!type.isTypeParameter())
         val dstDescriptor = TypeUtils.getClassDescriptor(type)                         // Get class descriptor for dst type.
         val dstTypeInfo   = codegen.typeInfoValue(dstDescriptor!!)                     // Get TypeInfo for dst type.
         val srcArg        = evaluateExpression(value.argument)                         // Evaluate src expression.

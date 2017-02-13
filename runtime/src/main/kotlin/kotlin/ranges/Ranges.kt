@@ -330,15 +330,122 @@ public fun Long.coerceIn(range: ClosedRange<Long>): Long {
 /**
  * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
-public fun IntProgression.reversed(): IntProgression {
-    return IntProgression.fromClosedRange(last, first, -step)
-}
+public fun IntProgression.reversed() = IntProgression.fromClosedRange(last, first, -step)
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
  *
  * The [to] value has to be less than this value.
  */
-public infix fun Int.downTo(to: Int): IntProgression {
-    return IntProgression.fromClosedRange(this, to, -1)
-}
+public infix fun Int.downTo(to: Byte) = IntProgression.fromClosedRange(this, to.toInt(), -1)
+
+/**
+ * Returns a progression from this value down to the specified [to] value with the step -1.
+ *
+ * The [to] value has to be less than this value.
+ */
+public infix fun Long.downTo(to: Byte) = LongProgression.fromClosedRange(this, to.toLong(), -1)
+
+/**
+ * Returns a progression from this value down to the specified [to] value with the step -1.
+ *
+ * The [to] value has to be less than this value.
+ */
+public infix fun Byte.downTo(to: Byte): IntProgression =
+        IntProgression.fromClosedRange(this.toInt(), to.toInt(), -1)
+
+/**
+ * Returns a progression from this value down to the specified [to] value with the step -1.
+ *
+ * The [to] value has to be less than this value.
+ */
+public infix fun Short.downTo(to: Byte) =
+        IntProgression.fromClosedRange(this.toInt(), to.toInt(), -1)
+
+/**
+ * Returns a progression from this value down to the specified [to] value with the step -1.
+ *
+ * The [to] value has to be less than this value.
+ */
+public infix fun Char.downTo(to: Char): CharProgression = CharProgression.fromClosedRange(this, to, -1)
+
+/**
+ * Returns a progression from this value down to the specified [to] value with the step -1.
+ *
+ * The [to] value has to be less than this value.
+ */
+public infix fun Int.downTo(to: Int) = IntProgression.fromClosedRange(this, to, -1)
+
+/**
+ * Returns a progression from this value down to the specified [to] value with the step -1.
+ *
+ * The [to] value has to be less than this value.
+ */
+public infix fun Long.downTo(to: Int) = LongProgression.fromClosedRange(this, to.toLong(), -1)
+
+/**
+ * Returns a progression from this value down to the specified [to] value with the step -1.
+ *
+ * The [to] value has to be less than this value.
+ */
+public infix fun Byte.downTo(to: Int): IntProgression =
+        IntProgression.fromClosedRange(this.toInt(), to, -1)
+
+/**
+ * Returns a progression from this value down to the specified [to] value with the step -1.
+ *
+ * The [to] value has to be less than this value.
+ */
+public infix fun Short.downTo(to: Int) = IntProgression.fromClosedRange(this.toInt(), to, -1)
+
+/**
+ * Returns a progression from this value down to the specified [to] value with the step -1.
+ *
+ * The [to] value has to be less than this value.
+ */
+public infix fun Int.downTo(to: Long) = LongProgression.fromClosedRange(this.toLong(), to, -1)
+
+/**
+ * Returns a progression from this value down to the specified [to] value with the step -1.
+ *
+ * The [to] value has to be less than this value.
+ */
+public infix fun Long.downTo(to: Long) = LongProgression.fromClosedRange(this, to, -1)
+
+/**
+ * Returns a progression from this value down to the specified [to] value with the step -1.
+ *
+ * The [to] value has to be less than this value.
+ */
+public infix fun Byte.downTo(to: Long): LongProgression =
+        LongProgression.fromClosedRange(this.toLong(), to, -1)
+
+/**
+ * Returns a progression from this value down to the specified [to] value with the step -1.
+ *
+ * The [to] value has to be less than this value.
+ */
+public infix fun Int.downTo(to: Short) = IntProgression.fromClosedRange(this, to.toInt(), -1)
+
+/**
+ * Returns a progression from this value down to the specified [to] value with the step -1.
+ *
+ * The [to] value has to be less than this value.
+ */
+public infix fun Long.downTo(to: Short) = LongProgression.fromClosedRange(this, to.toLong(), -1)
+
+/**
+ * Returns a progression from this value down to the specified [to] value with the step -1.
+ *
+ * The [to] value has to be less than this value.
+ */
+public infix fun Byte.downTo(to: Short): IntProgression =
+        IntProgression.fromClosedRange(this.toInt(), to.toInt(), -1)
+
+/**
+ * Returns a progression from this value down to the specified [to] value with the step -1.
+ *
+ * The [to] value has to be less than this value.
+ */
+public infix fun Short.downTo(to: Short): IntProgression =
+        IntProgression.fromClosedRange(this.toInt(), to.toInt(), -1)
