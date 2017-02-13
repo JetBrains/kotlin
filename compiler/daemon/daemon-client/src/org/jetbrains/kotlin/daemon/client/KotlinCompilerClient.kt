@@ -314,7 +314,11 @@ object KotlinCompilerClient {
 
     private fun startDaemon(compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, daemonOptions: DaemonOptions, reportingTargets: DaemonReportingTargets) {
         val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
-        val platformSpecificOptions = listOf("-Djava.awt.headless=true") // hide daemon window
+        val platformSpecificOptions = listOf(
+                // hide daemon window
+                "-Djava.awt.headless=true",
+                // prevent host name resolution
+                "-Djava.rmi.server.hostname=${LoopbackNetworkInterface.loopbackInetAddressName}")
         val args = listOf(
                    javaExecutable.absolutePath, "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)) +
                    platformSpecificOptions +
