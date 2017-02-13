@@ -60,6 +60,18 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
         doTest(fileName);
     }
 
+    @TestMetadata("JvmNameOnMember.kt")
+    public void testJvmNameOnMember() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/JvmNameOnMember.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("JvmStatic.kt")
+    public void testJvmStatic() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/JvmStatic.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("compiler/testData/asJava/lightClasses/compilationErrors")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -71,6 +83,12 @@ public class IdeLightClassTestGenerated extends AbstractIdeLightClassTest {
         @TestMetadata("TopLevelDestructuring.kt")
         public void testTopLevelDestructuring() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/TopLevelDestructuring.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("WrongAnnotations.kt")
+        public void testWrongAnnotations() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/WrongAnnotations.kt");
             doTest(fileName);
         }
     }
