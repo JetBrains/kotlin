@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.util.*
 
 object JvmPlatform : TargetPlatform("JVM") {
+    private val builtIns by lazy(LazyThreadSafetyMode.PUBLICATION) { JvmBuiltIns(LockBasedStorageManager()) }
+
     override fun getDefaultImports(languageVersionSettings: LanguageVersionSettings): List<ImportPath> = ArrayList<ImportPath>().apply {
         addAll(Default.getDefaultImports(languageVersionSettings))
 
@@ -37,7 +39,6 @@ object JvmPlatform : TargetPlatform("JVM") {
             }
         }
 
-        val builtIns = JvmBuiltIns(LockBasedStorageManager.NO_LOCKS)
         for (builtinPackageFragment in builtIns.builtInsPackageFragmentsImportedByDefault) {
             addAllClassifiersFromScope(builtinPackageFragment.getMemberScope())
         }
