@@ -121,7 +121,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
 
             val imports = file.importDirectives
 
-            if (imports.any { !it.isAllUnder && it.importPath?.fqnPart() == targetFqName }) {
+            if (imports.any { !it.isAllUnder && it.importPath?.fqName == targetFqName }) {
                 return ImportDescriptorResult.FAIL
             }
 
@@ -132,7 +132,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
                 else -> null
             }
             if (conflict != null
-                && imports.any { !it.isAllUnder && it.importPath?.fqnPart() == conflict.importableFqName && it.importPath?.importedName == name }
+                && imports.any { !it.isAllUnder && it.importPath?.fqName == conflict.importableFqName && it.importPath?.importedName == name }
             ) {
                 return ImportDescriptorResult.FAIL
             }
@@ -187,7 +187,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
 
             val importsFromPackage = imports.count {
                 val path = it.importPath
-                path != null && !path.isAllUnder && !path.hasAlias() && path.fqnPart().parent() == containerFqName
+                path != null && !path.isAllUnder && !path.hasAlias() && path.fqName.parent() == containerFqName
             }
             val nameCountToUseStar = if (target.containingDeclaration is ClassDescriptor)
                 codeStyleSettings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS
@@ -217,7 +217,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
                     .mapNotNull {
                         val importPath = it.importPath
                         if (importPath != null) {
-                            val fqName = importPath.fqnPart()
+                            val fqName = importPath.fqName
                             getMemberScope(fqName, moduleDescriptor)
                         }
                         else {
@@ -300,7 +300,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
 
         private fun dropRedundantExplicitImports(packageFqName: FqName) {
             val dropCandidates = file.importDirectives.filter {
-                !it.isAllUnder && it.aliasName == null && it.importPath?.fqnPart()?.parent() == packageFqName
+                !it.isAllUnder && it.aliasName == null && it.importPath?.fqName?.parent() == packageFqName
             }
 
             val importsToCheck = ArrayList<FqName>()

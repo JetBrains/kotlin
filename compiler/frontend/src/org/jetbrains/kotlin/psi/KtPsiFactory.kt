@@ -384,7 +384,7 @@ class KtPsiFactory(private val project: Project) {
     }
 
     fun createImportDirective(importPath: ImportPath): KtImportDirective {
-        if (importPath.fqnPart().isRoot) {
+        if (importPath.fqName.isRoot) {
             throw IllegalArgumentException("import path must not be empty")
         }
 

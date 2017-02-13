@@ -134,8 +134,8 @@ object ReplaceWithAnnotationAnalyzer {
         // this solution doesn't support aliased default imports with a different alias
         // TODO: Create import directives from ImportPath, create ImportResolver, create LazyResolverScope, see FileScopeProviderImpl
 
-        return listOf(buildExplicitImportsScope(aliasImports.map { it.fqnPart() }, resolutionFacade, module)) +
-               allUnderImports.map { module.getPackage(it.fqnPart()).memberScope.memberScopeAsImportingScope() }.asReversed()
+        return listOf(buildExplicitImportsScope(aliasImports.map { it.fqName }, resolutionFacade, module)) +
+               allUnderImports.map { module.getPackage(it.fqName).memberScope.memberScopeAsImportingScope() }.asReversed()
     }
 
     private fun buildExplicitImportsScope(annotation: ReplaceWith, resolutionFacade: ResolutionFacade, module: ModuleDescriptor): ExplicitImportsScope {

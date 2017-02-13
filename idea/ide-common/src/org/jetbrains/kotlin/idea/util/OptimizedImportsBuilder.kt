@@ -91,7 +91,7 @@ class OptimizedImportsBuilder(
                 .mapNotNull { it.importPath }
                 .filter {
                     val aliasName = it.alias
-                    aliasName != null && aliasName != it.fqnPart().shortName()
+                    aliasName != null && aliasName != it.fqName.shortName()
                 }
                 .mapTo(importRules) { ImportRule.Add(it) }
 

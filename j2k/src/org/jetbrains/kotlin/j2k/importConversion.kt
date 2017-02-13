@@ -163,7 +163,7 @@ private fun renderImportName(fqName: FqName, isOnDemand: Boolean)
 // TODO: use the correct LanguageVersionSettings instance here
 private val DEFAULT_IMPORTS_SET: Set<FqName> = JvmPlatform.getDefaultImports(LanguageVersionSettingsImpl.DEFAULT)
         .filter { it.isAllUnder }
-        .map { it.fqnPart() }
+        .map { it.fqName }
         .toSet()
 
 private fun isImportedByDefault(c: KtLightClass) = c.qualifiedName?.let { FqName(it).parent() } in DEFAULT_IMPORTS_SET

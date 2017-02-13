@@ -391,7 +391,7 @@ fun LookupElement.decorateAsStaticMember(
             val psiDocumentManager = PsiDocumentManager.getInstance(context.project)
             val file = context.file as KtFile
 
-            val addMemberImport = file.importDirectives.any { !it.isAllUnder && it.importPath?.fqnPart()?.parent() == containerFqName }
+            val addMemberImport = file.importDirectives.any { !it.isAllUnder && it.importPath?.fqName?.parent() == containerFqName }
 
             if (addMemberImport) {
                 psiDocumentManager.commitAllDocuments()

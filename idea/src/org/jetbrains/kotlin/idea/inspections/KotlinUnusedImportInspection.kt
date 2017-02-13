@@ -66,7 +66,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
                 .asSequence()
                 .mapNotNull { it.importPath }
                 .filter { !it.isAllUnder && !it.hasAlias() }
-                .map { it.fqnPart() }
+                .map { it.fqName }
                 .toSet()
 
         val fqNames = HashSet<FqName>()
@@ -95,10 +95,10 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
                 false
             }
             else if (importPath.isAllUnder) {
-                importPath.fqnPart() in parentFqNames
+                importPath.fqName in parentFqNames
             }
             else {
-                importPath.fqnPart() in fqNames
+                importPath.fqName in fqNames
             }
 
             if (!isUsed) {

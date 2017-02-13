@@ -28,8 +28,8 @@ object JvmPlatform : TargetPlatform("JVM") {
     override fun getDefaultImports(languageVersionSettings: LanguageVersionSettings): List<ImportPath> = ArrayList<ImportPath>().apply {
         addAll(Default.getDefaultImports(languageVersionSettings))
 
-        add(ImportPath("java.lang.*"))
-        add(ImportPath("kotlin.jvm.*"))
+        add(ImportPath.fromString("java.lang.*"))
+        add(ImportPath.fromString("kotlin.jvm.*"))
 
         fun addAllClassifiersFromScope(scope: MemberScope) {
             for (descriptor in scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.ALL_NAME_FILTER)) {

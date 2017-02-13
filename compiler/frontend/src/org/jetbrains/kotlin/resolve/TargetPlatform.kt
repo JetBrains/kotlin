@@ -43,16 +43,18 @@ abstract class TargetPlatform(val platformName: String) {
 
     object Default : TargetPlatform("Default") {
         override fun getDefaultImports(languageVersionSettings: LanguageVersionSettings): List<ImportPath> = ArrayList<ImportPath>().apply {
-            add(ImportPath("kotlin.*"))
-            add(ImportPath("kotlin.annotation.*"))
-            add(ImportPath("kotlin.collections.*"))
-            add(ImportPath("kotlin.ranges.*"))
-            add(ImportPath("kotlin.sequences.*"))
-            add(ImportPath("kotlin.text.*"))
-            add(ImportPath("kotlin.io.*"))
+            listOf(
+                    "kotlin.*",
+                    "kotlin.annotation.*",
+                    "kotlin.collections.*",
+                    "kotlin.ranges.*",
+                    "kotlin.sequences.*",
+                    "kotlin.text.*",
+                    "kotlin.io.*"
+            ).forEach { add(ImportPath.fromString(it)) }
 
             if (languageVersionSettings.supportsFeature(LanguageFeature.DefaultImportOfPackageKotlinComparisons)) {
-                add(ImportPath("kotlin.comparisons.*"))
+                add(ImportPath.fromString("kotlin.comparisons.*"))
             }
         }
 

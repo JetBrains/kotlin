@@ -34,7 +34,7 @@ class ImportableFqNameClassifier(private val file: KtFile) {
     init {
         for (import in file.importDirectives) {
             val importPath = import.importPath ?: continue
-            val fqName = importPath.fqnPart()
+            val fqName = importPath.fqName
             if (importPath.isAllUnder) {
                 allUnderImports.add(fqName)
             }
