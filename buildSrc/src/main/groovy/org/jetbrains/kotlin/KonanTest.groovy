@@ -447,7 +447,17 @@ fun main(args : Array<String>) {
             def writer = new StringWriter()
             e.printStackTrace(new PrintWriter(writer))
             def rawString  = writer.toString()
-            def formatedString = rawString.replaceAll("\r","|r").replaceAll("\n", "|n")
+            /**
+             * Teamcity require escaping some symbols in pipe manner.
+             * https://github.com/GitTools/GitVersion/issues/94
+             */
+            def formatedString = rawString
+                    .replaceAll("\r",  "|r")
+                    .replaceAll("\n",  "|n")
+                    .replaceAll("'",   "|'")
+                    .replaceAll("|",   "||")
+                    .replaceAll("\\[", "|[")
+                    .replaceAll("]",   "|]")
             teamcityReport("testFailed name='$name' message='${e.getMessage()}' details='${formatedString}'")
             teamcityFinish()
             return super.error(e)
