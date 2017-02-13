@@ -34,7 +34,7 @@ fun removeUnusedFunctionDefinitions(root: JsNode, functions: Map<JsName, JsFunct
     val removable = with(UnusedLocalFunctionsCollector(functions)) {
         process()
         accept(root)
-        removableFunctions
+        removableFunctions.toSet()
     }
 
     NodeRemover(JsStatement::class.java) { statement ->
