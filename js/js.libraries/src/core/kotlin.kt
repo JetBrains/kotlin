@@ -16,8 +16,6 @@
 
 package kotlin
 
-import typedArrayConcat
-
 /**
  * Returns an empty array of the specified type [T].
  */
@@ -105,6 +103,3 @@ internal inline fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array
 
 // temporary for shared code, until we have an annotation like JvmSerializable
 internal interface Serializable
-
-@PublishedApi
-internal inline fun <T> typedArrayConcatProxy(a: T, b: Array<T>): T = typedArrayConcat(a, b)

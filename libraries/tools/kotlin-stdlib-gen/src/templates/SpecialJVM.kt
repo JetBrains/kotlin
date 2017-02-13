@@ -269,7 +269,7 @@ object CommonArrays {
         }
         body(Platform.JS, ArraysOfPrimitives) {
             """
-            return typedArrayConcatProxy(this, arrayOf(elements))
+            return typedArrayConcat(this, arrayOf(elements))
             """
         }
 
