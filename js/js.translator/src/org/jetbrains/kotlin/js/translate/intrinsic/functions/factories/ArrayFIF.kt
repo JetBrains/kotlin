@@ -56,7 +56,7 @@ object ArrayFIF : CompositeFIF() {
             INT -> "Int32"
             FLOAT -> "Float32"
             DOUBLE -> "Float64"
-            else -> null
+            else -> null  // Shouldn't we set the $type$ property for primitive arrays?
         }?.let {
             return JsNew(JsNameRef(it + "Array"), listOf(arg))
         }
@@ -83,6 +83,7 @@ object ArrayFIF : CompositeFIF() {
         add(LONG.arrayPattern(), KotlinFunctionIntrinsic("newLongArray"))
         add(DOUBLE.arrayPattern(), typedArrayIntrinsic("Float64"))
 
+        //TODO: produce typedarrays here as well
         add(pattern(arrays, "<init>(Int,Function1)"), KotlinFunctionIntrinsic("newArrayF"))
 
         add(pattern(Namer.KOTLIN_LOWER_NAME, "arrayOfNulls"), KotlinFunctionIntrinsic("newArray", JsLiteral.NULL))
