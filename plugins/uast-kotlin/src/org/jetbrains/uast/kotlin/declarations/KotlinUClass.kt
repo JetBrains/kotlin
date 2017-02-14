@@ -38,6 +38,9 @@ class KotlinUClass private constructor(
         return super.getOriginalElement()
     }
 
+    override val annotations: List<UAnnotation>
+        get() = ktClass?.annotationEntries?.map { KotlinUAnnotation(it, this) } ?: emptyList()
+
     override val uastAnchor: UElement
         get() = UIdentifier(psi.nameIdentifier, this)
     
