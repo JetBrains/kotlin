@@ -1,9 +1,9 @@
 fun box(): String {
-    main(array())
+    foo(array())
     return "OK"
 }
 
-fun main(args: Array<String>) {
+fun foo(args: Array<String>) {
     D.foo(array())
 }
 

@@ -1,7 +1,7 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS, NATIVE
 
-fun main(args: Array<String>?) {
+fun foo(args: Array<String>?) {
     val y: Unit = Unit //do not compile
     A<Unit>()        //do not compile
     C<Unit>(Unit)      //do not compile
@@ -39,6 +39,6 @@ fun box() : String {
     a[2] = 2
     foreach(a, { el : Int -> System.out?.println(el) })
     almostFilter(a, { el : Int -> el })
-    main(null)
+    foo(null)
     return "OK"
 }
