@@ -231,11 +231,16 @@ fun parseCompilerArgumentsToFacet(arguments: List<String>, defaultArguments: Lis
         commonCompilerArguments.coroutinesWarn = false
         commonCompilerArguments.coroutinesError = false
 
+        if (compilerArguments != commonCompilerArguments) {
+            compilerArguments.coroutinesEnable = false
+            compilerArguments.coroutinesWarn = false
+            compilerArguments.coroutinesError = false
+        }
+
         parseArguments(argumentArray, compilerArguments, true)
 
-        if (!compilerArguments.coroutinesEnable && !compilerArguments.coroutinesWarn && !compilerArguments.coroutinesError) {
-            compilerInfo.coroutineSupport = oldCoroutineSupport
-        }
+        val restoreCoroutineSupport =
+                !compilerArguments.coroutinesEnable && !compilerArguments.coroutinesWarn && !compilerArguments.coroutinesError
 
         versionInfo.apiLevel = LanguageVersion.fromVersionString(compilerArguments.apiVersion)
         versionInfo.languageLevel = LanguageVersion.fromVersionString(compilerArguments.languageVersion)
@@ -268,5 +273,9 @@ fun parseCompilerArgumentsToFacet(arguments: List<String>, defaultArguments: Lis
         }
 
         copyInheritedFields(compilerArguments, commonCompilerArguments)
+
+        if (restoreCoroutineSupport) {
+            compilerInfo.coroutineSupport = oldCoroutineSupport
+        }
     }
 }
