@@ -131,13 +131,14 @@ internal fun <T> primitiveArrayConcat(a: T, b: T): T {
         for (i in 0..args.size - 1) {
             size += args[i].asDynamic().length
         }
-        // TODO loosing type information for Boolean-, Char-, LongArray ?
+        // TODO losing type information for Boolean-, Char-, LongArray ?
         val result = js("new a.constructor(size)")
         size = 0
         for (i in 0..args.size - 1) {
             val arr = args[i].asDynamic()
-            result.set(arr, size)
-            size += arr.length
+            for (j in 0..arr.length - 1) {
+                result[size++] = arr[j]
+            }
         }
         return result
     }
