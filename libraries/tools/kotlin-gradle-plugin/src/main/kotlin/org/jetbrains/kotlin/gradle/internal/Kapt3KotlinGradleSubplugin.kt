@@ -174,7 +174,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         val apOptions = kaptExtension.getAdditionalArguments(project, variantData, androidPlugin) + androidOptions
 
-        SubpluginOption("apoptions", encodeAnnotationProcessingOptions(apOptions))
+        pluginOptions += SubpluginOption("apoptions", encodeAnnotationProcessingOptions(apOptions))
 
         addMiscOptions(pluginOptions)
 
