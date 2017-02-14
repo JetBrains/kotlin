@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.*
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.constants.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -449,7 +451,8 @@ private class ConstantExpressionEvaluatorVisitor(
     private fun evaluateCall(callExpression: KtExpression, receiverExpression: KtExpression, expectedType: KotlinType?): CompileTimeConstant<*>? {
         val resolvedCall = callExpression.getResolvedCall(trace.bindingContext) ?: return null
 
-        if (!KotlinBuiltIns.isBuiltIn(resolvedCall.resultingDescriptor)) return null
+        val descriptorFqName = resolvedCall.resultingDescriptor.fqNameOrNull() ?: return null
+        if (!descriptorFqName.isSubpackageOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)) return null
 
         val resultingDescriptorName = resolvedCall.resultingDescriptor.name
 
