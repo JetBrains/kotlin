@@ -438,8 +438,7 @@ object CommonArrays {
                     doc { "Returns a [List] that wraps the original array." }
                     returns("List<T>")
 
-                    body(Platform.JVM) {
-                        """
+                    val objectLiteralImpl = """
                         return object : AbstractList<T>(), RandomAccess {
                             override val size: Int get() = this@asList.size
                             override fun isEmpty(): Boolean = this@asList.isEmpty()
@@ -449,11 +448,12 @@ object CommonArrays {
                             override fun lastIndexOf(element: T): Int = this@asList.lastIndexOf(element)
                         }
                         """
-                    }
+
+                    body(Platform.JVM) { objectLiteralImpl }
 
                     inline(Platform.JS, Inline.Yes, ArraysOfPrimitives)
                     if (primitive == PrimitiveType.Char) {
-                        body(Platform.JS) { "return this.toTypedArray().asList()" }
+                        body(Platform.JS) { objectLiteralImpl }
                     }
                     else {
                         body(Platform.JS) { "return this.unsafeCast<Array<T>>().asList()" }
