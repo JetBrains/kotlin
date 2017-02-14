@@ -279,7 +279,7 @@ class CallArgumentTranslator private constructor(
                 if (isVarargTypePrimitive) {
                     val method = if (isMixed) "arrayConcat" else "primitiveArrayConcat"
                     return JsAstUtils.invokeKotlinFunction(method, concatArguments[0],
-                                                           JsArrayLiteral(concatArguments.subList(1, concatArguments.size)))
+                                                           *concatArguments.subList(1, concatArguments.size).toTypedArray())
                 }
                 else {
                     return JsInvocation(JsNameRef("concat", concatArguments[0]), concatArguments.subList(1, concatArguments.size))
