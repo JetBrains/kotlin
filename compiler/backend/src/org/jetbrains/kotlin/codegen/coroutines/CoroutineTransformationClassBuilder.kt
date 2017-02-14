@@ -421,7 +421,7 @@ private fun InstructionAdapter.generateResumeWithExceptionCheck() {
 
 private fun Type.fieldNameForVar(index: Int) = descriptor.first() + "$" + index
 
-private fun withInstructionAdapter(block: InstructionAdapter.() -> Unit): InsnList {
+inline fun withInstructionAdapter(block: InstructionAdapter.() -> Unit): InsnList {
     val tmpMethodNode = MethodNode()
 
     InstructionAdapter(tmpMethodNode).apply(block)

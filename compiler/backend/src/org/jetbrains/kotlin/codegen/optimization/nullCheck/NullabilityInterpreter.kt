@@ -25,7 +25,7 @@ import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.TypeInsnNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 
-class NullabilityV2Interpreter : OptimizationBasicInterpreter() {
+class NullabilityInterpreter : OptimizationBasicInterpreter() {
     override fun newOperation(insn: AbstractInsnNode): BasicValue? {
         val defaultResult = super.newOperation(insn)
         val resultType = defaultResult?.type

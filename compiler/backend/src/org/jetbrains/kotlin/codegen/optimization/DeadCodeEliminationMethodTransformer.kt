@@ -29,9 +29,13 @@ class DeadCodeEliminationMethodTransformer : MethodTransformer() {
     }
 
     fun transformWithResult(internalClassName: String, methodNode: MethodNode): Result {
+        val frames = analyze(internalClassName, methodNode, OptimizationBasicInterpreter())
+        return removeDeadCodeByFrames(methodNode, frames)
+    }
+
+    fun removeDeadCodeByFrames(methodNode: MethodNode, frames: Array<out Any?>): Result {
         val removedNodes = HashSet<AbstractInsnNode>()
 
-        val frames = analyze(internalClassName, methodNode, OptimizationBasicInterpreter())
         val insnList = methodNode.instructions
         val insnsArray = insnList.toArray()
 
@@ -51,6 +55,7 @@ class DeadCodeEliminationMethodTransformer : MethodTransformer() {
     }
 
     class Result(val removedNodes: Set<AbstractInsnNode>) {
+        fun hasRemovedAnything() = removedNodes.isNotEmpty()
         fun isRemoved(node: AbstractInsnNode) = removedNodes.contains(node)
         fun isAlive(node: AbstractInsnNode) = !isRemoved(node)
     }

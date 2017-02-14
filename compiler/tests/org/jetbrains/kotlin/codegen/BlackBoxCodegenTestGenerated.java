@@ -11021,6 +11021,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/nullCheckOptimization"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("isNullable.kt")
+        public void testIsNullable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/nullCheckOptimization/isNullable.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt7774.kt")
         public void testKt7774() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/nullCheckOptimization/kt7774.kt");

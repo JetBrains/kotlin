@@ -1634,6 +1634,18 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/nullCheckOptimization"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("alreadyCheckedForIs.kt")
+        public void testAlreadyCheckedForIs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/alreadyCheckedForIs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("alreadyCheckedForNull.kt")
+        public void testAlreadyCheckedForNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/alreadyCheckedForNull.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ifNullEqualsNull.kt")
         public void testIfNullEqualsNull() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/ifNullEqualsNull.kt");
@@ -1655,6 +1667,36 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("ifUnitEqualsNullInline.kt")
         public void testIfUnitEqualsNullInline() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/ifUnitEqualsNullInline.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt12839.kt")
+        public void testKt12839() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/kt12839.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notNullAsNotNullable.kt")
+        public void testNotNullAsNotNullable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/notNullAsNotNullable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("redundantSafeCall.kt")
+        public void testRedundantSafeCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/redundantSafeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("reifiedIs.kt")
+        public void testReifiedIs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/reifiedIs.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("reifiedNullIs.kt")
+        public void testReifiedNullIs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/nullCheckOptimization/reifiedNullIs.kt");
             doTest(fileName);
         }
     }

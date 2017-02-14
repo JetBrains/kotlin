@@ -1,0 +1,5 @@
+@kotlin.Metadata
+public final class IsNullableKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private final static method isNullable(): boolean
+}

@@ -16,12 +16,10 @@
 
 package org.jetbrains.kotlin.codegen.optimization.nullCheck
 
-import org.jetbrains.kotlin.codegen.optimization.boxing.isUnitInstance
+import org.jetbrains.kotlin.codegen.optimization.boxing.ProgressionIteratorBasicValue
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 
 class NotNullBasicValue(type: Type?) : StrictBasicValue(type) {
@@ -37,3 +35,16 @@ class NotNullBasicValue(type: Type?) : StrictBasicValue(type) {
 
 object NullBasicValue : StrictBasicValue(AsmTypes.OBJECT_TYPE)
 
+enum class Nullability {
+    NULL, NOT_NULL, NULLABLE;
+    fun isNull() = this == NULL
+    fun isNotNull() = this == NOT_NULL
+}
+
+fun BasicValue.getNullability(): Nullability =
+        when (this) {
+            is NullBasicValue -> Nullability.NULL
+            is NotNullBasicValue -> Nullability.NOT_NULL
+            is ProgressionIteratorBasicValue -> Nullability.NOT_NULL
+            else -> Nullability.NULLABLE
+        }

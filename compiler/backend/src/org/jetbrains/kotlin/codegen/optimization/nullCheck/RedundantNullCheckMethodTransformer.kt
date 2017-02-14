@@ -37,18 +37,6 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
         }
     }
 
-    private enum class Nullability {
-        NULL, NOT_NULL, NULLABLE
-    }
-
-    private fun BasicValue.getNullability(): Nullability =
-            when (this) {
-                is NullBasicValue -> Nullability.NULL
-                is NotNullBasicValue -> Nullability.NOT_NULL
-                is ProgressionIteratorBasicValue -> Nullability.NOT_NULL
-                else -> Nullability.NULLABLE
-            }
-
     private fun isAlwaysFalse(opcode: Int, nullability: Nullability) =
             (opcode == Opcodes.IFNULL && nullability == Nullability.NOT_NULL) ||
             (opcode == Opcodes.IFNONNULL && nullability == Nullability.NULL)
@@ -70,7 +58,7 @@ class RedundantNullCheckMethodTransformer : MethodTransformer() {
         }
         if (nullCheckIfs.isEmpty()) return false
 
-        val frames = analyze(internalClassName, methodNode, NullabilityV2Interpreter())
+        val frames = analyze(internalClassName, methodNode, NullabilityInterpreter())
 
         val redundantNullCheckIfs = nullCheckIfs.mapNotNull { insn ->
             frames[instructions.indexOf(insn)]?.top()?.let { top ->

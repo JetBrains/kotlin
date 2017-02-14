@@ -26,7 +26,7 @@ fun <V : Value> Frame<V>.top(): V? =
         peek(0)
 
 fun <V : Value> Frame<V>.peek(offset: Int): V? =
-        if (stackSize >= offset) getStack(stackSize - offset - 1) else null
+        if (stackSize > offset) getStack(stackSize - offset - 1) else null
 
 class SavedStackDescriptor(
         val savedValues: List<BasicValue>,
