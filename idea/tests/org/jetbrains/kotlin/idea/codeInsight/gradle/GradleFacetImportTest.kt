@@ -234,6 +234,38 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }*/
 
     @Test
+    fun testDetectOldJsStdlib() {
+        createProjectSubFile("build.gradle", """
+            group 'Again'
+            version '1.0-SNAPSHOT'
+
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    maven {
+                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                    }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.6")
+                }
+            }
+
+            apply plugin: 'kotlin2js'
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-js-library:1.0.6"
+            }
+        """)
+        importProject()
+
+        with (facetSettings) {
+            Assert.assertEquals(TargetPlatformKind.JavaScript, versionInfo.targetPlatformKind)
+        }
+    }
+
+    @Test
     fun testCommonImport() {
         createProjectSubFile("build.gradle", """
             group 'Again'
