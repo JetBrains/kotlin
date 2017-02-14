@@ -46,6 +46,14 @@ class KotlinFacetConfiguration : FacetConfiguration {
         else {
             settings = KotlinFacetSettings()
         }
+
+        // Migration problem workaround for pre-1.1-beta releases (mainly 1.0.6) -> 1.1-rc+
+        // Problematic cases: 1.1-beta/1.1-beta2 -> 1.1-rc+ (useProjectSettings gets reset to false)
+        // This heuristic detects old enough configurations:
+        if (element.children.none { it.getAttribute("name").value == "useProjectSettings" }
+            && settings.compilerInfo.k2jvmCompilerArguments == null) {
+            settings.useProjectSettings = false
+        }
     }
 
     @Suppress("OverridingDeprecatedMember")
