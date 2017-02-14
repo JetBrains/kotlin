@@ -55,7 +55,7 @@ Kotlin.toString = function (o) {
     if (o == null) {
         return "null";
     }
-    else if (Kotlin.isArray(o)) {
+    else if (Kotlin.isArrayish(o)) {
         return "[...]";
     }
     else {

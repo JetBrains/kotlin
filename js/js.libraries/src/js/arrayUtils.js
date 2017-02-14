@@ -27,12 +27,11 @@ Kotlin.isLongArray = function (a) {
 };
 
 Kotlin.isArray = function (a) {
-    return Array.isArray(a)
-           || a instanceof Int8Array
-           || a instanceof Int16Array
-           || a instanceof Int32Array
-           || a instanceof Float32Array
-           || a instanceof Float64Array;
+    return Array.isArray(a) && !a.$type$;
+};
+
+Kotlin.isArrayish = function (a) {
+    return Array.isArray(a) || ArrayBuffer.isView(a)
 };
 
 Kotlin.arrayToString = function (a) {
@@ -46,7 +45,7 @@ Kotlin.arrayDeepToString = function (a, visited) {
         toString = String.fromCharCode;
     }
     return "[" + a.map(function (e) {
-            if (Kotlin.isArray(e) && visited.indexOf(e) < 0) {
+            if (Kotlin.isArrayish(e) && visited.indexOf(e) < 0) {
                 visited.push(e);
                 var result = Kotlin.arrayDeepToString(e, visited);
                 visited.pop();
@@ -62,7 +61,7 @@ Kotlin.arrayEquals = function (a, b) {
     if (a === b) {
         return true;
     }
-    if (!Kotlin.isArray(b) || a.length !== b.length) {
+    if (!Kotlin.isArrayish(b) || a.length !== b.length) {
         return false;
     }
 
@@ -78,12 +77,12 @@ Kotlin.arrayDeepEquals = function (a, b) {
     if (a === b) {
         return true;
     }
-    if (!Kotlin.isArray(b) || a.length !== b.length) {
+    if (!Kotlin.isArrayish(b) || a.length !== b.length) {
         return false;
     }
 
     for (var i = 0, n = a.length; i < n; i++) {
-        if (Kotlin.isArray(a[i])) {
+        if (Kotlin.isArrayish(a[i])) {
             if (!Kotlin.arrayDeepEquals(a[i], b[i])) {
                 return false;
             }
@@ -107,7 +106,7 @@ Kotlin.arrayDeepHashCode = function (arr) {
     var result = 1;
     for (var i = 0, n = arr.length; i < n; i++) {
         var e = arr[i];
-        result = ((31 * result | 0) + (Kotlin.isArray(e) ? Kotlin.arrayDeepHashCode(e) : Kotlin.hashCode(e))) | 0;
+        result = ((31 * result | 0) + (Kotlin.isArrayish(e) ? Kotlin.arrayDeepHashCode(e) : Kotlin.hashCode(e))) | 0;
     }
     return result;
 };

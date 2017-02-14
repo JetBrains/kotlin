@@ -101,7 +101,16 @@ public class BoxedChar(val c: Char) : Comparable<Char> {
 @PublishedApi
 @JsName("arrayConcat")
 internal fun <T> arrayConcat(a: T, b: T): T {
-    return a.asDynamic().concat.apply(js("[]"), js("arguments"));
+    val args: Array<T> = js("arguments")
+    val untyped = args.map { arr ->
+        if (arr !is Array<*>) {
+            arr.toTypedArray()
+        }
+        else {
+            arr
+        }
+    }
+    return a.asDynamic().concat.apply(js("[]"), untyped);
 }
 
 /* For future binary compatibility with TypedArrays
@@ -113,5 +122,26 @@ internal fun <T> arrayConcat(a: T, b: T): T {
 @PublishedApi
 @JsName("primitiveArrayConcat")
 internal fun <T> primitiveArrayConcat(a: T, b: T): T {
+    val args: Array<T> = js("arguments")
+    if (a is Array<*>) {
+        return arrayConcat.asDynamic().apply(null, args)
+    }
+    else {
+        var size = 0
+        for (i in 0..args.size - 1) {
+            size += args[i].asDynamic().length
+        }
+        // TODO loosing type information for Boolean-, Char-, LongArray ?
+        val result = js("new a.constructor(size)")
+        size = 0
+        for (i in 0..args.size - 1) {
+            val arr = args[i].asDynamic()
+            result.set(arr, size)
+            size += arr.length
+        }
+        return result
+    }
+    val args: Array<T> = js("arguments")
+
     return a.asDynamic().concat.apply(js("[]"), js("arguments"));
 }
