@@ -96,7 +96,7 @@ class CallArgumentTranslator private constructor(
                     hasSpreadOperator = arguments.any { it.getSpreadElement() != null }
                 }
 
-                isVarargTypePrimitive = KotlinBuiltIns.isPrimitiveType(parameterDescriptor.varargElementType!!)
+                isVarargTypePrimitive = KotlinBuiltIns.isPrimitiveType(parameterDescriptor.original.varargElementType!!)
 
                 if (hasSpreadOperator) {
                     if (isNativeFunctionCall) {
@@ -130,7 +130,7 @@ class CallArgumentTranslator private constructor(
             assert(concatArguments != null) { "concatArguments should not be null" }
 
             if (!result.isEmpty()) {
-                concatArguments!!.add(JsArrayLiteral(result))
+                concatArguments!!.add(JsArrayLiteral(result).apply { sideEffects = SideEffectKind.DEPENDS_ON_STATE })
             }
 
             if (!argsBeforeVararg!!.isEmpty()) {
