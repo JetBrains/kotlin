@@ -30,7 +30,10 @@ import org.jetbrains.kotlin.js.translate.expression.PatternTranslator
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.ArrayFIF
-import org.jetbrains.kotlin.js.translate.utils.*
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
+import org.jetbrains.kotlin.js.translate.utils.getReferenceToJsClass
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
@@ -95,7 +98,7 @@ class CallArgumentTranslator private constructor(
                     hasSpreadOperator = arguments.any { it.getSpreadElement() != null }
                 }
 
-                varargPrimitiveType = KotlinBuiltIns.getPrimitiveArrayType(parameterDescriptor.varargElementType!!)
+                varargPrimitiveType = KotlinBuiltIns.getPrimitiveType(parameterDescriptor.varargElementType!!)
 
                 if (hasSpreadOperator) {
                     if (isNativeFunctionCall) {

@@ -32,13 +32,16 @@ if (typeof String.prototype.endsWith === "undefined") {
     };
 }
 (function() {
-    var normalizeOffset = function(offset) {
-        if (offset < 0) return Math.max(0, offset + this.length);
-        return Math.min(offset, this.length);
+    var normalizeOffset = function(offset, length) {
+        if (offset < 0) return Math.max(0, offset + length);
+        return Math.min(offset, length);
     };
     var typedArraySlice = function(begin, end) {
-        begin = normalizeOffset(begin);
-        end = Math.max(begin, normalizeOffset(end || this.length));
+        if (typeof end === "undefined") {
+            end = this.length;
+        }
+        begin = normalizeOffset(begin || 0, this.length);
+        end = Math.max(begin, normalizeOffset(end, this.length));
         return new this.constructor(this.subarray(begin, end));
     };
 
@@ -52,3 +55,16 @@ if (typeof String.prototype.endsWith === "undefined") {
         }
     }
 })();
+
+// var check = function(a, b, l, r) {
+//     if (a.length != b.length) console.log("botva " + l + " " + r);
+//     for (var i = 0; i < a.length; ++i) {
+//         if (a[i] !== b[i]) console.log("botva " + l + " " + r);
+//     }
+// };
+// for (var i = -10; i < 10; ++i) {
+//     check(a.slice(i), b.slice(i), i);
+//     for (var j = -10; j < 10; ++j) {
+//         check(a.slice(i, j), b.slice(i, j), i, j);
+//     }
+// }
