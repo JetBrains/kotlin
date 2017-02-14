@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.kdoc
 
+import com.intellij.openapi.components.ServiceManager
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.getFileResolutionScope
@@ -35,7 +37,6 @@ import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
-import org.jetbrains.kotlin.utils.ifEmpty
 
 fun resolveKDocLink(context: BindingContext,
                     resolutionFacade: ResolutionFacade,
@@ -187,7 +188,9 @@ private fun getOuterScope(descriptor: DeclarationDescriptorWithSource, resolutio
     if (parent is PackageFragmentDescriptor) {
         val containingFile = (descriptor.source as? PsiSourceElement)?.psi?.containingFile as? KtFile
         if (containingFile != null) {
-            return resolutionFacade.getFileResolutionScope(containingFile)
+            val kotlinCacheService = ServiceManager.getService(containingFile.project, KotlinCacheService::class.java)
+            val facadeToUse = kotlinCacheService?.getResolutionFacade(listOf(containingFile)) ?: resolutionFacade
+            return facadeToUse.getFileResolutionScope(containingFile)
         }
     }
     return getKDocLinkResolutionScope(resolutionFacade, parent!!)
