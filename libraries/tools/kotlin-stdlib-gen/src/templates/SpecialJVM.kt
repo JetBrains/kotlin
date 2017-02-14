@@ -211,33 +211,43 @@ object CommonArrays {
                 }
             }
 
-    fun f_plusCollection() = f("plus(elements: Collection<T>)") {
-        operator(true)
+    fun f_plusCollection() =
+            (listOf(InvariantArraysOfObjects to null) + PrimitiveType.defaultPrimitives.map { ArraysOfPrimitives to it }).map {
+                val (family, primitive) = it
+                f("plus(elements: Collection<T>)") {
+                    operator(true)
 
-        // TODO: inline arrayPlusCollection when @PublishedAPI is available
-//        inline(Platform.JS, Inline.Yes)
-//        annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
+                    only(family)
+                    if (family == InvariantArraysOfObjects) {
+                        only(Platform.JS, ArraysOfObjects)
+                    }
 
-        only(InvariantArraysOfObjects, ArraysOfPrimitives)
-        only(Platform.JS, ArraysOfObjects, ArraysOfPrimitives)
+                // TODO: inline arrayPlusCollection when @PublishedAPI is available
+//                    inline(Platform.JS, Inline.Yes)
+//                    annotations(Platform.JS, """@Suppress("NOTHING_TO_INLINE")""")
 
-        returns("SELF")
-        returns(Platform.JS, ArraysOfObjects) { "Array<T>" }
-        doc { "Returns an array containing all elements of the original array and then all elements of the given [elements] collection." }
-        body(Platform.JVM) {
-            """
-            var index = size
-            val result = java.util.Arrays.copyOf(this, index + elements.size)
-            for (element in elements) result[index++] = element
-            return result
-            """
-        }
-        body(Platform.JS) {
-            """
-            return arrayPlusCollection(this, elements)
-            """
-        }
-    }
+                    returns("SELF")
+                    returns(Platform.JS, ArraysOfObjects) { "Array<T>" }
+                    doc { "Returns an array containing all elements of the original array and then all elements of the given [elements] collection." }
+                    body(Platform.JVM) {
+                        """
+                        var index = size
+                        val result = java.util.Arrays.copyOf(this, index + elements.size)
+                        for (element in elements) result[index++] = element
+                        return result
+                        """
+                    }
+                    if (primitive != null) {
+                        only(primitive)
+                    }
+                    when (primitive) {
+                        null, PrimitiveType.Char, PrimitiveType.Boolean, PrimitiveType.Long ->
+                            body(Platform.JS) { "return arrayPlusCollection(this, elements)" }
+                        else ->
+                            body(Platform.JS) { "return typedArrayPlusCollection(this, this.copyOf(size + elements.size), elements)" }
+                    }
+                }
+            }
 
     fun f_plusArray() = f("plus(elements: SELF)") {
         operator(true)
@@ -327,26 +337,28 @@ object CommonArrays {
 
                 inline(Platform.JVM, Inline.Only)
                 doc { "Returns new array which is a copy of the original array, resized to the given [newSize]." }
-                val defaultValue: String
+
                 if (primitive != null) {
                     only(primitive)
                     returns("SELF")
-                    defaultValue = when (primitive) {
-                        PrimitiveType.Boolean -> false.toString()
-                        PrimitiveType.Char -> "0"
-                        else -> "ZERO"
+                    when (primitive) {
+                        PrimitiveType.Boolean ->
+                            body(Platform.JS) { "return arrayCopyResize(this, newSize, false)" }
+                        PrimitiveType.Char ->
+                            body(Platform.JS) { "return arrayCopyResize(this, newSize, 0)" }
+                        PrimitiveType.Long ->
+                            body(Platform.JS) { "return arrayCopyResize(this, newSize, ZERO)" }
+                        else ->
+                            body(Platform.JS) { "return arrayCopy(this, ${primitive}Array(newSize))" }
                     }
-                } else {
-                    returns { "Array<T?>" }
-                    defaultValue = "null"
                 }
+                else {
+                    returns { "Array<T?>" }
+                    body(Platform.JS) { "return arrayCopyResize(this, newSize, null)" }
+                }
+
                 body(Platform.JVM) {
                     "return java.util.Arrays.copyOf(this, newSize)"
-                }
-                body(Platform.JS) {
-                    """
-                    return arrayCopyResize(this, newSize, $defaultValue)
-                    """
                 }
             }
         }
@@ -481,12 +493,13 @@ object CommonArrays {
                         return result as Array<T>
                         """
                     }
-
-                    if (primitive == PrimitiveType.Char) {
-                        body(Platform.JS) { "return Array<Char>(size, { i -> this[i] })" }
-                    }
-                    else {
-                        body(Platform.JS) { "return copyOf().unsafeCast<Array<T>>()" }
+                    when (primitive) {
+                        PrimitiveType.Char ->
+                            body(Platform.JS) { "return Array<Char>(size, { i -> this[i] })" }
+                        PrimitiveType.Boolean, PrimitiveType.Long ->
+                            body(Platform.JS) { "return copyOf().unsafeCast<Array<T>>()" }
+                        else ->
+                            body(Platform.JS) { "return js(\"Array.prototype.slice.call\")(this)" }
                     }
                 }
             }
@@ -496,7 +509,10 @@ object CommonArrays {
     fun templates() =
             listOf(f_plusElement()) +
             f_plusElementOperator() +
-            listOf(f_plusCollection(), f_plusArray(), f_copyOf(), f_copyOfRange()) +
+            f_plusCollection() +
+            listOf(f_plusArray()) +
+            f_copyOf() +
+            listOf(f_copyOfRange()) +
             f_copyOfResized() +
             f_sortPrimitives() +
             listOf(f_sort(), f_sortWith(), f_asList()) +
