@@ -491,17 +491,6 @@ public inline fun <T> Array<out T>.lastOrNull(predicate: (T) -> Boolean): T? {
     return null
 }
 
-/**
- * Returns the range of valid indices for the array.
- */
-public val <T> Array<out T>.indices: IntRange
-    get() = IntRange(0, lastIndex)
-
-/**
- * Returns the last valid index for the array.
- */
-public val <T> Array<out T>.lastIndex: Int
-    get() = size - 1
 
 /**
  * Applies the given [transform] function to each element of the original array
@@ -588,6 +577,61 @@ public fun Array<out Double>.sum(): Double {
 }
 
 // From _Arrays.kt.
+
+/**
+ * Returns the range of valid indices for the array.
+ */
+public val <T> Array<out T>.indices: IntRange
+    get() = IntRange(0, lastIndex)
+
+/**
+ * Returns the range of valid indices for the array.
+ */
+public val ByteArray.indices: IntRange
+    get() = IntRange(0, lastIndex)
+
+/**
+ * Returns the range of valid indices for the array.
+ */
+public val ShortArray.indices: IntRange
+    get() = IntRange(0, lastIndex)
+
+/**
+ * Returns the range of valid indices for the array.
+ */
+public val IntArray.indices: IntRange
+    get() = IntRange(0, lastIndex)
+
+/**
+ * Returns the range of valid indices for the array.
+ */
+public val LongArray.indices: IntRange
+    get() = IntRange(0, lastIndex)
+
+/**
+ * Returns the range of valid indices for the array.
+ */
+public val FloatArray.indices: IntRange
+    get() = IntRange(0, lastIndex)
+
+/**
+ * Returns the range of valid indices for the array.
+ */
+public val DoubleArray.indices: IntRange
+    get() = IntRange(0, lastIndex)
+
+/**
+ * Returns the range of valid indices for the array.
+ */
+public val BooleanArray.indices: IntRange
+    get() = IntRange(0, lastIndex)
+
+/**
+ * Returns the range of valid indices for the array.
+ */
+public val CharArray.indices: IntRange
+    get() = IntRange(0, lastIndex)
+
 
 /**
  * Returns `true` if the array is empty.
@@ -731,6 +775,61 @@ public inline fun BooleanArray.isNotEmpty(): Boolean {
 public inline fun CharArray.isNotEmpty(): Boolean {
     return !isEmpty()
 }
+
+/**
+ * Returns the last valid index for the array.
+ */
+public val <T> Array<out T>.lastIndex: Int
+    get() = size - 1
+
+
+/**
+ * Returns the last valid index for the array.
+ */
+public val ByteArray.lastIndex: Int
+    get() = size - 1
+
+/**
+ * Returns the last valid index for the array.
+ */
+public val ShortArray.lastIndex: Int
+    get() = size - 1
+
+/**
+ * Returns the last valid index for the array.
+ */
+public val IntArray.lastIndex: Int
+    get() = size - 1
+
+/**
+ * Returns the last valid index for the array.
+ */
+public val LongArray.lastIndex: Int
+    get() = size - 1
+
+/**
+ * Returns the last valid index for the array.
+ */
+public val FloatArray.lastIndex: Int
+    get() = size - 1
+
+/**
+ * Returns the last valid index for the array.
+ */
+public val DoubleArray.lastIndex: Int
+    get() = size - 1
+
+/**
+ * Returns the last valid index for the array.
+ */
+public val BooleanArray.lastIndex: Int
+    get() = size - 1
+
+/**
+ * Returns the last valid index for the array.
+ */
+public val CharArray.lastIndex: Int
+    get() = size - 1
 
 /**
  * Appends all elements to the given [destination] collection.

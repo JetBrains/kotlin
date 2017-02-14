@@ -16,6 +16,10 @@ For an optimized compilation use -opt:
 
 	./dist/bin/konanc hello.kt -o hello -opt
 
-For more tests, use:
+For some tests, use:
 
 	./gradlew backend.native:tests:run
+
+To run blackbox compiler tests from JVM Kotlin use (takes time):
+
+    ./gradlew run_external
