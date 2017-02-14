@@ -49,6 +49,20 @@ object ArrayFIF : CompositeFIF() {
     @JvmField
     val LENGTH_PROPERTY_INTRINSIC = BuiltInPropertyIntrinsic("length")
 
+    public fun castToTypedArray(type: PrimitiveType?, arg: JsArrayLiteral): JsExpression {
+        when (type) {
+            BYTE -> "Int8"
+            SHORT -> "Int16"
+            INT -> "Int32"
+            FLOAT -> "Float32"
+            DOUBLE -> "Float64"
+            else -> null
+        }?.let {
+            return JsNew(JsNameRef(it + "Array"), listOf(arg))
+        }
+        ?: return arg
+    }
+
     init {
         val arrayTypeNames = mutableListOf(KotlinBuiltIns.FQ_NAMES.array.shortName())
         PrimitiveType.values().mapTo(arrayTypeNames) { it.arrayTypeName }

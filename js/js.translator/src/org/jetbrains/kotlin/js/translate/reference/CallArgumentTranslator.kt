@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.translate.reference
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -28,10 +29,8 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.expression.PatternTranslator
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
-import org.jetbrains.kotlin.js.translate.utils.getReferenceToJsClass
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.ArrayFIF
+import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
@@ -83,7 +82,7 @@ class CallArgumentTranslator private constructor(
         var argsBeforeVararg: List<JsExpression>? = null
         var concatArguments: MutableList<JsExpression>? = null
         val argsToJsExpr = translateUnresolvedArguments(context(), resolvedCall)
-        var isVarargTypePrimitive: Boolean? = null
+        var varargPrimitiveType: PrimitiveType? = null
 
         for (parameterDescriptor in valueParameters) {
             val actualArgument = valueArgumentsByIndex[parameterDescriptor.index]
@@ -96,19 +95,21 @@ class CallArgumentTranslator private constructor(
                     hasSpreadOperator = arguments.any { it.getSpreadElement() != null }
                 }
 
-                isVarargTypePrimitive = KotlinBuiltIns.isPrimitiveType(parameterDescriptor.varargElementType!!)
+                varargPrimitiveType = KotlinBuiltIns.getPrimitiveArrayType(parameterDescriptor.varargElementType!!)
 
                 if (hasSpreadOperator) {
                     if (isNativeFunctionCall) {
                         argsBeforeVararg = result
                         result = mutableListOf<JsExpression>()
-                        concatArguments = prepareConcatArguments(arguments, translateResolvedArgument(actualArgument, argsToJsExpr))
+                        concatArguments = prepareConcatArguments(arguments,
+                                                                 translateResolvedArgument(actualArgument, argsToJsExpr),
+                                                                 varargPrimitiveType)
                     }
                     else {
                         result.addAll(translateVarargArgument(actualArgument,
                                                               argsToJsExpr,
                                                               actualArgument.arguments.size > 1,
-                                                              isVarargTypePrimitive))
+                                                              varargPrimitiveType))
                     }
                 }
                 else {
@@ -116,7 +117,7 @@ class CallArgumentTranslator private constructor(
                         result.addAll(translateResolvedArgument(actualArgument, argsToJsExpr))
                     }
                     else {
-                        result.addAll(translateVarargArgument(actualArgument, argsToJsExpr, true, isVarargTypePrimitive))
+                        result.addAll(translateVarargArgument(actualArgument, argsToJsExpr, true, varargPrimitiveType))
                     }
                 }
             }
@@ -130,14 +131,14 @@ class CallArgumentTranslator private constructor(
             assert(concatArguments != null) { "concatArguments should not be null" }
 
             if (!result.isEmpty()) {
-                concatArguments!!.add(JsArrayLiteral(result))
+                concatArguments!!.add(toArray(varargPrimitiveType, result))
             }
 
             if (!argsBeforeVararg!!.isEmpty()) {
-                concatArguments!!.add(0, JsArrayLiteral(argsBeforeVararg).apply { sideEffects = SideEffectKind.DEPENDS_ON_STATE })
+                concatArguments!!.add(0, toArray(varargPrimitiveType, argsBeforeVararg))
             }
 
-            result = mutableListOf(concatArgumentsIfNeeded(concatArguments!!, isVarargTypePrimitive!!, true))
+            result = mutableListOf(concatArgumentsIfNeeded(concatArguments!!, varargPrimitiveType, true))
 
             if (receiver != null) {
                 cachedReceiver = context().getOrDeclareTemporaryConstVariable(receiver)
@@ -244,12 +245,12 @@ class CallArgumentTranslator private constructor(
                 resolvedArgument: ResolvedValueArgument,
                 translatedArgs: Map<ValueArgument, JsExpression>,
                 shouldWrapVarargInArray: Boolean,
-                isVarargTypePrimitive: Boolean
+                varargPrimitiveType: PrimitiveType?
         ): List<JsExpression> {
             val arguments = resolvedArgument.arguments
             if (arguments.isEmpty()) {
                 return if (shouldWrapVarargInArray) {
-                    return listOf(JsArrayLiteral(listOf<JsExpression>()).apply { sideEffects = SideEffectKind.DEPENDS_ON_STATE })
+                    return listOf(toArray(varargPrimitiveType, listOf<JsExpression>()))
                 }
                 else {
                     listOf()
@@ -259,24 +260,24 @@ class CallArgumentTranslator private constructor(
             val list = translateResolvedArgument(resolvedArgument, translatedArgs)
 
             return if (shouldWrapVarargInArray) {
-                val concatArguments = prepareConcatArguments(arguments, list)
-                val concatExpression = concatArgumentsIfNeeded(concatArguments, isVarargTypePrimitive, false)
+                val concatArguments = prepareConcatArguments(arguments, list, varargPrimitiveType)
+                val concatExpression = concatArgumentsIfNeeded(concatArguments, varargPrimitiveType, false)
                 listOf(concatExpression)
             }
             else {
-                listOf(JsAstUtils.invokeMethod(Namer.kotlinObject(), "copyTypedArray", list[0]))
+                listOf(JsAstUtils.invokeMethod(list[0], "slice"))
             }
         }
 
         private fun concatArgumentsIfNeeded(
                 concatArguments: List<JsExpression>,
-                isVarargTypePrimitive: Boolean,
+                varargPrimitiveType: PrimitiveType?,
                 isMixed: Boolean
         ): JsExpression {
             assert(concatArguments.isNotEmpty()) { "concatArguments.size should not be 0" }
 
             if (concatArguments.size > 1) {
-                if (isVarargTypePrimitive) {
+                if (varargPrimitiveType != null) {
                     val method = if (isMixed) "arrayConcat" else "primitiveArrayConcat"
                     return JsAstUtils.invokeKotlinFunction(method, concatArguments[0],
                                                            *concatArguments.subList(1, concatArguments.size).toTypedArray())
@@ -290,7 +291,17 @@ class CallArgumentTranslator private constructor(
             }
         }
 
-        private fun prepareConcatArguments(arguments: List<ValueArgument>, list: List<JsExpression>): MutableList<JsExpression> {
+        private fun toArray(varargPrimitiveType: PrimitiveType?, elements: List<JsExpression>): JsExpression {
+            return ArrayFIF.castToTypedArray(
+                    varargPrimitiveType,
+                    JsArrayLiteral(elements).apply { sideEffects = SideEffectKind.DEPENDS_ON_STATE })
+        }
+
+        private fun prepareConcatArguments(
+                arguments: List<ValueArgument>,
+                list: List<JsExpression>,
+                varargPrimitiveType: PrimitiveType?
+        ): MutableList<JsExpression> {
             assert(arguments.isNotEmpty()) { "arguments.size should not be 0" }
             assert(arguments.size == list.size) { "arguments.size: " + arguments.size + " != list.size: " + list.size }
 
@@ -304,7 +315,7 @@ class CallArgumentTranslator private constructor(
 
                 if (valueArgument.getSpreadElement() != null) {
                     if (lastArrayContent.size > 0) {
-                        concatArguments.add(JsArrayLiteral(lastArrayContent).apply { sideEffects = SideEffectKind.DEPENDS_ON_STATE })
+                        concatArguments.add(toArray(varargPrimitiveType, lastArrayContent))
                         lastArrayContent = mutableListOf<JsExpression>()
                     }
                     concatArguments.add(expressionArgument)
@@ -314,7 +325,7 @@ class CallArgumentTranslator private constructor(
                 }
             }
             if (lastArrayContent.size > 0) {
-                concatArguments.add(JsArrayLiteral(lastArrayContent).apply { sideEffects = SideEffectKind.DEPENDS_ON_STATE })
+                concatArguments.add(toArray(varargPrimitiveType, lastArrayContent))
             }
 
             return concatArguments
