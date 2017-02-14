@@ -55,16 +55,3 @@ if (typeof String.prototype.endsWith === "undefined") {
         }
     }
 })();
-
-// var check = function(a, b, l, r) {
-//     if (a.length != b.length) console.log("botva " + l + " " + r);
-//     for (var i = 0; i < a.length; ++i) {
-//         if (a[i] !== b[i]) console.log("botva " + l + " " + r);
-//     }
-// };
-// for (var i = -10; i < 10; ++i) {
-//     check(a.slice(i), b.slice(i), i);
-//     for (var j = -10; j < 10; ++j) {
-//         check(a.slice(i, j), b.slice(i, j), i, j);
-//     }
-// }

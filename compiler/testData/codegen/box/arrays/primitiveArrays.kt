@@ -9,7 +9,7 @@ fun check(expected: ByteArray, actual: ByteArray) {
 fun box(): String {
 
     val bA = ByteArray(1)
-    check(bA)
+//    check(bA)
 
     if (bA !is ByteArray) return "fail 1"
     bA[0] = 1.toByte()

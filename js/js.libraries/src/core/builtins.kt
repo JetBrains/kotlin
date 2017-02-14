@@ -104,7 +104,7 @@ internal inline fun <T> concat(args: Array<T>): T {
             arr
         }
     }.toTypedArray()
-    return args[0].asDynamic().concat.apply(js("[]"), untyped);
+    return js("[]").concat.apply(js("[]"), untyped);
 }
 
 /* For future binary compatibility with TypedArrays

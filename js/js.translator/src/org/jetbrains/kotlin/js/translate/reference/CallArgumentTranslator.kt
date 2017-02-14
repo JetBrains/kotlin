@@ -98,7 +98,7 @@ class CallArgumentTranslator private constructor(
                     hasSpreadOperator = arguments.any { it.getSpreadElement() != null }
                 }
 
-                varargPrimitiveType = KotlinBuiltIns.getPrimitiveType(parameterDescriptor.varargElementType!!)
+                varargPrimitiveType = KotlinBuiltIns.getPrimitiveType(parameterDescriptor.original.varargElementType!!)
 
                 if (hasSpreadOperator) {
                     if (isNativeFunctionCall) {
@@ -106,7 +106,7 @@ class CallArgumentTranslator private constructor(
                         result = mutableListOf<JsExpression>()
                         concatArguments = prepareConcatArguments(arguments,
                                                                  translateResolvedArgument(actualArgument, argsToJsExpr),
-                                                                 varargPrimitiveType)
+                                                                 null)
                     }
                     else {
                         result.addAll(translateVarargArgument(actualArgument,
@@ -134,11 +134,11 @@ class CallArgumentTranslator private constructor(
             assert(concatArguments != null) { "concatArguments should not be null" }
 
             if (!result.isEmpty()) {
-                concatArguments!!.add(toArray(varargPrimitiveType, result))
+                concatArguments!!.add(toArray(null, result))
             }
 
             if (!argsBeforeVararg!!.isEmpty()) {
-                concatArguments!!.add(0, toArray(varargPrimitiveType, argsBeforeVararg))
+                concatArguments!!.add(0, toArray(null, argsBeforeVararg))
             }
 
             result = mutableListOf(concatArgumentsIfNeeded(concatArguments!!, varargPrimitiveType, true))
