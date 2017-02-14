@@ -12945,7 +12945,7 @@ public inline fun BooleanArray.asList(): List<Boolean> {
 /**
  * Returns a [List] that wraps the original array.
  */
-public inline fun CharArray.asList(): List<Char> {
+public fun CharArray.asList(): List<Char> {
     return object : AbstractList<Char>(), RandomAccess {
         override val size: Int get() = this@asList.size
         override fun isEmpty(): Boolean = this@asList.isEmpty()

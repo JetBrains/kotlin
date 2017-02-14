@@ -451,11 +451,11 @@ object CommonArrays {
 
                     body(Platform.JVM) { objectLiteralImpl }
 
-                    inline(Platform.JS, Inline.Yes, ArraysOfPrimitives)
                     if (primitive == PrimitiveType.Char) {
                         body(Platform.JS) { objectLiteralImpl }
                     }
                     else {
+                        inline(Platform.JS, Inline.Yes, ArraysOfPrimitives)
                         body(Platform.JS) { "return this.unsafeCast<Array<T>>().asList()" }
                     }
                 }
