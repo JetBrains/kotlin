@@ -35,18 +35,20 @@ if (typeof String.prototype.endsWith === "undefined") {
     var normalizeOffset = function(offset) {
         if (offset < 0) return Math.max(0, offset + this.length);
         return Math.min(offset, this.length);
-    }
+    };
     var typedArraySlice = function(begin, end) {
         begin = normalizeOffset(begin);
         end = Math.max(begin, normalizeOffset(end || this.length));
         return new this.constructor(this.subarray(begin, end));
     };
 
-    [Int8Array, Int16Array, Int32Array, Float32Array, Float64Array].foreach(function(TypedArray) {
+    var arrays = [Int8Array, Int16Array, Int32Array, Float32Array, Float64Array];
+    for (var i = 0; i < arrays.length; ++i) {
+        var TypedArray = arrays[i];
         if (typeof TypedArray.prototype.slice === "undefined") {
-          Object.defineProperty(TypedArray.prototype, 'slice', {
-            value: typedArraySlice
-          });
+            Object.defineProperty(TypedArray.prototype, 'slice', {
+                value: typedArraySlice
+            });
         }
-    });
+    }
 })();
