@@ -6,6 +6,7 @@
 #include "Exceptions.h"
 #include "Memory.h"
 #include "Natives.h"
+#include "String.h"
 #include "Types.h"
 
 class KotlinException {
@@ -53,8 +54,8 @@ OBJ_GETTER0(GetCurrentStackTrace) {
   ObjHeader* result = AllocArrayInstance(theArrayTypeInfo, size, OBJ_RESULT);
   ArrayHeader* array = result->array();
   for (int index = 0; index < size; ++index) {
-    AllocStringInstance(symbols[index], strlen(symbols[index]),
-                        ArrayAddressOfElementAt(array, index));
+    CreateStringFromCString(
+      symbols[index], ArrayAddressOfElementAt(array, index));
   }
   return result;
 }

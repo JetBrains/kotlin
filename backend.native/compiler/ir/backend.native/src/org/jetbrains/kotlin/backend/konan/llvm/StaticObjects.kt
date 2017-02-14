@@ -28,7 +28,7 @@ internal fun StaticData.createKotlinStringLiteral(value: IrConst<String>) = crea
 
 internal fun StaticData.createKotlinStringLiteral(value: String): ConstPointer {
     val name = "kstr:" + value.globalHashBase64
-    val elements = value.toByteArray(Charsets.UTF_8).map(::Int8)
+    val elements = value.toCharArray().map(::Char16)
 
     val objRef = createKotlinArray(KonanPlatform.builtIns.stringType, elements)
 

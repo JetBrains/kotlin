@@ -534,15 +534,6 @@ OBJ_GETTER(AllocArrayInstance, const TypeInfo* type_info, uint32_t elements) {
   RETURN_OBJ(ArrayContainer(type_info, elements).GetPlace()->obj());
 }
 
-OBJ_GETTER(AllocStringInstance, const char* data, uint32_t length) {
-  ArrayHeader* array = ArrayContainer(theStringTypeInfo, length).GetPlace();
-  memcpy(
-      ByteArrayAddressOfElementAt(array, 0),
-      data,
-      length);
-  RETURN_OBJ(array->obj());
-}
-
 OBJ_GETTER(InitInstance,
     ObjHeader** location, const TypeInfo* type_info, void (*ctor)(ObjHeader*)) {
   ObjHeader* sentinel = reinterpret_cast<ObjHeader*>(1);

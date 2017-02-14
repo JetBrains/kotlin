@@ -1,10 +1,6 @@
 package kotlin
 
 
-// TODO: enable, once global variables implemented.
-// @SymbolName("theEmptyString")
-// val theEmptyString = ""
-
 @ExportTypeInfo("theStringTypeInfo")
 public final class String : Comparable<String>, CharSequence {
     @SymbolName("Kotlin_String_hashCode")
@@ -21,7 +17,6 @@ public final class String : Comparable<String>, CharSequence {
     public override val length: Int
         get() = getStringLength()
 
-    // Can be O(N).
     @SymbolName("Kotlin_String_get")
     external override public fun get(index: Int): Char
 

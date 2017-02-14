@@ -76,6 +76,10 @@ internal class Int8(val value: Byte) : ConstValue {
     override val llvm = LLVMConstInt(LLVMInt8Type(), value.toLong(), 1)!!
 }
 
+internal class Char16(val value: Char) : ConstValue {
+    override val llvm = LLVMConstInt(LLVMInt16Type(), value.toLong(), 1)!!
+}
+
 internal class Int32(val value: Int) : ConstValue {
     override val llvm = LLVMConstInt(LLVMInt32Type(), value.toLong(), 1)!!
 }

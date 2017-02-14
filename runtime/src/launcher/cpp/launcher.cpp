@@ -2,6 +2,7 @@
 
 #include "Memory.h"
 #include "Natives.h"
+#include "String.h"
 #include "Types.h"
 
 //--- Setup args --------------------------------------------------------------//
@@ -11,8 +12,8 @@ OBJ_GETTER(setupArgs, int argc, char** argv) {
   ObjHeader* result = AllocArrayInstance(theArrayTypeInfo, argc - 1, OBJ_RESULT);
   ArrayHeader* array = result->array();
   for (int index = 1; index < argc; index++) {
-    AllocStringInstance(argv[index], strlen(argv[index]),
-                        ArrayAddressOfElementAt(array, index - 1));
+    CreateStringFromCString(
+      argv[index], ArrayAddressOfElementAt(array, index - 1));
   }
   return result;
 }

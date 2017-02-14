@@ -321,9 +321,8 @@ void DeinitMemory();
 //
 OBJ_GETTER(AllocInstance, const TypeInfo* type_info) RUNTIME_NOTHROW;
 OBJ_GETTER(AllocArrayInstance, const TypeInfo* type_info, uint32_t elements) RUNTIME_NOTHROW;
-OBJ_GETTER(AllocStringInstance, const char* data, uint32_t length) RUNTIME_NOTHROW;
-OBJ_GETTER(InitInstance,
-             ObjHeader** location, const TypeInfo* type_info, void (*ctor)(ObjHeader*));
+OBJ_GETTER(InitInstance, ObjHeader** location, const TypeInfo* type_info,
+           void (*ctor)(ObjHeader*));
 
 //
 // Object reference management.

@@ -70,7 +70,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             "kotlin.FloatArray"   to -4,
             "kotlin.DoubleArray"  to -8,
             "kotlin.BooleanArray" to -1,
-            "kotlin.String"       to -1
+            "kotlin.String"       to -2
     )
 
     private fun getInstanceSize(classType: LLVMTypeRef?, className: FqName) : Int {

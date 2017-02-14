@@ -25,6 +25,15 @@ inline const KByte* ByteArrayAddressOfElementAt(
   return reinterpret_cast<const KByte*>(obj + 1) + index;
 }
 
+inline KChar* CharArrayAddressOfElementAt(ArrayHeader* obj, KInt index) {
+  return reinterpret_cast<KChar*>(obj + 1) + index;
+}
+
+inline const KChar* CharArrayAddressOfElementAt(
+    const ArrayHeader* obj, KInt index) {
+  return reinterpret_cast<const KChar*>(obj + 1) + index;
+}
+
 // Consider aligning of base to sizeof(T).
 template <typename T>
 inline T* PrimitiveArrayAddressOfElementAt(ArrayHeader* obj, KInt index) {
