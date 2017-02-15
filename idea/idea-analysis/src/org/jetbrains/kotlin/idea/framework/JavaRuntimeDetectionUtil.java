@@ -21,7 +21,6 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.utils.LibraryUtils;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.util.List;
@@ -39,6 +38,11 @@ public class JavaRuntimeDetectionUtil {
 
     @Nullable
     public static VirtualFile getRuntimeJar(@NotNull List<VirtualFile> classesRoots) {
-        return LibraryUtils.getJarFile(classesRoots, PathUtil.KOTLIN_JAVA_RUNTIME_JAR);
+        for (VirtualFile root : classesRoots) {
+            if (PathUtil.KOTLIN_RUNTIME_JAR_PATTERN.matcher(root.getName()).matches()) {
+                return root;
+            }
+        }
+        return null;
     }
 }

@@ -23,6 +23,7 @@ import org.jetbrains.jps.model.java.impl.JavaSdkUtil;
 
 import java.io.File;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class PathUtil {
 
@@ -40,6 +41,8 @@ public class PathUtil {
     public static final String KOTLIN_TEST_JS_JAR = "kotlin-test-js.jar";
     public static final String KOTLIN_JAVA_RUNTIME_SRC_JAR = "kotlin-runtime-sources.jar";
     public static final String KOTLIN_COMPILER_JAR = "kotlin-compiler.jar";
+
+    public static final Pattern KOTLIN_RUNTIME_JAR_PATTERN = Pattern.compile("kotlin-(stdlib|runtime)(-\\d[\\d.]+(-.+)?)?\\.jar");
 
     public static final String HOME_FOLDER_NAME = "kotlinc";
     private static final File NO_PATH = new File("<no_path>");

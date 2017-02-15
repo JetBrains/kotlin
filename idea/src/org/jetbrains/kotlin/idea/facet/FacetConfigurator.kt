@@ -38,6 +38,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
+import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
 
 // Based on com.intellij.framework.detection.impl.FrameworkDetectionManager
@@ -137,9 +138,11 @@ class FacetConfigurator(
 
         if (FrameworkDetectionUtil.removeDisabled(newDescriptions, oldDescriptions).isEmpty()) return
 
-        val framework = getValidDetectedFramework() ?: return
-        FrameworkDetectionUtil.setupFrameworks(listOf(framework), PlatformModifiableModelsProvider(), DefaultModulesProvider(myProject))
-        myDetectedFrameworksData!!.putExistentFrameworkFiles(id, framework.relatedFiles)
+        val validFrameworks = getValidDetectedFrameworks().ifEmpty { return }
+        FrameworkDetectionUtil.setupFrameworks(frameworks, PlatformModifiableModelsProvider(), DefaultModulesProvider(myProject))
+        for (framework in validFrameworks) {
+            myDetectedFrameworksData!!.putExistentFrameworkFiles(id, framework.relatedFiles)
+        }
     }
 
     private fun runDetector(detectorId: Int?,
@@ -167,12 +170,12 @@ class FacetConfigurator(
         return frameworks
     }
 
-    private fun getValidDetectedFramework(): DetectedFrameworkDescription? {
-        val id = myDetectedFrameworksData!!.detectorsForDetectedFrameworks.singleOrNull() ?: return null
+    private fun getValidDetectedFrameworks(): List<DetectedFrameworkDescription> {
+        val id = myDetectedFrameworksData!!.detectorsForDetectedFrameworks.singleOrNull() ?: return emptyList()
         val index = FileBasedIndex.getInstance()
         val excludesConfiguration = DetectionExcludesConfiguration.getInstance(myProject)
         val frameworks = runDetector(id, index, excludesConfiguration, false)
-        return FrameworkDetectionUtil.removeDisabled(frameworks).singleOrNull()
+        return FrameworkDetectionUtil.removeDisabled(frameworks)
     }
 
     private fun ensureIndexIsUpToDate(detectors: Collection<Int>) {

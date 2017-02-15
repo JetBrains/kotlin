@@ -43,7 +43,7 @@ private val multiPlatformProjectsArg: String by lazy {
     "-" + CommonCompilerArguments::multiPlatform.annotations.filterIsInstance<Argument>().single().value
 }
 
-private fun Module.getAndCacheLanguageLevelByDependencies(): LanguageVersion {
+fun Module.getAndCacheLanguageLevelByDependencies(): LanguageVersion {
     val languageLevel = getLibraryLanguageLevel(
             this,
             null,
