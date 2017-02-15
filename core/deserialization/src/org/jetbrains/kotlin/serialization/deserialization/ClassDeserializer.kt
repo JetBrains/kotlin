@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.ClassDataWithSource
@@ -36,6 +37,8 @@ class ClassDeserializer(private val components: DeserializationComponents) {
         for (factory in components.fictitiousClassDescriptorFactories) {
             factory.createClass(classId)?.let { return it }
         }
+        if (classId in BLACK_LIST) return null
+
         val (classData, sourceElement) = key.classDataWithSource
                                          ?: components.classDataFinder.findClassData(classId)
                                          ?: return null
@@ -75,5 +78,17 @@ class ClassDeserializer(private val components: DeserializationComponents) {
         override fun equals(other: Any?) = other is ClassKey && classId == other.classId
 
         override fun hashCode() = classId.hashCode()
+    }
+
+    companion object {
+        /**
+         * FQ names of classes that should be ignored during deserialization.
+         *
+         * We ignore kotlin.Cloneable because since Kotlin 1.1, the descriptor for it is created via JvmBuiltInClassDescriptorFactory,
+         * but the metadata is still serialized for kotlin-reflect 1.0 to work (see BuiltInsSerializer.kt).
+         */
+        val BLACK_LIST = setOf(
+                ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.cloneable.toSafe())
+        )
     }
 }

@@ -38,9 +38,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.serialization.deserialization.AdditionalClassPartsProvider
-import org.jetbrains.kotlin.serialization.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.serialization.deserialization.PlatformDependentDeclarationFilter
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
@@ -66,7 +64,10 @@ open class JvmBuiltInsSettings(
 
     private val mockSerializableType = storageManager.createMockJavaIoSerializableType()
     private val cloneableType by storageManager.createLazyValue {
-        moduleDescriptor.builtIns.getBuiltInClassByName(JvmBuiltInClassDescriptorFactory.CLONEABLE_CLASS_ID.shortClassName).defaultType
+        ownerModuleDescriptor.findNonGenericClassAcrossDependencies(
+                JvmBuiltInClassDescriptorFactory.CLONEABLE_CLASS_ID,
+                NotFoundClasses(storageManager, ownerModuleDescriptor)
+        ).defaultType
     }
 
     private val javaAnalogueClassesWithCustomSupertypeCache = storageManager.createCacheWithNotNullValues<FqName, ClassDescriptor>()

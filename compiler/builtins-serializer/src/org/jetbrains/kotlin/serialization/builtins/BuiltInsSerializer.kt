@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.serialization.builtins
 
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.builtins.JvmBuiltInClassDescriptorFactory
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -26,12 +28,16 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.MetadataSerializer
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.io.File
 
 class BuiltInsSerializer(dependOnOldBuiltIns: Boolean) : MetadataSerializer(dependOnOldBuiltIns) {
@@ -88,11 +94,21 @@ class BuiltInsSerializer(dependOnOldBuiltIns: Boolean) : MetadataSerializer(depe
             fqName ->
             val packageView = module.getPackage(fqName)
             PackageSerializer(
-                    packageView.memberScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS),
+                    packageView.memberScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS) + createCloneable(module),
                     packageView.fragments.flatMap { fragment -> DescriptorUtils.getAllDescriptors(fragment.getMemberScope()) },
                     packageView.fqName,
                     File(destDir, BuiltInSerializerProtocol.getBuiltInsFilePath(packageView.fqName))
             ).run()
         }
+    }
+
+    // Serialize metadata for kotlin.Cloneable manually for compatibility with kotlin-reflect 1.0 which expects this metadata to be there.
+    // Since Kotlin 1.1, we always discard this class during deserialization (see ClassDeserializer.kt).
+    private fun createCloneable(module: ModuleDescriptor): ClassDescriptor {
+        val factory = JvmBuiltInClassDescriptorFactory(LockBasedStorageManager.NO_LOCKS, module) {
+            EmptyPackageFragmentDescriptor(module, KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
+        }
+        return factory.createClass(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.cloneable.toSafe()))
+               ?: error("Could not create kotlin.Cloneable in $module")
     }
 }
