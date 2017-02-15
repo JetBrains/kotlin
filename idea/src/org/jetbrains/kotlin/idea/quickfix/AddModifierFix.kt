@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 open class AddModifierFix(
         element: KtModifierListOwner,
-        private val modifier: KtModifierKeywordToken
+        protected val modifier: KtModifierKeywordToken
 ) : KotlinQuickFixAction<KtModifierListOwner>(element) {
 
     override fun getText(): String {

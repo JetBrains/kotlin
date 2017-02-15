@@ -445,6 +445,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addNoinline/basic.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("suspend.kt")
+        public void testSuspend() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/addNoinline/suspend.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/addReifiedToTypeParameterOfFunctionFix")
