@@ -385,7 +385,8 @@ object KeywordCompletion {
     }
 
     private fun isSupportedAtLanguageLevel(keyword: KtKeywordToken, position: PsiElement): Boolean {
-        val languageVersionSettings = ModuleUtilCore.findModuleForPsiElement(position)?.languageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT
+        val languageVersionSettings = ModuleUtilCore.findModuleForPsiElement(position)?.languageVersionSettings
+                                      ?: LanguageVersionSettingsImpl.DEFAULT
         val feature = when (keyword) {
             KtTokens.TYPE_ALIAS_KEYWORD -> LanguageFeature.TypeAliases
             KtTokens.HEADER_KEYWORD, KtTokens.IMPL_KEYWORD -> LanguageFeature.MultiPlatformProjects
