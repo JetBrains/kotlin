@@ -52,7 +52,9 @@ class FrameworkLibraryValidatorWithDynamicDescription(
         // TODO: propose to configure kotlin-stdlib-common once it's available
         if (targetPlatform == TargetPlatformKind.Common) return true
 
-        if (KotlinVersionInfoProvider.EP_NAME.extensions.any { it.getLibraryVersions(context.module, targetPlatform).isNotEmpty() }) return true
+        if (KotlinVersionInfoProvider.EP_NAME.extensions.any {
+            it.getLibraryVersions(context.module, targetPlatform, context.rootModel).isNotEmpty()
+        }) return true
 
         val libraryDescription = targetPlatform.libraryDescription
         val libraryKinds = libraryDescription.suitableLibraryKinds

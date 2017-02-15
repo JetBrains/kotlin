@@ -20,15 +20,15 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.LanguageSettingsProvider
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.targetPlatform
 import org.jetbrains.kotlin.utils.DescriptionAware
 
 class LanguageVersionSettingsProviderImpl : LanguageSettingsProvider {
     override fun getLanguageVersionSettings(moduleInfo: ModuleInfo, project: Project): LanguageVersionSettings {
-        return (moduleInfo as? ModuleSourceInfo)?.module?.languageVersionSettings ?: project.languageVersionSettings
+        return (moduleInfo as? ModuleSourceInfo)?.module?.languageVersionSettings ?: project.getLanguageVersionSettings()
     }
 
     override fun getTargetPlatform(moduleInfo: ModuleInfo): DescriptionAware {

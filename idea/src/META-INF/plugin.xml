@@ -2091,6 +2091,7 @@
     <classBuilderFactoryInterceptorExtension implementation="org.jetbrains.kotlin.noarg.NoArgClassBuilderInterceptorExtension"/>
     <storageComponentContainerContributor implementation="org.jetbrains.kotlin.noarg.ide.IdeNoArgComponentContainerContributor"/>
     <defaultErrorMessages implementation="org.jetbrains.kotlin.noarg.diagnostic.DefaultErrorMessagesNoArg"/>
+    <versionInfoProvider implementation="org.jetbrains.kotlin.idea.facet.KotlinVersionInfoProviderByModuleDependencies"/>
   </extensions>
 
 </idea-plugin>

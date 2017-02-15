@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,8 @@ import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsPr
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkVersion
-import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
-import com.intellij.openapi.roots.OrderRootType
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
@@ -32,35 +30,8 @@ import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumen
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
-import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
-import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
 import org.jetbrains.kotlin.idea.versions.*
 import java.lang.reflect.Field
-
-private fun getRuntimeLibraryVersions(
-        module: Module,
-        rootModel: ModuleRootModel?,
-        targetPlatform: TargetPlatformKind<*>
-): Collection<String> {
-    val presentationProvider = when (targetPlatform) {
-        is TargetPlatformKind.JavaScript -> JSLibraryStdPresentationProvider.getInstance()
-        is TargetPlatformKind.Jvm -> JavaRuntimePresentationProvider.getInstance()
-        is TargetPlatformKind.Common -> return emptyList()
-    }
-
-    KotlinVersionInfoProvider.EP_NAME
-            .extensions
-            .map { it.getLibraryVersions(module, targetPlatform) }
-            .firstOrNull { it.isNotEmpty() }
-            ?.let { return it }
-
-    return (rootModel ?: ModuleRootManager.getInstance(module))
-            .orderEntries
-            .asSequence()
-            .filterIsInstance<LibraryOrderEntry>()
-            .mapNotNull { it.library?.let { presentationProvider.detect(it.getFiles(OrderRootType.CLASSES).toList())?.versionString } }
-            .toList()
-}
 
 private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?): TargetPlatformKind<*> {
     if (getRuntimeLibraryVersions(module, rootModel, TargetPlatformKind.JavaScript).isNotEmpty()) {
@@ -76,31 +47,6 @@ private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?
         sdkVersion == null || sdkVersion >= JavaSdkVersion.JDK_1_8 -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_8]
         else -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
     }
-}
-
-private fun getDefaultLanguageLevel(
-        module: Module,
-        explicitVersion: String? = null
-): LanguageVersion {
-    val libVersion = explicitVersion
-                     ?: KotlinVersionInfoProvider.EP_NAME.extensions
-                             .mapNotNull { it.getCompilerVersion(module) }
-                             .minWith(VersionComparatorUtil.COMPARATOR)
-                     ?: bundledRuntimeVersion()
-    return when {
-        libVersion.startsWith("1.0") -> LanguageVersion.KOTLIN_1_0
-        else -> LanguageVersion.KOTLIN_1_1
-    }
-}
-
-internal fun getLibraryLanguageLevel(
-        module: Module,
-        rootModel: ModuleRootModel?,
-        targetPlatform: TargetPlatformKind<*>?
-): LanguageVersion {
-    val minVersion = getRuntimeLibraryVersions(module, rootModel, targetPlatform ?: TargetPlatformKind.Jvm[JvmTarget.JVM_1_8])
-            .minWith(VersionComparatorUtil.COMPARATOR)
-    return getDefaultLanguageLevel(module, minVersion)
 }
 
 fun KotlinFacetSettings.initializeIfNeeded(module: Module, rootModel: ModuleRootModel?) {

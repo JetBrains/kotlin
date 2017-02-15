@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.TargetPlatform
@@ -74,7 +74,7 @@ class BuiltInsCache private constructor(
             val builtInsCache = BuiltInsCache(project, platform, sdk, sdkModuleDescriptor, sdkContext)
 
             if (sdkBuiltIns is JvmBuiltIns) {
-                val isAdditionalBuiltInsFeatureSupported = project.languageVersionSettings.supportsFeature(LanguageFeature.AdditionalBuiltInsMembers)
+                val isAdditionalBuiltInsFeatureSupported = project.getLanguageVersionSettings().supportsFeature(LanguageFeature.AdditionalBuiltInsMembers)
                 sdkBuiltIns.initialize(
                         sdkModuleDescriptor!!, // sdk is not null for JvmBuiltIns because of calculateBuiltIns
                         isAdditionalBuiltInsFeatureSupported)

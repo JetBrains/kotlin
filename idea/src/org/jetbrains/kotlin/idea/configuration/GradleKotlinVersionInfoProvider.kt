@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.roots.ModuleRootModel
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.facet.KotlinVersionInfoProvider
 import org.jetbrains.kotlin.idea.facet.mavenLibraryIds
@@ -44,7 +45,7 @@ class GradleKotlinVersionInfoProvider : KotlinVersionInfoProvider {
         return runReadAction { getGradleFile(module)?.let { DifferentKotlinGradleVersionInspection.getKotlinPluginVersion(it) } }
     }
 
-    override fun getLibraryVersions(module: Module, targetPlatform: TargetPlatformKind<*>): Collection<String> {
+    override fun getLibraryVersions(module: Module, targetPlatform: TargetPlatformKind<*>, rootModel: ModuleRootModel?): Collection<String> {
         return runReadAction {
             getGradleFile(module)?.let {
                 DifferentStdlibGradleVersionInspection.getKotlinStdlibVersions(it, targetPlatform.mavenLibraryIds)
