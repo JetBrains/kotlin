@@ -2,6 +2,7 @@ package org.jetbrains.uast.test.kotlin
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.uast.UastLanguagePlugin
 import org.jetbrains.uast.evaluation.UEvaluatorExtension
@@ -135,6 +137,7 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
 
         override fun dispose() {
             Disposer.dispose(parentDisposable)
+            KtUsefulTestCase.resetApplicationToNull()
         }
     }
 }

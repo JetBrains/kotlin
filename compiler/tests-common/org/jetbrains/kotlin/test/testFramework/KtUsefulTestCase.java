@@ -136,7 +136,7 @@ public abstract class KtUsefulTestCase extends TestCase {
         application = null;
     }
 
-    protected void resetApplicationToNull() {
+    public static void resetApplicationToNull() {
         try {
             Field ourApplicationField = ApplicationManager.class.getDeclaredField("ourApplication");
             ourApplicationField.setAccessible(true);
