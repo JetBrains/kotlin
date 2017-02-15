@@ -5,6 +5,9 @@
 
 ## 1.1-RC
 
+### Reflection
+- [`KT-16358`](https://youtrack.jetbrains.com/issue/KT-16358) Incompatibility between kotlin-reflect 1.0 and kotlin-stdlib 1.1 fixed
+
 ### Compiler
 
 #### Coroutine support
@@ -16,13 +19,14 @@
 - [`KT-16219`](https://youtrack.jetbrains.com/issue/KT-16219) Marked as UNSUPPORTED: suspend get/set, in/!in operators for
 - [`KT-16145`](https://youtrack.jetbrains.com/issue/KT-16145) Beta-2 coroutine regression fixed (wrong code generation)
 
-#### Kapt
-- [`KT-15524`](https://youtrack.jetbrains.com/issue/KT-15524) kapt3: Fix javac error reporting in Kotlin daemon
-- [`KT-15721`](https://youtrack.jetbrains.com/issue/KT-15721) kapt3: JetBrains nullability annotations are now returned from Element.getAnnotationMirrors()
-- [`KT-16146`](https://youtrack.jetbrains.com/issue/KT-16146) kapt3: fixed work in verbose mode
-- [`KT-16153`](https://youtrack.jetbrains.com/issue/KT-16153) Kapt3: ignore declarations with illegal Java identifiers
-- [`KT-16167`](https://youtrack.jetbrains.com/issue/KT-16167) kapt3: fixed compilation error with kapt arguments in build.gradle
-- [`KT-16176`](https://youtrack.jetbrains.com/issue/KT-16176) kapt3: javac's finalCompiler log is now used to determine annotation processing errors
+#### Kapt3
+- [`KT-15524`](https://youtrack.jetbrains.com/issue/KT-15524) Fix javac error reporting in Kotlin daemon
+- [`KT-15721`](https://youtrack.jetbrains.com/issue/KT-15721) JetBrains nullability annotations are now returned from Element.getAnnotationMirrors()
+- [`KT-16146`](https://youtrack.jetbrains.com/issue/KT-16146) Fixed work in verbose mode
+- [`KT-16153`](https://youtrack.jetbrains.com/issue/KT-16153) Ignore declarations with illegal Java identifiers
+- [`KT-16167`](https://youtrack.jetbrains.com/issue/KT-16167) Fixed compilation error with kapt arguments in build.gradle
+- [`KT-16170`](https://youtrack.jetbrains.com/issue/KT-16170) Stub generator now adds imports for corrected error types to stubs
+- [`KT-16176`](https://youtrack.jetbrains.com/issue/KT-16176) javac's finalCompiler log is now used to determine annotation processing errors
 
 #### Backward compatibility
 - [`KT-16017`](https://youtrack.jetbrains.com/issue/KT-16017) More graceful error message for disabled features
@@ -32,6 +36,7 @@
 
 #### Various issues
 - [`KT-16225`](https://youtrack.jetbrains.com/issue/KT-16225) enumValues non-reified stub implementation references nonexistent method no more
+- [`KT-16291`](https://youtrack.jetbrains.com/issue/KT-16291) Smart cast works now when getting class of instance
 
 ### JavaScript backend
 - [`KT-16144`](https://youtrack.jetbrains.com/issue/KT-16144) Fixed inlining of functions called through inheritor ("fake" override) from another module
@@ -97,6 +102,7 @@
 - [`KT-16174`](https://youtrack.jetbrains.com/issue/KT-16174) Error fixed during IDEA-Gradle synchronization for Kotlin JS
 - [`KT-16267`](https://youtrack.jetbrains.com/issue/KT-16267) JS: fixed regression in 1.1-beta2 for multi-module gradle project
 - [`KT-16274`](https://youtrack.jetbrains.com/issue/KT-16274) Kotlin JS Gradle unexpected compiler error / absolute path to output file
+- [`KT-16322`](https://youtrack.jetbrains.com/issue/KT-16322) Circlet project Gradle import issue fixed
 
 ### REPL
 - [`KT-15861`](https://youtrack.jetbrains.com/issue/KT-15861) Use windows line separator in kotlin's JSR implementation
