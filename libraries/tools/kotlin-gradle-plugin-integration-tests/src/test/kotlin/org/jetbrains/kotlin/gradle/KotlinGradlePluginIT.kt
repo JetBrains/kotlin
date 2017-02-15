@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.gradle.tasks.USING_EXPERIMENTAL_INCREMENTAL_MESSAGE
+import org.jetbrains.kotlin.gradle.tasks.USING_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.getFilesByNames
 import org.jetbrains.kotlin.gradle.util.modify
@@ -261,7 +261,7 @@ class KotlinGradleIT: BaseGradleIT() {
         localPropertyFile.writeText("kotlin.incremental=true")
 
         project.build("build") {
-            assertContains(USING_EXPERIMENTAL_INCREMENTAL_MESSAGE)
+            assertContains(USING_INCREMENTAL_COMPILATION_MESSAGE)
         }
     }
 
