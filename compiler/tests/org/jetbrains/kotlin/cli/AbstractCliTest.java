@@ -74,12 +74,13 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
             @NotNull BinaryVersion version
     ) {
         String testDataAbsoluteDir = new File(testDataDir).getAbsolutePath();
-        String normalizedOutputWithoutExitCode = pureOutput
+        String normalizedOutputWithoutExitCode = StringUtil.convertLineSeparators(pureOutput)
                 .replace(testDataAbsoluteDir, "$TESTDATA_DIR$")
                 .replace(FileUtil.toSystemIndependentName(testDataAbsoluteDir), "$TESTDATA_DIR$")
                 .replace(PathUtil.getKotlinPathsForDistDirectory().getHomePath().getAbsolutePath(), "$PROJECT_DIR$")
                 .replace("expected version is " + version, "expected version is $ABI_VERSION$")
                 .replace("\\", "/")
+                .replaceAll("^.+running the Kotlin compiler under Java 6 or 7 is unsupported and will no longer be possible in a future update\\.\n", "")
                 .replace(KotlinCompilerVersion.VERSION, "$VERSION$");
 
         return normalizedOutputWithoutExitCode + exitCode;
