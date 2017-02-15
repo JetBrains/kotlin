@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.codeInsight.CodeInsightUtilCore
 import com.intellij.ide.actions.OpenFileAction
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.Project
@@ -400,6 +401,15 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
                     return buildGradleFile.path
                 }
             }
+
+            val externalProjectPath = ExternalSystemApiUtil.getExternalProjectPath(module)
+            if (externalProjectPath != null) {
+                buildGradleFile = File(externalProjectPath + "/" + GradleConstants.DEFAULT_SCRIPT_NAME)
+                if (buildGradleFile.exists()) {
+                    return buildGradleFile.path
+                }
+            }
+
             return null
         }
 
