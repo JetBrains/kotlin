@@ -38,11 +38,13 @@ import org.jetbrains.kotlin.renderer.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
 
 interface OverrideMemberChooserObject : ClassMember {
-    enum class BodyType {
-        NO_BODY,
-        EMPTY,
-        SUPER,
-        QUALIFIED_SUPER
+    sealed class BodyType {
+        object NO_BODY : BodyType()
+        object EMPTY : BodyType()
+        object SUPER : BodyType()
+        object QUALIFIED_SUPER : BodyType()
+
+        class Delegate(val receiverName: String) : BodyType()
     }
 
     val descriptor: CallableMemberDescriptor
@@ -191,10 +193,15 @@ fun generateUnsupportedOrSuperCall(
     }
     else {
         return buildString {
-            append("super")
-            if (bodyType == OverrideMemberChooserObject.BodyType.QUALIFIED_SUPER) {
-                val superClassFqName = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(descriptor.containingDeclaration as ClassifierDescriptor)
-                append("<").append(superClassFqName).append(">")
+            if (bodyType is OverrideMemberChooserObject.BodyType.Delegate) {
+                append(bodyType.receiverName)
+            }
+            else {
+                append("super")
+                if (bodyType == OverrideMemberChooserObject.BodyType.QUALIFIED_SUPER) {
+                    val superClassFqName = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(descriptor.containingDeclaration as ClassifierDescriptor)
+                    append("<").append(superClassFqName).append(">")
+                }
             }
             append(".").append(descriptor.name.render())
 

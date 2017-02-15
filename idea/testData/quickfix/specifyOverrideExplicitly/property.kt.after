@@ -1,0 +1,15 @@
+// "Specify override for 'foo(): Unit' explicitly" "true"
+
+interface A {
+    fun foo()
+}
+
+open class B : A {
+    override fun foo() {}
+}
+
+class C(val a: A) : B(), A by a {
+    override fun foo() {
+        a.foo()
+    }
+}
