@@ -271,6 +271,20 @@ object JvmRuntimeVersionsConsistencyChecker {
             }
         }.trimEnd())
 
+        // If there's kotlin-stdlib of version X in the classpath and kotlin-reflect of version Y < X,
+        // we suggest to provide an explicit dependency on version X.
+        // TODO: report this depending on the content of the jars instead
+        val minReflectJar =
+                jars.filter { it.file.name.startsWith("kotlin-reflect") }.minBy { it.version }
+        val maxStdlibJar =
+                jars.filter { it.file.name.startsWith("kotlin-runtime") || it.file.name.startsWith("kotlin-stdlib") }.maxBy { it.version }
+        if (minReflectJar != null && maxStdlibJar != null && minReflectJar.version < maxStdlibJar.version) {
+            messageCollector.issue(
+                    null,
+                    "Consider providing an explicit dependency on kotlin-reflect ${maxStdlibJar.version} to prevent strange errors"
+            )
+        }
+
         return null
     }
 
