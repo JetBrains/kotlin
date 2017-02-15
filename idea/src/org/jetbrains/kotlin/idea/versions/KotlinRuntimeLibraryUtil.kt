@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.idea.configuration.createConfigureKotlinNotification
 import org.jetbrains.kotlin.idea.configuration.getConfiguratorByName
 import org.jetbrains.kotlin.idea.framework.*
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
 import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinderFactory
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
@@ -70,6 +71,20 @@ fun getLibraryRootsWithAbiIncompatibleForKotlinJs(module: Module): Collection<Bi
 }
 
 fun updateLibraries(project: Project, libraries: Collection<Library>) {
+    if (project.allModules().any { module -> KotlinPluginUtil.isMavenModule(module) }) {
+        Messages.showMessageDialog(project, "Automatic library version update for Maven projects is currently unsupported. Please update your pom.xml manually.",
+                                   "Update Kotlin Runtime Library",
+                                   Messages.getErrorIcon())
+        return
+    }
+
+    if (project.allModules().any { module -> KotlinPluginUtil.isGradleModule(module) }) {
+        Messages.showMessageDialog(project, "Automatic library version update for Gradle projects is currently unsupported. Please update your build.gradle manually.",
+                                   "Update Kotlin Runtime Library",
+                                   Messages.getErrorIcon())
+        return
+    }
+
     ApplicationManager.getApplication().invokeLater {
         val kJvmConfigurator = getConfiguratorByName(KotlinJavaModuleConfigurator.NAME) as KotlinJavaModuleConfigurator? ?:
                                error("Configurator with given name doesn't exists: " + KotlinJavaModuleConfigurator.NAME)
