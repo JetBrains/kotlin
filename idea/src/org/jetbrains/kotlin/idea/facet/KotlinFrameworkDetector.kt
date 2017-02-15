@@ -21,8 +21,10 @@ import com.intellij.framework.detection.FacetBasedFrameworkDetector
 import com.intellij.framework.detection.FileContentPattern
 import com.intellij.framework.detection.FrameworkDetectionContext
 import com.intellij.framework.detection.impl.FrameworkDetectorRegistry
+import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
 
 class KotlinFrameworkDetector : FacetBasedFrameworkDetector<KotlinFacet, KotlinFacetConfiguration>(DETECTOR_ID) {
     companion object {
@@ -47,4 +49,11 @@ class KotlinFrameworkDetector : FacetBasedFrameworkDetector<KotlinFacet, KotlinF
             newFiles: Collection<VirtualFile>,
             context: FrameworkDetectionContext
     ) = super.detect(newFiles, context)
+
+    override fun setupFacet(facet: KotlinFacet, model: ModifiableRootModel?) {
+        model?.module?.let { module ->
+            facet.configuration.settings.initializeIfNeeded(module, model)
+            module.getAndCacheLanguageLevelByDependencies()
+        }
+    }
 }
