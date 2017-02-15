@@ -23,15 +23,22 @@ import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
+import com.intellij.openapi.ui.Messages
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
+import org.jetbrains.kotlin.idea.util.projectStructure.allModules
+import org.jetbrains.kotlin.idea.versions.findKotlinRuntimeLibrary
+import org.jetbrains.kotlin.idea.versions.updateLibraries
 import org.jetbrains.kotlin.psi.KtFile
 
 sealed class ChangeCoroutineSupportFix(
@@ -43,7 +50,19 @@ sealed class ChangeCoroutineSupportFix(
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
             val module = ModuleUtilCore.findModuleForPsiElement(file) ?: return
+
+            val runtimeUpdateRequired = coroutineSupport != CoroutineSupport.DISABLED &&
+                                        (getRuntimeLibraryVersion(module)?.startsWith("1.0") ?: false)
+
             if (KotlinPluginUtil.isGradleModule(module)) {
+                if (runtimeUpdateRequired) {
+                    Messages.showErrorDialog(project,
+                                             "Coroutines support requires version 1.1 or later of the Kotlin runtime library. " +
+                                             "Please update the version in your build script.",
+                                             super.getText())
+                    return
+                }
+
                 val element = KotlinWithGradleConfigurator.changeCoroutineConfiguration(module, coroutineSupport.compilerArgument)
                 element?.let {
                     OpenFileDescriptor(project, it.containingFile.virtualFile, it.textRange.startOffset).navigate(true)
@@ -51,9 +70,24 @@ sealed class ChangeCoroutineSupportFix(
                 return
             }
 
+            if (runtimeUpdateRequired) {
+                val library = findKotlinRuntimeLibrary(module)
+                if (library != null) {
+                    val rc = Messages.showOkCancelDialog(project,
+                                                         "Coroutines support requires version 1.1 or later of the Kotlin runtime library. " +
+                                                         "Would you like to update the runtime library in your project?",
+                                                         super.getText(),
+                                                         Messages.getQuestionIcon())
+                    if (rc != Messages.OK) return
+                    updateLibraries(project, listOf(library))
+                }
+            }
+
             val facetSettings = KotlinFacet.get(module)?.configuration?.settings ?: return
             ModuleRootModificationUtil.updateModel(module) {
                 facetSettings.compilerInfo.coroutineSupport = coroutineSupport
+                facetSettings.versionInfo.apiLevel = LanguageVersion.KOTLIN_1_1
+                facetSettings.versionInfo.languageLevel = LanguageVersion.KOTLIN_1_1
             }
         }
     }
@@ -62,6 +96,10 @@ sealed class ChangeCoroutineSupportFix(
         override fun getText() = "${super.getText()} in the project"
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+            if (coroutineSupport != CoroutineSupport.DISABLED) {
+                if (!checkUpdateRuntime(project, LanguageFeature.Coroutines.sinceApiVersion)) return
+            }
+
             with (KotlinCommonCompilerArgumentsHolder.getInstance(project).settings) {
                 coroutinesEnable = coroutineSupport == CoroutineSupport.ENABLED
                 coroutinesWarn = coroutineSupport == CoroutineSupport.ENABLED_WITH_WARNING
@@ -69,6 +107,7 @@ sealed class ChangeCoroutineSupportFix(
             }
             ProjectRootManagerEx.getInstanceEx(project).makeRootsChange({}, false, true)
         }
+
     }
 
     override fun getFamilyName() = "Enable/Disable coroutine support"

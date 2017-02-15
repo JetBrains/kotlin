@@ -274,18 +274,33 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
             return kotlinBlock.parent
         }
 
-        fun changeLanguageVersion(module: Module, languageVersion: String, forTests: Boolean): PsiElement? {
+        fun changeLanguageVersion(module: Module, languageVersion: String?, apiVersion: String? = null, forTests: Boolean): PsiElement? {
             return changeBuildGradle(module) { gradleFile ->
-                changeLanguageVersion(gradleFile, languageVersion, forTests)
+                var result: PsiElement? = null
+                if (languageVersion != null) {
+                    result = changeLanguageVersion(gradleFile, languageVersion, forTests)
+                }
+                if (apiVersion != null) {
+                    result = changeApiVersion(gradleFile, apiVersion, forTests)
+                }
+                result
             }
         }
 
         fun changeLanguageVersion(gradleFile: GroovyFile, languageVersion: String, forTests: Boolean): PsiElement? {
-            val snippet = "languageVersion = \"$languageVersion\""
+            return changeVersion(gradleFile, languageVersion, forTests, "languageVersion")
+        }
+
+        fun changeApiVersion(gradleFile: GroovyFile, apiVersion: String, forTests: Boolean): PsiElement? {
+            return changeVersion(gradleFile, apiVersion, forTests, "apiVersion")
+        }
+
+        private fun changeVersion(gradleFile: GroovyFile, version: String, forTests: Boolean, versionParameter: String): PsiElement? {
+            val snippet = "$versionParameter = \"$version\""
             val kotlinBlock = getBlockOrCreate(gradleFile, if (forTests) "compileTestKotlin" else "compileKotlin")
             val experimentalBlock = getBlockOrCreate(kotlinBlock, "kotlinOptions")
             addOrReplaceExpression(experimentalBlock, snippet) { stmt ->
-                (stmt as? GrAssignmentExpression)?.lValue?.text == "languageVersion"
+                (stmt as? GrAssignmentExpression)?.lValue?.text == versionParameter
             }
             return kotlinBlock.parent
         }

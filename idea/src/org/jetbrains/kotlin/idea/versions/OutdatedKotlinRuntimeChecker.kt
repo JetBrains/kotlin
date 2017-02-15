@@ -24,6 +24,8 @@ import com.intellij.notification.Notifications
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.LibraryOrderEntry
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.util.PathUtil.getLocalFile
 import com.intellij.util.text.VersionComparatorUtil
@@ -47,23 +49,33 @@ fun findOutdatedKotlinLibraries(project: Project): List<VersionedLibrary> {
     val outdatedLibraries = arrayListOf<VersionedLibrary>()
 
     for ((library, modules) in findAllUsedLibraries(project).entrySet()) {
-        val libraryVersionProperties =
-                getLibraryProperties(JavaRuntimePresentationProvider.getInstance(), library) ?:
-                getLibraryProperties(JSLibraryStdPresentationProvider.getInstance(), library) ?:
-                continue
-
-        val libraryVersion = libraryVersionProperties.versionString
-
-        val runtimeVersion = bundledRuntimeVersion()
-
-        val isOutdated = isRuntimeOutdated(libraryVersion, runtimeVersion)
-
-        if (isOutdated) {
-            outdatedLibraries.add(VersionedLibrary(library, libraryVersion, modules))
+        getOutdatedRuntimeLibraryVersion(library)?.let { version ->
+            outdatedLibraries.add(VersionedLibrary(library, version, modules))
         }
     }
 
     return outdatedLibraries
+}
+
+fun getOutdatedRuntimeLibraryVersion(library: Library): String? {
+    val libraryVersionProperties = getKotlinLibraryVersionProperties(library) ?: return null
+
+    val libraryVersion = libraryVersionProperties.versionString
+
+    val runtimeVersion = bundledRuntimeVersion()
+
+    return if (isRuntimeOutdated(libraryVersion, runtimeVersion)) libraryVersion else null
+}
+
+private fun getKotlinLibraryVersionProperties(library: Library) =
+        getLibraryProperties(JavaRuntimePresentationProvider.getInstance(), library) ?:
+        getLibraryProperties(JSLibraryStdPresentationProvider.getInstance(), library)
+
+fun findKotlinRuntimeLibrary(module: Module): Library? {
+    val orderEntries = ModuleRootManager.getInstance(module).orderEntries.filterIsInstance<LibraryOrderEntry>()
+    return orderEntries.asSequence()
+            .mapNotNull { it.library }
+            .firstOrNull { getKotlinLibraryVersionProperties(it) != null }
 }
 
 fun collectModulesWithOutdatedRuntime(libraries: List<VersionedLibrary>): List<Module> =
