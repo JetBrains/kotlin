@@ -489,8 +489,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         context.log("visitFunction                  : ${ir2string(declaration)}")
         val body = declaration.body
 
-        if (declaration.descriptor.modality == Modality.ABSTRACT || declaration.descriptor.isExternal || body == null)
-            return
+        if (declaration.descriptor.modality == Modality.ABSTRACT) return
+        if (body == null)                                         return
+        if (declaration.descriptor.isExternal)                    return
+        if (declaration.descriptor.name.toString().contains("foo") &&
+            declaration.descriptor.isInline)                      return
 
         codegen.prologue(declaration.descriptor)
 
