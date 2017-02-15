@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
 import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.ByteArrayInputStream
 
 class KotlinBuiltInDecompiler : ClassFileDecompilers.Full() {
@@ -82,7 +83,7 @@ fun buildDecompiledTextForBuiltIns(builtInFile: VirtualFile): DecompiledText {
             declarations.addAll(resolver.resolveDeclarationsInFacade(packageFqName))
             for (classProto in file.classesToDecompile) {
                 val classId = file.nameResolver.getClassId(classProto.fqName)
-                declarations.add(resolver.resolveTopLevelClass(classId)!!)
+                declarations.addIfNotNull(resolver.resolveTopLevelClass(classId))
             }
             return buildDecompiledText(packageFqName, declarations, decompilerRendererForBuiltIns)
         }

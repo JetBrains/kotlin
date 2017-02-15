@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.js.JsProtoBuf
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.utils.JsMetadataVersion
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.ByteArrayInputStream
 import java.io.IOException
 
@@ -76,7 +77,7 @@ fun buildDecompiledTextFromJsMetadata(kjsmFile: VirtualFile): DecompiledText {
             declarations.addAll(resolver.resolveDeclarationsInFacade(packageFqName))
             for (klass in file.classesToDecompile) {
                 val classId = file.nameResolver.getClassId(klass.fqName)
-                declarations.add(resolver.resolveTopLevelClass(classId)!!)
+                declarations.addIfNotNull(resolver.resolveTopLevelClass(classId))
             }
             return buildDecompiledText(packageFqName, declarations, decompilerRendererForJS)
         }
