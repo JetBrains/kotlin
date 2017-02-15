@@ -3190,6 +3190,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("smartCast.kt")
+            public void testSmartCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classLiteral/smartCast.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("typealiases.kt")
             public void testTypealiases() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classLiteral/typealiases.kt");
