@@ -75,8 +75,7 @@ internal fun deserializeModule(configuration: CompilerConfiguration,
     val storageManager = LockBasedStorageManager()
     val moduleDescriptor = ModuleDescriptorImpl(
             Name.special(moduleName), storageManager, KonanPlatform.builtIns)
-    val deserialization_config = CompilerDeserializationConfiguration(
-        configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, LanguageVersionSettingsImpl.DEFAULT))
+    val deserialization_config = CompilerDeserializationConfiguration(configuration)
 
 
     val libraryAsByteArray = base64Decode(base64)
