@@ -20,7 +20,7 @@ import kotlin.SinceKotlin;
 import kotlin.reflect.KCallable;
 import kotlin.reflect.KFunction;
 
-public class FunctionReference extends CallableReference implements FunctionImpl, KFunction {
+public class FunctionReference extends CallableReference implements FunctionBase, KFunction {
     private final int arity;
 
     public FunctionReference(int arity) {

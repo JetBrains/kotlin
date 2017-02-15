@@ -4,10 +4,10 @@
 // WITH_RUNTIME
 
 import kotlin.test.assertEquals
-import kotlin.jvm.internal.FunctionImpl
+import kotlin.jvm.internal.FunctionBase
 
 fun test(f: Function<*>, arity: Int) {
-    assertEquals(arity, (f as FunctionImpl).getArity())
+    assertEquals(arity, (f as FunctionBase).getArity())
 }
 
 fun foo(s: String, i: Int) {}

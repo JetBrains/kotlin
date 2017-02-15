@@ -25,7 +25,7 @@ import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import kotlin.jvm.internal.CallableReference
-import kotlin.jvm.internal.FunctionImpl
+import kotlin.jvm.internal.FunctionBase
 import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.internal.AnnotationConstructorCaller.CallMode.CALL_BY_NAME
 import kotlin.reflect.jvm.internal.AnnotationConstructorCaller.CallMode.POSITIONAL_CALL
@@ -39,7 +39,7 @@ internal class KFunctionImpl private constructor(
         private val signature: String,
         descriptorInitialValue: FunctionDescriptor?,
         private val boundReceiver: Any? = CallableReference.NO_RECEIVER
-) : KCallableImpl<Any?>(), KFunction<Any?>, FunctionImpl, FunctionWithAllInvokes {
+) : KCallableImpl<Any?>(), KFunction<Any?>, FunctionBase, FunctionWithAllInvokes {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?)
             : this(container, name, signature, null, boundReceiver)
 
