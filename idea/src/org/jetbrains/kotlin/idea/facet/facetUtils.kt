@@ -242,8 +242,8 @@ fun parseCompilerArgumentsToFacet(arguments: List<String>, defaultArguments: Lis
         val restoreCoroutineSupport =
                 !compilerArguments.coroutinesEnable && !compilerArguments.coroutinesWarn && !compilerArguments.coroutinesError
 
-        versionInfo.apiLevel = LanguageVersion.fromVersionString(compilerArguments.apiVersion)
-        versionInfo.languageLevel = LanguageVersion.fromVersionString(compilerArguments.languageVersion)
+        compilerArguments.apiVersion?.let { versionInfo.apiLevel = LanguageVersion.fromVersionString(it) }
+        compilerArguments.languageVersion?.let { versionInfo.languageLevel = LanguageVersion.fromVersionString(it) }
 
         if (versionInfo.targetPlatformKind is TargetPlatformKind.Jvm) {
             val jvmTarget = compilerInfo.k2jvmCompilerArguments!!.jvmTarget
