@@ -84,6 +84,7 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
     }
 
     override fun createEnvironment(source: File): AbstractCoreEnvironment {
+        val appWasNull = ApplicationManager.getApplication() == null
         compilerConfiguration = createKotlinCompilerConfiguration(source)
         val parentDisposable = Disposer.newDisposable()
         val kotlinCoreEnvironment = KotlinCoreEnvironment.createForTests(
@@ -96,7 +97,7 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
         AnalysisHandlerExtension.registerExtension(
                 kotlinCoreEnvironment.project, UastAnalysisHandlerExtension())
 
-        return KotlinCoreEnvironmentWrapper(kotlinCoreEnvironment, parentDisposable)
+        return KotlinCoreEnvironmentWrapper(kotlinCoreEnvironment, parentDisposable, appWasNull)
     }
 
     override fun tearDown() {
@@ -123,7 +124,8 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
     }
 
     private class KotlinCoreEnvironmentWrapper(val environment: KotlinCoreEnvironment,
-                                               val parentDisposable: Disposable) : AbstractCoreEnvironment() {
+                                               val parentDisposable: Disposable,
+                                               val appWasNull: Boolean) : AbstractCoreEnvironment() {
         override fun addJavaSourceRoot(root: File) {
             TODO("not implemented")
         }
@@ -137,7 +139,9 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
 
         override fun dispose() {
             Disposer.dispose(parentDisposable)
-            KtUsefulTestCase.resetApplicationToNull()
+            if (appWasNull) {
+                KtUsefulTestCase.resetApplicationToNull()
+            }
         }
     }
 }
