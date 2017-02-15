@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.junit.Assert
@@ -108,6 +107,12 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
 
         override fun supportsFeature(feature: LanguageFeature): Boolean =
                 languageFeatures[feature] ?: delegate.supportsFeature(feature)
+
+        override val additionalFeatures: Collection<LanguageFeature>
+            get() = error("Must not be called")
+
+        override val isApiVersionExplicit: Boolean
+            get() = error("Must not be called")
     }
 
     inner class TestFile(

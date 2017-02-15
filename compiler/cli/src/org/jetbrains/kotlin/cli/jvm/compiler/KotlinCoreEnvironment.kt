@@ -159,7 +159,7 @@ class KotlinCoreEnvironment private constructor(
             if (messageCollector != null) {
                 JvmRuntimeVersionsConsistencyChecker.checkCompilerClasspathConsistency(
                         messageCollector,
-                        configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS),
+                        configuration,
                         initialRoots.mapNotNull { (file, type) -> if (type == JavaRoot.RootType.BINARY) file else null }
                 )
             }
