@@ -39,7 +39,7 @@ public class JsProgramFragment {
     }
 
     @NotNull
-    public JsBlock getDeclarationBlock() {
+    public JsGlobalBlock getDeclarationBlock() {
         return declarationBlock;
     }
 

@@ -1,0 +1,413 @@
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.kotlin.serialization.js.ast;
+
+option java_outer_classname = "JsAstProtoBuf";
+option optimize_for = LITE_RUNTIME;
+
+
+// Expressions
+//
+
+message Expression {
+    oneof expression {
+        int32 simple_name_reference = 2;
+        ThisLiteral this_literal = 3;
+        NullLiteral null_literal = 4;
+        TrueLiteral true_literal = 5;
+        FalseLiteral false_literal = 6;
+        StringLiteral string_literal = 7;
+        RegExpLiteral reg_exp_literal = 8;
+        IntLiteral int_literal = 9;
+        DoubleLiteral double_literal = 10;
+        ArrayLiteral array_literal = 11;
+        ObjectLiteral object_literal = 12;
+        Function function = 13;
+        DocComment doc_comment = 14;
+        BinaryOperation binary = 15;
+        UnaryOperation unary = 16;
+        Conditional conditional = 17;
+        ArrayAccess array_access = 18;
+        NameReference name_reference = 19;
+        PropertyReference property_reference = 20;
+        Invocation invocation = 21;
+        Instantiation instantiation = 22;
+    }
+}
+
+message ThisLiteral {
+}
+
+message NullLiteral {
+}
+
+message TrueLiteral {
+}
+
+message FalseLiteral {
+}
+
+message StringLiteral {
+    required int32 string_id = 1;
+}
+
+message RegExpLiteral {
+    required int32 pattern_string_id = 1;
+    optional int32 flags_string_id = 2;
+}
+
+message IntLiteral {
+    required int32 value = 1;
+}
+
+message DoubleLiteral {
+    required double value = 1;
+}
+
+message ArrayLiteral {
+    repeated Expression element = 1;
+}
+
+message ObjectLiteral {
+    repeated ObjectLiteralEntry entry = 1;
+    required bool multiline = 2;
+}
+
+message ObjectLiteralEntry {
+    required Expression key = 1;
+    required Expression value = 2;
+}
+
+message Function {
+    repeated Parameter parameter = 1;
+    optional int32 name_id = 2;
+    required Statement body = 3;
+}
+
+message Parameter {
+    required int32 name_id = 1;
+}
+
+message DocComment {
+    repeated DocCommentTag tag = 1;
+}
+
+message DocCommentTag {
+    required int32 name_id = 1;
+    oneof value {
+        int32 value_string_id = 2;
+        Expression expression = 3;
+    }
+}
+
+message BinaryOperation {
+    required Expression left = 1;
+    required Expression right = 2;
+    required Type type = 3;
+
+    enum Type {
+        MUL = 1;
+        DIV = 2;
+        MOD = 3;
+        ADD = 4;
+        SUB = 5;
+        SHL = 6;
+        SHR = 7;
+        SHRU = 8;
+        LT = 9;
+        LTE = 10;
+        GT = 11;
+        GTE = 12;
+        INSTANCEOF = 13;
+        IN = 14;
+        EQ = 15;
+        NEQ = 16;
+        REF_EQ = 17;
+        REF_NEQ = 18;
+        BIT_AND = 19;
+        BIT_XOR = 20;
+        BIT_OR = 21;
+        AND = 22;
+        OR = 23;
+        ASG = 24;
+        ASG_ADD = 25;
+        ASG_SUB = 26;
+        ASG_MUL = 27;
+        ASG_DIV = 28;
+        ASG_MOD = 29;
+        ASG_SHL = 30;
+        ASG_SHR = 31;
+        ASG_SHRU = 32;
+        ASG_BIT_AND = 33;
+        ASG_BIT_OR = 34;
+        ASG_BIT_XOR = 35;
+        COMMA = 36;
+    }
+}
+
+message UnaryOperation {
+    required Expression operand = 1;
+    required Type type = 2;
+    required bool postfix = 3;
+
+    enum Type {
+        BIT_NOT = 1;
+        DEC = 2;
+        DELETE = 3;
+        INC = 4;
+        NEG = 5;
+        POS = 6;
+        NOT = 7;
+        TYPEOF = 8;
+        VOID = 9;
+    }
+}
+
+message Conditional {
+    required Expression test_expression = 1;
+    required Expression then_expression = 2;
+    required Expression else_expression = 3;
+}
+
+message ArrayAccess {
+    required Expression array = 1;
+    required Expression index = 2;
+}
+
+message NameReference {
+    required int32 name_id = 1;
+    required Expression qualifier = 2;
+}
+
+message PropertyReference {
+    required int32 string_id = 1;
+    optional Expression qualifier = 2;
+}
+
+message Invocation {
+    required Expression qualifier = 1;
+    repeated Expression argument = 2;
+}
+
+message Instantiation {
+    required Expression qualifier = 1;
+    repeated Expression argument = 2;
+}
+
+
+// Statements
+//
+
+message Statement {
+    oneof statement {
+        Return return_statement = 1;
+        Throw throw_statement = 2;
+        Break break_statement = 3;
+        Continue continue_statement = 4;
+        Debugger debugger = 5;
+        ExpressionStatement expression = 6;
+        Vars vars = 7;
+        Block block = 8;
+        GlobalBlock global_block = 9;
+        Label label = 10;
+        If if_statement = 11;
+        Switch switch_statement = 12;
+        While while_statement = 13;
+        DoWhile do_while_statement = 14;
+        For for_statement = 15;
+        ForIn for_in_statement = 16;
+        Try try_statement = 17;
+        Empty empty = 18;
+    }
+}
+
+message Return {
+    optional Expression value = 1;
+}
+
+message Throw {
+    required Expression exception = 1;
+}
+
+message Break {
+    optional int32 label_id = 1;
+}
+
+message Continue {
+    optional int32 label_id = 1;
+}
+
+message Debugger {
+}
+
+message ExpressionStatement {
+    required Expression expression = 1;
+}
+
+message Vars {
+    repeated VarDeclaration declaration = 1;
+    required bool multiline = 2;
+}
+
+message VarDeclaration {
+    required int32 name_id = 1;
+    optional Expression initial_value = 2;
+}
+
+message Block {
+    repeated Statement statement = 1;
+}
+
+message GlobalBlock {
+    repeated Statement statement = 1;
+}
+
+message Label {
+    required int32 nameId = 1;
+    required Statement inner_statement = 2;
+}
+
+message If {
+    required Expression condition = 1;
+    required Statement then_statement = 2;
+    optional Statement else_statement = 3;
+}
+
+message Switch {
+    required Expression expression = 1;
+    repeated SwitchEntry entry = 2;
+}
+
+message SwitchEntry {
+    optional Expression label = 1;
+    repeated Statement statement = 2;
+}
+
+message While {
+    required Expression condition = 1;
+    required Statement body = 2;
+}
+
+message DoWhile {
+    required Expression condition = 1;
+    required Statement body = 2;
+}
+
+message For {
+    oneof init {
+        Vars variables = 1;
+        Expression expression = 2;
+        EmptyInit empty = 3;
+    }
+    optional Expression condition = 4;
+    optional Expression increment = 5;
+    required Statement body = 6;
+}
+
+message EmptyInit {
+}
+
+message ForIn {
+    oneof value {
+        int32 nameId = 1;
+        Expression expression = 2;
+    }
+    required Expression iterable = 3;
+    required Statement body = 4;
+}
+
+message Try {
+    required Statement tryBlock = 1;
+    optional Catch catchBlock = 2;
+    optional Statement finallyBlock = 3;
+}
+
+message Catch {
+    required Parameter parameter = 1;
+    required Statement body = 2;
+}
+
+message Empty {
+}
+
+
+// Fragment
+
+message Fragment {
+    repeated ImportedModule imported_module = 1;
+    repeated Import import_entry = 2;
+    optional GlobalBlock declaration_block = 3;
+    optional GlobalBlock export_block = 4;
+    optional GlobalBlock initializer_block = 5;
+    repeated NameBinding name_binding = 6;
+    repeated ClassModel class_model = 7;
+    repeated Expression module_expression = 8;
+    repeated InlineModule inline_module = 9;
+}
+
+message ImportedModule {
+    required int32 external_name_id = 1;
+    required int32 internal_name_id = 2;
+    optional Expression plain_reference = 3;
+}
+
+message Import {
+    required int32 signature_id = 1;
+    required Expression expression = 2;
+}
+
+message NameBinding {
+    required int32 signature_id = 1;
+    required int32 nameId = 2;
+}
+
+message ClassModel {
+    required int32 name_id = 1;
+    optional int32 super_name_id = 2;
+    optional GlobalBlock post_declaration_block = 3;
+}
+
+message InlineModule {
+    required int32 signature_id = 1;
+    required int32 expression_id = 2;
+}
+
+// Tables
+//
+
+message StringTable {
+    repeated string entry = 1;
+}
+
+message NameTable {
+    repeated Name entry = 1;
+}
+
+message Name {
+    required bool temporary = 1;
+    optional int32 identifier = 2;
+}
+
+
+// Chunk
+//
+
+message Chunk {
+    required StringTable string_table = 1;
+    required NameTable name_table = 2;
+    required Fragment fragment = 3;
+}
