@@ -76,6 +76,9 @@ public abstract class CommonCompilerArguments implements Serializable {
     @Argument(value = "Xno-check-impl", description = "Do not check presence of 'impl' modifier in multi-platform projects")
     public boolean noCheckImpl;
 
+    @Argument(value = "Xskip-java-check", description = "Do not warn when running the compiler under Java 6 or 7")
+    public boolean noJavaVersionWarning;
+
     @Argument(value = "Xcoroutines=warn")
     public boolean coroutinesWarn;
 

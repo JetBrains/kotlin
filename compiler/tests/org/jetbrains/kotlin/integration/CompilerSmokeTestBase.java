@@ -43,6 +43,7 @@ public abstract class CompilerSmokeTestBase extends KotlinIntegrationTestBase {
         javaArgs.add("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler");
 
         Collections.addAll(javaArgs, arguments);
+        javaArgs.add("-Xskip-java-check");
 
         return run(logName, ArrayUtil.toStringArray(javaArgs));
     }

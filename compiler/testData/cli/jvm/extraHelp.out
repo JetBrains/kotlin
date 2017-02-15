@@ -18,6 +18,7 @@ where advanced options include:
   -Xplugin <path>            Load plugins from the given classpath
   -Xmulti-platform           Enable experimental language support for multi-platform projects
   -Xno-check-impl            Do not check presence of 'impl' modifier in multi-platform projects
+  -Xskip-java-check          Do not warn when running the compiler under Java 6 or 7
   -Xcoroutines={enable|warn|error} Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier
 
 

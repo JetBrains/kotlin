@@ -39,7 +39,7 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
 
         val result = buildString {
             val (commonOutput, commonExitCode) = AbstractCliTest.executeCompilerGrabOutput(K2MetadataCompiler(), listOf(
-                    commonSrc.absolutePath, "-d", commonDest.absolutePath
+                    commonSrc.absolutePath, "-d", commonDest.absolutePath, "-Xskip-java-check"
             ))
             appendln("-- Common --")
             appendln("Exit code: $commonExitCode")
@@ -50,7 +50,7 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
                 val (jvmOutput, jvmExitCode) = AbstractCliTest.executeCompilerGrabOutput(K2JVMCompiler(), listOf(
                         jvmSrc.absolutePath, commonSrc.absolutePath,
                         "-d", jvmDest.absolutePath,
-                        "-Xmulti-platform"
+                        "-Xmulti-platform", "-Xskip-java-check"
                 ))
                 appendln("-- JVM --")
                 appendln("Exit code: $jvmExitCode")
@@ -62,7 +62,7 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
                 val (jsOutput, jsExitCode) = AbstractCliTest.executeCompilerGrabOutput(K2JSCompiler(), listOf(
                         jsSrc.absolutePath, commonSrc.absolutePath,
                         "-output", jsDest.absolutePath,
-                        "-Xmulti-platform"
+                        "-Xmulti-platform", "-Xskip-java-check"
                 ))
                 appendln("-- JS --")
                 appendln("Exit code: $jsExitCode")
