@@ -246,11 +246,15 @@ object JvmRuntimeVersionsConsistencyChecker {
         val coreJars = ArrayList<KotlinLibraryFile>(2)
         val otherLibrariesWithBundledRuntime = ArrayList<VirtualFile>(0)
 
+        val visitedPaths = hashSetOf<String>()
+
         for (jarRoot in classpathJarRoots) {
             val fileKind = determineFileKind(jarRoot)
             if (fileKind is FileKind.Irrelevant) continue
 
             val jarFile = VfsUtilCore.getVirtualFileForJar(jarRoot) ?: continue
+            if (!visitedPaths.add(jarFile.path)) continue
+
             when (fileKind) {
                 is FileKind.Runtime -> {
                     val file = KotlinLibraryFile(jarFile, fileKind.version)
