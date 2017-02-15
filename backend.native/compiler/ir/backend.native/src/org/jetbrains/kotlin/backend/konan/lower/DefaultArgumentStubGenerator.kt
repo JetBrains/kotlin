@@ -65,19 +65,10 @@ class DefaultArgumentStubGenerator internal constructor(val context: Context): D
             val builder = context.createIrBuilder(descriptor)
             val body = builder.irBlockBody(irFunction) {
                 val params = mutableListOf<VariableDescriptor>()
-                val variables = mutableMapOf<VariableDescriptor, VariableDescriptor>()
-
-                val newExtensionReceiver =
-                        if (descriptor.extensionReceiverParameter == null) {
-                            null
-                        } else {
-                            IrGetValueImpl(
-                                    startOffset = irFunction.startOffset,
-                                    endOffset   = irFunction.endOffset,
-                                    descriptor  = descriptor.extensionReceiverParameter!!,
-                                    origin      = null
-                            )
-                        }
+                val variables = mutableMapOf<ValueDescriptor, ValueDescriptor>()
+                if (descriptor.extensionReceiverParameter != null) {
+                    variables[functionDescriptor.extensionReceiverParameter!!] = descriptor.extensionReceiverParameter!!
+                }
 
                 for (valueParameter in functionDescriptor.valueParameters) {
                     val parameterDescriptor = descriptor.valueParameters[valueParameter.index]
@@ -93,14 +84,19 @@ class DefaultArgumentStubGenerator internal constructor(val context: Context): D
                             putValueArgument(0, irInt(1 shl valueParameter.index))
                         }, irInt(0))
                         val expressionBody = getDefaultParameterExpressionBody(irFunction, valueParameter)
+
                         /* Use previously calculated values in next expression. */
-                        expressionBody.expression.transformChildrenVoid(object:IrElementTransformerVoid() {
+                        expressionBody.transformChildrenVoid(object:IrElementTransformerVoid() {
                             override fun visitGetValue(expression: IrGetValue): IrExpression {
-                                if (expression.descriptor == functionDescriptor.extensionReceiverParameter)
-                                    return newExtensionReceiver!!
-                                if (!variables.containsKey(expression.descriptor))
-                                    return expression
-                                return irGet(variables[expression.descriptor] as VariableDescriptor)
+                                log("GetValue: ${expression.descriptor}")
+                                val valueDescriptor = variables[expression.descriptor]
+                                return when (valueDescriptor) {
+                                    is VariableDescriptor          -> irGet(valueDescriptor)
+                                    is ReceiverParameterDescriptor -> irGet(valueDescriptor)
+                                    null                           -> expression
+                                    else                           -> TODO("$valueDescriptor")
+                                }
+
                             }
                         })
                         /* Mapping calculated values with its origin variables. */
@@ -133,7 +129,7 @@ class DefaultArgumentStubGenerator internal constructor(val context: Context): D
                             dispatchReceiver = irThis()
                         }
                         if (functionDescriptor.extensionReceiverParameter != null) {
-                            extensionReceiver = newExtensionReceiver
+                            extensionReceiver = irGet(variables[functionDescriptor.extensionReceiverParameter!!] as ReceiverParameterDescriptor)
                         }
                         params.forEachIndexed { i, variable ->
                             putValueArgument(i, irGet(variable))
@@ -389,3 +385,5 @@ internal object Helper {
     val kDefaultArgumentMarkerClassDescriptor = DescriptorUtils.getAllDescriptors(kKonanInternalPackageDescriptor.memberScope)
         .first{ it is ClassDescriptor && it.name == kDefaultArgumentMarkerName} as ClassDescriptor
 }
+
+internal fun IrBuilderWithScope.irGet(descriptor: ReceiverParameterDescriptor):IrGetValue = IrGetValueImpl(startOffset, endOffset, descriptor)
