@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -280,7 +281,12 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
 
         configuration.put(
                 CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS,
-                new LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(apiVersion), extraLanguageFeatures)
+                new LanguageVersionSettingsImpl(
+                        languageVersion,
+                        ApiVersion.createByLanguageVersion(apiVersion),
+                        extraLanguageFeatures,
+                        arguments.apiVersion != null
+                )
         );
     }
 

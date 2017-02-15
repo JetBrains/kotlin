@@ -99,14 +99,21 @@ interface LanguageVersionSettings {
 
     // Please do not use this to enable/disable specific features/checks. Instead add a new LanguageFeature entry and call supportsFeature
     val languageVersion: LanguageVersion
+
+    // TODO: refactor arguments related to coroutines so that this list is empty by default
+    val additionalFeatures: Collection<LanguageFeature>
+
+    @Deprecated("This is a temporary solution, please do not use.")
+    val isApiVersionExplicit: Boolean
 }
 
 class LanguageVersionSettingsImpl @JvmOverloads constructor(
         override val languageVersion: LanguageVersion,
         override val apiVersion: ApiVersion,
-        additionalFeatures: Collection<LanguageFeature> = emptySet()
+        additionalFeatures: Collection<LanguageFeature> = emptySet(),
+        override val isApiVersionExplicit: Boolean = false
 ) : LanguageVersionSettings {
-    private val additionalFeatures = additionalFeatures.toSet()
+    override val additionalFeatures = additionalFeatures.toSet()
 
     override fun supportsFeature(feature: LanguageFeature): Boolean {
         val since = feature.sinceVersion
