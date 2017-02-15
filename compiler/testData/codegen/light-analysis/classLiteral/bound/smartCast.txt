@@ -1,0 +1,12 @@
+@kotlin.Metadata
+public final class Foo {
+    private final @org.jetbrains.annotations.NotNull field s: java.lang.String
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class SmartCastKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

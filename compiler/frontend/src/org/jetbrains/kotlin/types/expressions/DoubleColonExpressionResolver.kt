@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.context.*
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.calls.util.createValueParametersForInvokeInFunctionType
@@ -54,6 +55,7 @@ import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.lang.UnsupportedOperationException
@@ -107,16 +109,20 @@ class DoubleColonExpressionResolver(
         }
         else {
             val result = resolveDoubleColonLHS(expression, c)
-            val type = result?.type
-            if (type != null && !type.isError) {
-                checkClassLiteral(c, expression, result)
+            if (result != null && !result.type.isError) {
+                val inherentType = result.type
+                val dataFlowInfo = (result as? DoubleColonLHS.Expression)?.dataFlowInfo ?: c.dataFlowInfo
+                val dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression.receiverExpression!!, inherentType, c)
+                val type =
+                        if (!dataFlowInfo.getStableNullability(dataFlowValue).canBeNull()) inherentType.makeNotNullable()
+                        else inherentType
+                checkClassLiteral(c, expression, type, result)
                 val variance =
                         if (result is DoubleColonLHS.Expression && !result.isObjectQualifier) Variance.OUT_VARIANCE else Variance.INVARIANT
                 val kClassType = reflectionTypes.getKClassType(Annotations.EMPTY, type, variance)
                 if (kClassType.isError) {
                     c.trace.report(MISSING_DEPENDENCY_CLASS.on(expression.receiverExpression!!, KotlinBuiltIns.FQ_NAMES.kClass.toSafe()))
                 }
-                val dataFlowInfo = (result as? DoubleColonLHS.Expression)?.dataFlowInfo ?: c.dataFlowInfo
                 return dataFlowAnalyzer.checkType(createTypeInfo(kClassType, dataFlowInfo), expression, c)
             }
         }
@@ -124,9 +130,12 @@ class DoubleColonExpressionResolver(
         return createTypeInfo(ErrorUtils.createErrorType("Unresolved class"), c)
     }
 
-    private fun checkClassLiteral(c: ExpressionTypingContext, expression: KtClassLiteralExpression, result: DoubleColonLHS) {
-        val type = result.type
-
+    private fun checkClassLiteral(
+            c: ExpressionTypingContext,
+            expression: KtClassLiteralExpression,
+            type: KotlinType,
+            result: DoubleColonLHS
+    ) {
         if (result is DoubleColonLHS.Expression) {
             if (!result.isObjectQualifier) {
                 if (!type.isSubtypeOf(type.builtIns.anyType)) {
