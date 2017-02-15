@@ -48,7 +48,7 @@ import kotlin.properties.Delegates
 
 const val ANNOTATIONS_PLUGIN_NAME = "org.jetbrains.kotlin.kapt"
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
-const val USING_EXPERIMENTAL_INCREMENTAL_MESSAGE = "Using experimental kotlin incremental compilation"
+const val USING_EXPERIMENTAL_INCREMENTAL_MESSAGE = "Using kotlin incremental compilation"
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCompile(), CompilerArgumentAware {
     abstract protected fun populateCompilerArguments(defaultsOnly: Boolean = false): T
