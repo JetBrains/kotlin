@@ -89,6 +89,9 @@ external private fun copyImpl(array: FloatArray, fromIndex: Int,
 external private fun copyImpl(array: DoubleArray, fromIndex: Int,
                               destination: DoubleArray, toIndex: Int, count: Int)
 
+@SymbolName("Kotlin_BooleanArray_copyImpl")
+external private fun copyImpl(array: BooleanArray, fromIndex: Int,
+                              destination: BooleanArray, toIndex: Int, count: Int)
 
 /**
  * Copies a range of array elements at a specified [fromIndex] (inclusive) to [toIndex] (exclusive) range of indices
@@ -125,6 +128,10 @@ fun FloatArray.copyRangeTo(destination: FloatArray, fromIndex: Int, toIndex: Int
 }
 
 fun DoubleArray.copyRangeTo(destination: DoubleArray, fromIndex: Int, toIndex: Int, destinationIndex: Int = 0) {
+    copyImpl(this, fromIndex, destination, destinationIndex, toIndex - fromIndex)
+}
+
+fun BooleanArray.copyRangeTo(destination: BooleanArray, fromIndex: Int, toIndex: Int, destinationIndex: Int = 0) {
     copyImpl(this, fromIndex, destination, destinationIndex, toIndex - fromIndex)
 }
 /**

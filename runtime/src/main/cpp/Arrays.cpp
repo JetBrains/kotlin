@@ -276,6 +276,10 @@ void Kotlin_DoubleArray_copyImpl(KConstRef thiz, KInt fromIndex,
   copyImpl<KDouble>(thiz, fromIndex, destination, toIndex, count);
 }
 
+void Kotlin_BooleanArray_copyImpl(KConstRef thiz, KInt fromIndex,
+                              KRef destination, KInt toIndex, KInt count) {
+  copyImpl<KBoolean>(thiz, fromIndex, destination, toIndex, count);
+}
 
 KLong Kotlin_LongArray_get(KConstRef thiz, KInt index) {
   const ArrayHeader* array = thiz->array();
