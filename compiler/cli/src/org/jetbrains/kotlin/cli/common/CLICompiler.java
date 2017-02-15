@@ -22,10 +22,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.concurrency.AppScheduledExecutorService;
-import com.sampullara.cli.Args;
-import kotlin.Pair;
 import kotlin.collections.ArraysKt;
-import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.fusesource.jansi.AnsiConsole;
 import org.jetbrains.annotations.NotNull;
@@ -245,8 +242,14 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
                 );
             }
 
-            configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS,
-                              new LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(apiVersion)));
+            configuration.put(
+                    CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS,
+                    new LanguageVersionSettingsImpl(
+                            languageVersion,
+                            ApiVersion.createByLanguageVersion(apiVersion),
+                            arguments.apiVersion != null
+                    )
+            );
         }
     }
 

@@ -76,7 +76,10 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.kotlinSourceRoots
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -151,7 +154,7 @@ class KotlinCoreEnvironment private constructor(
             if (messageCollector != null) {
                 JvmRuntimeVersionsConsistencyChecker.checkCompilerClasspathConsistency(
                         messageCollector,
-                        configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS),
+                        configuration,
                         javaClasspathRoots.mapNotNull { root -> if (root.type == JavaRoot.RootType.BINARY) root.file else null }
                 )
             }

@@ -323,6 +323,11 @@ public abstract class BaseDiagnosticsTest
         }
 
         @Override
+        public boolean isApiVersionExplicit() {
+            throw new IllegalStateException("Must not be called");
+        }
+
+        @Override
         public boolean equals(Object obj) {
             return obj instanceof DiagnosticTestLanguageVersionSettings &&
                    ((DiagnosticTestLanguageVersionSettings) obj).languageFeatures.equals(languageFeatures) &&

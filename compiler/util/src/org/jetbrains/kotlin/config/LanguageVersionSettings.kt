@@ -51,11 +51,15 @@ interface LanguageVersionSettings {
 
     val languageVersion: LanguageVersion
     val apiVersion: ApiVersion
+
+    @Deprecated("This is a temporary solution, please do not use.")
+    val isApiVersionExplicit: Boolean
 }
 
 class LanguageVersionSettingsImpl(
         override val languageVersion: LanguageVersion,
-        override val apiVersion: ApiVersion
+        override val apiVersion: ApiVersion,
+        override val isApiVersionExplicit: Boolean = false
 ) : LanguageVersionSettings {
     override fun supportsFeature(feature: LanguageFeature): Boolean {
         return languageVersion >= feature.sinceVersion
