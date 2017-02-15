@@ -41,8 +41,6 @@ object JvmRuntimeVersionsConsistencyChecker {
     private fun <T> T?.assertNotNull(message: () -> String): T =
             if (this == null) fatal(message()) else this
 
-    private val VERSION_ISSUE_SEVERITY = CompilerMessageSeverity.ERROR
-
     private const val META_INF = "META-INF"
     private const val MANIFEST_MF = "$META_INF/MANIFEST.MF"
 
@@ -129,13 +127,13 @@ object JvmRuntimeVersionsConsistencyChecker {
                 is ClasspathConsistency.InconsistentWithApiVersion ->
                     "Runtime JAR files in the classpath have the version ${consistency.actualRuntimeVersion}, " +
                     "which is older than the API version $apiVersion. " +
-                    "Remove them from the classpath or pass '-api-version ${consistency.actualRuntimeVersion}' explicitly. " +
+                    "Consider removing them from the classpath or passing '-api-version ${consistency.actualRuntimeVersion}' explicitly. " +
                     "You can also pass '-language-version ${consistency.actualRuntimeVersion}' instead, which will restrict " +
                     "not only the APIs to the specified version, but also the language features. " +
-                    "Alternatively, you can use '-Xskip-runtime-version-check' to suppress this error"
+                    "Alternatively, you can use '-Xskip-runtime-version-check' to suppress this warning"
                 else ->
                     "Some runtime JAR files in the classpath have an incompatible version. " +
-                    "Remove them from the classpath or use '-Xskip-runtime-version-check' to suppress errors"
+                    "Consider removing them from the classpath or use '-Xskip-runtime-version-check' to suppress this warning"
             }
             messageCollector.issue(null, message)
         }
@@ -146,16 +144,11 @@ object JvmRuntimeVersionsConsistencyChecker {
                     null,
                     "Some JAR files in the classpath have the Kotlin Runtime library bundled into them. " +
                     "This may cause difficult to debug problems if there's a different version of the Kotlin Runtime library in the classpath. " +
-                    "Consider removing these libraries from the classpath or use '-Xskip-runtime-version-check' to suppress this warning",
-                    CompilerMessageSeverity.STRONG_WARNING
+                    "Consider removing these libraries from the classpath or use '-Xskip-runtime-version-check' to suppress this warning"
             )
 
             for (library in librariesWithBundled) {
-                messageCollector.issue(
-                        library,
-                        "Library has Kotlin runtime bundled into it",
-                        CompilerMessageSeverity.STRONG_WARNING
-                )
+                messageCollector.issue(library, "Library has Kotlin runtime bundled into it")
             }
         }
     }
@@ -195,7 +188,11 @@ object JvmRuntimeVersionsConsistencyChecker {
 
     private fun checkNotNewerThanCompiler(messageCollector: MessageCollector, jar: KotlinLibraryFile): Boolean {
         if (jar.version > CURRENT_COMPILER_VERSION) {
-            messageCollector.issue(jar.file, "Runtime JAR file has version ${jar.version} which is newer than compiler version $CURRENT_COMPILER_VERSION")
+            messageCollector.issue(
+                    jar.file,
+                    "Runtime JAR file has version ${jar.version} which is newer than compiler version $CURRENT_COMPILER_VERSION",
+                    CompilerMessageSeverity.ERROR
+            )
             return true
         }
         return false
@@ -205,7 +202,10 @@ object JvmRuntimeVersionsConsistencyChecker {
             messageCollector: MessageCollector, jar: KotlinLibraryFile, apiVersion: MavenComparableVersion
     ): Boolean {
         if (jar.version < apiVersion) {
-            messageCollector.issue(jar.file, "Runtime JAR file has version ${jar.version} which is older than required for API version $apiVersion")
+            messageCollector.issue(
+                    jar.file,
+                    "Runtime JAR file has version ${jar.version} which is older than required for API version $apiVersion"
+            )
             return true
         }
         return false
@@ -224,7 +224,7 @@ object JvmRuntimeVersionsConsistencyChecker {
         if (oldestVersion == newestVersion) return oldestVersion
 
         messageCollector.issue(null, buildString {
-            appendln("Runtime JAR files in the classpath must have the same version. These files were found in the classpath:")
+            appendln("Runtime JAR files in the classpath should have the same version. These files were found in the classpath:")
             for (jar in jars) {
                 appendln("    ${jar.file.path} (version ${jar.version})")
             }
@@ -233,7 +233,11 @@ object JvmRuntimeVersionsConsistencyChecker {
         return null
     }
 
-    private fun MessageCollector.issue(file: VirtualFile?, message: String, severity: CompilerMessageSeverity = VERSION_ISSUE_SEVERITY) {
+    private fun MessageCollector.issue(
+            file: VirtualFile?,
+            message: String,
+            severity: CompilerMessageSeverity = CompilerMessageSeverity.STRONG_WARNING
+    ) {
         report(severity, message, CompilerMessageLocation.create(file?.let(VfsUtilCore::virtualToIoFile)?.path))
     }
 
