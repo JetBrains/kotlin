@@ -148,14 +148,15 @@ class VarargInjectionLowering internal constructor(val context: Context): Functi
 
     private fun arrayType(type: KotlinType): ArrayHandle {
         return when {
-            KotlinBuiltIns.isByte(type)   -> kByteArrayHandler
-            KotlinBuiltIns.isShort(type)  -> kShortArrayHandler
-            KotlinBuiltIns.isChar(type)   -> kCharArrayHandler
-            KotlinBuiltIns.isInt(type)    -> kIntArrayHandler
-            KotlinBuiltIns.isLong(type)   -> kLongArrayHandler
-            KotlinBuiltIns.isFloat(type)  -> kFloatArrayHandler
-            KotlinBuiltIns.isDouble(type) -> kDoubleArrayHandler
-            else                          -> kArrayHandler
+            KotlinBuiltIns.isByte(type)    -> kByteArrayHandler
+            KotlinBuiltIns.isShort(type)   -> kShortArrayHandler
+            KotlinBuiltIns.isChar(type)    -> kCharArrayHandler
+            KotlinBuiltIns.isInt(type)     -> kIntArrayHandler
+            KotlinBuiltIns.isLong(type)    -> kLongArrayHandler
+            KotlinBuiltIns.isFloat(type)   -> kFloatArrayHandler
+            KotlinBuiltIns.isDouble(type)  -> kDoubleArrayHandler
+            KotlinBuiltIns.isBoolean(type) -> kBooleanArrayHandler
+            else                           -> kArrayHandler
         }
     }
 
@@ -205,15 +206,16 @@ class VarargInjectionLowering internal constructor(val context: Context): Functi
                            val setMethodDescriptor: FunctionDescriptor,
                            val sizeDescriptor:DeclarationDescriptor,
                            val copyRangeToDescriptor:FunctionDescriptor)
-    val kKotlinPackage                = context.builtIns.builtInsModule.getPackage(FqName("kotlin"))
-    val kByteArrayHandler   = handle(arrayClassDescriptor("ByteArray"))
-    val kCharArrayHandler   = handle(arrayClassDescriptor("CharArray"))
-    val kShortArrayHandler  = handle(arrayClassDescriptor("ShortArray"))
-    val kIntArrayHandler    = handle(arrayClassDescriptor("IntArray"))
-    val kLongArrayHandler   = handle(arrayClassDescriptor("LongArray"))
-    val kFloatArrayHandler  = handle(arrayClassDescriptor("FloatArray"))
-    val kDoubleArrayHandler = handle(arrayClassDescriptor("DoubleArray"))
-    val kArrayHandler       = handle(context.builtIns.array)
+    val kKotlinPackage       = context.builtIns.builtInsModule.getPackage(FqName("kotlin"))
+    val kByteArrayHandler    = handle(arrayClassDescriptor("ByteArray"))
+    val kCharArrayHandler    = handle(arrayClassDescriptor("CharArray"))
+    val kShortArrayHandler   = handle(arrayClassDescriptor("ShortArray"))
+    val kIntArrayHandler     = handle(arrayClassDescriptor("IntArray"))
+    val kLongArrayHandler    = handle(arrayClassDescriptor("LongArray"))
+    val kFloatArrayHandler   = handle(arrayClassDescriptor("FloatArray"))
+    val kDoubleArrayHandler  = handle(arrayClassDescriptor("DoubleArray"))
+    val kBooleanArrayHandler = handle(arrayClassDescriptor("BooleanArray"))
+    val kArrayHandler        = handle(context.builtIns.array)
 
     val kInt               = context.builtIns.int
     val kIntType           =  context.builtIns.intType
