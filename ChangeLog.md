@@ -38,6 +38,11 @@
 - [`KT-16158`](https://youtrack.jetbrains.com/issue/KT-16158) Error is not reported now when library path contains JAR file without JS metadata, report warning instead
 - [`KT-16160`](https://youtrack.jetbrains.com/issue/KT-16160) Companion object dispatch receiver translation fixed
 
+### Standard library
+- [`KT-7858`](https://youtrack.jetbrains.com/issue/KT-7858) Add extension function `takeUnless`
+- `javaClass` extension property is deprecated, use `instance::class.java` instead
+- Massive deprecations are coming in JS standard library in `kotlin.dom` and `kotlin.dom.build` packages
+
 ### IDE
 
 #### Configuration issues
@@ -85,8 +90,6 @@
 - [`KT-15718`](https://youtrack.jetbrains.com/issue/KT-15718) createCoroutine now returns safe continuation
 - [`KT-16155`](https://youtrack.jetbrains.com/issue/KT-16155) Introduced createCoroutineUnchecked intrinsic
 
-### Standard library
-- [`KT-7858`](https://youtrack.jetbrains.com/issue/KT-7858) Add extension function `takeUnless`
 
 ### Gradle support
 - [`KT-15829`](https://youtrack.jetbrains.com/issue/KT-15829) Gradle Kotlin JS plugin: removed false "Duplicate source root:" warning for kotlin files
