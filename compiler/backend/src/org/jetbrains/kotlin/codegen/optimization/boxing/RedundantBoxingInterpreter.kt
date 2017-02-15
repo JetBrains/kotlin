@@ -84,6 +84,13 @@ internal class RedundantBoxingInterpreter(insnList: InsnList) : BoxingInterprete
         }
     }
 
+    override fun onAreEqual(insn: AbstractInsnNode, value1: BoxedBasicValue, value2: BoxedBasicValue) {
+        val descriptor1 = value1.descriptor
+        val descriptor2 = value2.descriptor
+        candidatesBoxedValues.merge(descriptor1, descriptor2)
+        descriptor1.addInsn(insn)
+    }
+
     override fun onMethodCallWithBoxedValue(value: BoxedBasicValue) {
         markValueAsDirty(value)
     }

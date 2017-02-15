@@ -66,7 +66,7 @@ class BoxedValueDescriptor(
     var isSafeToRemove = true; private set
     val unboxedType: Type = getUnboxedType(boxedType)
 
-    fun getAssociatedInsns() = associatedInsns.toReadOnlyList()
+    fun getAssociatedInsns() = associatedInsns.toList()
 
     fun addInsn(insnNode: AbstractInsnNode) {
         associatedInsns.add(insnNode)
