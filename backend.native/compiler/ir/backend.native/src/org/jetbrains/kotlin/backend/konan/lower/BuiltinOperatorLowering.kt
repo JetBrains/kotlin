@@ -6,15 +6,13 @@ import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalFunctions
 import org.jetbrains.kotlin.backend.konan.ir.isNullConst
 import org.jetbrains.kotlin.backend.konan.util.atMostOne
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrTry
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBinaryPrimitiveImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 /**
@@ -42,6 +40,14 @@ private class BuiltinOperatorTransformer(val context: Context) : IrElementTransf
             return transformBuiltinOperator(expression)
         }
 
+        return expression
+    }
+
+    override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
+        expression.transformChildrenVoid(this)
+        if (expression.argument.type.isNothing()) {
+            return expression.argument
+        }
         return expression
     }
 
