@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package kotlin.jvm.internal
+package kotlin.jvm.internal;
 
-public abstract class Lambda(private val arity: Int) : FunctionBase {
-    override fun getArity() = arity
+import kotlin.Function;
 
-    override fun toString() = Reflection.renderLambdaToString(this)
+import java.io.Serializable;
+
+public interface FunctionBase extends Function, Serializable {
+    int getArity();
 }

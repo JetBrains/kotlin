@@ -2476,11 +2476,40 @@ public final class kotlin/jvm/internal/FloatSpreadBuilder : kotlin/jvm/internal/
 	public final fun toArray ()[F
 }
 
-public abstract interface class kotlin/jvm/internal/FunctionImpl : java/io/Serializable, kotlin/Function {
+public abstract interface class kotlin/jvm/internal/FunctionBase : java/io/Serializable, kotlin/Function {
 	public abstract fun getArity ()I
 }
 
-public class kotlin/jvm/internal/FunctionReference : kotlin/jvm/internal/CallableReference, kotlin/jvm/internal/FunctionImpl, kotlin/reflect/KFunction {
+public abstract class kotlin/jvm/internal/FunctionImpl : java/io/Serializable, kotlin/Function, kotlin/jvm/functions/Function0, kotlin/jvm/functions/Function1, kotlin/jvm/functions/Function10, kotlin/jvm/functions/Function11, kotlin/jvm/functions/Function12, kotlin/jvm/functions/Function13, kotlin/jvm/functions/Function14, kotlin/jvm/functions/Function15, kotlin/jvm/functions/Function16, kotlin/jvm/functions/Function17, kotlin/jvm/functions/Function18, kotlin/jvm/functions/Function19, kotlin/jvm/functions/Function2, kotlin/jvm/functions/Function20, kotlin/jvm/functions/Function21, kotlin/jvm/functions/Function22, kotlin/jvm/functions/Function3, kotlin/jvm/functions/Function4, kotlin/jvm/functions/Function5, kotlin/jvm/functions/Function6, kotlin/jvm/functions/Function7, kotlin/jvm/functions/Function8, kotlin/jvm/functions/Function9 {
+	public fun <init> ()V
+	public abstract fun getArity ()I
+	public fun invoke ()Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public fun invokeVararg ([Ljava/lang/Object;)Ljava/lang/Object;
+}
+
+public class kotlin/jvm/internal/FunctionReference : kotlin/jvm/internal/CallableReference, kotlin/jvm/internal/FunctionBase, kotlin/reflect/KFunction {
 	public fun <init> (I)V
 	public fun <init> (ILjava/lang/Object;)V
 	protected fun computeReflected ()Lkotlin/reflect/KCallable;
@@ -2568,7 +2597,7 @@ public class kotlin/jvm/internal/Intrinsics {
 	public static fun throwUninitializedPropertyAccessException (Ljava/lang/String;)V
 }
 
-public abstract class kotlin/jvm/internal/Lambda : kotlin/jvm/internal/FunctionImpl {
+public abstract class kotlin/jvm/internal/Lambda : kotlin/jvm/internal/FunctionBase {
 	public fun <init> (I)V
 	public fun getArity ()I
 	public fun toString ()Ljava/lang/String;
