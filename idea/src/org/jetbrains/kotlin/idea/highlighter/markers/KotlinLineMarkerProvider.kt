@@ -32,6 +32,7 @@ import com.intellij.psi.search.searches.ClassInheritorsSearch
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
@@ -245,7 +246,7 @@ private fun collectImplementationMarkers(declaration: KtNamedDeclaration,
     result.add(LineMarkerInfo(
             anchor,
             anchor.textRange,
-            IMPLEMENTED_MARK,
+            KotlinIcons.FROM_HEADER,
             Pass.UPDATE_OVERRIDDEN_MARKERS,
             PLATFORM_IMPLEMENTATION.tooltip,
             PLATFORM_IMPLEMENTATION.navigationHandler,
@@ -266,7 +267,7 @@ private fun collectHeaderMarkers(declaration: KtNamedDeclaration,
     result.add(LineMarkerInfo(
             anchor,
             anchor.textRange,
-            IMPLEMENTING_MARK,
+            KotlinIcons.FROM_IMPL,
             Pass.UPDATE_OVERRIDDEN_MARKERS,
             HEADER_DECLARATION.tooltip,
             HEADER_DECLARATION.navigationHandler,
