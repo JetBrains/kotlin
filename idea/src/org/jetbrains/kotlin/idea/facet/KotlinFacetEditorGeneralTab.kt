@@ -89,6 +89,14 @@ class KotlinFacetEditorGeneralTab(
             targetPlatformComboBox.addActionListener {
                 updateCompilerConfigurable()
             }
+
+            val commonCompilerArguments = compilerInfo.commonCompilerArguments
+            if (configuration != null && commonCompilerArguments != null) {
+                with(configuration.settings.versionInfo) {
+                    commonCompilerArguments.languageVersion = languageLevel?.versionString
+                    commonCompilerArguments.apiVersion = apiLevel?.versionString
+                }
+            }
         }
 
         internal fun updateCompilerConfigurable() {
