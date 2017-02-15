@@ -2149,6 +2149,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("secondaryConstructorTemporaryVars.kt")
+            public void testSecondaryConstructorTemporaryVars() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/evaluationOrder/secondaryConstructorTemporaryVars.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("whenAsMinusArgument.kt")
             public void testWhenAsMinusArgument() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/evaluationOrder/whenAsMinusArgument.kt");

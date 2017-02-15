@@ -217,13 +217,14 @@ class ClassTranslator private constructor(
         val constructorInitializer = context.getFunctionObject(constructorDescriptor)
         constructorInitializer.name = context.getInnerNameForDescriptor(constructorDescriptor)
         context.addDeclarationStatement(constructorInitializer.makeStmt())
+
+        context = context.contextWithScope(constructorInitializer)
         context.translateAndAliasParameters(constructorDescriptor, constructorInitializer.parameters)
                 .translateFunction(constructor, constructorInitializer)
 
         // Translate super/this call
         val superCallGenerators = mutableListOf<(MutableList<JsStatement>) -> Unit>()
         val referenceToClass = context.getInnerReference(classDescriptor)
-        context = context.contextWithScope(constructorInitializer)
 
         superCallGenerators += { it += FunctionBodyTranslator.setDefaultValueForArguments(constructorDescriptor, context) }
 

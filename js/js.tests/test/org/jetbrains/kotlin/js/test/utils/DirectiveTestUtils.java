@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.js.test.utils;
 
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.backend.ast.*;
+import org.jetbrains.kotlin.js.inline.util.CollectUtilsKt;
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata;
 
 import java.util.*;
@@ -261,6 +263,28 @@ public class DirectiveTestUtils {
         }
     };
 
+    private static final DirectiveHandler HAS_NO_CAPTURED_VARS = new DirectiveHandler("HAS_NO_CAPTURED_VARS") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            String functionName = arguments.getNamedArgument("function");
+
+            Set<String> except = new HashSet<String>();
+            String exceptString = arguments.findNamedArgument("except");
+            if (exceptString != null) {
+                for (String exceptId : StringUtil.split(exceptString, ";")) {
+                    except.add(exceptId.trim());
+                }
+            }
+
+            JsFunction function = AstSearchUtil.getFunction(ast, functionName);
+            Set<JsName> freeVars = CollectUtilsKt.collectFreeVariables(function);
+            for (JsName freeVar : freeVars) {
+                assertTrue("Function " + functionName + " captures free variable " + freeVar.getIdent(),
+                           except.contains(freeVar.getIdent()));
+            }
+        }
+    };
+
     private static final List<DirectiveHandler> DIRECTIVE_HANDLERS = Arrays.asList(
             FUNCTION_CONTAINS_NO_CALLS,
             FUNCTION_NOT_CALLED,
@@ -278,7 +302,8 @@ public class DirectiveTestUtils {
             COUNT_NULLS,
             NOT_REFERENCED,
             HAS_INLINE_METADATA,
-            HAS_NO_INLINE_METADATA
+            HAS_NO_INLINE_METADATA,
+            HAS_NO_CAPTURED_VARS
     );
 
     public static void processDirectives(@NotNull JsNode ast, @NotNull String sourceCode) throws Exception {
