@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js.facade;
 
-import com.intellij.util.Base64;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
@@ -38,8 +37,10 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
+import org.jetbrains.kotlin.serialization.js.ast.JsAstDeserializer;
 import org.jetbrains.kotlin.serialization.js.ast.JsAstSerializer;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,14 +92,20 @@ public final class K2JSTranslator {
 
         // TODO: temporary code for testing purposes, remove later
         JsAstSerializer serializer = new JsAstSerializer();
+        JsAstDeserializer deserializer = new JsAstDeserializer(new JsProgram());
         JsProgram program = translationResult.getProgram();
         int bytesTotal = 0;
         for (JsProgramFragment fragment : translationResult.getFragments()) {
             ByteArrayOutputStream output = new ByteArrayOutputStream();
             serializer.serialize(fragment, output);
             bytesTotal += output.size();
-            String base64 = Base64.encode(output.toByteArray());
-            program.getGlobalBlock().getStatements().add(program.getStringLiteral(base64).makeStmt());
+
+            ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
+            JsProgramFragment deserializedFragment = deserializer.deserialize(input);
+
+            String expected = fragmentToString(fragment);
+            String actual = fragmentToString(deserializedFragment);
+            assert expected.equals(actual) : "Deserialization: " + expected + "\n\nvs.\n\n" + actual;
         }
 
         program.getGlobalBlock().getStatements().add(program.getNumberLiteral(bytesTotal).makeStmt());
@@ -122,5 +129,10 @@ public final class K2JSTranslator {
         }
         return new TranslationResult.Success(config, files, translationResult.getProgram(), diagnostics, importedModules,
                                              moduleDescriptor, bindingTrace.getBindingContext());
+    }
+
+    private static String fragmentToString(JsProgramFragment fragment) {
+        return fragment.getDeclarationBlock().toString() + fragment.getInitializerBlock().toString() +
+               fragment.getExportBlock().toString();
     }
 }
