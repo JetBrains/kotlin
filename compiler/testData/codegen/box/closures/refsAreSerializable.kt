@@ -4,20 +4,20 @@ import java.io.*
 
 fun box(): String {
     var o = ""
-    var b = 0.toByte()
-    var d = 0.0
-    var f = 0.0f
-    var i = 0
-    var j = 0L
-    var s = 0.toShort()
-    var c = '0'
-    var z = false
+    var b = 1.toByte()
+    var d = 1.0
+    var f = 1.0f
+    var i = 1
+    var j = 1L
+    var s = 1.toShort()
+    var c = '1'
+    var z = true
 
     val lambda = fun(): String {
         o = "OK"
         b++; d++; f++; i++; j++; s++; c++
-        z = true
-        return o
+        z = false
+        return "$o $b $d $f $i $j $s $c $z"
     }
 
     val baos = ByteArrayOutputStream()
@@ -27,8 +27,8 @@ fun box(): String {
 
     val bais = ByteArrayInputStream(baos.toByteArray())
     val ois = ObjectInputStream(bais)
-    val result = ois.readObject() as () -> String
+    val result = (ois.readObject() as () -> String)()
     ois.close()
 
-    return result()
+    return if (result == "OK 2 2.0 2.0 2 2 2 2 false") "OK" else "Fail: $result"
 }
