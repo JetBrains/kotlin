@@ -36,9 +36,8 @@ import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory.getOriginalElement
 import org.jetbrains.kotlin.asJava.builder.LightClassData
+import org.jetbrains.kotlin.asJava.builder.LightClassDataImpl
 import org.jetbrains.kotlin.asJava.builder.LightClassDataProviderForClassOrObject
-import org.jetbrains.kotlin.asJava.builder.OutermostKotlinClassLightClassData
-import org.jetbrains.kotlin.asJava.builder.WithFileStubAndExtraDiagnostics
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightModifierListWithExplicitModifiers
@@ -61,7 +60,7 @@ import java.util.*
 import javax.swing.Icon
 
 abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtClassOrObject)
-: KtLightClassBase(classOrObject.manager), StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
+    : KtLightClassBase(classOrObject.manager), StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     private val lightIdentifier = KtLightIdentifier(this, classOrObject)
 
     private val _extendsList by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -109,12 +108,12 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
         return LightClassGenerationSupport.getInstance(project).resolveToDescriptor(classOrObject) as? ClassDescriptor
     }
 
-    private fun getLightClassData(): OutermostKotlinClassLightClassData {
+    private fun getLightClassData(): LightClassDataImpl {
         val lightClassData = getLightClassData(classOrObject)
-        if (lightClassData !is OutermostKotlinClassLightClassData) {
+        if (lightClassData !is LightClassDataImpl) {
             LOG.error("Invalid light class data for existing light class:\n$lightClassData\n${classOrObject.getElementTextWithContext()}")
         }
-        return lightClassData as OutermostKotlinClassLightClassData
+        return lightClassData as LightClassDataImpl
     }
 
     private val _containingFile: PsiFile by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -194,7 +193,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
     override fun getName(): String? = classOrObject.nameAsName?.asString()
 
-    private val _modifierList : PsiModifierList by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val _modifierList: PsiModifierList by lazy(LazyThreadSafetyMode.PUBLICATION) {
         object : KtLightModifierListWithExplicitModifiers(this@KtLightClassForSourceDeclaration, computeModifiers()) {
             override val delegate: PsiAnnotationOwner
                 get() = this@KtLightClassForSourceDeclaration.delegate.modifierList!!
@@ -342,17 +341,17 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
     override fun getImplementsList() = _implementsList
 
     companion object {
-        private val JAVA_API_STUB = Key.create<CachedValue<WithFileStubAndExtraDiagnostics>>("JAVA_API_STUB")
+        private val JAVA_API_STUB = Key.create<CachedValue<LightClassData>>("JAVA_API_STUB")
 
         private val jetTokenToPsiModifier = listOf(
                 PUBLIC_KEYWORD to PsiModifier.PUBLIC,
-                INTERNAL_KEYWORD to  PsiModifier.PUBLIC,
+                INTERNAL_KEYWORD to PsiModifier.PUBLIC,
                 PROTECTED_KEYWORD to PsiModifier.PROTECTED,
                 FINAL_KEYWORD to PsiModifier.FINAL)
 
 
         fun create(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
-            if (classOrObject.containingKtFile.isScript || classOrObject.hasModifier(KtTokens.HEADER_KEYWORD))  {
+            if (classOrObject.containingKtFile.isScript || classOrObject.hasModifier(KtTokens.HEADER_KEYWORD)) {
                 return null
             }
 
@@ -387,10 +386,10 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
             return getLightClassCachedValue(classOrObject).value
         }
 
-        fun getLightClassCachedValue(classOrObject: KtClassOrObject): CachedValue<WithFileStubAndExtraDiagnostics> {
+        fun getLightClassCachedValue(classOrObject: KtClassOrObject): CachedValue<LightClassData> {
             var value =
                     getOutermostClassOrObject(classOrObject).getUserData(JAVA_API_STUB) // stub computed for outer class can be used for inner/nested
-                    ?: classOrObject.getUserData (JAVA_API_STUB)
+                    ?: classOrObject.getUserData(JAVA_API_STUB)
             if (value == null) {
                 value = CachedValuesManager.getManager(classOrObject.project).createCachedValue(
                         LightClassDataProviderForClassOrObject(classOrObject), false)

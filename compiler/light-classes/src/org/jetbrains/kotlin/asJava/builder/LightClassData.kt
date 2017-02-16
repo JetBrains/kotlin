@@ -17,43 +17,23 @@
 package org.jetbrains.kotlin.asJava.builder
 
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 
-interface LightClassData
-
-interface WithFileStubAndExtraDiagnostics: LightClassData {
+interface LightClassData {
     val javaFileStub: PsiJavaFileStub
     val extraDiagnostics: Diagnostics
 }
 
-interface LightClassDataForKotlinClass: LightClassData {
-    val classOrObject: KtClassOrObject
-}
-
-object InvalidLightClassData: WithFileStubAndExtraDiagnostics, LightClassDataForKotlinClass {
+object InvalidLightClassData: LightClassData {
     override val javaFileStub: PsiJavaFileStub
         get() = shouldNotBeCalled()
     override val extraDiagnostics: Diagnostics
-        get() = shouldNotBeCalled()
-    override val classOrObject: KtClassOrObject
         get() = shouldNotBeCalled()
 
     private fun shouldNotBeCalled(): Nothing = throw UnsupportedOperationException("Should not be called")
 }
 
-data class KotlinFacadeLightClassData(
+data class LightClassDataImpl(
         override val javaFileStub: PsiJavaFileStub,
         override val extraDiagnostics: Diagnostics
-): LightClassData, WithFileStubAndExtraDiagnostics
-
-data class InnerKotlinClassLightClassData(
-        override val classOrObject: KtClassOrObject
-): LightClassDataForKotlinClass
-
-data class OutermostKotlinClassLightClassData(
-        override val javaFileStub: PsiJavaFileStub,
-        override val extraDiagnostics: Diagnostics,
-        override val classOrObject: KtClassOrObject
-): LightClassDataForKotlinClass, WithFileStubAndExtraDiagnostics
+): LightClassData
