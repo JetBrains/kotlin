@@ -34,7 +34,6 @@ import kotlin.concurrent.schedule
 
 val DAEMON_PERIODIC_CHECK_INTERVAL_MS = 1000L
 
-
 class LogStream(name: String) : OutputStream() {
 
     val log by lazy { Logger.getLogger(name) }
@@ -151,9 +150,7 @@ object KotlinCompileDaemon {
                                                          }
                                                      })
 
-            if (daemonOptions.runFilesPath.isNotEmpty())
-                println(daemonOptions.runFilesPath)
-
+            println(COMPILE_DAEMON_IS_READY_MESSAGE)
             log.info("daemon is listening on port: $port")
 
             // this supposed to stop redirected streams reader(s) on the client side and prevent some situations with hanging threads, but doesn't work reliably
