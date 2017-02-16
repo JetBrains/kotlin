@@ -23,7 +23,9 @@ import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
-import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
@@ -31,15 +33,23 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.incremental.*
-import org.jetbrains.kotlin.daemon.report.*
+import org.jetbrains.kotlin.daemon.incremental.RemoteAnnotationsFileUpdater
+import org.jetbrains.kotlin.daemon.incremental.RemoteArtifactChangesProvider
+import org.jetbrains.kotlin.daemon.incremental.RemoteChangesRegostry
+import org.jetbrains.kotlin.daemon.report.CompileServicesFacadeMessageCollector
+import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
+import org.jetbrains.kotlin.daemon.report.DaemonMessageReporterPrintStreamAdapter
+import org.jetbrains.kotlin.daemon.report.RemoteICReporter
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.stackTraceStr
-import java.io.*
+import java.io.BufferedOutputStream
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.PrintStream
 import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
@@ -51,6 +61,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.comparisons.compareByDescending
+import kotlin.comparisons.thenBy
 import kotlin.concurrent.read
 import kotlin.concurrent.schedule
 import kotlin.concurrent.write
@@ -490,7 +501,7 @@ class CompileServiceImpl(
 
         ifAlive {
 
-            val aliveWithOpts = walkDaemons(File(daemonOptions.runFilesPathOrDefault), compilerId, runFile, filter = { f, p -> p != port }, report = { _, msg -> log.info(msg) }).toList()
+            val aliveWithOpts = walkDaemons(File(daemonOptions.runFilesPathOrDefault), compilerId, runFile, filter = { f, p -> p != port }, report = { cat, msg -> log.info(msg) }).toList()
             val comparator = compareByDescending<DaemonWithMetadata, DaemonJVMOptions>(DaemonJVMOptionsMemoryComparator(), { it.jvmOptions })
                     .thenBy(FileAgeComparator()) { it.runFile }
             aliveWithOpts.maxWith(comparator)?.let { bestDaemonWithMetadata ->
@@ -498,12 +509,12 @@ class CompileServiceImpl(
                 if (fattestOpts memorywiseFitsInto daemonJVMOptions && FileAgeComparator().compare(bestDaemonWithMetadata.runFile, runFile) < 0 ) {
                     // all others are smaller that me, take overs' clients and shut them down
                     log.info("$LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE lower prio, taking clients from them and schedule them to shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
-                    aliveWithOpts.forEach { (daemon, runFile, _) ->
+                    aliveWithOpts.forEach {
                         try {
-                            daemon.getClients().takeIf { it.isGood }?.let {
+                            it.daemon.getClients().check { it.isGood }?.let {
                                 it.get().forEach { clientAliveFile -> registerClient(clientAliveFile) }
                             }
-                            daemon.scheduleShutdown(true)
+                            it.daemon.scheduleShutdown(true)
                         }
                         catch (e: Exception) {
                             log.info("Cannot connect to a daemon, assuming dying ('${runFile.canonicalPath}'): ${e.message}")
@@ -528,7 +539,7 @@ class CompileServiceImpl(
                 else if (daemonJVMOptions memorywiseFitsInto fattestOpts && FileAgeComparator().compare(bestDaemonWithMetadata.runFile, runFile) > 0) {
                     // there is at least one bigger, handover my clients to it and shutdown
                     log.info("$LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE higher prio, handover clients to it and schedule shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
-                    getClients().takeIf { it.isGood }?.let {
+                    getClients().check { it.isGood }?.let {
                         it.get().forEach { bestDaemonWithMetadata.daemon.registerClient(it) }
                     }
                     scheduleShutdown(true)

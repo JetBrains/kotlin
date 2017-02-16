@@ -32,6 +32,7 @@ import java.rmi.server.UnicastRemoteObject
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 import kotlin.comparisons.compareByDescending
+import kotlin.comparisons.thenBy
 import kotlin.concurrent.thread
 
 class CompilationServices(
@@ -303,7 +304,7 @@ object KotlinCompilerClient {
                 .thenBy(FileAgeComparator()) { it.runFile }
         val optsCopy = daemonJVMOptions.copy()
         // if required options fit into fattest running daemon - return the daemon and required options with memory params set to actual ones in the daemon
-        return aliveWithMetadata.maxWith(comparator)?.takeIf { daemonJVMOptions memorywiseFitsInto it.jvmOptions }?.let {
+        return aliveWithMetadata.maxWith(comparator)?.check { daemonJVMOptions memorywiseFitsInto it.jvmOptions }?.let {
                 Pair(it.daemon, optsCopy.updateMemoryUpperBounds(it.jvmOptions))
             }
             // else combine all options from running daemon to get fattest option for a new daemon to run

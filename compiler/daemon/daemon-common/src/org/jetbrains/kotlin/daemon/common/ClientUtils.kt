@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.daemon.common
 
 import java.io.File
 import java.rmi.registry.LocateRegistry
+import java.util.*
+import kotlin.comparisons.compareValues
 
 
 internal val MAX_PORT_NUMBER = 0xffff
@@ -47,15 +49,17 @@ data class DaemonWithMetadata(val daemon: CompileService, val runFile: File, val
 fun walkDaemons(registryDir: File,
                 compilerId: CompilerId,
                 fileToCompareTimestamp: File,
-                filter: (File, Int) -> Boolean = { _, _ -> true },
-                report: (DaemonReportCategory, String) -> Unit = { _, _ -> }
+                filter: (File, Int) -> Boolean = { file, port -> true },
+                report: (DaemonReportCategory, String) -> Unit = { cat, msg -> }
 ): Sequence<DaemonWithMetadata> {
     val classPathDigest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString()
     val portExtractor = makePortFromRunFilenameExtractor(classPathDigest)
     return registryDir.walk()
             .map { Pair(it, portExtractor(it.name)) }
-            .filter { (file, port) -> port != null && filter(file, port) }
-            .mapNotNull { (file, port) ->
+            .filter { it.second != null && filter(it.first, it.second!!) }
+            .mapNotNull {
+                val file = it.first
+                val port = it.second
                 assert(port!! in 1..(MAX_PORT_NUMBER - 1))
                 val relativeAge = fileToCompareTimestamp.lastModified() - file.lastModified()
                 report(DaemonReportCategory.DEBUG, "found daemon on port $port ($relativeAge ms old), trying to connect")

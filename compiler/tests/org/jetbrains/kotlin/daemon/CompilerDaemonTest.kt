@@ -444,9 +444,9 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val electionLogs = logFiles.map { it to it?.readLines()?.find { it.contains(LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE) } }
 
         assertTrue("No daemon elected: \n${electionLogs.joinToString("\n")}",
-                   electionLogs.any { (_, electionLine) -> electionLine != null && (electionLine.contains("lower prio") || electionLine.contains("equal prio")) })
+                   electionLogs.any { it.second != null && (it.second!!.contains("lower prio") || it.second!!.contains("equal prio")) })
 
-        electionLogs.forEach { (logFile, _) -> logFile?.delete() }
+        electionLogs.forEach { it.first?.delete() }
 
         (1..PARALLEL_THREADS_TO_START).forEach {
             assertEquals("Compilation on thread $it failed:\n${outStreams[it - 1]}", 0, resultCodes[it - 1])
