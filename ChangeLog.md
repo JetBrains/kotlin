@@ -114,4 +114,4 @@
 ### Previous releases
 
 This release also includes the fixes and improvements from the previous
-[`1.1-Beta`](https://github.com/JetBrains/kotlin/blob/1.1-beta2/ChangeLog.md) release.
+[`1.1-Beta2`](https://github.com/JetBrains/kotlin/blob/1.1-beta2/ChangeLog.md) release.
