@@ -1,0 +1,5 @@
+{
+  "type": "SHORT_COMPANION_REFERENCE",
+  "mainFile": "test.kt",
+  "newName": "Bar"
+}

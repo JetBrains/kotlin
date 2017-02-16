@@ -16,28 +16,25 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
-import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.psi.search.SearchScope
-import com.intellij.refactoring.rename.PsiElementRenameHandler
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
-class RenameJavaSyntheticPropertyHandler : PsiElementRenameHandler() {
+class RenameJavaSyntheticPropertyHandler : AbstractReferenceSubstitutionRenameHandler<SyntheticJavaPropertyDescriptor>() {
     class Processor : RenamePsiElementProcessor() {
         override fun prepareRenaming(element: PsiElement, newName: String, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
             val propertyWrapper = element as? SyntheticPropertyWrapper ?: return
@@ -71,29 +68,12 @@ class RenameJavaSyntheticPropertyHandler : PsiElementRenameHandler() {
         }
     }
 
-    private fun getTargetDescriptor(dataContext: DataContext): SyntheticJavaPropertyDescriptor? {
-        val caret = CommonDataKeys.CARET.getData(dataContext) ?: return null
-        val ktFile = CommonDataKeys.PSI_FILE.getData(dataContext) as? KtFile ?: return null
-        val refExpr = ktFile.findElementAt(caret.offset)?.getNonStrictParentOfType<KtSimpleNameExpression>() ?: return null
+    override fun getTargetDescriptor(dataContext: DataContext): SyntheticJavaPropertyDescriptor? {
+        val refExpr = getReferenceExpression(dataContext) ?: return null
         return refExpr.analyze(BodyResolveMode.PARTIAL)[BindingContext.REFERENCE_TARGET, refExpr] as? SyntheticJavaPropertyDescriptor
     }
 
-    override fun isAvailableOnDataContext(dataContext: DataContext): Boolean {
-        return CommonDataKeys.EDITOR.getData(dataContext) != null && getTargetDescriptor(dataContext) != null
-    }
-
-    override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext) {
-        val descriptor = getTargetDescriptor(dataContext) ?: return
-        val wrappingContext = DataContext { id ->
-            if (CommonDataKeys.PSI_ELEMENT.`is`(id)) {
-                return@DataContext SyntheticPropertyWrapper(PsiManager.getInstance(project), descriptor)
-            }
-            dataContext.getData(id)
-        }
-        super.invoke(project, editor, file, wrappingContext)
-    }
-
-    override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext) {
-        // Can't be invoked outside of a text editor
+    override fun getElementToRename(project: Project, descriptor: SyntheticJavaPropertyDescriptor): PsiElement? {
+        return SyntheticPropertyWrapper(PsiManager.getInstance(project), descriptor)
     }
 }

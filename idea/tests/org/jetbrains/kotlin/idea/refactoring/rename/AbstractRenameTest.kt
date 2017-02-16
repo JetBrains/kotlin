@@ -21,7 +21,11 @@ import com.google.gson.JsonParser
 import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.lang.properties.psi.PropertiesFile
 import com.intellij.lang.properties.psi.Property
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.editor.impl.CaretImpl
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.Module
@@ -37,6 +41,7 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.intellij.refactoring.MultiFileTestCase
+import com.intellij.refactoring.rename.PsiElementRenameHandler
 import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
@@ -76,7 +81,8 @@ private enum class RenameType {
     MARKED_ELEMENT,
     FILE,
     BUNDLE_PROPERTY,
-    SYNTHETIC_PROPERTY
+    SYNTHETIC_PROPERTY,
+    SHORT_COMPANION_REFERENCE
 }
 
 abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
@@ -123,6 +129,7 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
                 RenameType.FILE -> renameFile(renameObject, context)
                 RenameType.BUNDLE_PROPERTY -> renameBundleProperty(renameObject, context)
                 RenameType.SYNTHETIC_PROPERTY -> renameSyntheticProperty(renameObject, context)
+                RenameType.SHORT_COMPANION_REFERENCE -> renameShortCompanionReference(renameObject, context)
             }
 
             if (hintDirective != null) {
@@ -361,6 +368,42 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             val substitution = RenamePsiElementProcessor.forElement(propertyWrapper).substituteElementToRename(propertyWrapper, null)
 
             runRenameProcessor(context, newName, substitution, renameParamsObject, true, true)
+        }
+    }
+
+    private fun renameShortCompanionReference(renameParamsObject: JsonObject, context: TestContext) {
+        val mainFilePath = renameParamsObject.getString("mainFile")
+        val newName = renameParamsObject.getString("newName")
+
+        doTestCommittingDocuments { rootDir, rootAfter ->
+            configExtra(rootDir, renameParamsObject)
+
+            val psiFile = rootDir.findFileByRelativePath(mainFilePath)!!.toPsiFile(project)!!
+
+            val doc = PsiDocumentManager.getInstance(project).getDocument(psiFile)!!
+            val marker = doc.extractMarkerOffset(project, "/*rename*/")
+            assert(marker != -1)
+
+            val editor = EditorFactory.getInstance().createEditor(doc)
+            editor.caretModel.moveToOffset(marker)
+
+            try {
+                val handler = RenameClassByCompanionObjectShortReferenceHandler()
+                val dataContext = DataContext { dataId ->
+                    when (dataId) {
+                        CommonDataKeys.EDITOR.name -> editor
+                        CommonDataKeys.CARET.name -> editor.caretModel.currentCaret
+                        CommonDataKeys.PSI_FILE.name -> psiFile
+                        PsiElementRenameHandler.DEFAULT_NAME.name -> newName
+                        else -> null
+                    }
+                }
+                Assert.assertTrue(handler.isAvailableOnDataContext(dataContext))
+                handler.invoke(project, editor, psiFile, dataContext)
+            }
+            finally {
+                EditorFactory.getInstance().releaseEditor(editor)
+            }
         }
     }
 
