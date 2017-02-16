@@ -26,8 +26,8 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.fileClasses.OldPackageFacadeClassUtils;
 import org.jetbrains.kotlin.codegen.AbstractClassBuilder;
+import org.jetbrains.kotlin.fileClasses.OldPackageFacadeClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
@@ -53,6 +53,7 @@ public class StubClassBuilder extends AbstractClassBuilder {
     private StubBuildingVisitor v;
     private final Stack<StubElement> parentStack;
     private boolean isPackageClass = false;
+    private int memberIndex = 0;
 
     public StubClassBuilder(@NotNull Stack<StubElement> parentStack) {
         this.parentStack = parentStack;
@@ -196,6 +197,7 @@ public class StubClassBuilder extends AbstractClassBuilder {
         }
 
         last.putUserData(ClsWrapperStubPsiFactory.ORIGIN, LightElementOriginKt.toLightMemberOrigin(origin));
+        last.putUserData(MemberIndex.KEY, new MemberIndex(memberIndex++));
     }
 
     @Override

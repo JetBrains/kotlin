@@ -6,4 +6,4 @@ class Foo {
 val x = Foo::bar
 
 // REF:Foo::bar
-// RESULT:KtLightAnnotationMethod:bar
+// RESULT:KtLightMethodImpl:bar

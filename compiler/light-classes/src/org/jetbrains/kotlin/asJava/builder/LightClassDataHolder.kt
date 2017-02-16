@@ -17,15 +17,23 @@
 package org.jetbrains.kotlin.asJava.builder
 
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiClassType
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil.findClass
 import org.jetbrains.kotlin.asJava.builder.InvalidLightClassDataHolder.javaFileStub
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
+import org.jetbrains.kotlin.asJava.elements.KtLightField
+import org.jetbrains.kotlin.asJava.elements.KtLightFieldImpl
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 
 interface LightClassDataHolder {
@@ -33,15 +41,33 @@ interface LightClassDataHolder {
     val extraDiagnostics: Diagnostics
 
     fun findData(findDelegate: (PsiJavaFileStub) -> PsiClass): LightClassData
-    fun findData(classOrObject: KtClassOrObject): LightClassData = findData { it.findDelegate(classOrObject) }
-    fun findData(classFqName: FqName): LightClassData = findData { it.findDelegate(classFqName) }
+
+    fun findDataForDefaultImpls(classOrObject: KtClassOrObject) = findData {
+        it.findDelegate(classOrObject).findInnerClassByName(JvmAbi.DEFAULT_IMPLS_CLASS_NAME, false)
+        ?: throw IllegalStateException("Couldn't get delegate for $this\n in ${DebugUtil.stubTreeToString(it)}")
+    }
+
+    fun findDataForClassOrObject(classOrObject: KtClassOrObject): LightClassData = findData { it.findDelegate(classOrObject) }
+    fun findDataForFacade(classFqName: FqName): LightClassData = findData { it.findDelegate(classFqName) }
 }
 
 interface LightClassData {
     val clsDelegate: PsiClass
+
+    val supertypes: Array<PsiClassType> get() { return clsDelegate.superTypes }
+
+    fun getOwnFields(containingClass: KtLightClass): List<KtLightField>
+    fun getOwnMethods(containingClass: KtLightClass): List<KtLightMethod>
 }
 
 class LightClassDataImpl(override val clsDelegate: PsiClass) : LightClassData {
+    override fun getOwnFields(containingClass: KtLightClass): List<KtLightField> {
+        return clsDelegate.fields.map { KtLightFieldImpl.fromClsField(it, containingClass) }
+    }
+
+    override fun getOwnMethods(containingClass: KtLightClass): List<KtLightMethod> {
+        return clsDelegate.methods.map { KtLightMethodImpl.fromClsMethod(it, containingClass) }
+    }
 }
 
 object InvalidLightClassDataHolder : LightClassDataHolder {
@@ -77,7 +103,7 @@ fun PsiJavaFileStub.findDelegate(classOrObject: KtClassOrObject): PsiClass {
     }
 
     val stubFileText = DebugUtil.stubTreeToString(this)
-    throw IllegalStateException("Couldn't get delegate for $this\nin $ktFileText\nstub: \n$stubFileText")
+    throw IllegalStateException("Couldn't get delegate for ${classOrObject.getDebugText()}\nin $ktFileText\nstub: \n$stubFileText")
 }
 
 fun PsiJavaFileStub.findDelegate(classFqName: FqName): PsiClass {

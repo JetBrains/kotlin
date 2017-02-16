@@ -59,7 +59,7 @@ import java.util.*
 import javax.swing.Icon
 
 abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtClassOrObject)
-    : KtLightClassBase(classOrObject.manager), StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
+    : KtLazyLightClass(classOrObject.manager), StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     private val lightIdentifier = KtLightIdentifier(this, classOrObject)
 
     private val _extendsList by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -80,9 +80,9 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
     override val clsDelegate: PsiClass get() = lightClassData.clsDelegate
 
-    private val lightClassData: LightClassData by lazy(LazyThreadSafetyMode.PUBLICATION) { findLightClassData() }
+    override val lightClassData: LightClassData by lazy(LazyThreadSafetyMode.PUBLICATION) { findLightClassData() }
 
-    open protected fun findLightClassData() = getLightClassDataHolder().findData(classOrObject)
+    open protected fun findLightClassData() = getLightClassDataHolder().findDataForClassOrObject(classOrObject)
 
     private fun getJavaFileStub(): PsiJavaFileStub = getLightClassDataHolder().javaFileStub
 

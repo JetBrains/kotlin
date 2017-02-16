@@ -14,7 +14,7 @@ UFile (package = ) [public abstract interface Callback {...]
                     UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()] : PsiType:UnsupportedOperationException
                         UIdentifier (Identifier (UnsupportedOperationException)) [UIdentifier (Identifier (UnsupportedOperationException))]
                         USimpleNameReferenceExpression (identifier = <init>) [<init>] : PsiType:UnsupportedOperationException
-        UMethod (name = Model) [public fun Model() {...}]
+        UAnnotationMethod (name = Model) [public fun Model() {...}]
             UBlockExpression [{...}]
                 UBlockExpression [{...}] : PsiType:Unit
                     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2)) [crashMe(Callback.java, { ...})] : PsiType:Unit

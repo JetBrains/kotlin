@@ -51,7 +51,7 @@ class KtLightClassForFacade private constructor(
         private val facadeClassFqName: FqName,
         private val lightClassDataCache: CachedValue<LightClassDataHolder>,
         files: Collection<KtFile>
-) : KtLightClassBase(manager) {
+) : KtLazyLightClass(manager) {
     private data class StubCacheKey(val fqName: FqName, val searchScope: GlobalSearchScope)
 
     class FacadeStubCache(private val project: Project) {
@@ -194,8 +194,12 @@ class KtLightClassForFacade private constructor(
 
     override fun copy() = KtLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files)
 
+    override val lightClassData by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        lightClassDataCache.value.findDataForFacade(facadeClassFqName)
+    }
+
     override val clsDelegate: PsiClass
-        get() = lightClassDataCache.value.findData(facadeClassFqName).clsDelegate
+        get() = lightClassData.clsDelegate
 
     override fun getNavigationElement() = files.iterator().next()
 

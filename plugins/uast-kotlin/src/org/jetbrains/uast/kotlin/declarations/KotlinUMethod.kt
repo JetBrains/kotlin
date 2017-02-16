@@ -20,7 +20,10 @@ import com.intellij.psi.PsiCodeBlock
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNameIdentifierOwner
-import org.jetbrains.kotlin.asJava.elements.*
+import org.jetbrains.kotlin.asJava.elements.KtLightElement
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.elements.isGetter
+import org.jetbrains.kotlin.asJava.elements.isSetter
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.uast.*
@@ -30,8 +33,14 @@ import org.jetbrains.uast.kotlin.*
 open class KotlinUMethod(
         psi: KtLightMethod,
         override val uastParent: UElement?
-) : UMethod, JavaUElementWithComments, PsiMethod by psi {
+) : UAnnotationMethod, JavaUElementWithComments, PsiMethod by psi {
     override val psi: KtLightMethod = unwrap<UMethod, KtLightMethod>(psi)
+
+    override val uastDefaultValue by lz {
+        val annotationParameter = psi.kotlinOrigin as? KtParameter ?: return@lz null
+        val defaultValue = annotationParameter.defaultValue ?: return@lz null
+        getLanguagePlugin().convertElement(defaultValue, this) as? UExpression
+    }
 
     private val kotlinOrigin = (psi.originalElement as KtLightElement<*, *>).kotlinOrigin
 
@@ -73,20 +82,6 @@ open class KotlinUMethod(
     override fun hashCode() = psi.hashCode()
 
     companion object {
-        fun create(psi: KtLightMethod, containingElement: UElement?) = when (psi) {
-            is KtLightMethodImpl.KtLightAnnotationMethod -> KotlinUAnnotationMethod(psi, containingElement)
-            else -> KotlinUMethod(psi, containingElement)
-        }
-    }
-}
-
-class KotlinUAnnotationMethod(
-        override val psi: KtLightMethodImpl.KtLightAnnotationMethod,
-        containingElement: UElement?
-) : KotlinUMethod(psi, containingElement), UAnnotationMethod {
-    override val uastDefaultValue by lz {
-        val annotationParameter = psi.kotlinOrigin as? KtParameter ?: return@lz null
-        val defaultValue = annotationParameter.defaultValue ?: return@lz null
-        getLanguagePlugin().convertElement(defaultValue, this) as? UExpression
+        fun create(psi: KtLightMethod, containingElement: UElement?) = KotlinUMethod(psi, containingElement)
     }
 }

@@ -21,8 +21,8 @@ import com.intellij.navigation.ItemPresentation
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
-import com.intellij.psi.impl.light.LightMethod
-import com.intellij.psi.impl.light.LightModifierList
+import com.intellij.psi.impl.light.LightElement
+import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.*
 import com.intellij.util.IncorrectOperationException
@@ -35,21 +35,25 @@ import org.jetbrains.kotlin.asJava.propertyNameByAccessor
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 
-interface KtLightMethod : PsiMethod, KtLightDeclaration<KtDeclaration, PsiMethod> {
+interface KtLightMethod : PsiAnnotationMethod, KtLightDeclaration<KtDeclaration, PsiMethod> {
     val lightMethodOrigin: LightMemberOrigin?
     val isDelegated: Boolean
 }
 
-sealed class KtLightMethodImpl(
-        override val clsDelegate: PsiMethod,
+class KtLightMethodImpl private constructor(
+        computeRealDelegate: () -> PsiMethod,
         override val lightMethodOrigin: LightMemberOrigin?,
-        containingClass: KtLightClass
-) : LightMethod(clsDelegate.manager, clsDelegate, containingClass), KtLightMethod {
+        private val containingClass: KtLightClass,
+        private val dummyDelegate: PsiMethod? = null
+) : LightElement(containingClass.manager, containingClass.language), KtLightMethod {
     override val kotlinOrigin: KtDeclaration? get() = lightMethodOrigin?.originalElement as? KtDeclaration
+
+    override val clsDelegate by lazy(LazyThreadSafetyMode.PUBLICATION, computeRealDelegate)
 
     private val lightIdentifier by lazy(LazyThreadSafetyMode.PUBLICATION) { KtLightIdentifier(this, kotlinOrigin as? KtNamedDeclaration) }
     private val returnTypeElem by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -59,7 +63,7 @@ sealed class KtLightMethodImpl(
 
     private val calculatingReturnType = ThreadLocal<Boolean>()
 
-    override fun getContainingClass(): KtLightClass = super.getContainingClass() as KtLightClass
+    override fun getContainingClass(): KtLightClass = containingClass
 
     private val paramsList: CachedValue<PsiParameterList> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val cacheManager = CachedValuesManager.getManager(clsDelegate.project)
@@ -95,7 +99,7 @@ sealed class KtLightMethodImpl(
 
     override fun getNavigationElement(): PsiElement = kotlinOrigin?.navigationElement ?: super.getNavigationElement()
     override fun getPresentation(): ItemPresentation? = kotlinOrigin?.presentation ?: super.getPresentation()
-    override fun getParent(): PsiElement? = containingClass
+    override fun getParent(): PsiElement = containingClass
     override fun getText() = kotlinOrigin?.text ?: ""
     override fun getTextRange() = kotlinOrigin?.textRange ?: TextRange.EMPTY_RANGE
 
@@ -198,21 +202,11 @@ sealed class KtLightMethodImpl(
             containingClass == other.containingClass &&
             clsDelegate == other.clsDelegate
 
-    override fun hashCode(): Int = ((name.hashCode() * 31 + (lightMethodOrigin?.hashCode() ?: 0)) * 31 + containingClass.hashCode()) * 31 + clsDelegate.hashCode()
+    override fun hashCode(): Int = ((getName().hashCode() * 31 + (lightMethodOrigin?.hashCode() ?: 0)) * 31 + containingClass.hashCode()) * 31 + clsDelegate.hashCode()
 
     override fun toString(): String = "${this::class.java.simpleName}:$name"
 
-    private class KtLightMethodForDeclaration(
-            delegate: PsiMethod, origin: LightMemberOrigin?, containingClass: KtLightClass
-    ) : KtLightMethodImpl(delegate, origin, containingClass)
-
-    class KtLightAnnotationMethod(
-            override val clsDelegate: PsiAnnotationMethod,
-            origin: LightMemberOrigin?,
-            containingClass: KtLightClass
-    ) : KtLightMethodImpl(clsDelegate, origin, containingClass), PsiAnnotationMethod {
-        override fun getDefaultValue() = clsDelegate.defaultValue
-    }
+    override fun getDefaultValue() = (clsDelegate as? PsiAnnotationMethod)?.defaultValue
 
     // override getReturnType() so return type resolves to type parameters of this method not delegate's
     // which is relied upon by java type inference
@@ -229,27 +223,72 @@ sealed class KtLightMethodImpl(
     }
 
     companion object Factory {
+        private fun adjustMethodOrigin(origin: LightMemberOriginForDeclaration?): LightMemberOriginForDeclaration? {
+            val originalElement = origin?.originalElement
+            if (originalElement is KtPropertyAccessor) {
+                return origin.copy(originalElement.getStrictParentOfType<KtProperty>()!!, origin.originKind)
+            }
+            return origin
+        }
+
         fun create(
                 delegate: PsiMethod, origin: LightMemberOrigin?, containingClass: KtLightClass
         ): KtLightMethodImpl {
-            return when (delegate) {
-                is PsiAnnotationMethod -> KtLightAnnotationMethod(delegate, origin, containingClass)
-                else -> KtLightMethodForDeclaration(delegate, origin, containingClass)
-            }
+            return KtLightMethodImpl({ delegate}, origin, containingClass)
         }
 
         @JvmStatic
         fun fromClsMethod(method: PsiMethod, containingClass: KtLightClass): KtLightMethodImpl {
-            var origin = ClsWrapperStubPsiFactory.getMemberOrigin(method)
-            val originalElement = if (origin != null) origin.originalElement else null
-            if (originalElement is KtPropertyAccessor) {
+            val origin = ClsWrapperStubPsiFactory.getMemberOrigin(method)
+            return KtLightMethodImpl.create(method, adjustMethodOrigin(origin), containingClass)
+        }
 
-                origin = origin!!.copy(PsiTreeUtil.getParentOfType(originalElement, KtProperty::class.java)!!, origin.originKind)
-            }
-
-            return KtLightMethodImpl.create(method, origin, containingClass)
+        @JvmStatic
+        fun lazy(
+                dummyDelegate: PsiMethod?,
+                containingClass: KtLightClass,
+                origin: LightMemberOriginForDeclaration?,
+                computeRealDelegate: () -> PsiMethod
+        ): KtLightMethodImpl {
+            return KtLightMethodImpl(computeRealDelegate, adjustMethodOrigin(origin), containingClass, dummyDelegate)
         }
     }
+
+    override fun getName() = dummyDelegate?.name ?: clsDelegate.name
+
+    override fun hasModifierProperty(name: String) = clsDelegate.hasModifierProperty(name)
+
+    override fun getThrowsList() = clsDelegate.throwsList
+
+    override fun hasTypeParameters() = clsDelegate.hasTypeParameters()
+
+    override fun isVarArgs() = clsDelegate.isVarArgs
+
+    override fun isConstructor() = clsDelegate.isConstructor
+
+    override fun getHierarchicalMethodSignature() = clsDelegate.hierarchicalMethodSignature
+
+    override fun getDocComment() = clsDelegate.docComment
+
+    override fun findSuperMethodSignaturesIncludingStatic(checkAccess: Boolean) = clsDelegate.findSuperMethodSignaturesIncludingStatic(checkAccess)
+
+    override fun getBody() = null
+
+    override fun isDeprecated() = clsDelegate.isDeprecated
+
+    override fun findDeepestSuperMethod() = clsDelegate.findDeepestSuperMethod()
+
+    override fun findDeepestSuperMethods() = clsDelegate.findDeepestSuperMethods()
+
+    override fun findSuperMethods() = clsDelegate.findSuperMethods()
+
+    override fun findSuperMethods(checkAccess: Boolean) = clsDelegate.findSuperMethods(checkAccess)
+
+    override fun findSuperMethods(parentClass: PsiClass?) = clsDelegate.findSuperMethods(parentClass)
+
+    override fun getContainingFile() = parent.containingFile
+
+    override fun isValid() = containingClass.isValid
 }
 
 fun KtLightMethod.isTraitFakeOverride(): Boolean {
