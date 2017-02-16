@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
+import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.ui.Messages
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.ApiVersion
@@ -86,6 +88,10 @@ sealed class EnableUnsupportedFeatureFix(
                 element?.let {
                     OpenFileDescriptor(project, it.containingFile.virtualFile, it.textRange.startOffset).navigate(true)
                 }
+                return
+            }
+
+            if (runtimeUpdateRequired && !askUpdateRuntime(module, feature.sinceApiVersion)) {
                 return
             }
 
@@ -155,15 +161,25 @@ fun checkUpdateRuntime(project: Project, requiredVersion: ApiVersion): Boolean {
         parsedModuleRuntimeVersion != null && parsedModuleRuntimeVersion < requiredVersion
     }
     if (modulesWithOutdatedRuntime.isNotEmpty()) {
-        val rc = Messages.showOkCancelDialog(project,
-                                             "This language feature requires version $requiredVersion or later of the Kotlin runtime library. " +
-                                             "Would you like to update the runtime library in your project?",
-                                             "Update runtime library",
-                                             Messages.getQuestionIcon())
-        if (rc != Messages.OK) return false
-
-        val librariesToUpdate = modulesWithOutdatedRuntime.mapNotNull(::findKotlinRuntimeLibrary)
-        updateLibraries(project, librariesToUpdate)
+        if (askUpdateRuntime(project, requiredVersion,
+                             modulesWithOutdatedRuntime.mapNotNull(::findKotlinRuntimeLibrary))) return false
     }
     return true
+}
+
+fun askUpdateRuntime(project: Project, requiredVersion: ApiVersion, librariesToUpdate: List<Library>): Boolean {
+    val rc = Messages.showOkCancelDialog(project,
+                                         "This language feature requires version $requiredVersion or later of the Kotlin runtime library. " +
+                                         "Would you like to update the runtime library in your project?",
+                                         "Update Runtime Library",
+                                         Messages.getQuestionIcon())
+    if (rc != Messages.OK) return false
+
+    updateLibraries(project, librariesToUpdate)
+    return true
+}
+
+fun askUpdateRuntime(module: Module, requiredVersion: ApiVersion): Boolean {
+    val library = findKotlinRuntimeLibrary(module) ?: return true
+    return askUpdateRuntime(module.project, requiredVersion, listOf(library))
 }
