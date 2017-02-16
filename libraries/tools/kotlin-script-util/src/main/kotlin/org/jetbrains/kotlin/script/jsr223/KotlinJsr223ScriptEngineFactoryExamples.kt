@@ -77,6 +77,7 @@ private fun contextClasspath(keyName: String, classLoader: ClassLoader): List<Fi
          ?: manifestClassPath(classLoader)?.anyOrNull { it.matchMaybeVersionedFile(keyName) }
         )?.toList()
 
+private val validJarExtensions = setOf("jar", "zip")
 
 private fun scriptCompilationClasspathFromContext(keyName: String, classLoader: ClassLoader = Thread.currentThread().contextClassLoader): List<File> =
         (System.getProperty("kotlin.script.classpath")?.split(File.pathSeparator)?.map(::File)
@@ -84,9 +85,9 @@ private fun scriptCompilationClasspathFromContext(keyName: String, classLoader: 
         ).let {
             it?.plus(kotlinScriptStandardJars) ?: kotlinScriptStandardJars
         }
-        .map { it?.canonicalFile }
+        .mapNotNull { it?.canonicalFile }
         .distinct()
-        .mapNotNull { it?.existsOrNull() }
+        .filter { (it.isDirectory || (it.isFile && it.extension.toLowerCase() in validJarExtensions)) && it.exists() }
 
 private val kotlinCompilerJar: File by lazy {
     // highest prio - explicit property

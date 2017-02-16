@@ -5,10 +5,11 @@ import org.jetbrains.kotlin.cli.common.repl.KOTLIN_SCRIPT_STATE_BINDINGS_KEY
 import org.jetbrains.kotlin.script.ScriptTemplateDefinition
 import javax.script.Bindings
 import javax.script.ScriptEngine
+import kotlin.script.templates.standard.ScriptTemplateWithBindings
 
 @Suppress("unused")
 @ScriptTemplateDefinition
-abstract class KotlinStandardJsr223ScriptTemplate(val bindings: Bindings) {
+abstract class KotlinStandardJsr223ScriptTemplate(val jsr223Bindings: Bindings) : ScriptTemplateWithBindings(jsr223Bindings) {
 
     private val myEngine: ScriptEngine? get() = bindings[KOTLIN_SCRIPT_ENGINE_BINDINGS_KEY]?.let { it as? ScriptEngine }
 
@@ -17,7 +18,7 @@ abstract class KotlinStandardJsr223ScriptTemplate(val bindings: Bindings) {
 
     fun eval(script: String, newBindings: Bindings): Any? =
             withMyEngine {
-                val savedState = newBindings[KOTLIN_SCRIPT_STATE_BINDINGS_KEY]?.takeIf { it === this.bindings[KOTLIN_SCRIPT_STATE_BINDINGS_KEY] }?.apply {
+                val savedState = newBindings[KOTLIN_SCRIPT_STATE_BINDINGS_KEY]?.takeIf { it === this.jsr223Bindings[KOTLIN_SCRIPT_STATE_BINDINGS_KEY] }?.apply {
                     newBindings[KOTLIN_SCRIPT_STATE_BINDINGS_KEY] = null
                 }
                 val res = it.eval(script, newBindings)
@@ -29,10 +30,10 @@ abstract class KotlinStandardJsr223ScriptTemplate(val bindings: Bindings) {
 
     fun eval(script: String): Any? =
             withMyEngine {
-                val savedState = bindings.remove(KOTLIN_SCRIPT_STATE_BINDINGS_KEY)
-                val res = it.eval(script, bindings)
+                val savedState = jsr223Bindings.remove(KOTLIN_SCRIPT_STATE_BINDINGS_KEY)
+                val res = it.eval(script, jsr223Bindings)
                 savedState?.apply {
-                    bindings[KOTLIN_SCRIPT_STATE_BINDINGS_KEY] = savedState
+                    jsr223Bindings[KOTLIN_SCRIPT_STATE_BINDINGS_KEY] = savedState
                 }
                 res
             }
