@@ -6,7 +6,7 @@ import org.junit.Test
 import java.io.File
 
 
-class KotlinAndroidGradleCLIOnly : AbstractKotlinAndroidGradleTests(gradleVersion = "2.3", androidGradlePluginVersion = "1.5.+")
+class KotlinAndroidGradleCLIOnly : AbstractKotlinAndroidGradleTests(gradleVersion = "2.14.1", androidGradlePluginVersion = "1.5.+")
 
 class KotlinAndroidWithJackGradleCLIOnly : AbstractKotlinAndroidWithJackGradleTests(gradleVersion = "3.3", androidGradlePluginVersion = "2.3.+")
 
