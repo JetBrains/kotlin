@@ -463,6 +463,7 @@ public class MethodInliner {
                         Map<Integer, LambdaInfo> lambdaMapping = new HashMap<Integer, LambdaInfo>();
 
                         int offset = 0;
+                        boolean capturesAnonymousObjectThatMustBeRegenerated = false;
                         for (int i = 0; i < paramCount; i++) {
                             SourceValue sourceValue = frame.getStack(firstParameterIndex + i);
                             LambdaInfo lambdaInfo = MethodInlinerUtilKt.getLambdaIfExistsAndMarkInstructions(
@@ -471,12 +472,17 @@ public class MethodInliner {
                             if (lambdaInfo != null) {
                                 lambdaMapping.put(offset, lambdaInfo);
                             }
+                            else if (i < argTypes.length && isAnonymousClassThatMustBeRegenerated(argTypes[i])) {
+                                capturesAnonymousObjectThatMustBeRegenerated = true;
+                            }
 
                             offset += i == 0 ? 1 : argTypes[i - 1].getSize();
                         }
 
                         transformations.add(
-                                buildConstructorInvocation(owner, desc, lambdaMapping, awaitClassReification)
+                                buildConstructorInvocation(
+                                        owner, desc, lambdaMapping, awaitClassReification, capturesAnonymousObjectThatMustBeRegenerated
+                                )
                         );
                         awaitClassReification = false;
                     }
@@ -538,6 +544,12 @@ public class MethodInliner {
         return node;
     }
 
+    private boolean isAnonymousClassThatMustBeRegenerated(@Nullable Type type) {
+        if (type == null || type.getSort() != Type.OBJECT) return false;
+        AnonymousObjectTransformationInfo info = inliningContext.findAnonymousObjectTransformationInfo(type.getInternalName());
+        return info != null && info.shouldRegenerate(true);
+    }
+
     @NotNull
     private Frame<SourceValue>[] analyzeMethodNodeBeforeInline(@NotNull MethodNode node) {
         try {
@@ -584,7 +596,8 @@ public class MethodInliner {
             @NotNull String anonymousType,
             @NotNull String desc,
             @NotNull Map<Integer, LambdaInfo> lambdaMapping,
-            boolean needReification
+            boolean needReification,
+            boolean capturesAnonymousObjectThatMustBeRegenerated
     ) {
         boolean memoizeAnonymousObject = inliningContext.findAnonymousObjectTransformationInfo(anonymousType) == null;
 
@@ -594,7 +607,8 @@ public class MethodInliner {
                 isAlreadyRegenerated(anonymousType),
                 desc,
                 false,
-                inliningContext.nameGenerator
+                inliningContext.nameGenerator,
+                capturesAnonymousObjectThatMustBeRegenerated
         );
 
         if (memoizeAnonymousObject) {

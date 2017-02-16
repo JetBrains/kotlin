@@ -200,6 +200,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doTest(fileName);
         }
 
+        @TestMetadata("objectInLambdaCapturesAnotherObject.kt")
+        public void testObjectInLambdaCapturesAnotherObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/objectInLambdaCapturesAnotherObject.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("safeCall.kt")
         public void testSafeCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/safeCall.kt");
@@ -1151,9 +1157,21 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/localFunInLambda"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("lambdaInLambdaCapturesAnotherFun.kt")
+        public void testLambdaInLambdaCapturesAnotherFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/localFunInLambda/lambdaInLambdaCapturesAnotherFun.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("localFunInLambda.kt")
         public void testLocalFunInLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localFunInLambdaCapturesAnotherFun.kt")
+        public void testLocalFunInLambdaCapturesAnotherFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/localFunInLambda/localFunInLambdaCapturesAnotherFun.kt");
             doTest(fileName);
         }
     }
