@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.types.KotlinType
 
 /**
@@ -70,3 +70,5 @@ tailrec fun KotlinType.notNullableIsRepresentedAs(valueType: ValueType): Boolean
     val firstSupertype = this.constructor.supertypes.firstOrNull() ?: return false
     return firstSupertype.notNullableIsRepresentedAs(valueType)
 }
+
+internal fun KotlinType.isValueType() = ValueType.values().any { this.isRepresentedAs(it) }

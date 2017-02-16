@@ -3,6 +3,8 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import llvm.LLVMTypeRef
 import org.jetbrains.kotlin.backend.konan.descriptors.allValueParameters
 import org.jetbrains.kotlin.backend.konan.descriptors.isUnit
+import org.jetbrains.kotlin.backend.konan.isValueType
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -81,15 +83,20 @@ private fun typeToHashString(type: KotlinType): String {
 private val FunctionDescriptor.signature: String
     get() {
         val extensionReceiverPart = this.extensionReceiverParameter?.let { "${it.type}." } ?: ""
-        val actualDescriptor = this.findOriginalTopMostOverriddenDescriptors().firstOrNull() ?: this
 
-        val argsPart = actualDescriptor.valueParameters.map {
+        val argsPart = this.valueParameters.map {
             typeToHashString(it.type)
         }.joinToString(";")
 
-        // TODO: add return type
-        // (it is not simple because return type can be changed when overriding)
-        return "$extensionReceiverPart($argsPart)"
+        // Just distinguish value types and references - it's needed for calling virtual methods through bridges.
+        val returnTypePart =
+                when {
+                    returnType.let { it != null && it.isValueType() } -> "ValueType"
+                    returnType.let { it != null && !KotlinBuiltIns.isUnitOrNullableUnit(it) } -> "Reference"
+                    else -> ""
+                }
+
+        return "$extensionReceiverPart($argsPart)$returnTypePart"
     }
 
 // TODO: rename to indicate that it has signature included

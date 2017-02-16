@@ -151,16 +151,6 @@ internal interface ContextUtils : RuntimeAware {
             return base64Encode(globalHashBytes)
         }
 
-    /**
-     * Converts this string to the sequence of bytes to be used for hashing/storing to binary/etc.
-     *
-     * TODO: share this implementation
-     */
-    private fun stringAsBytes(str: String) = str.toByteArray(Charsets.UTF_8)
-
-    val String.localHash: LocalHash
-        get() = LocalHash(localHash(stringAsBytes(this)))
-
     val String.globalHash: ConstValue
         get() = memScoped {
             val hashBytes = this@globalHash.globalHashBytes
@@ -170,12 +160,21 @@ internal interface ContextUtils : RuntimeAware {
     val FqName.globalHash: ConstValue
         get() = this.toString().globalHash
 
-    val Name.localHash: LocalHash
-        get() = this.toString().localHash
-
-    val FqName.localHash: LocalHash
-        get() = this.toString().localHash
 }
+
+/**
+ * Converts this string to the sequence of bytes to be used for hashing/storing to binary/etc.
+ */
+internal fun stringAsBytes(str: String) = str.toByteArray(Charsets.UTF_8)
+
+internal val String.localHash: LocalHash
+    get() = LocalHash(localHash(stringAsBytes(this)))
+
+internal val Name.localHash: LocalHash
+    get() = this.toString().localHash
+
+internal val FqName.localHash: LocalHash
+    get() = this.toString().localHash
 
 internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 

@@ -441,6 +441,76 @@ task initializers_correctOrder2(type: RunKonanTest) {
     source = "codegen/initializers/correctOrder2.kt"
 }
 
+task bridges_test0(type: RunKonanTest) {
+    goldValue = "42\n42\n"
+    source = "codegen/bridges/test0.kt"
+}
+
+task bridges_test1(type: RunKonanTest) {
+    goldValue = "1042\n"
+    source = "codegen/bridges/test1.kt"
+}
+
+task bridges_test2(type: RunKonanTest) {
+    goldValue = "42\n42\n"
+    source = "codegen/bridges/test2.kt"
+}
+
+task bridges_test3(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/bridges/test3.kt"
+}
+
+task bridges_test4(type: RunKonanTest) {
+    goldValue = "42\n42\n"
+    source = "codegen/bridges/test4.kt"
+}
+
+task bridges_test5(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/bridges/test5.kt"
+}
+
+task bridges_test6(type: RunKonanTest) {
+    goldValue = "42\n42\n42\n42\n42\n"
+    source = "codegen/bridges/test6.kt"
+}
+
+task bridges_test7(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/bridges/test7.kt"
+}
+
+task bridges_test8(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/bridges/test8.kt"
+}
+
+task bridges_test9(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/bridges/test9.kt"
+}
+
+task bridges_test10(type: RunKonanTest) {
+    goldValue = "42\n42\n"
+    source = "codegen/bridges/test10.kt"
+}
+
+task bridges_test11(type: RunKonanTest) {
+    goldValue = "42\n42\n42\n"
+    source = "codegen/bridges/test11.kt"
+}
+
+task bridges_test12(type: RunKonanTest) {
+    goldValue = "B: 42\nC: 42\n"
+    source = "codegen/bridges/test12.kt"
+}
+
+task bridges_test13(type: RunKonanTest) {
+    goldValue = "42\n42\n"
+    source = "codegen/bridges/test13.kt"
+}
+
 task array0(type: RunKonanTest) {
     goldValue = "5\n6\n7\n8\n9\n10\n11\n12\n13\n"
     source = "runtime/collections/array0.kt"

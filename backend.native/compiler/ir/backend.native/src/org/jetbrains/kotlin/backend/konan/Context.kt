@@ -3,25 +3,24 @@ package org.jetbrains.kotlin.backend.konan
 import llvm.LLVMDumpModule
 import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.backend.jvm.descriptors.initialize
-import org.jetbrains.kotlin.backend.konan.InteropBuiltIns
-import org.jetbrains.kotlin.backend.konan.descriptors.deepPrint
-import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
+import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.Ir
-import org.jetbrains.kotlin.backend.konan.llvm.Llvm
-import org.jetbrains.kotlin.backend.konan.llvm.LlvmDeclarations
-import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
+import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import java.lang.System.out
 
-internal class SpecialDescriptorsFactory {
+internal class SpecialDescriptorsFactory(val context: Context) {
     private val outerThisDescriptors = mutableMapOf<ClassDescriptor, PropertyDescriptor>()
+    private val bridgesDescriptors = mutableMapOf<FunctionDescriptor, FunctionDescriptor>()
 
     fun getOuterThisFieldDescriptor(innerClassDescriptor: ClassDescriptor): PropertyDescriptor =
         if (!innerClassDescriptor.isInner) throw AssertionError("Class is not inner: $innerClassDescriptor")
@@ -34,13 +33,75 @@ internal class SpecialDescriptorsFactory {
                 false, "this$0".synthesizedName, CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE,
                 false, false, false, false, false, false).initialize(outerClassDescriptor.defaultType, dispatchReceiverParameter = receiver)
         }
+
+    fun getBridgeDescriptor(descriptor: FunctionDescriptor): FunctionDescriptor {
+        return bridgesDescriptors.getOrPut(descriptor) {
+            SimpleFunctionDescriptorImpl.create(
+                    descriptor.containingDeclaration,
+                    Annotations.EMPTY,
+                    ("<bridge-to>" + descriptor.functionName).synthesizedName,
+                    CallableMemberDescriptor.Kind.DECLARATION,
+                    SourceElement.NO_SOURCE).apply {
+                    initializeBridgeDescriptor(this, descriptor)
+            }
+        }
+    }
+
+    private fun initializeBridgeDescriptor(bridgeDescriptor: SimpleFunctionDescriptorImpl, descriptor: FunctionDescriptor) {
+        val bridgeDirections = descriptor.bridgeDirections
+        if (bridgeDirections.allNotNeeded())
+            throw AssertionError("Function $descriptor is not needed in a bridge")
+
+        val returnType = when (bridgeDirections[0]) {
+            BridgeDirection.TO_VALUE_TYPE -> descriptor.returnType!!
+            BridgeDirection.NOT_NEEDED -> descriptor.returnType
+            BridgeDirection.FROM_VALUE_TYPE -> context.builtIns.anyType
+        }
+
+        val extensionReceiverType = when (bridgeDirections[1]) {
+            BridgeDirection.TO_VALUE_TYPE -> descriptor.extensionReceiverParameter!!.type
+            BridgeDirection.NOT_NEEDED -> descriptor.extensionReceiverParameter?.type
+            BridgeDirection.FROM_VALUE_TYPE -> context.builtIns.anyType
+        }
+
+        bridgeDescriptor.initialize(
+                extensionReceiverType,
+                descriptor.dispatchReceiverParameter,
+                descriptor.typeParameters,
+                descriptor.valueParameters.mapIndexed { index, valueParameterDescriptor ->
+                    when (bridgeDirections[index + 2]) {
+                        BridgeDirection.TO_VALUE_TYPE -> valueParameterDescriptor
+                        BridgeDirection.NOT_NEEDED -> valueParameterDescriptor
+                        BridgeDirection.FROM_VALUE_TYPE -> ValueParameterDescriptorImpl(
+                                valueParameterDescriptor.containingDeclaration,
+                                null,
+                                index,
+                                Annotations.EMPTY,
+                                valueParameterDescriptor.name,
+                                context.builtIns.anyType,
+                                valueParameterDescriptor.declaresDefaultValue(),
+                                valueParameterDescriptor.isCrossinline,
+                                valueParameterDescriptor.isNoinline,
+                                valueParameterDescriptor.varargElementType,
+                                SourceElement.NO_SOURCE)
+                    }
+                },
+                returnType,
+                descriptor.modality,
+                Visibilities.PRIVATE)
+    }
 }
 
 internal final class Context(val config: KonanConfig) : KonanBackendContext() {
 
     var moduleDescriptor: ModuleDescriptor? = null
 
-    val specialDescriptorsFactory = SpecialDescriptorsFactory()
+    val specialDescriptorsFactory = SpecialDescriptorsFactory(this)
+    private val vtableBuilders = mutableMapOf<ClassDescriptor, ClassVtablesBuilder>()
+
+    fun getVtableBuilder(classDescriptor: ClassDescriptor) = vtableBuilders.getOrPut(classDescriptor) {
+        ClassVtablesBuilder(classDescriptor, this)
+    }
 
     // TODO: make lateinit?
     var irModule: IrModuleFragment? = null

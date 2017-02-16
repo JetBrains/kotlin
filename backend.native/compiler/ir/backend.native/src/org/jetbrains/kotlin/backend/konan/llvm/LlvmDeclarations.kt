@@ -232,7 +232,7 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
 
             val typeInfoWithVtableType = structType(
                     runtime.typeInfoType,
-                    LLVMArrayType(int8TypePtr, descriptor.vtableEntries.size)!!
+                    LLVMArrayType(int8TypePtr, context.getVtableBuilder(descriptor).vtableEntries.size)!!
             )
 
             typeInfoGlobal = staticData.createGlobal(typeInfoWithVtableType, typeInfoGlobalName, isExported = false)

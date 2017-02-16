@@ -3,27 +3,23 @@ package org.jetbrains.kotlin.backend.konan.descriptors
 import org.jetbrains.kotlin.backend.konan.KonanBuiltIns
 import org.jetbrains.kotlin.backend.konan.ValueType
 import org.jetbrains.kotlin.backend.konan.isRepresentedAs
+import org.jetbrains.kotlin.backend.konan.isValueType
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
-import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeSubstitution
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -46,14 +42,14 @@ internal val ClassDescriptor.implementedInterfaces: List<ClassDescriptor>
  *
  * TODO: this method is actually a part of resolve and probably duplicates another one
  */
-internal fun FunctionDescriptor.resolveFakeOverride(): FunctionDescriptor {
+internal fun <T : CallableMemberDescriptor> T.resolveFakeOverride(): T {
     if (this.kind.isReal) {
         return this
     } else {
         val overridden = OverridingUtil.getOverriddenDeclarations(this)
         val filtered = OverridingUtil.filterOutOverridden(overridden)
         // TODO: is it correct to take first?
-        return filtered.first { it.modality != Modality.ABSTRACT } as FunctionDescriptor
+        return filtered.first { it.modality != Modality.ABSTRACT } as T
     }
 }
 
@@ -157,7 +153,7 @@ internal val KotlinType.isKFunctionType: Boolean
 internal val FunctionDescriptor.isFunctionInvoke: Boolean
     get() {
         val dispatchReceiver = dispatchReceiverParameter ?: return false
-        assert (!dispatchReceiver.type.isKFunctionType)
+        assert(!dispatchReceiver.type.isKFunctionType)
 
         return dispatchReceiver.type.isFunctionType &&
                 this.isOperator && this.name == OperatorNameConventions.INVOKE
@@ -165,8 +161,19 @@ internal val FunctionDescriptor.isFunctionInvoke: Boolean
 
 internal fun ClassDescriptor.isUnit() = this.defaultType.isUnit()
 
-internal val ClassDescriptor.contributedMethods: List<FunctionDescriptor>
+internal val <T : CallableMemberDescriptor> T.allOverriddenDescriptors: List<T>
     get() {
+        val result = mutableListOf<T>()
+        fun traverse(descriptor: T) {
+            result.add(descriptor)
+            descriptor.overriddenDescriptors.forEach { traverse(it as T) }
+        }
+        traverse(this)
+        return result
+    }
+
+internal val ClassDescriptor.contributedMethods: List<FunctionDescriptor>
+    get () {
         val contributedDescriptors = unsubstitutedMemberScope.getContributedDescriptors()
         // (includes declarations from supers)
 
@@ -177,49 +184,85 @@ internal val ClassDescriptor.contributedMethods: List<FunctionDescriptor>
         val setters = properties.mapNotNull { it.setter }
 
         val allMethods = (functions + getters + setters).sortedBy {
-           // TODO: use local hash instead, but it needs major refactoring.
-            it.functionName.hashCode()
+            it.functionName.localHash.value
         }
+
         return allMethods
     }
 
 fun ClassDescriptor.isAbstract() = this.modality == Modality.SEALED || this.modality == Modality.ABSTRACT
         || this.kind == ClassKind.ENUM_CLASS
 
-// TODO: optimize
-val ClassDescriptor.vtableEntries: List<FunctionDescriptor>
-    get() {
-        assert(!this.isInterface)
-
-        val superVtableEntries = if (KotlinBuiltIns.isSpecialClassWithNoSupertypes(this)) {
-            emptyList()
-        } else {
-            this.getSuperClassOrAny().vtableEntries
-        }
-
-        val methods = this.contributedMethods
-
-        val inheritedVtableSlots = superVtableEntries.map { superMethod ->
-            methods.singleOrNull { OverridingUtil.overrides(it, superMethod) } ?: superMethod
-        }
-
-        return inheritedVtableSlots + (methods - inheritedVtableSlots).filter { it.isOverridable }
+internal fun FunctionDescriptor.hasValueTypeAt(index: Int): Boolean {
+    when (index) {
+        0 -> return returnType.let { it != null && it.isValueType() }
+        1 -> return extensionReceiverParameter.let { it != null && it.type.isValueType() }
+        else -> return this.valueParameters[index - 2].type.isValueType()
     }
-
-fun ClassDescriptor.vtableIndex(function: FunctionDescriptor): Int {
-    this.vtableEntries.forEachIndexed { index, functionDescriptor ->
-        if (functionDescriptor == function.original) return index
-    }
-    throw Error(function.toString() + " not in vtable of " + this.toString())
 }
 
-val ClassDescriptor.methodTableEntries: List<FunctionDescriptor>
+internal fun FunctionDescriptor.hasReferenceAt(index: Int): Boolean {
+    when (index) {
+        0 -> return returnType.let { it != null && !it.isValueType() }
+        1 -> return extensionReceiverParameter.let { it != null && !it.type.isValueType() }
+        else -> return !this.valueParameters[index - 2].type.isValueType()
+    }
+}
+
+private fun FunctionDescriptor.overridesFunWithReferenceAt(index: Int)
+        = allOverriddenDescriptors.any { it.original.hasReferenceAt(index) }
+
+private fun FunctionDescriptor.overridesFunWithValueTypeAt(index: Int)
+        = allOverriddenDescriptors.any { it.original.hasValueTypeAt(index) }
+
+private fun FunctionDescriptor.needBridgeToAt(target: FunctionDescriptor, index: Int)
+        = hasValueTypeAt(index) xor target.hasValueTypeAt(index)
+
+internal fun FunctionDescriptor.needBridgeTo(target: FunctionDescriptor)
+        = (0..this.valueParameters.size + 1).any { needBridgeToAt(target, it) }
+
+internal val FunctionDescriptor.target: FunctionDescriptor
+    get() = (if (modality == Modality.ABSTRACT) this else resolveFakeOverride()).original
+
+internal enum class BridgeDirection {
+    NOT_NEEDED,
+    FROM_VALUE_TYPE,
+    TO_VALUE_TYPE
+}
+
+private fun FunctionDescriptor.bridgeDirectionAt(index: Int) : BridgeDirection {
+    if (kind.isReal) {
+        if (hasValueTypeAt(index) && overridesFunWithReferenceAt(index))
+            return BridgeDirection.FROM_VALUE_TYPE
+        return BridgeDirection.NOT_NEEDED
+    }
+
+    val target = this.target
+    return when {
+        hasValueTypeAt(index) && target.hasValueTypeAt(index) && overridesFunWithReferenceAt(index) -> BridgeDirection.FROM_VALUE_TYPE
+        hasValueTypeAt(index) && target.hasReferenceAt(index) && overridesFunWithValueTypeAt(index) -> BridgeDirection.TO_VALUE_TYPE
+        else -> BridgeDirection.NOT_NEEDED
+    }
+}
+
+private fun bridgesEqual(first: Array<BridgeDirection>, second: Array<BridgeDirection>)
+        = first.indices.none { first[it] != second[it] }
+
+internal fun Array<BridgeDirection>.allNotNeeded() = this.all { it == BridgeDirection.NOT_NEEDED }
+
+internal val FunctionDescriptor.bridgeDirections: Array<BridgeDirection>
     get() {
-        assert(!this.isAbstract())
-        return this.contributedMethods.filter {
-            // We check that either method is open, or one of declarations it overrides
-            // is open.
-            it.isOverridable || DescriptorUtils.getAllOverriddenDeclarations(it).any { it.isOverridable }
+        val ourDirections = Array<BridgeDirection>(this.valueParameters.size + 2, { BridgeDirection.NOT_NEEDED })
+        if (modality == Modality.ABSTRACT)
+            return ourDirections
+        for (index in ourDirections.indices)
+            ourDirections[index] = this.bridgeDirectionAt(index)
+
+        if (!kind.isReal && bridgesEqual(ourDirections, this.target.bridgeDirections)) {
+            // Bridge is inherited from supers
+            for (index in ourDirections.indices)
+                ourDirections[index] = BridgeDirection.NOT_NEEDED
         }
-        // TODO: probably method table should contain all accessible methods to improve binary compatibility
+
+        return ourDirections
     }

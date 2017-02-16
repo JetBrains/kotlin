@@ -4,15 +4,12 @@ import org.jetbrains.kotlin.backend.common.AbstractValueUsageTransformer
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.ValueType
-import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalClass
-import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalFunctions
+import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.isNullConst
 import org.jetbrains.kotlin.backend.konan.notNullableIsRepresentedAs
 import org.jetbrains.kotlin.backend.konan.isRepresentedAs
 import org.jetbrains.kotlin.backend.konan.util.atMostOne
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -92,6 +89,38 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                         expression.type, expression.operator, newTypeOperand, expression.argument)
             }
         }
+    }
+
+    override fun visitCall(expression: IrCall): IrExpression {
+        val irCall = super.visitCall(expression) as IrCall
+
+        val descriptor = irCall.descriptor as? FunctionDescriptor ?: return irCall
+        if (descriptor.modality == Modality.ABSTRACT || (irCall.superQualifier == null && descriptor.isOverridable))
+            return irCall  // A virtual call. box/unbox will be in the corresponding bridge.
+
+        val target = descriptor.target
+
+        if (!descriptor.original.needBridgeTo(target)) return irCall
+
+        val overriddenCall = IrCallImpl(irCall.startOffset, irCall.endOffset,
+                target, remapTypeArguments(irCall, target)).apply {
+            dispatchReceiver = irCall.dispatchReceiver
+            extensionReceiver = irCall.extensionReceiver
+            mapValueParameters { irCall.getValueArgument(it)!! }
+        }
+
+        return super.visitCall(overriddenCall)
+    }
+
+    private fun remapTypeArguments(oldExpression: IrMemberAccessExpression, newCallee: CallableDescriptor): Map<TypeParameterDescriptor, KotlinType>? {
+        val oldCallee = oldExpression.descriptor
+
+        return if (oldCallee.typeParameters.isEmpty())
+            null
+        else oldCallee.typeParameters.associateBy(
+                { newCallee.typeParameters[it.index] },
+                { oldExpression.getTypeArgument(it)!! }
+        )
     }
 
     /**
