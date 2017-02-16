@@ -490,10 +490,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val body = declaration.body
 
         if (declaration.descriptor.modality == Modality.ABSTRACT) return
-        if (body == null)                                         return
         if (declaration.descriptor.isExternal)                    return
-        if (declaration.descriptor.name.toString().contains("foo") &&
-            declaration.descriptor.isInline)                      return
+        if (body == null)                                         return
 
         codegen.prologue(declaration.descriptor)
 
