@@ -530,6 +530,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("LabeledExpression.after.kt")
+        public void testLabeledExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/LabeledExpression.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("RightBracketOnNewLine.after.kt")
         public void testRightBracketOnNewLine() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/RightBracketOnNewLine.after.kt");
