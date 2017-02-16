@@ -400,7 +400,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     fun testParallelDaemonStart() {
 
-        val PARALLEL_THREADS_TO_START = 10
+        val PARALLEL_THREADS_TO_START = 8
 
         val doneLatch = CountDownLatch(PARALLEL_THREADS_TO_START)
 
@@ -411,11 +411,15 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         fun connectThread(threadNo: Int) = thread(name = "daemonConnect$threadNo") {
             try {
                 withFlagFile(getTestName(true), ".alive") { flagFile ->
-                    val daemonOptions = DaemonOptions(shutdownDelayMilliseconds = 1000, runFilesPath = File(tmpdir, getTestName(true)).absolutePath, verbose = true)
+                    val daemonOptions = DaemonOptions(shutdownDelayMilliseconds = 10000,
+                                                      runFilesPath = File(tmpdir, getTestName(true)).absolutePath,
+                                                      verbose = true)
                     val logFile = createTempFile("kotlin-daemon-test", ".log")
                     val daemonJVMOptions =
-                            configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
-                                                      inheritMemoryLimits = false, inheritAdditionalProperties = false)
+                            configureDaemonJVMOptions(DaemonJVMOptions(maxMemory = "2048m"),
+                                                      "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
+                                                      inheritMemoryLimits = false,
+                                                      inheritAdditionalProperties = false)
                     val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
                     assertNotNull("failed to connect daemon", daemon)
                     val jar = tmpdir.absolutePath + File.separator + "hello.$threadNo.jar"
