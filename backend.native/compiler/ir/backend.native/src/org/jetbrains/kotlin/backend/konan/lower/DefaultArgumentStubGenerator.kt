@@ -111,7 +111,7 @@ class DefaultArgumentStubGenerator internal constructor(val context: Context): D
                     }
                 }
                 if (functionDescriptor is ClassConstructorDescriptor) {
-                    + irReturn(IrDelegatingConstructorCallImpl(
+                    + IrDelegatingConstructorCallImpl(
                             startOffset = irFunction.startOffset,
                             endOffset   = irFunction.endOffset,
                             descriptor  = functionDescriptor
@@ -122,7 +122,7 @@ class DefaultArgumentStubGenerator internal constructor(val context: Context): D
                         if (functionDescriptor.dispatchReceiverParameter != null) {
                             dispatchReceiver = irThis()
                         }
-                    })
+                    }
                 } else {
                     +irReturn(irCall(functionDescriptor).apply {
                         if (functionDescriptor.dispatchReceiverParameter != null) {
