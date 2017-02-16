@@ -11,11 +11,9 @@ buildscript {
         classpath("io.realm:realm-gradle-plugin:$realm_version") {
             exclude group: 'com.android.tools.build', module: 'gradle'
         }
-        classpath "com.jakewharton.sdkmanager:gradle-plugin:0.12.+"
     }
 }
 
-apply plugin: 'android-sdk-manager'
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
