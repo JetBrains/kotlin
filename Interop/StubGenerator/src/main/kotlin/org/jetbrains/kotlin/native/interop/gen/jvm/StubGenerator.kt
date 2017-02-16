@@ -96,6 +96,8 @@ class StubGenerator(
             })
         }
 
+    private val macroConstantsByName = nativeIndex.macroConstants.associateBy { it.name }
+
     /**
      * The output currently used by the generator.
      * Should append line separator after any usage.
@@ -155,6 +157,8 @@ class StubGenerator(
             is UIntPtrType -> "uintptr_t"
             is Int64Type -> "int64_t"
             is UInt64Type -> "uint64_t"
+            is Float32Type -> "float"
+            is Float64Type -> "double"
 
             is PointerType -> {
                 val pointeeType = this.pointeeType
@@ -190,6 +194,8 @@ class StubGenerator(
             is Int32Type, is UInt32Type -> "Int"
             is IntPtrType, is UIntPtrType, // TODO: 64-bit specific
             is Int64Type, is UInt64Type -> "Long"
+            is Float32Type -> "Float"
+            is Float64Type -> "Double"
 
             else -> throw NotImplementedError()
         }
@@ -300,6 +306,8 @@ class StubGenerator(
             is Int32Type, is UInt32Type -> "CInt32Var"
             is IntPtrType, is UIntPtrType, // TODO: 64-bit specific
             is Int64Type, is UInt64Type -> "CInt64Var"
+            is Float32Type -> "CFloat32Var"
+            is Float64Type -> "CFloat64Var"
             else -> TODO(type.toString())
         }
 
@@ -551,8 +559,13 @@ class StubGenerator(
         }
 
         out("// ${e.spelling}")
-        e.values.forEach {
-            out("val ${it.name}: ${e.baseType.kotlinType} = ${it.value}")
+        for (value in e.values) {
+            if (value.name in macroConstantsByName) {
+                // Macro "overrides" the original enum constant.
+                continue
+            }
+
+            out("val ${value.name}: ${e.baseType.kotlinType} = ${value.value}")
         }
     }
 
@@ -757,6 +770,64 @@ class StubGenerator(
         }
     }
 
+    private fun integerLiteral(type: Type, value: Long): String? {
+        if (value == Long.MIN_VALUE) {
+            return "${value + 1} - 1" // Workaround for "The value is out of range" compile error.
+        }
+
+        val unwrappedType = type.unwrapTypedefs()
+        if (unwrappedType !is PrimitiveType) {
+            return null
+        }
+
+        val narrowedValue: Number = when (unwrappedType.kotlinType) {
+            "Byte" -> value.toByte()
+            "Short" -> value.toShort()
+            "Int" -> value.toInt()
+            "Long" -> value
+            else -> return null
+        }
+
+        return narrowedValue.toString()
+    }
+
+    private fun floatingLiteral(type: Type, value: Double): String? {
+        return when (type.unwrapTypedefs()) {
+            Float32Type -> {
+                val floatValue = value.toFloat()
+                val bits = java.lang.Float.floatToRawIntBits(floatValue)
+                "bitsToFloat($bits) /* == $floatValue */"
+            }
+            Float64Type -> {
+                val bits = java.lang.Double.doubleToRawLongBits(value)
+                "bitsToDouble($bits) /* == $value */"
+            }
+            else -> null
+        }
+    }
+
+    private fun generateConstant(constant: ConstantDef) {
+        val literal = when (constant) {
+            is IntegerConstantDef -> integerLiteral(constant.type, constant.value) ?: return
+            is FloatingConstantDef -> floatingLiteral(constant.type, constant.value) ?: return
+            else -> {
+                // Not supported yet, ignore:
+                return
+            }
+        }
+
+        val kotlinType = mirror(constant.type).argType
+
+        // TODO: improve value rendering.
+
+        // TODO: consider using `const` modifier.
+        // It is not currently possible for floating literals.
+        // Also it provokes constant propagation which can reduce binary compatibility
+        // when replacing interop stubs without recompiling the application.
+
+        out("val ${constant.name}: $kotlinType = $literal")
+    }
+
     private val FunctionDecl.stubSymbolName: String
         get() {
             require(platform == KotlinPlatform.NATIVE)
@@ -802,6 +873,11 @@ class StubGenerator(
                 println("Warning: cannot generate binding definition for function ${it.name}")
             }
         }
+
+        nativeIndex.macroConstants.forEach {
+            generateConstant(it)
+        }
+        out("")
 
         nativeIndex.structs.forEach { s ->
             try {

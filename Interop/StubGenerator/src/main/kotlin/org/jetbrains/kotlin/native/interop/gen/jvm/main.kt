@@ -1,6 +1,8 @@
 package org.jetbrains.kotlin.native.interop.gen.jvm
 
+import org.jetbrains.kotlin.native.interop.indexer.Language
 import org.jetbrains.kotlin.native.interop.indexer.NativeIndex
+import org.jetbrains.kotlin.native.interop.indexer.NativeLibrary
 import org.jetbrains.kotlin.native.interop.indexer.buildNativeIndex
 import java.io.File
 import java.lang.IllegalArgumentException
@@ -118,7 +120,8 @@ private fun processLib(ktGenRoot: String,
 
     val headerFiles = config.getSpaceSeparated("headers") + additionalHeaders
     val compilerOpts = config.getSpaceSeparated("compilerOpts") + additionalCompilerOpts
-    val compiler = config.getProperty("compiler") ?: "clang"
+    val compiler = "clang"
+    val language = Language.C
     val linkerOpts = config.getSpaceSeparated("linkerOpts").toTypedArray() + additionalLinkerOpts
     val linker = args["-linker"]?.singleOrNull() ?: config.getProperty("linker") ?: "clang"
     val excludedFunctions = config.getSpaceSeparated("excludedFunctions").toSet()
@@ -135,7 +138,7 @@ private fun processLib(ktGenRoot: String,
 
     val libName = fqParts.joinToString("") + "stubs"
 
-    val nativeIndex = buildNativeIndex(headerFiles, compilerOpts)
+    val nativeIndex = buildNativeIndex(NativeLibrary(headerFiles, compilerOpts, language))
 
     val gen = StubGenerator(nativeIndex, outKtPkg, libName, excludedFunctions, generateShims, platform)
 
@@ -199,18 +202,4 @@ private fun processLib(ktGenRoot: String,
     }
 
     outCFile.delete()
-}
-
-private fun buildNativeIndex(headerFiles: List<String>, compilerOpts: List<String>): NativeIndex {
-    val tempHeaderFile = createTempFile(suffix = ".h")
-    tempHeaderFile.deleteOnExit()
-    tempHeaderFile.writer().buffered().use { reader ->
-        headerFiles.forEach {
-            reader.appendln("#include <$it>")
-        }
-    }
-
-    val res = buildNativeIndex(tempHeaderFile, compilerOpts)
-    println(res)
-    return res
 }

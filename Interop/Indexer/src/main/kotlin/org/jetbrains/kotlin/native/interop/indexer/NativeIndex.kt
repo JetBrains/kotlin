@@ -1,11 +1,15 @@
 package org.jetbrains.kotlin.native.interop.indexer
 
-import java.io.File
+enum class Language {
+    C
+}
+
+class NativeLibrary(val includes: List<String>, val compilerArgs: List<String>, val language: Language)
 
 /**
  * Retrieves the definitions from given C header file using given compiler arguments (e.g. defines).
  */
-fun buildNativeIndex(headerFile: File, args: List<String>): NativeIndex = buildNativeIndexImpl(headerFile, args)
+fun buildNativeIndex(library: NativeLibrary): NativeIndex = buildNativeIndexImpl(library)
 
 /**
  * This class describes the IR of definitions from C header file(s).
@@ -15,6 +19,7 @@ abstract class NativeIndex {
     abstract val enums: List<EnumDef>
     abstract val typedefs: List<TypedefDef>
     abstract val functions: List<FunctionDecl>
+    abstract val macroConstants: List<ConstantDef>
 }
 
 /**
@@ -75,6 +80,10 @@ class FunctionDecl(val name: String, val parameters: List<Parameter>, val return
  */
 class TypedefDef(val aliased: Type, val name: String)
 
+abstract class ConstantDef(val name: String, val type: Type)
+class IntegerConstantDef(name: String, type: Type, val value: Long) : ConstantDef(name, type)
+class FloatingConstantDef(name: String, type: Type, val value: Double) : ConstantDef(name, type)
+
 
 /**
  * C type.
@@ -99,6 +108,9 @@ object UIntPtrType : PrimitiveType
 
 object Int64Type : PrimitiveType
 object UInt64Type : PrimitiveType
+
+object Float32Type : PrimitiveType
+object Float64Type : PrimitiveType
 
 data class RecordType(val decl: StructDecl) : Type
 

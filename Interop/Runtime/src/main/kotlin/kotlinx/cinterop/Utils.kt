@@ -177,7 +177,7 @@ class CString private constructor(override val rawPtr: NativePtr) : CPointed {
         return decodeFromUtf8(bytes) // TODO: encoding
     }
 
-    fun asCharPtr() = reinterpret<CInt8Var>()
+    fun asCharPtr() = reinterpret<CInt8Var>().ptr
 }
 
 fun CString.Companion.fromString(str: String?, placement: NativePlacement): CString? {
