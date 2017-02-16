@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.psi.psiUtil.textRangeWithoutComments
 
 val MODIFIERS_LIST_ENTRIES = TokenSet.orSet(TokenSet.create(ANNOTATION_ENTRY, ANNOTATION), MODIFIER_KEYWORDS)
 
@@ -427,7 +428,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                 }
 
                 val spaces = if (empty) 0 else spacesInSimpleFunction
-                Spacing.createDependentLFSpacing(spaces, spaces, psiElement.textRange,
+                Spacing.createDependentLFSpacing(spaces, spaces, psiElement.textRangeWithoutComments,
                                                  codeStyleSettings.KEEP_LINE_BREAKS,
                                                  codeStyleSettings.KEEP_BLANK_LINES_IN_CODE)
             }
@@ -439,7 +440,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                 if (funNode.name != null) return@customRule null
 
                 // Empty block is covered in above rule
-                Spacing.createDependentLFSpacing(spacesInSimpleFunction, spacesInSimpleFunction, funNode.textRange,
+                Spacing.createDependentLFSpacing(spacesInSimpleFunction, spacesInSimpleFunction, funNode.textRangeWithoutComments,
                                                  codeStyleSettings.KEEP_LINE_BREAKS,
                                                  codeStyleSettings.KEEP_BLANK_LINES_IN_CODE)
             }

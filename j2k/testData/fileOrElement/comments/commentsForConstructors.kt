@@ -7,8 +7,7 @@ internal class A// this is a primary constructor
     } // end of primary constructor body
 
     // this is a secondary constructor 2
-    constructor(s: String) : this(s.length) {
-    } // end of secondary constructor 2 body
+    constructor(s: String) : this(s.length) {} // end of secondary constructor 2 body
 }// this is a secondary constructor 1
 // end of secondary constructor 1 body
 

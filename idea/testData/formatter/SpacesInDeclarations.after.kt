@@ -14,8 +14,7 @@ fun fooFun2() {
 }
 
 //-----------------------
-public fun Int.extFun1() {
-}
+public fun Int.extFun1() {}
 
 public
 fun Int.extFun2() {

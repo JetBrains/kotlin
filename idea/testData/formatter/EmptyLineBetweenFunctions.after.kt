@@ -28,8 +28,7 @@ fun f6() = 1
 fun f7() = 8
 
 // Two lines between
-fun l1() {
-}
+fun l1() {}
 
 
 fun l2() {}

@@ -1,8 +1,7 @@
 /** Doc comment for A */
 class A {
     /** Doc comment for function */
-    fun foo() {
-    }
+    fun foo() {}
 
     /**
      * Doc comment for property

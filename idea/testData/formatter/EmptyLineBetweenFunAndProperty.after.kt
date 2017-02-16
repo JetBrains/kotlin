@@ -1,6 +1,5 @@
 // No lines
-fun f1() {
-}
+fun f1() {}
 
 val p1 = 1
 fun f2() {}

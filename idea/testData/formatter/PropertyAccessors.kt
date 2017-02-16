@@ -25,3 +25,19 @@ class EmptyProperties {
         get() { return "" }
         set(value) {}
 }
+
+class EmptyProperties {
+    /**
+     *
+     */
+    var newline: String
+        /**
+         *
+         */
+        get() { return "" }
+
+        /**
+         *
+         */
+        set(value) {}
+}

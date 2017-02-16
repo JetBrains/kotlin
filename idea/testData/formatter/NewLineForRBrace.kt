@@ -28,3 +28,15 @@ enum class E1 {
 
 fun e = fun(a: Int,
             b: String) {}
+
+/**
+ *
+ */
+fun commented1() {}
+
+/*
+ */
+fun commented2() {}
+
+// Comment
+fun commented3() {}

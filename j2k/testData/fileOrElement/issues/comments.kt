@@ -25,16 +25,14 @@ internal class C {
     }
 
     //simple one line comment for function
-    fun f1() {
-    }
+    fun f1() {}
 
     //simple one line comment for field
     var j: Int = 0
 
     //double c style
     //comment before function
-    fun f2() {
-    }
+    fun f2() {}
 
     //double c style
     //comment before field
@@ -48,8 +46,7 @@ internal class C {
      * different
      */
     //comments
-    fun f3() {
-    }
+    fun f3() {}
 
     //combination
     /** of

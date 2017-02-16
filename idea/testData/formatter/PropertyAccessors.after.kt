@@ -21,3 +21,20 @@ class EmptyProperties {
         }
         set(value) {}
 }
+
+class EmptyProperties {
+    /**
+     *
+     */
+    var newline: String
+        /**
+         *
+         */
+        get() {
+            return ""
+        }
+        /**
+         *
+         */
+        set(value) {}
+}

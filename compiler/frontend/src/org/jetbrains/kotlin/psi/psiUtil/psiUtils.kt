@@ -311,6 +311,12 @@ private fun findFirstLeafWhollyInRange(file: PsiFile, range: TextRange): PsiElem
     return if (elementRange.endOffset <= range.endOffset) element else null
 }
 
+val PsiElement.textRangeWithoutComments: TextRange
+    get() {
+        val firstNonCommentChild = children.firstOrNull { it !is PsiWhiteSpace && it !is PsiComment } ?: return textRange
+        return TextRange(firstNonCommentChild.startOffset, endOffset)
+    }
+
 // ---------------------------------- Debug/logging ----------------------------------------------------------------------------------------
 
 fun PsiElement.getElementTextWithContext(): String {
