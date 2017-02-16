@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.caches.resolve
+package org.jetbrains.kotlin.idea.caches.resolve.lightClasses
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField

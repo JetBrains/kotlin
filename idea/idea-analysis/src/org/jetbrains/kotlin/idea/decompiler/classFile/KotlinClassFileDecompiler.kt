@@ -23,7 +23,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
-import org.jetbrains.kotlin.idea.caches.resolve.BySignatureIndexer
+import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.BySignatureIndexer
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.decompiler.common.createIncompatibleAbiVersionDecompiledText
