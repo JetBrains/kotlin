@@ -331,7 +331,7 @@ object KotlinCompilerClient {
                         daemon.inputStream
                                 .reader()
                                 .forEachLine {
-                                    if (daemonOptions.runFilesPath.isNotEmpty() && it.contains(daemonOptions.runFilesPath)) {
+                                    if (it == COMPILE_DAEMON_IS_READY_MESSAGE) {
                                         isEchoRead.release()
                                         return@forEachLine
                                     }
