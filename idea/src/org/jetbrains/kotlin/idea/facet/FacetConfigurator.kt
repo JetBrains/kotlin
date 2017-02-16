@@ -29,8 +29,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.PlatformModifiableModelsProvider
-import com.intellij.openapi.roots.ui.configuration.DefaultModulesProvider
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
@@ -38,7 +36,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
-import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
 
 // Based on com.intellij.framework.detection.impl.FrameworkDetectionManager
@@ -124,6 +121,7 @@ class FacetConfigurator(
         if (!shouldDetect) return
         shouldDetect = false
 
+        /*
         val index = FileBasedIndex.getInstance()
         val newDescriptions = ArrayList<DetectedFrameworkDescription>()
         val oldDescriptions = ArrayList<DetectedFrameworkDescription>()
@@ -139,10 +137,17 @@ class FacetConfigurator(
         if (FrameworkDetectionUtil.removeDisabled(newDescriptions, oldDescriptions).isEmpty()) return
 
         val validFrameworks = getValidDetectedFrameworks().ifEmpty { return }
+        for (validFramework in validFrameworks) {
+            if (validFramework is FacetBasedDetectedFrameworkDescription<*, *>) {
+                val module = ModuleManager.getInstance(myProject).findModuleByName(validFramework.get)
+            }
+
+        }
         FrameworkDetectionUtil.setupFrameworks(frameworks, PlatformModifiableModelsProvider(), DefaultModulesProvider(myProject))
         for (framework in validFrameworks) {
             myDetectedFrameworksData!!.putExistentFrameworkFiles(id, framework.relatedFiles)
         }
+        */
     }
 
     private fun runDetector(detectorId: Int?,
