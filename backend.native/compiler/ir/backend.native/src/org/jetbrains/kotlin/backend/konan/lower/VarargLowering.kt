@@ -5,6 +5,8 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanPlatform
 import org.jetbrains.kotlin.backend.konan.ir.ir2string
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 
 
 class VarargInjectionLowering internal constructor(val context: Context): FunctionLoweringPass {
@@ -72,7 +75,8 @@ class VarargInjectionLowering internal constructor(val context: Context): Functi
                     log("skipped vararg expression because it's string array literal")
                     return@forEach
                 }
-                val arrayHandle  = arrayType(type)
+                log ("$it: array type:$type, is array of primitives ${KotlinBuiltIns.isArray(it.type)}")
+                val arrayHandle      = arrayType(it.type)
                 val arrayConstructor = arrayHandle.arrayDescriptor.constructors.find { it.valueParameters.size == 1 }!!
                 val block            = irBlock(arrayHandle.arrayDescriptor.defaultType)
                 val arrayConstructorCall = irCall(
@@ -146,18 +150,22 @@ class VarargInjectionLowering internal constructor(val context: Context): Functi
             null
     }
 
-    private fun arrayType(type: KotlinType): ArrayHandle {
-        return when {
-            KotlinBuiltIns.isByte(type)    -> kByteArrayHandler
-            KotlinBuiltIns.isShort(type)   -> kShortArrayHandler
-            KotlinBuiltIns.isChar(type)    -> kCharArrayHandler
-            KotlinBuiltIns.isInt(type)     -> kIntArrayHandler
-            KotlinBuiltIns.isLong(type)    -> kLongArrayHandler
-            KotlinBuiltIns.isFloat(type)   -> kFloatArrayHandler
-            KotlinBuiltIns.isDouble(type)  -> kDoubleArrayHandler
-            KotlinBuiltIns.isBoolean(type) -> kBooleanArrayHandler
-            else                           -> kArrayHandler
+    private fun arrayType(type: KotlinType): ArrayHandle = when {
+        KotlinBuiltIns.isPrimitiveArray(type) -> {
+            val primitiveType = KotlinBuiltIns.getPrimitiveTypeByArrayClassFqName(DescriptorUtils.getFqName(type.constructor.declarationDescriptor!!))
+            when (primitiveType) {
+                PrimitiveType.BYTE    -> kByteArrayHandler
+                PrimitiveType.SHORT   -> kShortArrayHandler
+                PrimitiveType.CHAR    -> kCharArrayHandler
+                PrimitiveType.INT     -> kIntArrayHandler
+                PrimitiveType.LONG    -> kLongArrayHandler
+                PrimitiveType.FLOAT   -> kFloatArrayHandler
+                PrimitiveType.DOUBLE  -> kDoubleArrayHandler
+                PrimitiveType.BOOLEAN -> kBooleanArrayHandler
+                else                  -> TODO("unsupported type: $primitiveType")
+            }
         }
+        else -> kArrayHandler
     }
 
     private fun Offset.intPlus() = irCall(kIntPlusDescriptor, null)
