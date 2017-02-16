@@ -26,7 +26,7 @@ import com.intellij.util.SmartList
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
-import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
+import org.jetbrains.kotlin.asJava.builder.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
@@ -75,10 +75,18 @@ class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSup
         trace.setKotlinCodeAnalyzer(codeAnalyzer)
     }
 
-    override fun getContextForClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext {
+    override fun createLightClassDataHolderForClassOrObject(classOrObject: KtClassOrObject, builder: (LightClassConstructionContext) -> LightClassBuilderResult): LightClassDataHolder {
         //force resolve companion for light class generation
         bindingContext.get(BindingContext.CLASS, classOrObject)?.companionObjectDescriptor
-        return LightClassConstructionContext(bindingContext, module)
+
+        val (stub, bindingContext, diagnostics) = builder(getContext())
+
+        bindingContext.get(BindingContext.CLASS, classOrObject) ?: return InvalidLightClassDataHolder
+
+        return LightClassDataHolderImpl(
+                stub,
+                diagnostics
+        )
     }
 
     private fun getContext(): LightClassConstructionContext {
@@ -163,8 +171,9 @@ class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSup
         }
     }
 
-    override fun getContextForFacade(files: Collection<KtFile>): LightClassConstructionContext {
-        return getContext()
+    override fun createLightClassDataHolderForFacade(files: Collection<KtFile>, build: (LightClassConstructionContext) -> LightClassBuilderResult): LightClassDataHolder {
+        val (stub, _, diagnostics) = build(getContext())
+        return LightClassDataHolderImpl(stub, diagnostics)
     }
 
     override fun createTrace(): BindingTraceContext {

@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.resolve.BindingContext
 
 abstract class LightClassDataProvider<T : LightClassDataHolder>(
         private val project: Project
@@ -116,24 +115,17 @@ class LightClassDataProviderForClassOrObject(private val classOrObject: KtClassO
             }
         }
 
-        val classConstructionContext = LightClassGenerationSupport.getInstance(classOrObject.project).getContextForClassOrObject(classOrObject)
-
-        val (stub, bindingContext, diagnostics) = buildLightClass(classOrObject.project, packageFqName, listOf(file), generateClassFilter, classConstructionContext) {
-            state, files ->
-            val packageCodegen = state.factory.forPackage(packageFqName, files)
-            val packagePartType = state.fileClassesProvider.getFileClassType(file)
-            val context = state.rootContext.intoPackagePart(packageCodegen.packageFragment, packagePartType, file)
-            packageCodegen.generateClassOrObject(getOutermostClassOrObject(classOrObject), context)
-            state.factory.asList()
+        return LightClassGenerationSupport.getInstance(classOrObject.project).createLightClassDataHolderForClassOrObject(classOrObject) {
+            constructionContext ->
+            buildLightClass(classOrObject.project, packageFqName, listOf(file), generateClassFilter, constructionContext) {
+                state, files ->
+                val packageCodegen = state.factory.forPackage(packageFqName, files)
+                val packagePartType = state.fileClassesProvider.getFileClassType(file)
+                val context = state.rootContext.intoPackagePart(packageCodegen.packageFragment, packagePartType, file)
+                packageCodegen.generateClassOrObject(getOutermostClassOrObject(classOrObject), context)
+                state.factory.asList()
+            }
         }
-
-        bindingContext.get(BindingContext.CLASS, classOrObject) ?: return InvalidLightClassDataHolder
-
-
-        return LightClassDataHolderImpl(
-                stub,
-                diagnostics
-        )
     }
 
     override fun toString(): String {
@@ -143,14 +135,14 @@ class LightClassDataProviderForClassOrObject(private val classOrObject: KtClassO
 
 sealed class LightClassDataProviderForFileFacade constructor(
         protected val project: Project, protected val facadeFqName: FqName
-) : LightClassDataProvider<LightClassDataHolderImpl>(project) {
+) : LightClassDataProvider<LightClassDataHolder>(project) {
     override val isLocal: Boolean get() = false
     abstract val files: Collection<KtFile>
 
     override val valueAbsent: Boolean
         get() = files.isEmpty()
 
-    override fun computeLightClassData(): LightClassDataHolderImpl {
+    override fun computeLightClassData(): LightClassDataHolder {
         val generateClassFilter = object : GenerationState.GenerateClassFilter() {
             override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean {
                 return shouldGenerateClass(processingClassOrObject)
@@ -171,25 +163,26 @@ sealed class LightClassDataProviderForFileFacade constructor(
 
         val packageFqName = facadeFqName.parent()
 
-        val (stub, _, diagnostics) = buildLightClass(project, packageFqName, files, generateClassFilter, LightClassGenerationSupport.getInstance(project).getContextForFacade(files)) generate@ {
-            state, files ->
-            if (!files.isEmpty()) {
-                val representativeFile = files.iterator().next()
-                val fileClassInfo = NoResolveFileClassesProvider.getFileClassInfo(representativeFile)
-                if (!fileClassInfo.withJvmMultifileClass) {
-                    val codegen = state.factory.forPackage(representativeFile.packageFqName, files)
-                    codegen.generate(CompilationErrorHandler.THROW_EXCEPTION)
-                    state.factory.asList()
-                    return@generate
+        return LightClassGenerationSupport.getInstance(project).createLightClassDataHolderForFacade(files) {
+            constructionContext ->
+            buildLightClass(project, packageFqName, files, generateClassFilter, constructionContext) generate@ {
+                state, files ->
+                if (!files.isEmpty()) {
+                    val representativeFile = files.iterator().next()
+                    val fileClassInfo = NoResolveFileClassesProvider.getFileClassInfo(representativeFile)
+                    if (!fileClassInfo.withJvmMultifileClass) {
+                        val codegen = state.factory.forPackage(representativeFile.packageFqName, files)
+                        codegen.generate(CompilationErrorHandler.THROW_EXCEPTION)
+                        state.factory.asList()
+                        return@generate
+                    }
                 }
+
+                val codegen = state.factory.forMultifileClass(facadeFqName, files)
+                codegen.generate(CompilationErrorHandler.THROW_EXCEPTION)
+                state.factory.asList()
             }
-
-            val codegen = state.factory.forMultifileClass(facadeFqName, files)
-            codegen.generate(CompilationErrorHandler.THROW_EXCEPTION)
-            state.factory.asList()
         }
-
-        return LightClassDataHolderImpl(stub, diagnostics)
     }
 
     override fun toString(): String {

@@ -20,7 +20,9 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.asJava.builder.LightClassBuilderResult
 import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
+import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -32,7 +34,13 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 abstract class LightClassGenerationSupport {
 
-    abstract fun getContextForClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext
+    abstract fun createLightClassDataHolderForClassOrObject(
+            classOrObject: KtClassOrObject, builder: (LightClassConstructionContext) -> LightClassBuilderResult
+    ): LightClassDataHolder
+
+    abstract fun createLightClassDataHolderForFacade(
+            files: Collection<KtFile>, build: (LightClassConstructionContext) -> LightClassBuilderResult
+    ): LightClassDataHolder
 
     abstract fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject>
 
@@ -70,8 +78,6 @@ abstract class LightClassGenerationSupport {
     abstract fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String>
 
     abstract fun findFilesForFacade(facadeFqName: FqName, scope: GlobalSearchScope): Collection<KtFile>
-
-    abstract fun getContextForFacade(files: Collection<KtFile>): LightClassConstructionContext
 
     companion object {
         @JvmStatic fun getInstance(project: Project): LightClassGenerationSupport {

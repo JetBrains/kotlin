@@ -28,8 +28,7 @@ import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
-import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
-import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
+import org.jetbrains.kotlin.asJava.builder.*
 import org.jetbrains.kotlin.asJava.classes.FakeLightClassForFileOfPackage
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
@@ -65,7 +64,17 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     private val scopeFileComparator = JavaElementFinder.byClasspathComparator(GlobalSearchScope.allScope(project))
     private val psiManager: PsiManager = PsiManager.getInstance(project)
 
-    override fun getContextForClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext {
+    override fun createLightClassDataHolderForClassOrObject(classOrObject: KtClassOrObject, build: (LightClassConstructionContext) -> LightClassBuilderResult): LightClassDataHolder {
+        val (stub, bindingContext, diagnostics) = build(getContextForClassOrObject(classOrObject))
+        bindingContext.get(BindingContext.CLASS, classOrObject) ?: return InvalidLightClassDataHolder
+
+        return LightClassDataHolderImpl(
+                stub,
+                diagnostics
+        )
+    }
+
+    fun getContextForClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext {
         if (classOrObject.isLocal) {
             return getContextForLocalClassOrObject(classOrObject)
         }
@@ -108,7 +117,12 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         return LightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor)
     }
 
-    override fun getContextForFacade(files: Collection<KtFile>): LightClassConstructionContext {
+    override fun createLightClassDataHolderForFacade(files: Collection<KtFile>, build: (LightClassConstructionContext) -> LightClassBuilderResult): LightClassDataHolder {
+        val (stub, _, diagnostics) = build(getContextForFacade(files))
+        return LightClassDataHolderImpl(stub, diagnostics)
+    }
+
+    fun getContextForFacade(files: Collection<KtFile>): LightClassConstructionContext {
         assert(!files.isEmpty()) { "No files in facade" }
 
         val sortedFiles = files.sortedWith(scopeFileComparator)
