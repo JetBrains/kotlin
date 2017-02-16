@@ -25,22 +25,15 @@ import com.intellij.psi.impl.light.AbstractLightClass;
 import com.intellij.psi.impl.source.ClassInnerStuffCache;
 import com.intellij.psi.impl.source.PsiExtensibleClass;
 import com.intellij.psi.scope.PsiScopeProcessor;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.collections.ArraysKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory;
-import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin;
-import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration;
 import org.jetbrains.kotlin.asJava.elements.KtLightFieldImpl;
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.KtDeclaration;
-import org.jetbrains.kotlin.psi.KtProperty;
-import org.jetbrains.kotlin.psi.KtPropertyAccessor;
 
 import java.util.List;
 
@@ -124,8 +117,7 @@ public abstract class KtLightClassBase extends AbstractLightClass implements KtL
         return ContainerUtil.map(getDelegate().getFields(), new Function<PsiField, PsiField>() {
             @Override
             public PsiField fun(PsiField field) {
-                LightMemberOrigin origin = ClsWrapperStubPsiFactory.getMemberOrigin(field);
-                return KtLightFieldImpl.Factory.create(origin, field, KtLightClassBase.this);
+                return KtLightFieldImpl.Factory.fromClsField(field, KtLightClassBase.this);
             }
         });
     }
@@ -136,14 +128,7 @@ public abstract class KtLightClassBase extends AbstractLightClass implements KtL
         return ArraysKt.map(getDelegate().getMethods(), new Function1<PsiMethod, PsiMethod>() {
             @Override
             public PsiMethod invoke(PsiMethod method) {
-                LightMemberOriginForDeclaration origin = ClsWrapperStubPsiFactory.getMemberOrigin(method);
-                KtDeclaration originalElement = origin != null ? origin.getOriginalElement() : null;
-                if (originalElement instanceof KtPropertyAccessor) {
-                    //noinspection ConstantConditions
-                    origin = origin.copy(PsiTreeUtil.getParentOfType(originalElement, KtProperty.class), origin.getOriginKind());
-                }
-
-                return KtLightMethodImpl.Factory.create(method, origin, KtLightClassBase.this);
+                return KtLightMethodImpl.fromClsMethod(method, KtLightClassBase.this);
             }
         });
     }

@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.asJava.elements
 
 import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProviders
-import com.intellij.navigation.NavigationItem
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiVariableEx
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -167,6 +167,12 @@ sealed class KtLightFieldImpl(
                 }
                 else -> return KtLightFieldForDeclaration(origin, delegate, containingClass)
             }
+        }
+
+        @JvmStatic
+        fun fromClsField(field: PsiField, containingClass: KtLightClass): KtLightField {
+            val origin = ClsWrapperStubPsiFactory.getMemberOrigin(field)
+            return KtLightFieldImpl.create(origin, field, containingClass)
         }
     }
 }

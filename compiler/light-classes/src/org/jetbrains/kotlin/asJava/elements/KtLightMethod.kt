@@ -27,6 +27,7 @@ import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.*
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -235,6 +236,18 @@ sealed class KtLightMethodImpl(
                 is PsiAnnotationMethod -> KtLightAnnotationMethod(delegate, origin, containingClass)
                 else -> KtLightMethodForDeclaration(delegate, origin, containingClass)
             }
+        }
+
+        @JvmStatic
+        fun fromClsMethod(method: PsiMethod, containingClass: KtLightClass): KtLightMethodImpl {
+            var origin = ClsWrapperStubPsiFactory.getMemberOrigin(method)
+            val originalElement = if (origin != null) origin.originalElement else null
+            if (originalElement is KtPropertyAccessor) {
+
+                origin = origin!!.copy(PsiTreeUtil.getParentOfType(originalElement, KtProperty::class.java)!!, origin.originKind)
+            }
+
+            return KtLightMethodImpl.create(method, origin, containingClass)
         }
     }
 }
