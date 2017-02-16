@@ -14,38 +14,27 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.asJava;
+package org.jetbrains.kotlin.asJava
 
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.search.GlobalSearchScope;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext;
-import org.jetbrains.kotlin.asJava.classes.KtLightClass;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.KtDeclaration;
-import org.jetbrains.kotlin.psi.KtElement;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.BindingContext;
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiClass
+import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.BindingContext
 
-import java.util.Collection;
+abstract class LightClassGenerationSupport {
 
-public abstract class LightClassGenerationSupport {
+    abstract fun getContextForClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext
 
-    @NotNull
-    public static LightClassGenerationSupport getInstance(@NotNull Project project) {
-        return ServiceManager.getService(project, LightClassGenerationSupport.class);
-    }
-
-    @NotNull
-    public abstract LightClassConstructionContext getContextForClassOrObject(@NotNull KtClassOrObject classOrObject);
-
-    @NotNull
-    public abstract Collection<KtClassOrObject> findClassOrObjectDeclarations(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope);
+    abstract fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject>
 
     /*
      * Finds files whose package declaration is exactly {@code fqName}. For example, if a file declares
@@ -54,45 +43,39 @@ public abstract class LightClassGenerationSupport {
      *
      * If the resulting collection is empty, it means that this package has not other declarations than sub-packages
      */
-    @NotNull
-    public abstract Collection<KtFile> findFilesForPackage(@NotNull FqName fqName, @NotNull GlobalSearchScope searchScope);
+    abstract fun findFilesForPackage(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile>
 
     // Returns only immediately declared classes/objects, package classes are not included (they have no declarations)
-    @NotNull
-    public abstract Collection<KtClassOrObject> findClassOrObjectDeclarationsInPackage(
-            @NotNull FqName packageFqName,
-            @NotNull GlobalSearchScope searchScope
-    );
+    abstract fun findClassOrObjectDeclarationsInPackage(
+            packageFqName: FqName,
+            searchScope: GlobalSearchScope
+    ): Collection<KtClassOrObject>
 
-    public abstract boolean packageExists(@NotNull FqName fqName, @NotNull GlobalSearchScope scope);
+    abstract fun packageExists(fqName: FqName, scope: GlobalSearchScope): Boolean
 
-    @NotNull
-    public abstract Collection<FqName> getSubPackages(@NotNull FqName fqn, @NotNull GlobalSearchScope scope);
+    abstract fun getSubPackages(fqn: FqName, scope: GlobalSearchScope): Collection<FqName>
 
-    @Nullable
-    public abstract KtLightClass getLightClass(@NotNull KtClassOrObject classOrObject);
+    abstract fun getLightClass(classOrObject: KtClassOrObject): KtLightClass?
 
-    @Nullable
-    public abstract DeclarationDescriptor resolveToDescriptor(@NotNull KtDeclaration declaration);
+    abstract fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor?
 
-    @NotNull
-    public abstract BindingContext analyze(@NotNull KtElement element);
+    abstract fun analyze(element: KtElement): BindingContext
 
-    @NotNull
-    public abstract Collection<PsiClass> getFacadeClasses(@NotNull FqName facadeFqName, @NotNull GlobalSearchScope scope);
+    abstract fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass>
 
-    @NotNull
-    public abstract Collection<PsiClass> getMultifilePartClasses(@NotNull FqName partFqName, @NotNull GlobalSearchScope scope);
+    abstract fun getMultifilePartClasses(partFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass>
 
-    @NotNull
-    public abstract Collection<PsiClass> getFacadeClassesInPackage(@NotNull FqName packageFqName, @NotNull GlobalSearchScope scope);
+    abstract fun getFacadeClassesInPackage(packageFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass>
 
-    @NotNull
-    public abstract Collection<String> getFacadeNames(@NotNull FqName packageFqName, @NotNull GlobalSearchScope scope);
+    abstract fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String>
 
-    @NotNull
-    public abstract Collection<KtFile> findFilesForFacade(@NotNull FqName facadeFqName, @NotNull GlobalSearchScope scope);
+    abstract fun findFilesForFacade(facadeFqName: FqName, scope: GlobalSearchScope): Collection<KtFile>
 
-    @NotNull
-    public abstract LightClassConstructionContext getContextForFacade(@NotNull Collection<KtFile> files);
+    abstract fun getContextForFacade(files: Collection<KtFile>): LightClassConstructionContext
+
+    companion object {
+        @JvmStatic fun getInstance(project: Project): LightClassGenerationSupport {
+            return ServiceManager.getService(project, LightClassGenerationSupport::class.java)
+        }
+    }
 }
