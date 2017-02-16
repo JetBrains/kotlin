@@ -22,8 +22,12 @@ import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
-import org.jetbrains.kotlin.idea.configuration.*
-import org.jetbrains.kotlin.idea.versions.*
+import org.jetbrains.kotlin.idea.configuration.getModulesWithKotlinFiles
+import org.jetbrains.kotlin.idea.configuration.showConfigureKotlinNotificationIfNeeded
+import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
+import org.jetbrains.kotlin.idea.versions.collectModulesWithOutdatedRuntime
+import org.jetbrains.kotlin.idea.versions.findOutdatedKotlinLibraries
+import org.jetbrains.kotlin.idea.versions.notifyOutdatedKotlinRuntime
 import java.util.concurrent.atomic.AtomicInteger
 
 class KotlinConfigurationCheckerComponent protected constructor(project: Project) : AbstractProjectComponent(project) {
@@ -38,6 +42,10 @@ class KotlinConfigurationCheckerComponent protected constructor(project: Project
 
         StartupManager.getInstance(myProject).registerPostStartupActivity {
             DumbService.getInstance(myProject).smartInvokeLater {
+                for (module in getModulesWithKotlinFiles(myProject)) {
+                    module.getAndCacheLanguageLevelByDependencies()
+                }
+
                 val libraries = findOutdatedKotlinLibraries(myProject)
                 if (!libraries.isEmpty()) {
                     notifyOutdatedKotlinRuntime(myProject, libraries)
