@@ -368,6 +368,9 @@ fun main(args : Array<String>) {
                 currentResult = testCase.skip()
             }
             println("TEST $currentResult.status\n")
+            if (currentResult.status == TestStatus.ERROR || currentResult.status == TestStatus.FAILED) {
+                println("Command to reproduce: ./gradlew $name -Pfilter=${it.name}\n")
+            }
             results.put(it.name, currentResult)
         }
 
