@@ -16,12 +16,15 @@
 
 package org.jetbrains.kotlin.js.facade;
 
+import com.intellij.util.Base64;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
 import org.jetbrains.kotlin.js.backend.ast.JsImportedModule;
+import org.jetbrains.kotlin.js.backend.ast.JsProgram;
+import org.jetbrains.kotlin.js.backend.ast.JsProgramFragment;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.coroutine.CoroutineTransformer;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
@@ -35,7 +38,9 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
+import org.jetbrains.kotlin.serialization.js.ast.JsAstSerializer;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,6 +88,20 @@ public final class K2JSTranslator {
 
         JsInliner.process(config, analysisResult.getBindingTrace(), translationResult.getInnerModuleName(),
                           translationResult.getFragments(), translationResult.getFragments());
+
+        // TODO: temporary code for testing purposes, remove later
+        JsAstSerializer serializer = new JsAstSerializer();
+        JsProgram program = translationResult.getProgram();
+        int bytesTotal = 0;
+        for (JsProgramFragment fragment : translationResult.getFragments()) {
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            serializer.serialize(fragment, output);
+            bytesTotal += output.size();
+            String base64 = Base64.encode(output.toByteArray());
+            program.getGlobalBlock().getStatements().add(program.getStringLiteral(base64).makeStmt());
+        }
+
+        program.getGlobalBlock().getStatements().add(program.getNumberLiteral(bytesTotal).makeStmt());
 
         ResolveTemporaryNamesKt.resolveTemporaryNames(translationResult.getProgram());
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
