@@ -286,6 +286,10 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         val LANGUAGE_VERSION = "LANGUAGE_VERSION"
         private val LANGUAGE_PATTERN = Pattern.compile("([\\+\\-])(\\w+)\\s*")
 
+        val DEFAULT_DIAGNOSTIC_TESTS_FEATURES = listOf(
+                LanguageFeature.DoNotWarnOnCoroutines
+        )
+
         val API_VERSION_DIRECTIVE = "API_VERSION"
 
         val CHECK_TYPE_DIRECTIVE = "CHECK_TYPE"

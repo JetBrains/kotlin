@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
 val KtElement.platform: TargetPlatform
-    get() = TargetPlatformDetector.getPlatform(getContainingKtFile())
+    get() = TargetPlatformDetector.getPlatform(containingKtFile)
 
 val KtElement.builtIns: KotlinBuiltIns
     get() = getResolutionFacade().moduleDescriptor.builtIns
@@ -130,8 +130,8 @@ private fun getExtraLanguageFeatures(
 ): List<LanguageFeature> {
     return mutableListOf<LanguageFeature>().apply {
         when (coroutineSupport) {
-            CoroutineSupport.ENABLED -> {}
-            CoroutineSupport.ENABLED_WITH_WARNING -> add(LanguageFeature.WarnOnCoroutines)
+            CoroutineSupport.ENABLED -> add(LanguageFeature.DoNotWarnOnCoroutines)
+            CoroutineSupport.ENABLED_WITH_WARNING -> {}
             CoroutineSupport.DISABLED -> add(LanguageFeature.ErrorOnCoroutines)
         }
         if (targetPlatformKind == TargetPlatformKind.Common ||

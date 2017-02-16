@@ -62,11 +62,10 @@ abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractDiagnosticsTest() {
             moduleContext: ModuleContext,
             files: List<KtFile>,
             moduleTrace: BindingTrace,
-            languageVersionSettings: LanguageVersionSettings?,
+            languageVersionSettings: LanguageVersionSettings,
             separateModules: Boolean
     ): JsAnalysisResult {
         // TODO: support LANGUAGE directive in JS diagnostic tests
-        assert(languageVersionSettings == null) { "$LANGUAGE_DIRECTIVE directive is not supported in JS diagnostic tests" }
         moduleTrace.record<ModuleDescriptor, ModuleKind>(MODULE_KIND, moduleContext.module, getModuleKind(files))
         return TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(files, moduleTrace, moduleContext, config)
     }

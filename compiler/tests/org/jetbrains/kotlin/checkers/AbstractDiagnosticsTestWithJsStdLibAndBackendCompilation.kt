@@ -30,7 +30,7 @@ abstract class AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation : Abstra
             moduleContext: ModuleContext,
             files: List<KtFile>,
             moduleTrace: BindingTrace,
-            languageVersionSettings: LanguageVersionSettings?,
+            languageVersionSettings: LanguageVersionSettings,
             separateModules: Boolean
     ): JsAnalysisResult {
         val analysisResult = super.analyzeModuleContents(moduleContext, files, moduleTrace, languageVersionSettings, separateModules)

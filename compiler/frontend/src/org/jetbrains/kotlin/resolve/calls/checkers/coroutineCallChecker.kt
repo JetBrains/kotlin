@@ -96,7 +96,7 @@ fun checkCoroutinesFeature(languageVersionSettings: LanguageVersionSettings, dia
     else if (languageVersionSettings.supportsFeature(LanguageFeature.ErrorOnCoroutines)) {
         diagnosticHolder.report(Errors.EXPERIMENTAL_FEATURE_ERROR.on(reportOn, diagnosticData))
     }
-    else if (languageVersionSettings.supportsFeature(LanguageFeature.WarnOnCoroutines)) {
+    else if (!languageVersionSettings.supportsFeature(LanguageFeature.DoNotWarnOnCoroutines)) {
         diagnosticHolder.report(Errors.EXPERIMENTAL_FEATURE_WARNING.on(reportOn, diagnosticData))
     }
 }

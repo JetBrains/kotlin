@@ -288,19 +288,19 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
 
     @Nullable
     private static LanguageFeature chooseCoroutinesApplicabilityLevel(
-            @NotNull CompilerConfiguration configuration, @NotNull CommonCompilerArguments arguments) {
-        if (!arguments.coroutinesEnable && !arguments.coroutinesError && !arguments.coroutinesWarn) {
-            return LanguageFeature.WarnOnCoroutines;
-        }
-        else if (arguments.coroutinesError && !arguments.coroutinesWarn && !arguments.coroutinesEnable) {
+            @NotNull CompilerConfiguration configuration,
+            @NotNull CommonCompilerArguments arguments
+    ) {
+        if (arguments.coroutinesError && !arguments.coroutinesWarn && !arguments.coroutinesEnable) {
             return LanguageFeature.ErrorOnCoroutines;
         }
-        else if (arguments.coroutinesWarn && !arguments.coroutinesError && !arguments.coroutinesEnable) {
-            return LanguageFeature.WarnOnCoroutines;
-        }
         else if (arguments.coroutinesEnable && !arguments.coroutinesWarn && !arguments.coroutinesError) {
+            return LanguageFeature.DoNotWarnOnCoroutines;
+        }
+        else if (!arguments.coroutinesEnable && !arguments.coroutinesError) {
             return null;
-        } else {
+        }
+        else {
             String message = "The -Xcoroutines can only have one value";
             configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
                     CompilerMessageSeverity.ERROR, message, CompilerMessageLocation.NO_LOCATION

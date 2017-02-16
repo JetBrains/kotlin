@@ -103,8 +103,8 @@ object ModifierCheckerCore {
             LanguageFeature.Coroutines to LanguageFeature.ErrorOnCoroutines
     )
 
-    val warningOnFeature = mapOf(
-            LanguageFeature.Coroutines to LanguageFeature.WarnOnCoroutines
+    val noWarningOnFeature = mapOf(
+            LanguageFeature.Coroutines to LanguageFeature.DoNotWarnOnCoroutines
     )
 
     val featureDependenciesTargets = mapOf(
@@ -299,8 +299,8 @@ object ModifierCheckerCore {
             return false
         }
 
-        val pairedWarningFeature = warningOnFeature[dependency]
-        if (pairedWarningFeature != null && languageVersionSettings.supportsFeature(pairedWarningFeature)) {
+        val pairedNoWarningFeature = noWarningOnFeature[dependency]
+        if (pairedNoWarningFeature != null && !languageVersionSettings.supportsFeature(pairedNoWarningFeature)) {
             trace.report(Errors.EXPERIMENTAL_FEATURE_WARNING.on(node.psi, diagnosticData))
         }
 

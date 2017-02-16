@@ -52,7 +52,7 @@ enum class LanguageFeature(
     MultiPlatformProjects(null),
     MultiPlatformDoNotCheckImpl(null),
 
-    WarnOnCoroutines(null),
+    DoNotWarnOnCoroutines(null),
     ErrorOnCoroutines(null)
     ;
 
@@ -100,7 +100,6 @@ interface LanguageVersionSettings {
     // Please do not use this to enable/disable specific features/checks. Instead add a new LanguageFeature entry and call supportsFeature
     val languageVersion: LanguageVersion
 
-    // TODO: refactor arguments related to coroutines so that this list is empty by default
     val additionalFeatures: Collection<LanguageFeature>
 
     @Deprecated("This is a temporary solution, please do not use.")

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analyzer.common.DefaultAnalyzerFacade
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
@@ -63,6 +64,7 @@ import org.jetbrains.kotlin.test.util.DescriptorValidator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.RECURSIVE
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.RECURSIVE_ALL
+import org.jetbrains.kotlin.utils.keysToMap
 import org.junit.Assert
 import java.io.File
 import java.util.*
@@ -198,7 +200,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         // To be overridden by diagnostic-like tests.
     }
 
-    private fun loadLanguageVersionSettings(module: List<TestFile>): LanguageVersionSettings? {
+    private fun loadLanguageVersionSettings(module: List<TestFile>): LanguageVersionSettings {
         var result: LanguageVersionSettings? = null
         for (file in module) {
             val current = file.customLanguageVersionSettings
@@ -213,7 +215,11 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             }
         }
 
-        return result
+        return result ?: BaseDiagnosticsTest.DiagnosticTestLanguageVersionSettings(
+                BaseDiagnosticsTest.DEFAULT_DIAGNOSTIC_TESTS_FEATURES.keysToMap { true },
+                LanguageVersionSettingsImpl.DEFAULT.apiVersion,
+                LanguageVersionSettingsImpl.DEFAULT.languageVersion
+        )
     }
 
     private fun checkDynamicCallDescriptors(expectedFile: File, testFiles: List<TestFile>) {
@@ -253,19 +259,15 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             moduleContext: ModuleContext,
             files: List<KtFile>,
             moduleTrace: BindingTrace,
-            languageVersionSettings: LanguageVersionSettings?,
+            languageVersionSettings: LanguageVersionSettings,
             separateModules: Boolean
     ): AnalysisResult {
         @Suppress("NAME_SHADOWING")
         var files = files
 
-        val configuration =
-                if (languageVersionSettings != null)
-                    environment.configuration.copy().apply {
-                        this.languageVersionSettings = languageVersionSettings
-                    }
-                else
-                    environment.configuration
+        val configuration = environment.configuration.copy().apply {
+            this.languageVersionSettings = languageVersionSettings
+        }
 
         // New JavaDescriptorResolver is created for each module, which is good because it emulates different Java libraries for each module,
         // albeit with same class names
