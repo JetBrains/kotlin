@@ -8,16 +8,5 @@ UFile (package = )
                     ULiteralExpression (value = 0)
             ULiteralExpression (value = 5)
     UClass (name = IntRange)
-        UAnnotation (fqName = java.lang.annotation.Retention)
-            UNamedExpression (name = null)
-                UQualifiedReferenceExpression
-                    UQualifiedReferenceExpression
-                        UQualifiedReferenceExpression
-                            UQualifiedReferenceExpression
-                                USimpleNameReferenceExpression (identifier = java)
-                                USimpleNameReferenceExpression (identifier = lang)
-                            USimpleNameReferenceExpression (identifier = annotation)
-                        USimpleNameReferenceExpression (identifier = RetentionPolicy)
-                    USimpleNameReferenceExpression (identifier = RUNTIME)
         UAnnotationMethod (name = from)
         UAnnotationMethod (name = to)
