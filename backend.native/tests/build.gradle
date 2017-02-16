@@ -1078,10 +1078,10 @@ task inline2(type: RunKonanTest) {
     source = "codegen/inline/inline2.kt"
 }
 
-//task inline3(type: RunKonanTest) {
-//    goldValue = "5\n"
-//    source = "codegen/inline/inline3.kt"
-//}
+task inline3(type: RunKonanTest) {
+    goldValue = "5\n"
+    source = "codegen/inline/inline3.kt"
+}
 
 task vararg0(type: RunKonanTest) {
     source = "lower/vararg.kt"
@@ -1102,10 +1102,10 @@ task inline6(type: RunKonanTest) {
     source = "codegen/inline/inline6.kt"
 }
 
-//task inline7(type: RunKonanTest) {
-//    goldValue = "1\n2\n3\n"
-//    source = "codegen/inline/inline7.kt"
-//}
+task inline7(type: RunKonanTest) {
+    goldValue = "1\n2\n3\n"
+    source = "codegen/inline/inline7.kt"
+}
 
 task inline8(type: RunKonanTest) {
     goldValue = "8\n"
