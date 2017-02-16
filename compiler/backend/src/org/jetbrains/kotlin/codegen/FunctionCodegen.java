@@ -920,17 +920,23 @@ public class FunctionCodegen {
         // enum constructors have two additional synthetic parameters which somewhat complicate this task
         AnnotationCodegen.forMethod(mv, memberCodegen, typeMapper).genAnnotations(functionDescriptor, defaultMethod.getReturnType());
 
-        if (state.getClassBuilderMode().generateBodies) {
-            if (this.owner instanceof MultifileClassFacadeContext) {
-                mv.visitCode();
-                generateFacadeDelegateMethodBody(mv, defaultMethod, (MultifileClassFacadeContext) this.owner);
+        if (!state.getClassBuilderMode().generateBodies) {
+            if (this.owner instanceof MultifileClassFacadeContext)
                 endVisit(mv, "default method delegation", getSourceFromDescriptor(functionDescriptor));
-            }
-            else {
-                mv.visitCode();
-                generateDefaultImplBody(owner, functionDescriptor, mv, loadStrategy, function, memberCodegen, defaultMethod);
+            else
                 endVisit(mv, "default method", getSourceFromDescriptor(functionDescriptor));
-            }
+            return;
+        }
+
+        if (this.owner instanceof MultifileClassFacadeContext) {
+            mv.visitCode();
+            generateFacadeDelegateMethodBody(mv, defaultMethod, (MultifileClassFacadeContext) this.owner);
+            endVisit(mv, "default method delegation", getSourceFromDescriptor(functionDescriptor));
+        }
+        else {
+            mv.visitCode();
+            generateDefaultImplBody(owner, functionDescriptor, mv, loadStrategy, function, memberCodegen, defaultMethod);
+            endVisit(mv, "default method", getSourceFromDescriptor(functionDescriptor));
         }
     }
 

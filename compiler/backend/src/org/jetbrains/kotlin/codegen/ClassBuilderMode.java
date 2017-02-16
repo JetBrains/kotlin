@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import org.jetbrains.annotations.TestOnly;
+
 public class ClassBuilderMode {
     public final boolean generateBodies;
     public final boolean generateMetadata;
@@ -72,5 +74,12 @@ public class ClassBuilderMode {
             /* bodies = */ false,
             /* metadata = */ true,
             /* sourceRetention = */ true,
+            /* generateMultiFileFacadePartClasses = */ true);
+
+    @TestOnly
+    public final static ClassBuilderMode LIGHT_ANALYSIS_FOR_TESTS = new ClassBuilderMode(
+            /* bodies = */ false,
+            /* metadata = */ true,
+            /* sourceRetention = */ false,
             /* generateMultiFileFacadePartClasses = */ true);
 }

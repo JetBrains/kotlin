@@ -19,20 +19,15 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.Processor;
-import kotlin.Unit;
 import kotlin.io.FilesKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
 import org.jetbrains.kotlin.psi.KtProperty;
-import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension;
-import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
@@ -44,9 +39,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
-    // Set to 'true' to speed up black box tests locally
-    private static final boolean SKIP_LIGHT_ANALYSIS_MODE_TESTS = false;
-
     private boolean addRuntime = false;
     private boolean addReflect = false;
 
@@ -71,45 +63,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
                 addRuntime ? ConfigurationKind.NO_KOTLIN_REFLECT :
                 ConfigurationKind.JDK_ONLY;
 
-        try {
-            compileAndRun(files, javaFilesDir, jdkKind, javacOptions);
-        }
-        catch (Throwable boxError) {
-            // Even if black box fails, run light analysis mode test to generate the .txt file
-            try {
-                doLightAnalysisModeTest(wholeFile, files, javaFilesDir);
-            }
-            catch (Throwable ignored) {
-            }
-
-            throw ExceptionUtilsKt.rethrow(boxError);
-        }
-
-        doLightAnalysisModeTest(wholeFile, files, javaFilesDir);
-    }
-
-    private void doLightAnalysisModeTest(@NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir) {
-        if (SKIP_LIGHT_ANALYSIS_MODE_TESTS) return;
-
-        File boxTestsDir = new File("compiler/testData/codegen/box");
-        String relativePath = FilesKt.toRelativeString(wholeFile, boxTestsDir);
-        // Do nothing if this test is not under codegen/box
-        if (relativePath.startsWith("..")) return;
-
-        String outDir = new File("compiler/testData/codegen/light-analysis", relativePath).getParent();
-        File txtFile = new File(outDir, FilesKt.getNameWithoutExtension(wholeFile) + ".txt");
-        AbstractBytecodeListingTest.doTest(
-                getTestRootDisposable(), files, javaFilesDir, txtFile, ClassBuilderFactories.TEST_KAPT3,
-                new Function1<KotlinCoreEnvironment, Unit>() {
-                    @Override
-                    public Unit invoke(KotlinCoreEnvironment environment) {
-                        AnalysisHandlerExtension.Companion.registerExtension(
-                                environment.getProject(), new PartialAnalysisHandlerExtension()
-                        );
-                        return Unit.INSTANCE;
-                    }
-                }
-        );
+        compileAndRun(files, javaFilesDir, jdkKind, javacOptions);
     }
 
     @SuppressWarnings("WeakerAccess")

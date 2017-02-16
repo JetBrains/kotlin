@@ -161,7 +161,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         int access = 0;
 
-        if (!state.getClassBuilderMode().generateBodies && !DescriptorUtils.isTopLevelDeclaration(descriptor)) {
+        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES && !DescriptorUtils.isTopLevelDeclaration(descriptor)) {
             // !ClassBuilderMode.generateBodies means we are generating light classes & looking at a nested or inner class
             // Light class generation is implemented so that Cls-classes only read bare code of classes,
             // without knowing whether these classes are inner or not (see ClassStubBuilder.EMPTY_STRATEGY)

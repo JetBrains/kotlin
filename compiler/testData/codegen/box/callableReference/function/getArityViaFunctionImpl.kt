@@ -1,5 +1,6 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS, NATIVE
+// IGNORE_LIGHT_ANALYSIS
 
 // WITH_RUNTIME
 

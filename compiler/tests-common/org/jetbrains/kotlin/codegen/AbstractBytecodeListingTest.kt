@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -48,6 +49,18 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
                 classBuilderFactory: ClassBuilderFactory,
                 setupEnvironment: (KotlinCoreEnvironment) -> Unit = {}
         ) {
+            val classFileFactory = compileClasses(disposable, files, javaFilesDir, classBuilderFactory, setupEnvironment)
+            val actualTxt = BytecodeListingTextCollectingVisitor.getText(classFileFactory)
+            KotlinTestUtils.assertEqualsToFile(txtFile, actualTxt)
+        }
+
+        fun compileClasses(
+                disposable: Disposable,
+                files: List<TestFile>,
+                javaFilesDir: File?,
+                classBuilderFactory: ClassBuilderFactory,
+                setupEnvironment: (KotlinCoreEnvironment) -> Unit = {}
+        ): ClassFileFactory {
             val addRuntime = files.any { InTextDirectivesUtils.isDirectiveDefined(it.content, "WITH_RUNTIME") }
             val addReflect = files.any { InTextDirectivesUtils.isDirectiveDefined(it.content, "WITH_REFLECT") }
 
@@ -63,22 +76,48 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
             val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
             setupEnvironment(environment)
 
-            val generatedFiles = CodegenTestUtil.generateFiles(environment, loadMultiFiles(files, environment.project), classBuilderFactory)
-                    .getClassFiles()
-                    .sortedBy { it.relativePath }
-                    .map {
-                        val cr = ClassReader(it.asByteArray())
-                        val visitor = BytecodeListingTextCollectingVisitor()
-                        cr.accept(visitor, ClassReader.SKIP_CODE)
-                        KotlinTestUtils.replaceHash(visitor.text, "HASH")
-                    }.joinToString("\n\n", postfix = "\n")
-
-            KotlinTestUtils.assertEqualsToFile(txtFile, generatedFiles)
+            return CodegenTestUtil.generateFiles(environment, loadMultiFiles(files, environment.project), classBuilderFactory)
         }
     }
 }
 
-private class BytecodeListingTextCollectingVisitor : ClassVisitor(ASM5) {
+class BytecodeListingTextCollectingVisitor(val filter: Filter) : ClassVisitor(ASM5) {
+    companion object {
+        fun getText(factory: ClassFileFactory, filter: Filter = Filter.EMPTY, replaceHash: Boolean = true) = factory
+                .getClassFiles()
+                .sortedBy { it.relativePath }
+                .mapNotNull {
+                    val cr = ClassReader(it.asByteArray())
+                    val visitor = BytecodeListingTextCollectingVisitor(filter)
+                    cr.accept(visitor, ClassReader.SKIP_CODE)
+
+                    if (!filter.shouldWriteClass(cr.access, cr.className)) {
+                        return@mapNotNull null
+                    }
+
+                    if (replaceHash) {
+                        KotlinTestUtils.replaceHash(visitor.text, "HASH")
+                    }
+                    else {
+                        visitor.text
+                    }
+                }.joinToString("\n\n", postfix = "\n")
+    }
+
+    interface Filter {
+        fun shouldWriteClass(access: Int, name: String): Boolean
+        fun shouldWriteMethod(access: Int, name: String, desc: String): Boolean
+        fun shouldWriteField(access: Int, name: String, desc: String): Boolean
+        fun shouldWriteInnerClass(name: String): Boolean
+
+        object EMPTY : Filter {
+            override fun shouldWriteClass(access: Int, name: String) = true
+            override fun shouldWriteMethod(access: Int, name: String, desc: String) = true
+            override fun shouldWriteField(access: Int, name: String, desc: String) = true
+            override fun shouldWriteInnerClass(name: String) = true
+        }
+    }
+
     private class Declaration(val text: String, val annotations: MutableList<String> = arrayListOf())
 
     private val declarationsInsideClass = arrayListOf<Declaration>()
@@ -141,6 +180,10 @@ private class BytecodeListingTextCollectingVisitor : ClassVisitor(ASM5) {
             signature: String?,
             exceptions: Array<out String>?
     ): MethodVisitor? {
+        if (!filter.shouldWriteMethod(access, name, desc)) {
+            return null
+        }
+
         val returnType = Type.getReturnType(desc).className
         val parameterTypes = Type.getArgumentTypes(desc).map { it.className }
         val methodAnnotations = arrayListOf<String>()
@@ -173,6 +216,10 @@ private class BytecodeListingTextCollectingVisitor : ClassVisitor(ASM5) {
     }
 
     override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
+        if (!filter.shouldWriteField(access, name, desc)) {
+            return null
+        }
+
         val type = Type.getType(desc).className
         val fieldDeclaration = Declaration("field $name: $type")
         declarationsInsideClass.add(fieldDeclaration)
@@ -206,6 +253,9 @@ private class BytecodeListingTextCollectingVisitor : ClassVisitor(ASM5) {
     }
 
     override fun visitInnerClass(name: String, outerName: String?, innerName: String?, access: Int) {
+        if (!filter.shouldWriteInnerClass(name)) {
+            return
+        }
         declarationsInsideClass.add(Declaration("inner class $name"))
     }
 }
