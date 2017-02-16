@@ -107,6 +107,12 @@ open class JvmBuiltInsSettings(
 
     override fun getFunctions(name: Name, classDescriptor: DeserializedClassDescriptor): Collection<SimpleFunctionDescriptor> {
         if (name == CloneableClassScope.CLONE_NAME && KotlinBuiltIns.isArrayOrPrimitiveArray(classDescriptor)) {
+            // Do not create clone for arrays deserialized from metadata in the old (1.0) runtime, because clone is declared there anyway
+            if (classDescriptor.classProto.functionList.any { functionProto ->
+                classDescriptor.c.nameResolver.getName(functionProto.name) == CloneableClassScope.CLONE_NAME
+            }) {
+                return emptyList()
+            }
             return listOf(createCloneForArray(
                     classDescriptor, cloneableType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BUILTINS).single()
             ))
@@ -199,6 +205,7 @@ open class JvmBuiltInsSettings(
         setOwner(arrayClassDescriptor)
         setVisibility(Visibilities.PUBLIC)
         setReturnType(arrayClassDescriptor.defaultType)
+        setDispatchReceiverParameter(arrayClassDescriptor.thisAsReceiverParameter)
     }.build()!!
 
     private fun SimpleFunctionDescriptor.isMutabilityViolation(isMutable: Boolean): Boolean {
