@@ -193,16 +193,17 @@ class DefaultParameterInjector internal constructor(val context: Context): BodyL
                 val argumentsCount = argumentCount(expression)
                 if (argumentsCount == descriptor.valueParameters.size)
                     return expression
-                val (desc, params) = parametersForCall(expression)
+                val (descriptorForCall, params) = parametersForCall(expression)
                 return IrDelegatingConstructorCallImpl(
                         startOffset = expression.startOffset,
                         endOffset   = expression.endOffset,
-                        descriptor = desc as ClassConstructorDescriptor)
+                        descriptor  = descriptorForCall as ClassConstructorDescriptor)
                             .apply {
                                 params.forEach {
                                     log("call::params@${it.first.index}/${it.first.name.asString()}: ${ir2string(it.second)}")
                                     putValueArgument(it.first.index, it.second)
                                 }
+                                dispatchReceiver = expression.dispatchReceiver
                             }
 
             }
