@@ -89,11 +89,11 @@ public class CommonSupertypes {
         for (KotlinType type : types) {
             UnwrappedType unwrappedType = type.unwrap();
             if (unwrappedType instanceof FlexibleType) {
-                if (DynamicTypesKt.isDynamic(type)) {
-                    return type;
+                if (DynamicTypesKt.isDynamic(unwrappedType)) {
+                    return unwrappedType;
                 }
                 hasFlexible = true;
-                FlexibleType flexibleType = (FlexibleType) type;
+                FlexibleType flexibleType = (FlexibleType) unwrappedType;
                 upper.add(flexibleType.getUpperBound());
                 lower.add(flexibleType.getLowerBound());
             }
