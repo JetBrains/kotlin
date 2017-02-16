@@ -64,9 +64,21 @@ class StringBuilder private constructor (
         return this
     }
 
-    override fun append(csq: CharSequence?): Appendable = TODO()
+    override fun append(csq: CharSequence?): Appendable {
+        // TODO: how to treat nulls properly?
+        if (csq == null) return this
+        return append(csq, 0, csq.length)
+    }
 
-    override fun append(csq: CharSequence?, start: Int, end: Int): Appendable = TODO()
+    override fun append(csq: CharSequence?, start: Int, end: Int): Appendable {
+        // TODO: how to treat nulls properly?
+        if (csq == null) return this
+        ensureExtraCapacity(end - start)
+        var index = start
+        while (index < end)
+            array[length++] = csq[index++]
+        return this
+    }
 
     fun append(it: CharArray) {
         ensureExtraCapacity(it.size)

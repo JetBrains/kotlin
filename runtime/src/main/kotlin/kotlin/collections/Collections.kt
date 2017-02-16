@@ -149,17 +149,6 @@ public interface MutableIterable<out T> : Iterable<T> {
     override fun iterator(): MutableIterator<T>
 }
 
-
-@Fixme
-fun <E> Array<E>.asList(): List<E> {
-    // TODO: consider making lighter list over an array.
-    val result = ArrayList<E>(this.size)
-    for (e in this) {
-        result.add(e)
-    }
-    return result
-}
-/* TODO: use this one!
 public fun <T> Array<out T>.asList(): List<T> {
     return object : AbstractList<T>() {
         override val size: Int get() = this@asList.size
@@ -169,7 +158,7 @@ public fun <T> Array<out T>.asList(): List<T> {
         override fun indexOf(element: T): Int = this@asList.indexOf(element)
         override fun lastIndexOf(element: T): Int = this@asList.lastIndexOf(element)
     }
-} */
+}
 
 fun <E> Array<E>.toSet(): Set<E> {
     val result = HashSet<E>(this.size)
@@ -1009,15 +998,13 @@ public fun <T : Comparable<T>> MutableList<T>.sortDescending(): Unit {
 /**
  * Returns a list of all elements sorted according to their natural sort order.
  */
-@FixmeSorting
 public fun <T : Comparable<T>> Iterable<T>.sorted(): List<T> {
-    TODO()
-    //if (this is Collection) {
-    //    if (size <= 1) return this.toList()
-    //   @Suppress("UNCHECKED_CAST")
-    //    return (toTypedArray<Comparable<T>>() as Array<T>).apply { sort() }.asList()
-    //}
-    //return toMutableList().apply { sort() }
+    if (this is Collection) {
+        if (size <= 1) return this.toList()
+       @Suppress("UNCHECKED_CAST")
+        return (toTypedArray<Comparable<T>>() as Array<T>).apply { sort() }.asList()
+    }
+    return toMutableList().apply { sort() }
 }
 
 /**
@@ -1044,15 +1031,13 @@ public fun <T : Comparable<T>> Iterable<T>.sortedDescending(): List<T> {
 /**
  * Returns a list of all elements sorted according to the specified [comparator].
  */
-@FixmeSorting
 public fun <T> Iterable<T>.sortedWith(comparator: Comparator<in T>): List<T> {
-    TODO()
-    //if (this is Collection) {
-    //    if (size <= 1) return this.toList()
-    //    @Suppress("UNCHECKED_CAST")
-    //    return (toTypedArray<Any?>() as Array<T>).apply { sortWith(comparator) }.asList()
-    //}
-    //return toMutableList().apply { sortWith(comparator) }
+    if (this is Collection) {
+        if (size <= 1) return this.toList()
+        @Suppress("UNCHECKED_CAST")
+        return (toTypedArray<Any?>() as Array<T>).apply { sortWith(comparator) }.asList()
+    }
+    return toMutableList().apply { sortWith(comparator) }
 }
 
 /**
@@ -1568,6 +1553,7 @@ public inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
+ * Returns the number of elements in this collection.
  * Returns the number of elements in this collection.
  */
 public fun <T> Iterable<T>.count(): Int {

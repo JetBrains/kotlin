@@ -2,7 +2,8 @@ package kotlin
 
 import kotlin.collections.*
 import kotlin.internal.PureReifiable
-
+import kotlin.util.sortArrayComparable
+import kotlin.util.sortArrayWith
 // TODO: make all iterator() methods inline.
 
 /**
@@ -782,6 +783,25 @@ public inline fun CharArray.isNotEmpty(): Boolean {
 public val <T> Array<out T>.lastIndex: Int
     get() = size - 1
 
+/**
+ * Returns last index of [element], or -1 if the array does not contain element.
+ */
+public fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.lastIndexOf(element: T): Int {
+    if (element == null) {
+        for (index in indices.reversed()) {
+            if (this[index] == null) {
+                return index
+            }
+        }
+    } else {
+        for (index in indices.reversed()) {
+            if (element == this[index]) {
+                return index
+            }
+        }
+    }
+    return -1
+}
 
 /**
  * Returns the last valid index for the array.
@@ -922,6 +942,24 @@ public fun <C : MutableCollection<in Char>> CharArray.toCollection(destination: 
 }
 
 /**
+ * Returns a [List] containing all elements.
+ */
+public fun <T> Array<out T>.toList(): List<T> {
+    return when (size) {
+        0 -> emptyList()
+        1 -> listOf(this[0])
+        else -> this.toMutableList()
+    }
+}
+
+/**
+ * Returns a [MutableList] filled with all elements of this array.
+ */
+public fun <T> Array<out T>.toMutableList(): MutableList<T> {
+    return ArrayList(this.asCollection())
+}
+
+/**
  * Returns a [HashSet] of all elements.
  */
 public fun <T> Array<out T>.toHashSet(): HashSet<T> {
@@ -984,6 +1022,135 @@ public fun CharArray.toHashSet(): HashSet<Char> {
     return toCollection(HashSet<Char>(mapCapacity(size)))
 }
 
+/**
+ * Returns new array which is a copy of the original array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<T>.copyOf(): Array<T> {
+    return this.copyOfUninitializedElements(size)
+}
+
+/**
+ * Sorts the array in-place according to the order specified by the given [comparator].
+ */
+public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
+    if (size > 1) {
+        sortArrayWith(this, 0, size - 1, comparator)
+    }
+}
+
+/**
+ * Sorts elements in the array in-place according to natural sort order of the value returned by specified [selector] function.
+ */
+public inline fun <T, R : Comparable<R>> Array<out T>.sortBy(crossinline selector: (T) -> R?): Unit {
+    if (size > 1) sortWith(compareBy(selector))
+}
+
+/**
+ * Sorts elements in the array in-place descending according to natural sort order of the value returned by specified [selector] function.
+ */
+public inline fun <T, R : Comparable<R>> Array<out T>.sortByDescending(crossinline selector: (T) -> R?): Unit {
+    if (size > 1) sortWith(compareByDescending(selector))
+}
+
+/**
+ * Sorts elements in the array in-place descending according to their natural sort order.
+ */
+public fun <T : Comparable<T>> Array<out T>.sortDescending(): Unit {
+    sortWith(reverseOrder())
+}
+
+/**
+ * Returns a list of all elements sorted according to their natural sort order.
+ */
+public fun <T : Comparable<T>> Array<out T>.sorted(): List<T> {
+    return sortedArray().asList()
+}
+
+/**
+ * Returns a list of all elements sorted according to their natural sort order.
+ */
+public fun IntArray.sorted(): List<Int> {
+    return toTypedArray().apply { sort() }.asList()
+}
+
+/**
+ * Returns an array with all elements of this array sorted according to their natural sort order.
+ */
+public fun <T : Comparable<T>> Array<T>.sortedArray(): Array<T> {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sort() }
+}
+
+/**
+ * Returns an array with all elements of this array sorted descending according to their natural sort order.
+ */
+public fun <T : Comparable<T>> Array<T>.sortedArrayDescending(): Array<T> {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sortWith(reverseOrder()) }
+}
+
+/**
+ * Returns a list of all elements sorted according to natural sort order of the value returned by specified [selector] function.
+ */
+public inline fun <T, R : Comparable<R>> Array<out T>.sortedBy(crossinline selector: (T) -> R?): List<T> {
+    return sortedWith(compareBy(selector))
+}
+
+/**
+ * Returns a list of all elements sorted descending according to natural sort order of the value returned by specified [selector] function.
+ */
+public inline fun <T, R : Comparable<R>> Array<out T>.sortedByDescending(crossinline selector: (T) -> R?): List<T> {
+    return sortedWith(compareByDescending(selector))
+}
+
+/**
+ * Returns a list of all elements sorted descending according to their natural sort order.
+ */
+public fun <T : Comparable<T>> Array<out T>.sortedDescending(): List<T> {
+    return sortedWith(reverseOrder())
+}
+
+/**
+ * Sorts the array in-place according to the natural order of its elements.
+ *
+ * @throws ClassCastException if any element of the array is not [Comparable].
+ */
+public fun <T> Array<out T>.sort(): Unit {
+    if (size > 1) sortArrayComparable(this)
+}
+
+
+public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Unit {
+    sortArrayWith(this, fromIndex, toIndex, comparator)
+}
+
+/**
+ * Returns a *typed* object array containing all of the elements of this primitive array.
+ */
+public fun IntArray.toTypedArray(): Array<Int> {
+    val result = arrayOfNulls<Int>(size)
+    for (index in indices)
+        result[index] = this[index]
+    @Suppress("UNCHECKED_CAST")
+    return result as Array<Int>
+}
+
+/**
+ * Returns a list of all elements sorted according to the specified [comparator].
+ */
+public fun <T> Array<out T>.sortedWith(comparator: Comparator<in T>): List<T> {
+    return sortedArrayWith(comparator).asList()
+}
+
+/**
+ * Returns an array with all elements of this array sorted according the specified [comparator].
+ */
+public fun <T> Array<out T>.sortedArrayWith(comparator: Comparator<in T>): Array<out T> {
+    if (isEmpty()) return this
+    return this.copyOf().apply { sortWith(comparator) }
+}
+
 // From Library.kt.
 /**
  * Returns an array of objects of the given type with the given [size], initialized with null values.
@@ -993,6 +1160,19 @@ public inline fun <reified @PureReifiable T> arrayOfNulls(size: Int): Array<T?> 
         arrayOfUninitializedElements<T?>(size)
 
 /**
+ * Returns a *typed* array containing all of the elements of this collection.
+ *
+ * Allocates an array of runtime type `T` having its size equal to the size of this collection
+ * and populates the array with the elements of this collection.
+ */
+public inline fun <reified T> Collection<T>.toTypedArray(): Array<T> {
+    val result = arrayOfNulls<T>(size)
+    var index = 0
+    for (element in this) result[index++] = element
+    return result as Array<T>
+}
+
+/**
  * Returns an array containing the specified elements.
  */
 public inline fun <reified @PureReifiable T> arrayOf(vararg elements: T): Array<T> = elements as Array<T>
@@ -1000,7 +1180,6 @@ public inline fun <reified @PureReifiable T> arrayOf(vararg elements: T): Array<
 /**
  * Returns an array containing the specified [Double] numbers.
  */
-
 public inline fun doubleArrayOf(vararg elements: Double) = elements
 
 /**

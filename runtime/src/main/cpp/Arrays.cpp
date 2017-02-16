@@ -45,8 +45,8 @@ void Kotlin_Array_set(KRef thiz, KInt index, KConstRef value) {
 
 OBJ_GETTER(Kotlin_Array_clone, KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
-  ArrayHeader* result = ArrayContainer(
-      array->type_info(), array->count_).GetPlace();
+  ArrayHeader* result = AllocArrayInstance(
+      array->type_info(), array->count_, OBJ_RESULT)->array();
   for (int index = 0; index < array->count_; index++) {
     SetGlobalRef(
          ArrayAddressOfElementAt(result, index), *ArrayAddressOfElementAt(array, index));
@@ -109,8 +109,8 @@ void Kotlin_ByteArray_set(KRef thiz, KInt index, KByte value) {
 
 OBJ_GETTER(Kotlin_ByteArray_clone, KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
-  ArrayHeader* result = ArrayContainer(
-      theByteArrayTypeInfo, array->count_).GetPlace();
+  ArrayHeader* result = AllocArrayInstance(
+      array->type_info(), array->count_, OBJ_RESULT)->array();
   memcpy(
       ByteArrayAddressOfElementAt(result, 0),
       ByteArrayAddressOfElementAt(array, 0),
@@ -141,8 +141,8 @@ void Kotlin_CharArray_set(KRef thiz, KInt index, KChar value) {
 
 OBJ_GETTER(Kotlin_CharArray_clone, KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
-  ArrayHeader* result = ArrayContainer(
-      theCharArrayTypeInfo, array->count_).GetPlace();
+  ArrayHeader* result = AllocArrayInstance(
+      array->type_info(), array->count_, OBJ_RESULT)->array();
   memcpy(
       PrimitiveArrayAddressOfElementAt<KChar>(result, 0),
       PrimitiveArrayAddressOfElementAt<KChar>(array, 0),
@@ -185,8 +185,8 @@ void Kotlin_ShortArray_set(KRef thiz, KInt index, KShort value) {
 
 OBJ_GETTER(Kotlin_ShortArray_clone, KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
-  ArrayHeader* result = ArrayContainer(
-      theShortArrayTypeInfo, array->count_).GetPlace();
+  ArrayHeader* result = AllocArrayInstance(
+      array->type_info(), array->count_, OBJ_RESULT)->array();
   memcpy(
       PrimitiveArrayAddressOfElementAt<KShort>(result, 0),
       PrimitiveArrayAddressOfElementAt<KShort>(array, 0),
@@ -217,8 +217,8 @@ void Kotlin_IntArray_set(KRef thiz, KInt index, KInt value) {
 
 OBJ_GETTER(Kotlin_IntArray_clone, KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
-  ArrayHeader* result = ArrayContainer(
-      theIntArrayTypeInfo, array->count_).GetPlace();
+  ArrayHeader* result = AllocArrayInstance(
+      array->type_info(), array->count_, OBJ_RESULT)->array();
   memcpy(
       PrimitiveArrayAddressOfElementAt<KInt>(result, 0),
       PrimitiveArrayAddressOfElementAt<KInt>(array, 0),
@@ -300,8 +300,8 @@ void Kotlin_LongArray_set(KRef thiz, KInt index, KLong value) {
 
 OBJ_GETTER(Kotlin_LongArray_clone, KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
-  ArrayHeader* result = ArrayContainer(
-      theLongArrayTypeInfo, array->count_).GetPlace();
+  ArrayHeader* result = AllocArrayInstance(
+      array->type_info(), array->count_, OBJ_RESULT)->array();
   memcpy(
       PrimitiveArrayAddressOfElementAt<KLong>(result, 0),
       PrimitiveArrayAddressOfElementAt<KLong>(array, 0),
@@ -332,8 +332,8 @@ void Kotlin_FloatArray_set(KRef thiz, KInt index, KFloat value) {
 
 OBJ_GETTER(Kotlin_FloatArray_clone, KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
-  ArrayHeader* result = ArrayContainer(
-      theFloatArrayTypeInfo, array->count_).GetPlace();
+  ArrayHeader* result = AllocArrayInstance(
+      array->type_info(), array->count_, OBJ_RESULT)->array();
   memcpy(
       PrimitiveArrayAddressOfElementAt<KFloat>(result, 0),
       PrimitiveArrayAddressOfElementAt<KFloat>(array, 0),
@@ -364,8 +364,8 @@ void Kotlin_DoubleArray_set(KRef thiz, KInt index, KDouble value) {
 
 OBJ_GETTER(Kotlin_DoubleArray_clone, KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
-  ArrayHeader* result = ArrayContainer(
-      theDoubleArrayTypeInfo, array->count_).GetPlace();
+  ArrayHeader* result = AllocArrayInstance(
+      array->type_info(), array->count_, OBJ_RESULT)->array();
   memcpy(
       PrimitiveArrayAddressOfElementAt<KDouble>(result, 0),
       PrimitiveArrayAddressOfElementAt<KDouble>(array, 0),
@@ -396,8 +396,8 @@ void Kotlin_BooleanArray_set(KRef thiz, KInt index, KBoolean value) {
 
 OBJ_GETTER(Kotlin_BooleanArray_clone, KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
-  ArrayHeader* result = ArrayContainer(
-      theBooleanArrayTypeInfo, array->count_).GetPlace();
+  ArrayHeader* result = AllocArrayInstance(
+      array->type_info(), array->count_, OBJ_RESULT)->array();
   memcpy(
       PrimitiveArrayAddressOfElementAt<KBoolean>(result, 0),
       PrimitiveArrayAddressOfElementAt<KBoolean>(array, 0),
