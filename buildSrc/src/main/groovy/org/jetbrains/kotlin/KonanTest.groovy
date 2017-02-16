@@ -452,10 +452,10 @@ fun main(args : Array<String>) {
              * https://github.com/GitTools/GitVersion/issues/94
              */
             def formatedString = rawString
+                    .replaceAll("\\|", "||")
                     .replaceAll("\r",  "|r")
                     .replaceAll("\n",  "|n")
                     .replaceAll("'",   "|'")
-                    .replaceAll("|",   "||")
                     .replaceAll("\\[", "|[")
                     .replaceAll("]",   "|]")
             teamcityReport("testFailed name='$name' message='${e.getMessage()}' details='${formatedString}'")
