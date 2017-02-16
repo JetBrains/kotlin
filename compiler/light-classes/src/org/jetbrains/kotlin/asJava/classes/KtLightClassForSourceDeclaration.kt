@@ -21,7 +21,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
-import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.search.SearchScope
@@ -34,9 +33,9 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory.getOriginalElement
+import org.jetbrains.kotlin.asJava.builder.InvalidLightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassData
-import org.jetbrains.kotlin.asJava.builder.LightClassDataImpl
+import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassDataProviderForClassOrObject
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
@@ -79,41 +78,24 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
     abstract override fun getParent(): PsiElement?
     abstract override fun getQualifiedName(): String?
 
-    override val clsDelegate: PsiClass by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val javaFileStub = getJavaFileStub()
+    override val clsDelegate: PsiClass get() = lightClassData.clsDelegate
 
-        findDelegateClass(javaFileStub) ?: run {
-            val outermostClassOrObject = getOutermostClassOrObject(classOrObject)
-            val ktFileText: String? = try {
-                outermostClassOrObject.containingFile.text
-            }
-            catch (e: Exception) {
-                "Can't get text for outermost class"
-            }
+    private val lightClassData: LightClassData by lazy(LazyThreadSafetyMode.PUBLICATION) { findLightClassData() }
 
-            val stubFileText = DebugUtil.stubTreeToString(javaFileStub)
-            throw IllegalStateException("Couldn't get delegate for $this\nin $ktFileText\nstub: \n$stubFileText")
-        }
-    }
+    open protected fun findLightClassData() = getLightClassDataHolder().findData(classOrObject)
 
-    protected open fun findDelegateClass(javaFileStub: PsiJavaFileStub): PsiClass? {
-        return LightClassUtil.findClass(javaFileStub) {
-            getOriginalElement(it as StubElement<*>) == classOrObject
-        }
-    }
-
-    private fun getJavaFileStub(): PsiJavaFileStub = getLightClassData().javaFileStub
+    private fun getJavaFileStub(): PsiJavaFileStub = getLightClassDataHolder().javaFileStub
 
     protected fun getDescriptor(): ClassDescriptor? {
         return LightClassGenerationSupport.getInstance(project).resolveToDescriptor(classOrObject) as? ClassDescriptor
     }
 
-    private fun getLightClassData(): LightClassDataImpl {
-        val lightClassData = getLightClassData(classOrObject)
-        if (lightClassData !is LightClassDataImpl) {
+    protected fun getLightClassDataHolder(): LightClassDataHolder {
+        val lightClassData = getLightClassDataHolder(classOrObject)
+        if (lightClassData is InvalidLightClassDataHolder) {
             LOG.error("Invalid light class data for existing light class:\n$lightClassData\n${classOrObject.getElementTextWithContext()}")
         }
-        return lightClassData as LightClassDataImpl
+        return lightClassData
     }
 
     private val _containingFile: PsiFile by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -341,7 +323,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
     override fun getImplementsList() = _implementsList
 
     companion object {
-        private val JAVA_API_STUB = Key.create<CachedValue<LightClassData>>("JAVA_API_STUB")
+        private val JAVA_API_STUB = Key.create<CachedValue<LightClassDataHolder>>("JAVA_API_STUB")
 
         private val jetTokenToPsiModifier = listOf(
                 PUBLIC_KEYWORD to PsiModifier.PUBLIC,
@@ -382,11 +364,11 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
             return classOrObject.getBody()?.declarations?.isEmpty() ?: true
         }
 
-        fun getLightClassData(classOrObject: KtClassOrObject): LightClassData {
+        fun getLightClassDataHolder(classOrObject: KtClassOrObject): LightClassDataHolder {
             return getLightClassCachedValue(classOrObject).value
         }
 
-        fun getLightClassCachedValue(classOrObject: KtClassOrObject): CachedValue<LightClassData> {
+        fun getLightClassCachedValue(classOrObject: KtClassOrObject): CachedValue<LightClassDataHolder> {
             var value =
                     getOutermostClassOrObject(classOrObject).getUserData(JAVA_API_STUB) // stub computed for outer class can be used for inner/nested
                     ?: classOrObject.getUserData(JAVA_API_STUB)

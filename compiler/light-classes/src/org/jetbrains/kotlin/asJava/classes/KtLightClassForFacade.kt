@@ -20,7 +20,6 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
 import com.intellij.psi.*
-import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.impl.light.LightEmptyImplementsList
 import com.intellij.psi.impl.light.LightModifierList
 import com.intellij.psi.search.GlobalSearchScope
@@ -30,8 +29,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.asJava.builder.LightClassDataImpl
+import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassDataProviderForFileFacade
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
@@ -51,17 +49,17 @@ import javax.swing.Icon
 class KtLightClassForFacade private constructor(
         manager: PsiManager,
         private val facadeClassFqName: FqName,
-        private val lightClassDataCache: CachedValue<LightClassDataImpl>,
+        private val lightClassDataCache: CachedValue<LightClassDataHolder>,
         files: Collection<KtFile>
 ) : KtLightClassBase(manager) {
     private data class StubCacheKey(val fqName: FqName, val searchScope: GlobalSearchScope)
 
     class FacadeStubCache(private val project: Project) {
         private inner class FacadeCacheData {
-            val cache = object : SLRUCache<StubCacheKey, CachedValue<LightClassDataImpl>>(20, 30) {
-                override fun createValue(key: StubCacheKey): CachedValue<LightClassDataImpl> {
+            val cache = object : SLRUCache<StubCacheKey, CachedValue<LightClassDataHolder>>(20, 30) {
+                override fun createValue(key: StubCacheKey): CachedValue<LightClassDataHolder> {
                     val stubProvider = LightClassDataProviderForFileFacade.ByProjectSource(project, key.fqName, key.searchScope)
-                    return CachedValuesManager.getManager(project).createCachedValue<LightClassDataImpl>(stubProvider, /*trackValue = */false)
+                    return CachedValuesManager.getManager(project).createCachedValue<LightClassDataHolder>(stubProvider, /*trackValue = */false)
                 }
             }
         }
@@ -70,7 +68,7 @@ class KtLightClassForFacade private constructor(
                 { CachedValueProvider.Result.create(FacadeCacheData(), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT) },
                 /*trackValue = */ false)
 
-        operator fun get(qualifiedName: FqName, searchScope: GlobalSearchScope): CachedValue<LightClassDataImpl> {
+        operator fun get(qualifiedName: FqName, searchScope: GlobalSearchScope): CachedValue<LightClassDataHolder> {
             synchronized (cachedValue) {
                 return cachedValue.value.cache.get(StubCacheKey(qualifiedName, searchScope))
             }
@@ -197,21 +195,7 @@ class KtLightClassForFacade private constructor(
     override fun copy() = KtLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files)
 
     override val clsDelegate: PsiClass
-        get() {
-            val javaFileStub = lightClassDataCache.value.javaFileStub
-            return LightClassUtil.findClass(javaFileStub) {
-                facadeClassFqName.asString() == it.qualifiedName
-            } ?: throw IllegalStateException("Facade class $facadeClassFqName not found; classes in Java file stub: ${collectClassNames(javaFileStub)}")
-        }
-
-    private fun collectClassNames(javaFileStub: PsiJavaFileStub): String {
-        val names = mutableListOf<String>()
-        LightClassUtil.findClass(javaFileStub) { cls ->
-            names.add(cls.qualifiedName ?: "<null>")
-            false
-        }
-        return names.joinToString(prefix = "[", postfix = "]")
-    }
+        get() = lightClassDataCache.value.findData(facadeClassFqName).clsDelegate
 
     override fun getNavigationElement() = files.iterator().next()
 
@@ -284,7 +268,7 @@ class KtLightClassForFacade private constructor(
         ): KtLightClassForFacade {
             // TODO: refactor, using cached value doesn't make sense for this case
             val cachedValue = CachedValuesManager.getManager(manager.project).
-                    createCachedValue<LightClassDataImpl>(
+                    createCachedValue<LightClassDataHolder>(
                             LightClassDataProviderForFileFacade.ByFile(manager.project, facadeClassFqName, file), /*trackValue = */false
                     )
             return KtLightClassForFacade(manager, facadeClassFqName, cachedValue, listOf(file))
