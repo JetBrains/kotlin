@@ -120,7 +120,7 @@ open class NestedSourceMapper(
             value, key ->
             if (key.dest in value) 0 else RangeMapping.Comparator.compare(value, key)
         })
-        return if (index < 0) null else ranges[index];
+        return if (index < 0) null else ranges[index]
     }
 }
 
@@ -189,7 +189,7 @@ open class DefaultSourceMapper(val sourceInfo: SourceInfo) : SourceMapper {
 
     protected val origin: RawFileMapping
 
-    var callSiteMarker: CallSiteMarker? = null;
+    var callSiteMarker: CallSiteMarker? = null
         set(value) {
             lastMappedWithChanges = null
             field = value
