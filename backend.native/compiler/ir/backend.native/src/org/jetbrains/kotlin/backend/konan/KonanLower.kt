@@ -22,7 +22,7 @@ internal class KonanLower(val context: Context) {
             StringConcatenationLowering(context).lower(irFile)
         }
         phaser.phase(KonanPhase.LOWER_INLINE) {
-            //FunctionInlining(context).inline(irFile)
+            FunctionInlining(context).inline(irFile)
         }
         phaser.phase(KonanPhase.LOWER_ENUMS) {
             EnumClassLowering(context).run(irFile)
