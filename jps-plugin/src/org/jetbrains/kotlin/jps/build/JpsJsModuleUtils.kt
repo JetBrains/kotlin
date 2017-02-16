@@ -63,7 +63,9 @@ object JpsJsModuleUtils {
                 val moduleBuildTarget = ModuleBuildTarget(module, targetType)
                 val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(moduleBuildTarget)
                 val metaInfoFile = getOutputMetaFile(outputDir, module.name)
-                result.add(metaInfoFile.absolutePath)
+                if (metaInfoFile.exists()) {
+                    result.add(metaInfoFile.absolutePath)
+                }
             }
         })
     }
