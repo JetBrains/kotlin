@@ -25,7 +25,6 @@ import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.ui.Messages
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -36,9 +35,6 @@ import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgu
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
-import org.jetbrains.kotlin.idea.util.projectStructure.allModules
-import org.jetbrains.kotlin.idea.versions.findKotlinRuntimeLibrary
-import org.jetbrains.kotlin.idea.versions.updateLibraries
 import org.jetbrains.kotlin.psi.KtFile
 
 sealed class ChangeCoroutineSupportFix(
@@ -70,17 +66,8 @@ sealed class ChangeCoroutineSupportFix(
                 return
             }
 
-            if (runtimeUpdateRequired) {
-                val library = findKotlinRuntimeLibrary(module)
-                if (library != null) {
-                    val rc = Messages.showOkCancelDialog(project,
-                                                         "Coroutines support requires version 1.1 or later of the Kotlin runtime library. " +
-                                                         "Would you like to update the runtime library in your project?",
-                                                         super.getText(),
-                                                         Messages.getQuestionIcon())
-                    if (rc != Messages.OK) return
-                    updateLibraries(project, listOf(library))
-                }
+            if (runtimeUpdateRequired && !askUpdateRuntime(module, LanguageFeature.Coroutines.sinceApiVersion)) {
+                return
             }
 
             val facetSettings = KotlinFacet.get(module)?.configuration?.settings ?: return
@@ -90,6 +77,7 @@ sealed class ChangeCoroutineSupportFix(
                 facetSettings.versionInfo.languageLevel = LanguageVersion.KOTLIN_1_1
             }
         }
+
     }
 
     class InProject(element: PsiElement, coroutineSupport: CoroutineSupport) : ChangeCoroutineSupportFix(element, coroutineSupport) {
