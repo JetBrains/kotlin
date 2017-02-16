@@ -202,6 +202,11 @@ task defaults8(type: RunKonanTest) {
     source = "codegen/function/defaults8.kt"
 }
 
+task defaults9(type: RunKonanTest) {
+    goldValue = "1\n"
+    source = "codegen/function/defaults9.kt"
+}
+
 task sum_3const(type: RunKonanTest) {
     source = "codegen/function/sum_3const.kt"
 }
