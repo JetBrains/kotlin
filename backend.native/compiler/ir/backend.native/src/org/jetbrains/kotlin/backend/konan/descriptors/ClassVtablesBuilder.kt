@@ -47,13 +47,15 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
             } else {
                 if (!superMethod.trivialOverride())
                     newVtableSlots.add(OverriddenFunctionDescriptor(overridingMethod, superMethod.descriptor))
+                // Overriding method is defined in the current class and is not inherited - take it as is.
                 newVtableSlots.add(OverriddenFunctionDescriptor(overridingMethod, overridingMethod))
                 OverriddenFunctionDescriptor(overridingMethod, superMethod.overriddenDescriptor)
             }
         }
 
         methods.filterNot { method -> inheritedVtableSlots.any { it.descriptor == method } } // Find newly defined methods.
-                .mapTo(newVtableSlots) { OverriddenFunctionDescriptor(it, it) }
+                // Select target because method might be taken from default implementation of interface.
+                .mapTo(newVtableSlots) { OverriddenFunctionDescriptor(it, it.target) }
 
         val list = inheritedVtableSlots + newVtableSlots.filter { it.descriptor.isOverridable }.sortedBy {
             it.overriddenDescriptor.functionName.localHash.value
@@ -64,7 +66,7 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
     fun vtableIndex(function: FunctionDescriptor): Int {
         val target = function.target
         val index = vtableEntries.indexOfFirst { it.overriddenDescriptor == target }
-        if (index < 0) throw Error(function.toString() + " not in vtable of " + this.toString())
+        if (index < 0) throw Error(function.toString() + " not in vtable of " + classDescriptor.toString())
         return index
     }
 
