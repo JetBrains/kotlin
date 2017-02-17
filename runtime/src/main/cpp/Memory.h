@@ -304,8 +304,10 @@ extern "C" {
     return result;                                      \
   }
 
-void InitMemory();
-void DeinitMemory();
+struct MemoryState;
+
+MemoryState* InitMemory();
+void DeinitMemory(MemoryState*);
 
 //
 // Object allocation.

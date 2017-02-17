@@ -298,3 +298,37 @@ private object ReverseOrderComparator: Comparator<Comparable<Any>> {
     @Suppress("VIRTUAL_MEMBER_HIDDEN")
     fun reversed(): Comparator<Comparable<Any>> = NaturalOrderComparator
 }
+
+// From _Comparisions.kt.
+/**
+ * Returns the greater of two values.
+ * If values are equal, returns the first one.
+ */
+public fun <T: Comparable<T>> maxOf(a: T, b: T): T {
+    return if (a >= b) a else b
+}
+
+/**
+ * Returns the greater of two values.
+ */
+@kotlin.internal.InlineOnly
+public inline fun maxOf(a: Int, b: Int): Int {
+    return if (a >= b) a else b
+}
+
+/**
+ * Returns the smaller of two values.
+ * If values are equal, returns the first one.
+ */
+@SinceKotlin("1.1")
+public fun <T: Comparable<T>> minOf(a: T, b: T): T {
+    return if (a <= b) a else b
+}
+
+/**
+ * Returns the smaller of two values.
+ */
+@kotlin.internal.InlineOnly
+public inline fun minOf(a: Int, b: Int): Int {
+    return if (a <= b) a else b
+}

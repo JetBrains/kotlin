@@ -13,8 +13,8 @@ extern "C" {
 OBJ_GETTER(Kotlin_Any_toString, KConstRef thiz) {
   char cstring[80];
   snprintf(cstring, sizeof(cstring), "%s %p type %p",
-	   IsArray(thiz) ? "array" : "object",
-	   thiz, thiz->type_info_);
+           IsArray(thiz) ? "array" : "object",
+           thiz, thiz->type_info_);
   RETURN_RESULT_OF(CreateStringFromCString, cstring);
 }
 
@@ -25,10 +25,10 @@ OBJ_GETTER(Kotlin_Byte_toString, KByte value) {
 }
 
 OBJ_GETTER(Kotlin_Char_toString, KChar value) {
-  char cstring[5];
-  // TODO: support UTF-8.
-  snprintf(cstring, sizeof(cstring), "%c", value);
-  RETURN_RESULT_OF(CreateStringFromCString, cstring);
+  ArrayHeader* result = AllocArrayInstance(
+      theStringTypeInfo, 1, OBJ_RESULT)->array();
+  *CharArrayAddressOfElementAt(result, 0) = value;
+  RETURN_OBJ(result->obj());
 }
 
 OBJ_GETTER(Kotlin_Short_toString, KShort value) {

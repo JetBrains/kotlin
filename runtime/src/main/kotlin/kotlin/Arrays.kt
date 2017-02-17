@@ -372,6 +372,134 @@ public operator fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.contains(el
 }
 
 /**
+ * Returns `true` if [element] is found in the array.
+ */
+public operator fun ByteArray.contains(element: Byte): Boolean {
+    return indexOf(element) >= 0
+}
+
+/**
+ * Returns `true` if [element] is found in the array.
+ */
+public operator fun ShortArray.contains(element: Short): Boolean {
+    return indexOf(element) >= 0
+}
+
+/**
+ * Returns `true` if [element] is found in the array.
+ */
+public operator fun IntArray.contains(element: Int): Boolean {
+    return indexOf(element) >= 0
+}
+
+/**
+ * Returns `true` if [element] is found in the array.
+ */
+public operator fun LongArray.contains(element: Long): Boolean {
+    return indexOf(element) >= 0
+}
+
+/**
+ * Returns `true` if [element] is found in the array.
+ */
+public operator fun FloatArray.contains(element: Float): Boolean {
+    return indexOf(element) >= 0
+}
+
+/**
+ * Returns `true` if [element] is found in the array.
+ */
+public operator fun DoubleArray.contains(element: Double): Boolean {
+    return indexOf(element) >= 0
+}
+
+/**
+ * Returns `true` if [element] is found in the array.
+ */
+public operator fun BooleanArray.contains(element: Boolean): Boolean {
+    return indexOf(element) >= 0
+}
+
+/**
+ * Returns `true` if [element] is found in the array.
+ */
+public operator fun CharArray.contains(element: Char): Boolean {
+    return indexOf(element) >= 0
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<out T>.elementAt(index: Int): T {
+    return get(index)
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun ByteArray.elementAt(index: Int): Byte {
+    return get(index)
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun ShortArray.elementAt(index: Int): Short {
+    return get(index)
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun IntArray.elementAt(index: Int): Int {
+    return get(index)
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun LongArray.elementAt(index: Int): Long {
+    return get(index)
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun FloatArray.elementAt(index: Int): Float {
+    return get(index)
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun DoubleArray.elementAt(index: Int): Double {
+    return get(index)
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun BooleanArray.elementAt(index: Int): Boolean {
+    return get(index)
+}
+
+/**
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun CharArray.elementAt(index: Int): Char {
+    return get(index)
+}
+
+/**
  * Returns first index of [element], or -1 if the array does not contain element.
  */
 public fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.indexOf(element: T): Int {
@@ -392,6 +520,102 @@ public fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.indexOf(element: T):
 }
 
 /**
+ * Returns first index of [element], or -1 if the array does not contain element.
+ */
+public fun ByteArray.indexOf(element: Byte): Int {
+    for (index in indices) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns first index of [element], or -1 if the array does not contain element.
+ */
+public fun ShortArray.indexOf(element: Short): Int {
+    for (index in indices) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns first index of [element], or -1 if the array does not contain element.
+ */
+public fun IntArray.indexOf(element: Int): Int {
+    for (index in indices) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns first index of [element], or -1 if the array does not contain element.
+ */
+public fun LongArray.indexOf(element: Long): Int {
+    for (index in indices) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns first index of [element], or -1 if the array does not contain element.
+ */
+public fun FloatArray.indexOf(element: Float): Int {
+    for (index in indices) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns first index of [element], or -1 if the array does not contain element.
+ */
+public fun DoubleArray.indexOf(element: Double): Int {
+    for (index in indices) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns first index of [element], or -1 if the array does not contain element.
+ */
+public fun BooleanArray.indexOf(element: Boolean): Int {
+    for (index in indices) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns first index of [element], or -1 if the array does not contain element.
+ */
+public fun CharArray.indexOf(element: Char): Int {
+    for (index in indices) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
  * Returns index of the first element matching the given [predicate], or -1 if the array does not contain such element.
  */
 public inline fun <T> Array<out T>.indexOfFirst(predicate: (T) -> Boolean): Int {
@@ -404,9 +628,201 @@ public inline fun <T> Array<out T>.indexOfFirst(predicate: (T) -> Boolean): Int 
 }
 
 /**
+ * Returns index of the first element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+public inline fun ByteArray.indexOfFirst(predicate: (Byte) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+public inline fun ShortArray.indexOfFirst(predicate: (Short) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+public inline fun IntArray.indexOfFirst(predicate: (Int) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+public inline fun LongArray.indexOfFirst(predicate: (Long) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+public inline fun FloatArray.indexOfFirst(predicate: (Float) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+public inline fun DoubleArray.indexOfFirst(predicate: (Double) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+public inline fun BooleanArray.indexOfFirst(predicate: (Boolean) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the first element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+public inline fun CharArray.indexOfFirst(predicate: (Char) -> Boolean): Int {
+    for (index in indices) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
  * Returns index of the last element matching the given [predicate], or -1 if the array does not contain such element.
  */
 public inline fun <T> Array<out T>.indexOfLast(predicate: (T) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+public inline fun ByteArray.indexOfLast(predicate: (Byte) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+public inline fun ShortArray.indexOfLast(predicate: (Short) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+public inline fun IntArray.indexOfLast(predicate: (Int) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+public inline fun LongArray.indexOfLast(predicate: (Long) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+public inline fun FloatArray.indexOfLast(predicate: (Float) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+public inline fun DoubleArray.indexOfLast(predicate: (Double) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+public inline fun BooleanArray.indexOfLast(predicate: (Boolean) -> Boolean): Int {
+    for (index in indices.reversed()) {
+        if (predicate(this[index])) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns index of the last element matching the given [predicate], or -1 if the array does not contain such element.
+ */
+public inline fun CharArray.indexOfLast(predicate: (Char) -> Boolean): Int {
     for (index in indices.reversed()) {
         if (predicate(this[index])) {
             return index
@@ -492,6 +908,253 @@ public inline fun <T> Array<out T>.lastOrNull(predicate: (T) -> Boolean): T? {
     return null
 }
 
+/**
+ * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ */
+public fun <T> Array<out T>.single(): T {
+    return when (size) {
+        0 -> throw NoSuchElementException("Array is empty.")
+        1 -> this[0]
+        else -> throw IllegalArgumentException("Array has more than one element.")
+    }
+}
+
+/**
+ * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ */
+public fun ByteArray.single(): Byte {
+    return when (size) {
+        0 -> throw NoSuchElementException("Array is empty.")
+        1 -> this[0]
+        else -> throw IllegalArgumentException("Array has more than one element.")
+    }
+}
+
+/**
+ * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ */
+public fun ShortArray.single(): Short {
+    return when (size) {
+        0 -> throw NoSuchElementException("Array is empty.")
+        1 -> this[0]
+        else -> throw IllegalArgumentException("Array has more than one element.")
+    }
+}
+
+/**
+ * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ */
+public fun IntArray.single(): Int {
+    return when (size) {
+        0 -> throw NoSuchElementException("Array is empty.")
+        1 -> this[0]
+        else -> throw IllegalArgumentException("Array has more than one element.")
+    }
+}
+
+/**
+ * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ */
+public fun LongArray.single(): Long {
+    return when (size) {
+        0 -> throw NoSuchElementException("Array is empty.")
+        1 -> this[0]
+        else -> throw IllegalArgumentException("Array has more than one element.")
+    }
+}
+
+/**
+ * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ */
+public fun DoubleArray.single(): Double {
+    return when (size) {
+        0 -> throw NoSuchElementException("Array is empty.")
+        1 -> this[0]
+        else -> throw IllegalArgumentException("Array has more than one element.")
+    }
+}
+
+/**
+ * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ */
+public fun BooleanArray.single(): Boolean {
+    return when (size) {
+        0 -> throw NoSuchElementException("Array is empty.")
+        1 -> this[0]
+        else -> throw IllegalArgumentException("Array has more than one element.")
+    }
+}
+
+/**
+ * Returns the single element, or throws an exception if the array is empty or has more than one element.
+ */
+public fun CharArray.single(): Char {
+    return when (size) {
+        0 -> throw NoSuchElementException("Array is empty.")
+        1 -> this[0]
+        else -> throw IllegalArgumentException("Array has more than one element.")
+    }
+}
+
+/**
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ */
+public inline fun <T> Array<out T>.single(predicate: (T) -> Boolean): T {
+    var single: T? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Array contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    return single as T
+}
+
+/**
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ */
+public inline fun ByteArray.single(predicate: (Byte) -> Boolean): Byte {
+    var single: Byte? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Array contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    return single as Byte
+}
+
+/**
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ */
+public inline fun ShortArray.single(predicate: (Short) -> Boolean): Short {
+    var single: Short? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Array contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    return single as Short
+}
+
+/**
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ */
+public inline fun IntArray.single(predicate: (Int) -> Boolean): Int {
+    var single: Int? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Array contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    return single as Int
+}
+
+/**
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ */
+public inline fun LongArray.single(predicate: (Long) -> Boolean): Long {
+    var single: Long? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Array contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    return single as Long
+}
+
+/**
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ */
+public inline fun FloatArray.single(predicate: (Float) -> Boolean): Float {
+    var single: Float? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Array contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    return single as Float
+}
+
+/**
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ */
+public inline fun DoubleArray.single(predicate: (Double) -> Boolean): Double {
+    var single: Double? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Array contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    return single as Double
+}
+
+/**
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ */
+public inline fun BooleanArray.single(predicate: (Boolean) -> Boolean): Boolean {
+    var single: Boolean? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Array contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    return single as Boolean
+}
+
+/**
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
+ */
+public inline fun CharArray.single(predicate: (Char) -> Boolean): Char {
+    var single: Char? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Array contains more than one matching element.")
+            single = element
+            found = true
+        }
+    }
+    if (!found) throw NoSuchElementException("Array contains no element matching the predicate.")
+    return single as Char
+}
+
+/**
+ * Returns single element, or `null` if the array is empty or has more than one element.
+ */
+public fun <T> Array<out T>.singleOrNull(): T? {
+    return if (size == 1) this[0] else null
+}
 
 /**
  * Applies the given [transform] function to each element of the original array
@@ -578,7 +1241,6 @@ public fun Array<out Double>.sum(): Double {
 }
 
 // From _Arrays.kt.
-
 /**
  * Returns the range of valid indices for the array.
  */
@@ -633,6 +1295,59 @@ public val BooleanArray.indices: IntRange
 public val CharArray.indices: IntRange
     get() = IntRange(0, lastIndex)
 
+/**
+ * Returns the last valid index for the array.
+ */
+public val <T> Array<out T>.lastIndex: Int
+    get() = size - 1
+
+/**
+ * Returns the last valid index for the array.
+ */
+public val ByteArray.lastIndex: Int
+    get() = size - 1
+
+/**
+ * Returns the last valid index for the array.
+ */
+public val ShortArray.lastIndex: Int
+    get() = size - 1
+
+/**
+ * Returns the last valid index for the array.
+ */
+public val IntArray.lastIndex: Int
+    get() = size - 1
+
+/**
+ * Returns the last valid index for the array.
+ */
+public val LongArray.lastIndex: Int
+    get() = size - 1
+
+/**
+ * Returns the last valid index for the array.
+ */
+public val FloatArray.lastIndex: Int
+    get() = size - 1
+
+/**
+ * Returns the last valid index for the array.
+ */
+public val DoubleArray.lastIndex: Int
+    get() = size - 1
+
+/**
+ * Returns the last valid index for the array.
+ */
+public val BooleanArray.lastIndex: Int
+    get() = size - 1
+
+/**
+ * Returns the last valid index for the array.
+ */
+public val CharArray.lastIndex: Int
+    get() = size - 1
 
 /**
  * Returns `true` if the array is empty.
@@ -778,12 +1493,6 @@ public inline fun CharArray.isNotEmpty(): Boolean {
 }
 
 /**
- * Returns the last valid index for the array.
- */
-public val <T> Array<out T>.lastIndex: Int
-    get() = size - 1
-
-/**
  * Returns last index of [element], or -1 if the array does not contain element.
  */
 public fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.lastIndexOf(element: T): Int {
@@ -802,54 +1511,6 @@ public fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.lastIndexOf(element:
     }
     return -1
 }
-
-/**
- * Returns the last valid index for the array.
- */
-public val ByteArray.lastIndex: Int
-    get() = size - 1
-
-/**
- * Returns the last valid index for the array.
- */
-public val ShortArray.lastIndex: Int
-    get() = size - 1
-
-/**
- * Returns the last valid index for the array.
- */
-public val IntArray.lastIndex: Int
-    get() = size - 1
-
-/**
- * Returns the last valid index for the array.
- */
-public val LongArray.lastIndex: Int
-    get() = size - 1
-
-/**
- * Returns the last valid index for the array.
- */
-public val FloatArray.lastIndex: Int
-    get() = size - 1
-
-/**
- * Returns the last valid index for the array.
- */
-public val DoubleArray.lastIndex: Int
-    get() = size - 1
-
-/**
- * Returns the last valid index for the array.
- */
-public val BooleanArray.lastIndex: Int
-    get() = size - 1
-
-/**
- * Returns the last valid index for the array.
- */
-public val CharArray.lastIndex: Int
-    get() = size - 1
 
 /**
  * Appends all elements to the given [destination] collection.

@@ -2,6 +2,7 @@
 
 #include "Memory.h"
 #include "Natives.h"
+#include "Runtime.h"
 #include "String.h"
 #include "Types.h"
 
@@ -22,18 +23,16 @@ OBJ_GETTER(setupArgs, int argc, char** argv) {
 extern "C" void Konan_start(const ObjHeader* );
 
 int main(int argc, char** argv) {
+  RuntimeState* state = InitRuntime();
 
-    InitMemory();
-    InitGlobalVariables();
+  if (state != nullptr) {
+    ObjHolder args;
+    setupArgs(argc, argv, args.slot());
+    Konan_start(args.obj());
+  }
 
-    {
-      ObjHolder args;
-      setupArgs(argc, argv, args.slot());
-      Konan_start(args.obj());
-    }
+  DeinitRuntime(state);
 
-    DeinitMemory();
-
-    // Yes, we have to follow Java convention and return zero.
-    return 0;
+  // Yes, we have to follow Java convention and return zero.
+  return 0;
 }

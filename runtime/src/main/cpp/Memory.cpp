@@ -31,6 +31,8 @@ constexpr container_size_t kContainerAlignment = 1024;
 // Single object alignment.
 constexpr container_size_t kObjectAlignment = 8;
 
+}  // namespace
+
 #if USE_GC
 // Collection threshold default (collect after having so many elements in the
 // release candidates set).
@@ -66,6 +68,9 @@ struct MemoryState {
 #endif
 };
 
+namespace {
+
+// TODO: remove this global.
 MemoryState* memoryState = nullptr;
 
 // TODO: use those allocators for STL containers as well.
@@ -450,7 +455,7 @@ inline void ReleaseRef(const ObjHeader* object) {
 
 extern "C" {
 
-void InitMemory() {
+MemoryState* InitMemory() {
   RuntimeAssert(offsetof(ArrayHeader, type_info_)
                 ==
                 offsetof(ObjHeader,   type_info_),
@@ -476,9 +481,10 @@ void InitMemory() {
   memoryState->gcThreshold = kGcThreshold;
   memoryState->gcSuspendCount = 0;
 #endif
+  return memoryState;
 }
 
-void DeinitMemory() {
+void DeinitMemory(MemoryState* memoryState) {
 #if TRACE_MEMORY
   // Free all global objects, to ensure no memory leaks happens.
   for (auto location: *memoryState->globalObjects) {
@@ -505,7 +511,7 @@ void DeinitMemory() {
   }
 
   delete memoryState;
-  memoryState = nullptr;
+  ::memoryState = nullptr;
 }
 
 OBJ_GETTER(AllocInstance, const TypeInfo* type_info) {

@@ -41,15 +41,6 @@ KBoolean IsInstance(const ObjHeader* obj, const TypeInfo* type_info) RUNTIME_PUR
 void CheckCast(const ObjHeader* obj, const TypeInfo* type_info);
 KBoolean IsArray(KConstRef obj) RUNTIME_PURE;
 
-typedef void (*Initializer)();
-struct InitNode {
-    Initializer      init;
-    struct InitNode* next;
-};
-
-void AppendToInitializersTail(struct InitNode*);
-void InitGlobalVariables();
-
 #ifdef __cplusplus
 }
 #endif

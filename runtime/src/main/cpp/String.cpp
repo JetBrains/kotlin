@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <wctype.h>
 
 #include <iterator>
 #include <string>
@@ -151,13 +152,236 @@ KBoolean Kotlin_String_equals(KString thiz, KConstRef other) {
   if (thiz == otherString) return true;
   return thiz->count_ == otherString->count_ &&
       memcmp(CharArrayAddressOfElementAt(thiz, 0),
-	     CharArrayAddressOfElementAt(otherString, 0),
-	     thiz->count_ * sizeof(KChar)) == 0;
+             CharArrayAddressOfElementAt(otherString, 0),
+             thiz->count_ * sizeof(KChar)) == 0;
+}
+
+KBoolean Kotlin_String_equalsIgnoreCase(KString thiz, KConstRef other) {
+  RuntimeAssert(thiz->type_info() == theStringTypeInfo &&
+                other->type_info() == theStringTypeInfo, "Must be strings");
+  // Important, due to literal internalization.
+  KString otherString = other->array();
+  if (thiz == otherString) return true;
+  if (thiz->count_ != otherString->count_) return false;
+  auto count = thiz->count_;
+  const KChar* thizRaw = CharArrayAddressOfElementAt(thiz, 0);
+  const KChar* otherRaw = CharArrayAddressOfElementAt(otherString, 0);
+  for (KInt index = 0; index < count; ++index) {
+    if (towlower(*thizRaw++) != towlower(*otherRaw++)) return false;
+  }
+  return true;
+}
+
+OBJ_GETTER(Kotlin_String_replace, KString thiz, KChar oldChar, KChar newChar,
+           KBoolean ignoreCase) {
+  auto count = thiz->count_;
+  ArrayHeader* result = AllocArrayInstance(
+      theStringTypeInfo, count, OBJ_RESULT)->array();
+  const KChar* thizRaw = CharArrayAddressOfElementAt(thiz, 0);
+  KChar* resultRaw = CharArrayAddressOfElementAt(result, 0);
+  if (ignoreCase) {
+    KChar oldCharLower = towlower(oldChar);
+    for (KInt index = 0; index < count; ++index) {
+      KChar thizChar = *thizRaw++;
+      *resultRaw++ = towlower(thizChar) == oldCharLower ? newChar : thizChar;
+    }
+  } else {
+    for (KInt index = 0; index < count; ++index) {
+      KChar thizChar = *thizRaw++;
+      *resultRaw++ = thizChar == oldChar ? newChar : thizChar;
+    }
+  }
+  RETURN_OBJ(result->obj());
+}
+
+OBJ_GETTER(Kotlin_String_toUpperCase, KString thiz) {
+  auto count = thiz->count_;
+  ArrayHeader* result = AllocArrayInstance(
+      theStringTypeInfo, count, OBJ_RESULT)->array();
+  const KChar* thizRaw = CharArrayAddressOfElementAt(thiz, 0);
+  KChar* resultRaw = CharArrayAddressOfElementAt(result, 0);
+  for (KInt index = 0; index < count; ++index) {
+    *resultRaw++ = towupper(*thizRaw++);
+  }
+  RETURN_OBJ(result->obj());
+}
+
+OBJ_GETTER(Kotlin_String_toLowerCase, KString thiz) {
+  auto count = thiz->count_;
+  ArrayHeader* result = AllocArrayInstance(
+      theStringTypeInfo, count, OBJ_RESULT)->array();
+  const KChar* thizRaw = CharArrayAddressOfElementAt(thiz, 0);
+  KChar* resultRaw = CharArrayAddressOfElementAt(result, 0);
+  for (KInt index = 0; index < count; ++index) {
+    *resultRaw++ = towlower(*thizRaw++);
+  }
+  RETURN_OBJ(result->obj());
+}
+
+KBoolean Kotlin_String_regionMatches(KString thiz, KInt thizOffset,
+                                     KString other, KInt otherOffset,
+                                     KInt length, KBoolean ignoreCase) {
+  if (thizOffset < 0 || thizOffset + length > thiz->count_ ||
+      otherOffset < 0 || otherOffset + length > other->count_) {
+    return false;
+  }
+  const KChar* thizRaw = CharArrayAddressOfElementAt(thiz, thizOffset);
+  const KChar* otherRaw = CharArrayAddressOfElementAt(other, otherOffset);
+  if (ignoreCase) {
+    for (KInt index = 0; index < length; ++index) {
+      if (towlower(*thizRaw++) != towlower(*otherRaw++)) return false;
+    }
+  } else {
+    for (KInt index = 0; index < length; ++index) {
+      if (*thizRaw++ != *otherRaw++) return false;
+    }
+  }
+  return true;
+}
+
+KBoolean Kotlin_CharSequence_regionMatches(KString thiz, KInt thizOffset,
+                                           KString other, KInt otherOffset,
+                                           KInt length, KBoolean ignoreCase) {
+  RuntimeAssert(false, "Kotlin_CharSequence_regionMatches is not implemented");
+  return false;
+}
+
+KBoolean Kotlin_Char_isDefined(KChar ch) {
+  // TODO: fixme!
+  RuntimeAssert(false, "Kotlin_Char_isDefined() is not implemented");
+  return true;
+}
+
+KBoolean Kotlin_Char_isLetter(KChar ch) {
+  return iswalpha(ch);
+}
+
+KBoolean Kotlin_Char_isLetterOrDigit(KChar ch) {
+  return iswalnum(ch);
+}
+
+KBoolean Kotlin_Char_isDigit(KChar ch) {
+  return iswdigit(ch);
+}
+
+KBoolean Kotlin_Char_isIdentifierIgnorable(KChar ch) {
+  RuntimeAssert(false, "Kotlin_Char_isIdentifierIgnorable() is not implemented");
+  return false;
+}
+
+KBoolean Kotlin_Char_isISOControl(KChar ch) {
+  RuntimeAssert(false, "Kotlin_Char_isISOControl() is not implemented");
+  return false;
+}
+
+KBoolean Kotlin_Char_isHighSurrogate(KChar ch) {
+  return ((ch & 0xfc00) == 0xd800);
+}
+
+KBoolean Kotlin_Char_isLowSurrogate(KChar ch) {
+  return ((ch & 0xfc00) == 0xdc00);
+}
+
+KBoolean Kotlin_Char_isWhitespace(KChar ch) {
+  return iswspace(ch);
+}
+
+KBoolean Kotlin_Char_isLowerCase(KChar ch) {
+  return iswlower(ch);
+}
+
+KBoolean Kotlin_Char_isUpperCase(KChar ch) {
+  return iswupper(ch);
+}
+
+KChar Kotlin_Char_toLowerCase(KChar ch) {
+  return towlower(ch);
+}
+
+KChar Kotlin_Char_toUpperCase(KChar ch) {
+  return towupper(ch);
+}
+
+KInt Kotlin_String_indexOfChar(KString thiz, KChar ch, KInt fromIndex) {
+  if (fromIndex < 0 || fromIndex > thiz->count_) {
+    return false;
+  }
+  KInt count = thiz->count_;
+  const KChar* thizRaw = CharArrayAddressOfElementAt(thiz, fromIndex);
+  while (fromIndex < count) {
+    if (*thizRaw++ == ch) return fromIndex;
+    fromIndex++;
+  }
+  return -1;
+}
+
+KInt Kotlin_String_lastIndexOfChar(KString thiz, KChar ch, KInt fromIndex) {
+  if (fromIndex < 0 || fromIndex > thiz->count_ || thiz->count_ == 0) {
+    return false;
+  }
+  KInt count = thiz->count_;
+  KInt index = count - 1;
+  const KChar* thizRaw = CharArrayAddressOfElementAt(thiz, index);
+  while (index >= fromIndex) {
+    if (*thizRaw-- == ch) return index;
+    index--;
+  }
+  return -1;
+}
+
+// TODO: or code up Knuth-Moris-Pratt.
+KInt Kotlin_String_indexOfString(KString thiz, KString other, KInt fromIndex) {
+  if (fromIndex < 0 || fromIndex > thiz->count_ ||
+      fromIndex + other->count_ > thiz->count_) {
+    return -1;
+  }
+  KInt count = thiz->count_;
+  const KChar* thizRaw = CharArrayAddressOfElementAt(thiz, fromIndex);
+  const KChar* otherRaw = CharArrayAddressOfElementAt(thiz, 0);
+  void* result = memmem(thizRaw, (thiz->count_ - fromIndex) * sizeof(KChar),
+                        otherRaw, other->count_ * sizeof(KChar));
+  if (result == nullptr) return -1;
+
+  return (reinterpret_cast<intptr_t>(result) - reinterpret_cast<intptr_t>(
+      CharArrayAddressOfElementAt(thiz, 0))) / sizeof(KChar);
+}
+
+KInt Kotlin_String_lastIndexOfString(KString thiz, KString other, KInt fromIndex) {
+  if (fromIndex < 0 || fromIndex > thiz->count_ || thiz->count_ == 0 ||
+      fromIndex + other->count_ > thiz->count_) {
+    return false;
+  }
+  KInt count = thiz->count_;
+  KInt otherCount = other->count_;
+  KInt start = fromIndex;
+  if (otherCount <= count && start >= 0) {
+    if (otherCount > 0) {
+      if (fromIndex > count - otherCount)
+        start = count - otherCount;
+      KChar firstChar = *CharArrayAddressOfElementAt(other, 0);
+      while (true) {
+        KInt candidate = Kotlin_String_lastIndexOfChar(thiz, firstChar, start);
+        if (candidate == -1) return -1;
+        KInt offsetThiz = candidate;
+        KInt offsetOther = 0;
+        while (++offsetOther < otherCount &&
+               *CharArrayAddressOfElementAt(thiz, ++offsetThiz) ==
+               *CharArrayAddressOfElementAt(other, offsetOther)) {}
+        if (offsetOther == otherCount) {
+          return candidate;
+        }
+        start = candidate - 1;
+      }
+    }
+    return start < count ? start : count;
+  }
+  return -1;
 }
 
 KInt Kotlin_String_hashCode(KString thiz) {
   // TODO: consider caching strings hashes.
   // TODO: maybe use some simpler hashing algorithm?
+  // Note that we don't use Java's string hash.
   return CityHash64(
     CharArrayAddressOfElementAt(thiz, 0), thiz->count_ * sizeof(KChar));
 }
@@ -174,8 +398,8 @@ OBJ_GETTER(Kotlin_String_subSequence, KString thiz, KInt startIndex, KInt endInd
   ArrayHeader* result = AllocArrayInstance(
     theStringTypeInfo, length, OBJ_RESULT)->array();
   memcpy(CharArrayAddressOfElementAt(result, 0),
-	 CharArrayAddressOfElementAt(thiz, startIndex),
-	 length * sizeof(KChar));
+         CharArrayAddressOfElementAt(thiz, startIndex),
+         length * sizeof(KChar));
   RETURN_OBJ(result->obj());
 }
 
@@ -206,6 +430,5 @@ OBJ_GETTER0(Kotlin_io_Console_readLine) {
   }
   RETURN_RESULT_OF(CreateStringFromCString, data);
 }
-
 
 } // extern "C"

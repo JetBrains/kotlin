@@ -3,8 +3,8 @@ fun main(args : Array<String>) {
     println(255.toByte().toString())
     println(239.toShort().toString())
     println('A'.toString())
-    // println('Ё'.toString())
-    // println('ト'.toString())
+    println('Ё'.toString())
+    println('ト'.toString())
     println(1122334455.toString())
     println(112233445566778899.toString())
     // Here we differ from Java, as have no dtoa() yet.

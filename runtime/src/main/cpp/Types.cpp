@@ -36,25 +36,6 @@ void CheckInstance(const ObjHeader* obj, const TypeInfo* type_info) {
   ThrowClassCastException();
 }
 
-static struct InitNode* initHeadNode = nullptr;
-static struct InitNode* initTailNode = nullptr;
-
-void AppendToInitializersTail(struct InitNode *next) {
-  if (initHeadNode == nullptr) {
-    initHeadNode = next;
-  } else {
-    initTailNode->next = next;
-  }
-  initTailNode = next;
-}
-
-void InitGlobalVariables() {
-    struct InitNode *currNode = initHeadNode;
-    while(currNode != nullptr) {
-        currNode->init();
-        currNode = currNode->next;
-    }
-}
 #ifdef __cplusplus
 }
 #endif

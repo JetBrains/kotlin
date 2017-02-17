@@ -50,6 +50,11 @@ public annotation class FixmeSequences
 public annotation class FixmeVariance
 
 /**
+ * Need to be fixed because of regular expressions.
+ */
+public annotation class FixmeRegex
+
+/**
  * Need to be fixed.
  */
 public annotation class Fixme
