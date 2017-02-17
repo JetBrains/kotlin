@@ -39,4 +39,9 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> TYPED_ARRAYS_ENABLED =
             CompilerConfigurationKey.create("TypedArrays enabled");
+
+    public static final CompilerConfigurationKey<List<byte[]>> FALLBACK_METADATA =
+            CompilerConfigurationKey.create("fallback metadata");
+
+    public static final CompilerConfigurationKey<Boolean> SERIALIZE_FRAGMENTS = CompilerConfigurationKey.create("serialize fragments");
 }

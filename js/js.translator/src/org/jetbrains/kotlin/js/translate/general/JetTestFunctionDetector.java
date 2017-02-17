@@ -19,17 +19,10 @@ package org.jetbrains.kotlin.js.translate.general;
 import com.google.common.collect.Lists;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.Modality;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
-import org.jetbrains.kotlin.psi.KtClass;
-import org.jetbrains.kotlin.psi.KtDeclaration;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -66,50 +59,54 @@ public class JetTestFunctionDetector {
 
     @NotNull
     public static List<FunctionDescriptor> getTestFunctionDescriptors(
-            @NotNull BindingContext bindingContext,
-            @NotNull Collection<KtFile> files
+            @NotNull ModuleDescriptor moduleDescriptor
     ) {
         List<FunctionDescriptor> answer = Lists.newArrayList();
-        for (KtFile file : files) {
-            answer.addAll(getTestFunctions(bindingContext, file.getDeclarations()));
-        }
+        getTestFunctions(FqName.ROOT, moduleDescriptor, answer);
         return answer;
     }
 
-    @NotNull
-    private static List<FunctionDescriptor> getTestFunctions(
-            @NotNull BindingContext bindingContext,
-            @NotNull List<KtDeclaration> declarations
+    private static void getTestFunctions(
+            @NotNull FqName packageName,
+            @NotNull ModuleDescriptor moduleDescriptor,
+            @NotNull List<FunctionDescriptor> foundFunctions
     ) {
-        List<FunctionDescriptor> answer = Lists.newArrayList();
-        for (KtDeclaration declaration : declarations) {
-            MemberScope scope = null;
-
-            if (declaration instanceof KtClass) {
-                KtClass klass = (KtClass) declaration;
-                ClassDescriptor classDescriptor = BindingUtils.getClassDescriptor(bindingContext, klass);
-
-                if (classDescriptor.getModality() != Modality.ABSTRACT) {
-                    scope = classDescriptor.getDefaultType().getMemberScope();
+        for (PackageFragmentDescriptor packageDescriptor : moduleDescriptor.getPackage(packageName).getFragments()) {
+            Collection<DeclarationDescriptor> descriptors = DescriptorUtils.getAllDescriptors(packageDescriptor.getMemberScope());
+            for (DeclarationDescriptor descriptor : descriptors) {
+                if (descriptor instanceof ClassDescriptor) {
+                    getTestFunctions((ClassDescriptor) descriptor, foundFunctions);
                 }
             }
+        }
 
-            if (scope != null) {
-                Collection<DeclarationDescriptor> allDescriptors = DescriptorUtils.getAllDescriptors(scope);
+        for (FqName subpackageName : moduleDescriptor.getSubPackagesOf(packageName, MemberScope.Companion.getALL_NAME_FILTER())) {
+            getTestFunctions(subpackageName, moduleDescriptor, foundFunctions);
+        }
+    }
+
+    @NotNull
+    private static void getTestFunctions(
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull List<FunctionDescriptor> foundFunctions
+    ) {
+        if (classDescriptor.getModality() == Modality.ABSTRACT) return;
+
+
+                Collection<DeclarationDescriptor> allDescriptors = DescriptorUtils.getAllDescriptors(classDescriptor.getUnsubstitutedMemberScope());
                 List<FunctionDescriptor> testFunctions = ContainerUtil.mapNotNull(
                         allDescriptors,
-                        descriptor -> {
-                            if (descriptor instanceof FunctionDescriptor) {
-                                FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
-                                if (isTest(functionDescriptor)) return functionDescriptor;
-                            }
+                         descriptor-> {
+                                if (descriptor instanceof FunctionDescriptor) {
+                                    FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+                                    if (isTest(functionDescriptor)) return functionDescriptor;
+                                }
 
-                            return null;
-                        });
+                                return null;
+                            });
 
-                answer.addAll(testFunctions);
-            }
-        }
-        return answer;
+
+                foundFunctions.addAll(testFunctions);
+
     }
 }

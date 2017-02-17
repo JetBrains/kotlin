@@ -51,7 +51,17 @@ object KotlinJavascriptSerializationUtil {
         ))
     }
 
-    private fun serializeMetadata(
+    fun readScope(
+            metadata: Collection<ByteArray>,
+            storageManager: StorageManager,
+            module: ModuleDescriptor,
+            configuration: DeserializationConfiguration
+    ): PackageFragmentProvider {
+        val scopeProto = metadata.map { JsProtoBuf.Library.Part.parseFrom(it) }
+        return createKotlinJavascriptPackageFragmentProvider(storageManager, module, scopeProto, configuration)
+    }
+
+    fun serializeMetadata(
             bindingContext: BindingContext,
             module: ModuleDescriptor,
             moduleKind: ModuleKind,
@@ -84,10 +94,18 @@ object KotlinJavascriptSerializationUtil {
     fun metadataAsString(bindingContext: BindingContext, jsDescriptor: JsModuleDescriptor<ModuleDescriptor>): String =
             KotlinJavascriptMetadataUtils.formatMetadataAsString(jsDescriptor.name, jsDescriptor.serializeToBinaryMetadata(bindingContext))
 
-    private fun serializePackageFragment(bindingContext: BindingContext, module: ModuleDescriptor, fqName: FqName): ProtoBuf.PackageFragment {
-        val builder = ProtoBuf.PackageFragment.newBuilder()
-
+    fun serializePackage(bindingContext: BindingContext, module: ModuleDescriptor, fqName: FqName): JsProtoBuf.Library.Part {
         val packageView = module.getPackage(fqName)
+        return serializeScope(bindingContext, module, packageView.memberScope.getContributedDescriptors(), fqName)
+    }
+
+    fun serializeScope(
+            bindingContext: BindingContext,
+            module: ModuleDescriptor,
+            scope: Collection<DeclarationDescriptor>,
+            fqName: FqName
+    ): JsProtoBuf.Library.Part {
+        val builder = JsProtoBuf.Library.Part.newBuilder()
 
         // TODO: ModuleDescriptor should be able to return the package only with the contents of that module, without dependencies
         val skip: (DeclarationDescriptor) -> Boolean = { DescriptorUtils.getContainingModule(it) != module || (it is MemberDescriptor && it.isHeader) }
@@ -96,9 +114,7 @@ object KotlinJavascriptSerializationUtil {
         val serializerExtension = KotlinJavascriptSerializerExtension(fileRegistry)
         val serializer = DescriptorSerializer.createTopLevel(serializerExtension)
 
-        val classDescriptors = DescriptorSerializer.sort(
-                packageView.memberScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS)
-        ).filterIsInstance<ClassDescriptor>()
+        val classDescriptors = DescriptorSerializer.sort(scope).filterIsInstance<ClassDescriptor>()
 
         fun serializeClasses(descriptors: Collection<DeclarationDescriptor>) {
             fun serializeClass(classDescriptor: ClassDescriptor) {
@@ -119,10 +135,7 @@ object KotlinJavascriptSerializationUtil {
 
         val stringTable = serializerExtension.stringTable
 
-        val fragments = packageView.fragments
-        val members = fragments
-                .flatMap { fragment -> DescriptorUtils.getAllDescriptors(fragment.getMemberScope()) }
-                .filterNot(skip)
+        val members = scope.filterNot(skip)
         builder.`package` = serializer.packagePartProto(fqName, members).build()
 
         builder.setExtension(

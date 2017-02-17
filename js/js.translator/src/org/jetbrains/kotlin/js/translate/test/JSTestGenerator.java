@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.translate.test;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.kotlin.js.backend.ast.JsNew;
 import org.jetbrains.kotlin.js.backend.ast.JsStringLiteral;
@@ -26,10 +27,8 @@ import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.JetTestFunctionDetector;
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
-import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,8 +38,9 @@ public final class JSTestGenerator {
     }
 
     public static void generateTestCalls(@NotNull TranslationContext context,
-            @NotNull Collection<KtFile> files, @NotNull JSTester tester) {
-        List<FunctionDescriptor> functionDescriptors = JetTestFunctionDetector.getTestFunctionDescriptors(context.bindingContext(), files);
+            @NotNull ModuleDescriptor moduleDescriptor, @NotNull JSTester tester) {
+        List<FunctionDescriptor> functionDescriptors =
+                JetTestFunctionDetector.getTestFunctionDescriptors(moduleDescriptor);
         doGenerateTestCalls(functionDescriptors, context, tester);
     }
 

@@ -17,15 +17,14 @@
 package org.jetbrains.kotlin.idea
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.Variance
 
 class MainFunctionDetector {
@@ -68,8 +67,22 @@ class MainFunctionDetector {
         return isMain(getFunctionDescriptor(function))
     }
 
-    fun getMainFunction(files: Collection<KtFile>): KtNamedFunction? =
-        files.asSequence().map { findMainFunction(it.declarations) }.firstOrNull { it != null }
+    fun getMainFunction(module: ModuleDescriptor): FunctionDescriptor? = getMainFunction(module, module.getPackage(FqName.ROOT))
+
+    private fun getMainFunction(module: ModuleDescriptor, packageView: PackageViewDescriptor): FunctionDescriptor? {
+        for (packageFragment in packageView.fragments) {
+            DescriptorUtils.getAllDescriptors(packageFragment.getMemberScope())
+                    .filterIsInstance<FunctionDescriptor>()
+                    .firstOrNull { isMain(it) }
+                    ?.let { return it }
+        }
+
+        for (subpackageName in module.getSubPackagesOf(packageView.fqName, MemberScope.ALL_NAME_FILTER)) {
+            getMainFunction(module, module.getPackage(subpackageName))?.let { return it }
+        }
+
+        return null
+    }
 
     private fun findMainFunction(declarations: List<KtDeclaration>) =
         declarations.filterIsInstance<KtNamedFunction>().find { isMain(it) }
