@@ -75,7 +75,7 @@ task libffi(type: TgzNativeDep) {
 }
 
 task llvm(type: TgzNativeDep) {
-    baseName = "clang+llvm-3.8.0-$host"
+    baseName = "clang+llvm-$llvmVersion-$host"
 }
 
 if (isLinux()) {

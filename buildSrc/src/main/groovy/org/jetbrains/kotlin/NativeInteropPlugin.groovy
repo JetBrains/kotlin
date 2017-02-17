@@ -203,6 +203,14 @@ class NamedNativeInteropConfig implements Named {
                 environment['PATH'] = project.files(project.clangPath).asPath +
                         File.pathSeparator + environment['PATH']
 
+                if (project.isLinux()) {
+                    // StubGenerator passes the arguments to libclang which works not exactly the same way
+                    // as the clang binary and (in particular) uses different default header search path.
+                    // See e.g. http://lists.llvm.org/pipermail/cfe-dev/2013-November/033680.html
+                    // Workaround the problem:
+                    compilerOpts += ["-isystem", "${project.llvmDir}/lib/clang/${project.llvmVersion}/include"]
+                }
+
                 compilerOpts += project.hostClangArgs
                 linkerOpts   += project.hostClangArgs
 
