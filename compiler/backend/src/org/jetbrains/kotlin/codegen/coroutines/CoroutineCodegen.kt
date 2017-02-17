@@ -72,7 +72,7 @@ class CoroutineCodegen private constructor(
     // protected fun doResume(result, throwable)
     private val doResumeDescriptor =
             SimpleFunctionDescriptorImpl.create(
-                    classDescriptor, Annotations.EMPTY, Name.identifier("doResume"), CallableMemberDescriptor.Kind.DECLARATION,
+                    classDescriptor, Annotations.EMPTY, Name.identifier(DO_RESUME_METHOD_NAME), CallableMemberDescriptor.Kind.DECLARATION,
                     funDescriptor.source
             ).apply doResume@{
                 initialize(
