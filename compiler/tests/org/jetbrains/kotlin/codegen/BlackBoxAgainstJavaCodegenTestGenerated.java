@@ -152,6 +152,12 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxAga
             doTest(fileName);
         }
 
+        @TestMetadata("kt16412.kt")
+        public void testKt16412() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/callableReference/kt16412.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("publicFinalField.kt")
         public void testPublicFinalField() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/callableReference/publicFinalField.kt");
