@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.versions
 
+import com.google.common.collect.Sets
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
@@ -84,42 +85,40 @@ fun updateLibraries(project: Project, libraries: Collection<Library>) {
         return
     }
 
-    ApplicationManager.getApplication().invokeLater {
-        val kJvmConfigurator = getConfiguratorByName(KotlinJavaModuleConfigurator.NAME) as KotlinJavaModuleConfigurator? ?:
-                               error("Configurator with given name doesn't exists: " + KotlinJavaModuleConfigurator.NAME)
+    val kJvmConfigurator = getConfiguratorByName(KotlinJavaModuleConfigurator.NAME) as KotlinJavaModuleConfigurator? ?:
+                           error("Configurator with given name doesn't exists: " + KotlinJavaModuleConfigurator.NAME)
 
-        val kJsConfigurator = getConfiguratorByName(KotlinJsModuleConfigurator.NAME) as KotlinJsModuleConfigurator? ?:
-                              error("Configurator with given name doesn't exists: " + KotlinJsModuleConfigurator.NAME)
+    val kJsConfigurator = getConfiguratorByName(KotlinJsModuleConfigurator.NAME) as KotlinJsModuleConfigurator? ?:
+                          error("Configurator with given name doesn't exists: " + KotlinJsModuleConfigurator.NAME)
 
-        val collector = createConfigureKotlinNotificationCollector(project)
+    val collector = createConfigureKotlinNotificationCollector(project)
 
-        for (library in libraries) {
-            if (isDetected(JavaRuntimePresentationProvider.getInstance(), library)) {
-                updateJar(project, getRuntimeJar(library), LibraryJarDescriptor.RUNTIME_JAR)
-                updateJar(project, getReflectJar(library), LibraryJarDescriptor.REFLECT_JAR)
-                updateJar(project, getTestJar(library), LibraryJarDescriptor.TEST_JAR)
+    for (library in libraries) {
+        if (isDetected(JavaRuntimePresentationProvider.getInstance(), library)) {
+            updateJar(project, getRuntimeJar(library), LibraryJarDescriptor.RUNTIME_JAR)
+            updateJar(project, getReflectJar(library), LibraryJarDescriptor.REFLECT_JAR)
+            updateJar(project, getTestJar(library), LibraryJarDescriptor.TEST_JAR)
 
-                if (kJvmConfigurator.changeOldSourcesPathIfNeeded(library, collector)) {
-                    kJvmConfigurator.copySourcesToPathFromLibrary(library, collector)
-                }
-                else {
-                    updateJar(project, getRuntimeSrcJar(library), LibraryJarDescriptor.RUNTIME_SRC_JAR)
-                }
+            if (kJvmConfigurator.changeOldSourcesPathIfNeeded(library, collector)) {
+                kJvmConfigurator.copySourcesToPathFromLibrary(library, collector)
             }
-            else if (isDetected(JSLibraryStdPresentationProvider.getInstance(), library)) {
-                updateJar(project, getJsStdLibJar(library), LibraryJarDescriptor.JS_STDLIB_JAR)
-
-                if (kJsConfigurator.changeOldSourcesPathIfNeeded(library, collector)) {
-                    kJsConfigurator.copySourcesToPathFromLibrary(library, collector)
-                }
-                else {
-                    updateJar(project, getJsStdLibSrcJar(library), LibraryJarDescriptor.JS_STDLIB_SRC_JAR)
-                }
+            else {
+                updateJar(project, getRuntimeSrcJar(library), LibraryJarDescriptor.RUNTIME_SRC_JAR)
             }
         }
+        else if (isDetected(JSLibraryStdPresentationProvider.getInstance(), library)) {
+            updateJar(project, getJsStdLibJar(library), LibraryJarDescriptor.JS_STDLIB_JAR)
 
-        collector.showNotification()
+            if (kJsConfigurator.changeOldSourcesPathIfNeeded(library, collector)) {
+                kJsConfigurator.copySourcesToPathFromLibrary(library, collector)
+            }
+            else {
+                updateJar(project, getJsStdLibSrcJar(library), LibraryJarDescriptor.JS_STDLIB_SRC_JAR)
+            }
+        }
     }
+
+    collector.showNotification()
 }
 
 private fun updateJar(

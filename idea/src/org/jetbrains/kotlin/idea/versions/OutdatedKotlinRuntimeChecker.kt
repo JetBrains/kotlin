@@ -108,7 +108,9 @@ fun notifyOutdatedKotlinRuntime(project: Project, outdatedLibraries: Collection<
         if (event.eventType == HyperlinkEvent.EventType.ACTIVATED) {
             if ("update" == event.description) {
                 val outdatedLibraries = findOutdatedKotlinLibraries(project).map { it.library }
-                updateLibraries(project, outdatedLibraries)
+                ApplicationManager.getApplication().invokeLater {
+                    updateLibraries(project, outdatedLibraries)
+                }
                 suggestDeleteKotlinJsIfNeeded(project, outdatedLibraries)
             }
             else if ("ignore" == event.description) {

@@ -122,7 +122,11 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
             }
 
             val actionLabelText = MessageFormat.format("$updateAction {0,choice,0#|1#|1<all }Kotlin runtime librar{0,choice,0#|1#y|1<ies} ", badRuntimeLibraries.size)
-            answer.createActionLabel(actionLabelText) { updateLibraries(project, badRuntimeLibraries) }
+            answer.createActionLabel(actionLabelText) {
+                ApplicationManager.getApplication().invokeLater {
+                    updateLibraries(project, badRuntimeLibraries)
+                }
+            }
         }
         else if (badVersionedRoots.size == 1) {
             val badVersionedRoot = badVersionedRoots.first()

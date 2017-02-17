@@ -21,6 +21,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ContentEntry
 import com.intellij.openapi.roots.ModifiableRootModel
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.KotlinFacetConfiguration
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.test.testFramework.runInEdtAndWait
@@ -28,15 +29,8 @@ import org.jetbrains.kotlin.test.testFramework.runWriteAction
 
 class KotlinProjectDescriptorWithFacet(val languageVersion: LanguageVersion) : KotlinLightProjectDescriptor() {
     override fun configureModule(module: Module, model: ModifiableRootModel, contentEntry: ContentEntry) {
-        val facetManager = FacetManager.getInstance(module)
-        val facetModel = facetManager.createModifiableModel()
-        val configuration = KotlinFacetConfiguration()
-        configuration.settings.useProjectSettings = false
-        configuration.settings.versionInfo.languageLevel = languageVersion
-        val facet = facetManager.createFacet(KotlinFacetType.INSTANCE, "Kotlin", configuration, null)
-        facetModel.addFacet(facet)
-        runInEdtAndWait {
-            runWriteAction { facetModel.commit() }
+        configureKotlinFacet(module) { ->
+            settings.versionInfo.languageLevel = languageVersion
         }
     }
 
@@ -44,3 +38,18 @@ class KotlinProjectDescriptorWithFacet(val languageVersion: LanguageVersion) : K
         val KOTLIN_10 = KotlinProjectDescriptorWithFacet(LanguageVersion.KOTLIN_1_0)
     }
 }
+
+fun configureKotlinFacet(module: Module, configureCallback: KotlinFacetConfiguration.() -> Unit = {}): KotlinFacet {
+    val facetManager = FacetManager.getInstance(module)
+    val facetModel = facetManager.createModifiableModel()
+    val configuration = KotlinFacetConfiguration()
+    configuration.settings.useProjectSettings = false
+    configuration.configureCallback()
+    val facet = facetManager.createFacet(KotlinFacetType.INSTANCE, "Kotlin", configuration, null)
+    facetModel.addFacet(facet)
+    runInEdtAndWait {
+        runWriteAction { facetModel.commit() }
+    }
+    return facet
+}
+
