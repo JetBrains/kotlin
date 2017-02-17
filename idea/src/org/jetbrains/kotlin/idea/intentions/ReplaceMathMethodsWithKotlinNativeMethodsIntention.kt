@@ -40,5 +40,5 @@ abstract class ReplaceMathMethodsWithKotlinNativeMethodsIntention(
     override fun isApplicableTo(element: KtCallExpression) =
             element.calleeExpression?.text == mathMethodName &&
             element.valueArguments.size == 2 &&
-            element.isMethodCall("java.lang.Math.${mathMethodName}")
+            element.isMethodCall("java.lang.Math.$mathMethodName")
 }

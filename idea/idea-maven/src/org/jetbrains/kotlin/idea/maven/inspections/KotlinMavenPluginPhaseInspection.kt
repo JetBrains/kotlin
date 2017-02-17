@@ -125,7 +125,7 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
                 if (hasJsExecution && jsDependencies.isEmpty()) {
                     holder.createProblem(kotlinPlugin.artifactId.createStableCopy(),
                                          HighlightSeverity.WARNING,
-                                         "Kotlin JavaScript compiler configured but no ${MAVEN_JS_STDLIB_ID} dependency",
+                                         "Kotlin JavaScript compiler configured but no $MAVEN_JS_STDLIB_ID dependency",
                                          FixAddStdlibLocalFix(domFileElement.file, MAVEN_JS_STDLIB_ID, kotlinPlugin.version.rawText))
                 }
             }

@@ -48,5 +48,5 @@ class ReflectKotlinClassFinder(private val classLoader: ClassLoader) : KotlinCla
 
 private fun ClassId.toRuntimeFqName(): String {
     val className = relativeClassName.asString().replace('.', '$')
-    return if (packageFqName.isRoot) className else "${packageFqName}.$className"
+    return if (packageFqName.isRoot) className else "$packageFqName.$className"
 }

@@ -141,7 +141,7 @@ object KDocRenderer {
         if (tags.isEmpty()) {
             return
         }
-        to.append("<dl><dt><b>${title}:</b></dt>")
+        to.append("<dl><dt><b>$title:</b></dt>")
         tags.forEach {
             to.append("<dd><code>${it.getSubjectName()}</code> - ${markdownToHtml(it.getContent().trimStart())}</dd>")
         }
@@ -150,7 +150,7 @@ object KDocRenderer {
 
     private fun renderTag(tag: KDocTag?, title: String, to: StringBuilder) {
         if (tag != null) {
-            to.append("<dl><dt><b>${title}:</b></dt>")
+            to.append("<dl><dt><b>$title:</b></dt>")
             to.append("<dd>${markdownToHtml(tag.getContent())}</dd>")
             to.append("</dl>\n")
         }

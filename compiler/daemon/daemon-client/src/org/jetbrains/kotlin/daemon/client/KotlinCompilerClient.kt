@@ -211,7 +211,7 @@ object KotlinCompilerClient {
             val unrecognized = it.trimQuotes().split(",").filterExtractProps(opts.mappers, "")
             if (unrecognized.any())
                 throw IllegalArgumentException(
-                        "Unrecognized client options passed via property ${COMPILE_DAEMON_OPTIONS_PROPERTY}: " + unrecognized.joinToString(" ") +
+                        "Unrecognized client options passed via property $COMPILE_DAEMON_OPTIONS_PROPERTY: " + unrecognized.joinToString(" ") +
                         "\nSupported options: " + opts.mappers.joinToString(", ", transform = { it.names.first() }))
         }
         return opts

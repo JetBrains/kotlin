@@ -126,7 +126,7 @@ class KotlinCoverageExtension : JavaCoverageEngineExtension() {
                     result.partiallyCoveredLineCount += classInfo.partiallyCoveredLineCount
                 }
                 else {
-                    LOG.debug("Found no coverage for ${it}")
+                    LOG.debug("Found no coverage for $it")
                 }
             }
             return result

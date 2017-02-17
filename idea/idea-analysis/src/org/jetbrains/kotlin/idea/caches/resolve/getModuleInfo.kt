@@ -56,7 +56,7 @@ private fun PsiElement.getModuleInfo(onFailure: (String) -> IdeaModuleInfo?): Id
     val doNotAnalyze = containingJetFile?.doNotAnalyze
     if (doNotAnalyze != null) {
         return onFailure(
-                "Should not analyze element: ${text} in file ${containingJetFile?.name ?: " <no file>"}\n$doNotAnalyze"
+                "Should not analyze element: $text in file ${containingJetFile?.name ?: " <no file>"}\n$doNotAnalyze"
         )
     }
 
