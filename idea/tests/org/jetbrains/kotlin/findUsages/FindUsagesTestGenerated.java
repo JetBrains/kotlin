@@ -778,6 +778,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("labeledReturns.0.kt")
+            public void testLabeledReturns() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/labeledReturns.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("localClassMember.0.kt")
             public void testLocalClassMember() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/localClassMember.0.kt");
