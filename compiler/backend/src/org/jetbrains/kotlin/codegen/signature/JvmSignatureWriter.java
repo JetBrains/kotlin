@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.signature;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.load.kotlin.JvmDescriptorTypeWriter;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
@@ -57,7 +58,7 @@ public class JvmSignatureWriter extends JvmDescriptorTypeWriter<Type> {
                 return;
             case Type.ARRAY:
                 writeArrayType();
-                writeAsmType(asmType.getElementType());
+                writeAsmType(AsmUtil.correctElementType(asmType));
                 writeArrayEnd();
                 return;
             default:

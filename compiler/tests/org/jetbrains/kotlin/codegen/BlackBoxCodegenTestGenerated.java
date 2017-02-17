@@ -377,6 +377,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("genericArrayInObjectLiteralConstructor.kt")
+        public void testGenericArrayInObjectLiteralConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/genericArrayInObjectLiteralConstructor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("hashMap.kt")
         public void testHashMap() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/hashMap.kt");
