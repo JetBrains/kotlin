@@ -1,0 +1,4 @@
+@kotlin.Metadata
+public final class Simple {
+    public method <init>(): void
+}

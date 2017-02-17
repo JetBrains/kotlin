@@ -1,0 +1,52 @@
+@kotlin.Metadata
+public final class test/TopLevel {
+    public final static field Companion: test.TopLevel.Companion
+    private final static @org.jetbrains.annotations.NotNull field q: java.lang.String
+    private final @org.jetbrains.annotations.NotNull field x: java.lang.String
+    private final field y: int
+    inner class test/TopLevel/Companion
+    inner class test/TopLevel/InnerInterface
+    inner class test/TopLevel/InnerObject
+    inner class test/TopLevel/NestedClass
+    public method <init>(): void
+    public final method b(): void
+    public final static @org.jetbrains.annotations.NotNull method getQ(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method getX(): java.lang.String
+    public final method getY(): int
+}
+
+@kotlin.Metadata
+public final class test/TopLevel/Companion {
+    inner class test/TopLevel/Companion
+    private method <init>(): void
+    public final method a(): void
+    public final @org.jetbrains.annotations.NotNull method getQ(): java.lang.String
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method q$annotations(): void
+}
+
+@kotlin.Metadata
+public interface test/TopLevel/InnerInterface {
+    inner class test/TopLevel/InnerInterface
+}
+
+@kotlin.Metadata
+public final class test/TopLevel/InnerObject {
+    public final static field INSTANCE: test.TopLevel.InnerObject
+    inner class test/TopLevel/InnerObject
+    private method <init>(): void
+}
+
+@kotlin.Metadata
+public final class test/TopLevel/NestedClass {
+    inner class test/TopLevel/NestedClass
+    inner class test/TopLevel/NestedClass/NestedInnerClass
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public final class test/TopLevel/NestedClass/NestedInnerClass {
+    synthetic final field this$0: test.TopLevel.NestedClass
+    inner class test/TopLevel/NestedClass
+    inner class test/TopLevel/NestedClass/NestedInnerClass
+    public method <init>(p0: test.TopLevel.NestedClass): void
+}
