@@ -84,6 +84,12 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
         doTest(fileName);
     }
 
+    @TestMetadata("functionAssertion.kt")
+    public void testFunctionAssertion() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/functionAssertion.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("inheritKotlin.kt")
     public void testInheritKotlin() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/inheritKotlin.kt");
