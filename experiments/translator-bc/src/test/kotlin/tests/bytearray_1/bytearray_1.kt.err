@@ -1,6 +1,0 @@
-[ERROR]null -1:-1 
-
-[ERROR]/Users/minamoto/ws/kotlin-native/experiments/translator-bc/src/test/kotlin/tests/./bytearray_1/bytearray_1.kt 23:5 Unresolved reference: assert
-Exception in thread "main" org.kotlinnative.translator.exceptions.TranslationException: Can't initialize binding context for project
-	at org.kotlinnative.translator.TranslationState$Companion.createTranslationState(TranslationState.kt:80)
-	at MainKt.main(main.kt:18)

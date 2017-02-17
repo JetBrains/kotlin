@@ -1,3 +1,0 @@
-assignment_operators_1_plus_Int(11) == 17
-assignment_operators_1_minus_Int(11) == 5
-assignment_operators_1_times_Int(11) == 66

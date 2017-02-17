@@ -1,2 +1,0 @@
-if_without_else_2_Int(5) == 1256
-if_without_else_2_Int(55) == 1320

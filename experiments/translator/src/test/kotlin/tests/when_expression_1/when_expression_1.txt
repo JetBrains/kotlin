@@ -1,7 +1,0 @@
-when_expression_1_Int(21234) == 20
-when_expression_1_Int(55555) == 50
-when_expression_1_Int(345626) == 100
-when_expression_1_Int(756754) == 100
-when_expression_2_Byte(0) == 100
-when_expression_2_Byte(5) == 105
-when_expression_2_Byte(155) == 199

@@ -1,5 +1,0 @@
-nullable_primitive_types_1_small() == 29
-nullable_primitive_types_1_extern_Int(11) == 19
-nullable_primitive_types_1_if_null() == 11
-nullable_primitive_types_1_if_not_null() == 2245
-nullable_primitive_types_1_reassignment() == 5678

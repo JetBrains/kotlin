@@ -1,3 +1,0 @@
-testThirdCase() == 0
-testSecondCase() == 0
-testFirstCase() == 0

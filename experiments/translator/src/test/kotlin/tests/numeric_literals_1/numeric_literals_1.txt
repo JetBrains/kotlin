@@ -1,3 +1,0 @@
-numeric_literals_1_Int(0x20) == 32
-numeric_literals_1_LL() == 320
-numeric_literals_1_Binary() == 127

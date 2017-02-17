@@ -1,6 +1,0 @@
-[ERROR]null -1:-1 
-
-[ERROR]/Users/minamoto/ws/kotlin-native/experiments/translator-bc/src/test/kotlin/tests/./enum_inner_fields/enum_inner_fields.kt 3:12 Unresolved reference: WireType
-Exception in thread "main" org.kotlinnative.translator.exceptions.TranslationException: Can't initialize binding context for project
-	at org.kotlinnative.translator.TranslationState$Companion.createTranslationState(TranslationState.kt:80)
-	at MainKt.main(main.kt:18)

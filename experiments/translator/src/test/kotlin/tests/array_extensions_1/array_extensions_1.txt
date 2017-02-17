@@ -1,5 +1,0 @@
-array_extensions_1_copyOf() == 22
-array_extensions_1_copyOfRange() == 779
-array_extensions_1_copyOf_extend() == 340
-array_extensions_1_plus_element() == 2933
-array_extensions_1_plus_array() == 12132

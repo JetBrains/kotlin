@@ -1,6 +1,0 @@
-compact_test_Int(1) == 2
-compact_test_Int(3) == 4
-external_test_Int(3) == 2
-external_test_Int(4) == 3
-mixed_test_Int(1) == 4
-mixed_test_Int(9) == 12

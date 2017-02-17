@@ -1,1 +1,0 @@
-long_operations_1_Multiplication() == 29

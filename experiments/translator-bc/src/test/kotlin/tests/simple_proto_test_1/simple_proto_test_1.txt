@@ -1,1 +1,0 @@
-simple_proto_test() == 1

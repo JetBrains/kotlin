@@ -1,3 +1,0 @@
-when_block_test1_Int(0) == 1
-when_block_test1_Int(1) == 0
-when_block_test1_Int(2) == 0

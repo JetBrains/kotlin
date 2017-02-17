@@ -1,6 +1,0 @@
-postfix_1_plus_before_Int(20) == 20
-postfix_1_plus_after_Int(20) == 21
-postfix_1_plus_inside_Int(20) == 21
-postfix_1_minus_before_Int(20) == 20
-postfix_1_minus_after_Int(20) == 19
-postfix_1_minus_inside_Int(20) == 19

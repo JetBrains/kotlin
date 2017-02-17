@@ -1,4 +1,0 @@
-nullable_1_test_Int(1) == 1
-nullable_1_test_2_Int(4) == 5
-nullable_1_test_2_npe_operator_Int(23) == 578
-nullable_1_test_null_return() == 11

@@ -1,8 +1,0 @@
-[ERROR]null -1:-1 
-
-[ERROR]/Users/minamoto/ws/kotlin-native/experiments/translator-bc/src/test/kotlin/tests/./secondary_constructor_1/secondary_constructor_1.kt 20:35 Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: 
-public operator fun String?.plus(other: Any?): String defined in kotlin
-[ERROR]/Users/minamoto/ws/kotlin-native/experiments/translator-bc/src/test/kotlin/tests/./secondary_constructor_1/secondary_constructor_1.kt 26:5 Unresolved reference: println
-Exception in thread "main" org.kotlinnative.translator.exceptions.TranslationException: Can't initialize binding context for project
-	at org.kotlinnative.translator.TranslationState$Companion.createTranslationState(TranslationState.kt:80)
-	at MainKt.main(main.kt:18)

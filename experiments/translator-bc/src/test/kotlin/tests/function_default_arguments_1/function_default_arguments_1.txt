@@ -1,9 +1,0 @@
-function_default_arguments_1_mixed() == 76
-function_default_arguments_1_last_missed_Int(23) == 977
-function_default_arguments_1_last_present_Int(25) == 54
-function_default_arguments_1_position_third_only_Int(19) == 716
-function_default_arguments_1_position_all_reverse_Int(17) == 126
-function_default_arguments_1_position_all_right_order_Int(17) == 126
-function_default_arguments_1_position_all_default_Int(27) ==8268
-function_default_arguments_1_all_position() == 194
-function_default_arguments_1_add_class_arg() == 314

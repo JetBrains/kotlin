@@ -1,1 +1,0 @@
-class_method_access_1_test_Int(110) == 122

@@ -1,1 +1,0 @@
-class_default_argument_1_Int(34) == 45

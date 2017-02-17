@@ -1,3 +1,0 @@
-elvis_test_1_Int(0) == 0
-elvis_test_1_Int(2) == 1
-elvis_test_2() == 1

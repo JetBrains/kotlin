@@ -1,1 +1,0 @@
-class_reassignment_1() == 567

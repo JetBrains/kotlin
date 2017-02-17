@@ -1,2 +1,0 @@
-booleanarray_1_Boolean(1) == 1
-booleanarray_1_Boolean(0) == 0

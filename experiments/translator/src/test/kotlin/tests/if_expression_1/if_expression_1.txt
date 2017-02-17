@@ -1,4 +1,0 @@
-if_expression_1_Int(56) == 2323
-if_expression_1_Int(-58) == 678934
-if_expression_1_variable_Int(100) == 5
-if_expression_1_variable_Int(-100) == 7

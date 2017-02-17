@@ -1,6 +1,0 @@
-unary_operator_1_minus_Int(-5) == 5
-unary_operator_1_minus_Int(5) == -5
-unary_operator_1_plus_Int(-5) == -5
-unary_operator_1_plus_Int(5) == 5
-unary_operator_1_not_Boolean(1) == 0
-unary_operator_1_not_Boolean(0) == 1

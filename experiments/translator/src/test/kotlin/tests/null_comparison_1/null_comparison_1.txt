@@ -1,3 +1,0 @@
-null_comparison_1() == 87
-null_comparison_1_reassigned() == 87
-null_comparison_1_declaration() == 87

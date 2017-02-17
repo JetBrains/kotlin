@@ -1,3 +1,0 @@
-testTrivialValues() == 0
-testMaxValues() == 0
-testMinValues() == 0

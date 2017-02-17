@@ -1,2 +1,0 @@
-string_print_test_1_inline() == 23
-string_print_test_1_variable() == 1

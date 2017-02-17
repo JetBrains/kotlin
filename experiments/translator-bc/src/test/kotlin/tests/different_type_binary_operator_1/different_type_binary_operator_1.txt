@@ -1,3 +1,0 @@
-different_type_binary_operator_1_shl_Int_Long(10, 5) == 5120
-different_type_binary_operator_1_shr_Int_Long(5, 5000) == 156
-different_type_binary_operator_1_ushr_Int_Long(5, 5000) == 156

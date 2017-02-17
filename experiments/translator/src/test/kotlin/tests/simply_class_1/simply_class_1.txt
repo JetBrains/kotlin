@@ -1,1 +1,0 @@
-simply_class_1_Int(6789) == 6794

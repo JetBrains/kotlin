@@ -1,2 +1,0 @@
-floating_point_operators_1_double_leq_Double_Double(14.9301, 5.6) == 0
-floating_point_operators_1_double_leq_Double_Double(1.49301, 5.6) == 1

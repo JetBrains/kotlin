@@ -1,2 +1,0 @@
-nested_test_1_Int(1) == 1
-nested_test_2_Int(1) == 5

@@ -1,2 +1,0 @@
-global_test1() == 3000
-global_test2() == 4001

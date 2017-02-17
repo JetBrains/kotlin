@@ -1,8 +1,0 @@
-referential_equality_1_EQEQ_true() == 1
-referential_equality_1_EQEQ_false() == 0
-referential_equality_1_EQEQEQ_true() == 1
-referential_equality_1_EQEQEQ_false() == 0
-referential_equality_1_EXCLEQEQ_true() == 1
-referential_equality_1_EXCLEQEQ_false() == 0
-referential_equality_1_EXCLEQEQEQ_true() == 1
-referential_equality_1_EXCLEQEQEQ_false() == 0

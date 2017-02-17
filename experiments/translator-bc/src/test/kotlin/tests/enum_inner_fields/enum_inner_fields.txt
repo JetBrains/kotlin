@@ -1,2 +1,0 @@
-enum_field_test1_Byte(1) == 1
-enum_field_test1_Byte(2) == 2

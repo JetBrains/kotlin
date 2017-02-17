@@ -1,1 +1,0 @@
-initialization_in_place_and_this_1() == 100

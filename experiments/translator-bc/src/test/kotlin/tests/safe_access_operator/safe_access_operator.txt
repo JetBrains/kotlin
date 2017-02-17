@@ -1,1 +1,0 @@
-save_access_operator_test1() == 1

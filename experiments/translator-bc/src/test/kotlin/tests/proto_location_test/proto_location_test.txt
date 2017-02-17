@@ -1,3 +1,0 @@
-testTrivialLocationResponse() == 0
-testMaxLocationResponse() == 0
-testMinLocationResponse() == 0

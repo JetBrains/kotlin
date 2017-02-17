@@ -1,5 +1,0 @@
-testVarintDefaultMessage() == 0
-testVarintTrivialMessage() == 0
-testVarintNegativeMessage() == 0
-testVarintMaxValues() == 0
-testVarintMinValues() == 0

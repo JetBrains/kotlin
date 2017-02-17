@@ -1,6 +1,0 @@
-testCastToInt_Int(32) == 0
-testCastToInt_Int(34) == 1
-testCastToByte_Byte(32) == 0
-testCastToByte_Byte(34) == 1
-testCastToShort_Short(32) == 0
-testCastToShort_Short(34) == 1

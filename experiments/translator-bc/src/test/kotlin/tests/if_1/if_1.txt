@@ -1,4 +1,0 @@
-if_test_1_Int(11) == 10
-if_test_1_Int(0) == 0
-if_test_null_Int(0) == 1
-if_test_null_2_Int(0) == 0

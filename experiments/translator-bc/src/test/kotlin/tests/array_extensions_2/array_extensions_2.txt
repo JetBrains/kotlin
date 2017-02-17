@@ -1,1 +1,0 @@
-array_extensions_2_plus_array() == 10

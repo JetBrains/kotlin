@@ -1,6 +1,0 @@
-testZigZagDefaultValues() == 0
-testZigZagRandomValues() == 0
-testZigZagNegativeValues() == 0
-testZigZagPositiveValues() == 0
-testZigZagMaxValues() == 0
-testZigZagMinValues() == 0

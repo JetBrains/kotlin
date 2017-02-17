@@ -1,2 +1,0 @@
-do_while_test_1_Int(5) == 6
-do_while_test_1_Int(57) == 58

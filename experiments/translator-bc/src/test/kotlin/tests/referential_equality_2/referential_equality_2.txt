@@ -1,2 +1,0 @@
-referential_equality_2_EQ_master() == 1
-referential_equality_2_NEQ_master() == 1
