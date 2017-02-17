@@ -64,8 +64,12 @@ fun Module.getAndCacheLanguageLevelByDependencies(): LanguageVersion {
     }
     else {
         with(facetSettings.versionInfo) {
-            this.languageLevel = languageLevel
-            this.apiLevel = languageLevel
+            if (this.languageLevel == null) {
+                this.languageLevel = languageLevel
+            }
+            if (this.apiLevel == null) {
+                this.apiLevel = languageLevel
+            }
         }
     }
 

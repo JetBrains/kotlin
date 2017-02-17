@@ -24,6 +24,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.testFramework.PlatformTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.config.LanguageVersion;
+import org.jetbrains.kotlin.idea.project.PlatformKt;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
@@ -171,6 +173,26 @@ public class ConfigureKotlinTest extends PlatformTestCase {
 
     public void testJsLibraryWithoutPaths_doNotCopyJar() {
         doTestOneJsModule(FileState.DO_NOT_COPY, LibraryState.NON_CONFIGURED_LIBRARY);
+    }
+
+    public void testProjectWithoutFacetWithRuntime106WithoutLanguageLevel() {
+        assertEquals(LanguageVersion.KOTLIN_1_0, PlatformKt.getLanguageVersionSettings(myProject, null).getLanguageVersion());
+        assertEquals(LanguageVersion.KOTLIN_1_0, PlatformKt.getLanguageVersionSettings(getModule()).getLanguageVersion());
+    }
+
+    public void testProjectWithoutFacetWithRuntime11WithoutLanguageLevel() {
+        assertEquals(LanguageVersion.KOTLIN_1_1, PlatformKt.getLanguageVersionSettings(myProject, null).getLanguageVersion());
+        assertEquals(LanguageVersion.KOTLIN_1_1, PlatformKt.getLanguageVersionSettings(getModule()).getLanguageVersion());
+    }
+
+    public void testProjectWithoutFacetWithRuntime11WithLanguageLevel10() {
+        assertEquals(LanguageVersion.KOTLIN_1_0, PlatformKt.getLanguageVersionSettings(myProject, null).getLanguageVersion());
+        assertEquals(LanguageVersion.KOTLIN_1_0, PlatformKt.getLanguageVersionSettings(getModule()).getLanguageVersion());
+    }
+
+    public void testProjectWithFacetWithRuntime11WithLanguageLevel10() {
+        assertEquals(LanguageVersion.KOTLIN_1_1, PlatformKt.getLanguageVersionSettings(myProject, null).getLanguageVersion());
+        assertEquals(LanguageVersion.KOTLIN_1_0, PlatformKt.getLanguageVersionSettings(getModule()).getLanguageVersion());
     }
 
     private void doTestConfigureModulesWithNonDefaultSetup(KotlinWithLibraryConfigurator configurator) {
