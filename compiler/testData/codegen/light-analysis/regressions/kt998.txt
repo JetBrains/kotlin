@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class Kt998Kt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method findPairless(@org.jetbrains.annotations.NotNull p0: int[]): int
-    public final static method hasDuplicates(@org.jetbrains.annotations.NotNull p0: int[]): boolean
-}

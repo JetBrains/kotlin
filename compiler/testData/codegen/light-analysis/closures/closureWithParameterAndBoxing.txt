@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class ClosureWithParameterAndBoxingKt {
-    public final static method apply(p0: int, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): int
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-}

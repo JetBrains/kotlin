@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class WhenWithInRangeKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method withWhen(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.Object): int
-}

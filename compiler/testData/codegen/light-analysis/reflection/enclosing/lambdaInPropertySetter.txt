@@ -1,9 +1,0 @@
-@kotlin.Metadata
-public final class LambdaInPropertySetterKt {
-    private static @org.jetbrains.annotations.NotNull field _l: java.lang.Object
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method getL(): java.lang.Object
-    public final static @org.jetbrains.annotations.NotNull method get_l(): java.lang.Object
-    public final static method setL(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
-    public final static method set_l(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
-}

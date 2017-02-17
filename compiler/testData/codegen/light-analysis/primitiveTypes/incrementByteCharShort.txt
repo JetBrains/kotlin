@@ -1,7 +1,0 @@
-@kotlin.Metadata
-public final class IncrementByteCharShortKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method byteArg(p0: byte): void
-    public final static method charArg(p0: char): void
-    public final static method shortArg(p0: short): void
-}

@@ -1,9 +1,0 @@
-@kotlin.annotation.Retention
-@java.lang.annotation.Retention
-@kotlin.Metadata
-public annotation class Anno
-
-@kotlin.Metadata
-public final class AnnotationRetentionAnnotationKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-}

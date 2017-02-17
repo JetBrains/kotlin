@@ -1,8 +1,0 @@
-@kotlin.Metadata
-public final class TryFinallyKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method runtimeEx(): void
-    public final static @org.jetbrains.annotations.NotNull method test1WithFinally(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method test2WithFinally(): java.lang.String
-    public final static method unsupportedEx(): void
-}

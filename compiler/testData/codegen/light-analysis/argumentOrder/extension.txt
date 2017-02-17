@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class ExtensionKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method test(p0: double, p1: int, p2: long, @org.jetbrains.annotations.NotNull p3: kotlin.jvm.functions.Function0): java.lang.String
-}

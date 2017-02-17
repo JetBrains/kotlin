@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class ForArrayListMultiDeclKt {
-    private final static @org.jetbrains.annotations.NotNull field alist: java.util.ArrayList
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method getAlist(): java.util.ArrayList
-}

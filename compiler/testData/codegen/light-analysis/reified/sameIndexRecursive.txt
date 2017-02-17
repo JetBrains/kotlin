@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class SameIndexRecursiveKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    private final static method createArray(p0: int, p1: kotlin.jvm.functions.Function0): kotlin.Pair
-    private final static method recursive(p0: kotlin.jvm.functions.Function0): kotlin.Pair
-}

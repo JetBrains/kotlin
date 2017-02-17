@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class Kt1093Kt {
-    private final static @org.jetbrains.annotations.NotNull field f: kotlin.jvm.functions.Function1
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method getF(): kotlin.jvm.functions.Function1
-}

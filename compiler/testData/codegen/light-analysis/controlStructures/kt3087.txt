@@ -1,7 +1,0 @@
-@kotlin.Metadata
-public final class Kt3087Kt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method putInvertAsUnit(p0: boolean): void
-    public final static method putNumberCompareAsUnit(): void
-    public final static method putNumberCompareAsVoid(): void
-}

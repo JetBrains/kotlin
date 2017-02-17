@@ -1,7 +1,0 @@
-@kotlin.Metadata
-public final class Kt503Kt {
-    public final static @org.jetbrains.annotations.NotNull method array(@org.jetbrains.annotations.NotNull p0: java.lang.Object[]): java.lang.Object[]
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method iarr(@org.jetbrains.annotations.NotNull p0: int[]): int[]
-    public final static method thirdElementIsThree(@org.jetbrains.annotations.NotNull p0: int[]): boolean
-}

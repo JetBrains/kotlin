@@ -1,8 +1,0 @@
-@kotlin.Metadata
-public final class SwitchOptimizationTypesKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method byteFoo(p0: byte): int
-    public final static method charFoo(p0: char): int
-    public final static method intFoo(p0: int): int
-    public final static method shortFoo(p0: short): int
-}

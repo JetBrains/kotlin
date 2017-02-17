@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class Kt11163Kt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method compareTo(p0: int, p1: char): int
-    public final static @org.jetbrains.annotations.NotNull method foo(p0: int, p1: char): java.lang.String
-}

@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class GenericKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method findAll(@org.jetbrains.annotations.NotNull p0: java.util.ArrayList, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1): java.util.ArrayList
-}

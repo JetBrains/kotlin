@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class Kt14839Kt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public synthetic static method inlineFunctionWithDefaultArguments$default(p0: java.lang.Throwable, p1: boolean, p2: int, p3: java.lang.Object): void
-    public final static method inlineFunctionWithDefaultArguments(@org.jetbrains.annotations.Nullable p0: java.lang.Throwable, p1: boolean): void
-}

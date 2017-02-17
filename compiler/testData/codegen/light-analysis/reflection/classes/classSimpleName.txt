@@ -1,9 +1,0 @@
-@kotlin.Metadata
-public final class ClassSimpleNameKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-}
-
-@kotlin.Metadata
-public final class Klass {
-    public method <init>(): void
-}

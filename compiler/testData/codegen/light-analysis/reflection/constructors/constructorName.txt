@@ -1,9 +1,0 @@
-@kotlin.Metadata
-public final class A {
-    public method <init>(): void
-}
-
-@kotlin.Metadata
-public final class ConstructorNameKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-}

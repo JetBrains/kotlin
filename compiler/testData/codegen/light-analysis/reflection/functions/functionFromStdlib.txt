@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class FunctionFromStdlibKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method doStuff(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KFunction): java.lang.String
-}

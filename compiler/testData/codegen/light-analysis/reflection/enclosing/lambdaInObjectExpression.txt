@@ -1,9 +1,0 @@
-@kotlin.Metadata
-public interface C {
-    public abstract @org.jetbrains.annotations.NotNull method getA(): java.lang.Object
-}
-
-@kotlin.Metadata
-public final class LambdaInObjectExpressionKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-}

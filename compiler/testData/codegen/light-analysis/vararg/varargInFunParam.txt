@@ -1,7 +1,0 @@
-@kotlin.Metadata
-public final class VarargInFunParamKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method test1(@org.jetbrains.annotations.NotNull p0: int[]): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method test2(@org.jetbrains.annotations.NotNull p0: java.lang.String[]): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method test3(@org.jetbrains.annotations.NotNull p0: java.lang.Object[]): java.lang.String
-}

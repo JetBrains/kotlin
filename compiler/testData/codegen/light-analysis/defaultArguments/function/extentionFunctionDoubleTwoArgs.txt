@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class ExtentionFunctionDoubleTwoArgsKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public synthetic static method foo$default(p0: double, p1: double, p2: double, p3: int, p4: java.lang.Object): double
-    public final static method foo(p0: double, p1: double, p2: double): double
-}

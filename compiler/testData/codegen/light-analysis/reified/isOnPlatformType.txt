@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class KotlinKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    private final static method foo(p0: java.lang.Object): boolean
-    private final static method fooN(p0: java.lang.Object): boolean
-}

@@ -1,7 +1,0 @@
-@kotlin.Metadata
-public final class ParameterNamesAndNullabilityKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method extensionFunExpr(): void
-    public final static method funExpr(): void
-    public final static method lambda(): void
-}

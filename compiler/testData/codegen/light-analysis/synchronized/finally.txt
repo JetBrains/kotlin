@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class FinallyKt {
-    public final static method assertThatThreadDoesNotOwnMonitor(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-}

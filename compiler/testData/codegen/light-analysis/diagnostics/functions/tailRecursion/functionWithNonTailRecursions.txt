@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class FunctionWithNonTailRecursionsKt {
-    public final static method badTails(p0: int): int
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-}

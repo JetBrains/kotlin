@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class PrimitiveDefaultValuesKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public synthetic static method primitives$default(p0: boolean, p1: char, p2: byte, p3: short, p4: int, p5: float, p6: long, p7: double, p8: int, p9: java.lang.Object): void
-    public final static method primitives(p0: boolean, p1: char, p2: byte, p3: short, p4: int, p5: float, p6: long, p7: double): void
-}

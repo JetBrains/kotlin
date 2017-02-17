@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class ClosureReturnsNullableUnitKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method isNull(@org.jetbrains.annotations.Nullable p0: kotlin.Unit): boolean
-}

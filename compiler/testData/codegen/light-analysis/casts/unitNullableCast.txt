@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class UnitNullableCastKt {
-    public final static @org.jetbrains.annotations.Nullable method bar(): java.lang.Integer
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method foo(): void
-}

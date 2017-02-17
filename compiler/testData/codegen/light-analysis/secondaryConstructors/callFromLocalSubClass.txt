@@ -1,4 +1,0 @@
-@kotlin.Metadata
-public final class CallFromLocalSubClassKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-}

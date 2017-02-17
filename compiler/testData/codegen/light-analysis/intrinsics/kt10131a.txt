@@ -1,4 +1,0 @@
-@kotlin.Metadata
-public final class Kt10131aKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-}

@@ -1,9 +1,0 @@
-@kotlin.Metadata
-public final class EqualityKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-}
-
-@kotlin.Metadata
-public final class Foo {
-    public method <init>(): void
-}

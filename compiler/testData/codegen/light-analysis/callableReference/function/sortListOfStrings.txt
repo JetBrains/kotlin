@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class SortListOfStringsKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method compare(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
-    public final static method sort(@org.jetbrains.annotations.NotNull p0: java.util.List, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function2): void
-}

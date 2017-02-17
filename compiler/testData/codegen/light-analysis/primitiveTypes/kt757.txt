@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class demo_long/Kt757Kt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method inv(@org.jetbrains.annotations.Nullable p0: java.lang.Long): long
-}

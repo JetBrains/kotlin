@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class PrivateConstKt {
-    private final static field z: java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-}

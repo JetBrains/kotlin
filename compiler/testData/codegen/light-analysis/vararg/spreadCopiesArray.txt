@@ -1,7 +1,0 @@
-@kotlin.Metadata
-public final class SpreadCopiesArrayKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method copyArray(@org.jetbrains.annotations.NotNull p0: java.lang.Object[]): java.lang.Object[]
-    public final static @org.jetbrains.annotations.NotNull method copyIntArray(@org.jetbrains.annotations.NotNull p0: int[]): int[]
-    private final static method reifiedCopyArray(p0: java.lang.Object[]): java.lang.Object[]
-}

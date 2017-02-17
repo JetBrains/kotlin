@@ -1,8 +1,0 @@
-@kotlin.Metadata
-public final class Kt9022ReturnKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method testAnd(): boolean
-    public final static method testAnd(p0: boolean): boolean
-    public final static method testOr(): boolean
-    public final static method testOr(p0: boolean): boolean
-}

@@ -1,7 +1,0 @@
-@kotlin.Metadata
-public final class ArrayConstructorsSimpleKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method simpleDoubleArray(): java.lang.Double[]
-    public final static @org.jetbrains.annotations.NotNull method simpleIntArray(): java.lang.Integer[]
-    public final static @org.jetbrains.annotations.NotNull method simpleStringArray(): java.lang.String[]
-}

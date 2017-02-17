@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class FilterIsInstanceKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    private final static method filterIsInstance(@org.jetbrains.annotations.NotNull p0: java.lang.Object[]): java.util.List
-}

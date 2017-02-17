@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class FunctionNameKt {
-    public final static @kotlin.jvm.JvmName @org.jetbrains.annotations.NotNull method bar(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-}

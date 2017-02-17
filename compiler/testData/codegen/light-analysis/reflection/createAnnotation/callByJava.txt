@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class KKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    private final static method create(): java.lang.annotation.Annotation
-    private final static method create(p0: java.util.Map): java.lang.annotation.Annotation
-}

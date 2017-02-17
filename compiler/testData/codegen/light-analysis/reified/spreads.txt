@@ -1,7 +1,0 @@
-@kotlin.Metadata
-public final class SpreadsKt {
-    private final static method bar(p0: java.lang.Object[], p1: kotlin.jvm.functions.Function0): java.lang.Object[]
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    private final static method empty(): java.lang.Object[]
-    public final static method foo(@org.jetbrains.annotations.NotNull p0: java.lang.Object[]): int
-}

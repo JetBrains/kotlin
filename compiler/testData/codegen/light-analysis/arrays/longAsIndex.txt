@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class LongAsIndexKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method get(@org.jetbrains.annotations.NotNull p0: int[], p1: long): int
-    public final static method set(@org.jetbrains.annotations.NotNull p0: int[], p1: long, p2: int): void
-}

@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class Kt2271Kt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public synthetic static method foo$default(p0: int, p1: int, p2: int, p3: java.lang.Object): int
-    public final static method foo(p0: int, p1: int): int
-}

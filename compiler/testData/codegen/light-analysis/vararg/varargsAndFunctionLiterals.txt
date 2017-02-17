@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class VarargsAndFunctionLiteralsKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method foo(p0: int, @org.jetbrains.annotations.NotNull p1: int[], @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function1): java.lang.String
-}

@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class ForInNonOptimizedIndicesKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method sumIndices(@org.jetbrains.annotations.Nullable p0: java.util.Collection): int
-}

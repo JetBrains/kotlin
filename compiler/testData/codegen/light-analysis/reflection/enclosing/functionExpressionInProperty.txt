@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class FunctionExpressionInPropertyKt {
-    private final static @org.jetbrains.annotations.NotNull field property: kotlin.jvm.functions.Function0
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method getProperty(): kotlin.jvm.functions.Function0
-}

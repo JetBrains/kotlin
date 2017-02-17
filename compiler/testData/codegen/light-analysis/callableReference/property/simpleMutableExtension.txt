@@ -1,9 +1,0 @@
-@kotlin.Metadata
-public final class SimpleMutableExtensionKt {
-    private static field storage: int
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method getFoo(p0: int): int
-    public final static method getStorage(): int
-    public final static method setFoo(p0: int, p1: int): void
-    public final static method setStorage(p0: int): void
-}

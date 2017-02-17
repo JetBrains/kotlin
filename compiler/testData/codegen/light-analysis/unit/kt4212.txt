@@ -1,8 +1,0 @@
-@kotlin.Metadata
-public final class Kt4212Kt {
-    public final static method bar(): void
-    public final static @org.jetbrains.annotations.Nullable method baz(): java.lang.Object
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.Nullable method foo(): java.lang.Object
-    public final static @org.jetbrains.annotations.Nullable method quux(): kotlin.Unit
-}

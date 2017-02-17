@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class DeadTryCatchKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method catchAll(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function0): java.lang.String
-    public final static method tryTwice(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): void
-}

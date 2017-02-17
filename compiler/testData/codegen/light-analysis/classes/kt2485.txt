@@ -1,8 +1,0 @@
-@kotlin.Metadata
-public final class Kt2485Kt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method f1(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
-    public final static method f2(@org.jetbrains.annotations.Nullable p0: java.lang.Boolean): void
-    public final static method f3(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
-    public final static method f4(p0: boolean): void
-}

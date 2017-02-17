@@ -1,4 +1,0 @@
-@kotlin.Metadata
-public final class CapturedInInlineOnlyCAOKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-}

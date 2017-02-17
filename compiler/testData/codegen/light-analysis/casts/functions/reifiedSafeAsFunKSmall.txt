@@ -1,8 +1,0 @@
-@kotlin.Metadata
-public final class ReifiedSafeAsFunKSmallKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method fn0(): void
-    public final static method fn1(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
-    private final static method reifiedSafeAsReturnsNonNull(p0: java.lang.Object, p1: java.lang.String): void
-    private final static method reifiedSafeAsReturnsNull(p0: java.lang.Object, p1: java.lang.String): void
-}

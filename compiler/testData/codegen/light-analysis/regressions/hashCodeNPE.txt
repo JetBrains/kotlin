@@ -1,7 +1,0 @@
-@kotlin.Metadata
-public final class HashCodeNPEKt {
-    private static field x: int
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method getX(): int
-    public final static method setX(p0: int): void
-}

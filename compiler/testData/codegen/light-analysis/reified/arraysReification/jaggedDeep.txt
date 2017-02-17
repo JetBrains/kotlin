@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class JaggedDeepKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    private final static method jaggedArray(p0: kotlin.jvm.functions.Function3): java.lang.Object[][][]
-}

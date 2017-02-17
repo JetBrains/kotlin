@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class ConstantsInWhenKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method foo(p0: int): int
-    public final static method test(p0: boolean, p1: int): void
-}

@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class JavaPrimitiveTypeReifiedKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    private final static method check(p0: java.lang.String): void
-    private final static method checkNull(): void
-}

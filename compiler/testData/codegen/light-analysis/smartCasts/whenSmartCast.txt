@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class WhenSmartCastKt {
-    public final static method baz(@org.jetbrains.annotations.Nullable p0: java.lang.String): int
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-}

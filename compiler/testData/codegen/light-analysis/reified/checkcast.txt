@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class CheckcastKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    private final static method checkcast(p0: java.lang.Object): java.lang.Object
-}

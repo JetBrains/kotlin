@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class Kt2768Kt {
-    public final static method assertEquals(p0: java.lang.Object, p1: java.lang.Object): void
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-}

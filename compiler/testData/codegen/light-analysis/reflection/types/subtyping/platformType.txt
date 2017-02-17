@@ -1,7 +1,0 @@
-@kotlin.Metadata
-public final class KKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method check(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KCallable, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KCallable): void
-    public final static @org.jetbrains.annotations.Nullable method nullableString(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method string(): java.lang.String
-}

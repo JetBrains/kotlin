@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class SimpleKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method first(@org.jetbrains.annotations.NotNull p0: java.lang.StringBuilder): char
-    public final static method foo(): char
-}

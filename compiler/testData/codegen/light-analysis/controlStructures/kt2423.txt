@@ -1,7 +1,0 @@
-@kotlin.Metadata
-public final class Kt2423Kt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method ok1(): boolean
-    public final static method ok2(): boolean
-    public final static method ok3(): boolean
-}

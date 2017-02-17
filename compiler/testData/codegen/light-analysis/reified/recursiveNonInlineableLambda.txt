@@ -1,8 +1,0 @@
-@kotlin.Metadata
-public final class RecursiveNonInlineableLambdaKt {
-    private final static method bar1(): java.lang.String
-    private final static method bar2(p0: java.lang.String): java.lang.String
-    private final static method bar3(p0: java.lang.String): kotlin.Pair
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.String
-}

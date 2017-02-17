@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class LocalReturnInsideFunctionExpressionKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method simple(): kotlin.jvm.functions.Function0
-    public final static @org.jetbrains.annotations.NotNull method withLabel(): kotlin.jvm.functions.Function0
-}

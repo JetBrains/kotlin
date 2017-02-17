@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class IntegralWhenWithNoInlinedConstantsKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method foo1(p0: int): boolean
-    public final static method foo2(p0: int): boolean
-}

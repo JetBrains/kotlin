@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class DefaultArgsKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public synthetic static method test$default(p0: int, p1: java.lang.Object, p2: int, p3: java.lang.Object): void
-    public final static method test(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.Object): void
-}

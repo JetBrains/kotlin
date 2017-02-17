@@ -1,7 +1,0 @@
-@kotlin.Metadata
-public final class Kt9644tryKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method doCall(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Object
-    public final static method test1(): void
-    public final static @org.jetbrains.annotations.NotNull method test2(): java.lang.String
-}

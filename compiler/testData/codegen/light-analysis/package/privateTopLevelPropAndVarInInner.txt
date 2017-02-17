@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class PrivateTopLevelPropAndVarInInnerKt {
-    private static field x: java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    private final static method f(): java.lang.String
-}

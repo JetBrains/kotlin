@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class Kt2831Kt {
-    public final static method bar(@org.jetbrains.annotations.NotNull p0: java.lang.Object): int
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method foo(): java.lang.Void
-}

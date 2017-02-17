@@ -1,7 +1,0 @@
-@kotlin.Metadata
-public final class JavaBeanConventionKt {
-    private static field aBcde: int
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method getABcde(): int
-    public final static method setABcde(p0: int): void
-}

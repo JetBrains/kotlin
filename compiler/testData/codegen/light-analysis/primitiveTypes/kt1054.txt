@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class Kt1054Kt {
-    public final static method and(p0: boolean, p1: boolean): boolean
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-}

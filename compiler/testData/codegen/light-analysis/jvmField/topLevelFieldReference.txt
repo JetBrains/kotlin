@@ -1,8 +1,0 @@
-@kotlin.Metadata
-public final class zzz/TopLevelFieldReferenceKt {
-    public final static @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field internalField: java.lang.String
-    public final static @kotlin.jvm.JvmField @org.jetbrains.annotations.NotNull field publicField: java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method checkAccessor(@org.jetbrains.annotations.NotNull p0: kotlin.reflect.KProperty0, p1: java.lang.Object): void
-    public final static method testAccessors(): void
-}

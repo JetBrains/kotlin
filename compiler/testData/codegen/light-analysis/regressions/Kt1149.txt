@@ -1,9 +1,0 @@
-@kotlin.Metadata
-public final class test/regressions/kt1149/Kt1149Kt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-}
-
-@kotlin.Metadata
-public interface test/regressions/kt1149/SomeTrait {
-    public abstract method foo(): void
-}

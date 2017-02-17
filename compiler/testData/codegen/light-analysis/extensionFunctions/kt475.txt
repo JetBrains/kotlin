@@ -1,8 +1,0 @@
-@kotlin.Metadata
-public final class Kt475Kt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method getLast(@org.jetbrains.annotations.NotNull p0: java.util.ArrayList): java.lang.Object
-    public final static method getLength(@org.jetbrains.annotations.NotNull p0: java.util.ArrayList): int
-    public final static method setLast(@org.jetbrains.annotations.NotNull p0: java.util.ArrayList, p1: java.lang.Object): void
-    public final static method setLength(@org.jetbrains.annotations.NotNull p0: java.util.ArrayList, p1: int): void
-}

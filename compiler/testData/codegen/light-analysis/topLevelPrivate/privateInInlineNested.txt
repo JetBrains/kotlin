@@ -1,8 +1,0 @@
-@kotlin.Metadata
-public final class test/PrivateInInlineNestedKt {
-    private final static field prop: java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method call(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method inlineFun(): java.lang.String
-    private final static method test(): java.lang.String
-}

@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class NullValueKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public synthetic static method foo$default(p0: java.lang.String, p1: int, p2: java.lang.Object): void
-    public final static method foo(@org.jetbrains.annotations.Nullable p0: java.lang.String): void
-}

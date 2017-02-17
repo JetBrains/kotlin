@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class IteratingOverHashMapKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method testIteratingOverMap1(): boolean
-    public final static method testIteratingOverMap2(): boolean
-}

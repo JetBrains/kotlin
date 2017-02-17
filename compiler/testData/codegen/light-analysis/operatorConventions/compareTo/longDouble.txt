@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class LongDoubleKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method checkLess(p0: long, p1: double): java.lang.String
-}

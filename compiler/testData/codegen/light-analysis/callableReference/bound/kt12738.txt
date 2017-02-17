@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class Kt12738Kt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method get(p0: java.lang.Object): kotlin.jvm.functions.Function0
-}

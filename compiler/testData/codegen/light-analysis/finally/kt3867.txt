@@ -1,7 +1,0 @@
-@kotlin.Metadata
-public final class Kt3867Kt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method fail(): int
-    public final static @org.jetbrains.annotations.NotNull method test1(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method test2(): java.lang.String
-}

@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class BoundExtensionPropertyAcessorKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method getPlusK(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
-}

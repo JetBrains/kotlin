@@ -1,8 +1,0 @@
-@kotlin.Metadata
-public final class Kt882Kt {
-    private final static field _0: double
-    private final static field _0dbl: double
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method get_0(): double
-    public final static method get_0dbl(): double
-}

@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class RealIteratorFoldlKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method foldl(@org.jetbrains.annotations.NotNull p0: java.util.Iterator, p1: java.lang.Object, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function2): java.lang.Object
-}

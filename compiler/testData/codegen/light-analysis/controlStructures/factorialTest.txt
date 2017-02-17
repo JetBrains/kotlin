@@ -1,7 +1,0 @@
-@kotlin.Metadata
-public final class FactorialTestKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method facBreak(p0: int): int
-    public final static method facDoWhile(p0: int): int
-    public final static method facWhile(p0: int): int
-}

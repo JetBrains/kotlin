@@ -1,7 +1,0 @@
-@kotlin.Metadata
-public final class PropertyNameKt {
-    private static field v: int
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @kotlin.jvm.JvmName method vget(): int
-    public final static @kotlin.jvm.JvmName method vset(p0: int): void
-}

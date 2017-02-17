@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class LambdaToUnitCastKt {
-    private final static @org.jetbrains.annotations.NotNull field foo: kotlin.jvm.functions.Function0
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method getFoo(): kotlin.jvm.functions.Function0
-}

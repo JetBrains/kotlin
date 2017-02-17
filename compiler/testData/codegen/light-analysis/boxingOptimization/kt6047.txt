@@ -1,7 +1,0 @@
-@kotlin.Metadata
-public final class Kt6047Kt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method checkByte10(p0: byte): void
-    public final static method checkDouble1(p0: double): void
-    public final static method checkLongAB5E(p0: long): void
-}

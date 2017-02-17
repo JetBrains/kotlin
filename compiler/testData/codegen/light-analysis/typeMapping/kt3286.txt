@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class Kt3286Kt {
-    public final static @org.jetbrains.annotations.NotNull method blowUpHorribly(): java.lang.Void
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method test(p0: int): java.lang.String
-}

@@ -1,7 +1,0 @@
-@kotlin.Metadata
-public final class Kt6176Kt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method foo(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Object
-    public final static @org.jetbrains.annotations.NotNull method some(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: java.lang.Object): java.lang.Object
-    public final static @org.jetbrains.annotations.NotNull method some1(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: java.lang.Object): java.lang.Object
-}

@@ -1,7 +1,0 @@
-@kotlin.Metadata
-public final class CoerceVoidToArrayKt {
-    public final static @org.jetbrains.annotations.Nullable method a(): int[]
-    public final static @org.jetbrains.annotations.NotNull method b(): java.lang.Void
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method foo(): int[]
-}

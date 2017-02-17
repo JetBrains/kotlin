@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class ArrayGetAssignMultiIndexKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method get(@org.jetbrains.annotations.NotNull p0: java.lang.String[], p1: int, p2: int): java.lang.String
-    public final static method set(@org.jetbrains.annotations.NotNull p0: java.lang.String[], p1: int, p2: int, @org.jetbrains.annotations.NotNull p3: java.lang.String): void
-}

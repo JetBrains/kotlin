@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class demo_range/Kt752Kt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method rangeTo(@org.jetbrains.annotations.Nullable p0: java.lang.Integer, @org.jetbrains.annotations.Nullable p1: java.lang.Integer): kotlin.ranges.IntRange
-}

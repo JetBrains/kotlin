@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class ProgressionExpressionKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method sum(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Integer): int
-}

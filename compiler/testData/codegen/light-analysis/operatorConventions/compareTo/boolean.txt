@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class BooleanKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method checkLess(p0: boolean, p1: boolean): java.lang.String
-}

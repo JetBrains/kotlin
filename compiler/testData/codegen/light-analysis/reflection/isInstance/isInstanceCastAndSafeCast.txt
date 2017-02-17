@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class IsInstanceCastAndSafeCastKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method testInstance(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KClass): void
-    public final static method testNotInstance(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KClass): void
-}

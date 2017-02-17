@@ -1,9 +1,0 @@
-@kotlin.Metadata
-public final class Kt715Kt {
-    private final static @org.jetbrains.annotations.NotNull field test2: java.lang.Class
-    private final static @org.jetbrains.annotations.NotNull field test: java.lang.Class
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method getTest(): java.lang.Class
-    public final static @org.jetbrains.annotations.NotNull method getTest2(): java.lang.Class
-    private final static @kotlin.Suppress method javaClass(): java.lang.Class
-}

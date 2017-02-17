@@ -1,9 +1,0 @@
-@kotlin.Metadata
-public final class Foo {
-    public method <init>(): void
-}
-
-@kotlin.Metadata
-public final class StarProjectedTypeKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-}

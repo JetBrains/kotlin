@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class ForInCollectionImplicitReceiverIndicesKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method sumIndices(@org.jetbrains.annotations.NotNull p0: java.util.Collection): int
-}

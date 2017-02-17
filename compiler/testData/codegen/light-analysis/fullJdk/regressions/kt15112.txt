@@ -1,8 +1,0 @@
-@kotlin.Metadata
-public final class Kt15112Kt {
-    private final static field classLoaderLock: java.util.concurrent.locks.ReentrantReadWriteLock
-    private final static @org.jetbrains.annotations.NotNull field compiledClasses: java.util.ArrayList
-    private final static field evalStateLock: java.util.concurrent.locks.ReentrantReadWriteLock
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method getCompiledClasses(): java.util.ArrayList
-}

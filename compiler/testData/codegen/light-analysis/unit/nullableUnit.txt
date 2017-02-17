@@ -1,8 +1,0 @@
-@kotlin.Metadata
-public final class NullableUnitKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method deepIsNull(@org.jetbrains.annotations.Nullable p0: kotlin.Unit): boolean
-    public final static method deepIsNull0(@org.jetbrains.annotations.Nullable p0: kotlin.Unit): boolean
-    public final static method isNull(@org.jetbrains.annotations.Nullable p0: kotlin.Unit): boolean
-    public final static method isNullGeneric(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
-}

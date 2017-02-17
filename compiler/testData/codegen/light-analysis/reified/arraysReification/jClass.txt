@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class JClassKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    private final static method jClass(): java.lang.Class
-    private final static method jClassArray(): java.lang.Class
-}

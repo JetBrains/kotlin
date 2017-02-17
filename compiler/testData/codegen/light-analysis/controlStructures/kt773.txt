@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class demo2/Kt773Kt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method print(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
-    public final static method test(p0: int): void
-}

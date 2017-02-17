@@ -1,8 +1,0 @@
-@kotlin.Metadata
-public final class demo_range/Kt756Kt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static method dec(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): int
-    public final static method inc(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): int
-    public final static method unaryMinus(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): int
-    public final static method unaryPlus(@org.jetbrains.annotations.Nullable p0: java.lang.Integer): int
-}

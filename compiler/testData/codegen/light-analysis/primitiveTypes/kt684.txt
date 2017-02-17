@@ -1,7 +1,0 @@
-@kotlin.Metadata
-public final class Kt684Kt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public synthetic static method escape$default(p0: java.lang.String, p1: int, p2: java.lang.String, p3: int, p4: java.lang.Object): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method escape(@org.jetbrains.annotations.NotNull p0: java.lang.String, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): java.lang.String
-    public final static @org.jetbrains.annotations.Nullable method escapeChar(p0: char): java.lang.String
-}

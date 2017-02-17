@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class InlineTryCatchKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method testIt(): java.lang.String
-    public final static method tryOrElse(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function0): java.lang.Object
-}

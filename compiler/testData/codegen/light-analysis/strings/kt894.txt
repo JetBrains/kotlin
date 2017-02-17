@@ -1,5 +1,0 @@
-@kotlin.Metadata
-public final class Kt894Kt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.Nullable method stringConcat(p0: int): java.lang.String
-}

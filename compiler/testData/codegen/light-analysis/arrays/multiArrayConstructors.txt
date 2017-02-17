@@ -1,6 +1,0 @@
-@kotlin.Metadata
-public final class MultiArrayConstructorsKt {
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method stringMultiArray(): java.lang.String[][]
-    public final static @org.jetbrains.annotations.NotNull method stringNullableMultiArray(): java.lang.String[][]
-}
