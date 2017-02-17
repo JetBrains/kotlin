@@ -1,9 +1,6 @@
 import kotlinx.cinterop.*
 import sockets.*
 
-val AF_INET: Byte = 2
-val SOCK_STREAM = 1
-
 fun main(args: Array<String>) {
     if (args.size == 0) {
         return
@@ -17,12 +14,12 @@ fun main(args: Array<String>) {
         val buffer = allocArray<CInt8Var>(bufferLength)
         val serverAddr = alloc<sockaddr_in>()
 
-        val listenFd = socket(AF_INET.toInt(), SOCK_STREAM, 0)
+        val listenFd = socket(AF_INET, SOCK_STREAM, 0)
                 .ensureUnixCallResult { it >= 0 }
 
         with(serverAddr) {
             memset(this.ptr, 0, sockaddr_in.size)
-            sin_family.value = AF_INET
+            sin_family.value = AF_INET.toByte()
             sin_addr.s_addr.value = htons(0).toInt()
             sin_port.value = htons(port)
         }
