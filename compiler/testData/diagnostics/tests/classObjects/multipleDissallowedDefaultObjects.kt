@@ -1,10 +1,10 @@
 class A {
     inner class I {
-        <!WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> object A
+        companion <!NESTED_OBJECT_NOT_ALLOWED!>object A<!>
 
-        <!MANY_COMPANION_OBJECTS, WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> object B
+        <!MANY_COMPANION_OBJECTS!>companion<!> <!NESTED_OBJECT_NOT_ALLOWED!>object B<!>
 
-        <!MANY_COMPANION_OBJECTS, WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> object C
+        <!MANY_COMPANION_OBJECTS!>companion<!> <!NESTED_OBJECT_NOT_ALLOWED!>object C<!>
     }
 }
 

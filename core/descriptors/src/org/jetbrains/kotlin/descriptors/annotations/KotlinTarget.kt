@@ -44,14 +44,13 @@ enum class KotlinTarget(val description: String, val isDefault: Boolean = true) 
     STAR_PROJECTION("star projection", false),
     PROPERTY_PARAMETER("property constructor parameter", false),
 
-    CLASS_ONLY("class", false),  // includes only top level classes and nested classes (but not enums, objects, interfaces, inner or local classes)
+    CLASS_ONLY("class", false),  // includes only top level classes and nested/inner classes (but not enums, objects, interfaces and local classes)
     OBJECT("object", false),     // does not include OBJECT_LITERAL but DOES include COMPANION_OBJECT
     COMPANION_OBJECT("companion object", false),
     INTERFACE("interface", false),
     ENUM_CLASS("enum class", false),
     ENUM_ENTRY("enum entry", false),
 
-    INNER_CLASS("inner class", false),
     LOCAL_CLASS("local class", false),
 
     LOCAL_FUNCTION("local function", false),
@@ -93,10 +92,8 @@ enum class KotlinTarget(val description: String, val isDefault: Boolean = true) 
         fun classActualTargets(descriptor: ClassDescriptor): List<KotlinTarget> = when (descriptor.kind) {
             ClassKind.ANNOTATION_CLASS -> listOf(ANNOTATION_CLASS, CLASS)
             ClassKind.CLASS ->
-                if (descriptor.isInner) {
-                    listOf(INNER_CLASS, CLASS)
-                }
-                else if (DescriptorUtils.isLocal(descriptor)) {
+                // inner local classes should be CLASS_ONLY, not LOCAL_CLASS
+                if (!descriptor.isInner && DescriptorUtils.isLocal(descriptor)) {
                     listOf(LOCAL_CLASS, CLASS)
                 }
                 else {

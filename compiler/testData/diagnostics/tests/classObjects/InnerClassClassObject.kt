@@ -2,7 +2,7 @@
 
 class A {
     inner class B {
-        <!WRONG_MODIFIER_CONTAINING_DECLARATION!>companion<!> object { }
+        companion <!NESTED_OBJECT_NOT_ALLOWED!>object<!> { }
     }
 }
 

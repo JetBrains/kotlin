@@ -228,7 +228,7 @@ public class ModifiersChecker {
         private void checkObjectInsideInnerClass(@NotNull KtDeclaration modifierListOwner, @NotNull MemberDescriptor descriptor) {
             if (modifierListOwner instanceof KtObjectDeclaration) {
                 KtObjectDeclaration ktObject = (KtObjectDeclaration) modifierListOwner;
-                if (!ktObject.isLocal() && !ktObject.isCompanion() && isIllegalNestedClass(descriptor)) {
+                if (!ktObject.isLocal() && isIllegalNestedClass(descriptor)) {
                     trace.report(NESTED_OBJECT_NOT_ALLOWED.on(ktObject));
                 }
             }
