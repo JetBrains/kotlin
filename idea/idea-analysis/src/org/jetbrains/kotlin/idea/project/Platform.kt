@@ -54,8 +54,12 @@ fun Module.getAndCacheLanguageLevelByDependencies(): LanguageVersion {
     val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getSettings(this)
     if (facetSettings.useProjectSettings) {
         with(KotlinCommonCompilerArgumentsHolder.getInstance(project).settings) {
-            languageVersion = languageLevel.versionString
-            apiVersion = languageLevel.versionString
+            if (languageVersion == null) {
+                languageVersion = languageLevel.versionString
+            }
+            if (apiVersion == null) {
+                apiVersion = languageLevel.versionString
+            }
         }
     }
     else {
