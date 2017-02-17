@@ -371,6 +371,11 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         assertEquals(Collections.EMPTY_SET, contentOfOutputDir(PROJECT_NAME))
     }
 
+    fun testKotlinJavaScriptProjectWithEmptySrcDependency() {
+        initProject(JS_STDLIB)
+        makeAll().assertSuccessful()
+    }
+
     fun testKotlinJavaScriptProjectWithTests() {
         initProject(JS_STDLIB)
         makeAll().assertSuccessful()
