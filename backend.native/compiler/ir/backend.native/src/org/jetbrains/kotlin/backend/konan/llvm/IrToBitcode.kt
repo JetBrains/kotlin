@@ -1028,24 +1028,32 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     }
 
     //-------------------------------------------------------------------------//
-
+    /* FIXME. Fix "when" type in frontend.
+     * For the following code:
+     *  fun foo(x: Int) {
+     *      when (x) {
+     *          0 -> 0
+     *      }
+     *  }
+     *  we cannot determine if the result of when is assigned or not.
+     */
     private fun evaluateWhen(expression: IrWhen): LLVMValueRef {
         context.log("evaluateWhen               : ${ir2string(expression)}")
         var bbExit: LLVMBasicBlockRef? = null             // By default "when" does not have "exit".
         val isUnit                = KotlinBuiltIns.isUnit(expression.type)
         val isNothing             = KotlinBuiltIns.isNothing(expression.type)
-        val hasNoUnconditional    = !isUnconditional(expression.branches.last())
 
-        // If "when" has no unconditional branch we may continue execution even if it has type "Nothing".
-        // So we need an exit block.
-        if (!isNothing || hasNoUnconditional)         // If "when" has "exit".
+        // We may not cover all cases if IrWhen is used as statement.
+        val coverAllCases         = isUnconditional(expression.branches.last())
+
+        // "When" has exit block if:
+        //      its type is not Nothing - we must place phi in the exit block
+        //      or it doesn't cover all cases - we may fall through all of them and must create exit block to continue.
+        if (!isNothing || !coverAllCases)             // If "when" has "exit".
             bbExit = codegen.basicBlock()             // Create basic block to process "exit".
 
-        val hasNoValue = hasNoUnconditional
-        // (It is possible if IrWhen is used as statement).
-
         val llvmType = codegen.getLLVMType(expression.type)
-        val resultPhi = if (isUnit || isNothing || hasNoValue) null else
+        val resultPhi = if (isUnit || isNothing || !coverAllCases) null else
             codegen.appendingTo(bbExit!!) {
                 codegen.phi(llvmType)
             }
@@ -1061,7 +1069,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             // FIXME: remove the hacks.
             isUnit -> codegen.theUnitInstanceRef.llvm
             isNothing -> codegen.kNothingFakeValue
-            hasNoValue -> LLVMGetUndef(llvmType)!!
+            !coverAllCases -> LLVMGetUndef(llvmType)!!
             else -> resultPhi!!
         }
     }
