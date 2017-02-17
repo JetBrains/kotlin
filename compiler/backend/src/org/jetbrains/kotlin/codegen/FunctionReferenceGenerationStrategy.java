@@ -37,6 +37,8 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.*;
 
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
+
 public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrategy.CodegenBased {
     private final ResolvedCall<?> resolvedCall;
     private final FunctionDescriptor referencedFunction;
@@ -145,6 +147,12 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
         int receivers = (referencedFunction.getDispatchReceiverParameter() != null ? 1 : 0) +
                         (referencedFunction.getExtensionReceiverParameter() != null ? 1 : 0) -
                         (receiverType != null ? 1 : 0);
+
+        if (receivers < 0 &&  referencedFunction instanceof ConstructorDescriptor && isObject(referencedFunction.getContainingDeclaration().getContainingDeclaration())) {
+            //reference to object nested class
+            //TODO: seems problem should be fixed on frontend side (note that object instance are captured by generated class)
+            receivers = 0;
+        }
 
         List<ValueParameterDescriptor> parameters = CollectionsKt.drop(functionDescriptor.getValueParameters(), receivers);
         for (int i = 0; i < parameters.size(); i++) {
