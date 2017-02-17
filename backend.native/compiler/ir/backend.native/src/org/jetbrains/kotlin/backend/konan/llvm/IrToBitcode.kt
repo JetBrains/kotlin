@@ -1034,11 +1034,14 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         var bbExit: LLVMBasicBlockRef? = null             // By default "when" does not have "exit".
         val isUnit                = KotlinBuiltIns.isUnit(expression.type)
         val isNothing             = KotlinBuiltIns.isNothing(expression.type)
+        val hasNoUnconditional    = !isUnconditional(expression.branches.last())
 
-        if (!isNothing)                                     // If "when" has "exit".
-            bbExit = codegen.basicBlock()                   // Create basic block to process "exit".
+        // If "when" has no unconditional branch we may continue execution even if it has type "Nothing".
+        // So we need an exit block.
+        if (!isNothing || hasNoUnconditional)         // If "when" has "exit".
+            bbExit = codegen.basicBlock()             // Create basic block to process "exit".
 
-        val hasNoValue = !isUnconditional(expression.branches.last())
+        val hasNoValue = hasNoUnconditional
         // (It is possible if IrWhen is used as statement).
 
         val llvmType = codegen.getLLVMType(expression.type)
