@@ -58,7 +58,7 @@ class ValueParameterResolver(
             context: ExpressionTypingContext
     ) {
         if (!valueParameterDescriptor.declaresDefaultValue()) return
-        val defaultValue = jetParameter.getDefaultValue() ?: return
+        val defaultValue = jetParameter.defaultValue ?: return
         expressionTypingServices.getTypeInfo(defaultValue, context.replaceExpectedType(valueParameterDescriptor.type))
         if (DescriptorUtils.isAnnotationClass(DescriptorResolver.getContainingClass(context.scope))) {
             val constant = constantExpressionEvaluator.evaluateExpression(defaultValue, context.trace, valueParameterDescriptor.type)

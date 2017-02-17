@@ -121,7 +121,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
         classOrObject.containingFile.virtualFile ?: error("No virtual file for " + classOrObject.text)
 
         object : FakeFileForLightClass(
-                classOrObject.getContainingKtFile(),
+                classOrObject.containingKtFile,
                 { if (classOrObject.isTopLevel()) this else create(getOutermostClassOrObject(classOrObject))!! },
                 { getJavaFileStub() }
         ) {
@@ -352,7 +352,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
 
         fun create(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
-            if (classOrObject.getContainingKtFile().isScript || classOrObject.hasModifier(KtTokens.HEADER_KEYWORD))  {
+            if (classOrObject.containingKtFile.isScript || classOrObject.hasModifier(KtTokens.HEADER_KEYWORD))  {
                 return null
             }
 
@@ -366,7 +366,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
                 return null
             }
 
-            if (classOrObject.isLocal()) {
+            if (classOrObject.isLocal) {
                 if (classOrObject.containingFile.virtualFile == null) return null
 
                 return KtLightClassForLocalDeclaration(classOrObject)

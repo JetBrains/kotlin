@@ -102,7 +102,7 @@ fun KtSimpleNameExpression.getReceiverExpression(): KtExpression? {
         parent is KtCallExpression -> {
             //This is in case `a().b()`
             val callExpression = parent
-            val grandParent = callExpression.getParent()
+            val grandParent = callExpression.parent
             if (grandParent is KtQualifiedExpression) {
                 val parentsReceiver = grandParent.receiverExpression
                 if (parentsReceiver != callExpression) {
@@ -226,7 +226,7 @@ fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObject>>.ge
         return stub.getSuperNames()
     }
 
-    val specifiers = (this as KtClassOrObject).getSuperTypeListEntries()
+    val specifiers = (this as KtClassOrObject).superTypeListEntries
     if (specifiers.isEmpty()) return Collections.emptyList<String>()
 
     val result = ArrayList<String>()
@@ -488,7 +488,7 @@ fun KtElement.containingClass(): KtClass? = getStrictParentOfType()
 
 fun KtClassOrObject.findPropertyByName(name: String): KtNamedDeclaration? {
     return declarations.firstOrNull { it is KtProperty && it.name == name } as KtNamedDeclaration?
-           ?: getPrimaryConstructorParameters().firstOrNull { it.hasValOrVar() && it.name == name }
+           ?: primaryConstructorParameters.firstOrNull { it.hasValOrVar() && it.name == name }
 }
 
 fun isTypeConstructorReference(e: PsiElement): Boolean {

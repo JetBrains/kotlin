@@ -116,5 +116,5 @@ class KotlinStructureViewElement(val element: NavigatablePsiElement,
         get() = (descriptor as? DeclarationDescriptorWithVisibility)?.visibility == Visibilities.PUBLIC
 }
 
-fun KtClassOrObject.getStructureDeclarations() = getPrimaryConstructorParameters().filter { it.hasValOrVar() } + declarations
+fun KtClassOrObject.getStructureDeclarations() = primaryConstructorParameters.filter { it.hasValOrVar() } + declarations
 

@@ -145,7 +145,7 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
 
         if (original is ConstructorDescriptor && original.isPrimary) {
             val classOrObject = getDeclarationForDescriptor(original.containingDeclaration, file) as? KtClassOrObject
-            return classOrObject?.getPrimaryConstructor() ?: classOrObject
+            return classOrObject?.primaryConstructor ?: classOrObject
         }
 
         val descriptorKey = original.toStringKey()

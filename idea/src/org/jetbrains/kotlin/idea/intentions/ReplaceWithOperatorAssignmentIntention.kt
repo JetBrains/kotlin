@@ -46,7 +46,7 @@ class ReplaceWithOperatorAssignmentIntention : SelfTargetingOffsetIndependentInt
 
         // now check that the resulting operator assignment will be resolved
         val opAssign = buildOperatorAssignment(element)
-        opAssign.getContainingKtFile().doNotAnalyze = null //TODO: strange hack
+        opAssign.containingKtFile.doNotAnalyze = null //TODO: strange hack
         val newBindingContext = opAssign.analyzeAsReplacement(element, bindingContext)
         return newBindingContext.diagnostics.forElement(opAssign.operationReference).isEmpty()
     }

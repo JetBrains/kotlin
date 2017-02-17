@@ -36,7 +36,7 @@ class RemoveEmptyPrimaryConstructorIntention : SelfTargetingOffsetIndependentInt
         element.valueParameters.isNotEmpty() -> false
         element.annotations.isNotEmpty() -> false
         element.modifierList?.text?.isBlank() == false -> false
-        element.containingClass()?.getSecondaryConstructors()?.isNotEmpty() == true -> false
+        element.containingClass()?.secondaryConstructors?.isNotEmpty() == true -> false
         else -> true
     }
 }

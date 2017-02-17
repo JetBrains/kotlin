@@ -57,7 +57,7 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(K
         } ?: return
 
         val inconvertibleSubclasses = subclasses.filter {
-            it !is KtObjectDeclaration || it.containingClassOrObject != element || it.getSuperTypeListEntries().size != 1
+            it !is KtObjectDeclaration || it.containingClassOrObject != element || it.superTypeListEntries.size != 1
         }
         if (inconvertibleSubclasses.isNotEmpty()) {
             val message = buildString {
@@ -75,14 +75,14 @@ class ConvertSealedClassToEnumIntention : SelfTargetingRangeIntention<KtClass>(K
         val comma = psiFactory.createComma()
         val semicolon = psiFactory.createSemicolon()
 
-        val constructorCallNeeded = element.hasExplicitPrimaryConstructor() || element.getSecondaryConstructors().isNotEmpty()
+        val constructorCallNeeded = element.hasExplicitPrimaryConstructor() || element.secondaryConstructors.isNotEmpty()
         val entriesToAdd = subclasses.mapIndexed { i, subclass ->
             subclass as KtObjectDeclaration
 
             val entryText = buildString {
                 append(subclass.name)
                 if (constructorCallNeeded) {
-                    append((subclass.getSuperTypeListEntries().firstOrNull() as? KtSuperTypeCallEntry)?.valueArgumentList?.text ?: "()")
+                    append((subclass.superTypeListEntries.firstOrNull() as? KtSuperTypeCallEntry)?.valueArgumentList?.text ?: "()")
                 }
             }
             val entry = psiFactory.createEnumEntry(entryText)

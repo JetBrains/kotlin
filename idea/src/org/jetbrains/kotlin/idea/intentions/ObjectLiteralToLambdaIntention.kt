@@ -146,7 +146,7 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
         }
         else {
             val endOffset = (callee.parent as? KtCallExpression)?.typeArgumentList?.endOffset ?: callee.endOffset
-            ShortenReferences.DEFAULT.process(replaced.getContainingKtFile(), replaced.startOffset, endOffset)
+            ShortenReferences.DEFAULT.process(replaced.containingKtFile, replaced.startOffset, endOffset)
         }
     }
 
@@ -162,7 +162,7 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
         val singleFunction = objectDeclaration.declarations.singleOrNull() as? KtNamedFunction ?: return null
         if (!singleFunction.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return null
 
-        val delegationSpecifier = objectDeclaration.getSuperTypeListEntries().singleOrNull() ?: return null
+        val delegationSpecifier = objectDeclaration.superTypeListEntries.singleOrNull() ?: return null
         val typeRef = delegationSpecifier.typeReference ?: return null
         val bindingContext = typeRef.analyze(BodyResolveMode.PARTIAL)
         val baseType = bindingContext[BindingContext.TYPE, typeRef] ?: return null

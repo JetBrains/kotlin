@@ -45,19 +45,19 @@ interface IndexedImports {
 }
 
 class AllUnderImportsIndexed(allImports: Collection<KtImportDirective>) : IndexedImports {
-    override val imports = allImports.filter { it.isAllUnder() }
+    override val imports = allImports.filter { it.isAllUnder }
     override fun importsForName(name: Name) = imports
 }
 
 class ExplicitImportsIndexed(allImports: Collection<KtImportDirective>) : IndexedImports {
-    override val imports = allImports.filter { !it.isAllUnder() }
+    override val imports = allImports.filter { !it.isAllUnder }
 
     private val nameToDirectives: ListMultimap<Name, KtImportDirective> by lazy {
         val builder = ImmutableListMultimap.builder<Name, KtImportDirective>()
 
         for (directive in imports) {
-            val path = directive.getImportPath() ?: continue // parse error
-            val importedName = path.getImportedName() ?: continue // parse error
+            val path = directive.importPath ?: continue // parse error
+            val importedName = path.importedName ?: continue // parse error
             builder.put(importedName, directive)
         }
 
@@ -241,8 +241,8 @@ class LazyImportScope(
         return importResolver.storageManager.compute {
             val descriptors = LinkedHashSet<DeclarationDescriptor>()
             for (directive in importResolver.indexedImports.imports) {
-                val importPath = directive.getImportPath() ?: continue
-                val importedName = importPath.getImportedName()
+                val importPath = directive.importPath ?: continue
+                val importedName = importPath.importedName
                 if (importedName == null || nameFilter(importedName)) {
                     descriptors.addAll(importResolver.getImportScope(directive).getContributedDescriptors(kindFilter, nameFilter))
                 }

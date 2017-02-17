@@ -182,7 +182,7 @@ class QualifiedExpressionResolver {
                 when {
                     importDirective.suppressDiagnosticsInDebugMode() -> null
                     packageFragmentForVisibilityCheck is DeclarationDescriptorWithSource && packageFragmentForVisibilityCheck.source == SourceElement.NO_SOURCE -> {
-                        PackageFragmentWithCustomSource(packageFragmentForVisibilityCheck, KotlinSourceElement(importDirective.getContainingKtFile()))
+                        PackageFragmentWithCustomSource(packageFragmentForVisibilityCheck, KotlinSourceElement(importDirective.containingKtFile))
                     }
                     else -> packageFragmentForVisibilityCheck
                 }
@@ -601,7 +601,7 @@ class QualifiedExpressionResolver {
         if (descriptor is DeclarationDescriptorWithVisibility) {
             val fromToCheck =
                     if (shouldBeVisibleFrom is PackageFragmentDescriptor && shouldBeVisibleFrom.source == SourceElement.NO_SOURCE && referenceExpression.containingFile !is DummyHolder) {
-                        PackageFragmentWithCustomSource(shouldBeVisibleFrom, KotlinSourceElement(referenceExpression.getContainingKtFile()))
+                        PackageFragmentWithCustomSource(shouldBeVisibleFrom, KotlinSourceElement(referenceExpression.containingKtFile))
                     }
                     else {
                         shouldBeVisibleFrom

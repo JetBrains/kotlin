@@ -68,13 +68,13 @@ fun main(args: Array<String>) {
         try {
             for (entry in inJar.entries()) {
                 val inBytes = inJar.getInputStream(entry).readBytes()
-                val outBytes = transform(entry.getName(), inBytes)
+                val outBytes = transform(entry.name, inBytes)
 
                 if (inBytes.size < outBytes.size) {
-                    error("Size increased for ${entry.getName()}: was ${inBytes.size} bytes, became ${outBytes.size} bytes")
+                    error("Size increased for ${entry.name}: was ${inBytes.size} bytes, became ${outBytes.size} bytes")
                 }
 
-                entry.setCompressedSize(-1L)
+                entry.compressedSize = -1L
                 outJar.putNextEntry(entry)
                 outJar.write(outBytes)
                 outJar.closeEntry()

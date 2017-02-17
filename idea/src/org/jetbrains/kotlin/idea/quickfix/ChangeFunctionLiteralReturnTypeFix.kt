@@ -49,7 +49,7 @@ class ChangeFunctionLiteralReturnTypeFix(
     private val appropriateQuickFix = createAppropriateQuickFix(functionLiteralExpression, type)
 
     private fun createAppropriateQuickFix(functionLiteralExpression: KtLambdaExpression, type: KotlinType): IntentionAction? {
-        val analysisResult = functionLiteralExpression.getContainingKtFile().analyzeFullyAndGetResult()
+        val analysisResult = functionLiteralExpression.containingKtFile.analyzeFullyAndGetResult()
         val context = analysisResult.bindingContext
         val functionLiteralType = context.getType(functionLiteralExpression) ?: error("Type of function literal not available in binding context")
 

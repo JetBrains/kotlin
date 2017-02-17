@@ -163,7 +163,7 @@ class KotlinChangeSignatureDialog(
     override fun getTableEditor(table: JTable, item: ParameterTableModelItemBase<KotlinParameterInfo>): JBTableRowEditor? {
         return object : JBTableRowEditor() {
             private val components = ArrayList<JComponent>()
-            private val nameEditor = EditorTextField(item.parameter.name, getProject(), getFileType())
+            private val nameEditor = EditorTextField(item.parameter.name, project, fileType)
 
             private fun updateNameEditor() {
                 nameEditor.isEnabled = item.parameter != parametersTableModel.receiver
@@ -183,8 +183,8 @@ class KotlinChangeSignatureDialog(
                     val columnFinal = column
 
                     if (KotlinCallableParameterTableModel.isTypeColumn(columnInfo)) {
-                        val document = PsiDocumentManager.getInstance(getProject()).getDocument(item.typeCodeFragment)
-                        editor = EditorTextField(document, getProject(), getFileType())
+                        val document = PsiDocumentManager.getInstance(project).getDocument(item.typeCodeFragment)
+                        editor = EditorTextField(document, project, fileType)
                         component = editor
                     }
                     else if (KotlinCallableParameterTableModel.isNameColumn(columnInfo)) {
@@ -193,8 +193,8 @@ class KotlinChangeSignatureDialog(
                         updateNameEditor()
                     }
                     else if (KotlinCallableParameterTableModel.isDefaultValueColumn(columnInfo) && isDefaultColumnEnabled()) {
-                        val document = PsiDocumentManager.getInstance(getProject()).getDocument(item.defaultValueCodeFragment)
-                        editor = EditorTextField(document, getProject(), getFileType())
+                        val document = PsiDocumentManager.getInstance(project).getDocument(item.defaultValueCodeFragment)
+                        editor = EditorTextField(document, project, fileType)
                         component = editor
                     }
                     else if (KotlinPrimaryConstructorParameterTableModel.isValVarColumn(columnInfo)) {

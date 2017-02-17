@@ -37,7 +37,7 @@ fun KtFunctionLiteral.findLabelAndCall(): Pair<Name?, KtCallExpression?> {
 
     when (literalParent) {
         is KtLabeledExpression -> {
-            val callExpression = (literalParent.getParent() as? KtValueArgument)?.callExpression()
+            val callExpression = (literalParent.parent as? KtValueArgument)?.callExpression()
             return Pair(literalParent.getLabelNameAsName(), callExpression)
         }
 

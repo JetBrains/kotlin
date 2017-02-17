@@ -121,7 +121,7 @@ fun List<TypeCandidate>.getTypeByRenderedType(renderedType: String): KotlinType?
 class CallableBuilderConfiguration(
         val callableInfos: List<CallableInfo>,
         val originalElement: KtElement,
-        val currentFile: KtFile = originalElement.getContainingKtFile(),
+        val currentFile: KtFile = originalElement.containingKtFile,
         val currentEditor: Editor? = null,
         val isExtension: Boolean = false,
         val enableSubstitutions: Boolean = true
@@ -256,7 +256,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             }
 
             if (containingElement is KtElement) {
-                jetFileToEdit = containingElement.getContainingKtFile()
+                jetFileToEdit = containingElement.containingKtFile
                 if (jetFileToEdit != config.currentFile) {
                     containingFileEditor = FileEditorManager.getInstance(project).selectedTextEditor!!
                 }
@@ -482,7 +482,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                             when (kind) {
                                 ClassKind.ENUM_ENTRY -> {
                                     if (!(targetParent is KtClass && targetParent.isEnum())) throw AssertionError("Enum class expected: ${targetParent.text}")
-                                    val hasParameters = targetParent.getPrimaryConstructorParameters().isNotEmpty()
+                                    val hasParameters = targetParent.primaryConstructorParameters.isNotEmpty()
                                     psiFactory.createEnumEntry("$safeName${if (hasParameters) "()" else " "}")
                                 }
                                 else -> {
@@ -524,7 +524,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
                 if (declarationInPlace is KtSecondaryConstructor) {
                     val containingClass = declarationInPlace.containingClassOrObject!!
-                    if (containingClass.getPrimaryConstructorParameters().isNotEmpty()) {
+                    if (containingClass.primaryConstructorParameters.isNotEmpty()) {
                         declarationInPlace.replaceImplicitDelegationCallWithExplicit(true)
                     }
                     else if ((receiverClassDescriptor as ClassDescriptor).getSuperClassOrAny().constructors.all { it.valueParameters.isNotEmpty() }) {
@@ -647,7 +647,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     expression = TypeExpression.ForTypeReference(candidates)
                 }
                 is KtClassOrObject -> {
-                    elementToReplace = declaration.getSuperTypeListEntries().firstOrNull()
+                    elementToReplace = declaration.superTypeListEntries.firstOrNull()
                     expression = TypeExpression.ForDelegationSpecifier(candidates)
                 }
                 else -> throw AssertionError("Unexpected declaration kind: ${declaration.text}")
@@ -1066,7 +1066,7 @@ internal fun <D : KtNamedDeclaration> placeDeclarationInContainer(
 internal fun KtNamedDeclaration.getReturnTypeReference(): KtTypeReference? {
     return when (this) {
         is KtCallableDeclaration -> typeReference
-        is KtClassOrObject -> getSuperTypeListEntries().firstOrNull()?.typeReference
+        is KtClassOrObject -> superTypeListEntries.firstOrNull()?.typeReference
         else -> throw AssertionError("Unexpected declaration kind: $text")
     }
 }

@@ -35,7 +35,7 @@ class ArrayInDataClassInspection : AbstractKotlinInspection() {
         return object : KtVisitorVoid() {
             override fun visitClass(klass: KtClass) {
                 if (!klass.isData()) return
-                val constructor = klass.getPrimaryConstructor() ?: return
+                val constructor = klass.primaryConstructor ?: return
                 if (hasOverriddenEqualsAndHashCode(klass)) return
                 val context = constructor.analyze(BodyResolveMode.PARTIAL)
                 for (parameter in constructor.valueParameters) {

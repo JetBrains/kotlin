@@ -55,7 +55,7 @@ fun KtNamedDeclaration.getDeclarationBody(): KtElement? {
 }
 
 fun PsiElement.isCaller(allUsages: Array<out UsageInfo>): Boolean {
-    val primaryConstructor = (this as? KtClass)?.getPrimaryConstructor()
+    val primaryConstructor = (this as? KtClass)?.primaryConstructor
     val elementsToSearch = if (primaryConstructor != null) listOf(primaryConstructor, this) else listOf(this)
     return allUsages
             .asSequence()

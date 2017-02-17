@@ -84,7 +84,7 @@ fun getFunctionForExtractedFragment(
 
         val newDebugExpressions = addDebugExpressionIntoTmpFileForExtractFunction(originalFile, codeFragment, breakpointLine)
         if (newDebugExpressions.isEmpty()) return null
-        val tmpFile = newDebugExpressions.first().getContainingKtFile()
+        val tmpFile = newDebugExpressions.first().containingKtFile
 
         if (LOG.isDebugEnabled) {
             LOG.debug("TMP_FILE:\n${runReadAction { tmpFile.text }}")

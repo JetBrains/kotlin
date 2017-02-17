@@ -66,7 +66,7 @@ class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
 
         val classOrObject = getClassOrObject(element) as? KtClassOrObject ?: return
 
-        val file = classOrObject.getContainingKtFile()
+        val file = classOrObject.containingKtFile
 
         val virtualFile = file.virtualFile
         if (virtualFile != null) {

@@ -472,7 +472,7 @@ class KotlinIndicesHelper(
 
     private fun KtNamedDeclaration.resolveToDescriptorsWithHack(
             psiFilter: (KtDeclaration) -> Boolean): Collection<DeclarationDescriptor> {
-        if (getContainingKtFile().isCompiled) { //TODO: it's temporary while resolveToDescriptor does not work for compiled declarations
+        if (containingKtFile.isCompiled) { //TODO: it's temporary while resolveToDescriptor does not work for compiled declarations
             return resolutionFacade.resolveImportReference(moduleDescriptor, fqName!!).filterIsInstance<DeclarationDescriptor>()
         }
         else {

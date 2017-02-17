@@ -603,7 +603,7 @@ class ExpressionsOfTypeProcessor(
         runReadAction {
             if (!scope.isValid) return@runReadAction
 
-            val file = scope.getContainingKtFile()
+            val file = scope.containingKtFile
             val restricted = LocalSearchScope(scope).intersectWith(searchScope)
             if (restricted is LocalSearchScope) {
                 ScopeLoop@

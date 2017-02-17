@@ -70,7 +70,7 @@ fun PsiElement.toLightMethods(): List<PsiMethod> =
             is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
             is KtParameter -> LightClassUtil.getLightClassPropertyMethods(this).toList()
             is KtPropertyAccessor -> LightClassUtil.getLightClassAccessorMethods(this)
-            is KtClass -> toLightClass()?.getConstructors()?.firstOrNull().singletonOrEmptyList()
+            is KtClass -> toLightClass()?.constructors?.firstOrNull().singletonOrEmptyList()
             is PsiMethod -> this.singletonList()
             else -> listOf()
         }
@@ -88,8 +88,8 @@ fun PsiElement.getRepresentativeLightMethod(): PsiMethod? =
 fun KtParameter.toPsiParameters(): Collection<PsiParameter> {
     val paramList = getNonStrictParentOfType<KtParameterList>() ?: return emptyList()
 
-    val paramIndex = paramList.getParameters().indexOf(this)
-    val owner = paramList.getParent()
+    val paramIndex = paramList.parameters.indexOf(this)
+    val owner = paramList.parent
     val lightParamIndex = if (owner is KtDeclaration && owner.isExtensionDeclaration()) paramIndex + 1 else paramIndex
 
     val methods: Collection<PsiMethod> =

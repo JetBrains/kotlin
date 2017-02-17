@@ -177,8 +177,8 @@ val AbstractInsnNode.intConstant: Int? get() =
 
 fun insnListOf(vararg insns: AbstractInsnNode) = InsnList().apply { insns.forEach { add(it) } }
 
-fun AbstractInsnNode.isStoreOperation(): Boolean = getOpcode() in Opcodes.ISTORE..Opcodes.ASTORE
-fun AbstractInsnNode.isLoadOperation(): Boolean = getOpcode() in Opcodes.ILOAD..Opcodes.ALOAD
+fun AbstractInsnNode.isStoreOperation(): Boolean = opcode in Opcodes.ISTORE..Opcodes.ASTORE
+fun AbstractInsnNode.isLoadOperation(): Boolean = opcode in Opcodes.ILOAD..Opcodes.ALOAD
 
 val AbstractInsnNode?.insnText get() = InlineCodegenUtil.getInsnText(this)
 val AbstractInsnNode?.debugText get() =

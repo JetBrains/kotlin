@@ -55,7 +55,7 @@ internal val LOG = Logger.getInstance(KotlinCacheService::class.java)
 
 class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     override fun getResolutionFacade(elements: List<KtElement>): ResolutionFacade {
-        return getFacadeToAnalyzeFiles(elements.map { it.getContainingKtFile() })
+        return getFacadeToAnalyzeFiles(elements.map { it.containingKtFile })
     }
 
     override fun getSuppressionCache(): KotlinSuppressCache = kotlinSuppressCache.value
@@ -350,7 +350,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
 
     private fun KtCodeFragment.getContextFile(): KtFile? {
         val contextElement = context ?: return null
-        val contextFile = (contextElement as? KtElement)?.getContainingKtFile()
+        val contextFile = (contextElement as? KtElement)?.containingKtFile
                           ?: throw AssertionError("Analyzing kotlin code fragment of type $javaClass with java context of type ${contextElement.javaClass}")
         return if (contextFile is KtCodeFragment) contextFile.getContextFile() else contextFile
     }

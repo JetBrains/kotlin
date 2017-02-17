@@ -195,7 +195,7 @@ class DeprecatedCallableAddReplaceWithIntention : SelfTargetingRangeIntention<Kt
     }
 
     private fun extractImports(expression: KtExpression): Collection<String> {
-        val file = expression.getContainingKtFile()
+        val file = expression.containingKtFile
         val currentPackageFqName = file.packageFqName
         val importHelper = ImportInsertHelper.getInstance(expression.project)
 

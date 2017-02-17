@@ -55,9 +55,9 @@ class CreateKotlinSubClassIntention : SelfTargetingRangeIntention<KtClass>(KtCla
         if (!baseClass.isInterface() && !baseClass.isSealed() && !baseClass.isAbstract() && !baseClass.hasModifier(KtTokens.OPEN_KEYWORD)) {
             return null
         }
-        val primaryConstructor = baseClass.getPrimaryConstructor()
+        val primaryConstructor = baseClass.primaryConstructor
         if (!baseClass.isInterface() && primaryConstructor != null) {
-            val constructors = baseClass.getSecondaryConstructors() + primaryConstructor
+            val constructors = baseClass.secondaryConstructors + primaryConstructor
             if (constructors.none() {
                 !it.isPrivate() &&
                 it.getValueParameters().all { it.hasDefaultValue() }

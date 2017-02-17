@@ -183,7 +183,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
 
             val name = if (function.name.asString() == "equals" &&
                            jValueParameters.size == 1 &&
-                           c.module.builtIns.getNullableAnyType() == outType) {
+                           c.module.builtIns.nullableAnyType == outType) {
                 // This is a hack to prevent numerous warnings on Kotlin classes that inherit Java classes: if you override "equals" in such
                 // class without this hack, you'll be warned that in the superclass the name is "p0" (regardless of the fact that it's
                 // "other" in Any)
@@ -258,7 +258,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
 
         propertyDescriptor.setType(propertyType, listOf(), getDispatchReceiverParameter(), null as KotlinType?)
 
-        if (DescriptorUtils.shouldRecordInitializerForProperty(propertyDescriptor, propertyDescriptor.getType())) {
+        if (DescriptorUtils.shouldRecordInitializerForProperty(propertyDescriptor, propertyDescriptor.type)) {
             propertyDescriptor.setCompileTimeInitializer(
                     c.storageManager.createNullableLazyValue {
                         c.components.javaPropertyInitializerEvaluator.getInitializerConstant(field, propertyDescriptor)

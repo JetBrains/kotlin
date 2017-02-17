@@ -60,7 +60,7 @@ class LazyScriptDescriptor(
 
     val scriptDefinition: KotlinScriptDefinition
             by lazy {
-                val file = scriptInfo.script.getContainingKtFile()
+                val file = scriptInfo.script.containingKtFile
                 getScriptDefinition(file) ?: throw RuntimeException("file ${file.name} is not a script")
             }
 

@@ -403,7 +403,7 @@ class ExpressionCodegen(
                     val spreadBuilderClassName = AsmUtil.asmPrimitiveTypeToLangPrimitiveType(elementType)!!.typeName.identifier + "SpreadBuilder"
                     owner = "kotlin/jvm/internal/" + spreadBuilderClassName
                     addDescriptor = "(" + elementType.descriptor + ")V"
-                    toArrayDescriptor = "()" + type.getDescriptor()
+                    toArrayDescriptor = "()" + type.descriptor
                 }
                 mv.anew(Type.getObjectType(owner))
                 mv.dup()

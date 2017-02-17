@@ -283,7 +283,7 @@ fun breakOrContinueExpressionItems(position: KtElement, breakOrContinue: String)
                     result.add(createKeywordElement(breakOrContinue))
                 }
 
-                val label = (parent.getParent() as? KtLabeledExpression)?.getLabelNameAsName()
+                val label = (parent.parent as? KtLabeledExpression)?.getLabelNameAsName()
                 if (label != null) {
                     result.add(createKeywordElement(breakOrContinue, tail = label.labelNameToTail()))
                 }

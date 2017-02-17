@@ -74,7 +74,7 @@ internal fun PsiElement.representativeContainer(): PsiNamedElement? =
         when (this) {
             is KtDeclaration -> containingClassOrObject
                                 ?: getStrictParentOfType<KtNamedDeclaration>()
-                                ?: JavaPsiFacade.getInstance(project).findPackage(getContainingKtFile().packageFqName.asString())
+                                ?: JavaPsiFacade.getInstance(project).findPackage(containingKtFile.packageFqName.asString())
             is PsiMember -> containingClass
             else -> null
         }

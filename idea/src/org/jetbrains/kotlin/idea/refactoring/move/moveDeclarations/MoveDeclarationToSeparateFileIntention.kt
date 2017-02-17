@@ -45,7 +45,7 @@ class MoveDeclarationToSeparateFileIntention :
         if (element.name == null) return null
         if (element.parent !is KtFile) return null
         if (element.hasModifier(KtTokens.PRIVATE_KEYWORD)) return null
-        if (element.getContainingKtFile().declarations.size == 1) return null
+        if (element.containingKtFile.declarations.size == 1) return null
 
         val keyword = when (element) {
             is KtClass -> element.getClassOrInterfaceKeyword()
@@ -64,7 +64,7 @@ class MoveDeclarationToSeparateFileIntention :
 
     override fun applyTo(element: KtClassOrObject, editor: Editor?) {
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
-        val file = element.getContainingKtFile()
+        val file = element.containingKtFile
         val project = file.project
         val originalOffset = editor.caretModel.offset - element.startOffset
         val directory = file.containingDirectory ?: return

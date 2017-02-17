@@ -152,7 +152,7 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
                 if (superParameters.any { it.type.isError }) return null
 
                 val argumentText = StringBuilder()
-                val oldParameters = classDeclaration.getPrimaryConstructorParameters()
+                val oldParameters = classDeclaration.primaryConstructorParameters
                 val parametersToAdd = ArrayList<KtParameter>()
                 for (parameter in superParameters) {
                     val nameRendered = parameter.name.render()

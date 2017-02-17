@@ -175,7 +175,7 @@ class KotlinPullUpHelper(
             }
         }
         commonInitializer?.accept(visitor)
-        if (targetConstructor == (data.targetClass as? KtClass)?.getPrimaryConstructor() ?: data.targetClass) {
+        if (targetConstructor == (data.targetClass as? KtClass)?.primaryConstructor ?: data.targetClass) {
             property.initializer?.accept(visitor)
         }
 
@@ -193,7 +193,7 @@ class KotlinPullUpHelper(
 
     private val targetToSourceConstructors = LinkedHashMap<KtElement, MutableList<KtElement>>().let { result ->
         if (!data.isInterfaceTarget && data.targetClass is KtClass) {
-            result[data.targetClass.getPrimaryConstructor() ?: data.targetClass] = ArrayList<KtElement>()
+            result[data.targetClass.primaryConstructor ?: data.targetClass] = ArrayList<KtElement>()
             data.sourceClass.accept(
                     object : KtTreeVisitorVoid() {
                         private fun processConstructorReference(expression: KtReferenceExpression, callingConstructorElement: KtElement) {
@@ -208,7 +208,7 @@ class KotlinPullUpHelper(
                         override fun visitSuperTypeCallEntry(specifier: KtSuperTypeCallEntry) {
                             val constructorRef = specifier.calleeExpression.constructorReferenceExpression ?: return
                             val containingClass = specifier.getStrictParentOfType<KtClassOrObject>() ?: return
-                            val callingConstructorElement = containingClass.getPrimaryConstructor() ?: containingClass
+                            val callingConstructorElement = containingClass.primaryConstructor ?: containingClass
                             processConstructorReference(constructorRef, callingConstructorElement)
                         }
 
@@ -570,7 +570,7 @@ class KotlinPullUpHelper(
         }
 
         fun KtClassOrObject.getDelegatorToSuperCall(): KtSuperTypeCallEntry? {
-            return getSuperTypeListEntries().singleOrNull { it is KtSuperTypeCallEntry } as? KtSuperTypeCallEntry
+            return superTypeListEntries.singleOrNull { it is KtSuperTypeCallEntry } as? KtSuperTypeCallEntry
         }
 
         fun addUsedParameters(constructorElement: KtElement, info: InitializerInfo) {

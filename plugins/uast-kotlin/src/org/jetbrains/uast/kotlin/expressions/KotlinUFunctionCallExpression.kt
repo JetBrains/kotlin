@@ -40,8 +40,8 @@ class KotlinUFunctionCallExpression(
     companion object {
         fun resolveSource(descriptor: DeclarationDescriptor, source: PsiElement?): PsiMethod? {
             if (descriptor is ConstructorDescriptor && descriptor.isPrimary
-                    && source is KtClassOrObject && source.getPrimaryConstructor() == null
-                    && source.getSecondaryConstructors().isEmpty()) {
+                    && source is KtClassOrObject && source.primaryConstructor == null
+                    && source.secondaryConstructors.isEmpty()) {
                 return source.toLightClass()?.constructors?.firstOrNull()
             }
 

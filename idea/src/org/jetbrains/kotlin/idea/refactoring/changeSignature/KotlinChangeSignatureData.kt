@@ -50,7 +50,7 @@ class KotlinChangeSignatureData(
 
         val valueParameters = when (baseDeclaration) {
             is KtFunction -> baseDeclaration.valueParameters
-            is KtClass -> baseDeclaration.getPrimaryConstructorParameters()
+            is KtClass -> baseDeclaration.primaryConstructorParameters
             else -> null
         }
         parameters = baseDescriptor.valueParameters

@@ -102,7 +102,7 @@ class LazyTopDownAnalyzer(
                 }
 
                 override fun visitImportDirective(importDirective: KtImportDirective) {
-                    val importResolver = fileScopeProvider.getImportResolver(importDirective.getContainingKtFile())
+                    val importResolver = fileScopeProvider.getImportResolver(importDirective.containingKtFile)
                     importResolver.forceResolveImport(importDirective)
                 }
 
@@ -143,7 +143,7 @@ class LazyTopDownAnalyzer(
                 }
 
                 private fun registerPrimaryConstructorParameters(klass: KtClass) {
-                    for (jetParameter in klass.getPrimaryConstructorParameters()) {
+                    for (jetParameter in klass.primaryConstructorParameters) {
                         if (jetParameter.hasValOrVar()) {
                             c.primaryConstructorParameterProperties.put(jetParameter, lazyDeclarationResolver.resolveToDescriptor(jetParameter) as PropertyDescriptor)
                         }
@@ -222,7 +222,7 @@ class LazyTopDownAnalyzer(
     }
 
     private fun resolveImportsInAllFiles(c: TopDownAnalysisContext) {
-        for (file in c.files + c.scripts.keys.map { it.getContainingKtFile() }) {
+        for (file in c.files + c.scripts.keys.map { it.containingKtFile }) {
             fileScopeProvider.getImportResolver(file).forceResolveAllImports()
         }
     }

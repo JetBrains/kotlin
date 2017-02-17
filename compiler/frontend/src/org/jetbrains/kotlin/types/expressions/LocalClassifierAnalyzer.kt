@@ -74,7 +74,7 @@ class LocalClassifierAnalyzer(
             classOrObject: KtClassOrObject
     ) {
         val module = DescriptorUtils.getContainingModule(containingDeclaration)
-        val project = classOrObject.getProject()
+        val project = classOrObject.project
         val moduleContext = globalContext.withProject(project).withModule(module)
         val container = createContainerForLazyLocalClassifierAnalyzer(
                 moduleContext,

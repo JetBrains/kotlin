@@ -120,7 +120,7 @@ object DebuggerUtils {
         toProcess.add(file)
 
         for (collectedElement in analyzedElements) {
-            val containingFile = collectedElement.getContainingKtFile()
+            val containingFile = collectedElement.containingKtFile
             toProcess.add(containingFile)
         }
 

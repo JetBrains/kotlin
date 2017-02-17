@@ -84,7 +84,7 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunConfigurat
             while (currentElement != null) {
                 var entryPointContainer = currentElement
                 if (entryPointContainer is KtClass) {
-                    entryPointContainer = entryPointContainer.getCompanionObjects().singleOrNull()
+                    entryPointContainer = entryPointContainer.companionObjects.singleOrNull()
                 }
                 if (entryPointContainer != null && mainFunctionDetector.hasMain(entryPointContainer.declarations)) return entryPointContainer
                 currentElement = (currentElement as PsiElement).declarationContainer(true)

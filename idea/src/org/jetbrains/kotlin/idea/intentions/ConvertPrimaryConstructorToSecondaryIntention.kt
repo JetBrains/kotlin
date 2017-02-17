@@ -87,7 +87,7 @@ class ConvertPrimaryConstructorToSecondaryIntention : SelfTargetingIntention<KtP
                               valueParameter.typeReference?.text ?: "", valueParameter.defaultValue?.text)
                     }
                     noReturnType()
-                    for (superTypeEntry in klass.getSuperTypeListEntries()) {
+                    for (superTypeEntry in klass.superTypeListEntries) {
                         if (superTypeEntry is KtSuperTypeCallEntry) {
                             superDelegation(superTypeEntry.valueArgumentList?.text ?: "")
                             superTypeEntry.replace(factory.createSuperTypeEntry(superTypeEntry.typeReference!!.text))

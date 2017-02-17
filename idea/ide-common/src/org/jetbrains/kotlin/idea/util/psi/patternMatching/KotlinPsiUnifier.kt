@@ -598,7 +598,7 @@ class KotlinPsiUnifier(
             }
 
             fun getDelegationOrderInfo(cls: KtClassOrObject): OrderInfo<KtSuperTypeListEntry> {
-                val (orderInsensitive, orderSensitive) = cls.getSuperTypeListEntries().partition { it is KtSuperTypeEntry }
+                val (orderInsensitive, orderSensitive) = cls.superTypeListEntries.partition { it is KtSuperTypeEntry }
                 return OrderInfo(orderSensitive, orderInsensitive)
             }
 

@@ -100,8 +100,8 @@ class FunctionDescriptorResolver(
     ): SimpleFunctionDescriptor {
         val functionDescriptor = functionConstructor(
                 containingDescriptor,
-                annotationResolver.resolveAnnotationsWithoutArguments(scope, function.getModifierList(), trace),
-                function.getNameAsSafeName(),
+                annotationResolver.resolveAnnotationsWithoutArguments(scope, function.modifierList, trace),
+                function.nameAsSafeName,
                 CallableMemberDescriptor.Kind.DECLARATION,
                 function.toSourceElement()
         )
@@ -119,8 +119,8 @@ class FunctionDescriptorResolver(
             dataFlowInfo: DataFlowInfo
     ) {
         if (functionDescriptor.returnType != null) return
-        assert(function.getTypeReference() == null) {
-            "Return type must be initialized early for function: " + function.getText() + ", at: " + DiagnosticUtils.atLocation(function) }
+        assert(function.typeReference == null) {
+            "Return type must be initialized early for function: " + function.text + ", at: " + DiagnosticUtils.atLocation(function) }
 
         val returnType = if (function.hasBlockBody()) {
             builtIns.unitType
@@ -251,14 +251,14 @@ class FunctionDescriptorResolver(
             classElement: KtPureClassOrObject,
             trace: BindingTrace
     ): ClassConstructorDescriptorImpl? {
-        if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY || !classElement.hasPrimaryConstructor()) return null
+        if (classDescriptor.kind == ClassKind.ENUM_ENTRY || !classElement.hasPrimaryConstructor()) return null
         return createConstructorDescriptor(
                 scope,
                 classDescriptor,
                 true,
-                classElement.getPrimaryConstructorModifierList(),
-                classElement.getPrimaryConstructor() ?: classElement,
-                classElement.getPrimaryConstructorParameters(),
+                classElement.primaryConstructorModifierList,
+                classElement.primaryConstructor ?: classElement,
+                classElement.primaryConstructorParameters,
                 trace
         )
     }
@@ -273,9 +273,9 @@ class FunctionDescriptorResolver(
                 scope,
                 classDescriptor,
                 false,
-                constructor.getModifierList(),
+                constructor.modifierList,
                 constructor,
-                constructor.getValueParameters(),
+                constructor.valueParameters,
                 trace
         )
     }

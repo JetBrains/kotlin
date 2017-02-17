@@ -70,7 +70,7 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
             val qualifierDescriptor = receiverSelector?.let { context[BindingContext.REFERENCE_TARGET, it] }
 
             val targetParent =
-                    getTargetParentByQualifier(element.getContainingKtFile(), receiverSelector != null, qualifierDescriptor)
+                    getTargetParentByQualifier(element.containingKtFile, receiverSelector != null, qualifierDescriptor)
                     ?: return Collections.emptyList()
 
             element.getCreatePackageFixIfApplicable(targetParent)?.let { return emptyList() }
@@ -120,7 +120,7 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
             val qualifierDescriptor = receiverSelector?.let { context[BindingContext.REFERENCE_TARGET, it] }
 
             val targetParent =
-                    getTargetParentByQualifier(element.getContainingKtFile(), receiverSelector != null, qualifierDescriptor)
+                    getTargetParentByQualifier(element.containingKtFile, receiverSelector != null, qualifierDescriptor)
                     ?: return null
 
             return ClassInfo(

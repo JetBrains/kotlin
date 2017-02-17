@@ -127,7 +127,7 @@ class SmartCompletion(
             }
 
             is KtWhenConditionWithExpression -> {
-                val entry = parent.getParent() as KtWhenEntry
+                val entry = parent.parent as KtWhenEntry
                 val whenExpression = entry.parent as KtWhenExpression
                 val subject = whenExpression.subjectExpression ?: return@lazy emptySet()
 

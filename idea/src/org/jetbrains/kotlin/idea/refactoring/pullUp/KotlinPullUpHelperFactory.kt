@@ -69,7 +69,7 @@ class JavaToKotlinPullUpHelperFactory : PullUpHelperFactory {
         val targetClass = data.targetClass.unwrapped as? KtClass ?: return null
 
         val project = targetClass.project
-        val targetPackage = targetClass.getContainingKtFile().packageFqName.asString()
+        val targetPackage = targetClass.containingKtFile.packageFqName.asString()
         val dummyFile = PsiFileFactory.getInstance(project).createFileFromText(
                 "dummy.java",
                 JavaFileType.INSTANCE,

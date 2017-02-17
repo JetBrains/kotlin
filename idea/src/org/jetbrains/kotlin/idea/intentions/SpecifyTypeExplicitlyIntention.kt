@@ -87,7 +87,7 @@ class SpecifyTypeExplicitlyIntention :
                 else -> return null
             }
 
-            if (declaration.containingClassOrObject?.isLocal() ?: false) return null
+            if (declaration.containingClassOrObject?.isLocal ?: false) return null
 
             val callable = declaration.resolveToDescriptorIfAny() as? CallableDescriptor ?: return null
             if (publicAPIOnly && !callable.visibility.isPublicAPI) return null

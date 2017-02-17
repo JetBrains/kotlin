@@ -42,13 +42,13 @@ class KDocImpl(buffer: CharSequence?) : LazyParseablePsiElement(KDocTokens.KDOC,
     override fun getDefaultSection(): KDocSection = getChildOfType<KDocSection>()!!
 
     override fun findSectionByName(name: String): KDocSection? =
-        getChildrenOfType<KDocSection>().firstOrNull { it.getName() == name }
+        getChildrenOfType<KDocSection>().firstOrNull { it.name == name }
 
     override fun findSectionByTag(tag: KDocKnownTag): KDocSection? =
         findSectionByName(tag.name.toLowerCase())
 
     override fun findSectionByTag(tag: KDocKnownTag, subjectName: String): KDocSection? =
         getChildrenOfType<KDocSection>().firstOrNull {
-            it.getName() == tag.name.toLowerCase() && it.getSubjectName() == subjectName
+            it.name == tag.name.toLowerCase() && it.getSubjectName() == subjectName
         }
 }

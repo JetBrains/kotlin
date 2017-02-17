@@ -159,7 +159,7 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
         }
 
         if (changeInfo.isReturnTypeChanged && returnTypeIsNeeded) {
-            element.setTypeReference(null)
+            element.typeReference = null
             val returnTypeText = changeInfo.renderReturnType(this)
             val returnType = changeInfo.newReturnTypeInfo.type
             if (returnType == null || !returnType.isUnit()) {
@@ -258,7 +258,7 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
 
         if (parameterInfo.isTypeChanged && parameter.typeReference != null) {
             val renderedType = parameterInfo.renderType(parameterIndex, this)
-            parameter.setTypeReference(psiFactory.createType(renderedType))
+            parameter.typeReference = psiFactory.createType(renderedType)
         }
 
 

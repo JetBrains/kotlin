@@ -194,7 +194,7 @@ class KtLightClassForFacade private constructor(
 
     override fun isValid() = files.all { it.isValid && fileHasTopLevelCallables(it) && facadeClassFqName == it.javaFileFacadeFqName }
 
-    override fun copy() = KtLightClassForFacade(getManager(), facadeClassFqName, lightClassDataCache, files)
+    override fun copy() = KtLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files)
 
     override val clsDelegate: PsiClass
         get() {
@@ -216,7 +216,7 @@ class KtLightClassForFacade private constructor(
     override fun getNavigationElement() = files.iterator().next()
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
-        return another is PsiClass && Comparing.equal(another.qualifiedName, getQualifiedName())
+        return another is PsiClass && Comparing.equal(another.qualifiedName, qualifiedName)
     }
 
     override fun getElementIcon(flags: Int): Icon? = throw UnsupportedOperationException("This should be done by JetIconProvider")
@@ -240,7 +240,7 @@ class KtLightClassForFacade private constructor(
     override fun hashCode() = hashCode
 
     private fun computeHashCode(): Int {
-        var result = getManager().hashCode()
+        var result = manager.hashCode()
         result = 31 * result + files.hashCode()
         result = 31 * result + facadeClassFqName.hashCode()
         return result
@@ -255,7 +255,7 @@ class KtLightClassForFacade private constructor(
         if (this === other) return true
 
         if (this.hashCode != lightClass.hashCode) return false
-        if (getManager() != lightClass.getManager()) return false
+        if (manager != lightClass.manager) return false
         if (files != lightClass.files) return false
         if (facadeClassFqName != lightClass.facadeClassFqName) return false
 

@@ -64,7 +64,7 @@ class KotlinUClass private constructor(
     override fun getInitializers(): Array<UClassInitializer> = super.getInitializers()
 
     override fun getMethods(): Array<UMethod> {
-        val primaryConstructor = ktClass?.getPrimaryConstructor()?.toLightMethods()?.firstOrNull()
+        val primaryConstructor = ktClass?.primaryConstructor?.toLightMethods()?.firstOrNull()
         val initBlocks = ktClass?.getAnonymousInitializers() ?: emptyList()
 
         fun createUMethod(psiMethod: PsiMethod): UMethod {

@@ -49,7 +49,7 @@ class KotlinStandaloneScriptRunConfigurationProducer :
         fun pathFromPsiElement(element: PsiElement): String? {
             val file = element.getParentOfType<KtFile>(false) ?: return null
             val script = file.script ?: return null
-            return script.getContainingKtFile().virtualFile.canonicalPath
+            return script.containingKtFile.virtualFile.canonicalPath
         }
     }
 }

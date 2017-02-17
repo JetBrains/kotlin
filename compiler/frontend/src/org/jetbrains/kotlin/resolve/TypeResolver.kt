@@ -101,11 +101,11 @@ class TypeResolver(
 
     private fun resolveType(c: TypeResolutionContext, typeReference: KtTypeReference): KotlinType {
         assert(!c.allowBareTypes) { "Use resolvePossiblyBareType() when bare types are allowed" }
-        return resolvePossiblyBareType(c, typeReference).getActualType()
+        return resolvePossiblyBareType(c, typeReference).actualType
     }
 
     fun resolvePossiblyBareType(c: TypeResolutionContext, typeReference: KtTypeReference): PossiblyBareType {
-        val cachedType = c.trace.getBindingContext().get(BindingContext.TYPE, typeReference)
+        val cachedType = c.trace.bindingContext.get(BindingContext.TYPE, typeReference)
         if (cachedType != null) return type(cachedType)
 
         val resolvedTypeSlice = if (c.abbreviated) BindingContext.ABBREVIATED_TYPE else BindingContext.TYPE
@@ -120,15 +120,15 @@ class TypeResolver(
             // Bare types can be allowed only inside expressions; lazy type resolution is only relevant for declarations
 
             val lazyKotlinType = LazyWrappedType(storageManager) {
-                doResolvePossiblyBareType(c, typeReference).getActualType()
+                doResolvePossiblyBareType(c, typeReference).actualType
             }
             c.trace.record(resolvedTypeSlice, typeReference, lazyKotlinType)
             return type(lazyKotlinType)
         }
 
         val type = doResolvePossiblyBareType(c, typeReference)
-        if (!type.isBare()) {
-            c.trace.record(resolvedTypeSlice, typeReference, type.getActualType())
+        if (!type.isBare) {
+            c.trace.record(resolvedTypeSlice, typeReference, type.actualType)
         }
         return type
     }
@@ -820,7 +820,7 @@ class TypeResolver(
                 }
             }
             else {
-                val type = resolveType(c.noBareTypes(), argumentElement.getTypeReference()!!)
+                val type = resolveType(c.noBareTypes(), argumentElement.typeReference!!)
                 val kind = resolveProjectionKind(projectionKind)
                 if (constructor.parameters.size > i) {
                     val parameterDescriptor = constructor.parameters[i]

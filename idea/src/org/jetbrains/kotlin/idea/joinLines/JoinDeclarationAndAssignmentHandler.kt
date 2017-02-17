@@ -68,7 +68,7 @@ class JoinDeclarationAndAssignmentHandler : JoinRawLinesHandlerDelegate {
     }
 
     private fun doJoin(property: KtProperty, assignment: KtBinaryExpression) {
-        property.setInitializer(assignment.right)
+        property.initializer = assignment.right
         property.parent!!.deleteChildRange(property.nextSibling, assignment) //TODO: should we delete range?
     }
 

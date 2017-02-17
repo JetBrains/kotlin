@@ -77,8 +77,8 @@ class LazyJavaAnnotationDescriptor(
         val nameToArg = javaAnnotation.arguments.associateBy { it.name }
 
         return constructors.first().valueParameters.keysToMapExceptNulls { valueParameter ->
-            var javaAnnotationArgument = nameToArg[valueParameter.getName()]
-            if (javaAnnotationArgument == null && valueParameter.getName() == DEFAULT_ANNOTATION_MEMBER_NAME) {
+            var javaAnnotationArgument = nameToArg[valueParameter.name]
+            if (javaAnnotationArgument == null && valueParameter.name == DEFAULT_ANNOTATION_MEMBER_NAME) {
                 javaAnnotationArgument = nameToArg[null]
             }
 

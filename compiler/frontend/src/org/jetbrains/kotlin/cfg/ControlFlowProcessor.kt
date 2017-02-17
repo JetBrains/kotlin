@@ -1326,7 +1326,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         }
 
         private fun generateHeaderDelegationSpecifiers(classOrObject: KtClassOrObject) {
-            for (specifier in classOrObject.getSuperTypeListEntries()) {
+            for (specifier in classOrObject.superTypeListEntries) {
                 generateInstructions(specifier)
             }
         }
@@ -1351,7 +1351,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
 
         override fun visitClass(klass: KtClass) {
             if (klass.hasPrimaryConstructor()) {
-                processParameters(klass.getPrimaryConstructorParameters())
+                processParameters(klass.primaryConstructorParameters)
 
                 // delegation specifiers of primary constructor, anonymous class and property initializers
                 generateHeaderDelegationSpecifiers(klass)
@@ -1379,7 +1379,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         }
 
         private fun generateDeclarationForLocalClassOrObjectIfNeeded(classOrObject: KtClassOrObject) {
-            if (classOrObject.isLocal()) {
+            if (classOrObject.isLocal) {
                 for (declaration in classOrObject.declarations) {
                     if (declaration is KtSecondaryConstructor ||
                         declaration is KtProperty ||

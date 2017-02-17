@@ -296,7 +296,7 @@ class DeclarationsChecker(
     private fun checkTypesInClassHeader(classOrObject: KtClassOrObject) {
         fun KtTypeReference.type(): KotlinType? = trace.bindingContext.get(TYPE, this)
 
-        for (delegationSpecifier in classOrObject.getSuperTypeListEntries()) {
+        for (delegationSpecifier in classOrObject.superTypeListEntries) {
             val typeReference = delegationSpecifier.typeReference ?: continue
             typeReference.type()?.let { DescriptorResolver.checkBounds(typeReference, it, trace) }
         }
@@ -397,7 +397,7 @@ class DeclarationsChecker(
 
     private fun checkObject(declaration: KtObjectDeclaration, classDescriptor: ClassDescriptorWithResolutionScopes) {
         checkOpenMembers(classDescriptor)
-        if (declaration.isLocal() && !declaration.isCompanion() && !declaration.isObjectLiteral()) {
+        if (declaration.isLocal && !declaration.isCompanion() && !declaration.isObjectLiteral()) {
             trace.report(LOCAL_OBJECT_NOT_ALLOWED.on(declaration, classDescriptor))
         }
     }
@@ -412,7 +412,7 @@ class DeclarationsChecker(
         if (aClass.isInterface()) {
             checkConstructorInInterface(aClass)
             checkMethodsOfAnyInInterface(classDescriptor)
-            if (aClass.isLocal() && classDescriptor.containingDeclaration !is ClassDescriptor) {
+            if (aClass.isLocal && classDescriptor.containingDeclaration !is ClassDescriptor) {
                 trace.report(LOCAL_INTERFACE_NOT_ALLOWED.on(aClass, classDescriptor))
             }
         }
@@ -427,7 +427,7 @@ class DeclarationsChecker(
 
     private fun checkPrimaryConstructor(classOrObject: KtClassOrObject, classDescriptor: ClassDescriptor) {
         val primaryConstructor = classDescriptor.unsubstitutedPrimaryConstructor ?: return
-        val declaration = classOrObject.getPrimaryConstructor() ?: return
+        val declaration = classOrObject.primaryConstructor ?: return
 
         for (parameter in declaration.valueParameters) {
             trace.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter)?.let {
@@ -471,7 +471,7 @@ class DeclarationsChecker(
     }
 
     private fun checkConstructorInInterface(klass: KtClass) {
-        klass.getPrimaryConstructor()?.let { trace.report(CONSTRUCTOR_IN_INTERFACE.on(it)) }
+        klass.primaryConstructor?.let { trace.report(CONSTRUCTOR_IN_INTERFACE.on(it)) }
     }
 
     private fun checkMethodsOfAnyInInterface(classDescriptor: ClassDescriptorWithResolutionScopes) {
@@ -494,7 +494,7 @@ class DeclarationsChecker(
     }
 
     private fun checkValOnAnnotationParameter(aClass: KtClass) {
-        for (parameter in aClass.getPrimaryConstructorParameters()) {
+        for (parameter in aClass.primaryConstructorParameters) {
             if (!parameter.hasValOrVar()) {
                 trace.report(MISSING_VAL_ON_ANNOTATION_PARAMETER.on(parameter))
             }

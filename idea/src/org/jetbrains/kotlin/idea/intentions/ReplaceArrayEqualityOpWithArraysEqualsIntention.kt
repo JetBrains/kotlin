@@ -40,7 +40,7 @@ class ReplaceArrayEqualityOpWithArraysEqualsIntention : SelfTargetingOffsetIndep
         val right = element.right ?: return
         val left = element.left ?: return
         val factory = KtPsiFactory(project)
-        val ktFile = element.getContainingKtFile()
+        val ktFile = element.containingKtFile
         ktFile.resolveImportReference(FqName("java.util.Arrays")).firstOrNull()?.let {
             ImportInsertHelper.getInstance(project).importDescriptor(ktFile, it)
         }

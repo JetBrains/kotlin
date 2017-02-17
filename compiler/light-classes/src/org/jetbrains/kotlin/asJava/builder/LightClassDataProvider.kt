@@ -165,9 +165,9 @@ class LightClassDataProviderForClassOrObject(private val classOrObject: KtClassO
         LightClassDataProvider<WithFileStubAndExtraDiagnostics>(classOrObject.project) {
 
     private val file: KtFile
-        get() = classOrObject.getContainingKtFile()
+        get() = classOrObject.containingKtFile
 
-    override val isLocal: Boolean get() = classOrObject.isLocal()
+    override val isLocal: Boolean get() = classOrObject.isLocal
 
     override fun getContext(files: Collection<KtFile>): LightClassConstructionContext {
         return LightClassGenerationSupport.getInstance(classOrObject.project).getContextForClassOrObject(classOrObject)
@@ -237,7 +237,7 @@ class LightClassDataProviderForClassOrObject(private val classOrObject: KtClassO
                 // TODO: current method will process local classes in irrelevant declarations, it should be fixed.
                 // We generate all enclosing classes
 
-                if (classOrObject.isLocal() && processingClassOrObject.isLocal()) {
+                if (classOrObject.isLocal && processingClassOrObject.isLocal) {
                     val commonParent = PsiTreeUtil.findCommonParent(classOrObject, processingClassOrObject)
                     return commonParent != null && commonParent !is PsiFile
                 }
@@ -252,7 +252,7 @@ class LightClassDataProviderForClassOrObject(private val classOrObject: KtClassO
 
     override fun generate(state: GenerationState, files: Collection<KtFile>) {
         val packageCodegen = state.factory.forPackage(packageFqName, files)
-        val file = classOrObject.getContainingKtFile()
+        val file = classOrObject.containingKtFile
         val packagePartType = state.fileClassesProvider.getFileClassType(file)
         val context = state.rootContext.intoPackagePart(packageCodegen.packageFragment, packagePartType, file)
         packageCodegen.generateClassOrObject(classOrObject, context)

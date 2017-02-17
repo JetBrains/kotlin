@@ -44,7 +44,7 @@ class JvmStringTable(private val typeMapper: KotlinTypeMapper) : StringTable {
 
                     val lastRecord = records.lastOrNull()
                     if (lastRecord != null && lastRecord.isTrivial()) {
-                        lastRecord.setRange(lastRecord.range + 1)
+                        lastRecord.range = lastRecord.range + 1
                     }
                     else records.add(Record.newBuilder())
                 }
@@ -93,12 +93,12 @@ class JvmStringTable(private val typeMapper: KotlinTypeMapper) : StringTable {
         else {
             val predefinedIndex = JvmNameResolver.getPredefinedStringIndex(string)
             if (predefinedIndex != null) {
-                record.setPredefinedIndex(predefinedIndex)
+                record.predefinedIndex = predefinedIndex
                 // TODO: move all records with predefined names to the end and do not write associated strings for them (since they are ignored)
                 strings.add("")
             }
             else {
-                record.setOperation(Record.Operation.DESC_TO_CLASS_ID)
+                record.operation = Record.Operation.DESC_TO_CLASS_ID
                 strings.add("L${string.replace('.', '$')};")
             }
         }

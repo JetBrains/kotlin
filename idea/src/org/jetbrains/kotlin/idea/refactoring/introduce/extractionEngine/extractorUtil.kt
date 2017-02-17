@@ -372,7 +372,7 @@ private fun makeCall(
 
             is Initializer -> {
                 val newProperty = copiedDeclarations[outputValue.initializedDeclaration] as KtProperty
-                newProperty.setInitializer(psiFactory.createExpression(callText))
+                newProperty.initializer = psiFactory.createExpression(callText)
                 Collections.emptyList()
             }
 

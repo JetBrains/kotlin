@@ -64,7 +64,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     private val psiManager: PsiManager = PsiManager.getInstance(project)
 
     override fun getContextForClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext {
-        if (classOrObject.isLocal()) {
+        if (classOrObject.isLocal) {
             return getContextForLocalClassOrObject(classOrObject)
         }
         else {
@@ -312,12 +312,12 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         val relativeFqName = getClassRelativeName(decompiledClassOrObject)
         val iterator = relativeFqName.pathSegments().iterator()
         val base = iterator.next()
-        assert(rootLightClassForDecompiledFile.name == base.asString()) { "Light class for file:\n" + decompiledClassOrObject.getContainingKtFile().virtualFile.canonicalPath + "\nwas expected to have name: " + base.asString() + "\n Actual: " + rootLightClassForDecompiledFile.name }
+        assert(rootLightClassForDecompiledFile.name == base.asString()) { "Light class for file:\n" + decompiledClassOrObject.containingKtFile.virtualFile.canonicalPath + "\nwas expected to have name: " + base.asString() + "\n Actual: " + rootLightClassForDecompiledFile.name }
         var current: KtLightClassForDecompiledDeclaration = rootLightClassForDecompiledFile
         while (iterator.hasNext()) {
             val name = iterator.next()
             val innerClass = current.findInnerClassByName(name.asString(), false).sure {
-                "Could not find corresponding inner/nested class " + relativeFqName + " in class " + decompiledClassOrObject.fqName + "\n" + "File: " + decompiledClassOrObject.getContainingKtFile().virtualFile.name
+                "Could not find corresponding inner/nested class " + relativeFqName + " in class " + decompiledClassOrObject.fqName + "\n" + "File: " + decompiledClassOrObject.containingKtFile.virtualFile.name
             }
             current = innerClass as KtLightClassForDecompiledDeclaration
         }

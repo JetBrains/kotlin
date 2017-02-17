@@ -65,7 +65,7 @@ class KotlinInlineTypeAliasHandler : InlineActionHandler() {
         val typeAlias = element as? KtTypeAlias ?: return
         val name = typeAlias.name ?: return
         val aliasBody = typeAlias.getTypeReference() ?: return
-        val file = typeAlias.getContainingKtFile()
+        val file = typeAlias.containingKtFile
 
         val typeAliasDescriptor = typeAlias.resolveToDescriptor() as TypeAliasDescriptor
         val typeToInline = typeAliasDescriptor.expandedType

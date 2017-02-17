@@ -113,7 +113,7 @@ fun KtClassOrObject.getSuperTypeEntryByDescriptor(
         descriptor: ClassDescriptor,
         context: BindingContext
 ): KtSuperTypeListEntry? {
-    return getSuperTypeListEntries().firstOrNull {
+    return superTypeListEntries.firstOrNull {
         val referencedType = context[BindingContext.TYPE, it.typeReference]
         referencedType?.constructor?.declarationDescriptor == descriptor
     }

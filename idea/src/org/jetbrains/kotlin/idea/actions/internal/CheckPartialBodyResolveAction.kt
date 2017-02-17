@@ -193,7 +193,7 @@ class CheckPartialBodyResolveAction : AnAction() {
             is KtBlockExpression -> expression == parent.lastStatement() && isValueNeeded(parent)
 
             is KtContainerNode -> { //TODO - not quite correct
-                val pparent = parent.getParent() as? KtExpression
+                val pparent = parent.parent as? KtExpression
                 pparent != null && isValueNeeded(pparent)
             }
 

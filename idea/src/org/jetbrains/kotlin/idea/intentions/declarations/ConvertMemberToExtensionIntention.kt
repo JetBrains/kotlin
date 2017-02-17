@@ -57,7 +57,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
         val descriptor = element.resolveToDescriptor()
         val containingClass = descriptor.containingDeclaration as ClassDescriptor
 
-        val file = element.getContainingKtFile()
+        val file = element.containingKtFile
         val project = file.project
         val outermostParent = KtPsiUtil.getOutermostParent(element, file, false)
 
@@ -66,7 +66,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
         for (ref in ReferencesSearch.search(element)) {
             when (ref) {
                 is KtReference -> {
-                    val refFile = ref.element.getContainingKtFile()
+                    val refFile = ref.element.containingKtFile
                     if (refFile != file) {
                         ktFilesToAddImports.add(refFile)
                     }

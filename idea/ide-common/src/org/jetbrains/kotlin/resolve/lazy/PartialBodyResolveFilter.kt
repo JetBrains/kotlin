@@ -539,7 +539,7 @@ class PartialBodyResolveFilter(
                 is KtBlockExpression -> expression == parent.lastStatement() && isValueNeeded(parent)
 
                 is KtContainerNode -> { //TODO - not quite correct
-                    val pparent = parent.getParent() as? KtExpression
+                    val pparent = parent.parent as? KtExpression
                     pparent != null && isValueNeeded(pparent)
                 }
 
@@ -559,7 +559,7 @@ class PartialBodyResolveFilter(
         private fun KtBlockExpression.lastStatement(): KtExpression?
                 = lastChild?.siblings(forward = false)?.firstIsInstanceOrNull<KtExpression>()
 
-        private fun PsiElement.isStatement() = this is KtExpression && getParent() is KtBlockExpression
+        private fun PsiElement.isStatement() = this is KtExpression && parent is KtBlockExpression
 
         private fun KtTypeReference?.containsProbablyNothing()
                 = this?.typeElement?.anyDescendantOfType<KtUserType> { it.isProbablyNothing() } ?: false

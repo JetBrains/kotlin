@@ -104,9 +104,9 @@ internal fun createGroupedImportsAction(
         autoImportDescription: String,
         fqNames: Collection<FqName>
 ): KotlinAddImportAction {
-    val prioritizer = DescriptorGroupPrioritizer(element.getContainingKtFile())
+    val prioritizer = DescriptorGroupPrioritizer(element.containingKtFile)
 
-    val file = element.getContainingKtFile()
+    val file = element.containingKtFile
     val variants = fqNames
             .groupBy { it.parentOrNull() ?: FqName.ROOT }
             .map {
@@ -204,7 +204,7 @@ class KotlinAddImportAction internal constructor(
         project.executeWriteCommand(QuickFixBundle.message("add.import")) {
             if (!element.isValid) return@executeWriteCommand
 
-            val file = element.getContainingKtFile()
+            val file = element.containingKtFile
 
             variant.declarationToImport(project)?.let {
                 val location = ProximityLocation(element, ModuleUtilCore.findModuleForPsiElement(element))

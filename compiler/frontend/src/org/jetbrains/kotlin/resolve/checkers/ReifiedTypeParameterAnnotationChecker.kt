@@ -58,7 +58,7 @@ class ReifiedTypeParameterAnnotationChecker : SimpleDeclarationChecker {
 
             diagnosticHolder.report(
                     Errors.REIFIED_TYPE_PARAMETER_NO_INLINE.on(
-                            typeParameterDeclaration.getModifierList()!!.getModifier(KtTokens.REIFIED_KEYWORD)!!
+                            typeParameterDeclaration.modifierList!!.getModifier(KtTokens.REIFIED_KEYWORD)!!
                     )
             )
         }

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 class ConvertSecondaryConstructorToPrimaryInspection : IntentionBasedInspection<KtSecondaryConstructor>(
         ConvertSecondaryConstructorToPrimaryIntention::class,
-        { constructor -> constructor.containingClass()?.getSecondaryConstructors()?.size == 1 }
+        { constructor -> constructor.containingClass()?.secondaryConstructors?.size == 1 }
 ) {
     override fun inspectionTarget(element: KtSecondaryConstructor) = element.getConstructorKeyword()
 }
@@ -165,7 +165,7 @@ class ConvertSecondaryConstructorToPrimaryIntention : SelfTargetingRangeIntentio
         val delegationCall = element.getDelegationCall()
         val argumentList = delegationCall.valueArgumentList
         if (!delegationCall.isImplicit && argumentList != null) {
-            for (superTypeListEntry in klass.getSuperTypeListEntries()) {
+            for (superTypeListEntry in klass.superTypeListEntries) {
                 val typeReference = superTypeListEntry.typeReference ?: continue
                 val type = context[BindingContext.TYPE, typeReference]
                 if ((type?.constructor?.declarationDescriptor as? ClassDescriptor)?.kind == ClassKind.CLASS) {

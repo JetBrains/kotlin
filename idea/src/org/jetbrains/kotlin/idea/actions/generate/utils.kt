@@ -49,7 +49,7 @@ tailrec fun ClassDescriptor.findDeclaredFunction(
 
 fun getPropertiesToUseInGeneratedMember(classOrObject: KtClassOrObject): List<KtNamedDeclaration> {
     return ArrayList<KtNamedDeclaration>().apply {
-        classOrObject.getPrimaryConstructorParameters().filterTo(this) { it.hasValOrVar() }
+        classOrObject.primaryConstructorParameters.filterTo(this) { it.hasValOrVar() }
         classOrObject.declarations.filterIsInstance<KtProperty>().filterTo(this) {
             val descriptor = it.resolveToDescriptor()
             when (descriptor) {

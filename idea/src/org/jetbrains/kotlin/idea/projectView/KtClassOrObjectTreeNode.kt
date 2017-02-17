@@ -60,7 +60,7 @@ class KtClassOrObjectTreeNode(project: Project?, ktClassOrObject: KtClassOrObjec
             data.presentableText = classOrObject.name
 
             val parent = parent
-            if (KotlinIconProvider.getMainClass(classOrObject.getContainingKtFile()) != null) {
+            if (KotlinIconProvider.getMainClass(classOrObject.containingKtFile) != null) {
                 if (parent is KtFileTreeNode) {
                     update(parent.getParent())
                 }

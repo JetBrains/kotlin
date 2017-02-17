@@ -120,7 +120,7 @@ object Renderers {
 
     @JvmField val RENDER_CLASS_OR_OBJECT = Renderer {
         classOrObject: KtClassOrObject ->
-        val name = if (classOrObject.getName() != null) " '" + classOrObject.getName() + "'" else ""
+        val name = if (classOrObject.name != null) " '" + classOrObject.name + "'" else ""
         if (classOrObject is KtClass) "Class" + name else "Object" + name
     }
 

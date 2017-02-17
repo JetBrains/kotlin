@@ -44,7 +44,7 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
 
     private fun generateDelegatedMembers(): Collection<T> {
         val delegatedMembers = hashSetOf<T>()
-        for (delegationSpecifier in classOrObject.getSuperTypeListEntries()) {
+        for (delegationSpecifier in classOrObject.superTypeListEntries) {
             if (delegationSpecifier !is KtDelegatedSuperTypeEntry) {
                 continue
             }

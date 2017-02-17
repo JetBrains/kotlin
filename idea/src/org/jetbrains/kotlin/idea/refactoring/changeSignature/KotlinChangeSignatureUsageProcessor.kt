@@ -306,7 +306,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
         if (functionPsi is KtClass && functionPsi.isEnum()) {
             for (declaration in functionPsi.declarations) {
-                if (declaration is KtEnumEntry && declaration.getSuperTypeListEntries().isEmpty()) {
+                if (declaration is KtEnumEntry && declaration.superTypeListEntries.isEmpty()) {
                     result.add(KotlinEnumEntryWithoutSuperCallUsage(declaration))
                 }
             }

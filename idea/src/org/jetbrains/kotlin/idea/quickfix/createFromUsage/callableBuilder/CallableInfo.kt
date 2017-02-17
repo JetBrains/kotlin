@@ -107,7 +107,7 @@ abstract class TypeInfo(val variance: Variance) {
         return when (containingElement) {
             is KtClassOrObject -> (containingElement.resolveToDescriptor() as? ClassDescriptorWithResolutionScopes)?.scopeForMemberDeclarationResolution
             is KtBlockExpression -> (containingElement.statements.firstOrNull() ?: containingElement).getResolutionScope()
-            is KtElement -> containingElement.getContainingKtFile().getResolutionScope()
+            is KtElement -> containingElement.containingKtFile.getResolutionScope()
             else -> null
         }
     }

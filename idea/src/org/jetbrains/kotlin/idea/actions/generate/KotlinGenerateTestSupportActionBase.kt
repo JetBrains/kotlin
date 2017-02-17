@@ -62,7 +62,7 @@ abstract class KotlinGenerateTestSupportActionBase(
     companion object {
         private fun findTargetClass(editor: Editor, file: PsiFile): KtClassOrObject? {
             val elementAtCaret = file.findElementAt(editor.caretModel.offset) ?: return null
-            return elementAtCaret.parentsWithSelf.filterIsInstance<KtClassOrObject>().firstOrNull { !it.isLocal() }
+            return elementAtCaret.parentsWithSelf.filterIsInstance<KtClassOrObject>().firstOrNull { !it.isLocal }
         }
 
         private fun chooseAndPerform(editor: Editor, frameworks: List<TestFramework>, consumer: (TestFramework) -> Unit) {

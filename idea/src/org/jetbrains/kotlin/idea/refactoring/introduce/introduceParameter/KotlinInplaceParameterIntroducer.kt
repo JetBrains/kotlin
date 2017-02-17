@@ -175,7 +175,7 @@ class KotlinInplaceParameterIntroducer(
 
     init {
         initFormComponents {
-            addComponent(getPreviewComponent())
+            addComponent(previewComponent)
 
             val defaultValueCheckBox = NonFocusableCheckBox("Introduce default value")
             defaultValueCheckBox.isSelected = descriptor.withDefaultValue

@@ -183,7 +183,7 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
 
     private class AddJavaExecutionsLocalFix(val module: Module, val file: XmlFile, val kotlinPlugin: MavenDomPlugin) : LocalQuickFix {
         override fun getName() = "Configure maven-compiler-plugin executions in the right order"
-        override fun getFamilyName() = getName()
+        override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             PomFile.forFileOrNull(file)?.addJavacExecutions(module, kotlinPlugin)

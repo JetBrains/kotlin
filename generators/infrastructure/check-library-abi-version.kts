@@ -50,7 +50,7 @@ fun loadVersions(library: File): String {
     val jarFile = JarFile(library)
     try {
         for (entry in jarFile.entries()) {
-            if (entry.getName().endsWith(".class")) {
+            if (entry.name.endsWith(".class")) {
                 val classBytes = jarFile.getInputStream(entry).readBytes()
                 loadClassVersions(classBytes)?.let {
                     val (metadata, bytecode) = it

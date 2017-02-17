@@ -58,7 +58,7 @@ class CodeInliner<TCallElement : KtElement>(
 
     fun doInline(): KtElement? {
         val descriptor = resolvedCall.resultingDescriptor
-        val file = nameExpression.getContainingKtFile()
+        val file = nameExpression.containingKtFile
 
         val elementToBeReplaced = when (callElement) {
             is KtExpression -> callElement.getQualifiedExpressionForSelectorOrThis()

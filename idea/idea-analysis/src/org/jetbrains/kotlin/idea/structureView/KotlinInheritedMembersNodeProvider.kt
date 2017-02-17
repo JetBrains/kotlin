@@ -43,11 +43,11 @@ class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<TreeEleme
 
         val children = ArrayList<TreeElement>()
 
-        val defaultType = descriptor.getDefaultType()
+        val defaultType = descriptor.defaultType
         for (memberDescriptor in defaultType.memberScope.getContributedDescriptors()) {
             if (memberDescriptor !is CallableMemberDescriptor) continue
 
-            when (memberDescriptor.getKind()) {
+            when (memberDescriptor.kind) {
                 CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
                 CallableMemberDescriptor.Kind.DELEGATION -> {
                     val superTypeMember = DescriptorToSourceUtilsIde.getAnyDeclaration(project, memberDescriptor)

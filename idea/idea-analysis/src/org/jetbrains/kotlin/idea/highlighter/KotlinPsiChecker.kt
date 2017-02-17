@@ -69,7 +69,7 @@ open class KotlinPsiChecker : Annotator, HighlightRangeExtension {
 
         getAfterAnalysisVisitor(holder, bindingContext).forEach { visitor -> element.accept(visitor) }
 
-        annotateElement(element, holder, bindingContext.getDiagnostics())
+        annotateElement(element, holder, bindingContext.diagnostics)
     }
 
     override fun isForceHighlightParents(file: PsiFile): Boolean {

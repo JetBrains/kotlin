@@ -108,7 +108,7 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
                             // In the case of empty array, no element has the element type, so we fall back to the expected type, if any.
                             // This is not very accurate when annotation class has been changed without recompiling clients,
                             // but should not in fact matter because the value is empty anyway
-                            if (expectedIsArray) expectedType else builtIns.getArrayType(Variance.INVARIANT, builtIns.getAnyType())
+                            if (expectedIsArray) expectedType else builtIns.getArrayType(Variance.INVARIANT, builtIns.anyType)
                         }
 
                 val expectedElementType = builtIns.getArrayElementType(if (expectedIsArray) expectedType else actualArrayType)
@@ -147,15 +147,15 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
     private fun resolveArrayElementType(value: Value, nameResolver: NameResolver): SimpleType =
             with(builtIns) {
                 when (value.type) {
-                    Type.BYTE -> getByteType()
-                    Type.CHAR -> getCharType()
-                    Type.SHORT -> getShortType()
-                    Type.INT -> getIntType()
-                    Type.LONG -> getLongType()
-                    Type.FLOAT -> getFloatType()
-                    Type.DOUBLE -> getDoubleType()
-                    Type.BOOLEAN -> getBooleanType()
-                    Type.STRING -> getStringType()
+                    Type.BYTE -> byteType
+                    Type.CHAR -> charType
+                    Type.SHORT -> shortType
+                    Type.INT -> intType
+                    Type.LONG -> longType
+                    Type.FLOAT -> floatType
+                    Type.DOUBLE -> doubleType
+                    Type.BOOLEAN -> booleanType
+                    Type.STRING -> stringType
                     Type.CLASS -> error("Arrays of class literals are not supported yet") // TODO: support arrays of class literals
                     Type.ENUM -> resolveClass(nameResolver.getClassId(value.classId)).defaultType
                     Type.ANNOTATION -> resolveClass(nameResolver.getClassId(value.annotation.id)).defaultType

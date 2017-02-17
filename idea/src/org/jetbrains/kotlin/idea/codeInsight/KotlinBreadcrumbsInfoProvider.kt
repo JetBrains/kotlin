@@ -136,7 +136,7 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsInfoProvider() {
             return buildString {
                 append("object")
 
-                val superTypeEntries = getSuperTypeListEntries()
+                val superTypeEntries = superTypeListEntries
                 if (superTypeEntries.isNotEmpty()) {
                     append(" : ")
 

@@ -86,7 +86,7 @@ open class KotlinFunctionPattern : PsiElementPattern<KtFunction, KotlinFunctionP
         return withPatternCondition("kotlinFunctionPattern-definedInPackage") { function, context ->
             if (function.parent !is KtFile) return@withPatternCondition false
 
-            function.getContainingKtFile().packageFqName.asString() == packageFqName
+            function.containingKtFile.packageFqName.asString() == packageFqName
         }
     }
 }

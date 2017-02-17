@@ -65,19 +65,19 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
     ): KotlinTypeInfo {
         if (!isDeclaration) {
             // function expression
-            if (!function.getTypeParameters().isEmpty()) {
+            if (!function.typeParameters.isEmpty()) {
                 context.trace.report(TYPE_PARAMETERS_NOT_ALLOWED.on(function))
             }
 
-            if (function.getName() != null) {
+            if (function.name != null) {
                 context.trace.report(ANONYMOUS_FUNCTION_WITH_NAME.on(function.nameIdentifier!!))
             }
 
-            for (parameter in function.getValueParameters()) {
+            for (parameter in function.valueParameters) {
                 if (parameter.hasDefaultValue()) {
                     context.trace.report(ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE.on(parameter))
                 }
-                if (parameter.isVarArg()) {
+                if (parameter.isVarArg) {
                     context.trace.report(USELESS_VARARG_ON_PARAMETER.on(parameter))
                 }
             }
@@ -88,7 +88,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             functionDescriptor = components.functionDescriptorResolver.resolveFunctionDescriptor(
                     context.scope.ownerDescriptor, context.scope, function, context.trace, context.dataFlowInfo)
             assert(statementScope != null) {
-                "statementScope must be not null for function: " + function.getName() + " at location " + DiagnosticUtils.atLocation(function)
+                "statementScope must be not null for function: " + function.name + " at location " + DiagnosticUtils.atLocation(function)
             }
             statementScope!!.addFunctionDescriptor(functionDescriptor)
         }
@@ -112,7 +112,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         }
 
         components.valueParameterResolver.resolveValueParameters(
-                function.getValueParameters(), functionDescriptor.valueParameters, context.scope, context.dataFlowInfo, context.trace
+                function.valueParameters, functionDescriptor.valueParameters, context.scope, context.dataFlowInfo, context.trace
         )
 
         components.modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(function, functionDescriptor)
@@ -252,7 +252,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
                 if (returnedExpression != null) {
                     val type = context.trace.getType(returnedExpression)
                     if (type == null || !KotlinBuiltIns.isUnit(type)) {
-                        context.trace.report(RETURN_TYPE_MISMATCH.on(returnedExpression, components.builtIns.getUnitType()))
+                        context.trace.report(RETURN_TYPE_MISMATCH.on(returnedExpression, components.builtIns.unitType))
                     }
                 }
             }

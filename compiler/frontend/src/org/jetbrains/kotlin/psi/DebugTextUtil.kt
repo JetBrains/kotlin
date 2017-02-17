@@ -203,7 +203,7 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
             append("class ")
             appendInn(klass.nameAsName)
             appendInn(klass.typeParameterList)
-            appendInn(klass.getPrimaryConstructorModifierList(), prefix = " ", suffix = " ")
+            appendInn(klass.primaryConstructorModifierList, prefix = " ", suffix = " ")
             appendInn(klass.getPrimaryConstructorParameterList())
             appendInn(klass.getSuperTypeList(), prefix = " : ")
         }

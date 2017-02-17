@@ -35,7 +35,7 @@ fun main(args: Array<String>) {
         val jar = JarFile(file)
         try {
             for (jarEntry in jar.entries()) {
-                result[jarEntry.getName()] = Pair(jarEntry, jar.getInputStream(jarEntry).readBytes())
+                result[jarEntry.name] = Pair(jarEntry, jar.getInputStream(jarEntry).readBytes())
             }
         }
         finally {

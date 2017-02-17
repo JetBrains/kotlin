@@ -78,7 +78,7 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
         if ((element is KtNamedFunction || element is KtProperty) && element.hasModifier(KtTokens.ABSTRACT_KEYWORD)) return null
         if (element.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return null
         val containingClass = element.containingClassOrObject as? KtClass ?: return null
-        if (containingClass.isLocal() || containingClass.isInner()) return null
+        if (containingClass.isLocal || containingClass.isInner()) return null
         return element.nameIdentifier?.textRange
     }
 
@@ -284,7 +284,7 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
         val outerInstanceUsages = SmartList<UsageInfo>()
         val conflicts = MultiMap<PsiElement, String>()
 
-        containingClass.getCompanionObjects().firstOrNull()?.let { companion ->
+        containingClass.companionObjects.firstOrNull()?.let { companion ->
             val companionDescriptor = companion.resolveToDescriptor() as ClassDescriptor
             val callableDescriptor = element.resolveToDescriptor() as CallableMemberDescriptor
             companionDescriptor.findCallableMemberBySignature(callableDescriptor)?.let {

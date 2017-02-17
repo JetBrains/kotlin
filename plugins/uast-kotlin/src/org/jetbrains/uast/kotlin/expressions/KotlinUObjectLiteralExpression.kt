@@ -32,7 +32,7 @@ class KotlinUObjectLiteralExpression(
     override fun getExpressionType() = psi.objectDeclaration.toPsiType()
 
     private val superClassConstructorCall by lz {
-        psi.objectDeclaration.getSuperTypeListEntries().firstOrNull { it is KtSuperTypeCallEntry } as? KtSuperTypeCallEntry
+        psi.objectDeclaration.superTypeListEntries.firstOrNull { it is KtSuperTypeCallEntry } as? KtSuperTypeCallEntry
     }
     
     override val classReference: UReferenceExpression? by lz { superClassConstructorCall?.let { ObjectLiteralClassReference(it, this) } }

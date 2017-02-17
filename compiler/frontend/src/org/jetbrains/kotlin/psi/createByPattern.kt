@@ -173,7 +173,7 @@ fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, fa
     for ((pointer, n) in pointers) {
         var element = pointer.element!!
         if (element is KtFunctionLiteral) {
-            element = element.getParent() as KtLambdaExpression
+            element = element.parent as KtLambdaExpression
         }
         @Suppress("UNCHECKED_CAST")
         val argumentType = argumentTypes[n] as PsiElementPlaceholderArgumentType<in Any, in PsiElement>

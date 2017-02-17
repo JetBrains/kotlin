@@ -115,7 +115,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
                 val changeSignature = { runChangeSignature(project, constructorDescriptor, config, contextElement, text) }
                 changeSignature.runRefactoringWithPostprocessing(project, "refactoring.changeSignature") {
                     val constructorOrClass = constructorPointer.element
-                    val constructor = constructorOrClass as? KtConstructor<*> ?: (constructorOrClass as? KtClass)?.getPrimaryConstructor()
+                    val constructor = constructorOrClass as? KtConstructor<*> ?: (constructorOrClass as? KtClass)?.primaryConstructor
                     constructor?.getValueParameters()?.lastOrNull()?.replace(parameterToInsert)
                 }
             }
@@ -174,7 +174,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
 
             changeSignature.runRefactoringWithPostprocessing(project, "refactoring.changeSignature") {
                 val constructorOrClass = constructorPointer?.element
-                val constructor = constructorOrClass as? KtConstructor<*> ?: (constructorOrClass as? KtClass)?.getPrimaryConstructor()
+                val constructor = constructorOrClass as? KtConstructor<*> ?: (constructorOrClass as? KtClass)?.primaryConstructor
                 if (constructor == null || !visitedElements.add(constructor)) return@runRefactoringWithPostprocessing
                 constructor.getValueParameters().lastOrNull()?.let { newParam ->
                     val psiFactory = KtPsiFactory(project)
@@ -191,7 +191,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
             val propertyDescriptor = element.resolveToDescriptorIfAny() as? PropertyDescriptor ?: return
             val classDescriptor = propertyDescriptor.containingDeclaration as? ClassDescriptorWithResolutionScopes ?: return
             val klass = element.containingClassOrObject ?: return
-            val constructorDescriptors = if (klass.hasExplicitPrimaryConstructor() || klass.getSecondaryConstructors().isEmpty()) {
+            val constructorDescriptors = if (klass.hasExplicitPrimaryConstructor() || klass.secondaryConstructors.isEmpty()) {
                 listOf(classDescriptor.unsubstitutedPrimaryConstructor!!)
             }
             else {
@@ -222,7 +222,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
         (property.containingClassOrObject as? KtClass)?.let { klass ->
             if (klass.isAnnotation() || klass.isInterface()) return@let
 
-            if (property.accessors.isNotEmpty() || klass.getSecondaryConstructors().any { !it.getDelegationCall().isCallToThis }) {
+            if (property.accessors.isNotEmpty() || klass.secondaryConstructors.any { !it.getDelegationCall().isCallToThis }) {
                 actions.add(InitializeWithConstructorParameter(property))
             }
             else {

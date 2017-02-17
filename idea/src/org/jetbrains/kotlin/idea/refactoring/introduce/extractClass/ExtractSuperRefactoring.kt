@@ -103,7 +103,7 @@ class ExtractSuperRefactoring(
 
                 val superTypeList = originalClass.getSuperTypeList()
                 if (superTypeList != null) {
-                    for (superTypeListEntry in originalClass.getSuperTypeListEntries()) {
+                    for (superTypeListEntry in originalClass.superTypeListEntries) {
                         val superType = superTypeListEntry.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, superTypeListEntry.typeReference]
                                         ?: continue
                         val superClassDescriptor = superType.constructor.declarationDescriptor ?: continue
@@ -261,7 +261,7 @@ class ExtractSuperRefactoring(
         val needSuperCall = !extractInfo.isInterface
                             && (superClassEntry is KtSuperTypeCallEntry
                             || originalClass.hasPrimaryConstructor()
-                            || originalClass.getSecondaryConstructors().isEmpty())
+                            || originalClass.secondaryConstructors.isEmpty())
         val newSuperTypeListEntry = if (needSuperCall) {
             psiFactory.createSuperTypeCallEntry("$superTypeText()")
         }
@@ -297,7 +297,7 @@ class ExtractSuperRefactoring(
         val superClassEntry = if (!extractInfo.isInterface) {
             val originalClassDescriptor = originalClass.resolveToDescriptor() as ClassDescriptor
             val superClassDescriptor = originalClassDescriptor.getSuperClassNotAny()
-            originalClass.getSuperTypeListEntries().firstOrNull {
+            originalClass.superTypeListEntries.firstOrNull {
                 bindingContext[BindingContext.TYPE, it.typeReference]?.constructor?.declarationDescriptor == superClassDescriptor
             }
         }

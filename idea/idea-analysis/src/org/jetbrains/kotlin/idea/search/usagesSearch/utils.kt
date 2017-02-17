@@ -175,7 +175,7 @@ private fun processInheritorsDelegatingCallToSpecifiedConstructor(
 private fun processClassDelegationCallsToSpecifiedConstructor(
         klass: KtClass, constructor: DeclarationDescriptor, process: (KtCallElement) -> Boolean
 ): Boolean {
-    for (secondaryConstructor in klass.getSecondaryConstructors()) {
+    for (secondaryConstructor in klass.secondaryConstructors) {
         val delegationCallDescriptor = secondaryConstructor.getDelegationCall().getConstructorCallDescriptor()
         if (constructor == delegationCallDescriptor) {
             if (!process(secondaryConstructor.getDelegationCall())) return false
@@ -184,7 +184,7 @@ private fun processClassDelegationCallsToSpecifiedConstructor(
     if (!klass.isEnum()) return true
     for (declaration in klass.declarations) {
         if (declaration is KtEnumEntry) {
-            val delegationCall = declaration.getSuperTypeListEntries().firstOrNull()
+            val delegationCall = declaration.superTypeListEntries.firstOrNull()
             if (delegationCall is KtSuperTypeCallEntry && constructor == delegationCall.calleeExpression.getConstructorCallDescriptor()) {
                 if (!process(delegationCall)) return false
             }

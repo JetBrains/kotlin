@@ -57,7 +57,7 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
         if (element.nameIdentifier == null) return null
 
         if (element is KtClassOrObject) {
-            if (element.isLocal()) return null
+            if (element.isLocal) return null
             if (element is KtEnumEntry) return null
             if (element is KtClass && (element.isAnnotation() || element.isInterface())) return null
 
@@ -89,7 +89,7 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val lightClass = when (element) {
             is KtClassOrObject -> element.toLightClass()
-            else -> element.getContainingKtFile().findFacadeClass()
+            else -> element.containingKtFile.findFacadeClass()
         } ?: return
 
         object : CreateTestAction() {

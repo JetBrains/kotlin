@@ -648,7 +648,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
         val physicalExpression = substringContextOrThis
         val contentRange = extractableSubstringInfo?.contentRange
 
-        val file = physicalExpression.getContainingKtFile()
+        val file = physicalExpression.containingKtFile
 
         val references = physicalExpression
                 .collectDescendantsOfType<KtReferenceExpression> { contentRange == null || contentRange.contains(it.textRange) }

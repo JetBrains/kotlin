@@ -146,7 +146,7 @@ fun KtElement.getCall(context: BindingContext): Call? {
     val parent = element.parent
     val reference: KtExpression? = when {
         parent is KtInstanceExpressionWithLabel -> parent
-        parent is KtUserType -> parent.getParent()?.getParent() as? KtConstructorCalleeExpression
+        parent is KtUserType -> parent.parent?.parent as? KtConstructorCalleeExpression
         else -> element.getCalleeExpressionIfAny()
     }
     if (reference != null) {

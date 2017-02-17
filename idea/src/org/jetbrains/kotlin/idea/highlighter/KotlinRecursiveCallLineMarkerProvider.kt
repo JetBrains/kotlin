@@ -63,7 +63,7 @@ class KotlinRecursiveCallLineMarkerProvider : LineMarkerProvider {
             when (parent) {
                 is KtFunctionLiteral -> if (stopOnNonInlinedLambdas && !InlineUtil.isInlinedArgument(parent, parent.analyze(), false)) return null
                 is KtNamedFunction -> {
-                    when (parent.getParent()) {
+                    when (parent.parent) {
                         is KtBlockExpression, is KtClassBody, is KtFile, is KtScript -> return parent
                         else -> if (stopOnNonInlinedLambdas && !InlineUtil.isInlinedArgument(parent, parent.analyze(), false)) return null
                     }

@@ -114,7 +114,7 @@ private fun KotlinPullUpData.checkClashWithSuperDeclaration(
     val message = "${targetClassDescriptor.renderForConflicts()} already contains ${memberDescriptor.renderForConflicts()}"
 
     if (member is KtParameter) {
-        if (((targetClass as? KtClass)?.getPrimaryConstructorParameters() ?: emptyList()).any { it.name == member.name }) {
+        if (((targetClass as? KtClass)?.primaryConstructorParameters ?: emptyList()).any { it.name == member.name }) {
             conflicts.putValue(member, message.capitalize())
         }
         return

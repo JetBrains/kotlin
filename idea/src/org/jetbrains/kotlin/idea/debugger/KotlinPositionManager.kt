@@ -140,12 +140,12 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         val methodName = location.method().name()
         return when {
             JvmAbi.isGetterName(methodName) -> {
-                val parameterForGetter = contextElement.getPrimaryConstructor()?.valueParameters?.firstOrNull() {
+                val parameterForGetter = contextElement.primaryConstructor?.valueParameters?.firstOrNull() {
                     it.hasValOrVar() && it.name != null && JvmAbi.getterName(it.name!!) == methodName
                 } ?: return null
                 parameterForGetter
             }
-            methodName == "<init>" -> contextElement.getPrimaryConstructor()
+            methodName == "<init>" -> contextElement.primaryConstructor
             else -> null
         }
     }

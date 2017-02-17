@@ -88,7 +88,7 @@ class PlatformStaticAnnotationChecker : SimpleDeclarationChecker {
             else -> declaration
         }
 
-        if (insideObject && checkDeclaration.getModifierList()?.hasModifier(KtTokens.OVERRIDE_KEYWORD) == true) {
+        if (insideObject && checkDeclaration.modifierList?.hasModifier(KtTokens.OVERRIDE_KEYWORD) == true) {
             diagnosticHolder.report(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC.on(declaration))
         }
 

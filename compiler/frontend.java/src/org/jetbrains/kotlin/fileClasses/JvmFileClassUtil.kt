@@ -98,7 +98,7 @@ object JvmFileClassUtil {
 
     @JvmStatic fun isFromMultifileClass(declarationElement: KtElement, descriptor: DeclarationDescriptor): Boolean {
         if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
-            val fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(declarationElement.getContainingKtFile())
+            val fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(declarationElement.containingKtFile)
             return fileClassInfo.withJvmMultifileClass
         }
         return false
@@ -118,6 +118,6 @@ val KtFile.javaFileFacadeFqName: FqName
     }
 
 fun KtDeclaration.isInsideJvmMultifileClassFile() = JvmFileClassUtil.findAnnotationEntryOnFileNoResolve(
-        getContainingKtFile(),
+        containingKtFile,
         JvmFileClassUtil.JVM_MULTIFILE_CLASS_SHORT
 ) != null

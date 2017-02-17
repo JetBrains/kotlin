@@ -103,5 +103,5 @@ abstract class DataClassMethodGenerator(private val declaration: KtClassOrObject
                 .map { bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, it)!! }
 
     private val primaryConstructorParameters: List<KtParameter>
-        get() = (declaration as? KtClass)?.getPrimaryConstructorParameters().orEmpty()
+        get() = (declaration as? KtClass)?.primaryConstructorParameters.orEmpty()
 }

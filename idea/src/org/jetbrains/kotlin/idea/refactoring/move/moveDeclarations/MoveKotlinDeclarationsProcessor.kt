@@ -112,7 +112,7 @@ class MoveKotlinDeclarationsProcessor(
     private var nonCodeUsages: Array<NonCodeUsageInfo>? = null
     private val elementsToMove = descriptor.elementsToMove.filter { e -> e.parent != descriptor.moveTarget.getTargetPsiIfExists(e) }
     private val kotlinToLightElementsBySourceFile = elementsToMove
-            .groupBy { it.getContainingKtFile() }
+            .groupBy { it.containingKtFile }
             .mapValues { it.value.keysToMap { it.toLightElements() } }
     private val conflicts = MultiMap<PsiElement, String>()
 
@@ -251,7 +251,7 @@ class MoveKotlinDeclarationsProcessor(
                         continue
                     }
 
-                    oldToNewElementsMapping[sourceFile] = newDeclaration.getContainingKtFile()
+                    oldToNewElementsMapping[sourceFile] = newDeclaration.containingKtFile
 
                     transaction!!.getElementListener(oldDeclaration).elementMoved(newDeclaration)
                     for ((oldElement, newElement) in oldLightElements.asSequence().zip(newDeclaration.toLightElements().asSequence())) {

@@ -158,7 +158,7 @@ internal abstract class ImportFixBase<T : KtExpression> protected constructor(
         val nameStr = name.asString()
         if (nameStr.isEmpty()) return emptyList()
 
-        val file = element.getContainingKtFile()
+        val file = element.containingKtFile
 
         val bindingContext = element.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
         if (!checkErrorStillPresent(bindingContext)) return emptyList()
@@ -510,7 +510,7 @@ internal class ImportForMismatchingArgumentsFix(
         if (callElement.anyDescendantOfType<PsiErrorElement>()) return emptyList() // incomplete call
         val elementToAnalyze = callElement.getQualifiedExpressionForSelectorOrThis()
 
-        val file = element.getContainingKtFile()
+        val file = element.containingKtFile
         val resolutionFacade = file.getResolutionFacade()
         val resolutionScope = elementToAnalyze.getResolutionScope(bindingContext, resolutionFacade)
 

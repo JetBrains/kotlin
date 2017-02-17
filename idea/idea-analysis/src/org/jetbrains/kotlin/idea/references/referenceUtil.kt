@@ -103,7 +103,7 @@ fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
     }
     if (this is PsiJavaCodeReferenceElement && candidateTarget is KtObjectDeclaration && unwrappedTargets.size == 1) {
         val referredClass = unwrappedTargets.first()
-        if (referredClass is KtClass && candidateTarget in referredClass.getCompanionObjects()) {
+        if (referredClass is KtClass && candidateTarget in referredClass.companionObjects) {
             if (parent is PsiImportStaticStatement) return true
 
             return parent.reference?.unwrappedTargets?.any {

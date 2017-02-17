@@ -68,7 +68,7 @@ internal class PerFileAnalysisCache(val file: KtFile, val componentProvider: Com
     }
 
     fun getAnalysisResults(element: KtElement): AnalysisResult {
-        assert (element.getContainingKtFile() == file) { "Wrong file. Expected $file, but was ${element.getContainingKtFile()}" }
+        assert (element.containingKtFile == file) { "Wrong file. Expected $file, but was ${element.containingKtFile}" }
 
         val analyzableParent = KotlinResolveDataProvider.findAnalyzableParent(element)
 
@@ -146,7 +146,7 @@ private object KotlinResolveDataProvider {
                     // if none of the above worked, take the outermost declaration
                     ?: PsiTreeUtil.getTopmostParentOfType(element, KtDeclaration::class.java)
                     // if even that didn't work, take the whole file
-                    ?: element.getContainingKtFile()
+                    ?: element.containingKtFile
     }
 
     fun analyze(project: Project, componentProvider: ComponentProvider, analyzableElement: KtElement): AnalysisResult {
@@ -156,7 +156,7 @@ private object KotlinResolveDataProvider {
                 return AnalysisResult.success(analyzeExpressionCodeFragment(componentProvider, analyzableElement), module)
             }
 
-            val file = analyzableElement.getContainingKtFile()
+            val file = analyzableElement.containingKtFile
             if (file.getModuleInfo() is LibrarySourceInfo) {
                 // Library sources: mark file to skip
                 file.putUserData(LibrarySourceHacks.SKIP_TOP_LEVEL_MEMBERS, true)
@@ -165,7 +165,7 @@ private object KotlinResolveDataProvider {
             val resolveSession = componentProvider.get<ResolveSession>()
             val trace = DelegatingBindingTrace(resolveSession.bindingContext, "Trace for resolution of " + analyzableElement)
 
-            val targetPlatform = TargetPlatformDetector.getPlatform(analyzableElement.getContainingKtFile())
+            val targetPlatform = TargetPlatformDetector.getPlatform(analyzableElement.containingKtFile)
 
             val lazyTopDownAnalyzer = createContainerForLazyBodyResolve(
                     //TODO: should get ModuleContext

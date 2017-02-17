@@ -104,7 +104,7 @@ class KotlinInlineValHandler : InlineActionHandler() {
 
     override fun inlineElement(project: Project, editor: Editor?, element: PsiElement) {
         val declaration = element as KtProperty
-        val file = declaration.getContainingKtFile()
+        val file = declaration.containingKtFile
         val name = declaration.name ?: return
 
         val references = ReferencesSearch.search(declaration)
@@ -259,7 +259,7 @@ class KotlinInlineValHandler : InlineActionHandler() {
     }
 
     private fun addFunctionLiteralParameterTypes(parameters: String, inlinedExpressions: List<KtExpression>) {
-        val containingFile = inlinedExpressions.first().getContainingKtFile()
+        val containingFile = inlinedExpressions.first().containingKtFile
         val resolutionFacade = containingFile.getResolutionFacade()
 
         val functionsToAddParameters = inlinedExpressions.mapNotNull {

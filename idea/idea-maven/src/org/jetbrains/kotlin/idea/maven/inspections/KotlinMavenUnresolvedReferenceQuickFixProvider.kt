@@ -64,7 +64,7 @@ class KotlinMavenUnresolvedReferenceQuickFixProvider : UnresolvedReferenceQuickF
             val typeReference = expression.getParentOfType<KtTypeReference>(true)
             val referenced = typeReference?.text ?: expression.getReferencedName()
 
-            expression.getContainingKtFile()
+            expression.containingKtFile
                     .importDirectives
                     .firstOrNull { !it.isAllUnder && it.aliasName == referenced || it.importedFqName?.shortName()?.asString() == referenced }
                     ?.let { it.importedFqName?.asString() }

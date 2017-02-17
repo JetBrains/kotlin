@@ -65,7 +65,7 @@ class VarianceCheckerCore(
         if (klass is KtClass) {
             if (!checkClassHeader(klass)) return false
         }
-        for (member in klass.declarations + klass.getPrimaryConstructorParameters()) {
+        for (member in klass.declarations + klass.primaryConstructorParameters) {
             val descriptor = when (member) {
                 is KtParameter -> context.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, member)
                 is KtDeclaration -> context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, member)
@@ -93,7 +93,7 @@ class VarianceCheckerCore(
 
     private fun checkClassHeader(klass: KtClass): Boolean {
         var noError = true
-        for (specifier in klass.getSuperTypeListEntries()) {
+        for (specifier in klass.superTypeListEntries) {
             noError = noError and specifier.typeReference?.checkTypePosition(context, OUT_VARIANCE)
         }
         return noError and klass.checkTypeParameters(context, OUT_VARIANCE)

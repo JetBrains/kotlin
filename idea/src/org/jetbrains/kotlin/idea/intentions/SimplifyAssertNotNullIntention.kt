@@ -88,7 +88,7 @@ class SimplifyAssertNotNullIntention : SelfTargetingOffsetIndependentIntention<K
             val result = initializer.replace(newInitializer)
 
             val qualifiedExpression = (result as KtBinaryExpression).right as KtDotQualifiedExpression
-            ShortenReferences.DEFAULT.process(element.getContainingKtFile(),
+            ShortenReferences.DEFAULT.process(element.containingKtFile,
                                               qualifiedExpression.startOffset,
                                               (qualifiedExpression.selectorExpression as KtCallExpression).calleeExpression!!.endOffset)
         }

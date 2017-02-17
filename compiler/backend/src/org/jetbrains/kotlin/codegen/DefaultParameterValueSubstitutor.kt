@@ -54,7 +54,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
             contextKind: OwnerKind,
             classOrObject: KtPureClassOrObject
     ) {
-        val methodElement = classOrObject.getPrimaryConstructor() ?: classOrObject
+        val methodElement = classOrObject.primaryConstructor ?: classOrObject
 
         if (generateOverloadsIfNeeded(methodElement, constructorDescriptor, constructorDescriptor, contextKind, classBuilder, memberCodegen)) {
             return
@@ -251,7 +251,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
         val classDescriptor = constructorDescriptor.constructedClass
         if (classDescriptor.kind != ClassKind.CLASS) return false
 
-        if (classOrObject.isLocal()) return false
+        if (classOrObject.isLocal) return false
 
         if (CodegenBinding.canHaveOuter(state.bindingContext, classDescriptor)) return false
 
@@ -265,6 +265,6 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
     }
 
     private fun hasSecondaryConstructorsWithNoParameters(klass: KtClass) =
-        klass.getSecondaryConstructors().any { it.valueParameters.isEmpty() }
+        klass.secondaryConstructors.any { it.valueParameters.isEmpty() }
 
 }

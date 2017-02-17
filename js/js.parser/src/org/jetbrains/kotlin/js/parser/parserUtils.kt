@@ -68,7 +68,7 @@ private fun parse(
         insideFunction: Boolean,
         parseAction: Parser.(TokenStream)->Any
 ): Node {
-    Context.enter().setErrorReporter(reporter)
+    Context.enter().errorReporter = reporter
 
     try {
         val ts = TokenStream(StringReader(code, offset), "<parser>", FAKE_SOURCE_INFO.line)

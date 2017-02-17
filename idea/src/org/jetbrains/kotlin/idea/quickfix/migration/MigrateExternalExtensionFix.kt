@@ -40,7 +40,7 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
     : KotlinQuickFixAction<KtNamedDeclaration>(declaration), CleanupFix {
 
     override fun getText() = "Fix with 'asDynamic'"
-    override fun getFamilyName() = getText()
+    override fun getFamilyName() = text
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val declaration = element ?: return

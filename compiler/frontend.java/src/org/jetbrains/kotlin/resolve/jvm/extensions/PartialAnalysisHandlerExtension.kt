@@ -124,7 +124,7 @@ open class PartialAnalysisHandlerExtension : AnalysisHandlerExtension {
         }
 
         if (declaration is KtClass && declaration.isAnnotation()) {
-            declaration.getPrimaryConstructorParameters().forEach { doForEachDeclaration(it, f) }
+            declaration.primaryConstructorParameters.forEach { doForEachDeclaration(it, f) }
         }
     }
 

@@ -69,7 +69,7 @@ class AddJvmOverloadsIntention : SelfTargetingIntention<KtModifierListOwner>(
 
         text = "Add '@JvmOverloads' annotation to $targetName"
 
-        return TargetPlatformDetector.getPlatform(element.getContainingKtFile()) == JvmPlatform
+        return TargetPlatformDetector.getPlatform(element.containingKtFile) == JvmPlatform
                && parameters.any { it.hasDefaultValue() }
                && element.findAnnotation(annotationFqName) == null
     }

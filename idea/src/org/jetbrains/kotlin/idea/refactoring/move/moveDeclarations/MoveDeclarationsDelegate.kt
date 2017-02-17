@@ -45,7 +45,7 @@ sealed class MoveDeclarationsDelegate {
 
     object TopLevel : MoveDeclarationsDelegate() {
         override fun getContainerChangeInfo(originalDeclaration: KtNamedDeclaration, moveTarget: KotlinMoveTarget): ContainerChangeInfo {
-            return ContainerChangeInfo(ContainerInfo.Package(originalDeclaration.getContainingKtFile().packageFqName),
+            return ContainerChangeInfo(ContainerInfo.Package(originalDeclaration.containingKtFile.packageFqName),
                                        ContainerInfo.Package(moveTarget.targetContainerFqName!!))
         }
 

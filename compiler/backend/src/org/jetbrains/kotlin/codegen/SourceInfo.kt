@@ -34,7 +34,7 @@ data class SourceInfo(val source: String, val pathOrCleanFQN: String, val linesI
             val isTopLevel = element is KtFile || (element is KtNamedFunction && element.getParent() is KtFile)
             val cleanedClassFqName = if (!isTopLevel) internalClassName else internalClassName.substringBefore('$')
 
-            return SourceInfo(element.getContainingKtFile().name, cleanedClassFqName, lineNumbers!!)
+            return SourceInfo(element.containingKtFile.name, cleanedClassFqName, lineNumbers!!)
         }
     }
 
