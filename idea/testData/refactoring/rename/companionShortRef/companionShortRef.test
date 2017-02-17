@@ -1,5 +1,5 @@
 {
-  "type": "SHORT_COMPANION_REFERENCE",
+  "type": "AUTO_DETECT",
   "mainFile": "test.kt",
   "newName": "Bar"
 }

@@ -25,7 +25,6 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
-import com.intellij.openapi.editor.impl.CaretImpl
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.Module
@@ -42,6 +41,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.intellij.refactoring.MultiFileTestCase
 import com.intellij.refactoring.rename.PsiElementRenameHandler
+import com.intellij.refactoring.rename.RenameHandlerRegistry
 import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
@@ -49,7 +49,6 @@ import com.intellij.refactoring.util.CommonRefactoringUtil.RefactoringErrorHintE
 import com.intellij.testFramework.PlatformTestUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
 import org.jetbrains.kotlin.idea.jsonUtils.getString
@@ -60,14 +59,10 @@ import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
-import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.junit.Assert
 import java.io.File
 
@@ -81,8 +76,7 @@ private enum class RenameType {
     MARKED_ELEMENT,
     FILE,
     BUNDLE_PROPERTY,
-    SYNTHETIC_PROPERTY,
-    SHORT_COMPANION_REFERENCE
+    AUTO_DETECT
 }
 
 abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
@@ -128,8 +122,7 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
                 RenameType.MARKED_ELEMENT -> renameMarkedElement(renameObject, context)
                 RenameType.FILE -> renameFile(renameObject, context)
                 RenameType.BUNDLE_PROPERTY -> renameBundleProperty(renameObject, context)
-                RenameType.SYNTHETIC_PROPERTY -> renameSyntheticProperty(renameObject, context)
-                RenameType.SHORT_COMPANION_REFERENCE -> renameShortCompanionReference(renameObject, context)
+                RenameType.AUTO_DETECT -> renameWithAutoDetection(renameObject)
             }
 
             if (hintDirective != null) {
@@ -347,7 +340,7 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
         }
     }
 
-    private fun renameSyntheticProperty(renameParamsObject: JsonObject, context: TestContext) {
+    private fun renameWithAutoDetection(renameParamsObject: JsonObject) {
         val mainFilePath = renameParamsObject.getString("mainFile")
         val newName = renameParamsObject.getString("newName")
 
@@ -360,35 +353,10 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             val marker = doc.extractMarkerOffset(project, "/*rename*/")
             assert(marker != -1)
 
-            val refExpr = psiFile.findElementAt(marker)!!.getNonStrictParentOfType<KtSimpleNameExpression>()!!
-            val descriptor = refExpr.analyze(BodyResolveMode.PARTIAL)[BindingContext.REFERENCE_TARGET, refExpr]
-                    as SyntheticJavaPropertyDescriptor
-            val propertyWrapper = RenameJavaSyntheticPropertyHandler.SyntheticPropertyWrapper(psiFile.manager, descriptor)
-
-            val substitution = RenamePsiElementProcessor.forElement(propertyWrapper).substituteElementToRename(propertyWrapper, null)
-
-            runRenameProcessor(context, newName, substitution, renameParamsObject, true, true)
-        }
-    }
-
-    private fun renameShortCompanionReference(renameParamsObject: JsonObject, context: TestContext) {
-        val mainFilePath = renameParamsObject.getString("mainFile")
-        val newName = renameParamsObject.getString("newName")
-
-        doTestCommittingDocuments { rootDir, rootAfter ->
-            configExtra(rootDir, renameParamsObject)
-
-            val psiFile = rootDir.findFileByRelativePath(mainFilePath)!!.toPsiFile(project)!!
-
-            val doc = PsiDocumentManager.getInstance(project).getDocument(psiFile)!!
-            val marker = doc.extractMarkerOffset(project, "/*rename*/")
-            assert(marker != -1)
-
             val editor = EditorFactory.getInstance().createEditor(doc)
             editor.caretModel.moveToOffset(marker)
 
             try {
-                val handler = RenameClassByCompanionObjectShortReferenceHandler()
                 val dataContext = DataContext { dataId ->
                     when (dataId) {
                         CommonDataKeys.EDITOR.name -> editor
@@ -398,6 +366,7 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
                         else -> null
                     }
                 }
+                val handler = RenameHandlerRegistry.getInstance().getRenameHandler(dataContext)!!
                 Assert.assertTrue(handler.isAvailableOnDataContext(dataContext))
                 handler.invoke(project, editor, psiFile, dataContext)
             }
