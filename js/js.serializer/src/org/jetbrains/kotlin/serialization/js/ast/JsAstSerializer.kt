@@ -16,17 +16,21 @@
 
 package org.jetbrains.kotlin.serialization.js.ast
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.BinaryOperation.Type.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.UnaryOperation.Type.*
 import java.io.OutputStream
+import java.util.*
 
 class JsAstSerializer {
     private val nameTableBuilder = NameTable.newBuilder()
     private val stringTableBuilder = StringTable.newBuilder()
     private val nameMap = mutableMapOf<JsName, Int>()
     private val stringMap = mutableMapOf<String, Int>()
+    private val locationStack: Deque<JsLocation> = ArrayDeque()
 
     fun serialize(fragment: JsProgramFragment, output: OutputStream) {
         serialize(fragment).writeTo(output)
@@ -246,7 +250,14 @@ class JsAstSerializer {
             }
         }
 
-        statement.accept(visitor)
+        withLocation(statement, { visitor.builder.fileId = it }, {visitor.builder.location = it }) {
+            statement.accept(visitor)
+        }
+
+        if (statement is HasMetadata && statement.synthetic) {
+            visitor.builder.synthetic = true
+        }
+
         return visitor.builder.build()
     }
 
@@ -319,6 +330,9 @@ class JsAstSerializer {
                 x.parameters.forEach { functionBuilder.addParameter(serializeParameter(it)) }
                 x.name?.let { functionBuilder.nameId = serialize(it) }
                 functionBuilder.body = serialize(x.body)
+                if (x.isLocal) {
+                    functionBuilder.local = true
+                }
                 builder.function = functionBuilder.build()
             }
 
@@ -404,13 +418,24 @@ class JsAstSerializer {
             }
         }
 
-        expression.accept(visitor)
+        withLocation(expression, { visitor.builder.fileId = it }, {visitor.builder.location = it }) {
+            expression.accept(visitor)
+        }
+
+        with (visitor.builder) {
+            synthetic = expression.synthetic
+            sideEffects = map(expression.sideEffects)
+        }
+
         return visitor.builder.build()
     }
 
     private fun serializeParameter(parameter: JsParameter): Parameter {
         val parameterBuilder = Parameter.newBuilder()
         parameterBuilder.nameId = serialize(parameter.name)
+        if (parameter.hasDefaultValue) {
+            parameterBuilder.hasDefaultValue = true
+        }
         return parameterBuilder.build()
     }
 
@@ -430,7 +455,12 @@ class JsAstSerializer {
             varDecl.initExpression?.let { declBuilder.initialValue = serialize(it) }
             varsBuilder.addDeclaration(declBuilder)
         }
-        varsBuilder.multiline = vars.isMultiline
+
+        if (vars.isMultiline) {
+            varsBuilder.multiline = true
+        }
+        vars.exportedPackage?.let { varsBuilder.exportedPackageId = serialize(it) }
+
         return varsBuilder.build()
     }
 
@@ -493,6 +523,12 @@ class JsAstSerializer {
         JsUnaryOperator.VOID -> VOID
     }
 
+    private fun map(sideEffects: SideEffectKind) = when (sideEffects) {
+        SideEffectKind.AFFECTS_STATE -> SideEffects.AFFECTS_STATE
+        SideEffectKind.DEPENDS_ON_STATE -> SideEffects.DEPENDS_ON_STATE
+        SideEffectKind.PURE -> SideEffects.PURE
+    }
+
     private fun serialize(name: JsName) = nameMap.getOrPut(name) {
         val result = nameTableBuilder.entryCount
         val builder = Name.newBuilder()
@@ -506,5 +542,52 @@ class JsAstSerializer {
         val result = stringTableBuilder.entryCount
         stringTableBuilder.addEntry(string)
         result
+    }
+
+    private inline fun withLocation(node: JsNode, fileConsumer: (Int) -> Unit, locationConsumer: (Location) -> Unit, inner: () -> Unit) {
+        val lastLocation = locationStack.peek()
+        val location = extractLocation(node)
+        val locationStackModified = if (lastLocation != location && location != null) {
+            locationStack.push(location)
+            if (lastLocation == null || lastLocation.file != location.file) {
+                fileConsumer(serialize(location.file))
+            }
+            val locationBuilder = Location.newBuilder()
+            locationBuilder.startLine = location.startLine
+            locationBuilder.startChar = location.startChar
+            locationConsumer(locationBuilder.build())
+            true
+        }
+        else {
+            false
+        }
+
+        inner()
+
+        if (locationStackModified) {
+            locationStack.pop()
+        }
+    }
+
+    private fun extractLocation(node: JsNode): JsLocation? {
+        val source = node.source
+        return when (source) {
+            is JsLocation -> source
+            is PsiElement -> extractLocation(source)
+            else -> null
+        }
+    }
+
+    private fun extractLocation(element: PsiElement): JsLocation {
+        val file = element.containingFile
+        val document = file.viewProvider.document!!
+
+        val path = file.viewProvider.virtualFile.path
+
+        val startOffset = element.node.startOffset
+        val startLine = document.getLineNumber(startOffset)
+        val startChar = startOffset - document.getLineStartOffset(startLine)
+
+        return JsLocation(path, startLine, startChar)
     }
 }

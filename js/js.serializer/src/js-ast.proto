@@ -20,32 +20,49 @@ option java_outer_classname = "JsAstProtoBuf";
 option optimize_for = LITE_RUNTIME;
 
 
+message Location {
+    required int32 startLine = 1;
+    required int32 startChar = 2;
+}
+
+enum SideEffects {
+    AFFECTS_STATE = 1;
+    DEPENDS_ON_STATE = 2;
+    PURE = 3;
+}
+
+
 // Expressions
 //
 
 message Expression {
+    optional int32 fileId = 1;
+    optional Location location = 2;
+    optional bool synthetic = 3 [default = false];
+    optional SideEffects side_effects = 4 [default = AFFECTS_STATE];
+
     oneof expression {
-        int32 simple_name_reference = 2;
-        ThisLiteral this_literal = 3;
-        NullLiteral null_literal = 4;
-        TrueLiteral true_literal = 5;
-        FalseLiteral false_literal = 6;
-        StringLiteral string_literal = 7;
-        RegExpLiteral reg_exp_literal = 8;
-        IntLiteral int_literal = 9;
-        DoubleLiteral double_literal = 10;
-        ArrayLiteral array_literal = 11;
-        ObjectLiteral object_literal = 12;
-        Function function = 13;
-        DocComment doc_comment = 14;
-        BinaryOperation binary = 15;
-        UnaryOperation unary = 16;
-        Conditional conditional = 17;
-        ArrayAccess array_access = 18;
-        NameReference name_reference = 19;
-        PropertyReference property_reference = 20;
-        Invocation invocation = 21;
-        Instantiation instantiation = 22;
+        int32 simple_name_reference = 22;
+        ThisLiteral this_literal = 23;
+        NullLiteral null_literal = 24;
+        TrueLiteral true_literal = 25;
+        FalseLiteral false_literal = 26;
+        StringLiteral string_literal = 27;
+        RegExpLiteral reg_exp_literal = 28;
+        IntLiteral int_literal = 29;
+        DoubleLiteral double_literal = 30;
+        ArrayLiteral array_literal = 31;
+        ObjectLiteral object_literal = 32;
+        Function function = 33;
+        DocComment doc_comment = 34;
+        BinaryOperation binary = 35;
+        UnaryOperation unary = 36;
+        Conditional conditional = 37;
+        ArrayAccess array_access = 38;
+        NameReference name_reference = 39;
+        PropertyReference property_reference = 40;
+        Invocation invocation = 41;
+        Instantiation instantiation = 42;
     }
 }
 
@@ -84,7 +101,7 @@ message ArrayLiteral {
 
 message ObjectLiteral {
     repeated ObjectLiteralEntry entry = 1;
-    required bool multiline = 2;
+    optional bool multiline = 2 [default = true];
 }
 
 message ObjectLiteralEntry {
@@ -96,10 +113,12 @@ message Function {
     repeated Parameter parameter = 1;
     optional int32 name_id = 2;
     required Statement body = 3;
+    optional bool local = 4 [default = false];
 }
 
 message Parameter {
     required int32 name_id = 1;
+    optional bool has_default_value = 2 [default = false];
 }
 
 message DocComment {
@@ -190,7 +209,7 @@ message ArrayAccess {
 
 message NameReference {
     required int32 name_id = 1;
-    required Expression qualifier = 2;
+    optional Expression qualifier = 2;
 }
 
 message PropertyReference {
@@ -213,25 +232,29 @@ message Instantiation {
 //
 
 message Statement {
+    optional int32 fileId = 1;
+    optional Location location = 2;
+    optional bool synthetic = 3 [default = false];
+
     oneof statement {
-        Return return_statement = 1;
-        Throw throw_statement = 2;
-        Break break_statement = 3;
-        Continue continue_statement = 4;
-        Debugger debugger = 5;
-        ExpressionStatement expression = 6;
-        Vars vars = 7;
-        Block block = 8;
-        GlobalBlock global_block = 9;
-        Label label = 10;
-        If if_statement = 11;
-        Switch switch_statement = 12;
-        While while_statement = 13;
-        DoWhile do_while_statement = 14;
-        For for_statement = 15;
-        ForIn for_in_statement = 16;
-        Try try_statement = 17;
-        Empty empty = 18;
+        Return return_statement = 21;
+        Throw throw_statement = 22;
+        Break break_statement = 23;
+        Continue continue_statement = 24;
+        Debugger debugger = 25;
+        ExpressionStatement expression = 26;
+        Vars vars = 27;
+        Block block = 28;
+        GlobalBlock global_block = 29;
+        Label label = 30;
+        If if_statement = 31;
+        Switch switch_statement = 32;
+        While while_statement = 33;
+        DoWhile do_while_statement = 34;
+        For for_statement = 35;
+        ForIn for_in_statement = 36;
+        Try try_statement = 37;
+        Empty empty = 38;
     }
 }
 
@@ -260,7 +283,8 @@ message ExpressionStatement {
 
 message Vars {
     repeated VarDeclaration declaration = 1;
-    required bool multiline = 2;
+    optional bool multiline = 2 [default = false];
+    optional int32 exported_package_id = 3;
 }
 
 message VarDeclaration {

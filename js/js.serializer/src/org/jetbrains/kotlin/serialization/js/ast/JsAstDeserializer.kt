@@ -17,19 +17,23 @@
 package org.jetbrains.kotlin.serialization.js.ast
 
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Expression.ExpressionCase
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Statement.StatementCase
 import java.io.InputStream
+import java.util.*
 
 class JsAstDeserializer(private val program: JsProgram) {
     private val scope = JsRootScope(program)
     private val stringTable = mutableListOf<String>()
     private val nameTable = mutableListOf<Name>()
     private val nameCache = mutableListOf<JsName?>()
+    private val locationStack: Deque<JsLocation> = ArrayDeque()
 
     fun deserialize(input: InputStream): JsProgramFragment {
-        return deserialize(Chunk.parseFrom(input))
+        return deserialize(Chunk.parseFrom(CodedInputStream.newInstance(input).apply { setRecursionLimit(4096) }))
     }
 
     fun deserialize(proto: Chunk): JsProgramFragment {
@@ -94,7 +98,19 @@ class JsAstDeserializer(private val program: JsProgram) {
         }
     }
 
-    private fun deserialize(proto: Statement): JsStatement = when (proto.statementCase) {
+    private fun deserialize(proto: Statement): JsStatement {
+        val statement = withLocation(
+                fileId = if (proto.hasFileId()) proto.fileId else null,
+                location = if (proto.hasLocation()) proto.location else null,
+                action = { deserializeNoMetadata(proto) }
+        )
+        if (statement is HasMetadata) {
+            statement.synthetic = proto.synthetic
+        }
+        return statement
+    }
+
+    private fun deserializeNoMetadata(proto: Statement): JsStatement = when (proto.statementCase) {
         StatementCase.RETURN_STATEMENT -> {
             val returnProto = proto.returnStatement
             JsReturn(if (returnProto.hasValue()) deserialize(returnProto.value) else null)
@@ -226,7 +242,18 @@ class JsAstDeserializer(private val program: JsProgram) {
         null -> error("Statement not set")
     }
 
-    private fun deserialize(proto: Expression): JsExpression = when(proto.expressionCase) {
+    private fun deserialize(proto: Expression): JsExpression {
+        val expression = withLocation(
+                fileId = if (proto.hasFileId()) proto.fileId else null,
+                location = if (proto.hasLocation()) proto.location else null,
+                action = { deserializeNoMetadata(proto) }
+        )
+        expression.synthetic = proto.synthetic
+        expression.sideEffects = map(proto.sideEffects)
+        return expression
+    }
+
+    private fun deserializeNoMetadata(proto: Expression): JsExpression = when (proto.expressionCase) {
         ExpressionCase.THIS_LITERAL -> JsLiteral.THIS
         ExpressionCase.NULL_LITERAL -> JsLiteral.NULL
         ExpressionCase.TRUE_LITERAL -> JsLiteral.TRUE
@@ -268,6 +295,7 @@ class JsAstDeserializer(private val program: JsProgram) {
                 if (functionProto.hasNameId()) {
                     name = deserializeName(functionProto.nameId)
                 }
+                isLocal = functionProto.local
             }
         }
 
@@ -348,6 +376,9 @@ class JsAstDeserializer(private val program: JsProgram) {
             val initialValue = if (declProto.hasInitialValue()) deserialize(declProto.initialValue) else null
             vars.vars += JsVars.JsVar(deserializeName(declProto.nameId), initialValue)
         }
+        if (proto.hasExportedPackageId()) {
+            vars.exportedPackage = deserializeString(proto.exportedPackageId)
+        }
         return vars
     }
 
@@ -356,7 +387,9 @@ class JsAstDeserializer(private val program: JsProgram) {
     }
 
     private fun deserializeParameter(proto: Parameter): JsParameter {
-        return JsParameter(deserializeName(proto.nameId))
+        return JsParameter(deserializeName(proto.nameId)).apply {
+            hasDefaultValue = proto.hasDefaultValue
+        }
     }
 
     private fun deserializeName(id: Int): JsName {
@@ -425,5 +458,39 @@ class JsAstDeserializer(private val program: JsProgram) {
         UnaryOperation.Type.NOT -> JsUnaryOperator.NOT
         UnaryOperation.Type.TYPEOF -> JsUnaryOperator.TYPEOF
         UnaryOperation.Type.VOID -> JsUnaryOperator.VOID
+    }
+
+    private fun map(sideEffects: SideEffects) = when (sideEffects) {
+        SideEffects.AFFECTS_STATE -> SideEffectKind.AFFECTS_STATE
+        SideEffects.DEPENDS_ON_STATE -> SideEffectKind.DEPENDS_ON_STATE
+        SideEffects.PURE -> SideEffectKind.PURE
+    }
+
+    private fun <T : JsNode> withLocation(fileId: Int?, location: Location?, action: () -> T): T {
+        val lastLocation = locationStack.peek()
+        val deserializedLocation = if (fileId != null || location != null) {
+            val file = fileId?.let { deserializeString(it) } ?: lastLocation?.file!!
+            val (startLine, startChar) = if (location != null) {
+                Pair(location.startLine, location.startChar)
+            }
+            else {
+                Pair(lastLocation.startLine, lastLocation.startChar)
+            }
+            JsLocation(file, startLine, startChar)
+        }
+        else {
+            null
+        }
+
+        if (deserializedLocation != null) {
+            locationStack.push(deserializedLocation)
+        }
+        val node = action()
+        if (deserializedLocation != null) {
+            node.source = deserializedLocation
+            locationStack.pop()
+        }
+
+        return node
     }
 }
