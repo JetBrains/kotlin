@@ -29,6 +29,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.preprocessor.mkdirsOrFail
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.ObjectOutputStream
@@ -75,20 +76,28 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         return File(project.project.buildDir, "generated/source/kapt/$sourceSetName")
     }
 
+    fun getKaptGeneratedDirForKotlin(project: Project, sourceSetName: String): File {
+        return File(project.project.buildDir, "generated/source/kaptKotlin/$sourceSetName")
+    }
+
     fun getKaptStubsDir(project: Project, sourceSetName: String): File {
         val dir = File(project.project.buildDir, "tmp/kapt3/stubs/$sourceSetName")
         dir.mkdirs()
         return dir
     }
 
-    private class Kapt3SubpluginContext(
+    private inner class Kapt3SubpluginContext(
             val project: Project,
             val kotlinCompile: KotlinCompile,
             val javaCompile: AbstractCompile,
             val variantData: Any?,
             val sourceSetName: String,
             val kaptExtension: KaptExtension,
-            val kaptClasspath: MutableList<File>)
+            val kaptClasspath: MutableList<File>) {
+        val sourcesOutputDir = getKaptGeneratedDir(project, sourceSetName)
+        val kotlinSourcesOutputDir = getKaptGeneratedDirForKotlin(project, sourceSetName)
+        val classesOutputDir = getKaptClasssesDir(project, sourceSetName)
+    }
 
     override fun apply(
             project: Project, 
@@ -173,7 +182,11 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         else
             emptyMap()
 
-        val apOptions = kaptExtension.getAdditionalArguments(project, variantData, androidPlugin) + androidOptions
+        kotlinSourcesOutputDir.mkdirs()
+
+        val apOptions = kaptExtension.getAdditionalArguments(project, variantData, androidPlugin) +
+                androidOptions +
+                mapOf("kapt.kotlin.generated" to kotlinSourcesOutputDir.absolutePath)
 
         pluginOptions += SubpluginOption("apoptions", encodeAnnotationProcessingOptions(apOptions))
 
@@ -211,9 +224,6 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     }
 
     private fun Kapt3SubpluginContext.createKaptKotlinTask() {
-        val sourcesOutputDir = getKaptGeneratedDir(project, sourceSetName)
-        val classesOutputDir = getKaptClasssesDir(project, sourceSetName)
-
         // Replace compile*Kotlin to kapt*Kotlin
         assert(kotlinCompile.name.startsWith("compile"))
         val kaptTaskName = kotlinCompile.name.replaceFirst("compile", "kapt")
@@ -232,7 +242,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         kotlinCompile.dependsOn(kaptTask)
 
         // Add generated source dir as a source root for kotlinCompile and javaCompile
-        kotlinCompile.source(sourcesOutputDir)
+        kotlinCompile.source(sourcesOutputDir, kotlinSourcesOutputDir)
         javaCompile.source(sourcesOutputDir)
 
         val pluginOptions = kaptTask.pluginOptions

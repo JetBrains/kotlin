@@ -318,4 +318,16 @@ class Kapt3IT : BaseGradleIT() {
             assert(kaptArgs.contains(arg)) { "Kapt compiler arguments should contain '$arg'" }
         }
     }
+
+    @Test
+    fun testOutputKotlinCode() {
+        Project("kaptOutputKotlinCode", GRADLE_VERSION, directoryPrefix = "kapt2").build("build") {
+            assertSuccessful()
+            assertKaptSuccessful()
+            assertFileExists("build/generated/source/kapt/main/example/TestClassCustomized.java")
+            assertFileExists("build/generated/source/kaptKotlin/main/TestClass.kt")
+            assertFileExists("build/classes/main/example/TestClass.class")
+            assertFileExists("build/classes/main/example/TestClassCustomized.class")
+        }
+    }
 }

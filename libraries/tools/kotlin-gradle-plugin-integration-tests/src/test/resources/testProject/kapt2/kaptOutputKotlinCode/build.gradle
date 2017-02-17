@@ -1,0 +1,29 @@
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin'
+apply plugin: 'kotlin-kapt'
+
+repositories {
+    mavenLocal()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
+    kapt "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
+}
+
+kapt {
+    generateStubs = true
+    arguments {
+        arg("suffix", "Customized")
+        arg("generate.kotlin.code", "true")
+    }
+}
