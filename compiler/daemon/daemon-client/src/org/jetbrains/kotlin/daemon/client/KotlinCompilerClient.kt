@@ -28,6 +28,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.io.File
 import java.io.OutputStream
 import java.io.PrintStream
+import java.net.SocketException
+import java.rmi.ConnectException
+import java.rmi.UnmarshalException
 import java.rmi.server.UnicastRemoteObject
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
@@ -73,19 +76,39 @@ object KotlinCompilerClient {
     ): CompileService? {
 
         var attempts = 0
+
+        fun retryOrRethrow(e: Exception) {
+            if (attempts < DAEMON_CONNECT_CYCLE_ATTEMPTS) {
+                reportingTargets.report(DaemonReportCategory.INFO, "retrying($attempts) on:" + e.toString())
+            }
+            else throw e
+        }
+
         try {
-            while (attempts++ < DAEMON_CONNECT_CYCLE_ATTEMPTS) {
-                val (service, newJVMOptions) = tryFindSuitableDaemonOrNewOpts(File(daemonOptions.runFilesPath), compilerId, daemonJVMOptions, { cat, msg -> reportingTargets.report(cat, msg) })
-                if (service != null) {
-                    // the newJVMOptions could be checked here for additional parameters, if needed
-                    service.registerClient(clientAliveFlagFile.absolutePath)
-                    reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
-                    return service
+            while (attempts < DAEMON_CONNECT_CYCLE_ATTEMPTS) {
+                try {
+                    attempts += 1
+                    val (service, newJVMOptions) = tryFindSuitableDaemonOrNewOpts(File(daemonOptions.runFilesPath), compilerId, daemonJVMOptions, { cat, msg -> reportingTargets.report(cat, msg) })
+                    if (service != null) {
+                        // the newJVMOptions could be checked here for additional parameters, if needed
+                        service.registerClient(clientAliveFlagFile.absolutePath)
+                        reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
+                        return service
+                    }
+                    reportingTargets.report(DaemonReportCategory.DEBUG, "no suitable daemon found")
+                    if (autostart) {
+                        startDaemon(compilerId, newJVMOptions, daemonOptions, reportingTargets)
+                        reportingTargets.report(DaemonReportCategory.DEBUG, "new daemon started, trying to find it")
+                    }
                 }
-                reportingTargets.report(DaemonReportCategory.DEBUG, "no suitable daemon found")
-                if (autostart) {
-                    startDaemon(compilerId, newJVMOptions, daemonOptions, reportingTargets)
-                    reportingTargets.report(DaemonReportCategory.DEBUG, "new daemon started, trying to find it")
+                catch (e: SocketException) {
+                    retryOrRethrow(e)
+                }
+                catch (e: ConnectException) {
+                    retryOrRethrow(e)
+                }
+                catch (e: UnmarshalException) {
+                    retryOrRethrow(e)
                 }
             }
         }
