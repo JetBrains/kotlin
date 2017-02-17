@@ -958,10 +958,18 @@ public inline fun <T> Iterable<T>.takeWhile(predicate: (T) -> Boolean): List<T> 
 /**
  * Reverses elements in the list in-place.
  */
-@Fixme
 public fun <T> MutableList<T>.reverse(): Unit {
-    //java.util.Collections.reverse(this)
-    TODO()
+    val median = size / 2
+    var leftIndex = 0
+    var rightIndex = size - 1
+    while (leftIndex < median) {
+        val tmp = this[leftIndex]
+        this[leftIndex] = this[rightIndex]
+        this[rightIndex] = tmp
+        leftIndex++
+        rightIndex--
+    }
+
 }
 
 /**
