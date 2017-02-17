@@ -30,6 +30,7 @@ abstract class AbstractMavenImportHandler : MavenProjectImportHandler {
     abstract val pluginName: String
     abstract val annotationOptionName: String
     abstract val mavenPluginArtifactName: String
+    abstract val pluginJarFileFromIdea: File
 
     override fun invoke(facet: KotlinFacet, mavenProject: MavenProject) {
         modifyCompilerArgumentsForPlugin(facet, getPluginSetup(mavenProject),
@@ -45,15 +46,6 @@ abstract class AbstractMavenImportHandler : MavenProjectImportHandler {
             it.groupId == KOTLIN_PLUGIN_GROUP_ID && it.artifactId == KOTLIN_PLUGIN_ARTIFACT_ID
         } ?: return null
 
-        val runtimeJarFile = mavenProject.dependencies
-                .firstOrNull { it.groupId == KOTLIN_PLUGIN_GROUP_ID &&
-                               (it.artifactId == "kotlin-runtime" || it.artifactId == "kotlin-stdlib") }
-                ?.file ?: return null
-        val runtimeVersion = runtimeJarFile.parentFile.name
-
-        val mavenCompilerPluginJar = File(runtimeJarFile.parentFile.parentFile.parentFile,
-                                          "$mavenPluginArtifactName/$runtimeVersion/$mavenPluginArtifactName-$runtimeVersion.jar")
-
         val configuration = kotlinPlugin.configurationElement ?: return null
 
         val enabledCompilerPlugins = configuration.getElement("compilerPlugins")
@@ -67,8 +59,11 @@ abstract class AbstractMavenImportHandler : MavenProjectImportHandler {
                 ?.mapTo(mutableListOf()) { (it as Text).text }
                 ?: mutableListOf<String>()
 
+        // We can't use the plugin from Gradle as it may have the incompatible version
+        val classpath = listOf(pluginJarFileFromIdea.absolutePath)
+
         val annotationFqNames = getAnnotations(enabledCompilerPlugins, compilerPluginOptions) ?: return null
-        return AnnotationBasedCompilerPluginSetup(annotationFqNames, listOf(mavenCompilerPluginJar.absolutePath))
+        return AnnotationBasedCompilerPluginSetup(annotationFqNames, classpath)
     }
 
     private fun Element.getElement(name: String) = content.firstOrNull { it is Element && it.name == name } as? Element

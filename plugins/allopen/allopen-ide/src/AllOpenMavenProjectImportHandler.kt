@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.allopen.ide
 
 import org.jetbrains.kotlin.allopen.AllOpenCommandLineProcessor
 import org.jetbrains.kotlin.annotation.plugin.ide.AbstractMavenImportHandler
+import org.jetbrains.kotlin.utils.PathUtil
 
 class AllOpenMavenProjectImportHandler : AbstractMavenImportHandler() {
     private companion object {
@@ -28,6 +29,7 @@ class AllOpenMavenProjectImportHandler : AbstractMavenImportHandler() {
     override val pluginName = "allopen"
     override val annotationOptionName = AllOpenCommandLineProcessor.ANNOTATION_OPTION.name
     override val mavenPluginArtifactName = "kotlin-maven-allopen"
+    override val pluginJarFileFromIdea = PathUtil.getKotlinPathsForIdeaPlugin().allOpenPluginJarPath
 
     override fun getAnnotations(enabledCompilerPlugins: List<String>, compilerPluginOptions: List<String>): List<String>? {
         if ("all-open" !in enabledCompilerPlugins && "spring" !in enabledCompilerPlugins) {
