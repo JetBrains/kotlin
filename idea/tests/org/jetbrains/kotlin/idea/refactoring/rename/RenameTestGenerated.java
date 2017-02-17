@@ -204,6 +204,30 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("funWithLabeledReturns/funWithLabeledReturns.test")
+    public void testFunWithLabeledReturns_FunWithLabeledReturns() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/funWithLabeledReturns/funWithLabeledReturns.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledReturnInAnonymousFun/labeledReturnInAnonymousFun.test")
+    public void testLabeledReturnInAnonymousFun_LabeledReturnInAnonymousFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledReturnInAnonymousFun/labeledReturnInAnonymousFun.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledReturnInAnonymousFunBeforeWhitespace/labeledReturnInAnonymousFunBeforeWhitespace.test")
+    public void testLabeledReturnInAnonymousFunBeforeWhitespace_LabeledReturnInAnonymousFunBeforeWhitespace() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledReturnInAnonymousFunBeforeWhitespace/labeledReturnInAnonymousFunBeforeWhitespace.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("labeledReturnInLambda/labeledReturnInLambda.test")
+    public void testLabeledReturnInLambda_LabeledReturnInLambda() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/labeledReturnInLambda/labeledReturnInLambda.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("lambdaParameterRedeclaration/lambdaParameterRedeclaration.test")
     public void testLambdaParameterRedeclaration_LambdaParameterRedeclaration() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/lambdaParameterRedeclaration/lambdaParameterRedeclaration.test");

@@ -23,9 +23,11 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.refactoring.rename.PsiElementRenameHandler
 import com.intellij.refactoring.rename.inplace.MemberInplaceRenameHandler
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -37,7 +39,11 @@ abstract class AbstractReferenceSubstitutionRenameHandler<D : DeclarationDescrip
     protected fun getReferenceExpression(dataContext: DataContext): KtSimpleNameExpression? {
         val caret = CommonDataKeys.CARET.getData(dataContext) ?: return null
         val ktFile = CommonDataKeys.PSI_FILE.getData(dataContext) as? KtFile ?: return null
-        return ktFile.findElementAt(caret.offset)?.getNonStrictParentOfType<KtSimpleNameExpression>() ?: return null
+        var elementAtCaret = ktFile.findElementAt(caret.offset)
+        if (elementAtCaret is PsiWhiteSpace) {
+            elementAtCaret = CodeInsightUtils.getElementAtOffsetIgnoreWhitespaceAfter(ktFile, caret.offset)
+        }
+        return elementAtCaret?.getNonStrictParentOfType<KtSimpleNameExpression>()
     }
 
     protected abstract fun getTargetDescriptor(dataContext: DataContext): D?
