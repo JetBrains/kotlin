@@ -170,6 +170,8 @@ abstract class AnnotationCollectorExtensionBase(val supportInheritedAnnotations:
         }
 
         private fun recordClass(packageName: String, className: String) {
+            if (!isValidName(packageName) || !isValidName(className)) return
+
             val packageNameId = if (!packageName.isEmpty())
                 shortenedPackageNameCache.save(packageName, writer)
             else null
@@ -180,17 +182,23 @@ abstract class AnnotationCollectorExtensionBase(val supportInheritedAnnotations:
 
         private fun recordAnnotation(name: String?, type: String, annotationDesc: String) {
             val annotationFqName = Type.getType(annotationDesc).className
-            if (!isAnnotationHandled(annotationFqName)) return
+            if (!isAnnotationHandled(annotationFqName) || !isValidName(annotationFqName)) return
+
+            if (name != null && !isValidName(name)) return
 
             try {
-                val annotationId = shortenedAnnotationCache.save(annotationFqName, writer)
                 val packageName = this.currentPackageName
+                if (!isValidName(packageName)) return
+
+                val className = this.currentClassSimpleName
+                if (!isValidName(className)) return
+
+                val annotationId = shortenedAnnotationCache.save(annotationFqName, writer)
 
                 val packageNameId = if (!packageName.isEmpty())
                     shortenedPackageNameCache.save(packageName, writer)
                 else null
 
-                val className = this.currentClassSimpleName
                 val outputClassName = getOutputClassName(packageNameId, className)
                 val elementName = if (name != null) " $name" else ""
 
@@ -199,6 +207,10 @@ abstract class AnnotationCollectorExtensionBase(val supportInheritedAnnotations:
             catch (e: IOException) {
                 throw e
             }
+        }
+
+        private fun isValidName(name: String): Boolean {
+            return ' ' !in name
         }
 
         private fun getOutputClassName(packageNameId: String?, className: String): String {
