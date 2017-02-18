@@ -240,21 +240,30 @@ class CompileServiceImpl(
     }
 
     override fun scheduleShutdown(graceful: Boolean): CompileService.CallResult<Boolean> = ifAlive(minAliveness = Aliveness.Alive) {
-        CompileService.CallResult.Good(
-                if (!graceful || state.alive.compareAndSet(Aliveness.Alive.ordinal, Aliveness.LastSession.ordinal)) {
-                    timer.schedule(1) {
-                        ifAliveExclusive(minAliveness = Aliveness.LastSession, ignoreCompilerChanged = true) {
-                            when {
-                                !graceful -> shutdownImpl()
-                                state.sessions.isEmpty() -> shutdownWithDelay()
-                                else -> log.info("Some sessions are active, waiting for them to finish")
+        when {
+            !graceful -> {
+                shutdownWithDelay()
+                CompileService.CallResult.Good(true)
+            }
+            state.alive.compareAndSet(Aliveness.Alive.ordinal, Aliveness.LastSession.ordinal) -> {
+                timer.schedule(1) {
+                    ifAliveExclusive(minAliveness = Aliveness.LastSession, ignoreCompilerChanged = true) {
+                        when {
+                            state.sessions.isEmpty() -> shutdownWithDelay()
+                            else -> {
+                                daemonOptions.autoshutdownIdleSeconds = TimeUnit.MILLISECONDS.toSeconds(daemonOptions.forceShutdownTimeoutMilliseconds).toInt()
+                                daemonOptions.autoshutdownUnusedSeconds = daemonOptions.autoshutdownIdleSeconds
+                                log.info("Graceful shutdown signalled; unused/idle timeouts are set to ${daemonOptions.autoshutdownUnusedSeconds}/${daemonOptions.autoshutdownIdleSeconds}s")
+                                log.info("Some sessions are active, waiting for them to finish")
                             }
-                            CompileService.CallResult.Ok()
                         }
+                        CompileService.CallResult.Ok()
                     }
-                    true
                 }
-                else false)
+                CompileService.CallResult.Good(true)
+            }
+            else -> CompileService.CallResult.Good(false)
+        }
     }
 
     override fun remoteCompile(sessionId: Int,
@@ -437,7 +446,8 @@ class CompileServiceImpl(
         val stub = UnicastRemoteObject.exportObject(this, port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory) as CompileService
         registry.rebind (COMPILER_SERVICE_RMI_NAME, stub);
 
-        timer.schedule(100) {
+        // Arbitrary delay, short enough to start elections as soon as possible
+        timer.schedule(10) {
             initiateElections()
         }
         timer.schedule(delay = DAEMON_PERIODIC_CHECK_INTERVAL_MS, period = DAEMON_PERIODIC_CHECK_INTERVAL_MS) {

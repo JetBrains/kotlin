@@ -28,6 +28,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.io.File
 import java.io.OutputStream
 import java.io.PrintStream
+import java.net.SocketException
+import java.rmi.ConnectException
+import java.rmi.ConnectIOException
+import java.rmi.UnmarshalException
 import java.rmi.server.UnicastRemoteObject
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
@@ -48,6 +52,7 @@ object KotlinCompilerClient {
 
     val verboseReporting = System.getProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY) != null
 
+    data class ServiceWithSession(val service: CompileService, val sessionId: Int)
 
     fun connectToCompileService(compilerId: CompilerId,
                                 daemonJVMOptions: DaemonJVMOptions,
@@ -71,31 +76,48 @@ object KotlinCompilerClient {
                                 daemonOptions: DaemonOptions,
                                 reportingTargets: DaemonReportingTargets,
                                 autostart: Boolean = true
-    ): CompileService? {
+    ): CompileService? =
+            connectAndLease(compilerId,
+                            clientAliveFlagFile,
+                            daemonJVMOptions,
+                            daemonOptions,
+                            reportingTargets,
+                            autostart,
+                            leaseSession = false,
+                            sessionAliveFlagFile = null)?.service
 
-        var attempts = 0
-        try {
-            while (attempts++ < DAEMON_CONNECT_CYCLE_ATTEMPTS) {
-                val (service, newJVMOptions) = tryFindSuitableDaemonOrNewOpts(File(daemonOptions.runFilesPath), compilerId, daemonJVMOptions, { cat, msg -> reportingTargets.report(cat, msg) })
-                if (service != null) {
-                    // the newJVMOptions could be checked here for additional parameters, if needed
-                    service.registerClient(clientAliveFlagFile.absolutePath)
-                    reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
-                    return service
-                }
-                reportingTargets.report(DaemonReportCategory.DEBUG, "no suitable daemon found")
-                if (autostart) {
-                    startDaemon(compilerId, newJVMOptions, daemonOptions, reportingTargets)
-                    reportingTargets.report(DaemonReportCategory.DEBUG, "new daemon started, trying to find it")
-                }
+
+    fun connectAndLease(compilerId: CompilerId,
+                        clientAliveFlagFile: File,
+                        daemonJVMOptions: DaemonJVMOptions,
+                        daemonOptions: DaemonOptions,
+                        reportingTargets: DaemonReportingTargets,
+                        autostart: Boolean,
+                        leaseSession: Boolean,
+                        sessionAliveFlagFile: File? = null
+    ): ServiceWithSession? = connectLoop(reportingTargets) {
+        val (service, newJVMOptions) = tryFindSuitableDaemonOrNewOpts(File(daemonOptions.runFilesPath), compilerId, daemonJVMOptions, { cat, msg -> reportingTargets.report(cat, msg) })
+        if (service != null) {
+            // the newJVMOptions could be checked here for additional parameters, if needed
+            service.registerClient(clientAliveFlagFile.absolutePath)
+            reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
+            if (!leaseSession) ServiceWithSession(service, CompileService.NO_SESSION)
+            else {
+                val sessionId = service.leaseCompileSession(sessionAliveFlagFile?.absolutePath)
+                if (sessionId is CompileService.CallResult.Dying)
+                    null
+                else
+                    ServiceWithSession(service, sessionId.get())
             }
+        } else {
+            reportingTargets.report(DaemonReportCategory.DEBUG, "no suitable daemon found")
+            if (autostart) {
+                startDaemon(compilerId, newJVMOptions, daemonOptions, reportingTargets)
+                reportingTargets.report(DaemonReportCategory.DEBUG, "new daemon started, trying to find it")
+            }
+            null
         }
-        catch (e: Throwable) {
-            reportingTargets.report(DaemonReportCategory.EXCEPTION, e.toString())
-        }
-        return null
     }
-
 
     fun shutdownCompileService(compilerId: CompilerId, daemonOptions: DaemonOptions): Unit {
         connectToCompileService(compilerId, DaemonJVMOptions(), daemonOptions, DaemonReportingTargets(out = System.out), autostart = false, checkId = false)
@@ -107,6 +129,13 @@ object KotlinCompilerClient {
         shutdownCompileService(compilerId, DaemonOptions())
     }
 
+
+    fun leaseCompileSession(compilerService: CompileService, aliveFlagPath: String?): Int =
+            compilerService.leaseCompileSession(aliveFlagPath).get()
+
+    fun releaseCompileSession(compilerService: CompileService, sessionId: Int): Unit {
+        compilerService.releaseCompileSession(sessionId)
+    }
 
     fun compile(compilerService: CompileService,
                 sessionId: Int,
@@ -270,6 +299,33 @@ object KotlinCompilerClient {
             ?.let { listOf(it.absolutePath) }
 
     // --- Implementation ---------------------------------------
+
+    private inline fun <R> connectLoop(reportingTargets: DaemonReportingTargets, body: () -> R?): R? {
+        try {
+            var attempts = 0
+            while (attempts < DAEMON_CONNECT_CYCLE_ATTEMPTS) {
+                attempts += 1
+                val (res, err) = try {
+                    body() to null
+                }
+                catch (e: SocketException) { null to e }
+                catch (e: ConnectException) { null to e }
+                catch (e: ConnectIOException) { null to e }
+                catch (e: UnmarshalException) { null to e }
+
+                when {
+                    res != null -> return res
+                    err != null && attempts >= DAEMON_CONNECT_CYCLE_ATTEMPTS -> throw err
+                    err != null ->
+                        reportingTargets.report(DaemonReportCategory.INFO, "retrying($attempts) on: " + err.toString())
+                }
+            }
+        }
+        catch (e: Throwable) {
+            reportingTargets.report(DaemonReportCategory.EXCEPTION, e.toString())
+        }
+        return null
+    }
 
     private fun DaemonReportingTargets.report(category: DaemonReportCategory, message: String, source: String = "daemon client") {
         if (category == DaemonReportCategory.DEBUG && !verboseReporting) return
