@@ -257,7 +257,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     fun testDaemonGracefulShutdown() {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
-            val daemonOptions = DaemonOptions(autoshutdownIdleSeconds = 1, shutdownDelayMilliseconds = 1, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
+            val daemonOptions = DaemonOptions(autoshutdownIdleSeconds = 1, shutdownDelayMilliseconds = 1, forceShutdownTimeoutMilliseconds = 60000, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
             KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
 
             val logFile = createTempFile("kotlin-daemon-test", ".log")
@@ -403,7 +403,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     fun testParallelDaemonStart() {
 
-        val PARALLEL_THREADS_TO_START = 8
+        val PARALLEL_THREADS_TO_START = 10
 
         val doneLatch = CountDownLatch(PARALLEL_THREADS_TO_START)
 
@@ -414,25 +414,29 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         fun connectThread(threadNo: Int) = thread(name = "daemonConnect$threadNo") {
             try {
                 withFlagFile(getTestName(true), ".alive") { flagFile ->
-                    val daemonOptions = DaemonOptions(shutdownDelayMilliseconds = 10000, // attempt to avoid immediate shutdown of the non-elected daemons
-                                                      runFilesPath = File(tmpdir, getTestName(true)).absolutePath,
-                                                      verbose = true)
-                    val logFile = createTempFile("kotlin-daemon-test", ".log")
-                    val daemonJVMOptions =
-                            configureDaemonJVMOptions(DaemonJVMOptions(maxMemory = "2048m"),
-                                                      "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
-                                                      inheritMemoryLimits = false, inheritAdditionalProperties = false)
-                    val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
-                    assertNotNull("failed to connect daemon", daemon)
-                    val jar = tmpdir.absolutePath + File.separator + "hello.$threadNo.jar"
-                    val res = KotlinCompilerClient.compile(
-                            daemon!!,
-                            CompileService.NO_SESSION,
-                            CompileService.TargetPlatform.JVM,
-                            arrayOf(File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
-                            outStreams[threadNo])
-                    resultCodes[threadNo] = res
-                    logFiles[threadNo] = logFile
+                    withFlagFile(getTestName(true), ".salive") { sessionFlagFile ->
+                        val daemonOptions = DaemonOptions(shutdownDelayMilliseconds = 10000, // attempt to avoid immediate shutdown of the non-elected daemons
+                                                          runFilesPath = File(tmpdir, getTestName(true)).absolutePath,
+                                                          verbose = true)
+                        val logFile = createTempFile("kotlin-daemon-test", ".log")
+                        val daemonJVMOptions =
+                                configureDaemonJVMOptions(DaemonJVMOptions(maxMemory = "2048m"),
+                                                          "D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
+                                                          inheritMemoryLimits = false, inheritAdditionalProperties = false)
+                        val daemonWithSession = KotlinCompilerClient.connectAndLease(compilerId, flagFile, daemonJVMOptions, daemonOptions,
+                                                                                     DaemonReportingTargets(out = System.err), autostart = true,
+                                                                                     leaseSession = true, sessionAliveFlagFile = sessionFlagFile)
+                        assertNotNull("failed to connect daemon", daemonWithSession?.first)
+                        val jar = tmpdir.absolutePath + File.separator + "hello.$threadNo.jar"
+                        val res = KotlinCompilerClient.compile(
+                                daemonWithSession!!.first,
+                                daemonWithSession.second,
+                                CompileService.TargetPlatform.JVM,
+                                arrayOf(File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
+                                outStreams[threadNo])
+                        resultCodes[threadNo] = res
+                        logFiles[threadNo] = logFile
+                    }
                 }
             }
             finally {
@@ -713,7 +717,7 @@ internal fun File.ifLogNotContainsSequence(vararg patterns: String, body: (LineP
 internal fun File.assertLogContainsSequence(vararg patterns: String) {
     ifLogNotContainsSequence(*patterns)
     {
-        pattern,lineNo -> fail("Pattern '${pattern.regex}' is not found in the log file '$absolutePath'")
+        pattern,lineNo -> fail("Pattern '${pattern.regex}' is not found in the log file '$absolutePath' ($lineNo)")
     }
 }
 
