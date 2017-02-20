@@ -22,12 +22,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.core.setType
-import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.js.descriptorUtils.nameIfStandardType
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -267,3 +263,11 @@ fun KtDotQualifiedExpression.replaceFirstReceiver(
     return this
 }
 
+fun KtDotQualifiedExpression.deleteFirstReceiver(): KtExpression {
+    val receiver = receiverExpression
+    when (receiver) {
+        is KtDotQualifiedExpression -> receiver.deleteFirstReceiver()
+        else -> selectorExpression?.let { return this.replace(it) as KtExpression }
+    }
+    return this
+}

@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 
@@ -76,15 +75,6 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
                 element.replace(deleteFirstReceiver())
             }
         }
-    }
-
-    private fun KtDotQualifiedExpression.deleteFirstReceiver(): KtExpression {
-        val receiver = receiverExpression
-        when (receiver) {
-            is KtDotQualifiedExpression -> receiver.deleteFirstReceiver()
-            else -> selectorExpression?.let { return this.replace(it) as KtExpression }
-        }
-        return this
     }
 
     override fun isApplicableTo(element: KtCallExpression): Boolean {
