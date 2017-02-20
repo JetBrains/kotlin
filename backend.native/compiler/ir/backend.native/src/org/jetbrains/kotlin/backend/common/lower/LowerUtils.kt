@@ -4,13 +4,14 @@ import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -53,6 +54,42 @@ inline fun IrGeneratorWithScope.irBlock(expression: IrExpression, origin: IrStat
 
 inline fun IrGeneratorWithScope.irBlockBody(irElement: IrElement, body: IrBlockBodyBuilder.() -> Unit) =
         this.irBlockBody(irElement.startOffset, irElement.endOffset, body)
+
+open class IrBuildingTransformer(private val context: BackendContext) : IrElementTransformerVoid() {
+    private var currentBuilder: IrBuilderWithScope? = null
+
+    protected val builder: IrBuilderWithScope
+        get() = currentBuilder!!
+
+    private inline fun <T> withBuilder(declarationDescriptor: DeclarationDescriptor, block: () -> T): T {
+        val oldBuilder = currentBuilder
+        currentBuilder = context.createIrBuilder(declarationDescriptor)
+        return try {
+            block()
+        } finally {
+            currentBuilder = oldBuilder
+        }
+    }
+
+    override fun visitFunction(declaration: IrFunction): IrStatement {
+        withBuilder(declaration.descriptor) {
+            return super.visitFunction(declaration)
+        }
+    }
+
+    override fun visitField(declaration: IrField): IrStatement {
+        withBuilder(declaration.descriptor) {
+            // Transforms initializer:
+            return super.visitField(declaration)
+        }
+    }
+
+    override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer): IrStatement {
+        withBuilder(declaration.descriptor) {
+            return super.visitAnonymousInitializer(declaration)
+        }
+    }
+}
 
 fun computeOverrides(current: ClassDescriptor, functionsFromCurrent: List<CallableMemberDescriptor>): List<DeclarationDescriptor> {
 

@@ -62,7 +62,7 @@ internal class KonanLower(val context: Context) {
             Autoboxing(context).lower(irFile)
         }
         phaser.phase(KonanPhase.LOWER_INTEROP) {
-            InteropLowering(context).runOnFilePostfix(irFile)
+            InteropLowering(context).lower(irFile)
         }
     }
 }

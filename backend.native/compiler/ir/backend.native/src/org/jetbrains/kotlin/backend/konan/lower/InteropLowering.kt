@@ -1,8 +1,8 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.ValueType
 import org.jetbrains.kotlin.backend.konan.isRepresentedAs
@@ -12,12 +12,9 @@ import org.jetbrains.kotlin.ir.builders.IrBuilder
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil
@@ -29,16 +26,15 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 /**
  * Lowers some interop intrinsic calls.
  */
-internal class InteropLowering(val context: Context) : FunctionLoweringPass {
-    override fun lower(irFunction: IrFunction) {
-        val transformer = InteropTransformer(context, irFunction.descriptor)
-        irFunction.transformChildrenVoid(transformer)
+internal class InteropLowering(val context: Context) : FileLoweringPass {
+    override fun lower(irFile: IrFile) {
+        val transformer = InteropTransformer(context)
+        irFile.transformChildrenVoid(transformer)
     }
 }
 
-private class InteropTransformer(val context: Context, val function: FunctionDescriptor) : IrElementTransformerVoid() {
+private class InteropTransformer(val context: Context) : IrBuildingTransformer(context) {
 
-    val builder = context.createIrBuilder(function)
     val interop = context.interopBuiltIns
 
     private fun MemberScope.getSingleContributedFunction(name: String,
