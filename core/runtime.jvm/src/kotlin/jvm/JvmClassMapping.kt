@@ -92,7 +92,6 @@ public val <T : Any> Class<T>.kotlin: KClass<T>
 /**
  * Returns the runtime Java class of this object.
  */
-@Deprecated("Use 'instance::class.java' instead to get java class of the instance.", ReplaceWith("this::class.java"))
 public inline val <T: Any> T.javaClass : Class<T>
     @Suppress("UsePropertyAccessSyntax")
     get() = (this as java.lang.Object).getClass() as Class<T>
