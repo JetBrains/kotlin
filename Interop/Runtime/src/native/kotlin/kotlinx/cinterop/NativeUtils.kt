@@ -1,5 +1,7 @@
 package kotlinx.cinterop
 
+import konan.internal.Intrinsic
+
 internal fun decodeFromUtf8(bytes: ByteArray): String = kotlin.text.fromUtf8Array(bytes, 0, bytes.size)
 
 fun encodeToUtf8(str: String): ByteArray {
@@ -14,3 +16,9 @@ fun encodeToUtf8(str: String): ByteArray {
     }
     return result
 }
+
+@Intrinsic
+external fun bitsToFloat(bits: Int): Float
+
+@Intrinsic
+external fun bitsToDouble(bits: Long): Double

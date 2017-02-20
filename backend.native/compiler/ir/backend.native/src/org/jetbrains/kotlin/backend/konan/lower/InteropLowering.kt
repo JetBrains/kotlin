@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -186,6 +187,26 @@ private class InteropTransformer(val context: Context) : IrBuildingTransformer(c
                 builder.typeOf(type) ?: expression
             }
 
+            interop.bitsToFloat -> {
+                val argument = expression.getValueArgument(0)
+                if (argument is IrConst<*> && argument.kind == IrConstKind.Int) {
+                    val floatValue = kotlinx.cinterop.bitsToFloat(argument.value as Int)
+                    builder.irFloat(floatValue)
+                } else {
+                    expression
+                }
+            }
+
+            interop.bitsToDouble -> {
+                val argument = expression.getValueArgument(0)
+                if (argument is IrConst<*> && argument.kind == IrConstKind.Long) {
+                    val doubleValue = kotlinx.cinterop.bitsToDouble(argument.value as Long)
+                    builder.irDouble(doubleValue)
+                } else {
+                    expression
+                }
+            }
+
             else -> expression
         }
     }
@@ -195,3 +216,9 @@ private class InteropTransformer(val context: Context) : IrBuildingTransformer(c
         return getTypeArgument(typeParameter)!!
     }
 }
+
+private fun IrBuilder.irFloat(value: Float) =
+        IrConstImpl.float(startOffset, endOffset, context.builtIns.floatType, value)
+
+private fun IrBuilder.irDouble(value: Double) =
+        IrConstImpl.double(startOffset, endOffset, context.builtIns.doubleType, value)
