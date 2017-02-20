@@ -137,6 +137,15 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
         }
 
+        if (arguments.protocolsBackend != null) {
+            val protocolsBackend = ProtocolsBackend.fromString(arguments.protocolsBackend)
+            if (protocolsBackend != null) {
+                configuration.put(JVMConfigurationKeys.PROTOCOLS_BACKEND, protocolsBackend)
+            } else {
+                messageCollector.report(CompilerMessageSeverity.ERROR, "Wrong type for protocols backend", CompilerMessageLocation.NO_LOCATION)
+            }
+        }
+
         configuration.put(JVMConfigurationKeys.PARAMETERS_METADATA, arguments.javaParameters)
 
         putAdvancedOptions(configuration, arguments)

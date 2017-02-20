@@ -117,4 +117,7 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> USE_JAVAC =
             CompilerConfigurationKey.create("use javac");
 
+    public static final CompilerConfigurationKey<ProtocolsBackend> PROTOCOLS_BACKEND =
+            CompilerConfigurationKey.create("Backend type for protocols");
+
 }

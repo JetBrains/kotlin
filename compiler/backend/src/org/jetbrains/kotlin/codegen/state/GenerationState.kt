@@ -130,6 +130,8 @@ class GenerationState @JvmOverloads constructor(
     val isJvm8TargetWithDefaults: Boolean =  isJvm8Target && configuration.getBoolean(JVMConfigurationKeys.JVM8_TARGET_WITH_DEFAULTS)
     val generateDefaultImplsForJvm8: Boolean = configuration.getBoolean(JVMConfigurationKeys.INTERFACE_COMPATIBILITY)
 
+    val protocolsBackend: ProtocolsBackend = configuration.get(JVMConfigurationKeys.PROTOCOLS_BACKEND) ?: ProtocolsBackend.DEFAULT;
+
     val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
     val classBuilderMode: ClassBuilderMode = builderFactory.classBuilderMode
     val bindingTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "trace in GenerationState",

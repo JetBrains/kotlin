@@ -137,6 +137,9 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     )
     public String[] scriptResolverEnvironment;
 
+    @Argument(value = "protocols-backend", description = "Protocols backend type")
+    public String protocolsBackend;
+
     // Javac options
     @Argument(value = "-Xuse-javac", description = "Use javac for Java source and class files analysis")
     public boolean useJavac;

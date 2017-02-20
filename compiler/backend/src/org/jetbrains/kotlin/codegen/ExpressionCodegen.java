@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.config.ApiVersion;
+import org.jetbrains.kotlin.config.ProtocolsBackend;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
@@ -93,10 +94,7 @@ import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS;
 import org.jetbrains.kotlin.types.typesApproximation.CapturedTypeApproximationKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
-import org.jetbrains.org.objectweb.asm.Label;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
-import org.jetbrains.org.objectweb.asm.Opcodes;
-import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
@@ -131,6 +129,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     private final MemberCodegen<?> parentCodegen;
     private final TailRecursionCodegen tailRecursionCodegen;
     public final CallGenerator defaultCallGenerator = new CallGenerator.DefaultCallGenerator(this);
+    private final ProtocolGenerator protocolGenerator;
 
     private final Stack<BlockStackElement> blockStackElements = new Stack<>();
 
@@ -162,6 +161,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         this.parentCodegen = parentCodegen;
         this.tailRecursionCodegen = new TailRecursionCodegen(context, this, this.v, state);
+
+        this.protocolGenerator = state.getProtocolsBackend().equals(ProtocolsBackend.REFLECTION)
+                                 ? new ReflectionProtocolGenerator(this)
+                                 : new IndyProtocolGenerator(this, context);
     }
 
     @Nullable
@@ -199,7 +202,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             this.expression = expression;
         }
 
-        private void addGapLabel(Label label){
+        private void addGapLabel(Label label) {
             gaps.add(label);
         }
     }
@@ -1370,7 +1373,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     private void doFinallyOnReturn(@NotNull Label afterReturnLabel) {
-        if(!blockStackElements.isEmpty()) {
+        if (!blockStackElements.isEmpty()) {
             BlockStackElement stackElement = blockStackElements.peek();
             if (stackElement instanceof FinallyBlockStackElement) {
                 FinallyBlockStackElement finallyBlockStackElement = (FinallyBlockStackElement) stackElement;
@@ -1718,7 +1721,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @Nullable ExpressionCodegen codegen
     ) {
         StackValue value = context.lookupInContext(descriptor, prefix, state, ignoreNoOuter);
-        if(!isDelegatedLocalVariable(descriptor) || value == null) {
+        if (!isDelegatedLocalVariable(descriptor) || value == null) {
             return value;
         }
 
@@ -2124,6 +2127,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         assert callGenerator == defaultCallGenerator || !tailRecursionCodegen.isTailRecursion(resolvedCall) :
                 "Tail recursive method can't be inlined: " + descriptor;
 
+        DeclarationDescriptor originDeclaration = resolvedCall.getCandidateDescriptor().getContainingDeclaration();
+        boolean isProtocol = (originDeclaration instanceof ClassDescriptor) && ((ClassDescriptor) originDeclaration).isProtocol();
+        if (isProtocol) {
+            invokeProtocolMethodWithArguments(callableMethod, resolvedCall, receiver, callGenerator);
+            return;
+        }
+
         ArgumentGenerator argumentGenerator = new CallBasedArgumentGenerator(this, callGenerator, descriptor.getValueParameters(),
                                                                              callableMethod.getValueParameterTypes());
 
@@ -2139,8 +2149,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     ) {
         boolean isSuspendCall = CoroutineCodegenUtilKt.isSuspendNoInlineCall(resolvedCall);
         boolean isConstructor = resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor;
-        putReceiverAndInlineMarkerIfNeeded(callableMethod, resolvedCall, receiver, isSuspendCall, isConstructor);
 
+        putReceiverAndInlineMarkerIfNeeded(callableMethod, resolvedCall, receiver, isSuspendCall, isConstructor);
         callGenerator.processAndPutHiddenParameters(false);
 
         List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
@@ -2163,7 +2173,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         // Extra constructor marker argument
         if (callableMethod instanceof CallableMethod) {
             List<JvmMethodParameterSignature> callableParameters = ((CallableMethod) callableMethod).getValueParameters();
-            for (JvmMethodParameterSignature parameter: callableParameters) {
+            for (JvmMethodParameterSignature parameter : callableParameters) {
                 if (parameter.getKind() == JvmMethodParameterKind.CONSTRUCTOR_MARKER) {
                     callGenerator.putValueIfNeeded(parameter.getAsmType(), StackValue.constant(null, parameter.getAsmType()));
                 }
@@ -2191,6 +2201,38 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (returnType != null && KotlinBuiltIns.isNothing(returnType)) {
             v.aconst(null);
             v.athrow();
+        }
+    }
+
+    private void invokeProtocolMethodWithArguments(Callable callableMethod, ResolvedCall<?> resolvedCall, StackValue receiver, CallGenerator generator) {
+        boolean isSuspensionPoint = CoroutineCodegenUtilKt.isSuspensionPointInStateMachine(resolvedCall, bindingContext);
+        CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
+
+        putReceiverAndInlineMarkerIfNeeded(callableMethod, resolvedCall, receiver, isSuspensionPoint, false);
+        protocolGenerator.putInvokerAndGenerateIfNeeded((CallableMethod) callableMethod, resolvedCall);
+
+        putReceiverAndInlineMarkerIfNeeded(callableMethod, resolvedCall, receiver, isSuspensionPoint, false);
+
+        protocolGenerator.putArguments(this, generator, resolvedCall, callableMethod);
+        protocolGenerator.invokeMethod(callableMethod);
+
+        if (isSuspensionPoint) {
+            v.invokestatic(
+                    CoroutineCodegenUtilKt.COROUTINE_MARKER_OWNER,
+                    CoroutineCodegenUtilKt.BEFORE_SUSPENSION_POINT_MARKER_NAME,
+                    "()V", false
+            );
+        }
+
+        KotlinType returnType = descriptor.getReturnType();
+
+        if (returnType != null && KotlinBuiltIns.isNothing(returnType)) {
+            v.aconst(null);
+            v.athrow();
+        }
+
+        if (returnType != null && state.getProtocolsBackend() == ProtocolsBackend.REFLECTION) {
+            StackValue.coerce(OBJECT_TYPE, asmType(returnType), v);
         }
     }
 
@@ -2359,7 +2401,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 "should correspond to type arguments for the resulting type " + resultingType;
 
         Map<TypeParameterDescriptor, KotlinType> typeArgumentsMap = Maps.newHashMapWithExpectedSize(typeParameters.size());
-        for (TypeParameterDescriptor typeParameter: typeParameters) {
+        for (TypeParameterDescriptor typeParameter : typeParameters) {
             KotlinType typeArgument = typeArgumentsForReturnType.get(typeParameter.getIndex()).getType();
             typeArgumentsMap.put(typeParameter, typeArgument);
         }
@@ -3035,7 +3077,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     ) {
         Type leftType = left754Type.isNullable ? AsmUtil.boxType(left754Type.type) : left754Type.type;
 
-        if (pregeneratedLeft != null)  {
+        if (pregeneratedLeft != null) {
             StackValue.coercion(pregeneratedLeft, leftType).put(leftType, v);
         }
         else {
@@ -3539,7 +3581,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         storeTo.storeSelector(resultType, v);
-
     }
 
     @NotNull
@@ -3577,7 +3618,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     @NotNull
     public VariableDescriptor getVariableDescriptorNotNull(@NotNull KtElement declaration) {
         VariableDescriptor descriptor = bindingContext.get(VARIABLE, declaration);
-        assert descriptor != null :  "Couldn't find variable declaration in binding context " + declaration.getText();
+        assert descriptor != null : "Couldn't find variable declaration in binding context " + declaration.getText();
         return descriptor;
     }
 

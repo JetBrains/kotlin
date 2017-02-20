@@ -148,8 +148,9 @@ fun <T : Any> mapType(
             val jvmType =
                     if (mode.isForAnnotationParameter && KotlinBuiltIns.isKClass(descriptor)) {
                         factory.javaLangClassType
-                    }
-                    else {
+                    } else if (descriptorTypeWriter != null && descriptor.isProtocol) {
+                        factory.createObjectType("java/lang/Object")
+                    } else {
                         typeMappingConfiguration.getPredefinedTypeForClass(descriptor.original)
                         ?: run {
                             // refer to enum entries by enum type in bytecode unless ASM_TYPE is written
@@ -271,7 +272,7 @@ open class JvmDescriptorTypeWriter<T : Any>(private val jvmTypeFactory: JvmTypeF
     }
 
 
-    open public fun writeClass(objectType: T) {
+    open fun writeClass(objectType: T) {
         writeJvmTypeAsIs(objectType)
     }
 

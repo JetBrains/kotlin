@@ -43,8 +43,11 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Label;
@@ -1195,13 +1198,15 @@ public abstract class StackValue {
             }
             else {
                 PropertyGetterDescriptor getterDescriptor = descriptor.getGetter();
+
                 assert getterDescriptor != null : "Getter descriptor should be not null for " + descriptor;
+
+                DeclarationDescriptor declaration = getterDescriptor.getContainingDeclaration();
                 if (resolvedCall != null && getterDescriptor.isInline()) {
                     CallGenerator callGenerator = codegen.getOrCreateCallGenerator(resolvedCall, getterDescriptor);
                     callGenerator.processAndPutHiddenParameters(false);
                     callGenerator.genCall(getter, resolvedCall, false, codegen);
-                }
-                else {
+                } else {
                     getter.genInvokeInstruction(v);
                 }
 
@@ -1896,4 +1901,3 @@ public abstract class StackValue {
                 descriptor);
     }
 }
-

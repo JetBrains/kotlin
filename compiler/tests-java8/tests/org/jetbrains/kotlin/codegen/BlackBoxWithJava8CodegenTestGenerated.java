@@ -588,6 +588,27 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/java8/box/protocols")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Protocols extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInProtocols() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/box/protocols"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("assignment.kt")
+        public void testAssignment() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/assignment.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methods.kt")
+        public void testMethods() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/methods.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/java8/box/reflection")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
