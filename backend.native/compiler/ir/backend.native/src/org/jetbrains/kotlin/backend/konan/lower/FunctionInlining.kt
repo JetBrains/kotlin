@@ -32,7 +32,6 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     var fqName: String? = null
     override fun visitFile(declaration: IrFile): IrFile {
         fqName = declaration.packageFragmentDescriptor.fqName.asString()
-        println("akm_inline $fqName")
         return super.visitFile(declaration)
     }
 
