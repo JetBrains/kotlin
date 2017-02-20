@@ -163,6 +163,8 @@ private class NativeIndexImpl : NativeIndex() {
     fun convertType(type: CXType): Type = memScoped {
         val kind = type.kind.value
         return when (kind) {
+            CXType_Elaborated -> convertType(clang_Type_getNamedType(type, memScope))
+
             CXType_Unexposed -> {
                 val canonicalType = clang_getCanonicalType(type, memScope)
                 if (canonicalType.kind.value != CXType_Unexposed) {

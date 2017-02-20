@@ -113,7 +113,8 @@ List<String> llvmLinkerOpts() {
             '-lLLVMBitReader',
             '-lLLVMMC',
             '-lLLVMCore',
-            '-lLLVMSupport'
+            '-lLLVMSupport',
+            '-lLLVMDebugInfoCodeView'
     ]
 
     final List<String> res = new ArrayList<>()

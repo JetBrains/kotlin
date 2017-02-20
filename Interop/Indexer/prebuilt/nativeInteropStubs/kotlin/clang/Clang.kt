@@ -19,11 +19,18 @@ fun ctime(arg0: CPointer<time_tVar>?): CPointer<CInt8Var>? {
     return CPointer.createNullable<CInt8Var>(res)
 }
 
+fun difftime(arg0: time_t, arg1: time_t): Double {
+    val _arg0 = arg0
+    val _arg1 = arg1
+    val res = externals.difftime(_arg0, _arg1)
+    return res
+}
+
 fun getdate(arg0: String?): CPointer<tm>? {
-    memScoped {
+    return memScoped {
         val _arg0 = arg0?.toCString(memScope).rawPtr
         val res = externals.getdate(_arg0)
-        return CPointer.createNullable<tm>(res)
+        CPointer.createNullable<tm>(res)
     }
 }
 
@@ -46,23 +53,23 @@ fun mktime(arg0: CPointer<tm>?): time_t {
 }
 
 fun strftime(arg0: String?, arg1: size_t, arg2: String?, arg3: CPointer<tm>?): size_t {
-    memScoped {
+    return memScoped {
         val _arg0 = arg0?.toCString(memScope).rawPtr
         val _arg1 = arg1
         val _arg2 = arg2?.toCString(memScope).rawPtr
         val _arg3 = arg3.rawValue
         val res = externals.strftime(_arg0, _arg1, _arg2, _arg3)
-        return res
+        res
     }
 }
 
 fun strptime(arg0: String?, arg1: String?, arg2: CPointer<tm>?): CPointer<CInt8Var>? {
-    memScoped {
+    return memScoped {
         val _arg0 = arg0?.toCString(memScope).rawPtr
         val _arg1 = arg1?.toCString(memScope).rawPtr
         val _arg2 = arg2.rawValue
         val res = externals.strptime(_arg0, _arg1, _arg2)
-        return CPointer.createNullable<CInt8Var>(res)
+        CPointer.createNullable<CInt8Var>(res)
     }
 }
 
@@ -78,20 +85,20 @@ fun tzset(): Unit {
 }
 
 fun asctime_r(arg0: CPointer<tm>?, arg1: String?): CPointer<CInt8Var>? {
-    memScoped {
+    return memScoped {
         val _arg0 = arg0.rawValue
         val _arg1 = arg1?.toCString(memScope).rawPtr
         val res = externals.asctime_r(_arg0, _arg1)
-        return CPointer.createNullable<CInt8Var>(res)
+        CPointer.createNullable<CInt8Var>(res)
     }
 }
 
 fun ctime_r(arg0: CPointer<time_tVar>?, arg1: String?): CPointer<CInt8Var>? {
-    memScoped {
+    return memScoped {
         val _arg0 = arg0.rawValue
         val _arg1 = arg1?.toCString(memScope).rawPtr
         val res = externals.ctime_r(_arg0, _arg1)
-        return CPointer.createNullable<CInt8Var>(res)
+        CPointer.createNullable<CInt8Var>(res)
     }
 }
 
@@ -202,12 +209,12 @@ fun clang_VirtualFileOverlay_create(options: Int): CXVirtualFileOverlay? {
 }
 
 fun clang_VirtualFileOverlay_addFileMapping(arg0: CXVirtualFileOverlay?, virtualPath: String?, realPath: String?): CXErrorCode {
-    memScoped {
+    return memScoped {
         val _arg0 = arg0.rawValue
         val _virtualPath = virtualPath?.toCString(memScope).rawPtr
         val _realPath = realPath?.toCString(memScope).rawPtr
         val res = externals.clang_VirtualFileOverlay_addFileMapping(_arg0, _virtualPath, _realPath)
-        return CXErrorCode.byValue(res)
+        CXErrorCode.byValue(res)
     }
 }
 
@@ -246,20 +253,20 @@ fun clang_ModuleMapDescriptor_create(options: Int): CXModuleMapDescriptor? {
 }
 
 fun clang_ModuleMapDescriptor_setFrameworkModuleName(arg0: CXModuleMapDescriptor?, name: String?): CXErrorCode {
-    memScoped {
+    return memScoped {
         val _arg0 = arg0.rawValue
         val _name = name?.toCString(memScope).rawPtr
         val res = externals.clang_ModuleMapDescriptor_setFrameworkModuleName(_arg0, _name)
-        return CXErrorCode.byValue(res)
+        CXErrorCode.byValue(res)
     }
 }
 
 fun clang_ModuleMapDescriptor_setUmbrellaHeader(arg0: CXModuleMapDescriptor?, name: String?): CXErrorCode {
-    memScoped {
+    return memScoped {
         val _arg0 = arg0.rawValue
         val _name = name?.toCString(memScope).rawPtr
         val res = externals.clang_ModuleMapDescriptor_setUmbrellaHeader(_arg0, _name)
-        return CXErrorCode.byValue(res)
+        CXErrorCode.byValue(res)
     }
 }
 
@@ -332,11 +339,11 @@ fun clang_isFileMultipleIncludeGuarded(tu: CXTranslationUnit?, file: CXFile?): I
 }
 
 fun clang_getFile(tu: CXTranslationUnit?, file_name: String?): CXFile? {
-    memScoped {
+    return memScoped {
         val _tu = tu.rawValue
         val _file_name = file_name?.toCString(memScope).rawPtr
         val res = externals.clang_getFile(_tu, _file_name)
-        return CPointer.createNullable<COpaque>(res)
+        CPointer.createNullable<COpaque>(res)
     }
 }
 
@@ -508,12 +515,12 @@ fun clang_getDiagnosticInSet(Diags: CXDiagnosticSet?, Index: Int): CXDiagnostic?
 }
 
 fun clang_loadDiagnostics(file: String?, error: CPointer<CXLoadDiag_Error.Var>?, errorString: CPointer<CXString>?): CXDiagnosticSet? {
-    memScoped {
+    return memScoped {
         val _file = file?.toCString(memScope).rawPtr
         val _error = error.rawValue
         val _errorString = errorString.rawValue
         val res = externals.clang_loadDiagnostics(_file, _error, _errorString)
-        return CPointer.createNullable<COpaque>(res)
+        CPointer.createNullable<COpaque>(res)
     }
 }
 
@@ -652,7 +659,7 @@ fun clang_getTranslationUnitSpelling(CTUnit: CXTranslationUnit?, retValPlacement
 }
 
 fun clang_createTranslationUnitFromSourceFile(CIdx: CXIndex?, source_filename: String?, num_clang_command_line_args: Int, clang_command_line_args: CPointer<CPointerVar<CInt8Var>>?, num_unsaved_files: Int, unsaved_files: CPointer<CXUnsavedFile>?): CXTranslationUnit? {
-    memScoped {
+    return memScoped {
         val _CIdx = CIdx.rawValue
         val _source_filename = source_filename?.toCString(memScope).rawPtr
         val _num_clang_command_line_args = num_clang_command_line_args
@@ -660,26 +667,26 @@ fun clang_createTranslationUnitFromSourceFile(CIdx: CXIndex?, source_filename: S
         val _num_unsaved_files = num_unsaved_files
         val _unsaved_files = unsaved_files.rawValue
         val res = externals.clang_createTranslationUnitFromSourceFile(_CIdx, _source_filename, _num_clang_command_line_args, _clang_command_line_args, _num_unsaved_files, _unsaved_files)
-        return CPointer.createNullable<CXTranslationUnitImpl>(res)
+        CPointer.createNullable<CXTranslationUnitImpl>(res)
     }
 }
 
 fun clang_createTranslationUnit(CIdx: CXIndex?, ast_filename: String?): CXTranslationUnit? {
-    memScoped {
+    return memScoped {
         val _CIdx = CIdx.rawValue
         val _ast_filename = ast_filename?.toCString(memScope).rawPtr
         val res = externals.clang_createTranslationUnit(_CIdx, _ast_filename)
-        return CPointer.createNullable<CXTranslationUnitImpl>(res)
+        CPointer.createNullable<CXTranslationUnitImpl>(res)
     }
 }
 
 fun clang_createTranslationUnit2(CIdx: CXIndex?, ast_filename: String?, out_TU: CPointer<CXTranslationUnitVar>?): CXErrorCode {
-    memScoped {
+    return memScoped {
         val _CIdx = CIdx.rawValue
         val _ast_filename = ast_filename?.toCString(memScope).rawPtr
         val _out_TU = out_TU.rawValue
         val res = externals.clang_createTranslationUnit2(_CIdx, _ast_filename, _out_TU)
-        return CXErrorCode.byValue(res)
+        CXErrorCode.byValue(res)
     }
 }
 
@@ -689,7 +696,7 @@ fun clang_defaultEditingTranslationUnitOptions(): Int {
 }
 
 fun clang_parseTranslationUnit(CIdx: CXIndex?, source_filename: String?, command_line_args: CPointer<CPointerVar<CInt8Var>>?, num_command_line_args: Int, unsaved_files: CPointer<CXUnsavedFile>?, num_unsaved_files: Int, options: Int): CXTranslationUnit? {
-    memScoped {
+    return memScoped {
         val _CIdx = CIdx.rawValue
         val _source_filename = source_filename?.toCString(memScope).rawPtr
         val _command_line_args = command_line_args.rawValue
@@ -698,12 +705,12 @@ fun clang_parseTranslationUnit(CIdx: CXIndex?, source_filename: String?, command
         val _num_unsaved_files = num_unsaved_files
         val _options = options
         val res = externals.clang_parseTranslationUnit(_CIdx, _source_filename, _command_line_args, _num_command_line_args, _unsaved_files, _num_unsaved_files, _options)
-        return CPointer.createNullable<CXTranslationUnitImpl>(res)
+        CPointer.createNullable<CXTranslationUnitImpl>(res)
     }
 }
 
 fun clang_parseTranslationUnit2(CIdx: CXIndex?, source_filename: String?, command_line_args: CPointer<CPointerVar<CInt8Var>>?, num_command_line_args: Int, unsaved_files: CPointer<CXUnsavedFile>?, num_unsaved_files: Int, options: Int, out_TU: CPointer<CXTranslationUnitVar>?): CXErrorCode {
-    memScoped {
+    return memScoped {
         val _CIdx = CIdx.rawValue
         val _source_filename = source_filename?.toCString(memScope).rawPtr
         val _command_line_args = command_line_args.rawValue
@@ -713,12 +720,12 @@ fun clang_parseTranslationUnit2(CIdx: CXIndex?, source_filename: String?, comman
         val _options = options
         val _out_TU = out_TU.rawValue
         val res = externals.clang_parseTranslationUnit2(_CIdx, _source_filename, _command_line_args, _num_command_line_args, _unsaved_files, _num_unsaved_files, _options, _out_TU)
-        return CXErrorCode.byValue(res)
+        CXErrorCode.byValue(res)
     }
 }
 
 fun clang_parseTranslationUnit2FullArgv(CIdx: CXIndex?, source_filename: String?, command_line_args: CPointer<CPointerVar<CInt8Var>>?, num_command_line_args: Int, unsaved_files: CPointer<CXUnsavedFile>?, num_unsaved_files: Int, options: Int, out_TU: CPointer<CXTranslationUnitVar>?): CXErrorCode {
-    memScoped {
+    return memScoped {
         val _CIdx = CIdx.rawValue
         val _source_filename = source_filename?.toCString(memScope).rawPtr
         val _command_line_args = command_line_args.rawValue
@@ -728,7 +735,7 @@ fun clang_parseTranslationUnit2FullArgv(CIdx: CXIndex?, source_filename: String?
         val _options = options
         val _out_TU = out_TU.rawValue
         val res = externals.clang_parseTranslationUnit2FullArgv(_CIdx, _source_filename, _command_line_args, _num_command_line_args, _unsaved_files, _num_unsaved_files, _options, _out_TU)
-        return CXErrorCode.byValue(res)
+        CXErrorCode.byValue(res)
     }
 }
 
@@ -739,12 +746,12 @@ fun clang_defaultSaveOptions(TU: CXTranslationUnit?): Int {
 }
 
 fun clang_saveTranslationUnit(TU: CXTranslationUnit?, FileName: String?, options: Int): Int {
-    memScoped {
+    return memScoped {
         val _TU = TU.rawValue
         val _FileName = FileName?.toCString(memScope).rawPtr
         val _options = options
         val res = externals.clang_saveTranslationUnit(_TU, _FileName, _options)
-        return res
+        res
     }
 }
 
@@ -853,6 +860,12 @@ fun clang_isStatement(arg0: CXCursorKind): Int {
 fun clang_isAttribute(arg0: CXCursorKind): Int {
     val _arg0 = arg0.value
     val res = externals.clang_isAttribute(_arg0)
+    return res
+}
+
+fun clang_Cursor_hasAttrs(C: CXCursor): Int {
+    val _C = C.rawPtr
+    val res = externals.clang_Cursor_hasAttrs(_C)
     return res
 }
 
@@ -1124,6 +1137,24 @@ fun clang_isConstQualifiedType(T: CXType): Int {
     return res
 }
 
+fun clang_Cursor_isMacroFunctionLike(C: CXCursor): Int {
+    val _C = C.rawPtr
+    val res = externals.clang_Cursor_isMacroFunctionLike(_C)
+    return res
+}
+
+fun clang_Cursor_isMacroBuiltin(C: CXCursor): Int {
+    val _C = C.rawPtr
+    val res = externals.clang_Cursor_isMacroBuiltin(_C)
+    return res
+}
+
+fun clang_Cursor_isFunctionInlined(C: CXCursor): Int {
+    val _C = C.rawPtr
+    val res = externals.clang_Cursor_isFunctionInlined(_C)
+    return res
+}
+
 fun clang_isVolatileQualifiedType(T: CXType): Int {
     val _T = T.rawPtr
     val res = externals.clang_isVolatileQualifiedType(_T)
@@ -1154,6 +1185,13 @@ fun clang_getDeclObjCTypeEncoding(C: CXCursor, retValPlacement: NativePlacement)
     val _C = C.rawPtr
     val _retValPlacement = retValPlacement.alloc<CXString>().rawPtr
     val res = externals.clang_getDeclObjCTypeEncoding(_C, _retValPlacement)
+    return interpretPointed<CXString>(res)
+}
+
+fun clang_Type_getObjCEncoding(type: CXType, retValPlacement: NativePlacement): CXString {
+    val _type = type.rawPtr
+    val _retValPlacement = retValPlacement.alloc<CXString>().rawPtr
+    val res = externals.clang_Type_getObjCEncoding(_type, _retValPlacement)
     return interpretPointed<CXString>(res)
 }
 
@@ -1236,6 +1274,13 @@ fun clang_getArraySize(T: CXType): Long {
     return res
 }
 
+fun clang_Type_getNamedType(T: CXType, retValPlacement: NativePlacement): CXType {
+    val _T = T.rawPtr
+    val _retValPlacement = retValPlacement.alloc<CXType>().rawPtr
+    val res = externals.clang_Type_getNamedType(_T, _retValPlacement)
+    return interpretPointed<CXType>(res)
+}
+
 fun clang_Type_getAlignOf(T: CXType): Long {
     val _T = T.rawPtr
     val res = externals.clang_Type_getAlignOf(_T)
@@ -1256,11 +1301,11 @@ fun clang_Type_getSizeOf(T: CXType): Long {
 }
 
 fun clang_Type_getOffsetOf(T: CXType, S: String?): Long {
-    memScoped {
+    return memScoped {
         val _T = T.rawPtr
         val _S = S?.toCString(memScope).rawPtr
         val res = externals.clang_Type_getOffsetOf(_T, _S)
-        return res
+        res
     }
 }
 
@@ -1357,61 +1402,61 @@ fun clang_getCursorUSR(arg0: CXCursor, retValPlacement: NativePlacement): CXStri
 }
 
 fun clang_constructUSR_ObjCClass(class_name: String?, retValPlacement: NativePlacement): CXString {
-    memScoped {
+    return memScoped {
         val _class_name = class_name?.toCString(memScope).rawPtr
         val _retValPlacement = retValPlacement.alloc<CXString>().rawPtr
         val res = externals.clang_constructUSR_ObjCClass(_class_name, _retValPlacement)
-        return interpretPointed<CXString>(res)
+        interpretPointed<CXString>(res)
     }
 }
 
 fun clang_constructUSR_ObjCCategory(class_name: String?, category_name: String?, retValPlacement: NativePlacement): CXString {
-    memScoped {
+    return memScoped {
         val _class_name = class_name?.toCString(memScope).rawPtr
         val _category_name = category_name?.toCString(memScope).rawPtr
         val _retValPlacement = retValPlacement.alloc<CXString>().rawPtr
         val res = externals.clang_constructUSR_ObjCCategory(_class_name, _category_name, _retValPlacement)
-        return interpretPointed<CXString>(res)
+        interpretPointed<CXString>(res)
     }
 }
 
 fun clang_constructUSR_ObjCProtocol(protocol_name: String?, retValPlacement: NativePlacement): CXString {
-    memScoped {
+    return memScoped {
         val _protocol_name = protocol_name?.toCString(memScope).rawPtr
         val _retValPlacement = retValPlacement.alloc<CXString>().rawPtr
         val res = externals.clang_constructUSR_ObjCProtocol(_protocol_name, _retValPlacement)
-        return interpretPointed<CXString>(res)
+        interpretPointed<CXString>(res)
     }
 }
 
 fun clang_constructUSR_ObjCIvar(name: String?, classUSR: CXString, retValPlacement: NativePlacement): CXString {
-    memScoped {
+    return memScoped {
         val _name = name?.toCString(memScope).rawPtr
         val _classUSR = classUSR.rawPtr
         val _retValPlacement = retValPlacement.alloc<CXString>().rawPtr
         val res = externals.clang_constructUSR_ObjCIvar(_name, _classUSR, _retValPlacement)
-        return interpretPointed<CXString>(res)
+        interpretPointed<CXString>(res)
     }
 }
 
 fun clang_constructUSR_ObjCMethod(name: String?, isInstanceMethod: Int, classUSR: CXString, retValPlacement: NativePlacement): CXString {
-    memScoped {
+    return memScoped {
         val _name = name?.toCString(memScope).rawPtr
         val _isInstanceMethod = isInstanceMethod
         val _classUSR = classUSR.rawPtr
         val _retValPlacement = retValPlacement.alloc<CXString>().rawPtr
         val res = externals.clang_constructUSR_ObjCMethod(_name, _isInstanceMethod, _classUSR, _retValPlacement)
-        return interpretPointed<CXString>(res)
+        interpretPointed<CXString>(res)
     }
 }
 
 fun clang_constructUSR_ObjCProperty(property: String?, classUSR: CXString, retValPlacement: NativePlacement): CXString {
-    memScoped {
+    return memScoped {
         val _property = property?.toCString(memScope).rawPtr
         val _classUSR = classUSR.rawPtr
         val _retValPlacement = retValPlacement.alloc<CXString>().rawPtr
         val res = externals.clang_constructUSR_ObjCProperty(_property, _classUSR, _retValPlacement)
-        return interpretPointed<CXString>(res)
+        interpretPointed<CXString>(res)
     }
 }
 
@@ -1603,9 +1648,39 @@ fun clang_Module_getTopLevelHeader(arg0: CXTranslationUnit?, Module: CXModule?, 
     return CPointer.createNullable<COpaque>(res)
 }
 
+fun clang_CXXConstructor_isConvertingConstructor(C: CXCursor): Int {
+    val _C = C.rawPtr
+    val res = externals.clang_CXXConstructor_isConvertingConstructor(_C)
+    return res
+}
+
+fun clang_CXXConstructor_isCopyConstructor(C: CXCursor): Int {
+    val _C = C.rawPtr
+    val res = externals.clang_CXXConstructor_isCopyConstructor(_C)
+    return res
+}
+
+fun clang_CXXConstructor_isDefaultConstructor(C: CXCursor): Int {
+    val _C = C.rawPtr
+    val res = externals.clang_CXXConstructor_isDefaultConstructor(_C)
+    return res
+}
+
+fun clang_CXXConstructor_isMoveConstructor(C: CXCursor): Int {
+    val _C = C.rawPtr
+    val res = externals.clang_CXXConstructor_isMoveConstructor(_C)
+    return res
+}
+
 fun clang_CXXField_isMutable(C: CXCursor): Int {
     val _C = C.rawPtr
     val res = externals.clang_CXXField_isMutable(_C)
+    return res
+}
+
+fun clang_CXXMethod_isDefaulted(C: CXCursor): Int {
+    val _C = C.rawPtr
+    val res = externals.clang_CXXMethod_isDefaulted(_C)
     return res
 }
 
@@ -1824,7 +1899,7 @@ fun clang_defaultCodeCompleteOptions(): Int {
 }
 
 fun clang_codeCompleteAt(TU: CXTranslationUnit?, complete_filename: String?, complete_line: Int, complete_column: Int, unsaved_files: CPointer<CXUnsavedFile>?, num_unsaved_files: Int, options: Int): CPointer<CXCodeCompleteResults>? {
-    memScoped {
+    return memScoped {
         val _TU = TU.rawValue
         val _complete_filename = complete_filename?.toCString(memScope).rawPtr
         val _complete_line = complete_line
@@ -1833,7 +1908,7 @@ fun clang_codeCompleteAt(TU: CXTranslationUnit?, complete_filename: String?, com
         val _num_unsaved_files = num_unsaved_files
         val _options = options
         val res = externals.clang_codeCompleteAt(_TU, _complete_filename, _complete_line, _complete_column, _unsaved_files, _num_unsaved_files, _options)
-        return CPointer.createNullable<CXCodeCompleteResults>(res)
+        CPointer.createNullable<CXCodeCompleteResults>(res)
     }
 }
 
@@ -1910,11 +1985,47 @@ fun clang_getInclusions(tu: CXTranslationUnit?, visitor: CXInclusionVisitor?, cl
     return res
 }
 
+fun clang_Cursor_Evaluate(C: CXCursor): CXEvalResult? {
+    val _C = C.rawPtr
+    val res = externals.clang_Cursor_Evaluate(_C)
+    return CPointer.createNullable<COpaque>(res)
+}
+
+fun clang_EvalResult_getKind(E: CXEvalResult?): CXEvalResultKind {
+    val _E = E.rawValue
+    val res = externals.clang_EvalResult_getKind(_E)
+    return CXEvalResultKind.byValue(res)
+}
+
+fun clang_EvalResult_getAsInt(E: CXEvalResult?): Int {
+    val _E = E.rawValue
+    val res = externals.clang_EvalResult_getAsInt(_E)
+    return res
+}
+
+fun clang_EvalResult_getAsDouble(E: CXEvalResult?): Double {
+    val _E = E.rawValue
+    val res = externals.clang_EvalResult_getAsDouble(_E)
+    return res
+}
+
+fun clang_EvalResult_getAsStr(E: CXEvalResult?): CPointer<CInt8Var>? {
+    val _E = E.rawValue
+    val res = externals.clang_EvalResult_getAsStr(_E)
+    return CPointer.createNullable<CInt8Var>(res)
+}
+
+fun clang_EvalResult_dispose(E: CXEvalResult?): Unit {
+    val _E = E.rawValue
+    val res = externals.clang_EvalResult_dispose(_E)
+    return res
+}
+
 fun clang_getRemappings(path: String?): CXRemapping? {
-    memScoped {
+    return memScoped {
         val _path = path?.toCString(memScope).rawPtr
         val res = externals.clang_getRemappings(_path)
-        return CPointer.createNullable<COpaque>(res)
+        CPointer.createNullable<COpaque>(res)
     }
 }
 
@@ -2049,7 +2160,7 @@ fun clang_IndexAction_dispose(arg0: CXIndexAction?): Unit {
 }
 
 fun clang_indexSourceFile(arg0: CXIndexAction?, client_data: CXClientData?, index_callbacks: CPointer<IndexerCallbacks>?, index_callbacks_size: Int, index_options: Int, source_filename: String?, command_line_args: CPointer<CPointerVar<CInt8Var>>?, num_command_line_args: Int, unsaved_files: CPointer<CXUnsavedFile>?, num_unsaved_files: Int, out_TU: CPointer<CXTranslationUnitVar>?, TU_options: Int): Int {
-    memScoped {
+    return memScoped {
         val _arg0 = arg0.rawValue
         val _client_data = client_data.rawValue
         val _index_callbacks = index_callbacks.rawValue
@@ -2063,12 +2174,12 @@ fun clang_indexSourceFile(arg0: CXIndexAction?, client_data: CXClientData?, inde
         val _out_TU = out_TU.rawValue
         val _TU_options = TU_options
         val res = externals.clang_indexSourceFile(_arg0, _client_data, _index_callbacks, _index_callbacks_size, _index_options, _source_filename, _command_line_args, _num_command_line_args, _unsaved_files, _num_unsaved_files, _out_TU, _TU_options)
-        return res
+        res
     }
 }
 
 fun clang_indexSourceFileFullArgv(arg0: CXIndexAction?, client_data: CXClientData?, index_callbacks: CPointer<IndexerCallbacks>?, index_callbacks_size: Int, index_options: Int, source_filename: String?, command_line_args: CPointer<CPointerVar<CInt8Var>>?, num_command_line_args: Int, unsaved_files: CPointer<CXUnsavedFile>?, num_unsaved_files: Int, out_TU: CPointer<CXTranslationUnitVar>?, TU_options: Int): Int {
-    memScoped {
+    return memScoped {
         val _arg0 = arg0.rawValue
         val _client_data = client_data.rawValue
         val _index_callbacks = index_callbacks.rawValue
@@ -2082,7 +2193,7 @@ fun clang_indexSourceFileFullArgv(arg0: CXIndexAction?, client_data: CXClientDat
         val _out_TU = out_TU.rawValue
         val _TU_options = TU_options
         val res = externals.clang_indexSourceFileFullArgv(_arg0, _client_data, _index_callbacks, _index_callbacks_size, _index_options, _source_filename, _command_line_args, _num_command_line_args, _unsaved_files, _num_unsaved_files, _out_TU, _TU_options)
-        return res
+        res
     }
 }
 
@@ -2340,8 +2451,6 @@ class CXVirtualFileOverlayImpl(override val rawPtr: NativePtr) : COpaque
 
 class CXModuleMapDescriptorImpl(override val rawPtr: NativePtr) : COpaque
 
-class CXTranslationUnitImpl(override val rawPtr: NativePtr) : COpaque
-
 class CXUnsavedFile(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(24, 8)
@@ -2380,6 +2489,8 @@ class CXFileUniqueID(override val rawPtr: NativePtr) : CStructVar() {
         get() = memberAt(0)
     
 }
+
+class CXTranslationUnitImpl(override val rawPtr: NativePtr) : COpaque
 
 class CXSourceLocation(override val rawPtr: NativePtr) : CStructVar() {
     
@@ -3045,6 +3156,7 @@ enum class CXTranslationUnit_Flags(val value: Int) {
     CXTranslationUnit_SkipFunctionBodies(64),
     CXTranslationUnit_IncludeBriefCommentsInCodeCompletion(128),
     CXTranslationUnit_CreatePreambleOnFirstParse(256),
+    CXTranslationUnit_KeepGoing(512),
     ;
     
     companion object {
@@ -3253,7 +3365,8 @@ enum class CXCursorKind(val value: Int) {
     CXCursor_ObjCBoolLiteralExpr(145),
     CXCursor_ObjCSelfExpr(146),
     CXCursor_OMPArraySectionExpr(147),
-    CXCursor_LastExpr(147),
+    CXCursor_ObjCAvailabilityCheckExpr(148),
+    CXCursor_LastExpr(148),
     CXCursor_FirstStmt(200),
     CXCursor_UnexposedStmt(200),
     CXCursor_LabelStmt(201),
@@ -3317,7 +3430,16 @@ enum class CXCursorKind(val value: Int) {
     CXCursor_OMPTaskLoopDirective(258),
     CXCursor_OMPTaskLoopSimdDirective(259),
     CXCursor_OMPDistributeDirective(260),
-    CXCursor_LastStmt(260),
+    CXCursor_OMPTargetEnterDataDirective(261),
+    CXCursor_OMPTargetExitDataDirective(262),
+    CXCursor_OMPTargetParallelDirective(263),
+    CXCursor_OMPTargetParallelForDirective(264),
+    CXCursor_OMPTargetUpdateDirective(265),
+    CXCursor_OMPDistributeParallelForDirective(266),
+    CXCursor_OMPDistributeParallelForSimdDirective(267),
+    CXCursor_OMPDistributeSimdDirective(268),
+    CXCursor_OMPTargetParallelForSimdDirective(269),
+    CXCursor_LastStmt(269),
     CXCursor_TranslationUnit(300),
     CXCursor_FirstAttr(400),
     CXCursor_UnexposedAttr(400),
@@ -3350,8 +3472,9 @@ enum class CXCursorKind(val value: Int) {
     CXCursor_LastPreprocessing(503),
     CXCursor_ModuleImportDecl(600),
     CXCursor_TypeAliasTemplateDecl(601),
+    CXCursor_StaticAssert(602),
     CXCursor_FirstExtraDecl(600),
-    CXCursor_LastExtraDecl(601),
+    CXCursor_LastExtraDecl(602),
     CXCursor_OverloadCandidate(700),
     ;
     
@@ -3456,6 +3579,7 @@ enum class CXTypeKind(val value: Int) {
     CXType_ObjCId(27),
     CXType_ObjCClass(28),
     CXType_ObjCSel(29),
+    CXType_Float128(30),
     CXType_FirstBuiltin(2),
     CXType_LastBuiltin(29),
     CXType_Complex(100),
@@ -3477,6 +3601,7 @@ enum class CXTypeKind(val value: Int) {
     CXType_DependentSizedArray(116),
     CXType_MemberPointer(117),
     CXType_Auto(118),
+    CXType_Elaborated(119),
     ;
     
     companion object {
@@ -3504,6 +3629,9 @@ enum class CXCallingConv(val value: Int) {
     CXCallingConv_X86_64Win64(10),
     CXCallingConv_X86_64SysV(11),
     CXCallingConv_X86VectorCall(12),
+    CXCallingConv_Swift(13),
+    CXCallingConv_PreserveMost(14),
+    CXCallingConv_PreserveAll(15),
     CXCallingConv_Invalid(100),
     CXCallingConv_Unexposed(200),
     ;
@@ -3657,6 +3785,7 @@ enum class CXObjCPropertyAttrKind(val value: Int) {
     CXObjCPropertyAttr_weak(512),
     CXObjCPropertyAttr_strong(1024),
     CXObjCPropertyAttr_unsafe_unretained(2048),
+    CXObjCPropertyAttr_class(4096),
     ;
     
     companion object {
@@ -3819,6 +3948,28 @@ enum class CXCompletionContext(val value: Int) {
     class Var(override val rawPtr: NativePtr) : CEnumVar() {
         companion object : Type(CInt32Var.size.toInt())
         var value: CXCompletionContext
+            get() = byValue(this.reinterpret<CInt32Var>().value)
+            set(value) { this.reinterpret<CInt32Var>().value = value.value }
+    }
+}
+
+enum class CXEvalResultKind(val value: Int) {
+    CXEval_Int(1),
+    CXEval_Float(2),
+    CXEval_ObjCStrLiteral(3),
+    CXEval_StrLiteral(4),
+    CXEval_CFStr(5),
+    CXEval_Other(6),
+    CXEval_UnExposed(0),
+    ;
+    
+    companion object {
+        fun byValue(value: Int) = CXEvalResultKind.values().find { it.value == value }!!
+    }
+    
+    class Var(override val rawPtr: NativePtr) : CEnumVar() {
+        companion object : Type(CInt32Var.size.toInt())
+        var value: CXEvalResultKind
             get() = byValue(this.reinterpret<CInt32Var>().value)
             set(value) { this.reinterpret<CInt32Var>().value = value.value }
     }
@@ -4090,6 +4241,9 @@ typealias CXCompletionString = COpaquePointer
 typealias CXInclusionVisitorVar = CPointerVarWithValueMappedTo<CXInclusionVisitor>
 typealias CXInclusionVisitor = CFunctionPointer<CFunctionType3>
 
+typealias CXEvalResultVar = CPointerVarWithValueMappedTo<CXEvalResult>
+typealias CXEvalResult = COpaquePointer
+
 typealias CXRemappingVar = CPointerVarWithValueMappedTo<CXRemapping>
 typealias CXRemapping = COpaquePointer
 
@@ -4195,36 +4349,38 @@ object CFunctionType13 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CPointer<CXI
 }
 
 object externals {
-    init { System.loadLibrary("clangbridge") }
-    external fun asctime(arg0: Long): Long
+    init { System.loadLibrary("clangstubs") }
+    external fun asctime(arg0: NativePtr): NativePtr
     
     external fun clock(): Long
     
-    external fun ctime(arg0: Long): Long
+    external fun ctime(arg0: NativePtr): NativePtr
     
-    external fun getdate(arg0: Long): Long
+    external fun difftime(arg0: Long, arg1: Long): Double
     
-    external fun gmtime(arg0: Long): Long
+    external fun getdate(arg0: NativePtr): NativePtr
     
-    external fun localtime(arg0: Long): Long
+    external fun gmtime(arg0: NativePtr): NativePtr
     
-    external fun mktime(arg0: Long): Long
+    external fun localtime(arg0: NativePtr): NativePtr
     
-    external fun strftime(arg0: Long, arg1: Long, arg2: Long, arg3: Long): Long
+    external fun mktime(arg0: NativePtr): Long
     
-    external fun strptime(arg0: Long, arg1: Long, arg2: Long): Long
+    external fun strftime(arg0: NativePtr, arg1: Long, arg2: NativePtr, arg3: NativePtr): Long
     
-    external fun time(arg0: Long): Long
+    external fun strptime(arg0: NativePtr, arg1: NativePtr, arg2: NativePtr): NativePtr
+    
+    external fun time(arg0: NativePtr): Long
     
     external fun tzset(): Unit
     
-    external fun asctime_r(arg0: Long, arg1: Long): Long
+    external fun asctime_r(arg0: NativePtr, arg1: NativePtr): NativePtr
     
-    external fun ctime_r(arg0: Long, arg1: Long): Long
+    external fun ctime_r(arg0: NativePtr, arg1: NativePtr): NativePtr
     
-    external fun gmtime_r(arg0: Long, arg1: Long): Long
+    external fun gmtime_r(arg0: NativePtr, arg1: NativePtr): NativePtr
     
-    external fun localtime_r(arg0: Long, arg1: Long): Long
+    external fun localtime_r(arg0: NativePtr, arg1: NativePtr): NativePtr
     
     external fun posix2time(arg0: Long): Long
     
@@ -4232,195 +4388,195 @@ object externals {
     
     external fun time2posix(arg0: Long): Long
     
-    external fun timelocal(arg0: Long): Long
+    external fun timelocal(arg0: NativePtr): Long
     
-    external fun timegm(arg0: Long): Long
+    external fun timegm(arg0: NativePtr): Long
     
-    external fun nanosleep(__rqtp: Long, __rmtp: Long): Int
+    external fun nanosleep(__rqtp: NativePtr, __rmtp: NativePtr): Int
     
-    external fun clock_getres(__clock_id: Int, __res: Long): Int
+    external fun clock_getres(__clock_id: Int, __res: NativePtr): Int
     
-    external fun clock_gettime(__clock_id: Int, __tp: Long): Int
+    external fun clock_gettime(__clock_id: Int, __tp: NativePtr): Int
     
     external fun clock_gettime_nsec_np(__clock_id: Int): Long
     
-    external fun clock_settime(__clock_id: Int, __tp: Long): Int
+    external fun clock_settime(__clock_id: Int, __tp: NativePtr): Int
     
-    external fun clang_getCString(string: Long): Long
+    external fun clang_getCString(string: NativePtr): NativePtr
     
-    external fun clang_disposeString(string: Long): Unit
+    external fun clang_disposeString(string: NativePtr): Unit
     
-    external fun clang_disposeStringSet(set: Long): Unit
+    external fun clang_disposeStringSet(set: NativePtr): Unit
     
     external fun clang_getBuildSessionTimestamp(): Long
     
-    external fun clang_VirtualFileOverlay_create(options: Int): Long
+    external fun clang_VirtualFileOverlay_create(options: Int): NativePtr
     
-    external fun clang_VirtualFileOverlay_addFileMapping(arg0: Long, virtualPath: Long, realPath: Long): Int
+    external fun clang_VirtualFileOverlay_addFileMapping(arg0: NativePtr, virtualPath: NativePtr, realPath: NativePtr): Int
     
-    external fun clang_VirtualFileOverlay_setCaseSensitivity(arg0: Long, caseSensitive: Int): Int
+    external fun clang_VirtualFileOverlay_setCaseSensitivity(arg0: NativePtr, caseSensitive: Int): Int
     
-    external fun clang_VirtualFileOverlay_writeToBuffer(arg0: Long, options: Int, out_buffer_ptr: Long, out_buffer_size: Long): Int
+    external fun clang_VirtualFileOverlay_writeToBuffer(arg0: NativePtr, options: Int, out_buffer_ptr: NativePtr, out_buffer_size: NativePtr): Int
     
-    external fun clang_free(buffer: Long): Unit
+    external fun clang_free(buffer: NativePtr): Unit
     
-    external fun clang_VirtualFileOverlay_dispose(arg0: Long): Unit
+    external fun clang_VirtualFileOverlay_dispose(arg0: NativePtr): Unit
     
-    external fun clang_ModuleMapDescriptor_create(options: Int): Long
+    external fun clang_ModuleMapDescriptor_create(options: Int): NativePtr
     
-    external fun clang_ModuleMapDescriptor_setFrameworkModuleName(arg0: Long, name: Long): Int
+    external fun clang_ModuleMapDescriptor_setFrameworkModuleName(arg0: NativePtr, name: NativePtr): Int
     
-    external fun clang_ModuleMapDescriptor_setUmbrellaHeader(arg0: Long, name: Long): Int
+    external fun clang_ModuleMapDescriptor_setUmbrellaHeader(arg0: NativePtr, name: NativePtr): Int
     
-    external fun clang_ModuleMapDescriptor_writeToBuffer(arg0: Long, options: Int, out_buffer_ptr: Long, out_buffer_size: Long): Int
+    external fun clang_ModuleMapDescriptor_writeToBuffer(arg0: NativePtr, options: Int, out_buffer_ptr: NativePtr, out_buffer_size: NativePtr): Int
     
-    external fun clang_ModuleMapDescriptor_dispose(arg0: Long): Unit
+    external fun clang_ModuleMapDescriptor_dispose(arg0: NativePtr): Unit
     
-    external fun clang_createIndex(excludeDeclarationsFromPCH: Int, displayDiagnostics: Int): Long
+    external fun clang_createIndex(excludeDeclarationsFromPCH: Int, displayDiagnostics: Int): NativePtr
     
-    external fun clang_disposeIndex(index: Long): Unit
+    external fun clang_disposeIndex(index: NativePtr): Unit
     
-    external fun clang_CXIndex_setGlobalOptions(arg0: Long, options: Int): Unit
+    external fun clang_CXIndex_setGlobalOptions(arg0: NativePtr, options: Int): Unit
     
-    external fun clang_CXIndex_getGlobalOptions(arg0: Long): Int
+    external fun clang_CXIndex_getGlobalOptions(arg0: NativePtr): Int
     
-    external fun clang_getFileName(SFile: Long, retValPlacement: Long): Long
+    external fun clang_getFileName(SFile: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getFileTime(SFile: Long): Long
+    external fun clang_getFileTime(SFile: NativePtr): Long
     
-    external fun clang_getFileUniqueID(file: Long, outID: Long): Int
+    external fun clang_getFileUniqueID(file: NativePtr, outID: NativePtr): Int
     
-    external fun clang_isFileMultipleIncludeGuarded(tu: Long, file: Long): Int
+    external fun clang_isFileMultipleIncludeGuarded(tu: NativePtr, file: NativePtr): Int
     
-    external fun clang_getFile(tu: Long, file_name: Long): Long
+    external fun clang_getFile(tu: NativePtr, file_name: NativePtr): NativePtr
     
-    external fun clang_File_isEqual(file1: Long, file2: Long): Int
+    external fun clang_File_isEqual(file1: NativePtr, file2: NativePtr): Int
     
-    external fun clang_getNullLocation(retValPlacement: Long): Long
+    external fun clang_getNullLocation(retValPlacement: NativePtr): NativePtr
     
-    external fun clang_equalLocations(loc1: Long, loc2: Long): Int
+    external fun clang_equalLocations(loc1: NativePtr, loc2: NativePtr): Int
     
-    external fun clang_getLocation(tu: Long, file: Long, line: Int, column: Int, retValPlacement: Long): Long
+    external fun clang_getLocation(tu: NativePtr, file: NativePtr, line: Int, column: Int, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getLocationForOffset(tu: Long, file: Long, offset: Int, retValPlacement: Long): Long
+    external fun clang_getLocationForOffset(tu: NativePtr, file: NativePtr, offset: Int, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_Location_isInSystemHeader(location: Long): Int
+    external fun clang_Location_isInSystemHeader(location: NativePtr): Int
     
-    external fun clang_Location_isFromMainFile(location: Long): Int
+    external fun clang_Location_isFromMainFile(location: NativePtr): Int
     
-    external fun clang_getNullRange(retValPlacement: Long): Long
+    external fun clang_getNullRange(retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getRange(begin: Long, end: Long, retValPlacement: Long): Long
+    external fun clang_getRange(begin: NativePtr, end: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_equalRanges(range1: Long, range2: Long): Int
+    external fun clang_equalRanges(range1: NativePtr, range2: NativePtr): Int
     
-    external fun clang_Range_isNull(range: Long): Int
+    external fun clang_Range_isNull(range: NativePtr): Int
     
-    external fun clang_getExpansionLocation(location: Long, file: Long, line: Long, column: Long, offset: Long): Unit
+    external fun clang_getExpansionLocation(location: NativePtr, file: NativePtr, line: NativePtr, column: NativePtr, offset: NativePtr): Unit
     
-    external fun clang_getPresumedLocation(location: Long, filename: Long, line: Long, column: Long): Unit
+    external fun clang_getPresumedLocation(location: NativePtr, filename: NativePtr, line: NativePtr, column: NativePtr): Unit
     
-    external fun clang_getInstantiationLocation(location: Long, file: Long, line: Long, column: Long, offset: Long): Unit
+    external fun clang_getInstantiationLocation(location: NativePtr, file: NativePtr, line: NativePtr, column: NativePtr, offset: NativePtr): Unit
     
-    external fun clang_getSpellingLocation(location: Long, file: Long, line: Long, column: Long, offset: Long): Unit
+    external fun clang_getSpellingLocation(location: NativePtr, file: NativePtr, line: NativePtr, column: NativePtr, offset: NativePtr): Unit
     
-    external fun clang_getFileLocation(location: Long, file: Long, line: Long, column: Long, offset: Long): Unit
+    external fun clang_getFileLocation(location: NativePtr, file: NativePtr, line: NativePtr, column: NativePtr, offset: NativePtr): Unit
     
-    external fun clang_getRangeStart(range: Long, retValPlacement: Long): Long
+    external fun clang_getRangeStart(range: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getRangeEnd(range: Long, retValPlacement: Long): Long
+    external fun clang_getRangeEnd(range: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getSkippedRanges(tu: Long, file: Long): Long
+    external fun clang_getSkippedRanges(tu: NativePtr, file: NativePtr): NativePtr
     
-    external fun clang_disposeSourceRangeList(ranges: Long): Unit
+    external fun clang_disposeSourceRangeList(ranges: NativePtr): Unit
     
-    external fun clang_getNumDiagnosticsInSet(Diags: Long): Int
+    external fun clang_getNumDiagnosticsInSet(Diags: NativePtr): Int
     
-    external fun clang_getDiagnosticInSet(Diags: Long, Index: Int): Long
+    external fun clang_getDiagnosticInSet(Diags: NativePtr, Index: Int): NativePtr
     
-    external fun clang_loadDiagnostics(file: Long, error: Long, errorString: Long): Long
+    external fun clang_loadDiagnostics(file: NativePtr, error: NativePtr, errorString: NativePtr): NativePtr
     
-    external fun clang_disposeDiagnosticSet(Diags: Long): Unit
+    external fun clang_disposeDiagnosticSet(Diags: NativePtr): Unit
     
-    external fun clang_getChildDiagnostics(D: Long): Long
+    external fun clang_getChildDiagnostics(D: NativePtr): NativePtr
     
-    external fun clang_getNumDiagnostics(Unit: Long): Int
+    external fun clang_getNumDiagnostics(Unit: NativePtr): Int
     
-    external fun clang_getDiagnostic(Unit: Long, Index: Int): Long
+    external fun clang_getDiagnostic(Unit: NativePtr, Index: Int): NativePtr
     
-    external fun clang_getDiagnosticSetFromTU(Unit: Long): Long
+    external fun clang_getDiagnosticSetFromTU(Unit: NativePtr): NativePtr
     
-    external fun clang_disposeDiagnostic(Diagnostic: Long): Unit
+    external fun clang_disposeDiagnostic(Diagnostic: NativePtr): Unit
     
-    external fun clang_formatDiagnostic(Diagnostic: Long, Options: Int, retValPlacement: Long): Long
+    external fun clang_formatDiagnostic(Diagnostic: NativePtr, Options: Int, retValPlacement: NativePtr): NativePtr
     
     external fun clang_defaultDiagnosticDisplayOptions(): Int
     
-    external fun clang_getDiagnosticSeverity(arg0: Long): Int
+    external fun clang_getDiagnosticSeverity(arg0: NativePtr): Int
     
-    external fun clang_getDiagnosticLocation(arg0: Long, retValPlacement: Long): Long
+    external fun clang_getDiagnosticLocation(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getDiagnosticSpelling(arg0: Long, retValPlacement: Long): Long
+    external fun clang_getDiagnosticSpelling(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getDiagnosticOption(Diag: Long, Disable: Long, retValPlacement: Long): Long
+    external fun clang_getDiagnosticOption(Diag: NativePtr, Disable: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getDiagnosticCategory(arg0: Long): Int
+    external fun clang_getDiagnosticCategory(arg0: NativePtr): Int
     
-    external fun clang_getDiagnosticCategoryName(Category: Int, retValPlacement: Long): Long
+    external fun clang_getDiagnosticCategoryName(Category: Int, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getDiagnosticCategoryText(arg0: Long, retValPlacement: Long): Long
+    external fun clang_getDiagnosticCategoryText(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getDiagnosticNumRanges(arg0: Long): Int
+    external fun clang_getDiagnosticNumRanges(arg0: NativePtr): Int
     
-    external fun clang_getDiagnosticRange(Diagnostic: Long, Range: Int, retValPlacement: Long): Long
+    external fun clang_getDiagnosticRange(Diagnostic: NativePtr, Range: Int, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getDiagnosticNumFixIts(Diagnostic: Long): Int
+    external fun clang_getDiagnosticNumFixIts(Diagnostic: NativePtr): Int
     
-    external fun clang_getDiagnosticFixIt(Diagnostic: Long, FixIt: Int, ReplacementRange: Long, retValPlacement: Long): Long
+    external fun clang_getDiagnosticFixIt(Diagnostic: NativePtr, FixIt: Int, ReplacementRange: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getTranslationUnitSpelling(CTUnit: Long, retValPlacement: Long): Long
+    external fun clang_getTranslationUnitSpelling(CTUnit: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_createTranslationUnitFromSourceFile(CIdx: Long, source_filename: Long, num_clang_command_line_args: Int, clang_command_line_args: Long, num_unsaved_files: Int, unsaved_files: Long): Long
+    external fun clang_createTranslationUnitFromSourceFile(CIdx: NativePtr, source_filename: NativePtr, num_clang_command_line_args: Int, clang_command_line_args: NativePtr, num_unsaved_files: Int, unsaved_files: NativePtr): NativePtr
     
-    external fun clang_createTranslationUnit(CIdx: Long, ast_filename: Long): Long
+    external fun clang_createTranslationUnit(CIdx: NativePtr, ast_filename: NativePtr): NativePtr
     
-    external fun clang_createTranslationUnit2(CIdx: Long, ast_filename: Long, out_TU: Long): Int
+    external fun clang_createTranslationUnit2(CIdx: NativePtr, ast_filename: NativePtr, out_TU: NativePtr): Int
     
     external fun clang_defaultEditingTranslationUnitOptions(): Int
     
-    external fun clang_parseTranslationUnit(CIdx: Long, source_filename: Long, command_line_args: Long, num_command_line_args: Int, unsaved_files: Long, num_unsaved_files: Int, options: Int): Long
+    external fun clang_parseTranslationUnit(CIdx: NativePtr, source_filename: NativePtr, command_line_args: NativePtr, num_command_line_args: Int, unsaved_files: NativePtr, num_unsaved_files: Int, options: Int): NativePtr
     
-    external fun clang_parseTranslationUnit2(CIdx: Long, source_filename: Long, command_line_args: Long, num_command_line_args: Int, unsaved_files: Long, num_unsaved_files: Int, options: Int, out_TU: Long): Int
+    external fun clang_parseTranslationUnit2(CIdx: NativePtr, source_filename: NativePtr, command_line_args: NativePtr, num_command_line_args: Int, unsaved_files: NativePtr, num_unsaved_files: Int, options: Int, out_TU: NativePtr): Int
     
-    external fun clang_parseTranslationUnit2FullArgv(CIdx: Long, source_filename: Long, command_line_args: Long, num_command_line_args: Int, unsaved_files: Long, num_unsaved_files: Int, options: Int, out_TU: Long): Int
+    external fun clang_parseTranslationUnit2FullArgv(CIdx: NativePtr, source_filename: NativePtr, command_line_args: NativePtr, num_command_line_args: Int, unsaved_files: NativePtr, num_unsaved_files: Int, options: Int, out_TU: NativePtr): Int
     
-    external fun clang_defaultSaveOptions(TU: Long): Int
+    external fun clang_defaultSaveOptions(TU: NativePtr): Int
     
-    external fun clang_saveTranslationUnit(TU: Long, FileName: Long, options: Int): Int
+    external fun clang_saveTranslationUnit(TU: NativePtr, FileName: NativePtr, options: Int): Int
     
-    external fun clang_disposeTranslationUnit(arg0: Long): Unit
+    external fun clang_disposeTranslationUnit(arg0: NativePtr): Unit
     
-    external fun clang_defaultReparseOptions(TU: Long): Int
+    external fun clang_defaultReparseOptions(TU: NativePtr): Int
     
-    external fun clang_reparseTranslationUnit(TU: Long, num_unsaved_files: Int, unsaved_files: Long, options: Int): Int
+    external fun clang_reparseTranslationUnit(TU: NativePtr, num_unsaved_files: Int, unsaved_files: NativePtr, options: Int): Int
     
-    external fun clang_getTUResourceUsageName(kind: Int): Long
+    external fun clang_getTUResourceUsageName(kind: Int): NativePtr
     
-    external fun clang_getCXTUResourceUsage(TU: Long, retValPlacement: Long): Long
+    external fun clang_getCXTUResourceUsage(TU: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_disposeCXTUResourceUsage(usage: Long): Unit
+    external fun clang_disposeCXTUResourceUsage(usage: NativePtr): Unit
     
-    external fun clang_getNullCursor(retValPlacement: Long): Long
+    external fun clang_getNullCursor(retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getTranslationUnitCursor(arg0: Long, retValPlacement: Long): Long
+    external fun clang_getTranslationUnitCursor(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_equalCursors(arg0: Long, arg1: Long): Int
+    external fun clang_equalCursors(arg0: NativePtr, arg1: NativePtr): Int
     
-    external fun clang_Cursor_isNull(cursor: Long): Int
+    external fun clang_Cursor_isNull(cursor: NativePtr): Int
     
-    external fun clang_hashCursor(arg0: Long): Int
+    external fun clang_hashCursor(arg0: NativePtr): Int
     
-    external fun clang_getCursorKind(arg0: Long): Int
+    external fun clang_getCursorKind(arg0: NativePtr): Int
     
     external fun clang_isDeclaration(arg0: Int): Int
     
@@ -4432,6 +4588,8 @@ object externals {
     
     external fun clang_isAttribute(arg0: Int): Int
     
+    external fun clang_Cursor_hasAttrs(C: NativePtr): Int
+    
     external fun clang_isInvalid(arg0: Int): Int
     
     external fun clang_isTranslationUnit(arg0: Int): Int
@@ -4440,354 +4598,386 @@ object externals {
     
     external fun clang_isUnexposed(arg0: Int): Int
     
-    external fun clang_getCursorLinkage(cursor: Long): Int
+    external fun clang_getCursorLinkage(cursor: NativePtr): Int
     
-    external fun clang_getCursorVisibility(cursor: Long): Int
+    external fun clang_getCursorVisibility(cursor: NativePtr): Int
     
-    external fun clang_getCursorAvailability(cursor: Long): Int
+    external fun clang_getCursorAvailability(cursor: NativePtr): Int
     
-    external fun clang_getCursorPlatformAvailability(cursor: Long, always_deprecated: Long, deprecated_message: Long, always_unavailable: Long, unavailable_message: Long, availability: Long, availability_size: Int): Int
+    external fun clang_getCursorPlatformAvailability(cursor: NativePtr, always_deprecated: NativePtr, deprecated_message: NativePtr, always_unavailable: NativePtr, unavailable_message: NativePtr, availability: NativePtr, availability_size: Int): Int
     
-    external fun clang_disposeCXPlatformAvailability(availability: Long): Unit
+    external fun clang_disposeCXPlatformAvailability(availability: NativePtr): Unit
     
-    external fun clang_getCursorLanguage(cursor: Long): Int
+    external fun clang_getCursorLanguage(cursor: NativePtr): Int
     
-    external fun clang_Cursor_getTranslationUnit(arg0: Long): Long
+    external fun clang_Cursor_getTranslationUnit(arg0: NativePtr): NativePtr
     
-    external fun clang_createCXCursorSet(): Long
+    external fun clang_createCXCursorSet(): NativePtr
     
-    external fun clang_disposeCXCursorSet(cset: Long): Unit
+    external fun clang_disposeCXCursorSet(cset: NativePtr): Unit
     
-    external fun clang_CXCursorSet_contains(cset: Long, cursor: Long): Int
+    external fun clang_CXCursorSet_contains(cset: NativePtr, cursor: NativePtr): Int
     
-    external fun clang_CXCursorSet_insert(cset: Long, cursor: Long): Int
+    external fun clang_CXCursorSet_insert(cset: NativePtr, cursor: NativePtr): Int
     
-    external fun clang_getCursorSemanticParent(cursor: Long, retValPlacement: Long): Long
+    external fun clang_getCursorSemanticParent(cursor: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getCursorLexicalParent(cursor: Long, retValPlacement: Long): Long
+    external fun clang_getCursorLexicalParent(cursor: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getOverriddenCursors(cursor: Long, overridden: Long, num_overridden: Long): Unit
+    external fun clang_getOverriddenCursors(cursor: NativePtr, overridden: NativePtr, num_overridden: NativePtr): Unit
     
-    external fun clang_disposeOverriddenCursors(overridden: Long): Unit
+    external fun clang_disposeOverriddenCursors(overridden: NativePtr): Unit
     
-    external fun clang_getIncludedFile(cursor: Long): Long
+    external fun clang_getIncludedFile(cursor: NativePtr): NativePtr
     
-    external fun clang_getCursor(arg0: Long, arg1: Long, retValPlacement: Long): Long
+    external fun clang_getCursor(arg0: NativePtr, arg1: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getCursorLocation(arg0: Long, retValPlacement: Long): Long
+    external fun clang_getCursorLocation(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getCursorExtent(arg0: Long, retValPlacement: Long): Long
+    external fun clang_getCursorExtent(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getCursorType(C: Long, retValPlacement: Long): Long
+    external fun clang_getCursorType(C: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getTypeSpelling(CT: Long, retValPlacement: Long): Long
+    external fun clang_getTypeSpelling(CT: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getTypedefDeclUnderlyingType(C: Long, retValPlacement: Long): Long
+    external fun clang_getTypedefDeclUnderlyingType(C: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getEnumDeclIntegerType(C: Long, retValPlacement: Long): Long
+    external fun clang_getEnumDeclIntegerType(C: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getEnumConstantDeclValue(C: Long): Long
+    external fun clang_getEnumConstantDeclValue(C: NativePtr): Long
     
-    external fun clang_getEnumConstantDeclUnsignedValue(C: Long): Long
+    external fun clang_getEnumConstantDeclUnsignedValue(C: NativePtr): Long
     
-    external fun clang_getFieldDeclBitWidth(C: Long): Int
+    external fun clang_getFieldDeclBitWidth(C: NativePtr): Int
     
-    external fun clang_Cursor_getNumArguments(C: Long): Int
+    external fun clang_Cursor_getNumArguments(C: NativePtr): Int
     
-    external fun clang_Cursor_getArgument(C: Long, i: Int, retValPlacement: Long): Long
+    external fun clang_Cursor_getArgument(C: NativePtr, i: Int, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_Cursor_getNumTemplateArguments(C: Long): Int
+    external fun clang_Cursor_getNumTemplateArguments(C: NativePtr): Int
     
-    external fun clang_Cursor_getTemplateArgumentKind(C: Long, I: Int): Int
+    external fun clang_Cursor_getTemplateArgumentKind(C: NativePtr, I: Int): Int
     
-    external fun clang_Cursor_getTemplateArgumentType(C: Long, I: Int, retValPlacement: Long): Long
+    external fun clang_Cursor_getTemplateArgumentType(C: NativePtr, I: Int, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_Cursor_getTemplateArgumentValue(C: Long, I: Int): Long
+    external fun clang_Cursor_getTemplateArgumentValue(C: NativePtr, I: Int): Long
     
-    external fun clang_Cursor_getTemplateArgumentUnsignedValue(C: Long, I: Int): Long
+    external fun clang_Cursor_getTemplateArgumentUnsignedValue(C: NativePtr, I: Int): Long
     
-    external fun clang_equalTypes(A: Long, B: Long): Int
+    external fun clang_equalTypes(A: NativePtr, B: NativePtr): Int
     
-    external fun clang_getCanonicalType(T: Long, retValPlacement: Long): Long
+    external fun clang_getCanonicalType(T: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_isConstQualifiedType(T: Long): Int
+    external fun clang_isConstQualifiedType(T: NativePtr): Int
     
-    external fun clang_isVolatileQualifiedType(T: Long): Int
+    external fun clang_Cursor_isMacroFunctionLike(C: NativePtr): Int
     
-    external fun clang_isRestrictQualifiedType(T: Long): Int
+    external fun clang_Cursor_isMacroBuiltin(C: NativePtr): Int
     
-    external fun clang_getPointeeType(T: Long, retValPlacement: Long): Long
+    external fun clang_Cursor_isFunctionInlined(C: NativePtr): Int
     
-    external fun clang_getTypeDeclaration(T: Long, retValPlacement: Long): Long
+    external fun clang_isVolatileQualifiedType(T: NativePtr): Int
     
-    external fun clang_getDeclObjCTypeEncoding(C: Long, retValPlacement: Long): Long
+    external fun clang_isRestrictQualifiedType(T: NativePtr): Int
     
-    external fun clang_getTypeKindSpelling(K: Int, retValPlacement: Long): Long
+    external fun clang_getPointeeType(T: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getFunctionTypeCallingConv(T: Long): Int
+    external fun clang_getTypeDeclaration(T: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getResultType(T: Long, retValPlacement: Long): Long
+    external fun clang_getDeclObjCTypeEncoding(C: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getNumArgTypes(T: Long): Int
+    external fun clang_Type_getObjCEncoding(type: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getArgType(T: Long, i: Int, retValPlacement: Long): Long
+    external fun clang_getTypeKindSpelling(K: Int, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_isFunctionTypeVariadic(T: Long): Int
+    external fun clang_getFunctionTypeCallingConv(T: NativePtr): Int
     
-    external fun clang_getCursorResultType(C: Long, retValPlacement: Long): Long
+    external fun clang_getResultType(T: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_isPODType(T: Long): Int
+    external fun clang_getNumArgTypes(T: NativePtr): Int
     
-    external fun clang_getElementType(T: Long, retValPlacement: Long): Long
+    external fun clang_getArgType(T: NativePtr, i: Int, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getNumElements(T: Long): Long
+    external fun clang_isFunctionTypeVariadic(T: NativePtr): Int
     
-    external fun clang_getArrayElementType(T: Long, retValPlacement: Long): Long
+    external fun clang_getCursorResultType(C: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getArraySize(T: Long): Long
+    external fun clang_isPODType(T: NativePtr): Int
     
-    external fun clang_Type_getAlignOf(T: Long): Long
+    external fun clang_getElementType(T: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_Type_getClassType(T: Long, retValPlacement: Long): Long
+    external fun clang_getNumElements(T: NativePtr): Long
     
-    external fun clang_Type_getSizeOf(T: Long): Long
+    external fun clang_getArrayElementType(T: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_Type_getOffsetOf(T: Long, S: Long): Long
+    external fun clang_getArraySize(T: NativePtr): Long
     
-    external fun clang_Cursor_getOffsetOfField(C: Long): Long
+    external fun clang_Type_getNamedType(T: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_Cursor_isAnonymous(C: Long): Int
+    external fun clang_Type_getAlignOf(T: NativePtr): Long
     
-    external fun clang_Type_getNumTemplateArguments(T: Long): Int
+    external fun clang_Type_getClassType(T: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_Type_getTemplateArgumentAsType(T: Long, i: Int, retValPlacement: Long): Long
+    external fun clang_Type_getSizeOf(T: NativePtr): Long
     
-    external fun clang_Type_getCXXRefQualifier(T: Long): Int
+    external fun clang_Type_getOffsetOf(T: NativePtr, S: NativePtr): Long
     
-    external fun clang_Cursor_isBitField(C: Long): Int
+    external fun clang_Cursor_getOffsetOfField(C: NativePtr): Long
     
-    external fun clang_isVirtualBase(arg0: Long): Int
+    external fun clang_Cursor_isAnonymous(C: NativePtr): Int
     
-    external fun clang_getCXXAccessSpecifier(arg0: Long): Int
+    external fun clang_Type_getNumTemplateArguments(T: NativePtr): Int
     
-    external fun clang_Cursor_getStorageClass(arg0: Long): Int
+    external fun clang_Type_getTemplateArgumentAsType(T: NativePtr, i: Int, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getNumOverloadedDecls(cursor: Long): Int
+    external fun clang_Type_getCXXRefQualifier(T: NativePtr): Int
     
-    external fun clang_getOverloadedDecl(cursor: Long, index: Int, retValPlacement: Long): Long
+    external fun clang_Cursor_isBitField(C: NativePtr): Int
     
-    external fun clang_getIBOutletCollectionType(arg0: Long, retValPlacement: Long): Long
+    external fun clang_isVirtualBase(arg0: NativePtr): Int
     
-    external fun clang_visitChildren(parent: Long, visitor: Long, client_data: Long): Int
+    external fun clang_getCXXAccessSpecifier(arg0: NativePtr): Int
     
-    external fun clang_getCursorUSR(arg0: Long, retValPlacement: Long): Long
+    external fun clang_Cursor_getStorageClass(arg0: NativePtr): Int
     
-    external fun clang_constructUSR_ObjCClass(class_name: Long, retValPlacement: Long): Long
+    external fun clang_getNumOverloadedDecls(cursor: NativePtr): Int
     
-    external fun clang_constructUSR_ObjCCategory(class_name: Long, category_name: Long, retValPlacement: Long): Long
+    external fun clang_getOverloadedDecl(cursor: NativePtr, index: Int, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_constructUSR_ObjCProtocol(protocol_name: Long, retValPlacement: Long): Long
+    external fun clang_getIBOutletCollectionType(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_constructUSR_ObjCIvar(name: Long, classUSR: Long, retValPlacement: Long): Long
+    external fun clang_visitChildren(parent: NativePtr, visitor: NativePtr, client_data: NativePtr): Int
     
-    external fun clang_constructUSR_ObjCMethod(name: Long, isInstanceMethod: Int, classUSR: Long, retValPlacement: Long): Long
+    external fun clang_getCursorUSR(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_constructUSR_ObjCProperty(property: Long, classUSR: Long, retValPlacement: Long): Long
+    external fun clang_constructUSR_ObjCClass(class_name: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getCursorSpelling(arg0: Long, retValPlacement: Long): Long
+    external fun clang_constructUSR_ObjCCategory(class_name: NativePtr, category_name: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_Cursor_getSpellingNameRange(arg0: Long, pieceIndex: Int, options: Int, retValPlacement: Long): Long
+    external fun clang_constructUSR_ObjCProtocol(protocol_name: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getCursorDisplayName(arg0: Long, retValPlacement: Long): Long
+    external fun clang_constructUSR_ObjCIvar(name: NativePtr, classUSR: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getCursorReferenced(arg0: Long, retValPlacement: Long): Long
+    external fun clang_constructUSR_ObjCMethod(name: NativePtr, isInstanceMethod: Int, classUSR: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getCursorDefinition(arg0: Long, retValPlacement: Long): Long
+    external fun clang_constructUSR_ObjCProperty(property: NativePtr, classUSR: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_isCursorDefinition(arg0: Long): Int
+    external fun clang_getCursorSpelling(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getCanonicalCursor(arg0: Long, retValPlacement: Long): Long
+    external fun clang_Cursor_getSpellingNameRange(arg0: NativePtr, pieceIndex: Int, options: Int, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_Cursor_getObjCSelectorIndex(arg0: Long): Int
+    external fun clang_getCursorDisplayName(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_Cursor_isDynamicCall(C: Long): Int
+    external fun clang_getCursorReferenced(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_Cursor_getReceiverType(C: Long, retValPlacement: Long): Long
+    external fun clang_getCursorDefinition(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_Cursor_getObjCPropertyAttributes(C: Long, reserved: Int): Int
+    external fun clang_isCursorDefinition(arg0: NativePtr): Int
     
-    external fun clang_Cursor_getObjCDeclQualifiers(C: Long): Int
+    external fun clang_getCanonicalCursor(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_Cursor_isObjCOptional(C: Long): Int
+    external fun clang_Cursor_getObjCSelectorIndex(arg0: NativePtr): Int
     
-    external fun clang_Cursor_isVariadic(C: Long): Int
+    external fun clang_Cursor_isDynamicCall(C: NativePtr): Int
     
-    external fun clang_Cursor_getCommentRange(C: Long, retValPlacement: Long): Long
+    external fun clang_Cursor_getReceiverType(C: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_Cursor_getRawCommentText(C: Long, retValPlacement: Long): Long
+    external fun clang_Cursor_getObjCPropertyAttributes(C: NativePtr, reserved: Int): Int
     
-    external fun clang_Cursor_getBriefCommentText(C: Long, retValPlacement: Long): Long
+    external fun clang_Cursor_getObjCDeclQualifiers(C: NativePtr): Int
     
-    external fun clang_Cursor_getMangling(arg0: Long, retValPlacement: Long): Long
+    external fun clang_Cursor_isObjCOptional(C: NativePtr): Int
     
-    external fun clang_Cursor_getCXXManglings(arg0: Long): Long
+    external fun clang_Cursor_isVariadic(C: NativePtr): Int
     
-    external fun clang_Cursor_getModule(C: Long): Long
+    external fun clang_Cursor_getCommentRange(C: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getModuleForFile(arg0: Long, arg1: Long): Long
+    external fun clang_Cursor_getRawCommentText(C: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_Module_getASTFile(Module: Long): Long
+    external fun clang_Cursor_getBriefCommentText(C: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_Module_getParent(Module: Long): Long
+    external fun clang_Cursor_getMangling(arg0: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_Module_getName(Module: Long, retValPlacement: Long): Long
+    external fun clang_Cursor_getCXXManglings(arg0: NativePtr): NativePtr
     
-    external fun clang_Module_getFullName(Module: Long, retValPlacement: Long): Long
+    external fun clang_Cursor_getModule(C: NativePtr): NativePtr
     
-    external fun clang_Module_isSystem(Module: Long): Int
+    external fun clang_getModuleForFile(arg0: NativePtr, arg1: NativePtr): NativePtr
     
-    external fun clang_Module_getNumTopLevelHeaders(arg0: Long, Module: Long): Int
+    external fun clang_Module_getASTFile(Module: NativePtr): NativePtr
     
-    external fun clang_Module_getTopLevelHeader(arg0: Long, Module: Long, Index: Int): Long
+    external fun clang_Module_getParent(Module: NativePtr): NativePtr
     
-    external fun clang_CXXField_isMutable(C: Long): Int
+    external fun clang_Module_getName(Module: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_CXXMethod_isPureVirtual(C: Long): Int
+    external fun clang_Module_getFullName(Module: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_CXXMethod_isStatic(C: Long): Int
+    external fun clang_Module_isSystem(Module: NativePtr): Int
     
-    external fun clang_CXXMethod_isVirtual(C: Long): Int
+    external fun clang_Module_getNumTopLevelHeaders(arg0: NativePtr, Module: NativePtr): Int
     
-    external fun clang_CXXMethod_isConst(C: Long): Int
+    external fun clang_Module_getTopLevelHeader(arg0: NativePtr, Module: NativePtr, Index: Int): NativePtr
     
-    external fun clang_getTemplateCursorKind(C: Long): Int
+    external fun clang_CXXConstructor_isConvertingConstructor(C: NativePtr): Int
     
-    external fun clang_getSpecializedCursorTemplate(C: Long, retValPlacement: Long): Long
+    external fun clang_CXXConstructor_isCopyConstructor(C: NativePtr): Int
     
-    external fun clang_getCursorReferenceNameRange(C: Long, NameFlags: Int, PieceIndex: Int, retValPlacement: Long): Long
+    external fun clang_CXXConstructor_isDefaultConstructor(C: NativePtr): Int
     
-    external fun clang_getTokenKind(arg0: Long): Int
+    external fun clang_CXXConstructor_isMoveConstructor(C: NativePtr): Int
     
-    external fun clang_getTokenSpelling(arg0: Long, arg1: Long, retValPlacement: Long): Long
+    external fun clang_CXXField_isMutable(C: NativePtr): Int
     
-    external fun clang_getTokenLocation(arg0: Long, arg1: Long, retValPlacement: Long): Long
+    external fun clang_CXXMethod_isDefaulted(C: NativePtr): Int
     
-    external fun clang_getTokenExtent(arg0: Long, arg1: Long, retValPlacement: Long): Long
+    external fun clang_CXXMethod_isPureVirtual(C: NativePtr): Int
     
-    external fun clang_tokenize(TU: Long, Range: Long, Tokens: Long, NumTokens: Long): Unit
+    external fun clang_CXXMethod_isStatic(C: NativePtr): Int
     
-    external fun clang_annotateTokens(TU: Long, Tokens: Long, NumTokens: Int, Cursors: Long): Unit
+    external fun clang_CXXMethod_isVirtual(C: NativePtr): Int
     
-    external fun clang_disposeTokens(TU: Long, Tokens: Long, NumTokens: Int): Unit
+    external fun clang_CXXMethod_isConst(C: NativePtr): Int
     
-    external fun clang_getCursorKindSpelling(Kind: Int, retValPlacement: Long): Long
+    external fun clang_getTemplateCursorKind(C: NativePtr): Int
     
-    external fun clang_getDefinitionSpellingAndExtent(arg0: Long, startBuf: Long, endBuf: Long, startLine: Long, startColumn: Long, endLine: Long, endColumn: Long): Unit
+    external fun clang_getSpecializedCursorTemplate(C: NativePtr, retValPlacement: NativePtr): NativePtr
+    
+    external fun clang_getCursorReferenceNameRange(C: NativePtr, NameFlags: Int, PieceIndex: Int, retValPlacement: NativePtr): NativePtr
+    
+    external fun clang_getTokenKind(arg0: NativePtr): Int
+    
+    external fun clang_getTokenSpelling(arg0: NativePtr, arg1: NativePtr, retValPlacement: NativePtr): NativePtr
+    
+    external fun clang_getTokenLocation(arg0: NativePtr, arg1: NativePtr, retValPlacement: NativePtr): NativePtr
+    
+    external fun clang_getTokenExtent(arg0: NativePtr, arg1: NativePtr, retValPlacement: NativePtr): NativePtr
+    
+    external fun clang_tokenize(TU: NativePtr, Range: NativePtr, Tokens: NativePtr, NumTokens: NativePtr): Unit
+    
+    external fun clang_annotateTokens(TU: NativePtr, Tokens: NativePtr, NumTokens: Int, Cursors: NativePtr): Unit
+    
+    external fun clang_disposeTokens(TU: NativePtr, Tokens: NativePtr, NumTokens: Int): Unit
+    
+    external fun clang_getCursorKindSpelling(Kind: Int, retValPlacement: NativePtr): NativePtr
+    
+    external fun clang_getDefinitionSpellingAndExtent(arg0: NativePtr, startBuf: NativePtr, endBuf: NativePtr, startLine: NativePtr, startColumn: NativePtr, endLine: NativePtr, endColumn: NativePtr): Unit
     
     external fun clang_enableStackTraces(): Unit
     
-    external fun clang_executeOnThread(fn: Long, user_data: Long, stack_size: Int): Unit
+    external fun clang_executeOnThread(fn: NativePtr, user_data: NativePtr, stack_size: Int): Unit
     
-    external fun clang_getCompletionChunkKind(completion_string: Long, chunk_number: Int): Int
+    external fun clang_getCompletionChunkKind(completion_string: NativePtr, chunk_number: Int): Int
     
-    external fun clang_getCompletionChunkText(completion_string: Long, chunk_number: Int, retValPlacement: Long): Long
+    external fun clang_getCompletionChunkText(completion_string: NativePtr, chunk_number: Int, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getCompletionChunkCompletionString(completion_string: Long, chunk_number: Int): Long
+    external fun clang_getCompletionChunkCompletionString(completion_string: NativePtr, chunk_number: Int): NativePtr
     
-    external fun clang_getNumCompletionChunks(completion_string: Long): Int
+    external fun clang_getNumCompletionChunks(completion_string: NativePtr): Int
     
-    external fun clang_getCompletionPriority(completion_string: Long): Int
+    external fun clang_getCompletionPriority(completion_string: NativePtr): Int
     
-    external fun clang_getCompletionAvailability(completion_string: Long): Int
+    external fun clang_getCompletionAvailability(completion_string: NativePtr): Int
     
-    external fun clang_getCompletionNumAnnotations(completion_string: Long): Int
+    external fun clang_getCompletionNumAnnotations(completion_string: NativePtr): Int
     
-    external fun clang_getCompletionAnnotation(completion_string: Long, annotation_number: Int, retValPlacement: Long): Long
+    external fun clang_getCompletionAnnotation(completion_string: NativePtr, annotation_number: Int, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getCompletionParent(completion_string: Long, kind: Long, retValPlacement: Long): Long
+    external fun clang_getCompletionParent(completion_string: NativePtr, kind: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getCompletionBriefComment(completion_string: Long, retValPlacement: Long): Long
+    external fun clang_getCompletionBriefComment(completion_string: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getCursorCompletionString(cursor: Long): Long
+    external fun clang_getCursorCompletionString(cursor: NativePtr): NativePtr
     
     external fun clang_defaultCodeCompleteOptions(): Int
     
-    external fun clang_codeCompleteAt(TU: Long, complete_filename: Long, complete_line: Int, complete_column: Int, unsaved_files: Long, num_unsaved_files: Int, options: Int): Long
+    external fun clang_codeCompleteAt(TU: NativePtr, complete_filename: NativePtr, complete_line: Int, complete_column: Int, unsaved_files: NativePtr, num_unsaved_files: Int, options: Int): NativePtr
     
-    external fun clang_sortCodeCompletionResults(Results: Long, NumResults: Int): Unit
+    external fun clang_sortCodeCompletionResults(Results: NativePtr, NumResults: Int): Unit
     
-    external fun clang_disposeCodeCompleteResults(Results: Long): Unit
+    external fun clang_disposeCodeCompleteResults(Results: NativePtr): Unit
     
-    external fun clang_codeCompleteGetNumDiagnostics(Results: Long): Int
+    external fun clang_codeCompleteGetNumDiagnostics(Results: NativePtr): Int
     
-    external fun clang_codeCompleteGetDiagnostic(Results: Long, Index: Int): Long
+    external fun clang_codeCompleteGetDiagnostic(Results: NativePtr, Index: Int): NativePtr
     
-    external fun clang_codeCompleteGetContexts(Results: Long): Long
+    external fun clang_codeCompleteGetContexts(Results: NativePtr): Long
     
-    external fun clang_codeCompleteGetContainerKind(Results: Long, IsIncomplete: Long): Int
+    external fun clang_codeCompleteGetContainerKind(Results: NativePtr, IsIncomplete: NativePtr): Int
     
-    external fun clang_codeCompleteGetContainerUSR(Results: Long, retValPlacement: Long): Long
+    external fun clang_codeCompleteGetContainerUSR(Results: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_codeCompleteGetObjCSelector(Results: Long, retValPlacement: Long): Long
+    external fun clang_codeCompleteGetObjCSelector(Results: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_getClangVersion(retValPlacement: Long): Long
+    external fun clang_getClangVersion(retValPlacement: NativePtr): NativePtr
     
     external fun clang_toggleCrashRecovery(isEnabled: Int): Unit
     
-    external fun clang_getInclusions(tu: Long, visitor: Long, client_data: Long): Unit
+    external fun clang_getInclusions(tu: NativePtr, visitor: NativePtr, client_data: NativePtr): Unit
     
-    external fun clang_getRemappings(path: Long): Long
+    external fun clang_Cursor_Evaluate(C: NativePtr): NativePtr
     
-    external fun clang_getRemappingsFromFileList(filePaths: Long, numFiles: Int): Long
+    external fun clang_EvalResult_getKind(E: NativePtr): Int
     
-    external fun clang_remap_getNumFiles(arg0: Long): Int
+    external fun clang_EvalResult_getAsInt(E: NativePtr): Int
     
-    external fun clang_remap_getFilenames(arg0: Long, index: Int, original: Long, transformed: Long): Unit
+    external fun clang_EvalResult_getAsDouble(E: NativePtr): Double
     
-    external fun clang_remap_dispose(arg0: Long): Unit
+    external fun clang_EvalResult_getAsStr(E: NativePtr): NativePtr
     
-    external fun clang_findReferencesInFile(cursor: Long, file: Long, visitor: Long): Int
+    external fun clang_EvalResult_dispose(E: NativePtr): Unit
     
-    external fun clang_findIncludesInFile(TU: Long, file: Long, visitor: Long): Int
+    external fun clang_getRemappings(path: NativePtr): NativePtr
+    
+    external fun clang_getRemappingsFromFileList(filePaths: NativePtr, numFiles: Int): NativePtr
+    
+    external fun clang_remap_getNumFiles(arg0: NativePtr): Int
+    
+    external fun clang_remap_getFilenames(arg0: NativePtr, index: Int, original: NativePtr, transformed: NativePtr): Unit
+    
+    external fun clang_remap_dispose(arg0: NativePtr): Unit
+    
+    external fun clang_findReferencesInFile(cursor: NativePtr, file: NativePtr, visitor: NativePtr): Int
+    
+    external fun clang_findIncludesInFile(TU: NativePtr, file: NativePtr, visitor: NativePtr): Int
     
     external fun clang_index_isEntityObjCContainerKind(arg0: Int): Int
     
-    external fun clang_index_getObjCContainerDeclInfo(arg0: Long): Long
+    external fun clang_index_getObjCContainerDeclInfo(arg0: NativePtr): NativePtr
     
-    external fun clang_index_getObjCInterfaceDeclInfo(arg0: Long): Long
+    external fun clang_index_getObjCInterfaceDeclInfo(arg0: NativePtr): NativePtr
     
-    external fun clang_index_getObjCCategoryDeclInfo(arg0: Long): Long
+    external fun clang_index_getObjCCategoryDeclInfo(arg0: NativePtr): NativePtr
     
-    external fun clang_index_getObjCProtocolRefListInfo(arg0: Long): Long
+    external fun clang_index_getObjCProtocolRefListInfo(arg0: NativePtr): NativePtr
     
-    external fun clang_index_getObjCPropertyDeclInfo(arg0: Long): Long
+    external fun clang_index_getObjCPropertyDeclInfo(arg0: NativePtr): NativePtr
     
-    external fun clang_index_getIBOutletCollectionAttrInfo(arg0: Long): Long
+    external fun clang_index_getIBOutletCollectionAttrInfo(arg0: NativePtr): NativePtr
     
-    external fun clang_index_getCXXClassDeclInfo(arg0: Long): Long
+    external fun clang_index_getCXXClassDeclInfo(arg0: NativePtr): NativePtr
     
-    external fun clang_index_getClientContainer(arg0: Long): Long
+    external fun clang_index_getClientContainer(arg0: NativePtr): NativePtr
     
-    external fun clang_index_setClientContainer(arg0: Long, arg1: Long): Unit
+    external fun clang_index_setClientContainer(arg0: NativePtr, arg1: NativePtr): Unit
     
-    external fun clang_index_getClientEntity(arg0: Long): Long
+    external fun clang_index_getClientEntity(arg0: NativePtr): NativePtr
     
-    external fun clang_index_setClientEntity(arg0: Long, arg1: Long): Unit
+    external fun clang_index_setClientEntity(arg0: NativePtr, arg1: NativePtr): Unit
     
-    external fun clang_IndexAction_create(CIdx: Long): Long
+    external fun clang_IndexAction_create(CIdx: NativePtr): NativePtr
     
-    external fun clang_IndexAction_dispose(arg0: Long): Unit
+    external fun clang_IndexAction_dispose(arg0: NativePtr): Unit
     
-    external fun clang_indexSourceFile(arg0: Long, client_data: Long, index_callbacks: Long, index_callbacks_size: Int, index_options: Int, source_filename: Long, command_line_args: Long, num_command_line_args: Int, unsaved_files: Long, num_unsaved_files: Int, out_TU: Long, TU_options: Int): Int
+    external fun clang_indexSourceFile(arg0: NativePtr, client_data: NativePtr, index_callbacks: NativePtr, index_callbacks_size: Int, index_options: Int, source_filename: NativePtr, command_line_args: NativePtr, num_command_line_args: Int, unsaved_files: NativePtr, num_unsaved_files: Int, out_TU: NativePtr, TU_options: Int): Int
     
-    external fun clang_indexSourceFileFullArgv(arg0: Long, client_data: Long, index_callbacks: Long, index_callbacks_size: Int, index_options: Int, source_filename: Long, command_line_args: Long, num_command_line_args: Int, unsaved_files: Long, num_unsaved_files: Int, out_TU: Long, TU_options: Int): Int
+    external fun clang_indexSourceFileFullArgv(arg0: NativePtr, client_data: NativePtr, index_callbacks: NativePtr, index_callbacks_size: Int, index_options: Int, source_filename: NativePtr, command_line_args: NativePtr, num_command_line_args: Int, unsaved_files: NativePtr, num_unsaved_files: Int, out_TU: NativePtr, TU_options: Int): Int
     
-    external fun clang_indexTranslationUnit(arg0: Long, client_data: Long, index_callbacks: Long, index_callbacks_size: Int, index_options: Int, arg5: Long): Int
+    external fun clang_indexTranslationUnit(arg0: NativePtr, client_data: NativePtr, index_callbacks: NativePtr, index_callbacks_size: Int, index_options: Int, arg5: NativePtr): Int
     
-    external fun clang_indexLoc_getFileLocation(loc: Long, indexFile: Long, file: Long, line: Long, column: Long, offset: Long): Unit
+    external fun clang_indexLoc_getFileLocation(loc: NativePtr, indexFile: NativePtr, file: NativePtr, line: NativePtr, column: NativePtr, offset: NativePtr): Unit
     
-    external fun clang_indexLoc_getCXSourceLocation(loc: Long, retValPlacement: Long): Long
+    external fun clang_indexLoc_getCXSourceLocation(loc: NativePtr, retValPlacement: NativePtr): NativePtr
     
-    external fun clang_Type_visitFields(T: Long, visitor: Long, client_data: Long): Int
+    external fun clang_Type_visitFields(T: NativePtr, visitor: NativePtr, client_data: NativePtr): Int
     
 }
