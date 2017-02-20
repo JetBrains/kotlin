@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanPlatform
+import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.ir2string
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
@@ -17,10 +18,13 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
+import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.transformFlat
@@ -72,13 +76,11 @@ class DefaultArgumentStubGenerator internal constructor(val context: Context): D
 
                 for (valueParameter in functionDescriptor.valueParameters) {
                     val parameterDescriptor = descriptor.valueParameters[valueParameter.index]
+                    val temporaryVariableDescriptor = scope.createTemporaryVariableDescriptor(parameterDescriptor)
+                    params.add(temporaryVariableDescriptor)
+                    variables.put(valueParameter, temporaryVariableDescriptor)
                     if (valueParameter.hasDefaultValue()) {
-                        val variable = scope.createTemporaryVariable(
-                                irExpression = nullConst(irFunction, valueParameter.type)!!,
-                                isMutable = true)
-                        val variableDescriptor = variable.descriptor
-                        params.add(variableDescriptor)
-                        +variable
+
                         val condition = irNotEquals(irCall(Helper.kIntAnd).apply {
                             dispatchReceiver = irGet(maskParameterDescriptor(descriptor))
                             putValueArgument(0, irInt(1 shl valueParameter.index))
@@ -99,15 +101,19 @@ class DefaultArgumentStubGenerator internal constructor(val context: Context): D
 
                             }
                         })
-                        /* Mapping calculated values with its origin variables. */
-                        variables.put(valueParameter, variableDescriptor)
-                        +irIfThenElse(
-                                type      = KonanPlatform.builtIns.unitType,
+                        val variableInitialization = irIfThenElse(
+                                type      = temporaryVariableDescriptor.type,
                                 condition = condition,
-                                thenPart  = irSetVar(variableDescriptor, expressionBody.expression),
-                                elsePart  = irSetVar(variableDescriptor, irGet(parameterDescriptor)))
+                                thenPart  = expressionBody.expression,
+                                elsePart  = irGet(parameterDescriptor))
+                        + scope.createTemporaryVariable(
+                                descriptor  = temporaryVariableDescriptor,
+                                initializer = variableInitialization)
+                        /* Mapping calculated values with its origin variables. */
                     } else {
-                        params.add(parameterDescriptor)
+                        + scope.createTemporaryVariable(
+                                descriptor   = temporaryVariableDescriptor,
+                                initializer = irGet(parameterDescriptor))
                     }
                 }
                 if (functionDescriptor is ClassConstructorDescriptor) {
@@ -158,6 +164,21 @@ class DefaultArgumentStubGenerator internal constructor(val context: Context): D
 
     private fun log(msg:String) = context.log("DEFAULT-REPLACER: $msg")
 }
+
+private fun Scope.createTemporaryVariableDescriptor(parameterDescriptor: ValueParameterDescriptor?): VariableDescriptor =
+        IrTemporaryVariableDescriptorImpl(
+                containingDeclaration = this.scopeOwner,
+                name                  = parameterDescriptor!!.name.asString().synthesizedName,
+                outType               = parameterDescriptor.type,
+                isMutable             = false)
+
+private fun Scope.createTemporaryVariable(descriptor: VariableDescriptor, initializer: IrExpression) =
+        IrVariableImpl(
+                startOffset = initializer.startOffset,
+                endOffset   = initializer.endOffset,
+                origin      = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+                descriptor  = descriptor,
+                initializer = initializer)
 
 private fun getDefaultParameterExpressionBody(irFunction: IrFunction, valueParameter: ValueParameterDescriptor):IrExpressionBody {
     return irFunction.getDefault(valueParameter) as? IrExpressionBody ?: TODO("FIXME!!!")
