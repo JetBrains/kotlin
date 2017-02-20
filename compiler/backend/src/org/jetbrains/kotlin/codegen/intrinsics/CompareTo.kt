@@ -25,7 +25,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 class CompareTo : IntrinsicMethod() {
     private fun genInvoke(type: Type?, v: InstructionAdapter) {
         when (type) {
-            Type.INT_TYPE -> v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "compare", "(II)I", false)
+            Type.INT_TYPE, Type.CHAR_TYPE -> v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "compare", "(II)I", false)
             Type.LONG_TYPE -> v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "compare", "(JJ)I", false)
             Type.FLOAT_TYPE -> v.invokestatic("java/lang/Float", "compare", "(FF)I", false)
             Type.DOUBLE_TYPE -> v.invokestatic("java/lang/Double", "compare", "(DD)I", false)

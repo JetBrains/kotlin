@@ -1,0 +1,5 @@
+@kotlin.Metadata
+public final class CompareBoxedCharsKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method id(p0: java.lang.Object): java.lang.Object
+}

@@ -785,6 +785,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("compareBoxedChars.kt")
+        public void testCompareBoxedChars() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/compareBoxedChars.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("compareWithBoxedDouble.kt")
         public void testCompareWithBoxedDouble() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/compareWithBoxedDouble.kt");
