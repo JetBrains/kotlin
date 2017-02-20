@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.backend.konan.ir.IrInlineFunctionBody
 import org.jetbrains.kotlin.backend.konan.ir.getArguments
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.Scope
@@ -21,12 +21,20 @@ import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.types.KotlinType
 
-
 //-----------------------------------------------------------------------------//
 
 internal class FunctionInlining(val context: Context): IrElementTransformerVoid() {
 
     fun inline(irFile: IrFile) = irFile.accept(this, null)
+
+    //-------------------------------------------------------------------------//
+
+    var fqName: String? = null
+    override fun visitFile(declaration: IrFile): IrFile {
+        fqName = declaration.packageFragmentDescriptor.fqName.asString()
+        println("akm_inline $fqName")
+        return super.visitFile(declaration)
+    }
 
     //-------------------------------------------------------------------------//
 
@@ -68,7 +76,6 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
             .functions[functionDescriptor.original]                                         // Get FunctionDeclaration by FunctionDescriptor.
 
         if (functionDeclaration == null) return super.visitCall(irCall)                     // Function is declared in another module.
-
         val copyFuncDeclaration = functionDeclaration.accept(DeepCopyIrTree(),              // Create copy of the function.
             null) as IrFunction
 
@@ -84,16 +91,18 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         inlineBody.accept(lambdaInliner, null)
         val transformer = ParametersTransformer(parameters, irCall)
         inlineBody.accept(transformer, null)                                                // Replace parameters with expression.
-        return inlineBody
+        return super.visitBlock(inlineBody)
     }
 
     //-------------------------------------------------------------------------//
 
     override fun visitCall(expression: IrCall): IrExpression {
-        val functionDescriptor = expression.descriptor as FunctionDescriptor
-        if (!functionDescriptor.name.asString().contains("foo")) return super.visitCall(expression)
 
+        if(fqName!!.contains("kotlin")) return super.visitCall(expression)
+
+        val functionDescriptor = expression.descriptor as FunctionDescriptor
         if (functionDescriptor.isInline) return inlineFunction(expression)                  // Return newly created IrInlineBody instead of IrCall.
+
         return super.visitCall(expression)
     }
 
@@ -194,8 +203,9 @@ internal class ParametersTransformer(val parameterToArgument: List<Pair<Paramete
         val expression = super.visitTypeOperator(oldExpression) as IrTypeOperatorCall
 
         val typeArgsMap     = (callSite as IrMemberAccessExpressionBase).typeArguments!!
-        val typeConstructor = expression.typeOperand.constructor
-        val typeOld         = typeConstructor.declarationDescriptor as TypeParameterDescriptorImpl
+        val declarationDescriptor = expression.typeOperand.constructor.declarationDescriptor
+
+        val typeOld         = declarationDescriptor as TypeParameterDescriptor
         val typeNew         = typeArgsMap[typeOld]!!
         val startOffset     = expression.startOffset
         val endOffset       = expression.endOffset
