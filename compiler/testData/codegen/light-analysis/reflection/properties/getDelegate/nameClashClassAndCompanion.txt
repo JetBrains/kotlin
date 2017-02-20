@@ -8,7 +8,7 @@ public final class Delegate {
 
 @kotlin.Metadata
 public final class Foo {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     public final static field Companion: Foo.Companion
     private final @org.jetbrains.annotations.NotNull field x$delegate$1: Delegate
     private final static @org.jetbrains.annotations.NotNull field x$delegate: Delegate
@@ -19,7 +19,7 @@ public final class Foo {
 
 @kotlin.Metadata
 public final static class Foo/Companion {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     inner class Foo/Companion
     private method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getX(): java.lang.String

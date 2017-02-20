@@ -13,7 +13,7 @@ public final class D {
 
 @kotlin.Metadata
 public final class ExtensionDelegatesWithSameNamesKt {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field prop$delegate$1: D
     private final static @org.jetbrains.annotations.NotNull field prop$delegate: D
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

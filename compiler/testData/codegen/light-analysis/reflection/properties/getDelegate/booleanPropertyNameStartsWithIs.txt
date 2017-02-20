@@ -12,7 +12,7 @@ public final class Delegate {
 
 @kotlin.Metadata
 public final class Foo {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final @org.jetbrains.annotations.NotNull field isOK$delegate: Delegate
     public method <init>(): void
     public final method isOK(): boolean

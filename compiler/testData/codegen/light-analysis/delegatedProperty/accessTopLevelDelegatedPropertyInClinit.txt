@@ -1,6 +1,6 @@
 @kotlin.Metadata
 public final class AccessTopLevelDelegatedPropertyInClinitKt {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field a: java.lang.String
     private final static @org.jetbrains.annotations.NotNull field prop$delegate: Delegate
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

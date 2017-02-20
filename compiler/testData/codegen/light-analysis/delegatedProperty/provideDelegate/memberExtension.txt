@@ -1,6 +1,6 @@
 @kotlin.Metadata
 public final class Host {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     public final static field INSTANCE: Host
     private final static @org.jetbrains.annotations.NotNull field ok: java.lang.String
     private final static @org.jetbrains.annotations.NotNull field plusK$delegate: Host.StringDelegate

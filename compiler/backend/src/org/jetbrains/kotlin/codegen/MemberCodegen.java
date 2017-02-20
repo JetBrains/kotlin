@@ -492,10 +492,11 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         int indexOfDelegatedProperty = PropertyCodegen.indexOfDelegatedProperty(property);
 
         StackValue delegateValue = PropertyCodegen.invokeDelegatedPropertyConventionMethodWithReceiver(
-                codegen, typeMapper, provideDelegateResolvedCall, indexOfDelegatedProperty, 1, provideDelegateReceiver);
+                codegen, typeMapper, provideDelegateResolvedCall, indexOfDelegatedProperty, 1,
+                provideDelegateReceiver, propertyDescriptor
+        );
 
         propValue.store(delegateValue, codegen.v);
-
     }
 
     protected boolean shouldInitializeProperty(@NotNull KtProperty property) {
@@ -583,7 +584,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         }
         if (delegatedProperties.isEmpty()) return;
 
-        v.newField(NO_ORIGIN, ACC_PRIVATE | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME,
+        v.newField(NO_ORIGIN, ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME,
                    "[" + K_PROPERTY_TYPE, null, null);
 
         if (!state.getClassBuilderMode().generateBodies) return;

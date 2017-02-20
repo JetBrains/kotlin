@@ -11,7 +11,7 @@ public final class JvmStaticInObjectKt {
 
 @kotlin.Metadata
 public final class Test {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     public final static field INSTANCE: Test
     private final static @org.jetbrains.annotations.NotNull field testK$delegate: java.lang.String
     private final static @org.jetbrains.annotations.NotNull field testO$delegate: java.lang.String

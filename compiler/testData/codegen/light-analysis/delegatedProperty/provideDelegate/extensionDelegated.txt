@@ -1,6 +1,6 @@
 @kotlin.Metadata
 public final class ExtensionDelegatedKt {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field calc$delegate: UserDataProperty
     private static @org.jetbrains.annotations.NotNull field log: java.lang.String
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -8,7 +8,7 @@ public final class Delegate {
 
 @kotlin.Metadata
 public final class O {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     public final static field INSTANCE: O
     private final static @org.jetbrains.annotations.NotNull field memExt$delegate: Delegate
     private final static @org.jetbrains.annotations.NotNull field member$delegate: Delegate
@@ -21,7 +21,7 @@ public final class O {
 
 @kotlin.Metadata
 public final class UseKPropertyLaterKt {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field properties: java.util.HashSet
     private final static @org.jetbrains.annotations.NotNull field topLevel$delegate: Delegate
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

@@ -10,7 +10,7 @@ public final class B {
 
 @kotlin.Metadata
 public final class DelegatesKt {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field s$delegate$1: TestDelegate
     private final static @org.jetbrains.annotations.NotNull field s$delegate: TestDelegate
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

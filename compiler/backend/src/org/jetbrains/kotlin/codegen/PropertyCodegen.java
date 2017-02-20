@@ -58,6 +58,9 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.getDeprecatedAccessFlag;
 import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityForBackingField;
+import static org.jetbrains.kotlin.codegen.AsmUtil.isPropertyWithBackingFieldCopyInOuterClass;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.FIELD_FOR_PROPERTY;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.SYNTHETIC_METHOD_FOR_PROPERTY;
@@ -540,7 +543,7 @@ public class PropertyCodegen {
         StackValue.Property receiver = codegen.intermediateValueForProperty(propertyDescriptor, true, null, StackValue.LOCAL_0);
         return invokeDelegatedPropertyConventionMethodWithReceiver(
                 codegen, typeMapper, resolvedCall, indexInPropertyMetadataArray, propertyMetadataArgumentIndex,
-                receiver
+                receiver, propertyDescriptor
         );
     }
 
@@ -550,9 +553,12 @@ public class PropertyCodegen {
             @NotNull ResolvedCall<FunctionDescriptor> resolvedCall,
             final int indexInPropertyMetadataArray,
             int propertyMetadataArgumentIndex,
-            @Nullable StackValue receiver
+            @Nullable StackValue receiver,
+            @NotNull PropertyDescriptor propertyDescriptor
     ) {
-        final Type owner = getDelegatedPropertyMetadataOwner(codegen, typeMapper);
+        final Type owner = JvmAbi.isPropertyWithBackingFieldInOuterClass(propertyDescriptor) ?
+                           codegen.getState().getTypeMapper().mapOwner(propertyDescriptor)  :
+                           getDelegatedPropertyMetadataOwner(codegen, typeMapper);
 
         codegen.tempVariables.put(
                 resolvedCall.getCall().getValueArguments().get(propertyMetadataArgumentIndex).asElement(),

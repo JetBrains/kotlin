@@ -1,6 +1,6 @@
 @kotlin.Metadata
 public final class InlineProvideDelegateKt {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private static @org.jetbrains.annotations.NotNull field log: java.lang.String
     private final static @org.jetbrains.annotations.NotNull field testK$delegate: java.lang.String
     private final static @org.jetbrains.annotations.NotNull field testO$delegate: java.lang.String

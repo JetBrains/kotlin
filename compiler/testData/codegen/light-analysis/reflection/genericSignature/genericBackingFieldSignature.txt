@@ -10,7 +10,7 @@ public final class TParam {
 
 @kotlin.Metadata
 public final class Test {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final @org.jetbrains.annotations.Nullable field classField1: Z
     private final @org.jetbrains.annotations.Nullable field classField2: Z
     private final @org.jetbrains.annotations.Nullable field classField3: Zout

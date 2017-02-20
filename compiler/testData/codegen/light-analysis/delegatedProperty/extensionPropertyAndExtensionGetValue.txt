@@ -14,7 +14,7 @@ public final class B {
 
 @kotlin.Metadata
 public final class ExtensionPropertyAndExtensionGetValueKt {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field prop$delegate: A
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method getProp(@org.jetbrains.annotations.NotNull p0: B): java.lang.String

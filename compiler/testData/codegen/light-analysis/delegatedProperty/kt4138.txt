@@ -21,7 +21,7 @@ public final class Foo {
 
 @kotlin.Metadata
 public final static class Foo/Companion {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     inner class Foo/Companion
     private method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getA(): Foo
@@ -37,7 +37,7 @@ public interface FooTrait {
 
 @kotlin.Metadata
 public final static class FooTrait/Companion {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field A$delegate: Delegate
     private final static @org.jetbrains.annotations.NotNull field B$delegate: Delegate
     inner class FooTrait/Companion

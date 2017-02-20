@@ -10,7 +10,7 @@ public final class a/MultifileClass {
 
 @kotlin.Metadata
 synthetic final class a/MultifileClass__Part1Kt {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field OK$delegate: kotlin.Lazy
     public final static @org.jetbrains.annotations.NotNull method getOK(): java.lang.String
 }

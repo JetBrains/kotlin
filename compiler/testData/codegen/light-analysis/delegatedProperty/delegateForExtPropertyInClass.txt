@@ -11,7 +11,7 @@ public final class DelegateForExtPropertyInClassKt {
 
 @kotlin.Metadata
 public final class F {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final @org.jetbrains.annotations.NotNull field prop$delegate: Delegate
     inner class F/A
     public method <init>(): void

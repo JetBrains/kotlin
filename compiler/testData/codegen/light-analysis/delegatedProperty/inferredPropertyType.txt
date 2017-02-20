@@ -6,7 +6,7 @@ public final class A {
 
 @kotlin.Metadata
 public final class A/B {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final @org.jetbrains.annotations.NotNull field prop$delegate: Delegate
     synthetic final field this$0: A
     inner class A/B

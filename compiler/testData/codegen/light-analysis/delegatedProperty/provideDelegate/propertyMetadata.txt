@@ -1,6 +1,6 @@
 @kotlin.Metadata
 public final class PropertyMetadataKt {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field K$delegate: java.lang.String
     private final static @org.jetbrains.annotations.NotNull field O$delegate: java.lang.String
     private final static @org.jetbrains.annotations.NotNull field OK: java.lang.String

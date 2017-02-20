@@ -1,6 +1,6 @@
 @kotlin.Metadata
 public final class Kt6368Kt {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field a$delegate: kotlin.Lazy
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method getA(): java.util.HashMap
