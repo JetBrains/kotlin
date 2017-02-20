@@ -1,6 +1,6 @@
 @kotlin.Metadata
 public final class A {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private @AnnField field p: int
     private final @AnnDelegate @org.jetbrains.annotations.NotNull field s$delegate: CustomDelegate
     private final @AnnField field x: int

@@ -1,0 +1,27 @@
+@kotlin.Metadata
+public final class Delegate {
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method provideDelegate(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): Delegate
+}
+
+@kotlin.Metadata
+public final class Kt16441Kt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class TestClass {
+    public final static field Companion: TestClass.Companion
+    private final static @org.jetbrains.annotations.NotNull field test$delegate: Delegate
+    inner class TestClass/Companion
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public final static class TestClass/Companion {
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    inner class TestClass/Companion
+    private method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getTest(): java.lang.String
+}

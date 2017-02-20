@@ -11,7 +11,7 @@ public final class Kt4383Kt {
 
 @kotlin.Metadata
 public final class P {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     public final static field INSTANCE: P
     private final static @org.jetbrains.annotations.NotNull field u: kotlin.Unit
     private final static @org.jetbrains.annotations.NotNull field v$delegate: D

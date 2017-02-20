@@ -1,6 +1,6 @@
 @kotlin.Metadata
 public final class A {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final @org.jetbrains.annotations.NotNull field value$delegate: Holder
     public method <init>(p0: int): void
     public synthetic method getValue(): java.lang.Comparable

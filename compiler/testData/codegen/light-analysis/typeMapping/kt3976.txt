@@ -1,6 +1,6 @@
 @kotlin.Metadata
 public final class Kt3976Kt {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.Nullable field currentAccountId$delegate: SessionAccessor
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.Nullable method getCurrentAccountId(): java.lang.Integer

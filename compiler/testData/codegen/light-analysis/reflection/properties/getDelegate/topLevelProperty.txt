@@ -11,7 +11,7 @@ public final class Delegate {
 
 @kotlin.Metadata
 public final class TopLevelPropertyKt {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field result$delegate: Delegate
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method getResult(): java.lang.String

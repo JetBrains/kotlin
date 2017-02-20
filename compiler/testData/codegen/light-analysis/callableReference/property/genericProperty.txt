@@ -8,7 +8,7 @@ public final class DVal {
 
 @kotlin.Metadata
 public final class GenericPropertyKt {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.Nullable field additionalText$delegate: DVal
     private final static field additionalValue$delegate: DVal
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

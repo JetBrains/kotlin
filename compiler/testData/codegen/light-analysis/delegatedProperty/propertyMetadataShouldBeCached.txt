@@ -1,6 +1,6 @@
 @kotlin.Metadata
 public final class A {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     public final static field Companion: A.Companion
     private final static @org.jetbrains.annotations.Nullable field bar$delegate: AnyHandler
     private final @org.jetbrains.annotations.NotNull field foo$delegate: IntHandler
@@ -12,7 +12,7 @@ public final class A {
 
 @kotlin.Metadata
 public final static class A/Companion {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     inner class A/Companion
     private method <init>(): void
     public final @org.jetbrains.annotations.Nullable method getBar(): java.lang.Object
@@ -37,7 +37,7 @@ public final class IntHandler {
 
 @kotlin.Metadata
 public final class PropertyMetadataShouldBeCachedKt {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field baz$delegate: StringHandler
     private final static @org.jetbrains.annotations.NotNull field metadatas: java.util.IdentityHashMap
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

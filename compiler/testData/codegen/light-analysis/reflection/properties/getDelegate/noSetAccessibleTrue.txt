@@ -7,7 +7,7 @@ public final class Delegate {
 
 @kotlin.Metadata
 public final class Foo {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final @org.jetbrains.annotations.NotNull field member$delegate: Delegate
     private final @org.jetbrains.annotations.NotNull field memberExtension$delegate: Delegate
     public method <init>(): void
@@ -17,7 +17,7 @@ public final class Foo {
 
 @kotlin.Metadata
 public final class NoSetAccessibleTrueKt {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field extension$delegate: Delegate
     private final static @org.jetbrains.annotations.NotNull field topLevel$delegate: Delegate
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

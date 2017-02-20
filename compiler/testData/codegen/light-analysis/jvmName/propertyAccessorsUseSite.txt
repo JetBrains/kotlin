@@ -13,7 +13,7 @@ public final class PropertyAccessorsUseSiteKt {
 
 @kotlin.Metadata
 public final class TestIt {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private field isFries: boolean
     private final @org.jetbrains.annotations.NotNull field isUpdateable$delegate: Delegate
     public method <init>(): void

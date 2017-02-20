@@ -1,6 +1,6 @@
 @kotlin.Metadata
 public final class DIExampleKt {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field project: Project
     private final static @org.jetbrains.annotations.NotNull field x1$delegate: Project
     private final static @org.jetbrains.annotations.NotNull field x2$delegate: Project

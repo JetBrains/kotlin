@@ -1,6 +1,6 @@
 @kotlin.Metadata
 public class Base {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final @org.jetbrains.annotations.NotNull field x$delegate: Delegate
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method getX(): java.lang.String
@@ -16,7 +16,7 @@ public final class Delegate {
 
 @kotlin.Metadata
 public final class Derived {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final @org.jetbrains.annotations.NotNull field x$delegate: Delegate
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method getX(): java.lang.String

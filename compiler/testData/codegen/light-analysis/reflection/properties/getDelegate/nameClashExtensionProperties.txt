@@ -13,7 +13,7 @@ public final class Foo {
 
 @kotlin.Metadata
 public final class MemberExtensions {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final @org.jetbrains.annotations.NotNull field bar$delegate$1: Delegate
     private final @org.jetbrains.annotations.NotNull field bar$delegate$2: Delegate
     private final @org.jetbrains.annotations.NotNull field bar$delegate: Delegate
@@ -25,7 +25,7 @@ public final class MemberExtensions {
 
 @kotlin.Metadata
 public final class NameClashExtensionPropertiesKt {
-    private synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private final static @org.jetbrains.annotations.NotNull field bar$delegate$1: Delegate
     private final static @org.jetbrains.annotations.NotNull field bar$delegate$2: Delegate
     private final static @org.jetbrains.annotations.NotNull field bar$delegate: Delegate
