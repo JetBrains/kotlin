@@ -210,7 +210,12 @@ class NumberCompare(
 ) : BranchedValue(left, right, operandType, NumberCompare.getNumberCompareOpcode(opToken)) {
 
     override fun patchOpcode(opcode: Int, v: InstructionAdapter): Int {
-        when (operandType) {
+        // Opcode takes one int operand from the stack
+        assert(opcode in IFEQ..IFLE) {
+            "Opcode for comparing must be in range ${IFEQ..IFLE}, but $opcode was found"
+        }
+
+        return when (operandType) {
             Type.FLOAT_TYPE, Type.DOUBLE_TYPE -> {
                 if (opToken == KtTokens.GT || opToken == KtTokens.GTEQ) {
                     v.cmpl(operandType)
@@ -218,17 +223,19 @@ class NumberCompare(
                 else {
                     v.cmpg(operandType)
                 }
+
+                opcode
             }
             Type.LONG_TYPE -> {
                 v.lcmp()
+
+                opcode
             }
             else -> {
-                return opcode + (IF_ICMPEQ - IFEQ)
+                opcode + (IF_ICMPEQ - IFEQ)
             }
         }
-        return opcode
     }
-
     companion object {
         fun getNumberCompareOpcode(opToken: IElementType): Int {
             return when (opToken) {
