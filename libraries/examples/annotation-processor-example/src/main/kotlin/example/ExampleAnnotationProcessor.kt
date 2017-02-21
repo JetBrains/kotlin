@@ -6,6 +6,7 @@ import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.TypeElement
+import javax.tools.Diagnostic
 import kotlin.reflect.KClass
 
 class ExampleAnnotationProcessor : AbstractProcessor() {
@@ -18,6 +19,7 @@ class ExampleAnnotationProcessor : AbstractProcessor() {
 
         val SUFFIX_OPTION = "suffix"
         val GENERATE_KOTLIN_CODE_OPTION = "generate.kotlin.code"
+        val GENERATE_ERROR = "generate.error"
         val KAPT_KOTLIN_GENERATED_OPTION = "kapt.kotlin.generated"
     }
 
@@ -57,11 +59,15 @@ class ExampleAnnotationProcessor : AbstractProcessor() {
                 }
             }
         }
+
+        if (options[GENERATE_ERROR] == "true") {
+            processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "Error from annotation processor!")
+        }
     }
 
     override fun getSupportedSourceVersion() = SourceVersion.RELEASE_6
 
     override fun getSupportedAnnotationTypes() = ANNOTATION_TO_PREFIX.keys.map { it.java.canonicalName }.toSet()
 
-    override fun getSupportedOptions() = setOf(SUFFIX_OPTION)
+    override fun getSupportedOptions() = setOf(SUFFIX_OPTION, GENERATE_KOTLIN_CODE_OPTION, GENERATE_ERROR)
 }

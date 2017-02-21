@@ -51,6 +51,14 @@ internal fun Project.initKapt(
     val kaptExtension = extensions.getByType(KaptExtension::class.java)
     val kotlinAfterJavaTask: KotlinCompile?
 
+    fun warnUnsupportedKapt1Option(optionName: String) {
+        kotlinTask.logger.kotlinWarn("'$optionName' option is not supported by this kapt implementation. " +
+                "Please add the \"apply plugin: 'kotlin-kapt\" line to your build script to enable it.")
+    }
+
+    if (kaptExtension.processors.isNotEmpty()) warnUnsupportedKapt1Option("processors")
+    if (kaptExtension.correctErrorTypes) warnUnsupportedKapt1Option("correctErrorTypes")
+
     if (kaptExtension.generateStubs) {
         kotlinAfterJavaTask = createKotlinAfterJavaTask(javaTask, kotlinTask, kotlinOptions, tasksProvider)
 

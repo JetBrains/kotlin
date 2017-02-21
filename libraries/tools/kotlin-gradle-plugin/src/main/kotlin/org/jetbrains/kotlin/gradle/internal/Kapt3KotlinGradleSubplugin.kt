@@ -173,6 +173,11 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         pluginOptions += SubpluginOption("sources", generatedFilesDir.canonicalPath)
         pluginOptions += SubpluginOption("classes", getKaptClasssesDir(project, sourceSetName).canonicalPath)
 
+        val annotationProcessors = kaptExtension.processors
+        if (annotationProcessors.isNotEmpty()) {
+            pluginOptions += SubpluginOption("processors", annotationProcessors)
+        }
+
         val androidPlugin = variantData?.let {
             project.extensions.findByName("android") as? BaseExtension
         }

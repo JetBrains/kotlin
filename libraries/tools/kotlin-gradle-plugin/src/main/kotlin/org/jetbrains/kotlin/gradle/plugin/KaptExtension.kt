@@ -30,6 +30,8 @@ open class KaptExtension {
 
     open var correctErrorTypes: Boolean = false
 
+    open var processors: String = ""
+
     private var closure: Closure<*>? = null
 
     open fun arguments(closure: Closure<*>) {

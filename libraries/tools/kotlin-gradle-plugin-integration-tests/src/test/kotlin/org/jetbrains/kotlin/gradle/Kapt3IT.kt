@@ -44,6 +44,21 @@ class Kapt3IT : BaseGradleIT() {
     }
 
     @Test
+    fun testAnnotationProcessorAsFqName() {
+        val project = Project("annotationProcessorAsFqName", GRADLE_VERSION, directoryPrefix = "kapt2")
+
+        project.build("build") {
+            assertSuccessful()
+            assertKaptSuccessful()
+            assertContains(":compileKotlin")
+            assertContains(":compileJava")
+            assertFileExists("build/generated/source/kapt/main/example/TestClassGenerated.java")
+            assertFileExists("build/classes/main/example/TestClass.class")
+            assertFileExists("build/classes/main/example/TestClassGenerated.class")
+        }
+    }
+
+    @Test
     fun testSimple() {
         val project = Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")
 
