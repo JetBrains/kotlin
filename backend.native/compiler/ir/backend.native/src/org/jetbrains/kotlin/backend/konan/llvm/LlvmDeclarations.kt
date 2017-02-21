@@ -338,8 +338,6 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
             LLVMAddFunction(context.llvmModule, symbolName, llvmFunctionType)!!
         }
 
-        println("ZZZ: $descriptor")
-
         this.functions[descriptor] = FunctionLlvmDeclarations(llvmFunction)
     }
 }

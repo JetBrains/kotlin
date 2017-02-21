@@ -163,13 +163,6 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
     }
 
     private fun buildBridge(descriptor: OverriddenFunctionDescriptor, irClass: IrClass) {
-
-        println("BUILD_BRIDGE fun: ${descriptor.descriptor}")
-        println("BUILD_BRIDGE kind: ${descriptor.descriptor.kind}")
-        println("BUILD_BRIDGE target: ${descriptor.descriptor.target}")
-        println("BUILD_BRIDGE overridden: ${descriptor.overriddenDescriptor}")
-        println()
-
         val bridgeDescriptor = context.specialDescriptorsFactory.getBridgeDescriptor(descriptor)
         val target = descriptor.descriptor.target
 
