@@ -2005,6 +2005,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("andAndWithTmpVarRhs.kt")
+            public void testAndAndWithTmpVarRhs() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/evaluationOrder/andAndWithTmpVarRhs.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("assignToArrayElementWithSideEffect.kt")
             public void testAssignToArrayElementWithSideEffect() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/expression/evaluationOrder/assignToArrayElementWithSideEffect.kt");

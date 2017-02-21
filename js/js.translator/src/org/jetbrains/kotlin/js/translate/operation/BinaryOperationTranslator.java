@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.js.backend.ast.*;
+import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
@@ -202,10 +203,12 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
             if (rightExpression instanceof JsNameRef) {
                 result = rightExpression; // Reuse tmp variable
             } else {
-                result = context().defineTemporary(rightExpression);
+                result = context().declareTemporary(null).reference();
+                rightBlock.getStatements().add(JsAstUtils.asSyntheticStatement(JsAstUtils.assignment(result, rightExpression)));
             }
-            JsStatement assignmentStatement = JsAstUtils.assignment(result, literalResult).makeStmt();
+            JsStatement assignmentStatement = JsAstUtils.asSyntheticStatement(JsAstUtils.assignment(result, literalResult));
             ifStatement = JsAstUtils.newJsIf(leftExpression, rightBlock, assignmentStatement);
+            MetadataProperties.setSynthetic(ifStatement, true);
         }
         else {
             ifStatement = JsAstUtils.newJsIf(leftExpression, rightBlock);
