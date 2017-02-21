@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
+// TODO: cross-module usage.
+
 internal data class LoweredSyntheticFunction(val functionDescriptor: FunctionDescriptor, val containingClass: ClassDescriptor)
 
 internal data class LoweredEnumEntry(val implObject: ClassDescriptor, val valuesProperty: PropertyDescriptor,

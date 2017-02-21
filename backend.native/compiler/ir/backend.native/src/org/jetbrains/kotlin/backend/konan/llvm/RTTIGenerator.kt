@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
@@ -121,6 +122,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val fieldsPtr = staticData.placeGlobalConstArray("kfields:$className",
                 runtime.fieldTableRecordType, fields)
 
+        println("GEN_TABLES: class = $classDesc")
         val methods = if (classDesc.isAbstract()) {
             emptyList()
         } else {
@@ -133,7 +135,10 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                     throw AssertionError("Duplicate method table entry: functionName = '$functionName', hash = '${nameSignature.value}', entry1 = $previous, entry2 = $it")
 
                 // TODO: compile-time resolution limits binary compatibility
-                val methodEntryPoint =  it.implementation.entryPointAddress
+                val implementation = it.implementation
+                println("METHOD_TABLE: function = $functionName")
+                                println("METHOD_TABLE: impl = $implementation")
+                val methodEntryPoint =  implementation.entryPointAddress
                 MethodTableRecord(nameSignature, methodEntryPoint)
             }.sortedBy { it.nameSignature.value }
         }
@@ -154,7 +159,11 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             typeInfo
         } else {
             // TODO: compile-time resolution limits binary compatibility
-            val vtableEntries = context.getVtableBuilder(classDesc).vtableEntries.map { it.implementation.entryPointAddress }
+            val vtableEntries = context.getVtableBuilder(classDesc).vtableEntries.map {
+                val implementation = it.implementation
+                println("RAW_VTABLE: impl = $implementation")
+                implementation.entryPointAddress
+            }
             val vtable = ConstArray(int8TypePtr, vtableEntries)
             Struct(typeInfo, vtable)
         }
@@ -167,9 +176,14 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
     internal val OverriddenFunctionDescriptor.implementation: FunctionDescriptor
         get() {
+            println("IMPLEMENTATION fun: ${descriptor}")
+            println("IMPLEMENTATION overridden: ${overriddenDescriptor}")
             val target = descriptor.target
+            println("IMPLEMENTATION target: ${target}")
             if (!needBridge) return target
-            val bridgeOwner = if (descriptor.bridgeDirections.allNotNeeded()) target else descriptor
-            return context.specialDescriptorsFactory.getBridgeDescriptor(bridgeOwner)
+            //val bridgeOwner = if (!descriptor.kind.isReal && OverridingUtil.overrides(target, overriddenDescriptor) && !descriptor.needBridgeTo(overriddenDescriptor)) if (descriptor.bridgeDirectionsTo(overriddenDescriptor).allNotNeeded()) target else descriptor
+            val bridgeOwner = if (!descriptor.kind.isReal && OverridingUtil.overrides(target, overriddenDescriptor) && descriptor.bridgeDirectionsTo(overriddenDescriptor).allNotNeeded()) target else descriptor
+            println("IMPLEMENTATION owner: ${bridgeOwner}")
+            return context.specialDescriptorsFactory.getBridgeDescriptor(OverriddenFunctionDescriptor(bridgeOwner, overriddenDescriptor))
         }
 }

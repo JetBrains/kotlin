@@ -91,38 +91,6 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         }
     }
 
-    override fun visitCall(expression: IrCall): IrExpression {
-        val irCall = super.visitCall(expression) as IrCall
-
-        val descriptor = irCall.descriptor as? FunctionDescriptor ?: return irCall
-        if (descriptor.modality == Modality.ABSTRACT || (irCall.superQualifier == null && descriptor.isOverridable))
-            return irCall  // A virtual call. box/unbox will be in the corresponding bridge.
-
-        val target = descriptor.target
-
-        if (!descriptor.original.needBridgeTo(target)) return irCall
-
-        val overriddenCall = IrCallImpl(irCall.startOffset, irCall.endOffset,
-                target, remapTypeArguments(irCall, target)).apply {
-            dispatchReceiver = irCall.dispatchReceiver
-            extensionReceiver = irCall.extensionReceiver
-            mapValueParameters { irCall.getValueArgument(it)!! }
-        }
-
-        return super.visitCall(overriddenCall)
-    }
-
-    private fun remapTypeArguments(oldExpression: IrMemberAccessExpression, newCallee: CallableDescriptor): Map<TypeParameterDescriptor, KotlinType>? {
-        val oldCallee = oldExpression.descriptor
-
-        return if (oldCallee.typeParameters.isEmpty())
-            null
-        else oldCallee.typeParameters.associateBy(
-                { newCallee.typeParameters[it.index] },
-                { oldExpression.getTypeArgument(it)!! }
-        )
-    }
-
     /**
      * @return the [ValueType] given type represented in generated code as,
      * or `null` if represented as object reference.

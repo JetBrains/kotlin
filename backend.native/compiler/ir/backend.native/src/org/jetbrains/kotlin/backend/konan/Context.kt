@@ -5,7 +5,10 @@ import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.backend.jvm.descriptors.initialize
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.Ir
-import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.llvm.Llvm
+import org.jetbrains.kotlin.backend.konan.llvm.LlvmDeclarations
+import org.jetbrains.kotlin.backend.konan.llvm.functionName
+import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -20,7 +23,7 @@ import java.lang.System.out
 
 internal class SpecialDescriptorsFactory(val context: Context) {
     private val outerThisDescriptors = mutableMapOf<ClassDescriptor, PropertyDescriptor>()
-    private val bridgesDescriptors = mutableMapOf<FunctionDescriptor, FunctionDescriptor>()
+    private val bridgesDescriptors = mutableMapOf<Pair<FunctionDescriptor, BridgeDirections>, FunctionDescriptor>()
 
     fun getOuterThisFieldDescriptor(innerClassDescriptor: ClassDescriptor): PropertyDescriptor =
         if (!innerClassDescriptor.isInner) throw AssertionError("Class is not inner: $innerClassDescriptor")
@@ -34,24 +37,25 @@ internal class SpecialDescriptorsFactory(val context: Context) {
                 false, false, false, false, false, false).initialize(outerClassDescriptor.defaultType, dispatchReceiverParameter = receiver)
         }
 
-    fun getBridgeDescriptor(descriptor: FunctionDescriptor): FunctionDescriptor {
-        return bridgesDescriptors.getOrPut(descriptor) {
+    fun getBridgeDescriptor(descriptor: OverriddenFunctionDescriptor): FunctionDescriptor {
+        val bridgeDirections = descriptor.bridgeDirections
+        assert(descriptor.needBridge,
+                { "Function ${descriptor.descriptor} is not needed in a bridge to call overridden function ${descriptor.overriddenDescriptor}" })
+        return bridgesDescriptors.getOrPut(descriptor.descriptor to bridgeDirections) {
             SimpleFunctionDescriptorImpl.create(
-                    descriptor.containingDeclaration,
+                    descriptor.descriptor.containingDeclaration,
                     Annotations.EMPTY,
-                    ("<bridge-to>" + descriptor.functionName).synthesizedName,
+                    ("<bridge-" + bridgeDirections.toString() + ">" + descriptor.descriptor.functionName).synthesizedName,
                     CallableMemberDescriptor.Kind.DECLARATION,
                     SourceElement.NO_SOURCE).apply {
-                    initializeBridgeDescriptor(this, descriptor)
+                initializeBridgeDescriptor(this, descriptor.descriptor, bridgeDirections.array)
             }
         }
     }
 
-    private fun initializeBridgeDescriptor(bridgeDescriptor: SimpleFunctionDescriptorImpl, descriptor: FunctionDescriptor) {
-        val bridgeDirections = descriptor.bridgeDirections
-        if (bridgeDirections.allNotNeeded())
-            throw AssertionError("Function $descriptor is not needed in a bridge")
-
+    private fun initializeBridgeDescriptor(bridgeDescriptor: SimpleFunctionDescriptorImpl,
+                                           descriptor: FunctionDescriptor,
+                                           bridgeDirections: Array<BridgeDirection>) {
         val returnType = when (bridgeDirections[0]) {
             BridgeDirection.TO_VALUE_TYPE -> descriptor.returnType!!
             BridgeDirection.NOT_NEEDED -> descriptor.returnType
@@ -66,7 +70,7 @@ internal class SpecialDescriptorsFactory(val context: Context) {
 
         bridgeDescriptor.initialize(
                 extensionReceiverType,
-                descriptor.dispatchReceiverParameter,
+                (descriptor.containingDeclaration as ClassDescriptor).thisAsReceiverParameter,
                 descriptor.typeParameters,
                 descriptor.valueParameters.mapIndexed { index, valueParameterDescriptor ->
                     when (bridgeDirections[index + 2]) {
