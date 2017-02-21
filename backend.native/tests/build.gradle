@@ -725,12 +725,12 @@ task boxing7(type: RunKonanTest) {
 }
 
 task boxing8(type: RunKonanTest) {
-    goldValue = "1\n<null>\ntrue\nHello\n"
+    goldValue = "1\nnull\ntrue\nHello\n"
     source = "codegen/boxing/boxing8.kt"
 }
 
 task boxing9(type: RunKonanTest) {
-    goldValue = "1\n<null>\ntrue\nHello\n2\n<null>\ntrue\nHello\n3\n"
+    goldValue = "1\nnull\ntrue\nHello\n2\nnull\ntrue\nHello\n3\n"
     source = "codegen/boxing/boxing9.kt"
 }
 
