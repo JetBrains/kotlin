@@ -33,7 +33,7 @@ allprojects {
      } else {
          ext.targetArgs <<
             ["host":
-                ["--sysroot=$hostSysrootDir"], 
+                ["--sysroot=$hostSysrootDir", "-mmacosx-version-min=$minMacOsVersion"], 
              "iphone":
                 ["-stdlib=libc++", "-arch", "arm64", "-isysroot", "$iphoneSysrootDir"],
 // TODO: re-enable after simulator sysroot is available in the dependencies
