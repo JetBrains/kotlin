@@ -147,7 +147,7 @@ class TypeDeserializer(
             // This case for types written by eap compiler 1.1
             1 -> {
                 val arity = arguments.size - 1
-                if (arity > 0) {
+                if (arity >= 0) {
                     KotlinTypeFactory.simpleType(annotations, functionTypeConstructor.builtIns.getSuspendFunction(arity).typeConstructor, arguments, nullable)
                 }
                 else {
