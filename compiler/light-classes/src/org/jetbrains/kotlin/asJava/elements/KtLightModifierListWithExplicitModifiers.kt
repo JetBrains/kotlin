@@ -87,7 +87,7 @@ class KtLightModifierList(
     override fun copy(): PsiElement = KtLightModifierList(delegate, owner)
     override fun getReferences() = PsiReference.EMPTY_ARRAY
     override fun isEquivalentTo(another: PsiElement?) =
-            another is KtLightModifierList && delegate == another.delegate && owner == owner
+            another is KtLightModifierList && delegate == another.delegate && owner == another.owner
 }
 
 internal fun computeAnnotations(lightElement: PsiModifierList,
