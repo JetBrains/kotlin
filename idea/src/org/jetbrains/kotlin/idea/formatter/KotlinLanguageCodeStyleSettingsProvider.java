@@ -39,6 +39,9 @@ public class KotlinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSe
             case WRAPPING_AND_BRACES_SETTINGS:
                 return
                         "public class ThisIsASampleClass {\n" +
+                        "    val test = \n" +
+                        "        12\n" +
+                        "\n" +
                         "    fun foo1(i1: Int, i2: Int, i3: Int) : Int {\n" +
                         "        when (i1) {\n" +
                         "            is Number -> 0\n" +
@@ -64,7 +67,14 @@ public class KotlinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSe
                         "        }" +
                         "    }\n" +
                         "    private val f = {(a: Int)->a*2}\n" +
-                        "}";
+                        "}\n" +
+                        "\n" +
+                        "enum class Enumeration {\n" +
+                        "    A,\n" +
+                        "    B\n" +
+                        "}\n" +
+                        "";
+
             default:
                 return
                         "open class Some {\n"+
@@ -150,6 +160,7 @@ public class KotlinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSe
                 consumer.showStandardOptions(
                         // "ALIGN_MULTILINE_CHAINED_METHODS",
                         "KEEP_FIRST_COLUMN_COMMENT",
+                        "KEEP_LINE_BREAKS",
                         "ALIGN_MULTILINE_EXTENDS_LIST",
                         "ALIGN_MULTILINE_PARAMETERS",
                         "ALIGN_MULTILINE_PARAMETERS_IN_CALLS",

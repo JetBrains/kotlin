@@ -21,22 +21,21 @@ import com.intellij.formatting.DependentSpacingRule.Anchor
 import com.intellij.formatting.DependentSpacingRule.Trigger
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.codeStyle.CodeStyleSettings
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KtTokens
 import java.util.*
 
-class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings, val spacingBuilderUtil: KotlinSpacingBuilderUtil) {
+class KotlinSpacingBuilder(val commonCodeStyleSettings: CommonCodeStyleSettings, val spacingBuilderUtil: KotlinSpacingBuilderUtil) {
     private val builders = ArrayList<Builder>()
 
     private interface Builder {
         fun getSpacing(parent: ASTBlock, left: ASTBlock, right: ASTBlock): Spacing?
     }
 
-    inner class BasicSpacingBuilder() : SpacingBuilder(codeStyleSettings, KotlinLanguage.INSTANCE), Builder {
+    inner class BasicSpacingBuilder() : SpacingBuilder(commonCodeStyleSettings), Builder {
         override fun getSpacing(parent: ASTBlock, left: ASTBlock, right: ASTBlock): Spacing? {
             return super.getSpacing(parent, left, right)
         }
@@ -74,8 +73,8 @@ class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings, val spacing
             newRule {
                 p, l, r ->
                 Spacing.createDependentLFSpacing(numSpacesOtherwise, numSpacesOtherwise, p.textRange,
-                                                 codeStyleSettings.KEEP_LINE_BREAKS,
-                                                 if (allowBlankLines) codeStyleSettings.KEEP_BLANK_LINES_IN_CODE else 0)
+                                                 commonCodeStyleSettings.KEEP_LINE_BREAKS,
+                                                 if (allowBlankLines) commonCodeStyleSettings.KEEP_BLANK_LINES_IN_CODE else 0)
             }
         }
 
@@ -85,8 +84,8 @@ class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings, val spacing
                 spacingBuilderUtil.createLineFeedDependentSpacing(numSpacesOtherwise,
                                                                   numSpacesOtherwise,
                                                                   numberOfLineFeedsOtherwise,
-                                                                  codeStyleSettings.KEEP_LINE_BREAKS,
-                                                                  codeStyleSettings.KEEP_BLANK_LINES_IN_DECLARATIONS,
+                                                                  commonCodeStyleSettings.KEEP_LINE_BREAKS,
+                                                                  commonCodeStyleSettings.KEEP_BLANK_LINES_IN_DECLARATIONS,
                                                                   left.textRange,
                                                                   dependentSpacingRule)
             }
@@ -119,7 +118,7 @@ class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings, val spacing
                 // TODO: it's a severe hack but I don't know how to implement it in other way
                 if (child1.node.elementType == KtTokens.EOL_COMMENT && spacing.toString().contains("minLineFeeds=0")) {
                     val isBeforeBlock = child2.node.elementType == KtNodeTypes.BLOCK || child2.node.firstChildNode?.elementType == KtNodeTypes.BLOCK
-                    val keepBlankLines = if (isBeforeBlock) 0 else codeStyleSettings.KEEP_BLANK_LINES_IN_CODE
+                    val keepBlankLines = if (isBeforeBlock) 0 else commonCodeStyleSettings.KEEP_BLANK_LINES_IN_CODE
                     return createSpacing(0, minLineFeeds = 1, keepLineBreaks = true, keepBlankLines = keepBlankLines)
                 }
                 return spacing
@@ -143,8 +142,8 @@ class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings, val spacing
     fun createSpacing(minSpaces: Int,
                       maxSpaces: Int = minSpaces,
                       minLineFeeds: Int = 0,
-                      keepLineBreaks: Boolean = codeStyleSettings.KEEP_LINE_BREAKS,
-                      keepBlankLines: Int = codeStyleSettings.KEEP_BLANK_LINES_IN_CODE): Spacing {
+                      keepLineBreaks: Boolean = commonCodeStyleSettings.KEEP_LINE_BREAKS,
+                      keepBlankLines: Int = commonCodeStyleSettings.KEEP_BLANK_LINES_IN_CODE): Spacing {
         return Spacing.createSpacing(minSpaces, maxSpaces, minLineFeeds, keepLineBreaks, keepBlankLines)
     }
 }
@@ -163,8 +162,8 @@ interface KotlinSpacingBuilderUtil {
     fun isWhitespaceOrEmpty(node: ASTNode?): Boolean
 }
 
-fun rules(codeStyleSettings: CodeStyleSettings, builderUtil: KotlinSpacingBuilderUtil, init: KotlinSpacingBuilder.() -> Unit): KotlinSpacingBuilder {
-    val builder = KotlinSpacingBuilder(codeStyleSettings, builderUtil)
+fun rules(commonCodeStyleSettings: CommonCodeStyleSettings, builderUtil: KotlinSpacingBuilderUtil, init: KotlinSpacingBuilder.() -> Unit): KotlinSpacingBuilder {
+    val builder = KotlinSpacingBuilder(commonCodeStyleSettings, builderUtil)
     builder.init()
     return builder
 }

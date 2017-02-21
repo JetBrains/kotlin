@@ -50,7 +50,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
     val kotlinSettings = settings.getCustomSettings(KotlinCodeStyleSettings::class.java)!!
     val kotlinCommonSettings = settings.getCommonSettings(KotlinLanguage.INSTANCE)!!
 
-    return rules(settings, builderUtil) {
+    return rules(kotlinCommonSettings, builderUtil) {
         val DECLARATIONS =
                 TokenSet.create(PROPERTY, FUN, CLASS, OBJECT_DECLARATION, ENUM_ENTRY, SECONDARY_CONSTRUCTOR, CLASS_INITIALIZER)
 
@@ -159,8 +159,8 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             betweenInside(RETURN_KEYWORD, LABEL_QUALIFIER, RETURN).spaces(0)
             afterInside(RETURN_KEYWORD, RETURN).spaces(1)
             afterInside(LABEL_QUALIFIER, RETURN).spaces(1)
-            betweenInside(LABEL_QUALIFIER, EOL_COMMENT, LABELED_EXPRESSION).spacing(0, Int.MAX_VALUE, 0, true, codeStyleSettings.KEEP_BLANK_LINES_IN_CODE)
-            betweenInside(LABEL_QUALIFIER, BLOCK_COMMENT, LABELED_EXPRESSION).spacing(0, Int.MAX_VALUE, 0, true, codeStyleSettings.KEEP_BLANK_LINES_IN_CODE)
+            betweenInside(LABEL_QUALIFIER, EOL_COMMENT, LABELED_EXPRESSION).spacing(0, Int.MAX_VALUE, 0, true, commonCodeStyleSettings.KEEP_BLANK_LINES_IN_CODE)
+            betweenInside(LABEL_QUALIFIER, BLOCK_COMMENT, LABELED_EXPRESSION).spacing(0, Int.MAX_VALUE, 0, true, commonCodeStyleSettings.KEEP_BLANK_LINES_IN_CODE)
             afterInside(LABEL_QUALIFIER, LABELED_EXPRESSION).spaces(1)
 
             betweenInside(FUN_KEYWORD, VALUE_PARAMETER_LIST, FUN).spacing(0, 0, 0, false, 0)
@@ -429,8 +429,8 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
 
                 val spaces = if (empty) 0 else spacesInSimpleFunction
                 Spacing.createDependentLFSpacing(spaces, spaces, psiElement.textRangeWithoutComments,
-                                                 codeStyleSettings.KEEP_LINE_BREAKS,
-                                                 codeStyleSettings.KEEP_BLANK_LINES_IN_CODE)
+                                                 commonCodeStyleSettings.KEEP_LINE_BREAKS,
+                                                 commonCodeStyleSettings.KEEP_BLANK_LINES_IN_CODE)
             }
 
             inPosition(parent = BLOCK, left = LBRACE).customRule { parent, left, right ->
@@ -441,8 +441,8 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
 
                 // Empty block is covered in above rule
                 Spacing.createDependentLFSpacing(spacesInSimpleFunction, spacesInSimpleFunction, funNode.textRangeWithoutComments,
-                                                 codeStyleSettings.KEEP_LINE_BREAKS,
-                                                 codeStyleSettings.KEEP_BLANK_LINES_IN_CODE)
+                                                 commonCodeStyleSettings.KEEP_LINE_BREAKS,
+                                                 commonCodeStyleSettings.KEEP_BLANK_LINES_IN_CODE)
             }
         }
 
