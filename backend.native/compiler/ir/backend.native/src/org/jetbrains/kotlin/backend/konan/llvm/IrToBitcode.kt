@@ -2,23 +2,25 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jetbrains.kotlin.backend.konan.KonanPhase
+import org.jetbrains.kotlin.backend.konan.PhaseManager
 import org.jetbrains.kotlin.backend.konan.descriptors.*
+import org.jetbrains.kotlin.backend.konan.ir.IrInlineFunctionBody
+import org.jetbrains.kotlin.backend.konan.ir.getArguments
+import org.jetbrains.kotlin.backend.konan.ir.ir2string
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptorBase
+import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrSetterCallImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
@@ -1222,7 +1224,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
     private fun evaluateGetField(value: IrGetField): LLVMValueRef {
         context.log("evaluateGetField           : ${ir2string(value)}")
-        if (value.descriptor.dispatchReceiverParameter != null) {
+        if (value.descriptor.dispatchReceiverParameter != null
+                || value.descriptor is IrImplementingDelegateDescriptorImpl) { // TODO: hack because of IR bug.
             val thisPtr = evaluateExpression(value.receiver!!)
             return codegen.loadSlot(
                     fieldPtrOfClass(thisPtr, value.descriptor), value.descriptor.isVar())
@@ -1251,7 +1254,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateSetField(value: IrSetField): LLVMValueRef {
         context.log("evaluateSetField           : ${ir2string(value)}")
         val valueToAssign = evaluateExpression(value.value)
-        if (value.descriptor.dispatchReceiverParameter != null) {
+
+        if (value.descriptor.dispatchReceiverParameter != null
+                || value.descriptor is IrImplementingDelegateDescriptorImpl) { // TODO: hack because of IR bug.
             val thisPtr = evaluateExpression(value.receiver!!)
             codegen.storeAnyGlobal(valueToAssign, fieldPtrOfClass(thisPtr, value.descriptor))
         }
