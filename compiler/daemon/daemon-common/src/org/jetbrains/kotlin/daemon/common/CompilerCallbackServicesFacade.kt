@@ -81,7 +81,7 @@ interface CompilerCallbackServicesFacade : Remote {
     // ----------------------------------------------------
     // CompilationCanceledStatus
     @Throws(RemoteException::class, RmiFriendlyCompilationCanceledException::class)
-    fun compilationCanceledStatus_checkCanceled(): Unit
+    fun compilationCanceledStatus_checkCanceled(): Void?
 }
 
 

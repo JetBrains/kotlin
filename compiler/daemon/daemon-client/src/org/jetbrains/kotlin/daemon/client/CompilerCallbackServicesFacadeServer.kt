@@ -80,9 +80,10 @@ open class CompilerCallbackServicesFacadeServer(
 
     override fun lookupTracker_isDoNothing(): Boolean = lookupTracker_isDoNothing
 
-    override fun compilationCanceledStatus_checkCanceled() {
+    override fun compilationCanceledStatus_checkCanceled(): Void? {
         try {
             compilationCanceledStatus!!.checkCanceled()
+            return null
         }
         catch (e: Exception) {
             // avoid passing exceptions that may have different serialVersionUID on across rmi border
