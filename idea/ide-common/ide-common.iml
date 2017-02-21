@@ -21,5 +21,7 @@
     <orderEntry type="library" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="frontend.java" />
     <orderEntry type="module" module-name="util" />
+    <orderEntry type="module" module-name="js.frontend" />
+    <orderEntry type="module" module-name="js.serializer" />
   </component>
 </module>

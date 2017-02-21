@@ -27,9 +27,12 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import com.intellij.util.PathUtil
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.caches.resolve.LibraryModuleInfo
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.GlobalSearchScopeWithModuleSources
@@ -174,7 +177,7 @@ private class ModuleTestSourceScope(module: Module) : ModuleSourceScope(module) 
     override fun toString() = "ModuleTestSourceScope($module)"
 }
 
-open class LibraryInfo(val project: Project, val library: Library) : IdeaModuleInfo {
+open class LibraryInfo(val project: Project, val library: Library) : IdeaModuleInfo, LibraryModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.LIBRARY
 
@@ -196,6 +199,11 @@ open class LibraryInfo(val project: Project, val library: Library) : IdeaModuleI
 
         return result.toList()
     }
+
+    override fun isJsLibrary(): Boolean = KotlinJavaScriptLibraryDetectionUtil.isKotlinJavaScriptLibrary(library)
+
+    override fun getLibraryRoots(): Collection<String> =
+            library.getFiles(OrderRootType.CLASSES).map(PathUtil::getLocalPath).filterNotNull()
 
     override fun toString() = "LibraryInfo(libraryName=${library.name})"
 

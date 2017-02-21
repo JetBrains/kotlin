@@ -16,10 +16,9 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.openapi.roots.OrderRootType
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.analyzer.*
+import org.jetbrains.kotlin.caches.resolve.LibraryModuleInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.container.get
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
-import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.TargetEnvironment
@@ -73,9 +71,9 @@ object JsAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
         )
         var packageFragmentProvider = container.get<ResolveSession>().packageFragmentProvider
 
-        if (moduleInfo is LibraryInfo && KotlinJavaScriptLibraryDetectionUtil.isKotlinJavaScriptLibrary(moduleInfo.library)) {
-            val providers = moduleInfo.library.getFiles(OrderRootType.CLASSES)
-                    .flatMap { KotlinJavascriptMetadataUtils.loadMetadata(PathUtil.getLocalPath(it)!!) }
+        if (moduleInfo is LibraryModuleInfo && moduleInfo.isJsLibrary()) {
+            val providers = moduleInfo.getLibraryRoots()
+                    .flatMap { KotlinJavascriptMetadataUtils.loadMetadata(it) }
                     .filter { it.version.isCompatible() }
                     .mapNotNull {
                         KotlinJavascriptSerializationUtil.readModule(
