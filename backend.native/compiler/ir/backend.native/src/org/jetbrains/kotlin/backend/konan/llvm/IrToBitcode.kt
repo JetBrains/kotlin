@@ -708,47 +708,21 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private fun evaluateVararg(value: IrVararg): LLVMValueRef {
-        var oneSizedElementsCount = 0
-        data class Element(val exp: LLVMValueRef, val size: LLVMValueRef?, val isArray: Boolean)
-
         val elements = value.elements.map {
-            if (it is IrSpreadElement) {
-                val exp = evaluateExpression(it.expression)
-                val array = codegen.bitcast(codegen.kArrayHeaderPtr, exp)
-                val sizePtr = LLVMBuildStructGEP(codegen.builder, array, 2, "")
-                return@map Element(exp, codegen.load(sizePtr!!), true)
-            } else if (it is IrExpression) {
-                val exp = evaluateExpression(it)
-                oneSizedElementsCount++
-                return@map Element(exp, null, false)
-            } else {
-                TODO(ir2string(it))
+            if (it is IrExpression) {
+                val mapped = evaluateExpression(it)
+                if (codegen.isConst(mapped)) {
+                    return@map mapped
+                }
             }
+
+            throw IllegalStateException("IrVararg neither was lowered nor can be statically evaluated")
         }
 
-        if (elements.all { codegen.isConst(it.exp) && !it.isArray }) {
-            // Note: even if all elements are const, they aren't guaranteed to be statically initialized.
-            // E.g. an element may be a pointer to lazy-initialized object (aka singleton).
-            // However it is guaranteed that all elements are already initialized at this point.
-            return codegen.staticData.createKotlinArray(value.type, elements.map { it.exp })
-        }
-
-        val length = LLVMConstInt(LLVMInt32Type(), oneSizedElementsCount.toLong(), 0)!!
-        val finalLength = elements.filter { it.isArray }.fold(length) { sum, (_, size, _) ->
-            codegen.plus(sum, size!!)
-        }
-
-        val array = codegen.allocArray(codegen.typeInfoValue(value.type)!!, finalLength, Lifetime.GLOBAL)
-        elements.fold(kImmZero) { sum, (exp, size, isArray) ->
-            if (!isArray) {
-                call(context.llvm.setArrayFunction, listOf(array, sum, exp))
-                return@fold codegen.plus(sum, kImmOne)
-            } else {
-                call(context.llvm.copyImplArrayFunction, listOf(exp, kImmZero, array, sum, size!!))
-                return@fold codegen.plus(sum, size)
-            }
-        }
-        return array
+        // Note: even if all elements are const, they aren't guaranteed to be statically initialized.
+        // E.g. an element may be a pointer to lazy-initialized object (aka singleton).
+        // However it is guaranteed that all elements are already initialized at this point.
+        return codegen.staticData.createKotlinArray(value.type, elements)
     }
 
     //-------------------------------------------------------------------------//
