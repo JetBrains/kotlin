@@ -81,8 +81,7 @@ KInt Kotlin_String_getStringLength(KString thiz) {
 OBJ_GETTER(Kotlin_String_fromUtf8Array, KConstRef thiz, KInt start, KInt size) {
   const ArrayHeader* array = thiz->array();
   RuntimeAssert(array->type_info() == theByteArrayTypeInfo, "Must use a byte array");
-  if (start < 0 || size < 0 ||
-      start + size > array->count_ || start + size < start) {
+  if (start < 0 || size < 0 || size > array->count_ - start) {
     ThrowArrayIndexOutOfBoundsException();
   }
   if (size == 0) {
@@ -97,8 +96,7 @@ OBJ_GETTER(Kotlin_String_fromUtf8Array, KConstRef thiz, KInt start, KInt size) {
 OBJ_GETTER(Kotlin_String_fromCharArray, KConstRef thiz, KInt start, KInt size) {
   const ArrayHeader* array = thiz->array();
   RuntimeAssert(array->type_info() == theCharArrayTypeInfo, "Must use a char array");
-  if (start < 0 || size < 0 ||
-      start + size > array->count_ || start + size < start) {
+  if (start < 0 || size < 0 || size > array->count_ - start) {
     ThrowArrayIndexOutOfBoundsException();
   }
 
@@ -221,8 +219,9 @@ OBJ_GETTER(Kotlin_String_toLowerCase, KString thiz) {
 KBoolean Kotlin_String_regionMatches(KString thiz, KInt thizOffset,
                                      KString other, KInt otherOffset,
                                      KInt length, KBoolean ignoreCase) {
-  if (thizOffset < 0 || thizOffset + length > thiz->count_ ||
-      otherOffset < 0 || otherOffset + length > other->count_) {
+  if (length < 0 ||
+      thizOffset < 0 || length > thiz->count_ - thizOffset ||
+      otherOffset < 0 || length > other->count_ - otherOffset) {
     return false;
   }
   const KChar* thizRaw = CharArrayAddressOfElementAt(thiz, thizOffset);
@@ -332,7 +331,7 @@ KInt Kotlin_String_lastIndexOfChar(KString thiz, KChar ch, KInt fromIndex) {
 // TODO: or code up Knuth-Moris-Pratt.
 KInt Kotlin_String_indexOfString(KString thiz, KString other, KInt fromIndex) {
   if (fromIndex < 0 || fromIndex > thiz->count_ ||
-      fromIndex + other->count_ > thiz->count_) {
+      other->count_ > thiz->count_ - fromIndex) {
     return -1;
   }
   KInt count = thiz->count_;
@@ -348,7 +347,7 @@ KInt Kotlin_String_indexOfString(KString thiz, KString other, KInt fromIndex) {
 
 KInt Kotlin_String_lastIndexOfString(KString thiz, KString other, KInt fromIndex) {
   if (fromIndex < 0 || fromIndex > thiz->count_ || thiz->count_ == 0 ||
-      fromIndex + other->count_ > thiz->count_) {
+      other->count_ > thiz->count_ - fromIndex) {
     return false;
   }
   KInt count = thiz->count_;

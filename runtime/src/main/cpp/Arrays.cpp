@@ -12,8 +12,9 @@ static inline void copyImpl(KConstRef thiz, KInt fromIndex,
                 KRef destination, KInt toIndex, KInt count) {
   const ArrayHeader* array = thiz->array();
   ArrayHeader* destinationArray = destination->array();
-  if (fromIndex < 0 || fromIndex + count > array->count_ ||
-        toIndex < 0 || toIndex + count > destinationArray->count_) {
+  if (count < 0 ||
+        fromIndex < 0 || count > array->count_ - fromIndex ||
+        toIndex < 0 || count > destinationArray->count_ - toIndex) {
       ThrowArrayIndexOutOfBoundsException();
   }
 
@@ -73,8 +74,9 @@ void Kotlin_Array_copyImpl(KConstRef thiz, KInt fromIndex,
                            KRef destination, KInt toIndex, KInt count) {
   const ArrayHeader* array = thiz->array();
   ArrayHeader* destinationArray = destination->array();
-  if (fromIndex < 0 || fromIndex + count > array->count_ ||
-      toIndex < 0 || toIndex + count > destinationArray->count_) {
+  if (count < 0 ||
+      fromIndex < 0 || count > array->count_ - fromIndex ||
+      toIndex < 0 || count > destinationArray->count_ - toIndex) {
     ThrowArrayIndexOutOfBoundsException();
   }
   if (fromIndex >= toIndex) {
