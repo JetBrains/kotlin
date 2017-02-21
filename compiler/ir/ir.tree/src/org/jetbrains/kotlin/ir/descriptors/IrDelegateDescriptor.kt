@@ -66,7 +66,9 @@ abstract class IrDelegateDescriptorBase(
         /* isDelegated = */ true
 ) {
     init {
-        setOutType(delegateType)
+        val typeParameters: List<TypeParameterDescriptor> = emptyList()
+        val extensionReceiverParameter: ReceiverParameterDescriptor? = null
+        setType(delegateType, typeParameters, (containingDeclaration as ClassDescriptor).thisAsReceiverParameter, extensionReceiverParameter)
     }
 
     override final fun setOutType(outType: KotlinType?) {
