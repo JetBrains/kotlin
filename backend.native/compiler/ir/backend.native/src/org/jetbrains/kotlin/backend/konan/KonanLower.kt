@@ -27,9 +27,6 @@ internal class KonanLower(val context: Context) {
         phaser.phase(KonanPhase.LOWER_ENUMS) {
             EnumClassLowering(context).run(irFile)
         }
-        phaser.phase(KonanPhase.LOWER_VARARG) {
-            VarargInjectionLowering(context).runOnFilePostfix(irFile)
-        }
         phaser.phase(KonanPhase.LOWER_DEFAULT_PARAMETER_EXTENT) {
             DefaultArgumentStubGenerator(context).runOnFilePostfix(irFile)
             DefaultParameterInjector(context).runOnFilePostfix(irFile)
@@ -54,6 +51,9 @@ internal class KonanLower(val context: Context) {
         }
         phaser.phase(KonanPhase.LOWER_CALLABLES) {
             CallableReferenceLowering(context).runOnFilePostfix(irFile)
+        }
+        phaser.phase(KonanPhase.LOWER_VARARG) {
+            VarargInjectionLowering(context).runOnFilePostfix(irFile)
         }
         phaser.phase(KonanPhase.BRIDGES_BUILDING) {
             BridgesBuilding(context).lower(irFile)
