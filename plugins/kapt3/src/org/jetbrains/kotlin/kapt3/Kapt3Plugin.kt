@@ -67,6 +67,9 @@ object Kapt3ConfigurationKeys {
     val APT_OPTIONS: CompilerConfigurationKey<String> =
             CompilerConfigurationKey.create<String>("annotation processing options")
 
+    val ANNOTATION_PROCESSORS: CompilerConfigurationKey<String> =
+            CompilerConfigurationKey.create<String>("annotation processor qualified names")
+
     val VERBOSE_MODE: CompilerConfigurationKey<String> =
             CompilerConfigurationKey.create<String>("verbose mode")
 
@@ -104,6 +107,10 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
                 CliOption("apoptions", "options map", "Encoded annotation processor options",
                           required = false, allowMultipleOccurrences = false)
 
+        val ANNOTATION_PROCESSORS_OPTION: CliOption =
+                CliOption("processors", "<fqname,[fqname2,...]>", "Annotation processor qualified names",
+                          required = false, allowMultipleOccurrences = true)
+
         val VERBOSE_MODE_OPTION: CliOption =
                 CliOption("verbose", "true | false", "Enable verbose output", required = false)
 
@@ -122,11 +129,12 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
     override val pluginOptions: Collection<CliOption> =
             listOf(SOURCE_OUTPUT_DIR_OPTION, ANNOTATION_PROCESSOR_CLASSPATH_OPTION, APT_OPTIONS_OPTION,
                    CLASS_OUTPUT_DIR_OPTION, VERBOSE_MODE_OPTION, STUBS_OUTPUT_DIR_OPTION, APT_ONLY_OPTION,
-                   USE_LIGHT_ANALYSIS_OPTION, CORRECT_ERROR_TYPES_OPTION)
+                   USE_LIGHT_ANALYSIS_OPTION, CORRECT_ERROR_TYPES_OPTION, ANNOTATION_PROCESSORS_OPTION)
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
             ANNOTATION_PROCESSOR_CLASSPATH_OPTION -> configuration.appendList(ANNOTATION_PROCESSOR_CLASSPATH, value)
+            ANNOTATION_PROCESSORS_OPTION -> configuration.put(Kapt3ConfigurationKeys.ANNOTATION_PROCESSORS, value)
             APT_OPTIONS_OPTION -> configuration.put(Kapt3ConfigurationKeys.APT_OPTIONS, value)
             SOURCE_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.SOURCE_OUTPUT_DIR, value)
             CLASS_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.CLASS_OUTPUT_DIR, value)
@@ -172,6 +180,8 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
         val stubsOutputDir = configuration.get(Kapt3ConfigurationKeys.STUBS_OUTPUT_DIR)?.let(::File)
         val incrementalDataOutputDir = configuration.get(Kapt3ConfigurationKeys.INCREMENTAL_DATA_OUTPUT_DIR)?.let(::File)
 
+        val annotationProcessors = configuration.get(Kapt3ConfigurationKeys.ANNOTATION_PROCESSORS) ?: ""
+
         val apClasspath = configuration.get(ANNOTATION_PROCESSOR_CLASSPATH)?.map(::File)
 
         if (sourcesOutputDir == null || classFilesOutputDir == null || apClasspath == null || stubsOutputDir == null) {
@@ -215,13 +225,14 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
             logger.info("Incremental data output directory: $incrementalDataOutputDir")
             logger.info("Compile classpath: " + compileClasspath.joinToString())
             logger.info("Annotation processing classpath: " + apClasspath.joinToString())
+            logger.info("Annotation processors: " + annotationProcessors)
             logger.info("Java source roots: " + javaSourceRoots.joinToString())
             logger.info("Options: $apOptions")
         }
 
         val kapt3AnalysisCompletedHandlerExtension = ClasspathBasedKapt3Extension(
                 compileClasspath, apClasspath, javaSourceRoots, sourcesOutputDir, classFilesOutputDir,
-                stubsOutputDir, incrementalDataOutputDir, apOptions,
+                stubsOutputDir, incrementalDataOutputDir, apOptions, annotationProcessors,
                 isAptOnly, useLightAnalysis, correctErrorTypes, System.currentTimeMillis(), logger)
         AnalysisHandlerExtension.registerExtension(project, kapt3AnalysisCompletedHandlerExtension)
     }

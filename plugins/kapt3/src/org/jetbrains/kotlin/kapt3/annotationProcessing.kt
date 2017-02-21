@@ -35,6 +35,7 @@ fun KaptContext.doAnnotationProcessing(
         processors: List<Processor>,
         compileClasspath: List<File>,
         annotationProcessingClasspath: List<File>,
+        annotationProcessors: String,
         sourcesOutputDir: File,
         classesOutputDir: File,
         additionalSources: JavacList<JCTree.JCCompilationUnit> = JavacList.nil(),
@@ -49,6 +50,7 @@ fun KaptContext.doAnnotationProcessing(
 
         put(Option.CLASSPATH, compileClasspath.joinToString(File.pathSeparator) { it.canonicalPath })
         put(Option.PROCESSORPATH, annotationProcessingClasspath.joinToString(File.pathSeparator) { it.canonicalPath })
+        put(Option.PROCESSOR, annotationProcessors)
         put(Option.S, sourcesOutputDir.canonicalPath)
         put(Option.D, classesOutputDir.canonicalPath)
         put(Option.ENCODING, "UTF-8")

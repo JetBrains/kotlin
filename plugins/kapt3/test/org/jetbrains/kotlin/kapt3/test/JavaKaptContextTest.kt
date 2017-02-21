@@ -89,6 +89,7 @@ class JavaKaptContextTest {
                 listOf(processor),
                 emptyList(), // compile classpath
                 emptyList(), // annotation processing classpath
+                "", // list of annotation processor qualified names
                 outputDir,
                 outputDir,
                 withJdk = true)

@@ -51,13 +51,14 @@ class ClasspathBasedKapt3Extension(
         stubsOutputDir: File,
         incrementalDataOutputDir: File?,
         options: Map<String, String>,
+        annotationProcessors: String,
         aptOnly: Boolean,
         val useLightAnalysis: Boolean,
         correctErrorTypes: Boolean,
         pluginInitializedTime: Long,
         logger: KaptLogger
 ) : AbstractKapt3Extension(compileClasspath, annotationProcessingClasspath, javaSourceRoots, sourcesOutputDir,
-                           classFilesOutputDir, stubsOutputDir, incrementalDataOutputDir, options,
+                           classFilesOutputDir, stubsOutputDir, incrementalDataOutputDir, options, annotationProcessors,
                            aptOnly, pluginInitializedTime, logger, correctErrorTypes) {
     override val analyzePartially: Boolean
         get() = useLightAnalysis
@@ -102,6 +103,7 @@ abstract class AbstractKapt3Extension(
         val stubsOutputDir: File,
         val incrementalDataOutputDir: File?,
         val options: Map<String, String>,
+        val annotationProcessors: String,
         val aptOnly: Boolean,
         val pluginInitializedTime: Long,
         val logger: KaptLogger,
@@ -144,7 +146,7 @@ abstract class AbstractKapt3Extension(
             val (annotationProcessingTime) = measureTimeMillis {
                 kaptContext.doAnnotationProcessing(
                         javaSourceFiles, processors, compileClasspath, annotationProcessingClasspath,
-                        sourcesOutputDir, classFilesOutputDir)
+                        annotationProcessors, sourcesOutputDir, classFilesOutputDir)
             }
 
             logger.info { "Annotation processing took $annotationProcessingTime ms" }
