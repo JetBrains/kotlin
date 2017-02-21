@@ -89,6 +89,10 @@ task slackReport(type:Reporter) {
     reportHome = rootProject.file("test.output").absoluteFile
 }
 
+task bridges_all() {
+    dependsOn(tasks.withType(KonanTest).matching { !(it instanceof RunExternalTestGroup) && it.enabled && it.name.startsWith("bridges_") })
+}
+
 task sum (type:RunKonanTest) {
     source = "codegen/function/sum.kt"
 }
@@ -535,6 +539,21 @@ task bridges_test12(type: RunKonanTest) {
 task bridges_test13(type: RunKonanTest) {
     goldValue = "42\n42\n"
     source = "codegen/bridges/test13.kt"
+}
+
+task bridges_test14(type: RunKonanTest) {
+    goldValue = "42\n56\n42\n56\n56\n42\n156\n142\n"
+    source = "codegen/bridges/test14.kt"
+}
+
+task bridges_test15(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/bridges/test15.kt"
+}
+
+task bridges_test16(type: RunKonanTest) {
+    goldValue = "OK\nOK\n"
+    source = "codegen/bridges/test16.kt"
 }
 
 task array0(type: RunKonanTest) {
