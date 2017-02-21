@@ -37,18 +37,19 @@ internal class SpecialDescriptorsFactory(val context: Context) {
                 false, false, false, false, false, false).initialize(outerClassDescriptor.defaultType, dispatchReceiverParameter = receiver)
         }
 
-    fun getBridgeDescriptor(descriptor: OverriddenFunctionDescriptor): FunctionDescriptor {
-        val bridgeDirections = descriptor.bridgeDirections
-        assert(descriptor.needBridge,
-                { "Function ${descriptor.descriptor} is not needed in a bridge to call overridden function ${descriptor.overriddenDescriptor}" })
-        return bridgesDescriptors.getOrPut(descriptor.descriptor to bridgeDirections) {
+    fun getBridgeDescriptor(overriddenFunctionDescriptor: OverriddenFunctionDescriptor): FunctionDescriptor {
+        val descriptor = overriddenFunctionDescriptor.descriptor.original
+        assert(overriddenFunctionDescriptor.needBridge,
+                { "Function $descriptor is not needed in a bridge to call overridden function ${overriddenFunctionDescriptor.overriddenDescriptor}" })
+        val bridgeDirections = overriddenFunctionDescriptor.bridgeDirections
+        return bridgesDescriptors.getOrPut(descriptor to bridgeDirections) {
             SimpleFunctionDescriptorImpl.create(
-                    descriptor.descriptor.containingDeclaration,
+                    descriptor.containingDeclaration,
                     Annotations.EMPTY,
-                    ("<bridge-" + bridgeDirections.toString() + ">" + descriptor.descriptor.functionName).synthesizedName,
+                    ("<bridge-" + bridgeDirections.toString() + ">" + descriptor.functionName).synthesizedName,
                     CallableMemberDescriptor.Kind.DECLARATION,
                     SourceElement.NO_SOURCE).apply {
-                initializeBridgeDescriptor(this, descriptor.descriptor, bridgeDirections.array)
+                initializeBridgeDescriptor(this, descriptor, bridgeDirections.array)
             }
         }
     }

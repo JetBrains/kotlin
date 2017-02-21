@@ -16,22 +16,16 @@ internal class OverriddenFunctionDescriptor(val descriptor: FunctionDescriptor, 
         get() {
             if (descriptor.modality == Modality.ABSTRACT) return false
             return descriptor.kind == CallableMemberDescriptor.Kind.DELEGATION
-                    //|| descriptor.needBridgeTo(overriddenDescriptor)
                     || descriptor.target.needBridgeTo(overriddenDescriptor)
         }
 
-    fun trivialOverride() = descriptor.original == overriddenDescriptor
-
     val bridgeDirections: BridgeDirections
-        get() {
-//            if (descriptor.needBridgeTo(overriddenDescriptor))
-//                return descriptor.bridgeDirectionsTo(overriddenDescriptor)
-            return descriptor.target.bridgeDirectionsTo(overriddenDescriptor)
-        }
+        get() = descriptor.target.bridgeDirectionsTo(overriddenDescriptor)
 
-    val canBeCalledVirtually
+    val canBeCalledVirtually: Boolean
         // We check that either method is open, or one of declarations it overrides is open.
-        get() = overriddenDescriptor.isOverridable || DescriptorUtils.getAllOverriddenDeclarations(overriddenDescriptor).any { it.isOverridable }
+        get() = overriddenDescriptor.isOverridable
+                || DescriptorUtils.getAllOverriddenDeclarations(overriddenDescriptor).any { it.isOverridable }
 
 
     override fun toString(): String {
@@ -76,9 +70,8 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
             if (overridingMethod == null) {
                 superMethod
             } else {
-                if (!superMethod.trivialOverride())
-                    newVtableSlots.add(OverriddenFunctionDescriptor(overridingMethod, superMethod.descriptor))
-                // Overriding method is defined in the current class and is not inherited - take it as is.
+                // Add all possible (descriptor, overriddenDescriptor) edges for now, redundant will be removed later.
+                newVtableSlots.add(OverriddenFunctionDescriptor(overridingMethod, superMethod.descriptor))
                 newVtableSlots.add(OverriddenFunctionDescriptor(overridingMethod, overridingMethod))
                 OverriddenFunctionDescriptor(overridingMethod, superMethod.overriddenDescriptor)
             }
@@ -94,15 +87,13 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
                     }
                 println()
 
-        // TODO: why put all pairs <descriptor, overriddenDescriptor>?
         val zzz = inheritedVtableSlots.map { it.descriptor to it.bridgeDirections }.toSet()
 
-        methods// Find newly defined methods.
-                // TODO: Select target because method might be taken from default implementation of interface.
-                .mapTo(newVtableSlots) { OverriddenFunctionDescriptor(it, it) }
+        methods.mapTo(newVtableSlots) { OverriddenFunctionDescriptor(it, it) }
+
 
         val filteredNewVtableSlots = newVtableSlots
-                .filter { (it.descriptor.kind.isReal || it.needBridge) && !zzz.contains(it.descriptor to it.bridgeDirections) }
+                .filter { !zzz.contains(it.descriptor to it.bridgeDirections) }
                 .distinctBy { it.descriptor to it.bridgeDirections }
                 .filter { it.descriptor.isOverridable }
         println("VTABLE_ENTRIES new vtable:")
