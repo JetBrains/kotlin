@@ -1237,10 +1237,11 @@ task inline15(type: RunKonanTest) {
     source = "codegen/inline/inline15.kt"
 }
 
-//task inline16(type: RunKonanTest) {
-//    goldValue = "false\n"
-//    source = "codegen/inline/inline16.kt"
-//}
+task inline16(type: RunKonanTest) {
+    disabled = true
+    goldValue = "false\n"
+    source = "codegen/inline/inline16.kt"
+}
 
 task inline17(type: RunKonanTest) {
     goldValue = "[1, 2]\n"
