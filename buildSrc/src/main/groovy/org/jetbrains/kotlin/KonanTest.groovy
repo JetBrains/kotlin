@@ -439,29 +439,33 @@ fun main(args : Array<String>) {
             return super.pass()
         }
 
+        /**
+         * Teamcity require escaping some symbols in pipe manner.
+         * https://github.com/GitTools/GitVersion/issues/94
+         */
+        String toTeamCityFormat(String inStr) {
+            return inStr.replaceAll("\\|", "||")
+                        .replaceAll("\r",  "|r")
+                        .replaceAll("\n",  "|n")
+                        .replaceAll("'",   "|'")
+                        .replaceAll("\\[", "|[")
+                        .replaceAll("]",   "|]")
+
+        }
 
         TestResult fail(TestFailedException e) {
-            teamcityReport("testFailed type='comparisonFailure' name='$name' message='${e.getMessage()}'")
+            teamcityReport("testFailed type='comparisonFailure' name='$name' message='${toTeamCityFormat(e.getMessage())}'")
             teamcityFinish()
             return super.fail(e)
         }
+
 
         TestResult error(Exception e) {
             def writer = new StringWriter()
             e.printStackTrace(new PrintWriter(writer))
             def rawString  = writer.toString()
-            /**
-             * Teamcity require escaping some symbols in pipe manner.
-             * https://github.com/GitTools/GitVersion/issues/94
-             */
-            def formatedString = rawString
-                    .replaceAll("\\|", "||")
-                    .replaceAll("\r",  "|r")
-                    .replaceAll("\n",  "|n")
-                    .replaceAll("'",   "|'")
-                    .replaceAll("\\[", "|[")
-                    .replaceAll("]",   "|]")
-            teamcityReport("testFailed name='$name' message='${e.getMessage()}' details='${formatedString}'")
+
+            teamcityReport("testFailed name='$name' message='${toTeamCityFormat(e.getMessage())}' details='${toTeamCityFormat(rawString)}'")
             teamcityFinish()
             return super.error(e)
         }
