@@ -23,7 +23,7 @@ internal class OverriddenFunctionDescriptor(val descriptor: FunctionDescriptor, 
         get() = descriptor.target.bridgeDirectionsTo(overriddenDescriptor)
 
     val canBeCalledVirtually: Boolean
-        // We check that either method is open, or one of declarations it overrides is open.
+            // We check that either method is open, or one of declarations it overrides is open.
         get() = overriddenDescriptor.isOverridable
                 || DescriptorUtils.getAllOverriddenDeclarations(overriddenDescriptor).any { it.isOverridable }
 
@@ -70,30 +70,29 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
             if (overridingMethod == null) {
                 superMethod
             } else {
-                // Add all possible (descriptor, overriddenDescriptor) edges for now, redundant will be removed later.
                 newVtableSlots.add(OverriddenFunctionDescriptor(overridingMethod, superMethod.descriptor))
-                newVtableSlots.add(OverriddenFunctionDescriptor(overridingMethod, overridingMethod))
                 OverriddenFunctionDescriptor(overridingMethod, superMethod.overriddenDescriptor)
             }
         }
 
-                println("VTABLE_ENTRIES inherited vtable:")
-                inheritedVtableSlots.forEach {
-                        println("   VTABLE_ENTRIES descriptor: ${it.descriptor}")
-                        println("   VTABLE_ENTRIES overriddenDescriptor: ${it.overriddenDescriptor}")
-                    println("   VTABLE_ENTRIES needBridge: ${it.needBridge}")
-                    if (it.needBridge)
-                        println("   VTABLE_ENTRIES bridgeDirections: ${it.bridgeDirections.toString()}")
-                    }
-                println()
+        println("VTABLE_ENTRIES inherited vtable:")
+        inheritedVtableSlots.forEach {
+            println("   VTABLE_ENTRIES descriptor: ${it.descriptor}")
+            println("   VTABLE_ENTRIES overriddenDescriptor: ${it.overriddenDescriptor}")
+            println("   VTABLE_ENTRIES needBridge: ${it.needBridge}")
+            if (it.needBridge)
+                println("   VTABLE_ENTRIES bridgeDirections: ${it.bridgeDirections.toString()}")
+        }
+        println()
 
-        val zzz = inheritedVtableSlots.map { it.descriptor to it.bridgeDirections }.toSet()
 
+        // Add all possible (descriptor, overriddenDescriptor) edges for now, redundant will be removed later.
         methods.mapTo(newVtableSlots) { OverriddenFunctionDescriptor(it, it) }
 
+        val inheritedVtableSlotsSet = inheritedVtableSlots.map { it.descriptor to it.bridgeDirections }.toSet()
 
         val filteredNewVtableSlots = newVtableSlots
-                .filter { !zzz.contains(it.descriptor to it.bridgeDirections) }
+                .filterNot { inheritedVtableSlotsSet.contains(it.descriptor to it.bridgeDirections) }
                 .distinctBy { it.descriptor to it.bridgeDirections }
                 .filter { it.descriptor.isOverridable }
         println("VTABLE_ENTRIES new vtable:")
@@ -109,16 +108,16 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
 
         val list = inheritedVtableSlots + filteredNewVtableSlots.sortedBy { it.overriddenDescriptor.functionName.localHash.value }
 
-                println("VTABLE_ENTRIES vtable:")
-                list.forEach {
-                        println("   VTABLE_ENTRIES descriptor: ${it.descriptor}")
-                    println("   VTABLE_ENTRIES overriddenDescriptor: ${it.overriddenDescriptor}")
-                    println("   VTABLE_ENTRIES needBridge: ${it.needBridge}")
-                    if (it.needBridge)
-                        println("   VTABLE_ENTRIES bridgeDirections: ${it.bridgeDirections.toString()}")
-                    }
-                println()
-                println()
+        println("VTABLE_ENTRIES vtable:")
+        list.forEach {
+            println("   VTABLE_ENTRIES descriptor: ${it.descriptor}")
+            println("   VTABLE_ENTRIES overriddenDescriptor: ${it.overriddenDescriptor}")
+            println("   VTABLE_ENTRIES needBridge: ${it.needBridge}")
+            if (it.needBridge)
+                println("   VTABLE_ENTRIES bridgeDirections: ${it.bridgeDirections.toString()}")
+        }
+        println()
+        println()
 
 
         return list
@@ -126,11 +125,12 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
 
     fun vtableIndex(function: FunctionDescriptor): Int {
         val target = function.target
-            println("VTABLE_INDEX function: $function")
+        val bridgeDirections = target.bridgeDirectionsTo(function.original)
+        println("VTABLE_INDEX function: $function")
         println("VTABLE_INDEX original: ${function.original}")
-            println("VTABLE_INDEX target: ${target}")
+        println("VTABLE_INDEX target: ${target}")
         println("VTABLE_INDEX bridgeDirections: ${target.bridgeDirectionsTo(function.original).toString()}")
-        val index = vtableEntries.indexOfFirst { it.descriptor == function.original && it.bridgeDirections == target.bridgeDirectionsTo(function.original) }
+        val index = vtableEntries.indexOfFirst { it.descriptor == function.original && it.bridgeDirections == bridgeDirections }
         if (index < 0) throw Error(function.toString() + " not in vtable of " + classDescriptor.toString())
         return index.apply { println("VTABLE_INDEX index: $this"); println() }
     }
@@ -153,18 +153,18 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
 
         val contributedMethodsWithOverridden = classDescriptor.contributedMethodsWithOverridden
         println("METHOD_TABLE_ENTRIES: contributed methods")
-                contributedMethodsWithOverridden.forEach {
-                        println("   METHOD_TABLE_ENTRIES: descriptor = ${it.descriptor}")
-                        println("   METHOD_TABLE_ENTRIES: overriddenDescriptor = ${it.overriddenDescriptor}")
-                        println("   METHOD_TABLE_ENTRIES: overriddenDescriptor.isOverridable = ${it.overriddenDescriptor.isOverridable}")
-                    }
+        contributedMethodsWithOverridden.forEach {
+            println("   METHOD_TABLE_ENTRIES: descriptor = ${it.descriptor}")
+            println("   METHOD_TABLE_ENTRIES: overriddenDescriptor = ${it.overriddenDescriptor}")
+            println("   METHOD_TABLE_ENTRIES: overriddenDescriptor.isOverridable = ${it.overriddenDescriptor.isOverridable}")
+        }
         val result = contributedMethodsWithOverridden.filter { it.canBeCalledVirtually }
 
         println("METHOD_TABLE_ENTRIES: result")
-                result.forEach {
-                        println("   METHOD_TABLE_ENTRIES: descriptor = ${it.descriptor}")
-                        println("   METHOD_TABLE_ENTRIES: overriddenDescriptor = ${it.overriddenDescriptor}")
-                    }
+        result.forEach {
+            println("   METHOD_TABLE_ENTRIES: descriptor = ${it.descriptor}")
+            println("   METHOD_TABLE_ENTRIES: overriddenDescriptor = ${it.overriddenDescriptor}")
+        }
         return result
         // TODO: probably method table should contain all accessible methods to improve binary compatibility
     }

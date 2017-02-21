@@ -36,7 +36,12 @@ internal class DirectBridgesCallsLowering(val context: Context) : BodyLoweringPa
                 if (descriptor.kind != CallableMemberDescriptor.Kind.DELEGATION && !needBridge)
                     return expression
 
-                val toCall = if (needBridge) target else context.specialDescriptorsFactory.getBridgeDescriptor(OverriddenFunctionDescriptor(descriptor, target))
+                val toCall = if (needBridge) {
+                    target
+                } else {
+                    // Need to call delegating fun.
+                    context.specialDescriptorsFactory.getBridgeDescriptor(OverriddenFunctionDescriptor(descriptor, target))
+                }
 
                 return IrCallImpl(expression.startOffset, expression.endOffset,
                         toCall, remapTypeArguments(expression, toCall)).apply {
@@ -150,8 +155,9 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
                         .filter { !it.bridgeDirections.allNotNeeded() }
                         .filter { it.canBeCalledVirtually }
                         .distinctBy { it.bridgeDirections }
-                        .forEach { buildBridge(it, irClass)
-                }
+                        .forEach {
+                            buildBridge(it, irClass)
+                        }
             }
         }
     }

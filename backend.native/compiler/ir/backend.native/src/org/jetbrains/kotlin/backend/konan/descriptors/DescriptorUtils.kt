@@ -269,7 +269,10 @@ internal fun FunctionDescriptor.bridgeDirectionsTo(overriddenDescriptor: Functio
     for (index in ourDirections.array.indices)
         ourDirections.array[index] = this.bridgeDirectionToAt(overriddenDescriptor, index)
 
-    if (!kind.isReal && OverridingUtil.overrides(this.target, overriddenDescriptor) && ourDirections == this.target.bridgeDirectionsTo(overriddenDescriptor)) {
+    val target = this.target
+    if (!kind.isReal
+            && OverridingUtil.overrides(target, overriddenDescriptor)
+            && ourDirections == target.bridgeDirectionsTo(overriddenDescriptor)) {
         // Bridge is inherited from supers
         return BridgeDirections(this.valueParameters.size)
     }

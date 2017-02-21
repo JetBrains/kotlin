@@ -181,8 +181,13 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             val target = descriptor.target
             println("IMPLEMENTATION target: ${target}")
             if (!needBridge) return target
-            //val bridgeOwner = if (!descriptor.kind.isReal && OverridingUtil.overrides(target, overriddenDescriptor) && !descriptor.needBridgeTo(overriddenDescriptor)) if (descriptor.bridgeDirectionsTo(overriddenDescriptor).allNotNeeded()) target else descriptor
-            val bridgeOwner = if (!descriptor.kind.isReal && OverridingUtil.overrides(target, overriddenDescriptor) && descriptor.bridgeDirectionsTo(overriddenDescriptor).allNotNeeded()) target else descriptor
+            val bridgeOwner = if (!descriptor.kind.isReal
+                    && OverridingUtil.overrides(target, overriddenDescriptor)
+                    && descriptor.bridgeDirectionsTo(overriddenDescriptor).allNotNeeded()) {
+                target // Bridge is inherited from supers
+            } else {
+                descriptor
+            }
             println("IMPLEMENTATION owner: ${bridgeOwner}")
             return context.specialDescriptorsFactory.getBridgeDescriptor(OverriddenFunctionDescriptor(bridgeOwner, overriddenDescriptor))
         }
