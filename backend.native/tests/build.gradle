@@ -1193,6 +1193,12 @@ task vararg0(type: RunKonanTest) {
     source = "lower/vararg.kt"
 }
 
+task vararg_of_literals(type: RunKonanTest) {
+    disabled = true
+    goldValue = "a\na\n"
+    source = "lower/vararg_of_literals.kt"
+}
+
 task inline4(type: RunKonanTest) {
     goldValue = "3\n"
     source = "codegen/inline/inline4.kt"
