@@ -75,6 +75,7 @@ task run_external () {
                 "TOTAL: $statistics.total\n" +
                 "PASSED: $statistics.passed\n" +
                 "FAILED: $statistics.failed\n" +
+                "ERROR: $statistics.error\n" +
                 "SKIPPED: $statistics.skipped")
     }
 }
