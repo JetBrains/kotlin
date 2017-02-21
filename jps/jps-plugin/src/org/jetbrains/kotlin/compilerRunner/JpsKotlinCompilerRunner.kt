@@ -207,7 +207,7 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
     private fun getReturnCodeFromObject(rc: Any?): String {
         when {
             rc == null -> return INTERNAL_ERROR
-            ExitCode::class.java.name == rc.javaClass.name -> return rc.toString()
+            ExitCode::class.java.name == rc::class.java.name -> return rc.toString()
             else -> throw IllegalStateException("Unexpected return: " + rc)
         }
     }

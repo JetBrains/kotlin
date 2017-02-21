@@ -37,7 +37,7 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
     val COMMENT_WITH_LOOKUP_INFO = "/\\*[^*]+\\*/".toRegex()
 
     override fun checkLookups(lookupTracker: LookupTracker, compiledFiles: Set<File>) {
-        if (lookupTracker !is TestLookupTracker) throw AssertionError("Expected TestLookupTracker, but: ${lookupTracker.javaClass}")
+        if (lookupTracker !is TestLookupTracker) throw AssertionError("Expected TestLookupTracker, but: ${lookupTracker::class.java}")
 
         val fileToLookups = lookupTracker.lookups.groupBy { it.filePath }
 
