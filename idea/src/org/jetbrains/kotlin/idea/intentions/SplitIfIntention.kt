@@ -114,7 +114,7 @@ class SplitIfIntention : SelfTargetingIntention<KtExpression>(KtExpression::clas
             if (expression.operationToken != operator) return false
         }
 
-        val ifExpression = expression.parent?.parent as? KtIfExpression ?: return false
+        val ifExpression = expression.parent.parent as? KtIfExpression ?: return false
 
         if (ifExpression.condition == null) return false
         if (!PsiTreeUtil.isAncestor(ifExpression.condition, element, false)) return false

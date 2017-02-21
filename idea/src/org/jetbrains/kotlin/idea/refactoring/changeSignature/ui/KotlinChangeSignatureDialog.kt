@@ -446,7 +446,7 @@ class KotlinChangeSignatureDialog(
             val typeRef = getContentElement()
             val type = typeRef?.analyze(BodyResolveMode.PARTIAL)?.get(BindingContext.TYPE, typeRef)
             return when {
-                type != null && !type.isError -> KotlinTypeInfo(isCovariant, type, if (forPreview) typeRef?.text else null)
+                type != null && !type.isError -> KotlinTypeInfo(isCovariant, type, if (forPreview) typeRef.text else null)
                 typeRef != null -> KotlinTypeInfo(isCovariant, null, typeRef.text)
                 else -> KotlinTypeInfo(isCovariant)
             }

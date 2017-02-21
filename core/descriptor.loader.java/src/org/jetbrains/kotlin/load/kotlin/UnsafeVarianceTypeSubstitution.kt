@@ -32,7 +32,7 @@ internal class UnsafeVarianceTypeSubstitution(kotlinBuiltIns: KotlinBuiltIns) : 
         val unsafeVariancePaths = mutableListOf<List<Int>>()
         IndexedTypeHolder(topLevelType).checkTypePosition(
                 position,
-                { typeParameter, indexedTypeHolder, errorPosition ->
+                { _, indexedTypeHolder, _ ->
                     unsafeVariancePaths.add(indexedTypeHolder.argumentIndices)
                 },
                 customVariance = { null })

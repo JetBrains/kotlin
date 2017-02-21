@@ -53,7 +53,7 @@ class FunctionImportedFromObject(
             newOwner: DeclarationDescriptor?, modality: Modality?, visibility: Visibility?,
             kind: CallableMemberDescriptor.Kind?, copyOverrides: Boolean
     ): FunctionDescriptor {
-        throw UnsupportedOperationException("copy() should not be called on ${this.javaClass.simpleName}, was called for $this")
+        throw UnsupportedOperationException("copy() should not be called on ${this::class.java.simpleName}, was called for $this")
     }
 }
 
@@ -73,7 +73,7 @@ class PropertyImportedFromObject(
             newOwner: DeclarationDescriptor?, modality: Modality?, visibility: Visibility?,
             kind: CallableMemberDescriptor.Kind?, copyOverrides: Boolean
     ): FunctionDescriptor {
-        throw UnsupportedOperationException("copy() should not be called on ${this.javaClass.simpleName}, was called for $this")
+        throw UnsupportedOperationException("copy() should not be called on ${this::class.java.simpleName}, was called for $this")
     }
 }
 

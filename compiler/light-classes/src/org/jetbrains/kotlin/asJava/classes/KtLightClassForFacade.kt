@@ -247,7 +247,7 @@ class KtLightClassForFacade private constructor(
     }
 
     override fun equals(other: Any?): Boolean {
-        if (other == null || javaClass != other.javaClass) {
+        if (other == null || this::class.java != other::class.java) {
             return false
         }
 

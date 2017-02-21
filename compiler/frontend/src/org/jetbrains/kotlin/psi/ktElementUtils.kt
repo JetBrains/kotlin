@@ -28,5 +28,5 @@ internal fun KtElement.deleteSemicolon() {
     if (sibling == null || sibling.node.elementType != KtTokens.SEMICOLON) return
 
     val lastSiblingToDelete = PsiTreeUtil.skipSiblingsForward(sibling, PsiWhiteSpace::class.java)?.prevSibling ?: sibling
-    parent?.deleteChildRange(nextSibling, lastSiblingToDelete)
+    parent.deleteChildRange(nextSibling, lastSiblingToDelete)
 }

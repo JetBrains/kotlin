@@ -282,7 +282,7 @@ internal class DescriptorRendererImpl(
         return when (cd) {
             is TypeParameterDescriptor, is ClassDescriptor, is TypeAliasDescriptor -> renderClassifierName(cd)
             null -> typeConstructor.toString()
-            else -> error("Unexpected classifier: " + cd.javaClass)
+            else -> error("Unexpected classifier: " + cd::class.java)
         }
     }
 

@@ -38,7 +38,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
         val copy = DescriptorRendererOptionsImpl()
 
         //TODO: use Kotlin reflection
-        for (field in this.javaClass.declaredFields) {
+        for (field in this::class.java.declaredFields) {
             if (field.modifiers.and(Modifier.STATIC) != 0) continue
             field.isAccessible = true
             val property = field.get(this) as? ObservableProperty<*> ?: continue
@@ -54,7 +54,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     }
 
     private fun <T> property(initialValue: T): ReadWriteProperty<DescriptorRendererOptionsImpl, T> {
-        return Delegates.vetoable(initialValue) { property, oldValue, newValue ->
+        return Delegates.vetoable(initialValue) { _, _, _ ->
             if (isLocked) {
                 throw IllegalStateException("Cannot modify readonly DescriptorRendererOptions")
             }

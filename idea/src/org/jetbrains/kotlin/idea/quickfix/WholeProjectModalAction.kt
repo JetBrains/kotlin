@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.flatMapDescendantsOfTypeVisitor
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
 abstract class WholeProjectModalAction<TData : Any>(val title: String) : IntentionAction {
@@ -140,7 +139,7 @@ internal class WholeProjectForEachElementOfTypeFix<TTask : Any> private construc
                 noinline taskProcessor: (TTask) -> Unit,
                 name: String
         ) = createForMultiTaskOnElement<TElement, TTask>(
-                tasksFactory = { taskFactory(it).singletonOrEmptyList() },
+                tasksFactory = { listOfNotNull(taskFactory(it)) },
                 tasksProcessor = { it.forEach(taskProcessor) },
                 name = name
         )

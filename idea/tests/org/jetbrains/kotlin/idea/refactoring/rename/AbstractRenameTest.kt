@@ -168,7 +168,7 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
         val mainFilePath = renameParamsObject.getString("mainFile")
         val newName = renameParamsObject.getString("newName")
 
-        doTestCommittingDocuments { rootDir, rootAfter ->
+        doTestCommittingDocuments { rootDir, _ ->
             configExtra(rootDir, renameParamsObject)
 
             val mainFile = rootDir.findFileByRelativePath(mainFilePath)!!
@@ -209,7 +209,7 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
         val classFQN = renameParamsObject.getString("classId").toClassId().asSingleFqName().asString()
         val newName = renameParamsObject.getString("newName")
 
-        doTestCommittingDocuments { rootDir, rootAfter ->
+        doTestCommittingDocuments { _, _ ->
             val aClass = context.javaFacade.findClass(classFQN, context.project.allScope())!!
             val substitution = RenamePsiElementProcessor.forElement(aClass).substituteElementToRename(aClass, null)
 
@@ -222,7 +222,7 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
         val methodSignature = renameParamsObject.getString("methodSignature")
         val newName = renameParamsObject.getString("newName")
 
-        doTestCommittingDocuments { rootDir, rootAfter ->
+        doTestCommittingDocuments { _, _ ->
             val aClass = context.javaFacade.findClass(classFQN, GlobalSearchScope.moduleScope(context.module))!!
 
             val methodText = context.javaFacade.elementFactory.createMethodFromText(methodSignature + "{}", null)
@@ -239,20 +239,20 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
         val oldMethodName = Name.identifier(renameParamsObject.getString("oldName"))
 
         doRenameInKotlinClassOrPackage(renameParamsObject, context) {
-            declaration, scope -> scope.getContributedFunctions(oldMethodName, NoLookupLocation.FROM_TEST).first() }
+            _, scope -> scope.getContributedFunctions(oldMethodName, NoLookupLocation.FROM_TEST).first() }
     }
 
     private fun renameKotlinPropertyTest(renameParamsObject: JsonObject, context: TestContext) {
         val oldPropertyName = Name.identifier(renameParamsObject.getString("oldName"))
 
         doRenameInKotlinClassOrPackage(renameParamsObject, context) {
-            declaration, scope -> scope.getContributedVariables(oldPropertyName, NoLookupLocation.FROM_TEST).first() }
+            _, scope -> scope.getContributedVariables(oldPropertyName, NoLookupLocation.FROM_TEST).first() }
     }
 
     private fun renameKotlinClassTest(renameParamsObject: JsonObject, context: TestContext) {
         renameParamsObject.getString("classId") //assertion
 
-        doRenameInKotlinClassOrPackage(renameParamsObject, context) { declaration, scope -> declaration as ClassDescriptor }
+        doRenameInKotlinClassOrPackage(renameParamsObject, context) { declaration, _ -> declaration as ClassDescriptor }
     }
 
     private fun renameKotlinPackageTest(renameParamsObject: JsonObject, context: TestContext) {
@@ -260,7 +260,7 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
         val newName = renameParamsObject.getString("newName")
         val mainFilePath = renameParamsObject.getNullableString("mainFile") ?: "${getTestDirName(false)}.kt"
 
-        doTestCommittingDocuments { rootDir, rootAfter ->
+        doTestCommittingDocuments { rootDir, _ ->
             val mainFile = rootDir.findChild(mainFilePath)!!
             val document = FileDocumentManager.getInstance().getDocument(mainFile)!!
             val jetFile = PsiDocumentManager.getInstance(context.project).getPsiFile(document) as KtFile
@@ -282,7 +282,7 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
         val file = renameParamsObject.getString("file")
         val newName = renameParamsObject.getString("newName")
 
-        doTestCommittingDocuments { rootDir, rootAfter ->
+        doTestCommittingDocuments { rootDir, _ ->
             val mainFile = rootDir.findFileByRelativePath(file)!!
             val psiFile = PsiManager.getInstance(context.project).findFile(mainFile)
 
@@ -295,7 +295,7 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
         val oldName = renameParamsObject.getString("oldName")
         val newName = renameParamsObject.getString("newName")
 
-        doTestCommittingDocuments { rootDir, rootAfter ->
+        doTestCommittingDocuments { rootDir, _ ->
             val mainFile = rootDir.findChild(file)!!
             val psiFile = PsiManager.getInstance(context.project).findFile(mainFile) as PropertiesFile
             val property = psiFile.findPropertyByKey(oldName) as Property
@@ -319,7 +319,7 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
         val newName = renameParamsObject.getString("newName")
         val mainFilePath = renameParamsObject.getNullableString("mainFile") ?: "${getTestDirName(false)}.kt"
 
-        doTestCommittingDocuments { rootDir, rootAfter ->
+        doTestCommittingDocuments { rootDir, _ ->
             val mainFile = rootDir.findChild(mainFilePath)!!
             val document = FileDocumentManager.getInstance().getDocument(mainFile)!!
             val jetFile = PsiDocumentManager.getInstance(context.project).getPsiFile(document) as KtFile
@@ -344,7 +344,7 @@ abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
         val mainFilePath = renameParamsObject.getString("mainFile")
         val newName = renameParamsObject.getString("newName")
 
-        doTestCommittingDocuments { rootDir, rootAfter ->
+        doTestCommittingDocuments { rootDir, _ ->
             configExtra(rootDir, renameParamsObject)
 
             val psiFile = rootDir.findFileByRelativePath(mainFilePath)!!.toPsiFile(project)!!

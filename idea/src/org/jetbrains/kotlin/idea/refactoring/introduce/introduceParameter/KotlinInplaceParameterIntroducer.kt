@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getValueParameters
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.awt.Color
 import java.util.*
 import javax.swing.JCheckBox
@@ -261,7 +260,7 @@ class KotlinInplaceParameterIntroducer(
         val originalRange = expr.toRange()
         return descriptor.copy(
                 originalRange = originalRange,
-                occurrencesToReplace = if (replaceAll) occurrences.map { it.toRange() } else originalRange.singletonList(),
+                occurrencesToReplace = if (replaceAll) occurrences.map { it.toRange() } else listOf(originalRange),
                 argumentValue = expr!!
         )
     }

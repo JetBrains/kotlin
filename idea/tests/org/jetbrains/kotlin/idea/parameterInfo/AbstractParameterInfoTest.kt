@@ -36,7 +36,7 @@ import org.junit.Assert
 
 abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        val root = KotlinTestUtils.getTestsRoot(this.javaClass)
+        val root = KotlinTestUtils.getTestsRoot(this::class.java)
         if (root.contains("Lib")) {
             return JdkAndMockLibraryProjectDescriptor(
                     "$root/sharedLib", true, true, false, false

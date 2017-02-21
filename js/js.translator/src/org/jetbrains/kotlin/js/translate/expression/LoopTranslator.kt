@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtWhileExpressionBase
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 fun createWhile(doWhile: Boolean, expression: KtWhileExpressionBase, context: TranslationContext): JsNode {
     val conditionExpression = expression.condition ?:
@@ -121,7 +120,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
                             destructuringParameter, parameterName, itemValue, context.innerBlock(block))
                 }
             block.statements += currentVarInit
-            block.statements += if (realBody is JsBlock) realBody.statements else realBody.singletonOrEmptyList()
+            block.statements += if (realBody is JsBlock) realBody.statements else listOfNotNull(realBody)
 
             return block
         }

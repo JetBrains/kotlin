@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptExternalDependencies
 import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 class ScriptModuleSearchScope(val scriptFile: VirtualFile, baseScope: GlobalSearchScope) : DelegatingGlobalSearchScope(baseScope) {
     override fun equals(other: Any?) = other is ScriptModuleSearchScope && scriptFile == other.scriptFile && super.equals(other)
@@ -59,7 +58,7 @@ data class ScriptModuleInfo(val project: Project, val scriptFile: VirtualFile,
 }
 
 private fun sdkDependencies(scriptDependencies: KotlinScriptExternalDependencies?, project: Project): List<SdkInfo>
-        = findJdk(scriptDependencies, project)?.let { SdkInfo(project, it) }.singletonOrEmptyList()
+        = listOfNotNull(findJdk(scriptDependencies, project)?.let { SdkInfo(project, it) })
 
 fun findJdk(dependencies: KotlinScriptExternalDependencies?, project: Project): Sdk? {
     val allJdks = getAllProjectSdks()

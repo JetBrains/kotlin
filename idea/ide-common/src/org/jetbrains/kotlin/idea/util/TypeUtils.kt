@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.SmartSet
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 fun KotlinType.approximateFlexibleTypes(
         preferNotNull: Boolean = false,
@@ -118,7 +117,7 @@ fun KotlinType.anonymousObjectSuperTypeOrNull(): KotlinType? {
 }
 
 fun KotlinType.getResolvableApproximations(scope: LexicalScope?, checkTypeParameters: Boolean): Sequence<KotlinType> {
-    return (singletonList() + TypeUtils.getAllSupertypes(this))
+    return (listOf(this) + TypeUtils.getAllSupertypes(this))
             .asSequence()
             .filter { it.isResolvableInScope(scope, checkTypeParameters) }
             .mapNotNull mapArgs@ {

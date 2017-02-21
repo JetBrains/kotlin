@@ -91,7 +91,7 @@ class FilteredJvmDiagnostics(val jvmDiagnostics: Diagnostics, val otherDiagnosti
         val higherPriority = setOf<DiagnosticFactory<*>>(
                 CONFLICTING_OVERLOADS, REDECLARATION, NOTHING_TO_OVERRIDE, MANY_IMPL_MEMBER_NOT_IMPLEMENTED)
         return otherDiagnostics.forElement(psiElement).any { it.factory in higherPriority }
-                || psiElement is KtPropertyAccessor && alreadyReported(psiElement.parent!!)
+                || psiElement is KtPropertyAccessor && alreadyReported(psiElement.parent)
     }
 
     override fun forElement(psiElement: PsiElement): Collection<Diagnostic> {

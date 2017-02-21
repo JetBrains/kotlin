@@ -56,7 +56,7 @@ private fun PsiElement.getModuleInfo(onFailure: (String) -> IdeaModuleInfo?): Id
     val doNotAnalyze = containingJetFile?.doNotAnalyze
     if (doNotAnalyze != null) {
         return onFailure(
-                "Should not analyze element: $text in file ${containingJetFile?.name ?: " <no file>"}\n$doNotAnalyze"
+                "Should not analyze element: $text in file ${containingJetFile.name}\n$doNotAnalyze"
         )
     }
 
@@ -65,13 +65,13 @@ private fun PsiElement.getModuleInfo(onFailure: (String) -> IdeaModuleInfo?): Id
 
     if (containingJetFile is KtCodeFragment) {
         return containingJetFile.getContext()?.getModuleInfo()
-               ?: onFailure("Analyzing code fragment of type ${containingJetFile.javaClass} with no context element\nText:\n${containingJetFile.getText()}")
+               ?: onFailure("Analyzing code fragment of type ${containingJetFile::class.java} with no context element\nText:\n${containingJetFile.getText()}")
     }
 
-    val containingFile = containingFile ?: return onFailure("Analyzing element of type $javaClass with no containing file\nText:\n$text")
+    val containingFile = containingFile ?: return onFailure("Analyzing element of type ${this::class.java} with no containing file\nText:\n$text")
 
     val virtualFile = containingFile.originalFile.virtualFile
-            ?: return onFailure("Analyzing element of type $javaClass in non-physical file $containingFile of type ${containingFile.javaClass}\nText:\n$text")
+            ?: return onFailure("Analyzing element of type ${this::class.java} in non-physical file $containingFile of type ${containingFile::class.java}\nText:\n$text")
 
     return getModuleInfoByVirtualFile(
             project,

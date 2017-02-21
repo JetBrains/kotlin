@@ -244,7 +244,7 @@ data class ExtractionData(
                     val invokeDeclaration = getDeclaration(invokeDescriptor, context) ?: synthesizedInvokeDeclaration
                     val variableResolveResult = originalResolveResult.copy(resolvedCall = originalVariableCall!!,
                                                                            descriptor = originalVariableCall.resultingDescriptor)
-                    val functionResolveResult = originalResolveResult.copy(resolvedCall = originalFunctionCall!!,
+                    val functionResolveResult = originalResolveResult.copy(resolvedCall = originalFunctionCall,
                                                                            descriptor = originalFunctionCall.resultingDescriptor,
                                                                            declaration = invokeDeclaration)
                     referencesInfo.add(ResolvedReferenceInfo(newRef, variableResolveResult, smartCast, possibleTypes, shouldSkipPrimaryReceiver))

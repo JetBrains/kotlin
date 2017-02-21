@@ -70,7 +70,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
             name: String,
             vararg supportedAnnotations: String,
             options: Map<String, String> = emptyMap()
-    ) = testAP(false, name, options, { set, roundEnv, env -> fail("Should not run") }, *supportedAnnotations)
+    ) = testAP(false, name, options, { _, _, _ -> fail("Should not run") }, *supportedAnnotations)
 
     protected fun testAP(
             shouldRun: Boolean,

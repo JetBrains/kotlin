@@ -67,7 +67,7 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
             val fileNameBase = mainFile.nameWithoutExtension + "."
             val rootDir = mainFile.parentFile
             rootDir
-                    .list { file, name ->
+                    .list { _, name ->
                         name.startsWith(fileNameBase) && name != mainFileName && (name.endsWith(".kt") || name.endsWith(".java"))
                     }
                     .forEach {

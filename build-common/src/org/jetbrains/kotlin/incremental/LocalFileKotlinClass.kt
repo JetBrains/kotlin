@@ -50,5 +50,5 @@ class LocalFileKotlinClass private constructor(
 
     override fun hashCode(): Int = file.hashCode()
     override fun equals(other: Any?): Boolean = other is LocalFileKotlinClass && file == other.file
-    override fun toString(): String = "$javaClass: $file"
+    override fun toString(): String = "${this::class.java}: $file"
 }

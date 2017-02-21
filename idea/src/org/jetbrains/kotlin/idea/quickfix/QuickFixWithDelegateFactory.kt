@@ -57,7 +57,7 @@ open class QuickFixWithDelegateFactory(
         val action = delegateFactory() ?: return
 
         assert(action.detectPriority() == this.detectPriority()) {
-            "Incorrect priority of QuickFixWithDelegateFactory wrapper for ${action.javaClass.name}"
+            "Incorrect priority of QuickFixWithDelegateFactory wrapper for ${action::class.java.name}"
         }
 
         action.invoke(project, editor, file)

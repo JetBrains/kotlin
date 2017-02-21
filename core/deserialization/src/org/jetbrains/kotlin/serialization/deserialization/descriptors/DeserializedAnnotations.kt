@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class DeserializedAnnotations(
         storageManager: StorageManager,
@@ -36,7 +35,7 @@ open class DeserializedAnnotationsWithPossibleTargets(
         storageManager: StorageManager,
         compute: () -> List<AnnotationWithTarget>
 ) : Annotations {
-    private val annotations = storageManager.createLazyValue { compute().toReadOnlyList() }
+    private val annotations = storageManager.createLazyValue { compute().toList() }
 
     override fun isEmpty(): Boolean = annotations().isEmpty()
 

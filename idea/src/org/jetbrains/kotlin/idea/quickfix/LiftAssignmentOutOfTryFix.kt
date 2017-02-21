@@ -49,7 +49,7 @@ class LiftAssignmentOutOfTryFix(element: KtTryExpression): KotlinQuickFixAction<
 
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val expression = diagnostic.psiElement as? KtExpression ?: return null
-            val originalCatch = expression.parent?.parent?.parent as? KtCatchClause ?: return null
+            val originalCatch = expression.parent.parent?.parent as? KtCatchClause ?: return null
             val tryExpression = originalCatch.parent as? KtTryExpression ?: return null
             val tryAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(tryExpression.tryBlock) ?: return null
             for (catchClause in tryExpression.catchClauses) {

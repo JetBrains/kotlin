@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 class KotlinFrameExtraVariablesProvider : FrameExtraVariablesProvider {
@@ -64,7 +63,7 @@ private fun findAdditionalExpressions(position: SourcePosition): Set<TextWithImp
         return emptySet()
     }
 
-    val offset = file.getLineStartOffset(line)?.check { it > 0 } ?: return emptySet()
+    val offset = file.getLineStartOffset(line)?.takeIf { it > 0 } ?: return emptySet()
 
     val elem = file.findElementAt(offset)
     val containingElement = getContainingElement(elem!!) ?: elem ?: return emptySet()
@@ -101,9 +100,7 @@ private fun getContainingElement(element: PsiElement): KtElement? {
     val contElement = PsiTreeUtil.getParentOfType(element, KtDeclaration::class.java) ?: PsiTreeUtil.getParentOfType(element, KtElement::class.java)
     if (contElement is KtProperty && contElement.isLocal) {
         val parent = contElement.parent
-        if (parent != null) {
-            return getContainingElement(parent)
-        }
+        return getContainingElement(parent)
     }
 
     if (contElement is KtDeclarationWithBody) {

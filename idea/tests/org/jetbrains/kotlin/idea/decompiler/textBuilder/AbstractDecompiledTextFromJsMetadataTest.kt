@@ -31,7 +31,7 @@ abstract class AbstractDecompiledTextFromJsMetadataTest(baseDirectory: String) :
     override fun getFileToDecompile(): VirtualFile = getKjsmFile(TEST_PACKAGE, myModule!!)
 
     override fun checkPsiFile(psiFile: PsiFile) =
-            assertTrue(psiFile is KtDecompiledFile, "Expecting decompiled kotlin javascript file, was: " + psiFile.javaClass)
+            assertTrue(psiFile is KtDecompiledFile, "Expecting decompiled kotlin javascript file, was: " + psiFile::class.java)
 
     override fun setUp() {
         super.setUp()

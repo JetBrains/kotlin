@@ -35,7 +35,7 @@ class BuiltInsSerializerTest : TestCaseWithTmpdir() {
                 tmpdir,
                 srcDirs = listOf(File(source)),
                 extraClassPath = listOf(ForTestCompileRuntime.runtimeJarForTests()),
-                onComplete = { totalSize, totalFiles -> }
+                onComplete = { _, _ -> }
         )
 
         val module = KotlinTestUtils.createEmptyModule("<module>", DefaultBuiltIns.Instance)

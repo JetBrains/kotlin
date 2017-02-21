@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.nullability
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 tailrec fun <T : Any> LookupElement.putUserDataDeep(key: Key<T>, value: T?) {
@@ -413,7 +412,7 @@ fun ImportableFqNameClassifier.isImportableDescriptorImported(descriptor: Declar
 
 fun OffsetMap.tryGetOffset(key: OffsetKey): Int? {
     try {
-        return getOffset(key).check { it != -1 } // prior to IDEA 2016.3 getOffset() returned -1 if not found, now it throws exception
+        return getOffset(key).takeIf { it != -1 } // prior to IDEA 2016.3 getOffset() returned -1 if not found, now it throws exception
     }
     catch(e: Exception) {
         return null

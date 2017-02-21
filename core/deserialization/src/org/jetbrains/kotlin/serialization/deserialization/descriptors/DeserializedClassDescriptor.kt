@@ -38,8 +38,6 @@ import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
-import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
 class DeserializedClassDescriptor(
@@ -127,7 +125,7 @@ class DeserializedClassDescriptor(
     override fun getUnsubstitutedPrimaryConstructor(): ClassConstructorDescriptor? = primaryConstructor()
 
     private fun computeConstructors(): Collection<ClassConstructorDescriptor> =
-            computeSecondaryConstructors() + unsubstitutedPrimaryConstructor.singletonOrEmptyList() +
+            computeSecondaryConstructors() + listOfNotNull(unsubstitutedPrimaryConstructor) +
             c.components.additionalClassPartsProvider.getConstructors(this)
 
     private fun computeSecondaryConstructors(): List<ClassConstructorDescriptor> =
@@ -192,7 +190,7 @@ class DeserializedClassDescriptor(
                 )
             }
 
-            return result.toReadOnlyList()
+            return result.toList()
         }
 
         override fun getParameters() = parameters()

@@ -75,7 +75,7 @@ fun StatementGenerator.generateReceiver(startOffset: Int, endOffset: Int, receiv
         is ExtensionReceiver ->
             IrGetValueImpl(startOffset, startOffset, receiver.declarationDescriptor.extensionReceiverParameter!!)
         else ->
-            TODO("Receiver: ${receiver.javaClass.simpleName}")
+            TODO("Receiver: ${receiver::class.java.simpleName}")
     }
 
     return if (receiverExpression is IrExpressionWithCopy)
@@ -186,7 +186,7 @@ fun StatementGenerator.generateValueArgument(valueArgument: ResolvedValueArgumen
             is VarargValueArgument ->
                 generateVarargExpression(valueArgument, valueParameter)
             else ->
-                TODO("Unexpected valueArgument: ${valueArgument.javaClass.simpleName}")
+                TODO("Unexpected valueArgument: ${valueArgument::class.java.simpleName}")
         }
 
 fun Generator.getSuperQualifier(resolvedCall: ResolvedCall<*>): ClassDescriptor? {

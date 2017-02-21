@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.ir2cfg.generators
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir2cfg.builders.BlockConnectorBuilder
 import org.jetbrains.kotlin.ir2cfg.graph.BasicBlock
-import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class GeneralConnectorBuilder(private val element: IrStatement) : BlockConnectorBuilder {
 
@@ -36,8 +35,8 @@ class GeneralConnectorBuilder(private val element: IrStatement) : BlockConnector
     }
 
     override fun build() = when {
-        next.size <= 1 -> JoinBlockConnector(previous.toReadOnlyList(), element, next.firstOrNull())
-        previous.size == 1 -> SplitBlockConnector(previous.single(), element, next.toReadOnlyList())
+        next.size <= 1 -> JoinBlockConnector(previous.toList(), element, next.firstOrNull())
+        previous.size == 1 -> SplitBlockConnector(previous.single(), element, next.toList())
         else -> throw AssertionError("Connector should have either exactly one previous block or no more than one next block, " +
                                      "actual previous = ${previous.size}, next = ${next.size}")
     }

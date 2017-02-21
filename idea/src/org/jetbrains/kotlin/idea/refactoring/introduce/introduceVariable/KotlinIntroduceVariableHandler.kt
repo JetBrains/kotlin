@@ -69,7 +69,6 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.ifEmpty
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
@@ -562,11 +561,11 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                     componentFunctions.map { suggestNamesForComponent(it, project, collectingValidator) }
                 }
                 else {
-                    KotlinNameSuggester.suggestNamesByExpressionAndType(expression,
-                                                                        substringInfo?.type,
-                                                                        bindingContext,
-                                                                        validator,
-                                                                        "value").singletonList()
+                    listOf(KotlinNameSuggester.suggestNamesByExpressionAndType(expression,
+                                                                               substringInfo?.type,
+                                                                               bindingContext,
+                                                                               validator,
+                                                                               "value"))
                 }
 
                 val introduceVariableContext = IntroduceVariableContext(

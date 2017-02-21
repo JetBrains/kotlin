@@ -52,7 +52,7 @@ abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase(
         val testName = getTestName(false)
         if (KotlinTestUtils.isAllFilesPresentTest(testName)) return
 
-        val filePath = "${KotlinTestUtils.getTestsRoot(this.javaClass)}/${getTestName(false)}.kt"
+        val filePath = "${KotlinTestUtils.getTestsRoot(this::class.java)}/${getTestName(false)}.kt"
 
         Assert.assertTrue("File doesn't exist $filePath", File(filePath).exists())
 

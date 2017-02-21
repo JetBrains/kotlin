@@ -131,7 +131,7 @@ object ConstantsMapExternalizer : DataExternalizer<Map<String, Any>> {
                     output.writeByte(Kind.STRING.ordinal)
                     IOUtil.writeString(value, output)
                 }
-                else -> throw IllegalStateException("Unexpected constant class: ${value.javaClass}")
+                else -> throw IllegalStateException("Unexpected constant class: ${value::class.java}")
             }
         }
     }

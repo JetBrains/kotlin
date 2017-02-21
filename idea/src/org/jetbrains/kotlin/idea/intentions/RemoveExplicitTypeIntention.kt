@@ -64,6 +64,6 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
         fun isSetterParameter(element: KtCallableDeclaration) =
                 element is KtParameter && element.isSetterParameter
 
-        private val KtParameter.isSetterParameter: Boolean get() = (parent?.parent as? KtPropertyAccessor)?.isSetter ?: false
+        private val KtParameter.isSetterParameter: Boolean get() = (parent.parent as? KtPropertyAccessor)?.isSetter ?: false
     }
 }

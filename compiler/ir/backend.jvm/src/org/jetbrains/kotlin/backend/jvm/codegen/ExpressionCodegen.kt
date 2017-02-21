@@ -120,7 +120,7 @@ class ExpressionCodegen(
 
     override fun visitBlockBody(body: IrBlockBody, data: BlockInfo): StackValue {
         return body.statements.fold(none()) {
-            r, exp ->
+            _, exp ->
             exp.accept(this, data)
         }
     }
@@ -152,7 +152,7 @@ class ExpressionCodegen(
 
     override fun visitContainerExpression(expression: IrContainerExpression, data: BlockInfo): StackValue {
         val result = expression.statements.fold(none()) {
-            r, exp ->
+            _, exp ->
             //coerceNotToUnit(r.type, Type.VOID_TYPE)
             exp.accept(this, data)
         }

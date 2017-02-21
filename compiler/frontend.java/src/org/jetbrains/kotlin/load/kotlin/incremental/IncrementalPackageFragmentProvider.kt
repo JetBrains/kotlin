@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationCompone
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.kotlin.utils.keysToMap
 
 class IncrementalPackageFragmentProvider(
@@ -53,7 +52,7 @@ class IncrementalPackageFragmentProvider(
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> = emptySet()
 
     override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
-        return fqNameToPackageFragment[fqName].singletonOrEmptyList()
+        return listOfNotNull(fqNameToPackageFragment[fqName])
     }
 
 

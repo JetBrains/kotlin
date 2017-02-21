@@ -87,7 +87,7 @@ class SurroundWithNullCheckFix(
 
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val nullableExpression = diagnostic.psiElement as? KtReferenceExpression ?: return null
-            val forExpression = nullableExpression.parent?.parent as? KtForExpression ?: return null
+            val forExpression = nullableExpression.parent.parent as? KtForExpression ?: return null
             if (forExpression.parent !is KtBlockExpression) return null
 
             if (!nullableExpression.isStable()) return null

@@ -167,7 +167,7 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, 
                 container.isInner -> 1
                 else -> 0
             }
-            else -> throw UnsupportedOperationException("Unsupported message: ${message.javaClass}")
+            else -> throw UnsupportedOperationException("Unsupported message: ${message::class.java}")
         }
     }
 

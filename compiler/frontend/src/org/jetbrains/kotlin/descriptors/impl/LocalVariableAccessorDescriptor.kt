@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 sealed class LocalVariableAccessorDescriptor(
         final override val correspondingVariable: LocalVariableDescriptor,
@@ -38,7 +37,7 @@ sealed class LocalVariableAccessorDescriptor(
 
     init {
         val valueParameters =
-                if (isGetter) emptyList() else createValueParameter(Name.identifier("value"), correspondingVariable.type).singletonList()
+                if (isGetter) emptyList() else listOf(createValueParameter(Name.identifier("value"), correspondingVariable.type))
         initialize(null, null, emptyList(), valueParameters, correspondingVariable.type, Modality.FINAL, Visibilities.LOCAL)
     }
 

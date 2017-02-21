@@ -205,12 +205,12 @@ class AnnotationConverter(private val converter: Converter) {
             }
 
             is PsiAnnotation -> {
-                listOf({ codeConverter ->
+                listOf({ _ ->
                            val (name, arguments) = convertAnnotationValue(value)!!
                            AnnotationConstructorCall(name, arguments).assignPrototype(value)
                        })
             }
-            else -> listOf({ codeConverter -> DummyStringExpression(value?.text ?: "").assignPrototype(value) })
+            else -> listOf({ _ -> DummyStringExpression(value?.text ?: "").assignPrototype(value) })
         }
     }
 
@@ -226,7 +226,7 @@ class AnnotationConverter(private val converter: Converter) {
         if (expectedType is PsiArrayType && !isVararg) {
             return convertArrayInitializerValue(codeConverter,
                                                 value.text,
-                                                listOf({ codeConverter -> expression }),
+                                                listOf({ _ -> expression }),
                                                 expectedType,
                                                 false
             ).assignPrototype(value)

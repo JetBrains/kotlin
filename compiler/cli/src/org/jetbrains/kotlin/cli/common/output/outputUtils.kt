@@ -34,14 +34,14 @@ fun OutputFileCollection.writeAll(outputDir: File, report: (file: OutputFile, so
     }
 }
 
-private val REPORT_NOTHING = { file: OutputFile, sources: List<File>, output: File -> }
+private val REPORT_NOTHING: (OutputFile, List<File>, File) -> Unit = { _, _, _ -> }
 
 fun OutputFileCollection.writeAllTo(outputDir: File) {
     writeAll(outputDir, REPORT_NOTHING)
 }
 
 fun OutputFileCollection.writeAll(outputDir: File, messageCollector: MessageCollector) {
-    writeAll(outputDir) { file, sources, output ->
+    writeAll(outputDir) { _, sources, output ->
         messageCollector.report(CompilerMessageSeverity.OUTPUT, OutputMessageUtil.formatOutputMessage(sources, output), CompilerMessageLocation.NO_LOCATION)
     }
 }

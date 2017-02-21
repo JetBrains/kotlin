@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.*
 
 class InnerClassesLowering(val context: JvmBackendContext) : ClassLoweringPass {
@@ -69,7 +68,7 @@ class InnerClassesLowering(val context: JvmBackendContext) : ClassLoweringPass {
         private fun lowerConstructors() {
             irClass.declarations.transformFlat { irMember ->
                 if (irMember is IrConstructor)
-                    lowerConstructor(irMember).singletonList()
+                    listOf(lowerConstructor(irMember))
                 else
                     null
             }

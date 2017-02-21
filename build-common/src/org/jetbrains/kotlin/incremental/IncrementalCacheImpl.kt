@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.deserialization.supertypes
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import org.jetbrains.org.objectweb.asm.*
 import java.io.File
 import java.security.MessageDigest
@@ -272,7 +271,7 @@ open class IncrementalCacheImpl<Target>(
                                     ProtoBuf.Class::getPropertyList
                             ) + classData.classProto.enumEntryList.map { classData.nameResolver.getString(it.name) }
 
-                    val companionObjectChanged = createChangeInfo(classFqName.parent(), classFqName.shortName().asString().singletonOrEmptyList())
+                    val companionObjectChanged = createChangeInfo(classFqName.parent(), listOfNotNull(classFqName.shortName().asString()))
                     val companionObjectMembersChanged = createChangeInfo(classFqName, memberNames)
 
                     listOf(companionObjectMembersChanged, companionObjectChanged)
@@ -780,7 +779,7 @@ sealed class ChangeInfo(val fqName: FqName) {
     protected open fun toStringProperties(): String = "fqName = $fqName"
 
     override fun toString(): String {
-        return this.javaClass.simpleName + "(${toStringProperties()})"
+        return this::class.java.simpleName + "(${toStringProperties()})"
     }
 }
 

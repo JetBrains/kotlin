@@ -87,7 +87,7 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
         val resultingDescriptor = resolvedCall.resultingDescriptor
         if (resultingDescriptor !is FunctionDescriptor || resultingDescriptor.name.asString() != methodName) return null
         
-        val parent = element.parent ?: return null
+        val parent = element.parent
         val parentUElement = convertElementWithParent(parent, null) ?: return null
 
         val uExpression = KotlinUFunctionCallExpression(element, parentUElement, resolvedCall)

@@ -79,7 +79,7 @@ class AllUnderImportScope(
     }
 
     override fun printStructure(p: Printer) {
-        p.println(javaClass.simpleName)
+        p.println(this::class.java.simpleName)
     }
 }
 

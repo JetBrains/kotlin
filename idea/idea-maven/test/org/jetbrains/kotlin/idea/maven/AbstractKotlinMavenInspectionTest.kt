@@ -76,7 +76,7 @@ abstract class AbstractKotlinMavenInspectionTest : MavenImportingTestCase() {
         val suggestedFixes = actual.flatMap { p -> p.second.fixes?.sortedBy { it.familyName }?.map { p.second to it } ?: emptyList() }
 
         val filenamePrefix = pomFile.nameWithoutExtension + ".fixed."
-        val fixFiles = pomFile.parentFile.listFiles { file, name -> name.startsWith(filenamePrefix) && name.endsWith(".xml") }.sortedBy { it.name }
+        val fixFiles = pomFile.parentFile.listFiles { _, name -> name.startsWith(filenamePrefix) && name.endsWith(".xml") }.sortedBy { it.name }
 
         if (fixFiles.size > suggestedFixes.size) {
             fail("Not all fixes were suggested by the inspection: expected count: ${fixFiles.size}, actual fixes count: ${suggestedFixes.size}")

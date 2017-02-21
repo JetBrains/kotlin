@@ -35,7 +35,7 @@ class JeWildcardType(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other?.javaClass != javaClass) return false
+        if (other == null || other::class.java != this::class.java) return false
         other as? JeWildcardType ?: return false
 
         return superBound == other.superBound
@@ -70,7 +70,7 @@ class JeCapturedWildcardType(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other?.javaClass != javaClass) return false
+        if (other == null || other::class.java != this::class.java) return false
         other as? JeCapturedWildcardType ?: return false
 
         return superBound == other.superBound

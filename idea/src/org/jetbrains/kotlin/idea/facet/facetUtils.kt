@@ -162,7 +162,7 @@ fun parseCompilerArgumentsToFacet(arguments: List<String>, defaultArguments: Lis
     with(kotlinFacet.configuration.settings) {
         val compilerArguments = this.compilerArguments ?: return
 
-        val defaultCompilerArguments = compilerArguments.javaClass.newInstance()
+        val defaultCompilerArguments = compilerArguments::class.java.newInstance()
         parseArguments(defaultArguments.toTypedArray(), defaultCompilerArguments, true)
 
         val oldCoroutineSupport = CoroutineSupport.byCompilerArguments(compilerArguments)
@@ -182,7 +182,7 @@ fun parseCompilerArgumentsToFacet(arguments: List<String>, defaultArguments: Lis
 
         fun exposeAsAdditionalArgument(field: Field) = field.name !in primaryFields && field.get(compilerArguments) != field.get(defaultCompilerArguments)
 
-        val additionalArgumentsString = with(compilerArguments.javaClass.newInstance()) {
+        val additionalArgumentsString = with(compilerArguments::class.java.newInstance()) {
             copyFieldsSatisfying(compilerArguments, this, ::exposeAsAdditionalArgument)
             ArgumentUtils.convertArgumentsToStringList(this).joinToString(separator = " ") {
                 if (StringUtil.containsWhitespaces(it) || it.startsWith('"')) {
@@ -193,7 +193,7 @@ fun parseCompilerArgumentsToFacet(arguments: List<String>, defaultArguments: Lis
         compilerSettings?.additionalArguments =
                 if (additionalArgumentsString.isNotEmpty()) additionalArgumentsString else CompilerSettings.DEFAULT_ADDITIONAL_ARGUMENTS
 
-        with(compilerArguments.javaClass.newInstance()) {
+        with(compilerArguments::class.java.newInstance()) {
             copyFieldsSatisfying(this, compilerArguments, ::exposeAsAdditionalArgument)
         }
 

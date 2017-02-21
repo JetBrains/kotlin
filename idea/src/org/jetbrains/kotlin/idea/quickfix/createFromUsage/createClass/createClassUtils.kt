@@ -64,7 +64,7 @@ internal fun getTargetParentByQualifier(
             if (qualifierDescriptor.fqName != file.packageFqName) {
                 JavaPsiFacade.getInstance(project).findPackage(qualifierDescriptor.fqName.asString())
             }
-            else file as PsiElement // KT-9972
+            else file
         else ->
             null
     }
@@ -88,16 +88,16 @@ internal fun KtExpression.getInheritableTypeInfo(
         moduleDescriptor: ModuleDescriptor,
         containingDeclaration: PsiElement): Pair<TypeInfo, (ClassKind) -> Boolean> {
     val types = guessTypes(context, moduleDescriptor, coerceUnusedToUnit = false)
-    if (types.size != 1) return TypeInfo.Empty to { classKind -> true }
+    if (types.size != 1) return TypeInfo.Empty to { _ -> true }
 
     val type = types.first()
-    val descriptor = type.constructor.declarationDescriptor ?: return TypeInfo.Empty to { classKind -> false }
+    val descriptor = type.constructor.declarationDescriptor ?: return TypeInfo.Empty to { _ -> false }
 
     val canHaveSubtypes = !(type.constructor.isFinal || type.containsStarProjections())
     val isEnum = DescriptorUtils.isEnumClass(descriptor)
 
     if (!(canHaveSubtypes || isEnum)
-        || descriptor is TypeParameterDescriptor) return TypeInfo.Empty to { classKind -> false }
+        || descriptor is TypeParameterDescriptor) return TypeInfo.Empty to { _ -> false }
 
     return TypeInfo.ByType(type, Variance.OUT_VARIANCE).noSubstitutions() to { classKind ->
         when (classKind) {

@@ -55,7 +55,7 @@ class PredefinedPackageFragmentDescriptor(
                 calculatedFunctions().filter { nameFilter(it.name) && kindFilter.accepts(it) }
 
         override fun printScopeStructure(p: Printer) {
-            p.println(javaClass.simpleName)
+            p.println(this::class.java.simpleName)
         }
     }
 }

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.load.java.structure.reflect.safeClassLoader
 import org.jetbrains.kotlin.load.kotlin.reflect.RuntimeModuleData
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import java.util.*
@@ -65,7 +64,7 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
                 belonginess.accept(descriptor))
                 descriptor.accept(visitor, Unit)
             else null
-        }.toReadOnlyList()
+        }.toList()
     }
 
     protected enum class MemberBelonginess {

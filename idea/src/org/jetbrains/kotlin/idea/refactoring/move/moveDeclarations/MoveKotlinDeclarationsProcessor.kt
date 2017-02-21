@@ -171,7 +171,7 @@ class MoveKotlinDeclarationsProcessor(
 
         val usages = ArrayList<UsageInfo>()
         val conflictChecker = MoveConflictChecker(project, elementsToMove, descriptor.moveTarget, elementsToMove.first())
-        for ((sourceFile, kotlinToLightElements) in kotlinToLightElementsBySourceFile) {
+        for (kotlinToLightElements in kotlinToLightElementsBySourceFile.values) {
             kotlinToLightElements.keys.forEach {
                 if (descriptor.updateInternalReferences) {
                     val packageNameInfo = descriptor.delegate.getContainerChangeInfo(it, descriptor.moveTarget)
@@ -201,10 +201,10 @@ class MoveKotlinDeclarationsProcessor(
     override fun performRefactoring(usages: Array<out UsageInfo>) {
         fun moveDeclaration(declaration: KtNamedDeclaration, moveTarget: KotlinMoveTarget): KtNamedDeclaration? {
             val file = declaration.containingFile as? KtFile
-            assert(file != null) { "${declaration.javaClass}: ${declaration.text}" }
+            assert(file != null) { "${declaration::class.java}: ${declaration.text}" }
 
             val targetContainer = moveTarget.getOrCreateTargetPsi(declaration)
-                                  ?: throw AssertionError("Couldn't create Kotlin file for: ${declaration.javaClass}: ${declaration.text}")
+                                  ?: throw AssertionError("Couldn't create Kotlin file for: ${declaration::class.java}: ${declaration.text}")
 
             descriptor.delegate.preprocessDeclaration(descriptor, declaration)
             val newElement = mover(declaration, targetContainer)

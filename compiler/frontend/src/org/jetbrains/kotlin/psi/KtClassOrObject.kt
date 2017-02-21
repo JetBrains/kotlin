@@ -84,7 +84,7 @@ abstract class KtClassOrObject :
         return getOrCreateBody().addBefore(declaration, anchorAfter) as T
     }
 
-    fun isTopLevel(): Boolean = stub?.isTopLevel() ?: (parent == null || parent is KtFile)
+    fun isTopLevel(): Boolean = stub?.isTopLevel() ?: (parent is KtFile)
 
     override fun isLocal(): Boolean = stub?.isLocal() ?: KtPsiUtil.isLocal(this)
 

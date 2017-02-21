@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 class ConvertObjectLiteralToClassIntention : SelfTargetingRangeIntention<KtObjectLiteralExpression>(
         KtObjectLiteralExpression::class.java,
@@ -84,7 +83,7 @@ class ConvertObjectLiteralToClassIntention : SelfTargetingRangeIntention<KtObjec
                                 descriptorWithConflicts: ExtractableCodeDescriptorWithConflicts,
                                 onFinish: (ExtractionResult) -> Unit
                         ) {
-                            val descriptor = descriptorWithConflicts.descriptor.copy(suggestedNames = className.singletonList())
+                            val descriptor = descriptorWithConflicts.descriptor.copy(suggestedNames = listOf(className))
                             doRefactor(
                                     ExtractionGeneratorConfiguration(descriptor, ExtractionGeneratorOptions.DEFAULT),
                                     onFinish

@@ -45,8 +45,6 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isBooleanOrNullableBoolean
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.check
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptySet
 import java.util.*
 
@@ -94,7 +92,7 @@ class SmartCompletion(
     val descriptorFilter: ((DeclarationDescriptor, AbstractLookupElementFactory) -> Collection<LookupElement>)? =
             { descriptor: DeclarationDescriptor, factory: AbstractLookupElementFactory ->
                 filterDescriptor(descriptor, factory).map { postProcess(it) }
-            }.check { expectedInfos.isNotEmpty() }
+            }.takeIf { expectedInfos.isNotEmpty() }
 
     fun additionalItems(lookupElementFactory: LookupElementFactory): Pair<Collection<LookupElement>, InheritanceItemsSearcher?> {
         val (items, inheritanceSearcher) = additionalItemsNoPostProcess(lookupElementFactory)
@@ -287,7 +285,7 @@ class SmartCompletion(
                 val types = smartCastCalculator.types(item.receiverParameter).map { it.toFuzzyType(emptyList()) }
                 val matcher = { expectedInfo: ExpectedInfo -> types.matchExpectedInfo(expectedInfo) }
                 addLookupElements(null, expectedInfos, matcher) {
-                    item.createLookupElement().assignSmartCompletionPriority(SmartCompletionItemPriority.THIS).singletonList()
+                    listOf(item.createLookupElement().assignSmartCompletionPriority(SmartCompletionItemPriority.THIS))
                 }
             }
         }
@@ -328,7 +326,7 @@ class SmartCompletion(
     private fun createNamedArgumentWithValueLookupElement(name: Name, value: String, priority: SmartCompletionItemPriority): LookupElement {
         val lookupElement = LookupElementBuilder.create("${name.asString()} = $value")
                 .withIcon(KotlinIcons.PARAMETER)
-                .withInsertHandler({ context, item -> context.document.replaceString(context.startOffset, context.tailOffset, "${name.render()} = $value") })
+                .withInsertHandler({ context, _ -> context.document.replaceString(context.startOffset, context.tailOffset, "${name.render()} = $value") })
         lookupElement.putUserData(SmartCompletionInBasicWeigher.NAMED_ARGUMENT_KEY, Unit)
         lookupElement.assignSmartCompletionPriority(priority)
         return lookupElement

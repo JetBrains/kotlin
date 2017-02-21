@@ -36,13 +36,13 @@ object CreateClassFromReferenceExpressionActionFactory : CreateClassFromUsageFac
     }
 
     private fun getFullCallExpression(element: KtSimpleNameExpression): KtExpression? {
-        return element.parent?.let {
+        return element.parent.let {
             when {
                 it is KtCallExpression && it.calleeExpression == element -> return null
                 it is KtQualifiedExpression && it.selectorExpression == element -> it
                 else -> element
             }
-        } as? KtExpression
+        }
     }
 
     private fun isQualifierExpected(element: KtSimpleNameExpression) = element.isDotReceiver() || ((element.parent as? KtDotQualifiedExpression)?.isDotReceiver() ?: false)

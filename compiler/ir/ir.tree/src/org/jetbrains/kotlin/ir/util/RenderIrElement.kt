@@ -32,10 +32,10 @@ fun IrElement.render() = accept(RenderIrElementVisitor(), null)
 
 class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitElement(element: IrElement, data: Nothing?): String =
-            "? ${element.javaClass.simpleName}"
+            "? ${element::class.java.simpleName}"
 
     override fun visitDeclaration(declaration: IrDeclaration, data: Nothing?): String =
-            "? ${declaration.javaClass.simpleName} ${declaration.descriptor.ref()}"
+            "? ${declaration::class.java.simpleName} ${declaration.descriptor.ref()}"
 
     override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?): String =
             "MODULE_FRAGMENT ${declaration.descriptor.ref()}"
@@ -83,7 +83,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "SYNTHETIC_BODY kind=${body.kind}"
 
     override fun visitExpression(expression: IrExpression, data: Nothing?): String =
-            "? ${expression.javaClass.simpleName} type=${expression.type.render()}"
+            "? ${expression::class.java.simpleName} type=${expression.type.render()}"
 
     override fun <T> visitConst(expression: IrConst<T>, data: Nothing?): String =
             "CONST ${expression.kind} type=${expression.type.render()} value='${expression.value}'"
@@ -180,7 +180,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "CATCH parameter=${aCatch.parameter.ref()}"
 
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?): String =
-            "ERROR_DECL ${declaration.descriptor.javaClass.simpleName} ${declaration.descriptor.ref()}"
+            "ERROR_DECL ${declaration.descriptor::class.java.simpleName} ${declaration.descriptor.ref()}"
 
     override fun visitErrorExpression(expression: IrErrorExpression, data: Nothing?): String =
             "ERROR_EXPR '${expression.description}' type=${expression.type.render()}"
@@ -201,7 +201,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         val REFERENCE_RENDERER = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES 
 
         internal fun IrDeclaration.name(): String =
-                descriptor.let { it.name.toString() }
+                descriptor.name.toString()
 
         internal fun IrDeclaration.renderDeclared(): String =
                 DECLARATION_RENDERER.render(this.descriptor)

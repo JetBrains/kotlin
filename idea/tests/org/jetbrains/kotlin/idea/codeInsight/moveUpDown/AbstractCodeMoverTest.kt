@@ -54,7 +54,7 @@ abstract class AbstractMoveStatementTest : AbstractCodeMoverTest() {
                 it.checkAvailable(LightPlatformCodeInsightTestCase.getEditor(), LightPlatformCodeInsightTestCase.getFile(), info, direction == "down")
             } ?: error("No mover found")
 
-            assertEquals("Unmatched movers", defaultMoverClass.name, actualMover.javaClass.name)
+            assertEquals("Unmatched movers", defaultMoverClass.name, actualMover::class.java.name)
             assertEquals("Invalid applicability", isApplicableExpected, info.toMove2 != null)
         }
     }
@@ -62,7 +62,7 @@ abstract class AbstractMoveStatementTest : AbstractCodeMoverTest() {
 
 abstract class AbstractMoveLeftRightTest : AbstractCodeMoverTest() {
     protected fun doTest(path: String) {
-        doTest(path) { isApplicableExpected, direction ->  }
+        doTest(path) { _, _ ->  }
     }
 }
 

@@ -227,7 +227,7 @@ abstract class DeserializedMemberScope protected constructor(
     protected abstract fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
 
     override fun printScopeStructure(p: Printer) {
-        p.println(javaClass.simpleName, " {")
+        p.println(this::class.java.simpleName, " {")
         p.pushIndent()
 
         p.println("containingDeclaration = " + c.containingDeclaration)

@@ -81,8 +81,8 @@ fun getModificationsToPerform(
 
         val rules = mapOf<String, (String, File) -> Modification>(
                 newSuffix to { path, file -> ModifyContent(path, file) },
-                touchSuffix to { path, file -> TouchFile(path, touchPolicy) },
-                deleteSuffix to { path, file -> DeleteFile(path) }
+                touchSuffix to { path, _ -> TouchFile(path, touchPolicy) },
+                deleteSuffix to { path, _ -> DeleteFile(path) }
         )
 
         val modifications = ArrayList<Modification>()
@@ -130,7 +130,7 @@ fun getModificationsToPerform(
 abstract class Modification(val path: String) {
     abstract fun perform(workDir: File, mapping: MutableMap<File, File>)
 
-    override fun toString(): String = "${javaClass.simpleName} $path"
+    override fun toString(): String = "${this::class.java.simpleName} $path"
 }
 
 class ModifyContent(path: String, val dataFile: File) : Modification(path) {

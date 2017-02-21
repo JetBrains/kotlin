@@ -113,7 +113,7 @@ object KotlinEvaluationBuilder : EvaluatorBuilder {
                                       attachmentByPsiFile(codeFragment),
                                       Attachment("breakpoint.info", "line: ${position.line}"))
 
-            LOG.error("Trying to evaluate ${codeFragment.javaClass} with context ${codeFragment.context?.javaClass}", mergeAttachments(*attachments))
+            LOG.error("Trying to evaluate ${codeFragment::class.java} with context ${codeFragment.context?.javaClass}", mergeAttachments(*attachments))
             throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression in this context")
         }
 

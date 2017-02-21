@@ -259,7 +259,7 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
             val rootPath = path.substringBeforeLast("/") + "/"
 
             val rootDir = File(rootPath)
-            val extraFiles = rootDir.listFiles { dir, name ->
+            val extraFiles = rootDir.listFiles { _, name ->
                 if (!name.startsWith(prefix) || name == mainFileName) return@listFiles false
 
                 val ext = FileUtilRt.getExtension(name)

@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.GlobalSearchScopeWithModuleSources
-import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import java.util.*
 
 interface IdeaModuleInfo : ModuleInfo {
@@ -64,11 +63,11 @@ private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry, pro
         }
         is LibraryOrderEntry -> {
             val library = orderEntry.library ?: return listOf()
-            emptyOrSingletonList(LibraryInfo(project, library))
+            listOfNotNull(LibraryInfo(project, library))
         }
         is JdkOrderEntry -> {
             val sdk = orderEntry.jdk ?: return listOf()
-            emptyOrSingletonList(SdkInfo(project, sdk))
+            listOfNotNull(SdkInfo(project, sdk))
         }
         else -> {
             throw IllegalStateException("Unexpected order entry $orderEntry")

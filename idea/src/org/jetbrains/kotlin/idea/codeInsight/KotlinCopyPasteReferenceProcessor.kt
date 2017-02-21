@@ -153,7 +153,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
     ) {
         if (PsiTreeUtil.getNonStrictParentOfType(element, *IGNORE_REFERENCES_INSIDE) != null) return
 
-        element.forEachDescendantOfType<KtElement>(canGoInside = { it.javaClass as Class<*> !in IGNORE_REFERENCES_INSIDE }) { element ->
+        element.forEachDescendantOfType<KtElement>(canGoInside = { it::class.java as Class<*> !in IGNORE_REFERENCES_INSIDE }) { element ->
             val reference = element.mainReference ?: return@forEachDescendantOfType
 
             val descriptors = resolveReference(reference, bindingContext)

@@ -551,7 +551,7 @@ class KotlinPullUpHelper(
 
         fun KtClassOrObject.getOrCreateClassInitializer(): KtAnonymousInitializer {
             getOrCreateBody().declarations.lastOrNull { it is KtAnonymousInitializer }?.let { return it as KtAnonymousInitializer }
-            return addDeclaration(psiFactory.createAnonymousInitializer()) as KtAnonymousInitializer
+            return addDeclaration(psiFactory.createAnonymousInitializer())
         }
 
         fun KtElement.getConstructorBodyBlock(): KtBlockExpression? {

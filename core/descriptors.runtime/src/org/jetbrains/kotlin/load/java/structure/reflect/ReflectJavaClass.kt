@@ -110,5 +110,5 @@ class ReflectJavaClass(
 
     override fun hashCode() = klass.hashCode()
 
-    override fun toString() = javaClass.name + ": " + klass
+    override fun toString() = this::class.java.name + ": " + klass
 }

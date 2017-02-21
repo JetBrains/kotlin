@@ -67,7 +67,7 @@ class Preprocessor(val logger: Logger = SystemOutLogger) {
             override fun toString(): String = "Modify(${modifications.size})"
         }
 
-        override fun toString() = this.javaClass.simpleName
+        override fun toString() = this::class.java.simpleName
     }
 
     fun processSources(sourceRoot: File, profile: Profile) {

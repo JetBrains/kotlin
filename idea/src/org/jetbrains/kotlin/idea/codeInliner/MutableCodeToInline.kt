@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
 private val POST_INSERTION_ACTION: Key<(KtElement) -> Unit> = Key("POST_INSERTION_ACTION")
 
@@ -70,7 +69,7 @@ internal class MutableCodeToInline(
     }
 
     val expressions: Collection<KtExpression>
-        get() = statementsBefore + mainExpression.singletonOrEmptyList()
+        get() = statementsBefore + listOfNotNull(mainExpression)
 
     operator fun contains(element: PsiElement): Boolean {
         return expressions.any { it.isAncestor(element) }

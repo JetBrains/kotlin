@@ -32,7 +32,7 @@ class ReflectJavaClassifierType(public override val reflectType: Type) : Reflect
             is Class<*> -> ReflectJavaClass(type)
             is TypeVariable<*> -> ReflectJavaTypeParameter(type)
             is ParameterizedType -> ReflectJavaClass(type.rawType as Class<*>)
-            else -> throw IllegalStateException("Not a classifier type (${type.javaClass}): $type")
+            else -> throw IllegalStateException("Not a classifier type (${type::class.java}): $type")
         }
         classifier
     }

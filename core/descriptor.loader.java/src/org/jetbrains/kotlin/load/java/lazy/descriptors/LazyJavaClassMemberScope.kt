@@ -57,7 +57,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.*
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.util.*
 
@@ -87,8 +86,8 @@ class LazyJavaClassMemberScope(
         }
 
         enhanceSignatures(
-                result.ifEmpty { emptyOrSingletonList(createDefaultConstructor()) }
-        ).toReadOnlyList()
+                result.ifEmpty { listOfNotNull(createDefaultConstructor()) }
+        ).toList()
     }
 
     override fun JavaMethodDescriptor.isVisibleAsFunction(): Boolean {
@@ -192,8 +191,7 @@ class LazyJavaClassMemberScope(
         val overriddenBuiltinProperty = getter?.getOverriddenBuiltinWithDifferentJvmName()
         val specialGetterName = overriddenBuiltinProperty?.getBuiltinSpecialPropertyGetterName()
         if (specialGetterName != null
-                && !this@LazyJavaClassMemberScope.ownerDescriptor.hasRealKotlinSuperClassWithOverrideOf(
-                overriddenBuiltinProperty!!)
+            && !this@LazyJavaClassMemberScope.ownerDescriptor.hasRealKotlinSuperClassWithOverrideOf(overriddenBuiltinProperty)
         ) {
             return findGetterByName(specialGetterName, functions)
         }
@@ -209,7 +207,7 @@ class LazyJavaClassMemberScope(
             descriptor ->
             if (descriptor.valueParameters.size != 0) return@factory null
 
-            descriptor.check { KotlinTypeChecker.DEFAULT.isSubtypeOf(descriptor.returnType ?: return@check false, type) }
+            descriptor.takeIf { KotlinTypeChecker.DEFAULT.isSubtypeOf(descriptor.returnType ?: return@takeIf false, type) }
         }
     }
 
@@ -221,7 +219,7 @@ class LazyJavaClassMemberScope(
             if (descriptor.valueParameters.size != 1) return@factory null
 
             if (!KotlinBuiltIns.isUnit(descriptor.returnType ?: return@factory null)) return@factory null
-            descriptor.check { KotlinTypeChecker.DEFAULT.equalTypes(descriptor.valueParameters.single().type, type) }
+            descriptor.takeIf { KotlinTypeChecker.DEFAULT.equalTypes(descriptor.valueParameters.single().type, type) }
         }
     }
 

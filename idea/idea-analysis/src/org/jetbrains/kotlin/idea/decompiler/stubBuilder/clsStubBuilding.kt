@@ -142,7 +142,7 @@ fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<KtP
 fun createStubForTypeName(
         typeClassId: ClassId,
         parent: StubElement<out PsiElement>,
-        bindTypeArguments: (KotlinUserTypeStub, Int) -> Unit = { x, y -> }
+        bindTypeArguments: (KotlinUserTypeStub, Int) -> Unit = { _, _ -> }
 ): KotlinUserTypeStub {
     val substituteWithAny = typeClassId.isLocal
 

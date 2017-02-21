@@ -274,11 +274,8 @@ class IncrementalJvmCompilerRunner(
                 // there is no point in updating annotation file since all files will be compiled anyway
                 kaptAnnotationsFileUpdater = null
             }
-            else -> throw IllegalStateException("Unknown CompilationMode ${compilationMode.javaClass}")
+            else -> throw IllegalStateException("Unknown CompilationMode ${compilationMode::class.java}")
         }
-
-        @Suppress("NAME_SHADOWING")
-        var compilationMode = compilationMode
 
         val currentBuildInfo = BuildInfo(startTS = System.currentTimeMillis())
         BuildInfo.write(currentBuildInfo, lastBuildInfoFile)
@@ -356,7 +353,7 @@ class IncrementalJvmCompilerRunner(
                 changesRegistry.registerChanges(currentBuildInfo.startTS, dirtyData)
             }
             else {
-                assert(compilationMode is CompilationMode.Rebuild) { "Unexpected compilation mode: ${compilationMode.javaClass}" }
+                assert(compilationMode is CompilationMode.Rebuild) { "Unexpected compilation mode: ${compilationMode::class.java}" }
                 changesRegistry.unknownChanges(currentBuildInfo.startTS)
             }
         }
@@ -400,7 +397,6 @@ class IncrementalJvmCompilerRunner(
                 KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
                     result.addAll(partsByFacadeName(outputClass.classHeader.multifileClassName!!))
                 }
-
             }
         }
 

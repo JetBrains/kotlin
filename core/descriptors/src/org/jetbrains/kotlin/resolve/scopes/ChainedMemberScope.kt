@@ -47,7 +47,7 @@ class ChainedMemberScope(
     override fun toString() = debugName
 
     override fun printScopeStructure(p: Printer) {
-        p.println(javaClass.simpleName, ": ", debugName, " {")
+        p.println(this::class.java.simpleName, ": ", debugName, " {")
         p.pushIndent()
 
         for (scope in scopes) {

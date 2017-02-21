@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import kotlin.reflect.KClass
-import kotlin.reflect.memberFunctions
-import kotlin.reflect.primaryConstructor
+import kotlin.reflect.full.memberFunctions
+import kotlin.reflect.full.primaryConstructor
 
 open class KotlinScriptDefinitionFromAnnotatedTemplate(
         template: KClass<out Any>,
@@ -95,7 +95,7 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
         }
 
         fun makeScriptContents() = BasicScriptContents(file, getAnnotations = {
-            val classLoader = (template as Any).javaClass.classLoader
+            val classLoader = (template as Any)::class.java.classLoader
             try {
                 getAnnotationEntries(file, project)
                         .mapNotNull { psiAnn ->

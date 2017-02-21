@@ -253,7 +253,7 @@ fun <T, E : PsiElement> getPsiElementPopup(
 
     val list = JBList(elements.map(toPsi))
     list.cellRenderer = renderer
-    list.addListSelectionListener { e ->
+    list.addListSelectionListener {
         highlighter?.dropHighlight()
         val index = list.selectedIndex
         if (index >= 0) {

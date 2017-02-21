@@ -135,7 +135,7 @@ class KotlinPullUpDialog(
 
     private val sourceClass: KtClassOrObject get() = myClass as KtClassOrObject
 
-    override fun getDimensionServiceKey() = "#" + javaClass.name
+    override fun getDimensionServiceKey() = "#" + this::class.java.name
 
     override fun getSuperClass() = super.getSuperClass()
 

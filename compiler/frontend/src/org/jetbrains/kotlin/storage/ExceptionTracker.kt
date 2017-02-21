@@ -41,6 +41,6 @@ open class ExceptionTracker : ModificationTracker, LockBasedStorageManager.Excep
     }
 
     override fun toString(): String {
-        return javaClass.name + ": " + modificationCount
+        return this::class.java.name + ": " + modificationCount
     }
 }

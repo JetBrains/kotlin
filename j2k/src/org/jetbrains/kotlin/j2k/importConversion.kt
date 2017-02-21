@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 fun Converter.convertImportList(importList: PsiImportList): ImportList {
     val imports = importList.allImportStatements
@@ -134,7 +133,7 @@ private fun convertStaticExplicitImport(fqName: FqName, target: PsiElement?): Li
                 is KtClassBody -> {
                     val parentClass = originParent.parent as KtClassOrObject
                     if (parentClass is KtObjectDeclaration && parentClass.isCompanion()) {
-                        return parentClass.getFqName()?.child(nameToImport)?.render().singletonOrEmptyList()
+                        return listOfNotNull(parentClass.getFqName()?.child(nameToImport)?.render())
                     }
                 }
             }

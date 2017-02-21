@@ -48,7 +48,7 @@ abstract class AbstractReferenceToCompiledKotlinResolveInJavaTest : AbstractRefe
 
     override fun checkResolvedTo(element: PsiElement) {
         val navigationElement = element.navigationElement
-        Assert.assertFalse("Reference should not navigate to a light element\nWas: ${navigationElement.javaClass.simpleName}", navigationElement is KtLightElement<*, *>)
-        Assert.assertTrue("Reference should navigate to a kotlin declaration\nWas: ${navigationElement.javaClass.simpleName}", navigationElement is KtDeclaration || navigationElement is KtClsFile)
+        Assert.assertFalse("Reference should not navigate to a light element\nWas: ${navigationElement::class.java.simpleName}", navigationElement is KtLightElement<*, *>)
+        Assert.assertTrue("Reference should navigate to a kotlin declaration\nWas: ${navigationElement::class.java.simpleName}", navigationElement is KtDeclaration || navigationElement is KtClsFile)
     }
 }

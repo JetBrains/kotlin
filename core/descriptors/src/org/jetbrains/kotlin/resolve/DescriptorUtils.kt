@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addToStdlib.check
 
 fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor = companionObjectDescriptor ?: this
 
@@ -228,7 +227,7 @@ val DeclarationDescriptor.parents: Sequence<DeclarationDescriptor>
 val CallableMemberDescriptor.propertyIfAccessor: CallableMemberDescriptor
     get() = if (this is PropertyAccessorDescriptor) correspondingProperty else this
 
-fun CallableDescriptor.fqNameOrNull(): FqName? = fqNameUnsafe.check { it.isSafe }?.toSafe()
+fun CallableDescriptor.fqNameOrNull(): FqName? = fqNameUnsafe.takeIf { it.isSafe }?.toSafe()
 
 fun CallableMemberDescriptor.firstOverridden(
         useOriginal: Boolean = false,

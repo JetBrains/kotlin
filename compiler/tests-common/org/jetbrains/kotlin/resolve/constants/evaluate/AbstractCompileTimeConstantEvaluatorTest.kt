@@ -37,7 +37,7 @@ abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractAnnotationDesc
     // Test directives should look like [// val testedPropertyName: expectedValue]
     fun doConstantTest(path: String) {
         doTest(path) {
-            property, context ->
+            property, _ ->
             val compileTimeConstant = property.compileTimeInitializer
             if (compileTimeConstant is StringValue) {
                 "\\\"${compileTimeConstant.value}\\\""

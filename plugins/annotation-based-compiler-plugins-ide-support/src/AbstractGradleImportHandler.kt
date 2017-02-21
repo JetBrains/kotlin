@@ -60,7 +60,7 @@ abstract class AbstractGradleImportHandler : GradleProjectImportHandler {
         }?.data as? TaskData ?: return null
 
         val dataStorageTaskDescription = dataStorageTaskData.description ?: return null
-        val (annotationFqNamesList, classpathList) = TASK_DESCRIPTION_REGEX.matchEntire(
+        val (annotationFqNamesList, _) = TASK_DESCRIPTION_REGEX.matchEntire(
                 dataStorageTaskDescription)?.groupValues?.drop(1) ?: return null
 
         val annotationFqNames = annotationFqNamesList.split(',')

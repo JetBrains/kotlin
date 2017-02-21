@@ -92,7 +92,7 @@ class KotlinElements(
     override fun printElements(w: Writer, vararg elements: Element) {
         val printWriter = PrintWriter(w)
         for (element in elements) {
-            printWriter.println(element.simpleName.toString() + " (" + element.javaClass.name + ")")
+            printWriter.println(element.simpleName.toString() + " (" + element::class.java.name + ")")
         }
     }
 
@@ -177,7 +177,7 @@ object Constants {
             is Int, is Boolean -> value.toString()
             else -> throw IllegalArgumentException(
                     "Argument is not a primitive type or a string; it " +
-                    (if (value == null) "is a null value." else "has class " + value.javaClass.name) + ".")
+                    (if (value == null) "is a null value." else "has class " + value::class.java.name) + ".")
         }
     }
 

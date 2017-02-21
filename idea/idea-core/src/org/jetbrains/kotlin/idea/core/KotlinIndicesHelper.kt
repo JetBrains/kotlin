@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.isHiddenInResolution
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.util.*
@@ -270,7 +269,7 @@ class KotlinIndicesHelper(
         val shortNamesCache = PsiShortNamesCache.getInstance(project)
         if (shortNamesCache is CompositeShortNamesCache) {
             try {
-                fun getMyCachesField(clazz: Class<PsiShortNamesCache>): Field {
+                fun getMyCachesField(clazz: Class<out PsiShortNamesCache>): Field {
                     try {
                         return clazz.getDeclaredField("myCaches")
                     }
@@ -283,16 +282,16 @@ class KotlinIndicesHelper(
                     }
                 }
 
-                val myCachesField = getMyCachesField(shortNamesCache.javaClass)
+                val myCachesField = getMyCachesField(shortNamesCache::class.java)
                 val previousIsAccessible = myCachesField.isAccessible
                 try {
                     myCachesField.isAccessible = true
                     @Suppress("UNCHECKED_CAST")
                     return@lazy (myCachesField.get(shortNamesCache) as Array<PsiShortNamesCache>).filter {
                         it !is KotlinShortNamesCache
-                        && it.javaClass.name != "com.android.tools.idea.databinding.BrShortNamesCache"
-                        && it.javaClass.name != "com.android.tools.idea.databinding.DataBindingComponentShortNamesCache"
-                        && it.javaClass.name != "com.android.tools.idea.databinding.DataBindingShortNamesCache"
+                        && it::class.java.name != "com.android.tools.idea.databinding.BrShortNamesCache"
+                        && it::class.java.name != "com.android.tools.idea.databinding.DataBindingComponentShortNamesCache"
+                        && it::class.java.name != "com.android.tools.idea.databinding.DataBindingShortNamesCache"
                     }
                 }
                 finally {
@@ -479,7 +478,7 @@ class KotlinIndicesHelper(
             val translatedDeclaration = declarationTranslator(this) ?: return emptyList()
             if (!psiFilter(translatedDeclaration)) return emptyList()
 
-            return (resolutionFacade.resolveToDescriptor(translatedDeclaration)).singletonOrEmptyList()
+            return listOfNotNull((resolutionFacade.resolveToDescriptor(translatedDeclaration)))
         }
     }
 }

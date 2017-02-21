@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.psi.KtSuperExpression
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 
 fun resolveUnqualifiedSuperFromExpressionContext(
@@ -106,7 +105,7 @@ private fun resolveSupertypesForMethodOfAny(supertypes: Collection<KotlinType>, 
     return if (typesWithConcreteOverride.isNotEmpty())
         typesWithConcreteOverride
     else
-        anyType.singletonList()
+        listOf(anyType)
 }
 
 private fun resolveSupertypesByCalleeName(supertypes: Collection<KotlinType>, calleeName: Name): Collection<KotlinType> =

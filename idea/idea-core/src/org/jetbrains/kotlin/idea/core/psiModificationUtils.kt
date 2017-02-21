@@ -133,7 +133,7 @@ fun PsiElement.deleteElementAndCleanParent() {
     val parent = parent
 
     deleteElementWithDelimiters(this)
-    deleteChildlessElement(parent, this.javaClass)
+    deleteChildlessElement(parent, this::class.java)
 }
 
 // Delete element if it doesn't contain children of a given type

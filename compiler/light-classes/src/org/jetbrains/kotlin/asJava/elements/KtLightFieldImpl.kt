@@ -96,7 +96,7 @@ sealed class KtLightFieldImpl(
 
     override fun isValid() = containingClass.isValid
 
-    override fun toString(): String = "${this.javaClass.simpleName}:$name"
+    override fun toString(): String = "${this::class.java.simpleName}:$name"
 
     override fun equals(other: Any?): Boolean =
             other is KtLightField &&

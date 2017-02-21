@@ -276,7 +276,7 @@ object PositioningStrategies {
                 is KtPropertyAccessor -> element.namePlaceholder
                 is KtAnonymousInitializer -> element
                 else -> throw IllegalArgumentException(
-                        "Can't find text range for element '${element.javaClass.canonicalName}' with the text '${element.text}'")
+                        "Can't find text range for element '${element::class.java.canonicalName}' with the text '${element.text}'")
             }
             return markElement(elementToMark)
         }

@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
 abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberScopeImpl() {
@@ -89,7 +88,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
 
         computeNonDeclaredFunctions(result, name)
 
-        enhanceSignatures(result).toReadOnlyList()
+        enhanceSignatures(result).toList()
     }
 
     open protected fun JavaMethodDescriptor.isVisibleAsFunction() = true
@@ -245,9 +244,9 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
         computeNonDeclaredProperties(name, properties)
 
         if (DescriptorUtils.isAnnotationClass(ownerDescriptor))
-            properties.toReadOnlyList()
+            properties.toList()
         else
-            enhanceSignatures(properties).toReadOnlyList()
+            enhanceSignatures(properties).toList()
     }
 
     private fun resolveProperty(field: JavaField): PropertyDescriptor {
@@ -337,7 +336,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
             }
         }
 
-        return result.toReadOnlyList()
+        return result.toList()
     }
 
     protected abstract fun computeClassNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name>
@@ -345,7 +344,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
     override fun toString() = "Lazy scope for $ownerDescriptor"
 
     override fun printScopeStructure(p: Printer) {
-        p.println(javaClass.simpleName, " {")
+        p.println(this::class.java.simpleName, " {")
         p.pushIndent()
 
         p.println("containingDeclaration: $ownerDescriptor")

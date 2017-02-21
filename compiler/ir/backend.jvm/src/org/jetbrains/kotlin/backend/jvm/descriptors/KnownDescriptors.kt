@@ -42,7 +42,7 @@ open class KnownClassDescriptor(
         override val annotations: Annotations
 ) : ClassDescriptor {
     init {
-        assert(modality != Modality.SEALED) { "Implement getSealedSubclasses() for this class: $javaClass" }
+        assert(modality != Modality.SEALED) { "Implement getSealedSubclasses() for this class: ${this::class.java}" }
     }
 
     private lateinit var typeConstructor: TypeConstructor

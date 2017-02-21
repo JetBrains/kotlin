@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 class RangeToIntrinsic(function: FunctionDescriptor) : FunctionIntrinsicWithReceiverComputed() {
     val rangeTypeDescriptor = function.returnType!!.constructor.declarationDescriptor as ClassDescriptor
@@ -37,6 +36,6 @@ class RangeToIntrinsic(function: FunctionDescriptor) : FunctionIntrinsicWithRece
         }
         val finalClass = (existingClasses.firstOrNull() as? ClassDescriptor) ?: rangeTypeDescriptor
         val constructor = ReferenceTranslator.translateAsTypeReference(finalClass, context)
-        return JsNew(constructor, receiver.singletonOrEmptyList() + arguments)
+        return JsNew(constructor, listOfNotNull(receiver) + arguments)
     }
 }

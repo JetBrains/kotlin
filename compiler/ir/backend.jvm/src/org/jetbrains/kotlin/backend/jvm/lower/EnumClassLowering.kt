@@ -42,8 +42,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.findSingleFunction
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.*
 
@@ -169,8 +167,8 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
         private fun lowerEnumEntries() {
             irClass.declarations.transformFlat { declaration ->
                 if (declaration is IrEnumEntry) {
-                    createFieldForEnumEntry(declaration).singletonList() +
-                    lowerEnumEntryClass(declaration.correspondingClass).singletonOrEmptyList()
+                    listOf(createFieldForEnumEntry(declaration)) +
+                    listOfNotNull(lowerEnumEntryClass(declaration.correspondingClass))
                 }
                 else null
             }

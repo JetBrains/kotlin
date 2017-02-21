@@ -46,7 +46,7 @@ fun removeDefaultInitializers(arguments: List<JsExpression>, parameters: List<Js
             name != null && name in toRemove ->
                 listOf<JsStatement>()
             name != null && name in toExpand ->
-                flattenStatement((it as JsIf).thenStatement!!)
+                flattenStatement((it as JsIf).thenStatement)
             else ->
                 listOf(it)
         }
@@ -91,7 +91,7 @@ private fun isNameInitialized(
     name: JsName,
     initializer: JsStatement
 ): Boolean {
-    val thenStmt = (initializer as JsIf).thenStatement!!
+    val thenStmt = (initializer as JsIf).thenStatement
     val lastThenStmt = flattenStatement(thenStmt).last()
 
     val expr = (lastThenStmt as? JsExpressionStatement)?.expression

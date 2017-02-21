@@ -25,7 +25,7 @@ import javax.lang.model.element.TypeElement
 class ElementsTests : AbstractProcessorTest() {
     override val testDataDir = "plugins/annotation-processing/testData/elements"
     
-    fun testOverrides() = test("Overrides", "*") { set, roundEnv, env -> 
+    fun testOverrides() = test("Overrides", "*") { _, _, env ->
         val (parent, child, childChild) = Triple(env.findClass("Parent"), env.findClass("Child"), env.findClass("ChildOfChild"))
         
         val parentA = parent.findMethod("a")
@@ -52,7 +52,7 @@ class ElementsTests : AbstractProcessorTest() {
         childChildACharSequence.assertOverrides(childA, false)
     }
     
-    fun testOverrides2() = test("Overrides2", "*") { set, roundEnv, env ->
+    fun testOverrides2() = test("Overrides2", "*") { _, _, env ->
         val classes = listOf(env.findClass("Intf"), env.findClass("A"), env.findClass("B"))
         val (intf, a, b) = classes.map { it.findMethod("a") }
 
@@ -66,7 +66,7 @@ class ElementsTests : AbstractProcessorTest() {
         a.assertOverrides(intf, classes[2], true)
     }
     
-    fun testIsFunctionalInterface() = test("IsFunctionalInterface", "*") { set, roundEnv, env ->
+    fun testIsFunctionalInterface() = test("IsFunctionalInterface", "*") { _, _, env ->
         with (env.elementUtils as KotlinElements) {
             fun assertIsFunctionalInterface(fqName: String, isIntf: Boolean) {
                 assertEquals(isIntf, isFunctionalInterface(env.findClass(fqName)))
@@ -82,7 +82,7 @@ class ElementsTests : AbstractProcessorTest() {
         }
     }
     
-    fun testIsDeprecated() = test("IsDeprecated", "*") { set, roundEnv, env -> 
+    fun testIsDeprecated() = test("IsDeprecated", "*") { _, _, env ->
         with (env.elementUtils) {
             assertEquals(true, isDeprecated(env.findClass("Depr")))
             assertEquals(false, isDeprecated(env.findClass("NoDepr")))
@@ -90,7 +90,7 @@ class ElementsTests : AbstractProcessorTest() {
         }
     }
     
-    fun testGetElementValuesWithDefaults() = test("GetElementValuesWithDefaults", "Anno") { set, roundEnv, env ->
+    fun testGetElementValuesWithDefaults() = test("GetElementValuesWithDefaults", "Anno") { _, _, env ->
         val (a, b, c, d) = listOf(env.findClass("A"), env.findClass("B"), env.findClass("C"), env.findClass("D"))
         fun getValues(e: JeTypeElement) = env.elementUtils
                 .getElementValuesWithDefaults(e.annotationMirrors.first { it.psi.qualifiedName == "Anno" })
@@ -102,7 +102,7 @@ class ElementsTests : AbstractProcessorTest() {
         assertEquals(listOf("Mary", 20), getValues(d))
     }
     
-    fun testGetAllMembers() = test("GetAllMembers", "*") { set, roundEnv, env ->
+    fun testGetAllMembers() = test("GetAllMembers", "*") { _, _, env ->
         val clazz = env.findClass("MyClass")
         val members = clazz.enclosedElements
         assertEquals(5, members.size) // constructor, field, getter/setter, arbitrary method
@@ -114,7 +114,7 @@ class ElementsTests : AbstractProcessorTest() {
                      allMembers.sortedBy { it.simpleName.toString() }.joinToString { it.simpleName })
     }
     
-    fun testGetPackageOf() = test("GetPackageOf", "*") { set, roundEnv, env ->
+    fun testGetPackageOf() = test("GetPackageOf", "*") { _, _, env ->
         val e = env.elementUtils
 
         val myClass = env.findClass("test.MyClass")
@@ -130,7 +130,7 @@ class ElementsTests : AbstractProcessorTest() {
         assertEquals(3, classes.size)
     }
     
-    fun testGetArrayType() = test("GetPackageOf", "*") { set, roundEnv, env ->
+    fun testGetArrayType() = test("GetPackageOf", "*") { _, _, env ->
         val myClass = env.findClass("test.MyClass").asType()
         val array = env.typeUtils.getArrayType(myClass)
         assert(array is JeArrayType)

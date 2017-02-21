@@ -42,5 +42,5 @@ class ReflectJavaTypeParameter(
 
     override fun hashCode() = typeVariable.hashCode()
 
-    override fun toString() = javaClass.name + ": " + typeVariable
+    override fun toString() = this::class.java.name + ": " + typeVariable
 }

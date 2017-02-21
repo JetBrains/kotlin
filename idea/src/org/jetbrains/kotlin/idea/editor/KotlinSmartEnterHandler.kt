@@ -163,4 +163,4 @@ class KotlinSmartEnterHandler: SmartEnterProcessorWithFixers() {
 
 private val BRANCH_CONTAINERS = TokenSet.create(KtNodeTypes.THEN, KtNodeTypes.ELSE, KtNodeTypes.BODY)
 private val BRACES = TokenSet.create(KtTokens.RBRACE, KtTokens.LBRACE)
-private fun KtParameter.isInLambdaExpression() = this.parent?.parent is KtFunctionLiteral
+private fun KtParameter.isInLambdaExpression() = this.parent.parent is KtFunctionLiteral

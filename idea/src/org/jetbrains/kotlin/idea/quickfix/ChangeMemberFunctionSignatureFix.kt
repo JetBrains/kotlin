@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.resolve.findMemberWithMaxVisibility
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.supertypes
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 /**
@@ -254,7 +253,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
 
         object MatchNames : ParameterChooser {
             override fun choose(parameter: ValueParameterDescriptor, superParameter: ValueParameterDescriptor): ValueParameterDescriptor? {
-                return superParameter.check { parameter.name == superParameter.name }
+                return superParameter.takeIf { parameter.name == superParameter.name }
             }
         }
 

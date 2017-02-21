@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.name.FqName
 import java.util.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class CompositePackageFragmentProvider(// can be modified from outside
         private val providers: List<PackageFragmentProvider>) : PackageFragmentProvider {
@@ -31,7 +30,7 @@ class CompositePackageFragmentProvider(// can be modified from outside
         for (provider in providers) {
             result.addAll(provider.getPackageFragments(fqName))
         }
-        return result.toReadOnlyList()
+        return result.toList()
     }
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {

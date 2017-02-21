@@ -47,7 +47,7 @@ class DynamicCallableDescriptors(storageManager: StorageManager, builtIns: Kotli
 
     fun createDynamicDescriptorScope(call: Call, owner: DeclarationDescriptor) = object : MemberScopeImpl() {
         override fun printScopeStructure(p: Printer) {
-            p.println(javaClass.simpleName, ": dynamic candidates for " + call)
+            p.println(this::class.java.simpleName, ": dynamic candidates for " + call)
         }
 
         override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {

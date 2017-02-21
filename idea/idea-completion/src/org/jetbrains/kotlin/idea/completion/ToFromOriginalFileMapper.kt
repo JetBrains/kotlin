@@ -75,12 +75,12 @@ class ToFromOriginalFileMapper private constructor(
     fun <TElement : PsiElement> toOriginalFile(element: TElement): TElement? {
         if (element.containingFile != syntheticFile) return element
         val offset = toOriginalFile(element.startOffset) ?: return null
-        return PsiTreeUtil.findElementOfClassAtOffset(originalFile, offset, element.javaClass, true)
+        return PsiTreeUtil.findElementOfClassAtOffset(originalFile, offset, element::class.java, true)
     }
 
     fun <TElement : PsiElement> toSyntheticFile(element: TElement): TElement? {
         if (element.containingFile != originalFile) return element
         val offset = toSyntheticFile(element.startOffset) ?: return null
-        return PsiTreeUtil.findElementOfClassAtOffset(syntheticFile, offset, element.javaClass, true)
+        return PsiTreeUtil.findElementOfClassAtOffset(syntheticFile, offset, element::class.java, true)
     }
 }

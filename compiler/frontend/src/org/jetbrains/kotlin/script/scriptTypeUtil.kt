@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.serialization.deserialization.findNonGenericClassAcr
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
 import kotlin.reflect.*
+import kotlin.reflect.full.primaryConstructor
 
 data class ScriptParameter(val name: Name, val type: KotlinType)
 

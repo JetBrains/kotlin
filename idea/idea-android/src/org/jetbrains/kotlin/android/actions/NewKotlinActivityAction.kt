@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.actions.JavaToKotlinAction
 import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import java.io.File
-import kotlin.reflect.functions
-import kotlin.reflect.memberFunctions
+import kotlin.reflect.full.functions
+import kotlin.reflect.full.memberFunctions
 
 private val NEW_KOTLIN_ACTIVITY_START_LABEL = "Start New Kotlin Activity Action"
 private val NEW_KOTLIN_ACTIVITY_END_LABEL = "Finish New Kotlin Activity Action"

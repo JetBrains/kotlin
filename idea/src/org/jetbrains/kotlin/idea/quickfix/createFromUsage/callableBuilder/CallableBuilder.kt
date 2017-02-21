@@ -72,7 +72,6 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.lang.AssertionError
 import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
@@ -301,7 +300,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         .subtract(substitutionMap.keys)
                 fakeFunction = createFakeFunctionDescriptor(scope, typeArgumentsForFakeFunction.size)
                 collectSubstitutionsForCallableTypeParameters(fakeFunction, typeArgumentsForFakeFunction, substitutionMap)
-                mandatoryTypeParametersAsCandidates = receiverTypeCandidate.singletonOrEmptyList() + typeArgumentsForFakeFunction.map { TypeCandidate(substitutionMap[it]!!, scope) }
+                mandatoryTypeParametersAsCandidates = listOfNotNull(receiverTypeCandidate) + typeArgumentsForFakeFunction.map { TypeCandidate(substitutionMap[it]!!, scope) }
             }
             else {
                 fakeFunction = null
@@ -902,7 +901,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         // file templates
                         val newDeclaration = PsiTreeUtil.findElementOfClassAtOffset(jetFileToEdit,
                                                                                     declarationMarker.startOffset,
-                                                                                    declaration.javaClass,
+                                                                                    declaration::class.java,
                                                                                     false) ?: return
 
                         runWriteAction {

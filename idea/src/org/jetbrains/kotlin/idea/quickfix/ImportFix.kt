@@ -76,8 +76,6 @@ import org.jetbrains.kotlin.resolve.scopes.utils.addImportingScope
 import org.jetbrains.kotlin.resolve.scopes.utils.collectFunctions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.CachedValueProperty
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
 /**
@@ -201,7 +199,7 @@ internal abstract class ImportFixBase<T : KtExpression> protected constructor(
                 .any { diagnostic -> diagnostic.factory in getSupportedErrors() }
     }
 
-    protected open fun elementsToCheckDiagnostics(): Collection<PsiElement> = element.singletonOrEmptyList()
+    protected open fun elementsToCheckDiagnostics(): Collection<PsiElement> = listOfNotNull(element)
 
     abstract fun fillCandidates(
             name: String,
@@ -264,7 +262,7 @@ internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFix
         if (element.getIdentifier() != null) {
             val name = element.getReferencedName()
             if (Name.isValidIdentifier(name)) {
-                return Name.identifier(name).singletonList()
+                return listOf(Name.identifier(name))
             }
         }
 
@@ -356,7 +354,7 @@ internal class ImportConstructorReferenceFix(expression: KtSimpleNameExpression)
 }
 
 internal class InvokeImportFix(expression: KtExpression) : OrdinaryImportFixBase<KtExpression>(expression, MyFactory) {
-    override val importNames = OperatorNameConventions.INVOKE.singletonList()
+    override val importNames = listOf(OperatorNameConventions.INVOKE)
 
     override fun getCallTypeAndReceiver() = element?.let { CallTypeAndReceiver.OPERATOR(it) }
 
@@ -393,7 +391,7 @@ internal open class ArrayAccessorImportFix(
 
             val element = diagnostic.psiElement
             if (element is KtArrayAccessExpression && element.arrayExpression != null) {
-                return ArrayAccessorImportFix(element, importName(diagnostic).singletonList(), true).apply { computeSuggestions() }
+                return ArrayAccessorImportFix(element, listOf(importName(diagnostic)), true).apply { computeSuggestions() }
             }
 
             return null
@@ -430,14 +428,14 @@ internal class DelegateAccessorsImportFix(
 
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtExpression>? {
             return (diagnostic.psiElement as? KtExpression)?.let {
-                DelegateAccessorsImportFix(it, importNames(diagnostic.singletonList()), false).apply { computeSuggestions() }
+                DelegateAccessorsImportFix(it, importNames(listOf(diagnostic)), false).apply { computeSuggestions() }
             }
         }
 
         override fun doCreateActionsForAllProblems(sameTypeDiagnostics: Collection<Diagnostic>): List<IntentionAction> {
             val element = sameTypeDiagnostics.first().psiElement
             val names = importNames(sameTypeDiagnostics)
-            return (element as? KtExpression)?.let { DelegateAccessorsImportFix(it, names, true) }.singletonOrEmptyList()
+            return listOfNotNull((element as? KtExpression)?.let { DelegateAccessorsImportFix(it, names, true) })
         }
     }
 }
@@ -464,7 +462,7 @@ internal class ComponentsImportFix(
 
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtExpression>? {
             return (diagnostic.psiElement as? KtExpression)?.let {
-                ComponentsImportFix(it, importNames(diagnostic.singletonList()), false).apply { computeSuggestions() }
+                ComponentsImportFix(it, importNames(listOf(diagnostic)), false).apply { computeSuggestions() }
             }
         }
 
@@ -472,7 +470,7 @@ internal class ComponentsImportFix(
             val element = sameTypeDiagnostics.first().psiElement
             val names = importNames(sameTypeDiagnostics)
             val solveSeveralProblems = sameTypeDiagnostics.size > 1
-            return (element as? KtExpression)?.let { ComponentsImportFix(it, names, solveSeveralProblems) }.singletonOrEmptyList()
+            return listOfNotNull((element as? KtExpression)?.let { ComponentsImportFix(it, names, solveSeveralProblems) })
         }
     }
 }
@@ -490,8 +488,8 @@ internal class ImportForMismatchingArgumentsFix(
         return callExpression.valueArguments +
                callExpression.valueArguments.mapNotNull { it.getArgumentExpression() } +
                callExpression.valueArguments.mapNotNull { it.getArgumentName()?.referenceExpression } +
-               callExpression.valueArgumentList.singletonOrEmptyList() +
-               callExpression.referenceExpression().singletonOrEmptyList()
+               listOfNotNull(callExpression.valueArgumentList) +
+               listOfNotNull(callExpression.referenceExpression())
     }
 
     override fun fillCandidates(
@@ -571,8 +569,8 @@ object ImportForMissingOperatorFactory : KotlinSingleIntentionActionFactory() {
         when (name) {
             OperatorNameConventions.GET, OperatorNameConventions.SET -> {
                 if (element is KtArrayAccessExpression) {
-                    return object : ArrayAccessorImportFix(element, name.singletonList(), false) {
-                        override fun getSupportedErrors() = Errors.OPERATOR_MODIFIER_REQUIRED.singletonList()
+                    return object : ArrayAccessorImportFix(element, listOf(name), false) {
+                        override fun getSupportedErrors() = listOf(Errors.OPERATOR_MODIFIER_REQUIRED)
                     }
                 }
             }

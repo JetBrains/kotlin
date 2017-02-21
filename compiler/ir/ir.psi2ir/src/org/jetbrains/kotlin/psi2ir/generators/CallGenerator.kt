@@ -88,7 +88,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
                 is VariableDescriptor ->
                     generateGetVariable(startOffset, endOffset, descriptor, getTypeArguments(resolvedCall), origin)
                 else ->
-                    TODO("Unexpected callable descriptor: $descriptor ${descriptor.javaClass.simpleName}")
+                    TODO("Unexpected callable descriptor: $descriptor ${descriptor::class.java.simpleName}")
             }
 
     private fun generateGetVariable(

@@ -81,7 +81,7 @@ class KotlinStandaloneIncrementalCompilationTest : TestWithWorkingDir() {
         var step = 1
         for ((modificationStep, buildLogStep) in modifications.zip(buildLogSteps)) {
             modificationStep.forEach { it.perform(workingDir, mapWorkingToOriginalFile) }
-            val (exitCode, compiledSources, compileErrors) = make(cacheDir, sourceRoots, args)
+            val (_, compiledSources, compileErrors) = make(cacheDir, sourceRoots, args)
 
             expectedSB.appendLine(stepLogAsString(step, buildLogStep.compiledKotlinFiles, buildLogStep.compileErrors))
             expectedSBWithoutErrors.appendLine(stepLogAsString(step, buildLogStep.compiledKotlinFiles, buildLogStep.compileErrors, includeErrors = false))

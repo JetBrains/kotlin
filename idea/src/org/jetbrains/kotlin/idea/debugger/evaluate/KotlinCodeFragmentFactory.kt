@@ -57,11 +57,10 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.concurrent.atomic.AtomicReference
 
 class KotlinCodeFragmentFactory: CodeFragmentFactory() {
-    private val LOG = Logger.getInstance(this.javaClass)
+    private val LOG = Logger.getInstance(this::class.java)
 
     override fun createCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
         val contextElement = getWrappedContextElement(project, context)
@@ -323,7 +322,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             return containingFile
         }
 
-        private fun KtElement?.check(): Boolean = this != null && this.check { KotlinEditorTextProvider.isAcceptedAsCodeFragmentContext(it) } != null
+        private fun KtElement?.check(): Boolean = this != null && this.takeIf { KotlinEditorTextProvider.isAcceptedAsCodeFragmentContext(it) } != null
 
         //internal for tests
         fun createCodeFragmentForLabeledObjects(project: Project, markupMap: Map<*, ValueMarkup>): Pair<String, Map<String, Value>> {
@@ -398,7 +397,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
 
         val sb = StringBuilder()
 
-        javaFile?.packageName?.check { !it.isBlank() }?.let {
+        javaFile?.packageName?.takeIf { !it.isBlank() }?.let {
             sb.append("package ").append(it.quoteIfNeeded()).append("\n")
         }
 

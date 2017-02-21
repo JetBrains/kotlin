@@ -76,7 +76,7 @@ fun JsExpression.toInvocationWith(
             // `A(a, b, c)` -> `A(a, b, c, $this)`
             return JsInvocation(qualifier, leadingExtraArgs + padArguments(arguments) + thisExpr)
         }
-        else -> throw IllegalStateException("Unexpected node type: " + javaClass)
+        else -> throw IllegalStateException("Unexpected node type: " + this::class.java)
     }
 }
 

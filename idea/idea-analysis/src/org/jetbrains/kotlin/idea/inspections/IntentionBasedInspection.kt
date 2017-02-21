@@ -57,13 +57,13 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
             intention: KClass<out SelfTargetingRangeIntention<TElement>>,
             additionalChecker: (TElement) -> Boolean,
             problemText: String? = null
-    ) : this(listOf(IntentionData(intention, { element, inspection -> additionalChecker(element) } )), problemText)
+    ) : this(listOf(IntentionData(intention, { element, _ -> additionalChecker(element) } )), problemText)
 
 
 
     data class IntentionData<TElement : PsiElement>(
             val intention: KClass<out SelfTargetingRangeIntention<TElement>>,
-            val additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean = { element, inspection -> true }
+            val additionalChecker: (TElement, IntentionBasedInspection<TElement>) -> Boolean = { _, _ -> true }
     )
 
     open fun additionalFixes(element: TElement): List<LocalQuickFix>? = null

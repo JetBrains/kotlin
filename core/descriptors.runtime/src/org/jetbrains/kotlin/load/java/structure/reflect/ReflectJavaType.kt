@@ -39,5 +39,5 @@ abstract class ReflectJavaType : JavaType {
 
     override fun hashCode() = reflectType.hashCode()
 
-    override fun toString() = javaClass.name + ": " + reflectType
+    override fun toString() = this::class.java.name + ": " + reflectType
 }

@@ -32,7 +32,7 @@ object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFactory<K
     }
 
     override fun getPossibleClassKinds(element: KtUserType, diagnostic: Diagnostic): List<ClassKind> {
-        val typeRefParent = element.parent?.parent
+        val typeRefParent = element.parent.parent
         if (typeRefParent is KtConstructorCalleeExpression) return Collections.emptyList()
 
         val interfaceExpected = typeRefParent is KtSuperTypeEntry
@@ -60,7 +60,7 @@ object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFactory<K
 
     override fun extractFixData(element: KtUserType, diagnostic: Diagnostic): ClassInfo? {
         val name = element.referenceExpression?.getReferencedName() ?: return null
-        if (element.parent?.parent is KtConstructorCalleeExpression) return null
+        if (element.parent.parent is KtConstructorCalleeExpression) return null
 
         val file = element.containingFile as? KtFile ?: return null
 

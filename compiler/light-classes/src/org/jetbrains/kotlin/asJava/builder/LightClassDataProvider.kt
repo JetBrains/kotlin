@@ -260,7 +260,7 @@ class LightClassDataProviderForClassOrObject(private val classOrObject: KtClassO
     }
 
     override fun toString(): String {
-        return this.javaClass.name + " for " + classOrObject.name
+        return this::class.java.name + " for " + classOrObject.name
     }
 }
 
@@ -320,7 +320,7 @@ sealed class LightClassDataProviderForFileFacade private constructor(
     }
 
     override fun toString(): String {
-        return this.javaClass.name + " for $facadeFqName"
+        return this::class.java.name + " for $facadeFqName"
     }
 
     // create delegate by relevant files in project source using LightClassGenerationSupport

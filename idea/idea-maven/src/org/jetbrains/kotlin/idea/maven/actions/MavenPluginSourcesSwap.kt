@@ -105,12 +105,12 @@ class MavenPluginSourcesMoveToBuild : PsiElementBaseIntentionAction() {
     override fun startInWriteAction() = true
 
     override fun invoke(project: Project, editor: Editor, element: PsiElement) {
-        tryInvoke(project, element) { pom, dir, execution, build ->
+        tryInvoke(project, element) { pom, dir, execution, _ ->
             pom.executionSourceDirs(execution, listOf(dir))
         }
     }
 
-    private fun tryInvoke(project: Project, element: PsiElement, block: (pom: PomFile, dir: String, execution: MavenDomPluginExecution, build: MavenDomBuild) -> Unit = { p, d, e, b -> }): Boolean {
+    private fun tryInvoke(project: Project, element: PsiElement, block: (pom: PomFile, dir: String, execution: MavenDomPluginExecution, build: MavenDomBuild) -> Unit = { _, _, _, _ -> }): Boolean {
         val file = element.containingFile
 
         if (file == null || !MavenDomUtil.isMavenFile(file) || (element !is XmlElement && element.parent !is XmlElement)) {

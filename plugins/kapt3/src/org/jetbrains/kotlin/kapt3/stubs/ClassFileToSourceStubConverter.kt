@@ -632,7 +632,7 @@ class ClassFileToSourceStubConverter(
 
             is Type -> treeMaker.Select(treeMaker.Type(value), treeMaker.name("class"))
             is AnnotationNode -> convertAnnotation(value, packageFqName = null, filtered = false)!!
-            else -> throw IllegalArgumentException("Illegal literal expression value: $value (${value.javaClass.canonicalName})")
+            else -> throw IllegalArgumentException("Illegal literal expression value: $value (${value::class.java.canonicalName})")
         }
     }
 

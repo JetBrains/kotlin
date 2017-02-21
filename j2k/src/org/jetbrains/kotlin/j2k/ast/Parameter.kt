@@ -43,6 +43,7 @@ class FunctionParameter(identifier: Identifier,
         when (varVal) {
             VarValModifier.Var -> builder.append("var ")
             VarValModifier.Val -> builder.append("val ")
+            VarValModifier.None -> {}
         }
 
         builder.append(identifier)

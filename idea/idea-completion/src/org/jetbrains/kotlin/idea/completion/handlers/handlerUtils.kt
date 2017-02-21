@@ -136,7 +136,7 @@ fun createKeywordConstructLookupElement(
     return LookupElementBuilder.create(KeywordLookupObject(), keyword)
             .bold()
             .withTailText(tailText)
-            .withInsertHandler { insertionContext, lookupElement ->
+            .withInsertHandler { insertionContext, _ ->
                 if (insertionContext.completionChar == Lookup.NORMAL_SELECT_CHAR || insertionContext.completionChar == Lookup.REPLACE_SELECT_CHAR) {
                     val offset = insertionContext.tailOffset
                     val newIndent = detectIndent(insertionContext.document.charsSequence, offset - keyword.length)

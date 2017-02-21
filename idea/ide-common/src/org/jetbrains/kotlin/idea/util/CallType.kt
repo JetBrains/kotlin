@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.util.supertypesWithAny
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.lang.RuntimeException
 import java.util.*
 
@@ -261,7 +260,7 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
         is CallTypeAndReceiver.SUPER_MEMBERS -> {
             val qualifier = receiver.superTypeQualifier
             if (qualifier != null) {
-                return bindingContext.getType(receiver).singletonOrEmptyList().map { ReceiverType(it, 0) }
+                return listOfNotNull(bindingContext.getType(receiver)).map { ReceiverType(it, 0) }
             }
             else {
                 val resolutionScope = contextElement.getResolutionScope(bindingContext, resolutionFacade)

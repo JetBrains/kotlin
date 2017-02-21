@@ -75,7 +75,7 @@ abstract class AbstractMoveTest : KotlinMultiFileTestCase() {
         }
         isMultiModule = config["isMultiModule"]?.asBoolean ?: false
 
-        doTest({ rootDir, rootAfter ->
+        doTest({ rootDir, _ ->
             val mainFile = rootDir.findFileByRelativePath(mainFilePath)!!
             val mainPsiFile = PsiManager.getInstance(project!!).findFile(mainFile)!!
             val document = FileDocumentManager.getInstance().getDocument(mainFile)!!

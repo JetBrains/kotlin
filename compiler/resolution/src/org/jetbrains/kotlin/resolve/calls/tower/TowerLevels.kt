@@ -42,8 +42,6 @@ import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.typeUtil.getImmediateSuperclassNotAny
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
-import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
 internal abstract class AbstractScopeTowerLevel(
@@ -148,7 +146,7 @@ internal class MemberScopeTowerLevel(
     override fun getFunctions(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver<FunctionDescriptor>> {
         return collectMembers {
             getContributedFunctions(name, location) + it.getInnerConstructors(name, location) +
-            syntheticScopes.collectSyntheticMemberFunctions(it.singletonOrEmptyList(), name, location)
+            syntheticScopes.collectSyntheticMemberFunctions(listOfNotNull(it), name, location)
         }
     }
 }
@@ -278,7 +276,7 @@ private fun ResolutionScope.getContributedFunctionsAndConstructors(
         syntheticConstructorsProvider.getSyntheticConstructors(classifier, location).filterTo(result) { it.dispatchReceiverParameter == null }
     }
 
-    return result.toReadOnlyList()
+    return result.toList()
 }
 
 private fun ClassifierDescriptor.getCallableConstructors(): Collection<FunctionDescriptor> =

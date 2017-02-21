@@ -130,7 +130,7 @@ class LazyOperationsLog(
 
         val id = objectId(o)
 
-        val aClass = o.javaClass
+        val aClass = o::class.java
         sb.append(if (aClass.isAnonymousClass) aClass.name.substringAfterLast('.') else aClass.simpleName).append("@$id")
 
         fun Any.appendQuoted() {
@@ -139,15 +139,15 @@ class LazyOperationsLog(
 
         when {
             o is Named -> o.name.appendQuoted()
-            o.javaClass.simpleName == "LazyJavaClassifierType" -> {
+            o::class.java.simpleName == "LazyJavaClassifierType" -> {
                 val javaType = o.field<JavaTypeImpl<*>>("javaType")
                 javaType.psi.presentableText.appendQuoted()
             }
-            o.javaClass.simpleName == "LazyJavaClassTypeConstructor" -> {
+            o::class.java.simpleName == "LazyJavaClassTypeConstructor" -> {
                 val javaClass = o.field<Any>("this\$0").field<JavaClassImpl>("jClass")
                 javaClass.psi.name!!.appendQuoted()
             }
-            o.javaClass.simpleName == "DeserializedType" -> {
+            o::class.java.simpleName == "DeserializedType" -> {
                 val typeDeserializer = o.field<TypeDeserializer>("typeDeserializer")
                 val context = typeDeserializer.field<DeserializationContext>("c")
                 val typeProto = o.field<ProtoBuf.Type>("typeProto")
@@ -191,7 +191,7 @@ class LazyOperationsLog(
 }
 
 private fun <T> Any.field(name: String): T {
-    val field = this.javaClass.getDeclaredField(name)
+    val field = this::class.java.getDeclaredField(name)
     field.isAccessible = true
     @Suppress("UNCHECKED_CAST")
     return field.get(this) as T

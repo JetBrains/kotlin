@@ -83,7 +83,7 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
             val propertyName = propertyDescriptor.name.asString()
 
             val attributes = arrayListOf<PsiElement>()
-            val visitor = AndroidXmlVisitor { retId, wClass, valueElement ->
+            val visitor = AndroidXmlVisitor { retId, _, valueElement ->
                 if (retId.name == propertyName) attributes.add(valueElement)
             }
 
@@ -114,7 +114,7 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
         if (applicationPackage != null) {
             val mainVariant = mainSourceProvider.toVariant()
 
-            val method = try { javaClass.getMethod("getFlavorSourceProviders") } catch (e: NoSuchMethodException) { null }
+            val method = try { this::class.java.getMethod("getFlavorSourceProviders") } catch (e: NoSuchMethodException) { null }
             val variants: List<AndroidVariant>? = if (method != null) {
                 val sourceProviders = method.invoke(this) as List<SourceProvider>?
                 sourceProviders?.map { it.toVariant() } ?: listOf()

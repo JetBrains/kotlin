@@ -57,7 +57,7 @@ abstract class AbstractScopeAdapter : MemberScope {
     override fun getVariableNames() = workerScope.getVariableNames()
 
     override fun printScopeStructure(p: Printer) {
-        p.println(javaClass.simpleName, " {")
+        p.println(this::class.java.simpleName, " {")
         p.pushIndent()
 
         p.print("worker =")

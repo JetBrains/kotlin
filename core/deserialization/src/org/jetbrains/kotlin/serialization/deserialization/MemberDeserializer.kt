@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
-import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class MemberDeserializer(private val c: DeserializationContext) {
     private val annotationDeserializer = AnnotationDeserializer(c.components.moduleDescriptor, c.components.notFoundClasses)
@@ -267,7 +266,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
                     proto.varargElementType(c.typeTable)?.let { c.typeDeserializer.type(it) },
                     SourceElement.NO_SOURCE
             )
-        }.toReadOnlyList()
+        }.toList()
     }
 
     private fun DeclarationDescriptor.asProtoContainer(): ProtoContainer? = when (this) {

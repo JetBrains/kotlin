@@ -86,7 +86,7 @@ class ClasspathBasedKapt3Extension(
         if (processors.isEmpty()) {
             logger.info("No annotation processors available, aborting")
         } else {
-            logger.info { "Annotation processors: " + processors.joinToString { it.javaClass.canonicalName } }
+            logger.info { "Annotation processors: " + processors.joinToString { it::class.java.canonicalName } }
         }
 
         return processors

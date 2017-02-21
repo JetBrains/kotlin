@@ -32,7 +32,7 @@ class RegisteredFindersTest : KotlinLightCodeInsightFixtureTestCase() {
 
         project.getExtensions<PsiElementFinder>(PsiElementFinder.EP_NAME).forEach { finder ->
             if (finder is NonClasspathClassFinder) {
-                val name = finder.javaClass.simpleName
+                val name = finder::class.java.simpleName
                 val removed = expectedFindersNames.remove(name)
                 Assert.assertTrue("Unknown finder found: $finder, class name: $name, search in $expectedFindersNames.\n" +
                                   "Consider updating ${KotlinJavaPsiFacade::class.java}",

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.psi.*
 import com.intellij.psi.CommonClassNames.*
 import org.jetbrains.kotlin.j2k.ast.*
-import org.jetbrains.kotlin.utils.addToStdlib.check
 
 class CodeConverter(
         val converter: Converter,
@@ -81,7 +80,7 @@ class CodeConverter(
     fun convertLocalVariable(variable: PsiLocalVariable): LocalVariable {
         val isVal = canChangeType(variable)
         val type = typeConverter.convertVariableType(variable)
-        val explicitType = type.check { settings.specifyLocalVariableTypeByDefault || converter.shouldDeclareVariableType(variable, type, isVal) }
+        val explicitType = type.takeIf { settings.specifyLocalVariableTypeByDefault || converter.shouldDeclareVariableType(variable, type, isVal) }
         return LocalVariable(variable.declarationIdentifier(),
                              converter.convertAnnotations(variable),
                              converter.convertModifiers(variable, false),

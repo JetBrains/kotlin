@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.lang.reflect.*
 import java.util.*
 
@@ -102,7 +101,7 @@ open class KotlinPsiChecker : Annotator, HighlightRangeExtension {
         )
 
         fun createQuickFixes(diagnostic: Diagnostic): Collection<IntentionAction> =
-                createQuickFixes(diagnostic.singletonOrEmptyList())[diagnostic]
+                createQuickFixes(listOfNotNull(diagnostic))[diagnostic]
 
         private val UNRESOLVED_KEY = Key<Unit>("KotlinPsiChecker.UNRESOLVED_KEY")
 
@@ -133,7 +132,7 @@ private fun createQuickFixes(similarDiagnostics: Collection<Diagnostic>): MultiM
         actions.putValues(diagnostic, QuickFixes.getInstance().getActions(diagnostic.factory))
     }
 
-    actions.values().forEach { NoDeclarationDescriptorsChecker.check(it.javaClass) }
+    actions.values().forEach { NoDeclarationDescriptorsChecker.check(it::class.java) }
 
     return actions
 }

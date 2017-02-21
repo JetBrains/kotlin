@@ -17,17 +17,16 @@
 package org.jetbrains.kotlin.cfg.pseudocode.instructions
 
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
 abstract class InstructionWithNext(
         element: KtElement,
         blockScope: BlockScope
 ) : KtElementInstructionImpl(element, blockScope) {
     var next: Instruction? = null
-        set(value: Instruction?) {
+        set(value) {
             field = outgoingEdgeTo(value)
         }
 
     override val nextInstructions: Collection<Instruction>
-        get() = emptyOrSingletonList(next)
+        get() = listOfNotNull(next)
 }

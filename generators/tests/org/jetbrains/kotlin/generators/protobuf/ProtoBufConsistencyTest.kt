@@ -31,7 +31,7 @@ class ProtoBufConsistencyTest : TestCase() {
 
         for (protoPath in PROTO_PATHS) {
             val classFqName = protoPath.packageName + "." + protoPath.debugClassName
-            val klass = javaClass.classLoader.loadClass(classFqName) ?: error("Class not found: $classFqName")
+            val klass = this::class.java.classLoader.loadClass(classFqName) ?: error("Class not found: $classFqName")
             for (field in klass.declaredFields) {
                 if (Modifier.isStatic(field.modifiers) && field.type == GeneratedExtension::class.java) {
                     // The only place where type information for an extension is stored is the field's declared generic type.

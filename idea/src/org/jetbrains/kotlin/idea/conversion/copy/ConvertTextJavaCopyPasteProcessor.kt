@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.awt.datatransfer.DataFlavor
 import java.awt.datatransfer.Transferable
@@ -168,7 +167,7 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
         if (isParsedAsKotlinCode(text, pasteContext, project)) return null
 
         fun JavaContext.check(): JavaContext? {
-            return check { isParsedAsJavaCode(text, it, project) }
+            return takeIf { isParsedAsJavaCode(text, it, project) }
         }
 
         when (pasteContext) {

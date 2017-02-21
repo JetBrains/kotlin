@@ -235,8 +235,7 @@ private fun getExpressionToAddDebugExpressionBefore(tmpFile: KtFile, contextElem
 private fun addDebugExpressionBeforeContextElement(codeFragment: KtCodeFragment, contextElement: PsiElement): List<KtExpression> {
     val elementBefore = findElementBefore(contextElement)
 
-    val parent = elementBefore?.parent
-    if (parent == null || elementBefore == null) return emptyList()
+    val parent = elementBefore?.parent ?: return emptyList()
 
     val psiFactory = KtPsiFactory(codeFragment)
 

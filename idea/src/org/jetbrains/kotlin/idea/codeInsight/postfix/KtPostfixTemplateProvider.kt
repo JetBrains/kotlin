@@ -168,7 +168,7 @@ private class KtExpressionPostfixTemplateSelector(
     override fun getExpressions(context: PsiElement, document: Document, offset: Int): List<PsiElement> {
         val originalFile = context.containingFile.originalFile
         val textRange = context.textRange
-        val originalElement = findElementOfClassAtRange(originalFile, textRange.startOffset, textRange.endOffset, context.javaClass)
+        val originalElement = findElementOfClassAtRange(originalFile, textRange.startOffset, textRange.endOffset, context::class.java)
                               ?: return emptyList()
 
         val expressions = originalElement.parentsWithSelf

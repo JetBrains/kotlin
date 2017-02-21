@@ -113,7 +113,7 @@ class GenerationState @JvmOverloads constructor(
         }
     }
 
-    val extraJvmDiagnosticsTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "For extra diagnostics in ${this.javaClass}", false)
+    val extraJvmDiagnosticsTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "For extra diagnostics in ${this::class.java}", false)
     private val interceptedBuilderFactory: ClassBuilderFactory
     private var used = false
 

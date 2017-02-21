@@ -254,7 +254,7 @@ class LazyImportScope(
     override fun toString() = "LazyImportScope: " + debugName
 
     override fun printStructure(p: Printer) {
-        p.println(javaClass.simpleName, ": ", debugName, " {")
+        p.println(this::class.java.simpleName, ": ", debugName, " {")
         p.pushIndent()
 
         p.popIndent()

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.io.InputStream
 
 class CliVirtualFileFinder(
@@ -61,6 +60,6 @@ class CliVirtualFileFinder(
 
     private fun findBinaryClass(classId: ClassId, fileName: String): VirtualFile? =
             index.findClass(classId, acceptedRootTypes = JavaRoot.OnlyBinary) { dir, _ ->
-                dir.findChild(fileName)?.check(VirtualFile::isValid)
-            }?.check { it in scope }
+                dir.findChild(fileName)?.takeIf(VirtualFile::isValid)
+            }?.takeIf { it in scope }
 }

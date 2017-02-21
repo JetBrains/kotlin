@@ -51,7 +51,7 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
         while (elementToActions.isNotEmpty()) {
             var modificationStamp: Long? = file.modificationStamp
 
-            for ((element, action, processing) in elementToActions) {
+            for ((element, action, _) in elementToActions) {
                 if (element.isValid) {
                     action()
                 }

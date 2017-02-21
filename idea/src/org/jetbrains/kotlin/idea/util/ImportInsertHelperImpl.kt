@@ -392,7 +392,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
                 }
             }
             else {
-                error("Trying to insert import $fqName into a file ${file.name} of type ${file.javaClass} with no import list.")
+                error("Trying to insert import $fqName into a file ${file.name} of type ${file::class.java} with no import list.")
             }
         }
     }

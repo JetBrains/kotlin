@@ -56,7 +56,7 @@ class JeVariableElement(psi: PsiVariable) : JeAbstractElement<PsiVariable>(psi),
     
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other?.javaClass != javaClass) return false
+        if (other == null || other::class.java != this::class.java) return false
 
         return psi == (other as JeVariableElement).psi
     }

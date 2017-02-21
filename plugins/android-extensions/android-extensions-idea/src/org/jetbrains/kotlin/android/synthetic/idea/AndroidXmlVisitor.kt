@@ -47,7 +47,7 @@ class AndroidXmlVisitor(val elementCallback: (ResourceIdentifier, String, XmlAtt
         if (idAttribute != null) {
             val idAttributeValue = idAttribute.value
             if (idAttributeValue != null) {
-                val xmlType = tag?.getAttribute(AndroidConst.CLASS_ATTRIBUTE_NO_NAMESPACE)?.value ?: localName
+                val xmlType = tag.getAttribute(AndroidConst.CLASS_ATTRIBUTE_NO_NAMESPACE)?.value ?: localName
                 val name = androidIdToName(idAttributeValue)
                 if (name != null) elementCallback(name, xmlType, idAttribute)
             }

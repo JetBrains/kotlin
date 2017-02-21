@@ -55,7 +55,7 @@ open class KotlinIntroduceTypeAliasHandler : RefactoringActionHandler {
                 file,
                 "Select target code block",
                 listOf(TYPE_ELEMENT, TYPE_CONSTRUCTOR),
-                { elements, parent -> listOf(parent.containingFile) },
+                { _, parent -> listOf(parent.containingFile) },
                 continuation
         )
     }

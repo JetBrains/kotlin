@@ -199,7 +199,7 @@ sealed class KtLightMethodImpl(
 
     override fun hashCode(): Int = ((name.hashCode() * 31 + (lightMethodOrigin?.hashCode() ?: 0)) * 31 + containingClass.hashCode()) * 31 + clsDelegate.hashCode()
 
-    override fun toString(): String = "${this.javaClass.simpleName}:$name"
+    override fun toString(): String = "${this::class.java.simpleName}:$name"
 
     private class KtLightMethodForDeclaration(
             delegate: PsiMethod, origin: LightMemberOrigin?, containingClass: KtLightClass

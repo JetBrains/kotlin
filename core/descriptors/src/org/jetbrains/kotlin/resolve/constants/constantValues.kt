@@ -61,7 +61,7 @@ class ArrayValue(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+        if (other == null || other::class.java != this::class.java) return false
 
         return value == (other as ArrayValue).value
     }
@@ -149,7 +149,7 @@ class EnumValue(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+        if (other == null || other::class.java != this::class.java) return false
 
         return value == (other as EnumValue).value
     }
@@ -201,7 +201,7 @@ class IntValue(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+        if (other == null || other::class.java != this::class.java) return false
 
         val intValue = other as IntValue
 
@@ -266,7 +266,7 @@ class StringValue(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || javaClass != other.javaClass) return false
+        if (other == null || other::class.java != this::class.java) return false
 
         return value != (other as StringValue).value
     }

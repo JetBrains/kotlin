@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.io.File
 import java.io.OutputStream
 import java.io.PrintStream
@@ -60,11 +59,11 @@ object KotlinCompilerClient {
                                 checkId: Boolean = true
     ): CompileService? {
         val flagFile = System.getProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY)
-                     ?.let(String::trimQuotes)
-                     ?.check { !it.isBlank() }
-                     ?.let(::File)
-                     ?.check(File::exists)
-                     ?: makeAutodeletingFlagFile(baseDir = File(daemonOptions.runFilesPathOrDefault))
+                               ?.let(String::trimQuotes)
+                               ?.takeIf { !it.isBlank() }
+                               ?.let(::File)
+                               ?.takeIf(File::exists)
+                               ?: makeAutodeletingFlagFile(baseDir = File(daemonOptions.runFilesPathOrDefault))
         return connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, reportingTargets, autostart)
     }
 

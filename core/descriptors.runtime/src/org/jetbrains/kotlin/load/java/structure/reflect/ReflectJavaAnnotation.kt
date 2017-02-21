@@ -36,5 +36,5 @@ class ReflectJavaAnnotation(val annotation: Annotation) : ReflectJavaElement(), 
 
     override fun hashCode() = annotation.hashCode()
 
-    override fun toString() = javaClass.name + ": " + annotation
+    override fun toString() = this::class.java.name + ": " + annotation
 }

@@ -81,7 +81,7 @@ object J2KPostProcessingRegistrar {
         registerIntentionBasedProcessing(DestructureIntention())
         registerIntentionBasedProcessing(SimplifyAssertNotNullIntention())
 
-        registerDiagnosticBasedProcessing<KtBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, diagnostic ->
+        registerDiagnosticBasedProcessing<KtBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, _ ->
             val expression = RemoveUselessCastFix.invoke(element)
 
             val variable = expression.parent as? KtProperty
@@ -94,12 +94,12 @@ object J2KPostProcessingRegistrar {
             }
         }
 
-        registerDiagnosticBasedProcessing<KtTypeProjection>(Errors.REDUNDANT_PROJECTION) { element, diagnostic ->
+        registerDiagnosticBasedProcessing<KtTypeProjection>(Errors.REDUNDANT_PROJECTION) { _, diagnostic ->
             val fix = RemoveModifierFix.createRemoveProjectionFactory(true).createActions(diagnostic).single() as RemoveModifierFix
             fix.invoke()
         }
 
-        registerDiagnosticBasedProcessing<KtSimpleNameExpression>(Errors.UNNECESSARY_NOT_NULL_ASSERTION) { element, diagnostic ->
+        registerDiagnosticBasedProcessing<KtSimpleNameExpression>(Errors.UNNECESSARY_NOT_NULL_ASSERTION) { element, _ ->
             val exclExclExpr = element.parent as KtUnaryExpression
             exclExclExpr.replace(exclExclExpr.baseExpression!!)
         }
@@ -107,7 +107,7 @@ object J2KPostProcessingRegistrar {
         registerDiagnosticBasedProcessingFactory(
                 Errors.VAL_REASSIGNMENT, Errors.CAPTURED_VAL_INITIALIZATION
         ) {
-            element: KtSimpleNameExpression, diagnostic: Diagnostic ->
+            element: KtSimpleNameExpression, _: Diagnostic ->
             val property = element.mainReference.resolve() as? KtProperty
             if (property == null) {
                 null

@@ -127,7 +127,7 @@ class RenameKotlinClassProcessor : RenameKotlinPsiProcessor() {
             when (element) {
                 is KtLightClassForSourceDeclaration -> element.kotlinOrigin
                 is KtLightClassForFacade -> element
-                else -> throw AssertionError("Should not be suggested to rename element of type " + element.javaClass + " " + element)
+                else -> throw AssertionError("Should not be suggested to rename element of type " + element::class.java + " " + element)
             }
 
         is KtConstructor<*> ->

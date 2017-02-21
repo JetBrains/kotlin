@@ -373,7 +373,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             }
 
             override fun visitKtElement(element: KtElement) {
-                context.trace.report(UNSUPPORTED.on(element, javaClass.canonicalName))
+                context.trace.report(UNSUPPORTED.on(element, this::class.java.canonicalName))
             }
         })
         return newDataFlowInfo

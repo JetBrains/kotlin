@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.SmartSet
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 open class TypeCheckerContext(val errorTypeEqualsToAnything: Boolean) {
@@ -85,7 +84,7 @@ open class TypeCheckerContext(val errorTypeEqualsToAnything: Boolean) {
                 return true
             }
 
-            val policy = supertypesPolicy(current).check { it != SupertypesPolicy.None } ?: continue
+            val policy = supertypesPolicy(current).takeIf { it != SupertypesPolicy.None } ?: continue
             for (supertype in current.constructor.supertypes) deque.add(policy.transformType(supertype))
         }
 

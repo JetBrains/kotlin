@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 abstract class ChangeCallableReturnTypeFix(
@@ -76,7 +75,7 @@ abstract class ChangeCallableReturnTypeFix(
         val name = element.name
         if (name != null) {
             val container = element.resolveToDescriptor().containingDeclaration as? ClassDescriptor
-            val containerName = container?.name?.check { !it.isSpecial }?.asString()
+            val containerName = container?.name?.takeIf { !it.isSpecial }?.asString()
             val fullName = if (containerName != null) "'$containerName.$name'" else "'$name'"
             if (element is KtParameter) {
                 return "property $fullName"

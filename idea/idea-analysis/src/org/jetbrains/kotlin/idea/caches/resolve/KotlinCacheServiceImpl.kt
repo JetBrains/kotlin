@@ -262,7 +262,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 )
             }
 
-            else -> throw IllegalStateException("Unknown IdeaModuleInfo ${syntheticFileModule.javaClass}")
+            else -> throw IllegalStateException("Unknown IdeaModuleInfo ${syntheticFileModule::class.java}")
         }
     }
 
@@ -351,7 +351,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     private fun KtCodeFragment.getContextFile(): KtFile? {
         val contextElement = context ?: return null
         val contextFile = (contextElement as? KtElement)?.containingKtFile
-                          ?: throw AssertionError("Analyzing kotlin code fragment of type $javaClass with java context of type ${contextElement.javaClass}")
+                          ?: throw AssertionError("Analyzing kotlin code fragment of type ${this::class.java} with java context of type ${contextElement::class.java}")
         return if (contextFile is KtCodeFragment) contextFile.getContextFile() else contextFile
     }
 }

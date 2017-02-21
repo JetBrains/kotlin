@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.utils.addToStdlib.check
 
 class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpression>(KtCallExpression::class.java, "Replace 'assert' with 'if' statement"), LowPriorityAction {
     override fun isApplicableTo(element: KtCallExpression, caretOffset: Int): Boolean {
@@ -93,7 +92,7 @@ class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpress
 
     private fun extractMessageSingleExpression(functionLiteral: KtLambdaExpression, bindingContext: BindingContext): KtExpression? {
         return functionLiteral.bodyExpression?.statements?.singleOrNull()?.let { singleStatement ->
-            singleStatement.check { it.isUsedAsExpression(bindingContext) }
+            singleStatement.takeIf { it.isUsedAsExpression(bindingContext) }
         }
     }
 

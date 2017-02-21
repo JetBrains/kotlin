@@ -64,7 +64,7 @@ fun isAutoCreatedItUsage(expression: KtNameReferenceExpression): Boolean {
 
 // returns assignment which replaces initializer
 fun splitPropertyDeclaration(property: KtProperty): KtBinaryExpression {
-    val parent = property.parent!!
+    val parent = property.parent
 
     val initializer = property.initializer!!
 

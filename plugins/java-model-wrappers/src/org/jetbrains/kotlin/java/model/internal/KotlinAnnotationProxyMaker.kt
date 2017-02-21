@@ -140,7 +140,7 @@ private fun getObjectType(value: PsiAnnotationMemberValue): PsiType {
         }
     }
     
-    throw IllegalArgumentException("Illegal value type: ${value.javaClass}")
+    throw IllegalArgumentException("Illegal value type: ${value::class.java}")
 }
 
 private fun castPrimitiveValue(type: PsiType, value: Any?): Any = when (type) {

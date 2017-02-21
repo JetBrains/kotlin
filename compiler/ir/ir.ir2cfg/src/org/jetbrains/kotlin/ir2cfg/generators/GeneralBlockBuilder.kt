@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.ir2cfg.generators
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir2cfg.builders.BasicBlockBuilder
 import org.jetbrains.kotlin.ir2cfg.builders.BlockConnectorBuilder
-import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class GeneralBlockBuilder(override val incoming: BlockConnectorBuilder?) : BasicBlockBuilder {
 
@@ -32,5 +31,5 @@ class GeneralBlockBuilder(override val incoming: BlockConnectorBuilder?) : Basic
     override val last: IrStatement?
         get() = elements.lastOrNull()
 
-    override fun build() = BasicBlockImpl(elements.toReadOnlyList())
+    override fun build() = BasicBlockImpl(elements.toList())
 }

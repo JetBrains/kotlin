@@ -401,7 +401,7 @@ private class ConstantExpressionEvaluatorVisitor(
                     is IntegerValueTypeConstant ->
                         compileTimeConstant.getType(expectedType)
                     else ->
-                            throw IllegalStateException("Unexpected compileTimeConstant class: ${compileTimeConstant.javaClass.canonicalName}")
+                            throw IllegalStateException("Unexpected compileTimeConstant class: ${compileTimeConstant::class.java.canonicalName}")
 
                 }
                 if (!constantType.isSubtypeOf(expectedType)) return null

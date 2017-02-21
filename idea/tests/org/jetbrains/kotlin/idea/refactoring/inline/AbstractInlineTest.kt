@@ -43,7 +43,7 @@ abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
 
         val mainFileName = mainFile.name
         val mainFileBaseName = FileUtil.getNameWithoutExtension(mainFileName)
-        val extraFiles = mainFile.parentFile.listFiles { file, name ->
+        val extraFiles = mainFile.parentFile.listFiles { _, name ->
             name != mainFileName && name.startsWith("$mainFileBaseName.") && (name.endsWith(".kt") || name.endsWith(".java"))
         }
         val extraFilesToPsi = extraFiles.associateBy { fixture.configureByFile(path.replace(mainFileName, it.name)) }

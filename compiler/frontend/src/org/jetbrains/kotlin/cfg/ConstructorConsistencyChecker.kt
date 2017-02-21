@@ -113,7 +113,7 @@ class ConstructorConsistencyChecker private constructor(
                 .filterIsInstance<PropertyDescriptor>()
                 .filter { trace.get(BindingContext.BACKING_FIELD_REQUIRED, it) == true }
         pseudocode.traverse(
-                TraversalOrder.FORWARD, variablesData.variableInitializers, { instruction, enterData, exitData ->
+                TraversalOrder.FORWARD, variablesData.variableInitializers, { instruction, enterData, _ ->
 
             fun firstUninitializedNotNullProperty() = propertyDescriptors.firstOrNull {
                 !it.type.isMarkedNullable && !KotlinBuiltIns.isPrimitiveType(it.type) &&

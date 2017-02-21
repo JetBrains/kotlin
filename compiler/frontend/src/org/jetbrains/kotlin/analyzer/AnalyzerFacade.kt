@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
 class ResolverForModule(
@@ -179,7 +178,7 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
         val resolverForProject = createResolverForProject()
 
         fun computeDependencyDescriptors(module: M): List<ModuleDescriptorImpl> {
-            val orderedDependencies = firstDependency.singletonOrEmptyList() + module.dependencies()
+            val orderedDependencies = listOfNotNull(firstDependency) + module.dependencies()
             val dependenciesDescriptors = orderedDependencies.mapTo(ArrayList<ModuleDescriptorImpl>()) {
                 dependencyInfo ->
                 resolverForProject.descriptorForModule(dependencyInfo as M)

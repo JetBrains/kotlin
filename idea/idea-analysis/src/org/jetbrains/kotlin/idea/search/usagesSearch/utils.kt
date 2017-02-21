@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
-import org.jetbrains.kotlin.utils.addToStdlib.check
 
 val KtDeclaration.descriptor: DeclarationDescriptor?
     get() = this.analyze().get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
@@ -163,7 +162,7 @@ private fun processInheritorsDelegatingCallToSpecifiedConstructor(
 ): Boolean {
     return HierarchySearchRequest(klass, scope, false).searchInheritors().all {
         runReadAction {
-            val unwrapped = it.check { it.isValid }?.unwrapped
+            val unwrapped = it.takeIf { it.isValid }?.unwrapped
             if (unwrapped is KtClass)
                 processClassDelegationCallsToSpecifiedConstructor(unwrapped, descriptor, process)
             else

@@ -121,7 +121,7 @@ abstract class PlatformConfigurator(
 
     abstract fun configureModuleComponents(container: StorageComponentContainer)
 
-    val platformSpecificContainer = composeContainer(this.javaClass.simpleName) {
+    val platformSpecificContainer = composeContainer(this::class.java.simpleName) {
         useInstance(dynamicTypesSettings)
         declarationCheckers.forEach { useInstance(it) }
         callCheckers.forEach { useInstance(it) }

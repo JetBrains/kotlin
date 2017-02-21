@@ -296,7 +296,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
                     }
                 }
                 else if (comment.startsWith("//Breakpoint!")) {
-                    val ordinal = getPropertyFromComment(comment, "lambdaOrdinal")?.toInt() ?: null
+                    val ordinal = getPropertyFromComment(comment, "lambdaOrdinal")?.toInt()
                     val condition = getPropertyFromComment(comment, "condition")
                     createLineBreakpoint(breakpointManager, file, lineIndex, ordinal, condition)
                 }

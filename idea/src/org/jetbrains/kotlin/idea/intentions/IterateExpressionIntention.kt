@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(KtExpression::class.java, "Iterate over collection"), HighPriorityAction {
     override fun isApplicableTo(element: KtExpression, caretOffset: Int): Boolean {
@@ -77,7 +76,7 @@ class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(KtExpres
                     componentFunctions.map { suggestNamesForComponent(it, project, collectingValidator) }
                 }
                 else {
-                    KotlinNameSuggester.suggestIterationVariableNames(element, elementType, bindingContext, nameValidator, "e").singletonList()
+                    listOf(KotlinNameSuggester.suggestIterationVariableNames(element, elementType, bindingContext, nameValidator, "e"))
                 }
 
                 val paramPattern = (names.singleOrNull()?.first()
@@ -87,7 +86,7 @@ class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(KtExpres
 
                 CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(forExpression)?.let { forExpression ->
                     val bodyPlaceholder = (forExpression.body as KtBlockExpression).statements.single()
-                    val parameters = forExpression.destructuringDeclaration?.entries ?: forExpression.loopParameter!!.singletonList()
+                    val parameters = forExpression.destructuringDeclaration?.entries ?: listOf(forExpression.loopParameter!!)
 
                     val templateBuilder = TemplateBuilderImpl(forExpression)
                     for ((parameter, parameterNames) in (parameters zip names)) {

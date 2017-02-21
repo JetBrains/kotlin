@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.isWithoutValueArguments
-import org.jetbrains.kotlin.utils.addToStdlib.check
 
 class QualifiedExpressionResolver {
     fun resolvePackageHeader(
@@ -418,12 +417,12 @@ class QualifiedExpressionResolver {
         val qualifierDescriptor = when (receiver) {
             is PackageQualifier -> {
                 val childPackageFQN = receiver.descriptor.fqName.child(name)
-                receiver.descriptor.module.getPackage(childPackageFQN).check { !it.isEmpty() } ?:
+                receiver.descriptor.module.getPackage(childPackageFQN).takeIf { !it.isEmpty() } ?:
                 receiver.descriptor.memberScope.getContributedClassifier(name, location)
             }
             is ClassQualifier -> receiver.staticScope.getContributedClassifier(name, location)
             null -> context.scope.findClassifier(name, location) ?:
-                    context.scope.ownerDescriptor.module.getPackage(FqName.ROOT.child(name)).check { !it.isEmpty() }
+                    context.scope.ownerDescriptor.module.getPackage(FqName.ROOT.child(name)).takeIf { !it.isEmpty() }
             is ReceiverValue -> receiver.type.memberScope.memberScopeAsImportingScope().findClassifier(name, location)
             else -> null
         }
@@ -549,7 +548,7 @@ class QualifiedExpressionResolver {
             trace: BindingTrace,
             position: QualifierPosition
     ) {
-        path.foldRight(packageView) { (name, expression), currentView ->
+        path.foldRight(packageView) { (_, expression), currentView ->
             storeResult(trace, expression, currentView, shouldBeVisibleFrom = null, position = position)
             currentView.containingDeclaration
             ?: error("Containing Declaration must be not null for package with fqName: ${currentView.fqName}, " +

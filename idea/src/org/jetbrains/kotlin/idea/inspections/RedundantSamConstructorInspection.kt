@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -47,8 +46,6 @@ import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.collectSyntheticMemberFunctions
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.utils.addToStdlib.check
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 class RedundantSamConstructorInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
@@ -179,7 +176,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             for (staticFunWithSameName in containingClass.staticScope.getContributedFunctions(functionResolvedCall.resultingDescriptor.name, NoLookupLocation.FROM_IDE)) {
                 if (staticFunWithSameName is SamAdapterDescriptor<*>) {
                     if (isSamAdapterSuitableForCall(staticFunWithSameName, originalFunctionDescriptor, samConstructorCallArguments.size)) {
-                        return samConstructorCallArguments.check { canBeReplaced(functionCall, it) } ?: emptyList()
+                        return samConstructorCallArguments.takeIf { canBeReplaced(functionCall, it) } ?: emptyList()
                     }
                 }
             }
@@ -187,13 +184,13 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             // SAM adapters for member functions
             val syntheticScopes = functionCall.getResolutionFacade().getFrontendService(SyntheticScopes::class.java)
             val syntheticExtensions = syntheticScopes.collectSyntheticMemberFunctions(
-                        containingClass.defaultType.singletonList(),
-                        functionResolvedCall.resultingDescriptor.name,
-                        NoLookupLocation.FROM_IDE)
+                    listOf(containingClass.defaultType),
+                    functionResolvedCall.resultingDescriptor.name,
+                    NoLookupLocation.FROM_IDE)
             for (syntheticExtension in syntheticExtensions) {
                 val samAdapter = syntheticExtension as? SamAdapterExtensionFunctionDescriptor ?: continue
                 if (isSamAdapterSuitableForCall(samAdapter, originalFunctionDescriptor, samConstructorCallArguments.size)) {
-                    return samConstructorCallArguments.check { canBeReplaced(functionCall, it) } ?: emptyList()
+                    return samConstructorCallArguments.takeIf { canBeReplaced(functionCall, it) } ?: emptyList()
                 }
             }
 
@@ -204,7 +201,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
                 = argument.toCallExpression()?.samConstructorValueArgument() != null
 
         private fun KtCallExpression.samConstructorValueArgument(): KtValueArgument? {
-            return valueArguments.singleOrNull()?.check { it.getArgumentExpression() is KtLambdaExpression }
+            return valueArguments.singleOrNull()?.takeIf { it.getArgumentExpression() is KtLambdaExpression }
         }
 
         private fun ValueArgument.toCallExpression(): KtCallExpression? {

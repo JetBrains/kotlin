@@ -40,8 +40,6 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.*
-import org.jetbrains.kotlin.utils.addToStdlib.check
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
 enum class Tail {
@@ -66,7 +64,7 @@ interface ByTypeFilter {
         get() = null
 
     val multipleFuzzyTypes: Collection<FuzzyType>
-        get() = fuzzyType.singletonOrEmptyList()
+        get() = listOfNotNull(fuzzyType)
 
     object All : ByTypeFilter {
         override fun matchingSubstitutor(descriptorType: FuzzyType) = TypeSubstitutor.EMPTY
@@ -543,13 +541,13 @@ class ExpectedInfos(
         val declaration = expressionWithType.parent as? KtDeclarationWithBody ?: return null
         if (expressionWithType != declaration.bodyExpression || declaration.hasBlockBody()) return null
         val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] as? FunctionDescriptor ?: return null
-        return functionReturnValueExpectedInfo(descriptor, hasExplicitReturnType = declaration.hasDeclaredReturnType()).singletonOrEmptyList()
+        return listOfNotNull(functionReturnValueExpectedInfo(descriptor, hasExplicitReturnType = declaration.hasDeclaredReturnType()))
     }
 
     private fun calculateForReturn(expressionWithType: KtExpression): Collection<ExpectedInfo>? {
         val returnExpression = expressionWithType.parent as? KtReturnExpression ?: return null
         val descriptor = returnExpression.getTargetFunctionDescriptor(bindingContext) ?: return null
-        return functionReturnValueExpectedInfo(descriptor, hasExplicitReturnType = true).singletonOrEmptyList()
+        return listOfNotNull(functionReturnValueExpectedInfo(descriptor, hasExplicitReturnType = true))
     }
 
     private fun functionReturnValueExpectedInfo(descriptor: FunctionDescriptor, hasExplicitReturnType: Boolean): ExpectedInfo? {
@@ -582,7 +580,7 @@ class ExpectedInfos(
 
         val loopVar = forExpression.loopParameter
         val loopVarType = if (loopVar != null && loopVar.typeReference != null)
-            (bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, loopVar] as VariableDescriptor).type.check { !it.isError }
+            (bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, loopVar] as VariableDescriptor).type.takeIf { !it.isError }
         else
             null
 
@@ -624,7 +622,7 @@ class ExpectedInfos(
                             ?: property.dispatchReceiverParameter?.type?.toFuzzyType(emptyList())
                             ?: property.builtIns.nullableNothingType.toFuzzyType(emptyList())
 
-        val explicitPropertyType = property.fuzzyReturnType()?.check { propertyDeclaration.typeReference != null }
+        val explicitPropertyType = property.fuzzyReturnType()?.takeIf { propertyDeclaration.typeReference != null }
                                    ?: property.overriddenDescriptors.singleOrNull()?.fuzzyReturnType() // for override properties use super property type as explicit (if not specified)
         val typesWithGetDetector = TypesWithGetValueDetector(scope, indicesHelper, propertyOwnerType, explicitPropertyType)
         val typesWithSetDetector = if (property.isVar) TypesWithSetValueDetector(scope, indicesHelper, propertyOwnerType) else null

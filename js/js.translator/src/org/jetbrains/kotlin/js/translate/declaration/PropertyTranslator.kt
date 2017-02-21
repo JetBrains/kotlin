@@ -255,7 +255,7 @@ private class PropertyTranslator(
                     is PropertySetterDescriptor, is LocalVariableAccessorDescriptor.Setter ->
                         "setter"
                     else ->
-                        throw IllegalArgumentException("Unknown accessor type ${accessorDescriptor.javaClass}")
+                        throw IllegalArgumentException("Unknown accessor type ${accessorDescriptor::class.java}")
                 }
 
         val name = accessorDescriptor.name.asString()

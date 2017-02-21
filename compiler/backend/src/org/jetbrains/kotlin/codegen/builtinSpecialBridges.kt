@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getParentCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeAsSequence
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
 class BridgeForBuiltinSpecial<out Signature : Any>(
@@ -76,7 +75,7 @@ object BuiltinSpecialBridgesUtil {
         else null
 
         val commonBridges = reachableDeclarations.mapTo(LinkedHashSet<Signature>(), signatureByDescriptor)
-        commonBridges.removeAll(specialBridgesSignaturesInSuperClass + specialBridge?.from.singletonOrEmptyList())
+        commonBridges.removeAll(specialBridgesSignaturesInSuperClass + listOfNotNull(specialBridge?.from))
 
         if (fake) {
             for (overridden in function.overriddenDescriptors.map { it.original }) {

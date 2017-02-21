@@ -117,7 +117,7 @@ class ScriptTest : KtUsefulTestCase() {
 
             try {
                 return if (runIsolated) KotlinToJVMBytecodeCompiler.compileScript(environment, paths)
-                else KotlinToJVMBytecodeCompiler.compileScript(environment, this.javaClass.classLoader)
+                else KotlinToJVMBytecodeCompiler.compileScript(environment, this::class.java.classLoader)
             }
             catch (e: CompilationException) {
                 messageCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),

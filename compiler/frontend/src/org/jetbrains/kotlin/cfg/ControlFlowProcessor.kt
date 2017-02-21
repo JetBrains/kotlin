@@ -1026,7 +1026,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         }
 
         private fun isBlockInDoWhile(expression: KtBlockExpression): Boolean {
-            val parent = expression.parent ?: return false
+            val parent = expression.parent
             return parent.parent is KtDoWhileExpression
         }
 

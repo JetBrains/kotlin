@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 class ReferenceVariantsHelper(
@@ -281,7 +280,7 @@ class ReferenceVariantsHelper(
             val qualifier = bindingContext[BindingContext.QUALIFIER, receiverExpression] ?: return emptyList()
             val staticDescriptors = qualifier.staticScope.getDescriptorsFiltered(kindFilter, nameFilter)
 
-            val objectDescriptor = (qualifier as? ClassQualifier)?.descriptor?.check { it.kind == ClassKind.OBJECT } ?: return staticDescriptors
+            val objectDescriptor = (qualifier as? ClassQualifier)?.descriptor?.takeIf { it.kind == ClassKind.OBJECT } ?: return staticDescriptors
 
             return staticDescriptors + objectDescriptor.defaultType.memberScope.getDescriptorsFiltered(kindFilter, nameFilter)
         }

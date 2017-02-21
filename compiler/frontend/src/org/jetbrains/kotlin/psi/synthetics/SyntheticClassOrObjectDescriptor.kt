@@ -86,7 +86,7 @@ class SyntheticClassOrObjectDescriptor(
     override fun getSealedSubclasses() = emptyList<ClassDescriptor>()
 
     init {
-        assert(modality != Modality.SEALED) { "Implement getSealedSubclasses() for this class: $javaClass" }
+        assert(modality != Modality.SEALED) { "Implement getSealedSubclasses() for this class: ${this::class.java}" }
     }
 
     override fun getDeclaredCallableMembers(): List<CallableMemberDescriptor> =

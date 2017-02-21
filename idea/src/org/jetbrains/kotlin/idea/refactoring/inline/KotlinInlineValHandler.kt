@@ -54,7 +54,6 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
@@ -79,7 +78,7 @@ class KotlinInlineValHandler : InlineActionHandler() {
             parent.parent.firstChild.text == replacement.firstChild.text) {
             val entriesToAdd = replacement.entries
             val templateExpression = parent.parent as KtStringTemplateExpression
-            val inlinedExpressions = if (entriesToAdd.size > 0) {
+            val inlinedExpressions = if (entriesToAdd.isNotEmpty()) {
                 val firstAddedEntry = templateExpression.addRangeBefore(entriesToAdd.first(), entriesToAdd.last(), parent)
                 val lastNewEntry = parent.prevSibling
                 val nextElement = parent.nextSibling
@@ -99,7 +98,7 @@ class KotlinInlineValHandler : InlineActionHandler() {
             return inlinedExpressions
         }
 
-        return expression.replaced(replacement).singletonList()
+        return listOf(expression.replaced(replacement))
     }
 
     override fun inlineElement(project: Project, editor: Editor?, element: PsiElement) {

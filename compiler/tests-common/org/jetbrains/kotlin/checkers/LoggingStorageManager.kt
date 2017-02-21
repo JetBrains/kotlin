@@ -54,7 +54,7 @@ class LoggingStorageManager(
         }
 
     private fun computeCallerData(lambda: Any, wrapper: Any, arguments: List<Any?>, result: Any?): CallData {
-        val lambdaClass = lambda.javaClass
+        val lambdaClass = lambda::class.java
 
         val outerClass: Class<out Any?>? = lambdaClass.enclosingClass
 
@@ -79,7 +79,7 @@ class LoggingStorageManager(
                                   val value = field.get(outerInstance)
                                   if (value == null) return@firstOrNull false
 
-                                  val valueClass = value.javaClass
+                                  val valueClass = value::class.java
                                   val functionField = valueClass.findFunctionField()
                                   if (functionField == null) return@firstOrNull false
 
@@ -93,7 +93,7 @@ class LoggingStorageManager(
             if (wrappedLambdaField != null) {
                 wrappedLambdaField.isAccessible = true
                 val wrappedLambda = wrappedLambdaField.get(lambda)
-                return CallData(outerInstance, null, enclosingEntity(wrappedLambda.javaClass), arguments, result)
+                return CallData(outerInstance, null, enclosingEntity(wrappedLambda::class.java), arguments, result)
             }
         }
 
@@ -102,7 +102,7 @@ class LoggingStorageManager(
         return CallData(outerInstance, containingField, enclosingEntity, arguments, result)
     }
 
-    private fun enclosingEntity(_class: Class<Any>): GenericDeclaration? {
+    private fun enclosingEntity(_class: Class<out Any>): GenericDeclaration? {
         val result = _class.enclosingConstructor
             ?: _class.enclosingMethod
             ?: _class.enclosingClass
@@ -117,8 +117,7 @@ class LoggingStorageManager(
         while (true) {
             result.addAll(c.declaredFields.toList())
             @Suppress("UNCHECKED_CAST")
-            val superClass = (c as Class<Any>).superclass as Class<Any>?
-            if (superClass == null) break
+            val superClass = (c as Class<Any>).superclass ?: break
             if (c == superClass) break
             c = superClass
         }

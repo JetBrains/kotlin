@@ -194,7 +194,7 @@ class SyntheticAccessorLowering(val state: GenerationState) : FileLoweringPass, 
             call.extensionReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, fromDescriptor.valueParameters[offset++])
         }
 
-        call.descriptor.valueParameters.forEachIndexed { i, valueParameterDescriptor ->
+        call.descriptor.valueParameters.forEachIndexed { i, _ ->
             call.putValueArgument(i, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, fromDescriptor.valueParameters[i + offset]))
         }
     }

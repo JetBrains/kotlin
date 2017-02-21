@@ -74,7 +74,7 @@ object KotlinIntroduceTypeParameterHandler : RefactoringActionHandler {
                 file,
                 "Introduce type parameter to declaration",
                 listOf(CodeInsightUtils.ElementKind.TYPE_ELEMENT),
-                { elements, parent -> getPossibleTypeParameterContainers(parent) },
+                { _, parent -> getPossibleTypeParameterContainers(parent) },
                 continuation
         )
     }

@@ -75,7 +75,7 @@ private val LAMBDA_SUPERCLASSES = listOf(
 
 private class ClassBytes(val name: String) {
     val bytes: ByteArray by lazy {
-        val inputStream = this.javaClass.classLoader.getResourceAsStream(name.replace('.', '/') + ".class")
+        val inputStream = this::class.java.classLoader.getResourceAsStream(name.replace('.', '/') + ".class")
                           ?: throw EvaluateException("Couldn't find $name class in current class loader")
 
         inputStream.use {

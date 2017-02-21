@@ -108,7 +108,7 @@ abstract class AbstractProcessorTest : AbstractBytecodeTextTest() {
     protected fun testShouldNotRun(
             name: String,
             vararg supportedAnnotations: String
-    ) = testAP(false, name, { set, roundEnv, env -> fail("Should not run") }, *supportedAnnotations)
+    ) = testAP(false, name, { _, _, _ -> fail("Should not run") }, *supportedAnnotations)
 
     protected fun testAP(
             shouldRun: Boolean,

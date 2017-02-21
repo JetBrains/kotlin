@@ -28,7 +28,7 @@ abstract class TestWithWorkingDir {
 
     @Before
     open fun setUp() {
-        workingDir = FileUtil.createTempDirectory(this.javaClass.simpleName, null)
+        workingDir = FileUtil.createTempDirectory(this::class.java.simpleName, null)
     }
 
     @After

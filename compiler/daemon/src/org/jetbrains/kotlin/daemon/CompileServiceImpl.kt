@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.stackTraceStr
 import java.io.BufferedOutputStream
 import java.io.ByteArrayOutputStream
@@ -352,7 +351,7 @@ class CompileServiceImpl(
                 }
             }
             CompilerMode.NON_INCREMENTAL_COMPILER -> {
-                doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
+                doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
                     execCompiler(targetPlatform, Services.EMPTY, k2PlatformArgs, messageCollector)
                 }
             }
@@ -366,7 +365,7 @@ class CompileServiceImpl(
                 val gradleIncrementalServicesFacade = servicesFacade as IncrementalCompilerServicesFacade
 
                 withIC {
-                    doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
+                    doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
                         execIncrementalCompiler(k2jvmArgs, gradleIncrementalArgs, gradleIncrementalServicesFacade, compilationResults!!,
                                                 messageCollector, daemonReporter)
                     }
@@ -647,7 +646,7 @@ class CompileServiceImpl(
 
         ifAlive {
 
-            val aliveWithOpts = walkDaemons(File(daemonOptions.runFilesPathOrDefault), compilerId, runFile, filter = { f, p -> p != port }, report = { _, msg -> log.info(msg) }).toList()
+            val aliveWithOpts = walkDaemons(File(daemonOptions.runFilesPathOrDefault), compilerId, runFile, filter = { _, p -> p != port }, report = { _, msg -> log.info(msg) }).toList()
             val comparator = compareByDescending<DaemonWithMetadata, DaemonJVMOptions>(DaemonJVMOptionsMemoryComparator(), { it.jvmOptions })
                     .thenBy(FileAgeComparator()) { it.runFile }
             aliveWithOpts.maxWith(comparator)?.let { bestDaemonWithMetadata ->
@@ -745,7 +744,7 @@ class CompileServiceImpl(
                           operationsTracer: RemoteOperationsTracer?,
                           body: (PrintStream, EventManager, Profiler) -> ExitCode): CompileService.CallResult<Int> =
             ifAlive {
-                withValidClientOrSessionProxy(sessionId) { _ ->
+                withValidClientOrSessionProxy(sessionId) {
                     operationsTracer?.before("compile")
                     val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
                     val eventManger = EventManagerImpl()
@@ -775,7 +774,7 @@ class CompileServiceImpl(
                           tracer: RemoteOperationsTracer?,
                           body: (EventManager, Profiler) -> ExitCode): CompileService.CallResult<Int> =
             ifAlive {
-                withValidClientOrSessionProxy(sessionId) { _ ->
+                withValidClientOrSessionProxy(sessionId) {
                     tracer?.before("compile")
                     val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
                     val eventManger = EventManagerImpl()
@@ -907,8 +906,6 @@ class CompileServiceImpl(
     @JvmName("withValidRepl1")
     private inline fun<R> withValidRepl(sessionId: Int, body: KotlinJvmReplService.() -> CompileService.CallResult<R>): CompileService.CallResult<R> =
             withValidClientOrSessionProxy(sessionId) { session ->
-                (session?.data as? KotlinJvmReplService?)?.let {
-                    it.body()
-                } ?: CompileService.CallResult.Error("Not a REPL session $sessionId")
+                (session?.data as? KotlinJvmReplService?)?.body() ?: CompileService.CallResult.Error("Not a REPL session $sessionId")
             }
 }

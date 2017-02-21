@@ -90,7 +90,7 @@ private inline fun tryConnectToDaemon(port: Int, report: (DaemonReportCategory, 
         when (daemon) {
             null -> report(DaemonReportCategory.EXCEPTION, "daemon not found")
             is CompileService -> return daemon
-            else -> report(DaemonReportCategory.EXCEPTION, "Unable to cast compiler service, actual class received: ${daemon.javaClass.name}")
+            else -> report(DaemonReportCategory.EXCEPTION, "Unable to cast compiler service, actual class received: ${daemon::class.java.name}")
         }
     }
     catch (e: Throwable) {

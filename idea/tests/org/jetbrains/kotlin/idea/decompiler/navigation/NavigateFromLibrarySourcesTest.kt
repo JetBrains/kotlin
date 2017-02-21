@@ -83,7 +83,7 @@ class NavigateFromLibrarySourcesTest: LightCodeInsightFixtureTestCase() {
                 assertEquals(expectedFqName, element.fqName!!.asString())
             }
             else -> {
-                fail("Navigation element should be JetClass or PsiClass: " + element.javaClass + ", " + element.text)
+                fail("Navigation element should be JetClass or PsiClass: " + element::class.java + ", " + element.text)
             }
         }
     }

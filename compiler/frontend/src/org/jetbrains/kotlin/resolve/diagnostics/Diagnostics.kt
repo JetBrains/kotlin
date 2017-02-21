@@ -24,7 +24,7 @@ interface Diagnostics : Iterable<Diagnostic> {
     //should not be called on readonly views
     //any Diagnostics object returned by BindingContext#getDiagnostics() should implement this property
     val modificationTracker: ModificationTracker
-        get() = throw IllegalStateException("Trying to obtain modification tracker for Diagnostics object of class $javaClass")
+        get() = throw IllegalStateException("Trying to obtain modification tracker for Diagnostics object of class ${this::class.java}")
 
     fun all(): Collection<Diagnostic>
 

@@ -42,7 +42,7 @@ class MultiModuleOrderTest : BasicBoxTest("$TEST_DATA_DIR_PATH/multiModuleOrder/
         val mainJsFile = File(parentDir, "$name-main_v5.js").path
         val libJsFile = File(parentDir, "$name-lib_v5.js").path
         try {
-            RhinoUtils.runRhinoTest(listOf(mainJsFile, libJsFile), RhinoResultChecker { context, scope ->
+            RhinoUtils.runRhinoTest(listOf(mainJsFile, libJsFile), RhinoResultChecker { _, _ ->
                 // don't check anything, expect exception from function
             })
         }

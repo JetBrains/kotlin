@@ -148,7 +148,7 @@ class ReplOutputProcessor(
     fun printInternalErrorMessage(internalErrorText: String) = WriteCommandAction.runWriteCommandAction(project) {
         val promptText = "Internal error occurred. Please, send report to developers.\n"
         printOutput(promptText, ConsoleViewContentType.ERROR_OUTPUT, ReplIcons.RUNTIME_EXCEPTION)
-        logError(this.javaClass, internalErrorText)
+        logError(this::class.java, internalErrorText)
     }
 
     private fun getAttributesForSeverity(start: Int, end: Int, severity: Severity): TextAttributes {

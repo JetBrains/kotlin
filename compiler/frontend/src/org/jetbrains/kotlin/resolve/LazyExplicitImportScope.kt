@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.check
 
 class LazyExplicitImportScope(
         private val packageOrClassDescriptor: DeclarationDescriptor,
@@ -68,7 +67,7 @@ class LazyExplicitImportScope(
     }
 
     override fun printStructure(p: Printer) {
-        p.println(javaClass.simpleName, ": ", aliasName)
+        p.println(this::class.java.simpleName, ": ", aliasName)
     }
 
     // should be called only once
@@ -113,5 +112,5 @@ class LazyExplicitImportScope(
 
     private fun <D : CallableMemberDescriptor> Collection<D>.choseOnlyVisibleOrAll() =
             filter { isVisible(it, packageFragmentForVisibilityCheck, position = QualifierPosition.IMPORT) }.
-                    check { it.isNotEmpty() } ?: this
+                    takeIf { it.isNotEmpty() } ?: this
 }

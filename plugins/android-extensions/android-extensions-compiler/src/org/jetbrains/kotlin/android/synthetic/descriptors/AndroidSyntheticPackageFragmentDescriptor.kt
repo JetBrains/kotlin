@@ -84,7 +84,7 @@ class AndroidSyntheticPackageFragmentDescriptor(
         override fun getContributedVariables(name: Name, location: LookupLocation) = properties().filter { it.name == name }
 
         override fun printScopeStructure(p: Printer) {
-            p.println(javaClass.simpleName)
+            p.println(this::class.java.simpleName)
         }
     }
 }

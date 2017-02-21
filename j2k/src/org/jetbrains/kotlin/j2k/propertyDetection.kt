@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 class PropertyInfo(
@@ -227,7 +226,7 @@ private class PropertyDetector(
                 converter.convertModifiers(field, false).accessModifier()
             else
                 propertyAccess
-            val specialSetterAccess = setterAccess?.check { it != propertyAccess }
+            val specialSetterAccess = setterAccess?.takeIf { it != propertyAccess }
 
             val propertyInfo = PropertyInfo(Identifier.withNoPrototype(propertyName),
                                             isVar,

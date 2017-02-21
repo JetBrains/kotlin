@@ -37,5 +37,5 @@ class ReflectJavaPackage(override val fqName: FqName) : ReflectJavaElement(), Ja
 
     override fun hashCode() = fqName.hashCode()
 
-    override fun toString() = javaClass.name + ": " + fqName
+    override fun toString() = this::class.java.name + ": " + fqName
 }

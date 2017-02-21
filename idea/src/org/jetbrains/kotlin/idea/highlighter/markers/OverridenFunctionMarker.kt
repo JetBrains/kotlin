@@ -51,7 +51,7 @@ private fun PsiMethod.isMethodWithDeclarationInOtherClass(): Boolean {
 internal fun <T> getOverriddenDeclarations(mappingToJava: MutableMap<PsiMethod, T>, classes: Set<PsiClass>): Set<T> {
     val overridden = HashSet<T>()
     for (aClass in classes) {
-        AllOverridingMethodsSearch.search(aClass)!!.forEach(object : Processor<Pair<PsiMethod, PsiMethod>> {
+        AllOverridingMethodsSearch.search(aClass).forEach(object : Processor<Pair<PsiMethod, PsiMethod>> {
             override fun process(pair: Pair<PsiMethod, PsiMethod>?): Boolean {
                 ProgressManager.checkCanceled()
 

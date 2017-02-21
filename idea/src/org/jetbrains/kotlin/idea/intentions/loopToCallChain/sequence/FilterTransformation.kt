@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.blockExpressionsOrSingle
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.*
 
 abstract class FilterTransformationBase : SequenceTransformation {
@@ -119,7 +118,7 @@ abstract class FilterTransformationBase : SequenceTransformation {
                 restStatements: List<KtExpression>
         ): List<FilterTransformationBase> {
             if (conditions.size == 1) {
-                return createFilterTransformation(loop, inputVariable, indexVariable, conditions.single()).singletonList()
+                return listOf(createFilterTransformation(loop, inputVariable, indexVariable, conditions.single()))
             }
 
             var transformations = conditions.map { createFilterTransformation(loop, inputVariable, indexVariable, it) }
@@ -165,12 +164,12 @@ abstract class FilterTransformationBase : SequenceTransformation {
             else if (state.statements.size == 1) {
                 val thenStatement = thenBranch.blockExpressionsOrSingle().singleOrNull()
                 if (thenStatement is KtBreakExpression || thenStatement is KtContinueExpression) {
-                    return matchOneTransformation(state, condition, false, thenBranch, elseBranch.singletonList())
+                    return matchOneTransformation(state, condition, false, thenBranch, listOf(elseBranch))
                 }
 
                 val elseStatement = elseBranch.blockExpressionsOrSingle().singleOrNull()
                 if (elseStatement is KtBreakExpression || elseStatement is KtContinueExpression) {
-                    return matchOneTransformation(state, condition, true, elseBranch, thenBranch.singletonList())
+                    return matchOneTransformation(state, condition, true, elseBranch, listOf(thenBranch))
                 }
             }
 

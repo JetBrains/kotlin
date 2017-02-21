@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
 class DestructureInspection : IntentionBasedInspection<KtDeclaration>(
@@ -66,7 +65,7 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
         val factory = KtPsiFactory(element)
         val validator = NewDeclarationNameValidator(
                 container = element.parent, anchor = element, target = NewDeclarationNameValidator.Target.VARIABLES,
-                excludedDeclarations = usagesToRemove.map { it.declarationToDrop.singletonOrEmptyList() }.flatten()
+                excludedDeclarations = usagesToRemove.map { listOfNotNull(it.declarationToDrop) }.flatten()
         )
         val names = ArrayList<String>()
         usagesToRemove.forEach { (descriptor, usagesToReplace, variableToDrop, name) ->

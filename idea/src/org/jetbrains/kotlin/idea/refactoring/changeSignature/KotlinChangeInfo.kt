@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.kotlin.utils.keysToMap
 import java.util.*
 
@@ -78,7 +77,7 @@ open class KotlinChangeInfo(
     private val originalReceiverTypeInfo = methodDescriptor.receiver?.originalTypeInfo
 
     var receiverParameterInfo: KotlinParameterInfo? = receiver
-        set(value: KotlinParameterInfo?) {
+        set(value) {
             if (value != null && value !in newParameters) {
                 newParameters.add(value)
             }
@@ -188,7 +187,7 @@ open class KotlinChangeInfo(
         private set
 
     var primaryPropagationTargets: Collection<PsiElement> = emptyList()
-        set(value: Collection<PsiElement>) {
+        set(value) {
             field = value
 
             val result = LinkedHashSet<UsageInfo>()
@@ -210,7 +209,7 @@ open class KotlinChangeInfo(
 
             for (caller in value) {
                 add(caller)
-                OverridingMethodsSearch.search(caller.getRepresentativeLightMethod() ?: continue).forEach { add(it); true }
+                OverridingMethodsSearch.search(caller.getRepresentativeLightMethod() ?: continue).forEach { add(it) }
             }
 
             propagationTargetUsageInfos = result.toList()
@@ -458,14 +457,14 @@ open class KotlinChangeInfo(
                 currentPsiMethod: PsiMethod,
                 isGetter: Boolean
         ): JavaChangeInfo? {
-            val newParameterList = receiverParameterInfo.singletonOrEmptyList() + getNonReceiverParameters()
+            val newParameterList = listOfNotNull(receiverParameterInfo) + getNonReceiverParameters()
             val newJavaParameters = getJavaParameterInfos(originalPsiMethod, currentPsiMethod, newParameterList).toTypedArray()
             val newName = if (isGetter) JvmAbi.getterName(newName) else newName
             return createJavaChangeInfo(originalPsiMethod, currentPsiMethod, newName, currentPsiMethod.returnType, newJavaParameters)
         }
 
         fun createJavaChangeInfoForSetter(originalPsiMethod: PsiMethod, currentPsiMethod: PsiMethod): JavaChangeInfo? {
-            val newJavaParameters = getJavaParameterInfos(originalPsiMethod, currentPsiMethod, receiverParameterInfo.singletonOrEmptyList())
+            val newJavaParameters = getJavaParameterInfos(originalPsiMethod, currentPsiMethod, listOfNotNull(receiverParameterInfo))
             val oldIndex = if (methodDescriptor.receiver != null) 1 else 0
             if (isPrimaryMethodUpdated) {
                 val newIndex = if (receiverParameterInfo != null) 1 else 0

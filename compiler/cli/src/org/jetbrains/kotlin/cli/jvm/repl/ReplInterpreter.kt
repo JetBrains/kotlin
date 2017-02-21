@@ -103,7 +103,7 @@ class ReplInterpreter(
         val scriptDescriptor = when (analysisResult) {
             is ReplCodeAnalyzer.ReplLineAnalysisResult.WithErrors -> return LineResult.Error.CompileTime(errorHolder.renderedDiagnostics)
             is ReplCodeAnalyzer.ReplLineAnalysisResult.Successful -> analysisResult.scriptDescriptor
-            else -> error("Unexpected result ${analysisResult.javaClass}")
+            else -> error("Unexpected result ${analysisResult::class.java}")
         }
 
         val state = GenerationState(
@@ -185,7 +185,7 @@ class ReplInterpreter(
         private fun renderStackTrace(cause: Throwable, startFromMethodName: String): String {
             val newTrace = arrayListOf<StackTraceElement>()
             var skip = true
-            for ((_, element) in cause.stackTrace.withIndex().reversed()) {
+            for (element in cause.stackTrace.reversed()) {
                 if ("${element.className}.${element.methodName}" == startFromMethodName) {
                     skip = false
                 }

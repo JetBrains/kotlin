@@ -91,7 +91,7 @@ object CodegenUtil {
         else if (traitMember is PropertyDescriptor) {
             for (traitAccessor in traitMember.accessors) {
                 for (inheritedAccessor in (copy as PropertyDescriptor).accessors) {
-                    if (inheritedAccessor.javaClass == traitAccessor.javaClass) { // same accessor kind
+                    if (inheritedAccessor::class.java == traitAccessor::class.java) { // same accessor kind
                         result.put(traitAccessor, inheritedAccessor)
                     }
                 }

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
-import org.jetbrains.kotlin.utils.addToStdlib.check
 
 object BranchedFoldingUtils {
     fun getFoldableBranchedAssignment(branch: KtExpression?): KtBinaryExpression? {
@@ -36,11 +35,11 @@ object BranchedFoldingUtils {
 
             return true
         }
-        return (branch?.lastBlockStatementOrThis() as? KtBinaryExpression)?.check(::checkAssignment)
+        return (branch?.lastBlockStatementOrThis() as? KtBinaryExpression)?.takeIf(::checkAssignment)
     }
 
     fun getFoldableBranchedReturn(branch: KtExpression?): KtReturnExpression? {
-        return (branch?.lastBlockStatementOrThis() as? KtReturnExpression)?.check { it.returnedExpression != null }
+        return (branch?.lastBlockStatementOrThis() as? KtReturnExpression)?.takeIf { it.returnedExpression != null }
     }
 
     fun checkAssignmentsMatch(a1: KtBinaryExpression, a2: KtBinaryExpression): Boolean {

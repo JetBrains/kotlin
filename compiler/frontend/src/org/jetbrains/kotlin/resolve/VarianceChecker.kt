@@ -189,7 +189,7 @@ class VarianceCheckerCore(
                         (accessor as PropertyAccessorDescriptorImpl).visibility = Visibilities.PRIVATE_TO_THIS
                     }
                 }
-                else -> throw IllegalStateException("Unexpected descriptor type: ${descriptor.javaClass.name}")
+                else -> throw IllegalStateException("Unexpected descriptor type: ${descriptor::class.java.name}")
             }
         }
 

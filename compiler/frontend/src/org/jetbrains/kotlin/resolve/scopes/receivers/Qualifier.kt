@@ -111,7 +111,7 @@ class TypeAliasQualifier(
                         ?.takeIf { DescriptorUtils.isEnumEntry(it) }
 
         override fun printScopeStructure(p: Printer) {
-            p.println(javaClass.simpleName, " {")
+            p.println(this::class.java.simpleName, " {")
             p.pushIndent()
             p.println("descriptor = ", descriptor)
             p.popIndent()

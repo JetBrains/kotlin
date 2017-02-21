@@ -17,14 +17,13 @@
 package org.jetbrains.kotlin.j2k.usageProcessing
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 class MemberIntoObjectProcessing(private val member: PsiMember, private val objectName: String) : UsageProcessing {
     override val targetElement: PsiElement get() = member
 
     override val convertedCodeProcessor: ConvertedCodeProcessor? get() = null
 
-    override val javaCodeProcessors = AppendObjectNameProcessor().singletonList()
+    override val javaCodeProcessors = listOf(AppendObjectNameProcessor())
 
     override val kotlinCodeProcessors = emptyList<ExternalCodeProcessor>()
 

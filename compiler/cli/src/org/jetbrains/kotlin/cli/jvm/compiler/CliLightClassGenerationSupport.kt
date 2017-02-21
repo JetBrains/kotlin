@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
-import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import kotlin.properties.Delegates
 
 /**
@@ -147,7 +146,7 @@ class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSup
         val filesForFacade = findFilesForFacade(facadeFqName, scope)
         if (filesForFacade.isEmpty()) return emptyList()
 
-        return emptyOrSingletonList<PsiClass>(
+        return listOfNotNull<PsiClass>(
                 KtLightClassForFacade.createForFacade(psiManager, facadeFqName, scope, filesForFacade))
     }
 

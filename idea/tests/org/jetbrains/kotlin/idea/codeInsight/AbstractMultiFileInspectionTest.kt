@@ -50,7 +50,7 @@ abstract class AbstractMultiFileInspectionTest : KotlinMultiFileTestCase() {
 
         val withFullJdk = config["withFullJdk"]?.asBoolean ?: false
 
-        doTest({ rootDir, rootAfter ->
+        doTest({ _, _ ->
                    try {
                        if (withRuntime) {
                            ConfigLibraryUtil.configureKotlinRuntimeAndSdk(

@@ -72,7 +72,7 @@ class ReflectKotlinClass private constructor(
 
     override fun hashCode() = klass.hashCode()
 
-    override fun toString() = javaClass.name + ": " + klass
+    override fun toString() = this::class.java.name + ": " + klass
 }
 
 private object ReflectClassStructure {
@@ -175,7 +175,7 @@ private object ReflectClassStructure {
     }
 
     private fun processAnnotationArgumentValue(visitor: KotlinJvmBinaryClass.AnnotationArgumentVisitor, name: Name, value: Any) {
-        val clazz = value.javaClass
+        val clazz = value::class.java
         when {
             clazz in TYPES_ELIGIBLE_FOR_SIMPLE_VISIT -> {
                 visitor.visit(name, value)

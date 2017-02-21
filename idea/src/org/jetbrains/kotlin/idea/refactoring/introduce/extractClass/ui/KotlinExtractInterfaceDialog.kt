@@ -124,5 +124,5 @@ class KotlinExtractInterfaceDialog(
 
     override fun getHelpId() = HelpID.EXTRACT_INTERFACE
 
-    override fun createExtractedSuperNameField() = super.createExtractedSuperNameField()!!.apply { text = "I${originalClass.name}" }
+    override fun createExtractedSuperNameField() = super.createExtractedSuperNameField().apply { text = "I${originalClass.name}" }
 }

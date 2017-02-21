@@ -34,13 +34,11 @@ import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembers
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.*
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 internal class DeclarationsCheckerBuilder(
@@ -189,7 +187,7 @@ class DeclarationsChecker(
     private fun getUsedTypeAliasParameters(type: KotlinType, typeAlias: TypeAliasDescriptor): Set<TypeParameterDescriptor> =
             type.constituentTypes().mapNotNullTo(HashSet()) {
                 val descriptor = it.constructor.declarationDescriptor as? TypeParameterDescriptor
-                descriptor?.check { it.containingDeclaration == typeAlias }
+                descriptor?.takeIf { it.containingDeclaration == typeAlias }
             }
 
     private class TypeAliasDeclarationCheckingReportStrategy(
@@ -271,10 +269,10 @@ class DeclarationsChecker(
         if (visibilityModifier != null && visibilityModifier.node?.elementType != KtTokens.PRIVATE_KEYWORD) {
             val classDescriptor = constructorDescriptor.containingDeclaration
             if (classDescriptor.kind == ClassKind.ENUM_CLASS) {
-                trace.report(NON_PRIVATE_CONSTRUCTOR_IN_ENUM.on(visibilityModifier));
+                trace.report(NON_PRIVATE_CONSTRUCTOR_IN_ENUM.on(visibilityModifier))
             }
             else if (classDescriptor.modality == Modality.SEALED) {
-                trace.report(NON_PRIVATE_CONSTRUCTOR_IN_SEALED.on(visibilityModifier));
+                trace.report(NON_PRIVATE_CONSTRUCTOR_IN_SEALED.on(visibilityModifier))
             }
         }
     }

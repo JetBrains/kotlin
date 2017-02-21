@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.lang.reflect.Modifier
 
 interface MemberScope : ResolutionScope {
@@ -157,7 +156,7 @@ class DescriptorKindFilter(
                     val filter = field.get(null) as? DescriptorKindFilter
                     if (filter != null) MaskToName(filter.kindMask, field.name) else null
                 }
-                .toReadOnlyList()
+                .toList()
 
         private val DEBUG_MASK_BIT_NAMES = staticFields<DescriptorKindFilter>()
                 .filter { it.type == Integer.TYPE }
@@ -166,7 +165,7 @@ class DescriptorKindFilter(
                     val isOneBitMask = mask == (mask and (-mask))
                     if (isOneBitMask) MaskToName(mask, field.name) else null
                 }
-                .toReadOnlyList()
+                .toList()
 
         private inline fun <reified T : Any> staticFields() = T::class.java.fields.filter { Modifier.isStatic(it.modifiers) }
     }
@@ -181,7 +180,7 @@ abstract class DescriptorKindExclude {
      */
     abstract val fullyExcludedDescriptorKinds: Int
 
-    override fun toString() = this.javaClass.simpleName
+    override fun toString() = this::class.java.simpleName
 
     object Extensions : DescriptorKindExclude() {
         override fun excludes(descriptor: DeclarationDescriptor)

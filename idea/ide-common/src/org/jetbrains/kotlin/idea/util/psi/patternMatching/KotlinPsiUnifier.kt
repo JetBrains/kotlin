@@ -679,7 +679,7 @@ class KotlinPsiUnifier(
                 decl2: KtDeclaration,
                 desc1: DeclarationDescriptor?,
                 desc2: DeclarationDescriptor?): Status? {
-            if (decl1.javaClass != decl2.javaClass) return UNMATCHED
+            if (decl1::class.java != decl2::class.java) return UNMATCHED
 
             if (desc1 == null || desc2 == null) {
                 if (decl1 is KtParameter
@@ -689,7 +689,7 @@ class KotlinPsiUnifier(
                 return UNMATCHED
             }
             if (ErrorUtils.isError(desc1) || ErrorUtils.isError(desc2)) return UNMATCHED
-            if (desc1.javaClass != desc2.javaClass) return UNMATCHED
+            if (desc1::class.java != desc2::class.java) return UNMATCHED
 
             declarationPatternsToTargets.putValue(desc1, desc2)
             val status = when (decl1) {

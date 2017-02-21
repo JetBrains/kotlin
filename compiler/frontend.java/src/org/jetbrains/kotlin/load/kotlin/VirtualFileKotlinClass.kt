@@ -49,7 +49,7 @@ class VirtualFileKotlinClass private constructor(
 
     override fun equals(other: Any?) = other is VirtualFileKotlinClass && other.file == file
     override fun hashCode() = file.hashCode()
-    override fun toString() = "${javaClass.simpleName}: $file"
+    override fun toString() = "${this::class.java.simpleName}: $file"
 
     companion object Factory {
         private val LOG = Logger.getInstance(VirtualFileKotlinClass::class.java)

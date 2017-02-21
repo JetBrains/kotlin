@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.calls.inference.filterConstraintsOut
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 class AddGenericUpperBoundFix(
         typeParameter: KtTypeParameter,
@@ -68,7 +67,7 @@ class AddGenericUpperBoundFix(
             return when (diagnostic.factory) {
                 Errors.UPPER_BOUND_VIOLATED -> {
                     val upperBoundViolated = Errors.UPPER_BOUND_VIOLATED.cast(diagnostic)
-                    createAction(upperBoundViolated.b, upperBoundViolated.a).singletonOrEmptyList()
+                    listOfNotNull(createAction(upperBoundViolated.b, upperBoundViolated.a))
                 }
                 Errors.TYPE_INFERENCE_UPPER_BOUND_VIOLATED -> {
                     val inferenceData = Errors.TYPE_INFERENCE_UPPER_BOUND_VIOLATED.cast(diagnostic).a

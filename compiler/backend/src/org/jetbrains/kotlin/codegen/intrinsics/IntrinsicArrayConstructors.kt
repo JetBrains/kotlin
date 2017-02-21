@@ -28,7 +28,7 @@ internal val classId: ClassId =
         ClassId.topLevel(FqName("org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt"))
 
 internal val bytecode: ByteArray by lazy {
-    val stream = object {}.javaClass.classLoader.getResourceAsStream("${classId.asString()}.class")
+    val stream = object {}::class.java.classLoader.getResourceAsStream("${classId.asString()}.class")
     stream.readBytes().apply {
         stream.close()
     }

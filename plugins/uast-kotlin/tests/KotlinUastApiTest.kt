@@ -15,7 +15,7 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
     }
 
     @Test fun testAnnotationParameters() {
-        doTest("AnnotationParameters") { name, file ->
+        doTest("AnnotationParameters") { _, file ->
             val annotation = file.findElementByText<UAnnotation>("@IntRange(from = 10, to = 0)")
             assertEquals(annotation.findAttributeValue("from")?.evaluate(), 10)
             assertEquals(annotation.findAttributeValue("to")?.evaluate(), 0)
@@ -23,7 +23,7 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
     }
 
     @Test fun testConvertStringTemplate() {
-        doTest("StringTemplateInClass") { name, file ->
+        doTest("StringTemplateInClass") { _, file ->
             val literalExpression = file.findElementByText<ULiteralExpression>("lorem")
             val psi = literalExpression.psi!!
             Assert.assertTrue(psi is KtLiteralStringTemplateEntry)

@@ -24,14 +24,13 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.scopes.receivers.DetailedReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
-import org.jetbrains.kotlin.utils.addToStdlib.check
 
 
 class KnownResultProcessor<out C>(
         val result: Collection<C>
 ): ScopeTowerProcessor<C> {
     override fun process(data: TowerData)
-            = if (data == TowerData.Empty) listOfNotNull(result.check { it.isNotEmpty() }) else emptyList()
+            = if (data == TowerData.Empty) listOfNotNull(result.takeIf { it.isNotEmpty() }) else emptyList()
 }
 
 class CompositeScopeTowerProcessor<out C>(
@@ -46,7 +45,7 @@ internal abstract class AbstractSimpleScopeTowerProcessor<D : CallableDescriptor
 
     protected abstract fun simpleProcess(data: TowerData): Collection<C>
 
-    override fun process(data: TowerData): List<Collection<C>> = listOfNotNull(simpleProcess(data).check { it.isNotEmpty() })
+    override fun process(data: TowerData): List<Collection<C>> = listOfNotNull(simpleProcess(data).takeIf { it.isNotEmpty() })
 }
 
 private typealias CandidatesCollector<D> =
@@ -173,7 +172,7 @@ private fun <D : CallableDescriptor, C: Candidate<D>> createSimpleProcessor(
     }
     else {
         assert(explicitReceiver == null) {
-            "Illegal explicit receiver: $explicitReceiver(${explicitReceiver!!.javaClass.simpleName})"
+            "Illegal explicit receiver: $explicitReceiver(${explicitReceiver!!::class.java.simpleName})"
         }
         return NoExplicitReceiverScopeTowerProcessor(context, collectCandidates)
     }

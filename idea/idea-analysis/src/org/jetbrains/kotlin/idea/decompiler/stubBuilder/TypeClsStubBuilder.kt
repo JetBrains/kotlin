@@ -146,7 +146,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val typeProjection = KotlinTypeProjectionStubImpl(typeArgumentsListStub, projectionKind.ordinal)
             if (projectionKind != KtProjectionKind.STAR) {
                 val modifierKeywordToken = projectionKind.token as? KtModifierKeywordToken
-                createModifierListStub(typeProjection, modifierKeywordToken.singletonOrEmptyList())
+                createModifierListStub(typeProjection, listOfNotNull(modifierKeywordToken))
                 createTypeReferenceStub(typeProjection, typeArgumentProto.type(c.typeTable)!!)
             }
         }

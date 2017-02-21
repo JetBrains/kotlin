@@ -267,7 +267,7 @@ class KotlinTypes(
             }
             is JeVariableElement -> substitutor.substitute(element.psi.type).toJeType(psiManager())
             is JeTypeParameterElement -> substitutor.substitute(element.psi)?.toJeType(psiManager()) ?: element.asType()
-            else -> throw IllegalArgumentException("Invalid element type: ${element.javaClass.name} ($element)")
+            else -> throw IllegalArgumentException("Invalid element type: ${element::class.java.name} ($element)")
         }
     }
 
@@ -308,6 +308,6 @@ private fun assertKindNot(typeMirror: TypeMirror, vararg kinds: TypeKind): Unit 
 
 private fun assertJeType(type: TypeMirror) {
     if (type !is JeTypeMirror) {
-        illegalArg("Must be a subclass of JePsiType, got ${type.javaClass.name}")
+        illegalArg("Must be a subclass of JePsiType, got ${type::class.java.name}")
     }
 }

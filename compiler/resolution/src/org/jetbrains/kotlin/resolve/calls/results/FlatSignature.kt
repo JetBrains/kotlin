@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 interface SpecificityComparisonCallbacks {
     fun isNonSubtypeNotLessSpecific(specific: KotlinType, general: KotlinType): Boolean
@@ -62,7 +61,7 @@ class FlatSignature<out T> private constructor(
             return FlatSignature(origin,
                                  descriptor.typeParameters,
                                  valueParameterTypes =
-                                    extensionReceiverType.singletonOrEmptyList() + parameterTypes,
+                                 listOfNotNull(extensionReceiverType) + parameterTypes,
                                  hasExtensionReceiver = extensionReceiverType != null,
                                  hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
                                  numDefaults = numDefaults,

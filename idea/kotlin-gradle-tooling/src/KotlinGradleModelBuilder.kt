@@ -84,7 +84,7 @@ class KotlinGradleModelBuilder : ModelBuilderService {
             methodName: String,
             argumentsBySourceSet: MutableMap<String, List<String>>
     ) {
-        val taskClass = compileTask.javaClass
+        val taskClass = compileTask::class.java
         val sourceSetName = try {
             taskClass.findGetterMethod("getSourceSetName\$kotlin_gradle_plugin")?.invoke(compileTask) as? String
         } catch (e : InvocationTargetException) {
@@ -101,14 +101,14 @@ class KotlinGradleModelBuilder : ModelBuilderService {
     private fun getCoroutines(project: Project): String? {
         val kotlinExtension = project.extensions.findByName("kotlin") ?: return null
         val experimentalExtension = try {
-            kotlinExtension.javaClass.getMethod("getExperimental").invoke(kotlinExtension)
+            kotlinExtension::class.java.getMethod("getExperimental").invoke(kotlinExtension)
         }
         catch(e: NoSuchMethodException) {
             return null
         }
 
         return try {
-            experimentalExtension.javaClass.getMethod("getCoroutines").invoke(experimentalExtension)?.toString()
+            experimentalExtension::class.java.getMethod("getCoroutines").invoke(experimentalExtension)?.toString()
         }
         catch(e: NoSuchMethodException) {
             null

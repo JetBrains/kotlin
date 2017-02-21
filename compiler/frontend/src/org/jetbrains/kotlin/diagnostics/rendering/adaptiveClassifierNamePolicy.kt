@@ -46,7 +46,7 @@ private class AdaptiveClassifierNamePolicy(private val ambiguousNames: List<Name
                 val index = typeParametersWithSameName.indexOf(classifier)
                 renderer.renderAmbiguousTypeParameter(classifier, index + 1, isFirstOccurence)
             }
-            else -> error("Unexpected classifier: ${classifier.javaClass}")
+            else -> error("Unexpected classifier: ${classifier::class.java}")
         }
     }
 

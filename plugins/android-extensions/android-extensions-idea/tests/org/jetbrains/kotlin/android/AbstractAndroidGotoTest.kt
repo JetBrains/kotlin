@@ -48,7 +48,7 @@ abstract class AbstractAndroidGotoTest : KotlinAndroidTestCase() {
 
         val targetElement = GotoDeclarationAction.findTargetElement(f.project, f.editor, f.caretOffset)!!
 
-        assert(targetElement is XmlAttributeValue) { "XmlAttributeValue expected, got ${targetElement.javaClass}" }
+        assert(targetElement is XmlAttributeValue) { "XmlAttributeValue expected, got ${targetElement::class.java}" }
         assertEquals("@+id/${property.name}", (targetElement as XmlAttributeValue).value)
     }
 }

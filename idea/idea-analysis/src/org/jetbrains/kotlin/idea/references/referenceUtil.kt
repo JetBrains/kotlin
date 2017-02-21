@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.addToStdlib.constant
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import java.util.*
 
 // Navigation element of the resolved reference
@@ -56,7 +55,7 @@ val PsiReference.unwrappedTargets: Set<PsiElement>
 
         return when (this) {
             is PsiPolyVariantReference -> multiResolve(false).mapNotNullTo(HashSet<PsiElement>()) { it.element?.adjust() }
-            else -> emptyOrSingletonList(resolve()?.adjust()).toSet()
+            else -> listOfNotNull(resolve()?.adjust()).toSet()
         }
     }
 

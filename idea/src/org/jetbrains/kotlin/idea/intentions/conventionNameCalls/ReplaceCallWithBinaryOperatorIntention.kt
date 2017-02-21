@@ -109,7 +109,7 @@ class ReplaceCallWithBinaryOperatorIntention : SelfTargetingRangeIntention<KtDot
 
     private fun operation(calleeExpression: KtSimpleNameExpression): KtSingleValueToken? {
         val identifier = calleeExpression.getReferencedNameAsName()
-        val dotQualified = calleeExpression.parent?.parent as? KtDotQualifiedExpression ?: return null
+        val dotQualified = calleeExpression.parent.parent as? KtDotQualifiedExpression ?: return null
         return when (identifier) {
             OperatorNameConventions.EQUALS -> {
                 val resolvedCall = dotQualified.toResolvedCall(BodyResolveMode.PARTIAL) ?: return null

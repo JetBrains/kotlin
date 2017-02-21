@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessingExpressionConvert
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.*
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.lang.IllegalArgumentException
 import java.util.*
 
@@ -395,7 +394,7 @@ class Converter private constructor(
 
             var setter: PropertyAccessor? = null
             if (propertyInfo.needExplicitSetter) {
-                val accessorModifiers = Modifiers(propertyInfo.specialSetterAccess.singletonOrEmptyList()).assignNoPrototype()
+                val accessorModifiers = Modifiers(listOfNotNull(propertyInfo.specialSetterAccess)).assignNoPrototype()
                 if (setMethod != null && !propertyInfo.isSetMethodBodyFieldAccess) {
                     val method = convertMethod(setMethod, null, null, null, classKind)!!
                     if (method.modifiers.contains(Modifier.EXTERNAL))
@@ -729,6 +728,7 @@ class Converter private constructor(
         when (nullability) {
             Nullability.NotNull -> type = type.toNotNullType()
             Nullability.Nullable -> type = type.toNullableType()
+            Nullability.Default -> {}
         }
         return FunctionParameter(parameter.declarationIdentifier(), type, varValModifier,
                                  convertAnnotations(parameter), modifiers, defaultValue).assignPrototype(parameter, CommentsAndSpacesInheritance.LINE_BREAKS)

@@ -56,7 +56,7 @@ abstract class AbstractNavigationTest : KotlinLightCodeInsightFixtureTestCase() 
             val mainFileBaseName = mainFileName.substring(0, mainFileName.indexOf('.'))
             configureExtra(mainFileBaseName, fileText)
             mainFile.parentFile
-                    .listFiles { file, name ->
+                    .listFiles { _, name ->
                         name != mainFileName && name.startsWith("$mainFileBaseName.") && (name.endsWith(".kt") || name.endsWith(".java") || name.endsWith(".xml"))
                     }
                     .forEach{ myFixture.configureByFile(it.name) }

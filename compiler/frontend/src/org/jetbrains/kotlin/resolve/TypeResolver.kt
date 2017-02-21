@@ -281,7 +281,7 @@ class TypeResolver(
                     override fun getVisibility() = Visibilities.LOCAL
 
                     override fun substitute(substitutor: TypeSubstitutor): VariableDescriptor? {
-                        throw UnsupportedOperationException("Should not be called for descriptor of type $javaClass")
+                        throw UnsupportedOperationException("Should not be called for descriptor of type ${this::class.java}")
                     }
 
                     override fun isVar() = false
@@ -415,7 +415,7 @@ class TypeResolver(
             }
             is ClassDescriptor -> resolveTypeForClass(c, annotations, descriptor, element, qualifierResolutionResult)
             is TypeAliasDescriptor -> resolveTypeForTypeAlias(c, annotations, descriptor, element, qualifierResolutionResult)
-            else -> error("Unexpected classifier type: ${descriptor.javaClass}")
+            else -> error("Unexpected classifier type: ${descriptor::class.java}")
         }
     }
 
@@ -727,7 +727,7 @@ class TypeResolver(
                         Math.min(classifierChainLastIndex + 1, reversedQualifierParts.size),
                         reversedQualifierParts.size)
 
-        for ((name, expression, typeArguments) in nonClassQualifierParts) {
+        for ((_, _, typeArguments) in nonClassQualifierParts) {
             if (typeArguments != null) {
                 c.trace.report(TYPE_ARGUMENTS_NOT_ALLOWED.on(typeArguments, "here"))
                 return null

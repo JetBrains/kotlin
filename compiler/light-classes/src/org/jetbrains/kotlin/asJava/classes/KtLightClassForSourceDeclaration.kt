@@ -161,7 +161,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other == null || javaClass != other.javaClass) return false
+        if (other == null || this::class.java != other::class.java) return false
 
         val aClass = other as KtLightClassForSourceDeclaration
 
@@ -313,7 +313,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
         return this
     }
 
-    override fun toString() = "${this.javaClass.simpleName}:${classOrObject.getDebugText()}"
+    override fun toString() = "${this::class.java.simpleName}:${classOrObject.getDebugText()}"
 
     override fun getOwnInnerClasses(): List<PsiClass> {
         val result = ArrayList<PsiClass>()

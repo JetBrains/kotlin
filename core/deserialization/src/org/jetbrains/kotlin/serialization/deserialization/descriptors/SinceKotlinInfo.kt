@@ -97,7 +97,7 @@ class SinceKotlinInfo(
                 is ProtoBuf.Function -> if (proto.hasSinceKotlinInfo()) proto.sinceKotlinInfo else return null
                 is ProtoBuf.Property -> if (proto.hasSinceKotlinInfo()) proto.sinceKotlinInfo else return null
                 is ProtoBuf.TypeAlias -> if (proto.hasSinceKotlinInfo()) proto.sinceKotlinInfo else return null
-                else -> throw IllegalStateException("Unexpected declaration: ${proto.javaClass}")
+                else -> throw IllegalStateException("Unexpected declaration: ${proto::class.java}")
             }
 
             val info = table[id] ?: return null

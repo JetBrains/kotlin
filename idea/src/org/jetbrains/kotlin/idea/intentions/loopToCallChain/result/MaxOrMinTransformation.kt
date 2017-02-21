@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.idea.intentions.loopToCallChain.sequence.MapTransfor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.blockExpressionsOrSingle
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 class MaxOrMinTransformation(
         loop: KtForExpression,
@@ -133,7 +132,7 @@ class MaxOrMinTransformation(
                 MapTransformation(state.outerLoop, state.inputVariable, state.indexVariable, value, mapNotNull = false)
 
             val transformation = MaxOrMinTransformation(state.outerLoop, variableInitialization, isMax)
-            return TransformationMatch.Result(transformation, mapTransformation.singletonOrEmptyList())
+            return TransformationMatch.Result(transformation, listOfNotNull(mapTransformation))
         }
 
         private fun match(

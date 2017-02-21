@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.j2k.CodeConverter
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.j2k.dot
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 class AccessorToPropertyProcessing(val accessorMethod: PsiMethod, val accessorKind: AccessorKind, val propertyName: String) : UsageProcessing {
     override val targetElement: PsiElement get() = accessorMethod
@@ -42,7 +41,7 @@ class AccessorToPropertyProcessing(val accessorMethod: PsiMethod, val accessorKi
                 propertyName
 
             if (accessorKind == AccessorKind.GETTER) {
-                if (arguments.size != 0) return null // incorrect call
+                if (arguments.isNotEmpty()) return null // incorrect call
                 return propertyAccess
             }
             else {
@@ -59,7 +58,7 @@ class AccessorToPropertyProcessing(val accessorMethod: PsiMethod, val accessorKi
             if (accessorMethod.hasModifierProperty(PsiModifier.PRIVATE))
                 emptyList()
             else
-                AccessorToPropertyProcessor().singletonList()
+                listOf(AccessorToPropertyProcessor())
 
     inner class AccessorToPropertyProcessor: ExternalCodeProcessor {
         override fun processUsage(reference: PsiReference): Array<PsiReference>? {

@@ -90,7 +90,7 @@ private fun String.amendNextLinesIfNeeded(reader: OutputLineReader): String {
     if (nextLine != null) {
         // This code is needed for compatibility with AS 2.0 and IDEA 15.0, because of difference in android plugins
         val positionField = try {
-            reader.javaClass.getDeclaredField("myPosition")
+            reader::class.java.getDeclaredField("myPosition")
         }
         catch(e: Throwable) {
             null

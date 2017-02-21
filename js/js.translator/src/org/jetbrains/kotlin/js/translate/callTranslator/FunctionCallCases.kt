@@ -310,7 +310,7 @@ object DynamicOperatorCallCase : FunctionCallCase() {
                 @Suppress("USELESS_CAST")
                 (JsPostfixOperation(OperatorTable.getUnaryOperator(operationToken), dispatchReceiver) as JsExpression)
             }
-            else -> unsupported("Unsupported callElement type: ${callElement.javaClass}, callElement: $callElement, callInfo: $this")
+            else -> unsupported("Unsupported callElement type: ${callElement::class.java}, callElement: $callElement, callInfo: $this")
         }
     }
 }

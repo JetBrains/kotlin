@@ -68,7 +68,7 @@ fun addMemberToTarget(targetMember: KtNamedDeclaration, targetClass: KtClassOrOb
         return parameterList.addParameterBefore(targetMember, anchor)
     }
 
-    val anchor = targetClass.declarations.filterIsInstance(targetMember.javaClass).lastOrNull()
+    val anchor = targetClass.declarations.filterIsInstance(targetMember::class.java).lastOrNull()
     val movedMember = when {
         anchor == null && targetMember is KtProperty -> targetClass.addDeclarationBefore(targetMember, null)
         else -> targetClass.addDeclarationAfter(targetMember, anchor)

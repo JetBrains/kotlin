@@ -97,7 +97,7 @@ private val SUPPORTED_ARGUMENT_TYPES = listOf(
 fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, factory: (String) -> TElement): TElement {
     val argumentTypes = args.map { arg ->
         SUPPORTED_ARGUMENT_TYPES.firstOrNull { it.klass.isInstance(arg) }
-            ?: throw IllegalArgumentException("Unsupported argument type: ${arg.javaClass}, should be one of: ${SUPPORTED_ARGUMENT_TYPES.map { it.klass.simpleName }.joinToString()}")
+            ?: throw IllegalArgumentException("Unsupported argument type: ${arg::class.java}, should be one of: ${SUPPORTED_ARGUMENT_TYPES.map { it.klass.simpleName }.joinToString()}")
     }
 
     // convert arguments that can be converted into plain text
@@ -105,7 +105,7 @@ fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, fa
     val args = args.zip(argumentTypes).map {
         val (arg, type) = it
         if (type is PlainTextArgumentType)
-            (type.toPlainText as Function1<in Any, String>).invoke(arg) // TODO: see KT-7833
+            (type.toPlainText as Function1<Any, String>).invoke(arg) // TODO: see KT-7833
         else
             arg
     }
@@ -127,7 +127,7 @@ fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, fa
         if (arg is String) continue // already in the text
         val expectedElementType = (argumentTypes[n] as PsiElementPlaceholderArgumentType<*, *>).placeholderClass
 
-        for ((range, text) in placeholders) {
+        for ((range, _) in placeholders) {
             val token = resultElement.findElementAt(range.startOffset)!!
             for (element in token.parentsWithSelf) {
                 val elementRange = element.textRange.shiftRight(-start)

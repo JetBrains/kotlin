@@ -78,6 +78,6 @@ class SyntheticKotlinBlock(
             }
         }
 
-        return javaClass.name + ": " + textRange
+        return this::class.java.name + ": " + textRange
     }
 }

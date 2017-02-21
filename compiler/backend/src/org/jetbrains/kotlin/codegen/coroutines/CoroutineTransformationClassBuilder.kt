@@ -294,7 +294,7 @@ class CoroutineTransformerMethodVisitor(
         get() {
             assert(suspensionCallEnd.next is LabelNode) {
                 "Next instruction after ${this} should be a label, but " +
-                "${suspensionCallEnd.next.javaClass}/${suspensionCallEnd.next.opcode} was found"
+                "${suspensionCallEnd.next::class.java}/${suspensionCallEnd.next.opcode} was found"
             }
 
             return suspensionCallEnd.next as LabelNode

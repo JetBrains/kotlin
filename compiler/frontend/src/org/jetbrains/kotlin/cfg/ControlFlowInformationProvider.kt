@@ -549,7 +549,7 @@ class ControlFlowInformationProvider private constructor(
         pseudocode.traverse(TraversalOrder.BACKWARD, variableStatusData) {
             instruction: Instruction,
             enterData: Map<VariableDescriptor, VariableUseState>,
-            exitData: Map<VariableDescriptor, VariableUseState> ->
+            _: Map<VariableDescriptor, VariableUseState> ->
 
             val ctxt = VariableUseContext(instruction, reportedDiagnosticMap)
             val declaredVariables = pseudocodeVariablesData.getDeclaredVariables(instruction.owner, false)

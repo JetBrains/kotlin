@@ -39,6 +39,6 @@ class ExplicitImportsScope(private val descriptors: Collection<DeclarationDescri
             = descriptors
 
     override fun printStructure(p: Printer) {
-        p.println(javaClass.name)
+        p.println(this::class.java.name)
     }
 }

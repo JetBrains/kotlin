@@ -90,12 +90,12 @@ private fun TypeConstructor.debugInfo() = buildString {
 
     + "type: ${this@debugInfo}"
     + "hashCode: ${this@debugInfo.hashCode()}"
-    + "javaClass: ${this@debugInfo.javaClass.canonicalName}"
+    + "javaClass: ${this@debugInfo::class.java.canonicalName}"
     var declarationDescriptor: DeclarationDescriptor? = declarationDescriptor
     while (declarationDescriptor != null) {
 
         + "fqName: ${DescriptorRenderer.FQ_NAMES_IN_TYPES.render(declarationDescriptor)}"
-        + "javaClass: ${declarationDescriptor.javaClass.canonicalName}"
+        + "javaClass: ${declarationDescriptor::class.java.canonicalName}"
 
         declarationDescriptor = declarationDescriptor.containingDeclaration
     }

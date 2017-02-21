@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 object CreateTypeParameterUnmatchedTypeArgumentActionFactory : KotlinIntentionActionFactoryWithDelegate<KtTypeArgumentList, CreateTypeParameterData>() {
     override fun getElementOfInterest(diagnostic: Diagnostic) = diagnostic.psiElement as? KtTypeArgumentList
@@ -77,10 +76,10 @@ object CreateTypeParameterUnmatchedTypeArgumentActionFactory : KotlinIntentionAc
             diagnostic: Diagnostic,
             quickFixDataFactory: () -> CreateTypeParameterData?
     ): List<QuickFixWithDelegateFactory> {
-        return QuickFixWithDelegateFactory factory@ {
+        return listOf(QuickFixWithDelegateFactory factory@ {
             val originalElement = originalElementPointer.element ?: return@factory null
             val data = quickFixDataFactory() ?: return@factory null
             CreateTypeParameterFromUsageFix(originalElement, data, false)
-        }.singletonList()
+        })
     }
 }

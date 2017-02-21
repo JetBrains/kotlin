@@ -144,7 +144,7 @@ private fun classFileToString(classFile: File): String {
 
             out.write("\n------ string table types proto -----\n${DebugJvmProtoBuf.StringTableTypes.parseDelimitedFrom(input)}")
 
-            if (!classHeader!!.metadataVersion.isCompatible()) {
+            if (!classHeader.metadataVersion.isCompatible()) {
                 error("Incompatible class ($classHeader): $classFile")
             }
 

@@ -69,7 +69,7 @@ class JoinDeclarationAndAssignmentHandler : JoinRawLinesHandlerDelegate {
 
     private fun doJoin(property: KtProperty, assignment: KtBinaryExpression) {
         property.initializer = assignment.right
-        property.parent!!.deleteChildRange(property.nextSibling, assignment) //TODO: should we delete range?
+        property.parent.deleteChildRange(property.nextSibling, assignment) //TODO: should we delete range?
     }
 
     private fun isToSkip(element: PsiElement): Boolean {

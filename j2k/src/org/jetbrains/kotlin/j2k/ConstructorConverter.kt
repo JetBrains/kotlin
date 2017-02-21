@@ -170,7 +170,7 @@ class ConstructorConverter(
             }
         }
         else {
-            { it -> Block.Empty }
+            { Block.Empty }
         }
 
         // we need to replace renamed parameter usages in base class constructor arguments and in default values

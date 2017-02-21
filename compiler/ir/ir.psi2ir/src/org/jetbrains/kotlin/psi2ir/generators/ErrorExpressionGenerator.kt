@@ -31,7 +31,7 @@ class ErrorExpressionGenerator(statementGenerator: StatementGenerator) : Stateme
             if (ignoreErrors)
                 body()
             else
-                throw RuntimeException("${e?.message}: ${ktElement.javaClass.simpleName}:\n${ktElement.text}", e)
+                throw RuntimeException("${e?.message}: ${ktElement::class.java.simpleName}:\n${ktElement.text}", e)
 
     fun generateErrorExpression(ktElement: KtElement, e: Exception): IrExpression =
             generateErrorExpression(ktElement, e) {

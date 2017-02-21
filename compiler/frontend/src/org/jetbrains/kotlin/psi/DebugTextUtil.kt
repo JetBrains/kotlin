@@ -40,7 +40,7 @@ fun KtElement.getDebugText(): String {
 
 private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
 
-    private val LOG = Logger.getInstance(this.javaClass)
+    private val LOG = Logger.getInstance(this::class.java)
 
     override fun visitKtFile(file: KtFile, data: Unit?): String? {
         return "STUB file: ${file.name}"
@@ -48,7 +48,7 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
 
     override fun visitKtElement(element: KtElement, data: Unit?): String? {
         if (element is KtElementImplStub<*>) {
-            LOG.error("getDebugText() is not defined for ${element.javaClass}")
+            LOG.error("getDebugText() is not defined for ${element::class.java}")
         }
         return element.text
     }

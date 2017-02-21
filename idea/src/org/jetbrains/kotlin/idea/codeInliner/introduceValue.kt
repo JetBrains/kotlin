@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findLocalVariable
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addToStdlib.check
 
 /**
  * Modifies [MutableCodeToInline] introducing a variable initialized by [value] and replacing all of [usages] with its use.
@@ -93,7 +92,7 @@ internal fun MutableCodeToInline.introduceValue(
             val declaration = psiFactory.createDeclarationByPattern<KtVariableDeclaration>("val $0 = $1", name, value)
             statementsBefore.add(0, declaration)
 
-            val explicitType = valueType?.check {
+            val explicitType = valueType?.takeIf {
                 variableNeedsExplicitType(value, valueType, expressionToBeReplaced, resolutionScope, bindingContext)
             }
             if (explicitType != null) {

@@ -47,7 +47,7 @@ class RemoveSingleLambdaParameterFix(element: KtParameter) : KotlinQuickFixActio
 
             if (parameterList.parameters.size != 1) return null
 
-            if (parameterList.parent?.parent !is KtLambdaExpression) return null
+            if (parameterList.parent.parent !is KtLambdaExpression) return null
 
             return RemoveSingleLambdaParameterFix(parameter)
         }

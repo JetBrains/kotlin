@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -289,8 +288,8 @@ class CoroutineCodegen private constructor(
     }
 
     private fun allFunctionParameters() =
-                originalSuspendFunctionDescriptor.extensionReceiverParameter.singletonOrEmptyList() +
-                originalSuspendFunctionDescriptor.valueParameters.orEmpty()
+            listOfNotNull(originalSuspendFunctionDescriptor.extensionReceiverParameter) +
+            originalSuspendFunctionDescriptor.valueParameters.orEmpty()
 
     private fun ParameterDescriptor.getFieldInfoForCoroutineLambdaParameter() =
             createHiddenFieldInfo(type, COROUTINE_LAMBDA_PARAMETER_PREFIX + (this.safeAs<ValueParameterDescriptor>()?.index ?: ""))

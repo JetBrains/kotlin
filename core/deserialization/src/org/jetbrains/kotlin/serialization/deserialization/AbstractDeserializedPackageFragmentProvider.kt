@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 abstract class AbstractDeserializedPackageFragmentProvider(
         protected val storageManager: StorageManager,
@@ -39,7 +38,7 @@ abstract class AbstractDeserializedPackageFragmentProvider(
 
     protected abstract fun findPackage(fqName: FqName): DeserializedPackageFragment?
 
-    override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> = fragments(fqName).singletonOrEmptyList()
+    override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> = listOfNotNull(fragments(fqName))
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> = emptySet()
 }

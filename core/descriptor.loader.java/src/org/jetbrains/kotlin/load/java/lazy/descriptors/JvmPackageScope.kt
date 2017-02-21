@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.util.collectionUtils.getFirstClassifierDiscriminateHeaders
 import org.jetbrains.kotlin.util.collectionUtils.getFromAllScopes
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.utils.toReadOnlyList
 
 class JvmPackageScope(
         private val c: LazyJavaResolverContext,
@@ -43,7 +42,7 @@ class JvmPackageScope(
     private val kotlinScopes by c.storageManager.createLazyValue {
         packageFragment.binaryClasses.values.mapNotNull { partClass ->
             c.components.deserializedDescriptorResolver.createKotlinPackagePartScope(packageFragment, partClass)
-        }.toReadOnlyList()
+        }.toList()
     }
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
@@ -78,7 +77,7 @@ class JvmPackageScope(
     }
 
     override fun printScopeStructure(p: Printer) {
-        p.println(javaClass.simpleName, " {")
+        p.println(this::class.java.simpleName, " {")
         p.pushIndent()
 
         p.println("containingDeclaration: $packageFragment")

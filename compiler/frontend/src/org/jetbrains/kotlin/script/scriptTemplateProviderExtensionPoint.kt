@@ -52,13 +52,13 @@ interface ScriptTemplatesProvider {
 }
 
 fun makeScriptDefsFromTemplatesProviderExtensions(project: Project,
-                                                  errorsHandler: ((ScriptTemplatesProvider, Exception) -> Unit) = { ep, ex -> throw ex }
+                                                  errorsHandler: ((ScriptTemplatesProvider, Exception) -> Unit) = { _, ex -> throw ex }
 ): List<KotlinScriptDefinitionFromAnnotatedTemplate> =
         makeScriptDefsFromTemplatesProviders(Extensions.getArea(project).getExtensionPoint(ScriptTemplatesProvider.EP_NAME).extensions.asIterable(),
                                              errorsHandler)
 
 fun makeScriptDefsFromTemplatesProviders(providers: Iterable<ScriptTemplatesProvider>,
-                                         errorsHandler: ((ScriptTemplatesProvider, Exception) -> Unit) = { ep, ex -> throw ex }
+                                         errorsHandler: ((ScriptTemplatesProvider, Exception) -> Unit) = { _, ex -> throw ex }
 ): List<KotlinScriptDefinitionFromAnnotatedTemplate> {
     return providers.filter { it.isValid }.flatMap { provider ->
         try {

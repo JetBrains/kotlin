@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.types.checker.TypeCheckerContext.SupertypesPolicy
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addToStdlib.check
 
 object StrictEqualityTypeChecker {
     /**
@@ -106,7 +105,7 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
         when (constructor) {
             // Type itself can be just SimpleTypeImpl, not CapturedType. see KT-16147
             is CapturedTypeConstructor -> {
-                val lowerType = constructor.typeProjection.check { it.projectionKind == Variance.IN_VARIANCE }?.type?.unwrap()
+                val lowerType = constructor.typeProjection.takeIf { it.projectionKind == Variance.IN_VARIANCE }?.type?.unwrap()
 
                 // it is incorrect calculate this type directly because of recursive star projections
                 if (constructor.newTypeConstructor == null) {
@@ -191,9 +190,9 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
             else -> { // at least 2 supertypes with same constructors. Such case is rare
                 if (supertypesWithSameConstructor.any { isSubtypeForSameConstructor(it.arguments, superType) }) return true
 
-                val newArguments = superConstructor.parameters.mapIndexed { index, parameterDescriptor ->
+                val newArguments = superConstructor.parameters.mapIndexed { index, _ ->
                     val allProjections = supertypesWithSameConstructor.map {
-                        it.arguments.getOrNull(index)?.check { it.projectionKind == Variance.INVARIANT }?.type?.unwrap()
+                        it.arguments.getOrNull(index)?.takeIf { it.projectionKind == Variance.INVARIANT }?.type?.unwrap()
                         ?: error("Incorrect type: $it, subType: $subType, superType: $superType")
                     }
 

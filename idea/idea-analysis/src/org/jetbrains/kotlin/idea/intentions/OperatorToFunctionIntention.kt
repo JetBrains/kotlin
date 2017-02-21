@@ -217,7 +217,7 @@ class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(KtExpre
                     callExpression.valueArgumentList?.delete()
                 }
             }
-            return callee.parent!!.replace(transformed) as KtExpression
+            return callee.parent.replace(transformed) as KtExpression
         }
 
         fun convert(element: KtExpression): Pair<KtExpression, KtSimpleNameExpression> {

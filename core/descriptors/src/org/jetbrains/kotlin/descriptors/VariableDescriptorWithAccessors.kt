@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.descriptors
 
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
-
 interface VariableDescriptorWithAccessors : VariableDescriptor {
     val getter: VariableAccessorDescriptor?
 
@@ -35,4 +33,4 @@ interface VariableDescriptorWithAccessors : VariableDescriptor {
 }
 
 val VariableDescriptorWithAccessors.accessors: List<VariableAccessorDescriptor>
-    get() = getter.singletonOrEmptyList() + setter.singletonOrEmptyList()
+    get() = listOfNotNull(getter) + listOfNotNull(setter)

@@ -57,7 +57,7 @@ class SMAPBuilder(
     private fun generateDebugStrata(realMappings: List<FileMapping>): String {
         val combinedMapping = FileMapping(source, path)
         realMappings.forEach { fileMapping ->
-            fileMapping.lineMappings.filter { it.callSiteMarker != null }.forEach { (source, dest, range, callSiteMarker) ->
+            fileMapping.lineMappings.filter { it.callSiteMarker != null }.forEach { (_, dest, range, callSiteMarker) ->
                 combinedMapping.addRangeMapping(RangeMapping(
                         callSiteMarker!!.lineNumber, dest, range
                 ))

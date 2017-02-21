@@ -25,7 +25,7 @@ abstract class ReflectJavaAnnotationArgument(
     companion object Factory {
         fun create(value: Any, name: Name?): ReflectJavaAnnotationArgument {
             return when {
-                value.javaClass.isEnumClassOrSpecializedEnumEntryClass() -> ReflectJavaEnumValueAnnotationArgument(name, value as Enum<*>)
+                value::class.java.isEnumClassOrSpecializedEnumEntryClass() -> ReflectJavaEnumValueAnnotationArgument(name, value as Enum<*>)
                 value is Annotation -> ReflectJavaAnnotationAsAnnotationArgument(name, value)
                 value is Array<*> -> ReflectJavaArrayAnnotationArgument(name, value)
                 value is Class<*> -> ReflectJavaClassObjectAnnotationArgument(name, value)
@@ -52,7 +52,7 @@ class ReflectJavaEnumValueAnnotationArgument(
         private val value: Enum<*>
 ) : ReflectJavaAnnotationArgument(name), JavaEnumValueAnnotationArgument {
     override fun resolve(): ReflectJavaField {
-        val clazz = value.javaClass
+        val clazz = value::class.java
         val enumClass = if (clazz.isEnum) clazz else clazz.enclosingClass
         return ReflectJavaField(enumClass.getDeclaredField(value.name))
     }

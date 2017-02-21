@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.util.isValidOperator
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.*
 
 private fun getApplicableComponentFunctions(
@@ -54,7 +53,7 @@ private fun getApplicableComponentFunctions(
     PrimitiveType.values().mapTo(forbiddenClasses) { builtIns.getPrimitiveArrayClassDescriptor(it) }
 
     (receiverType ?: context.getType(contextExpression))?.let {
-        if ((it.singletonList() + it.supertypes()).any {
+        if ((listOf(it) + it.supertypes()).any {
             val fqName = it.constructor.declarationDescriptor?.importableFqName
             forbiddenClasses.any { it.fqNameSafe == fqName }
         }) return emptyList()

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.KtElementInstructionImpl
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
-import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
 abstract class AbstractJumpInstruction(
         element: KtElement,
@@ -30,7 +29,7 @@ abstract class AbstractJumpInstruction(
         blockScope: BlockScope
 ) : KtElementInstructionImpl(element, blockScope), JumpInstruction {
     var resolvedTarget: Instruction? = null
-        set(value: Instruction?) {
+        set(value) {
             field = outgoingEdgeTo(value)
         }
 
@@ -45,5 +44,5 @@ abstract class AbstractJumpInstruction(
     }
 
     override val nextInstructions: Collection<Instruction>
-        get() = emptyOrSingletonList(resolvedTarget)
+        get() = listOfNotNull(resolvedTarget)
 }

@@ -52,7 +52,7 @@ class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakpointPro
     }
 
     override fun canPutAt(file: VirtualFile, line: Int, project: Project): Boolean {
-        return canPutAt(file, line, project, javaClass)
+        return canPutAt(file, line, project, this::class.java)
     }
 
     override fun getPriority() = 120

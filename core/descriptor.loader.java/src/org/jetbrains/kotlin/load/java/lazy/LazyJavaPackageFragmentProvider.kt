@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNullable
-import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
 class LazyJavaPackageFragmentProvider(
         components: JavaResolverComponents
@@ -41,7 +40,7 @@ class LazyJavaPackageFragmentProvider(
 
     private fun getPackageFragment(fqName: FqName) = packageFragments(fqName)
 
-    override fun getPackageFragments(fqName: FqName) = emptyOrSingletonList(getPackageFragment(fqName))
+    override fun getPackageFragments(fqName: FqName) = listOfNotNull(getPackageFragment(fqName))
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean) =
             getPackageFragment(fqName)?.getSubPackageFqNames().orEmpty()

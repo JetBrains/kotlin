@@ -278,7 +278,7 @@ class ScriptTemplateTest {
 
             try {
                 return if (runIsolated) KotlinToJVMBytecodeCompiler.compileScript(environment, paths)
-                else KotlinToJVMBytecodeCompiler.compileScript(environment, this.javaClass.classLoader)
+                else KotlinToJVMBytecodeCompiler.compileScript(environment, this::class.java.classLoader)
             }
             catch (e: CompilationException) {
                 messageCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),
@@ -333,15 +333,17 @@ class TestKotlinScriptDependenciesResolver : TestKotlinScriptDummyDependenciesRe
         val cp = script.annotations.flatMap {
             when (it) {
                 is DependsOn -> if (it.path == "@{runtime}") listOf(kotlinPaths.runtimePath, kotlinPaths.scriptRuntimePath) else listOf(File(it.path))
-                is DependsOnTwo -> listOf(it.path1, it.path2).flatMap { it?.let {
-                    when {
-                        it.isBlank() -> emptyList()
-                        it == "@{runtime}" -> listOf(kotlinPaths.runtimePath, kotlinPaths.scriptRuntimePath)
-                        else -> listOf(File(it))
+                is DependsOnTwo -> listOf(it.path1, it.path2).flatMap {
+                    it.let {
+                        when {
+                            it.isBlank() -> emptyList()
+                            it == "@{runtime}" -> listOf(kotlinPaths.runtimePath, kotlinPaths.scriptRuntimePath)
+                            else -> listOf(File(it))
+                        }
                     }
-                }}
+                }
                 is InvalidScriptResolverAnnotation -> throw Exception("Invalid annotation ${it.name}", it.error)
-                else -> throw Exception("Unknown annotation ${it.javaClass}")
+                else -> throw Exception("Unknown annotation ${it::class.java}")
             }
         }
         return object : KotlinScriptExternalDependencies {

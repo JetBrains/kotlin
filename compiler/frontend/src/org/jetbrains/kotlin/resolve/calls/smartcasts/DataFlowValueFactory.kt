@@ -123,7 +123,7 @@ object DataFlowValueFactory {
                                                      receiverValue.getType(),
                                                      bindingContext,
                                                      containingDeclarationOrModule)
-        else -> throw UnsupportedOperationException("Unsupported receiver value: " + receiverValue.javaClass.name)
+        else -> throw UnsupportedOperationException("Unsupported receiver value: " + receiverValue::class.java.name)
     }
 
     @JvmStatic
@@ -242,7 +242,7 @@ object DataFlowValueFactory {
                     }
                     else {
                         IdentifierInfo.qualified(receiverInfo, implicitReceiver.type,
-                                                 selectorInfo, resolvedCall?.call?.isSafeCall() ?: false)
+                                                 selectorInfo, resolvedCall.call.isSafeCall())
                     }
                 }
             }

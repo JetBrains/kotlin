@@ -219,7 +219,7 @@ fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObject>>.ge
         }
     }
 
-    require(this is KtClassOrObject) { "it should be ${KtClassOrObject::class} but it is a ${this.javaClass.name}" }
+    require(this is KtClassOrObject) { "it should be ${KtClassOrObject::class} but it is a ${this::class.java.name}" }
 
     val stub = stub
     if (stub != null) {
@@ -339,12 +339,12 @@ fun KtModifierListOwner.isProtected(): Boolean = hasModifier(KtTokens.PROTECTED_
 
 fun KtSimpleNameExpression.isImportDirectiveExpression(): Boolean {
     val parent = parent
-    return parent is KtImportDirective || parent?.parent is KtImportDirective
+    return parent is KtImportDirective || parent.parent is KtImportDirective
 }
 
 fun KtSimpleNameExpression.isPackageDirectiveExpression(): Boolean {
     val parent = parent
-    return parent is KtPackageDirective || parent?.parent is KtPackageDirective
+    return parent is KtPackageDirective || parent.parent is KtPackageDirective
 }
 
 fun KtExpression.isInImportDirective(): Boolean {

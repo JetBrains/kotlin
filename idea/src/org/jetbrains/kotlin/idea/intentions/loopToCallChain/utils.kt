@@ -38,13 +38,10 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiUtil.isOrdinaryAssignment
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 fun generateLambda(inputVariable: KtCallableDeclaration, expression: KtExpression): KtLambdaExpression {
@@ -166,7 +163,7 @@ fun KtExpression?.findVariableInitializationBeforeLoop(
     for (statement in prevStatements) {
         val variableInitialization = extractVariableInitialization(statement, variable)
         if (variableInitialization != null) {
-            return variableInitialization.check {
+            return variableInitialization.takeIf {
                 statementsBetween.all { canSwapExecutionOrder(variableInitialization.initializationStatement, it) }
             }
         }

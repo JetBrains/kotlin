@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.*
 
 class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration>(KtNamedDeclaration::class.java, "Create test") {
@@ -186,7 +185,7 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                                     getDocument(generatedFile)?.let { doPostponedOperationsAndUnblockDocument(it) }
                                 }
 
-                                JavaToKotlinAction.convertFiles(generatedFile.singletonList(), project, false).singleOrNull()
+                                JavaToKotlinAction.convertFiles(listOf(generatedFile), project, false).singleOrNull()
                             }
                         }
                     }

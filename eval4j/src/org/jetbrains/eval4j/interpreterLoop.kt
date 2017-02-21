@@ -120,7 +120,7 @@ fun interpreterLoop(
         return exceptionCaught(exceptionValue) {
             exceptionType ->
             try {
-                val exceptionClass = exception.javaClass
+                val exceptionClass = exception::class.java
                 val _class = Class.forName(
                         exceptionType.internalName.replace('/', '.'),
                         true,
@@ -222,7 +222,7 @@ fun interpreterLoop(
                     }
                     catch (e: ThrownFromEvalExceptionBase) {
                         val exception = e.cause!!
-                        val exceptionValue = ObjectValue(exception, Type.getType(exception.javaClass))
+                        val exceptionValue = ObjectValue(exception, Type.getType(exception::class.java))
                         val handled = handler.exceptionThrown(frame, currentInsn,
                                 exceptionValue)
                         if (handled != null) return handled

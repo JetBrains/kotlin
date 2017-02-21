@@ -40,7 +40,7 @@ class ConsoleCompilerHelper(
     fun compileModule() {
         if (ExecutionManager.getInstance(project).contentManager.removeRunContent(executor, contentDescriptor)) {
             CompilerManager.getInstance(project).make(module) {
-                aborted: Boolean, errors: Int, warnings: Int, compileContext: CompileContext ->
+                _: Boolean, errors: Int, _: Int, _: CompileContext ->
                 if (!module.isDisposed) {
                     KotlinConsoleKeeper.getInstance(project).run(module, previousCompilationFailed = errors > 0)
                 }

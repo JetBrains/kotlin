@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.j2k.AccessorKind
 import org.jetbrains.kotlin.j2k.CodeConverter
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.j2k.dot
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 class FieldToPropertyProcessing(
         private val field: PsiField,
@@ -43,11 +42,11 @@ class FieldToPropertyProcessing(
             else if (field.name != propertyName)
                 listOf(ElementRenamedCodeProcessor(propertyName), UseAccessorsJavaCodeProcessor())
             else
-                UseAccessorsJavaCodeProcessor().singletonList()
+                listOf(UseAccessorsJavaCodeProcessor())
 
     override val kotlinCodeProcessors =
             if (field.name != propertyName)
-                ElementRenamedCodeProcessor(propertyName).singletonList()
+                listOf(ElementRenamedCodeProcessor(propertyName))
             else
                 emptyList()
 

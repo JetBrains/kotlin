@@ -25,10 +25,9 @@ import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addToStdlib.check
 
 val KotlinType.nameIfStandardType: Name?
-    get() = constructor.declarationDescriptor?.check(KotlinBuiltIns::isBuiltIn)?.name
+    get() = constructor.declarationDescriptor?.takeIf(KotlinBuiltIns::isBuiltIn)?.name
 
 fun KotlinType.getJetTypeFqName(printTypeArguments: Boolean): String {
     val declaration = requireNotNull(constructor.declarationDescriptor)

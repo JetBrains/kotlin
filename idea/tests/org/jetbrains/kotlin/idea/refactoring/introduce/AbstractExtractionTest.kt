@@ -69,13 +69,12 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.findElementByCommentPrefix
-import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import java.io.File
 import java.lang.AssertionError
 import java.util.*
 import kotlin.test.assertEquals
 
-abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = LightCodeInsightFixtureTestCase.JAVA_LATEST
 
     val fixture: JavaCodeInsightTestFixture get() = myFixture
@@ -125,12 +124,12 @@ abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTestCase(
             with (handler) {
                 val target = (file as KtFile).findElementByCommentPrefix("// TARGET:") as? KtNamedDeclaration
                 if (target != null) {
-                    selectElement(fixture.getEditor(), file, true, listOf(CodeInsightUtils.ElementKind.EXPRESSION)) { element ->
-                        invoke(fixture.getProject(), fixture.getEditor(), element as KtExpression, target)
+                    selectElement(fixture.editor, file, true, listOf(CodeInsightUtils.ElementKind.EXPRESSION)) { element ->
+                        invoke(fixture.project, fixture.editor, element as KtExpression, target)
                     }
                 }
                 else {
-                    invoke(fixture.getProject(), fixture.getEditor(), file, null)
+                    invoke(fixture.project, fixture.editor, file, null)
                 }
             }
         }
@@ -293,7 +292,7 @@ abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTestCase(
                             val actualReturnTypes = descriptor.controlFlow.possibleReturnTypes.map {
                                 IdeDescriptorRenderers.SOURCE_CODE.renderType(it)
                             }
-                            val allParameters = emptyOrSingletonList(descriptor.receiverParameter) + descriptor.parameters
+                            val allParameters = listOfNotNull(descriptor.receiverParameter) + descriptor.parameters
                             val actualDescriptors = allParameters.map { renderer.render(it.originalDescriptor) }.joinToString()
                             val actualTypes = allParameters.map {
                                 it.getParameterTypeCandidates(false).map { renderer.renderType(it) }.joinToString(", ", "[", "]")
@@ -405,7 +404,7 @@ abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTestCase(
 
         val mainFileName = mainFile.name
         val mainFileBaseName = FileUtil.getNameWithoutExtension(mainFileName)
-        val extraFiles = mainFile.parentFile.listFiles { file, name ->
+        val extraFiles = mainFile.parentFile.listFiles { _, name ->
             name != mainFileName && name.startsWith("$mainFileBaseName.") && (name.endsWith(".kt") || name.endsWith(".java"))
         }
         val extraFilesToPsi = extraFiles.associateBy { fixture.configureByFile(it.name) }
@@ -436,7 +435,7 @@ abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTestCase(
             KotlinTestUtils.assertEqualsToFile(conflictFile, e.message!!)
         }
         catch(e: RuntimeException) { // RuntimeException is thrown by IDEA code in CodeInsightUtils.java
-            if (e.javaClass != RuntimeException::class.java) throw e
+            if (e::class.java != RuntimeException::class.java) throw e
             KotlinTestUtils.assertEqualsToFile(conflictFile, e.message!!)
         }
         finally {

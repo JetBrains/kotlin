@@ -64,7 +64,6 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.util.findCallableMemberBySignature
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean {
@@ -279,7 +278,7 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
             return preprocessAndPass(callableDeclaration)
         }
 
-        val superPsiMethods = deepestSuperDeclaration.getRepresentativeLightMethod().singletonOrEmptyList()
+        val superPsiMethods = listOfNotNull(deepestSuperDeclaration.getRepresentativeLightMethod())
         checkSuperMethodsWithPopup(callableDeclaration, superPsiMethods, "Rename", editor) {
             preprocessAndPass(if (it.size > 1) deepestSuperDeclaration else callableDeclaration)
         }
@@ -445,7 +444,6 @@ class RenameKotlinPropertyProcessor : RenameKotlinPsiProcessor() {
                     }
                 }
             }
-            true
         }
     }
 

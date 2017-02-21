@@ -135,7 +135,7 @@ class WhileConditionFolding(val body: JsBlock) {
                 // applying this rule repeatedly we get while (A && (B || C)), which is correct
 
                 is JsIf -> {
-                    val then = statement.thenStatement!!
+                    val then = statement.thenStatement
                     if (statement.elseStatement == null) {
                         val nextCondition = extractCondition(then, label)
                         val result: JsExpression? = when (nextCondition) {

@@ -71,7 +71,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
 class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
@@ -542,7 +541,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                 val conflictElement = DescriptorToSourceUtils.descriptorToDeclaration(conflict)
                 if (conflictElement === info.method) continue
 
-                val candidateTypes = conflict.extensionReceiverParameter?.type.singletonOrEmptyList() + conflict.valueParameters.map { it.type }
+                val candidateTypes = listOfNotNull(conflict.extensionReceiverParameter?.type) + conflict.valueParameters.map { it.type }
 
                 if (candidateTypes == newTypes) {
                     result.putValue(conflictElement, "Function already exists: '" + DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(conflict) + "'")

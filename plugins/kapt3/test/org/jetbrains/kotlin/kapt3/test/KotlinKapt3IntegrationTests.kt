@@ -26,7 +26,7 @@ import javax.lang.model.element.ExecutableElement
 
 class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest() {
     @Test
-    fun testSimple() = test("Simple", "test.MyAnnotation") { set, roundEnv, env ->
+    fun testSimple() = test("Simple", "test.MyAnnotation") { set, roundEnv, _ ->
         assertEquals(1, set.size)
         val annotatedElements = roundEnv.getElementsAnnotatedWith(set.single())
         assertEquals(1, annotatedElements.size)
@@ -63,7 +63,7 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest() {
     }
 
     private fun bindingsTest(name: String, test: (File, File, Map<String, KaptJavaFileObject>) -> Unit) {
-        test(name, "test.MyAnnotation") { set, roundEnv, env ->
+        test(name, "test.MyAnnotation") { _, _, _ ->
             val kaptExtension = AnalysisHandlerExtension.getInstances(myEnvironment.project).firstIsInstance<Kapt3ExtensionForTests>()
 
             val stubsOutputDir = kaptExtension.stubsOutputDir
@@ -79,14 +79,14 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest() {
     fun testOptions() = test(
             "Simple", "test.MyAnnotation",
             options = mapOf("firstKey" to "firstValue", "secondKey" to "")
-    ) { set, roundEnv, env ->
+    ) { _, _, env ->
         val options = env.options
         assertEquals("firstValue", options["firstKey"])
         assertTrue("secondKey" in options)
     }
 
     @Test
-    fun testOverloads() = test("Overloads", "test.MyAnnotation") { set, roundEnv, env ->
+    fun testOverloads() = test("Overloads", "test.MyAnnotation") { set, roundEnv, _ ->
         assertEquals(1, set.size)
         val annotatedElements = roundEnv.getElementsAnnotatedWith(set.single())
         assertEquals(1, annotatedElements.size)

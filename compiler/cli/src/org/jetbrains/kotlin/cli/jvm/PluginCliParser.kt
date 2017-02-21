@@ -35,7 +35,7 @@ object PluginCliParser {
                         ?.map { File(it).toURI().toURL() }
                         ?.toTypedArray()
                         ?: arrayOf<URL>(),
-                javaClass.classLoader
+                this::class.java.classLoader
         )
 
         val componentRegistrars = ServiceLoader.load(ComponentRegistrar::class.java, classLoader).toMutableList()

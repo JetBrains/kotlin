@@ -57,7 +57,7 @@ abstract class AbstractLocalRedeclarationChecker(val overloadChecker: OverloadCh
                     }
                 }
             }
-            else -> throw IllegalStateException("Unexpected type of descriptor: ${newDescriptor.javaClass.name}, descriptor: $newDescriptor")
+            else -> throw IllegalStateException("Unexpected type of descriptor: ${newDescriptor::class.java.name}, descriptor: $newDescriptor")
         }
     }
 

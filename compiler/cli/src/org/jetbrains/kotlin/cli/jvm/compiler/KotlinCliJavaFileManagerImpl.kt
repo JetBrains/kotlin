@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.util.PerformanceCounter
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 import kotlin.properties.Delegates
 
@@ -50,7 +49,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             val classNameWithInnerClasses = classId.relativeClassName.asString()
             index.findClass(classId) { dir, type ->
                 findClassGivenPackage(allScope, dir, classNameWithInnerClasses, type)
-            }?.check { it.containingFile.virtualFile in searchScope }
+            }?.takeIf { it.containingFile.virtualFile in searchScope }
         }
     }
 
@@ -88,7 +87,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     override fun findPackage(packageName: String): PsiPackage? {
         var found = false
         val packageFqName = packageName.toSafeFqName() ?: return null
-        index.traverseDirectoriesInPackage(packageFqName) { dir, rootType ->
+        index.traverseDirectoriesInPackage(packageFqName) { _, _ ->
             found = true
             //abort on first found
             false
@@ -149,10 +148,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             var curClass = topLevelClass
             while (segments.hasNext()) {
                 val innerClassName = segments.next()
-                val innerClass = curClass.findInnerClassByName(innerClassName, false)
-                if (innerClass == null) {
-                    return null
-                }
+                val innerClass = curClass.findInnerClassByName(innerClassName, false) ?: return null
                 curClass = innerClass
             }
             return curClass

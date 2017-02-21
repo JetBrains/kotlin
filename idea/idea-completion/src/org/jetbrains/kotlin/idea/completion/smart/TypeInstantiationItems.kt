@@ -188,7 +188,7 @@ class TypeInstantiationItems(
             itemText = "object: $itemText{...}"
             lookupString = "object"
             allLookupStrings = setOf(lookupString, lookupElement.lookupString)
-            insertHandler = InsertHandler<LookupElement> { context, item ->
+            insertHandler = InsertHandler<LookupElement> { context, _ ->
                 val startOffset = context.startOffset
 
                 val text1 = "object: $typeText"

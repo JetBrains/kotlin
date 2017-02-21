@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.findPackage
 import org.jetbrains.kotlin.resolve.source.getPsi
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.lang.IllegalStateException
 import java.util.*
 
@@ -384,7 +383,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                 scope.findPackage(name)
 
             val canShortenNow = targetByName?.asString() == target.asString()
-            return if (canShortenNow) AnalyzeQualifiedElementResult.ShortenNow else AnalyzeQualifiedElementResult.ImportDescriptors(target.singletonOrEmptyList())
+            return if (canShortenNow) AnalyzeQualifiedElementResult.ShortenNow else AnalyzeQualifiedElementResult.ImportDescriptors(listOfNotNull(target))
         }
 
         override fun shortenElement(element: KtUserType): KtElement {

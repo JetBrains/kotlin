@@ -144,7 +144,7 @@ abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
             val classDir = classFile.parentFile
             val classLastName = classFile.name
             val packageFacadePrefix = classLastName.replace(".class", "\$")
-            classDir.listFiles { dir, lastName ->
+            classDir.listFiles { _, lastName ->
                 lastName.startsWith(packageFacadePrefix) && lastName.endsWith(".class")
             }.forEach { packageFacadeFile ->
                 processClassFile(checker, packageFacadeFile)

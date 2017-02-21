@@ -35,7 +35,7 @@ class WrongBytecodeVersionTest : KtUsefulTestCase() {
         val librarySource = File(directory, "A.kt")
         val usageSource = File(directory, "B.kt")
 
-        val tmpdir = KotlinTestUtils.tmpDir(javaClass.simpleName)
+        val tmpdir = KotlinTestUtils.tmpDir(this::class.java.simpleName)
 
         val environment = KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations(testRootDisposable)
         LoadDescriptorUtil.compileKotlinToDirAndGetModule(listOf(librarySource), tmpdir, environment)

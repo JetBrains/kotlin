@@ -101,14 +101,14 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
         internal set
 
     protected fun isIntentionBaseInspectionEnabled(project: Project, target: TElement): Boolean {
-        val inspection = inspection ?: findInspection(this.javaClass.kotlin) ?: return false
+        val inspection = inspection ?: findInspection(this::class.java.kotlin) ?: return false
 
         val key = HighlightDisplayKey.find(inspection.shortName)
         if (!InspectionProjectProfileManager.getInstance(project).inspectionProfile.isToolEnabled(key, target)) {
             return false
         }
 
-        return inspection.intentionInfos.single { it.intention == this.javaClass.kotlin }.additionalChecker(target, inspection)
+        return inspection.intentionInfos.single { it.intention == this::class.java.kotlin }.additionalChecker(target, inspection)
     }
 
     final override fun invoke(project: Project, editor: Editor, file: PsiFile): Unit {

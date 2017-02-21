@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.*
 
 object CreateClassFromCallWithConstructorCalleeActionFactory : CreateClassFromUsageFactory<KtCallElement>() {
@@ -46,7 +45,7 @@ object CreateClassFromCallWithConstructorCalleeActionFactory : CreateClassFromUs
     }
 
     override fun getPossibleClassKinds(element: KtCallElement, diagnostic: Diagnostic): List<ClassKind> {
-        return (if (element is KtAnnotationEntry) ClassKind.ANNOTATION_CLASS else ClassKind.PLAIN_CLASS).singletonList()
+        return listOf((if (element is KtAnnotationEntry) ClassKind.ANNOTATION_CLASS else ClassKind.PLAIN_CLASS))
     }
 
     override fun extractFixData(element: KtCallElement, diagnostic: Diagnostic): ClassInfo? {

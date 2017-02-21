@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
 interface KtReference : PsiPolyVariantReference {
@@ -95,7 +94,7 @@ abstract class AbstractKtReference<T : KtElement>(element: T)
         if (targetDescriptor is PackageViewDescriptor) {
             val psiFacade = JavaPsiFacade.getInstance(expression.project)
             val fqName = targetDescriptor.fqName.asString()
-            return psiFacade.findPackage(fqName).singletonOrEmptyList()
+            return listOfNotNull(psiFacade.findPackage(fqName))
         }
         else {
             return DescriptorToSourceUtilsIde.getAllDeclarations(expression.project, targetDescriptor)
@@ -105,10 +104,7 @@ abstract class AbstractKtReference<T : KtElement>(element: T)
     protected abstract fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor>
 
     private fun getLabelTargets(context: BindingContext): Collection<PsiElement>? {
-        val reference = expression
-        if (reference !is KtReferenceExpression) {
-            return null
-        }
+        val reference = expression as? KtReferenceExpression ?: return null
         val labelTarget = context[BindingContext.LABEL_TARGET, reference]
         if (labelTarget != null) {
             return listOf(labelTarget)
@@ -116,7 +112,7 @@ abstract class AbstractKtReference<T : KtElement>(element: T)
         return context[BindingContext.AMBIGUOUS_LABEL_TARGET, reference]
     }
 
-    override fun toString() = javaClass.simpleName + ": " + expression.text
+    override fun toString() = this::class.java.simpleName + ": " + expression.text
 }
 
 abstract class KtSimpleReference<T : KtReferenceExpression>(expression: T) : AbstractKtReference<T>(expression) {

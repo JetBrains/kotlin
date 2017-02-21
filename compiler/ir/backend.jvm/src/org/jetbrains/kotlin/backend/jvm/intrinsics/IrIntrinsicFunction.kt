@@ -62,7 +62,7 @@ open class IrIntrinsicFunction(
     open fun invoke(v: InstructionAdapter, codegen: ExpressionCodegen, data: BlockInfo):StackValue {
         val args = mutableListOf(expression.dispatchReceiver, expression.extensionReceiver)
         args.addAll(expression.descriptor.valueParameters.mapIndexed {
-            i, valueParameterDescriptor ->
+            i, _ ->
             expression.getValueArgument(i)
         })
         args.filterNotNull().forEachIndexed { i, irExpression -> genArg(irExpression, codegen, i, data) }
@@ -108,7 +108,7 @@ fun IrMemberAccessExpression.argTypes(context: JvmBackendContext): ArrayList<Typ
 
 fun IrMemberAccessExpression.receiverAndArgs(): List<IrExpression> {
     return (arrayListOf(this.dispatchReceiver, this.extensionReceiver) +
-                 descriptor.valueParameters.mapIndexed { i, valueParameterDescriptor ->getValueArgument(i)}).filterNotNull()
+                 descriptor.valueParameters.mapIndexed { i, _ ->getValueArgument(i)}).filterNotNull()
 }
 
 fun List<IrExpression>.asmTypes(context: JvmBackendContext): List<Type> {
