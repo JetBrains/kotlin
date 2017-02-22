@@ -34,6 +34,10 @@ internal class CompilerPluginOptions {
         mutableClasspath.add(file.canonicalPath)
     }
 
+    internal fun removeClasspathEntry(file: File) {
+        mutableClasspath.remove(file.canonicalPath)
+    }
+
     fun addPluginArgument(pluginId: String, key: String, value: String) {
         mutableArguments.add("plugin:$pluginId:$key=$value")
     }

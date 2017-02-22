@@ -137,7 +137,10 @@ internal class Kotlin2JvmSourceSetProcessor(
                     val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, sourceSetName,
                             aptConfiguration.resolve(), aptOutputDir, aptWorkingDir)
 
-                    kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager, sourceSetName, null, subpluginEnvironment, tasksProvider)
+                    kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager,
+                            sourceSetName, null, subpluginEnvironment, tasksProvider)
+                } else {
+                    removeAnnotationProcessingPluginClasspathEntry(kotlinTask)
                 }
 
                 sourceSet.java.srcDirs.forEach { kotlinSourceSet.kotlin.srcDir(it) }
@@ -398,19 +401,27 @@ internal open class KotlinAndroidPlugin(
             kotlinTask.description = "Compiles the $variantDataName kotlin."
             kotlinTask.setDependsOn(javaTask.dependsOn)
 
-            val isKapt2Enabled = Kapt3GradleSubplugin.isEnabled(project)
+            val isKapt3Enabled = Kapt3GradleSubplugin.isEnabled(project)
 
             val aptFiles = arrayListOf<File>()
 
-            if (!isKapt2Enabled) {
+            if (!isKapt3Enabled) {
+                var hasAnyKaptDependency: Boolean = false
                 for (provider in variantData.sourceProviders) {
                     val aptConfiguration = aptConfigurations[(provider as AndroidSourceSet).name]
                     // Ignore if there's only an annotation processor wrapper in dependencies (added by default)
                     if (aptConfiguration != null && aptConfiguration.allDependencies.size > 1) {
                         javaTask.dependsOn(aptConfiguration.buildDependencies)
                         aptFiles.addAll(aptConfiguration.resolve())
+                        hasAnyKaptDependency = true
                     }
                 }
+
+                if (!hasAnyKaptDependency) {
+                    removeAnnotationProcessingPluginClasspathEntry(kotlinTask)
+                }
+            } else {
+                removeAnnotationProcessingPluginClasspathEntry(kotlinTask)
             }
 
             val appliedPlugins = subpluginEnvironment.addSubpluginOptions(
@@ -422,7 +433,7 @@ internal open class KotlinAndroidPlugin(
 
             var kotlinAfterJavaTask: KotlinCompile? = null
 
-            if (javaTask is JavaCompile && aptFiles.isNotEmpty() && !isKapt2Enabled) {
+            if (javaTask is JavaCompile && aptFiles.isNotEmpty() && !isKapt3Enabled) {
                 val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(variantDataName)
 
                 variantData.addJavaSourceFoldersToModel(aptOutputDir)
@@ -562,6 +573,18 @@ private fun createSyncOutputTask(
     previousTask.finalizedByIfNotFailed(syncTask)
 
     project.logger.kotlinDebug { "Created task ${syncTask.path} to copy kotlin classes from $kotlinDir to $javaDir" }
+}
+
+private val KOTLIN_ANNOTATION_PROCESSING_FILE_REGEX = "kotlin-annotation-processing-[\\-0-9A-Za-z.]+\\.jar".toRegex()
+
+private fun removeAnnotationProcessingPluginClasspathEntry(kotlinCompile: KotlinCompile) {
+    kotlinCompile.pluginOptions.classpath
+            .map(::File)
+            .filter { it.name.matches(KOTLIN_ANNOTATION_PROCESSING_FILE_REGEX) }
+            .forEach {
+                kotlinCompile.logger.kotlinDebug("Removing plugin classpath dependency $it")
+                kotlinCompile.pluginOptions.removeClasspathEntry(it)
+            }
 }
 
 private fun loadSubplugins(project: Project): SubpluginEnvironment {
