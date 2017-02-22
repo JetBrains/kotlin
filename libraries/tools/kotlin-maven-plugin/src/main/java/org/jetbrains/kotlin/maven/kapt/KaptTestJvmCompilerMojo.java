@@ -1,20 +1,4 @@
-/*
- * Copyright 2010-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package org.jetbrains.kotlin.maven;
+package org.jetbrains.kotlin.maven.kapt;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -25,25 +9,16 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
-import org.jetbrains.kotlin.maven.kapt.AnnotationProcessingManager;
-import org.jetbrains.kotlin.maven.kapt.KaptTestJvmCompilerMojo;
 
 import java.util.List;
 
-/**
- * Compiles Kotlin test sources
+/** Note! This file was majorly copied from {@link org.jetbrains.kotlin.maven.KotlinTestCompileMojo}.
+ * Please change the original file if you make changes to {@link KaptTestJvmCompilerMojo}.
  *
  * @noinspection UnusedDeclaration
  */
-
-/** Note!
- * Please change {@link KaptTestJvmCompilerMojo} as well as it was majorly copied from this file. */
-
-@Mojo(name = "test-compile",
-        defaultPhase = LifecyclePhase.TEST_COMPILE,
-        requiresDependencyResolution = ResolutionScope.TEST
-)
-public class KotlinTestCompileMojo extends K2JVMCompileMojo {
+@Mojo(name = "test-kapt", defaultPhase = LifecyclePhase.PROCESS_TEST_SOURCES, requiresDependencyResolution = ResolutionScope.TEST)
+public class KaptTestJvmCompilerMojo extends KaptJVMCompilerMojo {
     /**
      * Flag to allow test compilation to be skipped.
      */
@@ -103,7 +78,13 @@ public class KotlinTestCompileMojo extends K2JVMCompileMojo {
     }
 
     @NotNull
+    @Override
     protected String getSourceSetName() {
         return AnnotationProcessingManager.TEST_SOURCE_SET_NAME;
+    }
+
+    @Override
+    protected void addKaptSourcesDirectory(@NotNull String path) {
+        project.addTestCompileSourceRoot(path);
     }
 }

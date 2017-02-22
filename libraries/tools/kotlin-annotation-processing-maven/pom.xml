@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <modelVersion>4.0.0</modelVersion>
+    <properties>
+        <maven.version>3.0.4</maven.version>
+        <annotation-processing.src>${basedir}/../../../plugins/kapt3/src</annotation-processing.src>
+        <annotation-processing.target-src>${basedir}/target/src/main/kotlin</annotation-processing.target-src>
+        <annotation-processing.target-src-test>${basedir}/target/src/test/kotlin</annotation-processing.target-src-test>
+        <annotation-processing.target-resource>${basedir}/target/resource</annotation-processing.target-resource>
+    </properties>
+
+    <parent>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-project</artifactId>
+        <version>1.1-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>kotlin-annotation-processing-maven</artifactId>
+    <packaging>jar</packaging>
+
+    <description>Annotation Processor wrapper for Kotlin Maven plugin</description>
+
+    <repositories>
+        <repository>
+            <id>jetbrains-utils</id>
+            <url>http://repository.jetbrains.com/utils</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-compiler</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>gradle-api</artifactId>
+            <version>1.6</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.android.tools.build</groupId>
+            <artifactId>gradle</artifactId>
+            <version>1.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>${annotation-processing.target-src}</sourceDirectory>
+        <testSourceDirectory>${annotation-processing.target-src-test}</testSourceDirectory>
+        <resources>
+            <resource>
+                <directory>${annotation-processing.target-resource}</directory>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-sources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${annotation-processing.target-src}</outputDirectory>
+                            <resources>
+                                <resource><directory>${annotation-processing.src}</directory></resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${annotation-processing.target-resource}/META-INF</outputDirectory>
+                            <resources>
+                                <resource><directory>${annotation-processing.src}/META-INF</directory></resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <version>${project.version}</version>
+                <configuration>
+                    <jdkHome>${env.JDK_18}</jdkHome>
+                    <annotationPaths>
+                        <annotationPath>${basedir}/kotlinAnnotation</annotationPath>
+                    </annotationPaths>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals> <goal>compile</goal> </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${annotation-processing.target-src}</sourceDir>
+                            </sourceDirs>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals> <goal>test-compile</goal> </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>tools_jar_profile</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <file>
+                    <exists>kotlin-annotation-processing-maven-build.txt</exists>
+                </file>
+            </activation>
+            <properties>
+                <toolsjar>${env.JDK_18}/lib/tools.jar</toolsjar>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sun</groupId>
+                    <artifactId>tools</artifactId>
+                    <version>1.8.0</version>
+                    <scope>system</scope>
+                    <systemPath>${toolsjar}</systemPath>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+</project>

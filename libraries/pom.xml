@@ -105,6 +105,7 @@
         <module>tools/kotlin-js-tests</module>
         <module>tools/kotlin-js-tests-junit</module>
         <module>tools/kotlin-annotation-processing</module>
+        <module>tools/kotlin-annotation-processing-maven</module>
         <module>tools/kotlin-allopen</module>
         <module>tools/kotlin-maven-allopen</module>
         <module>tools/kotlin-noarg</module>

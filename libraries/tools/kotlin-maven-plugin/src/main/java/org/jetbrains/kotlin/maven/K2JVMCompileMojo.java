@@ -17,16 +17,15 @@
 package org.jetbrains.kotlin.maven;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
+import org.jetbrains.kotlin.maven.kapt.AnnotationProcessingManager;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.intellij.openapi.util.text.StringUtil.join;
@@ -81,6 +80,24 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
     @Override
     protected K2JVMCompilerArguments createCompilerArguments() {
         return new K2JVMCompilerArguments();
+    }
+
+    @Override
+    protected List<String> getSourceFilePaths() {
+        List<String> paths = super.getSourceFilePaths();
+
+        File sourcesDir = AnnotationProcessingManager.getGeneratedSourcesDirectory(project, getSourceSetName());
+        if (sourcesDir.isDirectory()) {
+            paths = new ArrayList<String>(paths);
+            paths.add(sourcesDir.getAbsolutePath());
+        }
+
+        return paths;
+    }
+
+    @NotNull
+    protected String getSourceSetName() {
+        return AnnotationProcessingManager.COMPILE_SOURCE_SET_NAME;
     }
 
     @Override
