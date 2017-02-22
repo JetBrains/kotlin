@@ -146,7 +146,7 @@ abstract class KonanTest extends DefaultTask {
 
         }
         if (goldValue != null && goldValue != out.toString()) {
-            throw new TestFailedException("test failed.")
+            throw new TestFailedException("Test failed. Expected output: $goldValue, actual output: ${out.toString()}")
         }
     }
 }
@@ -415,7 +415,8 @@ fun main(args : Array<String>) {
 
             TestResult fail(TestFailedException e) {
                 statistics.fail()
-                return new TestResult(TestStatus.FAILED, "Cause: ${e.getCause()?.getMessage()}")
+                println(e.getMessage())
+                return new TestResult(TestStatus.FAILED, "Exception: ${e.getMessage()}. Cause: ${e.getCause()?.getMessage()}")
             }
 
             TestResult error(Exception e) {
