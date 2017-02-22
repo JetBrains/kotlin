@@ -36,7 +36,11 @@ task clean {
 }
 
 task run() {
-    dependsOn(tasks.withType(KonanTest).matching { !(it instanceof RunExternalTestGroup) && it.enabled })
+    String prefix = project.findProperty("prefix")
+    if (prefix != null)
+        dependsOn(tasks.withType(KonanTest).matching { !(it instanceof RunExternalTestGroup) && it.enabled && it.name.startsWith(prefix) })
+    else
+        dependsOn(tasks.withType(KonanTest).matching { !(it instanceof RunExternalTestGroup) && it.enabled })
 }
 
 task run_external () {
@@ -87,10 +91,6 @@ task daily() {
 
 task slackReport(type:Reporter) {
     reportHome = rootProject.file("test.output").absoluteFile
-}
-
-task bridges_all() {
-    dependsOn(tasks.withType(KonanTest).matching { !(it instanceof RunExternalTestGroup) && it.enabled && it.name.startsWith("bridges_") })
 }
 
 task sum (type:RunKonanTest) {
