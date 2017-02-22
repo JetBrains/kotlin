@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedAnnotationsWithPossibleTargets
@@ -115,7 +116,9 @@ class TypeDeserializer(
             when {
                 proto.hasClassName() -> {
                     classDescriptors(proto.className)?.typeConstructor
-                    ?: c.components.notFoundClasses.getClass(proto, c.nameResolver, c.typeTable)
+                    ?: c.nameResolver.getClassId(proto.className).let { classId ->
+                        c.components.notFoundClasses.getClass(classId, computeTypeParametersCount(classId, proto, c.typeTable)).typeConstructor
+                    }
                 }
                 proto.hasTypeParameter() ->
                     typeParameterTypeConstructor(proto.typeParameter)
@@ -128,10 +131,21 @@ class TypeDeserializer(
                 }
                 proto.hasTypeAliasName() -> {
                     typeAliasDescriptors(proto.typeAliasName)?.typeConstructor
-                    ?: c.components.notFoundClasses.getTypeAlias(proto, c.nameResolver, c.typeTable)
+                    ?: c.nameResolver.getClassId(proto.typeAliasName).let { classId ->
+                        c.components.notFoundClasses.getTypeAlias(classId, computeTypeParametersCount(classId, proto, c.typeTable)).typeConstructor
+                    }
                 }
                 else -> ErrorUtils.createErrorTypeConstructor("Unknown type")
             }
+
+    private fun computeTypeParametersCount(classId: ClassId, proto: ProtoBuf.Type, typeTable: TypeTable): List<Int> {
+        val typeParametersCount = generateSequence(proto) { it.outerType(typeTable) }.map { it.argumentCount }.toMutableList()
+        val classNestingLevel = generateSequence(classId, ClassId::getOuterClassId).count()
+        while (typeParametersCount.size < classNestingLevel) {
+            typeParametersCount.add(0)
+        }
+        return typeParametersCount
+    }
 
     private fun createSuspendFunctionType(
             annotations: Annotations,

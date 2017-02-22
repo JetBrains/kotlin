@@ -29,10 +29,12 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.ClassTypeConstructorImpl
+import org.jetbrains.kotlin.types.SimpleType
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.Variance
 
 class NotFoundClasses(private val storageManager: StorageManager, private val module: ModuleDescriptor) {
     /**
@@ -71,7 +73,7 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
         }
 
         val container = classId.outerClassId?.let { outerClassId ->
-            getOrCreateClass(outerClassId, typeParametersCount.drop(1))
+            getClass(outerClassId, typeParametersCount.drop(1))
         } ?: packageFragments(classId.packageFqName)
 
         // Treat a class with a nested ClassId as inner for simplicity, otherwise the outer type cannot have generic arguments
@@ -152,22 +154,12 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
     // (This may happen when a class with the same FQ name is instantiated with different type arguments in different modules.)
     // It's better than creating just one descriptor because otherwise would fail in multiple places where it's asserted that
     // the number of type arguments in a type must be equal to the number of the type parameters of the class
-    private fun getOrCreateClass(classId: ClassId, typeParametersCount: List<Int>): ClassDescriptor {
+    fun getClass(classId: ClassId, typeParametersCount: List<Int>): ClassDescriptor {
         return classes(ClassRequest(classId, typeParametersCount))
     }
 
-    fun getClass(proto: ProtoBuf.Type, nameResolver: NameResolver, typeTable: TypeTable): TypeConstructor {
-        val classId = nameResolver.getClassId(proto.className)
-        return getOrCreateClass(classId, computeTypeParametersCount(classId, proto, typeTable)).typeConstructor
-    }
-
-    fun getClass(classId: ClassId, typeParametersCount: List<Int>): TypeConstructor {
-        return getOrCreateClass(classId, typeParametersCount).typeConstructor
-    }
-
-    fun getTypeAlias(proto: ProtoBuf.Type, nameResolver: NameResolver, typeTable: TypeTable): TypeConstructor {
-        val classId = nameResolver.getClassId(proto.typeAliasName)
-        return typeAliases(ClassRequest(classId, computeTypeParametersCount(classId, proto, typeTable))).typeConstructor
+    fun getTypeAlias(classId: ClassId, typeParametersCount: List<Int>): TypeAliasDescriptor {
+        return typeAliases(ClassRequest(classId, typeParametersCount))
     }
 }
 
@@ -178,13 +170,4 @@ private fun createTypeParameters(
     TypeParameterDescriptorImpl.createWithDefaultBound(
             classifierDescriptor, Annotations.EMPTY, false, Variance.INVARIANT, Name.identifier("T$index"), index
     )
-}
-
-private fun computeTypeParametersCount(classId: ClassId, proto: ProtoBuf.Type, typeTable: TypeTable): List<Int> {
-    val typeParametersCount = generateSequence(proto) { it.outerType(typeTable) }.map { it.argumentCount }.toMutableList()
-    val classNestingLevel = generateSequence(classId, ClassId::getOuterClassId).count()
-    while (typeParametersCount.size < classNestingLevel) {
-        typeParametersCount.add(0)
-    }
-    return typeParametersCount
 }
