@@ -36,13 +36,13 @@ class KotlinSpacingBuilder(val commonCodeStyleSettings: CommonCodeStyleSettings,
         fun getSpacing(parent: ASTBlock, left: ASTBlock, right: ASTBlock): Spacing?
     }
 
-    inner class BasicSpacingBuilder() : SpacingBuilder(commonCodeStyleSettings), Builder {
+    inner class BasicSpacingBuilder : SpacingBuilder(commonCodeStyleSettings), Builder {
         override fun getSpacing(parent: ASTBlock, left: ASTBlock, right: ASTBlock): Spacing? {
             return super.getSpacing(parent, left, right)
         }
     }
 
-    inner class CustomSpacingBuilder() : Builder {
+    inner class CustomSpacingBuilder : Builder {
         private val rules = ArrayList<(ASTBlock, ASTBlock, ASTBlock) -> Spacing?>()
         private var conditions = ArrayList<(ASTBlock, ASTBlock, ASTBlock) -> Boolean>()
 
@@ -71,16 +71,15 @@ class KotlinSpacingBuilder(val commonCodeStyleSettings: CommonCodeStyleSettings,
         }
 
         fun lineBreakIfLineBreakInParent(numSpacesOtherwise: Int, allowBlankLines: Boolean = true) {
-            newRule {
-                p, l, r ->
-                Spacing.createDependentLFSpacing(numSpacesOtherwise, numSpacesOtherwise, p.textRange,
+            newRule { p, _, _ ->
+            Spacing.createDependentLFSpacing(numSpacesOtherwise, numSpacesOtherwise, p.textRange,
                                                  commonCodeStyleSettings.KEEP_LINE_BREAKS,
                                                  if (allowBlankLines) commonCodeStyleSettings.KEEP_BLANK_LINES_IN_CODE else 0)
             }
         }
 
         fun emptyLinesIfLineBreakInLeft(emptyLines: Int, numberOfLineFeedsOtherwise: Int = 1, numSpacesOtherwise: Int = 0) {
-            newRule { parent: ASTBlock, left: ASTBlock, right: ASTBlock ->
+            newRule { _: ASTBlock, left: ASTBlock, _: ASTBlock ->
                 val lastChild = left.node?.psi?.lastChild
                 val leftEndsWithComment = lastChild is PsiComment && lastChild.tokenType == KtTokens.EOL_COMMENT
                 val dependentSpacingRule = DependentSpacingRule(Trigger.HAS_LINE_FEEDS).registerData(Anchor.MIN_LINE_FEEDS, emptyLines + 1)
@@ -95,7 +94,7 @@ class KotlinSpacingBuilder(val commonCodeStyleSettings: CommonCodeStyleSettings,
         }
 
         fun spacing(spacing: Spacing) {
-            newRule { parent, left, right -> spacing }
+            newRule { _, _, _ -> spacing }
         }
 
         fun customRule(block: (parent: ASTBlock, left: ASTBlock, right: ASTBlock) -> Spacing?) {
