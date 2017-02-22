@@ -93,21 +93,14 @@ internal class ClassVtablesBuilder(val classDescriptor: ClassDescriptor, val con
         return index
     }
 
-    private val ClassDescriptor.contributedMethodsWithOverridden: List<OverriddenFunctionDescriptor>
-        get() {
-            return contributedMethods.flatMap { method ->
-                method.allOverriddenDescriptors.map { OverriddenFunctionDescriptor(method, it) }
-            }.distinctBy {
-                Triple(it.overriddenDescriptor.functionName, it.descriptor, it.needBridge)
-            }.sortedBy {
-                it.overriddenDescriptor.functionName.localHash.value
-            }
-        }
-
     val methodTableEntries: List<OverriddenFunctionDescriptor> by lazy {
         assert(!classDescriptor.isAbstract())
 
-        classDescriptor.contributedMethodsWithOverridden.filter { it.canBeCalledVirtually }
+        classDescriptor.contributedMethods
+                .flatMap { method -> method.allOverriddenDescriptors.map { OverriddenFunctionDescriptor(method, it) } }
+                .filter { it.canBeCalledVirtually }
+                .distinctBy { Triple(it.overriddenDescriptor.functionName, it.descriptor, it.needBridge) }
+                .sortedBy { it.overriddenDescriptor.functionName.localHash.value }
         // TODO: probably method table should contain all accessible methods to improve binary compatibility
     }
 
