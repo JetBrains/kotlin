@@ -71,6 +71,7 @@ internal class SpecialDescriptorsFactory(val context: Context) {
 
         bridgeDescriptor.initialize(
                 extensionReceiverType,
+                // TODO: bug in descriptor - https://youtrack.jetbrains.com/issue/KT-16438.
                 (descriptor.containingDeclaration as ClassDescriptor).thisAsReceiverParameter,
                 descriptor.typeParameters,
                 descriptor.valueParameters.mapIndexed { index, valueParameterDescriptor ->

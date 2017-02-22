@@ -240,13 +240,15 @@ internal class BridgeDirections(val array: Array<BridgeDirection>) {
     fun allNotNeeded(): Boolean = array.all { it == BridgeDirection.NOT_NEEDED }
 
     override fun toString(): String {
-        return String(array.map {
-            when (it) {
+        val result = StringBuilder()
+        array.forEach {
+            result.append(when (it) {
                 BridgeDirection.FROM_VALUE_TYPE -> 'U' // unbox
                 BridgeDirection.TO_VALUE_TYPE -> 'B' // box
                 BridgeDirection.NOT_NEEDED -> 'N' // none
-            }
-        }.toCharArray())
+            })
+        }
+        return result.toString()
     }
 
     override fun equals(other: Any?): Boolean {
