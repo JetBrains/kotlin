@@ -82,8 +82,8 @@ class DefaultArgumentStubGenerator internal constructor(val context: Context): D
                     if (valueParameter.hasDefaultValue()) {
 
                         val condition = irNotEquals(irCall(Helper.kIntAnd).apply {
-                            dispatchReceiver = irGet(maskParameterDescriptor(descriptor))
-                            putValueArgument(0, irInt(1 shl valueParameter.index))
+                            dispatchReceiver = irGet(maskParameterDescriptor(descriptor, valueParameter.index / 32))
+                            putValueArgument(0, irInt(1 shl (valueParameter.index % 32)))
                         }, irInt(0))
                         val expressionBody = getDefaultParameterExpressionBody(irFunction, valueParameter)
 
@@ -184,7 +184,7 @@ private fun getDefaultParameterExpressionBody(irFunction: IrFunction, valueParam
     return irFunction.getDefault(valueParameter) as? IrExpressionBody ?: TODO("FIXME!!!")
 }
 
-private fun maskParameterDescriptor(descriptor: FunctionDescriptor) = descriptor.valueParameters.single { it.name == Helper.kParameterMaskName }
+private fun maskParameterDescriptor(descriptor: FunctionDescriptor, number:Int)= descriptor.valueParameters.single { it.name == parameterMaskName(number) }
 
 private fun markerParameterDescriptor(descriptor: FunctionDescriptor) = descriptor.valueParameters.single {it.name == Helper.kConstructorMarkerName}
 
@@ -272,27 +272,31 @@ class DefaultParameterInjector internal constructor(val context: Context): BodyL
                 val realDescriptor = keyDescriptor.generateDefaultsDescription(context)
 
                 log("$descriptor -> $realDescriptor")
-                var maskValue = 0
+                val maskValues = Array(descriptor.valueParameters.size / 32 + 1, {0})
                 val params = mutableListOf<Pair<ValueParameterDescriptor, IrExpression?>>()
                 params.addAll(descriptor.valueParameters.mapIndexed { i, _ ->
                     val valueArgument = expression.getValueArgument(i)
-                    if (valueArgument == null) maskValue = maskValue or (1 shl i)
+                    if (valueArgument == null) {
+                        val maskIndex = i / 32
+                        maskValues[maskIndex] = maskValues[maskIndex] or (1 shl (i % 32))
+                    }
                     val valueParameterDescriptor = realDescriptor.valueParameters[i]
                     val pair = valueParameterDescriptor to (valueArgument ?: nullConst(expression, valueParameterDescriptor.type))
                     return@mapIndexed pair
                 })
-                params += maskParameterDescriptor(realDescriptor) to IrConstImpl<Int>(
-                        startOffset = irBody.startOffset,
-                        endOffset   = irBody.endOffset,
-                        type        = KonanPlatform.builtIns.intType,
-                        kind        = IrConstKind.Int,
-                        value       = maskValue)
+                maskValues.forEachIndexed { i, maskValue ->
+                    params += maskParameterDescriptor(realDescriptor, i) to IrConstImpl.int(
+                            startOffset = irBody.startOffset,
+                            endOffset   = irBody.endOffset,
+                            type        = KonanPlatform.builtIns.intType,
+                            value       = maskValue)
+                }
                 if (expression.descriptor is ClassConstructorDescriptor) {
                     params += markerParameterDescriptor(realDescriptor) to IrGetObjectValueImpl(
-                            irBody.startOffset,
-                            irBody.endOffset,
-                            Helper.kDefaultArgumentMarkerClassDescriptor.defaultType,
-                            Helper.kDefaultArgumentMarkerClassDescriptor)
+                            startOffset = irBody.startOffset,
+                            endOffset   = irBody.endOffset,
+                            type        = Helper.kDefaultArgumentMarkerClassDescriptor.defaultType,
+                            descriptor  = Helper.kDefaultArgumentMarkerClassDescriptor)
                 }
                 params.forEach {
                     log("descriptor::${realDescriptor.name.asString()}#${it.first.index}: ${it.first.name.asString()}")
@@ -333,7 +337,9 @@ private fun FunctionDescriptor.generateDefaultsDescription(context: Context): Fu
             else -> TODO("FIXME: $this")
         }
 
-        val syntheticParameters = mutableListOf(valueParameter(descriptor, valueParameters.size, Helper.kParameterMaskName, KonanPlatform.builtIns.intType))
+        val syntheticParameters = mutableListOf<ValueParameterDescriptor>(*Array(valueParameters.size / 32 + 1, {
+            valueParameter(descriptor, valueParameters.size + it, parameterMaskName(it), KonanPlatform.builtIns.intType)
+        }))
         if (this is ClassConstructorDescriptor) {
             syntheticParameters += valueParameter(descriptor, syntheticParameters.last().index + 1,
                     Helper.kConstructorMarkerName,
@@ -402,10 +408,10 @@ internal object Helper {
 
     val kKonanInternalPackageDescriptor       = KonanPlatform.builtIns.builtInsModule.getPackage(FqName("konan.internal"))
     val kDefaultArgumentMarkerName            = Name.identifier("DefaultArgumentMarker")
-    val kParameterMaskName                    = Name.identifier("__\$mask\$__")
-    val kConstructorMarkerName                = Name.identifier("__\$marker\$__")
+    val kConstructorMarkerName                = "marker".synthesizedName
     val kDefaultArgumentMarkerClassDescriptor = DescriptorUtils.getAllDescriptors(kKonanInternalPackageDescriptor.memberScope)
         .first{ it is ClassDescriptor && it.name == kDefaultArgumentMarkerName} as ClassDescriptor
 }
 
 internal fun IrBuilderWithScope.irGet(descriptor: ReceiverParameterDescriptor):IrGetValue = IrGetValueImpl(startOffset, endOffset, descriptor)
+private fun parameterMaskName(number: Int) = "mask$number".synthesizedName
