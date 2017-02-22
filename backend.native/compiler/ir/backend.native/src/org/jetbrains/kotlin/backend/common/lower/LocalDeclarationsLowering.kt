@@ -526,6 +526,7 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
                     Visibilities.PRIVATE,
                     newTypeParameters
             )
+            newDescriptor.returnType = oldDescriptor.returnType
 
             oldDescriptor.dispatchReceiverParameter?.let {
                 recordRemappedParameter(it, newDescriptor.dispatchReceiverParameter!!)
