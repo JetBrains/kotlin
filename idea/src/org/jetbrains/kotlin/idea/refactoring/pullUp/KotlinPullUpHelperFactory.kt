@@ -92,7 +92,7 @@ class JavaToKotlinPullUpHelperFactory : PullUpHelperFactory {
         return outerPsiClasses
                 .drop(1)
                 .plus(dummyTargetClass)
-                .fold(dummyFile.add(outerPsiClasses.first())) { parent, child -> parent.add(child) } as PsiClass
+                .fold(dummyFile.add(outerPsiClasses.first()), PsiElement::add) as PsiClass
     }
 
     override fun createPullUpHelper(data: PullUpData): PullUpHelper<*> {

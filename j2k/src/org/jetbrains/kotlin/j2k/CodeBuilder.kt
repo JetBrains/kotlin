@@ -102,7 +102,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
         if (commentInfo.isComment) {
             // Original comment was first in line, but there's no line break before the current one
             if (!commentInfo.isPostInsert && commentInfo.isFirstNonWhitespaceElementInLine &&
-                !builder.takeLastWhile { it.isWhitespace() }.contains('\n')) {
+                !builder.takeLastWhile(Char::isWhitespace).contains('\n')) {
                 builder.append('\n')
             }
 

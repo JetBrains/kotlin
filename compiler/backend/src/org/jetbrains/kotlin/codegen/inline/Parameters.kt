@@ -70,7 +70,5 @@ internal class Parameters(val parameters: List<ParameterInfo>) : Iterable<Parame
     }
 
     val capturedTypes: List<Type>
-        get() = captured.map {
-            it.getType()
-        }
+        get() = captured.map(CapturedParamInfo::getType)
 }

@@ -34,9 +34,9 @@ interface ReflectJavaAnnotationOwner : JavaAnnotationOwner {
 }
 
 fun Array<Annotation>.getAnnotations(): List<ReflectJavaAnnotation> {
-    return map { ReflectJavaAnnotation(it) }
+    return map(::ReflectJavaAnnotation)
 }
 
 fun Array<Annotation>.findAnnotation(fqName: FqName): ReflectJavaAnnotation? {
-    return firstOrNull { it.annotationClass.java.classId.asSingleFqName() == fqName }?.let { ReflectJavaAnnotation(it) }
+    return firstOrNull { it.annotationClass.java.classId.asSingleFqName() == fqName }?.let(::ReflectJavaAnnotation)
 }

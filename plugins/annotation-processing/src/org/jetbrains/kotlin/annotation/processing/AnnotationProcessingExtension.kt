@@ -339,7 +339,7 @@ abstract class AbstractAnnotationProcessingExtension(
             }
 
             val applicableAnnotations = applicableAnnotationNames
-                    .map { javaPsiFacade().findClass(it, projectScope())?.let { JeTypeElement(it) } }
+                    .map { javaPsiFacade().findClass(it, projectScope())?.let(::JeTypeElement) }
                     .filterNotNullTo(hashSetOf())
 
             log {

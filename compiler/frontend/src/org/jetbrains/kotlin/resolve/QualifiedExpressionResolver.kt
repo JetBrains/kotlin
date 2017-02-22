@@ -488,7 +488,7 @@ class QualifiedExpressionResolver {
 
         return qualifiedExpressions
                 .subList(nextExpressionIndexAfterQualifier, qualifiedExpressions.size)
-                .map { CallExpressionElement(it) }
+                .map(::CallExpressionElement)
     }
 
     private fun mapToQualifierParts(qualifiedExpressions: List<KtQualifiedExpression>,

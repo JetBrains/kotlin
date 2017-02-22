@@ -132,7 +132,7 @@ internal constructor(private val nativePattern: Pattern) {
     /**
      * Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
      */
-    public fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = generateSequence({ find(input, startIndex) }, { match -> match.next() })
+    public fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = generateSequence({ find(input, startIndex) }, MatchResult::next)
 
     /**
      * Attempts to match the entire [input] CharSequence against the pattern.

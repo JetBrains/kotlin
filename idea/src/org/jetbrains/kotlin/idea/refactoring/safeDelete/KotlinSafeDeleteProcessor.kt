@@ -315,7 +315,7 @@ class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
             is KtProperty ->
                 if (!element.isLocal) {
-                    element.toLightMethods().forEach { method -> method.cleanUpOverrides() }
+                    element.toLightMethods().forEach(PsiMethod::cleanUpOverrides)
                 }
 
             is KtTypeParameter ->

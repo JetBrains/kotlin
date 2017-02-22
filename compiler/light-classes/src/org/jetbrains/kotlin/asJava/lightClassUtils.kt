@@ -139,9 +139,7 @@ val KtClassOrObject.hasInterfaceDefaultImpls: Boolean
     get() = this is KtClass && isInterface() && hasNonAbstractMembers(this)
 
 private fun hasNonAbstractMembers(ktInterface: KtClass): Boolean {
-    return ktInterface.declarations.any {
-        isNonAbstractMember(it)
-    }
+    return ktInterface.declarations.any(::isNonAbstractMember)
 }
 
 private fun isNonAbstractMember(member: KtDeclaration?): Boolean {

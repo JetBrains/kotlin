@@ -78,7 +78,7 @@ fun renderResolvedCall(resolvedCall: ResolvedCall<*>, context: RenderingContext)
         }
 
         val typeParameters = resolvedCall.candidateDescriptor.typeParameters
-        val (inferredTypeParameters, notInferredTypeParameters) = typeParameters.partition { parameter -> parameter.isInferred() }
+        val (inferredTypeParameters, notInferredTypeParameters) = typeParameters.partition(TypeParameterDescriptor::isInferred)
 
         append("<br/>$indent<i>where</i> ")
         if (!notInferredTypeParameters.isEmpty()) {
@@ -103,7 +103,7 @@ fun renderResolvedCall(resolvedCall: ResolvedCall<*>, context: RenderingContext)
         append(typeRenderer.render(receiverParameter.type, context)).append(".")
     }
     append(HtmlEscapers.htmlEscaper().escape(resultingDescriptor.name.asString())).append("(")
-    append(resultingDescriptor.valueParameters.map { parameter -> renderParameter(parameter) }.joinToString())
+    append(resultingDescriptor.valueParameters.map(::renderParameter).joinToString())
     append(if (resolvedCall.hasUnmappedArguments()) renderError(")") else ")")
 
     if (!resolvedCall.candidateDescriptor.typeParameters.isEmpty()) {

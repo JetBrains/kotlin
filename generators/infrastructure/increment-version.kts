@@ -30,7 +30,7 @@ fun main(args: Array<String>) {
 
     var versionStr = args[0]
 
-    val incrementPartStr = versionStr.takeLastWhile { it.isDigit() }
+    val incrementPartStr = versionStr.takeLastWhile(Char::isDigit)
     val versionPrefix = versionStr.take(versionStr.length - incrementPartStr.length)
     val incrementPart = incrementPartStr.toInt()
 

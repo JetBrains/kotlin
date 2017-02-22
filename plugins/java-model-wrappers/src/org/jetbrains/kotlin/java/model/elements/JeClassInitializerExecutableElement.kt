@@ -29,7 +29,7 @@ class JeClassInitializerExecutableElement(
 ) : JeAbstractElement<PsiClassInitializer>(psi), ExecutableElement, JeNoAnnotations, JeModifierListOwner {
     val isStaticInitializer = psi.isStatic
 
-    override fun getEnclosingElement() = psi.containingClass?.let { JeTypeElement(it) }
+    override fun getEnclosingElement() = psi.containingClass?.let(::JeTypeElement)
 
     override fun getSimpleName() = if (isStaticInitializer) JeName.CLINIT else JeName.EMPTY
 

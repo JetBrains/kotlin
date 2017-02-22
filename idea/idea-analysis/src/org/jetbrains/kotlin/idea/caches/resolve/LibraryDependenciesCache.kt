@@ -75,7 +75,7 @@ class LibraryDependenciesCache(private val project: Project) {
             }, Unit)
         }
 
-        getLibraryUsageIndex().modulesLibraryIsUsedIn[library].forEach { module -> collectLibrariesAndSdksAcrossDependencies(module) }
+        getLibraryUsageIndex().modulesLibraryIsUsedIn[library].forEach(::collectLibrariesAndSdksAcrossDependencies)
 
         return Pair(libraries.toList(), sdks.toList())
     }

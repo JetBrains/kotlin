@@ -64,9 +64,9 @@ object LongCompareToBOIF : BinaryOperationIntrinsicFactory {
         }
     }
 
-    private val INTEGER_COMPARE_TO_LONG = CompareToBinaryIntrinsic( { longFromInt(it) }, ID())
+    private val INTEGER_COMPARE_TO_LONG = CompareToBinaryIntrinsic(::longFromInt, ID())
     private val CHAR_COMPARE_TO_LONG  = CompareToBinaryIntrinsic( { longFromInt(charToInt(it)) }, ID())
-    private val LONG_COMPARE_TO_INTEGER  = CompareToBinaryIntrinsic( ID(), { longFromInt(it) })
+    private val LONG_COMPARE_TO_INTEGER  = CompareToBinaryIntrinsic(ID(), ::longFromInt)
     private val LONG_COMPARE_TO_CHAR  = CompareToBinaryIntrinsic( ID(), { longFromInt(charToInt(it)) })
     private val LONG_COMPARE_TO_LONG  = CompareToBinaryIntrinsic( ID(), ID() )
 

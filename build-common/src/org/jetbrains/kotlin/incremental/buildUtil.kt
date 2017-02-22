@@ -42,7 +42,7 @@ import java.util.*
 
 
 fun Iterable<File>.javaSourceRoots(roots: Iterable<File>): Iterable<File> =
-        filter { it.isJavaFile() }
+        filter(File::isJavaFile)
                 .map { findSrcDirRoot(it, roots) }
                 .filterNotNull()
 

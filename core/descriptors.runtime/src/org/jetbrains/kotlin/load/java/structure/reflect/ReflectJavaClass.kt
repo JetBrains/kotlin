@@ -97,7 +97,7 @@ class ReflectJavaClass(
         get() = Name.identifier(klass.simpleName)
 
     override val typeParameters: List<ReflectJavaTypeParameter>
-        get() = klass.typeParameters.map { ReflectJavaTypeParameter(it) }
+        get() = klass.typeParameters.map(::ReflectJavaTypeParameter)
 
     override val isInterface: Boolean
         get() = klass.isInterface

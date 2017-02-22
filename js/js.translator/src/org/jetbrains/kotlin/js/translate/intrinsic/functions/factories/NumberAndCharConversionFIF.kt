@@ -33,14 +33,14 @@ object NumberAndCharConversionFIF : CompositeFIF() {
 
     private val convertOperations: Map<String, ConversionUnaryIntrinsic>  =
             mapOf(
-                    "Float|Double.toInt" to ConversionUnaryIntrinsic { toInt32(it) },
-                    "Int|Float|Double.toShort" to ConversionUnaryIntrinsic { toShort(it) },
-                    "Short|Int|Float|Double.toByte" to ConversionUnaryIntrinsic { toByte(it) },
+                    "Float|Double.toInt" to ConversionUnaryIntrinsic(::toInt32),
+                    "Int|Float|Double.toShort" to ConversionUnaryIntrinsic(::toShort),
+                    "Short|Int|Float|Double.toByte" to ConversionUnaryIntrinsic(::toByte),
 
-                    "Int|Short|Byte.toLong" to ConversionUnaryIntrinsic { longFromInt(it) },
-                    "Float|Double.toLong" to ConversionUnaryIntrinsic { longFromNumber(it) },
+                    "Int|Short|Byte.toLong" to ConversionUnaryIntrinsic(::longFromInt),
+                    "Float|Double.toLong" to ConversionUnaryIntrinsic(::longFromNumber),
 
-                    "Char.toDouble|toFloat|toInt" to ConversionUnaryIntrinsic { charToInt(it) },
+                    "Char.toDouble|toFloat|toInt" to ConversionUnaryIntrinsic(::charToInt),
                     "Char.toShort" to ConversionUnaryIntrinsic { toShort(charToInt(it)) },
                     "Char.toByte" to ConversionUnaryIntrinsic { toByte(charToInt(it)) },
                     "Char.toLong" to ConversionUnaryIntrinsic { longFromInt(charToInt(it)) },
@@ -52,7 +52,7 @@ object NumberAndCharConversionFIF : CompositeFIF() {
                     "Number.toFloat|toDouble" to ConversionUnaryIntrinsic { invokeKotlinFunction("numberToDouble", it) },
                     "Number.toLong" to ConversionUnaryIntrinsic { invokeKotlinFunction("numberToLong", it) },
 
-                    "Int|Short|Byte|Float|Double.toChar" to  ConversionUnaryIntrinsic { toChar(it) },
+                    "Int|Short|Byte|Float|Double.toChar" to  ConversionUnaryIntrinsic(::toChar),
 
                     "Long.toFloat|toDouble" to  ConversionUnaryIntrinsic { invokeMethod(it, "toNumber") },
                     "Long.toInt" to  ConversionUnaryIntrinsic { invokeMethod(it, "toInt") },

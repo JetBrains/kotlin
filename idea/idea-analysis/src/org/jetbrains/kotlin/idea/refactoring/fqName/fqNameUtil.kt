@@ -32,7 +32,7 @@ fun PsiElement.getKotlinFqName(): FqName? {
     val element = namedUnwrappedElement
     return when (element) {
         is PsiPackage -> FqName(element.qualifiedName)
-        is PsiClass -> element.qualifiedName?.let { FqName(it) }
+        is PsiClass -> element.qualifiedName?.let(::FqName)
         is PsiMember -> element.getName()?.let { name ->
             val prefix = element.containingClass?.qualifiedName
             FqName(if (prefix != null) "$prefix.$name" else name)

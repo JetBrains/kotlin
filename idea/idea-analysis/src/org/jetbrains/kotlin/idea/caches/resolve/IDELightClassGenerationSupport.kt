@@ -176,9 +176,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     }
 
     override fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
-        val filesByModule = findFilesForFacade(facadeFqName, scope).groupBy {
-            it.getModuleInfo()
-        }
+        val filesByModule = findFilesForFacade(facadeFqName, scope).groupBy(KtFile::getModuleInfo)
 
         return filesByModule.flatMap {
             createLightClassForFileFacade(facadeFqName, it.value, it.key)

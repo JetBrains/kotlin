@@ -66,7 +66,7 @@ class StubBasedPackageMemberDeclarationProvider(
                 .mapTo(result) { KtClassInfoUtil.createClassLikeInfo(it) }
 
         KotlinScriptFqnIndex.instance.get(childName(name), project, searchScope)
-                .mapTo(result) { KtScriptInfo(it) }
+                .mapTo(result, ::KtScriptInfo)
         return result
     }
 

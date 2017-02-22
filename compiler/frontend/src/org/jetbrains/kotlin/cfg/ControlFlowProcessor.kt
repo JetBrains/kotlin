@@ -1416,7 +1416,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
 
         private fun generateCallOrMarkUnresolved(call: KtCallElement) {
             if (!generateCall(call)) {
-                val arguments = call.valueArguments.mapNotNull { valueArgument -> valueArgument.getArgumentExpression() }
+                val arguments = call.valueArguments.mapNotNull(ValueArgument::getArgumentExpression)
 
                 for (argument in arguments) {
                     generateInstructions(argument)

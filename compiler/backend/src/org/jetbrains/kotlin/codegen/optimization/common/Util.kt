@@ -52,9 +52,7 @@ fun MethodNode.prepareForEmitting() {
 
     // local variables with live ranges starting after last meaningful instruction lead to VerifyError
     localVariables = localVariables.filter { lv ->
-        InsnSequence(lv.start, lv.end).any { insn ->
-            insn.isMeaningful
-        }
+        InsnSequence(lv.start, lv.end).any(AbstractInsnNode::isMeaningful)
     }
 
     // We should remove linenumbers after last meaningful instruction
@@ -73,9 +71,7 @@ fun MethodNode.prepareForEmitting() {
 
 fun MethodNode.removeEmptyCatchBlocks() {
     tryCatchBlocks = tryCatchBlocks.filter { tcb ->
-        InsnSequence(tcb.start, tcb.end).any { insn ->
-            insn.isMeaningful
-        }
+        InsnSequence(tcb.start, tcb.end).any(AbstractInsnNode::isMeaningful)
     }
 }
 

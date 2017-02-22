@@ -111,7 +111,7 @@ class InsertHandlerProvider(
             }
         }
 
-        originalFunction.extensionReceiverParameter?.type?.let { addPotentiallyInferred(it) }
+        originalFunction.extensionReceiverParameter?.type?.let(::addPotentiallyInferred)
         originalFunction.valueParameters.forEach { addPotentiallyInferred(it.type) }
 
         fun allTypeParametersPotentiallyInferred() = originalFunction.typeParameters.all { it in potentiallyInferred }

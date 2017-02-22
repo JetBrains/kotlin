@@ -62,7 +62,7 @@ fun createModuleResolverProvider(
 
     val allModuleInfos = (allModules ?: collectAllModuleInfosFromIdeaModel(project)).toHashSet()
 
-    val syntheticFilesByModule = syntheticFiles.groupBy { it.getModuleInfo() }
+    val syntheticFilesByModule = syntheticFiles.groupBy(KtFile::getModuleInfo)
     val syntheticFilesModules = syntheticFilesByModule.keys
     allModuleInfos.addAll(syntheticFilesModules)
 

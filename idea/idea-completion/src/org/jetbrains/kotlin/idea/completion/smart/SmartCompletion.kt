@@ -412,7 +412,7 @@ class SmartCompletion(
                 if (descriptor.modality != Modality.ABSTRACT && !descriptor.isInner) {
                     descriptor.constructors
                             .filter(visibilityFilter)
-                            .mapNotNullTo(this) { toLookupElement(it) }
+                            .mapNotNullTo(this, ::toLookupElement)
                 }
             }
         }

@@ -49,7 +49,7 @@ class GradleScriptTemplatesProvider(project: Project): ScriptTemplatesProvider {
         gradleExeSettings?.daemonVmOptions?.let { vmOptions ->
             CommandLineTokenizer(vmOptions).toList()
                     .mapNotNull { it?.let { it as? String } }
-                    .filterNot { it.isBlank() }
+                    .filterNot(String::isBlank)
                     .distinct()
         } ?: emptyList()
     }
@@ -68,13 +68,13 @@ class GradleScriptTemplatesProvider(project: Project): ScriptTemplatesProvider {
     override val environment: Map<String, Any?>? by lazy {
 
         mapOf(
-            "gradleHome" to gradleExeSettings?.gradleHome?.let { File(it) },
-            "projectRoot" to (project.basePath ?: project.baseDir.canonicalPath)?.let { File(it) },
-            "gradleWithConnection" to { action: (ProjectConnection) -> Unit ->
+                "gradleHome" to gradleExeSettings?.gradleHome?.let(::File),
+                "projectRoot" to (project.basePath ?: project.baseDir.canonicalPath)?.let(::File),
+                "gradleWithConnection" to { action: (ProjectConnection) -> Unit ->
                 GradleExecutionHelper().execute(project.basePath!!, null) { action(it) } },
-            "gradleJavaHome" to gradleExeSettings?.javaHome,
-            "gradleJvmOptions" to gradleJvmOptions,
-            "getScriptSectionTokens" to ::topLevelSectionCodeTextTokens)
+                "gradleJavaHome" to gradleExeSettings?.javaHome,
+                "gradleJvmOptions" to gradleJvmOptions,
+                "getScriptSectionTokens" to ::topLevelSectionCodeTextTokens)
     }
 
     companion object {

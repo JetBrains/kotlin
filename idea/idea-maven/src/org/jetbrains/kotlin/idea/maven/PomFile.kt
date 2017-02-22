@@ -544,7 +544,7 @@ class PomFile private constructor(val xmlFile: XmlFile, val domModel: MavenDomPr
           <profiles/>
         """.lines()
                 .map { it.trim().removePrefix("<").removeSuffix("/>").trim() }
-                .filter { it.isNotEmpty() }
+                .filter(String::isNotEmpty)
                 .toCollection(LinkedHashSet())
 
         val recommendedOrderAsList = recommendedElementsOrder.toList()

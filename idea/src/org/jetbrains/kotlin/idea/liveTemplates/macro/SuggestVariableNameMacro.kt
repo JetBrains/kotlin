@@ -39,7 +39,7 @@ class SuggestVariableNameMacro : Macro() {
     override fun getPresentableName() = "kotlinSuggestVariableName()"
 
     override fun calculateResult(params: Array<out Expression>, context: ExpressionContext): Result? {
-        return suggestNames(context).firstOrNull()?.let { TextResult(it) }
+        return suggestNames(context).firstOrNull()?.let(::TextResult)
     }
 
     override fun calculateLookupItems(params: Array<out Expression>, context: ExpressionContext): Array<out LookupElement>? {

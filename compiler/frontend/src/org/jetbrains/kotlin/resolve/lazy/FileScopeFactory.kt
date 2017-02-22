@@ -71,7 +71,7 @@ class FileScopeFactory(
 
         val extraImports = file.originalFile.virtualFile?.let {  vFile ->
             val scriptExternalDependencies = getScriptExternalDependencies(vFile, file.project)
-            ktImportsFactory.createImportDirectives(scriptExternalDependencies?.imports?.map { ImportPath(it) }.orEmpty())
+            ktImportsFactory.createImportDirectives(scriptExternalDependencies?.imports?.map(::ImportPath).orEmpty())
         }
 
         val allImplicitImports = defaultImports concat extraImports

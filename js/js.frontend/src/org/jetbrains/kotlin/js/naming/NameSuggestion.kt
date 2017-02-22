@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.getNameForAnnotatedObject
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
@@ -85,7 +86,7 @@ class NameSuggestion {
 
             is PackageFragmentDescriptor -> {
                 return if (!descriptor.fqName.isRoot) {
-                    SuggestedName(descriptor.fqName.pathSegments().map { it.asString() }, true, descriptor,
+                    SuggestedName(descriptor.fqName.pathSegments().map(Name::asString), true, descriptor,
                                   descriptor.containingDeclaration)
                 }
                 else {

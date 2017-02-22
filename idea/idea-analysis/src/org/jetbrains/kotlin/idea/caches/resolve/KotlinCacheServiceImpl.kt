@@ -180,7 +180,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     private fun createFacadeForSyntheticFiles(files: Set<KtFile>): ProjectResolutionFacade {
         // we assume that all files come from the same module
         val targetPlatform = files.map { TargetPlatformDetector.getPlatform(it) }.toSet().single()
-        val syntheticFileModule = files.map { it.getModuleInfo() }.toSet().single()
+        val syntheticFileModule = files.map(KtFile::getModuleInfo).toSet().single()
         val sdk = syntheticFileModule.sdk
         val filesModificationTracker = ModificationTracker {
             // TODO: Check getUserData(FILE_OUT_OF_BLOCK_MODIFICATION_COUNT) actually works

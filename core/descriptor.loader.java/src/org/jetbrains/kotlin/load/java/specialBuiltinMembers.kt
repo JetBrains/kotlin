@@ -67,7 +67,7 @@ object BuiltinSpecialProperties {
                     .groupBy({ it.second }, { it.first })
 
     private val SPECIAL_FQ_NAMES = PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.keys
-    internal val SPECIAL_SHORT_NAMES = SPECIAL_FQ_NAMES.map { it.shortName() }.toSet()
+    internal val SPECIAL_SHORT_NAMES = SPECIAL_FQ_NAMES.map(FqName::shortName).toSet()
 
     fun hasBuiltinSpecialPropertyFqName(callableMemberDescriptor: CallableMemberDescriptor): Boolean {
         if (callableMemberDescriptor.name !in SPECIAL_SHORT_NAMES) return false

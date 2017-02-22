@@ -49,7 +49,7 @@ fun Converter.convertImport(anImport: PsiImportStatementBase, dumpConversion: Bo
     }
     else {
         convertImport(fqName, reference, onDemand, anImport is PsiImportStaticStatement)
-                .map { Import(it) }
+                .map(::Import)
     }
     return convertedImports.map { it.assignPrototype(anImport) }
 }

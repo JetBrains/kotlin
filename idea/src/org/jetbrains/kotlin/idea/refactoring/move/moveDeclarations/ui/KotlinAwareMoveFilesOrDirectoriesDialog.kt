@@ -143,7 +143,7 @@ class KotlinAwareMoveFilesOrDirectoriesDialog(
         this.helpID = helpID
 
         with (updatePackageDirectiveCb) {
-            val jetFiles = psiElements.filterIsInstance<KtFile>().filter { it.isInJavaSourceRoot() }
+            val jetFiles = psiElements.filterIsInstance<KtFile>().filter(KtFile::isInJavaSourceRoot)
             if (jetFiles.isEmpty()) {
                 parent.remove(updatePackageDirectiveCb)
                 return

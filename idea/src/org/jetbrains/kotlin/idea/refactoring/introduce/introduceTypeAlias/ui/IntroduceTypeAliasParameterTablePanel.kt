@@ -32,7 +32,7 @@ open class IntroduceTypeAliasParameterTablePanel : AbstractParameterTablePanel<T
     }
 
     fun init(parameters: List<TypeParameter>) {
-        parameterInfos = parameters.mapTo(ArrayList()) { TypeParameterInfo(it) }
+        parameterInfos = parameters.mapTo(ArrayList(), ::TypeParameterInfo)
         super.init()
     }
 

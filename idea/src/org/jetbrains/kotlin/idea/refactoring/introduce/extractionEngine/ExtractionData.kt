@@ -260,7 +260,7 @@ data class ExtractionData(
     }
 
     override fun dispose() {
-        expressions.forEach { unmarkReferencesInside(it) }
+        expressions.forEach(::unmarkReferencesInside)
     }
 }
 

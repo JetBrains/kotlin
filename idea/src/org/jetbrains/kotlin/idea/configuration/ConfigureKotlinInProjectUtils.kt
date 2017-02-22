@@ -86,7 +86,7 @@ fun showConfigureKotlinNotificationIfNeeded(project: Project, excludeModules: Li
     ApplicationManager.getApplication().executeOnPooledThread {
         val notificationString = DumbService.getInstance(project).runReadActionInSmartMode(Computable {
             val modules = getModulesWithKotlinFiles(project) - excludeModules
-            if (modules.all { isModuleConfigured(it) }) null else ConfigureKotlinNotification.getNotificationString(project, excludeModules)
+            if (modules.all(::isModuleConfigured)) null else ConfigureKotlinNotification.getNotificationString(project, excludeModules)
         })
         if (notificationString != null) {
             ApplicationManager.getApplication().invokeLater {

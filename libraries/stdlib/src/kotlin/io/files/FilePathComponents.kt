@@ -126,7 +126,7 @@ internal fun File.toComponents(): FilePathComponents {
     val rootLength = path.getRootLength()
     val rootName = path.substring(0, rootLength)
     val subPath = path.substring(rootLength)
-    val list = if (subPath.isEmpty()) listOf() else subPath.split(File.separatorChar).map { File(it) }
+    val list = if (subPath.isEmpty()) listOf() else subPath.split(File.separatorChar).map(::File)
     return FilePathComponents(File(rootName), list)
 }
 

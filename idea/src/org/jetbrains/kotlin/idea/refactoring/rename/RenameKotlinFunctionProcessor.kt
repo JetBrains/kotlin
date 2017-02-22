@@ -203,7 +203,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
 
         RenameUtil.doRenameGenericNamedElement(element, newName, simpleUsages.toTypedArray(), listener)
 
-        (element.unwrapped as? KtNamedDeclaration)?.let { dropOverrideKeywordIfNecessary(it) }
+        (element.unwrapped as? KtNamedDeclaration)?.let(::dropOverrideKeywordIfNecessary)
     }
 
     private fun wrapPsiMethod(element: PsiElement?): PsiMethod? = when (element) {

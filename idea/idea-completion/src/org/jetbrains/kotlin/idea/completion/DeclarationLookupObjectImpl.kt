@@ -42,7 +42,7 @@ abstract class DeclarationLookupObjectImpl(
             return if (descriptor != null)
                 descriptor.importableFqName
             else
-                (psiElement as? PsiClass)?.qualifiedName?.let { FqName(it) }
+                (psiElement as? PsiClass)?.qualifiedName?.let(::FqName)
         }
 
     override fun toString() = super.toString() + " " + (descriptor ?: psiElement)

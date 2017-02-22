@@ -203,9 +203,7 @@ class ExpressionsOfTypeProcessor(
     }
 
     private enum class ReferenceProcessor(val handler: (ExpressionsOfTypeProcessor, PsiReference) -> Boolean) {
-        CallableOfOurType({ processor, reference ->
-                              processor.processReferenceToCallableOfOurType(reference)
-                          }),
+        CallableOfOurType(ExpressionsOfTypeProcessor::processReferenceToCallableOfOurType),
 
         ProcessLambdasInCalls({ processor, reference ->
                                   (reference.element as? KtReferenceExpression)?.let { processor.processLambdasForCallableReference(it) }

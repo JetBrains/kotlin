@@ -31,5 +31,5 @@ class ReflectJavaMethod(override val member: Method) : ReflectJavaMember(), Java
         get() = member.defaultValue != null
 
     override val typeParameters: List<ReflectJavaTypeParameter>
-        get() = member.typeParameters.map { ReflectJavaTypeParameter(it) }
+        get() = member.typeParameters.map(::ReflectJavaTypeParameter)
 }

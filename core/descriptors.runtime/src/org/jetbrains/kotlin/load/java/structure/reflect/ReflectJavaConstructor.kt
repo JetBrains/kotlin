@@ -46,5 +46,5 @@ class ReflectJavaConstructor(override val member: Constructor<*>) : ReflectJavaM
         }
 
     override val typeParameters: List<ReflectJavaTypeParameter>
-        get() = member.typeParameters.map { ReflectJavaTypeParameter(it) }
+        get() = member.typeParameters.map(::ReflectJavaTypeParameter)
 }

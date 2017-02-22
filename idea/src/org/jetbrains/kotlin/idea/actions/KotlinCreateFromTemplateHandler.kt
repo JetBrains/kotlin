@@ -29,7 +29,7 @@ class KotlinCreateFromTemplateHandler : DefaultCreateFromTemplateHandler() {
         if (!packageName.isNullOrEmpty()) {
             props[FileTemplate.ATTRIBUTE_PACKAGE_NAME] = packageName!!
                     .split('.')
-                    .map { it.quoteIfNeeded() }
+                    .map(String::quoteIfNeeded)
                     .joinToString(".")
         }
 

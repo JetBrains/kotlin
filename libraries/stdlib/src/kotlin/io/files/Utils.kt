@@ -95,7 +95,7 @@ public fun File.relativeTo(base: File): File = File(this.toRelativeString(base))
  * @return File with relative path from [base] to this, or `this` if this and base paths have different roots.
  */
 public fun File.relativeToOrSelf(base: File): File
-        = toRelativeStringOrNull(base)?.let { File(it) } ?: this
+        = toRelativeStringOrNull(base)?.let(::File) ?: this
 
 /**
  * Calculates the relative path for this file from [base] file.
@@ -105,7 +105,7 @@ public fun File.relativeToOrSelf(base: File): File
  * @return File with relative path from [base] to this, or `null` if this and base paths have different roots.
  */
 public fun File.relativeToOrNull(base: File): File?
-        = toRelativeStringOrNull(base)?.let { File(it) }
+        = toRelativeStringOrNull(base)?.let(::File)
 
 
 private fun File.toRelativeStringOrNull(base: File): String? {

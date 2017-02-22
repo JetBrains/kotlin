@@ -33,7 +33,7 @@ import java.util.HashSet
 fun ModuleSourceInfo.getDependentModules(): Set<ModuleSourceInfo> {
     val dependents = getDependents(module)
     if (isTests()) {
-        return dependents.mapTo(HashSet<ModuleSourceInfo>()) { it.testSourceInfo() }
+        return dependents.mapTo(HashSet<ModuleSourceInfo>(), Module::testSourceInfo)
     }
     else {
         return dependents.flatMapTo(HashSet<ModuleSourceInfo>()) { listOf(it.productionSourceInfo(), it.testSourceInfo()) }

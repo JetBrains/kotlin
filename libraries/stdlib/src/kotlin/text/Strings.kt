@@ -125,7 +125,7 @@ public fun String.trimEnd(vararg chars: Char): String = trimEnd { it in chars }
 /**
  * Returns a sub sequence of this char sequence having leading and trailing whitespace trimmed.
  */
-public fun CharSequence.trim(): CharSequence = trim { it.isWhitespace() }
+public fun CharSequence.trim(): CharSequence = trim(Char::isWhitespace)
 
 /**
  * Returns a string with leading and trailing whitespace trimmed.
@@ -136,7 +136,7 @@ public inline fun String.trim(): String = (this as CharSequence).trim().toString
 /**
  * Returns a sub sequence of this char sequence having leading whitespace removed.
  */
-public fun CharSequence.trimStart(): CharSequence = trimStart { it.isWhitespace() }
+public fun CharSequence.trimStart(): CharSequence = trimStart(Char::isWhitespace)
 
 /**
  * Returns a string with leading whitespace removed.
@@ -147,7 +147,7 @@ public inline fun String.trimStart(): String = (this as CharSequence).trimStart(
 /**
  * Returns a sub sequence of this char sequence having trailing whitespace removed.
  */
-public fun CharSequence.trimEnd(): CharSequence = trimEnd { it.isWhitespace() }
+public fun CharSequence.trimEnd(): CharSequence = trimEnd(Char::isWhitespace)
 
 /**
  * Returns a string with trailing whitespace removed.

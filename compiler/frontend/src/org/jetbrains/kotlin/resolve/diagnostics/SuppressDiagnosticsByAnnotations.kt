@@ -40,7 +40,7 @@ abstract class SuppressDiagnosticsByAnnotations(
 ) : SuppressStringProvider {
 
     private val stringsToSuppress = diagnosticsToSuppress.map { it.name.toLowerCase() }
-    private val expectedFqNames = annotationsFqName.map { it.toString() }
+    private val expectedFqNames = annotationsFqName.map(FqName::toString)
 
     override fun get(annotationDescriptor: AnnotationDescriptor): List<String> {
         val descriptor = DescriptorUtils.getClassDescriptorForType(annotationDescriptor.type)

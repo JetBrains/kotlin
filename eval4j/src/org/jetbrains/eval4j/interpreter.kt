@@ -341,7 +341,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
         return when (insn.opcode) {
             MULTIANEWARRAY -> {
                 val node = insn as MultiANewArrayInsnNode
-                eval.newMultiDimensionalArray(Type.getType(node.desc), values.map { v -> v.int })
+                eval.newMultiDimensionalArray(Type.getType(node.desc), values.map(Value::int))
             }
 
             INVOKEVIRTUAL, INVOKESPECIAL, INVOKEINTERFACE -> {

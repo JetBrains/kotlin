@@ -138,7 +138,7 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
             if (isExtension && containingDescriptor is ClassDescriptor) {
                 val implicitClass = (refExpr.getResolvedCall(bindingContext)?.dispatchReceiver as? ImplicitClassReceiver)?.classDescriptor
                 if (DescriptorUtils.isCompanionObject(implicitClass)) {
-                    return { ImplicitCompanionAsDispatchReceiverUsageInfo(it) }
+                    return ::ImplicitCompanionAsDispatchReceiverUsageInfo
                 }
                 return null
             }

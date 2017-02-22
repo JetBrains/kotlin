@@ -79,7 +79,7 @@ class DifferentMavenStdlibVersionInspection : DomElementsInspection<MavenDomProj
     }
 
     private fun createFixes(project: MavenProject, versionElement: GenericDomValue<*>, versions: List<String>): List<SetVersionQuickFix> {
-        val bestVersion = versions.maxBy { MavenVersionComparable(it) }!!
+        val bestVersion = versions.maxBy(::MavenVersionComparable)!!
         if (bestVersion == versionElement.stringValue) {
             return emptyList()
         }
