@@ -46,7 +46,10 @@ object CallableReferenceTranslator {
         val descriptor = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), expression.callableReference)
 
         val receiver = expression.receiverExpression?.let { r ->
-            if (context.bindingContext().get(BindingContext.DOUBLE_COLON_LHS, r) is DoubleColonLHS.Expression) {
+            if (context.bindingContext().get(BindingContext.DOUBLE_COLON_LHS, r) is DoubleColonLHS.Expression &&
+                descriptor is CallableMemberDescriptor &&
+                descriptor.dispatchReceiverParameter ?: descriptor.extensionReceiverParameter != null
+            ) {
                 val block = JsBlock()
                 val e = Translation.translateAsExpression(r, context, block)
                 if (!block.isEmpty) {
