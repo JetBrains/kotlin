@@ -431,7 +431,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         if (IncrementalCompilation.isEnabled()) {
             for (target in chunk.targets) {
                 val cache = incrementalCaches[target]!!
-                val removedAndDirtyFiles = filesToCompile[target] + dirtyFilesHolder.getRemovedFiles(target).map { File(it) }
+                val removedAndDirtyFiles = filesToCompile[target] + dirtyFilesHolder.getRemovedFiles(target).map(::File)
                 cache.markOutputClassesDirty(removedAndDirtyFiles)
             }
         }

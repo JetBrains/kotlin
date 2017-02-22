@@ -66,7 +66,7 @@ class JpsIncrementalCacheImpl(
             }
         }
 
-        return result.map { File(it) }
+        return result.map(::File)
     }
 
     fun cleanDirtyInlineFunctions() {
