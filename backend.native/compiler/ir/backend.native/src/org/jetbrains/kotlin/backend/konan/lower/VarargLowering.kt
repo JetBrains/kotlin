@@ -34,8 +34,13 @@ class VarargInjectionLowering internal constructor(val context: Context): Functi
 
     private fun lower(owner:FunctionDescriptor, irBody: IrBody) {
         irBody.transformChildrenVoid(object: IrElementTransformerVoid() {
+            val transformer = this
             override fun visitCall(expression: IrCall): IrExpression {
+                log("call of: ${expression.descriptor}")
                 context.createIrBuilder(owner, expression.startOffset, expression.endOffset).apply {
+                    expression.descriptor.valueParameters.forEach {
+                        log("varargElementType: ${it.varargElementType} expr: ${ir2string(expression.getValueArgument(it))}")
+                    }
                     expression.descriptor.valueParameters.filter{it.varargElementType != null && expression.getValueArgument(it) == null}.forEach {
                         expression.putValueArgument(it.index,
                             IrVarargImpl(startOffset       = startOffset,
@@ -45,7 +50,7 @@ class VarargInjectionLowering internal constructor(val context: Context): Functi
                         )
                     }
                 }
-                super.visitCall(expression)
+                expression.transformChildrenVoid(this)
                 return expression
             }
 
@@ -69,7 +74,7 @@ class VarargInjectionLowering internal constructor(val context: Context): Functi
 
                     val vars = expression.elements.map {
                         val initVar = scope.createTemporaryVariable(
-                                (it as? IrSpreadElement)?.expression ?: it as IrExpression,
+                                ((it as? IrSpreadElement)?.expression ?: it as IrExpression).apply {  it.transformChildrenVoid(transformer) },
                                 "elem".synthesizedString, true)
                         block.statements.add(initVar)
                         it to initVar
