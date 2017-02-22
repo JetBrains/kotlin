@@ -1154,13 +1154,13 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
-    private static String getDefaultDescriptor(@NotNull Method method, @Nullable String dispatchReceiverDescriptor, boolean isExtension) {
+    private static String getDefaultDescriptor(
+            @NotNull Method method,
+            @Nullable String dispatchReceiverDescriptor,
+            @NotNull CallableDescriptor callableDescriptor
+    ) {
         String descriptor = method.getDescriptor();
-        int argumentsCount = Type.getArgumentTypes(descriptor).length;
-        if (isExtension) {
-            argumentsCount--;
-        }
-        int maskArgumentsCount = (argumentsCount + Integer.SIZE - 1) / Integer.SIZE;
+        int maskArgumentsCount = (callableDescriptor.getValueParameters().size() + Integer.SIZE - 1) / Integer.SIZE;
         String additionalArgs = StringUtil.repeat(Type.INT_TYPE.getDescriptor(), maskArgumentsCount);
         additionalArgs += (isConstructor(method) ? DEFAULT_CONSTRUCTOR_MARKER : OBJECT_TYPE).getDescriptor();
         String result = descriptor.replace(")", additionalArgs + ")");
@@ -1186,7 +1186,7 @@ public class KotlinTypeMapper {
         String descriptor = getDefaultDescriptor(
                 jvmSignature,
                 isStaticMethod(kind, functionDescriptor) || isConstructor ? null : ownerType.getDescriptor(),
-                functionDescriptor.getExtensionReceiverParameter() != null
+                CodegenUtilKt.unwrapFrontendVersion(functionDescriptor)
         );
 
         return new Method(isConstructor ? "<init>" : jvmSignature.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, descriptor);

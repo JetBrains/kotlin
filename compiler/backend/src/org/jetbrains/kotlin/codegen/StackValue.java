@@ -883,7 +883,7 @@ public abstract class StackValue {
             newReceiver.put(newReceiver.type, v);
             callGenerator.processAndPutHiddenParameters(false);
 
-            defaultArgs = generator.generate(valueArguments, valueArguments);
+            defaultArgs = generator.generate(valueArguments, valueArguments, call.getResultingDescriptor());
         }
 
         private ArgumentGenerator createArgumentGenerator() {

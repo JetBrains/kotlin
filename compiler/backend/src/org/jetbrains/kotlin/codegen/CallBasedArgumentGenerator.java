@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
@@ -54,11 +56,12 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
     @Override
     public DefaultCallArgs generate(
             @NotNull List<? extends ResolvedValueArgument> valueArgumentsByIndex,
-            @NotNull List<? extends ResolvedValueArgument> valueArgs
+            @NotNull List<? extends ResolvedValueArgument> valueArgs,
+            @Nullable CallableDescriptor calleeDescriptor
     ) {
         boolean shouldMarkLineNumbers = this.codegen.isShouldMarkLineNumbers();
         this.codegen.setShouldMarkLineNumbers(false);
-        DefaultCallArgs defaultArgs = super.generate(valueArgumentsByIndex, valueArgs);
+        DefaultCallArgs defaultArgs = super.generate(valueArgumentsByIndex, valueArgs, calleeDescriptor);
         this.codegen.setShouldMarkLineNumbers(shouldMarkLineNumbers);
         return defaultArgs;
     }
