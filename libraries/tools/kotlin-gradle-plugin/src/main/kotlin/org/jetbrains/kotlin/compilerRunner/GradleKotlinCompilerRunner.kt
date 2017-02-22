@@ -24,33 +24,30 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
+import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.common.CompilationResultCategory
 import org.jetbrains.kotlin.gradle.plugin.ParentLastURLClassLoader
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.incremental.*
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.PrintStream
+
+import java.io.*
 import kotlin.concurrent.thread
 
 internal const val KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY = "kotlin.compiler.execution.strategy"
 internal const val DAEMON_EXECUTION_STRATEGY = "daemon"
 internal const val IN_PROCESS_EXECUTION_STRATEGY = "in-process"
 internal const val OUT_OF_PROCESS_EXECUTION_STRATEGY = "out-of-process"
+const val CREATED_CLIENT_FILE_PREFIX = "Created client-is-alive flag file: "
+const val EXISTING_CLIENT_FILE_PREFIX = "Existing client-is-alive flag file: "
+const val CREATED_SESSION_FILE_PREFIX = "Created session-is-alive flag file: "
+const val EXISTING_SESSION_FILE_PREFIX = "Existing session-is-alive flag file: "
+const val DELETED_SESSION_FILE_PREFIX = "Deleted session-is-alive flag file: "
+const val COULD_NOT_CONNECT_TO_DAEMON_MESSAGE = "Could not connect to Kotlin compile daemon"
 
 internal class GradleCompilerRunner(private val project: Project) : KotlinCompilerRunner<GradleCompilerEnvironment>() {
     override val log = GradleKotlinLogger(project.logger)
-    private val flagFile = run {
-        val dir = File(project.rootProject.buildDir, "kotlin").apply { mkdirs() }
-        File(dir, "daemon-is-alive").apply {
-            if (!exists()) {
-                createNewFile()
-                deleteOnExit()
-            }
-        }
-    }
 
     fun runJvmCompiler(
             sourcesToCompile: List<File>,
@@ -132,25 +129,43 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
     }
 
     override fun compileWithDaemon(compilerClassName: String, compilerArgs: CommonCompilerArguments, environment: GradleCompilerEnvironment): ExitCode? {
-        val exitCode = if (environment is GradleIncrementalCompilerEnvironment) {
-            incrementalCompilationWithDaemon(environment)
-        }
-        else {
-            nonIncrementalCompilationWithDaemon(compilerClassName, environment)
-        }
-        exitCode?.let {
-            withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
-                daemon.clearJarCache()
+        val connection = getDaemonConnection(environment)
+        if (connection == null) {
+            if (environment is GradleIncrementalCompilerEnvironment) {
+                log.warn("Could not perform incremental compilation: $COULD_NOT_CONNECT_TO_DAEMON_MESSAGE")
             }
-            logFinish(DAEMON_EXECUTION_STRATEGY)
+            else {
+                log.warn(COULD_NOT_CONNECT_TO_DAEMON_MESSAGE)
+            }
+            return null
         }
+
+        val (daemon, sessionId) = connection
+        val exitCode = try {
+            val res = if (environment is GradleIncrementalCompilerEnvironment) {
+                incrementalCompilationWithDaemon(daemon, sessionId, environment)
+            } else {
+                nonIncrementalCompilationWithDaemon(daemon, sessionId, compilerClassName, environment)
+            }
+            exitCodeFromProcessExitCode(res.get())
+        }
+        catch (e: Throwable) {
+            log.warn("Compilation with Kotlin compile daemon was not successful")
+            e.printStackTrace()
+            null
+        }
+        // todo: can we clear cache on the end of session?
+        daemon.clearJarCache()
+        logFinish(DAEMON_EXECUTION_STRATEGY)
         return exitCode
     }
 
     private fun nonIncrementalCompilationWithDaemon(
+            daemon: CompileService,
+            sessionId: Int,
             compilerClassName: String,
             environment: GradleCompilerEnvironment
-    ): ExitCode? {
+    ): CompileService.CallResult<Int> {
         val targetPlatform = when (compilerClassName) {
             K2JVM_COMPILER -> CompileService.TargetPlatform.JVM
             K2JS_COMPILER -> CompileService.TargetPlatform.JS
@@ -166,21 +181,15 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                 reportSeverity = reportSeverity(verbose),
                 requestedCompilationResults = emptyArray())
         val servicesFacade = GradleCompilerServicesFacadeImpl(project, environment.messageCollector)
-
-        val res = withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
-            val argsArray = ArgumentUtils.convertArgumentsToStringList(environment.compilerArgs).toTypedArray()
-            daemon.compile(sessionId, argsArray, compilationOptions, servicesFacade, compilationResults = null)
-        }
-
-        val exitCode = res?.get()?.let { exitCodeFromProcessExitCode(it) }
-        if (exitCode == null) {
-            log.warn("Could not perform non-incremental compilation with Kotlin compile daemon, " +
-                    "non-incremental compilation in fallback mode will be performed")
-        }
-        return exitCode
+        val argsArray = ArgumentUtils.convertArgumentsToStringList(environment.compilerArgs).toTypedArray()
+        return daemon.compile(sessionId, argsArray, compilationOptions, servicesFacade, compilationResults = null)
     }
 
-    private fun incrementalCompilationWithDaemon(environment: GradleIncrementalCompilerEnvironment): ExitCode? {
+    private fun incrementalCompilationWithDaemon(
+            daemon: CompileService,
+            sessionId: Int,
+            environment: GradleIncrementalCompilerEnvironment
+    ): CompileService.CallResult<Int> {
         val knownChangedFiles = environment.changedFiles as? ChangedFiles.Known
 
         val verbose = environment.compilerArgs.verbose
@@ -198,18 +207,8 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
                 targetPlatform = CompileService.TargetPlatform.JVM
         )
         val servicesFacade = GradleIncrementalCompilerServicesFacadeImpl(project, environment)
-
-        val res = withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
-            val argsArray = ArgumentUtils.convertArgumentsToStringList(environment.compilerArgs).toTypedArray()
-            daemon.compile(sessionId, argsArray, compilationOptions, servicesFacade, GradleCompilationResults(project))
-        }
-
-        val exitCode = res?.get()?.let { exitCodeFromProcessExitCode(it) }
-        if (exitCode == null) {
-            log.warn("Could not perform incremental compilation with Kotlin compile daemon, " +
-                    "non-incremental compilation in fallback mode will be performed")
-        }
-        return exitCode
+        val argsArray = ArgumentUtils.convertArgumentsToStringList(environment.compilerArgs).toTypedArray()
+        return daemon.compile(sessionId, argsArray, compilationOptions, servicesFacade, GradleCompilationResults(project))
     }
 
     private fun reportCategories(verbose: Boolean): Array<Int> =
@@ -286,10 +285,61 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
         log.debug("Finished executing kotlin compiler using $strategy strategy")
     }
 
-    @Synchronized
-    override fun getDaemonConnection(environment: GradleCompilerEnvironment): DaemonConnection {
+    override fun getDaemonConnection(environment: GradleCompilerEnvironment): CompileServiceSession? {
         val compilerId = CompilerId.makeCompilerId(environment.compilerClasspath)
-        return newDaemonConnection(compilerId, flagFile, environment)
+        val clientIsAliveFlagFile = getOrCreateClientFlagFile(project)
+        val sessionIsAliveFlagFile = getOrCreateSessionFlagFile(project)
+        return newDaemonConnection(compilerId, clientIsAliveFlagFile, sessionIsAliveFlagFile, environment)
+    }
+
+    companion object {
+        // created once per gradle instance
+        // when gradle daemon dies, kotlin daemon should die too
+        // however kotlin daemon (if it idles enough) can die before gradle daemon dies
+        @Volatile
+        private var clientIsAliveFlagFile: File? = null
+
+        @Synchronized
+        private fun getOrCreateClientFlagFile(project: Project): File {
+            val log = project.logger
+            if (clientIsAliveFlagFile == null || !clientIsAliveFlagFile!!.exists()) {
+                val projectName = project.rootProject.name.normalizeForFlagFile()
+                clientIsAliveFlagFile =  FileUtil.createTempFile("kotlin-compiler-in-$projectName-", ".alive")
+                log.kotlinDebug { CREATED_CLIENT_FILE_PREFIX + clientIsAliveFlagFile!!.relativeToRoot(project) }
+            }
+            else {
+                log.kotlinDebug { EXISTING_CLIENT_FILE_PREFIX + clientIsAliveFlagFile!!.relativeToRoot(project) }
+            }
+
+            return clientIsAliveFlagFile!!
+        }
+
+        private fun String.normalizeForFlagFile(): String {
+            val validChars = ('a'..'z') + ('0'..'9') + "-_"
+            return filter { it in validChars }
+        }
+
+        // session is created per build
+        @Volatile
+        private var sessionFlagFile: File? = null
+
+        // session files are deleted at org.jetbrains.kotlin.gradle.plugin.KotlinGradleBuildServices.buildFinished
+        @Synchronized
+        private fun getOrCreateSessionFlagFile(project: Project): File {
+            val log = project.logger
+            if (sessionFlagFile == null || !sessionFlagFile!!.exists()) {
+                val sessionFilesDir = sessionsDir(project).apply { mkdirs() }
+                sessionFlagFile = FileUtil.createTempFile(sessionFilesDir, "kotlin-compiler-", ".salive")
+                log.kotlinDebug { CREATED_SESSION_FILE_PREFIX + sessionFlagFile!!.relativeToRoot(project) }
+            }
+            else {
+                log.kotlinDebug { EXISTING_SESSION_FILE_PREFIX + sessionFlagFile!!.relativeToRoot(project) }
+            }
+
+            return sessionFlagFile!!
+        }
+
+        internal fun sessionsDir(project: Project): File =
+                File(File(project.rootProject.buildDir, "kotlin"), "sessions")
     }
 }
-

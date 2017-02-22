@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.gradle.api.Project
 import java.io.File
 
 internal fun File.isJavaFile() =
@@ -38,3 +39,6 @@ internal fun File.relativeOrCanonical(base: File): String =
 
 internal fun Iterable<File>.pathsAsStringRelativeTo(base: File): String =
         map { it.relativeOrCanonical(base) }.sorted().joinToString()
+
+internal fun File.relativeToRoot(project: Project): String =
+        relativeOrCanonical(project.rootProject.rootDir)

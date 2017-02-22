@@ -42,6 +42,7 @@ class CompilationServices(
         val compilationCanceledStatus: CompilationCanceledStatus? = null
 )
 
+data class CompileServiceSession(val compileService: CompileService, val sessionId: Int)
 
 object KotlinCompilerClient {
 
@@ -50,7 +51,14 @@ object KotlinCompilerClient {
 
     val verboseReporting = System.getProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY) != null
 
-    data class ServiceWithSession(val service: CompileService, val sessionId: Int)
+    fun getOrCreateClientFlagFile(daemonOptions: DaemonOptions): File =
+            // for jps property is passed from IDEA to JPS in KotlinBuildProcessParametersProvider
+            System.getProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY)
+                ?.let(String::trimQuotes)
+                ?.takeUnless(String::isBlank)
+                ?.let(::File)
+                ?.takeIf(File::exists)
+                ?: makeAutodeletingFlagFile(baseDir = File(daemonOptions.runFilesPathOrDefault))
 
     fun connectToCompileService(compilerId: CompilerId,
                                 daemonJVMOptions: DaemonJVMOptions,
@@ -59,12 +67,7 @@ object KotlinCompilerClient {
                                 autostart: Boolean = true,
                                 checkId: Boolean = true
     ): CompileService? {
-        val flagFile = System.getProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY)
-                               ?.let(String::trimQuotes)
-                               ?.takeUnless(String::isBlank)
-                               ?.let(::File)
-                               ?.takeIf(File::exists)
-                               ?: makeAutodeletingFlagFile(baseDir = File(daemonOptions.runFilesPathOrDefault))
+        val flagFile = getOrCreateClientFlagFile(daemonOptions)
         return connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, reportingTargets, autostart)
     }
 
@@ -82,7 +85,7 @@ object KotlinCompilerClient {
                             reportingTargets,
                             autostart,
                             leaseSession = false,
-                            sessionAliveFlagFile = null)?.service
+                            sessionAliveFlagFile = null)?.compileService
 
 
     fun connectAndLease(compilerId: CompilerId,
@@ -93,20 +96,20 @@ object KotlinCompilerClient {
                         autostart: Boolean,
                         leaseSession: Boolean,
                         sessionAliveFlagFile: File? = null
-    ): ServiceWithSession? = connectLoop(reportingTargets) {
+    ): CompileServiceSession? = connectLoop(reportingTargets) {
         setupServerHostName()
         val (service, newJVMOptions) = tryFindSuitableDaemonOrNewOpts(File(daemonOptions.runFilesPath), compilerId, daemonJVMOptions, { cat, msg -> reportingTargets.report(cat, msg) })
         if (service != null) {
             // the newJVMOptions could be checked here for additional parameters, if needed
             service.registerClient(clientAliveFlagFile.absolutePath)
             reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
-            if (!leaseSession) ServiceWithSession(service, CompileService.NO_SESSION)
+            if (!leaseSession) CompileServiceSession(service, CompileService.NO_SESSION)
             else {
                 val sessionId = service.leaseCompileSession(sessionAliveFlagFile?.absolutePath)
                 if (sessionId is CompileService.CallResult.Dying)
                     null
                 else
-                    ServiceWithSession(service, sessionId.get())
+                    CompileServiceSession(service, sessionId.get())
             }
         } else {
             reportingTargets.report(DaemonReportCategory.DEBUG, "no suitable daemon found")

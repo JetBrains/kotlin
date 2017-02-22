@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.additionalArgumentsAsList
+import org.jetbrains.kotlin.daemon.client.CompileServiceSession
+import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import java.io.ByteArrayOutputStream
@@ -48,7 +50,17 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
     }
 
     companion object {
-        private @Volatile var jpsDaemonConnection: DaemonConnection? = null
+        @Volatile
+        private var _jpsCompileServiceSession: CompileServiceSession? = null
+
+        @Synchronized
+        private fun getOrCreateDaemonConnection(newConnection: ()-> CompileServiceSession?): CompileServiceSession? {
+            if (_jpsCompileServiceSession == null) {
+                _jpsCompileServiceSession = newConnection()
+            }
+
+            return _jpsCompileServiceSession
+        }
     }
 
     fun runK2JvmCompiler(
@@ -116,14 +128,19 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
             else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
         }
 
-        val res = withDaemon(environment, retryOnConnectionError = true) { daemon, sessionId ->
-            val compilerMode = CompilerMode.JPS_COMPILER
-            val verbose = compilerArgs.verbose
-            val options = CompilationOptions(compilerMode, targetPlatform, reportCategories(verbose), reportSeverity(verbose), requestedCompilationResults = emptyArray())
-            daemon.compile(sessionId, serializeWithAdditionalCompilerArgs(compilerArgs), options, JpsCompilerServicesFacadeImpl(environment), null)
+        log.debug("Try to connect to daemon")
+        val connection = getDaemonConnection(environment)
+        if (connection == null) {
+            log.info("Could not connect to daemon")
+            return null
         }
 
-        return res?.get()?.let { exitCodeFromProcessExitCode(it) }
+        val (daemon, sessionId) = connection
+        val compilerMode = CompilerMode.JPS_COMPILER
+        val verbose = compilerArgs.verbose
+        val options = CompilationOptions(compilerMode, targetPlatform, reportCategories(verbose), reportSeverity(verbose), requestedCompilationResults = emptyArray())
+        val res = daemon.compile(sessionId, serializeWithAdditionalCompilerArgs(compilerArgs), options, JpsCompilerServicesFacadeImpl(environment), null)
+        return exitCodeFromProcessExitCode(res.get())
     }
 
     private fun withAdditionalArguments(compilerArgs: CommonCompilerArguments): CommonCompilerArguments {
@@ -213,17 +230,15 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
         }
     }
 
-    @Synchronized
-    override fun getDaemonConnection(environment: JpsCompilerEnvironment): DaemonConnection {
-        if (jpsDaemonConnection == null) {
-            val libPath = CompilerRunnerUtil.getLibPath(environment.kotlinPaths, environment.messageCollector)
-            val compilerPath = File(libPath, "kotlin-compiler.jar")
-            val compilerId = CompilerId.makeCompilerId(compilerPath)
-            // TODO: pass daemon options to newDaemonConnection
-            val daemonOptions = configureDaemonOptions()
-            val flagFile = makeAutodeletingFlagFile("compiler-jps-session-", File(daemonOptions.runFilesPathOrDefault))
-            jpsDaemonConnection = newDaemonConnection(compilerId, flagFile, environment, daemonOptions)
-        }
-        return jpsDaemonConnection!!
-    }
+    override fun getDaemonConnection(environment: JpsCompilerEnvironment): CompileServiceSession? =
+            getOrCreateDaemonConnection {
+                val libPath = CompilerRunnerUtil.getLibPath(environment.kotlinPaths, environment.messageCollector)
+                val compilerPath = File(libPath, "kotlin-compiler.jar")
+                val compilerId = CompilerId.makeCompilerId(compilerPath)
+                val daemonOptions = configureDaemonOptions()
+
+                val clientFlagFile = KotlinCompilerClient.getOrCreateClientFlagFile(daemonOptions)
+                val sessionFlagFile = makeAutodeletingFlagFile("compiler-jps-session-", File(daemonOptions.runFilesPathOrDefault))
+                newDaemonConnection(compilerId, clientFlagFile, sessionFlagFile, environment, daemonOptions)
+            }
 }

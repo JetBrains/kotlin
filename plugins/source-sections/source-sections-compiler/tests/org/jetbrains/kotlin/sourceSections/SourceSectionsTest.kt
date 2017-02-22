@@ -197,7 +197,7 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
                     messageCollector.clear()
                     val outputs = arrayListOf<OutputMessageUtil.Output>()
 
-                    val code = KotlinCompilerClient.compile(daemonWithSession!!.service, daemonWithSession.sessionId, CompileService.TargetPlatform.JVM,
+                    val code = KotlinCompilerClient.compile(daemonWithSession!!.compileService, daemonWithSession.sessionId, CompileService.TargetPlatform.JVM,
                                                             args, messageCollector,
                                                             { outFile, srcFiles -> outputs.add(OutputMessageUtil.Output(srcFiles, outFile)) },
                                                             reportSeverity = ReportSeverity.DEBUG)
@@ -211,7 +211,7 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
                 }
             }
             finally {
-                daemonWithSession!!.service.shutdown()
+                daemonWithSession!!.compileService.shutdown()
             }
         }
     }
