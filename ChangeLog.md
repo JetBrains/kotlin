@@ -13,6 +13,7 @@
 - [`KT-15464`](https://youtrack.jetbrains.com/issue/KT-15464) Regression: compilation error "Supertypes of the following classes cannot be resolved..."
 - [`KT-15334`](https://youtrack.jetbrains.com/issue/KT-15334) Incorrect compilation error "val cannot be reassigned" inside do-while
 - [`KT-15995`](https://youtrack.jetbrains.com/issue/KT-15995) Do not report error on libraries that bundle Kotlin runtime in classpath
+- [`KT-16272`](https://youtrack.jetbrains.com/issue/KT-16272) Unreported deprecation on variables called as functions
 - Some warnings are now reported even if there are compilation errors
 - Add hint to use "-language-version", when applicable
 
@@ -56,6 +57,7 @@
 #### Gradle
 - [`KT-15218`](https://youtrack.jetbrains.com/issue/KT-15218) Fix compatibility with Gradle 3.2+ distributions by isolating compiler process
 - [`KT-13275`](https://youtrack.jetbrains.com/issue/KT-13275) Support compiling with Jack&Jill enabled (Android)
+- [`KT-16003`](https://youtrack.jetbrains.com/issue/KT-16003) The project does not build after copy/move
 
 #### Kapt
 
@@ -70,6 +72,11 @@
 - [`KT-15675`](https://youtrack.jetbrains.com/issue/KT-15675) Support using kapt with Java-only projects
 - [`KT-15803`](https://youtrack.jetbrains.com/issue/KT-15803) Generate enum values with bodies properly
 - [`KT-15915`](https://youtrack.jetbrains.com/issue/KT-15915) Fix annotation processors writing to classes dir with kapt
+- [`KT-15524`](https://youtrack.jetbrains.com/issue/KT-15524) Error messages should display associated element information (if available)
+- [`KT-15697`](https://youtrack.jetbrains.com/issue/KT-15697) Annotation with AnnotationTarget.PROPERTY on a Kotlin property breaks annotation processing
+- [`KT-16146`](https://youtrack.jetbrains.com/issue/KT-16146) Kapt doesn't work in verbose mode
+- [`KT-16153`](https://youtrack.jetbrains.com/issue/KT-16153) Kapt does not properly escape valid kotlin names when generating stub java classes
+- [`KT-16176`](https://youtrack.jetbrains.com/issue/KT-16176) Kapt reports a lot of false positive errors
 
 ## 1.0.6
 
