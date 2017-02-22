@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 class GeneratorContext(
         val configuration: Psi2IrConfiguration,
@@ -31,6 +33,6 @@ class GeneratorContext(
 ) : IrGeneratorContext(IrBuiltIns(moduleDescriptor.builtIns)) {
     val sourceManager = PsiSourceManager()
 
-    val reflectionTypes = ReflectionTypes(moduleDescriptor)
+    // TODO: inject a correct StorageManager instance, or store NotFoundClasses inside ModuleDescriptor
+    val reflectionTypes = ReflectionTypes(moduleDescriptor, NotFoundClasses(LockBasedStorageManager.NO_LOCKS, moduleDescriptor))
 }
-

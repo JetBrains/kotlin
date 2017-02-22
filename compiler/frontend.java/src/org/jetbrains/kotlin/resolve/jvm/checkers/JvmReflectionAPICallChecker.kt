@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.calls.checkers.AbstractReflectionApiCallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH
+import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
@@ -30,7 +31,11 @@ import org.jetbrains.kotlin.storage.getValue
  * If there's no Kotlin reflection implementation found in the classpath, checks that there are no usages
  * of reflection API which will fail at runtime.
  */
-class JvmReflectionAPICallChecker(private val module: ModuleDescriptor, storageManager: StorageManager) : AbstractReflectionApiCallChecker(module, storageManager) {
+class JvmReflectionAPICallChecker(
+        private val module: ModuleDescriptor,
+        notFoundClasses: NotFoundClasses,
+        storageManager: StorageManager
+) : AbstractReflectionApiCallChecker(module, notFoundClasses, storageManager) {
     override val isWholeReflectionApiAvailable by storageManager.createLazyValue {
         module.findClassAcrossModuleDependencies(JvmAbi.REFLECTION_FACTORY_IMPL) != null
     }

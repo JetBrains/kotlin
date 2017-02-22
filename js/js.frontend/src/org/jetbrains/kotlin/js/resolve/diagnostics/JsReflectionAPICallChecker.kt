@@ -25,12 +25,18 @@ import org.jetbrains.kotlin.diagnostics.Errors.UNSUPPORTED
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.checkers.AbstractReflectionApiCallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
+import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 
 private val ALLOWED_KCLASS_MEMBERS = setOf("simpleName", "isInstance")
 
-class JsReflectionAPICallChecker(private val module: ModuleDescriptor, storageManager: StorageManager) : AbstractReflectionApiCallChecker(module, storageManager) {
+class JsReflectionAPICallChecker(
+        module: ModuleDescriptor,
+        private val reflectionTypes: ReflectionTypes,
+        notFoundClasses: NotFoundClasses,
+        storageManager: StorageManager
+) : AbstractReflectionApiCallChecker(module, notFoundClasses, storageManager) {
     override val isWholeReflectionApiAvailable: Boolean
         get() = false
 
@@ -38,7 +44,7 @@ class JsReflectionAPICallChecker(private val module: ModuleDescriptor, storageMa
         context.trace.report(UNSUPPORTED.on(element, "This reflection API is not supported yet in JavaScript"))
     }
 
-    private val kClass by storageManager.createLazyValue { ReflectionTypes(module).kClass }
+    private val kClass by storageManager.createLazyValue { reflectionTypes.kClass }
 
     override fun isAllowedReflectionApi(descriptor: CallableDescriptor, containingClass: ClassDescriptor): Boolean =
             super.isAllowedReflectionApi(descriptor, containingClass) ||

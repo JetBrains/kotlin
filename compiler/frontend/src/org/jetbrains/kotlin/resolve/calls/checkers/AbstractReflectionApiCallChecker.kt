@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.serialization.deserialization.NotFoundClasses
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -34,12 +35,16 @@ private val ANY_MEMBER_NAMES = setOf("equals", "hashCode", "toString")
 /**
  * Checks that there are no usages of reflection API which will fail at runtime.
  */
-abstract class AbstractReflectionApiCallChecker(private val module: ModuleDescriptor, storageManager: StorageManager) : CallChecker {
+abstract class AbstractReflectionApiCallChecker(
+        private val module: ModuleDescriptor,
+        private val notFoundClasses: NotFoundClasses,
+        storageManager: StorageManager
+) : CallChecker {
     protected abstract val isWholeReflectionApiAvailable: Boolean
     protected abstract fun report(element: PsiElement, context: CallCheckerContext)
 
     private val kPropertyClasses by storageManager.createLazyValue {
-        val reflectionTypes = ReflectionTypes(module)
+        val reflectionTypes = ReflectionTypes(module, notFoundClasses)
         setOf(reflectionTypes.kProperty0, reflectionTypes.kProperty1, reflectionTypes.kProperty2)
     }
 
