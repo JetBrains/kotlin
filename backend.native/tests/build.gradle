@@ -366,6 +366,16 @@ task enum_companionObject(type: RunKonanTest) {
     source = "codegen/enum/companionObject.kt"
 }
 
+task enum_interfaceCallNoEntryClass(type: RunKonanTest) {
+    goldValue = "('z3', 3)\n('z3', 3)\n"
+    source = "codegen/enum/interfaceCallNoEntryClass.kt"
+}
+
+task enum_interfaceCallWithEntryClass(type: RunKonanTest) {
+    goldValue = "z1z2\nz1z2\n"
+    source = "codegen/enum/interfaceCallWithEntryClass.kt"
+}
+
 task innerClass_simple(type: RunKonanTest) {
     goldValue = "OK\n"
     source = "codegen/innerClass/simple.kt"
