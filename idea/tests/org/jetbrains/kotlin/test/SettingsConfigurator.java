@@ -28,7 +28,7 @@ import java.util.Arrays;
 public class SettingsConfigurator {
     public static final String SET_TRUE_DIRECTIVE = "SET_TRUE:";
     public static final String SET_FALSE_DIRECTIVE = "SET_FALSE:";
-    public static final String SET_INT_DIRECTIVE = "SET_INT:";
+    private static final String SET_INT_DIRECTIVE = "SET_INT:";
 
     private final String[] settingsToTrue;
     private final String[] settingsToFalse;
@@ -54,7 +54,7 @@ public class SettingsConfigurator {
         this.objects = objects;
     }
 
-    public static void setSettingValue(String settingName, Object value, Class<?> valueType, Object... objects) {
+    private static void setSettingValue(String settingName, Object value, Class<?> valueType, Object... objects) {
         for (Object object : objects) {
             if (setSettingWithField(settingName, object, value) || setSettingWithMethod(settingName, object, value, valueType)) {
                 return;
@@ -65,11 +65,11 @@ public class SettingsConfigurator {
                 "There's no property or method with name '%s' in given objects: %s", settingName, Arrays.toString(objects)));
     }
 
-    public static void setBooleanSetting(String setting, Boolean value, Object... objects) {
+    private static void setBooleanSetting(String setting, Boolean value, Object... objects) {
         setSettingValue(setting, value, boolean.class, objects);
     }
 
-    public static void setIntSetting(String setting, Integer value, Object... objects) {
+    private static void setIntSetting(String setting, Integer value, Object... objects) {
         setSettingValue(setting, value, int.class, objects);
     }
 

@@ -9,9 +9,7 @@ enum class E3 {
 }
 
 enum class E4 {
-    F {
-    },
-    S, T
+    F {}, S, T
 }
 
 enum class E5 { F, S {}, T }

@@ -23,3 +23,10 @@ enum class E7 {
 
     }, S, T
 }
+
+enum class E8 {
+    A, // A
+    B  // B
+}
+
+// SET_TRUE: KEEP_LINE_BREAKS

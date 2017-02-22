@@ -986,6 +986,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTestInverted(fileName);
         }
 
+        @TestMetadata("EmptyLineBetweenEnumEntries.after.inv.kt")
+        public void testEmptyLineBetweenEnumEntries() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/EmptyLineBetweenEnumEntries.after.inv.kt");
+            doTestInverted(fileName);
+        }
+
         @TestMetadata("ForLineBreak.after.inv.kt")
         public void testForLineBreak() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ForLineBreak.after.inv.kt");
