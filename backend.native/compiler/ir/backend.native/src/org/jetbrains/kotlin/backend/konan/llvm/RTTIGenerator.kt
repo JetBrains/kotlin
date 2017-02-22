@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
@@ -169,7 +170,13 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         get() {
             val target = descriptor.target
             if (!needBridge) return target
-            val bridgeOwner = if (descriptor.bridgeDirections.allNotNeeded()) target else descriptor
-            return context.specialDescriptorsFactory.getBridgeDescriptor(bridgeOwner)
+            val bridgeOwner = if (!descriptor.kind.isReal
+                    && OverridingUtil.overrides(target, overriddenDescriptor)
+                    && descriptor.bridgeDirectionsTo(overriddenDescriptor).allNotNeeded()) {
+                target // Bridge is inherited from superclass.
+            } else {
+                descriptor
+            }
+            return context.specialDescriptorsFactory.getBridgeDescriptor(OverriddenFunctionDescriptor(bridgeOwner, overriddenDescriptor))
         }
 }

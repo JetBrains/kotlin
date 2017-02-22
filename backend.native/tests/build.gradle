@@ -36,7 +36,11 @@ task clean {
 }
 
 task run() {
-    dependsOn(tasks.withType(KonanTest).matching { !(it instanceof RunExternalTestGroup) && it.enabled })
+    String prefix = project.findProperty("prefix")
+    if (prefix != null)
+        dependsOn(tasks.withType(KonanTest).matching { !(it instanceof RunExternalTestGroup) && it.enabled && it.name.startsWith(prefix) })
+    else
+        dependsOn(tasks.withType(KonanTest).matching { !(it instanceof RunExternalTestGroup) && it.enabled })
 }
 
 task run_external () {
@@ -362,6 +366,16 @@ task enum_companionObject(type: RunKonanTest) {
     source = "codegen/enum/companionObject.kt"
 }
 
+task enum_interfaceCallNoEntryClass(type: RunKonanTest) {
+    goldValue = "('z3', 3)\n('z3', 3)\n"
+    source = "codegen/enum/interfaceCallNoEntryClass.kt"
+}
+
+task enum_interfaceCallWithEntryClass(type: RunKonanTest) {
+    goldValue = "z1z2\nz1z2\n"
+    source = "codegen/enum/interfaceCallWithEntryClass.kt"
+}
+
 task innerClass_simple(type: RunKonanTest) {
     goldValue = "OK\n"
     source = "codegen/innerClass/simple.kt"
@@ -535,6 +549,41 @@ task bridges_test12(type: RunKonanTest) {
 task bridges_test13(type: RunKonanTest) {
     goldValue = "42\n42\n"
     source = "codegen/bridges/test13.kt"
+}
+
+task bridges_test14(type: RunKonanTest) {
+    goldValue = "42\n56\n42\n56\n56\n42\n156\n142\n"
+    source = "codegen/bridges/test14.kt"
+}
+
+task bridges_test15(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/bridges/test15.kt"
+}
+
+task bridges_test16(type: RunKonanTest) {
+    goldValue = "OK\nOK\n"
+    source = "codegen/bridges/test16.kt"
+}
+
+task classDelegation_method(type: RunKonanTest) {
+    goldValue = "OKOK\n"
+    source = "codegen/classDelegation/method.kt"
+}
+
+task classDelegation_property(type: RunKonanTest) {
+    goldValue = "4242\n"
+    source = "codegen/classDelegation/property.kt"
+}
+
+task classDelegation_generic(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/classDelegation/generic.kt"
+}
+
+task classDelegation_withBridge(type: RunKonanTest) {
+    goldValue = "OK\n"
+    source = "codegen/classDelegation/withBridge.kt"
 }
 
 task array0(type: RunKonanTest) {

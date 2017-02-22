@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.SimpleMemberScope
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.descriptors.createValueParameter
 import org.jetbrains.kotlin.backend.jvm.descriptors.initialize
@@ -36,6 +37,8 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
+
+// TODO: cross-module usage.
 
 internal data class LoweredSyntheticFunction(val functionDescriptor: FunctionDescriptor, val containingClass: ClassDescriptor)
 
@@ -173,7 +176,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                 defaultEnumEntryConstructors.put(loweredEnumConstructor, constructorDescriptor)
             }
 
-            val memberScope = MemberScope.Empty
+            val memberScope = SimpleMemberScope(irClass.descriptor.unsubstitutedMemberScope.getContributedDescriptors().toList())
             defaultClassDescriptor.initialize(memberScope, constructors, null)
 
             return defaultClass

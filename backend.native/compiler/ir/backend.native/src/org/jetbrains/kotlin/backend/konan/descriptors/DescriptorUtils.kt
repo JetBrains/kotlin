@@ -49,6 +49,7 @@ internal fun <T : CallableMemberDescriptor> T.resolveFakeOverride(): T {
         val overridden = OverridingUtil.getOverriddenDeclarations(this)
         val filtered = OverridingUtil.filterOutOverridden(overridden)
         // TODO: is it correct to take first?
+        @Suppress("UNCHECKED_CAST")
         return filtered.first { it.modality != Modality.ABSTRACT } as T
     }
 }
@@ -166,6 +167,7 @@ internal val <T : CallableMemberDescriptor> T.allOverriddenDescriptors: List<T>
         val result = mutableListOf<T>()
         fun traverse(descriptor: T) {
             result.add(descriptor)
+            @Suppress("UNCHECKED_CAST")
             descriptor.overriddenDescriptors.forEach { traverse(it as T) }
         }
         traverse(this)
@@ -209,12 +211,6 @@ internal fun FunctionDescriptor.hasReferenceAt(index: Int): Boolean {
     }
 }
 
-private fun FunctionDescriptor.overridesFunWithReferenceAt(index: Int)
-        = allOverriddenDescriptors.any { it.original.hasReferenceAt(index) }
-
-private fun FunctionDescriptor.overridesFunWithValueTypeAt(index: Int)
-        = allOverriddenDescriptors.any { it.original.hasValueTypeAt(index) }
-
 private fun FunctionDescriptor.needBridgeToAt(target: FunctionDescriptor, index: Int)
         = hasValueTypeAt(index) xor target.hasValueTypeAt(index)
 
@@ -230,39 +226,60 @@ internal enum class BridgeDirection {
     TO_VALUE_TYPE
 }
 
-private fun FunctionDescriptor.bridgeDirectionAt(index: Int) : BridgeDirection {
-    if (kind.isReal) {
-        if (hasValueTypeAt(index) && overridesFunWithReferenceAt(index))
-            return BridgeDirection.FROM_VALUE_TYPE
-        return BridgeDirection.NOT_NEEDED
-    }
-
-    val target = this.target
-    return when {
-        hasValueTypeAt(index) && target.hasValueTypeAt(index) && overridesFunWithReferenceAt(index) -> BridgeDirection.FROM_VALUE_TYPE
-        hasValueTypeAt(index) && target.hasReferenceAt(index) && overridesFunWithValueTypeAt(index) -> BridgeDirection.TO_VALUE_TYPE
-        else -> BridgeDirection.NOT_NEEDED
+private fun FunctionDescriptor.bridgeDirectionToAt(target: FunctionDescriptor, index: Int): BridgeDirection {
+    when {
+        hasValueTypeAt(index) && target.hasReferenceAt(index) -> return BridgeDirection.FROM_VALUE_TYPE
+        hasReferenceAt(index) && target.hasValueTypeAt(index) -> return BridgeDirection.TO_VALUE_TYPE
+        else -> return BridgeDirection.NOT_NEEDED
     }
 }
 
-private fun bridgesEqual(first: Array<BridgeDirection>, second: Array<BridgeDirection>)
-        = first.indices.none { first[it] != second[it] }
+internal class BridgeDirections(val array: Array<BridgeDirection>) {
+    constructor(parametersCount: Int): this(Array<BridgeDirection>(parametersCount + 2, { BridgeDirection.NOT_NEEDED }))
 
-internal fun Array<BridgeDirection>.allNotNeeded() = this.all { it == BridgeDirection.NOT_NEEDED }
+    fun allNotNeeded(): Boolean = array.all { it == BridgeDirection.NOT_NEEDED }
 
-internal val FunctionDescriptor.bridgeDirections: Array<BridgeDirection>
-    get() {
-        val ourDirections = Array<BridgeDirection>(this.valueParameters.size + 2, { BridgeDirection.NOT_NEEDED })
-        if (modality == Modality.ABSTRACT)
-            return ourDirections
-        for (index in ourDirections.indices)
-            ourDirections[index] = this.bridgeDirectionAt(index)
-
-        if (!kind.isReal && bridgesEqual(ourDirections, this.target.bridgeDirections)) {
-            // Bridge is inherited from supers
-            for (index in ourDirections.indices)
-                ourDirections[index] = BridgeDirection.NOT_NEEDED
+    override fun toString(): String {
+        val result = StringBuilder()
+        array.forEach {
+            result.append(when (it) {
+                BridgeDirection.FROM_VALUE_TYPE -> 'U' // unbox
+                BridgeDirection.TO_VALUE_TYPE -> 'B' // box
+                BridgeDirection.NOT_NEEDED -> 'N' // none
+            })
         }
-
-        return ourDirections
+        return result.toString()
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is BridgeDirections) return false
+
+        return array.size == other.array.size
+                && array.indices.all { array[it] == other.array[it] }
+    }
+
+    override fun hashCode(): Int {
+        var result = 0
+        array.forEach { result = result * 31 + it.ordinal }
+        return result
+    }
+}
+
+internal fun FunctionDescriptor.bridgeDirectionsTo(overriddenDescriptor: FunctionDescriptor): BridgeDirections {
+    val ourDirections = BridgeDirections(this.valueParameters.size)
+    if (modality == Modality.ABSTRACT)
+        return ourDirections
+    for (index in ourDirections.array.indices)
+        ourDirections.array[index] = this.bridgeDirectionToAt(overriddenDescriptor, index)
+
+    val target = this.target
+    if (!kind.isReal
+            && OverridingUtil.overrides(target, overriddenDescriptor)
+            && ourDirections == target.bridgeDirectionsTo(overriddenDescriptor)) {
+        // Bridge is inherited from superclass.
+        return BridgeDirections(this.valueParameters.size)
+    }
+
+    return ourDirections
+}

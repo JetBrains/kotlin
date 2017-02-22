@@ -7,6 +7,8 @@ import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
+import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
@@ -296,8 +298,12 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         val descriptor = declaration.descriptor
 
         val dispatchReceiverParameter = descriptor.dispatchReceiverParameter
-        if (dispatchReceiverParameter != null) {
-            val containingClass = dispatchReceiverParameter.containingDeclaration
+        if (dispatchReceiverParameter != null
+                // TODO: hack because of IR bug: https://github.com/JetBrains/kotlin/tree/rr/dispatch_receiver_for_delegate_descriptor.
+                || descriptor is IrImplementingDelegateDescriptorImpl) {
+            val containingClass = dispatchReceiverParameter?.containingDeclaration
+                    // TODO: hack because of IR bug: https://github.com/JetBrains/kotlin/tree/rr/dispatch_receiver_for_delegate_descriptor.
+                    ?: descriptor.containingDeclaration
             val classDeclarations = this.classes[containingClass] ?: error(containingClass.toString())
 
             val allFields = classDeclarations.fields
