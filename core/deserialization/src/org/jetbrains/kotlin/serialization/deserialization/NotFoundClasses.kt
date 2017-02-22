@@ -70,9 +70,9 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
             throw UnsupportedOperationException("Unresolved local class: $classId")
         }
 
-        val container =
-                if (classId.isNestedClass) getOrCreateClass(classId.outerClassId, typeParametersCount.drop(1))
-                else packageFragments(classId.packageFqName)
+        val container = classId.outerClassId?.let { outerClassId ->
+            getOrCreateClass(outerClassId, typeParametersCount.drop(1))
+        } ?: packageFragments(classId.packageFqName)
 
         // Treat a class with a nested ClassId as inner for simplicity, otherwise the outer type cannot have generic arguments
         val isInner = classId.isNestedClass
@@ -182,7 +182,7 @@ private fun createTypeParameters(
 
 private fun computeTypeParametersCount(classId: ClassId, proto: ProtoBuf.Type, typeTable: TypeTable): List<Int> {
     val typeParametersCount = generateSequence(proto) { it.outerType(typeTable) }.map { it.argumentCount }.toMutableList()
-    val classNestingLevel = generateSequence(classId) { if (it.isNestedClass) it.outerClassId else null }.count()
+    val classNestingLevel = generateSequence(classId, ClassId::getOuterClassId).count()
     while (typeParametersCount.size < classNestingLevel) {
         typeParametersCount.add(0)
     }

@@ -40,7 +40,7 @@ fun ModuleDescriptor.findNonGenericClassAcrossDependencies(classId: ClassId, not
     if (existingClass != null) return existingClass
 
     // Take a list of N zeros, where N is the number of class names in the given ClassId
-    val typeParametersCount = generateSequence(classId) { if (it.isNestedClass) it.outerClassId else null }.map { 0 }.toList()
+    val typeParametersCount = generateSequence(classId, ClassId::getOuterClassId).map { 0 }.toList()
 
     return notFoundClasses.getClass(classId, typeParametersCount).declarationDescriptor as ClassDescriptor
 }
@@ -62,4 +62,3 @@ fun ModuleDescriptor.findTypeAliasAcrossModuleDependencies(classId: ClassId): Ty
     val lastName = segments[lastNameIndex]
     return currentClass.unsubstitutedMemberScope.getContributedClassifier(lastName, NoLookupLocation.FROM_DESERIALIZATION) as? TypeAliasDescriptor
 }
-

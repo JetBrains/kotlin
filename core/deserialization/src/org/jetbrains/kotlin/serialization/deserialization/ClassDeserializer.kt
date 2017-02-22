@@ -44,8 +44,9 @@ class ClassDeserializer(private val components: DeserializationComponents) {
                                          ?: return null
         val (nameResolver, classProto) = classData
 
-        val outerContext = if (classId.isNestedClass) {
-            val outerClass = deserializeClass(classId.outerClassId) as? DeserializedClassDescriptor ?: return null
+        val outerClassId = classId.outerClassId
+        val outerContext = if (outerClassId != null) {
+            val outerClass = deserializeClass(outerClassId) as? DeserializedClassDescriptor ?: return null
 
             // Find the outer class first and check if he knows anything about the nested class we're looking for
             if (!outerClass.hasNestedClass(classId.shortClassName)) return null

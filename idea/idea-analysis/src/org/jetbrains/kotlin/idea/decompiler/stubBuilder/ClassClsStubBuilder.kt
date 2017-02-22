@@ -253,9 +253,10 @@ private class ClassClsStubBuilder(
                     "Root file: ${rootFile.canonicalPath}\n" +
                     "Dir: ${rootFile.parent.canonicalPath}\n" +
                     "Children:\n" +
-                    "${rootFile.parent.children.sortedBy { it.name }.joinToString(separator = "\n") {
-                        it.name + " (valid: ${it.isValid})"
-                    } }")
+                    rootFile.parent.children.sortedBy { it.name }.joinToString(separator = "\n") {
+                        "${it.name} (valid: ${it.isValid})"
+                    }
+            )
             return
         }
         val (nameResolver, classProto) = classDataWithSource.classData
