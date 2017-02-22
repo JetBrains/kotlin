@@ -5,7 +5,7 @@
 #include "Exceptions.h"
 #include "Memory.h"
 #include "Natives.h"
-#include "String.h"
+#include "KString.h"
 #include "Types.h"
 
 extern "C" {

@@ -1,9 +1,7 @@
-#include <string.h>
-
 #include "Memory.h"
 #include "Natives.h"
 #include "Runtime.h"
-#include "String.h"
+#include "KString.h"
 #include "Types.h"
 
 //--- Setup args --------------------------------------------------------------//
