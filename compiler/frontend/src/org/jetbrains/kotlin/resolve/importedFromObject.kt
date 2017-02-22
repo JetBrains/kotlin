@@ -27,12 +27,13 @@ fun PropertyDescriptor.asImportedFromObject(original: PropertyImportedFromObject
 
 abstract class ImportedFromObjectCallableDescriptor<out TCallable : CallableMemberDescriptor>(
         val callableFromObject: TCallable,
-        originalOrNull: TCallable?
+        private val originalOrNull: TCallable?
 ) : CallableDescriptor {
 
     val containingObject = callableFromObject.containingDeclaration as ClassDescriptor
 
-    protected val _original = originalOrNull ?: this
+    protected val _original
+        get() = originalOrNull ?: this
 }
 
 // members imported from object should be wrapped to not require dispatch receiver

@@ -54,6 +54,10 @@ abstract class KtCodeFragment(
         }
     }
 
+    override final fun init(elementType: IElementType, contentElementType: IElementType?) {
+        super.init(elementType, contentElementType)
+    }
+
     private var resolveScope: GlobalSearchScope? = null
     private var thisType: PsiType? = null
     private var superType: PsiType? = null
