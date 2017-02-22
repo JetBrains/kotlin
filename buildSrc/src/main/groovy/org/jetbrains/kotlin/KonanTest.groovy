@@ -257,7 +257,7 @@ class RunExternalTestGroup extends RunKonanTest {
             total   += other.total
             passed  += other.passed
             failed  += other.failed
-            error  += other.error
+            error   += other.error
             skipped += other.skipped
         }
     }
@@ -425,6 +425,7 @@ fun main(args : Array<String>) {
             }
 
             TestResult skip() {
+                statistics.skip()
                 return new TestResult(TestStatus.SKIPPED)
             }
         }
