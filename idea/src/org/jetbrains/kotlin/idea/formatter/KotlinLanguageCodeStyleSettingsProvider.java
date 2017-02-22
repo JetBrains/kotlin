@@ -74,7 +74,41 @@ public class KotlinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSe
                         "    B\n" +
                         "}\n" +
                         "";
-
+            case BLANK_LINES_SETTINGS:
+                return
+                        "class Foo {\n" +
+                        "    private var field1: Int = 1\n" +
+                        "    private val field2: String? = null\n" +
+                        "\n" +
+                        "\n" +
+                        "    init {\n" +
+                        "        field1 = 2;\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    fun foo1() {\n" +
+                        "        run {\n" +
+                        "            \n" +
+                        "            \n" +
+                        "            \n" +
+                        "            field1\n" +
+                        "        }\n" +
+                        "    }\n" +
+                        "\n" +
+                        "\n" +
+                        "    class InnerClass {\n" +
+                        "    }\n" +
+                        "}\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "class AnotherClass {\n" +
+                        "}\n" +
+                        "\n" +
+                        "interface TestInterface {\n" +
+                        "}\n" +
+                        "fun run(f: () -> Unit) {\n" +
+                        "    f()\n" +
+                        "}";
             default:
                 return
                         "open class Some {\n"+
@@ -181,8 +215,15 @@ public class KotlinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSe
                                           "Put left brace on new line",
                                           CodeStyleSettingsCustomizable.WRAPPING_BRACES);
                 break;
+            case BLANK_LINES_SETTINGS:
+                consumer.showStandardOptions(
+                        "KEEP_BLANK_LINES_IN_CODE",
+                        "KEEP_BLANK_LINES_IN_DECLARATIONS"
+                );
+                break;
             default:
                 consumer.showStandardOptions();
+                break;
         }
     }
 
