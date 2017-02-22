@@ -151,10 +151,10 @@ fun <T : CPointed> NativePlacement.allocPointerTo() = alloc<CPointerVar<T>>()
 /**
  * The zero-terminated string.
  */
-class CString private constructor(override val rawPtr: NativePtr) : CPointed {
+class CString(override val rawPtr: NativePtr) : CPointed {
 
     companion object {
-        fun fromArray(array: CArray<CInt8Var>) = CString(array.rawPtr)
+        fun fromArray(array: CArray<CInt8Var>) = array.reinterpret<CString>()
     }
 
     fun length(): Int {

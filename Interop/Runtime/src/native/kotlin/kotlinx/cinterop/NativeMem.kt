@@ -51,7 +51,7 @@ object nativeMemUtils {
         if (ptr == nativeNullPtr) {
             throw OutOfMemoryError("unable to allocate native memory")
         }
-        return NativeAllocated(ptr)
+        return interpretPointed<NativeAllocated>(ptr)
     }
 
     fun free(mem: NativePointed) {

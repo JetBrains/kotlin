@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.TypeUtils
 
 private val cPointerName = "CPointer"
 private val nativePointedName = "NativePointed"
@@ -37,12 +38,26 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val cPointerRawValue = cPointer.unsubstitutedMemberScope.getContributedVariables("rawValue").single()
 
+    val cPointerGetRawValue = packageScope.getContributedFunctions("getRawValue").single {
+        val extensionReceiverParameter = it.extensionReceiverParameter
+        extensionReceiverParameter != null &&
+                TypeUtils.getClassDescriptor(extensionReceiverParameter.type) == cPointer
+    }
+
     val nativePointedRawPtrGetter =
             nativePointed.unsubstitutedMemberScope.getContributedVariables("rawPtr").single().getter!!
 
+    val nativePointedGetRawPointer = packageScope.getContributedFunctions("getRawPointer").single {
+        val extensionReceiverParameter = it.extensionReceiverParameter
+        extensionReceiverParameter != null &&
+                TypeUtils.getClassDescriptor(extensionReceiverParameter.type) == nativePointed
+    }
+
     val memberAt = packageScope.getContributedFunctions("memberAt").single()
 
-    val interpretPointed = packageScope.getContributedFunctions("interpretPointed").single()
+    val interpretNullablePointed = packageScope.getContributedFunctions("interpretNullablePointed").single()
+
+    val interpretCPointer = packageScope.getContributedFunctions("interpretCPointer").single()
 
     val arrayGetByIntIndex = packageScope.getContributedFunctions("get").single {
         KotlinBuiltIns.isInt(it.valueParameters.single().type)

@@ -12,40 +12,14 @@ interface NativePointed {
 
 // `null` value of `NativePointed?` is mapped to `nativeNullPtr`.
 val NativePointed?.rawPtr: NativePtr
-    get() = this?.rawPtr ?: nativeNullPtr
+    get() = if (this != null) this.rawPtr else nativeNullPtr
 
 /**
- * Returns interpretation of entity with given pointer, or `null` if it is null.
+ * Returns interpretation of entity with given pointer.
  *
  * @param T must not be abstract
  */
-inline fun <reified T : NativePointed> interpretNullablePointed(ptr: NativePtr): T? {
-    return ifNotNull(ptr) {
-        interpretPointed<T>(it)
-    }
-}
-
-/**
- * Applies the function to the pointer if it is not null, otherwise returns `null`.
- */
-inline fun <T> ifNotNull(ptr: NativePtr, function: (NativePtr)->T): T? {
-    return if (ptr == nativeNullPtr) {
-        null
-    } else {
-        function(ptr)
-    }
-}
-
-/**
- * Applies the function to the pointer ensuring that it is not null.
- */
-inline fun <T> ensuringNotNull(ptr: NativePtr, function: (NativePtr)->T): T {
-    if (ptr == nativeNullPtr) {
-        throw IllegalArgumentException()
-    } else {
-        return function(ptr)
-    }
-}
+inline fun <reified T : NativePointed> interpretPointed(ptr: NativePtr): T = interpretNullablePointed<T>(ptr)!!
 
 /**
  * Changes the interpretation of the pointed data or code.
@@ -60,16 +34,7 @@ interface CPointed : NativePointed
 /**
  * C pointer.
  */
-class CPointer<T : CPointed> private constructor(val rawValue: NativePtr) {
-    companion object {
-        fun <T : CPointed> create(rawValue: NativePtr) = ensuringNotNull(rawValue) {
-            CPointer<T>(rawValue)
-        }
-
-        fun <T : CPointed> createNullable(rawValue: NativePtr) = ifNotNull(rawValue) {
-            CPointer<T>(it)
-        }
-    }
+class CPointer<T : CPointed> internal constructor(val rawValue: NativePtr) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -90,7 +55,7 @@ class CPointer<T : CPointed> private constructor(val rawValue: NativePtr) {
  * Returns the pointer to this data or code.
  */
 val <T : CPointed> T.ptr: CPointer<T>
-    get() = CPointer.create(this.rawPtr)
+    get() = interpretCPointer(this.rawPtr)!!
 
 /**
  * Returns the corresponding [CPointed].
@@ -104,7 +69,7 @@ inline val <reified T : CPointed> CPointer<T>.pointed: T
 val CPointer<*>?.rawValue: NativePtr
     get() = this?.rawValue ?: nativeNullPtr
 
-fun <T : CPointed> CPointer<*>.reinterpret(): CPointer<T> = CPointer.create(this.rawValue)
+fun <T : CPointed> CPointer<*>.reinterpret(): CPointer<T> = interpretCPointer(this.rawValue)!!
 
 /**
  * The [CPointed] without any specified interpretation.
@@ -251,7 +216,7 @@ typealias CPointerVar<T> = CPointerVarWithValueMappedTo<CPointer<T>>
  * The value of this variable.
  */
 inline var <reified P : CPointer<*>> CPointerVarWithValueMappedTo<P>.value: P?
-    get() = CPointer.createNullable<CPointed>(nativeMemUtils.getNativePtr(this)) as P?
+    get() = interpretCPointer<CPointed>(nativeMemUtils.getNativePtr(this)) as P?
     set(value) = nativeMemUtils.putNativePtr(this, value.rawValue)
 
 /**

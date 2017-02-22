@@ -14,11 +14,17 @@ inline val nativeNullPtr: NativePtr
 fun <T : CVariable> typeOf(): CVariable.Type = throw Error("typeOf() is called with erased argument")
 
 /**
- * Returns interpretation of entity with given pointer.
+ * Returns interpretation of entity with given pointer, or `null` if it is null.
  *
  * @param T must not be abstract
  */
-@Intrinsic external fun <T : NativePointed> interpretPointed(ptr: NativePtr): T
+@Intrinsic external fun <T : NativePointed> interpretNullablePointed(ptr: NativePtr): T?
+
+@Intrinsic external fun <T : CPointed> interpretCPointer(rawValue: NativePtr): CPointer<T>?
+
+@Intrinsic external fun NativePointed.getRawPointer(): NativePtr
+
+@Intrinsic external fun CPointer<*>.getRawValue(): NativePtr
 
 inline fun <reified T : CAdaptedFunctionType<*>> CAdaptedFunctionType.Companion.getInstanceOf(): T =
         TODO("CAdaptedFunctionType.getInstanceOf")

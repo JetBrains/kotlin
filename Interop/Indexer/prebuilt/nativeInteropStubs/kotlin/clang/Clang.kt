@@ -5,7 +5,7 @@ import kotlinx.cinterop.*
 fun asctime(arg0: CPointer<tm>?): CPointer<CInt8Var>? {
     val _arg0 = arg0.rawValue
     val res = externals.asctime(_arg0)
-    return CPointer.createNullable<CInt8Var>(res)
+    return interpretCPointer<CInt8Var>(res)
 }
 
 fun clock(): clock_t {
@@ -16,7 +16,7 @@ fun clock(): clock_t {
 fun ctime(arg0: CPointer<time_tVar>?): CPointer<CInt8Var>? {
     val _arg0 = arg0.rawValue
     val res = externals.ctime(_arg0)
-    return CPointer.createNullable<CInt8Var>(res)
+    return interpretCPointer<CInt8Var>(res)
 }
 
 fun difftime(arg0: time_t, arg1: time_t): Double {
@@ -30,20 +30,20 @@ fun getdate(arg0: String?): CPointer<tm>? {
     return memScoped {
         val _arg0 = arg0?.toCString(memScope).rawPtr
         val res = externals.getdate(_arg0)
-        CPointer.createNullable<tm>(res)
+        interpretCPointer<tm>(res)
     }
 }
 
 fun gmtime(arg0: CPointer<time_tVar>?): CPointer<tm>? {
     val _arg0 = arg0.rawValue
     val res = externals.gmtime(_arg0)
-    return CPointer.createNullable<tm>(res)
+    return interpretCPointer<tm>(res)
 }
 
 fun localtime(arg0: CPointer<time_tVar>?): CPointer<tm>? {
     val _arg0 = arg0.rawValue
     val res = externals.localtime(_arg0)
-    return CPointer.createNullable<tm>(res)
+    return interpretCPointer<tm>(res)
 }
 
 fun mktime(arg0: CPointer<tm>?): time_t {
@@ -69,7 +69,7 @@ fun strptime(arg0: String?, arg1: String?, arg2: CPointer<tm>?): CPointer<CInt8V
         val _arg1 = arg1?.toCString(memScope).rawPtr
         val _arg2 = arg2.rawValue
         val res = externals.strptime(_arg0, _arg1, _arg2)
-        CPointer.createNullable<CInt8Var>(res)
+        interpretCPointer<CInt8Var>(res)
     }
 }
 
@@ -89,7 +89,7 @@ fun asctime_r(arg0: CPointer<tm>?, arg1: String?): CPointer<CInt8Var>? {
         val _arg0 = arg0.rawValue
         val _arg1 = arg1?.toCString(memScope).rawPtr
         val res = externals.asctime_r(_arg0, _arg1)
-        CPointer.createNullable<CInt8Var>(res)
+        interpretCPointer<CInt8Var>(res)
     }
 }
 
@@ -98,7 +98,7 @@ fun ctime_r(arg0: CPointer<time_tVar>?, arg1: String?): CPointer<CInt8Var>? {
         val _arg0 = arg0.rawValue
         val _arg1 = arg1?.toCString(memScope).rawPtr
         val res = externals.ctime_r(_arg0, _arg1)
-        CPointer.createNullable<CInt8Var>(res)
+        interpretCPointer<CInt8Var>(res)
     }
 }
 
@@ -106,14 +106,14 @@ fun gmtime_r(arg0: CPointer<time_tVar>?, arg1: CPointer<tm>?): CPointer<tm>? {
     val _arg0 = arg0.rawValue
     val _arg1 = arg1.rawValue
     val res = externals.gmtime_r(_arg0, _arg1)
-    return CPointer.createNullable<tm>(res)
+    return interpretCPointer<tm>(res)
 }
 
 fun localtime_r(arg0: CPointer<time_tVar>?, arg1: CPointer<tm>?): CPointer<tm>? {
     val _arg0 = arg0.rawValue
     val _arg1 = arg1.rawValue
     val res = externals.localtime_r(_arg0, _arg1)
-    return CPointer.createNullable<tm>(res)
+    return interpretCPointer<tm>(res)
 }
 
 fun posix2time(arg0: time_t): time_t {
@@ -182,7 +182,7 @@ fun clock_settime(__clock_id: clockid_t, __tp: CPointer<timespec>?): Int {
 fun clang_getCString(string: CXString): CPointer<CInt8Var>? {
     val _string = string.rawPtr
     val res = externals.clang_getCString(_string)
-    return CPointer.createNullable<CInt8Var>(res)
+    return interpretCPointer<CInt8Var>(res)
 }
 
 fun clang_disposeString(string: CXString): Unit {
@@ -205,7 +205,7 @@ fun clang_getBuildSessionTimestamp(): Long {
 fun clang_VirtualFileOverlay_create(options: Int): CXVirtualFileOverlay? {
     val _options = options
     val res = externals.clang_VirtualFileOverlay_create(_options)
-    return CPointer.createNullable<CXVirtualFileOverlayImpl>(res)
+    return interpretCPointer<CXVirtualFileOverlayImpl>(res)
 }
 
 fun clang_VirtualFileOverlay_addFileMapping(arg0: CXVirtualFileOverlay?, virtualPath: String?, realPath: String?): CXErrorCode {
@@ -249,7 +249,7 @@ fun clang_VirtualFileOverlay_dispose(arg0: CXVirtualFileOverlay?): Unit {
 fun clang_ModuleMapDescriptor_create(options: Int): CXModuleMapDescriptor? {
     val _options = options
     val res = externals.clang_ModuleMapDescriptor_create(_options)
-    return CPointer.createNullable<CXModuleMapDescriptorImpl>(res)
+    return interpretCPointer<CXModuleMapDescriptorImpl>(res)
 }
 
 fun clang_ModuleMapDescriptor_setFrameworkModuleName(arg0: CXModuleMapDescriptor?, name: String?): CXErrorCode {
@@ -289,7 +289,7 @@ fun clang_createIndex(excludeDeclarationsFromPCH: Int, displayDiagnostics: Int):
     val _excludeDeclarationsFromPCH = excludeDeclarationsFromPCH
     val _displayDiagnostics = displayDiagnostics
     val res = externals.clang_createIndex(_excludeDeclarationsFromPCH, _displayDiagnostics)
-    return CPointer.createNullable<COpaque>(res)
+    return interpretCPointer<COpaque>(res)
 }
 
 fun clang_disposeIndex(index: CXIndex?): Unit {
@@ -343,7 +343,7 @@ fun clang_getFile(tu: CXTranslationUnit?, file_name: String?): CXFile? {
         val _tu = tu.rawValue
         val _file_name = file_name?.toCString(memScope).rawPtr
         val res = externals.clang_getFile(_tu, _file_name)
-        CPointer.createNullable<COpaque>(res)
+        interpretCPointer<COpaque>(res)
     }
 }
 
@@ -492,7 +492,7 @@ fun clang_getSkippedRanges(tu: CXTranslationUnit?, file: CXFile?): CPointer<CXSo
     val _tu = tu.rawValue
     val _file = file.rawValue
     val res = externals.clang_getSkippedRanges(_tu, _file)
-    return CPointer.createNullable<CXSourceRangeList>(res)
+    return interpretCPointer<CXSourceRangeList>(res)
 }
 
 fun clang_disposeSourceRangeList(ranges: CPointer<CXSourceRangeList>?): Unit {
@@ -511,7 +511,7 @@ fun clang_getDiagnosticInSet(Diags: CXDiagnosticSet?, Index: Int): CXDiagnostic?
     val _Diags = Diags.rawValue
     val _Index = Index
     val res = externals.clang_getDiagnosticInSet(_Diags, _Index)
-    return CPointer.createNullable<COpaque>(res)
+    return interpretCPointer<COpaque>(res)
 }
 
 fun clang_loadDiagnostics(file: String?, error: CPointer<CXLoadDiag_Error.Var>?, errorString: CPointer<CXString>?): CXDiagnosticSet? {
@@ -520,7 +520,7 @@ fun clang_loadDiagnostics(file: String?, error: CPointer<CXLoadDiag_Error.Var>?,
         val _error = error.rawValue
         val _errorString = errorString.rawValue
         val res = externals.clang_loadDiagnostics(_file, _error, _errorString)
-        CPointer.createNullable<COpaque>(res)
+        interpretCPointer<COpaque>(res)
     }
 }
 
@@ -533,7 +533,7 @@ fun clang_disposeDiagnosticSet(Diags: CXDiagnosticSet?): Unit {
 fun clang_getChildDiagnostics(D: CXDiagnostic?): CXDiagnosticSet? {
     val _D = D.rawValue
     val res = externals.clang_getChildDiagnostics(_D)
-    return CPointer.createNullable<COpaque>(res)
+    return interpretCPointer<COpaque>(res)
 }
 
 fun clang_getNumDiagnostics(Unit: CXTranslationUnit?): Int {
@@ -546,13 +546,13 @@ fun clang_getDiagnostic(Unit: CXTranslationUnit?, Index: Int): CXDiagnostic? {
     val _Unit = Unit.rawValue
     val _Index = Index
     val res = externals.clang_getDiagnostic(_Unit, _Index)
-    return CPointer.createNullable<COpaque>(res)
+    return interpretCPointer<COpaque>(res)
 }
 
 fun clang_getDiagnosticSetFromTU(Unit: CXTranslationUnit?): CXDiagnosticSet? {
     val _Unit = Unit.rawValue
     val res = externals.clang_getDiagnosticSetFromTU(_Unit)
-    return CPointer.createNullable<COpaque>(res)
+    return interpretCPointer<COpaque>(res)
 }
 
 fun clang_disposeDiagnostic(Diagnostic: CXDiagnostic?): Unit {
@@ -667,7 +667,7 @@ fun clang_createTranslationUnitFromSourceFile(CIdx: CXIndex?, source_filename: S
         val _num_unsaved_files = num_unsaved_files
         val _unsaved_files = unsaved_files.rawValue
         val res = externals.clang_createTranslationUnitFromSourceFile(_CIdx, _source_filename, _num_clang_command_line_args, _clang_command_line_args, _num_unsaved_files, _unsaved_files)
-        CPointer.createNullable<CXTranslationUnitImpl>(res)
+        interpretCPointer<CXTranslationUnitImpl>(res)
     }
 }
 
@@ -676,7 +676,7 @@ fun clang_createTranslationUnit(CIdx: CXIndex?, ast_filename: String?): CXTransl
         val _CIdx = CIdx.rawValue
         val _ast_filename = ast_filename?.toCString(memScope).rawPtr
         val res = externals.clang_createTranslationUnit(_CIdx, _ast_filename)
-        CPointer.createNullable<CXTranslationUnitImpl>(res)
+        interpretCPointer<CXTranslationUnitImpl>(res)
     }
 }
 
@@ -705,7 +705,7 @@ fun clang_parseTranslationUnit(CIdx: CXIndex?, source_filename: String?, command
         val _num_unsaved_files = num_unsaved_files
         val _options = options
         val res = externals.clang_parseTranslationUnit(_CIdx, _source_filename, _command_line_args, _num_command_line_args, _unsaved_files, _num_unsaved_files, _options)
-        CPointer.createNullable<CXTranslationUnitImpl>(res)
+        interpretCPointer<CXTranslationUnitImpl>(res)
     }
 }
 
@@ -779,7 +779,7 @@ fun clang_reparseTranslationUnit(TU: CXTranslationUnit?, num_unsaved_files: Int,
 fun clang_getTUResourceUsageName(kind: CXTUResourceUsageKind): CPointer<CInt8Var>? {
     val _kind = kind.value
     val res = externals.clang_getTUResourceUsageName(_kind)
-    return CPointer.createNullable<CInt8Var>(res)
+    return interpretCPointer<CInt8Var>(res)
 }
 
 fun clang_getCXTUResourceUsage(TU: CXTranslationUnit?, retValPlacement: NativePlacement): CXTUResourceUsage {
@@ -938,12 +938,12 @@ fun clang_getCursorLanguage(cursor: CXCursor): CXLanguageKind {
 fun clang_Cursor_getTranslationUnit(arg0: CXCursor): CXTranslationUnit? {
     val _arg0 = arg0.rawPtr
     val res = externals.clang_Cursor_getTranslationUnit(_arg0)
-    return CPointer.createNullable<CXTranslationUnitImpl>(res)
+    return interpretCPointer<CXTranslationUnitImpl>(res)
 }
 
 fun clang_createCXCursorSet(): CXCursorSet? {
     val res = externals.clang_createCXCursorSet()
-    return CPointer.createNullable<CXCursorSetImpl>(res)
+    return interpretCPointer<CXCursorSetImpl>(res)
 }
 
 fun clang_disposeCXCursorSet(cset: CXCursorSet?): Unit {
@@ -997,7 +997,7 @@ fun clang_disposeOverriddenCursors(overridden: CPointer<CXCursor>?): Unit {
 fun clang_getIncludedFile(cursor: CXCursor): CXFile? {
     val _cursor = cursor.rawPtr
     val res = externals.clang_getIncludedFile(_cursor)
-    return CPointer.createNullable<COpaque>(res)
+    return interpretCPointer<COpaque>(res)
 }
 
 fun clang_getCursor(arg0: CXTranslationUnit?, arg1: CXSourceLocation, retValPlacement: NativePlacement): CXCursor {
@@ -1585,32 +1585,32 @@ fun clang_Cursor_getMangling(arg0: CXCursor, retValPlacement: NativePlacement): 
 fun clang_Cursor_getCXXManglings(arg0: CXCursor): CPointer<CXStringSet>? {
     val _arg0 = arg0.rawPtr
     val res = externals.clang_Cursor_getCXXManglings(_arg0)
-    return CPointer.createNullable<CXStringSet>(res)
+    return interpretCPointer<CXStringSet>(res)
 }
 
 fun clang_Cursor_getModule(C: CXCursor): CXModule? {
     val _C = C.rawPtr
     val res = externals.clang_Cursor_getModule(_C)
-    return CPointer.createNullable<COpaque>(res)
+    return interpretCPointer<COpaque>(res)
 }
 
 fun clang_getModuleForFile(arg0: CXTranslationUnit?, arg1: CXFile?): CXModule? {
     val _arg0 = arg0.rawValue
     val _arg1 = arg1.rawValue
     val res = externals.clang_getModuleForFile(_arg0, _arg1)
-    return CPointer.createNullable<COpaque>(res)
+    return interpretCPointer<COpaque>(res)
 }
 
 fun clang_Module_getASTFile(Module: CXModule?): CXFile? {
     val _Module = Module.rawValue
     val res = externals.clang_Module_getASTFile(_Module)
-    return CPointer.createNullable<COpaque>(res)
+    return interpretCPointer<COpaque>(res)
 }
 
 fun clang_Module_getParent(Module: CXModule?): CXModule? {
     val _Module = Module.rawValue
     val res = externals.clang_Module_getParent(_Module)
-    return CPointer.createNullable<COpaque>(res)
+    return interpretCPointer<COpaque>(res)
 }
 
 fun clang_Module_getName(Module: CXModule?, retValPlacement: NativePlacement): CXString {
@@ -1645,7 +1645,7 @@ fun clang_Module_getTopLevelHeader(arg0: CXTranslationUnit?, Module: CXModule?, 
     val _Module = Module.rawValue
     val _Index = Index
     val res = externals.clang_Module_getTopLevelHeader(_arg0, _Module, _Index)
-    return CPointer.createNullable<COpaque>(res)
+    return interpretCPointer<COpaque>(res)
 }
 
 fun clang_CXXConstructor_isConvertingConstructor(C: CXCursor): Int {
@@ -1837,7 +1837,7 @@ fun clang_getCompletionChunkCompletionString(completion_string: CXCompletionStri
     val _completion_string = completion_string.rawValue
     val _chunk_number = chunk_number
     val res = externals.clang_getCompletionChunkCompletionString(_completion_string, _chunk_number)
-    return CPointer.createNullable<COpaque>(res)
+    return interpretCPointer<COpaque>(res)
 }
 
 fun clang_getNumCompletionChunks(completion_string: CXCompletionString?): Int {
@@ -1890,7 +1890,7 @@ fun clang_getCompletionBriefComment(completion_string: CXCompletionString?, retV
 fun clang_getCursorCompletionString(cursor: CXCursor): CXCompletionString? {
     val _cursor = cursor.rawPtr
     val res = externals.clang_getCursorCompletionString(_cursor)
-    return CPointer.createNullable<COpaque>(res)
+    return interpretCPointer<COpaque>(res)
 }
 
 fun clang_defaultCodeCompleteOptions(): Int {
@@ -1908,7 +1908,7 @@ fun clang_codeCompleteAt(TU: CXTranslationUnit?, complete_filename: String?, com
         val _num_unsaved_files = num_unsaved_files
         val _options = options
         val res = externals.clang_codeCompleteAt(_TU, _complete_filename, _complete_line, _complete_column, _unsaved_files, _num_unsaved_files, _options)
-        CPointer.createNullable<CXCodeCompleteResults>(res)
+        interpretCPointer<CXCodeCompleteResults>(res)
     }
 }
 
@@ -1935,7 +1935,7 @@ fun clang_codeCompleteGetDiagnostic(Results: CPointer<CXCodeCompleteResults>?, I
     val _Results = Results.rawValue
     val _Index = Index
     val res = externals.clang_codeCompleteGetDiagnostic(_Results, _Index)
-    return CPointer.createNullable<COpaque>(res)
+    return interpretCPointer<COpaque>(res)
 }
 
 fun clang_codeCompleteGetContexts(Results: CPointer<CXCodeCompleteResults>?): Long {
@@ -1988,7 +1988,7 @@ fun clang_getInclusions(tu: CXTranslationUnit?, visitor: CXInclusionVisitor?, cl
 fun clang_Cursor_Evaluate(C: CXCursor): CXEvalResult? {
     val _C = C.rawPtr
     val res = externals.clang_Cursor_Evaluate(_C)
-    return CPointer.createNullable<COpaque>(res)
+    return interpretCPointer<COpaque>(res)
 }
 
 fun clang_EvalResult_getKind(E: CXEvalResult?): CXEvalResultKind {
@@ -2012,7 +2012,7 @@ fun clang_EvalResult_getAsDouble(E: CXEvalResult?): Double {
 fun clang_EvalResult_getAsStr(E: CXEvalResult?): CPointer<CInt8Var>? {
     val _E = E.rawValue
     val res = externals.clang_EvalResult_getAsStr(_E)
-    return CPointer.createNullable<CInt8Var>(res)
+    return interpretCPointer<CInt8Var>(res)
 }
 
 fun clang_EvalResult_dispose(E: CXEvalResult?): Unit {
@@ -2025,7 +2025,7 @@ fun clang_getRemappings(path: String?): CXRemapping? {
     return memScoped {
         val _path = path?.toCString(memScope).rawPtr
         val res = externals.clang_getRemappings(_path)
-        CPointer.createNullable<COpaque>(res)
+        interpretCPointer<COpaque>(res)
     }
 }
 
@@ -2033,7 +2033,7 @@ fun clang_getRemappingsFromFileList(filePaths: CPointer<CPointerVar<CInt8Var>>?,
     val _filePaths = filePaths.rawValue
     val _numFiles = numFiles
     val res = externals.clang_getRemappingsFromFileList(_filePaths, _numFiles)
-    return CPointer.createNullable<COpaque>(res)
+    return interpretCPointer<COpaque>(res)
 }
 
 fun clang_remap_getNumFiles(arg0: CXRemapping?): Int {
@@ -2082,49 +2082,49 @@ fun clang_index_isEntityObjCContainerKind(arg0: CXIdxEntityKind): Int {
 fun clang_index_getObjCContainerDeclInfo(arg0: CPointer<CXIdxDeclInfo>?): CPointer<CXIdxObjCContainerDeclInfo>? {
     val _arg0 = arg0.rawValue
     val res = externals.clang_index_getObjCContainerDeclInfo(_arg0)
-    return CPointer.createNullable<CXIdxObjCContainerDeclInfo>(res)
+    return interpretCPointer<CXIdxObjCContainerDeclInfo>(res)
 }
 
 fun clang_index_getObjCInterfaceDeclInfo(arg0: CPointer<CXIdxDeclInfo>?): CPointer<CXIdxObjCInterfaceDeclInfo>? {
     val _arg0 = arg0.rawValue
     val res = externals.clang_index_getObjCInterfaceDeclInfo(_arg0)
-    return CPointer.createNullable<CXIdxObjCInterfaceDeclInfo>(res)
+    return interpretCPointer<CXIdxObjCInterfaceDeclInfo>(res)
 }
 
 fun clang_index_getObjCCategoryDeclInfo(arg0: CPointer<CXIdxDeclInfo>?): CPointer<CXIdxObjCCategoryDeclInfo>? {
     val _arg0 = arg0.rawValue
     val res = externals.clang_index_getObjCCategoryDeclInfo(_arg0)
-    return CPointer.createNullable<CXIdxObjCCategoryDeclInfo>(res)
+    return interpretCPointer<CXIdxObjCCategoryDeclInfo>(res)
 }
 
 fun clang_index_getObjCProtocolRefListInfo(arg0: CPointer<CXIdxDeclInfo>?): CPointer<CXIdxObjCProtocolRefListInfo>? {
     val _arg0 = arg0.rawValue
     val res = externals.clang_index_getObjCProtocolRefListInfo(_arg0)
-    return CPointer.createNullable<CXIdxObjCProtocolRefListInfo>(res)
+    return interpretCPointer<CXIdxObjCProtocolRefListInfo>(res)
 }
 
 fun clang_index_getObjCPropertyDeclInfo(arg0: CPointer<CXIdxDeclInfo>?): CPointer<CXIdxObjCPropertyDeclInfo>? {
     val _arg0 = arg0.rawValue
     val res = externals.clang_index_getObjCPropertyDeclInfo(_arg0)
-    return CPointer.createNullable<CXIdxObjCPropertyDeclInfo>(res)
+    return interpretCPointer<CXIdxObjCPropertyDeclInfo>(res)
 }
 
 fun clang_index_getIBOutletCollectionAttrInfo(arg0: CPointer<CXIdxAttrInfo>?): CPointer<CXIdxIBOutletCollectionAttrInfo>? {
     val _arg0 = arg0.rawValue
     val res = externals.clang_index_getIBOutletCollectionAttrInfo(_arg0)
-    return CPointer.createNullable<CXIdxIBOutletCollectionAttrInfo>(res)
+    return interpretCPointer<CXIdxIBOutletCollectionAttrInfo>(res)
 }
 
 fun clang_index_getCXXClassDeclInfo(arg0: CPointer<CXIdxDeclInfo>?): CPointer<CXIdxCXXClassDeclInfo>? {
     val _arg0 = arg0.rawValue
     val res = externals.clang_index_getCXXClassDeclInfo(_arg0)
-    return CPointer.createNullable<CXIdxCXXClassDeclInfo>(res)
+    return interpretCPointer<CXIdxCXXClassDeclInfo>(res)
 }
 
 fun clang_index_getClientContainer(arg0: CPointer<CXIdxContainerInfo>?): CXIdxClientContainer? {
     val _arg0 = arg0.rawValue
     val res = externals.clang_index_getClientContainer(_arg0)
-    return CPointer.createNullable<COpaque>(res)
+    return interpretCPointer<COpaque>(res)
 }
 
 fun clang_index_setClientContainer(arg0: CPointer<CXIdxContainerInfo>?, arg1: CXIdxClientContainer?): Unit {
@@ -2137,7 +2137,7 @@ fun clang_index_setClientContainer(arg0: CPointer<CXIdxContainerInfo>?, arg1: CX
 fun clang_index_getClientEntity(arg0: CPointer<CXIdxEntityInfo>?): CXIdxClientEntity? {
     val _arg0 = arg0.rawValue
     val res = externals.clang_index_getClientEntity(_arg0)
-    return CPointer.createNullable<COpaque>(res)
+    return interpretCPointer<COpaque>(res)
 }
 
 fun clang_index_setClientEntity(arg0: CPointer<CXIdxEntityInfo>?, arg1: CXIdxClientEntity?): Unit {
@@ -2150,7 +2150,7 @@ fun clang_index_setClientEntity(arg0: CPointer<CXIdxEntityInfo>?, arg1: CXIdxCli
 fun clang_IndexAction_create(CIdx: CXIndex?): CXIndexAction? {
     val _CIdx = CIdx.rawValue
     val res = externals.clang_IndexAction_create(_CIdx)
-    return CPointer.createNullable<COpaque>(res)
+    return interpretCPointer<COpaque>(res)
 }
 
 fun clang_IndexAction_dispose(arg0: CXIndexAction?): Unit {

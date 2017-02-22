@@ -148,20 +148,25 @@ private class InteropTransformer(val context: Context) : IrBuildingTransformer(c
         if (descriptor is ClassConstructorDescriptor) {
             val type = descriptor.constructedClass.defaultType
             if (type.isRepresentedAs(ValueType.C_POINTER) || type.isRepresentedAs(ValueType.NATIVE_POINTED)) {
-                return expression.getValueArgument(0)!!
+                throw Error("Native interop types constructors must not be called directly")
             }
         }
 
         if (descriptor == interop.nativePointedRawPtrGetter ||
                 OverridingUtil.overrides(descriptor, interop.nativePointedRawPtrGetter)) {
 
-            return expression.dispatchReceiver!!
+            // Replace by the intrinsic call to be handled by code generator:
+            return builder.irCall(interop.nativePointedGetRawPointer).apply {
+                extensionReceiver = expression.dispatchReceiver
+            }
         }
 
         return when (descriptor) {
-            interop.cPointerRawValue.getter -> expression.dispatchReceiver!!
-
-            interop.interpretPointed -> expression.getValueArgument(0)!!
+            interop.cPointerRawValue.getter ->
+                // Replace by the intrinsic call to be handled by code generator:
+                builder.irCall(interop.cPointerGetRawValue).apply {
+                    extensionReceiver = expression.dispatchReceiver
+                }
 
             interop.arrayGetByIntIndex, interop.arrayGetByLongIndex -> {
                 val array = expression.extensionReceiver!!

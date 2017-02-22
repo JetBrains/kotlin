@@ -276,7 +276,7 @@ class StubGenerator(
         class Pointer(val pointee: String) : TypeInfo() {
             override fun argToJni(name: String) = "$name.rawValue"
 
-            override fun argFromJni(name: String) = "CPointer.createNullable<$pointee>($name)"
+            override fun argFromJni(name: String) = "interpretCPointer<$pointee>($name)"
 
             override val jniType: String
                 get() = "NativePtr"

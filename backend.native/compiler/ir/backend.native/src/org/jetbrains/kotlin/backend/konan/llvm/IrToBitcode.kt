@@ -1661,6 +1661,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val interop = context.interopBuiltIns
 
         return when (descriptor) {
+            interop.interpretNullablePointed, interop.interpretCPointer,
+            interop.nativePointedGetRawPointer, interop.cPointerGetRawValue -> args.single()
+
             in interop.readPrimitive -> {
                 val pointerType = pointerType(codegen.getLLVMType(descriptor.returnType!!))
                 val rawPointer = args.last()

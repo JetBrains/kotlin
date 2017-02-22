@@ -15,7 +15,7 @@ data class StableObjPtr private constructor(val value: COpaquePointer) {
          */
         fun create(any: Any) = fromValue(newGlobalRef(any))
 
-        private fun fromValue(value: NativePtr) = fromValue(CPointer.create(value))
+        private fun fromValue(value: NativePtr) = fromValue(interpretCPointer(value)!!)
 
         /**
          * Creates [StableObjPtr] from given raw value.
@@ -219,7 +219,7 @@ private fun ffiCreateCif(returnType: ffi_type, paramTypes: List<ffi_type>): ffi_
 
 private fun ffiFunImpl0(ffiCif: Long, ret: Long, args: Long, userData: Any) {
     ffiFunImpl(interpretPointed(ffiCif),
-            CPointer.create(ret),
+            interpretCPointer(ret)!!,
             interpretPointed(args),
             userData as UserData)
 }
