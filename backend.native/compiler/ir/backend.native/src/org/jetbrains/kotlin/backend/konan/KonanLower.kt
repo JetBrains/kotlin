@@ -55,13 +55,9 @@ internal class KonanLower(val context: Context) {
         phaser.phase(KonanPhase.LOWER_VARARG) {
             VarargInjectionLowering(context).runOnFilePostfix(irFile)
         }
-        phaser.phase(KonanPhase.LOWER_DELEGATION) {
-            DelegationLowering(context).runOnFilePostfix(irFile)
-        }
         phaser.phase(KonanPhase.BRIDGES_BUILDING) {
+            DelegationLowering(context).runOnFilePostfix(irFile)
             BridgesBuilding(context).runOnFilePostfix(irFile)
-        }
-        phaser.phase(KonanPhase.LOWER_DIRECT_BRIDGES_CALLS) {
             DirectBridgesCallsLowering(context).runOnFilePostfix(irFile)
         }
         phaser.phase(KonanPhase.AUTOBOX) {

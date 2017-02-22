@@ -173,7 +173,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
             val bridgeOwner = if (!descriptor.kind.isReal
                     && OverridingUtil.overrides(target, overriddenDescriptor)
                     && descriptor.bridgeDirectionsTo(overriddenDescriptor).allNotNeeded()) {
-                target // Bridge is inherited from supers
+                target // Bridge is inherited from superclass.
             } else {
                 descriptor
             }

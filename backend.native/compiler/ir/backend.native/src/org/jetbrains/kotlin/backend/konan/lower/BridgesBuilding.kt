@@ -27,7 +27,7 @@ internal class DirectBridgesCallsLowering(val context: Context) : BodyLoweringPa
                 val descriptor = expression.descriptor as? FunctionDescriptor ?: return expression
                 if (descriptor.modality == Modality.ABSTRACT
                         || (expression.superQualifier == null && descriptor.isOverridable)) {
-                    // A virtual call. box/unbox will be in the corresponding bridge.
+                    // A virtual call. boxing/unboxing will be in the corresponding bridge.
                     return expression
                 }
 
@@ -39,7 +39,7 @@ internal class DirectBridgesCallsLowering(val context: Context) : BodyLoweringPa
                 val toCall = if (needBridge) {
                     target
                 } else {
-                    // Need to call delegating fun.
+                    // Need to call delegating function.
                     context.specialDescriptorsFactory.getBridgeDescriptor(OverriddenFunctionDescriptor(descriptor, target))
                 }
 
@@ -81,10 +81,8 @@ internal class DelegationLowering(val context: Context) : ClassLoweringPass {
                 is IrProperty -> {
                     val getter = transformBridgeToDelegatedMethod(irClass, it.getter)
                     val setter = transformBridgeToDelegatedMethod(irClass, it.setter)
-                    if (getter != null || setter != null) {
-                        it.getter = getter
-                        it.setter = setter
-                    }
+                    if (getter != null) it.getter = getter
+                    if (setter != null) it.setter = setter
                     null
                 }
                 else -> null
@@ -92,7 +90,7 @@ internal class DelegationLowering(val context: Context) : ClassLoweringPass {
         }
     }
 
-    // TODO: hack because of broken IR for synthesized delegated members.
+    // TODO: hack because of broken IR for synthesized delegated members: https://youtrack.jetbrains.com/issue/KT-16486.
     private fun transformBridgeToDelegatedMethod(irClass: IrClass, irFunction: IrFunction?): IrFunction? {
         if (irFunction == null || irFunction.descriptor.kind != CallableMemberDescriptor.Kind.DELEGATION) return null
 

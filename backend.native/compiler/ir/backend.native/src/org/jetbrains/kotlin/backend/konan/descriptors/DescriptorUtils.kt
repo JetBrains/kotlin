@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import java.util.*
 
 /**
  * List of all implemented interfaces (including those which implemented by a super class)
@@ -254,11 +253,14 @@ internal class BridgeDirections(val array: Array<BridgeDirection>) {
         if (this === other) return true
         if (other !is BridgeDirections) return false
 
-        return (Arrays.equals(array, other.array))
+        return array.size == other.array.size
+                && array.indices.all { array[it] == other.array[it] }
     }
 
     override fun hashCode(): Int {
-        return Arrays.hashCode(array)
+        var result = 0
+        array.forEach { result = result * 31 + it.ordinal }
+        return result
     }
 }
 
@@ -273,7 +275,7 @@ internal fun FunctionDescriptor.bridgeDirectionsTo(overriddenDescriptor: Functio
     if (!kind.isReal
             && OverridingUtil.overrides(target, overriddenDescriptor)
             && ourDirections == target.bridgeDirectionsTo(overriddenDescriptor)) {
-        // Bridge is inherited from supers
+        // Bridge is inherited from superclass.
         return BridgeDirections(this.valueParameters.size)
     }
 

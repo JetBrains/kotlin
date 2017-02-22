@@ -299,9 +299,11 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
 
         val dispatchReceiverParameter = descriptor.dispatchReceiverParameter
         if (dispatchReceiverParameter != null
-                || descriptor is IrImplementingDelegateDescriptorImpl) { // TODO: hack because of IR bug.
+                // TODO: hack because of IR bug: https://github.com/JetBrains/kotlin/tree/rr/dispatch_receiver_for_delegate_descriptor.
+                || descriptor is IrImplementingDelegateDescriptorImpl) {
             val containingClass = dispatchReceiverParameter?.containingDeclaration
-                    ?: descriptor.containingDeclaration // TODO: hack because of IR bug.
+                    // TODO: hack because of IR bug: https://github.com/JetBrains/kotlin/tree/rr/dispatch_receiver_for_delegate_descriptor.
+                    ?: descriptor.containingDeclaration
             val classDeclarations = this.classes[containingClass] ?: error(containingClass.toString())
 
             val allFields = classDeclarations.fields

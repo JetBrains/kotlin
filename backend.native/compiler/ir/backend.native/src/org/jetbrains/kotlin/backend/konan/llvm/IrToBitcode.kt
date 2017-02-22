@@ -1225,7 +1225,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateGetField(value: IrGetField): LLVMValueRef {
         context.log("evaluateGetField           : ${ir2string(value)}")
         if (value.descriptor.dispatchReceiverParameter != null
-                || value.descriptor is IrImplementingDelegateDescriptorImpl) { // TODO: hack because of IR bug.
+                // TODO: hack because of IR bug: https://github.com/JetBrains/kotlin/tree/rr/dispatch_receiver_for_delegate_descriptor.
+                || value.descriptor is IrImplementingDelegateDescriptorImpl) {
             val thisPtr = evaluateExpression(value.receiver!!)
             return codegen.loadSlot(
                     fieldPtrOfClass(thisPtr, value.descriptor), value.descriptor.isVar())
@@ -1256,7 +1257,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val valueToAssign = evaluateExpression(value.value)
 
         if (value.descriptor.dispatchReceiverParameter != null
-                || value.descriptor is IrImplementingDelegateDescriptorImpl) { // TODO: hack because of IR bug.
+                // TODO: hack because of IR bug: https://github.com/JetBrains/kotlin/tree/rr/dispatch_receiver_for_delegate_descriptor.
+                || value.descriptor is IrImplementingDelegateDescriptorImpl) {
             val thisPtr = evaluateExpression(value.receiver!!)
             codegen.storeAnyGlobal(valueToAssign, fieldPtrOfClass(thisPtr, value.descriptor))
         }
