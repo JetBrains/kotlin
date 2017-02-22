@@ -112,39 +112,31 @@ class TypeDeserializer(
         return simpleType.withAbbreviation(simpleType(abbreviatedTypeProto, additionalAnnotations))
     }
 
-    private fun typeConstructor(proto: ProtoBuf.Type): TypeConstructor =
-            when {
-                proto.hasClassName() -> {
-                    classDescriptors(proto.className)?.typeConstructor
-                    ?: c.nameResolver.getClassId(proto.className).let { classId ->
-                        c.components.notFoundClasses.getClass(classId, computeTypeParametersCount(classId, proto, c.typeTable)).typeConstructor
-                    }
-                }
-                proto.hasTypeParameter() ->
-                    typeParameterTypeConstructor(proto.typeParameter)
-                    ?: ErrorUtils.createErrorTypeConstructor("Unknown type parameter ${proto.typeParameter}")
-                proto.hasTypeParameterName() -> {
-                    val container = c.containingDeclaration
-                    val name = c.nameResolver.getString(proto.typeParameterName)
-                    val parameter = ownTypeParameters.find { it.name.asString() == name }
-                    parameter?.typeConstructor ?: ErrorUtils.createErrorTypeConstructor("Deserialized type parameter $name in $container")
-                }
-                proto.hasTypeAliasName() -> {
-                    typeAliasDescriptors(proto.typeAliasName)?.typeConstructor
-                    ?: c.nameResolver.getClassId(proto.typeAliasName).let { classId ->
-                        c.components.notFoundClasses.getTypeAlias(classId, computeTypeParametersCount(classId, proto, c.typeTable)).typeConstructor
-                    }
-                }
-                else -> ErrorUtils.createErrorTypeConstructor("Unknown type")
+    private fun typeConstructor(proto: ProtoBuf.Type): TypeConstructor {
+        fun notFoundClass(classIdIndex: Int): ClassDescriptor {
+            val classId = c.nameResolver.getClassId(classIdIndex)
+            val typeParametersCount = generateSequence(proto) { it.outerType(c.typeTable) }.map { it.argumentCount }.toMutableList()
+            val classNestingLevel = generateSequence(classId, ClassId::getOuterClassId).count()
+            while (typeParametersCount.size < classNestingLevel) {
+                typeParametersCount.add(0)
             }
-
-    private fun computeTypeParametersCount(classId: ClassId, proto: ProtoBuf.Type, typeTable: TypeTable): List<Int> {
-        val typeParametersCount = generateSequence(proto) { it.outerType(typeTable) }.map { it.argumentCount }.toMutableList()
-        val classNestingLevel = generateSequence(classId, ClassId::getOuterClassId).count()
-        while (typeParametersCount.size < classNestingLevel) {
-            typeParametersCount.add(0)
+            return c.components.notFoundClasses.getClass(classId, typeParametersCount)
         }
-        return typeParametersCount
+
+        return when {
+            proto.hasClassName() -> (classDescriptors(proto.className) ?: notFoundClass(proto.className)).typeConstructor
+            proto.hasTypeParameter() ->
+                typeParameterTypeConstructor(proto.typeParameter)
+                ?: ErrorUtils.createErrorTypeConstructor("Unknown type parameter ${proto.typeParameter}")
+            proto.hasTypeParameterName() -> {
+                val container = c.containingDeclaration
+                val name = c.nameResolver.getString(proto.typeParameterName)
+                val parameter = ownTypeParameters.find { it.name.asString() == name }
+                parameter?.typeConstructor ?: ErrorUtils.createErrorTypeConstructor("Deserialized type parameter $name in $container")
+            }
+            proto.hasTypeAliasName() -> (typeAliasDescriptors(proto.typeAliasName) ?: notFoundClass(proto.typeAliasName)).typeConstructor
+            else -> ErrorUtils.createErrorTypeConstructor("Unknown type")
+        }
     }
 
     private fun createSuspendFunctionType(

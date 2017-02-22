@@ -18,22 +18,16 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.AbstractTypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.ClassTypeConstructorImpl
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 
 class NotFoundClasses(private val storageManager: StorageManager, private val module: ModuleDescriptor) {
@@ -46,28 +40,7 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
         EmptyPackageFragmentDescriptor(module, fqName)
     }
 
-    private val classes = storageManager.createMemoizedFunction<ClassRequest, ClassDescriptor> { request ->
-        computeClassifier(request, {
-            owner, name, isInner, numberOfTypeParametersCount ->
-            MockClassDescriptor(storageManager, owner, name, isInner, numberOfTypeParametersCount)
-        })
-    }
-
-    private val typeAliases = storageManager.createMemoizedFunction<ClassRequest, TypeAliasDescriptor> { request ->
-        computeClassifier(request, {
-            owner, name, isInner, numberOfTypeParametersCount ->
-            MockTypeAliasDescriptor(storageManager, owner, name, isInner, numberOfTypeParametersCount)
-        })
-    }
-
-    // TODO: Uncomment this when KT-12871 is fixed
-    // private typealias ConstructorFunction<D> = (DeclarationDescriptor, Name, isInner: Boolean, numberOfTypeParametersCount: Int) -> D
-    private fun <D> computeClassifier(
-            request: ClassRequest,
-            constructor: (DeclarationDescriptor, Name, isInner: Boolean, numberOfTypeParametersCount: Int) -> D
-    ): D {
-        val (classId, typeParametersCount) = request
-
+    private val classes = storageManager.createMemoizedFunction<ClassRequest, ClassDescriptor> { (classId, typeParametersCount) ->
         if (classId.isLocal) {
             throw UnsupportedOperationException("Unresolved local class: $classId")
         }
@@ -79,7 +52,7 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
         // Treat a class with a nested ClassId as inner for simplicity, otherwise the outer type cannot have generic arguments
         val isInner = classId.isNestedClass
 
-        return constructor(container, classId.shortClassName, isInner, typeParametersCount.firstOrNull() ?: 0)
+        MockClassDescriptor(storageManager, container, classId.shortClassName, isInner, typeParametersCount.firstOrNull() ?: 0)
     }
 
     class MockClassDescriptor internal constructor(
@@ -89,7 +62,11 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
             private val isInner: Boolean,
             numberOfDeclaredTypeParameters: Int
     ) : ClassDescriptorBase(storageManager, container, name, SourceElement.NO_SOURCE, /* isExternal = */ false) {
-        private val typeParameters = createTypeParameters(this, numberOfDeclaredTypeParameters)
+        private val typeParameters = (1..numberOfDeclaredTypeParameters).map { index ->
+            TypeParameterDescriptorImpl.createWithDefaultBound(
+                    this, Annotations.EMPTY, false, Variance.INVARIANT, Name.identifier("T$index"), index
+            )
+        }
 
         private val typeConstructor = ClassTypeConstructorImpl(this, /* isFinal = */ true, typeParameters, setOf(module.builtIns.anyType))
 
@@ -117,39 +94,6 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
         override fun toString() = "class $name (not found)"
     }
 
-    private class MockTypeAliasDescriptor(
-            storageManager: StorageManager,
-            containingDeclaration: DeclarationDescriptor,
-            name: Name,
-            private val isInner: Boolean,
-            numberOfDeclaredTypeParameters: Int
-    ) : AbstractTypeAliasDescriptor(containingDeclaration, Annotations.EMPTY, name, SourceElement.NO_SOURCE, Visibilities.PUBLIC) {
-        init {
-            initialize(createTypeParameters(this, numberOfDeclaredTypeParameters))
-        }
-
-        private val constructorTypeParameters by storageManager.createLazyValue { computeConstructorTypeParameters() }
-
-        override fun getTypeConstructorTypeParameters() = constructorTypeParameters
-
-        // We don't have enough information about underlying type, so just take nullable Any?
-        // Anyway it should not used extensively, because not found type aliases are only used for type abbreviations
-        override val underlyingType: SimpleType
-            get() = builtIns.nullableAnyType
-        override val expandedType: SimpleType
-            get() = builtIns.nullableAnyType
-        override fun getDefaultType(): SimpleType =
-                builtIns.nullableAnyType
-        override val classDescriptor: ClassDescriptor?
-            get() = expandedType.constructor.declarationDescriptor as? ClassDescriptor
-
-        override fun isInner(): Boolean = isInner
-
-        override fun substitute(substitutor: TypeSubstitutor) = this
-
-        override fun toString() = "MockTypeAliasDescriptor[$fqNameUnsafe]"
-    }
-
     // We create different ClassDescriptor instances for types with the same ClassId but different number of type arguments.
     // (This may happen when a class with the same FQ name is instantiated with different type arguments in different modules.)
     // It's better than creating just one descriptor because otherwise would fail in multiple places where it's asserted that
@@ -157,17 +101,4 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
     fun getClass(classId: ClassId, typeParametersCount: List<Int>): ClassDescriptor {
         return classes(ClassRequest(classId, typeParametersCount))
     }
-
-    fun getTypeAlias(classId: ClassId, typeParametersCount: List<Int>): TypeAliasDescriptor {
-        return typeAliases(ClassRequest(classId, typeParametersCount))
-    }
-}
-
-private fun createTypeParameters(
-        classifierDescriptor: ClassifierDescriptor,
-        numberOfDeclaredTypeParameters: Int
-) = (1..numberOfDeclaredTypeParameters).map { index ->
-    TypeParameterDescriptorImpl.createWithDefaultBound(
-            classifierDescriptor, Annotations.EMPTY, false, Variance.INVARIANT, Name.identifier("T$index"), index
-    )
 }
