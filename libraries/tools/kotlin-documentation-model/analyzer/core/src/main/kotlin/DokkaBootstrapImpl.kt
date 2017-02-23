@@ -10,6 +10,11 @@ fun parseSourceLinkDefinition(srcLink: String): SourceLinkDefinition {
             urlAndLine.substringAfter("#", "").let { if (it.isEmpty()) null else "#" + it })
 }
 
+fun parseSourceRoot(sourceRoot: String): SourceRoot {
+    val components = sourceRoot.split("::", limit = 2)
+    return SourceRoot(components.first(), components.getOrNull(1)?.split(',').orEmpty())
+}
+
 class DokkaBootstrapImpl : DokkaBootstrap {
 
     class DokkaProxyLogger(val consumer: BiConsumer<String, String>) : DokkaLogger {
@@ -46,7 +51,7 @@ class DokkaBootstrapImpl : DokkaBootstrap {
         generator = DokkaGenerator(
                 DokkaProxyLogger(logger),
                 classpath,
-                sources,
+                sources.map(::parseSourceRoot),
                 samples,
                 includes,
                 moduleName,
