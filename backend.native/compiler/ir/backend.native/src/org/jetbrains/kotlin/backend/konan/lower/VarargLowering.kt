@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
+import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanPlatform
@@ -10,9 +10,12 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.builders.Scope
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irSetVar
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -26,14 +29,19 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 
 
-class VarargInjectionLowering internal constructor(val context: Context): FunctionLoweringPass {
-    override fun lower(irFunction: IrFunction) {
-        if (irFunction.body != null)
-            lower(irFunction.descriptor, irFunction.body!!)
+class VarargInjectionLowering internal constructor(val context: Context): DeclarationContainerLoweringPass {
+    override fun lower(irDeclarationContainer: IrDeclarationContainer) {
+        irDeclarationContainer.declarations.forEach{
+            when (it) {
+                is IrField    -> lower(it.descriptor, it.initializer)
+                is IrFunction -> lower(it.descriptor, it.body)
+                is IrProperty -> lower(it.descriptor, it.backingField)
+            }
+        }
     }
 
-    private fun lower(owner:FunctionDescriptor, irBody: IrBody) {
-        irBody.transformChildrenVoid(object: IrElementTransformerVoid() {
+    private fun lower(owner:DeclarationDescriptor, element: IrElement?) {
+        element?.transformChildrenVoid(object: IrElementTransformerVoid() {
             val transformer = this
             override fun visitCall(expression: IrCall): IrExpression {
                 log("call of: ${expression.descriptor}")
