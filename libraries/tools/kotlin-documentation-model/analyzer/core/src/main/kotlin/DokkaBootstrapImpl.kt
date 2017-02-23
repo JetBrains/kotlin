@@ -12,7 +12,7 @@ fun parseSourceLinkDefinition(srcLink: String): SourceLinkDefinition {
 
 fun parseSourceRoot(sourceRoot: String): SourceRoot {
     val components = sourceRoot.split("::", limit = 2)
-    return SourceRoot(components.first(), components.getOrNull(1)?.split(',').orEmpty())
+    return SourceRoot(components.last(), if (components.size == 1) listOf() else components[0].split(','))
 }
 
 class DokkaBootstrapImpl : DokkaBootstrap {
