@@ -1035,13 +1035,13 @@
         <sequential>
             <java classname="org.jetbrains.kotlin.preloading.Preloader" failonerror="true" fork="true" maxmemory="${max.heap.size.for.forked.jvm}">
                 <classpath>
-                    <pathelement location="${kotlin-home}/lib/kotlin-preloader.jar"/>
+                    <pathelement location="${bootstrap.compiler.home}/lib/kotlin-preloader.jar"/>
                 </classpath>
                 <assertions>
                     <enable/>
                 </assertions>
                 <arg value="-cp"/>
-                <arg value="${kotlin-home}/lib/kotlin-compiler.jar"/>
+                <arg value="${bootstrap.compiler.home}/lib/kotlin-compiler.jar"/>
                 <arg value="org.jetbrains.kotlin.preprocessor.PreprocessorCLI"/>
                 <arg value="@{src}"/>
                 <arg value="@{output}"/>
