@@ -1,14 +1,30 @@
 description = 'Kotlin Standard Library'
 
-dependencies {
-    compile project(':kotlin-runtime')
-    testCompile project(':kotlin-test-parent:kotlin-test-junit')
-}
-
 sourceSets {
+    builtins {
+        java {
+            srcDir "${rootDir}/../core/builtins/src"
+            srcDir "${rootDir}/../core/runtime.jvm/src"
+            exclude 'org/jetbrains/annotations/**'
+        }
+        kotlin {
+            srcDir "${rootDir}/../core/builtins/src"
+            srcDir "${rootDir}/../core/runtime.jvm/src"
+            exclude 'org/jetbrains/annotations/**'
+        }
+    }
     main {
         java {
             srcDir 'src'
+        }
+    }
+    testLib {
+        kotlin {
+            srcDir '../kotlin.test/common/src/main/kotlin'
+            srcDir '../kotlin.test/jvm/src/main/kotlin'
+            srcDir '../kotlin.test/junit/src/main/kotlin'
+
+            //resources '../kotlin.test/junit/src/main/resources'
         }
     }
     test {
@@ -18,8 +34,28 @@ sourceSets {
     }
 }
 
+dependencies {
+    builtinsCompile group: 'org.jetbrains', name: 'annotations', version:'13.0'
+    compile sourceSets.builtins.output
+//    compile project(':kotlin-runtime')
+//    testCompile project(':kotlin-test-parent:kotlin-test-junit')
+
+    testLibCompile sourceSets.builtins.output
+    //testLibCompile sourceSets.main.output
+    testLibCompile('junit:junit:4.12')
+    testCompile configurations.testLibCompile
+    testCompile sourceSets.testLib.output
+}
+
 jar {
     manifestAttributes(manifest, project, 'Core')
+    from("${rootDir}/../dist/builtins")
+    from sourceSets.builtins.output
+}
+
+sourcesJar {
+    from "${rootDir}/../core/builtins/native"
+    from sourceSets.builtins.kotlin
 }
 
 artifacts {
@@ -27,21 +63,39 @@ artifacts {
     archives javadocJar
 }
 
-compileJava {
-    sourceCompatibility = 1.6
-    targetCompatibility = 1.6
-    options.fork = true
-    options.forkOptions.executable = "${JDK_16}/bin/javac"
+[compileJava, compileBuiltinsJava].each { task ->
+    task.sourceCompatibility = 1.6
+    task.targetCompatibility = 1.6
+    task.options.fork = true
+    task.options.forkOptions.executable = "${JDK_16}/bin/javac"
 }
 
+compileBuiltinsKotlin {
+    kotlinOptions {
+        jdkHome = JDK_16
+        freeCompilerArgs = [
+                "-Xallow-kotlin-package",
+                "-Xdump-declarations-to", "${buildDir}/runtime-declarations.json",
+                "-cp", "${rootDir}/../dist/builtins",
+                "-module-name", "kotlin-runtime"
+        ]
+    }
+}
 compileKotlin {
     kotlinOptions {
         jdkHome = JDK_16
         freeCompilerArgs = [
                 "-Xallow-kotlin-package",
                 "-Xmultifile-parts-inherit",
-                "-Xdump-declarations-to", "${buildDir}/stdlib-declarations.json".toString(),
-                "-module-name", "${project.name}".toString()
+                "-Xdump-declarations-to", "${buildDir}/stdlib-declarations.json",
+                "-module-name", project.name
         ]
+    }
+}
+
+compileTestLibKotlin {
+    kotlinOptions {
+        jdkHome = JDK_16
+        freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform"]
     }
 }

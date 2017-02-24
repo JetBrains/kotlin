@@ -2,7 +2,7 @@
 description 'Kotlin Script Runtime'
 
 dependencies {
-    compile project(':kotlin-runtime')
+    compileOnly project(':kotlin-stdlib')
 }
 
 sourceSets {
@@ -23,5 +23,8 @@ artifacts {
 }
 
 compileKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", "${project.name}".toString()]
+    kotlinOptions.freeCompilerArgs = [
+            "-Xallow-kotlin-package",
+            "-module-name", project.name
+    ]
 }
