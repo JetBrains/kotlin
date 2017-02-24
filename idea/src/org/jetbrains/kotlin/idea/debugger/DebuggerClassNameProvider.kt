@@ -232,8 +232,8 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
 
         val mangledInternalClassName =
                 className +
-                (if (ownerDescriptor.name.isSpecial) "\$\$special\$" else "$") +
-                InlineCodegenUtil.INLINE_TRANSFORMATION_SUFFIX + "$" +
+                (if (ownerDescriptor.name.isSpecial) "$" + InlineCodegenUtil.SPECIAL_TRANSFORMATION_NAME else "") +
+                InlineCodegenUtil.INLINE_CALL_TRANSFORMATION_SUFFIX + "$" +
                 inlineFunctionName
 
         return listOf("$mangledInternalClassName*")

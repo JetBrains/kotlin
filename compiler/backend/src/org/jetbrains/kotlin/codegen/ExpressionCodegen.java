@@ -4907,7 +4907,8 @@ The "returned" value of try expression with no finally is either the last expres
     public NameGenerator getInlineNameGenerator() {
         NameGenerator nameGenerator = getParentCodegen().getInlineNameGenerator();
         Name name = context.getContextDescriptor().getName();
-        return nameGenerator.subGenerator((name.isSpecial() ? "$special" : name.asString()) + "$$inlined" );
+        String inlinedName = name.isSpecial() ? InlineCodegenUtil.SPECIAL_TRANSFORMATION_NAME : name.asString();
+        return nameGenerator.subGenerator(inlinedName + InlineCodegenUtil.INLINE_CALL_TRANSFORMATION_SUFFIX);
     }
 
     public Type getReturnType() {

@@ -81,7 +81,9 @@ public class InlineCodegenUtil {
     private static final String INLINE_MARKER_AFTER_METHOD_NAME = "afterInlineCall";
     private static final String INLINE_MARKER_FINALLY_START = "finallyStart";
     private static final String INLINE_MARKER_FINALLY_END = "finallyEnd";
+    public static final String SPECIAL_TRANSFORMATION_NAME = "$special";
     public static final String INLINE_TRANSFORMATION_SUFFIX = "$inlined";
+    public static final String INLINE_CALL_TRANSFORMATION_SUFFIX = "$" + INLINE_TRANSFORMATION_SUFFIX;
     public static final String INLINE_FUN_THIS_0_SUFFIX = "$inline_fun";
     public static final String INLINE_FUN_VAR_SUFFIX = "$iv";
 
