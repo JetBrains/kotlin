@@ -72,7 +72,8 @@ internal fun newThrowable(message: String?, cause: Throwable?): Throwable {
     return throwable
 }
 
-public class BoxedChar(val c: Char) : Comparable<Char> {
+@JsName("BoxedChar")
+internal class BoxedChar(val c: Char) : Comparable<Char> {
     override fun equals(other: Any?): Boolean {
         return other is BoxedChar && c == other.c
     }
