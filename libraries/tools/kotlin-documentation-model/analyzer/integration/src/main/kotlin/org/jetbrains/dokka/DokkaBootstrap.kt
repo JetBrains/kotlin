@@ -13,6 +13,7 @@ interface DokkaBootstrap {
                   outputDir: String,
                   format: String,
                   includeNonPublic: Boolean,
+                  includeRootPackage: Boolean,
                   reportUndocumented: Boolean,
                   skipEmptyPackages: Boolean,
                   skipDeprecated: Boolean,
