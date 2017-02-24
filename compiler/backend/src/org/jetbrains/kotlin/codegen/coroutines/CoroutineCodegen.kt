@@ -321,6 +321,11 @@ class CoroutineCodegen private constructor(
     }
 
     companion object {
+        fun shouldCreateByLambda(
+                originalSuspendLambdaDescriptor: CallableDescriptor,
+                declaration: KtElement): Boolean {
+            return (declaration is KtFunctionLiteral && originalSuspendLambdaDescriptor.isSuspendLambda)
+        }
 
         @JvmStatic
         fun createByLambda(
@@ -329,8 +334,7 @@ class CoroutineCodegen private constructor(
                 declaration: KtElement,
                 classBuilder: ClassBuilder
         ): ClosureCodegen? {
-            if (declaration !is KtFunctionLiteral) return null
-            if (!originalSuspendLambdaDescriptor.isSuspendLambda) return null
+            if (!shouldCreateByLambda(originalSuspendLambdaDescriptor, declaration)) return null
 
             return CoroutineCodegen(
                     expressionCodegen,
