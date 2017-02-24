@@ -824,6 +824,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepOverTest(fileName);
         }
 
+        @TestMetadata("stopInObjectLiteralInInlineCallWithClosureInAnonymous.kt")
+        public void testStopInObjectLiteralInInlineCallWithClosureInAnonymous() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInObjectLiteralInInlineCallWithClosureInAnonymous.kt");
+            doStepOverTest(fileName);
+        }
+
         @TestMetadata("stopInSuspendFunctionWithSuspendPoints.kt")
         public void testStopInSuspendFunctionWithSuspendPoints() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInSuspendFunctionWithSuspendPoints.kt");
