@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.quickfix.replaceWith
 
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.SmartPsiElementPointer
@@ -90,6 +91,7 @@ class ReplaceProtectedToPublishedApiCallFix(
         }
 
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            if (!ApplicationManager.getApplication().isUnitTestMode) return null
             val psiElement = diagnostic.psiElement as? KtExpression ?: return null
             val descriptor = DiagnosticFactory.cast(diagnostic, Errors.PROTECTED_CALL_FROM_PUBLIC_INLINE).a.let {
                 if (it is CallableMemberDescriptor) DescriptorUtils.getDirectMember(it) else it
