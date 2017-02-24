@@ -30,6 +30,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.xdebugger.impl.XDebugSessionImpl
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
+import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegen
 import org.jetbrains.kotlin.codegen.coroutines.DO_RESUME_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.containsNonTailSuspensionCalls
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
@@ -51,6 +52,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -221,12 +223,16 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
         val inlineFunctionName = resolvedCall.resultingDescriptor.name
 
         val ownerDescriptor = lexicalScope.ownerDescriptor
-        val ownerDescriptorName = if (isFunctionWithSuspendStateMachine(ownerDescriptor, typeMapper.bindingContext)) {
-            Name.identifier(DO_RESUME_METHOD_NAME)
-        }
-        else {
-            ownerDescriptor.name
-        }
+        val ownerDeclaration = if (ownerDescriptor is DeclarationDescriptor) DescriptorToSourceUtils.getSourceFromDescriptor(ownerDescriptor) else null
+
+        val ownerDescriptorName =
+                if (isFunctionWithSuspendStateMachine(ownerDescriptor, typeMapper.bindingContext) ||
+                    (ownerDescriptor is CallableDescriptor && ownerDeclaration is KtElement && CoroutineCodegen.shouldCreateByLambda(ownerDescriptor, ownerDeclaration))) {
+                    Name.identifier(DO_RESUME_METHOD_NAME)
+                }
+                else {
+                    ownerDescriptor.name
+                }
 
         val ownerJvmName = if (ownerDescriptorName.isSpecial) InlineCodegenUtil.SPECIAL_TRANSFORMATION_NAME else ownerDescriptorName.asString()
         val mangledInternalClassName =
