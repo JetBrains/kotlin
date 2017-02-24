@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
@@ -187,7 +188,7 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
     private fun inlineCallClassPatterns(typeMapper: KotlinTypeMapper, element: KtElement): List<String> {
         val context = typeMapper.bindingContext
 
-        val (inlineCall, ktAnonymousClassElementProducer) = runReadAction {
+        val inlineCall = runReadAction {
             element.parents.map {
                 val ktCallExpression: KtCallExpression = when(it) {
                     is KtFunctionLiteral -> {
@@ -210,31 +211,26 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
                 ktCallExpression to (it as KtElement)
             }.lastOrNull {
                 it != null && isInlineCall(context, it.component1())
-            }
+            }?.first
         } ?: return emptyList()
 
         val lexicalScope = context[BindingContext.LEXICAL_SCOPE, inlineCall] ?: return emptyList()
+        val baseClassName = classNamesForPosition(inlineCall, false).firstOrNull() ?: return emptyList()
 
         val resolvedCall = runReadAction { inlineCall.getResolvedCall(context) } ?: return emptyList()
         val inlineFunctionName = resolvedCall.resultingDescriptor.name
 
-        val originalInternalClassName = CodegenBinding.asmTypeForAnonymousClass(
-                typeMapper.bindingContext, ktAnonymousClassElementProducer).internalName
-
         val ownerDescriptor = lexicalScope.ownerDescriptor
-
-        val className = if (isFunctionWithSuspendStateMachine(ownerDescriptor, typeMapper.bindingContext)) {
-            originalInternalClassName.replaceAfterLast("$", DO_RESUME_METHOD_NAME)
+        val ownerDescriptorName = if (isFunctionWithSuspendStateMachine(ownerDescriptor, typeMapper.bindingContext)) {
+            Name.identifier(DO_RESUME_METHOD_NAME)
         }
         else {
-            originalInternalClassName.funPrefix()
+            ownerDescriptor.name
         }
 
+        val ownerJvmName = if (ownerDescriptorName.isSpecial) InlineCodegenUtil.SPECIAL_TRANSFORMATION_NAME else ownerDescriptorName.asString()
         val mangledInternalClassName =
-                className +
-                (if (ownerDescriptor.name.isSpecial) "$" + InlineCodegenUtil.SPECIAL_TRANSFORMATION_NAME else "") +
-                InlineCodegenUtil.INLINE_CALL_TRANSFORMATION_SUFFIX + "$" +
-                inlineFunctionName
+                baseClassName + "$" + ownerJvmName + InlineCodegenUtil.INLINE_CALL_TRANSFORMATION_SUFFIX + "$" + inlineFunctionName
 
         return listOf("$mangledInternalClassName*")
     }
@@ -254,7 +250,7 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
                     KtSecondaryConstructor::class.java)
 
     private fun getElementToCalculateClassName(notPositionedElement: PsiElement?): KtElement? {
-        if (notPositionedElement?.javaClass as Class<*> in TYPES_TO_CALCULATE_CLASSNAME) return notPositionedElement as KtElement
+        if (notPositionedElement?.let { it::class.java } as Class<*> in TYPES_TO_CALCULATE_CLASSNAME) return notPositionedElement as KtElement
 
         return readAction { PsiTreeUtil.getParentOfType(notPositionedElement, *TYPES_TO_CALCULATE_CLASSNAME) }
     }
@@ -410,17 +406,6 @@ private fun isInlineCall(context: BindingContext, expr: KtCallExpression): Boole
 }
 
 private inline fun <reified T : PsiElement> PsiElement.typedParent(): T? = getStrictParentOfType()
-
-private fun String.funPrefix(): String {
-    if (lastIndexOf("$") < 0) return this
-
-    val trimmed = trimEnd { it == '$' || it.isDigit() } // Can accidentally trim end of function name if it ends with a number
-    val nextDollarIndex = indexOf('$', startIndex = trimmed.length - 1)
-
-    if (nextDollarIndex < 0) return this
-
-    return this.substring(0, nextDollarIndex)
-}
 
 private fun String.substringIndex(): String {
     if (lastIndexOf("$") < 0) return this
