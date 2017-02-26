@@ -1,3 +1,103 @@
+public final class A {
+    @org.jetbrains.annotations.Nullable()
+    private final A x = null;
+
+    @org.jetbrains.annotations.Nullable()
+    public final A getX() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.Nullable()
+    public final A f1(@org.jetbrains.annotations.NotNull()
+    A a, @org.jetbrains.annotations.NotNull()
+    A.B b) {
+        return null;
+    }
+
+    public A() {
+        super();
+    }
+
+    public static abstract interface B {
+
+        @org.jetbrains.annotations.Nullable()
+        public abstract A.B getY();
+
+        public static final class DefaultImpls {
+
+            public DefaultImpls() {
+                super();
+            }
+        }
+    }
+
+    public static final class C {
+        public static final A.C INSTANCE = null;
+
+        private C() {
+            super();
+        }
+    }
+}
+
+////////////////////
+
+
+public final class A2 {
+
+    public A2() {
+        super();
+    }
+
+    public static final class B {
+
+        public B() {
+            super();
+        }
+
+        public static final class C {
+
+            public C() {
+                super();
+            }
+
+            public static final class D {
+
+                public D() {
+                    super();
+                }
+
+                public static final class Cme {
+
+                    public Cme() {
+                        super();
+                    }
+                }
+
+                public static final class E {
+
+                    public E() {
+                        super();
+                    }
+                }
+            }
+        }
+    }
+}
+
+////////////////////
+
+
+public final class Foo {
+
+    public Foo() {
+        super();
+    }
+}
+
+////////////////////
+
+
 public final class Test {
 
     public Test() {
