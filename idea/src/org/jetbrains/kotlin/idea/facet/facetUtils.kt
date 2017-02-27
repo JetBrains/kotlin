@@ -156,7 +156,12 @@ private val CommonCompilerArguments.exposedFields: List<String>
         else -> commonExposedFields
     }
 
-fun parseCompilerArgumentsToFacet(arguments: List<String>, defaultArguments: List<String>, kotlinFacet: KotlinFacet) {
+fun parseCompilerArgumentsToFacet(
+        arguments: List<String>,
+        defaultArguments: List<String>,
+        kotlinFacet: KotlinFacet,
+        appendAdditionalArguments: Boolean = false
+) {
     val argumentArray = arguments.toTypedArray()
 
     with(kotlinFacet.configuration.settings) {
@@ -211,8 +216,14 @@ fun parseCompilerArgumentsToFacet(arguments: List<String>, defaultArguments: Lis
             copyFieldsSatisfying(compilerArguments, this, ::exposeAsAdditionalArgument)
             ArgumentUtils.convertArgumentsToStringList(this).joinToString(separator = " ")
         }
-        compilerInfo.compilerSettings!!.additionalArguments =
-                if (additionalArgumentsString.isNotEmpty()) additionalArgumentsString else CompilerSettings.DEFAULT_ADDITIONAL_ARGUMENTS
+
+        val newAdditionalArguments = if (additionalArgumentsString.isNotEmpty()) additionalArgumentsString else CompilerSettings.DEFAULT_ADDITIONAL_ARGUMENTS
+        if (appendAdditionalArguments) {
+            compilerInfo.compilerSettings!!.additionalArguments += " $newAdditionalArguments"
+        }
+        else {
+            compilerInfo.compilerSettings!!.additionalArguments = newAdditionalArguments
+        }
 
         with(compilerArguments.javaClass.newInstance()) {
             copyFieldsSatisfying(this, compilerArguments, ::exposeAsAdditionalArgument)
