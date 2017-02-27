@@ -85,7 +85,12 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
             scope.createTemporaryVariable(statementGenerator.generateExpression(it), "subject")
         }
 
-        val resultType = getInferredTypeWithImplicitCastsOrFail(expression)
+        // TODO relies on ControlFlowInformationProvider, get rid of it
+        val resultType =
+                if (context.bindingContext[BindingContext.USED_AS_EXPRESSION, expression] ?: false)
+                    getInferredTypeWithImplicitCastsOrFail(expression)
+                else
+                    context.builtIns.unitType
 
         val irWhen = IrWhenImpl(expression.startOffset, expression.endOffset, resultType, IrStatementOrigin.WHEN)
 
