@@ -112,20 +112,22 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
                                           PomFile.KotlinGoals.MetaData)
 
     private fun configureFacet(mavenProject: MavenProject, modifiableModelsProvider: IdeModifiableModelsProvider, module: Module) {
-        val mavenPlugin = mavenProject.findPlugin(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID)
-        val compilerVersion = mavenPlugin?.version ?: return
+        val mavenPlugin = mavenProject.findPlugin(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID) ?: return
+        val compilerVersion = mavenPlugin.version ?: LanguageVersion.LATEST.versionString
         val kotlinFacet = module.getOrCreateFacet(modifiableModelsProvider, false)
         val platform = detectPlatformByExecutions(mavenProject) ?: detectPlatformByLibraries(mavenProject)
 
         kotlinFacet.configureFacet(compilerVersion, CoroutineSupport.DEFAULT, platform, modifiableModelsProvider)
-        val apiVersion = mavenPlugin.configurationElement?.getChild("apiVersion")?.text?.let { LanguageVersion.fromFullVersionString(it) }
-        val sharedArguments = mavenPlugin.configurationElement?.let { getCompilerArgumentsByConfigurationElement(it) } ?: emptyList()
+        val configuration = mavenPlugin.configurationElement
+        val apiVersion = configuration?.getChild("apiVersion")?.text?.let { LanguageVersion.fromFullVersionString(it) }
+        val sharedArguments = configuration?.let { getCompilerArgumentsByConfigurationElement(it) } ?: emptyList()
         val executionArguments = mavenPlugin.executions?.filter { it.goals.any { it in compilationGoals } }
                                          ?.firstOrNull()
                                          ?.configurationElement?.let { getCompilerArgumentsByConfigurationElement(it) }
                                  ?: emptyList()
         with(kotlinFacet.configuration.settings) {
             versionInfo.apiLevel = apiVersion
+            compilerInfo.k2jvmCompilerArguments?.jvmTarget = configuration?.getChild("jvmTarget")?.text
         }
         parseCompilerArgumentsToFacet(sharedArguments, emptyList(), kotlinFacet)
         parseCompilerArgumentsToFacet(executionArguments, emptyList(), kotlinFacet)

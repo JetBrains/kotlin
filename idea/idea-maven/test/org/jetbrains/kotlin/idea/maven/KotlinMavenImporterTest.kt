@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.idea.maven
 
+import org.jetbrains.kotlin.config.KotlinFacetSettings
+import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.junit.Assert
 import java.io.File
 
 class KotlinMavenImporterTest : MavenImportingTestCase() {
@@ -384,7 +387,115 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         assertTestSources("project", "src/test/java", "src/test/kotlin", "src/test/kotlin.jvm")
     }
 
+    fun testJvmTarget() {
+        createProjectSubDirs("src/main/kotlin", "src/main/kotlin.jvm", "src/test/kotlin", "src/test/kotlin.jvm")
+
+        importProject("""
+        <groupId>test</groupId>
+        <artifactId>project</artifactId>
+        <version>1.0.0</version>
+
+        <dependencies>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>$kotlinVersion</version>
+            </dependency>
+        </dependencies>
+
+        <build>
+            <sourceDirectory>src/main/kotlin</sourceDirectory>
+
+            <plugins>
+                <plugin>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+
+                    <executions>
+                        <execution>
+                            <id>compile</id>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <jvmTarget>1.8</jvmTarget>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+        """)
+
+        assertModules("project")
+        assertImporterStatePresent()
+
+        with (facetSettings) {
+            Assert.assertEquals("JVM 1.8", versionInfo.targetPlatformKind!!.description)
+            Assert.assertEquals("1.8", compilerInfo.k2jvmCompilerArguments!!.jvmTarget)
+        }
+    }
+
+    fun testArgsInFacet() {
+        createProjectSubDirs("src/main/kotlin", "src/main/kotlin.jvm", "src/test/kotlin", "src/test/kotlin.jvm")
+
+        importProject("""
+        <groupId>test</groupId>
+        <artifactId>project</artifactId>
+        <version>1.0.0</version>
+
+        <dependencies>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>$kotlinVersion</version>
+            </dependency>
+        </dependencies>
+
+        <build>
+            <sourceDirectory>src/main/kotlin</sourceDirectory>
+
+            <plugins>
+                <plugin>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+
+                    <executions>
+                        <execution>
+                            <id>compile</id>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <args>
+                            <arg>-jvm-target</arg>
+                            <arg>1.8</arg>
+                            <arg>-Xcoroutines=enable</arg>
+                        </args>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+        """)
+
+        assertModules("project")
+        assertImporterStatePresent()
+
+        with (facetSettings) {
+            Assert.assertEquals("JVM 1.8", versionInfo.targetPlatformKind!!.description)
+            Assert.assertEquals("1.8", compilerInfo.k2jvmCompilerArguments!!.jvmTarget)
+            Assert.assertEquals("enable", compilerInfo.coroutineSupport.compilerArgument)
+        }
+    }
+
     private fun assertImporterStatePresent() {
         assertNotNull("Kotlin importer component is not present", myTestFixture.module.getComponent(KotlinImporterComponent::class.java))
     }
+
+    private val facetSettings: KotlinFacetSettings
+        get() = KotlinFacet.get(getModule("project"))!!.configuration.settings
 }
