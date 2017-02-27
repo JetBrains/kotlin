@@ -18,10 +18,14 @@
 package kotlin.coroutines.experimental.jvm.internal
 
 import java.lang.IllegalStateException
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.jvm.internal.interceptContinuationIfNeeded
+import kotlin.coroutines.experimental.Continuation
+import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.experimental.processBareContinuationResume
 import kotlin.jvm.internal.Lambda
 
+/**
+ * @suppress
+ */
 abstract class CoroutineImpl(
         arity: Int,
         @JvmField
