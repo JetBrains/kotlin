@@ -195,6 +195,10 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         return isModified
     }
 
+    open fun getRuntimeLibrary(sdk: Sdk?): String {
+        return getRuntimeLibraryForSdk(sdk)
+    }
+
     companion object {
         private val VERSION_TEMPLATE = "\$VERSION$"
 
@@ -490,7 +494,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
             return addLastExpressionInBlockIfNeeded(snippet, repositoriesBlock)
         }
 
-        fun getRuntimeLibrary(sdk: Sdk?): String {
+        fun getRuntimeLibraryForSdk(sdk: Sdk?): String {
             return getDependencySnippet(getStdlibArtifactId(sdk))
         }
 
