@@ -92,7 +92,11 @@ private class CallableReferencesUnbinder(val lower: CallableReferenceLowering,
         val descriptor = expression.descriptor
         val boundArgs = expression.getArguments()
         val boundParams = boundArgs.map { it.first }
-        val unboundParams = descriptor.allValueParameters - boundParams
+
+        val allParams = with (descriptor) {
+            listOf(dispatchReceiverParameter, extensionReceiverParameter).filterNotNull() + valueParameters
+        }
+        val unboundParams = allParams - boundParams
 
         val startOffset = expression.startOffset
         val endOffset = expression.endOffset
