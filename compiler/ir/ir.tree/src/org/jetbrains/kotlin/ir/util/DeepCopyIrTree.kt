@@ -283,21 +283,23 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             shallowCopyCall(expression).transformValueArguments(expression)
 
     protected fun shallowCopyCall(expression: IrCall) =
-            if (expression is IrCallWithShallowCopy)
-                expression.shallowCopy(
-                        mapStatementOrigin(expression.origin),
-                        mapCallee(expression.descriptor),
-                        mapSuperQualifier(expression.superQualifier)
-                )
-            else
-                IrCallImpl(
-                        expression.startOffset, expression.endOffset,
-                        expression.type,
-                        mapCallee(expression.descriptor),
-                        expression.getTypeArgumentsMap(),
-                        mapStatementOrigin(expression.origin),
-                        mapSuperQualifier(expression.superQualifier)
-                )
+            when (expression) {
+                is IrCallWithShallowCopy ->
+                    expression.shallowCopy(
+                            mapStatementOrigin(expression.origin),
+                            mapCallee(expression.descriptor),
+                            mapSuperQualifier(expression.superQualifier)
+                    )
+                else ->
+                    IrCallImpl(
+                            expression.startOffset, expression.endOffset,
+                            expression.type,
+                            mapCallee(expression.descriptor),
+                            expression.getTypeArgumentsMap(),
+                            mapStatementOrigin(expression.origin),
+                            mapSuperQualifier(expression.superQualifier)
+                    )
+            }
 
     protected fun <T : IrMemberAccessExpression> T.transformValueArguments(original: IrMemberAccessExpression): T =
             apply {
