@@ -17,14 +17,28 @@
 package org.jetbrains.kotlin.js.coroutine
 
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
+import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.JsScope
 import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
 
 class CoroutineTransformationContext(private val scope: JsScope, function: JsFunction) {
+    private val localVariableNameCache = mutableMapOf<JsName, JsName>()
+    private val usedLocalVariableIds = mutableSetOf<String>()
+
     val entryBlock = CoroutineBlock()
     val globalCatchBlock = CoroutineBlock()
     val metadata = function.coroutineMetadata!!
-    val controllerFieldName by lazy { scope.declareFreshName("\$controller") }
-    val returnValueFieldName by lazy { scope.declareFreshName("\$returnValue") }
-    val receiverFieldName by lazy { scope.declareFreshName("\$this") }
+    val controllerFieldName by lazy { scope.declareName("\$controller") }
+    val returnValueFieldName by lazy { scope.declareName("\$returnValue") }
+    val receiverFieldName by lazy { scope.declareName("\$this") }
+
+    fun getFieldName(variableName: JsName) = localVariableNameCache.getOrPut(variableName) {
+        val baseId = "local\$${variableName.ident}"
+        var suggestedId = baseId
+        var suffix = 0
+        while (!usedLocalVariableIds.add(suggestedId)) {
+            suggestedId = "${baseId}_${suffix++}"
+        }
+        scope.declareName(suggestedId)
+    }
 }

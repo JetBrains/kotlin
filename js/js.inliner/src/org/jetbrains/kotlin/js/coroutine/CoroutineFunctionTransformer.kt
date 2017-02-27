@@ -30,7 +30,7 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
     private val body = functionWithBody.body
     private val localVariables = (function.collectLocalVariables() + functionWithBody.collectLocalVariables() -
                                   functionWithBody.parameters.last().name).toMutableSet()
-    private val className = function.scope.parent.declareFreshName("Coroutine\$${name ?: "anonymous"}")
+    private val className = JsScope.declareTemporaryName("Coroutine\$${name ?: "anonymous"}")
 
     fun transform(): List<JsStatement> {
         val context = CoroutineTransformationContext(function.scope, function)
@@ -41,7 +41,7 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
         val globalCatchBlockIndex = coroutineBlocks.indexOf(context.globalCatchBlock)
 
         coroutineBlocks.forEach { it.jsBlock.collectAdditionalLocalVariables() }
-        coroutineBlocks.forEach { it.jsBlock.replaceLocalVariables(function.scope, context, localVariables) }
+        coroutineBlocks.forEach { it.jsBlock.replaceLocalVariables(context, localVariables) }
 
         val additionalStatements = mutableListOf<JsStatement>()
         generateDoResume(coroutineBlocks, context, additionalStatements)
@@ -67,7 +67,7 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
         val lastParameter = parameters.lastOrNull()?.name
 
         val controllerName = if (context.metadata.hasController) {
-            function.scope.declareFreshName("controller").apply {
+            JsScope.declareTemporaryName("controller").apply {
                 constructor.parameters.add(constructor.parameters.lastIndex, JsParameter(this))
             }
         }
@@ -90,7 +90,7 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
             }
             for (localVariable in localVariables) {
                 val value = if (localVariable !in parameterNames) Namer.getUndefinedExpression() else localVariable.makeRef()
-                assignToField(function.scope.getFieldName(localVariable), value)
+                assignToField(context.getFieldName(localVariable), value)
             }
         }
 
@@ -157,10 +157,10 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
 
         instantiation.arguments += parameters.last().name.makeRef()
 
-        val suspendedName = functionWithBody.scope.declareFreshName("suspended")
+        val suspendedName = JsScope.declareTemporaryName("suspended")
         functionWithBody.parameters += JsParameter(suspendedName)
 
-        val instanceName = functionWithBody.scope.declareFreshName("instance")
+        val instanceName = JsScope.declareTemporaryName("instance")
         functionWithBody.body.statements += JsAstUtils.newVar(instanceName, instantiation)
 
         val invokeResume = JsReturn(JsInvocation(JsNameRef(context.metadata.doResumeName, instanceName.makeRef()), JsLiteral.NULL))

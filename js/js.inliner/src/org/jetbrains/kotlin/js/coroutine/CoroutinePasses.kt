@@ -237,8 +237,9 @@ fun JsBlock.replaceSpecialReferences(context: CoroutineTransformationContext) {
     visitor.accept(this)
 }
 
-fun JsBlock.replaceLocalVariables(scope: JsScope, context: CoroutineTransformationContext, localVariables: Set<JsName>) {
+fun JsBlock.replaceLocalVariables(context: CoroutineTransformationContext, localVariables: Set<JsName>) {
     replaceSpecialReferences(context)
+
     val visitor = object : JsVisitorWithContextImpl() {
         override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean = false
 
@@ -260,14 +261,14 @@ fun JsBlock.replaceLocalVariables(scope: JsScope, context: CoroutineTransformati
 
         override fun endVisit(x: JsNameRef, ctx: JsContext<in JsNode>) {
             if (x.qualifier == null && x.name in localVariables) {
-                val fieldName = scope.getFieldName(x.name!!)
+                val fieldName = context.getFieldName(x.name!!)
                 ctx.replaceMe(JsNameRef(fieldName, JsLiteral.THIS))
             }
         }
 
         override fun endVisit(x: JsVars, ctx: JsContext<in JsStatement>) {
             val assignments = x.vars.mapNotNull {
-                val fieldName = scope.getFieldName(it.name)
+                val fieldName = context.getFieldName(it.name)
                 val initExpression = it.initExpression
                 if (initExpression != null) {
                     JsAstUtils.assignment(JsNameRef(fieldName, JsLiteral.THIS), it.initExpression)
@@ -287,5 +288,3 @@ fun JsBlock.replaceLocalVariables(scope: JsScope, context: CoroutineTransformati
     }
     visitor.accept(this)
 }
-
-fun JsScope.getFieldName(variableName: JsName) = declareName("local\$${variableName.ident}")

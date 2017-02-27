@@ -28,6 +28,7 @@ class AstGenerationResult(
         val innerModuleName: JsName,
         val fragments: List<JsProgramFragment>,
         val fragmentMap: Map<KtFile, JsProgramFragment>,
+        val newFragments: List<JsProgramFragment>,
         val fileMemberScopes: Map<KtFile, List<DeclarationDescriptor>>,
         val importedModuleList: List<JsImportedModule>
 )

@@ -119,10 +119,22 @@ public final class K2JSTranslator {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
         if (hasError(diagnostics)) return new TranslationResult.Fail(diagnostics);
 
-        List<JsProgramFragment> newFragments = translationResult.getFragments();
-        List<JsProgramFragment> allFragments = new ArrayList<JsProgramFragment>(newFragments);
+        List<JsProgramFragment> newFragments = new ArrayList<JsProgramFragment>(translationResult.getNewFragments());
+        List<JsProgramFragment> allFragments = new ArrayList<JsProgramFragment>(translationResult.getFragments());
 
         JsInliner.process(config, analysisResult.getBindingTrace(), translationResult.getInnerModuleName(), allFragments, newFragments);
+
+        CoroutineTransformer coroutineTransformer = new CoroutineTransformer(translationResult.getProgram());
+        for (JsProgramFragment fragment : newFragments) {
+            coroutineTransformer.accept(fragment.getDeclarationBlock());
+            coroutineTransformer.accept(fragment.getInitializerBlock());
+        }
+        RemoveUnusedImportsKt.removeUnusedImports(translationResult.getProgram());
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
+        if (hasError(diagnostics)) return new TranslationResult.Fail(diagnostics);
+
+        ExpandIsCallsKt.expandIsCalls(newFragments);
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
         Map<KtFile, FileTranslationResult> fileMap = new HashMap<KtFile, FileTranslationResult>();
         JsAstSerializer serializer = new JsAstSerializer();
@@ -151,15 +163,6 @@ public final class K2JSTranslator {
         ResolveTemporaryNamesKt.resolveTemporaryNames(translationResult.getProgram());
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
         if (hasError(diagnostics)) return new TranslationResult.Fail(diagnostics);
-
-        CoroutineTransformer coroutineTransformer = new CoroutineTransformer(translationResult.getProgram());
-        coroutineTransformer.accept(translationResult.getProgram());
-        RemoveUnusedImportsKt.removeUnusedImports(translationResult.getProgram());
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
-        if (hasError(diagnostics)) return new TranslationResult.Fail(diagnostics);
-
-        ExpandIsCallsKt.expandIsCalls(newFragments);
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
         List<String> importedModules = new ArrayList<>();
         for (JsImportedModule module : translationResult.getImportedModuleList()) {

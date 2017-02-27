@@ -87,6 +87,10 @@ class JsAstDeserializer(private val program: JsProgram) {
             deserializeString(inlineModuleProto.signatureId) to moduleExpressions[inlineModuleProto.expressionId]
         }
 
+        for (nameBinding in fragment.nameBindings) {
+            nameBinding.name.imported = nameBinding.key in fragment.imports
+        }
+
         return fragment
     }
 
