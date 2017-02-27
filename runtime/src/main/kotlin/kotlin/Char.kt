@@ -92,6 +92,11 @@ public final class Char : Comparable<Char> {
     }
 
     // Konan-specific.
+    public fun equals(other: Char): Boolean = konan.internal.areEqualByValue(this, other)
+
+    public override fun equals(other: Any?): Boolean =
+            other is Char && konan.internal.areEqualByValue(this, other)
+
     @SymbolName("Kotlin_Char_toString")
     external public override fun toString(): String
 

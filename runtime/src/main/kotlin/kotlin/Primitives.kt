@@ -214,6 +214,11 @@ public final class Byte : Number(), Comparable<Byte> {
     }
 
     // Konan-specific.
+    public fun equals(other: Byte): Boolean = konan.internal.areEqualByValue(this, other)
+
+    public override fun equals(other: Any?): Boolean =
+            other is Byte && konan.internal.areEqualByValue(this, other)
+
     @SymbolName("Kotlin_Byte_toString")
     external public override fun toString(): String
 
@@ -436,6 +441,11 @@ public final class Short : Number(), Comparable<Short> {
     external public override fun toDouble(): Double
 
     // Konan-specific.
+    public fun equals(other: Short): Boolean = konan.internal.areEqualByValue(this, other)
+
+    public override fun equals(other: Any?): Boolean =
+        other is Short && konan.internal.areEqualByValue(this, other)
+
     @SymbolName("Kotlin_Short_toString")
     external public override fun toString(): String
 
@@ -667,6 +677,11 @@ public final class Int : Number(), Comparable<Int> {
     external public override fun toDouble(): Double
 
     // Konan-specific.
+    public fun equals(other: Int): Boolean = konan.internal.areEqualByValue(this, other)
+
+    public override fun equals(other: Any?): Boolean =
+         other is Int && konan.internal.areEqualByValue(this, other)
+
     @SymbolName("Kotlin_Int_toString")
     external public override fun toString(): String
 
@@ -674,6 +689,7 @@ public final class Int : Number(), Comparable<Int> {
         return this
     }
 
+    // TODO: make extensions.
     fun highestOneBit() : Int {
         var index = 31
 
@@ -924,6 +940,11 @@ public final class Long : Number(), Comparable<Long> {
     external public override fun toDouble(): Double
 
     // Konan-specific.
+    public fun equals(other: Long): Boolean = konan.internal.areEqualByValue(this, other)
+
+    public override fun equals(other: Any?): Boolean =
+            other is Long && konan.internal.areEqualByValue(this, other)
+
     @SymbolName("Kotlin_Long_toString")
     external public override fun toString(): String
 
@@ -1130,6 +1151,14 @@ public final class Float : Number(), Comparable<Float> {
     external public override fun toDouble(): Double
 
     // Konan-specific.
+    // We intentionally provide this overload to equals() to avoid artifical boxing.
+    // Note that here we intentionally deviate from JVM Kotlin, where this method would be
+    // this.bits() == other.bits().
+    public fun equals(other: Float): Boolean = konan.internal.areEqualByValue(this, other)
+
+    public override fun equals(other: Any?): Boolean =
+            other is Float && konan.internal.areEqualByValue(this, other)
+
     @SymbolName("Kotlin_Float_toString")
     external public override fun toString(): String
 
@@ -1340,6 +1369,13 @@ public final class Double : Number(), Comparable<Double> {
     external public override fun toDouble(): Double
 
     // Konan-specific.
+    // Note that here we intentionally deviate from JVM Kotlin, where this method would be
+    // this.bits() == other.bits().
+    public fun equals(other: Double): Boolean = konan.internal.areEqualByValue(this, other)
+
+    public override fun equals(other: Any?): Boolean =
+            other is Double && konan.internal.areEqualByValue(this, other)
+
     @SymbolName("Kotlin_Double_toString")
     external public override fun toString(): String
 

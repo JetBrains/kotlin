@@ -33,6 +33,11 @@ public final class Boolean : Comparable<Boolean> {
     external public override fun compareTo(other: Boolean): Int
 
     // Konan-specific.
+    public fun equals(other: Boolean): Boolean = konan.internal.areEqualByValue(this, other)
+
+    public override fun equals(other: Any?): Boolean =
+        other is Boolean && konan.internal.areEqualByValue(this, other)
+
     @SymbolName("Kotlin_Boolean_toString")
     external public override fun toString(): String
 
