@@ -47,6 +47,15 @@ FILE /dataClasses.kt
           CALL '<get-z>(): Any' type=kotlin.Any origin=GET_PROPERTY
             $this: GET_VAR '<receiver: Test1>' type=Test1 origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public final fun copy(x: kotlin.Int = ..., y: kotlin.String = ..., z: kotlin.Any = ...): Test1
+      x: EXPRESSION_BODY
+        CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_VAR '<receiver: Test1>' type=Test1 origin=null
+      y: EXPRESSION_BODY
+        CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
+          $this: GET_VAR '<receiver: Test1>' type=Test1 origin=null
+      z: EXPRESSION_BODY
+        CALL '<get-z>(): Any' type=kotlin.Any origin=GET_PROPERTY
+          $this: GET_VAR '<receiver: Test1>' type=Test1 origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='copy(Int = ..., String = ..., Any = ...): Test1'
           CALL 'constructor Test1(Int, String, Any)' type=Test1 origin=null

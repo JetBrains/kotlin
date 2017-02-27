@@ -49,7 +49,7 @@ abstract class IrStatementsBuilder<out T : IrElement>(
     }
 
     protected abstract fun addStatement(irStatement: IrStatement)
-    protected abstract fun doBuild(): T
+    abstract fun doBuild(): T
 }
 
 open class IrBlockBodyBuilder(

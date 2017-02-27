@@ -51,6 +51,9 @@ fun <T : IrElement> IrStatementsBuilder<T>.defineTemporaryVar(value: IrExpressio
     return temporary.descriptor
 }
 
+fun IrBuilderWithScope.irExprBody(value: IrExpression) =
+        IrExpressionBodyImpl(startOffset, endOffset, value)
+
 fun IrBuilderWithScope.irReturn(value: IrExpression) =
         IrReturnImpl(startOffset, endOffset, context.builtIns.nothingType, scope.assertCastOwner(), value)
 

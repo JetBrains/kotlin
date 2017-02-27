@@ -17,10 +17,13 @@
 package org.jetbrains.kotlin.ir.builders
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 
 class IrMemberFunctionBuilder(
         context: IrGeneratorContext,
@@ -30,10 +33,16 @@ class IrMemberFunctionBuilder(
         startOffset: Int = UNDEFINED_OFFSET,
         endOffset: Int = UNDEFINED_OFFSET
 ) : IrBlockBodyBuilder(context, Scope(function), startOffset, endOffset) {
-    inline fun addToClass(body: IrMemberFunctionBuilder.() -> Unit) {
-        val irFunction = IrFunctionImpl(startOffset, endOffset, origin, function)
-        body()
+    lateinit var irFunction: IrFunction
+
+    inline fun addToClass(body: IrMemberFunctionBuilder.(IrFunction) -> Unit) {
+        irFunction = IrFunctionImpl(startOffset, endOffset, origin, function)
+        body(irFunction)
         irFunction.body = doBuild()
         irClass.addMember(irFunction)
+    }
+
+    fun putDefault(parameter: ValueParameterDescriptor, value: IrExpression) {
+        irFunction.putDefault(parameter, irExprBody(value))
     }
 }
