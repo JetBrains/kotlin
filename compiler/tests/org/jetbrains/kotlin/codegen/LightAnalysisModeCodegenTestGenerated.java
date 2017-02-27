@@ -2601,6 +2601,12 @@ public class LightAnalysisModeCodegenTestGenerated extends AbstractLightAnalysis
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classLiteral/bound/simple.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("smartCast.kt")
+            public void testSmartCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/classLiteral/bound/smartCast.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/classLiteral/java")
