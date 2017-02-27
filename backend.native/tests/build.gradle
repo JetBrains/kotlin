@@ -46,7 +46,7 @@ task run() {
 task run_external () {
     // TODO Consider test output directory cleaning before execution.
     // TODO Consider using some logger instead of println
-    // Create tasks for external tests
+    // Create tasks for external tests.
     externalTestsDir.eachDirRecurse {
         // Skip build directory and directories without *.kt files.
         if (it.name == "build" || it.listFiles().count {it.name.endsWith(".kt")} == 0) {
@@ -60,9 +60,16 @@ task run_external () {
             groupDirectory = "$taskDirectory"
         }
     }
+
+    // Set up dependencies.
     def testTasks = tasks.withType(RunExternalTestGroup).matching { it.enabled }
+    String prefix = project.findProperty("prefix")
+    if (prefix != null) {
+        testTasks = testTasks.matching { it.name.startsWith(prefix) }
+    }
     dependsOn(testTasks)
 
+    // Collect results in one json.
     doLast {
         Map<String, Map<String, RunExternalTestGroup.TestResult>> results = [:]
         def statistics = new RunExternalTestGroup.Statistics()
