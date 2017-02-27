@@ -613,6 +613,11 @@ task sort0(type: RunKonanTest) {
     source = "runtime/collections/sort0.kt"
 }
 
+task sort1(type: RunKonanTest) {
+    goldValue = "[a, b, x]\n[-1, 0, 42, 239, 100500]\n"
+    source = "runtime/collections/sort1.kt"
+}
+
 task if_else(type: RunKonanTest) {
     source = "codegen/branching/if_else.kt"
 }
