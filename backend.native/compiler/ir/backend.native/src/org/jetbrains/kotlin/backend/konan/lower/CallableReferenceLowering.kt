@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -35,7 +33,7 @@ internal class CallableReferenceLowering(val context: KonanBackendContext) : Dec
 
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.declarations.transformFlat { memberDeclaration ->
-            if (memberDeclaration is IrFunction)
+            if (memberDeclaration is IrFunction || memberDeclaration is IrProperty)
                 lowerCallableReferences(this, memberDeclaration)
             else
                 null
@@ -47,10 +45,10 @@ internal class CallableReferenceLowering(val context: KonanBackendContext) : Dec
  * Replaces all callable references in the function body to unbound ones.
  * Returns the list of this function and all created ones.
  */
-private fun lowerCallableReferences(lower: CallableReferenceLowering, function: IrFunction): List<IrFunction> {
-    val transformer = CallableReferencesUnbinder(lower, function)
-    function.transformChildrenVoid(transformer)
-    return function.singletonList() + transformer.createdFunctions
+private fun lowerCallableReferences(lower: CallableReferenceLowering, declaration: IrDeclaration): List<IrDeclaration> {
+    val transformer = CallableReferencesUnbinder(lower, declaration)
+    declaration.transformChildrenVoid(transformer)
+    return declaration.singletonList() + transformer.createdFunctions
 }
 
 private object DECLARATION_ORIGIN_FUNCTION_FOR_CALLABLE_REFERENCE :
@@ -61,7 +59,7 @@ private object DECLARATION_ORIGIN_FUNCTION_FOR_CALLABLE_REFERENCE :
  * Adds all created functions to [createdFunctions].
  */
 private class CallableReferencesUnbinder(val lower: CallableReferenceLowering,
-                                         val function: IrFunction) : IrElementTransformerVoid() {
+                                         val declaration: IrDeclaration) : IrElementTransformerVoid() {
 
     val createdFunctions = mutableListOf<IrFunction>()
 
@@ -193,7 +191,7 @@ private class CallableReferencesUnbinder(val lower: CallableReferenceLowering,
         val newName = Name.identifier("${descriptor.name}\$bound-${lower.callableReferenceCount++}")
 
         val newDescriptor = SimpleFunctionDescriptorImpl.create(
-                function.descriptor.containingDeclaration, Annotations.EMPTY,
+                declaration.descriptor.containingDeclaration!!, Annotations.EMPTY,
                 newName, CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE)
 
         val simpleFunctionImplType = simpleFunctionImplClass.defaultType
