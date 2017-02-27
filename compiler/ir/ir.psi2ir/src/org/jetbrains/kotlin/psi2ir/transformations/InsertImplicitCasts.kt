@@ -93,7 +93,7 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
     override fun visitReturn(expression: IrReturn): IrExpression {
         expression.transformChildrenVoid(this)
 
-        expression.value = expression.value?.cast(expression.returnTarget.returnType)
+        expression.value = expression.value.cast(expression.returnTarget.returnType)
 
         return expression
     }
@@ -186,27 +186,29 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
 
     private fun IrExpression.cast(expectedType: KotlinType?): IrExpression {
         if (expectedType == null) return this
-
         if (expectedType.isError) return this
-
-        if (KotlinBuiltIns.isUnit(expectedType)) return coerceToUnit()
 
         val valueType = this.type
 
-        if (valueType.isNullabilityFlexible() && valueType.containsNull() && !expectedType.containsNull()) {
-            val nonNullValueType = valueType.upperIfFlexible().makeNotNullable()
-            return IrTypeOperatorCallImpl(
-                    this.startOffset, this.endOffset, nonNullValueType,
-                    IrTypeOperator.IMPLICIT_NOTNULL, nonNullValueType, this
-            ).cast(expectedType)
+        return when {
+            KotlinBuiltIns.isUnit(expectedType) ->
+                coerceToUnit()
+            valueType.isNullabilityFlexible() && valueType.containsNull() && !expectedType.containsNull() -> {
+                val nonNullValueType = valueType.upperIfFlexible().makeNotNullable()
+                IrTypeOperatorCallImpl(
+                        this.startOffset, this.endOffset, nonNullValueType,
+                        IrTypeOperator.IMPLICIT_NOTNULL, nonNullValueType, this
+                ).cast(expectedType)
+            }
+            KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType.makeNotNullable(), expectedType) ->
+                this
+            KotlinBuiltIns.isInt(valueType) ->
+                IrTypeOperatorCallImpl(this.startOffset, this.endOffset, expectedType,
+                                       IrTypeOperator.IMPLICIT_INTEGER_COERCION, expectedType.makeNotNullable(), this)
+            else ->
+                IrTypeOperatorCallImpl(this.startOffset, this.endOffset, expectedType,
+                                       IrTypeOperator.IMPLICIT_CAST, expectedType, this)
         }
-
-        if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType.makeNotNullable(), expectedType)) {
-            return IrTypeOperatorCallImpl(this.startOffset, this.endOffset, expectedType,
-                                          IrTypeOperator.IMPLICIT_CAST, expectedType, this)
-        }
-
-        return this
     }
 
     private fun IrExpression.coerceToUnit(): IrExpression {

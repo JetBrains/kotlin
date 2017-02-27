@@ -545,6 +545,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("primitivesImplicitConversions.kt")
+        public void testPrimitivesImplicitConversions() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/primitivesImplicitConversions.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("references.kt")
         public void testReferences() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/references.kt");

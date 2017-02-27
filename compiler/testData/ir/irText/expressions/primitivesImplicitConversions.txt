@@ -1,0 +1,23 @@
+FILE /primitivesImplicitConversions.kt
+  FUN public fun test(): kotlin.Unit
+    BLOCK_BODY
+      VAR val test1: kotlin.Int? = 42
+        CONST Int type=kotlin.Int value='42'
+      VAR val test2: kotlin.Long = 42.toLong()
+        CONST Long type=kotlin.Long value='42'
+      VAR val test3: kotlin.Long? = 42.toLong()
+        CONST Long type=kotlin.Long value='42'
+      VAR val test4: kotlin.Long? = -1.toLong()
+        CONST Long type=kotlin.Long value='-1'
+      VAR val test5: kotlin.Long? = -1.toLong()
+        TYPE_OP origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
+          CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
+            $this: CONST Int type=kotlin.Int value='1'
+      VAR val test6: kotlin.Short? = -1.toShort()
+        TYPE_OP origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Short
+          CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
+            $this: CONST Int type=kotlin.Int value='1'
+      VAR val test7: kotlin.Byte? = -1.toByte()
+        TYPE_OP origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Byte
+          CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
+            $this: CONST Int type=kotlin.Int value='1'
