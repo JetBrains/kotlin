@@ -23,6 +23,10 @@ Kotlin.equals = function (obj1, obj2) {
         return false;
     }
 
+    if (obj1 !== obj1) {
+        return obj2 !== obj2;
+    }
+
     if (typeof obj1 == "object" && typeof obj1.equals === "function") {
         return obj1.equals(obj2);
     }

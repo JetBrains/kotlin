@@ -16,23 +16,26 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.operation
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperation
 import org.jetbrains.kotlin.js.backend.ast.JsBinaryOperator
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsLiteral
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.js.patterns.NamePredicate
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
+import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -41,13 +44,26 @@ import java.util.*
 
 object EqualsBOIF : BinaryOperationIntrinsicFactory {
     private object EqualsIntrinsic : AbstractBinaryOperationIntrinsic() {
+
+        // Primitives with no boxing or tricky NaN behavior, represented by a Number at runtime.
+        // Whenever the left side of equality is of this type, equality could be tested via '==='.
+        private val SIMPLE_PRIMITIVES = EnumSet.of(PrimitiveType.BYTE, PrimitiveType.SHORT, PrimitiveType.INT)
+
         override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
             val isNegated = expression.isNegated()
             if (right == JsLiteral.NULL || left == JsLiteral.NULL) {
                 return TranslationUtils.nullCheck(if (right == JsLiteral.NULL) left else right, isNegated)
             }
-            else if (canUseSimpleEquals(expression, context)) {
-                return JsBinaryOperation(if (isNegated) JsBinaryOperator.REF_NEQ else JsBinaryOperator.REF_EQ, left, right)
+
+            val ktLeft = checkNotNull(expression.left) { "No left-hand side: " + expression.text }
+            val ktRight = checkNotNull(expression.right) { "No right-hand side: " + expression.text }
+            val leftType = getRefinedType(ktLeft, context)?.let { KotlinBuiltIns.getPrimitiveTypeByKotlinType(it) }
+            val rightType = getRefinedType(ktRight, context)?.let { KotlinBuiltIns.getPrimitiveTypeByKotlinType(it) }
+
+            if (leftType != null && (leftType in SIMPLE_PRIMITIVES || leftType == rightType && leftType != PrimitiveType.LONG)) {
+                return JsBinaryOperation(if (isNegated) JsBinaryOperator.REF_NEQ else JsBinaryOperator.REF_EQ,
+                                         Translation.unboxIfNeeded(left, leftType == PrimitiveType.CHAR),
+                                         Translation.unboxIfNeeded(right, rightType == PrimitiveType.CHAR))
             }
 
             val resolvedCall = expression.getResolvedCall(context.bindingContext())
@@ -61,15 +77,41 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
                 return JsBinaryOperation(if (isNegated) JsBinaryOperator.NEQ else JsBinaryOperator.EQ, left, right)
             }
 
-            val result = TopLevelFIF.KOTLIN_EQUALS.apply(left, Arrays.asList<JsExpression>(right), context)
+            val maybeBoxedLeft = if (leftType == PrimitiveType.CHAR) JsAstUtils.charToBoxedChar(left) else left
+            val maybeBoxedRight = if (rightType == PrimitiveType.CHAR) JsAstUtils.charToBoxedChar(right) else right
+
+            val result = TopLevelFIF.KOTLIN_EQUALS.apply(maybeBoxedLeft, Arrays.asList<JsExpression>(maybeBoxedRight), context)
             return if (isNegated) JsAstUtils.not(result) else result
         }
 
-        private fun canUseSimpleEquals(expression: KtBinaryExpression, context: TranslationContext): Boolean {
-            val left = expression.left
-            assert(left != null) { "No left-hand side: " + expression.text }
-            val typeName = JsDescriptorUtils.getNameIfStandardType(left!!, context)
-            return typeName != null && NamePredicate.PRIMITIVE_NUMBERS_MAPPED_TO_PRIMITIVE_JS.apply(typeName)
+        /**
+         * Tries to get as precise statically known primitive type as possible - taking smart-casts and generic supertypes into account.
+         * This is needed to be compatible with JVM NaN behaviour, in particular the following two cases.
+         *
+         * // Smart-casts
+         * val a: Any = Double.NaN
+         * println(a == a) // true
+         * if (a is Double) {
+         *   println(a == a) // false
+         * }
+         *
+         * // Generics with Double super-type
+         * fun <T: Double> foo(v: T) = println(v == v)
+         * foo(Double.NaN) // false
+         *
+         * Also see org/jetbrains/kotlin/codegen/codegenUtil.kt#calcTypeForIEEE754ArithmeticIfNeeded
+         */
+        private fun getRefinedType(expression: KtExpression, context: TranslationContext): KotlinType? {
+            val bindingContext = context.bindingContext()
+            val descriptor = context.declarationDescriptor ?: context.currentModule
+            val ktType = bindingContext.getType(expression) ?: return null
+
+            val dataFlow = DataFlowValueFactory.createDataFlowValue(expression, ktType, bindingContext, descriptor)
+            val isPrimitiveFn = KotlinBuiltIns::isPrimitiveTypeOrNullablePrimitiveType
+
+            return bindingContext.getDataFlowInfoBefore(expression).getStableTypes(dataFlow).find(isPrimitiveFn) ?: // Smart-casts
+                   TypeUtils.getAllSupertypes(ktType).find(isPrimitiveFn) ?: // Generic super-types
+                   ktType // Default
         }
     }
 
@@ -90,21 +132,6 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
             TopLevelFIF.EQUALS_IN_ANY.apply(descriptor) -> EqualsIntrinsic
 
             else -> null
-        }
-
-        if (result != null && leftType != rightType) {
-            val leftChar = (leftType != null && KotlinBuiltIns.isCharOrNullableChar(leftType))
-            val rightChar = (rightType != null && KotlinBuiltIns.isCharOrNullableChar(rightType))
-
-            if (leftChar xor rightChar) {
-                return object : AbstractBinaryOperationIntrinsic() {
-                    override fun apply(expression: KtBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
-                        val maybeBoxedLeft = if (leftChar) JsAstUtils.charToBoxedChar(left) else left
-                        val maybeBoxedRight = if (rightChar) JsAstUtils.charToBoxedChar(right) else right
-                        return result.apply(expression, maybeBoxedLeft, maybeBoxedRight, context)
-                    }
-                }
-            }
         }
 
         return result

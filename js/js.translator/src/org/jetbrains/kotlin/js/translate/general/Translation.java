@@ -190,11 +190,7 @@ public final class Translation {
         JsNode jsNode = translateExpression(expression, context, block);
         if (jsNode instanceof  JsExpression) {
             KotlinType expressionType = context.bindingContext().getType(expression);
-            if (expressionType != null && KotlinBuiltIns.isCharOrNullableChar(expressionType) &&
-                (jsNode instanceof JsInvocation || jsNode instanceof JsNameRef || jsNode instanceof JsArrayAccess)) {
-                jsNode = JsAstUtils.boxedCharToChar((JsExpression) jsNode);
-            }
-            return (JsExpression) jsNode;
+            return unboxIfNeeded((JsExpression) jsNode, expressionType != null && KotlinBuiltIns.isCharOrNullableChar(expressionType));
         }
 
         assert jsNode instanceof JsStatement : "Unexpected node of type: " + jsNode.getClass().toString();
@@ -207,6 +203,16 @@ public final class Translation {
 
         block.getStatements().add(convertToStatement(jsNode));
         return JsLiteral.NULL;
+    }
+
+    @NotNull
+    public static JsExpression unboxIfNeeded(@NotNull JsExpression expression, boolean charOrNullableChar) {
+        if (charOrNullableChar &&
+            (expression instanceof JsInvocation || expression instanceof JsNameRef || expression instanceof JsArrayAccess)
+        ) {
+            expression = JsAstUtils.boxedCharToChar(expression);
+        }
+        return expression;
     }
 
     @NotNull

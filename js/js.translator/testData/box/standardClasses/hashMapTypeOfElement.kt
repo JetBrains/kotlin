@@ -22,12 +22,11 @@ fun box(): String {
     mapWithDoubleKeys[1.0] = 1
     assertEquals("number", jsTypeOf (mapWithDoubleKeys.keys.iterator().next()), "mapWithDoubleKeys")
 
-    // boxed NaNs are not equal, KT-13610
-//    mapWithDoubleKeys.clear()
-//    var dNaN = 0.0 / 0.0
-//    mapWithDoubleKeys[dNaN] = 100
-//    assertEquals(100, mapWithDoubleKeys[dNaN])
-//    assertEquals("number", jsTypeOf (mapWithDoubleKeys.keys.iterator().next()), "dNaN")
+    mapWithDoubleKeys.clear()
+    var dNaN = 0.0 / 0.0
+    mapWithDoubleKeys[dNaN] = 100
+    assertEquals(100, mapWithDoubleKeys[dNaN])
+    assertEquals("number", jsTypeOf (mapWithDoubleKeys.keys.iterator().next()), "dNaN")
 
     mapWithDoubleKeys.clear()
     var dPositiveInfinity = +1.0 / 0.0
@@ -45,12 +44,11 @@ fun box(): String {
     mapWithFloatKeys[1.0f] = 1
     assertEquals("number", jsTypeOf (mapWithFloatKeys.keys.iterator().next()), "mapWithFloatKeys")
 
-    // boxed NaNs are not equal, KT-13610
-//    mapWithFloatKeys.clear()
-//    var fNaN: Float = 0.0f / 0.0f
-//    mapWithFloatKeys[fNaN] = 100
-//    assertEquals(100, mapWithFloatKeys[fNaN])
-//    assertEquals("number", jsTypeOf (mapWithFloatKeys.keys.iterator().next()), "fNaN")
+    mapWithFloatKeys.clear()
+    var fNaN: Float = 0.0f / 0.0f
+    mapWithFloatKeys[fNaN] = 100
+    assertEquals(100, mapWithFloatKeys[fNaN])
+    assertEquals("number", jsTypeOf (mapWithFloatKeys.keys.iterator().next()), "fNaN")
 
     mapWithFloatKeys.clear()
     var fPositiveInfinity = +1.0f / 0.0f

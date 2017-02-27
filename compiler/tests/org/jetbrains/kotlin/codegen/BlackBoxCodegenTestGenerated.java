@@ -8525,6 +8525,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("equalsNaN.kt")
+        public void testEqualsNaN() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/equalsNaN.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("equalsNullableDouble.kt")
         public void testEqualsNullableDouble() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ieee754/equalsNullableDouble.kt");
