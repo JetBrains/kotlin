@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalFunctions
 import org.jetbrains.kotlin.backend.konan.ir.isNullConst
 import org.jetbrains.kotlin.backend.konan.util.atMostOne
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBinaryPrimitiveImpl
@@ -73,23 +74,37 @@ private class BuiltinOperatorTransformer(val context: Context) : IrElementTransf
     private fun lowerEqeq(lhs: IrExpression, rhs: IrExpression, startOffset: Int, endOffset: Int): IrExpression {
         // TODO: optimize boxing?
 
+        val equals = selectEqualsFunction(lhs, rhs)
+
+        return IrCallImpl(startOffset, endOffset, equals).apply {
+            putValueArgument(0, lhs)
+            putValueArgument(1, rhs)
+        }
+    }
+
+    private fun selectEqualsFunction(lhs: IrExpression, rhs: IrExpression): FunctionDescriptor {
+        val nullableNothingType = builtIns.nullableNothingType
+        if (lhs.type.isSubtypeOf(nullableNothingType) && rhs.type.isSubtypeOf(nullableNothingType)) {
+            // Compare by reference if each part is either `Nothing` or `Nothing?`:
+            return irBuiltins.eqeqeq
+        }
+
         // TODO: areEqualByValue intrinsics are specially treated by code generator
         // and thus can be declared synthetically in the compiler instead of explicitly in the runtime.
 
         // Find a type-compatible `konan.internal.areEqualByValue` intrinsic:
-        val equals = builtIns.getKonanInternalFunctions("areEqualByValue").atMostOne {
+        builtIns.getKonanInternalFunctions("areEqualByValue").atMostOne {
             lhs.type.isSubtypeOf(it.valueParameters[0].type) && rhs.type.isSubtypeOf(it.valueParameters[1].type)
-        } ?: if (lhs.isNullConst() || rhs.isNullConst()) {
+        }?.let {
+            return it
+        }
+
+        return if (lhs.isNullConst() || rhs.isNullConst()) {
             // or compare by reference if left or right part is `null`:
             irBuiltins.eqeqeq
         } else {
             // or use the general implementation:
             builtIns.getKonanInternalFunctions("areEqual").single()
-        }
-
-        return IrCallImpl(startOffset, endOffset, equals).apply {
-            putValueArgument(0, lhs)
-            putValueArgument(1, rhs)
         }
     }
 }
