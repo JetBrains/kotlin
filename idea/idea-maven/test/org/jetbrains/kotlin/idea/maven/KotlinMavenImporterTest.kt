@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.maven
 
 import org.jetbrains.kotlin.config.KotlinFacetSettings
+import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.junit.Assert
 import java.io.File
@@ -387,7 +388,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         assertTestSources("project", "src/test/java", "src/test/kotlin", "src/test/kotlin.jvm")
     }
 
-    fun testJvmTarget() {
+    fun testJvmFacetConfiguration() {
         createProjectSubDirs("src/main/kotlin", "src/main/kotlin.jvm", "src/test/kotlin", "src/test/kotlin.jvm")
 
         importProject("""
@@ -421,6 +422,153 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                         </execution>
                     </executions>
                     <configuration>
+                        <languageVersion>1.1</languageVersion>
+                        <apiVersion>1.0</apiVersion>
+                        <multiPlatform>true</multiPlatform>
+                        <nowarn>true</nowarn>
+                        <args>
+                            <arg>-Xcoroutines=enable</arg>
+                        </args>
+                        <jvmTarget>1.8</jvmTarget>
+                        <jdkHome>JDK_HOME</jdkHome>
+                        <classpath>foobar.jar</classpath>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+        """)
+
+        assertModules("project")
+        assertImporterStatePresent()
+
+        with (facetSettings) {
+            Assert.assertEquals("1.1", versionInfo.languageLevel!!.versionString)
+            Assert.assertEquals("1.1", compilerInfo.commonCompilerArguments!!.languageVersion)
+            Assert.assertEquals("1.0", versionInfo.apiLevel!!.versionString)
+            Assert.assertEquals("1.0", compilerInfo.commonCompilerArguments!!.apiVersion)
+            Assert.assertEquals(true, compilerInfo.commonCompilerArguments!!.suppressWarnings)
+            Assert.assertEquals("enable", compilerInfo.coroutineSupport.compilerArgument)
+            Assert.assertEquals("JVM 1.8", versionInfo.targetPlatformKind!!.description)
+            Assert.assertEquals("1.8", compilerInfo.k2jvmCompilerArguments!!.jvmTarget)
+            Assert.assertEquals("-cp foobar.jar -jdk-home JDK_HOME -Xmulti-platform",
+                                compilerInfo.compilerSettings!!.additionalArguments)
+        }
+    }
+
+    fun testJsFacetConfiguration() {
+        createProjectSubDirs("src/main/kotlin", "src/main/kotlin.jvm", "src/test/kotlin", "src/test/kotlin.jvm")
+
+        importProject("""
+        <groupId>test</groupId>
+        <artifactId>project</artifactId>
+        <version>1.0.0</version>
+
+        <dependencies>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>$kotlinVersion</version>
+            </dependency>
+        </dependencies>
+
+        <build>
+            <sourceDirectory>src/main/kotlin</sourceDirectory>
+
+            <plugins>
+                <plugin>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+
+                    <executions>
+                        <execution>
+                            <id>compile</id>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>js</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <languageVersion>1.1</languageVersion>
+                        <apiVersion>1.0</apiVersion>
+                        <multiPlatform>true</multiPlatform>
+                        <nowarn>true</nowarn>
+                        <args>
+                            <arg>-Xcoroutines=enable</arg>
+                        </args>
+                        <sourceMap>true</sourceMap>
+                        <outputFile>test.js</outputFile>
+                        <metaInfo>true</metaInfo>
+                        <moduleKind>commonjs</moduleKind>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+        """)
+
+        assertModules("project")
+        assertImporterStatePresent()
+
+        with (facetSettings) {
+            Assert.assertEquals("1.1", versionInfo.languageLevel!!.versionString)
+            Assert.assertEquals("1.1", compilerInfo.commonCompilerArguments!!.languageVersion)
+            Assert.assertEquals("1.0", versionInfo.apiLevel!!.versionString)
+            Assert.assertEquals("1.0", compilerInfo.commonCompilerArguments!!.apiVersion)
+            Assert.assertEquals(true, compilerInfo.commonCompilerArguments!!.suppressWarnings)
+            Assert.assertEquals("enable", compilerInfo.coroutineSupport.compilerArgument)
+            Assert.assertTrue(versionInfo.targetPlatformKind is TargetPlatformKind.JavaScript)
+            Assert.assertEquals(true, compilerInfo.k2jsCompilerArguments!!.sourceMap)
+            Assert.assertEquals("commonjs", compilerInfo.k2jsCompilerArguments!!.moduleKind)
+            Assert.assertEquals("-output test.js -meta-info -Xmulti-platform",
+                                compilerInfo.compilerSettings!!.additionalArguments)
+        }
+    }
+
+    fun testFacetSplitConfiguration() {
+        createProjectSubDirs("src/main/kotlin", "src/main/kotlin.jvm", "src/test/kotlin", "src/test/kotlin.jvm")
+
+        importProject("""
+        <groupId>test</groupId>
+        <artifactId>project</artifactId>
+        <version>1.0.0</version>
+
+        <dependencies>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>$kotlinVersion</version>
+            </dependency>
+        </dependencies>
+
+        <build>
+            <sourceDirectory>src/main/kotlin</sourceDirectory>
+
+            <plugins>
+                <plugin>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+
+                    <executions>
+                        <execution>
+                            <id>compile</id>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                            <configuration>
+                                <languageVersion>1.1</languageVersion>
+                                <multiPlatform>true</multiPlatform>
+                                <args>
+                                    <arg>-Xcoroutines=enable</arg>
+                                </args>
+                                <jdkHome>JDK_HOME</jdkHome>
+                                <classpath>foobar.jar</classpath>
+                            </configuration>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <apiVersion>1.0</apiVersion>
+                        <nowarn>true</nowarn>
                         <jvmTarget>1.8</jvmTarget>
                     </configuration>
                 </plugin>
@@ -432,8 +580,16 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         assertImporterStatePresent()
 
         with (facetSettings) {
+            Assert.assertEquals("1.1", versionInfo.languageLevel!!.versionString)
+            Assert.assertEquals("1.1", compilerInfo.commonCompilerArguments!!.languageVersion)
+            Assert.assertEquals("1.0", versionInfo.apiLevel!!.versionString)
+            Assert.assertEquals("1.0", compilerInfo.commonCompilerArguments!!.apiVersion)
+            Assert.assertEquals(true, compilerInfo.commonCompilerArguments!!.suppressWarnings)
+            Assert.assertEquals("enable", compilerInfo.coroutineSupport.compilerArgument)
             Assert.assertEquals("JVM 1.8", versionInfo.targetPlatformKind!!.description)
             Assert.assertEquals("1.8", compilerInfo.k2jvmCompilerArguments!!.jvmTarget)
+            Assert.assertEquals("-version -cp foobar.jar -jdk-home JDK_HOME -Xmulti-platform",
+                                compilerInfo.compilerSettings!!.additionalArguments)
         }
     }
 
