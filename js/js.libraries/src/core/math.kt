@@ -1,6 +1,9 @@
 package kotlin.js
 
 //TODO: declare using number
+/**
+ * Exposes the JavaScript [Math object](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Math) to Kotlin.
+ */
 public external object Math {
     public val PI: Double
     public fun random(): Double
@@ -27,5 +30,12 @@ public external object Math {
     public fun ceil(value: Number): Int
 }
 
+/**
+ * Returns the smaller of two values.
+ */
 public fun Math.min(a: Long, b: Long): Long = if (a <= b) a else b
+
+/**
+ * Returns the greater of two values.
+ */
 public fun Math.max(a: Long, b: Long): Long = if (a >= b) a else b

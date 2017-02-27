@@ -16,6 +16,9 @@
 
 package kotlin.js
 
+/**
+ * Exposes the JavaScript [Promise object](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise) to Kotlin.
+ */
 public open external class Promise<out T>(executor: (resolve: (T) -> Unit, reject: (Throwable) -> Unit) -> Unit) {
     companion object {
         public fun <S> all(promise: Array<out Promise<S>>): Promise<Array<in S>>

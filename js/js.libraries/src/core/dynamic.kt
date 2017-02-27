@@ -16,6 +16,9 @@
 
 package kotlin.js
 
+/**
+ * Reinterprets this value as a value of the [dynamic type](/docs/reference/dynamic-type.html).
+ */
 @kotlin.internal.InlineOnly
 public inline fun Any?.asDynamic(): dynamic = this
 

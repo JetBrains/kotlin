@@ -5,8 +5,14 @@ public external val noImpl: Nothing
 
 public external val definedExternally: Nothing
 
+/**
+ * Exposes the JavaScript [eval function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval) to Kotlin.
+ */
 public external fun eval(expr: String): dynamic
 
+/**
+ * Exposes the JavaScript [undefined property](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined) to Kotlin.
+ */
 public external val undefined: Nothing?
 
 @Deprecated("Use toInt() instead.", ReplaceWith("s.toInt()"), level = DeprecationLevel.ERROR)

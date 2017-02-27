@@ -17,6 +17,10 @@ Core functions and types, available on all supported platforms.
 
 Library support for the Kotlin annotation facility.
 
+# Package kotlin.browser
+
+Access to top-level properties (`document`, `window` etc.) in the browser environment.
+
 # Package kotlin.collections
 
 Collection types, such as [Iterable][kotlin.collections.Iterable], [Collection][kotlin.collections.Collection],
@@ -30,9 +34,29 @@ Helper functions for creating [Comparator][java.util.Comparator] instances.
 
 Utility functions for concurrent programming.
 
+# Package kotlin.coroutines.experimental
+
+Library support for coroutines, including support for lazy sequences.
+
+# Package kotlin.coroutines.experimental.intrinsics
+
+Low-level building blocks for libraries that provide coroutine-based APIs.
+
+# Package kotlin.dom
+
+Utility functions for working with the browser DOM.
+
+# Package kotlin.experimental
+
+Experimental APIs, subject to change in future versions of Kotlin.
+
 # Package kotlin.io
 
 IO API for working with files and streams.
+
+# Package kotlin.js
+
+Functions and other APIs specific to the JavaScript platform.
 
 # Package kotlin.jvm
 
@@ -51,15 +75,23 @@ and helper functions for implementing custom delegates.
 
 Runtime API for [Kotlin reflection](/docs/reference/reflection.html)
 
+# Package kotlin.reflect.full
+
+Extensions for [Kotlin reflection](/docs/reference/reflection.html) provided by `kotlin-reflect` library.
+
 # Package kotlin.reflect.jvm
 
 Runtime API for interoperability between [Kotlin reflection](/docs/reference/reflection.html) and
-Java reflection.
+Java reflection provided by `kotlin-reflect` library.
 
 # Package kotlin.sequences
 
 [Sequence][kotlin.sequences.Sequence] type that represents lazily evaluated collections. Top-level functions for instantiating sequences
 and extension functions for sequences.
+
+# Package kotlin.streams
+
+Utility functions for working with Java 8 [streams](https://docs.oracle.com/javase/8/docs/api/java/util/stream/package-summary.html).
 
 # Package kotlin.system
 
@@ -72,4 +104,56 @@ Functions for writing test assertions.
 # Package kotlin.text
 
 Functions for working with text and regular expressions.
+
+# Package org.khronos.webgl
+
+Kotlin JavaScript wrappers for the WebGL API.
+
+# Package org.w3c.dom
+
+Kotlin JavaScript wrappers for the DOM API.
+
+# Package org.w3c.dom.css
+
+Kotlin JavaScript wrappers for the DOM CSS API.
+
+# Package org.w3c.dom.events
+
+Kotlin JavaScript wrappers for the DOM events API.
+
+# Package org.w3c.dom.parsing
+
+Kotlin JavaScript wrappers for the DOM parsing API.
+
+# Package org.w3c.dom.svg
+
+Kotlin JavaScript wrappers for the DOM SVG API.
+
+# Package org.w3c.dom.url
+
+Kotlin JavaScript wrappers for the DOM URL API.
+
+# Package org.w3c.fetch
+
+Kotlin JavaScript wrappers for the [W3C fetch API](https://fetch.spec.whatwg.org).
+
+# Package org.w3c.files
+
+Kotlin JavaScript wrappers for the [W3C file API](https://www.w3.org/TR/FileAPI/).
+
+# Package org.w3c.notifications
+
+Kotlin JavaScript wrappers for the [Web Notifications API](https://www.w3.org/TR/notifications/).
+
+# Package org.w3c.performance
+
+Kotlin JavaScript wrappers for the [Navigation Timing API](https://www.w3.org/TR/navigation-timing/).
+
+# Package org.w3c.workers
+
+Kotlin JavaScript wrappers for the [Web Workers API](https://www.w3.org/TR/workers/).
+
+# Package org.w3c.xhr
+
+Kotlin JavaScript wrappers for the [XMLHttpRequest API](https://www.w3.org/TR/XMLHttpRequest/).
 
