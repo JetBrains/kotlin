@@ -57,7 +57,7 @@ object KotlinJavascriptSerializationUtil {
             module: ModuleDescriptor,
             configuration: DeserializationConfiguration
     ): PackageFragmentProvider {
-        val scopeProto = metadata.map { JsProtoBuf.Library.Part.parseFrom(it) }
+        val scopeProto = metadata.map { JsProtoBuf.Library.Part.parseFrom(it, JsSerializerProtocol.extensionRegistry) }
         return createKotlinJavascriptPackageFragmentProvider(storageManager, module, scopeProto, configuration)
     }
 

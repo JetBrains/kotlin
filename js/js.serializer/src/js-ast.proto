@@ -210,16 +210,19 @@ message ArrayAccess {
 message NameReference {
     required int32 name_id = 1;
     optional Expression qualifier = 2;
+    optional InlineStrategy inline_strategy = 3 [default=NOT_INLINE];
 }
 
 message PropertyReference {
     required int32 string_id = 1;
     optional Expression qualifier = 2;
+    optional InlineStrategy inline_strategy = 3 [default=NOT_INLINE];
 }
 
 message Invocation {
     required Expression qualifier = 1;
     repeated Expression argument = 2;
+    optional InlineStrategy inline_strategy = 3 [default=NOT_INLINE];
 }
 
 message Instantiation {
@@ -366,6 +369,12 @@ message Catch {
 }
 
 message Empty {
+}
+
+enum InlineStrategy {
+    AS_FUNCTION = 0;
+    IN_PLACE = 1;
+    NOT_INLINE = 2;
 }
 
 

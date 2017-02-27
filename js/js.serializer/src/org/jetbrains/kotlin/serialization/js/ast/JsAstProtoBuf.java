@@ -73,6 +73,71 @@ public final class JsAstProtoBuf {
     // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.js.ast.SideEffects)
   }
 
+  /**
+   * Protobuf enum {@code org.jetbrains.kotlin.serialization.js.ast.InlineStrategy}
+   */
+  public enum InlineStrategy
+      implements org.jetbrains.kotlin.protobuf.Internal.EnumLite {
+    /**
+     * <code>AS_FUNCTION = 0;</code>
+     */
+    AS_FUNCTION(0, 0),
+    /**
+     * <code>IN_PLACE = 1;</code>
+     */
+    IN_PLACE(1, 1),
+    /**
+     * <code>NOT_INLINE = 2;</code>
+     */
+    NOT_INLINE(2, 2),
+    ;
+
+    /**
+     * <code>AS_FUNCTION = 0;</code>
+     */
+    public static final int AS_FUNCTION_VALUE = 0;
+    /**
+     * <code>IN_PLACE = 1;</code>
+     */
+    public static final int IN_PLACE_VALUE = 1;
+    /**
+     * <code>NOT_INLINE = 2;</code>
+     */
+    public static final int NOT_INLINE_VALUE = 2;
+
+
+    public final int getNumber() { return value; }
+
+    public static InlineStrategy valueOf(int value) {
+      switch (value) {
+        case 0: return AS_FUNCTION;
+        case 1: return IN_PLACE;
+        case 2: return NOT_INLINE;
+        default: return null;
+      }
+    }
+
+    public static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<InlineStrategy>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<InlineStrategy>
+        internalValueMap =
+          new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<InlineStrategy>() {
+            public InlineStrategy findValueByNumber(int number) {
+              return InlineStrategy.valueOf(number);
+            }
+          };
+
+    private final int value;
+
+    private InlineStrategy(int index, int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.js.ast.InlineStrategy)
+  }
+
   public interface LocationOrBuilder extends
       // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.js.ast.Location)
       org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
@@ -13314,6 +13379,15 @@ public final class JsAstProtoBuf {
      * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Expression qualifier = 2;</code>
      */
     org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Expression getQualifier();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    boolean hasInlineStrategy();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy getInlineStrategy();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.NameReference}
@@ -13383,6 +13457,18 @@ public final class JsAstProtoBuf {
               bitField0_ |= 0x00000002;
               break;
             }
+            case 24: {
+              int rawValue = input.readEnum();
+              org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy value = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy.valueOf(rawValue);
+              if (value == null) {
+                unknownFieldsCodedOutput.writeRawVarint32(tag);
+                unknownFieldsCodedOutput.writeRawVarint32(rawValue);
+              } else {
+                bitField0_ |= 0x00000004;
+                inlineStrategy_ = value;
+              }
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -13447,9 +13533,25 @@ public final class JsAstProtoBuf {
       return qualifier_;
     }
 
+    public static final int INLINE_STRATEGY_FIELD_NUMBER = 3;
+    private org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy inlineStrategy_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    public boolean hasInlineStrategy() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy getInlineStrategy() {
+      return inlineStrategy_;
+    }
+
     private void initFields() {
       nameId_ = 0;
       qualifier_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Expression.getDefaultInstance();
+      inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy.NOT_INLINE;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -13480,6 +13582,9 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeMessage(2, qualifier_);
       }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeEnum(3, inlineStrategy_.getNumber());
+      }
       output.writeRawBytes(unknownFields);
     }
 
@@ -13496,6 +13601,10 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(2, qualifier_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeEnumSize(3, inlineStrategy_.getNumber());
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -13595,6 +13704,8 @@ public final class JsAstProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000001);
         qualifier_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Expression.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000002);
+        inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy.NOT_INLINE;
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -13626,6 +13737,10 @@ public final class JsAstProtoBuf {
           to_bitField0_ |= 0x00000002;
         }
         result.qualifier_ = qualifier_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.inlineStrategy_ = inlineStrategy_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -13637,6 +13752,9 @@ public final class JsAstProtoBuf {
         }
         if (other.hasQualifier()) {
           mergeQualifier(other.getQualifier());
+        }
+        if (other.hasInlineStrategy()) {
+          setInlineStrategy(other.getInlineStrategy());
         }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
@@ -13768,6 +13886,41 @@ public final class JsAstProtoBuf {
         return this;
       }
 
+      private org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy.NOT_INLINE;
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public boolean hasInlineStrategy() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy getInlineStrategy() {
+        return inlineStrategy_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public Builder setInlineStrategy(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000004;
+        inlineStrategy_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public Builder clearInlineStrategy() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy.NOT_INLINE;
+        
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.js.ast.NameReference)
     }
 
@@ -13800,6 +13953,15 @@ public final class JsAstProtoBuf {
      * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Expression qualifier = 2;</code>
      */
     org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Expression getQualifier();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    boolean hasInlineStrategy();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy getInlineStrategy();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.PropertyReference}
@@ -13869,6 +14031,18 @@ public final class JsAstProtoBuf {
               bitField0_ |= 0x00000002;
               break;
             }
+            case 24: {
+              int rawValue = input.readEnum();
+              org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy value = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy.valueOf(rawValue);
+              if (value == null) {
+                unknownFieldsCodedOutput.writeRawVarint32(tag);
+                unknownFieldsCodedOutput.writeRawVarint32(rawValue);
+              } else {
+                bitField0_ |= 0x00000004;
+                inlineStrategy_ = value;
+              }
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -13933,9 +14107,25 @@ public final class JsAstProtoBuf {
       return qualifier_;
     }
 
+    public static final int INLINE_STRATEGY_FIELD_NUMBER = 3;
+    private org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy inlineStrategy_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    public boolean hasInlineStrategy() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy getInlineStrategy() {
+      return inlineStrategy_;
+    }
+
     private void initFields() {
       stringId_ = 0;
       qualifier_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Expression.getDefaultInstance();
+      inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy.NOT_INLINE;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -13966,6 +14156,9 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeMessage(2, qualifier_);
       }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeEnum(3, inlineStrategy_.getNumber());
+      }
       output.writeRawBytes(unknownFields);
     }
 
@@ -13982,6 +14175,10 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(2, qualifier_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeEnumSize(3, inlineStrategy_.getNumber());
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -14081,6 +14278,8 @@ public final class JsAstProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000001);
         qualifier_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Expression.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000002);
+        inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy.NOT_INLINE;
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -14112,6 +14311,10 @@ public final class JsAstProtoBuf {
           to_bitField0_ |= 0x00000002;
         }
         result.qualifier_ = qualifier_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.inlineStrategy_ = inlineStrategy_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -14123,6 +14326,9 @@ public final class JsAstProtoBuf {
         }
         if (other.hasQualifier()) {
           mergeQualifier(other.getQualifier());
+        }
+        if (other.hasInlineStrategy()) {
+          setInlineStrategy(other.getInlineStrategy());
         }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
@@ -14254,6 +14460,41 @@ public final class JsAstProtoBuf {
         return this;
       }
 
+      private org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy.NOT_INLINE;
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public boolean hasInlineStrategy() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy getInlineStrategy() {
+        return inlineStrategy_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public Builder setInlineStrategy(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000004;
+        inlineStrategy_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public Builder clearInlineStrategy() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy.NOT_INLINE;
+        
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.js.ast.PropertyReference)
     }
 
@@ -14291,6 +14532,15 @@ public final class JsAstProtoBuf {
      * <code>repeated .org.jetbrains.kotlin.serialization.js.ast.Expression argument = 2;</code>
      */
     int getArgumentCount();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    boolean hasInlineStrategy();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy getInlineStrategy();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Invocation}
@@ -14361,6 +14611,18 @@ public final class JsAstProtoBuf {
                 mutable_bitField0_ |= 0x00000002;
               }
               argument_.add(input.readMessage(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Expression.PARSER, extensionRegistry));
+              break;
+            }
+            case 24: {
+              int rawValue = input.readEnum();
+              org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy value = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy.valueOf(rawValue);
+              if (value == null) {
+                unknownFieldsCodedOutput.writeRawVarint32(tag);
+                unknownFieldsCodedOutput.writeRawVarint32(rawValue);
+              } else {
+                bitField0_ |= 0x00000002;
+                inlineStrategy_ = value;
+              }
               break;
             }
           }
@@ -14450,9 +14712,25 @@ public final class JsAstProtoBuf {
       return argument_.get(index);
     }
 
+    public static final int INLINE_STRATEGY_FIELD_NUMBER = 3;
+    private org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy inlineStrategy_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    public boolean hasInlineStrategy() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy getInlineStrategy() {
+      return inlineStrategy_;
+    }
+
     private void initFields() {
       qualifier_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Expression.getDefaultInstance();
       argument_ = java.util.Collections.emptyList();
+      inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy.NOT_INLINE;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -14487,6 +14765,9 @@ public final class JsAstProtoBuf {
       for (int i = 0; i < argument_.size(); i++) {
         output.writeMessage(2, argument_.get(i));
       }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeEnum(3, inlineStrategy_.getNumber());
+      }
       output.writeRawBytes(unknownFields);
     }
 
@@ -14503,6 +14784,10 @@ public final class JsAstProtoBuf {
       for (int i = 0; i < argument_.size(); i++) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(2, argument_.get(i));
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeEnumSize(3, inlineStrategy_.getNumber());
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -14602,6 +14887,8 @@ public final class JsAstProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000001);
         argument_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000002);
+        inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy.NOT_INLINE;
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -14634,6 +14921,10 @@ public final class JsAstProtoBuf {
           bitField0_ = (bitField0_ & ~0x00000002);
         }
         result.argument_ = argument_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.inlineStrategy_ = inlineStrategy_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -14652,6 +14943,9 @@ public final class JsAstProtoBuf {
             argument_.addAll(other.argument_);
           }
           
+        }
+        if (other.hasInlineStrategy()) {
+          setInlineStrategy(other.getInlineStrategy());
         }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
@@ -14877,6 +15171,41 @@ public final class JsAstProtoBuf {
         ensureArgumentIsMutable();
         argument_.remove(index);
 
+        return this;
+      }
+
+      private org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy.NOT_INLINE;
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public boolean hasInlineStrategy() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy getInlineStrategy() {
+        return inlineStrategy_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public Builder setInlineStrategy(org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000004;
+        inlineStrategy_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public Builder clearInlineStrategy() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.InlineStrategy.NOT_INLINE;
+        
         return this;
       }
 

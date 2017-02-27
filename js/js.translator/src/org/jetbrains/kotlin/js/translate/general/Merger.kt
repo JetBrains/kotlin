@@ -44,7 +44,7 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
         for ((key, importExpr) in fragment.imports) {
             if (declaredImports.add(key)) {
                 val name = nameTable[key]!!
-                importBlock.statements += JsAstUtils.newVar(nameMap.rename(name), nameMap.rename(importExpr))
+                importBlock.statements += JsAstUtils.newVar(name, importExpr)
             }
         }
 
@@ -52,12 +52,7 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
         initializerBlock.statements += fragment.initializerBlock
         addExportStatements(fragment)
 
-        classes += fragment.classes.values.map { cls ->
-            val name = nameMap.rename(cls.name)
-            name to JsClassModel(name, cls.superName?.let { nameMap.rename(it) }).also { copy ->
-                copy.postDeclarationBlock.statements += cls.postDeclarationBlock.statements.map { nameMap.rename(it) }
-            }
-        }
+        classes += fragment.classes
     }
 
     val importedModules: List<JsImportedModule>
@@ -113,6 +108,24 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
         rename(fragment.declarationBlock)
         rename(fragment.exportBlock)
         rename(fragment.initializerBlock)
+
+        fragment.nameBindings.forEach { it.name = rename(it.name) }
+        fragment.imports.entries.forEach { it.setValue(rename(it.value)) }
+
+        fragment.importedModules.forEach { import ->
+            import.internalName = rename(import.internalName)
+            import.plainReference?.let { rename(it) }
+        }
+
+        val classes = fragment.classes.values.map { cls ->
+            JsClassModel(rename(cls.name), cls.superName?.let { rename(it) }).apply {
+                postDeclarationBlock.statements += rename(cls.postDeclarationBlock).statements
+            }
+        }
+        fragment.classes.clear()
+        fragment.classes += classes.map { it.name to it }
+
+        fragment.inlineModuleMap.forEach { (_, value) -> rename(value) }
     }
 
     private fun <T: JsNode> Map<JsName, JsName>.rename(node: T): T {

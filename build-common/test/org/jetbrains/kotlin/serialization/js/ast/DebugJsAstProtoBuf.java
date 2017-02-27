@@ -99,6 +99,97 @@ public final class DebugJsAstProtoBuf {
     // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.js.ast.SideEffects)
   }
 
+  /**
+   * Protobuf enum {@code org.jetbrains.kotlin.serialization.js.ast.InlineStrategy}
+   */
+  public enum InlineStrategy
+      implements org.jetbrains.kotlin.protobuf.ProtocolMessageEnum {
+    /**
+     * <code>AS_FUNCTION = 0;</code>
+     */
+    AS_FUNCTION(0, 0),
+    /**
+     * <code>IN_PLACE = 1;</code>
+     */
+    IN_PLACE(1, 1),
+    /**
+     * <code>NOT_INLINE = 2;</code>
+     */
+    NOT_INLINE(2, 2),
+    ;
+
+    /**
+     * <code>AS_FUNCTION = 0;</code>
+     */
+    public static final int AS_FUNCTION_VALUE = 0;
+    /**
+     * <code>IN_PLACE = 1;</code>
+     */
+    public static final int IN_PLACE_VALUE = 1;
+    /**
+     * <code>NOT_INLINE = 2;</code>
+     */
+    public static final int NOT_INLINE_VALUE = 2;
+
+
+    public final int getNumber() { return value; }
+
+    public static InlineStrategy valueOf(int value) {
+      switch (value) {
+        case 0: return AS_FUNCTION;
+        case 1: return IN_PLACE;
+        case 2: return NOT_INLINE;
+        default: return null;
+      }
+    }
+
+    public static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<InlineStrategy>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<InlineStrategy>
+        internalValueMap =
+          new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<InlineStrategy>() {
+            public InlineStrategy findValueByNumber(int number) {
+              return InlineStrategy.valueOf(number);
+            }
+          };
+
+    public final org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor
+        getValueDescriptor() {
+      return getDescriptor().getValues().get(index);
+    }
+    public final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
+        getDescriptorForType() {
+      return getDescriptor();
+    }
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.EnumDescriptor
+        getDescriptor() {
+      return org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.getDescriptor().getEnumTypes().get(1);
+    }
+
+    private static final InlineStrategy[] VALUES = values();
+
+    public static InlineStrategy valueOf(
+        org.jetbrains.kotlin.protobuf.Descriptors.EnumValueDescriptor desc) {
+      if (desc.getType() != getDescriptor()) {
+        throw new java.lang.IllegalArgumentException(
+          "EnumValueDescriptor is not for this type.");
+      }
+      return VALUES[desc.getIndex()];
+    }
+
+    private final int index;
+    private final int value;
+
+    private InlineStrategy(int index, int value) {
+      this.index = index;
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.serialization.js.ast.InlineStrategy)
+  }
+
   public interface LocationOrBuilder extends
       // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.js.ast.Location)
       org.jetbrains.kotlin.protobuf.MessageOrBuilder {
@@ -17688,6 +17779,15 @@ public final class DebugJsAstProtoBuf {
      * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Expression qualifier = 2;</code>
      */
     org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.ExpressionOrBuilder getQualifierOrBuilder();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    boolean hasInlineStrategy();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy getInlineStrategy();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.NameReference}
@@ -17757,6 +17857,17 @@ public final class DebugJsAstProtoBuf {
                 qualifier_ = subBuilder.buildPartial();
               }
               bitField0_ |= 0x00000002;
+              break;
+            }
+            case 24: {
+              int rawValue = input.readEnum();
+              org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy value = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy.valueOf(rawValue);
+              if (value == null) {
+                unknownFields.mergeVarintField(3, rawValue);
+              } else {
+                bitField0_ |= 0x00000004;
+                inlineStrategy_ = value;
+              }
               break;
             }
           }
@@ -17835,9 +17946,25 @@ public final class DebugJsAstProtoBuf {
       return qualifier_;
     }
 
+    public static final int INLINE_STRATEGY_FIELD_NUMBER = 3;
+    private org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy inlineStrategy_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    public boolean hasInlineStrategy() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy getInlineStrategy() {
+      return inlineStrategy_;
+    }
+
     private void initFields() {
       nameId_ = 0;
       qualifier_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Expression.getDefaultInstance();
+      inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy.NOT_INLINE;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -17868,6 +17995,9 @@ public final class DebugJsAstProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeMessage(2, qualifier_);
       }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeEnum(3, inlineStrategy_.getNumber());
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -17884,6 +18014,10 @@ public final class DebugJsAstProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(2, qualifier_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeEnumSize(3, inlineStrategy_.getNumber());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -18011,6 +18145,8 @@ public final class DebugJsAstProtoBuf {
           qualifierBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000002);
+        inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy.NOT_INLINE;
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -18051,6 +18187,10 @@ public final class DebugJsAstProtoBuf {
         } else {
           result.qualifier_ = qualifierBuilder_.build();
         }
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.inlineStrategy_ = inlineStrategy_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -18072,6 +18212,9 @@ public final class DebugJsAstProtoBuf {
         }
         if (other.hasQualifier()) {
           mergeQualifier(other.getQualifier());
+        }
+        if (other.hasInlineStrategy()) {
+          setInlineStrategy(other.getInlineStrategy());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -18258,6 +18401,41 @@ public final class DebugJsAstProtoBuf {
         return qualifierBuilder_;
       }
 
+      private org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy.NOT_INLINE;
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public boolean hasInlineStrategy() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy getInlineStrategy() {
+        return inlineStrategy_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public Builder setInlineStrategy(org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000004;
+        inlineStrategy_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public Builder clearInlineStrategy() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy.NOT_INLINE;
+        onChanged();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.js.ast.NameReference)
     }
 
@@ -18294,6 +18472,15 @@ public final class DebugJsAstProtoBuf {
      * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Expression qualifier = 2;</code>
      */
     org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.ExpressionOrBuilder getQualifierOrBuilder();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    boolean hasInlineStrategy();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy getInlineStrategy();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.PropertyReference}
@@ -18363,6 +18550,17 @@ public final class DebugJsAstProtoBuf {
                 qualifier_ = subBuilder.buildPartial();
               }
               bitField0_ |= 0x00000002;
+              break;
+            }
+            case 24: {
+              int rawValue = input.readEnum();
+              org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy value = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy.valueOf(rawValue);
+              if (value == null) {
+                unknownFields.mergeVarintField(3, rawValue);
+              } else {
+                bitField0_ |= 0x00000004;
+                inlineStrategy_ = value;
+              }
               break;
             }
           }
@@ -18441,9 +18639,25 @@ public final class DebugJsAstProtoBuf {
       return qualifier_;
     }
 
+    public static final int INLINE_STRATEGY_FIELD_NUMBER = 3;
+    private org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy inlineStrategy_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    public boolean hasInlineStrategy() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy getInlineStrategy() {
+      return inlineStrategy_;
+    }
+
     private void initFields() {
       stringId_ = 0;
       qualifier_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Expression.getDefaultInstance();
+      inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy.NOT_INLINE;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -18474,6 +18688,9 @@ public final class DebugJsAstProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeMessage(2, qualifier_);
       }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeEnum(3, inlineStrategy_.getNumber());
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -18490,6 +18707,10 @@ public final class DebugJsAstProtoBuf {
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(2, qualifier_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeEnumSize(3, inlineStrategy_.getNumber());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -18617,6 +18838,8 @@ public final class DebugJsAstProtoBuf {
           qualifierBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000002);
+        inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy.NOT_INLINE;
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -18657,6 +18880,10 @@ public final class DebugJsAstProtoBuf {
         } else {
           result.qualifier_ = qualifierBuilder_.build();
         }
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.inlineStrategy_ = inlineStrategy_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -18678,6 +18905,9 @@ public final class DebugJsAstProtoBuf {
         }
         if (other.hasQualifier()) {
           mergeQualifier(other.getQualifier());
+        }
+        if (other.hasInlineStrategy()) {
+          setInlineStrategy(other.getInlineStrategy());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -18864,6 +19094,41 @@ public final class DebugJsAstProtoBuf {
         return qualifierBuilder_;
       }
 
+      private org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy.NOT_INLINE;
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public boolean hasInlineStrategy() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy getInlineStrategy() {
+        return inlineStrategy_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public Builder setInlineStrategy(org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000004;
+        inlineStrategy_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public Builder clearInlineStrategy() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy.NOT_INLINE;
+        onChanged();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.js.ast.PropertyReference)
     }
 
@@ -18915,6 +19180,15 @@ public final class DebugJsAstProtoBuf {
      */
     org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.ExpressionOrBuilder getArgumentOrBuilder(
         int index);
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    boolean hasInlineStrategy();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy getInlineStrategy();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Invocation}
@@ -18987,6 +19261,17 @@ public final class DebugJsAstProtoBuf {
                 mutable_bitField0_ |= 0x00000002;
               }
               argument_.add(input.readMessage(org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Expression.PARSER, extensionRegistry));
+              break;
+            }
+            case 24: {
+              int rawValue = input.readEnum();
+              org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy value = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy.valueOf(rawValue);
+              if (value == null) {
+                unknownFields.mergeVarintField(3, rawValue);
+              } else {
+                bitField0_ |= 0x00000002;
+                inlineStrategy_ = value;
+              }
               break;
             }
           }
@@ -19088,9 +19373,25 @@ public final class DebugJsAstProtoBuf {
       return argument_.get(index);
     }
 
+    public static final int INLINE_STRATEGY_FIELD_NUMBER = 3;
+    private org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy inlineStrategy_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    public boolean hasInlineStrategy() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy getInlineStrategy() {
+      return inlineStrategy_;
+    }
+
     private void initFields() {
       qualifier_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Expression.getDefaultInstance();
       argument_ = java.util.Collections.emptyList();
+      inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy.NOT_INLINE;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -19125,6 +19426,9 @@ public final class DebugJsAstProtoBuf {
       for (int i = 0; i < argument_.size(); i++) {
         output.writeMessage(2, argument_.get(i));
       }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeEnum(3, inlineStrategy_.getNumber());
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -19141,6 +19445,10 @@ public final class DebugJsAstProtoBuf {
       for (int i = 0; i < argument_.size(); i++) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(2, argument_.get(i));
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeEnumSize(3, inlineStrategy_.getNumber());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -19273,6 +19581,8 @@ public final class DebugJsAstProtoBuf {
         } else {
           argumentBuilder_.clear();
         }
+        inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy.NOT_INLINE;
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -19318,6 +19628,10 @@ public final class DebugJsAstProtoBuf {
         } else {
           result.argument_ = argumentBuilder_.build();
         }
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.inlineStrategy_ = inlineStrategy_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -19362,6 +19676,9 @@ public final class DebugJsAstProtoBuf {
               argumentBuilder_.addAllMessages(other.argument_);
             }
           }
+        }
+        if (other.hasInlineStrategy()) {
+          setInlineStrategy(other.getInlineStrategy());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -19758,6 +20075,41 @@ public final class DebugJsAstProtoBuf {
           argument_ = null;
         }
         return argumentBuilder_;
+      }
+
+      private org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy.NOT_INLINE;
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public boolean hasInlineStrategy() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy getInlineStrategy() {
+        return inlineStrategy_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public Builder setInlineStrategy(org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000004;
+        inlineStrategy_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.InlineStrategy inline_strategy = 3 [default = NOT_INLINE];</code>
+       */
+      public Builder clearInlineStrategy() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        inlineStrategy_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineStrategy.NOT_INLINE;
+        onChanged();
+        return this;
       }
 
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.js.ast.Invocation)
@@ -49675,202 +50027,195 @@ public final class DebugJsAstProtoBuf {
       "_BIT_OR\020\"\022\017\n\013ASG_BIT_XOR\020#\022\t\n\005COMMA\020$\"\233\002" +
       "\n\016UnaryOperation\022F\n\007operand\030\001 \002(\01325.org." +
       "jetbrains.kotlin.serialization.js.ast.Ex" +
-      "pression\022M\n\004type\030\003 \002(\0162?.org.jetbrains.k" +
-      "otlin.serialization.js.ast.BinaryOperati" +
-      "on.Type\"\231\003\n\004Type\022\007\n\003MUL\020\001\022\007\n\003DIV\020\002\022\007\n\003MO" +
-      "D\020\003\022\007\n\003ADD\020\004\022\007\n\003SUB\020\005\022\007\n\003SHL\020\006\022\007\n\003SHR\020\007\022" +
-      "\010\n\004SHRU\020\010\022\006\n\002LT\020\t\022\007\n\003LTE\020\n\022\006\n\002GT\020\013\022\007\n\003GT" +
-      "E\020\014\022\016\n\nINSTANCEOF\020\r\022\006\n\002IN\020\016\022\006\n\002EQ\020\017\022\007\n\003N" +
-      "EQ\020\020\022\n\n\006REF_EQ\020\021\022\013\n\007REF_NEQ\020\022\022\013\n\007BIT_AND" +
-      "\020\023\022\013\n\007BIT_XOR\020\024\022\n\n\006BIT_OR\020\025\022\007\n\003AND\020\026\022\006\n\002",
-      "OR\020\027\022\007\n\003ASG\020\030\022\013\n\007ASG_ADD\020\031\022\013\n\007ASG_SUB\020\032\022" +
-      "\013\n\007ASG_MUL\020\033\022\013\n\007ASG_DIV\020\034\022\013\n\007ASG_MOD\020\035\022\013" +
-      "\n\007ASG_SHL\020\036\022\013\n\007ASG_SHR\020\037\022\014\n\010ASG_SHRU\020 \022\017" +
-      "\n\013ASG_BIT_AND\020!\022\016\n\nASG_BIT_OR\020\"\022\017\n\013ASG_B" +
-      "IT_XOR\020#\022\t\n\005COMMA\020$\"\233\002\n\016UnaryOperation\022F" +
-      "\n\007operand\030\001 \002(\01325.org.jetbrains.kotlin.s" +
-      "erialization.js.ast.Expression\022L\n\004type\030\002" +
-      " \002(\0162>.org.jetbrains.kotlin.serializatio" +
-      "n.js.ast.UnaryOperation.Type\022\017\n\007postfix\030" +
-      "\003 \002(\010\"b\n\004Type\022\013\n\007BIT_NOT\020\001\022\007\n\003DEC\020\002\022\n\n\006D",
-      "ELETE\020\003\022\007\n\003INC\020\004\022\007\n\003NEG\020\005\022\007\n\003POS\020\006\022\007\n\003NO" +
-      "T\020\007\022\n\n\006TYPEOF\020\010\022\010\n\004VOID\020\t\"\375\001\n\013Conditiona" +
-      "l\022N\n\017test_expression\030\001 \002(\01325.org.jetbrai" +
-      "ns.kotlin.serialization.js.ast.Expressio" +
-      "n\022N\n\017then_expression\030\002 \002(\01325.org.jetbrai" +
-      "ns.kotlin.serialization.js.ast.Expressio" +
-      "n\022N\n\017else_expression\030\003 \002(\01325.org.jetbrai" +
-      "ns.kotlin.serialization.js.ast.Expressio" +
-      "n\"\231\001\n\013ArrayAccess\022D\n\005array\030\001 \002(\01325.org.j" +
-      "etbrains.kotlin.serialization.js.ast.Exp",
-      "ression\022D\n\005index\030\002 \002(\01325.org.jetbrains.k" +
-      "otlin.serialization.js.ast.Expression\"j\n" +
-      "\rNameReference\022\017\n\007name_id\030\001 \002(\005\022H\n\tquali" +
-      "fier\030\002 \001(\01325.org.jetbrains.kotlin.serial" +
-      "ization.js.ast.Expression\"p\n\021PropertyRef" +
-      "erence\022\021\n\tstring_id\030\001 \002(\005\022H\n\tqualifier\030\002" +
-      " \001(\01325.org.jetbrains.kotlin.serializatio" +
-      "n.js.ast.Expression\"\237\001\n\nInvocation\022H\n\tqu" +
-      "alifier\030\001 \002(\01325.org.jetbrains.kotlin.ser" +
-      "ialization.js.ast.Expression\022G\n\010argument",
-      "\030\002 \003(\01325.org.jetbrains.kotlin.serializat" +
-      "ion.js.ast.Expression\"\242\001\n\rInstantiation\022" +
-      "H\n\tqualifier\030\001 \002(\01325.org.jetbrains.kotli" +
-      "n.serialization.js.ast.Expression\022G\n\010arg" +
-      "ument\030\002 \003(\01325.org.jetbrains.kotlin.seria" +
-      "lization.js.ast.Expression\"\323\013\n\tStatement" +
-      "\022\016\n\006fileId\030\001 \001(\005\022E\n\010location\030\002 \001(\01323.org" +
-      ".jetbrains.kotlin.serialization.js.ast.L" +
-      "ocation\022\030\n\tsynthetic\030\003 \001(\010:\005false\022M\n\020ret" +
-      "urn_statement\030\025 \001(\01321.org.jetbrains.kotl",
-      "in.serialization.js.ast.ReturnH\000\022K\n\017thro" +
-      "w_statement\030\026 \001(\01320.org.jetbrains.kotlin" +
-      ".serialization.js.ast.ThrowH\000\022K\n\017break_s" +
-      "tatement\030\027 \001(\01320.org.jetbrains.kotlin.se" +
-      "rialization.js.ast.BreakH\000\022Q\n\022continue_s" +
-      "tatement\030\030 \001(\01323.org.jetbrains.kotlin.se" +
-      "rialization.js.ast.ContinueH\000\022G\n\010debugge" +
-      "r\030\031 \001(\01323.org.jetbrains.kotlin.serializa" +
-      "tion.js.ast.DebuggerH\000\022T\n\nexpression\030\032 \001" +
-      "(\0132>.org.jetbrains.kotlin.serialization.",
-      "js.ast.ExpressionStatementH\000\022?\n\004vars\030\033 \001" +
-      "(\0132/.org.jetbrains.kotlin.serialization." +
-      "js.ast.VarsH\000\022A\n\005block\030\034 \001(\01320.org.jetbr" +
-      "ains.kotlin.serialization.js.ast.BlockH\000" +
-      "\022N\n\014global_block\030\035 \001(\01326.org.jetbrains.k" +
-      "otlin.serialization.js.ast.GlobalBlockH\000" +
-      "\022A\n\005label\030\036 \001(\01320.org.jetbrains.kotlin.s" +
-      "erialization.js.ast.LabelH\000\022E\n\014if_statem" +
-      "ent\030\037 \001(\0132-.org.jetbrains.kotlin.seriali" +
-      "zation.js.ast.IfH\000\022M\n\020switch_statement\030 ",
-      " \001(\01321.org.jetbrains.kotlin.serializatio" +
-      "n.js.ast.SwitchH\000\022K\n\017while_statement\030! \001" +
-      "(\01320.org.jetbrains.kotlin.serialization." +
-      "js.ast.WhileH\000\022P\n\022do_while_statement\030\" \001" +
-      "(\01322.org.jetbrains.kotlin.serialization." +
-      "js.ast.DoWhileH\000\022G\n\rfor_statement\030# \001(\0132" +
-      "..org.jetbrains.kotlin.serialization.js." +
-      "ast.ForH\000\022L\n\020for_in_statement\030$ \001(\01320.or" +
-      "g.jetbrains.kotlin.serialization.js.ast." +
-      "ForInH\000\022G\n\rtry_statement\030% \001(\0132..org.jet",
-      "brains.kotlin.serialization.js.ast.TryH\000" +
-      "\022A\n\005empty\030& \001(\01320.org.jetbrains.kotlin.s" +
-      "erialization.js.ast.EmptyH\000B\013\n\tstatement" +
-      "\"N\n\006Return\022D\n\005value\030\001 \001(\01325.org.jetbrain" +
-      "s.kotlin.serialization.js.ast.Expression" +
-      "\"Q\n\005Throw\022H\n\texception\030\001 \002(\01325.org.jetbr" +
-      "ains.kotlin.serialization.js.ast.Express" +
-      "ion\"\031\n\005Break\022\020\n\010label_id\030\001 \001(\005\"\034\n\010Contin" +
-      "ue\022\020\n\010label_id\030\001 \001(\005\"\n\n\010Debugger\"`\n\023Expr" +
-      "essionStatement\022I\n\nexpression\030\001 \002(\01325.or",
-      "g.jetbrains.kotlin.serialization.js.ast." +
-      "Expression\"\215\001\n\004Vars\022N\n\013declaration\030\001 \003(\013" +
+      "pression\022L\n\004type\030\002 \002(\0162>.org.jetbrains.k" +
+      "otlin.serialization.js.ast.UnaryOperatio" +
+      "n.Type\022\017\n\007postfix\030\003 \002(\010\"b\n\004Type\022\013\n\007BIT_N" +
+      "OT\020\001\022\007\n\003DEC\020\002\022\n\n\006DELETE\020\003\022\007\n\003INC\020\004\022\007\n\003NE",
+      "G\020\005\022\007\n\003POS\020\006\022\007\n\003NOT\020\007\022\n\n\006TYPEOF\020\010\022\010\n\004VOI" +
+      "D\020\t\"\375\001\n\013Conditional\022N\n\017test_expression\030\001" +
+      " \002(\01325.org.jetbrains.kotlin.serializatio" +
+      "n.js.ast.Expression\022N\n\017then_expression\030\002" +
+      " \002(\01325.org.jetbrains.kotlin.serializatio" +
+      "n.js.ast.Expression\022N\n\017else_expression\030\003" +
+      " \002(\01325.org.jetbrains.kotlin.serializatio" +
+      "n.js.ast.Expression\"\231\001\n\013ArrayAccess\022D\n\005a" +
+      "rray\030\001 \002(\01325.org.jetbrains.kotlin.serial" +
+      "ization.js.ast.Expression\022D\n\005index\030\002 \002(\013",
+      "25.org.jetbrains.kotlin.serialization.js" +
+      ".ast.Expression\"\312\001\n\rNameReference\022\017\n\007nam" +
+      "e_id\030\001 \002(\005\022H\n\tqualifier\030\002 \001(\01325.org.jetb" +
+      "rains.kotlin.serialization.js.ast.Expres" +
+      "sion\022^\n\017inline_strategy\030\003 \001(\01629.org.jetb" +
+      "rains.kotlin.serialization.js.ast.Inline" +
+      "Strategy:\nNOT_INLINE\"\320\001\n\021PropertyReferen" +
+      "ce\022\021\n\tstring_id\030\001 \002(\005\022H\n\tqualifier\030\002 \001(\013" +
+      "25.org.jetbrains.kotlin.serialization.js" +
+      ".ast.Expression\022^\n\017inline_strategy\030\003 \001(\016",
       "29.org.jetbrains.kotlin.serialization.js" +
-      ".ast.VarDeclaration\022\030\n\tmultiline\030\002 \001(\010:\005" +
-      "false\022\033\n\023exported_package_id\030\003 \001(\005\"o\n\016Va" +
-      "rDeclaration\022\017\n\007name_id\030\001 \002(\005\022L\n\rinitial" +
-      "_value\030\002 \001(\01325.org.jetbrains.kotlin.seri" +
-      "alization.js.ast.Expression\"P\n\005Block\022G\n\t" +
-      "statement\030\001 \003(\01324.org.jetbrains.kotlin.s" +
-      "erialization.js.ast.Statement\"V\n\013GlobalB",
-      "lock\022G\n\tstatement\030\001 \003(\01324.org.jetbrains." +
-      "kotlin.serialization.js.ast.Statement\"f\n" +
-      "\005Label\022\016\n\006nameId\030\001 \002(\005\022M\n\017inner_statemen" +
-      "t\030\002 \002(\01324.org.jetbrains.kotlin.serializa" +
-      "tion.js.ast.Statement\"\352\001\n\002If\022H\n\tconditio" +
-      "n\030\001 \002(\01325.org.jetbrains.kotlin.serializa" +
-      "tion.js.ast.Expression\022L\n\016then_statement" +
-      "\030\002 \002(\01324.org.jetbrains.kotlin.serializat" +
-      "ion.js.ast.Statement\022L\n\016else_statement\030\003" +
-      " \001(\01324.org.jetbrains.kotlin.serializatio",
-      "n.js.ast.Statement\"\232\001\n\006Switch\022I\n\nexpress" +
-      "ion\030\001 \002(\01325.org.jetbrains.kotlin.seriali" +
-      "zation.js.ast.Expression\022E\n\005entry\030\002 \003(\0132" +
-      "6.org.jetbrains.kotlin.serialization.js." +
-      "ast.SwitchEntry\"\234\001\n\013SwitchEntry\022D\n\005label" +
-      "\030\001 \001(\01325.org.jetbrains.kotlin.serializat" +
-      "ion.js.ast.Expression\022G\n\tstatement\030\002 \003(\013" +
-      "24.org.jetbrains.kotlin.serialization.js" +
-      ".ast.Statement\"\225\001\n\005While\022H\n\tcondition\030\001 " +
-      "\002(\01325.org.jetbrains.kotlin.serialization",
-      ".js.ast.Expression\022B\n\004body\030\002 \002(\01324.org.j" +
-      "etbrains.kotlin.serialization.js.ast.Sta" +
-      "tement\"\227\001\n\007DoWhile\022H\n\tcondition\030\001 \002(\01325." +
-      "org.jetbrains.kotlin.serialization.js.as" +
-      "t.Expression\022B\n\004body\030\002 \002(\01324.org.jetbrai" +
-      "ns.kotlin.serialization.js.ast.Statement" +
-      "\"\277\003\n\003For\022D\n\tvariables\030\001 \001(\0132/.org.jetbra" +
-      "ins.kotlin.serialization.js.ast.VarsH\000\022K" +
-      "\n\nexpression\030\002 \001(\01325.org.jetbrains.kotli" +
-      "n.serialization.js.ast.ExpressionH\000\022E\n\005e",
-      "mpty\030\003 \001(\01324.org.jetbrains.kotlin.serial" +
-      "ization.js.ast.EmptyInitH\000\022H\n\tcondition\030" +
-      "\004 \001(\01325.org.jetbrains.kotlin.serializati" +
-      "on.js.ast.Expression\022H\n\tincrement\030\005 \001(\0132" +
+      ".ast.InlineStrategy:\nNOT_INLINE\"\377\001\n\nInvo" +
+      "cation\022H\n\tqualifier\030\001 \002(\01325.org.jetbrain" +
+      "s.kotlin.serialization.js.ast.Expression" +
+      "\022G\n\010argument\030\002 \003(\01325.org.jetbrains.kotli" +
+      "n.serialization.js.ast.Expression\022^\n\017inl" +
+      "ine_strategy\030\003 \001(\01629.org.jetbrains.kotli" +
+      "n.serialization.js.ast.InlineStrategy:\nN" +
+      "OT_INLINE\"\242\001\n\rInstantiation\022H\n\tqualifier" +
+      "\030\001 \002(\01325.org.jetbrains.kotlin.serializat",
+      "ion.js.ast.Expression\022G\n\010argument\030\002 \003(\0132" +
       "5.org.jetbrains.kotlin.serialization.js." +
-      "ast.Expression\022B\n\004body\030\006 \002(\01324.org.jetbr" +
-      "ains.kotlin.serialization.js.ast.Stateme" +
-      "ntB\006\n\004init\"\013\n\tEmptyInit\"\374\001\n\005ForIn\022\020\n\006nam" +
-      "eId\030\001 \001(\005H\000\022K\n\nexpression\030\002 \001(\01325.org.je" +
-      "tbrains.kotlin.serialization.js.ast.Expr",
-      "essionH\000\022G\n\010iterable\030\003 \002(\01325.org.jetbrai" +
-      "ns.kotlin.serialization.js.ast.Expressio" +
-      "n\022B\n\004body\030\004 \002(\01324.org.jetbrains.kotlin.s" +
-      "erialization.js.ast.StatementB\007\n\005value\"\337" +
-      "\001\n\003Try\022F\n\010tryBlock\030\001 \002(\01324.org.jetbrains" +
-      ".kotlin.serialization.js.ast.Statement\022D" +
-      "\n\ncatchBlock\030\002 \001(\01320.org.jetbrains.kotli" +
-      "n.serialization.js.ast.Catch\022J\n\014finallyB" +
-      "lock\030\003 \001(\01324.org.jetbrains.kotlin.serial" +
-      "ization.js.ast.Statement\"\224\001\n\005Catch\022G\n\tpa",
-      "rameter\030\001 \002(\01324.org.jetbrains.kotlin.ser" +
-      "ialization.js.ast.Parameter\022B\n\004body\030\002 \002(" +
-      "\01324.org.jetbrains.kotlin.serialization.j" +
-      "s.ast.Statement\"\007\n\005Empty\"\327\005\n\010Fragment\022R\n" +
-      "\017imported_module\030\001 \003(\01329.org.jetbrains.k" +
-      "otlin.serialization.js.ast.ImportedModul" +
-      "e\022G\n\014import_entry\030\002 \003(\01321.org.jetbrains." +
-      "kotlin.serialization.js.ast.Import\022Q\n\021de" +
-      "claration_block\030\003 \001(\01326.org.jetbrains.ko" +
-      "tlin.serialization.js.ast.GlobalBlock\022L\n",
-      "\014export_block\030\004 \001(\01326.org.jetbrains.kotl" +
-      "in.serialization.js.ast.GlobalBlock\022Q\n\021i" +
-      "nitializer_block\030\005 \001(\01326.org.jetbrains.k" +
-      "otlin.serialization.js.ast.GlobalBlock\022L" +
-      "\n\014name_binding\030\006 \003(\01326.org.jetbrains.kot" +
-      "lin.serialization.js.ast.NameBinding\022J\n\013" +
-      "class_model\030\007 \003(\01325.org.jetbrains.kotlin" +
-      ".serialization.js.ast.ClassModel\022P\n\021modu" +
-      "le_expression\030\010 \003(\01325.org.jetbrains.kotl" +
-      "in.serialization.js.ast.Expression\022N\n\rin",
-      "line_module\030\t \003(\01327.org.jetbrains.kotlin" +
-      ".serialization.js.ast.InlineModule\"\224\001\n\016I" +
-      "mportedModule\022\030\n\020external_name_id\030\001 \002(\005\022" +
-      "\030\n\020internal_name_id\030\002 \002(\005\022N\n\017plain_refer" +
-      "ence\030\003 \001(\01325.org.jetbrains.kotlin.serial" +
-      "ization.js.ast.Expression\"i\n\006Import\022\024\n\014s" +
-      "ignature_id\030\001 \002(\005\022I\n\nexpression\030\002 \002(\01325." +
-      "org.jetbrains.kotlin.serialization.js.as" +
-      "t.Expression\"3\n\013NameBinding\022\024\n\014signature" +
-      "_id\030\001 \002(\005\022\016\n\006nameId\030\002 \002(\005\"\214\001\n\nClassModel",
-      "\022\017\n\007name_id\030\001 \002(\005\022\025\n\rsuper_name_id\030\002 \001(\005" +
-      "\022V\n\026post_declaration_block\030\003 \001(\01326.org.j" +
-      "etbrains.kotlin.serialization.js.ast.Glo" +
-      "balBlock\";\n\014InlineModule\022\024\n\014signature_id" +
-      "\030\001 \002(\005\022\025\n\rexpression_id\030\002 \002(\005\"\034\n\013StringT" +
-      "able\022\r\n\005entry\030\001 \003(\t\"K\n\tNameTable\022>\n\005entr" +
-      "y\030\001 \003(\0132/.org.jetbrains.kotlin.serializa" +
-      "tion.js.ast.Name\"M\n\004Name\022\021\n\ttemporary\030\001 " +
-      "\002(\010\022\022\n\nidentifier\030\002 \001(\005\022\036\n\026signature_ref" +
-      "erence_id\030\003 \001(\005\"\346\001\n\005Chunk\022L\n\014string_tabl",
-      "e\030\001 \002(\01326.org.jetbrains.kotlin.serializa" +
-      "tion.js.ast.StringTable\022H\n\nname_table\030\002 " +
-      "\002(\01324.org.jetbrains.kotlin.serialization" +
-      ".js.ast.NameTable\022E\n\010fragment\030\003 \002(\01323.or" +
+      "ast.Expression\"\323\013\n\tStatement\022\016\n\006fileId\030\001" +
+      " \001(\005\022E\n\010location\030\002 \001(\01323.org.jetbrains.k" +
+      "otlin.serialization.js.ast.Location\022\030\n\ts" +
+      "ynthetic\030\003 \001(\010:\005false\022M\n\020return_statemen" +
+      "t\030\025 \001(\01321.org.jetbrains.kotlin.serializa" +
+      "tion.js.ast.ReturnH\000\022K\n\017throw_statement\030" +
+      "\026 \001(\01320.org.jetbrains.kotlin.serializati" +
+      "on.js.ast.ThrowH\000\022K\n\017break_statement\030\027 \001",
+      "(\01320.org.jetbrains.kotlin.serialization." +
+      "js.ast.BreakH\000\022Q\n\022continue_statement\030\030 \001" +
+      "(\01323.org.jetbrains.kotlin.serialization." +
+      "js.ast.ContinueH\000\022G\n\010debugger\030\031 \001(\01323.or" +
       "g.jetbrains.kotlin.serialization.js.ast." +
-      "Fragment*@\n\013SideEffects\022\021\n\rAFFECTS_STATE" +
-      "\020\001\022\024\n\020DEPENDS_ON_STATE\020\002\022\010\n\004PURE\020\003B\024B\022De" +
-      "bugJsAstProtoBuf"
+      "DebuggerH\000\022T\n\nexpression\030\032 \001(\0132>.org.jet" +
+      "brains.kotlin.serialization.js.ast.Expre" +
+      "ssionStatementH\000\022?\n\004vars\030\033 \001(\0132/.org.jet" +
+      "brains.kotlin.serialization.js.ast.VarsH" +
+      "\000\022A\n\005block\030\034 \001(\01320.org.jetbrains.kotlin.",
+      "serialization.js.ast.BlockH\000\022N\n\014global_b" +
+      "lock\030\035 \001(\01326.org.jetbrains.kotlin.serial" +
+      "ization.js.ast.GlobalBlockH\000\022A\n\005label\030\036 " +
+      "\001(\01320.org.jetbrains.kotlin.serialization" +
+      ".js.ast.LabelH\000\022E\n\014if_statement\030\037 \001(\0132-." +
+      "org.jetbrains.kotlin.serialization.js.as" +
+      "t.IfH\000\022M\n\020switch_statement\030  \001(\01321.org.j" +
+      "etbrains.kotlin.serialization.js.ast.Swi" +
+      "tchH\000\022K\n\017while_statement\030! \001(\01320.org.jet" +
+      "brains.kotlin.serialization.js.ast.While",
+      "H\000\022P\n\022do_while_statement\030\" \001(\01322.org.jet" +
+      "brains.kotlin.serialization.js.ast.DoWhi" +
+      "leH\000\022G\n\rfor_statement\030# \001(\0132..org.jetbra" +
+      "ins.kotlin.serialization.js.ast.ForH\000\022L\n" +
+      "\020for_in_statement\030$ \001(\01320.org.jetbrains." +
+      "kotlin.serialization.js.ast.ForInH\000\022G\n\rt" +
+      "ry_statement\030% \001(\0132..org.jetbrains.kotli" +
+      "n.serialization.js.ast.TryH\000\022A\n\005empty\030& " +
+      "\001(\01320.org.jetbrains.kotlin.serialization" +
+      ".js.ast.EmptyH\000B\013\n\tstatement\"N\n\006Return\022D",
+      "\n\005value\030\001 \001(\01325.org.jetbrains.kotlin.ser" +
+      "ialization.js.ast.Expression\"Q\n\005Throw\022H\n" +
+      "\texception\030\001 \002(\01325.org.jetbrains.kotlin." +
+      "serialization.js.ast.Expression\"\031\n\005Break" +
+      "\022\020\n\010label_id\030\001 \001(\005\"\034\n\010Continue\022\020\n\010label_" +
+      "id\030\001 \001(\005\"\n\n\010Debugger\"`\n\023ExpressionStatem" +
+      "ent\022I\n\nexpression\030\001 \002(\01325.org.jetbrains." +
+      "kotlin.serialization.js.ast.Expression\"\215" +
+      "\001\n\004Vars\022N\n\013declaration\030\001 \003(\01329.org.jetbr" +
+      "ains.kotlin.serialization.js.ast.VarDecl",
+      "aration\022\030\n\tmultiline\030\002 \001(\010:\005false\022\033\n\023exp" +
+      "orted_package_id\030\003 \001(\005\"o\n\016VarDeclaration" +
+      "\022\017\n\007name_id\030\001 \002(\005\022L\n\rinitial_value\030\002 \001(\013" +
+      "25.org.jetbrains.kotlin.serialization.js" +
+      ".ast.Expression\"P\n\005Block\022G\n\tstatement\030\001 " +
+      "\003(\01324.org.jetbrains.kotlin.serialization" +
+      ".js.ast.Statement\"V\n\013GlobalBlock\022G\n\tstat" +
+      "ement\030\001 \003(\01324.org.jetbrains.kotlin.seria" +
+      "lization.js.ast.Statement\"f\n\005Label\022\016\n\006na" +
+      "meId\030\001 \002(\005\022M\n\017inner_statement\030\002 \002(\01324.or",
+      "g.jetbrains.kotlin.serialization.js.ast." +
+      "Statement\"\352\001\n\002If\022H\n\tcondition\030\001 \002(\01325.or" +
+      "g.jetbrains.kotlin.serialization.js.ast." +
+      "Expression\022L\n\016then_statement\030\002 \002(\01324.org" +
+      ".jetbrains.kotlin.serialization.js.ast.S" +
+      "tatement\022L\n\016else_statement\030\003 \001(\01324.org.j" +
+      "etbrains.kotlin.serialization.js.ast.Sta" +
+      "tement\"\232\001\n\006Switch\022I\n\nexpression\030\001 \002(\01325." +
+      "org.jetbrains.kotlin.serialization.js.as" +
+      "t.Expression\022E\n\005entry\030\002 \003(\01326.org.jetbra",
+      "ins.kotlin.serialization.js.ast.SwitchEn" +
+      "try\"\234\001\n\013SwitchEntry\022D\n\005label\030\001 \001(\01325.org" +
+      ".jetbrains.kotlin.serialization.js.ast.E" +
+      "xpression\022G\n\tstatement\030\002 \003(\01324.org.jetbr" +
+      "ains.kotlin.serialization.js.ast.Stateme" +
+      "nt\"\225\001\n\005While\022H\n\tcondition\030\001 \002(\01325.org.je" +
+      "tbrains.kotlin.serialization.js.ast.Expr" +
+      "ession\022B\n\004body\030\002 \002(\01324.org.jetbrains.kot" +
+      "lin.serialization.js.ast.Statement\"\227\001\n\007D" +
+      "oWhile\022H\n\tcondition\030\001 \002(\01325.org.jetbrain",
+      "s.kotlin.serialization.js.ast.Expression" +
+      "\022B\n\004body\030\002 \002(\01324.org.jetbrains.kotlin.se" +
+      "rialization.js.ast.Statement\"\277\003\n\003For\022D\n\t" +
+      "variables\030\001 \001(\0132/.org.jetbrains.kotlin.s" +
+      "erialization.js.ast.VarsH\000\022K\n\nexpression" +
+      "\030\002 \001(\01325.org.jetbrains.kotlin.serializat" +
+      "ion.js.ast.ExpressionH\000\022E\n\005empty\030\003 \001(\01324" +
+      ".org.jetbrains.kotlin.serialization.js.a" +
+      "st.EmptyInitH\000\022H\n\tcondition\030\004 \001(\01325.org." +
+      "jetbrains.kotlin.serialization.js.ast.Ex",
+      "pression\022H\n\tincrement\030\005 \001(\01325.org.jetbra" +
+      "ins.kotlin.serialization.js.ast.Expressi" +
+      "on\022B\n\004body\030\006 \002(\01324.org.jetbrains.kotlin." +
+      "serialization.js.ast.StatementB\006\n\004init\"\013" +
+      "\n\tEmptyInit\"\374\001\n\005ForIn\022\020\n\006nameId\030\001 \001(\005H\000\022" +
+      "K\n\nexpression\030\002 \001(\01325.org.jetbrains.kotl" +
+      "in.serialization.js.ast.ExpressionH\000\022G\n\010" +
+      "iterable\030\003 \002(\01325.org.jetbrains.kotlin.se" +
+      "rialization.js.ast.Expression\022B\n\004body\030\004 " +
+      "\002(\01324.org.jetbrains.kotlin.serialization",
+      ".js.ast.StatementB\007\n\005value\"\337\001\n\003Try\022F\n\010tr" +
+      "yBlock\030\001 \002(\01324.org.jetbrains.kotlin.seri" +
+      "alization.js.ast.Statement\022D\n\ncatchBlock" +
+      "\030\002 \001(\01320.org.jetbrains.kotlin.serializat" +
+      "ion.js.ast.Catch\022J\n\014finallyBlock\030\003 \001(\01324" +
+      ".org.jetbrains.kotlin.serialization.js.a" +
+      "st.Statement\"\224\001\n\005Catch\022G\n\tparameter\030\001 \002(" +
+      "\01324.org.jetbrains.kotlin.serialization.j" +
+      "s.ast.Parameter\022B\n\004body\030\002 \002(\01324.org.jetb" +
+      "rains.kotlin.serialization.js.ast.Statem",
+      "ent\"\007\n\005Empty\"\327\005\n\010Fragment\022R\n\017imported_mo" +
+      "dule\030\001 \003(\01329.org.jetbrains.kotlin.serial" +
+      "ization.js.ast.ImportedModule\022G\n\014import_" +
+      "entry\030\002 \003(\01321.org.jetbrains.kotlin.seria" +
+      "lization.js.ast.Import\022Q\n\021declaration_bl" +
+      "ock\030\003 \001(\01326.org.jetbrains.kotlin.seriali" +
+      "zation.js.ast.GlobalBlock\022L\n\014export_bloc" +
+      "k\030\004 \001(\01326.org.jetbrains.kotlin.serializa" +
+      "tion.js.ast.GlobalBlock\022Q\n\021initializer_b" +
+      "lock\030\005 \001(\01326.org.jetbrains.kotlin.serial",
+      "ization.js.ast.GlobalBlock\022L\n\014name_bindi" +
+      "ng\030\006 \003(\01326.org.jetbrains.kotlin.serializ" +
+      "ation.js.ast.NameBinding\022J\n\013class_model\030" +
+      "\007 \003(\01325.org.jetbrains.kotlin.serializati" +
+      "on.js.ast.ClassModel\022P\n\021module_expressio" +
+      "n\030\010 \003(\01325.org.jetbrains.kotlin.serializa" +
+      "tion.js.ast.Expression\022N\n\rinline_module\030" +
+      "\t \003(\01327.org.jetbrains.kotlin.serializati" +
+      "on.js.ast.InlineModule\"\224\001\n\016ImportedModul" +
+      "e\022\030\n\020external_name_id\030\001 \002(\005\022\030\n\020internal_",
+      "name_id\030\002 \002(\005\022N\n\017plain_reference\030\003 \001(\01325" +
+      ".org.jetbrains.kotlin.serialization.js.a" +
+      "st.Expression\"i\n\006Import\022\024\n\014signature_id\030" +
+      "\001 \002(\005\022I\n\nexpression\030\002 \002(\01325.org.jetbrain" +
+      "s.kotlin.serialization.js.ast.Expression" +
+      "\"3\n\013NameBinding\022\024\n\014signature_id\030\001 \002(\005\022\016\n" +
+      "\006nameId\030\002 \002(\005\"\214\001\n\nClassModel\022\017\n\007name_id\030" +
+      "\001 \002(\005\022\025\n\rsuper_name_id\030\002 \001(\005\022V\n\026post_dec" +
+      "laration_block\030\003 \001(\01326.org.jetbrains.kot" +
+      "lin.serialization.js.ast.GlobalBlock\";\n\014",
+      "InlineModule\022\024\n\014signature_id\030\001 \002(\005\022\025\n\rex" +
+      "pression_id\030\002 \002(\005\"\034\n\013StringTable\022\r\n\005entr" +
+      "y\030\001 \003(\t\"K\n\tNameTable\022>\n\005entry\030\001 \003(\0132/.or" +
+      "g.jetbrains.kotlin.serialization.js.ast." +
+      "Name\"-\n\004Name\022\021\n\ttemporary\030\001 \002(\010\022\022\n\nident" +
+      "ifier\030\002 \001(\005\"\346\001\n\005Chunk\022L\n\014string_table\030\001 " +
+      "\002(\01326.org.jetbrains.kotlin.serialization" +
+      ".js.ast.StringTable\022H\n\nname_table\030\002 \002(\0132" +
+      "4.org.jetbrains.kotlin.serialization.js." +
+      "ast.NameTable\022E\n\010fragment\030\003 \002(\01323.org.je",
+      "tbrains.kotlin.serialization.js.ast.Frag" +
+      "ment*@\n\013SideEffects\022\021\n\rAFFECTS_STATE\020\001\022\024" +
+      "\n\020DEPENDS_ON_STATE\020\002\022\010\n\004PURE\020\003*?\n\016Inline" +
+      "Strategy\022\017\n\013AS_FUNCTION\020\000\022\014\n\010IN_PLACE\020\001\022" +
+      "\016\n\nNOT_INLINE\020\002B\024B\022DebugJsAstProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -50015,19 +50360,19 @@ public final class DebugJsAstProtoBuf {
     internal_static_org_jetbrains_kotlin_serialization_js_ast_NameReference_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_serialization_js_ast_NameReference_descriptor,
-        new java.lang.String[] { "NameId", "Qualifier", });
+        new java.lang.String[] { "NameId", "Qualifier", "InlineStrategy", });
     internal_static_org_jetbrains_kotlin_serialization_js_ast_PropertyReference_descriptor =
       getDescriptor().getMessageTypes().get(22);
     internal_static_org_jetbrains_kotlin_serialization_js_ast_PropertyReference_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_serialization_js_ast_PropertyReference_descriptor,
-        new java.lang.String[] { "StringId", "Qualifier", });
+        new java.lang.String[] { "StringId", "Qualifier", "InlineStrategy", });
     internal_static_org_jetbrains_kotlin_serialization_js_ast_Invocation_descriptor =
       getDescriptor().getMessageTypes().get(23);
     internal_static_org_jetbrains_kotlin_serialization_js_ast_Invocation_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_serialization_js_ast_Invocation_descriptor,
-        new java.lang.String[] { "Qualifier", "Argument", });
+        new java.lang.String[] { "Qualifier", "Argument", "InlineStrategy", });
     internal_static_org_jetbrains_kotlin_serialization_js_ast_Instantiation_descriptor =
       getDescriptor().getMessageTypes().get(24);
     internal_static_org_jetbrains_kotlin_serialization_js_ast_Instantiation_fieldAccessorTable = new

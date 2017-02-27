@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.serialization.js.ast
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.protobuf.CodedInputStream
+import org.jetbrains.kotlin.resolve.inline.InlineStrategy as KotlinInlineStrategy
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Expression.ExpressionCase
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Statement.StatementCase
@@ -341,13 +342,22 @@ class JsAstDeserializer(private val program: JsProgram) {
 
         ExpressionCase.NAME_REFERENCE -> {
             val nameRefProto = proto.nameReference
-            JsNameRef(deserializeName(nameRefProto.nameId), if (nameRefProto.hasQualifier()) deserialize(nameRefProto.qualifier) else null)
+            val qualifier = if (nameRefProto.hasQualifier()) deserialize(nameRefProto.qualifier) else null
+            JsNameRef(deserializeName(nameRefProto.nameId), qualifier).apply {
+                if (nameRefProto.hasInlineStrategy()) {
+                    inlineStrategy = map(nameRefProto.inlineStrategy)
+                }
+            }
         }
 
         ExpressionCase.PROPERTY_REFERENCE -> {
             val propertyRefProto = proto.propertyReference
             val qualifier = if (propertyRefProto.hasQualifier()) deserialize(propertyRefProto.qualifier) else null
-            JsNameRef(deserializeString(propertyRefProto.stringId), qualifier)
+            JsNameRef(deserializeString(propertyRefProto.stringId), qualifier).apply {
+                if (propertyRefProto.hasInlineStrategy()) {
+                    inlineStrategy = map(propertyRefProto.inlineStrategy)
+                }
+            }
         }
 
         ExpressionCase.INVOCATION -> {
@@ -355,7 +365,11 @@ class JsAstDeserializer(private val program: JsProgram) {
             JsInvocation(
                     deserialize(invocationProto.qualifier),
                     invocationProto.argumentList.map { deserialize(it) }
-            )
+            ).apply {
+                if (invocationProto.hasInlineStrategy()) {
+                    inlineStrategy = map(invocationProto.inlineStrategy)
+                }
+            }
         }
 
         ExpressionCase.INSTANTIATION -> {
@@ -464,6 +478,12 @@ class JsAstDeserializer(private val program: JsProgram) {
         SideEffects.AFFECTS_STATE -> SideEffectKind.AFFECTS_STATE
         SideEffects.DEPENDS_ON_STATE -> SideEffectKind.DEPENDS_ON_STATE
         SideEffects.PURE -> SideEffectKind.PURE
+    }
+
+    private fun map(inlineStrategy: InlineStrategy) = when(inlineStrategy) {
+        InlineStrategy.AS_FUNCTION -> KotlinInlineStrategy.AS_FUNCTION
+        InlineStrategy.IN_PLACE -> KotlinInlineStrategy.IN_PLACE
+        InlineStrategy.NOT_INLINE -> KotlinInlineStrategy.NOT_INLINE
     }
 
     private fun <T : JsNode> withLocation(fileId: Int?, location: Location?, action: () -> T): T {
