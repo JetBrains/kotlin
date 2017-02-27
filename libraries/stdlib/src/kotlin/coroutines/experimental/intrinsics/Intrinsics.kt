@@ -52,6 +52,16 @@ public val COROUTINE_SUSPENDED: Any = Any()
 
 // JVM declarations
 
+/**
+ * Creates a coroutine without receiver and with result type [T].
+ * This function creates a new, fresh instance of suspendable computation every time it is invoked.
+ *
+ * To start executing the created coroutine, invoke `resume(Unit)` on the returned [Continuation] instance.
+ * The [completion] continuation is invoked when coroutine completes with result or exception.
+ *
+ * This function is _unchecked_. Repeated invocation of any resume function on the resulting continuation corrupts the
+ * state machine of the coroutine and may result in arbitrary behaviour or exception.
+ */
 @SinceKotlin("1.1")
 @kotlin.jvm.JvmVersion
 public fun <T> (suspend () -> T).createCoroutineUnchecked(
@@ -64,6 +74,16 @@ public fun <T> (suspend () -> T).createCoroutineUnchecked(
         else
             (this.create(completion) as kotlin.coroutines.experimental.jvm.internal.CoroutineImpl).facade
 
+/**
+ * Creates a coroutine with receiver type [R] and result type [T].
+ * This function creates a new, fresh instance of suspendable computation every time it is invoked.
+ *
+ * To start executing the created coroutine, invoke `resume(Unit)` on the returned [Continuation] instance.
+ * The [completion] continuation is invoked when coroutine completes with result or exception.
+ *
+ * This function is _unchecked_. Repeated invocation of any resume function on the resulting continuation corrupts the
+ * state machine of the coroutine and may result in arbitrary behaviour or exception.
+ */
 @SinceKotlin("1.1")
 @kotlin.jvm.JvmVersion
 public fun <R, T> (suspend R.() -> T).createCoroutineUnchecked(

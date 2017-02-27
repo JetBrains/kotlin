@@ -49,10 +49,12 @@ public fun <T> (suspend  () -> T).startCoroutine(
 }
 
 /**
- * Creates coroutine with receiver type [R] and result type [T].
+ * Creates a coroutine with receiver type [R] and result type [T].
  * This function creates a new, fresh instance of suspendable computation every time it is invoked.
+ *
  * To start executing the created coroutine, invoke `resume(Unit)` on the returned [Continuation] instance.
  * The [completion] continuation is invoked when coroutine completes with result or exception.
+ * Repeated invocation of any resume function on the resulting continuation produces [IllegalStateException].
  */
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
@@ -62,10 +64,12 @@ public fun <R, T> (suspend R.() -> T).createCoroutine(
 ): Continuation<Unit> = SafeContinuation(createCoroutineUnchecked(receiver, completion), COROUTINE_SUSPENDED)
 
 /**
- * Creates coroutine without receiver and with result type [T].
+ * Creates a coroutine without receiver and with result type [T].
  * This function creates a new, fresh instance of suspendable computation every time it is invoked.
+ *
  * To start executing the created coroutine, invoke `resume(Unit)` on the returned [Continuation] instance.
  * The [completion] continuation is invoked when coroutine completes with result or exception.
+ * Repeated invocation of any resume function on the resulting continuation produces [IllegalStateException].
  */
 @SinceKotlin("1.1")
 @Suppress("UNCHECKED_CAST")
