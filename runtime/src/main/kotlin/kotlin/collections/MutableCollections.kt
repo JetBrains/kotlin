@@ -258,17 +258,17 @@ private fun MutableCollection<*>.retainNothing(): Boolean {
 /**
  * Sorts elements in the list in-place according to their natural sort order.
  */
-@FixmeSorting
-public fun <T : Comparable<T>> MutableList<T>.sort(): Unit {
-    TODO()
-    //if (size > 1) java.util.Collections.sort(this)
-}
+public fun <T : Comparable<T>> MutableList<T>.sort(): Unit = sortWith(Comparator<T> { a: T, b: T -> a.compareTo(b) })
 
 /**
  * Sorts elements in the list in-place according to the order specified with [comparator].
  */
-@FixmeSorting
 public fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
-    TODO()
-    //if (size > 1) java.util.Collections.sort(this, comparator)
+    if (size > 1) {
+        val it = listIterator()
+        for (v in toTypedArray().apply { sortWith(comparator) }) {
+            it.next()
+            it.set(v)
+        }
+    }
 }
