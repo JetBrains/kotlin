@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
@@ -40,6 +37,7 @@ import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import java.lang.AssertionError
 import java.util.*
 
@@ -143,14 +141,17 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
 
     private fun generateDelegatedProperty(irClass: IrClassImpl, irDelegate: IrFieldImpl,
                                           delegated: PropertyDescriptor, overridden: PropertyDescriptor) {
-        val irProperty = IrPropertyImpl(irDelegate.startOffset, irDelegate.endOffset, IrDeclarationOrigin.DELEGATED_MEMBER, false, delegated)
+        val startOffset = irDelegate.startOffset
+        val endOffset = irDelegate.endOffset
 
-        val irGetter = IrFunctionImpl(irDelegate.startOffset, irDelegate.endOffset, IrDeclarationOrigin.DELEGATED_MEMBER, delegated.getter!!)
+        val irProperty = IrPropertyImpl(startOffset, endOffset, IrDeclarationOrigin.DELEGATED_MEMBER, false, delegated)
+
+        val irGetter = IrFunctionImpl(startOffset, endOffset, IrDeclarationOrigin.DELEGATED_MEMBER, delegated.getter!!)
         irGetter.body = generateDelegateFunctionBody(irDelegate, delegated.getter!!, overridden.getter!!)
         irProperty.getter = irGetter
 
         if (delegated.isVar) {
-            val irSetter = IrFunctionImpl(irDelegate.startOffset, irDelegate.endOffset, IrDeclarationOrigin.DELEGATED_MEMBER, delegated.setter!!)
+            val irSetter = IrFunctionImpl(startOffset, endOffset, IrDeclarationOrigin.DELEGATED_MEMBER, delegated.setter!!)
             irSetter.body = generateDelegateFunctionBody(irDelegate, delegated.setter!!, overridden.setter!!)
             irProperty.setter = irSetter
         }
@@ -165,22 +166,28 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
     }
 
     private fun generateDelegateFunctionBody(irDelegate: IrFieldImpl, delegated: FunctionDescriptor, overridden: FunctionDescriptor): IrBlockBodyImpl {
-        val irBlockBody = IrBlockBodyImpl(irDelegate.startOffset, irDelegate.endOffset)
+        val startOffset = irDelegate.startOffset
+        val endOffset = irDelegate.endOffset
+        val classOwner = delegated.containingDeclaration.assertedCast<ClassDescriptor> { "Class member expected: $delegated" }
+
+        val irBlockBody = IrBlockBodyImpl(startOffset, endOffset)
         val returnType = overridden.returnType!!
-        val irCall = IrCallImpl(irDelegate.startOffset, irDelegate.endOffset, returnType, overridden, null)
-        irCall.dispatchReceiver = IrGetValueImpl(irDelegate.startOffset, irDelegate.endOffset, irDelegate.descriptor)
+        val irCall = IrCallImpl(startOffset, endOffset, returnType, overridden, null)
+        irCall.dispatchReceiver = IrGetFieldImpl(startOffset, endOffset, irDelegate.descriptor,
+                                                 IrGetValueImpl(startOffset, endOffset, classOwner.thisAsReceiverParameter)
+                                                 )
         irCall.extensionReceiver = delegated.extensionReceiverParameter?.let { extensionReceiver ->
-            IrGetValueImpl(irDelegate.startOffset, irDelegate.endOffset, extensionReceiver)
+            IrGetValueImpl(startOffset, endOffset, extensionReceiver)
         }
         irCall.mapValueParameters { overriddenValueParameter ->
             val delegatedValueParameter = delegated.valueParameters[overriddenValueParameter.index]
-            IrGetValueImpl(irDelegate.startOffset, irDelegate.endOffset, delegatedValueParameter)
+            IrGetValueImpl(startOffset, endOffset, delegatedValueParameter)
         }
         if (KotlinBuiltIns.isUnit(returnType) || KotlinBuiltIns.isNothing(returnType)) {
             irBlockBody.statements.add(irCall)
         }
         else {
-            val irReturn = IrReturnImpl(irDelegate.startOffset, irDelegate.endOffset, context.builtIns.nothingType, delegated, irCall)
+            val irReturn = IrReturnImpl(startOffset, endOffset, context.builtIns.nothingType, delegated, irCall)
             irBlockBody.statements.add(irReturn)
         }
         return irBlockBody

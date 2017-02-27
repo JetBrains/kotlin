@@ -22,6 +22,7 @@ FILE /delegatedImplementationWithExplicitOverride.kt
     FUN DELEGATED_MEMBER public open override fun foo(): kotlin.Unit
       BLOCK_BODY
         CALL 'foo(): Unit' type=kotlin.Unit origin=null
-          $this: GET_VAR '`C$IFooBar$delegate`: FooBarImpl' type=FooBarImpl origin=null
+          $this: GET_FIELD '`C$IFooBar$delegate`: FooBarImpl' type=FooBarImpl origin=null
+            receiver: GET_VAR '<receiver: C>' type=C origin=null
     FUN public open override fun bar(): kotlin.Unit
       BLOCK_BODY
