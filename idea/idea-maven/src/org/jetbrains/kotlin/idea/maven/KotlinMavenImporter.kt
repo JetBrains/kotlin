@@ -33,6 +33,10 @@ import org.jetbrains.idea.maven.model.MavenPlugin
 import org.jetbrains.idea.maven.project.*
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
+import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -102,8 +106,36 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         configureFacet(mavenProject, modifiableModelsProvider, module)
     }
 
-    private fun getCompilerArgumentsByConfigurationElement(configuration: Element) =
-            configuration.getChild("args")?.getChildren("arg")?.map { it.text } ?: emptyList()
+    private fun getCompilerArgumentsByConfigurationElement(configuration: Element, platform: TargetPlatformKind<*>): List<String> {
+        val arguments = when (platform) {
+            is TargetPlatformKind.Jvm -> K2JVMCompilerArguments()
+            is TargetPlatformKind.JavaScript -> K2JSCompilerArguments()
+            is TargetPlatformKind.Common -> K2MetadataCompilerArguments()
+        }
+
+        arguments.apiVersion = configuration.getChild("apiVersion")?.text
+        arguments.languageVersion = configuration.getChild("languageVersion")?.text
+        arguments.multiPlatform = configuration.getChild("multiPlatform")?.text?.trim()?.toBoolean() ?: false
+        arguments.suppressWarnings = configuration.getChild("nowarn")?.text?.trim()?.toBoolean() ?: false
+        when (arguments) {
+            is K2JVMCompilerArguments -> {
+                arguments.classpath = configuration.getChild("classpath")?.text
+                arguments.jdkHome = configuration.getChild("jdkHome")?.text
+                arguments.jvmTarget = configuration.getChild("jvmTarget")?.text
+            }
+            is K2JSCompilerArguments -> {
+                arguments.sourceMap = configuration.getChild("sourceMap")?.text?.trim()?.toBoolean() ?: false
+                arguments.outputFile = configuration.getChild("outputFile")?.text
+                arguments.metaInfo = configuration.getChild("metaInfo")?.text?.trim()?.toBoolean() ?: false
+                arguments.moduleKind = configuration.getChild("moduleKind")?.text
+            }
+        }
+
+        return ArrayList<String>().apply {
+            this += ArgumentUtils.convertArgumentsToStringList(arguments)
+            configuration.getChild("args")?.getChildren("arg")?.mapNotNullTo(this) { it.text }
+        }
+    }
 
     private val compilationGoals = listOf(PomFile.KotlinGoals.Compile,
                                           PomFile.KotlinGoals.TestCompile,
@@ -118,19 +150,16 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         val platform = detectPlatformByExecutions(mavenProject) ?: detectPlatformByLibraries(mavenProject)
 
         kotlinFacet.configureFacet(compilerVersion, CoroutineSupport.DEFAULT, platform, modifiableModelsProvider)
+        val configuredPlatform = kotlinFacet.configuration.settings.versionInfo.targetPlatformKind!!
         val configuration = mavenPlugin.configurationElement
-        val apiVersion = configuration?.getChild("apiVersion")?.text?.let { LanguageVersion.fromFullVersionString(it) }
-        val sharedArguments = configuration?.let { getCompilerArgumentsByConfigurationElement(it) } ?: emptyList()
+        val sharedArguments = configuration?.let { getCompilerArgumentsByConfigurationElement(it, configuredPlatform) } ?: emptyList()
         val executionArguments = mavenPlugin.executions?.filter { it.goals.any { it in compilationGoals } }
                                          ?.firstOrNull()
-                                         ?.configurationElement?.let { getCompilerArgumentsByConfigurationElement(it) }
-                                 ?: emptyList()
-        with(kotlinFacet.configuration.settings) {
-            versionInfo.apiLevel = apiVersion
-            compilerInfo.k2jvmCompilerArguments?.jvmTarget = configuration?.getChild("jvmTarget")?.text
-        }
+                                         ?.configurationElement?.let { getCompilerArgumentsByConfigurationElement(it, configuredPlatform) }
         parseCompilerArgumentsToFacet(sharedArguments, emptyList(), kotlinFacet)
-        parseCompilerArgumentsToFacet(executionArguments, emptyList(), kotlinFacet)
+        if (executionArguments != null) {
+            parseCompilerArgumentsToFacet(executionArguments, emptyList(), kotlinFacet, true)
+        }
         MavenProjectImportHandler.getInstances(module.project).forEach { it(kotlinFacet, mavenProject) }
     }
 
