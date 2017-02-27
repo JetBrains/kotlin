@@ -27,6 +27,8 @@ class IrExpressionBodyImpl(startOffset: Int, endOffset: Int) : IrElementBase(sta
         this.expression = expression
     }
 
+    constructor(expression: IrExpression) : this(expression.startOffset, expression.endOffset, expression)
+
     override lateinit var expression: IrExpression
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

@@ -45,7 +45,7 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
             val ktDefaultValue = ktParameter.defaultValue ?: continue
             val valueParameter = getOrFail(BindingContext.VALUE_PARAMETER, ktParameter) as? ValueParameterDescriptor ?: continue
             val irDefaultValue = statementGenerator.generateExpression(ktDefaultValue)
-            irFunction.putDefault(valueParameter, IrExpressionBodyImpl(ktDefaultValue.startOffset, ktDefaultValue.endOffset, irDefaultValue))
+            irFunction.putDefault(valueParameter, IrExpressionBodyImpl(irDefaultValue))
         }
     }
 
@@ -64,8 +64,7 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
     }
 
     fun generatePropertyInitializerBody(ktInitializer: KtExpression): IrExpressionBody =
-            IrExpressionBodyImpl(ktInitializer.startOffset, ktInitializer.endOffset,
-                                 createStatementGenerator().generateExpression(ktInitializer))
+            IrExpressionBodyImpl(createStatementGenerator().generateExpression(ktInitializer))
 
     fun generateLambdaBody(ktFun: KtFunctionLiteral): IrBody {
         val statementGenerator = createStatementGenerator()

@@ -194,7 +194,7 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
             return IrFieldImpl(
                     enumEntry.startOffset, enumEntry.endOffset, JvmLoweredDeclarationOrigin.FIELD_FOR_ENUM_ENTRY,
                     fieldPropertyDescriptor,
-                    IrExpressionBodyImpl(enumEntryInitializer.startOffset, enumEntryInitializer.endOffset, enumEntryInitializer)
+                    IrExpressionBodyImpl(enumEntryInitializer)
             )
         }
 

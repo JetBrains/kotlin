@@ -60,7 +60,7 @@ class PropertyGenerator(val declarationGenerator: DeclarationGenerator) : Genera
         val irField = IrFieldImpl(ktParameter.startOffset, ktParameter.endOffset, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, propertyDescriptor)
         val irGetParameter = IrGetValueImpl(ktParameter.startOffset, ktParameter.endOffset,
                                             valueParameterDescriptor, IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER)
-        irField.initializer = IrExpressionBodyImpl(ktParameter.startOffset, ktParameter.endOffset, irGetParameter)
+        irField.initializer = IrExpressionBodyImpl(irGetParameter)
         irProperty.backingField = irField
 
         val getter = propertyDescriptor.getter ?:

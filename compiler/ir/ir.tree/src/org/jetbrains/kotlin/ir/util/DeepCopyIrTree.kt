@@ -178,10 +178,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             throw IllegalArgumentException("Unsupported body type: $body")
 
     override fun visitExpressionBody(body: IrExpressionBody): IrExpressionBody =
-            IrExpressionBodyImpl(
-                    body.startOffset, body.endOffset,
-                    body.expression.transform(this, null)
-            )
+            IrExpressionBodyImpl(body.expression.transform(this, null))
 
     override fun visitBlockBody(body: IrBlockBody): IrBlockBody =
             IrBlockBodyImpl(
