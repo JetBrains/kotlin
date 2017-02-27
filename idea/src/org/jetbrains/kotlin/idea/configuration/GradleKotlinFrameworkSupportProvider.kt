@@ -88,7 +88,7 @@ class GradleKotlinJavaFrameworkSupportProvider : GradleKotlinFrameworkSupportPro
     override fun getPluginDefinition() = KotlinGradleModuleConfigurator.APPLY_KOTLIN
 
     override fun getRuntimeLibrary(rootModel: ModifiableRootModel) =
-            KotlinWithGradleConfigurator.getRuntimeLibrary(rootModel.sdk)
+            KotlinWithGradleConfigurator.getRuntimeLibraryForSdk(rootModel.sdk)
 }
 
 class GradleKotlinJSFrameworkSupportProvider : GradleKotlinFrameworkSupportProvider("KOTLIN_JS", "Kotlin (JavaScript)") {
