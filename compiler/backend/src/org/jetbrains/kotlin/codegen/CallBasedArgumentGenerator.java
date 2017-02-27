@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.*;
+import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.List;
@@ -84,7 +85,9 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
     protected void generateVararg(int i, @NotNull VarargValueArgument argument) {
         ValueParameterDescriptor parameter = valueParameters.get(i);
         Type type = valueParameterTypes.get(i);
-        codegen.genVarargs(argument, parameter.getType());
+        // Upper bound for type of vararg parameter should always have a form of 'Array<out T>',
+        // while its lower bound may be Nothing-typed after approximation
+        codegen.genVarargs(argument, FlexibleTypesKt.upperIfFlexible(parameter.getType()));
         callGenerator.afterParameterPut(type, null, i);
     }
 
