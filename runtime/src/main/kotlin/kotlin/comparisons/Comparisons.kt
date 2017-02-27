@@ -4,6 +4,11 @@ interface Comparator<T> {
     fun compare(a: T, b: T): Int
 }
 
+fun <T> Comparator(function: (a: T, b: T) -> Int): Comparator<T> {
+    return object: Comparator<T> {
+        override fun compare(a: T, b: T) = function(a, b)
+    }
+}
 /**
  * Compares two values using the specified functions [selectors] to calculate the result of the comparison.
  * The functions are called sequentially, receive the given values [a] and [b] and return [Comparable]
