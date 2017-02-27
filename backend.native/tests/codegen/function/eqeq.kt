@@ -6,6 +6,9 @@ fun eqeqF  (a:Float,  b:Float ) = a == b
 fun eqeqD  (a:Double, b:Double) = a == b
 fun eqeqStr(a:String, b:String) = a == b
 
+fun eqeqN  (a: Nothing, b: Nothing) = a == b
+fun eqeqNN (a: Nothing?, b: Nothing?) = a == b
+
 fun eqeqeq (a: Any?, b: Any?) = a === b
 
 fun gtI  (a:Int,    b:Int   ) = a >  b
@@ -32,6 +35,9 @@ fun main(args: Array<String>) {
     if (!eqeqD(3.0 , 3.0 )) throw Error()
 
     if (!eqeqStr(helloString(), helloString()))   throw Error()
+
+    if (!eqeqNN(null, null)) throw Error()
+
     if (!eqeqeq(helloString(),  helloString()))   throw Error()
     if (eqeqeq(helloString(),   goodbyeString())) throw Error()
 
