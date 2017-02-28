@@ -65,17 +65,10 @@ class KtLightMethodImpl private constructor(
 
     override fun getContainingClass(): KtLightClass = containingClass
 
-    private val paramsList: CachedValue<PsiParameterList> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val cacheManager = CachedValuesManager.getManager(clsDelegate.project)
-        cacheManager.createCachedValue<PsiParameterList>({
-            val parameterBuilder = LightParameterListBuilder(manager, KotlinLanguage.INSTANCE, this)
-
-            for ((index, parameter) in clsDelegate.parameterList.parameters.withIndex()) {
-                parameterBuilder.addParameter(KtLightParameter(parameter, index, this))
-            }
-
-            CachedValueProvider.Result.create(parameterBuilder, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
-        }, false)
+    private val paramsList: PsiParameterList by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KtLightParameterList(this, dummyDelegate?.parameterList?.parametersCount ?: clsDelegate.parameterList.parametersCount) {
+            clsDelegate.parameterList.parameters.mapIndexed { index, clsParameter -> KtLightParameter(clsParameter, index, this@KtLightMethodImpl) }
+        }
     }
 
     private val typeParamsList: CachedValue<PsiTypeParameterList> by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -161,7 +154,7 @@ class KtLightMethodImpl private constructor(
 
     override fun getNameIdentifier() = lightIdentifier
 
-    override fun getParameterList() = paramsList.value
+    override fun getParameterList() = paramsList
 
     override fun getTypeParameterList() = typeParamsList.value
 
@@ -264,7 +257,7 @@ class KtLightMethodImpl private constructor(
 
     override fun isVarArgs() = clsDelegate.isVarArgs
 
-    override fun isConstructor() = clsDelegate.isConstructor
+    override fun isConstructor() = dummyDelegate?.isConstructor ?: clsDelegate.isConstructor
 
     override fun getHierarchicalMethodSignature() = clsDelegate.hierarchicalMethodSignature
 

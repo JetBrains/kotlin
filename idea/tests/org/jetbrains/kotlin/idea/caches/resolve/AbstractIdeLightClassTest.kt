@@ -196,11 +196,13 @@ object LightClassLazinessChecker {
     }
 
     private data class MethodInfo(
-            val name: String
+            val name: String,
+            val isConstructor: Boolean,
+            val parameterCount: Int
     )
 
     private fun methodInfo(method: PsiMethod) = with(method) {
-        MethodInfo(name)
+        MethodInfo(name, isConstructor, method.parameterList.parametersCount)
     }
 }
 
