@@ -31,7 +31,7 @@ class JsAstSerializer {
     private val stringTableBuilder = StringTable.newBuilder()
     private val nameMap = mutableMapOf<JsName, Int>()
     private val stringMap = mutableMapOf<String, Int>()
-    private val locationStack: Deque<JsLocation> = ArrayDeque()
+    private val fileStack: Deque<String> = ArrayDeque()
 
     fun serialize(fragment: JsProgramFragment, output: OutputStream) {
         serialize(fragment).writeTo(output)
@@ -561,27 +561,25 @@ class JsAstSerializer {
     }
 
     private inline fun withLocation(node: JsNode, fileConsumer: (Int) -> Unit, locationConsumer: (Location) -> Unit, inner: () -> Unit) {
-        val lastLocation = locationStack.peek()
         val location = extractLocation(node)
-        val locationStackModified = if (lastLocation != location && location != null) {
-            locationStack.push(location)
-            if (lastLocation == null || lastLocation.file != location.file) {
+        var fileChanged = false
+        if (location != null) {
+            val lastFile = fileStack.peek()
+            fileChanged = lastFile != location.file
+            if (fileChanged) {
                 fileConsumer(serialize(location.file))
+                fileStack.push(location.file)
             }
             val locationBuilder = Location.newBuilder()
             locationBuilder.startLine = location.startLine
             locationBuilder.startChar = location.startChar
             locationConsumer(locationBuilder.build())
-            true
-        }
-        else {
-            false
         }
 
         inner()
 
-        if (locationStackModified) {
-            locationStack.pop()
+        if (fileChanged) {
+            fileStack.pop()
         }
     }
 

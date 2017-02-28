@@ -20,22 +20,25 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.PairConsumer;
+import org.jetbrains.kotlin.js.backend.ast.JsLocation;
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilder;
 
 class SourceMapBuilderConsumer implements PairConsumer<SourceMapBuilder, Object> {
     @Override
     public void consume(SourceMapBuilder builder, Object sourceInfo) {
-        if (!(sourceInfo instanceof PsiElement)) {
-            return;
+        if (sourceInfo instanceof PsiElement) {
+            PsiElement element = (PsiElement) sourceInfo;
+            PsiFile file = element.getContainingFile();
+            int offset = element.getNode().getStartOffset();
+            Document document = file.getViewProvider().getDocument();
+            assert document != null;
+            int line = document.getLineNumber(offset);
+            int column = offset - document.getLineStartOffset(line);
+            builder.addMapping(file.getViewProvider().getVirtualFile().getPath(), line, column);
         }
-
-        PsiElement element = (PsiElement) sourceInfo;
-        PsiFile file = element.getContainingFile();
-        int offset = element.getNode().getStartOffset();
-        Document document = file.getViewProvider().getDocument();
-        assert document != null;
-        int line = document.getLineNumber(offset);
-        int column = offset - document.getLineStartOffset(line);
-        builder.addMapping(file.getViewProvider().getVirtualFile().getPath(), line, column);
+        else if (sourceInfo instanceof JsLocation) {
+            JsLocation location = (JsLocation) sourceInfo;
+            builder.addMapping(location.getFile(), location.getStartLine(), location.getStartChar());
+        }
     }
 }

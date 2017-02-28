@@ -31,7 +31,7 @@ class JsAstDeserializer(private val program: JsProgram) {
     private val stringTable = mutableListOf<String>()
     private val nameTable = mutableListOf<Name>()
     private val nameCache = mutableListOf<JsName?>()
-    private val locationStack: Deque<JsLocation> = ArrayDeque()
+    private val fileStack: Deque<String> = ArrayDeque()
 
     fun deserialize(input: InputStream): JsProgramFragment {
         return deserialize(Chunk.parseFrom(CodedInputStream.newInstance(input).apply { setRecursionLimit(4096) }))
@@ -491,28 +491,27 @@ class JsAstDeserializer(private val program: JsProgram) {
     }
 
     private fun <T : JsNode> withLocation(fileId: Int?, location: Location?, action: () -> T): T {
-        val lastLocation = locationStack.peek()
-        val deserializedLocation = if (fileId != null || location != null) {
-            val file = fileId?.let { deserializeString(it) } ?: lastLocation?.file!!
-            val (startLine, startChar) = if (location != null) {
-                Pair(location.startLine, location.startChar)
-            }
-            else {
-                Pair(lastLocation.startLine, lastLocation.startChar)
-            }
-            JsLocation(file, startLine, startChar)
+        val deserializedFile = fileId?.let { deserializeString(it) }
+        val file = deserializedFile ?: fileStack.peek()
+        val deserializedLocation = if (file != null && location != null) {
+            JsLocation(file, location.startLine, location.startChar)
         }
         else {
             null
         }
 
-        if (deserializedLocation != null) {
-            locationStack.push(deserializedLocation)
+        val shouldUpdateFile = location != null && deserializedFile != null && deserializedFile != fileStack.peek()
+        if (shouldUpdateFile) {
+            fileStack.push(deserializedFile)
         }
         val node = action()
         if (deserializedLocation != null) {
-            node.source = deserializedLocation
-            locationStack.pop()
+            if (node !is JsLiteral.JsBooleanLiteral && node !is JsLiteral.JsThisRef && node !is JsNullLiteral) {
+                node.source = deserializedLocation
+            }
+        }
+        if (shouldUpdateFile) {
+            fileStack.pop()
         }
 
         return node

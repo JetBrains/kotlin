@@ -270,10 +270,17 @@ abstract class BasicBoxTest(
             translateFiles(allTranslationUnits, recompiledOutputFile, recompiledConfig)
 
             val originalOutput = FileUtil.loadFile(outputFile)
-            val recompiledOutput = FileUtil.loadFile(recompiledOutputFile)
+            val recompiledOutput = removeRecompiledSuffix(FileUtil.loadFile(recompiledOutputFile))
             TestCase.assertEquals("Output file changed after recompilation", originalOutput, recompiledOutput)
+
+            val originalSourceMap = FileUtil.loadFile(File(outputFile.parentFile, outputFile.name + ".map"))
+            val recompiledSourceMap = removeRecompiledSuffix(
+                    FileUtil.loadFile(File(recompiledOutputFile.parentFile, recompiledOutputFile.name + ".map")))
+            TestCase.assertEquals("Source map file changed after recompilation", originalSourceMap, recompiledSourceMap)
         }
-    }protected fun translateFiles(units: List<TranslationUnit>, outputFile: File, config: JsConfig,
+    }
+
+    private fun removeRecompiledSuffix(text: String): String = text.replace("-recompiled.js", ".js")protected fun translateFiles(units: List<TranslationUnit>, outputFile: File, config: JsConfig,
             outputPrefixFile: File?,
             outputPostfixFile: File?,
             mainCallParameters: MainCallParameters) {
@@ -362,9 +369,11 @@ abstract class BasicBoxTest(
         configuration.put(JSConfigurationKeys.TARGET, EcmaVersion.v5)
 
         configuration.put(JSConfigurationKeys.SOURCE_MAP, generateSourceMap)
+
         val hasFilesToRecompile = module.hasFilesToRecompile
         configuration.put(JSConfigurationKeys.META_INFO, multiModule)
         configuration.put(JSConfigurationKeys.SERIALIZE_FRAGMENTS, hasFilesToRecompile)
+        configuration.put(JSConfigurationKeys.SOURCE_MAP, hasFilesToRecompile)
 
         if (additionalMetadata != null) {
             configuration.put(JSConfigurationKeys.FALLBACK_METADATA, additionalMetadata.map { FileUtil.loadFileBytes(it) })
@@ -413,9 +422,7 @@ abstract class BasicBoxTest(
                 currentModule.languageVersion = LanguageVersion.fromVersionString(version)
             }
 
-            return TestFile(temporaryFile.absolutePath, currentModule).apply {
-                recompile = RECOMPILE_PATTERN.matcher(text).find()
-            }
+            return TestFile(temporaryFile.absolutePath, currentModule, recompile = RECOMPILE_PATTERN.matcher(text).find())
         }
 
         override fun createModule(name: String, dependencies: List<String>): TestModule? {
@@ -427,12 +434,10 @@ abstract class BasicBoxTest(
         }
     }
 
-    private class TestFile(val fileName: String, val module: TestModule) {
+    private class TestFile(val fileName: String, val module: TestModule, val recompile: Boolean) {
         init {
             module.files += this
         }
-
-        var recompile = false
     }
 
     private class TestModule(

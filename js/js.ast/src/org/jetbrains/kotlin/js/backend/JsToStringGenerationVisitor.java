@@ -464,7 +464,9 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
         rightParen();
         nestedPush(x.getBody());
-        accept(x.getBody());
+        if (x.getBody() != null) {
+            accept(x.getBody());
+        }
         nestedPop(x.getBody());
     }
 

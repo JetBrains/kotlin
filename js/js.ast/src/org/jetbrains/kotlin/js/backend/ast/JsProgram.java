@@ -19,11 +19,7 @@ import java.util.Map;
 public final class JsProgram extends SourceInfoAwareJsNode {
     private final JsGlobalBlock globalBlock = new JsGlobalBlock();
 
-    private final TDoubleObjectHashMap<JsDoubleLiteral> doubleLiteralMap = new TDoubleObjectHashMap<JsDoubleLiteral>();
-    private final TIntObjectHashMap<JsIntLiteral> intLiteralMap = new TIntObjectHashMap<JsIntLiteral>();
-
     private final JsRootScope rootScope;
-    private final Map<String, JsStringLiteral> stringLiteralMap = new THashMap<String, JsStringLiteral>();
     private final JsObjectScope topScope;
 
     public JsProgram() {
@@ -36,23 +32,11 @@ public final class JsProgram extends SourceInfoAwareJsNode {
     }
 
     public JsNumberLiteral getNumberLiteral(double value) {
-        JsDoubleLiteral literal = doubleLiteralMap.get(value);
-        if (literal == null) {
-            literal = new JsDoubleLiteral(value);
-            doubleLiteralMap.put(value, literal);
-        }
-
-        return literal;
+        return new JsDoubleLiteral(value);
     }
 
     public JsNumberLiteral getNumberLiteral(int value) {
-        JsIntLiteral literal = intLiteralMap.get(value);
-        if (literal == null) {
-            literal = new JsIntLiteral(value);
-            intLiteralMap.put(value, literal);
-        }
-
-        return literal;
+        return new JsIntLiteral(value);
     }
 
     /**
@@ -77,12 +61,7 @@ public final class JsProgram extends SourceInfoAwareJsNode {
      */
     @NotNull
     public JsStringLiteral getStringLiteral(String value) {
-        JsStringLiteral literal = stringLiteralMap.get(value);
-        if (literal == null) {
-            literal = new JsStringLiteral(value);
-            stringLiteralMap.put(value, literal);
-        }
-        return literal;
+        return new JsStringLiteral(value);
     }
 
     @Override
