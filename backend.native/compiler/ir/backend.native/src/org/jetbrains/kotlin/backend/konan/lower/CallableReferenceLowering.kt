@@ -2,22 +2,25 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.descriptors.*
-import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.builtins.getFunctionalClassKind
-import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.backend.konan.KonanBackendContext
+import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalClass
+import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionOrKFunctionType
+import org.jetbrains.kotlin.backend.konan.ir.addArguments
+import org.jetbrains.kotlin.backend.konan.ir.getArguments
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallableReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -32,9 +35,9 @@ internal class CallableReferenceLowering(val context: KonanBackendContext) : Dec
     var callableReferenceCount = 0
 
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
-        irDeclarationContainer.declarations.transformFlat { memberDeclaration ->
-            if (memberDeclaration is IrFunction || memberDeclaration is IrProperty)
-                lowerCallableReferences(this, memberDeclaration)
+        irDeclarationContainer.declarations.transformFlat { declaration ->
+            if (declaration !is IrDeclarationContainer)
+                lowerCallableReferences(this, irDeclarationContainer, declaration)
             else
                 null
         }
@@ -45,8 +48,15 @@ internal class CallableReferenceLowering(val context: KonanBackendContext) : Dec
  * Replaces all callable references in the function body to unbound ones.
  * Returns the list of this function and all created ones.
  */
-private fun lowerCallableReferences(lower: CallableReferenceLowering, declaration: IrDeclaration): List<IrDeclaration> {
-    val transformer = CallableReferencesUnbinder(lower, declaration)
+private fun lowerCallableReferences(lower: CallableReferenceLowering,
+                                    irDeclarationContainer: IrDeclarationContainer,
+                                    declaration: IrDeclaration): List<IrDeclaration> {
+    val containingDeclaration = when (irDeclarationContainer) {
+        is IrClass -> irDeclarationContainer.descriptor
+        is IrFile -> irDeclarationContainer.packageFragmentDescriptor
+        else -> throw AssertionError("Unexpected declaration container: $irDeclarationContainer")
+    }
+    val transformer = CallableReferencesUnbinder(lower, containingDeclaration)
     declaration.transformChildrenVoid(transformer)
     return declaration.singletonList() + transformer.createdFunctions
 }
@@ -59,7 +69,7 @@ private object DECLARATION_ORIGIN_FUNCTION_FOR_CALLABLE_REFERENCE :
  * Adds all created functions to [createdFunctions].
  */
 private class CallableReferencesUnbinder(val lower: CallableReferenceLowering,
-                                         val declaration: IrDeclaration) : IrElementTransformerVoid() {
+                                         val containingDeclaration: DeclarationDescriptor) : IrElementTransformerVoid() {
 
     val createdFunctions = mutableListOf<IrFunction>()
 
@@ -82,6 +92,11 @@ private class CallableReferencesUnbinder(val lower: CallableReferenceLowering,
                 .filterIsInstance<PropertyDescriptor>()
                 .single { it.name.asString() == "boundArgs" }
                 .getter!!
+    }
+
+    override fun visitClass(declaration: IrClass): IrStatement {
+        // Class is a declaration container - it will be visited by the main visitor (CallableReferenceLowering).
+        return declaration
     }
 
     override fun visitCallableReference(expression: IrCallableReference): IrExpression {
@@ -191,7 +206,7 @@ private class CallableReferencesUnbinder(val lower: CallableReferenceLowering,
         val newName = Name.identifier("${descriptor.name}\$bound-${lower.callableReferenceCount++}")
 
         val newDescriptor = SimpleFunctionDescriptorImpl.create(
-                declaration.descriptor.containingDeclaration!!, Annotations.EMPTY,
+                containingDeclaration, Annotations.EMPTY,
                 newName, CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE)
 
         val simpleFunctionImplType = simpleFunctionImplClass.defaultType
