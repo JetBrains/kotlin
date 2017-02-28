@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.Variance
 
@@ -70,7 +71,7 @@ class MainFunctionDetector {
     fun getMainFunction(module: ModuleDescriptor): FunctionDescriptor? = getMainFunction(module, module.getPackage(FqName.ROOT))
 
     private fun getMainFunction(module: ModuleDescriptor, packageView: PackageViewDescriptor): FunctionDescriptor? {
-        for (packageFragment in packageView.fragments) {
+        for (packageFragment in packageView.fragments.filter { it.module == module }) {
             DescriptorUtils.getAllDescriptors(packageFragment.getMemberScope())
                     .filterIsInstance<FunctionDescriptor>()
                     .firstOrNull { isMain(it) }

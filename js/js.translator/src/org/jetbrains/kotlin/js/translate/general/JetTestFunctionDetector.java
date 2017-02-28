@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -72,7 +73,9 @@ public class JetTestFunctionDetector {
             @NotNull List<FunctionDescriptor> foundFunctions
     ) {
         for (PackageFragmentDescriptor packageDescriptor : moduleDescriptor.getPackage(packageName).getFragments()) {
-            Collection<DeclarationDescriptor> descriptors = DescriptorUtils.getAllDescriptors(packageDescriptor.getMemberScope());
+            if (DescriptorUtils.getContainingModule(packageDescriptor) != moduleDescriptor) continue;
+            Collection<DeclarationDescriptor> descriptors = packageDescriptor.getMemberScope().getContributedDescriptors(
+                    DescriptorKindFilter.CLASSIFIERS, MemberScope.Companion.getALL_NAME_FILTER());
             for (DeclarationDescriptor descriptor : descriptors) {
                 if (descriptor instanceof ClassDescriptor) {
                     getTestFunctions((ClassDescriptor) descriptor, foundFunctions);
@@ -85,7 +88,6 @@ public class JetTestFunctionDetector {
         }
     }
 
-    @NotNull
     private static void getTestFunctions(
             @NotNull ClassDescriptor classDescriptor,
             @NotNull List<FunctionDescriptor> foundFunctions
@@ -93,7 +95,8 @@ public class JetTestFunctionDetector {
         if (classDescriptor.getModality() == Modality.ABSTRACT) return;
 
 
-                Collection<DeclarationDescriptor> allDescriptors = DescriptorUtils.getAllDescriptors(classDescriptor.getUnsubstitutedMemberScope());
+                Collection<DeclarationDescriptor> allDescriptors = classDescriptor.getUnsubstitutedMemberScope().getContributedDescriptors(
+                DescriptorKindFilter.FUNCTIONS, MemberScope.Companion.getALL_NAME_FILTER());
                 List<FunctionDescriptor> testFunctions = ContainerUtil.mapNotNull(
                         allDescriptors,
                          descriptor-> {
