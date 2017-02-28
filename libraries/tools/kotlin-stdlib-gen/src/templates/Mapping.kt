@@ -402,6 +402,8 @@ fun mapping(): List<GenericFunction> {
             """
             Creates a [Grouping] source from ${f.collection.prefixWithArticle()} to be used later with one of group-and-fold operations
             using the specified [keySelector] function to extract a key from each ${f.element}.
+
+            @sample samples.collections.Collections.Transformations.groupingByEachCount
             """
         }
 

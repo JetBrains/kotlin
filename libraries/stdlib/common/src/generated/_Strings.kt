@@ -425,6 +425,8 @@ public header inline fun <K, V, M : MutableMap<in K, MutableList<V>>> CharSequen
 /**
  * Creates a [Grouping] source from a char sequence to be used later with one of group-and-fold operations
  * using the specified [keySelector] function to extract a key from each character.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupingByEachCount
  */
 @SinceKotlin("1.1")
 public header inline fun <K> CharSequence.groupingBy(crossinline keySelector: (Char) -> K): Grouping<Char, K>

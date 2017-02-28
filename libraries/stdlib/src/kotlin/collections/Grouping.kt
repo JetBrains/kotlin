@@ -224,6 +224,8 @@ public inline fun <S, T : S, K, M : MutableMap<in K, S>> Grouping<T, K>.reduceTo
  * Groups elements from the [Grouping] source by key and counts elements in each group.
  *
  * @return a [Map] associating the key of each group with the count of elements in the group.
+ *
+ * @sample samples.collections.Collections.Transformations.groupingByEachCount
  */
 @SinceKotlin("1.1")
 @JvmVersion
@@ -241,6 +243,8 @@ public fun <T, K> Grouping<T, K>.eachCount(): Map<K, Int> =
  * that value is used as an initial value of the counter for that group.
  *
  * @return the [destination] map associating the key of each group with the count of elements in the group.
+ *
+ * @sample samples.collections.Collections.Transformations.groupingByEachCount
  */
 @SinceKotlin("1.1")
 public fun <T, K, M : MutableMap<in K, Int>> Grouping<T, K>.eachCountTo(destination: M): M =
