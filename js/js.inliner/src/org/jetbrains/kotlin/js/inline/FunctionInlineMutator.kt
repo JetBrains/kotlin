@@ -99,7 +99,7 @@ private constructor(
         var thisReplacement = getThisReplacement(call)
         if (thisReplacement == null || thisReplacement is JsLiteral.JsThisRef) return
 
-        val thisName = namingContext.getFreshName(getThisAlias())
+        val thisName = JsScope.declareTemporaryName(getThisAlias())
         namingContext.newVar(thisName, thisReplacement)
         thisReplacement = thisName.makeRef()
 
@@ -109,7 +109,7 @@ private constructor(
     private fun processReturns() {
         resultExpr = getResultReference()
 
-        val breakName = namingContext.getFreshName(getBreakLabel())
+        val breakName = JsScope.declareTemporaryName(getBreakLabel())
         this.breakLabel = JsLabel(breakName).apply { synthetic = true }
 
         val visitor = ReturnReplacingVisitor(resultExpr as? JsNameRef, breakName.makeRef(), invokedFunction, call.isSuspend)
@@ -119,7 +119,7 @@ private constructor(
     private fun getResultReference(): JsNameRef? {
         if (!isResultNeeded(call)) return null
 
-        val resultName = namingContext.getFreshName(getResultLabel())
+        val resultName = JsScope.declareTemporaryName(getResultLabel())
         this.resultName = resultName
         namingContext.newVar(resultName, null)
         return resultName.makeRef()

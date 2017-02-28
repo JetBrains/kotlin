@@ -25,10 +25,7 @@ import java.util.IdentityHashMap
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.inline.util.replaceNames
 
-class NamingContext(
-        private val scope: JsScope,
-        private val statementContext: JsContext<JsStatement>
-) {
+class NamingContext(private val statementContext: JsContext<JsStatement>) {
     private val renamings = IdentityHashMap<JsName, JsExpression>()
     private val declarations = ArrayList<JsVars>()
     private var addedDeclarations = false
@@ -47,8 +44,6 @@ class NamingContext(
 
         renamings.put(name, replacement)
     }
-
-    fun getFreshName(candidate: String): JsName = scope.declareFreshName(candidate)
 
     fun newVar(name: JsName, value: JsExpression? = null) {
         val vars = JsAstUtils.newVar(name, value)
