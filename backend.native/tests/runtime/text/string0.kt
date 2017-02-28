@@ -6,4 +6,5 @@ fun main(args: Array<String>) {
     println(strI18n.toUpperCase())
     println(strI18n.toLowerCase())
     println("пока".capitalize())
+    println("http://jetbrains.com".startsWith("http://"))
 }

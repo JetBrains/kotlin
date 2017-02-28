@@ -712,7 +712,7 @@ public fun CharSequence.endsWith(char: Char, ignoreCase: Boolean = false): Boole
  */
 public fun CharSequence.startsWith(prefix: CharSequence, ignoreCase: Boolean = false): Boolean {
     if (!ignoreCase && this is String && prefix is String)
-        return this.startsWith(prefix)
+        return (this as String).startsWith(prefix)
     else
         return regionMatchesImpl(0, prefix, 0, prefix.length, ignoreCase)
 }
@@ -722,7 +722,7 @@ public fun CharSequence.startsWith(prefix: CharSequence, ignoreCase: Boolean = f
  */
 public fun CharSequence.startsWith(prefix: CharSequence, startIndex: Int, ignoreCase: Boolean = false): Boolean {
     if (!ignoreCase && this is String && prefix is String)
-        return this.startsWith(prefix, startIndex)
+        return (this as String).startsWith(prefix, startIndex)
     else
         return regionMatchesImpl(startIndex, prefix, 0, prefix.length, ignoreCase)
 }
@@ -732,7 +732,7 @@ public fun CharSequence.startsWith(prefix: CharSequence, startIndex: Int, ignore
  */
 public fun CharSequence.endsWith(suffix: CharSequence, ignoreCase: Boolean = false): Boolean {
     if (!ignoreCase && this is String && suffix is String)
-        return this.endsWith(suffix)
+        return (this as String).endsWith(suffix)
     else
         return regionMatchesImpl(length - suffix.length, suffix, 0, suffix.length, ignoreCase)
 }

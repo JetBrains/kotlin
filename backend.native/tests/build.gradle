@@ -879,7 +879,7 @@ task string_builder0(type: RunKonanTest) {
 }
 
 task string0(type: RunKonanTest) {
-    goldValue = "true\ntrue\nПРИВЕТ\nпривет\nПока\n"
+    goldValue = "true\ntrue\nПРИВЕТ\nпривет\nПока\ntrue\n"
     source = "runtime/text/string0.kt"
 }
 

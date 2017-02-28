@@ -76,28 +76,6 @@ public fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: B
 }
 
 /**
- * Returns a copy of this string converted to upper case using the rules of the default locale.
- */
-@SymbolName("Kotlin_String_toUpperCase")
-external public fun String.toUpperCase(): String
-
-/**
- * Returns a copy of this string converted to lower case using the rules of the default locale.
- */
-@SymbolName("Kotlin_String_toLowerCase")
-external public inline fun String.toLowerCase(): String
-
-/**
- * Returns a copy of this string having its first letter uppercased, or the original string,
- * if it's empty or already starts with an upper case letter.
- *
- * @sample samples.text.Strings.captialize
- */
-public fun String.capitalize(): String {
-    return if (isNotEmpty() && this[0].isLowerCase()) substring(0, 1).toUpperCase() + substring(1) else this
-}
-
-/**
  * Returns a copy of this string having its first letter lowercased, or the original string,
  * if it's empty or already starts with a lower case letter.
  *
@@ -111,6 +89,34 @@ public fun String.decapitalize(): String {
  * Returns `true` if this string is empty or consists solely of whitespace characters.
  */
 public fun CharSequence.isBlank(): Boolean = length == 0 || indices.all { this[it].isWhitespace() }
+
+/**
+ * Returns the substring of this string starting at the [startIndex] and ending right before the [endIndex].
+ *
+ * @param startIndex the start index (inclusive).
+ * @param endIndex the end index (exclusive).
+ */
+@kotlin.internal.InlineOnly
+public inline fun String.substring(startIndex: Int, endIndex: Int): String =
+        subSequence(startIndex, endIndex) as String
+
+/**
+ * Returns `true` if this string starts with the specified prefix.
+ */
+public fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boolean =
+        regionMatches(0, prefix, 0, prefix.length, ignoreCase)
+
+/**
+ * Returns `true` if a substring of this string starting at the specified offset [startIndex] starts with the specified prefix.
+ */
+public fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean =
+        regionMatches(startIndex, prefix, 0, prefix.length, ignoreCase)
+
+/**
+ * Returns `true` if this string ends with the specified suffix.
+ */
+public fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean =
+        regionMatches(length - suffix.length, suffix, 0, suffix.length, ignoreCase)
 
 /**
  * Returns `true` if the specified range in this char sequence is equal to the specified range in another char sequence.
@@ -136,3 +142,25 @@ external public fun CharSequence.regionMatches(
 external public fun String.regionMatches(
         thisOffset: Int, other: String, otherOffset: Int, length: Int,
         ignoreCase: Boolean = false): Boolean
+
+/**
+ * Returns a copy of this string converted to upper case using the rules of the default locale.
+ */
+@SymbolName("Kotlin_String_toUpperCase")
+external public fun String.toUpperCase(): String
+
+/**
+ * Returns a copy of this string converted to lower case using the rules of the default locale.
+ */
+@SymbolName("Kotlin_String_toLowerCase")
+external public inline fun String.toLowerCase(): String
+
+/**
+ * Returns a copy of this string having its first letter uppercased, or the original string,
+ * if it's empty or already starts with an upper case letter.
+ *
+ * @sample samples.text.Strings.captialize
+ */
+public fun String.capitalize(): String {
+    return if (isNotEmpty() && this[0].isLowerCase()) substring(0, 1).toUpperCase() + substring(1) else this
+}
