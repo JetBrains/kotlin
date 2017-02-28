@@ -588,7 +588,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("enable", compilerInfo.coroutineSupport.compilerArgument)
             Assert.assertEquals("JVM 1.8", versionInfo.targetPlatformKind!!.description)
             Assert.assertEquals("1.8", compilerInfo.k2jvmCompilerArguments!!.jvmTarget)
-            Assert.assertEquals("-version -cp foobar.jar -jdk-home JDK_HOME -Xmulti-platform",
+            Assert.assertEquals("-cp foobar.jar -jdk-home JDK_HOME -Xmulti-platform",
                                 compilerInfo.compilerSettings!!.additionalArguments)
         }
     }
