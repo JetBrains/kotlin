@@ -17,7 +17,7 @@ open class S(
 class A : I by S(
         foo(),
         Nested(),
-        <!UNRESOLVED_REFERENCE!>Inner<!>(),
+        <!RESOLUTION_TO_CLASSIFIER!>Inner<!>(),
         CONST,
         Companion.CONST,
         Nested.CONST,

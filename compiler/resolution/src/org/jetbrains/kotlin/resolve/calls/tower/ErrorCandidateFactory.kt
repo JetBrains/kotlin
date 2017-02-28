@@ -31,6 +31,7 @@ enum class WrongResolutionToClassifier(val message: (Name) -> String) {
     INTERFACE_AS_VALUE({ "Interface $it does not have companion object" }),
     INTERFACE_AS_FUNCTION({ "Interface $it does not have constructors" }),
     CLASS_AS_VALUE({ "Class $it does not have companion object" }),
+    INNER_CLASS_CONSTRUCTOR_NO_RECEIVER({ "Constructor of inner class $it can be called only with receiver of containing class" }),
     OBJECT_AS_FUNCTION({ "Function 'invoke()' is not found in object $it" })
 }
 
@@ -92,7 +93,11 @@ private fun ErrorCandidateContext.asClassifierCall(asFunction: Boolean) {
                     when (classifier.kind) {
                         ClassKind.INTERFACE -> if (asFunction) INTERFACE_AS_FUNCTION else INTERFACE_AS_VALUE
                         ClassKind.OBJECT -> if (asFunction) OBJECT_AS_FUNCTION else return
-                        ClassKind.CLASS -> if (asFunction) return else CLASS_AS_VALUE
+                        ClassKind.CLASS -> when {
+                            asFunction && explicitReceiver is QualifierReceiver? && classifier.isInner -> INNER_CLASS_CONSTRUCTOR_NO_RECEIVER
+                            !asFunction -> CLASS_AS_VALUE
+                            else -> return
+                        }
                         else -> return
                     }
                 }

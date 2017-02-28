@@ -10,7 +10,7 @@ class Test {
         }
 
         fun more(): InnerClass {
-            val b = <!UNRESOLVED_REFERENCE!>InnerClass<!>()
+            val b = <!RESOLUTION_TO_CLASSIFIER!>InnerClass<!>()
 
             val <!UNUSED_VARIABLE!>testVal<!> = <!UNRESOLVED_REFERENCE!>inClass<!>
             <!UNRESOLVED_REFERENCE!>foo<!>()

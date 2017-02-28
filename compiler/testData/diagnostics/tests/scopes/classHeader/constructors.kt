@@ -4,7 +4,7 @@ class A(
         n: Nested = foo(),
         n2: Nested = Nested(),
         inn: Inner = null!!,
-        inn2: Inner = <!UNRESOLVED_REFERENCE!>Inner<!>(),
+        inn2: Inner = <!RESOLUTION_TO_CLASSIFIER!>Inner<!>(),
         i: Interface = null!!,
         c: Int = CONST,
         cc: Int = Companion.CONST,
