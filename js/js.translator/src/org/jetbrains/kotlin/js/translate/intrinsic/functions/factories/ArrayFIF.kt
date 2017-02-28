@@ -49,7 +49,7 @@ object ArrayFIF : CompositeFIF() {
     @JvmField
     val LENGTH_PROPERTY_INTRINSIC = BuiltInPropertyIntrinsic("length")
 
-    public fun castToTypedArray(type: PrimitiveType?, arg: JsArrayLiteral): JsExpression {
+    fun castToTypedArray(type: PrimitiveType?, arg: JsArrayLiteral): JsExpression {
         when (type) {
             BYTE -> "Int8"
             SHORT -> "Int16"
