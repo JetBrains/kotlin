@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: AT.java
 
 public class AT<G> {
