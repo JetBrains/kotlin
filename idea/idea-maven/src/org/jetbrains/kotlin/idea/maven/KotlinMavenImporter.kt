@@ -158,7 +158,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
                                          ?.configurationElement?.let { getCompilerArgumentsByConfigurationElement(it, configuredPlatform) }
         parseCompilerArgumentsToFacet(sharedArguments, emptyList(), kotlinFacet)
         if (executionArguments != null) {
-            parseCompilerArgumentsToFacet(executionArguments, emptyList(), kotlinFacet, true)
+            parseCompilerArgumentsToFacet(executionArguments, emptyList(), kotlinFacet)
         }
         MavenProjectImportHandler.getInstances(module.project).forEach { it(kotlinFacet, mavenProject) }
     }
