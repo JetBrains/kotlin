@@ -7,7 +7,7 @@ Relevant pages: [Packages](packages.html)
 
 [start]
 kotlinFile
-  : preamble toplevelObject*
+  : preamble topLevelObject*
   ;
 
 [start]
@@ -43,16 +43,14 @@ import
 See [Imports](packages.html#imports)
 */
 
-toplevelObject
+topLevelObject
   : class
   : object
   : function
   : property
-//  : typeAlias
+  : typeAlias
   ;
 
-/*
 typeAlias
-  : modifiers "typealias" SimpleName (typeParameters typeConstraints)? "=" type
+  : modifiers "typealias" SimpleName typeParameters? "=" type
   ;
-*/

@@ -570,7 +570,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   : "@" (annotationUseSiteTarget ":")? "[" unescapedAnnotation+ "]"
      *   ;
      *
-     *   annotationUseSiteTarget
+     * annotationUseSiteTarget
      *   : "file"
      *   : "field"
      *   : "property"
@@ -1234,7 +1234,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *
      * property
      *   : modifiers ("val" | "var")
-     *       typeParameters? (type "." | annotations)?
+     *       typeParameters?
+     *       (type ".")?
      *       ("(" variableDeclarationEntry{","} ")" | variableDeclarationEntry)
      *       typeConstraints
      *       ("by" | "=" expression SEMI?)?
@@ -1505,7 +1506,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     /*
      * function
      *   : modifiers "fun" typeParameters?
-     *       (type "." | annotations)?
+     *       (type ".")?
      *       SimpleName
      *       typeParameters? functionParameters (":" type)?
      *       typeConstraints
@@ -1887,10 +1888,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     /*
      * type
-     *   : annotations typeDescriptor
+     *   : typeModifiers typeReference
+     *   ;
      *
-     * typeDescriptor
-     *   : selfType
+     * typeReference
      *   : functionType
      *   : userType
      *   : nullableType
@@ -1898,7 +1899,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
      *   ;
      *
      * nullableType
-     *   : typeDescriptor "?"
+     *   : typeReference "?"
+     *   ;
      */
     void parseTypeRef() {
         parseTypeRef(TokenSet.EMPTY);
@@ -2165,7 +2167,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     /*
      * functionType
-     *   : "(" (parameter | modifiers type){","}? ")" "->" type?
+     *   : (type ".")? "(" parameter{","}? ")" "->" type?
      *   ;
      */
     private void parseFunctionType() {
@@ -2188,7 +2190,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     /*
      * functionParameters
-     *   : "(" functionParameter{","}? ")" // default values
+     *   : "(" functionParameter{","}? ")"
      *   ;
      *
      * functionParameter

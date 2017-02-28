@@ -7,7 +7,7 @@ Digit
   : ["0".."9"];
 
 IntegerLiteral
-  : Digit+?
+  : Digit (Digit | "_")*
 
 FloatLiteral
   : <Java double literal>;
@@ -17,7 +17,7 @@ HexDigit
   : Digit | ["A".."F", "a".."f"];
 
 HexadecimalLiteral
-  : "0x" HexDigit+;
+  : "0x" HexDigit (HexDigit | "_")*;
 
 CharacterLiteral
   : <character as in Java>;
@@ -59,13 +59,6 @@ SimpleName
 
 /**
 See [Java interoperability](java-interop.html)
-*/
-
-FieldName
-  : "$" SimpleName;
-
-/*
-See [Properties And Fields](properties.html)
 */
 
 LabelName

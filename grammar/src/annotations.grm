@@ -15,13 +15,15 @@ annotationList
   ;
 
 annotationUseSiteTarget
-  : "file"
   : "field"
+  : "file"
   : "property"
   : "get"
   : "set"
+  : "receiver"
   : "param"
   : "setparam"
+  : "delegate"
   ;
 
 unescapedAnnotation
