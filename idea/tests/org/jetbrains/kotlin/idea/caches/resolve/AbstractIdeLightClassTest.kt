@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.util.io.FileUtilRt
-import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiMethod
+import com.intellij.psi.*
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
@@ -188,21 +185,28 @@ object LightClassLazinessChecker {
     }
 
     private data class FieldInfo(
-            val name: String
+            val name: String,
+            val modifiers: List<String>
     )
 
     private fun fieldInfo(field: PsiField) = with(field) {
-        FieldInfo(name!!)
+        FieldInfo(
+                name!!, PsiModifier.MODIFIERS.asList().filter { hasModifierProperty(it) }
+        )
     }
 
     private data class MethodInfo(
             val name: String,
+            val modifiers: List<String>,
             val isConstructor: Boolean,
             val parameterCount: Int
     )
 
     private fun methodInfo(method: PsiMethod) = with(method) {
-        MethodInfo(name, isConstructor, method.parameterList.parametersCount)
+        MethodInfo(
+                name, PsiModifier.MODIFIERS.asList().filter { hasModifierProperty(it) },
+                isConstructor, method.parameterList.parametersCount
+        )
     }
 }
 

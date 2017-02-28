@@ -91,7 +91,7 @@ sealed class KtLightFieldImpl<T: PsiField>(
 
     override fun getModifierList() = _modifierList
 
-    override fun hasModifierProperty(@NonNls name: String) = clsDelegate.hasModifierProperty(name)
+    override fun hasModifierProperty(@NonNls name: String) = (dummyDelegate ?: clsDelegate).hasModifierProperty(name)
 
     override fun getText() = kotlinOrigin?.text ?: ""
 

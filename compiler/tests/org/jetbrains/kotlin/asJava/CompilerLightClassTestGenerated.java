@@ -80,6 +80,12 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses/compilationErrors"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("AnnotationModifiers.kt")
+        public void testAnnotationModifiers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/AnnotationModifiers.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SameName.kt")
         public void testSameName() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/SameName.kt");
