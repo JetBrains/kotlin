@@ -25,7 +25,6 @@ import java.io.PrintStream
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KProperty1
 import kotlin.reflect.declaredMemberProperties
-import kotlin.reflect.memberProperties
 
 // Additional properties that should be included in interface
 @Suppress("unused")
@@ -223,6 +222,7 @@ private fun generateMarkdown(properties: List<KProperty1<*, *>>) {
     println("|------|-------------|-----------------|--------------|")
     for (property in properties) {
         val name = property.name
+        if (name == "includeRuntime") continue   // This option has no effect in Gradle builds
         val description = property.findAnnotation<Argument>()!!.description
         val possibleValues = property.gradleValues.possibleValues
         val defaultValue = when (property.gradleDefaultValue) {
