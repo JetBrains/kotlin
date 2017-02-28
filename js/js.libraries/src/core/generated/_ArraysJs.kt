@@ -7635,6 +7635,8 @@ public inline fun <K, V, M : MutableMap<in K, MutableList<V>>> CharArray.groupBy
 /**
  * Creates a [Grouping] source from an array to be used later with one of group-and-fold operations
  * using the specified [keySelector] function to extract a key from each element.
+ * 
+ * @sample samples.collections.Collections.Transformations.groupingByEachCount
  */
 @SinceKotlin("1.1")
 public inline fun <T, K> Array<out T>.groupingBy(crossinline keySelector: (T) -> K): Grouping<T, K> {
