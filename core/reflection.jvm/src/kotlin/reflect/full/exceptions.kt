@@ -27,6 +27,7 @@ import kotlin.reflect.jvm.isAccessible
  *
  * @see [kotlin.reflect.jvm.isAccessible]
  */
+@SinceKotlin("1.1")
 class IllegalCallableAccessException(cause: IllegalAccessException) : kotlin.reflect.IllegalCallableAccessException(cause)
 
 /**
@@ -48,5 +49,6 @@ class IllegalPropertyDelegateAccessException(cause: IllegalAccessException) : Ex
  * An exception that is thrown when the code tries to introspect a property of a class or a package
  * and that class or the package no longer has that property.
  */
+@SinceKotlin("1.1")
 class NoSuchPropertyException(cause: Exception? = null) : kotlin.reflect.NoSuchPropertyException(cause)
 
