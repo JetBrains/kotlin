@@ -150,13 +150,14 @@ public final class K2JSTranslator {
                     serializer.serialize(fragment, output);
                     binaryAst = output.toByteArray();
                 }
+
+                if (scope != null) {
+                    JsProtoBuf.Library.Part part = KotlinJavascriptSerializationUtil.INSTANCE.serializeScope(
+                            bindingTrace.getBindingContext(), moduleDescriptor, scope, file.getPackageFqName());
+                    binaryMetadata = part.toByteArray();
+                }
             }
 
-            if (scope != null) {
-                JsProtoBuf.Library.Part part = KotlinJavascriptSerializationUtil.INSTANCE.serializeScope(
-                        bindingTrace.getBindingContext(), moduleDescriptor, scope, file.getPackageFqName());
-                binaryMetadata = part.toByteArray();
-            }
             fileMap.put(file, new FileTranslationResult(file, binaryMetadata, binaryAst));
         }
 
