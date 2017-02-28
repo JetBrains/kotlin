@@ -28,7 +28,9 @@ class Collections {
         @Sample
         fun lastIndexOfList() {
             assertPrints(emptyList<Any>().lastIndex, "-1")
-            assertPrints(listOf("a", "x", "y").lastIndex, "2")
+            val list = listOf("a", "x", "y")
+            assertPrints(list.lastIndex, "2")
+            assertPrints(list[list.lastIndex], "y")
         }
     }
 
