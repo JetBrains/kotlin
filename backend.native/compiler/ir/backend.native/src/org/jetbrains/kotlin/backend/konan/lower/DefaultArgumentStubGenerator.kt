@@ -143,6 +143,13 @@ class DefaultArgumentStubGenerator internal constructor(val context: Context): D
                     })
                 }
             }
+            // Replace default argument initializers with empty composites.
+            functionDescriptor.valueParameters.forEach {
+                if (it.declaresDefaultValue()) {
+                    irFunction.putDefault(it, IrExpressionBodyImpl(irFunction.startOffset, irFunction.endOffset,
+                            IrCompositeImpl(irFunction.startOffset, irFunction.startOffset, it.type)))
+                }
+            }
             return if (functionDescriptor is ClassConstructorDescriptor)
                       listOf(irFunction, IrConstructorImpl(
                               startOffset = irFunction.startOffset,
