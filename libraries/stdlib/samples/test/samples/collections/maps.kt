@@ -84,11 +84,16 @@ class Maps {
         @Sample
         fun getOrPut() {
             val map = mutableMapOf<String, Int?>()
-            assertPrints(map.getOrPut("x") { 2 }, "2")
-            assertPrints(map.getOrPut("x") { 3 }, "2") // still
 
+            assertPrints(map.getOrPut("x") { 2 }, "2")
+            // subsequent calls to getOrPut do not evaluate the default value
+            // since the first getOrPut has already stored value 2 in the map
+            assertPrints(map.getOrPut("x") { 3 }, "2")
+
+            // however null value mapped to a key is treated the same as the missing value
             assertPrints(map.getOrPut("y") { null }, "null")
-            assertPrints(map.getOrPut("y") { 42 }, "42") // but!
+            // so in that case the default value is evaluated
+            assertPrints(map.getOrPut("y") { 42 }, "42")
         }
 
         @Sample
