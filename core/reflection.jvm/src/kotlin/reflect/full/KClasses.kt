@@ -35,6 +35,7 @@ import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
  * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/classes.html#constructors)
  * for more information.
  */
+@SinceKotlin("1.1")
 val <T : Any> KClass<T>.primaryConstructor: KFunction<T>?
     get() = (this as KClassImpl<T>).constructors.firstOrNull {
         ((it as KFunctionImpl).descriptor as ConstructorDescriptor).isPrimary
@@ -45,6 +46,7 @@ val <T : Any> KClass<T>.primaryConstructor: KFunction<T>?
  * Returns a [KClass] instance representing the companion object of a given class,
  * or `null` if the class doesn't have a companion object.
  */
+@SinceKotlin("1.1")
 val KClass<*>.companionObject: KClass<*>?
     get() = nestedClasses.firstOrNull {
         (it as KClassImpl<*>).descriptor.isCompanionObject
@@ -54,6 +56,7 @@ val KClass<*>.companionObject: KClass<*>?
  * Returns an instance of the companion object of a given class,
  * or `null` if the class doesn't have a companion object.
  */
+@SinceKotlin("1.1")
 val KClass<*>.companionObjectInstance: Any?
     get() = companionObject?.objectInstance
 
@@ -65,6 +68,7 @@ val KClass<*>.companionObjectInstance: Any?
 @Deprecated("This function creates a type which rarely makes sense for generic classes. " +
             "For example, such type can only be used in signatures of members of that class. " +
             "Use starProjectedType or createType() for clearer semantics.")
+@SinceKotlin("1.1")
 val KClass<*>.defaultType: KType
     get() = KTypeImpl((this as KClassImpl<*>).descriptor.defaultType) { jClass }
 
@@ -81,24 +85,28 @@ val KClass<*>.declaredMembers: Collection<KCallable<*>>
  * Returns all functions declared in this class, including all non-static methods declared in the class
  * and the superclasses, as well as static methods declared in the class.
  */
+@SinceKotlin("1.1")
 val KClass<*>.functions: Collection<KFunction<*>>
     get() = members.filterIsInstance<KFunction<*>>()
 
 /**
  * Returns static functions declared in this class.
  */
+@SinceKotlin("1.1")
 val KClass<*>.staticFunctions: Collection<KFunction<*>>
     get() = (this as KClassImpl).data().allStaticMembers.filterIsInstance<KFunction<*>>()
 
 /**
  * Returns non-extension non-static functions declared in this class and all of its superclasses.
  */
+@SinceKotlin("1.1")
 val KClass<*>.memberFunctions: Collection<KFunction<*>>
     get() = (this as KClassImpl).data().allNonStaticMembers.filter { it.isNotExtension && it is KFunction<*> } as Collection<KFunction<*>>
 
 /**
  * Returns extension functions declared in this class and all of its superclasses.
  */
+@SinceKotlin("1.1")
 val KClass<*>.memberExtensionFunctions: Collection<KFunction<*>>
     get() = (this as KClassImpl).data().allNonStaticMembers.filter { it.isExtension && it is KFunction<*> } as Collection<KFunction<*>>
 
@@ -107,18 +115,21 @@ val KClass<*>.memberExtensionFunctions: Collection<KFunction<*>>
  * If this is a Java class, it includes all non-static methods (both extensions and non-extensions)
  * declared in the class and the superclasses, as well as static methods declared in the class.
  */
+@SinceKotlin("1.1")
 val KClass<*>.declaredFunctions: Collection<KFunction<*>>
     get() = (this as KClassImpl).data().declaredMembers.filterIsInstance<KFunction<*>>()
 
 /**
  * Returns non-extension non-static functions declared in this class.
  */
+@SinceKotlin("1.1")
 val KClass<*>.declaredMemberFunctions: Collection<KFunction<*>>
     get() = (this as KClassImpl).data().declaredNonStaticMembers.filter { it.isNotExtension && it is KFunction<*> } as Collection<KFunction<*>>
 
 /**
  * Returns extension functions declared in this class.
  */
+@SinceKotlin("1.1")
 val KClass<*>.declaredMemberExtensionFunctions: Collection<KFunction<*>>
     get() = (this as KClassImpl).data().declaredNonStaticMembers.filter { it.isExtension && it is KFunction<*> } as Collection<KFunction<*>>
 
@@ -126,30 +137,35 @@ val KClass<*>.declaredMemberExtensionFunctions: Collection<KFunction<*>>
  * Returns static properties declared in this class.
  * Only properties representing static fields of Java classes are considered static.
  */
+@SinceKotlin("1.1")
 val KClass<*>.staticProperties: Collection<KProperty0<*>>
     get() = (this as KClassImpl).data().allStaticMembers.filter { it.isNotExtension && it is KProperty0<*> } as Collection<KProperty0<*>>
 
 /**
  * Returns non-extension properties declared in this class and all of its superclasses.
  */
+@SinceKotlin("1.1")
 val <T : Any> KClass<T>.memberProperties: Collection<KProperty1<T, *>>
     get() = (this as KClassImpl<T>).data().allNonStaticMembers.filter { it.isNotExtension && it is KProperty1<*, *> } as Collection<KProperty1<T, *>>
 
 /**
  * Returns extension properties declared in this class and all of its superclasses.
  */
+@SinceKotlin("1.1")
 val <T : Any> KClass<T>.memberExtensionProperties: Collection<KProperty2<T, *, *>>
     get() = (this as KClassImpl<T>).data().allNonStaticMembers.filter { it.isExtension && it is KProperty2<*, *, *> } as Collection<KProperty2<T, *, *>>
 
 /**
  * Returns non-extension properties declared in this class.
  */
+@SinceKotlin("1.1")
 val <T : Any> KClass<T>.declaredMemberProperties: Collection<KProperty1<T, *>>
     get() = (this as KClassImpl<T>).data().declaredNonStaticMembers.filter { it.isNotExtension && it is KProperty1<*, *> } as Collection<KProperty1<T, *>>
 
 /**
  * Returns extension properties declared in this class.
  */
+@SinceKotlin("1.1")
 val <T : Any> KClass<T>.declaredMemberExtensionProperties: Collection<KProperty2<T, *, *>>
     get() = (this as KClassImpl<T>).data().declaredNonStaticMembers.filter { it.isExtension && it is KProperty2<*, *, *> } as Collection<KProperty2<T, *, *>>
 
