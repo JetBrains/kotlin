@@ -1,0 +1,56 @@
+FILE /localDifferentReceivers.kt
+  CLASS CLASS MyClass
+    CONSTRUCTOR public constructor MyClass(value: kotlin.String)
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='MyClass'
+    PROPERTY public final val value: kotlin.String
+      FIELD PROPERTY_BACKING_FIELD public final val value: kotlin.String
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter value: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value>(): kotlin.String
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-value>(): String'
+            GET_FIELD 'value: String' type=kotlin.String origin=null
+              receiver: GET_VAR '<receiver: MyClass>' type=MyClass origin=null
+  FUN public operator fun MyClass.provideDelegate(host: kotlin.Any?, p: kotlin.Any): kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='provideDelegate(Any?, Any) on MyClass: String'
+        CALL '<get-value>(): String' type=kotlin.String origin=GET_PROPERTY
+          $this: GET_VAR '<receiver: provideDelegate(Any?, Any) on MyClass: String>' type=MyClass origin=null
+  FUN public operator fun kotlin.String.getValue(receiver: kotlin.Any?, p: kotlin.Any): kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='getValue(Any?, Any) on String: String'
+        GET_VAR '<receiver: getValue(Any?, Any) on String: String>' type=kotlin.String origin=null
+  FUN public fun box(): kotlin.String
+    BLOCK_BODY
+      LOCAL_DELEGATED_PROPERTY val testO: kotlin.String
+        VAR DELEGATE val `testO$delegate`: kotlin.String
+          CALL 'provideDelegate(Any?, Any) on MyClass: String' type=kotlin.String origin=null
+            $receiver: CALL 'constructor MyClass(String)' type=MyClass origin=null
+              value: CONST String type=kotlin.String value='O'
+            host: CONST Null type=kotlin.Nothing? value='null'
+            p: CALLABLE_REFERENCE 'testO: String' type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+        FUN DELEGATED_PROPERTY_ACCESSOR local final fun <get-testO>(): kotlin.String
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='<get-testO>(): String'
+              CALL 'getValue(Any?, Any) on String: String' type=kotlin.String origin=null
+                $receiver: GET_VAR '`testO$delegate`: String' type=kotlin.String origin=null
+                receiver: CONST Null type=kotlin.Nothing? value='null'
+                p: CALLABLE_REFERENCE 'testO: String' type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      LOCAL_DELEGATED_PROPERTY val testK: kotlin.String
+        VAR DELEGATE val `testK$delegate`: kotlin.String
+          CONST String type=kotlin.String value='K'
+        FUN DELEGATED_PROPERTY_ACCESSOR local final fun <get-testK>(): kotlin.String
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='<get-testK>(): String'
+              CALL 'getValue(Any?, Any) on String: String' type=kotlin.String origin=null
+                $receiver: GET_VAR '`testK$delegate`: String' type=kotlin.String origin=null
+                receiver: CONST Null type=kotlin.Nothing? value='null'
+                p: CALLABLE_REFERENCE 'testK: String' type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      VAR val testOK: kotlin.String
+        CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
+          $this: CALL '<get-testO>(): String' type=kotlin.String origin=GET_LOCAL_PROPERTY
+          other: CALL '<get-testK>(): String' type=kotlin.String origin=GET_LOCAL_PROPERTY
+      RETURN type=kotlin.Nothing from='box(): String'
+        GET_VAR 'testOK: String' type=kotlin.String origin=null

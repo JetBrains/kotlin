@@ -1,0 +1,61 @@
+FILE /member.kt
+  CLASS CLASS Delegate
+    CONSTRUCTOR public constructor Delegate(value: kotlin.String)
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Delegate'
+    PROPERTY public final val value: kotlin.String
+      FIELD PROPERTY_BACKING_FIELD public final val value: kotlin.String
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter value: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value>(): kotlin.String
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-value>(): String'
+            GET_FIELD 'value: String' type=kotlin.String origin=null
+              receiver: GET_VAR '<receiver: Delegate>' type=Delegate origin=null
+    FUN public final operator fun getValue(thisRef: kotlin.Any?, property: kotlin.Any?): kotlin.String
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='getValue(Any?, Any?): String'
+          CALL '<get-value>(): String' type=kotlin.String origin=GET_PROPERTY
+            $this: GET_VAR '<receiver: Delegate>' type=Delegate origin=null
+  CLASS CLASS DelegateProvider
+    CONSTRUCTOR public constructor DelegateProvider(value: kotlin.String)
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='DelegateProvider'
+    PROPERTY public final val value: kotlin.String
+      FIELD PROPERTY_BACKING_FIELD public final val value: kotlin.String
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter value: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value>(): kotlin.String
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-value>(): String'
+            GET_FIELD 'value: String' type=kotlin.String origin=null
+              receiver: GET_VAR '<receiver: DelegateProvider>' type=DelegateProvider origin=null
+    FUN public final operator fun provideDelegate(thisRef: kotlin.Any?, property: kotlin.Any?): Delegate
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='provideDelegate(Any?, Any?): Delegate'
+          CALL 'constructor Delegate(String)' type=Delegate origin=null
+            value: CALL '<get-value>(): String' type=kotlin.String origin=GET_PROPERTY
+              $this: GET_VAR '<receiver: DelegateProvider>' type=DelegateProvider origin=null
+  CLASS CLASS Host
+    CONSTRUCTOR public constructor Host()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Host'
+    PROPERTY public final val testMember: kotlin.String
+      FIELD DELEGATE val `testMember$delegate`: Delegate
+        EXPRESSION_BODY
+          CALL 'provideDelegate(Any?, Any?): Delegate' type=Delegate origin=null
+            $this: CALL 'constructor DelegateProvider(String)' type=DelegateProvider origin=null
+              value: CONST String type=kotlin.String value='OK'
+            thisRef: GET_VAR '<receiver: Host>' type=Host origin=null
+            property: CALLABLE_REFERENCE 'testMember: String' type=kotlin.reflect.KProperty1<Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+      FUN DELEGATED_PROPERTY_ACCESSOR public final fun <get-testMember>(): kotlin.String
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-testMember>(): String'
+            CALL 'getValue(Any?, Any?): String' type=kotlin.String origin=null
+              $this: GET_FIELD '`testMember$delegate`: Delegate' type=Delegate origin=null
+                receiver: GET_VAR '<receiver: Host>' type=Host origin=null
+              thisRef: GET_VAR '<receiver: Host>' type=Host origin=null
+              property: CALLABLE_REFERENCE 'testMember: String' type=kotlin.reflect.KProperty1<Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
