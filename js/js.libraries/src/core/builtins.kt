@@ -99,7 +99,7 @@ internal class BoxedChar(val c: Char) : Comparable<Char> {
 internal inline fun <T> concat(args: Array<T>): T {
     val untyped = args.map { arr ->
         if (arr !is Array<*>) {
-            js("Array.prototype.slice.call")(arr)
+            js("[]").slice.call(arr)
         }
         else {
             arr
@@ -108,8 +108,7 @@ internal inline fun <T> concat(args: Array<T>): T {
     return js("[]").concat.apply(js("[]"), untyped);
 }
 
-/* For future binary compatibility with TypedArrays
- * TODO: concat normal Array's and TypedArrays into an Array
+/** Concat regular Array's and TypedArrays into an Array
  */
 @PublishedApi
 @JsName("arrayConcat")
@@ -118,11 +117,11 @@ internal fun <T> arrayConcat(a: T, b: T): T {
     return concat(args)
 }
 
-/* For future binary compatibility with TypedArrays
- * TODO: concat primitive arrays.
- *       For Byte-, Short-, Int-, Float-, and DoubleArray concat result into a TypedArray.
- *       For Boolean-, Char-, and LongArray return an Array with corresponding type property.
- *       Default to Array.prototype.concat for compatibility.
+/** Concat primitive arrays.
+ *
+ *  For Byte-, Short-, Int-, Float-, and DoubleArray concat result into a TypedArray.
+ *  For Boolean-, Char-, and LongArray return an Array with corresponding type property.
+ *  Default to Array.prototype.concat for compatibility.
  */
 @PublishedApi
 @JsName("primitiveArrayConcat")

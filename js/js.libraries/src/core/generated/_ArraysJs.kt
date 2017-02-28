@@ -13454,21 +13454,21 @@ public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public fun ByteArray.toTypedArray(): Array<Byte> {
-    return js("Array.prototype.slice.call")(this)
+    return js("[]").slice.call(this)
 }
 
 /**
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public fun ShortArray.toTypedArray(): Array<Short> {
-    return js("Array.prototype.slice.call")(this)
+    return js("[]").slice.call(this)
 }
 
 /**
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public fun IntArray.toTypedArray(): Array<Int> {
-    return js("Array.prototype.slice.call")(this)
+    return js("[]").slice.call(this)
 }
 
 /**
@@ -13482,14 +13482,14 @@ public fun LongArray.toTypedArray(): Array<Long> {
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public fun FloatArray.toTypedArray(): Array<Float> {
-    return js("Array.prototype.slice.call")(this)
+    return js("[]").slice.call(this)
 }
 
 /**
  * Returns a *typed* object array containing all of the elements of this primitive array.
  */
 public fun DoubleArray.toTypedArray(): Array<Double> {
-    return js("Array.prototype.slice.call")(this)
+    return js("[]").slice.call(this)
 }
 
 /**
