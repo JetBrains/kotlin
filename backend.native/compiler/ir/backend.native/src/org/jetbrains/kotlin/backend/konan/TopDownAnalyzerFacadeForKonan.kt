@@ -31,19 +31,29 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProvid
 
 object TopDownAnalyzerFacadeForKonan {
     fun analyzeFiles(files: Collection<KtFile>, config: KonanConfig): AnalysisResult {
-        val context = ContextForNewModule(ProjectContext(config.project), Name.special("<${config.moduleId}>"),
-                KonanPlatform.builtIns, null)
+        val moduleName = if (config.compileAsStdlib) {
+            STDLIB_MODULE_NAME
+        } else {
+            Name.special("<${config.moduleId}>")
+        }
 
-        val builtinsForCompilerModule = KonanBuiltIns(context.storageManager, true)
-        val compilerBuiltInsModule = builtinsForCompilerModule.builtInsModule
-        KonanPlatform.builtIns.builtInsModule = context.module
+        val context = ContextForNewModule(ProjectContext(config.project), moduleName, KonanPlatform.builtIns, null)
 
-        // Make sure the compiler produced BuiltIns module comes in last
-        context.setDependencies(
-                listOf(context.module) +
-                config.moduleDescriptors +
-                listOf(compilerBuiltInsModule)
-        )
+        val module = context.module
+        assert (module.isStdlib() == config.compileAsStdlib)
+
+        if (!module.isStdlib()) {
+            context.setDependencies(listOf(module) + config.moduleDescriptors + KonanPlatform.builtIns.builtInsModule)
+        } else {
+            KonanPlatform.builtIns.createBuiltInsModule(module)
+            assert (config.moduleDescriptors.isEmpty())
+            context.setDependencies(module)
+
+            // TODO: stdlib should probably also depend on builtInsModule.
+            // However this would lead to mutual dependency between stdlib and builtInsModule,
+            // and the compiler can't handle it.
+        }
+
         return analyzeFilesWithGivenTrace(files, BindingTraceContext(), context, config)
     }
 

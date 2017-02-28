@@ -200,7 +200,7 @@ targetList.each { target ->
             "-Dkonan.home=${project.parent.file('dist')}",
             "-Djava.library.path=${project.buildDir}/nativelibs"
         args('-output', project(':runtime').file("build/${target}/stdlib.kt.bc"), 
-            '-nolink', '-nostdlib',
+            '-nolink', '-nostdlib', '-compile_as_stdlib',
             '-target', target,
             '-runtime', project(':runtime').file("build/${target}/runtime.bc"),
             '-properties', project(':backend.native').file('konan.properties'),

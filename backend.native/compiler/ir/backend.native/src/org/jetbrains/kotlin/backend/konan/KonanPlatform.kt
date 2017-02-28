@@ -17,21 +17,44 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.backend.konan.KonanPlatformConfigurator
-import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.createBuiltInPackageFragmentProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 
-class KonanBuiltIns: KotlinBuiltIns {
-    constructor(storageManager: StorageManager) : super(storageManager)
+val STDLIB_MODULE_NAME = Name.special("<stdlib>")
 
-    constructor(storageManager: StorageManager, withModule: Boolean) : this(storageManager) {
-        if (withModule) createBuiltInsModule()
+fun ModuleDescriptor.isStdlib(): Boolean {
+    return name == STDLIB_MODULE_NAME
+}
+
+class KonanBuiltIns(storageManager: StorageManager) : KotlinBuiltIns(storageManager) {
+    override fun createBuiltInsModule() = throw Error("should not be called")
+
+    fun createBuiltInsModule(stdlib: ModuleDescriptorImpl) {
+        builtInsModule = ModuleDescriptorImpl(BUILTINS_MODULE_NAME, storageManager, this, null)
+        val packageFragmentProvider = createBuiltInPackageFragmentProvider(
+                storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,
+                classDescriptorFactories,
+                platformDependentDeclarationFilter,
+                additionalClassPartsProvider
+        ) { path ->
+            val classLoader = KotlinBuiltIns::class.java.classLoader
+            if (classLoader != null) classLoader.getResourceAsStream(path) else ClassLoader.getSystemResourceAsStream(path)
+        }
+
+        builtInsModule.initialize(packageFragmentProvider)
+        // The code above is copy-pasted from super.createBuiltInsModule(); TODO: refactor.
+
+        // stdlib comes first to override declarations from builtIns (even when they are requested from builtIns).
+        builtInsModule.setDependencies(stdlib, builtInsModule)
     }
 }
 
@@ -47,5 +70,5 @@ object KonanPlatform : TargetPlatform("Konan") {
 
     override val platformConfigurator: PlatformConfigurator = KonanPlatformConfigurator
 
-    val builtIns: KonanBuiltIns = KonanBuiltIns(LockBasedStorageManager.NO_LOCKS, false)
+    val builtIns: KonanBuiltIns = KonanBuiltIns(LockBasedStorageManager.NO_LOCKS)
 }

@@ -23,6 +23,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("optimized compilation")
         val NOSTDLIB: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("don't link with stdlib")
+        val COMPILE_AS_STDLIB: CompilerConfigurationKey<Boolean>
+                = CompilerConfigurationKey.create("compile the module as stdlib")
         val NOLINK: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("don't link, only produce a bitcode file ")
         val TARGET: CompilerConfigurationKey<String?>

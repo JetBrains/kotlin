@@ -31,6 +31,9 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "nostdlib", description = "Don't link with stdlib")
     public boolean nostdlib;
 
+    @Argument(value = "compile_as_stdlib", description = "Compile the module as stdlib")
+    public boolean compileAsStdlib;
+
     @Argument(value = "opt", description = "Enable optimizations during compilation")
     public boolean optimization;
 
