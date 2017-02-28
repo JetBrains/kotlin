@@ -619,6 +619,20 @@ task delegatedProperty_delegatedOverride(type: LinkKonanTest) {
     lib = "codegen/delegatedProperty/delegatedOverride_lib.kt"
 }
 
+task delegatedProperty_lazy(type: RunKonanTest) {
+    goldValue = "computed!\nHello\nHello\n"
+    source = "codegen/delegatedProperty/lazy.kt"
+}
+
+task delegatedProperty_observable(type: RunKonanTest) {
+    goldValue = "<no name> -> first\nfirst -> second\n"
+    source = "codegen/delegatedProperty/observable.kt"
+}
+
+task delegatedProperty_map(type: RunKonanTest) {
+    goldValue = "John Doe\n25\n"
+    source = "codegen/delegatedProperty/map.kt"
+}
 
 task array0(type: RunKonanTest) {
     goldValue = "5\n6\n7\n8\n9\n10\n11\n12\n13\n"
