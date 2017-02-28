@@ -466,6 +466,23 @@ public class InlineCodegenUtil {
         }
     }
 
+    public static void removeFinallyMarkers(@NotNull MethodNode intoNode) {
+        InsnList instructions = intoNode.instructions;
+        AbstractInsnNode curInstr = instructions.getFirst();
+        while (curInstr != null) {
+            if (isFinallyMarker(curInstr)) {
+                AbstractInsnNode marker = curInstr;
+                //just to assert
+                getConstant(marker.getPrevious());
+                curInstr = curInstr.getNext();
+                instructions.remove(marker.getPrevious());
+                instructions.remove(marker);
+                continue;
+            }
+            curInstr = curInstr.getNext();
+        }
+    }
+
     public static void addInlineMarker(@NotNull InstructionAdapter v, boolean isStartNotEnd) {
         v.visitMethodInsn(
                 Opcodes.INVOKESTATIC, INLINE_MARKER_CLASS_NAME,

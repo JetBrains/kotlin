@@ -466,7 +466,9 @@ public class InlineCodegen extends CallGenerator {
                 adapter, infos, ((StackValue.Local) remapper.remap(parameters.getArgsSizeOnStack() + 1).value).index
         );
         removeStaticInitializationTrigger(adapter);
-        removeFinallyMarkers(adapter);
+        if (!InlineCodegenUtil.isFinallyMarkerRequired(codegen.getContext())) {
+            InlineCodegenUtil.removeFinallyMarkers(adapter);
+        }
 
         adapter.accept(new MethodBodyVisitor(codegen.v));
 
@@ -1022,25 +1024,6 @@ public class InlineCodegen extends CallGenerator {
         processor.substituteTryBlockNodes(intoNode);
 
         //processor.substituteLocalVarTable(intoNode);
-    }
-
-    private void removeFinallyMarkers(@NotNull MethodNode intoNode) {
-        if (InlineCodegenUtil.isFinallyMarkerRequired(codegen.getContext())) return;
-
-        InsnList instructions = intoNode.instructions;
-        AbstractInsnNode curInstr = instructions.getFirst();
-        while (curInstr != null) {
-            if (InlineCodegenUtil.isFinallyMarker(curInstr)) {
-                AbstractInsnNode marker = curInstr;
-                //just to assert
-                getConstant(marker.getPrevious());
-                curInstr = curInstr.getNext();
-                instructions.remove(marker.getPrevious());
-                instructions.remove(marker);
-                continue;
-            }
-            curInstr = curInstr.getNext();
-        }
     }
 
     @NotNull

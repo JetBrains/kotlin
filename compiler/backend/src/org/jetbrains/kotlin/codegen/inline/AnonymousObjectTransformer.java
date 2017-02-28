@@ -141,12 +141,12 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
         List<CapturedParamInfo> additionalFakeParams =
                 extractParametersMappingAndPatchConstructor(constructor, allCapturedParamBuilder, constructorParamBuilder,
                                                             transformationInfo, parentRemapper);
-        List<MethodVisitor> deferringMethods = new ArrayList<MethodVisitor>();
+        List<DeferredMethodVisitor> deferringMethods = new ArrayList<DeferredMethodVisitor>();
 
         generateConstructorAndFields(classBuilder, allCapturedParamBuilder, constructorParamBuilder, parentRemapper, additionalFakeParams);
 
         for (MethodNode next : methodsToTransform) {
-            MethodVisitor deferringVisitor = newMethod(classBuilder, next);
+            DeferredMethodVisitor deferringVisitor = newMethod(classBuilder, next);
             InlineResult funResult =
                     inlineMethodAndUpdateGlobalResult(parentRemapper, deferringVisitor, next, allCapturedParamBuilder, false);
 
@@ -161,7 +161,8 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
             deferringMethods.add(deferringVisitor);
         }
 
-        for (MethodVisitor method : deferringMethods) {
+        for (DeferredMethodVisitor method : deferringMethods) {
+            InlineCodegenUtil.removeFinallyMarkers(method.getIntermediate());
             method.visitEnd();
         }
 
@@ -313,6 +314,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
         MethodNode intermediateMethodNode =
                 new MethodNode(AsmUtil.NO_FLAG_PACKAGE_PRIVATE, "<init>", constructorDescriptor, null, ArrayUtil.EMPTY_STRING_ARRAY);
         inlineMethodAndUpdateGlobalResult(parentRemapper, intermediateMethodNode, constructor, constructorInlineBuilder, true);
+        InlineCodegenUtil.removeFinallyMarkers(intermediateMethodNode);
 
         AbstractInsnNode first = intermediateMethodNode.instructions.getFirst();
         final Label oldStartLabel = first instanceof LabelNode ? ((LabelNode) first).getLabel() : null;
