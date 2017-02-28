@@ -75,9 +75,8 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                 val opCall = statementGenerator.pregenerateCall(opResolvedCall)
                 opCall.setExplicitReceiverValue(irLValue)
                 val irOpCall = CallGenerator(statementGenerator).generateCall(expression, opCall, origin)
-                val temporary = defineTemporary(irOpCall)
-                +irLValue.store(irGet(temporary))
-                +irGet(temporary)
+                +irLValue.store(irOpCall)
+                +irLValue.load()
             }
         }
     }

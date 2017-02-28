@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.psi2ir.generators.CallGenerator
-import org.jetbrains.kotlin.psi2ir.intermediate.CallBuilder
-import org.jetbrains.kotlin.psi2ir.intermediate.argumentsCount
 import org.jetbrains.kotlin.types.KotlinType
 
 class LValueWithGetterAndSetterCalls(
@@ -37,20 +35,13 @@ class LValueWithGetterAndSetterCalls(
             getterCall?.descriptor ?: setterCall?.descriptor ?:
             throw AssertionError("Call-based LValue should have either a getter or a setter call")
 
-    private var getterInstantiated = false
-    private var setterInstantiated = false
-
     override fun load(): IrExpression {
         if (getterCall == null) throw AssertionError("No getter call for $descriptor")
-        if (getterInstantiated) throw AssertionError("Getter for $descriptor has already been instantiated")
-        getterInstantiated = true
         return callGenerator.generateCall(startOffset, endOffset, getterCall, origin)
     }
 
     override fun store(irExpression: IrExpression): IrExpression {
         if (setterCall == null) throw AssertionError("No setter call for $descriptor")
-        if (setterInstantiated) throw AssertionError("Setter for $descriptor has already been instantiated")
-        setterInstantiated = true
         setterCall.irValueArgumentsByIndex[setterCall.argumentsCount - 1] = irExpression
         return callGenerator.generateCall(startOffset, endOffset, setterCall, origin)
     }
