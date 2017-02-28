@@ -326,11 +326,39 @@ public fun Long.coerceIn(range: ClosedRange<Long>): Long {
 }
 
 
+internal fun checkStepIsPositive(isPositive: Boolean, step: Number) {
+    if (!isPositive) throw IllegalArgumentException("Step must be positive, was: $step.")
+}
+
 // This part is from generated _Ranges.kt.
 /**
  * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
 public fun IntProgression.reversed() = IntProgression.fromClosedRange(last, first, -step)
+
+/**
+ * Returns a progression that goes over the same range with the given step.
+ */
+public infix fun IntProgression.step(step: Int): IntProgression {
+    checkStepIsPositive(step > 0, step)
+    return IntProgression.fromClosedRange(first, last, if (this.step > 0) step else -step)
+}
+
+/**
+ * Returns a progression that goes over the same range with the given step.
+ */
+public infix fun LongProgression.step(step: Long): LongProgression {
+    checkStepIsPositive(step > 0, step)
+    return LongProgression.fromClosedRange(first, last, if (this.step > 0) step else -step)
+}
+
+/**
+ * Returns a progression that goes over the same range with the given step.
+ */
+public infix fun CharProgression.step(step: Int): CharProgression {
+    checkStepIsPositive(step > 0, step)
+    return CharProgression.fromClosedRange(first, last, if (this.step > 0) step else -step)
+}
 
 /**
  * Returns a progression from this value down to the specified [to] value with the step -1.
