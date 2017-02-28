@@ -114,6 +114,10 @@ class StatementGenerator(
             componentSubstitutedCall.setExplicitReceiverValue(containerValue)
 
             val componentVariable = getOrFail(BindingContext.VARIABLE, ktEntry)
+
+            // componentN for '_' SHOULD NOT be evaluated
+            if (componentVariable.name.isSpecial) continue
+
             val irComponentCall = callGenerator.generateCall(ktEntry.startOffset, ktEntry.endOffset, componentSubstitutedCall,
                                                              IrStatementOrigin.COMPONENT_N.withIndex(index + 1))
             val irComponentVar = IrVariableImpl(ktEntry.startOffset, ktEntry.endOffset, IrDeclarationOrigin.DEFINED,

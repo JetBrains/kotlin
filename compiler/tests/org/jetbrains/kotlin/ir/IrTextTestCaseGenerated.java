@@ -482,6 +482,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("destructuringWithUnderscore.kt")
+        public void testDestructuringWithUnderscore() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/destructuringWithUnderscore.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("dotQualified.kt")
         public void testDotQualified() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/dotQualified.kt");
