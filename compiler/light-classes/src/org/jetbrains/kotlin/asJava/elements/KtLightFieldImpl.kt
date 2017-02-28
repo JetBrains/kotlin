@@ -102,18 +102,11 @@ sealed class KtLightFieldImpl<T: PsiField>(
     override fun toString(): String = "${this::class.java.simpleName}:$name"
 
     override fun equals(other: Any?): Boolean =
-            other is KtLightField &&
-            name == other.name &&
-            lightMemberOrigin == other.lightMemberOrigin &&
-            containingClass == other.containingClass &&
-            clsDelegate == other.clsDelegate
+            other is KtLightFieldImpl<*> &&
+            this.name == other.name &&
+            this.containingClass == other.containingClass
 
-    override fun hashCode(): Int {
-        var result = lightMemberOrigin?.hashCode() ?: 0
-        result = 31 * result + clsDelegate.hashCode()
-        result = 31 * result + containingClass.hashCode()
-        return result
-    }
+    override fun hashCode() = 31 * containingClass.hashCode() + (name?.hashCode() ?: 0)
 
     override val kotlinOrigin: KtDeclaration? get() = lightMemberOrigin?.originalElement
 
