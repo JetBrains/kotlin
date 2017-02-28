@@ -131,7 +131,7 @@ internal class MetadataGenerator(override val context: Context): ContextUtils {
 
     internal fun property(declaration: IrProperty) {
         if (declaration.backingField == null) return
-        assert(declaration.backingField!!.descriptor == declaration.descriptor)
+        assert(declaration.backingField!!.descriptor == declaration.descriptor || declaration.isDelegated)
             
         context.ir.propertiesWithBackingFields.add(declaration.descriptor)
     }

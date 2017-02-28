@@ -55,6 +55,16 @@ public annotation class FixmeVariance
 public annotation class FixmeRegex
 
 /**
+ * Need to be fixed because of reflection.
+ */
+public annotation class FixmeReflection
+
+/**
+ * Need to be fixed because of concurrency.
+ */
+public annotation class FixmeConcurrency
+
+/**
  * Need to be fixed.
  */
 public annotation class Fixme

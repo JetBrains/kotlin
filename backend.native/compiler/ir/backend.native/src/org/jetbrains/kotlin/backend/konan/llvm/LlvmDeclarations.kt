@@ -125,7 +125,7 @@ private fun ContextUtils.getDeclaredFields(classDescriptor: ClassDescriptor): Li
 }
 
 private fun ContextUtils.createClassBodyType(name: String, fields: List<PropertyDescriptor>): LLVMTypeRef {
-    val fieldTypes = fields.map { getLLVMType(it.type) }.toTypedArray()
+    val fieldTypes = fields.map { getLLVMType(if (it.isDelegated) context.builtIns.nullableAnyType else it.type) }.toTypedArray()
 
     val classType = LLVMStructCreateNamed(LLVMGetModuleContext(context.llvmModule), name)!!
 
@@ -300,7 +300,8 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         val dispatchReceiverParameter = descriptor.dispatchReceiverParameter
         if (dispatchReceiverParameter != null
                 // TODO: hack because of IR bug: https://github.com/JetBrains/kotlin/tree/rr/dispatch_receiver_for_delegate_descriptor.
-                || descriptor is IrImplementingDelegateDescriptorImpl) {
+                || descriptor is IrImplementingDelegateDescriptorImpl
+                || (descriptor is IrPropertyDelegateDescriptorImpl && descriptor.containingDeclaration is ClassDescriptor)) {
             val containingClass = dispatchReceiverParameter?.containingDeclaration
                     // TODO: hack because of IR bug: https://github.com/JetBrains/kotlin/tree/rr/dispatch_receiver_for_delegate_descriptor.
                     ?: descriptor.containingDeclaration
