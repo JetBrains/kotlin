@@ -406,9 +406,12 @@
                        byline="true" encoding="UTF-8" />
     </target>
 
-    <target name="js-stdlib">
-        <property environment="env"/>
+    <target name="js-stdlib-preprocess">
         <kotlin-pp src="libraries/stdlib/src" output="${intermediate-sources}/stdlib/js" profile="JS" />
+    </target>
+
+    <target name="js-stdlib" depends="js-stdlib-preprocess">
+        <property environment="env"/>
         <cleandir dir="${js.stdlib.output.dir}"/>
 
         <!-- We don't want descriptors for built-ins to be serialized, so we compile these files separately. -->
@@ -474,7 +477,7 @@
         <copy file="${kotlin-home}/lib/kotlin-stdlib-js.jar" tofile="${kotlin-home}/lib/kotlin-jslib.jar" />
     </target>
 
-    <target name="pack-js-stdlib-sources">
+    <target name="pack-js-stdlib-sources" depends="js-stdlib-preprocess">
         <jar destfile="${kotlin-home}/lib/kotlin-stdlib-js-sources.jar" duplicate="fail">
             <resources refid="js.lib.files" />
             <fileset refid="kotlin.builtin.files" />
