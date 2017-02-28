@@ -613,6 +613,13 @@ task delegatedProperty_local(type: RunKonanTest) {
     source = "codegen/delegatedProperty/local.kt"
 }
 
+task delegatedProperty_delegatedOverride(type: LinkKonanTest) {
+    goldValue = "156\nx\n117\n42\n"
+    source = "codegen/delegatedProperty/delegatedOverride_main.kt"
+    lib = "codegen/delegatedProperty/delegatedOverride_lib.kt"
+}
+
+
 task array0(type: RunKonanTest) {
     goldValue = "5\n6\n7\n8\n9\n10\n11\n12\n13\n"
     source = "runtime/collections/array0.kt"
