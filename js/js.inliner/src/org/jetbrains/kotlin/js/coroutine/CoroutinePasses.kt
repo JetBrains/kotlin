@@ -18,8 +18,9 @@ package org.jetbrains.kotlin.js.coroutine
 
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.js.inline.util.collectFreeVariables
+import org.jetbrains.kotlin.js.inline.util.replaceNames
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
 fun JsNode.collectNodesToSplit(breakContinueTargets: Map<JsContinue, JsStatement>): Set<JsNode> {
     val root = this
@@ -189,7 +190,7 @@ private fun CoroutineBlock.collectTargetBlocks(): Set<CoroutineBlock> {
     val targetBlocks = mutableSetOf<CoroutineBlock>()
     jsBlock.accept(object : RecursiveJsVisitor() {
         override fun visitDebugger(x: JsDebugger) {
-            targetBlocks += x.targetExceptionBlock.singletonOrEmptyList() + x.targetBlock.singletonOrEmptyList()
+            targetBlocks += listOfNotNull(x.targetExceptionBlock) + listOfNotNull(x.targetBlock)
         }
     })
     return targetBlocks
@@ -239,7 +240,23 @@ fun JsBlock.replaceSpecialReferences(context: CoroutineTransformationContext) {
 fun JsBlock.replaceLocalVariables(scope: JsScope, context: CoroutineTransformationContext, localVariables: Set<JsName>) {
     replaceSpecialReferences(context)
     val visitor = object : JsVisitorWithContextImpl() {
-        override fun visit(x: JsFunction, ctx: JsContext<*>) = false
+        override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean = false
+
+        override fun endVisit(x: JsFunction, ctx: JsContext<in JsNode>) {
+            val freeVars = x.collectFreeVariables().intersect(localVariables)
+            if (freeVars.isNotEmpty()) {
+                val wrapperFunction = JsFunction(x.scope.parent, JsBlock(), "")
+                val wrapperInvocation = JsInvocation(wrapperFunction)
+                wrapperFunction.body.statements += JsReturn(x)
+                val nameMap = freeVars.associate { it to wrapperFunction.scope.declareTemporaryName(it.ident) }
+                for (freeVar in freeVars) {
+                    wrapperFunction.parameters += JsParameter(nameMap[freeVar]!!)
+                    wrapperInvocation.arguments += JsNameRef(scope.getFieldName(freeVar), JsLiteral.THIS)
+                }
+                x.body = replaceNames(x.body, nameMap.mapValues { it.value.makeRef() })
+                ctx.replaceMe(wrapperInvocation)
+            }
+        }
 
         override fun endVisit(x: JsNameRef, ctx: JsContext<in JsNode>) {
             if (x.qualifier == null && x.name in localVariables) {
@@ -266,8 +283,6 @@ fun JsBlock.replaceLocalVariables(scope: JsScope, context: CoroutineTransformati
             else {
                 ctx.removeMe()
             }
-
-            super.endVisit(x, ctx)
         }
     }
     visitor.accept(this)
