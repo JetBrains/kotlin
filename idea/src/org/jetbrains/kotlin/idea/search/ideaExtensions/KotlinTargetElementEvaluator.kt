@@ -16,17 +16,15 @@
 
 package org.jetbrains.kotlin.idea.search.ideaExtensions
 
+import com.intellij.codeInsight.JavaTargetElementEvaluator
 import com.intellij.codeInsight.TargetElementEvaluatorEx
 import com.intellij.codeInsight.TargetElementUtil
-import com.intellij.codeInsight.TargetElementUtilExtender
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtPrimaryConstructor
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isAbstract
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.*
 
 class KotlinTargetElementEvaluator : TargetElementEvaluatorEx {
     override fun includeSelfInGotoImplementation(element: PsiElement): Boolean = !(element is KtClass && element.isAbstract())
@@ -36,6 +34,15 @@ class KotlinTargetElementEvaluator : TargetElementEvaluatorEx {
         if (ref is KtDestructuringDeclarationReference && flags.and(TargetElementUtil.ELEMENT_NAME_ACCEPTED) != 0) {
             return ref.element
         }
+
+        val refExpression = ref.element as? KtSimpleNameExpression
+        val calleeExpression = refExpression?.getParentOfTypeAndBranch<KtCallElement> { calleeExpression }
+        if (calleeExpression != null) {
+            (ref.resolve() as? KtConstructor<*>)?.let {
+                return if (flags and JavaTargetElementEvaluator.NEW_AS_CONSTRUCTOR != 0) it else it.containingClassOrObject
+            }
+        }
+
         return null
     }
 
