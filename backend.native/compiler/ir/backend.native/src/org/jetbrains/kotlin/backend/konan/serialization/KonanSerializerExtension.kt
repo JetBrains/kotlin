@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.types.FlexibleType
 internal class KonanSerializerExtension(val context: Context) :
         KotlinSerializerExtensionBase(KonanSerializerProtocol) {
 
+    override val stringTable = KonanStringTable()
+
     private val backingFieldClass = 
         context.builtIns.getKonanInternalClass("HasBackingField").getDefaultType()
 
