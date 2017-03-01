@@ -86,22 +86,28 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
     <V> V getUserData(UserDataKey<V> key);
 
     @NotNull
+    @Override
     CopyBuilder<? extends FunctionDescriptor> newCopyBuilder();
 
-    interface CopyBuilder<D extends FunctionDescriptor> {
+    interface CopyBuilder<D extends FunctionDescriptor> extends CallableMemberDescriptor.CopyBuilder<D> {
         @NotNull
+        @Override
         CopyBuilder<D> setOwner(@NotNull DeclarationDescriptor owner);
 
         @NotNull
+        @Override
         CopyBuilder<D> setModality(@NotNull Modality modality);
 
         @NotNull
+        @Override
         CopyBuilder<D> setVisibility(@NotNull Visibility visibility);
 
         @NotNull
+        @Override
         CopyBuilder<D> setKind(@NotNull Kind kind);
 
         @NotNull
+        @Override
         CopyBuilder<D> setCopyOverrides(boolean copyOverrides);
 
         @NotNull
@@ -120,6 +126,7 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
         CopyBuilder<D> setExtensionReceiverType(@Nullable KotlinType type);
 
         @NotNull
+        @Override
         CopyBuilder<D> setDispatchReceiverParameter(@Nullable ReceiverParameterDescriptor dispatchReceiverParameter);
 
         @NotNull
@@ -147,12 +154,14 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
         CopyBuilder<D> setAdditionalAnnotations(@NotNull Annotations additionalAnnotations);
 
         @NotNull
+        @Override
         CopyBuilder<D> setSubstitution(@NotNull TypeSubstitution substitution);
 
         @NotNull
         <V> CopyBuilder<D> putUserData(@NotNull UserDataKey<V> userDataKey, V value);
 
         @Nullable
+        @Override
         D build();
     }
 }

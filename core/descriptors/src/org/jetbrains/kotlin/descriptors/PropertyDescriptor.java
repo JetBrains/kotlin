@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.types.TypeSubstitution;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 import java.util.Collection;
@@ -57,4 +58,8 @@ public interface PropertyDescriptor extends VariableDescriptorWithAccessors, Cal
     PropertyDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 
     boolean isLateInit();
+
+    @NotNull
+    @Override
+    CopyBuilder<? extends PropertyDescriptor> newCopyBuilder();
 }
