@@ -35,7 +35,13 @@ class VarargInjectionLowering internal constructor(val context: Context): Declar
             when (it) {
                 is IrField    -> lower(it.descriptor, it.initializer)
                 is IrFunction -> lower(it.descriptor, it.body)
-                is IrProperty -> lower(it.descriptor, it.backingField)
+                is IrProperty -> {
+                    lower(it.descriptor, it.backingField)
+                    if (it.getter != null)
+                        lower(it.getter!!.descriptor, it.getter)
+                    if (it.setter != null)
+                        lower(it.setter!!.descriptor, it.setter)
+                }
             }
         }
     }
