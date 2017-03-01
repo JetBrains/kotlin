@@ -43,6 +43,7 @@ public fun <T> Stream<T>.toList(): List<T> = collect(Collectors.toList<T>())
 /**
  * Returns a [List] containing all elements produced by this stream.
  */
+@SinceKotlin("1.1")
 public fun IntStream.toList(): List<Int> = toArray().asList()
 
 /**
