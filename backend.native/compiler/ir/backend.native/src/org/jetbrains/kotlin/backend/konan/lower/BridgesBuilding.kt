@@ -46,7 +46,8 @@ internal class DirectBridgesCallsLowering(val context: Context) : BodyLoweringPa
                 }
 
                 return IrCallImpl(expression.startOffset, expression.endOffset,
-                        toCall, remapTypeArguments(expression, toCall)).apply {
+                        toCall, remapTypeArguments(expression, toCall), expression.origin,
+                        superQualifier = toCall.containingDeclaration as ClassDescriptor /* Call non-virtually */).apply {
                     dispatchReceiver = expression.dispatchReceiver
                     extensionReceiver = expression.extensionReceiver
                     mapValueParameters { expression.getValueArgument(it)!! }
