@@ -40,8 +40,12 @@ class LocalFunctionGenerator(statementGenerator: StatementGenerator) : Statement
         irFun.body = BodyGenerator(lambdaDescriptor, statementGenerator.context).generateLambdaBody(ktFun)
         irBlock.statements.add(irFun)
 
-        irBlock.statements.add(IrCallableReferenceImpl(ktLambda.startOffset, ktLambda.endOffset, lambdaExpressionType,
-                                                       lambdaDescriptor, null, IrStatementOrigin.LAMBDA))
+        irBlock.statements.add(
+                IrCallableReferenceImpl(
+                        ktLambda.startOffset, ktLambda.endOffset, lambdaExpressionType,
+                        lambdaDescriptor, null, IrStatementOrigin.LAMBDA
+                )
+        )
 
         return irBlock
     }
@@ -58,17 +62,17 @@ class LocalFunctionGenerator(statementGenerator: StatementGenerator) : Statement
                 val irFun = generateFunctionDeclaration(ktFun)
                 irBlock.statements.add(irFun)
 
-                irBlock.statements.add(IrCallableReferenceImpl(ktFun.startOffset, ktFun.endOffset, funExpressionType,
-                                                               irFun.descriptor, null, IrStatementOrigin.ANONYMOUS_FUNCTION))
+                irBlock.statements.add(
+                        IrCallableReferenceImpl(
+                                ktFun.startOffset, ktFun.endOffset, funExpressionType,
+                                irFun.descriptor, null, IrStatementOrigin.ANONYMOUS_FUNCTION
+                        )
+                )
 
                 irBlock
             }
 
-    private fun generateFunctionDeclaration(ktFun: KtNamedFunction): IrFunction {
-        val funDescriptor = getOrFail(BindingContext.FUNCTION, ktFun)
-        val irFun = IrFunctionImpl(ktFun.startOffset, ktFun.endOffset, IrDeclarationOrigin.DEFINED, funDescriptor)
-        irFun.body = BodyGenerator(funDescriptor, statementGenerator.context).generateFunctionBody(ktFun.bodyExpression!!)
-        return irFun
-    }
+    private fun generateFunctionDeclaration(ktFun: KtNamedFunction): IrFunction =
+            DeclarationGenerator(context).generateFunctionDeclaration(ktFun)
 
 }
