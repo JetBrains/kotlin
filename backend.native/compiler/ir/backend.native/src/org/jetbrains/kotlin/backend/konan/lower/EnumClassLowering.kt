@@ -126,6 +126,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
         private lateinit var valueOfFunctionDescriptor: FunctionDescriptor
 
         fun run() {
+            insertInstanceInitializerCall()
             assignOrdinalsToEnumEntries()
             lowerEnumConstructors(irClass)
             lowerEnumEntriesClasses()
@@ -134,6 +135,28 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
             if (defaultClass != null)
                 irClass.declarations.add(defaultClass)
             createImplObject()
+        }
+
+        private fun insertInstanceInitializerCall() {
+            irClass.transformChildrenVoid(object: IrElementTransformerVoid() {
+                override fun visitClass(declaration: IrClass): IrStatement {
+                    // Skip nested
+                    return declaration
+                }
+
+                override fun visitConstructor(declaration: IrConstructor): IrStatement {
+                    declaration.transformChildrenVoid(this)
+
+                    val blockBody = declaration.body as? IrBlockBody ?: throw AssertionError("Unexpected constructor body: ${declaration.body}")
+                    blockBody.statements.transformFlat {
+                        if (it is IrEnumConstructorCall)
+                            listOf(it, IrInstanceInitializerCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                                    irClass.descriptor))
+                        else null
+                    }
+                    return declaration
+                }
+            })
         }
 
         private fun assignOrdinalsToEnumEntries() {
