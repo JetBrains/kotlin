@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.findCorrespondingSupertype
 import java.util.*
 import kotlin.properties.Delegates
 
@@ -58,10 +59,8 @@ class SamAdapterFunctionsScope(
     override fun getSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         var result: SmartList<FunctionDescriptor>? = null
         for (type in receiverTypes) {
-            val substitutorForType by lazy { buildMemberScopeSubstitutorForType(type) }
-
             for (function in type.memberScope.getContributedFunctions(name, location)) {
-                val extension = extensionForFunction(function.original)?.substitute(substitutorForType)
+                val extension = extensionForFunction(function.original)?.substituteForReceiverType(type)
                 if (extension != null) {
                     if (result == null) {
                         result = SmartList()
@@ -77,15 +76,24 @@ class SamAdapterFunctionsScope(
         }
     }
 
-    private fun buildMemberScopeSubstitutorForType(type: KotlinType) =
-            TypeConstructorSubstitution.create(type).wrapWithCapturingSubstitution(needApproximation = true).buildSubstitutor()
+    private fun FunctionDescriptor.substituteForReceiverType(receiverType: KotlinType): FunctionDescriptor? {
+        val containingClass = containingDeclaration as? ClassDescriptor ?: return null
+        val correspondingSupertype = findCorrespondingSupertype(receiverType, containingClass.defaultType) ?: return null
+
+        return substitute(
+                TypeConstructorSubstitution
+                        .create(correspondingSupertype)
+                        .wrapWithCapturingSubstitution(needApproximation = true)
+                        .buildSubstitutor()
+        )
+    }
 
     override fun getSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> {
         return receiverTypes.flatMapTo(LinkedHashSet<FunctionDescriptor>()) { type ->
             type.memberScope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)
                     .filterIsInstance<FunctionDescriptor>()
                     .mapNotNull {
-                        extensionForFunction(it.original)?.substitute(buildMemberScopeSubstitutorForType(type))
+                        extensionForFunction(it.original)?.substituteForReceiverType(type)
                     }
         }
     }

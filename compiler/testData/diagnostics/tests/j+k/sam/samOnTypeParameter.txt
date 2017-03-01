@@ -1,0 +1,21 @@
+package
+
+public fun </*0*/ P : FormFieldValidatorPresenterTest<kotlin.String>> setValidationListener(/*0*/ presenter: P, /*1*/ validationListener: (kotlin.Boolean) -> kotlin.Unit): kotlin.Unit
+
+public open class FormFieldValidatorPresenterTest</*0*/ V : kotlin.String!> {
+    public constructor FormFieldValidatorPresenterTest</*0*/ V : kotlin.String!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun setValidationListenerTest(/*0*/ validationListener: FormFieldValidatorPresenterTest.ValidationListenerTest!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public interface ValidationListenerTest {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public abstract fun onValidityChanged(/*0*/ valid: kotlin.Boolean): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    // Static members
+    public final /*synthesized*/ fun ValidationListenerTest(/*0*/ function: (valid: kotlin.Boolean) -> kotlin.Unit): FormFieldValidatorPresenterTest.ValidationListenerTest
+}
