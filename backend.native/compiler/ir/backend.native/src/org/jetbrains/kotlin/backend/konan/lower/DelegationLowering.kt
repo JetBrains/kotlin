@@ -122,7 +122,6 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
 
         val kPropertiesField = createKPropertiesFieldDescriptor(irFile.packageFragmentDescriptor, genericArrayType.replace(kPropertyImplType))
 
-
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitFunction(declaration: IrFunction): IrStatement {
                 return super.visitFunction(declaration)
@@ -180,11 +179,13 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
 
         })
 
-        irFile.declarations.add(0, IrFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION,
-                kPropertiesField,
-                IrExpressionBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        context.createArrayOfExpression(kPropertyImplType, kProperties))))
+        if (kProperties.size > 0) {
+            irFile.declarations.add(0, IrFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION,
+                    kPropertiesField,
+                    IrExpressionBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                            context.createArrayOfExpression(kPropertyImplType, kProperties))))
+        }
     }
 
     private object DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION :
