@@ -70,7 +70,14 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
             getDelegatableMembers(delegatedInterfaceType).map { memberDescriptor ->
                 val newModality = if (memberDescriptor.modality == Modality.ABSTRACT) Modality.OPEN else memberDescriptor.modality
                 @Suppress("UNCHECKED_CAST")
-                (memberDescriptor.copy(ownerDescriptor, newModality, Visibilities.INHERITED, DELEGATION, false) as T)
+                memberDescriptor.newCopyBuilder()
+                        .setOwner(ownerDescriptor)
+                        .setDispatchReceiverParameter(ownerDescriptor.thisAsReceiverParameter)
+                        .setModality(newModality)
+                        .setVisibility(Visibilities.INHERITED)
+                        .setKind(DELEGATION)
+                        .setCopyOverrides(false)
+                        .build() as T
             }
 
     private fun checkClashWithOtherDelegatedMember(candidate: T, delegatedMembers: Collection<T>): Boolean {

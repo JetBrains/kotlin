@@ -168,13 +168,14 @@ class ClassGenerator(val declarationGenerator: DeclarationGenerator) : Generator
     private fun generateDelegateFunctionBody(irDelegate: IrFieldImpl, delegated: FunctionDescriptor, overridden: FunctionDescriptor): IrBlockBodyImpl {
         val startOffset = irDelegate.startOffset
         val endOffset = irDelegate.endOffset
-        val classOwner = delegated.containingDeclaration.assertedCast<ClassDescriptor> { "Class member expected: $delegated" }
+        val dispatchReceiver = delegated.dispatchReceiverParameter ?:
+                               throw AssertionError("Delegated member should have a dispatch receiver: $delegated")
 
         val irBlockBody = IrBlockBodyImpl(startOffset, endOffset)
         val returnType = overridden.returnType!!
         val irCall = IrCallImpl(startOffset, endOffset, returnType, overridden, null)
         irCall.dispatchReceiver = IrGetFieldImpl(startOffset, endOffset, irDelegate.descriptor,
-                                                 IrGetValueImpl(startOffset, endOffset, classOwner.thisAsReceiverParameter)
+                                                 IrGetValueImpl(startOffset, endOffset, dispatchReceiver)
                                                  )
         irCall.extensionReceiver = delegated.extensionReceiverParameter?.let { extensionReceiver ->
             IrGetValueImpl(startOffset, endOffset, extensionReceiver)
