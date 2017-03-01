@@ -6883,6 +6883,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reflection/kClassToAndFromJsClass.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("primitives.kt")
+        public void testPrimitives() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/reflection/primitives.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("js/js.translator/testData/box/regression")

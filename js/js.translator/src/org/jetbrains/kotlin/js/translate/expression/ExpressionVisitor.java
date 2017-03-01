@@ -238,6 +238,10 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
         if (lhs instanceof DoubleColonLHS.Expression && !((DoubleColonLHS.Expression) lhs).isObjectQualifier()) {
             JsExpression receiver = translateAsExpression(receiverExpression, context);
+            KotlinType type = context.bindingContext().getType(receiverExpression);
+            if (type != null && KotlinBuiltIns.isChar(type)) {
+                receiver = JsAstUtils.charToBoxedChar(receiver);
+            }
             return new JsInvocation(context.namer().kotlin(GET_KCLASS_FROM_EXPRESSION), receiver);
         }
 

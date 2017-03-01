@@ -24,6 +24,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.hash.LinkedHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.*;
@@ -247,8 +249,31 @@ public final class StaticContext {
     private JsExpression buildQualifiedExpression(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
+            KotlinType type = classDescriptor.getDefaultType();
             if (KotlinBuiltIns.isAny(classDescriptor)) {
                 return pureFqn("Object", null);
+            }
+            else if (KotlinBuiltIns.isInt(type) || KotlinBuiltIns.isShort(type) || KotlinBuiltIns.isByte(type) ||
+                     KotlinBuiltIns.isFloat(type) || KotlinBuiltIns.isDouble(type)) {
+                return pureFqn("Number", null);
+            }
+            else if (KotlinBuiltIns.isLong(type)) {
+                return pureFqn("Long", Namer.kotlinObject());
+            }
+            else if (KotlinBuiltIns.isChar(type)) {
+                return pureFqn("BoxedChar", Namer.kotlinObject());
+            }
+            else if (KotlinBuiltIns.isString(type)) {
+                return pureFqn("String", null);
+            }
+            else if (KotlinBuiltIns.isBoolean(type)) {
+                return pureFqn("Boolean", null);
+            }
+            else if (KotlinBuiltIns.isArrayOrPrimitiveArray(classDescriptor)) {
+                return pureFqn("Array", null);
+            }
+            else if (FunctionTypesKt.isBuiltinFunctionalType(type)) {
+                return pureFqn("Function", null);
             }
             else if (TypeUtilsKt.isThrowable(classDescriptor.getDefaultType())) {
                 return pureFqn("Error", null);

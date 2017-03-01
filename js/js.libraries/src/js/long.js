@@ -64,6 +64,12 @@ Kotlin.Long = function(low, high) {
   this.high_ = high | 0;  // force into 32 signed bits.
 };
 
+Kotlin.Long.$metadata$ = {
+    kind: "class",
+    simpleName: "Long",
+    interfaces:[]
+};
+
 
 // NOTE: Common constant values ZERO, ONE, NEG_ONE, etc. are defined below the
 // from* methods on which they depend.
