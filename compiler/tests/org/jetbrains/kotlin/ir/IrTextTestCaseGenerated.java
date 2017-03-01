@@ -470,6 +470,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("contructorCall.kt")
+        public void testContructorCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/contructorCall.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("conventionComparisons.kt")
         public void testConventionComparisons() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/conventionComparisons.kt");

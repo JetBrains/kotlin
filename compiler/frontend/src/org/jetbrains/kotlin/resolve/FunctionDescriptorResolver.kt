@@ -317,6 +317,7 @@ class FunctionDescriptorResolver(
                         DescriptorUtils.getDefaultConstructorVisibility(classDescriptor)
                 )
         )
+        constructor.returnType = classDescriptor.defaultType
         if (DescriptorUtils.isAnnotationClass(classDescriptor)) {
             CompileTimeConstantUtils.checkConstructorParametersType(valueParameters, trace)
         }

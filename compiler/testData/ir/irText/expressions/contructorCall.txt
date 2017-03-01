@@ -1,0 +1,14 @@
+FILE /contructorCall.kt
+  CLASS CLASS A
+    CONSTRUCTOR public constructor A()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='A'
+  PROPERTY public val test: A
+    FIELD PROPERTY_BACKING_FIELD public val test: A
+      EXPRESSION_BODY
+        CALL 'constructor A()' type=A origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test>(): A
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test>(): A'
+          GET_FIELD 'test: A' type=A origin=null
