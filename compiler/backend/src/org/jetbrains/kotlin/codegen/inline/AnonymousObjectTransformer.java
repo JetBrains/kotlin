@@ -271,7 +271,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
         //TODO for inline method make public class
         transformationInfo.setNewConstructorDescriptor(constructorDescriptor);
         MethodVisitor constructorVisitor = classBuilder.newMethod(
-                NO_ORIGIN, AsmUtil.NO_FLAG_PACKAGE_PRIVATE, "<init>", constructorDescriptor, null, ArrayUtil.EMPTY_STRING_ARRAY
+                NO_ORIGIN, constructor.access, "<init>", constructorDescriptor, null, ArrayUtil.EMPTY_STRING_ARRAY
         );
 
         final Label newBodyStartLabel = new Label();
@@ -312,7 +312,7 @@ public class AnonymousObjectTransformer extends ObjectTransformer<AnonymousObjec
         }
 
         MethodNode intermediateMethodNode =
-                new MethodNode(AsmUtil.NO_FLAG_PACKAGE_PRIVATE, "<init>", constructorDescriptor, null, ArrayUtil.EMPTY_STRING_ARRAY);
+                new MethodNode(constructor.access, "<init>", constructorDescriptor, null, ArrayUtil.EMPTY_STRING_ARRAY);
         inlineMethodAndUpdateGlobalResult(parentRemapper, intermediateMethodNode, constructor, constructorInlineBuilder, true);
         InlineCodegenUtil.removeFinallyMarkers(intermediateMethodNode);
 
