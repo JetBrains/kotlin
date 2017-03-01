@@ -1032,14 +1032,14 @@ public class KotlinTypeMapper {
         }
 
         if (f instanceof ConstructorDescriptor) {
-            return mapSignature(f, kind, f.getOriginal().getValueParameters(), skipGenericSignature);
+            return mapSignatureWithCustomParameters(f, kind, f.getOriginal().getValueParameters(), skipGenericSignature);
         }
 
-        return mapSignature(f, kind, f.getValueParameters(), skipGenericSignature);
+        return mapSignatureWithCustomParameters(f, kind, f.getValueParameters(), skipGenericSignature);
     }
 
     @NotNull
-    public JvmMethodGenericSignature mapSignature(
+    public JvmMethodGenericSignature mapSignatureWithCustomParameters(
             @NotNull FunctionDescriptor f,
             @NotNull OwnerKind kind,
             @NotNull List<ValueParameterDescriptor> valueParameters,
@@ -1049,7 +1049,7 @@ public class KotlinTypeMapper {
             return mapSignature(((FunctionImportedFromObject) f).getCallableFromObject(), kind, skipGenericSignature);
         }
         else if (f instanceof TypeAliasConstructorDescriptor) {
-            return mapSignature(((TypeAliasConstructorDescriptor) f).getUnderlyingConstructorDescriptor(), kind, valueParameters, skipGenericSignature);
+            return mapSignatureWithCustomParameters(((TypeAliasConstructorDescriptor) f).getUnderlyingConstructorDescriptor(), kind, valueParameters, skipGenericSignature);
         }
 
         checkOwnerCompatibility(f);
