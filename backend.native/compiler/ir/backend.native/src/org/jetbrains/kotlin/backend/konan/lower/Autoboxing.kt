@@ -51,7 +51,8 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     }
 
     override fun IrExpression.useInTypeOperator(operator: IrTypeOperator, typeOperand: KotlinType): IrExpression {
-        return if (operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {
+        return if (operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT ||
+                   operator == IrTypeOperator.IMPLICIT_INTEGER_COERCION) {
             this
         } else {
             // Codegen expects the argument of type-checking operator to be an object reference:
@@ -68,7 +69,8 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         val newTypeOperand = getRuntimeReferenceType(expression.typeOperand)
 
         return when (expression.operator) {
-            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> expression
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
+            IrTypeOperator.IMPLICIT_INTEGER_COERCION -> expression
 
             IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST,
             IrTypeOperator.IMPLICIT_NOTNULL, IrTypeOperator.SAFE_CAST -> {

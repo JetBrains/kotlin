@@ -60,10 +60,6 @@ internal class ClassDelegationLowering(val context: Context) : DeclarationContai
         val statement = body.statements.single()
         val delegatedCall = ((statement as? IrReturn)?.value ?: statement) as? IrCall
                 ?: throw AssertionError("Unexpected method body: $statement")
-        val propertyGetter = delegatedCall.dispatchReceiver as? IrGetValue
-                ?: throw AssertionError("Unexpected dispatch receiver: ${delegatedCall.dispatchReceiver}")
-        val propertyDescriptor = propertyGetter.descriptor as? PropertyDescriptor
-                ?: throw AssertionError("Unexpected dispatch receiver descriptor: ${propertyGetter.descriptor}")
         val delegated = context.specialDescriptorsFactory.getBridgeDescriptor(
                 OverriddenFunctionDescriptor(descriptor, delegatedCall.descriptor as FunctionDescriptor))
         val newFunction = IrFunctionImpl(irFunction.startOffset, irFunction.endOffset, irFunction.origin, delegated)
@@ -71,9 +67,7 @@ internal class ClassDelegationLowering(val context: Context) : DeclarationContai
         val irBlockBody = IrBlockBodyImpl(irFunction.startOffset, irFunction.endOffset)
         val returnType = delegatedCall.descriptor.returnType!!
         val irCall = IrCallImpl(irFunction.startOffset, irFunction.endOffset, returnType, delegatedCall.descriptor, null)
-        val receiver = IrGetValueImpl(irFunction.startOffset, irFunction.endOffset,
-                (irDeclarationContainer as IrClass).descriptor.thisAsReceiverParameter)
-        irCall.dispatchReceiver = IrGetFieldImpl(irFunction.startOffset, irFunction.endOffset, propertyDescriptor, receiver)
+        irCall.dispatchReceiver = delegatedCall.dispatchReceiver
         irCall.extensionReceiver = delegated.extensionReceiverParameter?.let { extensionReceiver ->
             IrGetValueImpl(irFunction.startOffset, irFunction.endOffset, extensionReceiver)
         }

@@ -2,10 +2,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jetbrains.kotlin.backend.konan.KonanPhase
-import org.jetbrains.kotlin.backend.konan.PhaseManager
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.IrInlineFunctionBody
 import org.jetbrains.kotlin.backend.konan.ir.getArguments
@@ -27,9 +24,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.typeUtil.isNothing
-import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
-import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 
@@ -1130,6 +1125,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateTypeOperator(value: IrTypeOperatorCall): LLVMValueRef {
         when (value.operator) {
             IrTypeOperator.CAST                      -> return evaluateCast(value)
+            IrTypeOperator.IMPLICIT_INTEGER_COERCION -> return evaluateIntegerCoercion(value)
             IrTypeOperator.IMPLICIT_CAST             -> return evaluateExpression(value.argument)
             IrTypeOperator.IMPLICIT_NOTNULL          -> TODO("${ir2string(value)}")
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
@@ -1140,7 +1136,31 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             IrTypeOperator.INSTANCEOF                -> return evaluateInstanceOf(value)
             IrTypeOperator.NOT_INSTANCEOF            -> return evaluateNotInstanceOf(value)
         }
+    }
 
+    //-------------------------------------------------------------------------//
+
+    private fun KotlinType.isPrimitiveInteger(): Boolean {
+        return isPrimitiveNumberType() &&
+               !KotlinBuiltIns.isFloat(this) &&
+               !KotlinBuiltIns.isDouble(this) &&
+               !KotlinBuiltIns.isChar(this)
+    }
+
+    private fun evaluateIntegerCoercion(value: IrTypeOperatorCall): LLVMValueRef {
+        context.log("evaluateIntegerCoercion    : ${ir2string(value)}")
+        val type = value.typeOperand
+        assert(type.isPrimitiveInteger())
+        val result = evaluateExpression(value.argument)
+        val llvmSrcType = codegen.getLLVMType(value.argument.type)
+        val llvmDstType = codegen.getLLVMType(type)
+        val srcWidth = LLVMGetIntTypeWidth(llvmSrcType)
+        val dstWidth = LLVMGetIntTypeWidth(llvmDstType)
+        return when {
+            srcWidth == dstWidth           -> result
+            srcWidth > dstWidth            -> LLVMBuildTrunc(codegen.builder, result, llvmDstType, "")!!
+            else /* srcWidth < dstWidth */ -> LLVMBuildSExt(codegen.builder, result, llvmDstType, "")!!
+        }
     }
 
     //-------------------------------------------------------------------------//
