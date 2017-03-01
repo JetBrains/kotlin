@@ -51,16 +51,10 @@ public class TargetPlatformDetector {
             return contextFile instanceof KtFile ? getPlatform((KtFile) contextFile) : JvmPlatform.INSTANCE;
         }
 
-        return getPlatform((PsiFile) file);
-    }
-
-    public static TargetPlatform getPlatform(@NotNull PsiFile file) {
-
         VirtualFile virtualFile = file.getOriginalFile().getVirtualFile();
         if (virtualFile == null) {
             return getDefaultPlatform(file);
         }
-
         Module moduleForFile = ProjectFileIndex.SERVICE.getInstance(file.getProject()).getModuleForFile(virtualFile);
         if (moduleForFile == null) {
             return getDefaultPlatform(file);
@@ -75,7 +69,7 @@ public class TargetPlatformDetector {
     }
 
     @NotNull
-    private static TargetPlatform getDefaultPlatform(@NotNull PsiFile file) {
+    private static TargetPlatform getDefaultPlatform(@NotNull KtFile file) {
         LOG.info("Using default platform for file: " + file.getName());
         return JvmPlatform.INSTANCE;
     }
