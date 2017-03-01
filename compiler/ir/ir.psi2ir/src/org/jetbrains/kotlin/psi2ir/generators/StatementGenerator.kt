@@ -105,7 +105,7 @@ class StatementGenerator(
         return irBlock
     }
 
-    fun declareComponentVariablesInBlock(multiDeclaration: KtDestructuringDeclaration, irBlock: IrContainerExpressionBase, containerValue: IntermediateValue) {
+    fun declareComponentVariablesInBlock(multiDeclaration: KtDestructuringDeclaration, irBlock: IrStatementContainer, containerValue: IntermediateValue) {
         val callGenerator = CallGenerator(this)
         for ((index, ktEntry) in multiDeclaration.entries.withIndex()) {
             val componentResolvedCall = getOrFail(BindingContext.COMPONENT_RESOLVED_CALL, ktEntry)

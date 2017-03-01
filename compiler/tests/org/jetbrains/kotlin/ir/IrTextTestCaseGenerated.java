@@ -785,6 +785,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("destructuringInLambda.kt")
+        public void testDestructuringInLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/lambdas/destructuringInLambda.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("extensionLambda.kt")
         public void testExtensionLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/lambdas/extensionLambda.kt");

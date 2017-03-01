@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi2ir.intermediate.VariableLValue
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
@@ -71,6 +72,15 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
 
         val ktBody = ktFun.bodyExpression!!
         val irBlockBody = IrBlockBodyImpl(ktBody.startOffset, ktBody.endOffset)
+
+        for (ktParameter in ktFun.valueParameters) {
+            val ktDestructuringDeclaration = ktParameter.destructuringDeclaration ?: continue
+            val valueParameter = getOrFail(BindingContext.VALUE_PARAMETER, ktParameter)
+            val parameterValue = VariableLValue(ktDestructuringDeclaration.startOffset, ktDestructuringDeclaration.endOffset,
+                                                valueParameter, IrStatementOrigin.DESTRUCTURING_DECLARATION)
+            statementGenerator.declareComponentVariablesInBlock(ktDestructuringDeclaration, irBlockBody, parameterValue)
+        }
+
         if (ktBody is KtBlockExpression) {
             val ktBodyStatements = ktBody.statements
             if (ktBodyStatements.isNotEmpty()) {
