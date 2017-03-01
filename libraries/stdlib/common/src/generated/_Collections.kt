@@ -1041,6 +1041,8 @@ public header inline fun <T> Iterable<T>.asIterable(): Iterable<T>
 
 /**
  * Creates a [Sequence] instance that wraps the original collection returning its elements when being iterated.
+ * 
+ * @sample samples.collections.Sequences.Building.sequenceFromCollection
  */
 public header fun <T> Iterable<T>.asSequence(): Sequence<T>
 

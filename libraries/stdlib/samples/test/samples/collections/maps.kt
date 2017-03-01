@@ -3,7 +3,6 @@ package samples.collections
 import samples.*
 import kotlin.test.*
 import java.util.*
-import kotlin.comparisons.*
 
 @RunWith(Enclosed::class)
 class Maps {

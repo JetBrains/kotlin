@@ -21,13 +21,20 @@ package kotlin.coroutines.experimental
 import kotlin.coroutines.experimental.intrinsics.*
 
 /**
- *  Builds a [Sequence] lazily yielding values one by one.
+ * Builds a [Sequence] lazily yielding values one by one.
+ *
+ * @see kotlin.sequences.generateSequence
+ *
+ * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
+ * @sample samples.collections.Sequences.Building.buildFibonacciSequence
  */
 @SinceKotlin("1.1")
 public fun <T> buildSequence(builderAction: suspend SequenceBuilder<T>.() -> Unit): Sequence<T> = Sequence { buildIterator(builderAction) }
 
 /**
  * Builds an [Iterator] lazily yielding values one by one.
+ *
+ * @sample samples.collections.Sequences.Building.buildIterator
  */
 @SinceKotlin("1.1")
 public fun <T> buildIterator(builderAction: suspend SequenceBuilder<T>.() -> Unit): Iterator<T> {
@@ -38,12 +45,21 @@ public fun <T> buildIterator(builderAction: suspend SequenceBuilder<T>.() -> Uni
 
 /**
  * Builder for a [Sequence] or an [Iterator], provides [yield] and [yieldAll] suspension functions.
+ *
+ * @see buildSequence
+ * @see buildIterator
+ *
+ * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
+ * @sample samples.collections.Sequences.Building.buildFibonacciSequence
  */
 @RestrictsSuspension
 @SinceKotlin("1.1")
 public abstract class SequenceBuilder<in T> internal constructor() {
     /**
      * Yields a value to the [Iterator] being built.
+     *
+     * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
+     * @sample samples.collections.Sequences.Building.buildFibonacciSequence
      */
     public abstract suspend fun yield(value: T)
 
@@ -51,11 +67,15 @@ public abstract class SequenceBuilder<in T> internal constructor() {
      * Yields all values from the `iterator` to the [Iterator] being built.
      *
      * The sequence of values returned by the given iterator can be potentially infinite.
+     *
+     * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
      */
     public abstract suspend fun yieldAll(iterator: Iterator<T>)
 
     /**
      * Yields a collections of values to the [Iterator] being built.
+     *
+     * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
      */
     public suspend fun yieldAll(elements: Iterable<T>) {
         if (elements is Collection && elements.isEmpty()) return
@@ -66,6 +86,8 @@ public abstract class SequenceBuilder<in T> internal constructor() {
      * Yields potentially infinite sequence of values  to the [Iterator] being built.
      *
      * The sequence can be potentially infinite.
+     *
+     * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
      */
     public suspend fun yieldAll(sequence: Sequence<T>) = yieldAll(sequence.iterator())
 }
