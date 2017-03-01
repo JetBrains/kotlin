@@ -12,6 +12,7 @@
 
 ### Standard library
 - [`KT-6561`](https://youtrack.jetbrains.com/issue/KT-6561) Drop java.util.Collections package from js stdlib
+- `javaClass` extension property is no more deprecated due to migration problems
 
 ### IDE
 - [`KT-16329`](https://youtrack.jetbrains.com/issue/KT-16329) Inspection "Calls to staic methods in Java interfaces..." always reports warning undependent of jvm-target
