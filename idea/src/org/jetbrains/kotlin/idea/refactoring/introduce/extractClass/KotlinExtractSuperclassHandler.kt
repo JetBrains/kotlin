@@ -39,12 +39,6 @@ object KotlinExtractSuperclassHandler : KotlinExtractSuperHandlerBase(false) {
     }
 
     override fun doInvoke(klass: KtClassOrObject, targetParent: PsiElement, project: Project, editor: Editor?) {
-        if (!CommonRefactoringUtil.checkReadOnlyStatus(project, klass)) return
-
-        getErrorMessage(klass)?.let {
-            CommonRefactoringUtil.showErrorHint(project, editor, RefactoringBundle.getCannotRefactorMessage(it), REFACTORING_NAME, HelpID.EXTRACT_SUPERCLASS)
-        }
-
         KotlinExtractSuperclassDialog(
                 originalClass = klass,
                 targetParent = targetParent,

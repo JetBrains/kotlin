@@ -24,9 +24,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringActionHandler
+import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.extractSuperclass.ExtractSuperClassUtil
 import com.intellij.refactoring.lang.ElementsHandler
+import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.idea.refactoring.SeparateFileWrapper
 import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
@@ -42,6 +45,7 @@ abstract class KotlinExtractSuperHandlerBase(private val isExtractInterface: Boo
         val offset = editor.caretModel.offset
         val element = file.findElementAt(offset) ?: return
         val klass = element.getNonStrictParentOfType<KtClassOrObject>() ?: return
+        if (!checkClass(klass, editor)) return
         editor.scrollingModel.scrollToCaret(ScrollType.MAKE_VISIBLE)
         selectElements(klass, project, editor)
     }
@@ -50,7 +54,27 @@ abstract class KotlinExtractSuperHandlerBase(private val isExtractInterface: Boo
         if (dataContext == null) return
         val editor = CommonDataKeys.EDITOR.getData(dataContext)
         val klass = PsiTreeUtil.findCommonParent(*elements)?.getNonStrictParentOfType<KtClassOrObject>() ?: return
+        if (!checkClass(klass, editor)) return
         selectElements(klass, project, editor)
+    }
+
+    private fun checkClass(klass: KtClassOrObject, editor: Editor?): Boolean {
+        val project = klass.project
+
+        if (!CommonRefactoringUtil.checkReadOnlyStatus(project, klass)) return false
+
+        getErrorMessage(klass)?.let {
+            CommonRefactoringUtil.showErrorHint(
+                    project,
+                    editor,
+                    RefactoringBundle.getCannotRefactorMessage(it),
+                    KotlinExtractSuperclassHandler.REFACTORING_NAME,
+                    HelpID.EXTRACT_SUPERCLASS
+            )
+            return false
+        }
+
+        return true
     }
 
     fun selectElements(klass: KtClassOrObject, project: Project, editor: Editor?) {
