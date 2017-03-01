@@ -12603,6 +12603,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("kt12248.kt")
+                public void testKt12248() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/const/kt12248.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt15913.kt")
+                public void testKt15913() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/const/kt15913.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("noDivisionByZeroFeature.kt")
                 public void testNoDivisionByZeroFeature() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/const/noDivisionByZeroFeature.kt");
