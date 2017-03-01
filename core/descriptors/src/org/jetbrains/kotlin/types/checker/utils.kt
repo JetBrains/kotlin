@@ -27,7 +27,7 @@ private class SubtypePathNode(val type: KotlinType, val previous: SubtypePathNod
 
 fun findCorrespondingSupertype(
         subtype: KotlinType, supertype: KotlinType,
-        typeCheckingProcedureCallbacks: TypeCheckingProcedureCallbacks
+        typeCheckingProcedureCallbacks: TypeCheckingProcedureCallbacks = TypeCheckerProcedureCallbacksImpl()
 ): KotlinType? {
     val queue = ArrayDeque<SubtypePathNode>()
     queue.add(SubtypePathNode(subtype, null))
