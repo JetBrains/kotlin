@@ -288,6 +288,28 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/addMissingDestructuring")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddMissingDestructuring extends AbstractIntentionTest {
+        public void testAllFilesPresentInAddMissingDestructuring() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addMissingDestructuring"),
+                                                            Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("notAvailable.kt")
+        public void testNotAvailable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addMissingDestructuring/notAvailable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addMissingDestructuring/simple.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/addNameToArgument")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
