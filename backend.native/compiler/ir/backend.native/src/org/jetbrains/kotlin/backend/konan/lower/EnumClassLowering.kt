@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanPlatform
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalFunctions
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
+import org.jetbrains.kotlin.backend.konan.ir.createArrayOfExpression
+import org.jetbrains.kotlin.backend.konan.ir.createSimpleDelegatingConstructor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
@@ -171,7 +173,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
 
             descriptor.constructors.forEach {
                 val loweredEnumConstructor = loweredEnumConstructors[it]!!
-                val (constructorDescriptor, constructor) = createSimpleDelegatingConstructor(defaultClassDescriptor, loweredEnumConstructor)
+                val (constructorDescriptor, constructor) = defaultClassDescriptor.createSimpleDelegatingConstructor(loweredEnumConstructor)
                 constructors.add(constructorDescriptor)
                 defaultClass.declarations.add(constructor)
                 defaultEnumEntryConstructors.put(loweredEnumConstructor, constructorDescriptor)
@@ -233,7 +235,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
             val memberScope = MemberScope.Empty
 
             val constructorOfAny = irClass.descriptor.module.builtIns.any.constructors.first()
-            val (constructorDescriptor, constructor) = createSimpleDelegatingConstructor(implObjectDescriptor, constructorOfAny)
+            val (constructorDescriptor, constructor) = implObjectDescriptor.createSimpleDelegatingConstructor(constructorOfAny)
 
             implObjectDescriptor.initialize(memberScope, setOf(constructorDescriptor), constructorDescriptor)
 
@@ -260,34 +262,6 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
             return newDescriptor
         }
 
-        private fun createSimpleDelegatingConstructor(classDescriptor: ClassDescriptor,
-                                                      superConstructorDescriptor: ClassConstructorDescriptor)
-                : Pair<ClassConstructorDescriptor, IrConstructor> {
-            val constructorDescriptor = ClassConstructorDescriptorImpl.createSynthesized(
-                    classDescriptor,
-                    Annotations.EMPTY,
-                    superConstructorDescriptor.isPrimary,
-                    SourceElement.NO_SOURCE)
-            val valueParameters = superConstructorDescriptor.valueParameters.map {
-                it.copy(constructorDescriptor, it.name, it.index)
-            }
-            constructorDescriptor.initialize(valueParameters, superConstructorDescriptor.visibility)
-            constructorDescriptor.returnType = superConstructorDescriptor.returnType
-
-            val body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    listOf(
-                            IrDelegatingConstructorCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, superConstructorDescriptor).apply {
-                                valueParameters.forEachIndexed { idx, parameter ->
-                                    putValueArgument(idx, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter))
-                                }
-                            },
-                            IrInstanceInitializerCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, classDescriptor)
-                    )
-            )
-            val constructor = IrConstructorImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, constructorDescriptor, body)
-            return Pair(constructorDescriptor, constructor)
-        }
-
         private fun createSyntheticValuesFieldDeclaration(implObjectDescriptor: ClassDescriptor,
                                                           enumEntries: List<IrEnumEntry>): IrFieldImpl {
             val valuesArrayType = context.builtIns.getArrayType(Variance.INVARIANT, irClass.descriptor.defaultType)
@@ -304,7 +278,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
             val loweredEnumEntry = LoweredEnumEntry(implObjectDescriptor, valuesFieldDescriptor, substitutedValueOf, entriesMap)
             loweredEnumEntries.put(irClass.descriptor, loweredEnumEntry)
 
-            val irValuesInitializer = createArrayOfExpression(irClass.descriptor.defaultType, enumEntries.map { it.initializerExpression })
+            val irValuesInitializer = context.createArrayOfExpression(irClass.descriptor.defaultType, enumEntries.map { it.initializerExpression })
 
             val irField = IrFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED,
                     valuesFieldDescriptor,
@@ -321,30 +295,11 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
 
         private val kotlinPackage = context.irModule!!.descriptor.getPackage(FqName("kotlin"))
 
-        private val genericArrayOfFun = kotlinPackage.memberScope.getContributedFunctions(Name.identifier("arrayOf"), NoLookupLocation.FROM_BACKEND).first()
-
         private val genericValueOfFun = context.builtIns.getKonanInternalFunctions("valueOfForEnum").single()
 
         private val genericValuesFun = context.builtIns.getKonanInternalFunctions("valuesForEnum").single()
 
         private val genericArrayType = kotlinPackage.memberScope.getContributedClassifier(Name.identifier("Array"), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
-
-        private fun createArrayOfExpression(arrayElementType: KotlinType, arrayElements: List<IrExpression>): IrExpression {
-            val typeParameter0 = genericArrayOfFun.typeParameters[0]
-            val typeSubstitutor = TypeSubstitutor.create(mapOf(typeParameter0.typeConstructor to TypeProjectionImpl(arrayElementType)))
-            val substitutedArrayOfFun = genericArrayOfFun.substitute(typeSubstitutor)!!
-
-            val typeArguments = mapOf(typeParameter0 to arrayElementType)
-
-            val valueParameter0 = substitutedArrayOfFun.valueParameters[0]
-            val arg0VarargType = valueParameter0.type
-            val arg0VarargElementType = valueParameter0.varargElementType!!
-            val arg0 = IrVarargImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, arg0VarargType, arg0VarargElementType, arrayElements)
-
-            return IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, substitutedArrayOfFun, typeArguments).apply {
-                putValueArgument(0, arg0)
-            }
-        }
 
         private fun createSyntheticValuesMethodDeclaration(companionObjectDescriptor: ClassDescriptor): IrFunction {
             val typeParameterT = genericValuesFun.typeParameters[0]

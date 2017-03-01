@@ -186,7 +186,7 @@ class RunInteropKonanTest extends KonanTest {
 }
 
 @ParallelizableTask
-class LinkKonanTest extends KonanTest {
+class LinkKonanTestNoStdlib extends KonanTest {
     protected String lib
 
     void compileTest(List<String> filesToCompile, String exe) {
@@ -194,6 +194,19 @@ class LinkKonanTest extends KonanTest {
         def libBc = "${libDir}.bc"
 
         runCompiler(lib, libBc, ['-nolink', '-nostdlib'])
+        runCompiler(filesToCompile, exe, ['-library', libBc])
+    }
+}
+
+@ParallelizableTask
+class LinkKonanTest extends KonanTest {
+    protected String lib
+
+    void compileTest(List<String> filesToCompile, String exe) {
+        def libDir = project.file(lib).absolutePath
+        def libBc = "${libDir}.bc"
+
+        runCompiler(lib, libBc, ['-nolink'])
         runCompiler(filesToCompile, exe, ['-library', libBc])
     }
 }

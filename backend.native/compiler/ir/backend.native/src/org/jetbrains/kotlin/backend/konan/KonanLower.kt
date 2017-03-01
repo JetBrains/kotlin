@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 internal class KonanLower(val context: Context) {
 
@@ -39,6 +38,10 @@ internal class KonanLower(val context: Context) {
         phaser.phase(KonanPhase.LOWER_INITIALIZERS) {
             InitializersLowering(context).runOnFilePostfix(irFile)
         }
+        phaser.phase(KonanPhase.LOWER_DELEGATION) {
+            ClassDelegationLowering(context).runOnFilePostfix(irFile)
+            PropertyDelegationLowering(context).lower(irFile)
+        }
         phaser.phase(KonanPhase.LOWER_TYPE_OPERATORS) {
             TypeOperatorLowering(context).runOnFilePostfix(irFile)
         }
@@ -58,7 +61,6 @@ internal class KonanLower(val context: Context) {
             VarargInjectionLowering(context).runOnFilePostfix(irFile)
         }
         phaser.phase(KonanPhase.BRIDGES_BUILDING) {
-            DelegationLowering(context).runOnFilePostfix(irFile)
             BridgesBuilding(context).runOnFilePostfix(irFile)
             DirectBridgesCallsLowering(context).runOnFilePostfix(irFile)
         }

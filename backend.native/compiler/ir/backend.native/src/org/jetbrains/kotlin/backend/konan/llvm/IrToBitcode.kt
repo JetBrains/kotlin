@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptorBase
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
+import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -1226,7 +1227,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         context.log("evaluateGetField           : ${ir2string(value)}")
         if (value.descriptor.dispatchReceiverParameter != null
                 // TODO: hack because of IR bug: https://github.com/JetBrains/kotlin/tree/rr/dispatch_receiver_for_delegate_descriptor.
-                || value.descriptor is IrImplementingDelegateDescriptorImpl) {
+                || value.descriptor is IrImplementingDelegateDescriptorImpl
+                || (value.descriptor is IrPropertyDelegateDescriptorImpl && value.descriptor.containingDeclaration is ClassDescriptor)) {
             val thisPtr = evaluateExpression(value.receiver!!)
             return codegen.loadSlot(
                     fieldPtrOfClass(thisPtr, value.descriptor), value.descriptor.isVar())
@@ -1258,7 +1260,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         if (value.descriptor.dispatchReceiverParameter != null
                 // TODO: hack because of IR bug: https://github.com/JetBrains/kotlin/tree/rr/dispatch_receiver_for_delegate_descriptor.
-                || value.descriptor is IrImplementingDelegateDescriptorImpl) {
+                || value.descriptor is IrImplementingDelegateDescriptorImpl
+                || (value.descriptor is IrPropertyDelegateDescriptorImpl && value.descriptor.containingDeclaration is ClassDescriptor)) {
             val thisPtr = evaluateExpression(value.receiver!!)
             codegen.storeAnyGlobal(valueToAssign, fieldPtrOfClass(thisPtr, value.descriptor))
         }

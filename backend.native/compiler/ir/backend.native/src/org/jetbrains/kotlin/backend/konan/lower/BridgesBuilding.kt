@@ -13,8 +13,10 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.util.transformFlat
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.types.KotlinType
@@ -66,71 +68,6 @@ internal class DirectBridgesCallsLowering(val context: Context) : BodyLoweringPa
     }
 }
 
-private object DECLARATION_ORIGIN_BRIDGE_METHOD :
-        IrDeclarationOriginImpl("BRIDGE_METHOD")
-
-internal class DelegationLowering(val context: Context) : ClassLoweringPass {
-    override fun lower(irClass: IrClass) {
-        irClass.declarations.transformFlat {
-            when (it) {
-                is IrFunction -> {
-                    val transformedFun = transformBridgeToDelegatedMethod(irClass, it)
-                    if (transformedFun == null) null
-                    else listOf(transformedFun)
-                }
-                is IrProperty -> {
-                    val getter = transformBridgeToDelegatedMethod(irClass, it.getter)
-                    val setter = transformBridgeToDelegatedMethod(irClass, it.setter)
-                    if (getter != null) it.getter = getter
-                    if (setter != null) it.setter = setter
-                    null
-                }
-                else -> null
-            }
-        }
-    }
-
-    // TODO: hack because of broken IR for synthesized delegated members: https://youtrack.jetbrains.com/issue/KT-16486.
-    private fun transformBridgeToDelegatedMethod(irClass: IrClass, irFunction: IrFunction?): IrFunction? {
-        if (irFunction == null || irFunction.descriptor.kind != CallableMemberDescriptor.Kind.DELEGATION) return null
-
-        val body = irFunction.body as? IrBlockBody
-                ?: throw AssertionError("Unexpected method body: ${irFunction.body}")
-        val statement = body.statements.single()
-        val delegatedCall = ((statement as? IrReturn)?.value ?: statement) as? IrCall
-                ?: throw AssertionError("Unexpected method body: $statement")
-        val propertyGetter = delegatedCall.dispatchReceiver as? IrGetValue
-                ?: throw AssertionError("Unexpected dispatch receiver: ${delegatedCall.dispatchReceiver}")
-        val propertyDescriptor = propertyGetter.descriptor as? PropertyDescriptor
-                ?: throw AssertionError("Unexpected dispatch receiver descriptor: ${propertyGetter.descriptor}")
-        val delegated = context.specialDescriptorsFactory.getBridgeDescriptor(
-                OverriddenFunctionDescriptor(irFunction.descriptor, delegatedCall.descriptor as FunctionDescriptor))
-        val newFunction = IrFunctionImpl(irFunction.startOffset, irFunction.endOffset, DECLARATION_ORIGIN_BRIDGE_METHOD, delegated)
-
-        val irBlockBody = IrBlockBodyImpl(irFunction.startOffset, irFunction.endOffset)
-        val returnType = delegatedCall.descriptor.returnType!!
-        val irCall = IrCallImpl(irFunction.startOffset, irFunction.endOffset, returnType, delegatedCall.descriptor, null)
-        val receiver = IrGetValueImpl(irFunction.startOffset, irFunction.endOffset, irClass.descriptor.thisAsReceiverParameter)
-        irCall.dispatchReceiver = IrGetFieldImpl(irFunction.startOffset, irFunction.endOffset, propertyDescriptor, receiver)
-        irCall.extensionReceiver = delegated.extensionReceiverParameter?.let { extensionReceiver ->
-            IrGetValueImpl(irFunction.startOffset, irFunction.endOffset, extensionReceiver)
-        }
-        irCall.mapValueParameters { overriddenValueParameter ->
-            val delegatedValueParameter = delegated.valueParameters[overriddenValueParameter.index]
-            IrGetValueImpl(irFunction.startOffset, irFunction.endOffset, delegatedValueParameter)
-        }
-        if (KotlinBuiltIns.isUnit(returnType) || KotlinBuiltIns.isNothing(returnType)) {
-            irBlockBody.statements.add(irCall)
-        } else {
-            val irReturn = IrReturnImpl(irFunction.startOffset, irFunction.endOffset, context.builtIns.nothingType, delegated, irCall)
-            irBlockBody.statements.add(irReturn)
-        }
-
-        newFunction.body = irBlockBody
-        return newFunction
-    }
-}
-
 internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         val functions = mutableSetOf<FunctionDescriptor?>()
@@ -159,6 +96,9 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
             }
         }
     }
+
+    private object DECLARATION_ORIGIN_BRIDGE_METHOD :
+            IrDeclarationOriginImpl("BRIDGE_METHOD")
 
     private fun buildBridge(descriptor: OverriddenFunctionDescriptor, irClass: IrClass) {
         val bridgeDescriptor = context.specialDescriptorsFactory.getBridgeDescriptor(descriptor)
