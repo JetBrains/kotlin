@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.frontend.js.di
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
@@ -42,7 +43,7 @@ fun createTopDownAnalyzerForJs(
         compilerConfiguration: CompilerConfiguration
 ): LazyTopDownAnalyzer {
     val storageComponentContainer = createContainer("TopDownAnalyzerForJs", JsPlatform) {
-        configureModule(moduleContext, JsPlatform, bindingTrace)
+        configureModule(moduleContext, JsPlatform, TargetPlatformVersion.NoVersion, bindingTrace)
 
         useInstance(declarationProviderFactory)
         useImpl<FileScopeProviderImpl>()

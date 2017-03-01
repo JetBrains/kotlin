@@ -144,13 +144,7 @@ private fun getExtraLanguageFeatures(
 
 fun KtElement.createCompilerConfiguration(): CompilerConfiguration = CompilerConfiguration().apply {
     languageVersionSettings = this@createCompilerConfiguration.languageVersionSettings
-
-    val module = ModuleUtilCore.findModuleForPsiElement(this@createCompilerConfiguration)
-    val platform = module?.targetPlatform?.version
-    if (platform is JvmTarget) {
-        put(JVMConfigurationKeys.JVM_TARGET, platform)
-    }
-
+    put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
     isReadOnly = true
 }
 
@@ -161,3 +155,6 @@ val KtElement.languageVersionSettings: LanguageVersionSettings
         }
         return ModuleUtilCore.findModuleForPsiElement(this)?.languageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT
     }
+
+val KtElement.jvmTarget: JvmTarget
+    get() = ModuleUtilCore.findModuleForPsiElement(this)?.targetPlatform?.version as? JvmTarget ?: JvmTarget.DEFAULT

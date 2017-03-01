@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmen
 object DefaultAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
     private val compilerConfiguration = CompilerConfiguration().apply {
         languageVersionSettings = LanguageVersionSettingsImpl(
-                LanguageVersion.LATEST, ApiVersion.LATEST, setOf(LanguageFeature.MultiPlatformProjects)
+                LanguageVersion.LATEST, ApiVersion.LATEST, additionalFeatures = setOf(LanguageFeature.MultiPlatformProjects)
         )
     }
 
@@ -128,7 +128,7 @@ object DefaultAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
             targetEnvironment: TargetEnvironment,
             packagePartProvider: PackagePartProvider
     ): StorageComponentContainer = createContainer("ResolveCommonCode", targetPlatform) {
-        configureModule(moduleContext, targetPlatform, bindingTrace)
+        configureModule(moduleContext, targetPlatform, TargetPlatformVersion.NoVersion, bindingTrace)
 
         useInstance(moduleContentScope)
         useInstance(LookupTracker.DO_NOTHING)

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.frontend.di
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.get
@@ -36,7 +37,9 @@ import org.jetbrains.kotlin.types.expressions.LocalClassDescriptorHolder
 import org.jetbrains.kotlin.types.expressions.LocalLazyDeclarationResolver
 
 fun StorageComponentContainer.configureModule(
-        moduleContext: ModuleContext, platform: TargetPlatform
+        moduleContext: ModuleContext,
+        platform: TargetPlatform,
+        platformVersion: TargetPlatformVersion
 ) {
     useInstance(moduleContext)
     useInstance(moduleContext.module)
@@ -45,6 +48,7 @@ fun StorageComponentContainer.configureModule(
     useInstance(moduleContext.module.builtIns)
 
     useInstance(platform)
+    useInstance(platformVersion)
 
     platform.platformConfigurator.configureModuleComponents(this)
 
@@ -60,9 +64,12 @@ private fun StorageComponentContainer.configurePlatformIndependentComponents() {
 }
 
 fun StorageComponentContainer.configureModule(
-        moduleContext: ModuleContext, platform: TargetPlatform, trace: BindingTrace
+        moduleContext: ModuleContext,
+        platform: TargetPlatform,
+        platformVersion: TargetPlatformVersion,
+        trace: BindingTrace
 ) {
-    configureModule(moduleContext, platform)
+    configureModule(moduleContext, platform, platformVersion)
     useInstance(trace)
 }
 
@@ -76,9 +83,10 @@ fun createContainerForBodyResolve(
         bindingTrace: BindingTrace,
         platform: TargetPlatform,
         statementFilter: StatementFilter,
+        targetPlatformVersion: TargetPlatformVersion,
         compilerConfiguration: CompilerConfiguration
 ): StorageComponentContainer = createContainer("BodyResolve", platform) {
-    configureModule(moduleContext, platform, bindingTrace)
+    configureModule(moduleContext, platform, targetPlatformVersion, bindingTrace)
 
     useInstance(statementFilter)
 
@@ -95,9 +103,10 @@ fun createContainerForLazyBodyResolve(
         bindingTrace: BindingTrace,
         platform: TargetPlatform,
         bodyResolveCache: BodyResolveCache,
+        targetPlatformVersion: TargetPlatformVersion,
         compilerConfiguration: CompilerConfiguration
 ): StorageComponentContainer = createContainer("LazyBodyResolve", platform) {
-    configureModule(moduleContext, platform, bindingTrace)
+    configureModule(moduleContext, platform, targetPlatformVersion, bindingTrace)
 
     useInstance(LookupTracker.DO_NOTHING)
     useInstance(kotlinCodeAnalyzer)
@@ -113,11 +122,12 @@ fun createContainerForLazyLocalClassifierAnalyzer(
         bindingTrace: BindingTrace,
         platform: TargetPlatform,
         lookupTracker: LookupTracker,
+        targetPlatformVersion: TargetPlatformVersion,
         compilerConfiguration: CompilerConfiguration,
         statementFilter: StatementFilter,
         localClassDescriptorHolder: LocalClassDescriptorHolder
 ): StorageComponentContainer = createContainer("LocalClassifierAnalyzer", platform) {
-    configureModule(moduleContext, platform, bindingTrace)
+    configureModule(moduleContext, platform, targetPlatformVersion, bindingTrace)
 
     useInstance(localClassDescriptorHolder)
     useInstance(lookupTracker)
@@ -142,10 +152,11 @@ fun createContainerForLazyResolve(
         declarationProviderFactory: DeclarationProviderFactory,
         bindingTrace: BindingTrace,
         platform: TargetPlatform,
+        targetPlatformVersion: TargetPlatformVersion,
         targetEnvironment: TargetEnvironment,
         compilerConfiguration: CompilerConfiguration
 ): StorageComponentContainer = createContainer("LazyResolve", platform) {
-    configureModule(moduleContext, platform, bindingTrace)
+    configureModule(moduleContext, platform, targetPlatformVersion, bindingTrace)
 
     useInstance(declarationProviderFactory)
     useInstance(LookupTracker.DO_NOTHING)
@@ -166,6 +177,7 @@ fun createLazyResolveSession(moduleContext: ModuleContext, files: Collection<KtF
                 FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
                 BindingTraceContext(),
                 TargetPlatform.Default,
+                TargetPlatformVersion.NoVersion,
                 CompilerEnvironment,
                 CompilerConfiguration.EMPTY
         ).get<ResolveSession>()

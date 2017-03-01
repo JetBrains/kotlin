@@ -82,15 +82,12 @@ object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
             resolverForModule.componentProvider.get<JavaDescriptorResolver>()
         }
 
+        val languageSettingsProvider = LanguageSettingsProvider.getInstance(project)
+        val jvmTarget = languageSettingsProvider.getTargetPlatform(moduleInfo) as? JvmTarget ?: JvmTarget.JVM_1_6
+
         val configuration = CompilerConfiguration().apply {
-            val languageSettingsProvider = LanguageSettingsProvider.getInstance(project)
             languageVersionSettings = languageSettingsProvider.getLanguageVersionSettings(moduleInfo, project)
-
-            val platform = languageSettingsProvider.getTargetPlatform(moduleInfo)
-            if (platform is JvmTarget) {
-                put(JVMConfigurationKeys.JVM_TARGET, platform)
-            }
-
+            put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
             isReadOnly = true
         }
 
@@ -105,6 +102,7 @@ object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
                 targetEnvironment,
                 LookupTracker.DO_NOTHING,
                 packagePartProvider,
+                jvmTarget,
                 configuration,
                 useBuiltInsProvider = false, // TODO: load built-ins from module dependencies in IDE
                 useLazyResolve = true

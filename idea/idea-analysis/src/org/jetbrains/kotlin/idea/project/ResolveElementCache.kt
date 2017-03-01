@@ -588,6 +588,7 @@ class ResolveElementCache(
                 trace,
                 targetPlatform,
                 statementFilter,
+                file.jvmTarget,
                 file.createCompilerConfiguration()
         ).get<BodyResolver>()
     }

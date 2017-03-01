@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.tests.di
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.getValue
 import org.jetbrains.kotlin.container.useImpl
@@ -37,7 +38,7 @@ import org.jetbrains.kotlin.types.expressions.FakeCallResolver
 
 fun createContainerForTests(project: Project, module: ModuleDescriptor): ContainerForTests {
     return ContainerForTests(createContainer("Tests", JvmPlatform) {
-        configureModule(ModuleContext(module, project), JvmPlatform)
+        configureModule(ModuleContext(module, project), JvmPlatform, JvmTarget.JVM_1_6)
         useInstance(LookupTracker.DO_NOTHING)
         configureCommon(CompilerConfiguration.EMPTY)
         useImpl<ExpressionTypingServices>()

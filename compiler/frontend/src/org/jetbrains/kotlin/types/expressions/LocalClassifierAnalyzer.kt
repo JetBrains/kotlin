@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.GlobalContext
@@ -62,6 +63,7 @@ class LocalClassifierAnalyzer(
         private val platform: TargetPlatform,
         private val lookupTracker: LookupTracker,
         private val supertypeLoopChecker: SupertypeLoopChecker,
+        private val targetPlatformVersion: TargetPlatformVersion,
         private val compilerConfiguration: CompilerConfiguration,
         private val delegationFilter: DelegationFilter
 ) {
@@ -79,6 +81,7 @@ class LocalClassifierAnalyzer(
                 context.trace,
                 platform,
                 lookupTracker,
+                targetPlatformVersion,
                 compilerConfiguration,
                 context.statementFilter,
                 LocalClassDescriptorHolder(
@@ -160,10 +163,9 @@ class LocalClassDescriptorHolder(
                         override val languageVersionSettings = this@LocalClassDescriptorHolder.languageVersionSettings
                         override val syntheticResolveExtension = this@LocalClassDescriptorHolder.syntheticResolveExtension
                         override val delegationFilter: DelegationFilter = this@LocalClassDescriptorHolder.delegationFilter
-                    }
-                    ,
+                    },
                     containingDeclaration,
-                    classOrObject.getNameAsSafeName(),
+                    classOrObject.nameAsSafeName,
                     KtClassInfoUtil.createClassLikeInfo(classOrObject),
                     classOrObject.hasModifier(KtTokens.EXTERNAL_KEYWORD)
             )

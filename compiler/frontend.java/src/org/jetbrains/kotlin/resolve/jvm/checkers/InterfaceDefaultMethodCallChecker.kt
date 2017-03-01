@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
@@ -31,10 +30,10 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
-class InterfaceDefaultMethodCallChecker : CallChecker {
+class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget) : CallChecker {
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        val supportDefaults = context.compilerConfiguration.get(JVMConfigurationKeys.JVM_TARGET) == JvmTarget.JVM_1_8
+        val supportDefaults = jvmTarget == JvmTarget.JVM_1_8
 
         val descriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return
 
