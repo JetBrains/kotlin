@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@
 
 package org.jetbrains.kotlin.config
 
-import org.jetbrains.kotlin.utils.DescriptionAware
 import org.jetbrains.org.objectweb.asm.Opcodes
 
-enum class JvmTarget(override val description: String) : DescriptionAware {
+enum class JvmTarget(override val description: String) : TargetPlatformVersion {
     JVM_1_6("1.6"),
     JVM_1_8("1.8"),
     ;

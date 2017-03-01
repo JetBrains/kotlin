@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.utils.DescriptionAware
 
-sealed class TargetPlatformKind<out Version : DescriptionAware>(
+sealed class TargetPlatformKind<out Version : TargetPlatformVersion>(
         val version: Version,
         val name: String
 ) : DescriptionAware {
@@ -39,9 +39,9 @@ sealed class TargetPlatformKind<out Version : DescriptionAware>(
         }
     }
 
-    object JavaScript : TargetPlatformKind<DescriptionAware.NoVersion>(DescriptionAware.NoVersion, "JavaScript")
+    object JavaScript : TargetPlatformKind<TargetPlatformVersion.NoVersion>(TargetPlatformVersion.NoVersion, "JavaScript")
 
-    object Common : TargetPlatformKind<DescriptionAware.NoVersion>(DescriptionAware.NoVersion, "Common (experimental)")
+    object Common : TargetPlatformKind<TargetPlatformVersion.NoVersion>(TargetPlatformVersion.NoVersion, "Common (experimental)")
 
     companion object {
         val ALL_PLATFORMS: List<TargetPlatformKind<*>> by lazy { Jvm.JVM_PLATFORMS + JavaScript + Common }
