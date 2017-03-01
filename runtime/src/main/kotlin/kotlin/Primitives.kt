@@ -886,7 +886,7 @@ public final class Long : Number(), Comparable<Long> {
     external public operator fun unaryMinus(): Long
 
     /** Creates a range from this value to the specified [other] value. */
-    external public operator fun rangeTo(other: Byte): LongRange {
+    public operator fun rangeTo(other: Byte): LongRange {
         return LongRange(this, other.toLong())
     }
     /** Creates a range from this value to the specified [other] value. */
