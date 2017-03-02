@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,8 @@ public class Visibilities {
             return true;
         }
 
+        // Note that this method returns false if `from` declaration is `init` initializer
+        // because initializer does not have source element
         private boolean inSameFile(@NotNull DeclarationDescriptor what, @NotNull DeclarationDescriptor from) {
             SourceFile fromContainingFile = DescriptorUtils.getContainingSourceFile(from);
             if (fromContainingFile != SourceFile.NO_SOURCE_FILE) {
@@ -47,9 +49,13 @@ public class Visibilities {
             return false;
         }
 
+        private boolean hasContainingSourceFile(@NotNull DeclarationDescriptor descriptor) {
+            return DescriptorUtils.getContainingSourceFile(descriptor) != SourceFile.NO_SOURCE_FILE;
+        }
+
         @Override
         public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
-            if (DescriptorUtils.isTopLevelDeclaration(what)) {
+            if (DescriptorUtils.isTopLevelDeclaration(what) && hasContainingSourceFile(from)) {
                 return inSameFile(what, from);
             }
 

@@ -3400,6 +3400,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("initializerWithSecondaryConstructor.kt")
+            public void testInitializerWithSecondaryConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/initializerWithSecondaryConstructor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("initwithgetter.kt")
             public void testInitwithgetter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/constructorConsistency/initwithgetter.kt");
