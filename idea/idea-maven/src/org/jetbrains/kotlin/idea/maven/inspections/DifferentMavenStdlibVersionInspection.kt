@@ -30,7 +30,6 @@ import org.jetbrains.idea.maven.model.MavenId
 import org.jetbrains.idea.maven.project.MavenProject
 import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.kotlin.idea.maven.PomFile
-import org.jetbrains.kotlin.idea.maven.configuration.KotlinJavaMavenConfigurator
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID
 
@@ -52,7 +51,7 @@ class DifferentMavenStdlibVersionInspection : DomElementsInspection<MavenDomProj
             return
         }
 
-        val pomFile = PomFile(file)
+        val pomFile = PomFile.forFileOrNull(file) ?: return
         pomFile.findKotlinPlugins().filter { it.version.stringValue != stdlibVersion.singleOrNull() }.forEach { plugin ->
             val fixes = plugin.version.stringValue?.let { version ->
                 createFixes(project, plugin.version, stdlibVersion + version)
