@@ -281,33 +281,24 @@ public abstract class StackValue {
     }
 
     private static void box(Type type, Type toType, InstructionAdapter v) {
-        if (type == Type.BYTE_TYPE || toType.getInternalName().equals(NULLABLE_BYTE_TYPE_NAME) && type == Type.INT_TYPE) {
-            v.cast(type, Type.BYTE_TYPE);
-            v.invokestatic(NULLABLE_BYTE_TYPE_NAME, "valueOf", "(B)L" + NULLABLE_BYTE_TYPE_NAME + ";", false);
+        if (type == Type.INT_TYPE) {
+            if (toType.getInternalName().equals(NULLABLE_BYTE_TYPE_NAME)) {
+                type = Type.BYTE_TYPE;
+            }
+            else if (toType.getInternalName().equals(NULLABLE_SHORT_TYPE_NAME)) {
+                type = Type.SHORT_TYPE;
+            }
+            else if (toType.getInternalName().equals(NULLABLE_LONG_TYPE_NAME)) {
+                type = Type.LONG_TYPE;
+            }
+            v.cast(Type.INT_TYPE, type);
         }
-        else if (type == Type.SHORT_TYPE || toType.getInternalName().equals(NULLABLE_SHORT_TYPE_NAME) && type == Type.INT_TYPE) {
-            v.cast(type, Type.SHORT_TYPE);
-            v.invokestatic(NULLABLE_SHORT_TYPE_NAME, "valueOf", "(S)L" + NULLABLE_SHORT_TYPE_NAME + ";", false);
-        }
-        else if (type == Type.LONG_TYPE || toType.getInternalName().equals(NULLABLE_LONG_TYPE_NAME) && type == Type.INT_TYPE) {
-            v.cast(type, Type.LONG_TYPE);
-            v.invokestatic(NULLABLE_LONG_TYPE_NAME, "valueOf", "(J)L" + NULLABLE_LONG_TYPE_NAME + ";", false);
-        }
-        else if (type == Type.INT_TYPE) {
-            v.invokestatic("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
-        }
-        else if (type == Type.BOOLEAN_TYPE) {
-            v.invokestatic("java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;", false);
-        }
-        else if (type == Type.CHAR_TYPE) {
-            v.invokestatic("java/lang/Character", "valueOf", "(C)Ljava/lang/Character;", false);
-        }
-        else if (type == Type.FLOAT_TYPE) {
-            v.invokestatic("java/lang/Float", "valueOf", "(F)Ljava/lang/Float;", false);
-        }
-        else if (type == Type.DOUBLE_TYPE) {
-            v.invokestatic("java/lang/Double", "valueOf", "(D)Ljava/lang/Double;", false);
-        }
+
+        Type boxedType = AsmUtil.boxType(type);
+        if (boxedType == type) return;
+
+        v.invokestatic(boxedType.getInternalName(), "valueOf", Type.getMethodDescriptor(boxedType, type), false);
+        coerce(boxedType, toType,  v);
     }
 
     private static void unbox(Type type, InstructionAdapter v) {
