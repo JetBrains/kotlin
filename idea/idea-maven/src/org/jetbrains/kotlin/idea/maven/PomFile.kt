@@ -57,7 +57,7 @@ class PomFile private constructor(val xmlFile: XmlFile, val domModel: MavenDomPr
             override fun visitElement(element: PsiElement) {
                 super.visitElement(element)
 
-                if (element is XmlTag && element.localName in recommendedElementsOrder) {
+                if (element is XmlTag && element.localName in recommendedElementsOrder && element.parent === projectElement) {
                     nodesByName[element.localName] = element
                 }
                 else if (element is XmlTag && element.localName == "project") {
