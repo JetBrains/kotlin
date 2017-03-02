@@ -108,11 +108,8 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
 
         return when (descriptor) {
             is SyntheticFieldDescriptor -> {
-                val receiverValue = statementGenerator.generateBackingFieldReceiver(ktLeft, resolvedCall, descriptor)
-
-                BackingFieldLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor.propertyDescriptor,
-                                   receiverValue, origin)
-
+                val receiverValue = statementGenerator.generateBackingFieldReceiver(ktLeft.startOffset, ktLeft.endOffset, resolvedCall, descriptor)
+                BackingFieldLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor.propertyDescriptor, receiverValue, origin)
             }
             is LocalVariableDescriptor ->
                 @Suppress("DEPRECATION")

@@ -590,6 +590,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("objectAsCallable.kt")
+        public void testObjectAsCallable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/objectAsCallable.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("objectClassReference.kt")
         public void testObjectClassReference() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/objectClassReference.kt");

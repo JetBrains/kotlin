@@ -1,0 +1,45 @@
+FILE /objectAsCallable.kt
+  CLASS OBJECT A
+    CONSTRUCTOR private constructor A()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='A'
+  CLASS ENUM_CLASS En
+    CONSTRUCTOR private constructor En()
+      BLOCK_BODY
+        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
+        INSTANCE_INITIALIZER_CALL classDescriptor='En'
+    ENUM_ENTRY enum entry X
+      init: ENUM_CONSTRUCTOR_CALL 'constructor En()'
+    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<En>
+      SYNTHETIC_BODY kind=ENUM_VALUES
+    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): En
+      SYNTHETIC_BODY kind=ENUM_VALUEOF
+  FUN public operator fun A.invoke(i: kotlin.Int): kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='invoke(Int) on A: Int'
+        GET_VAR 'value-parameter i: Int' type=kotlin.Int origin=null
+  FUN public operator fun En.invoke(i: kotlin.Int): kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='invoke(Int) on En: Int'
+        GET_VAR 'value-parameter i: Int' type=kotlin.Int origin=null
+  PROPERTY public val test1: kotlin.Int
+    FIELD PROPERTY_BACKING_FIELD public val test1: kotlin.Int
+      EXPRESSION_BODY
+        CALL 'invoke(Int) on A: Int' type=kotlin.Int origin=INVOKE
+          $receiver: GET_OBJECT 'A' type=A
+          i: CONST Int type=kotlin.Int value='42'
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test1>(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test1>(): Int'
+          GET_FIELD 'test1: Int' type=kotlin.Int origin=null
+  PROPERTY public val test2: kotlin.Int
+    FIELD PROPERTY_BACKING_FIELD public val test2: kotlin.Int
+      EXPRESSION_BODY
+        CALL 'invoke(Int) on En: Int' type=kotlin.Int origin=INVOKE
+          $receiver: GET_ENUM 'X' type=En
+          i: CONST Int type=kotlin.Int value='42'
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test2>(): kotlin.Int
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test2>(): Int'
+          GET_FIELD 'test2: Int' type=kotlin.Int origin=null

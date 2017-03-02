@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -26,8 +27,12 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.intermediate.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
@@ -38,21 +43,61 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
         return when (descriptor) {
             is PropertyDescriptor ->
                 generatePropertyGetterCall(descriptor, startOffset, endOffset, call)
-            is VariableDescriptor ->
-                call.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
-                    generateGetVariable(startOffset, endOffset, descriptor, getTypeArguments(call.original), origin)
-                }
             is FunctionDescriptor ->
                 generateFunctionCall(descriptor, startOffset, endOffset, origin, call)
             else ->
-                TODO("Unexpected callable descriptor: $descriptor ${descriptor.javaClass.simpleName}")
+                call.callReceiver.call { _, _ ->
+                    generateValueReference(startOffset, endOffset, descriptor, call.original, origin)
+                }
         }
     }
 
-    fun generateGetVariable(startOffset: Int, endOffset: Int,
-                            descriptor: VariableDescriptor,
-                            typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
-                            origin: IrStatementOrigin? = null) =
+    fun generateValueReference(
+            startOffset: Int,
+            endOffset: Int,
+            descriptor: DeclarationDescriptor,
+            resolvedCall: ResolvedCall<*>?,
+            origin: IrStatementOrigin?
+    ): IrExpression =
+            when (descriptor) {
+                is FakeCallableDescriptorForObject ->
+                    generateValueReference(startOffset, endOffset, descriptor.getReferencedDescriptor(), resolvedCall, origin)
+                is TypeAliasDescriptor ->
+                    generateValueReference(startOffset, endOffset, descriptor.classDescriptor!!, null, origin)
+                is ClassDescriptor -> {
+                    val classValueType = descriptor.classValueType!!
+                    when {
+                        DescriptorUtils.isObject(descriptor) ->
+                            IrGetObjectValueImpl(startOffset, endOffset, classValueType, descriptor)
+                        DescriptorUtils.isEnumEntry(descriptor) ->
+                            IrGetEnumValueImpl(startOffset, endOffset, classValueType, descriptor)
+                        else -> {
+                            val companionObjectDescriptor = descriptor.companionObjectDescriptor
+                                                            ?: throw java.lang.AssertionError("Class value without companion object: $descriptor")
+                            IrGetObjectValueImpl(startOffset, endOffset, classValueType, companionObjectDescriptor)
+                        }
+                    }
+                }
+                is PropertyDescriptor -> {
+                    generateCall(startOffset, endOffset, statementGenerator.pregenerateCall(resolvedCall!!))
+                }
+                is SyntheticFieldDescriptor -> {
+                    val receiver = statementGenerator.generateBackingFieldReceiver(startOffset, endOffset, resolvedCall, descriptor)
+                    IrGetFieldImpl(startOffset, endOffset, descriptor.propertyDescriptor, receiver?.load())
+                }
+                is VariableDescriptor ->
+                    generateGetVariable(startOffset, endOffset, descriptor, getTypeArguments(resolvedCall), origin)
+                else ->
+                    TODO("Unexpected callable descriptor: $descriptor ${descriptor.javaClass.simpleName}")
+            }
+
+    private fun generateGetVariable(
+            startOffset: Int,
+            endOffset: Int,
+            descriptor: VariableDescriptor,
+            typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+            origin: IrStatementOrigin? = null
+    ) =
             @Suppress("DEPRECATION")
             if (descriptor is LocalVariableDescriptor && descriptor.isDelegated)
                 IrCallImpl(startOffset, endOffset, descriptor.type, descriptor.getter!!, typeArguments, origin ?: IrStatementOrigin.GET_LOCAL_PROPERTY)

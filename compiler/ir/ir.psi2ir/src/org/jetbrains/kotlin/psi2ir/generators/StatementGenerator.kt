@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.assertCast
 import org.jetbrains.kotlin.ir.builders.Scope
@@ -35,13 +37,10 @@ import org.jetbrains.kotlin.psi2ir.intermediate.createTemporaryVariableInBlock
 import org.jetbrains.kotlin.psi2ir.intermediate.setExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
-import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
-import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import java.lang.AssertionError
 
@@ -262,40 +261,10 @@ class StatementGenerator(
             expression: KtExpression,
             resolvedCall: ResolvedCall<*>?
     ): IrExpression =
-            when (descriptor) {
-                is FakeCallableDescriptorForObject ->
-                    generateExpressionForReferencedDescriptor(descriptor.getReferencedDescriptor(), expression, resolvedCall)
-                is TypeAliasDescriptor ->
-                    generateExpressionForReferencedDescriptor(descriptor.classDescriptor!!, expression, null)
-                is ClassDescriptor -> {
-                    val classValueType = descriptor.classValueType!!
-                    when {
-                        DescriptorUtils.isObject(descriptor) ->
-                            IrGetObjectValueImpl(expression.startOffset, expression.endOffset, classValueType, descriptor)
-                        DescriptorUtils.isEnumEntry(descriptor) ->
-                            IrGetEnumValueImpl(expression.startOffset, expression.endOffset, classValueType, descriptor)
-                        else -> {
-                            IrGetObjectValueImpl(expression.startOffset, expression.endOffset, classValueType,
-                                                 descriptor.companionObjectDescriptor ?: throw AssertionError("Class value without companion object: $descriptor"))
-                        }
-                    }
-                }
-                is PropertyDescriptor -> {
-                    CallGenerator(this).generateCall(expression.startOffset, expression.endOffset, pregenerateCall(resolvedCall!!))
-                }
-                is SyntheticFieldDescriptor -> {
-                    val receiver = generateBackingFieldReceiver(expression, resolvedCall, descriptor)
-                    IrGetFieldImpl(expression.startOffset, expression.endOffset, descriptor.propertyDescriptor, receiver?.load())
-                }
-                is VariableDescriptor ->
-                    CallGenerator(this).generateGetVariable(expression.startOffset, expression.endOffset, descriptor,
-                                                            getTypeArguments(resolvedCall))
-                else ->
-                    IrErrorExpressionImpl(
-                            expression.startOffset, expression.endOffset, getInferredTypeWithImplicitCastsOrFail(expression),
-                            expression.text + ": ${descriptor.name} ${descriptor.javaClass.simpleName}"
-                    )
-            }
+            CallGenerator(this).generateValueReference(
+                    expression.startOffset, expression.endOffset,
+                    descriptor, resolvedCall, null
+            )
 
     override fun visitCallExpression(expression: KtCallExpression, data: Nothing?): IrStatement {
         val resolvedCall = getResolvedCall(expression) ?:

@@ -41,9 +41,12 @@ import java.lang.AssertionError
 fun StatementGenerator.generateReceiverOrNull(ktDefaultElement: KtElement, receiver: ReceiverValue?): IntermediateValue? =
         receiver?.let { generateReceiver(ktDefaultElement, receiver) }
 
-fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: ReceiverValue): IntermediateValue {
+fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: ReceiverValue): IntermediateValue =
+        generateReceiver(ktDefaultElement.startOffset, ktDefaultElement.endOffset, receiver)
+
+fun StatementGenerator.generateReceiver(startOffset: Int, endOffset: Int, receiver: ReceiverValue): IntermediateValue {
     if (receiver is TransientReceiver) {
-        return TransientReceiverValue(ktDefaultElement.text, receiver.type)
+        return TransientReceiverValue(receiver.type)
     }
 
     val receiverExpression = when (receiver) {
@@ -51,11 +54,10 @@ fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: R
             if (receiver.classDescriptor.kind.isSingleton &&
                 this.scopeOwner != receiver.classDescriptor && //For anonymous initializers
                 this.scopeOwner.containingDeclaration != receiver.classDescriptor) {
-                IrGetObjectValueImpl(ktDefaultElement.startOffset, ktDefaultElement.endOffset, receiver.type,
-                                     receiver.classDescriptor)
+                IrGetObjectValueImpl(startOffset, endOffset, receiver.type, receiver.classDescriptor)
             }
             else {
-                IrGetValueImpl(ktDefaultElement.startOffset, ktDefaultElement.endOffset, receiver.classDescriptor.thisAsReceiverParameter)
+                IrGetValueImpl(startOffset, endOffset, receiver.classDescriptor.thisAsReceiverParameter)
             }
         }
         is ThisClassReceiver ->
@@ -68,8 +70,7 @@ fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: R
             IrGetObjectValueImpl(receiver.expression.startOffset, receiver.expression.endOffset, receiver.type,
                                  receiver.classQualifier.descriptor as ClassDescriptor)
         is ExtensionReceiver ->
-            IrGetValueImpl(ktDefaultElement.startOffset, ktDefaultElement.startOffset,
-                           receiver.declarationDescriptor.extensionReceiverParameter!!)
+            IrGetValueImpl(startOffset, startOffset, receiver.declarationDescriptor.extensionReceiverParameter!!)
         else ->
             TODO("Receiver: ${receiver.javaClass.simpleName}")
     }
@@ -88,14 +89,13 @@ private fun generateThisOrSuperReceiver(receiver: ReceiverValue, classDescriptor
 }
 
 fun StatementGenerator.generateBackingFieldReceiver(
-        ktDefaultElement: KtElement,
+        startOffset: Int,
+        endOffset: Int,
         resolvedCall: ResolvedCall<*>?,
         fieldDescriptor: SyntheticFieldDescriptor
 ): IntermediateValue? {
-
     val receiver = resolvedCall?.dispatchReceiver ?: fieldDescriptor.getDispatchReceiverForBackend() ?: return null
-
-    return this.generateReceiver(ktDefaultElement, receiver)
+    return this.generateReceiver(startOffset, endOffset, receiver)
 }
 
 fun StatementGenerator.generateCallReceiver(
