@@ -320,14 +320,14 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val loopCheck = codegen.basicBlock()
 
         override fun genBreak(destination: IrBreak) {
-            if (destination.label == null || destination.label == loop.label)
+            if (destination.loop == loop)
                 codegen.br(loopExit)
             else
                 super.genBreak(destination)
         }
 
         override fun genContinue(destination: IrContinue) {
-            if (destination.label == null || destination.label == loop.label)
+            if (destination.loop == loop)
                 codegen.br(loopCheck)
             else
                 super.genContinue(destination)
