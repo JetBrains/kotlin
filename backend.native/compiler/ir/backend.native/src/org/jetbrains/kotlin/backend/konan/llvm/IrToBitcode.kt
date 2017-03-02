@@ -908,7 +908,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         // Jump to finalize-and-continue instead of simply continuing.
         override fun genContinue(destination: IrContinue) {
-            val block = breakBlocks.getOrPut(destination.loop) {
+            val block = continueBlocks.getOrPut(destination.loop) {
                 codegen.basicBlock("finalizeAndContinue") {
                     genFinalize()
                     outerContext.genContinue(destination)
