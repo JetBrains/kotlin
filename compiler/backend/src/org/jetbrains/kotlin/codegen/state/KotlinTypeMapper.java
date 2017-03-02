@@ -192,6 +192,10 @@ public class KotlinTypeMapper {
             return asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) descriptor);
         }
 
+        if (descriptor instanceof ConstructorDescriptor) {
+            return mapClass(((ConstructorDescriptor) descriptor).getConstructedClass());
+        }
+
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
         if (container instanceof PackageFragmentDescriptor) {
             String packageMemberOwner = internalNameForPackageMemberOwner((CallableMemberDescriptor) descriptor, publicFacade);
@@ -702,15 +706,14 @@ public class KotlinTypeMapper {
 
     @NotNull
     public CallableMethod mapToCallableMethod(@NotNull FunctionDescriptor descriptor, boolean superCall) {
-        if (descriptor instanceof TypeAliasConstructorDescriptor) {
-            return mapToCallableMethod(((TypeAliasConstructorDescriptor) descriptor).getUnderlyingConstructorDescriptor(), superCall);
-        }
-
-        if (descriptor instanceof ClassConstructorDescriptor) {
+        if (descriptor instanceof ConstructorDescriptor) {
             JvmMethodSignature method = mapSignatureSkipGeneric(descriptor);
-            Type owner = mapClass(((ClassConstructorDescriptor) descriptor).getContainingDeclaration());
+            Type owner = mapOwner(descriptor);
             String defaultImplDesc = mapDefaultMethod(descriptor, OwnerKind.IMPLEMENTATION).getDescriptor();
-            return new CallableMethod(owner, owner, defaultImplDesc, method, INVOKESPECIAL, null, null, null, false);
+            return new CallableMethod(
+                    owner, owner, defaultImplDesc, method, INVOKESPECIAL,
+                    null, null, null, false
+            );
         }
 
         if (descriptor instanceof LocalVariableAccessorDescriptor) {
