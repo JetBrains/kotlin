@@ -181,8 +181,7 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
 
         @TestMetadata("destructuringWrongName/inspectionData/inspections.test")
         public void testDestructuringWrongName_inspectionData_Inspections_test() throws Exception {
-            String fileName =
-                    KotlinTestUtils.navigationMetadata("idea/testData/inspections/destructuringWrongName/inspectionData/inspections.test");
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/destructuringWrongName/inspectionData/inspections.test");
             doTest(fileName);
         }
 
