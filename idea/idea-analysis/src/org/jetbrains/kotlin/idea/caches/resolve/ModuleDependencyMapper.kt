@@ -114,7 +114,7 @@ fun createModuleResolverProvider(
     )
 }
 
-private fun collectAllModuleInfosFromIdeaModel(project: Project): List<IdeaModuleInfo> {
+fun collectAllModuleInfosFromIdeaModel(project: Project): List<IdeaModuleInfo> {
     val ideaModules = ModuleManager.getInstance(project).modules.toList()
     val modulesSourcesInfos = ideaModules.flatMap { listOf(it.productionSourceInfo(), it.testSourceInfo()) }
 

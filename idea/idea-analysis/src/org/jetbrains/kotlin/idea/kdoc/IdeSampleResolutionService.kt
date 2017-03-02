@@ -19,8 +19,11 @@ package org.jetbrains.kotlin.idea.kdoc
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.collectAllModuleInfosFromIdeaModel
+import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.stubindex.KotlinClassShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinFunctionShortNameIndex
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -29,16 +32,29 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 class IdeSampleResolutionService(val project: Project) : SampleResolutionService {
 
     override fun resolveSample(context: BindingContext, fromDescriptor: DeclarationDescriptor, resolutionFacade: ResolutionFacade, qualifiedName: List<String>): Collection<DeclarationDescriptor> {
+
         val allScope = GlobalSearchScope.projectScope(project)
+
         val shortName = qualifiedName.lastOrNull() ?: return emptyList()
-        val functions = KotlinFunctionShortNameIndex.getInstance().get(shortName, project, allScope)
+
         val targetFqName = FqName.fromSegments(qualifiedName)
 
+        val functions = KotlinFunctionShortNameIndex.getInstance().get(shortName, project, allScope).asSequence()
+        val classes = KotlinClassShortNameIndex.getInstance().get(shortName, project, allScope).asSequence()
 
-        val descriptors = functions.asSequence()
+        val descriptors = (functions + classes)
                 .filter { it.fqName == targetFqName }
                 .map { it.resolveToDescriptor(BodyResolveMode.PARTIAL) } // TODO Filter out not visible due dependencies config descriptors
                 .toList()
-        return descriptors
+        if(descriptors.isNotEmpty())
+            return descriptors
+
+        val packageDescriptors = collectAllModuleInfosFromIdeaModel(project)
+                .asSequence()
+                .map { resolutionFacade.findModuleDescriptor(it)?.getPackage(targetFqName) }
+                .filterNotNull()
+                .filterNot { it.isEmpty() }
+
+        return packageDescriptors.toList()
     }
 }
