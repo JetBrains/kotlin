@@ -104,7 +104,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         }
 
         val resolvedCall = getResolvedCall(ktLeft) ?: TODO("no resolved call for LHS")
-        val descriptor = resolvedCall.candidateDescriptor
+        val descriptor = resolvedCall.resultingDescriptor
 
         return when (descriptor) {
             is SyntheticFieldDescriptor -> {

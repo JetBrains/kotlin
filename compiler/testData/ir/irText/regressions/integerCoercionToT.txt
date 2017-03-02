@@ -1,0 +1,39 @@
+FILE /integerCoercionToT.kt
+  CLASS INTERFACE CPointed
+  FUN public inline fun <reified T : CPointed> CPointed.reinterpret(): T
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='reinterpret() on CPointed: T'
+        CALL 'TODO(): Nothing' type=kotlin.Nothing origin=null
+  CLASS CLASS CInt32VarX
+    CONSTRUCTOR public constructor CInt32VarX<T>()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CInt32VarX'
+  TYPEALIAS typealias CInt32Var = CInt32VarX<Int> type=CInt32VarX<kotlin.Int>
+  PROPERTY public var <T_INT : kotlin.Int> CInt32VarX<T_INT>.value: T_INT
+    FUN public fun CInt32VarX<T_INT>.<get-value>(): T_INT
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-value>() on CInt32VarX<T_INT>: T_INT'
+          CALL 'TODO(): Nothing' type=kotlin.Nothing origin=null
+    FUN public fun CInt32VarX<T_INT>.<set-value>(value: T_INT): kotlin.Unit
+      BLOCK_BODY
+  CLASS CLASS IdType
+    CONSTRUCTOR public constructor IdType(value: kotlin.Int)
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='IdType'
+    PROPERTY public final val value: kotlin.Int
+      FIELD PROPERTY_BACKING_FIELD public final val value: kotlin.Int
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-value>(): Int'
+            GET_FIELD 'value: Int' type=kotlin.Int origin=null
+              receiver: GET_VAR '<receiver: IdType>' type=IdType origin=null
+  FUN public fun foo(value: IdType, cv: CInt32Var /* = CInt32VarX<kotlin.Int> */): kotlin.Unit
+    BLOCK_BODY
+      CALL '<set-value>(Int) on CInt32VarX<Int>: Unit' type=kotlin.Unit origin=EQ
+        $receiver: GET_VAR 'value-parameter cv: CInt32Var /* = CInt32VarX<Int> */' type=CInt32Var /* = CInt32VarX<kotlin.Int> */ origin=null
+        value: CALL '<get-value>(): Int' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_VAR 'value-parameter value: IdType' type=IdType origin=null

@@ -188,6 +188,8 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
         if (expectedType == null) return this
         if (expectedType.isError) return this
 
+        val notNullableExpectedType = expectedType.makeNotNullable()
+
         val valueType = this.type
 
         return when {
@@ -196,17 +198,17 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
             valueType.isNullabilityFlexible() && valueType.containsNull() && !expectedType.containsNull() -> {
                 val nonNullValueType = valueType.upperIfFlexible().makeNotNullable()
                 IrTypeOperatorCallImpl(
-                        this.startOffset, this.endOffset, nonNullValueType,
+                        startOffset, endOffset, nonNullValueType,
                         IrTypeOperator.IMPLICIT_NOTNULL, nonNullValueType, this
                 ).cast(expectedType)
             }
             KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType.makeNotNullable(), expectedType) ->
                 this
-            KotlinBuiltIns.isInt(valueType) ->
-                IrTypeOperatorCallImpl(this.startOffset, this.endOffset, expectedType,
-                                       IrTypeOperator.IMPLICIT_INTEGER_COERCION, expectedType.makeNotNullable(), this)
+            KotlinBuiltIns.isInt(valueType) && notNullableExpectedType.isBuiltInIntegerType() ->
+                IrTypeOperatorCallImpl(startOffset, endOffset, expectedType,
+                                       IrTypeOperator.IMPLICIT_INTEGER_COERCION, notNullableExpectedType, this)
             else ->
-                IrTypeOperatorCallImpl(this.startOffset, this.endOffset, expectedType,
+                IrTypeOperatorCallImpl(startOffset, endOffset, expectedType,
                                        IrTypeOperator.IMPLICIT_CAST, expectedType, this)
         }
     }
@@ -220,5 +222,11 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
             IrTypeOperatorCallImpl(startOffset, endOffset, builtIns.unitType,
                                    IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, builtIns.unitType, this)
     }
+
+    private fun KotlinType.isBuiltInIntegerType(): Boolean =
+            KotlinBuiltIns.isByte(this) ||
+            KotlinBuiltIns.isShort(this) ||
+            KotlinBuiltIns.isInt(this) ||
+            KotlinBuiltIns.isLong(this)
 }
 
