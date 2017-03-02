@@ -160,7 +160,6 @@ fun createContainerForLazyResolve(
     useInstance(LookupTracker.DO_NOTHING)
     useInstance(languageVersionSettings)
 
-    useImpl<FileScopeProviderImpl>()
     useImpl<AnnotationResolverImpl>()
     useImpl<CompilerDeserializationConfiguration>()
     targetEnvironment.configure(this)

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.lazy
 
 import com.intellij.openapi.util.Key
+import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.storage.StorageManager
 
+@DefaultImplementation(FileScopeProviderImpl::class)
 interface FileScopeProvider {
     fun getFileResolutionScope(file: KtFile): LexicalScope = getFileScopes(file).lexicalScope
     fun getImportResolver(file: KtFile): ImportResolver = getFileScopes(file).importResolver

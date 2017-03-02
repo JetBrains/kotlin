@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.kotlin.resolve.lazy.FileScopeProviderImpl
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
@@ -61,7 +60,6 @@ private fun StorageComponentContainer.configureJavaTopDownAnalysis(
 
     useInstance(VirtualFileFinderFactory.getInstance(project).create(moduleContentScope))
 
-    useImpl<FileScopeProviderImpl>()
     useImpl<AnnotationResolverImpl>()
 
     useImpl<JavaClassFinderImpl>()

@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.lazy.FileScopeProviderImpl
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
@@ -132,7 +131,6 @@ object DefaultAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
         useInstance(LookupTracker.DO_NOTHING)
         useImpl<ResolveSession>()
         useImpl<LazyTopDownAnalyzer>()
-        useImpl<FileScopeProviderImpl>()
         useInstance(languageVersionSettings)
         useImpl<AnnotationResolverImpl>()
         useImpl<CompilerDeserializationConfiguration>()

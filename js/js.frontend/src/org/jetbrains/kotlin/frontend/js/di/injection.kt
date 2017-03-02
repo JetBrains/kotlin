@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.lazy.FileScopeProviderImpl
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
@@ -42,7 +41,6 @@ fun createTopDownAnalyzerForJs(
         configureModule(moduleContext, JsPlatform, TargetPlatformVersion.NoVersion, bindingTrace)
 
         useInstance(declarationProviderFactory)
-        useImpl<FileScopeProviderImpl>()
         useImpl<AnnotationResolverImpl>()
 
         CompilerEnvironment.configure(this)
