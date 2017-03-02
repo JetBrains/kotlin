@@ -43,7 +43,9 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
                ?: if (cacheOfNulls.contains(path)) null
                else scriptDefinitionProvider.findScriptDefinition(file)?.getDependenciesFor(file, project, null)
                     .apply {
-                        log.info("[kts] new cached deps for $path: ${this?.classpath?.joinToString(File.pathSeparator)}")
+                        if (this != null) {
+                            log.info("[kts] new cached deps for $path: ${this.classpath.joinToString(File.pathSeparator)}")
+                        }
                         cacheLock.write {
                             if (this == null) {
                                 cacheOfNulls.add(path)
