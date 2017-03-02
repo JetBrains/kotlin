@@ -45,7 +45,7 @@ class DifferentKotlinMavenVersionInspection : DomElementsInspection<MavenDomProj
             return
         }
 
-        val pomFile = PomFile(domFileElement.file)
+        val pomFile = PomFile.forFileOrNull(domFileElement.file) ?: return
         pomFile.findKotlinPlugins().filter { it.version.exists() && it.version.stringValue != idePluginVersion }.forEach { plugin ->
             createProblem(holder, plugin)
         }

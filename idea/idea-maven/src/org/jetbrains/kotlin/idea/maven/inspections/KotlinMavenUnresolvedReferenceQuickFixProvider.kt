@@ -100,10 +100,10 @@ class AddMavenDependencyQuickFix(val className: String, val smartPsiElementPoint
             val isTestSource = ProjectRootManager.getInstance(project).fileIndex.isInTestSourceContent(virtualFile)
             val scope = if (isTestSource) MavenArtifactScope.TEST else null
 
-            val pom = PomFile(xmlFile)
-
-            ids.forEach {
-                pom.addDependency(it, scope)
+            PomFile.forFileOrNull(xmlFile)?.let { pom ->
+                ids.forEach {
+                    pom.addDependency(it, scope)
+                }
             }
         }
     }

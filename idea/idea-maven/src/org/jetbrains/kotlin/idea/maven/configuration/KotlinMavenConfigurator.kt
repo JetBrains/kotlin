@@ -68,7 +68,7 @@ abstract class KotlinMavenConfigurator
 
     private fun checkKotlinPlugin(module: Module): ConfigureKotlinStatus {
         val psi = findModulePomFile(module) as? XmlFile ?: return ConfigureKotlinStatus.BROKEN
-        val pom = PomFile(psi)
+        val pom = PomFile.forFileOrNull(psi) ?: return ConfigureKotlinStatus.NON_APPLICABLE
 
         if (hasKotlinPlugin(pom)) {
             return ConfigureKotlinStatus.CONFIGURED
@@ -137,7 +137,7 @@ abstract class KotlinMavenConfigurator
             return
         }
 
-        val pom = PomFile(file as XmlFile)
+        val pom = PomFile.forFileOrNull(file as XmlFile) ?: return
         pom.addProperty(KOTLIN_VERSION_PROPERTY, version)
 
         pom.addDependency(MavenId(GROUP_ID, getStdlibArtifactId(module), "\${$KOTLIN_VERSION_PROPERTY}"), MavenArtifactScope.COMPILE, null, false, null)

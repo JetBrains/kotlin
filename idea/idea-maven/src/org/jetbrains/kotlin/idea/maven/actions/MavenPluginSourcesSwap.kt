@@ -54,7 +54,7 @@ class MavenPluginSourcesMoveToExecutionIntention : PsiElementBaseIntentionAction
             return false
         }
 
-        val pom = PomFile(file as XmlFile)
+        val pom = PomFile.forFileOrNull(file as XmlFile) ?: return false
         if (domElement.getParentOfType(MavenDomBuild::class.java, false)?.sourceDirectory === domElement) {
             return pom.findKotlinExecutions(PomFile.KotlinGoals.Compile, PomFile.KotlinGoals.Js).isNotEmpty()
         }
@@ -69,7 +69,7 @@ class MavenPluginSourcesMoveToExecutionIntention : PsiElementBaseIntentionAction
 
     override fun invoke(project: Project, editor: Editor, element: PsiElement) {
         val xmlFile = element.containingFile as? XmlFile ?: return
-        val pomFile = PomFile(xmlFile)
+        val pomFile = PomFile.forFileOrNull(xmlFile) ?: return
 
         val tag = element.getParentOfType<XmlTag>(false) ?: return
         val domElement = DomManager.getDomManager(project).getDomElement(tag) as? GenericDomValue<*> ?: return
@@ -126,7 +126,7 @@ class MavenPluginSourcesMoveToBuild : PsiElementBaseIntentionAction() {
                 .filterIsInstance<XmlTag>()
                 .firstOrNull { it.localName == "sourceDirs" } ?: return false
 
-        val pom = PomFile(element.containingFile as XmlFile)
+        val pom = PomFile.forFileOrNull(element.containingFile as XmlFile) ?: return false
         val sourceDirsToMove = pom.executionSourceDirs(execution)
 
         if (sourceDirsToMove.size != 1) {
