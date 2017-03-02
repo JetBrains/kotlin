@@ -4320,6 +4320,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     private static ReceiverValue getConstructorReceiver(@NotNull ResolvedCall<?> resolvedCall) {
         CallableDescriptor constructor = resolvedCall.getResultingDescriptor();
         if (constructor.getExtensionReceiverParameter() != null) {
+            // see comment on `withDispatchReceiver` parameter in
+            // org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptorImpl.Companion.createIfAvailable
             assert constructor instanceof TypeAliasConstructorDescriptor :
                     "Only type alias constructor can have an extension receiver: " + constructor;
             return resolvedCall.getExtensionReceiver();

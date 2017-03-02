@@ -106,22 +106,34 @@ class TypeAliasConstructorDescriptorImpl private constructor(
     }
 
     companion object {
+        private fun TypeAliasDescriptor.getTypeSubstitutorForUnderlyingClass(): TypeSubstitutor? {
+            if (classDescriptor == null) return null
+            return TypeSubstitutor.create(expandedType)
+        }
+
         fun createIfAvailable(
                 typeAliasDescriptor: TypeAliasDescriptor,
                 constructor: ClassConstructorDescriptor,
-                substitutor: TypeSubstitutor,
-                withDispatchReceiver: Boolean = false
+                // When resolution is ran for common calls, type aliases constructors are resolved as extensions
+                // (i.e. after members, and with extension receiver)
+                // But when resolving super-calls (with known set of candidates) constructors of inner classes are expected to have
+                // an dispatch receiver
+                withDispatchReceiver: Boolean
         ): TypeAliasConstructorDescriptor? {
+            val substitutorForUnderlyingClass = typeAliasDescriptor.getTypeSubstitutorForUnderlyingClass() ?: return null
 
             val typeAliasConstructor =
                     TypeAliasConstructorDescriptorImpl(typeAliasDescriptor, constructor, null, constructor.annotations,
                                                        constructor.kind, typeAliasDescriptor.source)
 
-            val valueParameters = FunctionDescriptorImpl.getSubstitutedValueParameters(typeAliasConstructor, constructor.valueParameters, substitutor, false, false)
-                                  ?: return null
+            val valueParameters =
+                    FunctionDescriptorImpl.getSubstitutedValueParameters(
+                            typeAliasConstructor, constructor.valueParameters, substitutorForUnderlyingClass, false, false
+                    )
+                    ?: return null
 
             val returnType = run {
-                val returnTypeNoAbbreviation = substitutor.substitute(constructor.returnType, Variance.INVARIANT)
+                val returnTypeNoAbbreviation = substitutorForUnderlyingClass.substitute(constructor.returnType, Variance.INVARIANT)
                                                ?: return null
                 val abbreviation = typeAliasDescriptor.defaultType
                 if (returnTypeNoAbbreviation is SimpleType && abbreviation is SimpleType)
@@ -132,10 +144,10 @@ class TypeAliasConstructorDescriptorImpl private constructor(
 
             val receiverParameterType =
                     if (withDispatchReceiver) null
-                    else constructor.dispatchReceiverParameter?.let { substitutor.safeSubstitute(it.type, Variance.INVARIANT) }
+                    else constructor.dispatchReceiverParameter?.let { substitutorForUnderlyingClass.safeSubstitute(it.type, Variance.INVARIANT) }
 
             val dispatchReceiver =
-                    if (withDispatchReceiver) constructor.dispatchReceiverParameter?.substitute(substitutor)
+                    if (withDispatchReceiver) constructor.dispatchReceiverParameter?.substitute(substitutorForUnderlyingClass)
                     else null
 
             typeAliasConstructor.initialize(

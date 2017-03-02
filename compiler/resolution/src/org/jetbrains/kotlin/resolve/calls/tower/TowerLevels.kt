@@ -36,7 +36,9 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastI
 import org.jetbrains.kotlin.resolve.scopes.utils.collectFunctions
 import org.jetbrains.kotlin.resolve.scopes.utils.collectVariables
 import org.jetbrains.kotlin.resolve.selectMostSpecificInEachOverridableGroup
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.typeUtil.getImmediateSuperclassNotAny
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -319,22 +321,11 @@ private fun getClassWithConstructors(classifier: ClassifierDescriptor?): ClassDe
 private val ClassDescriptor.canHaveCallableConstructors: Boolean
     get() = !ErrorUtils.isError(this) && !kind.isSingleton
 
-fun TypeAliasDescriptor.getTypeAliasConstructors(): Collection<TypeAliasConstructorDescriptor> {
+fun TypeAliasDescriptor.getTypeAliasConstructors(withDispatchReceiver: Boolean = false): Collection<TypeAliasConstructorDescriptor> {
     val classDescriptor = this.classDescriptor ?: return emptyList()
     if (!classDescriptor.canHaveCallableConstructors) return emptyList()
 
-    val substitutor = this.getTypeSubstitutorForUnderlyingClass() ?:
-                      throw AssertionError("classDescriptor should be non-null for $this")
-
     return classDescriptor.constructors.mapNotNull {
-        TypeAliasConstructorDescriptorImpl.createIfAvailable(this, it, substitutor)
+        TypeAliasConstructorDescriptorImpl.createIfAvailable(this, it, withDispatchReceiver)
     }
-}
-
-private fun TypeAliasDescriptor.getTypeSubstitutorForUnderlyingClass(): TypeSubstitutor? {
-    if (classDescriptor == null) return null
-
-    val expandedTypeParameters = expandedType.constructor.parameters
-    val expandedTypeArguments = expandedType.arguments
-    return TypeSubstitutor.create(IndexedParametersSubstitution(expandedTypeParameters, expandedTypeArguments))
 }

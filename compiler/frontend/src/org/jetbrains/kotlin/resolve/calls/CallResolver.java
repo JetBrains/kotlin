@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingVisitorDispatcher;
@@ -452,17 +451,18 @@ public class CallResolver {
         }
 
         // If any constructor has type parameter (currently it only can be true for ones from Java), try to infer arguments for them
-        // Otherwise use NO_EXPECTED_TYPE and knownTypeParametersSubstitutor
+        // Otherwise use NO_EXPECTED_TYPE and known type substitutor
         boolean anyConstructorHasDeclaredTypeParameters =
                 anyConstructorHasDeclaredTypeParameters(superType.getConstructor().getDeclarationDescriptor());
 
-        TypeSubstitutor knownTypeParametersSubstitutor = anyConstructorHasDeclaredTypeParameters ? null : TypeSubstitutor.create(superType);
         if (anyConstructorHasDeclaredTypeParameters) {
             context = context.replaceExpectedType(superType);
         }
 
         Collection<ResolutionCandidate<ConstructorDescriptor>> candidates =
-                CallResolverUtilKt.createResolutionCandidatesForConstructors(context.scope, context.call, superType, knownTypeParametersSubstitutor);
+                CallResolverUtilKt.createResolutionCandidatesForConstructors(
+                        context.scope, context.call, superType, !anyConstructorHasDeclaredTypeParameters
+                );
 
         return new Pair<Collection<ResolutionCandidate<ConstructorDescriptor>>, BasicCallResolutionContext>(candidates, context);
     }
