@@ -1723,7 +1723,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun generateWhenCase(resultPhi: LLVMValueRef?, branch: IrBranch,
                                  bbNext: LLVMBasicBlockRef?, bbExit: LLVMBasicBlockRef?) {
         val branchResult = branch.result
-        val isNothing = KotlinBuiltIns.isNothing(branchResult.type)
         val brResult = if (isUnconditional(branch)) {                                // It is the "else" clause.
             evaluateExpression(branchResult)                                         // Generate clause body.
         } else {                                                                     // It is conditional clause.
@@ -1733,10 +1732,12 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             codegen.positionAtEnd(bbCurr)                                            // Switch generation to block for clause body.
             evaluateExpression(branch.result)                                        // Generate clause body.
         }
-        if (resultPhi != null && !isNothing)
-            codegen.assignPhis(resultPhi to brResult)
-        if (bbExit != null && !isNothing)
-            codegen.br(bbExit)
+        if (!codegen.isAfterTerminator()) {
+            if (resultPhi != null)
+                codegen.assignPhis(resultPhi to brResult)
+            if (bbExit != null)
+                codegen.br(bbExit)
+        }
         if (bbNext != null)                                                          // Switch generation to next or exit.
             codegen.positionAtEnd(bbNext)
         else if (bbExit != null)
