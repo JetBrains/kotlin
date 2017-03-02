@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.resolve.jvm
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
@@ -84,12 +81,7 @@ object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
 
         val languageSettingsProvider = LanguageSettingsProvider.getInstance(project)
         val jvmTarget = languageSettingsProvider.getTargetPlatform(moduleInfo) as? JvmTarget ?: JvmTarget.JVM_1_6
-
-        val configuration = CompilerConfiguration().apply {
-            languageVersionSettings = languageSettingsProvider.getLanguageVersionSettings(moduleInfo, project)
-            put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
-            isReadOnly = true
-        }
+        val languageVersionSettings = languageSettingsProvider.getLanguageVersionSettings(moduleInfo, project)
 
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
 
@@ -103,7 +95,7 @@ object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
                 LookupTracker.DO_NOTHING,
                 packagePartProvider,
                 jvmTarget,
-                configuration,
+                languageVersionSettings,
                 useBuiltInsProvider = false, // TODO: load built-ins from module dependencies in IDE
                 useLazyResolve = true
         )

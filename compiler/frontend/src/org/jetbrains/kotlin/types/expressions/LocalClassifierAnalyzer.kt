@@ -64,7 +64,7 @@ class LocalClassifierAnalyzer(
         private val lookupTracker: LookupTracker,
         private val supertypeLoopChecker: SupertypeLoopChecker,
         private val targetPlatformVersion: TargetPlatformVersion,
-        private val compilerConfiguration: CompilerConfiguration,
+        private val languageVersionSettings: LanguageVersionSettings,
         private val delegationFilter: DelegationFilter
 ) {
     fun processClassOrObject(
@@ -82,7 +82,7 @@ class LocalClassifierAnalyzer(
                 platform,
                 lookupTracker,
                 targetPlatformVersion,
-                compilerConfiguration,
+                languageVersionSettings,
                 context.statementFilter,
                 LocalClassDescriptorHolder(
                         scope,
@@ -96,7 +96,7 @@ class LocalClassifierAnalyzer(
                         typeResolver,
                         annotationResolver,
                         supertypeLoopChecker,
-                        compilerConfiguration.languageVersionSettings,
+                        languageVersionSettings,
                         SyntheticResolveExtension.getInstance(project),
                         delegationFilter
                 )

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.frontend.java.di
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.JvmBuiltInsPackageFragmentProvider
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.context.LazyResolveToken
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
-import org.jetbrains.kotlin.frontend.di.configureCommon
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.InternalFlexibleTypeTransformer
@@ -89,7 +87,7 @@ fun createContainerForLazyResolveWithJava(
         lookupTracker: LookupTracker,
         packagePartProvider: PackagePartProvider,
         jvmTarget: JvmTarget,
-        compilerConfiguration: CompilerConfiguration,
+        languageVersionSettings: LanguageVersionSettings,
         useBuiltInsProvider: Boolean,
         useLazyResolve: Boolean
 ): StorageComponentContainer = createContainer("LazyResolveWithJava", JvmPlatform) {
@@ -100,7 +98,7 @@ fun createContainerForLazyResolveWithJava(
     useInstance(moduleClassResolver)
     useInstance(declarationProviderFactory)
 
-    configureCommon(compilerConfiguration)
+    useInstance(languageVersionSettings)
 
     if (useBuiltInsProvider) {
         useInstance((moduleContext.module.builtIns as JvmBuiltIns).settings)
@@ -126,10 +124,10 @@ fun createContainerForTopDownAnalyzerForJvm(
         packagePartProvider: PackagePartProvider,
         moduleClassResolver: ModuleClassResolver,
         jvmTarget: JvmTarget,
-        compilerConfiguration: CompilerConfiguration
+        languageVersionSettings: LanguageVersionSettings
 ): ComponentProvider = createContainerForLazyResolveWithJava(
         moduleContext, bindingTrace, declarationProviderFactory, moduleContentScope, moduleClassResolver,
-        CompilerEnvironment, lookupTracker, packagePartProvider, jvmTarget, compilerConfiguration,
+        CompilerEnvironment, lookupTracker, packagePartProvider, jvmTarget, languageVersionSettings,
         useBuiltInsProvider = true, useLazyResolve = false
 )
 

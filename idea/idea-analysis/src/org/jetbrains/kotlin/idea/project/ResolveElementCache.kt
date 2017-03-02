@@ -589,7 +589,7 @@ class ResolveElementCache(
                 targetPlatform,
                 statementFilter,
                 file.jvmTarget,
-                file.createCompilerConfiguration()
+                file.languageVersionSettings
         ).get<BodyResolver>()
     }
 

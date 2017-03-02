@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.types.expressions;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
@@ -61,7 +60,6 @@ public class ExpressionTypingComponents {
     /*package*/ OverloadChecker overloadChecker;
     /*package*/ LanguageVersionSettings languageVersionSettings;
     /*package*/ Iterable<RttiExpressionChecker> rttiExpressionCheckers;
-    /*package*/ CompilerConfiguration compilerConfiguration;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
@@ -201,10 +199,5 @@ public class ExpressionTypingComponents {
     @Inject
     public void setRttiExpressionCheckers(@NotNull Iterable<RttiExpressionChecker> rttiExpressionCheckers) {
         this.rttiExpressionCheckers = rttiExpressionCheckers;
-    }
-
-    @Inject
-    public void setCompilerConfiguration(CompilerConfiguration compilerConfiguration) {
-        this.compilerConfiguration = compilerConfiguration;
     }
 }

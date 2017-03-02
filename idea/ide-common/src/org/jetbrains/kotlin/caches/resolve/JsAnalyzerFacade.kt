@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.caches.resolve.LibraryModuleInfo
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.TargetPlatformVersion
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
@@ -56,11 +54,7 @@ object JsAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
                 project, moduleContext.storageManager, syntheticFiles, if (moduleInfo.isLibrary) GlobalSearchScope.EMPTY_SCOPE else moduleContentScope
         )
 
-        // TODO: deduplicate this with JvmAnalyzerFacade
-        val configuration = CompilerConfiguration().apply {
-            languageVersionSettings = LanguageSettingsProvider.getInstance(project).getLanguageVersionSettings(moduleInfo, project)
-            isReadOnly = true
-        }
+        val languageVersionSettings = LanguageSettingsProvider.getInstance(project).getLanguageVersionSettings(moduleInfo, project)
 
         val container = createContainerForLazyResolve(
                 moduleContext,
@@ -69,7 +63,7 @@ object JsAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
                 JsPlatform,
                 TargetPlatformVersion.NoVersion,
                 targetEnvironment,
-                configuration
+                languageVersionSettings
         )
         var packageFragmentProvider = container.get<ResolveSession>().packageFragmentProvider
 

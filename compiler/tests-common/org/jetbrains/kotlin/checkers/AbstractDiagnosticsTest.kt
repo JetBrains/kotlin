@@ -266,10 +266,6 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         @Suppress("NAME_SHADOWING")
         var files = files
 
-        val configuration = environment.configuration.copy().apply {
-            this.languageVersionSettings = languageVersionSettings
-        }
-
         // New JavaDescriptorResolver is created for each module, which is good because it emulates different Java libraries for each module,
         // albeit with same class names
         // See TopDownAnalyzerFacadeForJVM#analyzeFilesWithJavaIntegration
@@ -282,7 +278,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                     moduleContext.project,
                     files,
                     moduleTrace,
-                    configuration,
+                    environment.configuration.copy().apply { this.languageVersionSettings = languageVersionSettings },
                     { scope -> JvmPackagePartProvider(environment, scope) }
             )
         }
@@ -318,7 +314,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 JvmPackagePartProvider(environment, moduleContentScope),
                 moduleClassResolver,
                 JvmTarget.JVM_1_6,
-                configuration
+                languageVersionSettings
         )
         container.initJvmBuiltInsForTopDownAnalysis()
         moduleClassResolver.resolver = container.get<JavaDescriptorResolver>()

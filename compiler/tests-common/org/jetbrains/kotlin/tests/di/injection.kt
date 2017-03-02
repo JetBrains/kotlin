@@ -17,15 +17,14 @@
 package org.jetbrains.kotlin.tests.di
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.getValue
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.frontend.di.configureCommon
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.resolve.DescriptorResolver
@@ -40,7 +39,7 @@ fun createContainerForTests(project: Project, module: ModuleDescriptor): Contain
     return ContainerForTests(createContainer("Tests", JvmPlatform) {
         configureModule(ModuleContext(module, project), JvmPlatform, JvmTarget.JVM_1_6)
         useInstance(LookupTracker.DO_NOTHING)
-        configureCommon(CompilerConfiguration.EMPTY)
+        useInstance(LanguageVersionSettingsImpl.DEFAULT)
         useImpl<ExpressionTypingServices>()
     })
 }

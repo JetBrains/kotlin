@@ -16,14 +16,13 @@
 
 package org.jetbrains.kotlin.frontend.js.di
 
-import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.frontend.di.configureCommon
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.resolve.JsPlatform
@@ -40,7 +39,7 @@ fun createTopDownAnalyzerForJs(
         moduleContext: ModuleContext,
         bindingTrace: BindingTrace,
         declarationProviderFactory: DeclarationProviderFactory,
-        compilerConfiguration: CompilerConfiguration
+        languageVersionSettings: LanguageVersionSettings
 ): LazyTopDownAnalyzer {
     val storageComponentContainer = createContainer("TopDownAnalyzerForJs", JsPlatform) {
         configureModule(moduleContext, JsPlatform, TargetPlatformVersion.NoVersion, bindingTrace)
@@ -51,7 +50,7 @@ fun createTopDownAnalyzerForJs(
         CompilerEnvironment.configure(this)
 
         useInstance(LookupTracker.DO_NOTHING)
-        configureCommon(compilerConfiguration)
+        useInstance(languageVersionSettings)
         useImpl<ResolveSession>()
         useImpl<LazyTopDownAnalyzer>()
     }.apply {

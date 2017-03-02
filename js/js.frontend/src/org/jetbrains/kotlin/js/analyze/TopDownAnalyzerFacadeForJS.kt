@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.analyze
 
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.context.ContextForNewModule
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
@@ -55,7 +56,7 @@ object TopDownAnalyzerFacadeForJS {
         val analyzerForJs = createTopDownAnalyzerForJs(
                 moduleContext, trace,
                 FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
-                config.configuration
+                config.configuration.languageVersionSettings
         )
         analyzerForJs.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
         return JsAnalysisResult.success(trace, moduleContext.module)

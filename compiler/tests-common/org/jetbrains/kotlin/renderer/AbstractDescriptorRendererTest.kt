@@ -20,8 +20,8 @@ import com.intellij.openapi.editor.impl.DocumentImpl
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -64,7 +64,7 @@ abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment() {
                 JvmPlatform,
                 JvmTarget.JVM_1_6,
                 targetEnvironment,
-                CompilerConfiguration.EMPTY
+                LanguageVersionSettingsImpl.DEFAULT
         )
 
         val resolveSession = container.get<ResolveSession>()

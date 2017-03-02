@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.frontend.di
 
-import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.TargetPlatformVersion
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.useImpl
@@ -73,18 +73,13 @@ fun StorageComponentContainer.configureModule(
     useInstance(trace)
 }
 
-fun StorageComponentContainer.configureCommon(configuration: CompilerConfiguration) {
-    useInstance(configuration)
-    useInstance(configuration.languageVersionSettings)
-}
-
 fun createContainerForBodyResolve(
         moduleContext: ModuleContext,
         bindingTrace: BindingTrace,
         platform: TargetPlatform,
         statementFilter: StatementFilter,
         targetPlatformVersion: TargetPlatformVersion,
-        compilerConfiguration: CompilerConfiguration
+        languageVersionSettings: LanguageVersionSettings
 ): StorageComponentContainer = createContainer("BodyResolve", platform) {
     configureModule(moduleContext, platform, targetPlatformVersion, bindingTrace)
 
@@ -92,7 +87,7 @@ fun createContainerForBodyResolve(
 
     useInstance(LookupTracker.DO_NOTHING)
     useInstance(BodyResolveCache.ThrowException)
-    configureCommon(compilerConfiguration)
+    useInstance(languageVersionSettings)
 
     useImpl<BodyResolver>()
 }
@@ -104,7 +99,7 @@ fun createContainerForLazyBodyResolve(
         platform: TargetPlatform,
         bodyResolveCache: BodyResolveCache,
         targetPlatformVersion: TargetPlatformVersion,
-        compilerConfiguration: CompilerConfiguration
+        languageVersionSettings: LanguageVersionSettings
 ): StorageComponentContainer = createContainer("LazyBodyResolve", platform) {
     configureModule(moduleContext, platform, targetPlatformVersion, bindingTrace)
 
@@ -112,7 +107,7 @@ fun createContainerForLazyBodyResolve(
     useInstance(kotlinCodeAnalyzer)
     useInstance(kotlinCodeAnalyzer.fileScopeProvider)
     useInstance(bodyResolveCache)
-    configureCommon(compilerConfiguration)
+    useInstance(languageVersionSettings)
     useImpl<LazyTopDownAnalyzer>()
     useImpl<BasicAbsentDescriptorHandler>()
 }
@@ -123,7 +118,7 @@ fun createContainerForLazyLocalClassifierAnalyzer(
         platform: TargetPlatform,
         lookupTracker: LookupTracker,
         targetPlatformVersion: TargetPlatformVersion,
-        compilerConfiguration: CompilerConfiguration,
+        languageVersionSettings: LanguageVersionSettings,
         statementFilter: StatementFilter,
         localClassDescriptorHolder: LocalClassDescriptorHolder
 ): StorageComponentContainer = createContainer("LocalClassifierAnalyzer", platform) {
@@ -143,7 +138,7 @@ fun createContainerForLazyLocalClassifierAnalyzer(
     useImpl<DeclarationScopeProviderForLocalClassifierAnalyzer>()
     useImpl<LocalLazyDeclarationResolver>()
 
-    configureCommon(compilerConfiguration)
+    useInstance(languageVersionSettings)
     useInstance(statementFilter)
 }
 
@@ -154,14 +149,13 @@ fun createContainerForLazyResolve(
         platform: TargetPlatform,
         targetPlatformVersion: TargetPlatformVersion,
         targetEnvironment: TargetEnvironment,
-        compilerConfiguration: CompilerConfiguration
+        languageVersionSettings: LanguageVersionSettings
 ): StorageComponentContainer = createContainer("LazyResolve", platform) {
     configureModule(moduleContext, platform, targetPlatformVersion, bindingTrace)
 
     useInstance(declarationProviderFactory)
     useInstance(LookupTracker.DO_NOTHING)
-
-    configureCommon(compilerConfiguration)
+    useInstance(languageVersionSettings)
 
     useImpl<FileScopeProviderImpl>()
     useImpl<CompilerDeserializationConfiguration>()
@@ -179,5 +173,5 @@ fun createLazyResolveSession(moduleContext: ModuleContext, files: Collection<KtF
                 TargetPlatform.Default,
                 TargetPlatformVersion.NoVersion,
                 CompilerEnvironment,
-                CompilerConfiguration.EMPTY
+                LanguageVersionSettingsImpl.DEFAULT
         ).get<ResolveSession>()

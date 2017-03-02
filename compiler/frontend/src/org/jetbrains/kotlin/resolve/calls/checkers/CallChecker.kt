@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
@@ -38,8 +37,7 @@ interface CallChecker {
 class CallCheckerContext(
         val resolutionContext: ResolutionContext<*>,
         val trace: BindingTrace,
-        val languageVersionSettings: LanguageVersionSettings,
-        val compilerConfiguration: CompilerConfiguration
+        val languageVersionSettings: LanguageVersionSettings
 ) {
     val scope: LexicalScope
         get() = resolutionContext.scope
@@ -50,7 +48,7 @@ class CallCheckerContext(
     val isAnnotationContext: Boolean
         get() = resolutionContext.isAnnotationContext
 
-    constructor(c: ResolutionContext<*>, languageVersionSettings: LanguageVersionSettings, configuration: CompilerConfiguration) : this(c, c.trace, languageVersionSettings, configuration)
+    constructor(c: ResolutionContext<*>, languageVersionSettings: LanguageVersionSettings) : this(c, c.trace, languageVersionSettings)
 }
 
 // Use this utility to avoid premature computation of deferred return type of a resolved callable descriptor.

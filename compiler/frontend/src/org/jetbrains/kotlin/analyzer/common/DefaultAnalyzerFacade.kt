@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.frontend.di.configureCommon
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
@@ -49,11 +48,9 @@ import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmen
  * See [TargetPlatform.Default]
  */
 object DefaultAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
-    private val compilerConfiguration = CompilerConfiguration().apply {
-        languageVersionSettings = LanguageVersionSettingsImpl(
-                LanguageVersion.LATEST, ApiVersion.LATEST, additionalFeatures = setOf(LanguageFeature.MultiPlatformProjects)
-        )
-    }
+    private val languageVersionSettings = LanguageVersionSettingsImpl(
+            LanguageVersion.LATEST, ApiVersion.LATEST, additionalFeatures = setOf(LanguageFeature.MultiPlatformProjects)
+    )
 
     private class SourceModuleInfo(
             override val name: Name,
@@ -135,7 +132,7 @@ object DefaultAnalyzerFacade : AnalyzerFacade<PlatformAnalysisParameters>() {
         useImpl<ResolveSession>()
         useImpl<LazyTopDownAnalyzer>()
         useImpl<FileScopeProviderImpl>()
-        configureCommon(compilerConfiguration)
+        useInstance(languageVersionSettings)
         useImpl<CompilerDeserializationConfiguration>()
         useInstance(packagePartProvider)
         useInstance(declarationProviderFactory)
