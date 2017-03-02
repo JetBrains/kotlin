@@ -372,23 +372,12 @@ public abstract class StackValue {
             }
         }
         else if (toType.getSort() == Type.ARRAY) {
-            if (fromType.getSort() == Type.ARRAY &&
-                fromType.getElementType().equals(AsmTypes.JAVA_CLASS_TYPE) && toType.equals(K_CLASS_ARRAY_TYPE)) {
-                wrapJavaClassesIntoKClasses(v);
-            }
-            else {
-                v.checkcast(toType);
-            }
+            v.checkcast(toType);
         }
         else if (toType.getSort() == Type.OBJECT) {
             if (fromType.getSort() == Type.OBJECT || fromType.getSort() == Type.ARRAY) {
                 if (!toType.equals(OBJECT_TYPE)) {
-                    if (fromType.equals(AsmTypes.JAVA_CLASS_TYPE) && toType.equals(AsmTypes.K_CLASS_TYPE)) {
-                        wrapJavaClassIntoKClass(v);
-                    }
-                    else {
-                        v.checkcast(toType);
-                    }
+                    v.checkcast(toType);
                 }
             }
             else {
@@ -1211,7 +1200,20 @@ public abstract class StackValue {
                 else {
                     getter.genInvokeInstruction(v);
                 }
-                coerce(getter.getReturnType(), type, v);
+
+                Type typeOfValueOnStack = getter.getReturnType();
+                if (DescriptorUtils.isAnnotationClass(descriptor.getContainingDeclaration())) {
+                    if (this.type.equals(K_CLASS_TYPE)) {
+                        wrapJavaClassIntoKClass(v);
+                        typeOfValueOnStack = K_CLASS_TYPE;
+                    }
+                    else if (this.type.equals(K_CLASS_ARRAY_TYPE)) {
+                        wrapJavaClassesIntoKClasses(v);
+                        typeOfValueOnStack = K_CLASS_ARRAY_TYPE;
+                    }
+                }
+
+                coerce(typeOfValueOnStack, type, v);
 
                 KotlinType returnType = descriptor.getReturnType();
                 if (returnType != null && KotlinBuiltIns.isNothing(returnType)) {

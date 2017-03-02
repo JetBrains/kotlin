@@ -14209,6 +14209,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("forceWrapping.kt")
+            public void testForceWrapping() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/kClassInAnnotation/forceWrapping.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("vararg.kt")
             public void testVararg() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/kClassInAnnotation/vararg.kt");
@@ -14218,6 +14224,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("varargInJava.kt")
             public void testVarargInJava() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/kClassInAnnotation/varargInJava.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("wrappingForCallableReferences.kt")
+            public void testWrappingForCallableReferences() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/reflection/kClassInAnnotation/wrappingForCallableReferences.kt");
                 doTest(fileName);
             }
         }
