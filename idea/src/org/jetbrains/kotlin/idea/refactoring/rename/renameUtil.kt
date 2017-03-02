@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.rename.ResolvableCollisionUsageInfo
 import com.intellij.refactoring.rename.UnresolvableCollisionUsageInfo
 import com.intellij.refactoring.util.MoveRenameUsageInfo
@@ -79,4 +81,9 @@ class LostDefaultValuesInOverridingFunctionUsageInfo(
             subParam.addRange(superParam.equalsToken, defaultValue)
         }
     }
+}
+
+inline fun <reified T : PsiElement> PsiFile.findElementForRename(offset: Int): T? {
+    return PsiTreeUtil.findElementOfClassAtOffset(this, offset, T::class.java, false)
+           ?: PsiTreeUtil.findElementOfClassAtOffset(this, (offset - 1).coerceAtLeast(0), T::class.java, false)
 }

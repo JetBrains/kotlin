@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinImplicitLambdaPa
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.openapi.command.WriteCommandAction
+import org.jetbrains.kotlin.idea.refactoring.rename.findElementForRename
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
 class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
     override fun isRunInWriteAction(): Boolean = false
@@ -50,19 +52,58 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
     }
 
     fun testFunctionLiteralIt() {
+        doTestImplicitLambdaParameter("y")
+    }
+
+    fun testFunctionLiteralItEndCaret() {
+        doTestImplicitLambdaParameter("y")
+    }
+
+    fun testFunctionLiteralParenthesis() {
+        doTestInplaceRename("y")
+    }
+
+    fun testLocalFunction() {
+        doTestInplaceRename("bar")
+    }
+
+    fun testFunctionParameterNotInplace() {
+        doTestInplaceRename(null)
+    }
+
+    fun testGlobalFunctionNotInplace() {
+        doTestInplaceRename(null)
+    }
+
+    fun testTopLevelValNotInplace() {
+        doTestInplaceRename(null)
+    }
+
+    fun testLabelFromFunction() {
+        doTestInplaceRename("foo")
+    }
+
+    fun testMultiDeclaration() {
+        doTestInplaceRename("foo")
+    }
+
+    fun testLocalVarShadowingMemberProperty() {
+        doTestInplaceRename("name1")
+    }
+
+    private fun doTestImplicitLambdaParameter(newName: String) {
         configureByFile(getTestName(false) + ".kt")
-        val newName = "y"
 
         // This code is copy-pasted from CodeInsightTestUtil.doInlineRename() and slightly modified.
         // Original method was not suitable because it expects renamed element to be reference to other or referrable
 
-        val file = LightPlatformCodeInsightTestCase.getFile()!!
-        val editor = LightPlatformCodeInsightTestCase.getEditor()!!
-        val element = file.findReferenceAt(editor.caretModel.offset)!!.element
+        val file = getFile()!!
+        val editor = getEditor()!!
+        val element = file.findElementForRename<KtNameReferenceExpression>(editor.caretModel.offset)!!
         assertNotNull(element)
 
         val dataContext = SimpleDataContext.getSimpleContext(CommonDataKeys.PSI_ELEMENT.name, element!!,
-                                                             LightPlatformCodeInsightTestCase.getCurrentEditorDataContext())
+                                                             getCurrentEditorDataContext())
         val handler = RenameKotlinImplicitLambdaParameter()
 
         assertTrue(handler.isRenaming(dataContext), "In-place rename not allowed for " + element)
@@ -98,38 +139,6 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
 
 
         checkResultByFile(getTestName(false) + ".kt.after")
-    }
-
-    fun testFunctionLiteralParenthesis() {
-        doTestInplaceRename("y")
-    }
-
-    fun testLocalFunction() {
-        doTestInplaceRename("bar")
-    }
-
-    fun testFunctionParameterNotInplace() {
-        doTestInplaceRename(null)
-    }
-
-    fun testGlobalFunctionNotInplace() {
-        doTestInplaceRename(null)
-    }
-
-    fun testTopLevelValNotInplace() {
-        doTestInplaceRename(null)
-    }
-
-    fun testLabelFromFunction() {
-        doTestInplaceRename("foo")
-    }
-
-    fun testMultiDeclaration() {
-        doTestInplaceRename("foo")
-    }
-
-    fun testLocalVarShadowingMemberProperty() {
-        doTestInplaceRename("name1")
     }
 
     private fun doTestInplaceRename(newName: String?) {
