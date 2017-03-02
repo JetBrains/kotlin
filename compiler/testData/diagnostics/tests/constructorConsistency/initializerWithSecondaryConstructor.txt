@@ -1,0 +1,21 @@
+package
+
+private const val A: kotlin.Long = 0.toLong()
+private val B: kotlin.Long = 0.toLong()
+private fun sample(): kotlin.Long
+
+public final class Foo {
+    public constructor Foo()
+    public final var bar: kotlin.Long
+    private final var other: PrivateClass?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+private final class PrivateClass {
+    public constructor PrivateClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
