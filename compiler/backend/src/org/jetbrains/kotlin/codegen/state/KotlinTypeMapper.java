@@ -707,9 +707,9 @@ public class KotlinTypeMapper {
     @NotNull
     public CallableMethod mapToCallableMethod(@NotNull FunctionDescriptor descriptor, boolean superCall) {
         if (descriptor instanceof ConstructorDescriptor) {
-            JvmMethodSignature method = mapSignatureSkipGeneric(descriptor);
+            JvmMethodSignature method = mapSignatureSkipGeneric(descriptor.getOriginal());
             Type owner = mapOwner(descriptor);
-            String defaultImplDesc = mapDefaultMethod(descriptor, OwnerKind.IMPLEMENTATION).getDescriptor();
+            String defaultImplDesc = mapDefaultMethod(descriptor.getOriginal(), OwnerKind.IMPLEMENTATION).getDescriptor();
             return new CallableMethod(
                     owner, owner, defaultImplDesc, method, INVOKESPECIAL,
                     null, null, null, false
@@ -1040,10 +1040,6 @@ public class KotlinTypeMapper {
 
         if (CoroutineCodegenUtilKt.isSuspendFunctionNotSuspensionView(f)) {
             return mapSignature(CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(f), kind, skipGenericSignature);
-        }
-
-        if (f instanceof ConstructorDescriptor) {
-            return mapSignatureWithCustomParameters(f, kind, f.getOriginal().getValueParameters(), skipGenericSignature);
         }
 
         return mapSignatureWithCustomParameters(f, kind, f.getValueParameters(), skipGenericSignature);
@@ -1426,7 +1422,7 @@ public class KotlinTypeMapper {
         List<ResolvedValueArgument> valueArguments = superCall.getValueArgumentsByIndex();
         assert valueArguments != null : "Failed to arrange value arguments by index: " + superDescriptor;
 
-        List<JvmMethodParameterSignature> parameters = mapSignatureSkipGeneric(superDescriptor).getValueParameters();
+        List<JvmMethodParameterSignature> parameters = mapSignatureSkipGeneric(superDescriptor.getOriginal()).getValueParameters();
 
         int params = parameters.size();
         int args = valueArguments.size();
