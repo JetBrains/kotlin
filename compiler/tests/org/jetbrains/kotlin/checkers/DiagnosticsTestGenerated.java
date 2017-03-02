@@ -4573,6 +4573,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("errorTypesInDataClasses.kt")
+            public void testErrorTypesInDataClasses() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/errorTypesInDataClasses.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("extensionComponentsOnNullable.kt")
             public void testExtensionComponentsOnNullable() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/extensionComponentsOnNullable.kt");

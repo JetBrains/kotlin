@@ -163,7 +163,6 @@ open class LazyClassMemberScope(
             var componentIndex = 0
 
             for (parameter in constructor.valueParameters) {
-                if (parameter.type.isError) continue
                 if (!primaryConstructorParameters.get(parameter.index).hasValOrVar()) continue
 
                 val properties = getContributedVariables(parameter.name, location)
