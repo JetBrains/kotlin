@@ -93,7 +93,7 @@ internal class SpecialDescriptorsFactory(val context: Context) {
                 },
                 returnType,
                 descriptor.modality,
-                Visibilities.PRIVATE)
+                Visibilities.PUBLIC)
     }
 }
 
