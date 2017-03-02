@@ -56,6 +56,9 @@ class KonanBuiltIns(storageManager: StorageManager) : KotlinBuiltIns(storageMana
         // stdlib comes first to override declarations from builtIns (even when they are requested from builtIns).
         builtInsModule.setDependencies(stdlib, builtInsModule)
     }
+
+    override fun getClassDescriptorFactories() =
+            super.getClassDescriptorFactories() + KonanBuiltInClassDescriptorFactory(storageManager, builtInsModule)
 }
 
 object KonanPlatform : TargetPlatform("Konan") {
