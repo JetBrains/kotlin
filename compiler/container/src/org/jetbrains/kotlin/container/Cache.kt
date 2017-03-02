@@ -42,7 +42,8 @@ fun Class<*>.getInfo(): ClassInfo {
 data class ClassInfo(
         val constructorInfo: ConstructorInfo?,
         val setterInfos: List<SetterInfo>,
-        val registrations: List<Type>
+        val registrations: List<Type>,
+        val defaultImplementation: Class<*>?
 )
 
 data class ConstructorInfo(
@@ -56,7 +57,7 @@ data class SetterInfo(
 )
 
 private fun traverseClass(c: Class<*>): ClassInfo {
-    return ClassInfo(getConstructorInfo(c), getSetterInfos(c), getRegistrations(c))
+    return ClassInfo(getConstructorInfo(c), getSetterInfos(c), getRegistrations(c), getDefaultImplementation(c))
 }
 
 private fun getSetterInfos(c: Class<*>): List<SetterInfo> {
@@ -97,6 +98,10 @@ private fun collectInterfacesRecursive(type: Type, result: MutableSet<Type>) {
             collectInterfacesRecursive(it, result)
         }
     }
+}
+
+private fun getDefaultImplementation(klass: Class<*>): Class<*>? {
+    return klass.getAnnotation(DefaultImplementation::class.java)?.impl?.java
 }
 
 private fun getRegistrations(klass: Class<*>): List<Type> {

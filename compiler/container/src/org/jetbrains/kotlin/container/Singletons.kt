@@ -149,3 +149,9 @@ class ImplicitSingletonTypeComponentDescriptor(container: ComponentContainer, kl
         return "Implicit: ${klass.simpleName}"
     }
 }
+
+class DefaultSingletonTypeComponentDescriptor(container: ComponentContainer, klass: Class<*>) : SingletonTypeComponentDescriptor(container, klass) {
+    override fun toString(): String {
+        return "Default: ${klass.simpleName}"
+    }
+}

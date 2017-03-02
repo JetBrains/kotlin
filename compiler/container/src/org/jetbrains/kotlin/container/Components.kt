@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.container
 
 import java.lang.reflect.*
 
-class InstanceComponentDescriptor(val instance: Any) : ComponentDescriptor {
+open class InstanceComponentDescriptor(val instance: Any) : ComponentDescriptor {
 
     override fun getValue(): Any = instance
     override fun getRegistrations(): Iterable<Type> = instance::class.java.getInfo().registrations
@@ -28,4 +28,8 @@ class InstanceComponentDescriptor(val instance: Any) : ComponentDescriptor {
     override fun toString(): String {
         return "Instance: ${instance::class.java.simpleName}"
     }
+}
+
+class DefaultInstanceComponentDescriptor(instance: Any): InstanceComponentDescriptor(instance) {
+    override fun toString() = "Default instance: ${instance.javaClass.simpleName}"
 }

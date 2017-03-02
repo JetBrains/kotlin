@@ -161,16 +161,30 @@ class ComponentStorage(val myId: String, parent: ComponentStorage?) : ValueResol
                     is ParameterizedType -> type.rawType as? Class<*>
                     else -> null
                 }
-                if (rawType == null)
-                    continue
 
-                if (!Modifier.isAbstract(rawType.modifiers) && !rawType.isPrimitive) {
-                    val implicitDescriptor = ImplicitSingletonTypeComponentDescriptor(context.container, rawType)
-                    adhocDescriptors.add(implicitDescriptor)
-                    collectAdhocComponents(context, implicitDescriptor, visitedTypes, adhocDescriptors)
-                }
+                val implicitDependency = rawType?.let { getImplicitlyDefinedDependency(context, it) } ?: continue
+
+                adhocDescriptors.add(implicitDependency)
+                collectAdhocComponents(context, implicitDependency, visitedTypes, adhocDescriptors)
             }
         }
+    }
+
+    private fun getImplicitlyDefinedDependency(context: ComponentResolveContext, rawType: Class<*>): ComponentDescriptor? {
+        if (!Modifier.isAbstract(rawType.modifiers) && !rawType.isPrimitive) {
+            return ImplicitSingletonTypeComponentDescriptor(context.container, rawType)
+        }
+
+        val defaultImplementation = rawType.getInfo().defaultImplementation
+        if (defaultImplementation != null && defaultImplementation.getInfo().constructorInfo != null) {
+            return DefaultSingletonTypeComponentDescriptor(context.container, defaultImplementation)
+        }
+
+        if (defaultImplementation != null) {
+            return defaultImplementation.getField("INSTANCE")?.get(null)?.let(::DefaultInstanceComponentDescriptor)
+        }
+
+        return null
     }
 
     private fun injectProperties(instance: Any, context: ValueResolveContext) {
