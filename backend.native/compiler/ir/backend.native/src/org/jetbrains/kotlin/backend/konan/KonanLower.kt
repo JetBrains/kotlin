@@ -25,13 +25,6 @@ internal class KonanLower(val context: Context) {
         phaser.phase(KonanPhase.LOWER_ENUMS) {
             EnumClassLowering(context).run(irFile)
         }
-        phaser.phase(KonanPhase.LOWER_DEFAULT_PARAMETER_EXTENT) {
-            DefaultArgumentStubGenerator(context).runOnFilePostfix(irFile)
-            DefaultParameterInjector(context).runOnFilePostfix(irFile)
-        }
-        phaser.phase(KonanPhase.LOWER_BUILTIN_OPERATORS) {
-            BuiltinOperatorLowering(context).runOnFilePostfix(irFile)
-        }
         phaser.phase(KonanPhase.LOWER_SHARED_VARIABLES) {
             SharedVariablesLowering(context).runOnFilePostfix(irFile)
         }
@@ -47,6 +40,16 @@ internal class KonanLower(val context: Context) {
         }
         phaser.phase(KonanPhase.LOWER_LOCAL_FUNCTIONS) {
             LocalDeclarationsLowering(context).runOnFilePostfix(irFile)
+        }
+        phaser.phase(KonanPhase.LOWER_TAILREC) {
+            TailrecLowering(context).runOnFilePostfix(irFile)
+        }
+        phaser.phase(KonanPhase.LOWER_DEFAULT_PARAMETER_EXTENT) {
+            DefaultArgumentStubGenerator(context).runOnFilePostfix(irFile)
+            DefaultParameterInjector(context).runOnFilePostfix(irFile)
+        }
+        phaser.phase(KonanPhase.LOWER_BUILTIN_OPERATORS) {
+            BuiltinOperatorLowering(context).runOnFilePostfix(irFile)
         }
         phaser.phase(KonanPhase.LOWER_INNER_CLASSES) {
             InnerClassLowering(context).runOnFilePostfix(irFile)

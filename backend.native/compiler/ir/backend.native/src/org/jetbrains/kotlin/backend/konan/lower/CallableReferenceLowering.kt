@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
+import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalClass
@@ -109,9 +110,7 @@ private class CallableReferencesUnbinder(val lower: CallableReferenceLowering,
         val boundArgs = expression.getArguments()
         val boundParams = boundArgs.map { it.first }
 
-        val allParams = with (descriptor) {
-            listOf(dispatchReceiverParameter, extensionReceiverParameter).filterNotNull() + valueParameters
-        }
+        val allParams = descriptor.explicitParameters
         val unboundParams = allParams - boundParams
 
         val startOffset = expression.startOffset
