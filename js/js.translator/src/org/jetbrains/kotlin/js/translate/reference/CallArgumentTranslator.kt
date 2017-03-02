@@ -214,6 +214,74 @@ class CallArgumentTranslator private constructor(
         return result
     }
 
+    private fun translateVarargArgument(
+            resolvedArgument: ResolvedValueArgument,
+            translatedArgs: Map<ValueArgument, JsExpression>,
+            shouldWrapVarargInArray: Boolean,
+            varargPrimitiveType: PrimitiveType?
+    ): List<JsExpression> {
+        val arguments = resolvedArgument.arguments
+        if (arguments.isEmpty()) {
+            return if (shouldWrapVarargInArray) {
+                return listOf(toArray(varargPrimitiveType, listOf<JsExpression>()))
+            }
+            else {
+                listOf()
+            }
+        }
+
+        val list = translateResolvedArgument(resolvedArgument, translatedArgs)
+
+        return if (shouldWrapVarargInArray) {
+            val concatArguments = prepareConcatArguments(arguments, list, varargPrimitiveType)
+            val concatExpression = concatArgumentsIfNeeded(concatArguments, varargPrimitiveType, false)
+            listOf(concatExpression)
+        }
+        else {
+            listOf(JsAstUtils.invokeMethod(list[0], "slice"))
+        }
+    }
+
+    private fun toArray(varargPrimitiveType: PrimitiveType?, elements: List<JsExpression>): JsExpression {
+        return ArrayFIF.castToTypedArray(program(),
+                                         varargPrimitiveType,
+                                         JsArrayLiteral(elements).apply { sideEffects = SideEffectKind.DEPENDS_ON_STATE })
+    }
+
+    private fun prepareConcatArguments(
+            arguments: List<ValueArgument>,
+            list: List<JsExpression>,
+            varargPrimitiveType: PrimitiveType?
+    ): MutableList<JsExpression> {
+        assert(arguments.isNotEmpty()) { "arguments.size should not be 0" }
+        assert(arguments.size == list.size) { "arguments.size: " + arguments.size + " != list.size: " + list.size }
+
+        val concatArguments = mutableListOf<JsExpression>()
+        var lastArrayContent = mutableListOf<JsExpression>()
+
+        val size = arguments.size
+        for (index in 0..size - 1) {
+            val valueArgument = arguments[index]
+            val expressionArgument = list[index]
+
+            if (valueArgument.getSpreadElement() != null) {
+                if (lastArrayContent.size > 0) {
+                    concatArguments.add(toArray(varargPrimitiveType, lastArrayContent))
+                    lastArrayContent = mutableListOf<JsExpression>()
+                }
+                concatArguments.add(expressionArgument)
+            }
+            else {
+                lastArrayContent.add(expressionArgument)
+            }
+        }
+        if (lastArrayContent.size > 0) {
+            concatArguments.add(toArray(varargPrimitiveType, lastArrayContent))
+        }
+
+        return concatArguments
+    }
+
     companion object {
 
         @JvmStatic fun translate(resolvedCall: ResolvedCall<*>, receiver: JsExpression?, context: TranslationContext): ArgumentsInfo {
@@ -244,34 +312,6 @@ class CallArgumentTranslator private constructor(
             return resolvedArgument.arguments.map { translatedArgs[it]!! }
         }
 
-        private fun translateVarargArgument(
-                resolvedArgument: ResolvedValueArgument,
-                translatedArgs: Map<ValueArgument, JsExpression>,
-                shouldWrapVarargInArray: Boolean,
-                varargPrimitiveType: PrimitiveType?
-        ): List<JsExpression> {
-            val arguments = resolvedArgument.arguments
-            if (arguments.isEmpty()) {
-                return if (shouldWrapVarargInArray) {
-                    return listOf(toArray(varargPrimitiveType, listOf<JsExpression>()))
-                }
-                else {
-                    listOf()
-                }
-            }
-
-            val list = translateResolvedArgument(resolvedArgument, translatedArgs)
-
-            return if (shouldWrapVarargInArray) {
-                val concatArguments = prepareConcatArguments(arguments, list, varargPrimitiveType)
-                val concatExpression = concatArgumentsIfNeeded(concatArguments, varargPrimitiveType, false)
-                listOf(concatExpression)
-            }
-            else {
-                listOf(JsAstUtils.invokeMethod(list[0], "slice"))
-            }
-        }
-
         private fun concatArgumentsIfNeeded(
                 concatArguments: List<JsExpression>,
                 varargPrimitiveType: PrimitiveType?,
@@ -292,46 +332,6 @@ class CallArgumentTranslator private constructor(
             else {
                 return concatArguments[0]
             }
-        }
-
-        private fun toArray(varargPrimitiveType: PrimitiveType?, elements: List<JsExpression>): JsExpression {
-            return ArrayFIF.castToTypedArray(
-                    varargPrimitiveType,
-                    JsArrayLiteral(elements).apply { sideEffects = SideEffectKind.DEPENDS_ON_STATE })
-        }
-
-        private fun prepareConcatArguments(
-                arguments: List<ValueArgument>,
-                list: List<JsExpression>,
-                varargPrimitiveType: PrimitiveType?
-        ): MutableList<JsExpression> {
-            assert(arguments.isNotEmpty()) { "arguments.size should not be 0" }
-            assert(arguments.size == list.size) { "arguments.size: " + arguments.size + " != list.size: " + list.size }
-
-            val concatArguments = mutableListOf<JsExpression>()
-            var lastArrayContent = mutableListOf<JsExpression>()
-
-            val size = arguments.size
-            for (index in 0..size - 1) {
-                val valueArgument = arguments[index]
-                val expressionArgument = list[index]
-
-                if (valueArgument.getSpreadElement() != null) {
-                    if (lastArrayContent.size > 0) {
-                        concatArguments.add(toArray(varargPrimitiveType, lastArrayContent))
-                        lastArrayContent = mutableListOf<JsExpression>()
-                    }
-                    concatArguments.add(expressionArgument)
-                }
-                else {
-                    lastArrayContent.add(expressionArgument)
-                }
-            }
-            if (lastArrayContent.size > 0) {
-                concatArguments.add(toArray(varargPrimitiveType, lastArrayContent))
-            }
-
-            return concatArguments
         }
     }
 }

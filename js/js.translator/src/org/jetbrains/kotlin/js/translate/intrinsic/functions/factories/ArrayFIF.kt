@@ -49,18 +49,18 @@ object ArrayFIF : CompositeFIF() {
     @JvmField
     val LENGTH_PROPERTY_INTRINSIC = BuiltInPropertyIntrinsic("length")
 
-    fun castToTypedArray(type: PrimitiveType?, arg: JsArrayLiteral): JsExpression {
-        when (type) {
-            BYTE -> "Int8"
-            SHORT -> "Int16"
-            INT -> "Int32"
-            FLOAT -> "Float32"
-            DOUBLE -> "Float64"
-            else -> null  // Shouldn't we set the $type$ property for primitive arrays?
-        }?.let {
-            return JsNew(JsNameRef(it + "Array"), listOf(arg))
+    fun castToTypedArray(p: JsProgram, type: PrimitiveType?, arg: JsArrayLiteral): JsExpression {
+        return when (type) {
+            BOOLEAN -> markType(p.getStringLiteral("BooleanArray"), arg)
+            CHAR -> markType(p.getStringLiteral("CharArray"), arg)
+            BYTE -> JsNew(JsNameRef("Int8Array"), listOf(arg))
+            SHORT -> JsNew(JsNameRef("Int16Array"), listOf(arg))
+            INT -> JsNew(JsNameRef("Int32Array"), listOf(arg))
+            FLOAT -> JsNew(JsNameRef("Float32Array"), listOf(arg))
+            DOUBLE -> JsNew(JsNameRef("Float64Array"), listOf(arg))
+            LONG -> markType(p.getStringLiteral("LongArray"), arg)
+            else -> arg
         }
-        ?: return arg
     }
 
     init {
@@ -74,23 +74,27 @@ object ArrayFIF : CompositeFIF() {
         add(pattern(arrays, "<get-size>"), LENGTH_PROPERTY_INTRINSIC)
         add(pattern(arrays, "iterator"), KotlinFunctionIntrinsic("arrayIterator"))
 
-        add(BOOLEAN.arrayPattern(), KotlinFunctionIntrinsic("newBooleanArray"))
-        add(CHAR.arrayPattern(), KotlinFunctionIntrinsic("newCharArray"))
+        add(BOOLEAN.arrayPattern(), arrayWithTypePropertyIntrinsic("BooleanArray"))
+        add(CHAR.arrayPattern(), arrayWithTypePropertyIntrinsic("CharArray"))
         add(BYTE.arrayPattern(), typedArrayIntrinsic("Int8"))
         add(SHORT.arrayPattern(), typedArrayIntrinsic("Int16"))
         add(INT.arrayPattern(), typedArrayIntrinsic("Int32"))
         add(FLOAT.arrayPattern(), typedArrayIntrinsic("Float32"))
-        add(LONG.arrayPattern(), KotlinFunctionIntrinsic("newLongArray"))
+        add(LONG.arrayPattern(), arrayWithTypePropertyIntrinsic("LongArray"))
         add(DOUBLE.arrayPattern(), typedArrayIntrinsic("Float64"))
 
-        //TODO: produce typedarrays here as well
+        add(BOOLEAN.arrayFPattern(), arrayFWithTypePropertyIntrinsic("BooleanArray"))
+        add(CHAR.arrayFPattern(), arrayFWithTypePropertyIntrinsic("CharArray"))
+        add(BYTE.arrayFPattern(), typedArrayFIntrinsic("Int8"))
+        add(SHORT.arrayFPattern(), typedArrayFIntrinsic("Int16"))
+        add(INT.arrayFPattern(), typedArrayFIntrinsic("Int32"))
+        add(FLOAT.arrayFPattern(), typedArrayFIntrinsic("Float32"))
+        add(LONG.arrayFPattern(), arrayFWithTypePropertyIntrinsic("LongArray"))
+        add(DOUBLE.arrayFPattern(), typedArrayFIntrinsic("Float64"))
+
         add(pattern(arrays, "<init>(Int,Function1)"), KotlinFunctionIntrinsic("newArrayF"))
 
         add(pattern(Namer.KOTLIN_LOWER_NAME, "arrayOfNulls"), KotlinFunctionIntrinsic("newArray", JsLiteral.NULL))
-
-        add(BOOLEAN.arrayOfPattern(), KotlinFunctionIntrinsic("newBooleanArrayOf"))
-        add(CHAR.arrayOfPattern(), KotlinFunctionIntrinsic("newCharArrayOf"))
-        add(LONG.arrayOfPattern(), KotlinFunctionIntrinsic("newLongArrayOf"))
 
         val arrayFactoryMethodNames = arrayTypeNames.map { Name.identifier(it.toArrayOf()) }
         val arrayFactoryMethods = pattern(Namer.KOTLIN_LOWER_NAME, NamePredicate(arrayFactoryMethodNames))
@@ -98,12 +102,34 @@ object ArrayFIF : CompositeFIF() {
     }
 
     private fun PrimitiveType.arrayPattern() = pattern(NamePredicate(arrayTypeName), "<init>(Int)")
-    private fun PrimitiveType.arrayOfPattern() = pattern(Namer.KOTLIN_LOWER_NAME, arrayTypeName.toArrayOf())
+    private fun PrimitiveType.arrayFPattern() = pattern(NamePredicate(arrayTypeName), "<init>(Int,Function1)")
 
     private fun Name.toArrayOf() = decapitalize(this.asString() + "Of")
 
     private fun typedArrayIntrinsic(typeName: String) = intrinsify { _, arguments, _ ->
         JsNew(JsNameRef(typeName + "Array"), arguments)
+    }
+
+    private fun markType(typeName: JsStringLiteral, e: JsExpression): JsExpression {
+        return JsAstUtils.invokeKotlinFunction("withType", typeName, e);
+    }
+
+    private fun arrayWithTypePropertyIntrinsic(typeName: String) = intrinsify { _, arguments, context ->
+        assert(arguments.size == 1) { "Array <init>(Int) expression must have one argument." }
+        val (size) = arguments
+        markType(context.program().getStringLiteral(typeName), JsAstUtils.invokeKotlinFunction("newArray", size))
+    }
+
+    private fun arrayFWithTypePropertyIntrinsic(typeName: String) = intrinsify { _, arguments, context ->
+        assert(arguments.size == 2) { "Array <init>(Int, Function1) expression must have two arguments." }
+        val (size, fn) = arguments
+        markType(context.program().getStringLiteral(typeName), JsAstUtils.invokeKotlinFunction("newArrayF", size, fn))
+    }
+
+    private fun typedArrayFIntrinsic(typeName: String) = intrinsify { _, arguments, _ ->
+        assert(arguments.size == 2) { "Array <init>(Int, Function1) expression must have two arguments." }
+        val (size, fn) = arguments
+        JsNew(JsNameRef(typeName + "Array"), listOf(JsAstUtils.invokeKotlinFunction("newArrayF", size, fn)))
     }
 
     private fun intrinsify(f: (receiver: JsExpression?, arguments: List<JsExpression>, context: TranslationContext) -> JsExpression)
