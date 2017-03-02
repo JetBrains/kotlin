@@ -341,6 +341,78 @@ private class BooleanIteratorImpl(val collection: BooleanArray) : BooleanIterato
 // This part is from generated _Arrays.kt.
 
 /**
+ * Returns `true` if all elements match the given [predicate].
+ */
+public inline fun <T> Array<out T>.all(predicate: (T) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
+
+/**
+ * Returns `true` if all elements match the given [predicate].
+ */
+public inline fun ByteArray.all(predicate: (Byte) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
+
+/**
+ * Returns `true` if all elements match the given [predicate].
+ */
+public inline fun ShortArray.all(predicate: (Short) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
+
+/**
+ * Returns `true` if all elements match the given [predicate].
+ */
+public inline fun IntArray.all(predicate: (Int) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
+
+/**
+ * Returns `true` if all elements match the given [predicate].
+ */
+public inline fun LongArray.all(predicate: (Long) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
+
+/**
+ * Returns `true` if all elements match the given [predicate].
+ */
+public inline fun FloatArray.all(predicate: (Float) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
+
+/**
+ * Returns `true` if all elements match the given [predicate].
+ */
+public inline fun DoubleArray.all(predicate: (Double) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
+
+/**
+ * Returns `true` if all elements match the given [predicate].
+ */
+public inline fun BooleanArray.all(predicate: (Boolean) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
+
+/**
+ * Returns `true` if all elements match the given [predicate].
+ */
+public inline fun CharArray.all(predicate: (Char) -> Boolean): Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
+
+/**
  * Returns `true` if array has at least one element.
  */
 public fun <T> Array<out T>.any(): Boolean {
@@ -354,14 +426,6 @@ public fun <T> Array<out T>.any(): Boolean {
 public inline fun <T> Array<out T>.any(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
     return false
-}
-
-/**
- * Returns `true` if all elements match the given [predicate].
- */
-public inline fun <T> Array<out T>.all(predicate: (T) -> Boolean): Boolean {
-    for (element in this) if (!predicate(element)) return false
-    return true
 }
 
 /**
@@ -426,6 +490,12 @@ public operator fun BooleanArray.contains(element: Boolean): Boolean {
 public operator fun CharArray.contains(element: Char): Boolean {
     return indexOf(element) >= 0
 }
+
+/**
+ * Returns the number of elements in this array.
+ */
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<out T>.count(): Int = this.size
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
@@ -497,6 +567,213 @@ public inline fun BooleanArray.elementAt(index: Int): Boolean {
 @kotlin.internal.InlineOnly
 public inline fun CharArray.elementAt(index: Int): Char {
     return get(index)
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
+ */
+public inline fun <R> IntArray.fold(initial: R, operation: (acc: R, Int) -> R): R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
+ */
+public inline fun <R> LongArray.fold(initial: R, operation: (acc: R, Long) -> R): R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
+ */
+public inline fun <R> FloatArray.fold(initial: R, operation: (acc: R, Float) -> R): R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
+ */
+public inline fun <R> DoubleArray.fold(initial: R, operation: (acc: R, Double) -> R): R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
+ */
+public inline fun <R> BooleanArray.fold(initial: R, operation: (acc: R, Boolean) -> R): R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+}
+
+/**
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
+ */
+public inline fun <R> CharArray.fold(initial: R, operation: (acc: R, Char) -> R): R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+}
+
+/**
+ * Performs the given [action] on each element.
+ */
+public inline fun <T> Array<out T>.forEach(action: (T) -> Unit): Unit {
+    for (element in this) action(element)
+}
+
+/**
+ * Performs the given [action] on each element.
+ */
+public inline fun ByteArray.forEach(action: (Byte) -> Unit): Unit {
+    for (element in this) action(element)
+}
+
+/**
+ * Performs the given [action] on each element.
+ */
+public inline fun ShortArray.forEach(action: (Short) -> Unit): Unit {
+    for (element in this) action(element)
+}
+
+/**
+ * Performs the given [action] on each element.
+ */
+public inline fun IntArray.forEach(action: (Int) -> Unit): Unit {
+    for (element in this) action(element)
+}
+
+/**
+ * Performs the given [action] on each element.
+ */
+public inline fun LongArray.forEach(action: (Long) -> Unit): Unit {
+    for (element in this) action(element)
+}
+
+/**
+ * Performs the given [action] on each element.
+ */
+public inline fun FloatArray.forEach(action: (Float) -> Unit): Unit {
+    for (element in this) action(element)
+}
+
+/**
+ * Performs the given [action] on each element.
+ */
+public inline fun DoubleArray.forEach(action: (Double) -> Unit): Unit {
+    for (element in this) action(element)
+}
+
+/**
+ * Performs the given [action] on each element.
+ */
+public inline fun BooleanArray.forEach(action: (Boolean) -> Unit): Unit {
+    for (element in this) action(element)
+}
+
+/**
+ * Performs the given [action] on each element.
+ */
+public inline fun CharArray.forEach(action: (Char) -> Unit): Unit {
+    for (element in this) action(element)
+}
+
+/**
+ * Performs the given [action] on each element, providing sequential index with the element.
+ * @param [action] function that takes the index of an element and the element itself
+ * and performs the desired action on the element.
+ */
+public inline fun <T> Array<out T>.forEachIndexed(action: (index: Int, T) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
+}
+
+/**
+ * Performs the given [action] on each element, providing sequential index with the element.
+ * @param [action] function that takes the index of an element and the element itself
+ * and performs the desired action on the element.
+ */
+public inline fun ByteArray.forEachIndexed(action: (index: Int, Byte) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
+}
+
+/**
+ * Performs the given [action] on each element, providing sequential index with the element.
+ * @param [action] function that takes the index of an element and the element itself
+ * and performs the desired action on the element.
+ */
+public inline fun ShortArray.forEachIndexed(action: (index: Int, Short) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
+}
+
+/**
+ * Performs the given [action] on each element, providing sequential index with the element.
+ * @param [action] function that takes the index of an element and the element itself
+ * and performs the desired action on the element.
+ */
+public inline fun IntArray.forEachIndexed(action: (index: Int, Int) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
+}
+
+/**
+ * Performs the given [action] on each element, providing sequential index with the element.
+ * @param [action] function that takes the index of an element and the element itself
+ * and performs the desired action on the element.
+ */
+public inline fun LongArray.forEachIndexed(action: (index: Int, Long) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
+}
+
+/**
+ * Performs the given [action] on each element, providing sequential index with the element.
+ * @param [action] function that takes the index of an element and the element itself
+ * and performs the desired action on the element.
+ */
+public inline fun FloatArray.forEachIndexed(action: (index: Int, Float) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
+}
+
+/**
+ * Performs the given [action] on each element, providing sequential index with the element.
+ * @param [action] function that takes the index of an element and the element itself
+ * and performs the desired action on the element.
+ */
+public inline fun DoubleArray.forEachIndexed(action: (index: Int, Double) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
+}
+
+/**
+ * Performs the given [action] on each element, providing sequential index with the element.
+ * @param [action] function that takes the index of an element and the element itself
+ * and performs the desired action on the element.
+ */
+public inline fun BooleanArray.forEachIndexed(action: (index: Int, Boolean) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
+}
+
+/**
+ * Performs the given [action] on each element, providing sequential index with the element.
+ * @param [action] function that takes the index of an element and the element itself
+ * and performs the desired action on the element.
+ */
+public inline fun CharArray.forEachIndexed(action: (index: Int, Char) -> Unit): Unit {
+    var index = 0
+    for (item in this) action(index++, item)
 }
 
 /**
