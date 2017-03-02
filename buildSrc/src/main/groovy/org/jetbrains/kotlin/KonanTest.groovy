@@ -83,22 +83,23 @@ abstract class KonanTest extends DefaultTask {
         return "$outputDirectory/$exeName"
     }
 
+    protected String removeDiagnostics(String str) {
+        return str.replaceAll(~/<!.*?!>(.*?)<!>/) { all, text -> text }
+    }
+
     // TODO refactor
     List<String> buildCompileList() {
         def result = []
         def filePattern = ~/(?m)\/\/\s*FILE:\s*(.*)$/
         def srcFile = project.file(source)
-        def srcText = srcFile.text
+        def srcText = removeDiagnostics(srcFile.text)
         def matcher = filePattern.matcher(srcText)
 
         if (!matcher.find()) {
             // There is only one file in the input
-            project.copy{
-                from srcFile.absolutePath
-                into outputDirectory
-            }
-            def newFile ="$outputDirectory/${srcFile.name}"
-            result.add(newFile)
+            def filePath = "$outputDirectory/${srcFile.name}"
+            createFile(filePath, srcText)
+            result.add(filePath)
         } else {
             // There are several files
             def processedChars = 0
