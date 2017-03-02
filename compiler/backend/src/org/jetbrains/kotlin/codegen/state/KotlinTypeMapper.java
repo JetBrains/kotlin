@@ -1034,6 +1034,10 @@ public class KotlinTypeMapper {
             return mapSignature(((TypeAliasConstructorDescriptor) f).getUnderlyingConstructorDescriptor(), kind, skipGenericSignature);
         }
 
+        if (f instanceof FunctionImportedFromObject) {
+            return mapSignature(((FunctionImportedFromObject) f).getCallableFromObject(), kind, skipGenericSignature);
+        }
+
         if (CoroutineCodegenUtilKt.isSuspendFunctionNotSuspensionView(f)) {
             return mapSignature(CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(f), kind, skipGenericSignature);
         }
@@ -1052,10 +1056,6 @@ public class KotlinTypeMapper {
             @NotNull List<ValueParameterDescriptor> valueParameters,
             boolean skipGenericSignature
     ) {
-        if (f instanceof FunctionImportedFromObject) {
-            return mapSignature(((FunctionImportedFromObject) f).getCallableFromObject(), kind, skipGenericSignature);
-        }
-
         checkOwnerCompatibility(f);
 
         JvmSignatureWriter sw = skipGenericSignature || f instanceof AccessorForCallableDescriptor
