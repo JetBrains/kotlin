@@ -25,6 +25,7 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.roots.libraries.LibraryUtil
 import com.intellij.openapi.ui.MessageType
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
@@ -49,12 +50,13 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -219,7 +221,7 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
             }?.first
         } ?: return emptyList()
 
-        val lexicalScope = context[BindingContext.LEXICAL_SCOPE, inlineCall] ?: return emptyList()
+        val lexicalScope = runReadAction { inlineCall.getExpressionResolutionScope(context) } ?: return emptyList()
         val baseClassName = classNamesForPosition(inlineCall, false).firstOrNull() ?: return emptyList()
 
         val resolvedCall = runReadAction { inlineCall.getResolvedCall(context) } ?: return emptyList()
@@ -424,4 +426,11 @@ private fun String.substringIndex(): String {
         return substringBeforeLast("$") + "$"
     }
     return this
+}
+
+private fun KtCallExpression.getExpressionResolutionScope(bindingContext: BindingContext): LexicalScope? {
+    return parentsWithSelf
+            .takeWhile { it !is KtClassBody && it !is KtBlockExpression && it !is PsiFile }
+            .map { if (it is KtElement) bindingContext[BindingContext.LEXICAL_SCOPE, it] else null }
+            .firstOrNull { it != null }
 }
