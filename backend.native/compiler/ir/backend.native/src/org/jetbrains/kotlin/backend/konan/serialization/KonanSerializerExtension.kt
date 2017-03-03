@@ -18,26 +18,18 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalClass
-import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.kotlin.serialization.KonanLinkData
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.*
-import org.jetbrains.kotlin.backend.konan.descriptors.*
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.source.PsiSourceFile
-import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
-import org.jetbrains.kotlin.types.FlexibleType
+import org.jetbrains.kotlin.serialization.*
 
 internal class KonanSerializerExtension(val context: Context) :
         KotlinSerializerExtensionBase(KonanSerializerProtocol) {
 
     override val stringTable = KonanStringTable()
 
-    private val backingFieldClass = 
+    private val backingFieldClass =
         context.builtIns.getKonanInternalClass("HasBackingField").getDefaultType()
 
     private val backingFieldAnnotation = AnnotationDescriptorImpl(
@@ -47,7 +39,7 @@ internal class KonanSerializerExtension(val context: Context) :
         super.serializeProperty(descriptor, proto)
 
         if (context.ir.propertiesWithBackingFields.contains(descriptor)) {
-            proto.addExtension(KonanLinkData.propertyAnnotation, 
+            proto.addExtension(KonanLinkData.propertyAnnotation,
                 annotationSerializer.serializeAnnotation(backingFieldAnnotation))
 
             proto.flags = proto.flags or Flags.HAS_ANNOTATIONS.toFlags(true)
@@ -56,16 +48,17 @@ internal class KonanSerializerExtension(val context: Context) :
 }
 
 object KonanSerializerProtocol : SerializerExtensionProtocol(
-        ExtensionRegistryLite.newInstance().apply { 
-           KonanLinkData.registerAllExtensions(this) 
+        ExtensionRegistryLite.newInstance().apply {
+           KonanLinkData.registerAllExtensions(this)
         },
-        KonanLinkData.constructorAnnotation, 
-        KonanLinkData.classAnnotation, 
-        KonanLinkData.functionAnnotation, 
+        KonanLinkData.packageFqName,
+        KonanLinkData.constructorAnnotation,
+        KonanLinkData.classAnnotation,
+        KonanLinkData.functionAnnotation,
         KonanLinkData.propertyAnnotation,
-        KonanLinkData.enumEntryAnnotation, 
-        KonanLinkData.compileTimeValue, 
-        KonanLinkData.parameterAnnotation, 
+        KonanLinkData.enumEntryAnnotation,
+        KonanLinkData.compileTimeValue,
+        KonanLinkData.parameterAnnotation,
         KonanLinkData.typeAnnotation,
         KonanLinkData.typeParameterAnnotation
 )

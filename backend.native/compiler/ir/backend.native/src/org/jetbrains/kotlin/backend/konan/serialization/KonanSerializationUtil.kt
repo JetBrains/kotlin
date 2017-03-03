@@ -2,32 +2,26 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanPlatform
-import org.jetbrains.kotlin.backend.konan.llvm.base64Encode
 import org.jetbrains.kotlin.backend.konan.llvm.base64Decode
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.backend.konan.llvm.base64Encode
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.serialization.AnnotationSerializer
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.StringTableImpl
-import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.KonanLinkData
-import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.utils.*
-import org.jetbrains.kotlin.incremental.components.LookupTracker
 
 /* ------------ Deserializer part ------------------------------------------*/
 
@@ -152,7 +146,7 @@ internal class KonanSerializationUtil(val context: Context) {
         val members = fragments
                 .flatMap { fragment -> DescriptorUtils.getAllDescriptors(fragment.getMemberScope()) }
                 .filterNot(skip)
-        val packageProto = serializer.packagePartProto(members).build() 
+        val packageProto = serializer.packagePartProto(fqName, members).build()
             ?: error("Package fragments not serialized: $fragments")
 
 

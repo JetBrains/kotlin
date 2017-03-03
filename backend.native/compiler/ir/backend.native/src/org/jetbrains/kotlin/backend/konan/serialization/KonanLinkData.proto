@@ -15,6 +15,10 @@ option optimize_for = LITE_RUNTIME;
 
 // Konan extensions to the "descriptors" protobuf.
 
+extend Package {
+    optional int32 package_fq_name = 171;
+}
+
 extend Class {
     repeated Annotation class_annotation = 170;
 }
