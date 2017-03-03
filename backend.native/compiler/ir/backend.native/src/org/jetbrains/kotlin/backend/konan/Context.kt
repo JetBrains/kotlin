@@ -22,8 +22,10 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import java.lang.System.out
 
 internal class SpecialDescriptorsFactory(val context: Context) {
+    private val enumSpecialDescriptorsFactory by lazy { EnumSpecialDescriptorsFactory(context) }
     private val outerThisDescriptors = mutableMapOf<ClassDescriptor, PropertyDescriptor>()
     private val bridgesDescriptors = mutableMapOf<Pair<FunctionDescriptor, BridgeDirections>, FunctionDescriptor>()
+    private val loweredEnums = mutableMapOf<ClassDescriptor, LoweredEnum>()
 
     fun getOuterThisFieldDescriptor(innerClassDescriptor: ClassDescriptor): PropertyDescriptor =
         if (!innerClassDescriptor.isInner) throw AssertionError("Class is not inner: $innerClassDescriptor")
@@ -51,6 +53,13 @@ internal class SpecialDescriptorsFactory(val context: Context) {
                     SourceElement.NO_SOURCE).apply {
                 initializeBridgeDescriptor(this, descriptor, bridgeDirections.array)
             }
+        }
+    }
+
+    fun getLoweredEnum(enumClassDescriptor: ClassDescriptor): LoweredEnum {
+        assert(enumClassDescriptor.kind == ClassKind.ENUM_CLASS, { "Expected enum class but was: $enumClassDescriptor" })
+        return loweredEnums.getOrPut(enumClassDescriptor) {
+            enumSpecialDescriptorsFactory.createLoweredEnum(enumClassDescriptor)
         }
     }
 

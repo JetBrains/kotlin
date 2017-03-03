@@ -349,12 +349,12 @@ task enum1(type: RunKonanTest) {
 }
 
 task enum_valueOf(type: RunKonanTest) {
-    goldValue = "E1\n"
+    goldValue = "E1\nE2\nE3\n"
     source = "codegen/enum/valueOf.kt"
 }
 
 task enum_values(type: RunKonanTest) {
-    goldValue = "E2\n"
+    goldValue = "E3\nE1\nE2\n"
     source = "codegen/enum/values.kt"
 }
 
@@ -381,6 +381,12 @@ task enum_interfaceCallNoEntryClass(type: RunKonanTest) {
 task enum_interfaceCallWithEntryClass(type: RunKonanTest) {
     goldValue = "z1z2\nz1z2\n"
     source = "codegen/enum/interfaceCallWithEntryClass.kt"
+}
+
+task enum_linkTest(type: LinkKonanTest) {
+    goldValue = "42\n117\n-1\n"
+    source = "codegen/enum/linkTest_main.kt"
+    lib = "codegen/enum/linkTest_lib.kt"
 }
 
 task innerClass_simple(type: RunKonanTest) {

@@ -28,8 +28,8 @@ fun ir2stringWhole(ir: IrElement?): String {
   return strWriter.toString()
 }
 
-internal fun ClassDescriptor.createSimpleDelegatingConstructor(superConstructorDescriptor: ClassConstructorDescriptor)
-        : Pair<ClassConstructorDescriptor, IrConstructor> {
+internal fun ClassDescriptor.createSimpleDelegatingConstructorDescriptor(superConstructorDescriptor: ClassConstructorDescriptor)
+        : ClassConstructorDescriptor {
     val constructorDescriptor = ClassConstructorDescriptorImpl.createSynthesized(
             this,
             Annotations.EMPTY,
@@ -40,20 +40,23 @@ internal fun ClassDescriptor.createSimpleDelegatingConstructor(superConstructorD
     }
     constructorDescriptor.initialize(valueParameters, superConstructorDescriptor.visibility)
     constructorDescriptor.returnType = superConstructorDescriptor.returnType
+    return constructorDescriptor
+}
 
+internal fun ClassDescriptor.createSimpleDelegatingConstructor(superConstructorDescriptor: ClassConstructorDescriptor,
+                                                               constructorDescriptor: ClassConstructorDescriptor)
+        : IrConstructor {
     val body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             listOf(
                     IrDelegatingConstructorCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, superConstructorDescriptor).apply {
-                        valueParameters.forEachIndexed { idx, parameter ->
+                        constructorDescriptor.valueParameters.forEachIndexed { idx, parameter ->
                             putValueArgument(idx, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter))
                         }
                     },
                     IrInstanceInitializerCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, this)
             )
     )
-    val constructor = IrConstructorImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, constructorDescriptor, body)
-
-    return Pair(constructorDescriptor, constructor)
+    return IrConstructorImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, constructorDescriptor, body)
 }
 
 internal fun Context.createArrayOfExpression(arrayElementType: KotlinType,
