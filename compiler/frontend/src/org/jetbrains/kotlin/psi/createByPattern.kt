@@ -30,17 +30,17 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.renderer.render
 import java.util.*
 
-fun KtPsiFactory.createExpressionByPattern(pattern: String, vararg args: Any): KtExpression
-        = createByPattern(pattern, *args) { createExpression(it) }
+fun KtPsiFactory.createExpressionByPattern(pattern: String, vararg args: Any, reformat: Boolean = true): KtExpression
+        = createByPattern(pattern, *args, reformat = reformat) { createExpression(it) }
 
-fun KtPsiFactory.createValueArgumentListByPattern(pattern: String, vararg args: Any): KtValueArgumentList
-        = createByPattern(pattern, *args) { createCallArguments(it) }
+fun KtPsiFactory.createValueArgumentListByPattern(pattern: String, vararg args: Any, reformat: Boolean = true): KtValueArgumentList
+        = createByPattern(pattern, *args, reformat = reformat) { createCallArguments(it) }
 
-fun <TDeclaration : KtDeclaration> KtPsiFactory.createDeclarationByPattern(pattern: String, vararg args: Any): TDeclaration
-        = createByPattern(pattern, *args) { createDeclaration<TDeclaration>(it) }
+fun <TDeclaration : KtDeclaration> KtPsiFactory.createDeclarationByPattern(pattern: String, vararg args: Any, reformat: Boolean = true): TDeclaration
+        = createByPattern(pattern, *args, reformat = reformat) { createDeclaration<TDeclaration>(it) }
 
-fun KtPsiFactory.createDestructuringDeclarationByPattern(pattern: String, vararg args: Any): KtDestructuringDeclaration
-        = createByPattern(pattern, *args) { createDestructuringDeclaration(it) }
+fun KtPsiFactory.createDestructuringDeclarationByPattern(pattern: String, vararg args: Any, reformat: Boolean = true): KtDestructuringDeclaration
+        = createByPattern(pattern, *args, reformat = reformat) { createDestructuringDeclaration(it) }
 
 private abstract class ArgumentType<T : Any>(val klass: Class<T>)
 
@@ -94,7 +94,7 @@ private val SUPPORTED_ARGUMENT_TYPES = listOf(
         PsiChildRangeArgumentType
 )
 
-fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, factory: (String) -> TElement): TElement {
+fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, reformat: Boolean = true, factory: (String) -> TElement): TElement {
     val argumentTypes = args.map { arg ->
         SUPPORTED_ARGUMENT_TYPES.firstOrNull { it.klass.isInstance(arg) }
             ?: throw IllegalArgumentException("Unsupported argument type: ${arg::class.java}, should be one of: ${SUPPORTED_ARGUMENT_TYPES.map { it.klass.simpleName }.joinToString()}")
@@ -146,30 +146,31 @@ fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, fa
 
     val codeStyleManager = CodeStyleManager.getInstance(project)
 
-    val stringPlaceholderRanges = allPlaceholders
-            .filter { args[it.key] is String }
-            .flatMap { it.value }
-            .map { it.range }
-            .filterNot { it.isEmpty }
-            .sortedByDescending { it.startOffset }
+    if (reformat) {
+        val stringPlaceholderRanges = allPlaceholders
+                .filter { args[it.key] is String }
+                .flatMap { it.value }
+                .map { it.range }
+                .filterNot { it.isEmpty }
+                .sortedByDescending { it.startOffset }
 
-    // reformat whole text except for String arguments (as they can contain user's formatting to be preserved)
-    if (stringPlaceholderRanges.none()) {
-        resultElement = codeStyleManager.reformat(resultElement, true) as TElement
-    }
-    else {
-        var bound = resultElement.endOffset - 1
-        for (range in stringPlaceholderRanges) {
-            // we extend reformatting range by 1 to the right because otherwise some of spaces are not reformatted
-            resultElement = codeStyleManager.reformatRange(resultElement, range.endOffset + start, bound + 1, true) as TElement
-            bound = range.startOffset + start
+        // reformat whole text except for String arguments (as they can contain user's formatting to be preserved)
+        if (stringPlaceholderRanges.none()) {
+            resultElement = codeStyleManager.reformat(resultElement, true) as TElement
         }
-        resultElement = codeStyleManager.reformatRange(resultElement, start, bound + 1, true) as TElement
+        else {
+            var bound = resultElement.endOffset - 1
+            for (range in stringPlaceholderRanges) {
+                // we extend reformatting range by 1 to the right because otherwise some of spaces are not reformatted
+                resultElement = codeStyleManager.reformatRange(resultElement, range.endOffset + start, bound + 1, true) as TElement
+                bound = range.startOffset + start
+            }
+            resultElement = codeStyleManager.reformatRange(resultElement, start, bound + 1, true) as TElement
+        }
+
+        // do not reformat the whole expression in PostprocessReformattingAspect
+        CodeEditUtil.setNodeGeneratedRecursively(resultElement.node, false)
     }
-
-    // do not reformat the whole expression in PostprocessReformattingAspect
-    CodeEditUtil.setNodeGeneratedRecursively(resultElement.node, false)
-
     for ((pointer, n) in pointers) {
         var element = pointer.element!!
         if (element is KtFunctionLiteral) {
@@ -185,7 +186,8 @@ fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, fa
         }
     }
 
-    codeStyleManager.adjustLineIndent(resultElement.containingFile, resultElement.textRange)
+    if (reformat)
+        codeStyleManager.adjustLineIndent(resultElement.containingFile, resultElement.textRange)
 
     return resultElement
 }

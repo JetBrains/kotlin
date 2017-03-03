@@ -169,7 +169,7 @@ class ShadowedDeclarationsFilter(
         val newCall = object : Call {
             //TODO: compiler crash (KT-8011)
             //val arguments = parameters.indices.map { DummyArgument(it) }
-            val callee = psiFactory.createExpressionByPattern("$0", name)
+            val callee = psiFactory.createExpressionByPattern("$0", name, reformat = false)
 
             override fun getCalleeExpression() = callee
 
