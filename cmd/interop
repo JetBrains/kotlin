@@ -1,0 +1,63 @@
+#!/usr/bin/env bash 
+
+if [ -z "$JAVACMD" -a -n "$JAVA_HOME" -a -x "$JAVA_HOME/bin/java" ]; then
+    JAVACMD="$JAVA_HOME/bin/java"
+else
+    JAVACMD=java
+fi
+[ -n "$JAVACMD" ] || JAVACMD=java
+
+declare -a java_args
+declare -a interop_args
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -D*)
+      java_args=("${java_args[@]}" "$1")
+      shift
+      ;;
+    -J*)
+      java_args=("${java_args[@]}" "${1:2}")
+      shift
+      ;;
+     *)
+      interop_args=("${interop_args[@]}" "$1")
+      shift
+      ;;
+  esac
+done
+
+
+findHome() {
+    local source="${BASH_SOURCE[0]}"
+    while [ -h "$source" ] ; do
+	local linked="$(readlink "$source")"
+	local dir="$(cd -P $(dirname "$source") && cd -P $(dirname "$linked") && pwd)"
+	source="$dir/$(basename "$linked")"
+    done
+    (cd -P "$(dirname "$source")/.." && pwd)
+}
+KONAN_HOME="$(findHome)"
+
+NATIVE_LIB="${KONAN_HOME}/konan/nativelib"
+DEPENDENCIES="${KONAN_HOME}/../dependencies/all"
+JAVA_OPTS="-ea \
+    -Djava.library.path=${NATIVE_LIB} \
+    -Dkonan.home=${KONAN_HOME}"
+
+STUB_GENERATOR_JAR="${KONAN_HOME}/konan/lib/StubGenerator.jar"
+KOTLIN_JAR="${KONAN_HOME}/konan/lib/kotlin-compiler.jar"
+INTEROP_INDEXER_JAR="${KONAN_HOME}/konan/lib/Indexer.jar"
+INTEROP_RUNTIME_JAR="${KONAN_HOME}/konan/lib/Runtime.jar"
+INTEROP_CLASSPATH="$STUB_GENERATOR_JAR:$KOTLIN_JAR:$INTEROP_INDEXER_JAR:$INTEROP_RUNTIME_JAR"
+INTEROP_TOOL=org.jetbrains.kotlin.native.interop.gen.jvm.MainKt
+
+TARGET_ARG=-target:native
+
+LIBCLANG_DISABLE_CRASH_RECOVERY=1 \
+$JAVACMD $JAVA_OPTS ${java_args[@]} \
+    -cp $INTEROP_CLASSPATH \
+    $INTEROP_TOOL \
+    $TARGET_ARG ${interop_args[@]} \
+
+

@@ -124,6 +124,14 @@ task dist_compiler(type: Copy) {
         into('konan/lib')
     }
 
+    from(project('Interop').file('Indexer/build/libs')) {
+        into('konan/lib')
+    }
+
+    from(project('Interop').file('StubGenerator/build/libs')) {
+        into('konan/lib')
+    }
+
     from(project(':backend.native').file('build/external_jars')) {
         into('konan/lib')
     }
@@ -132,15 +140,46 @@ task dist_compiler(type: Copy) {
         into('konan/nativelib')
     }
 
+    from(project(':Interop').file('Indexer/build/nativelibs')) {
+        into('konan/nativelib')
+    }
+
+    from(project(':Interop').file('Runtime/build/nativelibs')) {
+        into('konan/nativelib')
+    }
+
     from(file('cmd')) {
         fileMode(0755)
         include('konanc')
         include('kotlinc-native')
+        include('interop')
         into('bin')
     }
 
     from(project(':backend.native').file('konan.properties')) {
         into('konan')
+    }
+
+    from("$llvmDir/lib") {
+        into('konan/nativelib')
+        include '**/libclang.*'
+        includeEmptyDirs = false
+    }
+
+    doLast {
+        // MacOS System Integrity Protection strips DYLD_LIBRARY_PATH from
+        // environment of all the binaries residing in /bin /usr/bin etc.
+        // That means /usr/bin/java can't use DYLD_LIBRARY_PATH to pick up
+        // rpath'ed libraries. 
+        // See dyld(1), install_name_tool(1) for rpath details.
+
+        if (isMac()) {
+            exec {
+                commandLine "install_name_tool"
+                args '-add_rpath', '@loader_path/', 
+                    'dist/konan/nativelib/libclangstubs.dylib'
+            }
+        }
     }
 }
 

@@ -9,11 +9,7 @@ import java.lang.IllegalArgumentException
 import java.util.*
 
 fun main(args: Array<String>) {
-    val llvmInstallPath = System.getProperty("llvmInstallPath")!!
-
-    val ktGenRoot = args[0]
-    val nativeLibsDir = args[1]
-    val otherArgs = args.drop(2)
+    val konanHome = System.getProperty("konan.home")!!
 
     // TODO: remove OSX defaults.
     val substitutions = mapOf(
@@ -21,7 +17,7 @@ fun main(args: Array<String>) {
             "os" to (System.getenv("TARGET_OS") ?: detectHost())
     )
 
-    processLib(ktGenRoot, nativeLibsDir, llvmInstallPath, substitutions, otherArgs)
+    processLib(konanHome, substitutions, args.asList())
 }
 
 private fun detectHost():String {
@@ -88,41 +84,105 @@ private fun Properties.getSpaceSeparated(name: String): List<String> {
     return this.getProperty(name)?.split(' ') ?: emptyList()
 }
 
+private fun Properties.getOsSpecific(name: String): String? {
+    val host = detectHost()
+    return this.getProperty("$name.$host")
+}
+
 private fun List<String>?.isTrue(): Boolean {
     // The rightmost wins, null != "true".
     return this?.last() == "true"
 }
 
-private fun processLib(ktGenRoot: String,
-                       nativeLibsDir: String,
-                       llvmInstallPath: String,
+private fun runCmd(command: Array<String>, workDir: File, verbose: Boolean = false) {
+        if (verbose) println(command)
+        ProcessBuilder(*command)
+                .directory(workDir)
+                .inheritIO()
+                .runExpectingSuccess()
+}
+
+private fun Properties.defaultCompilerOpts(dependencies: String): List<String> {
+    val sysRootDir = this.getOsSpecific("sysRoot")!!
+    val sysRoot= "$dependencies/$sysRootDir"
+    val host = detectHost()
+    when (host) {
+        "osx" -> return listOf(
+            "-B$sysRoot/usr/bin",
+            "--sysroot=$sysRoot",
+            "-mmacosx-version-min=10.10")
+        "linux" -> {
+            val llvmHomeDir = this.getOsSpecific("llvmHome")!!
+            val llvmHome = "$dependencies/$llvmHomeDir"
+            val llvmVersion = this.getProperty("llvmVersion")!!
+            val gccToolChainDir = this.getOsSpecific("gccToolChain")!!
+            val gccToolChain= "$dependencies/$gccToolChainDir"
+// StubGenerator passes the arguments to libclang which 
+// works not exactly the same way as the clang binary and 
+// (in particular) uses different default header search path.
+// See e.g. http://lists.llvm.org/pipermail/cfe-dev/2013-November/033680.html
+// We workaround the problem with -isystem flag below.
+            return listOf(
+                "-isystem", 
+                "$llvmHome/lib/clang/$llvmVersion/include",
+                "--gcc-toolchain=$gccToolChain",
+                "-L$llvmHome/lib",
+                "-B$sysRoot/../bin",
+                "--sysroot=$sysRoot")
+        }
+        else -> error("Unexpected host: ${host}")
+    }
+}
+
+private fun loadProperties(file: File?, substitutions: Map<String, String>): Properties {
+    val result = Properties()
+    file?.bufferedReader()?.use { reader ->
+        result.load(reader)
+    }
+    substitute(result, substitutions)
+    return result
+}
+
+private fun processLib(konanHome: String,
                        substitutions: Map<String, String>,
-                       additionalArgs: List<String>) {
+                       commandArgs: List<String>) {
 
-    val args = additionalArgs.groupBy ({ getArgPrefix(it)!! }, { dropPrefix(it)!! }) // TODO
+    val args = commandArgs.groupBy ({ getArgPrefix(it)!! }, { dropPrefix(it)!! }) // TODO
 
+    val userDir = System.getProperty("user.dir")
+    val ktGenRoot = args["-generated"]?.single() ?: userDir
+    val nativeLibsDir = args["-natives"]?.single() ?: userDir
     val platformName = args["-target"]?.single() ?: "jvm"
 
     val platform = KotlinPlatform.values().single { it.name.equals(platformName, ignoreCase = true) }
 
     val defFile = args["-def"]?.single()?.let { File(it) }
+    val config = loadProperties(defFile, substitutions)
 
-    val config = Properties()
-    defFile?.bufferedReader()?.use { reader ->
-        config.load(reader)
-    }
-    substitute(config, substitutions)
+    val konanFileName = args["-properties"]?.single() ?:
+        "${konanHome}/konan/konan.properties"
+    val konanFile = File(konanFileName)
+    val konanProperties = loadProperties(konanFile, mapOf())
 
+    val llvmHome = konanProperties.getOsSpecific("llvmHome")!!
+    val dependencies = File("$konanHome/../dependencies/all").canonicalPath
+    val llvmInstallPath = "$dependencies/$llvmHome"
     val additionalHeaders = args["-h"].orEmpty()
     val additionalCompilerOpts = args["-copt"].orEmpty()
     val additionalLinkerOpts = args["-lopt"].orEmpty()
     val generateShims = args["-shims"].isTrue()
+    val verbose = args["-verbose"].isTrue()
 
+    val defaultOpts = konanProperties.defaultCompilerOpts(dependencies)
     val headerFiles = config.getSpaceSeparated("headers") + additionalHeaders
-    val compilerOpts = config.getSpaceSeparated("compilerOpts") + additionalCompilerOpts
+    val compilerOpts = 
+        config.getSpaceSeparated("compilerOpts") +
+        defaultOpts + additionalCompilerOpts 
     val compiler = "clang"
     val language = Language.C
-    val linkerOpts = config.getSpaceSeparated("linkerOpts").toTypedArray() + additionalLinkerOpts
+    val linkerOpts = 
+        config.getSpaceSeparated("linkerOpts").toTypedArray() +
+        defaultOpts + additionalLinkerOpts 
     val linker = args["-linker"]?.singleOrNull() ?: config.getProperty("linker") ?: "clang"
     val excludedFunctions = config.getSpaceSeparated("excludedFunctions").toSet()
 
@@ -173,20 +233,14 @@ private fun processLib(ktGenRoot: String,
                 *compilerArgsForJniIncludes,
                 "-c", outCFile.path, "-o", outOFile.path)
 
-        ProcessBuilder(*compilerCmd)
-                .directory(workDir)
-                .inheritIO()
-                .runExpectingSuccess()
+        runCmd(compilerCmd, workDir, verbose)
 
         val outLib = nativeLibsDir + "/" + System.mapLibraryName(libName)
 
         val linkerCmd = arrayOf("$llvmInstallPath/bin/$linker", *linkerOpts, outOFile.path, "-shared", "-o", outLib,
                 "-Wl,-flat_namespace,-undefined,dynamic_lookup")
 
-        ProcessBuilder(*linkerCmd)
-                .directory(workDir)
-                .inheritIO()
-                .runExpectingSuccess()
+        runCmd(linkerCmd, workDir, verbose)
 
         outOFile.delete()
     } else if (platform == KotlinPlatform.NATIVE) {
@@ -195,10 +249,7 @@ private fun processLib(ktGenRoot: String,
         val compilerCmd = arrayOf("$llvmInstallPath/bin/$compiler", *compilerOpts.toTypedArray(),
                 "-emit-llvm", "-c", outCFile.path, "-o", outLib)
 
-        ProcessBuilder(*compilerCmd)
-                .directory(workDir)
-                .inheritIO()
-                .runExpectingSuccess()
+        runCmd(compilerCmd, workDir, verbose)
     }
 
     outCFile.delete()

@@ -167,7 +167,7 @@ class NamedNativeInteropConfig implements Named {
                     new File(project.findProject(":Interop:Indexer").buildDir, "nativelibs"),
                     new File(project.findProject(":Interop:Runtime").buildDir, "nativelibs")
             ).asPath
-            systemProperties "llvmInstallPath" : project.llvmDir
+            systemProperties "konan.home": project.rootProject.file("dist")
             environment "LIBCLANG_DISABLE_CRASH_RECOVERY": "1"
             environment "DYLD_LIBRARY_PATH": "${project.llvmDir}/lib"
             environment "LD_LIBRARY_PATH": "${project.llvmDir}/lib"
@@ -183,9 +183,12 @@ class NamedNativeInteropConfig implements Named {
 
                 linkerOpts += linkFiles.files
 
-                args = [generatedSrcDir, nativeLibsDir]
-
+                args "-properties:" + project.findProject(":backend.native").file("konan.properties")
+                args "-generated:" + generatedSrcDir
+                args "-natives:" + nativeLibsDir
                 args "-target:" + this.target
+                // Uncomment to debug.
+                //args "-verbose:true"
 
                 if (defFile != null) {
                     args "-def:" + project.file(defFile)
@@ -202,17 +205,6 @@ class NamedNativeInteropConfig implements Named {
                 // TODO: the interop plugin should probably be reworked to execute clang from build scripts directly
                 environment['PATH'] = project.files(project.clangPath).asPath +
                         File.pathSeparator + environment['PATH']
-
-                if (project.isLinux()) {
-                    // StubGenerator passes the arguments to libclang which works not exactly the same way
-                    // as the clang binary and (in particular) uses different default header search path.
-                    // See e.g. http://lists.llvm.org/pipermail/cfe-dev/2013-November/033680.html
-                    // Workaround the problem:
-                    compilerOpts += ["-isystem", "${project.llvmDir}/lib/clang/${project.llvmVersion}/include"]
-                }
-
-                compilerOpts += project.hostClangArgs
-                linkerOpts   += project.hostClangArgs
 
                 args compilerOpts.collect { "-copt:$it" }
                 args linkerOpts.collect { "-lopt:$it" }
