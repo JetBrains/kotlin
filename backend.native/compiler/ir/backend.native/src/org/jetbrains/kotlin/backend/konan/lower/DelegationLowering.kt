@@ -46,7 +46,7 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
     }
 
     override fun lower(irFile: IrFile) {
-        val kProperties = mutableListOf<IrExpression>()
+        val kProperties = mutableMapOf<VariableDescriptorWithAccessors, Pair<IrExpression, Int>>()
 
         val getter = genericArrayType.unsubstitutedMemberScope.getContributedFunctions(Name.identifier("get"), NoLookupLocation.FROM_BACKEND).single()
         val typeParameterT = genericArrayType.declaredTypeParameters[0]
@@ -63,62 +63,49 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
 
             override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
                 declaration.transformChildrenVoid(this)
-                val name = declaration.descriptor.name.asString()
-                val type = declaration.descriptor.type
 
                 val initializer = declaration.delegate.initializer!!
                 return IrVariableImpl(declaration.startOffset, declaration.endOffset,
                         declaration.origin, declaration.delegate.descriptor,
                         IrBlockImpl(initializer.startOffset, initializer.endOffset, initializer.type, null,
                                 listOf(
-                                        transformBridgeToDelegate(name, type, declaration.getter),
-                                        transformBridgeToDelegate(name, type, declaration.setter),
+                                        declaration.getter,
+                                        declaration.setter,
                                         initializer
                                 ).filterNotNull())
                 )
 
             }
 
-            override fun visitProperty(declaration: IrProperty): IrStatement {
-                declaration.transformChildrenVoid(this)
-                if (declaration.isDelegated) {
-                    val name = declaration.descriptor.name.asString()
-                    val type = declaration.descriptor.returnType!!
-                    declaration.getter = transformBridgeToDelegate(name, type, declaration.getter)
-                    declaration.setter = transformBridgeToDelegate(name, type, declaration.setter)
-                }
-                return declaration
-            }
-
-            private fun transformBridgeToDelegate(name: String, type: KotlinType, irFunction: IrFunction?): IrFunction? {
-                irFunction?.transformChildrenVoid(object : IrElementTransformerVoid() {
-                    override fun visitCallableReference(expression: IrCallableReference): IrExpression {
-                        val fieldInitializer = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                                getKPropertyImplConstructorDescriptorWithProjection(type)).apply {
-                            putValueArgument(0, IrConstImpl<String>(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                                    context.builtIns.stringType, IrConstKind.String, name))
-                        }
-
-                        val index = kProperties.size
-                        kProperties.add(fieldInitializer)
-
-                        return IrCallImpl(expression.startOffset, expression.endOffset, substitutedGetter).apply {
-                            dispatchReceiver = IrGetFieldImpl(expression.startOffset, expression.endOffset, kPropertiesField)
-                            putValueArgument(0, IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, index))
-                        }
+            override fun visitCallableReference(expression: IrCallableReference): IrExpression {
+                expression.transformChildrenVoid(this)
+                val propertyDescriptor = expression.descriptor as? VariableDescriptorWithAccessors
+                if (propertyDescriptor == null) return expression
+                val field = kProperties.getOrPut(propertyDescriptor) {
+                    val initializer = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                            getKPropertyImplConstructorDescriptorWithProjection(propertyDescriptor.type)).apply {
+                        putValueArgument(0, IrConstImpl<String>(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                                context.builtIns.stringType, IrConstKind.String, propertyDescriptor.name.asString()))
                     }
-                })
-                return irFunction
-            }
+                    val index = kProperties.size
 
+                    initializer to index
+                }
+
+                return IrCallImpl(expression.startOffset, expression.endOffset, substitutedGetter).apply {
+                    dispatchReceiver = IrGetFieldImpl(expression.startOffset, expression.endOffset, kPropertiesField)
+                    putValueArgument(0, IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, field.second))
+                }
+            }
         })
 
-        if (kProperties.size > 0) {
+        if (kProperties.isNotEmpty()) {
+            val initializers = kProperties.values.sortedBy { it.second }.map { it.first }
             irFile.declarations.add(0, IrFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION,
                     kPropertiesField,
                     IrExpressionBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                            context.createArrayOfExpression(kPropertyImplType, kProperties))))
+                            context.createArrayOfExpression(kPropertyImplType, initializers))))
         }
     }
 
