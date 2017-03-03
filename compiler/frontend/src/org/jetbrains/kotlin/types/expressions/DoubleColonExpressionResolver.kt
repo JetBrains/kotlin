@@ -57,7 +57,6 @@ import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 import java.lang.UnsupportedOperationException
 import java.util.*
@@ -605,26 +604,29 @@ class DoubleColonExpressionResolver(
                 if (expression.isEmptyLHS) null
                 else resolveDoubleColonLHS(expression, context)
 
-        if (lhsResult is DoubleColonLHS.Expression) {
-            reportUnsupportedIfNeeded(expression, context)
-        }
+        val resolutionResults = resolveCallableReferenceRHS(expression, lhsResult, context, resolveArgumentsMode)
 
-        val resolutionResults =
-                resolveCallableReferenceRHS(expression, lhsResult, context, resolveArgumentsMode)
-
-        reportUnsupportedReferenceToSuspendFunction(resolutionResults, expression, context)
+        reportUnsupportedCallableReferenceIfNeeded(expression, context, lhsResult, resolutionResults)
 
         return lhsResult to resolutionResults
     }
 
-    private fun reportUnsupportedReferenceToSuspendFunction(
-            resolutionResults: OverloadResolutionResults<CallableDescriptor>?,
+    private fun reportUnsupportedCallableReferenceIfNeeded(
             expression: KtCallableReferenceExpression,
-            context: ExpressionTypingContext
+            context: ExpressionTypingContext,
+            lhsResult: DoubleColonLHS?,
+            resolutionResults: OverloadResolutionResults<CallableDescriptor>?
     ) {
-        if (resolutionResults?.isSingleResult == true &&
-                resolutionResults.resultingDescriptor.safeAs<FunctionDescriptor>()?.isSuspend == true) {
+        val descriptor =
+                if (resolutionResults?.isSingleResult == true) resolutionResults.resultingDescriptor as? FunctionDescriptor else null
+        if (descriptor?.isSuspend == true) {
             context.trace.report(UNSUPPORTED.on(expression.callableReference, "Callable references to suspend functions"))
+        }
+
+        val expressionResult = lhsResult as? DoubleColonLHS.Expression ?: return
+        // "<expr>::foo" was not supported without bound callable references, except the case of a nested class constructor in an object
+        if (!expressionResult.isObjectQualifier || descriptor !is ConstructorDescriptor) {
+            reportUnsupportedIfNeeded(expression, context)
         }
     }
 
