@@ -121,24 +121,6 @@ internal fun KonanBuiltIns.getKonanInternalFunctions(name: String): List<Functio
 
 internal fun KotlinType.isUnboundCallableReference() = this.isRepresentedAs(ValueType.UNBOUND_CALLABLE_REFERENCE)
 
-internal val CallableDescriptor.allValueParameters: List<ParameterDescriptor>
-    get() {
-        val receivers = mutableListOf<ParameterDescriptor>()
-
-        if (this is ConstructorDescriptor)
-            receivers.add(this.constructedClass.thisAsReceiverParameter)
-
-        val dispatchReceiverParameter = this.dispatchReceiverParameter
-        if (dispatchReceiverParameter != null)
-            receivers.add(dispatchReceiverParameter)
-
-        val extensionReceiverParameter = this.extensionReceiverParameter
-        if (extensionReceiverParameter != null)
-            receivers.add(extensionReceiverParameter)
-
-        return receivers + this.valueParameters
-    }
-
 internal val KotlinType.isFunctionOrKFunctionType: Boolean
     get() {
         val kind = constructor.declarationDescriptor?.getFunctionalClassKind()

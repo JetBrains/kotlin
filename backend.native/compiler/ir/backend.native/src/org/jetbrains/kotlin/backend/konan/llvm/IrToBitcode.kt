@@ -2,10 +2,10 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
+import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.IrInlineFunctionBody
-import org.jetbrains.kotlin.backend.konan.ir.getArguments
 import org.jetbrains.kotlin.backend.konan.ir.ir2string
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptorBase
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -475,7 +476,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
      */
     private fun bindParameters(descriptor: FunctionDescriptor?): Map<ParameterDescriptor, LLVMValueRef> {
         if (descriptor == null) return emptyMap()
-        val parameterDescriptors = descriptor.allValueParameters
+        val parameterDescriptors = descriptor.allParameters
         return parameterDescriptors.mapIndexed { i, parameterDescriptor ->
             val parameter = codegen.param(descriptor, i)
             assert(codegen.getLLVMType(parameterDescriptor.type) == parameter.type)
@@ -1553,7 +1554,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             param to evaluateExpression(argExpr)
         }.toMap()
 
-        val allValueParameters = expression.descriptor.allValueParameters
+        val allValueParameters = expression.descriptor.allParameters
 
         return allValueParameters.dropWhile { it !in evaluatedArgs }.map {
             evaluatedArgs[it]!!
@@ -1845,7 +1846,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val constructedClass = codegen.constructedClass!!
         val thisPtr = currentCodeContext.genGetValue(constructedClass.thisAsReceiverParameter)
 
-        val thisPtrArgType = codegen.getLLVMType(descriptor.allValueParameters[0].type)
+        val thisPtrArgType = codegen.getLLVMType(descriptor.allParameters[0].type)
         val thisPtrArg = if (thisPtr.type == thisPtrArgType) {
             thisPtr
         } else {

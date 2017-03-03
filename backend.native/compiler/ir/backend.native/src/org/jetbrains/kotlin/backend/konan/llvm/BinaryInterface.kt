@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.LLVMTypeRef
-import org.jetbrains.kotlin.backend.konan.descriptors.allValueParameters
+import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.konan.descriptors.isUnit
 import org.jetbrains.kotlin.backend.konan.isValueType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -143,7 +143,7 @@ private fun getStringValue(annotation: AnnotationDescriptor): String? {
 internal fun RuntimeAware.getLlvmFunctionType(function: FunctionDescriptor): LLVMTypeRef {
     val original = function.original
     val returnType = if (original is ConstructorDescriptor) voidType else getLLVMReturnType(original.returnType!!)
-    val paramTypes = ArrayList(original.allValueParameters.map { getLLVMType(it.type) })
+    val paramTypes = ArrayList(original.allParameters.map { getLLVMType(it.type) })
     if (isObjectType(returnType)) paramTypes.add(kObjHeaderPtrPtr)
 
     return functionType(returnType, isVarArg = false, paramTypes = *paramTypes.toTypedArray())

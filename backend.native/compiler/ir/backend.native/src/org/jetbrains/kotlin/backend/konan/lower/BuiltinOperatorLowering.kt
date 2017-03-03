@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalFunctions
-import org.jetbrains.kotlin.backend.konan.ir.isNullConst
 import org.jetbrains.kotlin.backend.konan.util.atMostOne
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptor
@@ -11,6 +10,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBinaryPrimitiveImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
+import org.jetbrains.kotlin.ir.util.isNullConst
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.types.typeUtil.isNothing

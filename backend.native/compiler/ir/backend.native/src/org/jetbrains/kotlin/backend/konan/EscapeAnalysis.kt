@@ -1,9 +1,9 @@
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.konan.descriptors.allValueParameters
+import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.llvm.RuntimeAware
-import org.jetbrains.kotlin.backend.konan.ir.getArguments
+import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.backend.konan.ir.ir2string
 import org.jetbrains.kotlin.backend.konan.llvm.isObjectType
 import org.jetbrains.kotlin.descriptors.*
@@ -248,7 +248,7 @@ internal class ElementFinderVisitor(
     }
 
     override fun visitFunction(declaration: IrFunction) {
-        declaration.descriptor.allValueParameters.forEach {
+        declaration.descriptor.allParameters.forEach {
             if (isInteresting(it))
                 parameterRoles.addParameter(it)
         }
