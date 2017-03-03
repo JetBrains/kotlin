@@ -4,20 +4,22 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.callsSuper
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
@@ -83,6 +85,21 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
 
         private fun lowerOuterThisReferences() {
             irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
+                private fun <E> MutableList<E>.push(element: E) = this.add(element)
+
+                private fun <E> MutableList<E>.pop() = this.removeAt(size - 1)
+
+                private fun <E> MutableList<E>.peek(): E? = if (size == 0) null else this[size - 1]
+
+                private val functionsStack = mutableListOf<FunctionDescriptor>()
+
+                override fun visitFunction(declaration: IrFunction): IrStatement {
+                    functionsStack.push(declaration.descriptor)
+                    val result = super.visitFunction(declaration)
+                    functionsStack.pop()
+                    return result
+                }
+
                 override fun visitGetValue(expression: IrGetValue): IrExpression {
                     expression.transformChildrenVoid(this)
 
@@ -91,12 +108,23 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
 
                     if (implicitThisClass == classDescriptor) return expression
 
+                    val constructorDescriptor = functionsStack.peek()!! as? ConstructorDescriptor
+
                     val startOffset = expression.startOffset
                     val endOffset = expression.endOffset
                     val origin = expression.origin
 
-                    var irThis: IrExpression = IrGetValueImpl(startOffset, endOffset, classDescriptor.thisAsReceiverParameter, origin)
-                    var innerClass = classDescriptor
+                    var irThis: IrExpression
+                    var innerClass: ClassDescriptor
+                    if (constructorDescriptor == null) {
+                        innerClass = classDescriptor
+                        irThis = IrGetValueImpl(startOffset, endOffset, classDescriptor.thisAsReceiverParameter, origin)
+                    } else {
+                        // For constructor we have outer class as dispatchReceiverParameter.
+                        innerClass = DescriptorUtils.getContainingClass(classDescriptor) ?:
+                                throw AssertionError("No containing class for inner class $classDescriptor")
+                        irThis = IrGetValueImpl(startOffset, endOffset, constructorDescriptor.dispatchReceiverParameter!!, origin)
+                    }
 
                     while (innerClass != implicitThisClass) {
                         if (!innerClass.isInner) {

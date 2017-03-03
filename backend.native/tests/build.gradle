@@ -424,6 +424,11 @@ task innerClass_noPrimaryConstructor(type: RunKonanTest) {
     source = "codegen/innerClass/noPrimaryConstructor.kt"
 }
 
+task innerClass_secondaryConstructor(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "codegen/innerClass/secondaryConstructor.kt"
+}
+
 task localClass_localHierarchy(type: RunKonanTest) {
     goldValue = "OK\n"
     source = "codegen/localClass/localHierarchy.kt"
