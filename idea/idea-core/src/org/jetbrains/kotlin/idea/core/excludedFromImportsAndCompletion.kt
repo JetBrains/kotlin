@@ -20,6 +20,7 @@ import com.intellij.codeInsight.JavaProjectCodeInsightSettings
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.psi.KtFile
 
 
 private val exclusions =
@@ -30,10 +31,12 @@ private val exclusions =
                 "kotlin.reflect.jvm.internal"
         )
 
-private fun shouldBeHiddenAsInternalImplementationDetail(fqName: String) = exclusions.any { fqName.startsWith(it) }
+private fun shouldBeHiddenAsInternalImplementationDetail(fqName: String, locationFqName: String) =
+        exclusions.any { fqName.startsWith(it) }
+        && (locationFqName.isBlank() || !fqName.startsWith(locationFqName))
 
-fun DeclarationDescriptor.isExcludedFromAutoImport(project: Project): Boolean {
+fun DeclarationDescriptor.isExcludedFromAutoImport(project: Project, inFile: KtFile?): Boolean {
     val fqName = importableFqName?.asString() ?: return false
     return JavaProjectCodeInsightSettings.getSettings(project).isExcluded(fqName) ||
-           shouldBeHiddenAsInternalImplementationDetail(fqName)
+           shouldBeHiddenAsInternalImplementationDetail(fqName, inFile?.packageFqName?.asString() ?: "")
 }

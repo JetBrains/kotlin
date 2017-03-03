@@ -153,7 +153,8 @@ abstract class CompletionSession(
                                    searchScope,
                                    filter,
                                    filterOutPrivate = !mayIncludeInaccessible,
-                                   declarationTranslator = { toFromOriginalFileMapper.toSyntheticFile(it) })
+                                   declarationTranslator = { toFromOriginalFileMapper.toSyntheticFile(it) },
+                                   file = file)
     }
 
     private fun isVisibleDescriptor(descriptor: DeclarationDescriptor, completeNonAccessible: Boolean): Boolean {
@@ -169,7 +170,7 @@ abstract class CompletionSession(
             return completeNonAccessible && (!descriptor.isFromLibrary() || isDebuggerContext)
         }
 
-        if (descriptor.isExcludedFromAutoImport(project)) return false
+        if (descriptor.isExcludedFromAutoImport(project, file)) return false
 
         return true
     }

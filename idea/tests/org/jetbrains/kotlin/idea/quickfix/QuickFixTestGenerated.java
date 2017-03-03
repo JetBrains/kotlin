@@ -824,6 +824,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("notExcludedFromImportWhenInternalUse.kt")
+        public void testNotExcludedFromImportWhenInternalUse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/notExcludedFromImportWhenInternalUse.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("notForThisLabel.kt")
         public void testNotForThisLabel() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/autoImports/notForThisLabel.kt");

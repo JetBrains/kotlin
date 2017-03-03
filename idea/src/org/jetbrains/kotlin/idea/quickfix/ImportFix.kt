@@ -175,7 +175,7 @@ internal abstract class ImportFixBase<T : KtExpression> protected constructor(
             return true
         }
 
-        val indicesHelper = KotlinIndicesHelper(resolutionFacade, searchScope, ::isVisible)
+        val indicesHelper = KotlinIndicesHelper(resolutionFacade, searchScope, ::isVisible, file = file)
 
         var result = fillCandidates(nameStr, callTypeAndReceiver, bindingContext, indicesHelper)
 

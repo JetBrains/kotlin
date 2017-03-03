@@ -58,7 +58,8 @@ class KotlinIndicesHelper(
         visibilityFilter: (DeclarationDescriptor) -> Boolean,
         private val declarationTranslator: (KtDeclaration) -> KtDeclaration? = { it },
         applyExcludeSettings: Boolean = true,
-        private val filterOutPrivate: Boolean = true
+        private val filterOutPrivate: Boolean = true,
+        private val file: KtFile? = null
 ) {
 
     private val moduleDescriptor = resolutionFacade.moduleDescriptor
@@ -68,7 +69,7 @@ class KotlinIndicesHelper(
     private val descriptorFilter: (DeclarationDescriptor) -> Boolean = filter@ {
         if (it.isHiddenInResolution(resolutionFacade.frontendService<LanguageVersionSettings>())) return@filter false
         if (!visibilityFilter(it)) return@filter false
-        if (applyExcludeSettings && it.isExcludedFromAutoImport(project)) return@filter false
+        if (applyExcludeSettings && it.isExcludedFromAutoImport(project, file)) return@filter false
         true
     }
 

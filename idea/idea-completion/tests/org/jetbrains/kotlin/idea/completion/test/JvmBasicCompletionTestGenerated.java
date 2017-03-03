@@ -2789,6 +2789,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("CompletionForExcludedWhenInternalUse.kt")
+        public void testCompletionForExcludedWhenInternalUse() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/CompletionForExcludedWhenInternalUse.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ExtensionFromStandardLibrary.kt")
         public void testExtensionFromStandardLibrary() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/java/ExtensionFromStandardLibrary.kt");
