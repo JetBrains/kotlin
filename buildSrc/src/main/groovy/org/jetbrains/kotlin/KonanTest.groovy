@@ -2,10 +2,11 @@ package org.jetbrains.kotlin
 
 import groovy.json.JsonOutput
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.TaskAction
 
-abstract class KonanTest extends DefaultTask {
+abstract class KonanTest extends JavaExec {
     protected String source
     def backendNative = project.project(":backend.native")
     def runtimeProject = project.project(":runtime")
@@ -23,13 +24,13 @@ abstract class KonanTest extends DefaultTask {
 
     boolean enabled = true
 
-    public void setDisabled(boolean value) {
+    void setDisabled(boolean value) {
         this.enabled = !value
     }
 
     // Uses directory defined in $outputSourceSetName source set.
     // If such source set doesn't exist, uses temporary directory.
-    public void createOutputDirectory() {
+    void createOutputDirectory() {
         if (outputDirectory != null) {
             return
         }
@@ -43,10 +44,17 @@ abstract class KonanTest extends DefaultTask {
         }
     }
 
-    public KonanTest(){
+    KonanTest(){
         // TODO: that's a long reach up the project tree.
         // May be we should reorganize a little.
         dependsOn(project.rootProject.tasks['dist'])
+    }
+
+    @Override
+    void exec() {
+        // Perhaps later we will return this exec() back but for now rest of infrastructure expects
+        // compilation begins on runCompiler call, to emulate this behaviour we call super.exec() after
+        // configuration part at runCompiler.
     }
 
     abstract void compileTest(List<String> filesToCompile, String exe)
@@ -54,19 +62,18 @@ abstract class KonanTest extends DefaultTask {
     protected void runCompiler(List<String> filesToCompile, String output, List<String> moreArgs) {
         def log = new ByteArrayOutputStream()
         try {
-            project.javaexec {
-                main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
-                classpath = project.configurations.cli_bc
-                jvmArgs "-ea",
-                        "-Dkonan.home=${dist.canonicalPath}",
-                        "-Djava.library.path=${dist.canonicalPath}/konan/nativelib"
-                args("-output", output,
-                        *filesToCompile,
-                        *moreArgs,
-                        *project.globalArgs)
-                standardOutput = log
-                errorOutput = log
-            }
+            main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
+            classpath = project.configurations.cli_bc
+            jvmArgs =["-ea",
+                       "-Dkonan.home=${dist.canonicalPath}",
+                       "-Djava.library.path=${dist.canonicalPath}/konan/nativelib"]
+            args = ["-output", output,
+                     *filesToCompile,
+                     *moreArgs,
+                     *project.globalArgs]
+            standardOutput = log
+            errorOutput = log
+            super.exec()
         } finally {
             def logString = log.toString()
             project.file("${output}.compilation.log").write(logString)
@@ -153,7 +160,7 @@ abstract class KonanTest extends DefaultTask {
 }
 
 class TestFailedException extends RuntimeException {
-    public TestFailedException(String s) {
+    TestFailedException(String s) {
         super(s)
     }
 }
