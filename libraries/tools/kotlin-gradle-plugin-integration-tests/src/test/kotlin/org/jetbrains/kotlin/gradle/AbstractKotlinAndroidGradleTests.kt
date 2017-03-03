@@ -211,6 +211,21 @@ abstract class AbstractKotlinAndroidWithJackGradleTests(
                     androidGradlePluginVersion = androidGradlePluginVersion, javaHome = File(getEnvJDK_18()))
 
     @Test
+    fun testAndroidTestCompilation() {
+        val project = Project("AndroidJackProject", gradleVersion)
+
+        project.build("assembleAndroidTest") {
+            assertSuccessful()
+            assertFileExists("Android/build/tmp/kotlin-classes/flavor1Debug.jar")
+            assertFileExists("Android/build/tmp/kotlin-classes/flavor2Debug.jar")
+            assertFileExists("Android/build/tmp/kotlin-classes/flavor1DebugAndroidTest.jar")
+            assertFileExists("Android/build/tmp/kotlin-classes/flavor2DebugAndroidTest.jar")
+            assertFileExists("Android/build/outputs/apk/Android-flavor1-debug-androidTest.apk")
+            assertFileExists("Android/build/outputs/apk/Android-flavor2-debug-androidTest.apk")
+        }
+    }
+
+    @Test
     fun testSimpleCompile() {
         val project = Project("AndroidJackProject", gradleVersion)
 
