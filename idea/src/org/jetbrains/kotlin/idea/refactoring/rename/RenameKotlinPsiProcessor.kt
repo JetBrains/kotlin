@@ -31,12 +31,11 @@ import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
-import org.jetbrains.kotlin.idea.highlighter.markers.headerDeclarationIfAny
 import org.jetbrains.kotlin.idea.highlighter.markers.headerImplementations
+import org.jetbrains.kotlin.idea.highlighter.markers.liftToHeader
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
 import org.jetbrains.kotlin.idea.search.projectScope
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -72,11 +71,7 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
 
         val declaration = element.namedUnwrappedElement as? KtNamedDeclaration
         if (declaration != null) {
-            when {
-                declaration.hasModifier(KtTokens.HEADER_KEYWORD) -> declaration
-                declaration.hasModifier(KtTokens.IMPL_KEYWORD) -> declaration.headerDeclarationIfAny()
-                else -> null
-            }?.let { headerDeclaration ->
+            declaration.liftToHeader()?.let { headerDeclaration ->
                 allRenames[headerDeclaration] = safeNewName
                 headerDeclaration.headerImplementations().forEach { allRenames[it] = safeNewName }
             }
