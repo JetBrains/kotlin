@@ -444,7 +444,10 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
                     generateNameForLiftedDeclaration(oldDescriptor, memberOwner),
                     CallableMemberDescriptor.Kind.SYNTHESIZED,
                     oldDescriptor.source
-            )
+            ).apply {
+                isTailrec = oldDescriptor.isTailrec
+                // TODO: copy other properties or consider using `FunctionDescriptor.CopyBuilder`.
+            }
 
             localFunctionContext.transformedDescriptor = newDescriptor
             transformedDescriptors[oldDescriptor] = newDescriptor
