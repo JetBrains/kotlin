@@ -58,19 +58,19 @@ class StringBuilder private constructor (
     }
 
     // Of Appenable.
-    override fun append(c: Char) : Appendable {
+    override fun append(c: Char) : StringBuilder {
         ensureExtraCapacity(1)
         array[length++] = c
         return this
     }
 
-    override fun append(csq: CharSequence?): Appendable {
+    override fun append(csq: CharSequence?): StringBuilder {
         // TODO: how to treat nulls properly?
         if (csq == null) return this
         return append(csq, 0, csq.length)
     }
 
-    override fun append(csq: CharSequence?, start: Int, end: Int): Appendable {
+    override fun append(csq: CharSequence?, start: Int, end: Int): StringBuilder {
         // TODO: how to treat nulls properly?
         if (csq == null) return this
         ensureExtraCapacity(end - start)
@@ -80,16 +80,18 @@ class StringBuilder private constructor (
         return this
     }
 
-    fun append(it: CharArray) {
+    fun append(it: CharArray): StringBuilder {
         ensureExtraCapacity(it.size)
         for (c in it)
             array[length++] = c
+        return this
     }
 
-    fun append(it: String) {
+    fun append(it: String): StringBuilder {
         ensureExtraCapacity(it.length)
         for (c in toCharArray(it))
             array[length++] = c
+        return this
     }
 
     fun append(it: Boolean) = append(it.toString())
