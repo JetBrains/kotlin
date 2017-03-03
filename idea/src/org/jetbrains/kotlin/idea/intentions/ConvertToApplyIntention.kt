@@ -40,9 +40,13 @@ class ConvertToApplyIntention : ConvertToScopeIntention<KtExpression>(
 
     private fun KtProperty.isApplicable(): Boolean {
         if (!isLocal) return false
-        val nextSibling = getDotQualifiedSiblingIfAny(forward = true)
         val localVariableName = name ?: return false
-        return nextSibling != null && isApplicableWithGivenReceiverText(nextSibling, localVariableName)
+        val firstDotQualified = getDotQualifiedSiblingIfAny(forward = true)
+        if (firstDotQualified != null && isApplicableWithGivenReceiverText(firstDotQualified, localVariableName)) {
+            val nextDotQualified = firstDotQualified.getDotQualifiedSiblingIfAny(forward = true)
+            return nextDotQualified != null && isApplicableWithGivenReceiverText(nextDotQualified, localVariableName)
+        }
+        return false
     }
 
     private fun KtDotQualifiedExpression.findTargetProperty(receiverExpressionText: String): KtProperty? {
