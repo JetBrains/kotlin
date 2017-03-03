@@ -15,8 +15,7 @@ internal class OverriddenFunctionDescriptor(val descriptor: FunctionDescriptor, 
     val needBridge: Boolean
         get() {
             if (descriptor.modality == Modality.ABSTRACT) return false
-            return descriptor.kind == CallableMemberDescriptor.Kind.DELEGATION
-                    || descriptor.target.needBridgeTo(overriddenDescriptor)
+            return descriptor.target.needBridgeTo(overriddenDescriptor)
         }
 
     val bridgeDirections: BridgeDirections

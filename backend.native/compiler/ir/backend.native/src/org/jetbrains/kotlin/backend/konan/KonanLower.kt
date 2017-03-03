@@ -32,7 +32,6 @@ internal class KonanLower(val context: Context) {
             InitializersLowering(context).runOnFilePostfix(irFile)
         }
         phaser.phase(KonanPhase.LOWER_DELEGATION) {
-            ClassDelegationLowering(context).runOnFilePostfix(irFile)
             PropertyDelegationLowering(context).lower(irFile)
         }
         phaser.phase(KonanPhase.LOWER_TYPE_OPERATORS) {

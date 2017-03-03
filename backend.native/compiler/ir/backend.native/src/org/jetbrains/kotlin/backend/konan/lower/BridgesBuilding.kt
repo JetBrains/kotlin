@@ -34,20 +34,11 @@ internal class DirectBridgesCallsLowering(val context: Context) : BodyLoweringPa
                 }
 
                 val target = descriptor.target
-                val needBridge = descriptor.original.needBridgeTo(target)
-                if (descriptor.kind != CallableMemberDescriptor.Kind.DELEGATION && !needBridge)
-                    return expression
-
-                val toCall = if (needBridge) {
-                    target
-                } else {
-                    // Need to call delegating function.
-                    context.specialDescriptorsFactory.getBridgeDescriptor(OverriddenFunctionDescriptor(descriptor, target))
-                }
+                if (!descriptor.original.needBridgeTo(target)) return expression
 
                 return IrCallImpl(expression.startOffset, expression.endOffset,
-                        toCall, remapTypeArguments(expression, toCall), expression.origin,
-                        superQualifier = toCall.containingDeclaration as ClassDescriptor /* Call non-virtually */).apply {
+                        target, remapTypeArguments(expression, target), expression.origin,
+                        superQualifier = target.containingDeclaration as ClassDescriptor /* Call non-virtually */).apply {
                     dispatchReceiver = expression.dispatchReceiver
                     extensionReceiver = expression.extensionReceiver
                     mapValueParameters { expression.getValueArgument(it)!! }
