@@ -191,27 +191,30 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
         val context = typeMapper.bindingContext
 
         val inlineCall = runReadAction {
-            element.parents.map {
-                val ktCallExpression: KtCallExpression = when(it) {
-                    is KtFunctionLiteral -> {
-                        val lambdaExpression = it.parent as? KtLambdaExpression
-                        // call(param, { <it> })
-                        lambdaExpression?.typedParent<KtValueArgument>()?.typedParent<KtValueArgumentList>()?.typedParent<KtCallExpression>() ?:
+            val parentCallsWithLambdas = element.parents.map {
+                val ktCallExpression: KtCallExpression =
+                        when (it) {
+                            is KtFunctionLiteral -> {
+                                val lambdaExpression = it.parent as? KtLambdaExpression
+                                // call(param, { <it> })
+                                lambdaExpression?.typedParent<KtValueArgument>()?.typedParent<KtValueArgumentList>()?.typedParent<KtCallExpression>() ?:
 
-                        // call { <it> }
-                        lambdaExpression?.typedParent<KtLambdaArgument>()?.typedParent<KtCallExpression>()
-                    }
+                                // call { <it> }
+                                lambdaExpression?.typedParent<KtLambdaArgument>()?.typedParent<KtCallExpression>()
+                            }
 
-                    is KtNamedFunction -> {
-                        // call(fun () {})
-                        it.typedParent<KtValueArgument>()?.typedParent<KtValueArgumentList>()?.typedParent<KtCallExpression>()
-                    }
+                            is KtNamedFunction -> {
+                                // call(fun () {})
+                                it.typedParent<KtValueArgument>()?.typedParent<KtValueArgumentList>()?.typedParent<KtCallExpression>()
+                            }
 
-                    else -> null
-                } ?: return@map null
+                            else -> null
+                        } ?: return@map null
 
                 ktCallExpression to (it as KtElement)
-            }.lastOrNull {
+            }.toList()
+
+            parentCallsWithLambdas.lastOrNull {
                 it != null && isInlineCall(context, it.component1())
             }?.first
         } ?: return emptyList()
