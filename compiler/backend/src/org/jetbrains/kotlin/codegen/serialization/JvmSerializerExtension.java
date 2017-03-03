@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl;
 import org.jetbrains.kotlin.load.kotlin.JavaFlexibleTypeDeserializer;
 import org.jetbrains.kotlin.load.kotlin.TypeSignatureMappingKt;
 import org.jetbrains.kotlin.name.ClassId;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.serialization.AnnotationSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.serialization.SerializerExtension;
@@ -77,7 +78,7 @@ public class JvmSerializerExtension extends SerializerExtension {
     }
 
     @Override
-    public void serializePackage(@NotNull ProtoBuf.Package.Builder proto) {
+    public void serializePackage(@NotNull FqName packageFqName, @NotNull ProtoBuf.Package.Builder proto) {
         if (!moduleName.equals(JvmAbi.DEFAULT_MODULE_NAME)) {
             proto.setExtension(JvmProtoBuf.packageModuleName, stringTable.getStringIndex(moduleName));
         }

@@ -17,20 +17,18 @@
 package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.constants.NullValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfo
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.contains
@@ -543,7 +541,7 @@ class DescriptorSerializer private constructor(
         return builder
     }
 
-    fun packagePartProto(members: Collection<DeclarationDescriptor>): ProtoBuf.Package.Builder {
+    fun packagePartProto(packageFqName: FqName, members: Collection<DeclarationDescriptor>): ProtoBuf.Package.Builder {
         val builder = ProtoBuf.Package.newBuilder()
 
         for (declaration in sort(members)) {
@@ -564,7 +562,7 @@ class DescriptorSerializer private constructor(
             builder.sinceKotlinInfoTable = sinceKotlinInfoProto
         }
 
-        extension.serializePackage(builder)
+        extension.serializePackage(packageFqName, builder)
 
         return builder
     }

@@ -93,7 +93,7 @@ object KotlinJavascriptSerializationUtil {
         val skip: (DeclarationDescriptor) -> Boolean = { DescriptorUtils.getContainingModule(it) != module || (it is MemberDescriptor && it.isHeader) }
 
         val fileRegistry = KotlinFileRegistry()
-        val serializerExtension = KotlinJavascriptSerializerExtension(fileRegistry, fqName)
+        val serializerExtension = KotlinJavascriptSerializerExtension(fileRegistry)
         val serializer = DescriptorSerializer.createTopLevel(serializerExtension)
 
         val classDescriptors = DescriptorSerializer.sort(
@@ -123,7 +123,7 @@ object KotlinJavascriptSerializationUtil {
         val members = fragments
                 .flatMap { fragment -> DescriptorUtils.getAllDescriptors(fragment.getMemberScope()) }
                 .filterNot(skip)
-        builder.`package` = serializer.packagePartProto(members).build()
+        builder.`package` = serializer.packagePartProto(fqName, members).build()
 
         builder.setExtension(
                 JsProtoBuf.packageFragmentFiles,

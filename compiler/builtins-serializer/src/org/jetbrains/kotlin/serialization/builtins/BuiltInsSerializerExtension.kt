@@ -17,9 +17,8 @@
 package org.jetbrains.kotlin.serialization.builtins
 
 import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 
-class BuiltInsSerializerExtension(packageFqName: FqName) : KotlinSerializerExtensionBase(BuiltInSerializerProtocol, packageFqName) {
+class BuiltInsSerializerExtension : KotlinSerializerExtensionBase(BuiltInSerializerProtocol) {
     override fun shouldUseTypeTable(): Boolean = true
 }

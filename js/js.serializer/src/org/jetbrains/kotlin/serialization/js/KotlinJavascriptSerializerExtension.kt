@@ -29,9 +29,8 @@ import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.types.FlexibleType
 
 class KotlinJavascriptSerializerExtension(
-        private val fileRegistry: KotlinFileRegistry,
-        packageFqName: FqName
-) : KotlinSerializerExtensionBase(JsSerializerProtocol, packageFqName) {
+        private val fileRegistry: KotlinFileRegistry
+) : KotlinSerializerExtensionBase(JsSerializerProtocol) {
     override val stringTable = JavaScriptStringTable()
 
     override fun serializeFlexibleType(flexibleType: FlexibleType, lowerProto: ProtoBuf.Type.Builder, upperProto: ProtoBuf.Type.Builder) {

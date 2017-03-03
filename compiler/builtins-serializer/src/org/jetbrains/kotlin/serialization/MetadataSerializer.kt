@@ -141,11 +141,11 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
     protected inner class PackageSerializer(
             private val classes: Collection<DeclarationDescriptor>,
             private val members: Collection<DeclarationDescriptor>,
-            packageFqName: FqName,
+            private val packageFqName: FqName,
             private val destFile: File
     ) {
         private val proto = ProtoBuf.PackageFragment.newBuilder()
-        private val extension = BuiltInsSerializerExtension(packageFqName)
+        private val extension = BuiltInsSerializerExtension()
 
         fun run() {
             serializeClasses(classes)
@@ -170,7 +170,7 @@ open class MetadataSerializer(private val dependOnOldBuiltIns: Boolean) {
         }
 
         private fun serializeMembers(members: Collection<DeclarationDescriptor>) {
-            proto.`package` = DescriptorSerializer.createTopLevel(extension).packagePartProto(members).build()
+            proto.`package` = DescriptorSerializer.createTopLevel(extension).packagePartProto(packageFqName, members).build()
         }
 
         private fun serializeStringTable() {
