@@ -41,7 +41,7 @@ class CallableUsageReplacementStrategy(
         return {
             if (usage is KtOperationReferenceExpression && usage.getReferencedNameElementType() != KtTokens.IDENTIFIER) {
                 val nameExpression = OperatorToFunctionIntention.convert(usage.parent as KtExpression).second
-                createReplacer(nameExpression)!!.invoke()
+                createReplacer(nameExpression)?.invoke()
             }
             else {
                 CodeInliner(usage, bindingContext, resolvedCall, callElement, replacement).doInline()
