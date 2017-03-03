@@ -26,6 +26,9 @@ interface IrBody : IrElement {
 
 interface IrExpressionBody : IrBody {
     var expression: IrExpression
+
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrExpressionBody =
+            accept(transformer, data) as IrExpressionBody
 }
 
 interface IrBlockBody : IrBody, IrStatementContainer

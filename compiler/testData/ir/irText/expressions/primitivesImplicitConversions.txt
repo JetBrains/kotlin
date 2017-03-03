@@ -1,4 +1,58 @@
 FILE /primitivesImplicitConversions.kt
+  PROPERTY public val test1: kotlin.Long = 42.toLong()
+    FIELD PROPERTY_BACKING_FIELD public val test1: kotlin.Long = 42.toLong()
+      EXPRESSION_BODY
+        CONST Long type=kotlin.Long value='42'
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test1>(): kotlin.Long
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test1>(): Long'
+          GET_FIELD 'test1: Long' type=kotlin.Long origin=null
+  PROPERTY public val test2: kotlin.Short = 42.toShort()
+    FIELD PROPERTY_BACKING_FIELD public val test2: kotlin.Short = 42.toShort()
+      EXPRESSION_BODY
+        CONST Short type=kotlin.Short value='42'
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test2>(): kotlin.Short
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test2>(): Short'
+          GET_FIELD 'test2: Short' type=kotlin.Short origin=null
+  PROPERTY public val test3: kotlin.Byte = 42.toByte()
+    FIELD PROPERTY_BACKING_FIELD public val test3: kotlin.Byte = 42.toByte()
+      EXPRESSION_BODY
+        CONST Byte type=kotlin.Byte value='42'
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test3>(): kotlin.Byte
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test3>(): Byte'
+          GET_FIELD 'test3: Byte' type=kotlin.Byte origin=null
+  PROPERTY public val test4: kotlin.Long = -42.toLong()
+    FIELD PROPERTY_BACKING_FIELD public val test4: kotlin.Long = -42.toLong()
+      EXPRESSION_BODY
+        TYPE_OP origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
+          CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
+            $this: CONST Int type=kotlin.Int value='42'
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test4>(): kotlin.Long
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test4>(): Long'
+          GET_FIELD 'test4: Long' type=kotlin.Long origin=null
+  PROPERTY public val test5: kotlin.Short = -42.toShort()
+    FIELD PROPERTY_BACKING_FIELD public val test5: kotlin.Short = -42.toShort()
+      EXPRESSION_BODY
+        TYPE_OP origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Short
+          CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
+            $this: CONST Int type=kotlin.Int value='42'
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test5>(): kotlin.Short
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test5>(): Short'
+          GET_FIELD 'test5: Short' type=kotlin.Short origin=null
+  PROPERTY public val test6: kotlin.Byte = -42.toByte()
+    FIELD PROPERTY_BACKING_FIELD public val test6: kotlin.Byte = -42.toByte()
+      EXPRESSION_BODY
+        TYPE_OP origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Byte
+          CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
+            $this: CONST Int type=kotlin.Int value='42'
+    FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test6>(): kotlin.Byte
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-test6>(): Byte'
+          GET_FIELD 'test6: Byte' type=kotlin.Byte origin=null
   FUN public fun test(): kotlin.Unit
     BLOCK_BODY
       VAR val test1: kotlin.Int? = 42
@@ -21,3 +75,27 @@ FILE /primitivesImplicitConversions.kt
         TYPE_OP origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Byte
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value='1'
+  FUN public fun testImplicitArguments(x: kotlin.Long = ...): kotlin.Unit
+    x: EXPRESSION_BODY
+      TYPE_OP origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
+        CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
+          $this: CONST Int type=kotlin.Int value='1'
+    BLOCK_BODY
+  CLASS CLASS TestImplicitArguments
+    CONSTRUCTOR public constructor TestImplicitArguments(x: kotlin.Long = ...)
+      x: EXPRESSION_BODY
+        TYPE_OP origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
+          CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
+            $this: CONST Int type=kotlin.Int value='1'
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='TestImplicitArguments'
+    PROPERTY public final val x: kotlin.Long
+      FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Long
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter x: Long = ...' type=kotlin.Long origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Long
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): Long'
+            GET_FIELD 'x: Long' type=kotlin.Long origin=null
+              receiver: GET_VAR '<receiver: TestImplicitArguments>' type=TestImplicitArguments origin=null

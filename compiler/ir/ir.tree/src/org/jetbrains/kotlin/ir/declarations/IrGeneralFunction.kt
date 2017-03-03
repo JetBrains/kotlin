@@ -28,7 +28,7 @@ interface IrFunction : IrDeclaration {
     override val declarationKind: IrDeclarationKind
         get() = IrDeclarationKind.FUNCTION
 
-    fun putDefault(parameter: ValueParameterDescriptor, expressionBody: IrBody)
-    fun getDefault(parameter: ValueParameterDescriptor): IrBody?
+    fun putDefault(parameter: ValueParameterDescriptor, expressionBody: IrExpressionBody)
+    fun getDefault(parameter: ValueParameterDescriptor): IrExpressionBody?
 }
 

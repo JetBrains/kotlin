@@ -18,6 +18,9 @@ package org.jetbrains.kotlin.psi2ir.transformations
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
@@ -122,6 +125,24 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
         return declaration
     }
 
+    override fun visitField(declaration: IrField): IrStatement {
+        declaration.transformChildrenVoid(this)
+
+        declaration.initializer?.coerce(declaration.descriptor.type)
+
+        return declaration
+    }
+
+    override fun visitFunction(declaration: IrFunction): IrStatement {
+        declaration.transformChildrenVoid(this)
+
+        declaration.descriptor.valueParameters.forEach {
+            declaration.getDefault(it)?.coerce(it.type)
+        }
+
+        return declaration
+    }
+
     override fun visitWhen(expression: IrWhen): IrExpression {
         expression.transformChildrenVoid(this)
 
@@ -182,6 +203,10 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
         }
 
         return expression
+    }
+
+    private fun IrExpressionBody.coerce(expectedType: KotlinType) {
+        expression = expression.cast(expectedType)
     }
 
     private fun IrExpression.cast(expectedType: KotlinType?): IrExpression {
