@@ -12,7 +12,68 @@ import com.android.sdklib.SdkVersionInfo;
 import com.android.tools.idea.actions.OverrideResourceAction;
 import com.android.tools.idea.templates.RepositoryUrlManager;
 import com.android.tools.klint.checks.*;
+import com.android.tools.klint.checks.AddJavascriptInterfaceDetector;
+import com.android.tools.klint.checks.AlarmDetector;
+import com.android.tools.klint.checks.AllowAllHostnameVerifierDetector;
+import com.android.tools.klint.checks.AlwaysShowActionDetector;
+import com.android.tools.klint.checks.AndroidAutoDetector;
+import com.android.tools.klint.checks.AnnotationDetector;
+import com.android.tools.klint.checks.ApiDetector;
+import com.android.tools.klint.checks.AppCompatCallDetector;
+import com.android.tools.klint.checks.AppIndexingApiDetector;
+import com.android.tools.klint.checks.BadHostnameVerifierDetector;
+import com.android.tools.klint.checks.CallSuperDetector;
+import com.android.tools.klint.checks.CipherGetInstanceDetector;
+import com.android.tools.klint.checks.CleanupDetector;
+import com.android.tools.klint.checks.CommentDetector;
+import com.android.tools.klint.checks.CustomViewDetector;
+import com.android.tools.klint.checks.CutPasteDetector;
+import com.android.tools.klint.checks.DateFormatDetector;
+import com.android.tools.klint.checks.FragmentDetector;
+import com.android.tools.klint.checks.GetSignaturesDetector;
+import com.android.tools.klint.checks.HandlerDetector;
+import com.android.tools.klint.checks.IconDetector;
+import com.android.tools.klint.checks.JavaPerformanceDetector;
+import com.android.tools.klint.checks.JavaScriptInterfaceDetector;
+import com.android.tools.klint.checks.LayoutConsistencyDetector;
+import com.android.tools.klint.checks.LayoutInflationDetector;
+import com.android.tools.klint.checks.LocaleDetector;
+import com.android.tools.klint.checks.LogDetector;
+import com.android.tools.klint.checks.MathDetector;
+import com.android.tools.klint.checks.MergeRootFrameLayoutDetector;
+import com.android.tools.klint.checks.NonInternationalizedSmsDetector;
+import com.android.tools.klint.checks.OverdrawDetector;
+import com.android.tools.klint.checks.OverrideConcreteDetector;
+import com.android.tools.klint.checks.ParcelDetector;
+import com.android.tools.klint.checks.PreferenceActivityDetector;
+import com.android.tools.klint.checks.PrivateResourceDetector;
+import com.android.tools.klint.checks.ReadParcelableDetector;
+import com.android.tools.klint.checks.RecyclerViewDetector;
+import com.android.tools.klint.checks.RegistrationDetector;
+import com.android.tools.klint.checks.RequiredAttributeDetector;
+import com.android.tools.klint.checks.RtlDetector;
+import com.android.tools.klint.checks.SQLiteDetector;
+import com.android.tools.klint.checks.SdCardDetector;
+import com.android.tools.klint.checks.SecureRandomDetector;
+import com.android.tools.klint.checks.SecurityDetector;
+import com.android.tools.klint.checks.ServiceCastDetector;
+import com.android.tools.klint.checks.SetJavaScriptEnabledDetector;
+import com.android.tools.klint.checks.SetTextDetector;
+import com.android.tools.klint.checks.SslCertificateSocketFactoryDetector;
+import com.android.tools.klint.checks.StringFormatDetector;
+import com.android.tools.klint.checks.ToastDetector;
+import com.android.tools.klint.checks.TrustAllX509TrustManagerDetector;
+import com.android.tools.klint.checks.UnsafeBroadcastReceiverDetector;
+import com.android.tools.klint.checks.UnsafeNativeCodeDetector;
+import com.android.tools.klint.checks.ViewConstructorDetector;
+import com.android.tools.klint.checks.ViewHolderDetector;
+import com.android.tools.klint.checks.ViewTagDetector;
+import com.android.tools.klint.checks.ViewTypeDetector;
+import com.android.tools.klint.checks.WrongCallDetector;
+import com.android.tools.klint.checks.WrongImportDetector;
 import com.android.tools.klint.detector.api.Issue;
+import com.android.tools.lint.checks.*;
+import com.android.tools.lint.detector.api.TextFormat;
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.application.ApplicationManager;
@@ -410,6 +471,28 @@ public class AndroidLintInspectionToolProvider {
       super(AndroidBundle.message("android.lint.inspections.new.api"), ApiDetector.UNSUPPORTED);
     }
 
+    @NotNull
+    @Override
+    public AndroidLintQuickFix[] getQuickFixes(@NotNull PsiElement startElement, @NotNull PsiElement endElement, @NotNull String message) {
+      int api = ApiDetector.getRequiredVersion(TextFormat.RAW.toText(message));
+      if (api == -1) {
+        return AndroidLintQuickFix.EMPTY_ARRAY;
+      }
+
+      Project project = startElement.getProject();
+      if (JavaPsiFacade.getInstance(project).findClass(REQUIRES_API_ANNOTATION, GlobalSearchScope.allScope(project)) != null) {
+        return new AndroidLintQuickFix[] {
+                new AddTargetApiQuickFix(api, true),
+                new AddTargetApiQuickFix(api, false),
+                new AddTargetVersionCheckQuickFix(api)
+        };
+      }
+
+      return new AndroidLintQuickFix[] {
+              new AddTargetApiQuickFix(api, false),
+              new AddTargetVersionCheckQuickFix(api)
+      };
+    }
   }
 
   public static class AndroidKLintInlinedApiInspection extends AndroidLintInspectionBase {

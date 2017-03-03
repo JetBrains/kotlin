@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.allopen.AbstractBytecodeListingTestForAllOpen
 import org.jetbrains.kotlin.android.*
 import org.jetbrains.kotlin.android.configure.AbstractConfigureProjectTest
 import org.jetbrains.kotlin.android.folding.AbstractAndroidResourceFoldingTest
-import org.jetbrains.kotlin.android.intentions.AbstractAndroidIntentionTest
-import org.jetbrains.kotlin.android.intentions.AbstractAndroidResourceIntentionTest
+import org.jetbrains.kotlin.android.quickfix.AbstractAndroidLintQuickfixTest
+import org.jetbrains.kotlin.android.intention.AbstractAndroidResourceIntentionTest
 import org.jetbrains.kotlin.android.lint.AbstractKotlinLintTest
-import org.jetbrains.kotlin.android.quickfixes.AbstractAndroidQuickFixMultiFileTest
+import org.jetbrains.kotlin.android.quickfix.AbstractAndroidQuickFixMultiFileTest
 import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessorBoxTest
 import org.jetbrains.kotlin.annotation.processing.test.sourceRetention.AbstractBytecodeListingTestForSourceRetention
 import org.jetbrains.kotlin.annotation.processing.test.wrappers.AbstractAnnotationProcessingTest
@@ -1209,7 +1209,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractAndroidResourceIntentionTest> {
-            model("android/resourceIntentions", extension = "test", singleClass = true)
+            model("android/resourceIntention", extension = "test", singleClass = true)
         }
 
         testClass<AbstractAndroidQuickFixMultiFileTest> {
@@ -1220,8 +1220,8 @@ fun main(args: Array<String>) {
             model("android/lint", excludeParentDirs = true)
         }
 
-        testClass<AbstractAndroidIntentionTest> {
-            model("android/intentions", pattern = "^([\\w\\-_]+)\\.kt$")
+        testClass<AbstractAndroidLintQuickfixTest> {
+            model("android/lintQuickfix", pattern = "^([\\w\\-_]+)\\.kt$")
         }
 
         testClass<AbstractAndroidResourceFoldingTest> {

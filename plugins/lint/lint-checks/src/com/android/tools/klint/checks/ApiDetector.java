@@ -50,6 +50,8 @@ import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.android.SdkConstants.*;
 import static com.android.tools.klint.detector.api.ClassContext.getFqcn;
@@ -100,9 +102,9 @@ public class ApiDetector extends ResourceXmlDetector
             Severity.ERROR,
             new Implementation(
                     ApiDetector.class,
-                    EnumSet.of(Scope.CLASS_FILE, Scope.RESOURCE_FILE, Scope.MANIFEST),
+                    EnumSet.of(Scope.JAVA_FILE, Scope.RESOURCE_FILE, Scope.MANIFEST),
+                    Scope.JAVA_FILE_SCOPE,
                     Scope.RESOURCE_FILE_SCOPE,
-                    Scope.CLASS_FILE_SCOPE,
                     Scope.MANIFEST_SCOPE));
 
     /** Accessing an inlined API on older platforms */
@@ -871,6 +873,16 @@ public class ApiDetector extends ResourceXmlDetector
         }
 
         return false;
+    }
+
+    public static int getRequiredVersion(String errorMessage) {
+        Pattern pattern = Pattern.compile("\\s(\\d+)\\s");
+        Matcher matcher = pattern.matcher(errorMessage);
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group(1));
+        }
+
+        return -1;
     }
 
     private final class ApiVisitor extends AbstractUastVisitor {

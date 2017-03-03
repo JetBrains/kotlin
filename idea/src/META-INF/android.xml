@@ -19,7 +19,7 @@
         <editorNotificationProvider implementation="org.jetbrains.kotlin.android.actions.KotlinNewActivityNotification"/>
 
         <intentionAction>
-            <className>org.jetbrains.kotlin.android.intentions.KotlinAndroidAddStringResource</className>
+            <className>org.jetbrains.kotlin.android.intention.KotlinAndroidAddStringResource</className>
             <category>Kotlin Android</category>
         </intentionAction>
 

@@ -18,5 +18,6 @@
     <orderEntry type="module" module-name="frontend" />
     <orderEntry type="module" module-name="idea-analysis" />
     <orderEntry type="module" module-name="idea-core" />
+    <orderEntry type="module" module-name="idea" />
   </component>
 </module>
