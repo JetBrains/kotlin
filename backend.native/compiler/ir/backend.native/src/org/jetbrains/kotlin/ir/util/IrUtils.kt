@@ -1,10 +1,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.expressions.*
 
 /**
  * Binds the arguments explicitly represented in the IR to the parameters of the accessed function.
@@ -64,3 +61,6 @@ internal fun IrMemberAccessExpression.addArguments(args: List<Pair<ParameterDesc
         this.addArguments(args.toMap())
 
 internal fun IrExpression.isNullConst() = this is IrConst<*> && this.kind == IrConstKind.Null
+
+fun IrCall.usesDefaultArguments(): Boolean =
+        this.descriptor.valueParameters.any { this.getValueArgument(it) != null }
