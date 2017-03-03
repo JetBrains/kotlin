@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.highlighter.markers
 
 import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import com.intellij.ide.util.DefaultPsiElementCellRenderer
-import com.intellij.psi.NavigatablePsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
@@ -56,12 +55,7 @@ fun getPlatformImplementationTooltip(declaration: KtDeclaration): String? {
 }
 
 fun navigateToPlatformImplementation(e: MouseEvent?, declaration: KtDeclaration) {
-    val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
-    val commonModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
-
-    val implementations = commonModuleDescriptor.allImplementingModules.flatMap {
-        it.implementationsOf(descriptor)
-    }.mapNotNull { DescriptorToSourceUtils.descriptorToDeclaration(it) as? NavigatablePsiElement }
+    val implementations = declaration.headerImplementations()
     if (implementations.isEmpty()) return
 
     val renderer = DefaultPsiElementCellRenderer()
@@ -70,4 +64,12 @@ fun navigateToPlatformImplementation(e: MouseEvent?, declaration: KtDeclaration)
                                         "Choose implementation of ${declaration.name}",
                                         "Implementations of ${declaration.name}",
                                         renderer)
+}
+
+internal fun KtDeclaration.headerImplementations(): Set<KtDeclaration> {
+    val descriptor = toDescriptor() as? MemberDescriptor ?: return emptySet()
+    val commonModuleDescriptor = containingKtFile.findModuleDescriptor()
+    return commonModuleDescriptor.allImplementingModules.flatMap {
+        it.implementationsOf(descriptor)
+    }.mapNotNullTo(LinkedHashSet()) { DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtDeclaration }
 }

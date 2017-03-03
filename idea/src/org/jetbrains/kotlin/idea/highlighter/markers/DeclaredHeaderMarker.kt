@@ -16,17 +16,18 @@
 
 package org.jetbrains.kotlin.idea.highlighter.markers
 
-import com.intellij.psi.NavigatablePsiElement
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleProductionSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.ModuleTestSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.checkers.HeaderImplDeclarationChecker
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 
 fun ModuleDescriptor.commonModuleOrNull(): ModuleDescriptor? {
@@ -70,13 +71,20 @@ fun getHeaderDeclarationTooltip(declaration: KtDeclaration): String? {
 }
 
 fun navigateToHeaderDeclaration(declaration: KtDeclaration) {
-    val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
-    val platformModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
+    declaration.headerDeclarationIfAny()?.navigate(false)
+}
 
-    val commonModuleDescriptor = platformModuleDescriptor.commonModuleOrNull() ?: return
-    val headerDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(
-            commonModuleDescriptor.declarationOf(descriptor) ?: return
-    ) as? NavigatablePsiElement ?: return
+internal fun MemberDescriptor.headerDescriptor() = module.commonModuleOrNull()?.declarationOf(this)
 
-    headerDeclaration.navigate(false)
+internal fun KtDeclaration.headerDeclarationIfAny(): KtDeclaration? {
+    val headerDescriptor = (toDescriptor() as? MemberDescriptor)?.headerDescriptor() ?: return null
+    return DescriptorToSourceUtils.descriptorToDeclaration(headerDescriptor) as? KtDeclaration
+}
+
+internal fun KtDeclaration.liftToHeader(): KtDeclaration? {
+    return when {
+        hasModifier(KtTokens.HEADER_KEYWORD) -> this
+        hasModifier(KtTokens.IMPL_KEYWORD) -> headerDeclarationIfAny()
+        else -> null
+    }
 }

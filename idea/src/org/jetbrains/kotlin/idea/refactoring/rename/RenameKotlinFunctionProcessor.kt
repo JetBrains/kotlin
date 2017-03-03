@@ -35,9 +35,11 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.highlighter.markers.liftToHeader
 import org.jetbrains.kotlin.idea.refactoring.Pass
 import org.jetbrains.kotlin.idea.refactoring.checkSuperMethods
 import org.jetbrains.kotlin.idea.refactoring.checkSuperMethodsWithPopup
@@ -106,7 +108,11 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
             get() = originalDeclaration
     }
 
+    private fun substituteForHeaderOrImpl(element: PsiElement?) = (element?.namedUnwrappedElement as? KtNamedDeclaration)?.liftToHeader()
+
     override fun substituteElementToRename(element: PsiElement?, editor: Editor?): PsiElement?  {
+        substituteForHeaderOrImpl(element)?.let { return it }
+
         val wrappedMethod = wrapPsiMethod(element) ?: return element
 
         val deepestSuperMethods = wrappedMethod.findDeepestSuperMethods()
@@ -138,6 +144,8 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
             }
             renameCallback.pass(elementToProcess)
         }
+
+        substituteForHeaderOrImpl(element)?.let { return preprocessAndPass(it) }
 
         val wrappedMethod = wrapPsiMethod(element) ?: return
 

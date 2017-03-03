@@ -41,4 +41,40 @@ public class MultiModuleRenameTestGenerated extends AbstractMultiModuleRenameTes
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/fileNotUnderSourceRootWithNamesakeUnderSourceRoot/fileNotUnderSourceRootWithNamesakeUnderSourceRoot.test");
         doTest(fileName);
     }
+
+    @TestMetadata("headersAndImplsByHeaderClass/headersAndImplsByHeaderClass.test")
+    public void testHeadersAndImplsByHeaderClass_HeadersAndImplsByHeaderClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headersAndImplsByHeaderClass/headersAndImplsByHeaderClass.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("headersAndImplsByHeaderFun/headersAndImplsByHeaderFun.test")
+    public void testHeadersAndImplsByHeaderFun_HeadersAndImplsByHeaderFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headersAndImplsByHeaderFun/headersAndImplsByHeaderFun.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("headersAndImplsByHeaderVal/headersAndImplsByHeaderVal.test")
+    public void testHeadersAndImplsByHeaderVal_HeadersAndImplsByHeaderVal() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headersAndImplsByHeaderVal/headersAndImplsByHeaderVal.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("headersAndImplsByImplClass/headersAndImplsByImplClass.test")
+    public void testHeadersAndImplsByImplClass_HeadersAndImplsByImplClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headersAndImplsByImplClass/headersAndImplsByImplClass.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("headersAndImplsByImplFun/headersAndImplsByImplFun.test")
+    public void testHeadersAndImplsByImplFun_HeadersAndImplsByImplFun() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headersAndImplsByImplFun/headersAndImplsByImplFun.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("headersAndImplsByImplVal/headersAndImplsByImplVal.test")
+    public void testHeadersAndImplsByImplVal_HeadersAndImplsByImplVal() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/renameMultiModule/headersAndImplsByImplVal/headersAndImplsByImplVal.test");
+        doTest(fileName);
+    }
 }
