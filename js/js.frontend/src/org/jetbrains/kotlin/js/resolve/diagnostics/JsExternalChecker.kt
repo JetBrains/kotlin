@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.js.PredefinedAnnotation
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
@@ -88,6 +90,23 @@ object JsExternalChecker : SimpleDeclarationChecker {
 
         if (descriptor is FunctionDescriptor && descriptor.isInline) {
             diagnosticHolder.report(ErrorsJs.INLINE_EXTERNAL_DECLARATION.on(declaration))
+        }
+
+        if (descriptor is CallableMemberDescriptor && !(descriptor is PropertyAccessorDescriptor && descriptor.isDefault)) {
+            for (p in descriptor.valueParameters) {
+                if ((p.varargElementType ?: p.type).isExtensionFunctionType) {
+                    val ktParam = p.source.getPsi() as? KtParameter ?: declaration
+                    diagnosticHolder.report(ErrorsJs.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION.on(ktParam))
+                }
+            }
+
+            // Only report on properties if there are no custom accessors
+            val propertyWithCustomAccessors = descriptor is PropertyDescriptor &&
+                                              !(descriptor.getter?.isDefault ?: true && descriptor.setter?.isDefault ?: true)
+
+            if (!propertyWithCustomAccessors && descriptor.returnType?.isExtensionFunctionType ?: false) {
+                diagnosticHolder.report(ErrorsJs.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION.on(declaration))
+            }
         }
 
         if (descriptor is CallableMemberDescriptor && descriptor.isNonAbstractMemberOfInterface() &&

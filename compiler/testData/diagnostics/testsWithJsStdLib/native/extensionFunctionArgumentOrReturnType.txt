@@ -1,0 +1,29 @@
+package
+
+public external val prop: kotlin.Int.() -> kotlin.Int
+public external var prop2: kotlin.Int.() -> kotlin.Int
+public external val propGet: kotlin.Int.() -> kotlin.Int
+public external var propSet: kotlin.Int.() -> kotlin.Int
+public external fun bar(/*0*/ vararg f: kotlin.Int.() -> kotlin.Int /*kotlin.Array<out kotlin.Int.() -> kotlin.Int>*/): kotlin.Unit
+public external fun baz(): kotlin.Int.() -> kotlin.Int
+public external fun foo(/*0*/ f: kotlin.Int.() -> kotlin.Int): kotlin.Unit
+
+public external final class A {
+    public constructor A(/*0*/ f: kotlin.Int.() -> kotlin.Int)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public external final data class B {
+    public constructor B(/*0*/ a: kotlin.Int.() -> kotlin.Int, /*1*/ b: kotlin.Int.() -> kotlin.Int)
+    public final val a: kotlin.Int.() -> kotlin.Int
+    public final var b: kotlin.Int.() -> kotlin.Int
+    public final val c: kotlin.Int.() -> kotlin.Int
+    public final operator /*synthesized*/ fun component1(): kotlin.Int.() -> kotlin.Int
+    public final operator /*synthesized*/ fun component2(): kotlin.Int.() -> kotlin.Int
+    public final /*synthesized*/ fun copy(/*0*/ a: kotlin.Int.() -> kotlin.Int = ..., /*1*/ b: kotlin.Int.() -> kotlin.Int = ...): B
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
