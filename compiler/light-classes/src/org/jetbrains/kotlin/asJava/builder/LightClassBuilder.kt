@@ -80,7 +80,7 @@ fun buildLightClass(
             LOG.error("Unbalanced stack operations: " + pop)
         }
 
-        ServiceManager.getService(project, StubComputationTracker::class.java)?.onStubComputed(javaFileStub)
+        ServiceManager.getService(project, StubComputationTracker::class.java)?.onStubComputed(javaFileStub, context)
         return LightClassBuilderResult(javaFileStub, bindingContext, state.collectedExtraJvmDiagnostics)
     }
     catch (e: ProcessCanceledException) {

@@ -20,6 +20,7 @@ import com.intellij.openapi.components.ComponentManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.impl.java.stubs.PsiClassStub
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
+import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.asJava.builder.StubComputationTracker
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
@@ -34,13 +35,13 @@ object LightClassComputationControl {
 
         val actualFqNames = ArrayList<String>()
         val stubComputationTracker = object : StubComputationTracker {
-            override fun onStubComputed(javaFileStub: PsiJavaFileStub) {
+            override fun onStubComputed(javaFileStub: PsiJavaFileStub, context: LightClassConstructionContext) {
                 val qualifiedName = (javaFileStub.childrenStubs.single() as PsiClassStub<*>).qualifiedName!!
                 actualFqNames.add(qualifiedName)
             }
         }
 
-        project.withServiceRegistered<StubComputationTracker>(stubComputationTracker) {
+        project.withServiceRegistered<StubComputationTracker, Unit>(stubComputationTracker) {
             testBody()
         }
 
@@ -58,13 +59,13 @@ object LightClassComputationControl {
     private fun List<String>.prettyToString() = if (isEmpty()) "<empty>" else joinToString()
 }
 
-private inline fun <reified T : Any> ComponentManager.withServiceRegistered(instance: T, body: () -> Unit) {
+inline fun <reified T : Any, R> ComponentManager.withServiceRegistered(instance: T, body: () -> R): R {
     val picoContainer = picoContainer as MutablePicoContainer
     val key = T::class.java.name
     try {
         picoContainer.unregisterComponent(key)
         picoContainer.registerComponentInstance(key, instance)
-        body()
+        return body()
     }
     finally {
         picoContainer.unregisterComponent(key)

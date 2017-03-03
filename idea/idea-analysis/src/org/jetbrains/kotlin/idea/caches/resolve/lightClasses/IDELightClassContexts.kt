@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.IDELightClassConstructionContext.Mode.EXACT
+import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.IDELightClassConstructionContext.Mode.LIGHT
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -68,6 +70,15 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.WrappedTypeFactory
 import org.jetbrains.kotlin.utils.sure
 
+
+class IDELightClassConstructionContext(bindingContext: BindingContext, module: ModuleDescriptor, val mode: Mode)
+    : LightClassConstructionContext(bindingContext, module) {
+    enum class Mode {
+        LIGHT,
+        EXACT
+    }
+}
+
 object IDELightClassContexts {
 
     private val LOG = Logger.getInstance(this::class.java)
@@ -87,7 +98,7 @@ object IDELightClassContexts {
             "Class descriptor was not found for ${classOrObject.getElementTextWithContext()}"
         }
         ForceResolveUtil.forceResolveAllContents(classDescriptor)
-        return LightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor)
+        return IDELightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor, EXACT)
     }
 
     fun contextForLocalClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext {
@@ -98,12 +109,12 @@ object IDELightClassContexts {
 
         if (descriptor == null) {
             LOG.warn("No class descriptor in context for class: " + classOrObject.getElementTextWithContext())
-            return LightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor)
+            return IDELightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor, EXACT)
         }
 
         ForceResolveUtil.forceResolveAllContents(descriptor)
 
-        return LightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor)
+        return IDELightClassConstructionContext(bindingContext, resolutionFacade.moduleDescriptor, EXACT)
     }
 
 
@@ -111,8 +122,7 @@ object IDELightClassContexts {
         val resolveSession = files.first().getResolutionFacade().getFrontendService(ResolveSession::class.java)
 
         forceResolvePackageDeclarations(files, resolveSession)
-
-        return LightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor)
+        return IDELightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor, EXACT)
     }
 
     fun lightContextForClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext {
@@ -120,7 +130,7 @@ object IDELightClassContexts {
 
         ForceResolveUtil.forceResolveAllContents(resolveSession.resolveToDescriptor(classOrObject))
 
-        return LightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor)
+        return IDELightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor, LIGHT)
     }
 
     fun lightContextForFacade(files: List<KtFile>): LightClassConstructionContext {
@@ -129,7 +139,7 @@ object IDELightClassContexts {
 
         forceResolvePackageDeclarations(files, resolveSession)
 
-        return LightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor)
+        return IDELightClassConstructionContext(resolveSession.bindingContext, resolveSession.moduleDescriptor, LIGHT)
     }
 
     fun forceResolvePackageDeclarations(files: Collection<KtFile>, session: ResolveSession) {

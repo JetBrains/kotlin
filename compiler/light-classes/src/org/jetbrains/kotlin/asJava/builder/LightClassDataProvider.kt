@@ -212,5 +212,5 @@ sealed class LightClassDataProviderForFileFacade constructor(
 
 
 interface StubComputationTracker {
-    fun onStubComputed(javaFileStub: PsiJavaFileStub)
+    fun onStubComputed(javaFileStub: PsiJavaFileStub, context: LightClassConstructionContext)
 }
