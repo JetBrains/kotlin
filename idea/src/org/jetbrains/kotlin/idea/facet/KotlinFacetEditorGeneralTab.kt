@@ -23,7 +23,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.DocumentAdapter
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.ThreeStateCheckBox
-import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -31,7 +30,9 @@ import org.jetbrains.kotlin.cli.common.arguments.parseArguments
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerConfigurableTab
 import java.awt.BorderLayout
-import javax.swing.*
+import javax.swing.JComboBox
+import javax.swing.JComponent
+import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
 
 class KotlinFacetEditorGeneralTab(
@@ -101,7 +102,7 @@ class KotlinFacetEditorGeneralTab(
 
         internal fun updateCompilerConfigurable() {
             compilerConfigurable.setTargetPlatform(chosenPlatform)
-            UIUtil.setEnabled(compilerConfigurable.contentPane, !useProjectSettingsCheckBox.isSelected, true)
+            compilerConfigurable.setEnabled(!useProjectSettingsCheckBox.isSelected)
         }
 
         val chosenPlatform: TargetPlatformKind<*>?

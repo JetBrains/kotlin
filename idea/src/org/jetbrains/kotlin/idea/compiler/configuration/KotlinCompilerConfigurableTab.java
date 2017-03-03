@@ -33,6 +33,7 @@ import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.util.text.VersionComparatorUtil;
 import com.intellij.util.ui.ThreeStateCheckBox;
+import com.intellij.util.ui.UIUtil;
 import kotlin.collections.ArraysKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
@@ -105,6 +106,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private JComboBox apiVersionComboBox;
     private JPanel scriptPanel;
 
+    private boolean isEnabled = true;
+
     public KotlinCompilerConfigurableTab(
             Project project,
             CommonCompilerArguments commonCompilerArguments,
@@ -143,8 +146,10 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         copyRuntimeFilesCheckBox.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(@NotNull ChangeEvent e) {
-                outputDirectory.setEnabled(copyRuntimeFilesCheckBox.isSelected());
-                labelForOutputDirectory.setEnabled(copyRuntimeFilesCheckBox.isSelected());
+                if (isEnabled) {
+                    outputDirectory.setEnabled(copyRuntimeFilesCheckBox.isSelected());
+                    labelForOutputDirectory.setEnabled(copyRuntimeFilesCheckBox.isSelected());
+                }
             }
         });
 
@@ -500,5 +505,10 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
     public JComboBox getCoroutineSupportComboBox() {
         return coroutineSupportComboBox;
+    }
+
+    public void setEnabled(boolean value) {
+        isEnabled = value;
+        UIUtil.setEnabled(getContentPane(), value, true);
     }
 }
