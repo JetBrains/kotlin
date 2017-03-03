@@ -3,8 +3,11 @@ package org.jetbrains.kotlin.gradle.plugin
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.api.AndroidSourceSet
+import com.android.build.gradle.internal.TaskContainerAdaptor
+import com.android.build.gradle.internal.TaskManager
 import com.android.build.gradle.internal.variant.BaseVariantData
 import com.android.build.gradle.internal.variant.BaseVariantOutputData
+import com.android.build.gradle.internal.variant.TestVariantData
 import com.android.builder.model.SourceProvider
 import groovy.lang.Closure
 import org.gradle.api.InvalidUserDataException
@@ -31,6 +34,7 @@ import org.jetbrains.kotlin.gradle.internal.initKapt
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.plugin.android.KotlinJillTask
 import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.utils.getDeclaredFieldInHierarchy
 import org.jetbrains.kotlin.incremental.configureMultiProjectIncrementalCompilation
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProviderAndroidWrapper
 import java.io.File
@@ -369,6 +373,22 @@ internal open class KotlinAndroidPlugin(
         }
     }
 
+    private fun forceCreateJavacTask(project: Project,
+                                     androidPlugin: BasePlugin,
+                                     variantData: BaseVariantData<*>): JavaCompile? {
+        val taskManager = androidPlugin::class.java.getDeclaredFieldInHierarchy("taskManager")
+                ?.let { it.isAccessible = true; it[androidPlugin] as TaskManager }
+        if (taskManager == null) {
+            log.kotlinDebug("TaskManager was not found, possibly, an incompatible Android Gradle plugin version is used.")
+            return null
+        }
+        val taskContainerAdaptor = TaskContainerAdaptor(project.tasks)
+        return taskManager.createJavacTask(taskContainerAdaptor, variantData.scope)?.get(taskContainerAdaptor)
+    }
+
+    private fun getTestedVariantData(variantData: BaseVariantData<*>): BaseVariantData<*>? =
+            ((variantData as? TestVariantData)?.testedVariantData as? BaseVariantData<*>)
+
     private fun processVariantData(
             variantDataList: List<BaseVariantData<out BaseVariantOutputData>>,
             project: Project,
@@ -384,7 +404,12 @@ internal open class KotlinAndroidPlugin(
             val variantDataName = variantData.name
             logger.kotlinDebug("Process variant [$variantDataName]")
 
-            val javaTask = AndroidGradleWrapper.getJavaTask(variantData)
+            val testedVariantData = getTestedVariantData(variantData)
+            val isAndroidTestVariant = variantDataName.endsWith("androidTest", ignoreCase = true) &&
+                                       testedVariantData != null
+
+            val javaTask = AndroidGradleWrapper.getJavaTask(variantData) ?:
+                           (if (isAndroidTestVariant) forceCreateJavacTask(project, androidPlugin, variantData) else null)
 
             if (javaTask == null) {
                 logger.info("KOTLIN: javaTask is missing for $variantDataName, so Kotlin files won't be compiled for it")
@@ -446,6 +471,10 @@ internal open class KotlinAndroidPlugin(
             }
 
             configureSources(kotlinTask, variantData)
+            if (isAndroidTestVariant) {
+                configureSources(kotlinTask, testedVariantData!!)
+            }
+
             if (kotlinAfterJavaTask != null) {
                 configureSources(kotlinAfterJavaTask, variantData)
             }
