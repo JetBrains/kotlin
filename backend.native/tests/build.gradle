@@ -1306,10 +1306,10 @@ task inline4(type: RunKonanTest) {
     source = "codegen/inline/inline4.kt"
 }
 
-//task inline5(type: RunKonanTest) {
-//    goldValue = "33\n"
-//    source = "codegen/inline/inline5.kt"
-//}
+task inline5(type: RunKonanTest) {
+    goldValue = "33\n"
+    source = "codegen/inline/inline5.kt"
+}
 
 task inline6(type: RunKonanTest) {
     goldValue = "hello1\nhello2\nhello3\nhello4\n"
@@ -1355,6 +1355,18 @@ task inline16(type: RunKonanTest) {
 task inline17(type: RunKonanTest) {
     goldValue = "[1, 2]\n"
     source = "codegen/inline/inline17.kt"
+}
+
+task inline18(type: RunKonanTest) {
+    disabled = true
+    goldValue = "true\n"
+    source = "codegen/inline/inline18.kt"
+}
+
+task inline19(type: RunKonanTest) {
+    disabled = true
+    goldValue = "6\n"
+    source = "codegen/inline/inline19.kt"
 }
 
 kotlinNativeInterop {
