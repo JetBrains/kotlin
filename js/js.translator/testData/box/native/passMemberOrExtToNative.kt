@@ -1,3 +1,6 @@
+// TODO: Unmute when extension functions are supported in external declarations.
+// IGNORE_BACKEND: JS
+
 package foo
 
 open class A(val v: String) {
