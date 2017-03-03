@@ -4,14 +4,13 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
 import org.jetbrains.kotlin.backend.konan.ir.IrInlineFunctionBody
 import org.jetbrains.kotlin.backend.konan.ir.getArguments
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrContainerExpressionBase
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
@@ -25,14 +24,27 @@ import org.jetbrains.kotlin.types.KotlinType
 
 internal class FunctionInlining(val context: Context): IrElementTransformerVoid() {
 
+    var currentFile     : IrFile?     = null
+    var currentFunction : IrFunction? = null
+    var functionScope   : Scope?      = null
+
+    //-------------------------------------------------------------------------//
+
     fun inline(irFile: IrFile) = irFile.accept(this, null)
 
     //-------------------------------------------------------------------------//
 
-    var fqName: String? = null
     override fun visitFile(declaration: IrFile): IrFile {
-        fqName = declaration.packageFragmentDescriptor.fqName.asString()
+        currentFile = declaration
         return super.visitFile(declaration)
+    }
+
+    //-------------------------------------------------------------------------//
+
+    override fun visitFunction(declaration: IrFunction): IrStatement {
+        currentFunction = declaration
+        functionScope   = Scope(declaration.descriptor)
+        return super.visitFunction(declaration)
     }
 
     //-------------------------------------------------------------------------//
@@ -46,24 +58,23 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     //-------------------------------------------------------------------------//
 
     fun evaluateParameters(irCall: IrCall,
-        statements: MutableList<IrStatement>): List<Pair<ParameterDescriptor, IrExpression>> {
+        statements: MutableList<IrStatement>): MutableList<Pair<DeclarationDescriptor, IrExpression>> {
 
-        val scope          = Scope(irCall.descriptor as FunctionDescriptor)
         val parametersOld  = irCall.getArguments()                                          // Create map call_site_argument -> inline_function_parameter.
         val parametersNew  = parametersOld.map {
-            val argument  = it.first
+            val argument  = it.first.original
             val parameter = it.second
-            if (parameter is IrGetValue)       return@map it                                // Parameter is already GetValue - nothing to evaluate.
-            if (parameter is IrConst<*>)       return@map it                                // Parameter is constant - nothing to evaluate.
-            if (isLambdaExpression(parameter)) return@map it                                // Parameter is lambda - will be inlined.
+            if (parameter is IrGetValue)       return@map argument to it.second             // Parameter is already GetValue - nothing to evaluate.
+            if (parameter is IrConst<*>)       return@map argument to it.second             // Parameter is constant - nothing to evaluate.
+            if (isLambdaExpression(parameter)) return@map argument to it.second             // Parameter is lambda - will be inlined.
 
-            val newVar = scope.createTemporaryVariable(parameter, "inline", false)          // Create new variable and init it with the parameter expression.
+            val newVar = functionScope!!.createTemporaryVariable(parameter, "inline", false) // Create new variable and init it with the parameter expression.
             statements.add(0, newVar)                                                       // Add initialization of the new variable in statement list.
 
             val getVal = IrGetValueImpl(0, 0, newVar.descriptor)                            // Create new IR element representing access the new variable.
             argument to getVal                                                              // Parameter will be replaced with the new variable.
         }
-        return parametersNew
+        return parametersNew.toMutableList()
     }
 
     //-------------------------------------------------------------------------//
@@ -74,13 +85,20 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         val functionDeclaration = context.ir.originalModuleIndex
             .functions[functionDescriptor.original]                                         // Get FunctionDeclaration by FunctionDescriptor.
 
-        if (functionDeclaration == null) return super.visitCall(irCall)                     // Function is declared in another module.
+        val result = super.visitCall(irCall)
+        if (functionDeclaration == null) return result                                      // Function is declared in another module.
+//        print("inline function ${currentFile!!.name} ")                                   // TODO debug output
+//        print("function: ${currentFunction!!.descriptor.name} ")                          // TODO debug output
+//        println("call: ${functionDescriptor.name} ${irCall.startOffset}")                 // TODO debug output
+
         val copyFuncDeclaration = functionDeclaration.accept(DeepCopyIrTree(),              // Create copy of the function.
             null) as IrFunction
 
         val startOffset = copyFuncDeclaration.startOffset
         val endOffset   = copyFuncDeclaration.endOffset
         val returnType  = copyFuncDeclaration.descriptor.returnType!!
+
+        if (copyFuncDeclaration.body == null) return result                                 // TODO workaround
         val blockBody   = copyFuncDeclaration.body!! as IrBlockBody
         val statements  = blockBody.statements
         val parameters  = evaluateParameters(irCall, statements)                            // Evaluate parameters representing expression.
@@ -90,6 +108,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         inlineBody.accept(lambdaInliner, null)
         val transformer = ParametersTransformer(parameters, irCall)
         inlineBody.accept(transformer, null)                                                // Replace parameters with expression.
+
         return super.visitBlock(inlineBody)
     }
 
@@ -97,7 +116,9 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
     override fun visitCall(expression: IrCall): IrExpression {
 
-        if(fqName!!.contains("kotlin")) return super.visitCall(expression)
+        val fqName = currentFile!!.packageFragmentDescriptor.fqName.asString()              // TODO to be removed after stdlib compilation
+        if(fqName.contains("kotlin")) return super.visitCall(expression)                    // TODO to be removed after stdlib compilation
+        // if (currentFunction!!.descriptor.isInline) return super.visitCall(expression)       // TODO workaround
 
         val functionDescriptor = expression.descriptor as FunctionDescriptor
         if (functionDescriptor.isInline) return inlineFunction(expression)                  // Return newly created IrInlineBody instead of IrCall.
@@ -113,7 +134,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 //-----------------------------------------------------------------------------//
 
 internal class LambdaInliner(val parameterToArgument:
-      List<Pair<ParameterDescriptor, IrExpression>>): IrElementTransformerVoid() {
+      MutableList<Pair<DeclarationDescriptor, IrExpression>>): IrElementTransformerVoid() {
 
     override fun visitElement(element: IrElement) = element.accept(this, null)
 
@@ -144,9 +165,11 @@ internal class LambdaInliner(val parameterToArgument:
 
     //-------------------------------------------------------------------------//
 
-    fun getLambdaFunction(lambdaArgument: IrBlock): IrFunction {
+    fun getLambdaFunction(lambdaArgument: IrBlock): IrFunction? {
         val statements = (lambdaArgument as IrContainerExpressionBase).statements
-        val lambdaFunction = statements[0] as IrFunction
+        val irFunction = statements[0]
+        if (irFunction !is IrFunction) return null                                          // TODO
+        val lambdaFunction = irFunction as IrFunction
         return lambdaFunction
     }
 
@@ -163,12 +186,14 @@ internal class LambdaInliner(val parameterToArgument:
         val lambdaArgument = parameterArgument.second
         val lambdaFunction = getLambdaFunction(lambdaArgument as IrBlock)
 
+        if (lambdaFunction == null) return super.visitCall(irCall)                          // TODO
+
         val parameters = lambdaFunction.descriptor.valueParameters                          // Lambda function parameters
         val res = parameters.map {
             val argument  = irCall.getValueArgument(it.index)
-            val parameter = it
+            val parameter = it as DeclarationDescriptor
             parameter to argument!!
-        }
+        }.toMutableList()
 
         val lambdaStatements = getLambdaStatements(lambdaArgument)
         val lambdaReturnType = getLambdaReturnType(lambdaArgument)
@@ -190,10 +215,11 @@ internal class LambdaInliner(val parameterToArgument:
 
 //-----------------------------------------------------------------------------//
 
-internal class ParametersTransformer(val parameterToArgument: List<Pair<ParameterDescriptor, IrExpression>>,
+internal class ParametersTransformer(val parameterToArgument: MutableList<Pair<DeclarationDescriptor, IrExpression>>,
                                      val callSite: IrCall): IrElementTransformerVoid() {
 
     override fun visitElement(element: IrElement) = element.accept(this, null)
+    val scope  = Scope(callSite.descriptor as FunctionDescriptor)
 
     //-------------------------------------------------------------------------//
 
@@ -201,10 +227,17 @@ internal class ParametersTransformer(val parameterToArgument: List<Pair<Paramete
 
         val expression = super.visitTypeOperator(oldExpression) as IrTypeOperatorCall
 
-        val typeArgsMap     = (callSite as IrMemberAccessExpressionBase).typeArguments!!
-        val declarationDescriptor = expression.typeOperand.constructor.declarationDescriptor
+        if (expression.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {              // Nothing to do for IMPLICIT_COERCION_TO_UNIT
+            return expression
+        }
 
-        val typeOld         = declarationDescriptor as TypeParameterDescriptor
+        val typeArgsMap = (callSite as IrMemberAccessExpressionBase).typeArguments          // If there are no type args - do nothing.
+        if (typeArgsMap == null) return expression
+
+        val typeDescriptor = expression.typeOperand.constructor.declarationDescriptor
+        if (typeDescriptor !is TypeParameterDescriptor) return expression                   // It is not TypeParameter - do nothing
+
+        val typeOld         = typeDescriptor
         val typeNew         = typeArgsMap[typeOld]!!
         val startOffset     = expression.startOffset
         val endOffset       = expression.endOffset
@@ -219,12 +252,57 @@ internal class ParametersTransformer(val parameterToArgument: List<Pair<Paramete
 
     override fun visitGetValue(expression: IrGetValue): IrExpression {
         val descriptor = expression.descriptor
-        if (descriptor !is ParameterDescriptor) {                                           // TODO do we need this check?
-            return super.visitGetValue(expression)
+        val result = super.visitGetValue(expression)
+        val parameterArgument = parameterToArgument.find { it.first == descriptor }         // Find expression to replace this parameter.
+        if (parameterArgument == null) {
+            return result
         }
-        val parameterArgument = parameterToArgument.find { it.first.original == descriptor } // Find expression to replace this parameter.
-        if (parameterArgument == null) return super.visitGetValue(expression)
 
         return  parameterArgument.second                                                    // TODO should we proceed with IR iteration here?
     }
+
+    //-------------------------------------------------------------------------//
+
+    fun newVariable(oldVariable: IrVariable, newType: KotlinType): IrVariable {
+
+        val initializer = oldVariable.initializer!!
+        val newVariable = scope.createTemporaryVariable(initializer, "inline", false)       // Create new variable and init it with the parameter expression.
+
+        return newVariable
+    }
+
+    //-------------------------------------------------------------------------//
+
+    fun substituteType(variable: IrVariable): KotlinType? {
+
+        val typeArgsMap = (callSite as IrMemberAccessExpressionBase).typeArguments
+        if (typeArgsMap == null) return null
+        val oldType     = variable.descriptor.type
+        val typeDescriptor = oldType.constructor.declarationDescriptor
+        return typeArgsMap[typeDescriptor]
+    }
+
+    //-------------------------------------------------------------------------//
+
+    override fun visitVariable(declaration: IrVariable): IrStatement {
+
+        val result = super.visitVariable(declaration)
+        val type = substituteType(declaration)
+        if (type == null) {
+            return result
+        }
+
+        val newVar = newVariable(declaration, type)
+        val rr = parameterToArgument.find { it.first == declaration.descriptor }
+        if (rr == null) {
+            val getVal = IrGetValueImpl(0, 0, newVar.descriptor)                            // Create new IR element representing access the new variable.
+            parameterToArgument.add(declaration.descriptor to getVal)
+        } else {
+            return rr.second
+        }
+
+        return newVar
+    }
+
 }
+
