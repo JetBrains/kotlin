@@ -1207,6 +1207,7 @@ task initializers2(type: RunKonanTest) {
                 "1\n" +
                 "globalValue2\n" +
                 "globalValue3\n"
+
     source = "runtime/basic/initializers2.kt"
 }
 
@@ -1299,6 +1300,16 @@ task vararg_of_literals(type: RunKonanTest) {
     disabled = true
     goldValue = "a\na\n"
     source = "lower/vararg_of_literals.kt"
+}
+
+task tailrec(type: RunKonanTest) {
+    goldValue = "12\n100000000\n" +
+            "8\n" +
+            "1\n" +
+            "3 ...\n2 ...\n1 ...\nready!\n" +
+            "2\n-1\n" +
+            "true\nfalse\n"
+    source = "lower/tailrec.kt"
 }
 
 task inline4(type: RunKonanTest) {
