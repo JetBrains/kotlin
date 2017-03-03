@@ -414,7 +414,7 @@ private fun isInlineCall(context: BindingContext, expr: KtCallExpression): Boole
     return InlineUtil.isInline(resolvedCall.resultingDescriptor)
 }
 
-private inline fun <reified T : PsiElement> PsiElement.typedParent(): T? = getStrictParentOfType()
+private inline fun <reified T : PsiElement> PsiElement.typedParent(): T? = parent as? T
 
 private fun String.substringIndex(): String {
     if (lastIndexOf("$") < 0) return this
