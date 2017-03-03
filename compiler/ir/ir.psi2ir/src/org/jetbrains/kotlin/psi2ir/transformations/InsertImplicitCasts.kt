@@ -38,174 +38,128 @@ fun insertImplicitCasts(builtIns: KotlinBuiltIns, element: IrElement) {
 }
 
 class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoid() {
+    private inline fun <T : IrElement> T.transformPostfix(body: T.() -> Unit): T {
+        transformChildrenVoid(this@InsertImplicitCasts)
+        this.body()
+        return this
+    }
+
     override fun visitElement(element: IrElement): IrElement {
         element.transformChildrenVoid(this)
         return element
     }
 
-    override fun visitMemberAccess(expression: IrMemberAccessExpression): IrExpression {
-        expression.transformChildrenVoid(this)
-
-        with(expression) {
-            dispatchReceiver = dispatchReceiver?.cast(descriptor.dispatchReceiverParameter?.type)
-            extensionReceiver = extensionReceiver?.cast(descriptor.extensionReceiverParameter?.type)
-            for (index in descriptor.valueParameters.indices) {
-                val argument = getValueArgument(index) ?: continue
-                val parameterType = descriptor.valueParameters[index].type
-                putValueArgument(index, argument.cast(parameterType))
+    override fun visitMemberAccess(expression: IrMemberAccessExpression): IrExpression =
+            expression.transformPostfix {
+                dispatchReceiver = dispatchReceiver?.cast(descriptor.dispatchReceiverParameter?.type)
+                extensionReceiver = extensionReceiver?.cast(descriptor.extensionReceiverParameter?.type)
+                for (index in descriptor.valueParameters.indices) {
+                    val argument = getValueArgument(index) ?: continue
+                    val parameterType = descriptor.valueParameters[index].type
+                    putValueArgument(index, argument.cast(parameterType))
+                }
             }
-        }
 
-        return expression
-    }
-
-    override fun visitBlockBody(body: IrBlockBody): IrBody {
-        body.transformChildrenVoid(this)
-
-        body.statements.forEachIndexed { i, irStatement ->
-            if (irStatement is IrExpression) {
-                body.statements[i] = irStatement.coerceToUnit()
+    override fun visitBlockBody(body: IrBlockBody): IrBody =
+            body.transformPostfix {
+                statements.forEachIndexed { i, irStatement ->
+                    if (irStatement is IrExpression) {
+                        body.statements[i] = irStatement.coerceToUnit()
+                    }
+                }
             }
-        }
 
-        return body
-    }
+    override fun visitContainerExpression(expression: IrContainerExpression): IrExpression =
+            expression.transformPostfix {
+                if (statements.isEmpty()) return this
 
-    override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
-        expression.transformChildrenVoid(this)
-
-        val type = expression.type
-        if (expression.statements.isEmpty()) {
-            return expression
-        }
-
-        val lastIndex = expression.statements.lastIndex
-        expression.statements.forEachIndexed { i, irStatement ->
-            if (irStatement is IrExpression) {
-                expression.statements[i] =
-                        if (i == lastIndex)
-                            irStatement.cast(type)
-                        else
-                            irStatement.coerceToUnit()
+                val lastIndex = statements.lastIndex
+                statements.forEachIndexed { i, irStatement ->
+                    if (irStatement is IrExpression) {
+                        statements[i] =
+                                if (i == lastIndex)
+                                    irStatement.cast(type)
+                                else
+                                    irStatement.coerceToUnit()
+                    }
+                }
             }
-        }
 
-        return expression
-    }
-
-    override fun visitReturn(expression: IrReturn): IrExpression {
-        expression.transformChildrenVoid(this)
-
-        expression.value = expression.value.cast(expression.returnTarget.returnType)
-
-        return expression
-    }
-
-    override fun visitSetVariable(expression: IrSetVariable): IrExpression {
-        expression.transformChildrenVoid(this)
-
-        expression.value = expression.value.cast(expression.descriptor.type)
-
-        return expression
-    }
-
-    override fun visitSetField(expression: IrSetField): IrExpression {
-        expression.transformChildrenVoid(this)
-
-        expression.value = expression.value.cast(expression.descriptor.type)
-
-        return expression
-    }
-
-    override fun visitVariable(declaration: IrVariable): IrVariable {
-        declaration.transformChildrenVoid(this)
-
-        declaration.initializer = declaration.initializer?.cast(declaration.descriptor.type)
-
-        return declaration
-    }
-
-    override fun visitField(declaration: IrField): IrStatement {
-        declaration.transformChildrenVoid(this)
-
-        declaration.initializer?.coerce(declaration.descriptor.type)
-
-        return declaration
-    }
-
-    override fun visitFunction(declaration: IrFunction): IrStatement {
-        declaration.transformChildrenVoid(this)
-
-        declaration.descriptor.valueParameters.forEach {
-            declaration.getDefault(it)?.coerce(it.type)
-        }
-
-        return declaration
-    }
-
-    override fun visitWhen(expression: IrWhen): IrExpression {
-        expression.transformChildrenVoid(this)
-
-        val resultType = expression.type
-
-        for (irBranch in expression.branches) {
-            irBranch.condition = irBranch.condition.cast(builtIns.booleanType)
-            irBranch.result = irBranch.result.cast(resultType)
-        }
-
-        return expression
-    }
-
-    override fun visitLoop(loop: IrLoop): IrExpression {
-        loop.transformChildrenVoid(this)
-
-        loop.condition = loop.condition.cast(builtIns.booleanType)
-
-        loop.body = loop.body?.coerceToUnit()
-
-        return loop
-    }
-
-    override fun visitThrow(expression: IrThrow): IrExpression {
-        expression.transformChildrenVoid(this)
-
-        expression.value = expression.value.cast(builtIns.throwable.defaultType)
-
-        return expression
-    }
-
-    override fun visitTry(aTry: IrTry): IrExpression {
-        aTry.transformChildrenVoid(this)
-
-        val resultType = aTry.type
-
-        aTry.tryResult = aTry.tryResult.cast(resultType)
-
-        for (aCatch in aTry.catches) {
-            aCatch.result = aCatch.result.cast(resultType)
-        }
-
-        aTry.finallyExpression = aTry.finallyExpression?.coerceToUnit()
-
-        return aTry
-    }
-
-    override fun visitVararg(expression: IrVararg): IrExpression {
-        expression.transformChildrenVoid(this)
-
-        expression.elements.forEachIndexed { i, element ->
-            when (element) {
-                is IrSpreadElement ->
-                    element.expression = element.expression.cast(expression.type)
-                is IrExpression ->
-                    expression.putElement(i, element.cast(expression.varargElementType))
+    override fun visitReturn(expression: IrReturn): IrExpression =
+            expression.transformPostfix {
+                value = value.cast(expression.returnTarget.returnType)
             }
-        }
 
-        return expression
-    }
+    override fun visitSetVariable(expression: IrSetVariable): IrExpression =
+            expression.transformPostfix {
+                value = value.cast(expression.descriptor.type)
+            }
 
-    private fun IrExpressionBody.coerce(expectedType: KotlinType) {
+    override fun visitSetField(expression: IrSetField): IrExpression =
+            expression.transformPostfix {
+                value = value.cast(expression.descriptor.type)
+            }
+
+    override fun visitVariable(declaration: IrVariable): IrVariable =
+            declaration.transformPostfix {
+                initializer = initializer?.cast(declaration.descriptor.type)
+            }
+
+    override fun visitField(declaration: IrField): IrStatement =
+            declaration.transformPostfix {
+                initializer?.coerceInnerExpression(descriptor.type)
+            }
+
+    override fun visitFunction(declaration: IrFunction): IrStatement =
+            declaration.transformPostfix {
+                descriptor.valueParameters.forEach {
+                    getDefault(it)?.coerceInnerExpression(it.type)
+                }
+            }
+
+    override fun visitWhen(expression: IrWhen): IrExpression =
+            expression.transformPostfix {
+                for (irBranch in branches) {
+                    irBranch.condition = irBranch.condition.cast(builtIns.booleanType)
+                    irBranch.result = irBranch.result.cast(type)
+                }
+            }
+
+    override fun visitLoop(loop: IrLoop): IrExpression =
+            loop.transformPostfix {
+                condition = condition.cast(builtIns.booleanType)
+                body = body?.coerceToUnit()
+            }
+
+    override fun visitThrow(expression: IrThrow): IrExpression =
+            expression.transformPostfix {
+                value = value.cast(builtIns.throwable.defaultType)
+            }
+
+    override fun visitTry(aTry: IrTry): IrExpression =
+            aTry.transformPostfix {
+                tryResult = tryResult.cast(type)
+
+                for (aCatch in catches) {
+                    aCatch.result = aCatch.result.cast(type)
+                }
+
+                finallyExpression = finallyExpression?.coerceToUnit()
+            }
+
+    override fun visitVararg(expression: IrVararg): IrExpression =
+            expression.transformPostfix {
+                elements.forEachIndexed { i, element ->
+                    when (element) {
+                        is IrSpreadElement ->
+                            element.expression = element.expression.cast(expression.type)
+                        is IrExpression ->
+                            putElement(i, element.cast(varargElementType))
+                    }
+                }
+            }
+
+    private fun IrExpressionBody.coerceInnerExpression(expectedType: KotlinType) {
         expression = expression.cast(expectedType)
     }
 
