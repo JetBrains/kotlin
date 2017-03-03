@@ -89,15 +89,19 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
     @NotNull
     private File compileLibrary(@NotNull String sourcePath, @NotNull File... extraClassPath) {
+        return compileLibrary(sourcePath, Collections.<String>emptyList(), extraClassPath);
+    }
+
+    private File compileLibrary(@NotNull String sourcePath, List<String> additionalOptions, @NotNull File... extraClassPath) {
         File destination = new File(tmpdir, sourcePath + ".jar");
-        compileLibrary(new K2JVMCompiler(), sourcePath, destination, extraClassPath);
+        compileLibrary(new K2JVMCompiler(), sourcePath, destination, additionalOptions, extraClassPath);
         return destination;
     }
 
     private void compileLibrary(
-            @NotNull CLICompiler<?> compiler, @NotNull String sourcePath, @NotNull File destination, @NotNull File... extraClassPath
+            @NotNull CLICompiler<?> compiler, @NotNull String sourcePath, @NotNull File destination, List<String> additionalOptions, @NotNull File... extraClassPath
     ) {
-        Pair<String, ExitCode> output = compileKotlin(compiler, sourcePath, destination, Collections.<String>emptyList(), extraClassPath);
+        Pair<String, ExitCode> output = compileKotlin(compiler, sourcePath, destination, additionalOptions, extraClassPath);
         Assert.assertEquals(normalizeOutput(new Pair<String, ExitCode>("", ExitCode.OK)), normalizeOutput(output));
     }
 
@@ -324,7 +328,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
         try {
             System.setProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY, "true");
-            compileLibrary(compiler, libraryName, destination);
+            compileLibrary(compiler, libraryName, destination, Collections.<String>emptyList());
         }
         finally {
             System.clearProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY);
@@ -628,5 +632,15 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
         Pair<String, ExitCode> output = compileKotlin("source.kt", tmpdir, library1);
         KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
+    }
+
+    public void testWrongInlineTarget() throws Exception {
+        File library = compileLibrary("library", Arrays.asList("-jvm-target", "1.8"));
+
+        Pair<String, ExitCode> outputMain = compileKotlin("source.kt", tmpdir, library);
+
+        KotlinTestUtils.assertEqualsToFile(
+                new File(getTestDataDirectory(), "output.txt"), normalizeOutput(outputMain)
+        );
     }
 }

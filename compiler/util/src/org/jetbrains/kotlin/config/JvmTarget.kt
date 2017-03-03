@@ -17,11 +17,18 @@
 package org.jetbrains.kotlin.config
 
 import org.jetbrains.kotlin.utils.DescriptionAware
+import org.jetbrains.org.objectweb.asm.Opcodes
 
 enum class JvmTarget(override val description: String) : DescriptionAware {
     JVM_1_6("1.6"),
     JVM_1_8("1.8"),
     ;
+
+    val bytecodeVersion: Int
+        get() = when(this) {
+            JVM_1_6 -> Opcodes.V1_6
+            JVM_1_8 -> Opcodes.V1_8
+        }
 
     companion object {
         @JvmField
@@ -29,5 +36,17 @@ enum class JvmTarget(override val description: String) : DescriptionAware {
 
         @JvmStatic
         fun fromString(string: String) = values().find { it.description == string }
+
+        fun getDescription(bytecodeVersion: Int): String {
+            val platformDescription = values().find { it.bytecodeVersion == bytecodeVersion }?.description ?:
+                   when (bytecodeVersion) {
+                       Opcodes.V1_7 -> "1.7"
+                       Opcodes.V1_8 + 1 -> "1.9"
+                       else -> null
+                   }
+
+            return if (platformDescription != null) "JVM target $platformDescription"
+                    else "JVM bytecode version $bytecodeVersion"
+        }
     }
 }

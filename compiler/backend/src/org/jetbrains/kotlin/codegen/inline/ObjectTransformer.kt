@@ -66,7 +66,6 @@ class WhenMappingTransformer(
         val fieldNode = transformationInfo.fieldNode
         classReader.accept(object : ClassVisitor(InlineCodegenUtil.API, classBuilder.visitor) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
-                InlineCodegenUtil.assertVersionNotGreaterThanGeneratedOne(version, name, state)
                 classBuilder.defineClass(null, version, access, name, signature, superName, interfaces)
             }
 

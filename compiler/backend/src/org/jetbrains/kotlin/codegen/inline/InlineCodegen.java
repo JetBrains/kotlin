@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -202,7 +203,7 @@ public class InlineCodegen extends CallGenerator {
         MethodNode node = nodeAndSmap != null ? nodeAndSmap.getNode() : null;
         throw new CompilationException(
                 "Couldn't inline method call '" + functionDescriptor.getName() + "' into\n" +
-                contextDescriptor + "\n" +
+                DescriptorRenderer.DEBUG_TEXT.render(contextDescriptor) + "\n" +
                 (element != null ? element.getText() : "<no source>") +
                 (generateNodeText ? ("\nCause: " + InlineCodegenUtil.getNodeText(node)) : ""),
                 e, callElement
@@ -321,7 +322,7 @@ public class InlineCodegen extends CallGenerator {
                 }
             });
 
-            return InlineCodegenUtil.getMethodNode(bytes, asmMethod.getName(), asmMethod.getDescriptor(), classId, state);
+            return InlineCodegenUtil.getMethodNode(bytes, asmMethod.getName(), asmMethod.getDescriptor(), classId);
         }
 
         assert callableDescriptor instanceof DeserializedCallableMemberDescriptor : "Not a deserialized function or proper: " + callableDescriptor;
@@ -348,7 +349,7 @@ public class InlineCodegen extends CallGenerator {
         });
 
 
-        return InlineCodegenUtil.getMethodNode(bytes, asmMethod.getName(), asmMethod.getDescriptor(), containerId, state);
+        return InlineCodegenUtil.getMethodNode(bytes, asmMethod.getName(), asmMethod.getDescriptor(), containerId);
     }
 
     @NotNull

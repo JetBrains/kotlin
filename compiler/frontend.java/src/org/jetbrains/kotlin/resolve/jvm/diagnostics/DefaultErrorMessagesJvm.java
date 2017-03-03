@@ -115,6 +115,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
         MAP.put(ErrorsJvm.DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET, "Super calls to Java default methods are deprecated in JVM target 1.6. Recompile with '-jvm-target 1.8'");
         MAP.put(ErrorsJvm.INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET, "Calls to static methods in Java interfaces are deprecated in JVM target 1.6. Recompile with '-jvm-target 1.8'");
+
+        MAP.put(ErrorsJvm.INLINE_FROM_HIGHER_PLATFORM, "Cannot inline bytecode built with {0} into bytecode that is being built with {1}. Please specify proper ''-jvm-target'' option", Renderers.TO_STRING, Renderers.TO_STRING);
     }
 
     @NotNull

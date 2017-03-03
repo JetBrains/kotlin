@@ -123,7 +123,8 @@ class GenerationState @JvmOverloads constructor(
         extraJvmDiagnosticsTrace.bindingContext.diagnostics
     }
 
-    val isJvm8Target: Boolean = configuration.get(JVMConfigurationKeys.JVM_TARGET) == JvmTarget.JVM_1_8
+    val target = configuration.get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
+    val isJvm8Target: Boolean = target == JvmTarget.JVM_1_8
     val isJvm8TargetWithDefaults: Boolean =  isJvm8Target && configuration.getBoolean(JVMConfigurationKeys.JVM8_TARGET_WITH_DEFAULTS)
     val generateDefaultImplsForJvm8: Boolean = configuration.getBoolean(JVMConfigurationKeys.INTERFACE_COMPATIBILITY)
 
@@ -162,7 +163,7 @@ class GenerationState @JvmOverloads constructor(
 
     val rootContext: CodegenContext<*> = RootContext(this)
 
-    val classFileVersion: Int = if (isJvm8Target) Opcodes.V1_8 else Opcodes.V1_6
+    val classFileVersion: Int = target.bytecodeVersion
 
     val generateParametersMetadata: Boolean = configuration.getBoolean(JVMConfigurationKeys.PARAMETERS_METADATA)
 

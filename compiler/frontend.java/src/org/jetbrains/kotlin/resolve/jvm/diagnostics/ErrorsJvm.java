@@ -92,6 +92,8 @@ public interface ErrorsJvm {
     DiagnosticFactory0<PsiElement> DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<PsiElement> INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET = DiagnosticFactory0.create(WARNING);
 
+    DiagnosticFactory2<PsiElement, String, String> INLINE_FROM_HIGHER_PLATFORM = DiagnosticFactory2.create(ERROR);
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {

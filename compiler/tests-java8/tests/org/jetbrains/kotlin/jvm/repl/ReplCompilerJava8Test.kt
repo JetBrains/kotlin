@@ -83,13 +83,10 @@ class ReplCompilerJava8Test : TestCase() {
         val configuration = makeConfiguration().apply {
             put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_6)
         }
-        try {
-            runTest(configuration)
-            Assert.fail("Should fail due to bytecode incompatibility check")
-        }
-        catch (e: CompilationException) {
-            Assert.assertTrue(e.message!!.contains("This compiler can only inline Java 1.6 bytecode (version 50)"))
-        }
+
+        val result = runTest(configuration)
+        Assert.assertTrue(result is ReplCompileResult.Error)
+        Assert.assertTrue((result as ReplCompileResult.Error).message.contains("error: cannot inline bytecode built with JVM target 1.8 into bytecode that is being built with JVM target 1.6"))
     }
 
     @Test
@@ -98,11 +95,9 @@ class ReplCompilerJava8Test : TestCase() {
         val configuration = makeConfiguration()
         System.setProperty(KOTLIN_REPL_JVM_TARGET_PROPERTY, "1.6")
         try {
-            runTest(configuration)
-            Assert.fail("Should fail due to bytecode incompatibility check")
-        }
-        catch (e: CompilationException) {
-            Assert.assertTrue(e.message!!.contains("This compiler can only inline Java 1.6 bytecode (version 50)"))
+            val result = runTest(configuration)
+            Assert.assertTrue(result is ReplCompileResult.Error)
+            Assert.assertTrue((result as ReplCompileResult.Error).message.contains("error: cannot inline bytecode built with JVM target 1.8 into bytecode that is being built with JVM target 1.6"))
         }
         finally {
             System.clearProperty(KOTLIN_REPL_JVM_TARGET_PROPERTY)
