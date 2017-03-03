@@ -6,7 +6,7 @@ public final class A {
 }
 
 @kotlin.Metadata
-public final class A/B {
+public final static class A/B {
     public final static field INSTANCE: A.B
     inner class A/B
     inner class A/B/C
@@ -14,7 +14,7 @@ public final class A/B {
 }
 
 @kotlin.Metadata
-public final class A/B/C {
+public final static class A/B/C {
     public final static field INSTANCE: A.B.C
     private final static @org.jetbrains.annotations.NotNull field ok: java.lang.String
     inner class A/B

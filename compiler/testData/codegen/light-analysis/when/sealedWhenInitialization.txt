@@ -6,7 +6,7 @@ public abstract class A {
 }
 
 @kotlin.Metadata
-public final class A/B {
+public final static class A/B {
     public final static field INSTANCE: A.B
     inner class A/B
     private method <init>(): void

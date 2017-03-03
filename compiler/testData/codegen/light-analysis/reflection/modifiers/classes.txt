@@ -41,7 +41,7 @@ public final class S/InnerClass {
 }
 
 @kotlin.Metadata
-public final class S/NonCompanionObject {
+public final static class S/NonCompanionObject {
     public final static field INSTANCE: S.NonCompanionObject
     inner class S/NonCompanionObject
     private method <init>(): void

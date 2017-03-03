@@ -10,7 +10,7 @@ public final class Foo {
 }
 
 @kotlin.Metadata
-private final class Foo/O {
+private final static class Foo/O {
     public final static field INSTANCE: Foo.O
     inner class Foo/O
     private method <init>(): void

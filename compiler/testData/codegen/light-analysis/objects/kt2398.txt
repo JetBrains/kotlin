@@ -5,7 +5,7 @@ public final class C {
 }
 
 @kotlin.Metadata
-public final class C/Obj {
+public final static class C/Obj {
     public final static field INSTANCE: C.Obj
     private final static @org.jetbrains.annotations.NotNull field o: java.lang.String
     inner class C/Obj
@@ -25,7 +25,7 @@ public final static class C/Obj/D {
 }
 
 @kotlin.Metadata
-public final class C/Obj/InnerObj {
+public final static class C/Obj/InnerObj {
     public final static field INSTANCE: C.Obj.InnerObj
     inner class C/Obj
     inner class C/Obj/InnerObj

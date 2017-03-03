@@ -128,43 +128,35 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         boolean isAbstract = false;
         boolean isInterface = false;
         boolean isFinal = false;
-        boolean isStatic;
         boolean isAnnotation = false;
         boolean isEnum = false;
 
         ClassKind kind = descriptor.getKind();
 
-        if (kind == ClassKind.OBJECT) {
-            isStatic = isCompanionObject(descriptor);
-            isFinal = true;
+        Modality modality = descriptor.getModality();
+
+        if (modality == Modality.ABSTRACT || modality == Modality.SEALED) {
+            isAbstract = true;
         }
-        else {
-            Modality modality = descriptor.getModality();
 
-            if (modality == Modality.ABSTRACT || modality == Modality.SEALED) {
-                isAbstract = true;
-            }
+        if (kind == ClassKind.INTERFACE) {
+            isAbstract = true;
+            isInterface = true;
+        }
+        else if (kind == ClassKind.ANNOTATION_CLASS) {
+            isAbstract = true;
+            isInterface = true;
+            isAnnotation = true;
+        }
+        else if (kind == ClassKind.ENUM_CLASS) {
+            isAbstract = hasAbstractMembers(descriptor);
+            isEnum = true;
+        }
 
-            if (kind == ClassKind.INTERFACE) {
-                isAbstract = true;
-                isInterface = true;
-            }
-            else if (kind == ClassKind.ANNOTATION_CLASS) {
-                isAbstract = true;
-                isInterface = true;
-                isAnnotation = true;
-            }
-            else if (kind == ClassKind.ENUM_CLASS) {
-                isAbstract = hasAbstractMembers(descriptor);
-                isEnum = true;
-            }
-
-            if (modality != Modality.OPEN && !isAbstract) {
-                // Light-class mode: Do not make enum classes final since PsiClass corresponding to enum is expected to be inheritable from
-                isFinal = !(kind == ClassKind.ENUM_CLASS && !state.getClassBuilderMode().generateBodies);
-            }
-
-            isStatic = !descriptor.isInner();
+        if (modality != Modality.OPEN && !isAbstract) {
+            isFinal = kind == ClassKind.OBJECT ||
+                      // Light-class mode: Do not make enum classes final since PsiClass corresponding to enum is expected to be inheritable from
+                      !(kind == ClassKind.ENUM_CLASS && !state.getClassBuilderMode().generateBodies);
         }
 
         int access = 0;
@@ -176,7 +168,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             // Thus we must write full accessibility flags on inner classes in this mode
             access |= getVisibilityAccessFlag(descriptor);
             // Same for STATIC
-            if (isStatic) {
+            if (!descriptor.isInner()) {
                 access |= ACC_STATIC;
             }
         }

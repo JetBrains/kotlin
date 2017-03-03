@@ -9,7 +9,7 @@ public final class A {
 }
 
 @kotlin.Metadata
-public final class A/B {
+public final static class A/B {
     public final static field INSTANCE: A.B
     private final static field prop: int
     inner class A/B
@@ -19,7 +19,7 @@ public final class A/B {
 }
 
 @kotlin.Metadata
-public final class A/C {
+public final static class A/C {
     public final static field INSTANCE: A.C
     inner class A/C
     private method <init>(): void

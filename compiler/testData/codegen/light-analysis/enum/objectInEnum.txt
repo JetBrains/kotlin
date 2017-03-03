@@ -11,7 +11,7 @@ public enum class E {
 }
 
 @kotlin.Metadata
-public final class E/O {
+public final static class E/O {
     public final static field INSTANCE: E.O
     inner class E/O
     private method <init>(): void
@@ -27,7 +27,7 @@ final static class E/SUBCLASS {
 }
 
 @kotlin.Metadata
-public final class E/SUBCLASS/O {
+public final static class E/SUBCLASS/O {
     public final static field INSTANCE: E.SUBCLASS.O
     inner class E/SUBCLASS
     inner class E/SUBCLASS/O

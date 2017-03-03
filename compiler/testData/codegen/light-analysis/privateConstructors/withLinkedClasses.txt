@@ -8,7 +8,7 @@ public class Outer {
 }
 
 @kotlin.Metadata
-public final class Outer/First {
+public final static class Outer/First {
     public final static field INSTANCE: Outer.First
     inner class Outer/First
     private method <init>(): void

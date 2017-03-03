@@ -19,7 +19,7 @@ public final class Outer {
 }
 
 @kotlin.Metadata
-public final class Outer/O {
+public final static class Outer/O {
     public final static field INSTANCE: Outer.O
     inner class Outer/O
     private method <init>(): void

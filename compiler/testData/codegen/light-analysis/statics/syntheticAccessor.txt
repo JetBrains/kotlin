@@ -7,7 +7,7 @@ public final class A {
 }
 
 @kotlin.Metadata
-public final class A/B {
+public final static class A/B {
     public final static field INSTANCE: A.B
     private final static @org.jetbrains.annotations.NotNull field z: java.lang.String
     inner class A/B
