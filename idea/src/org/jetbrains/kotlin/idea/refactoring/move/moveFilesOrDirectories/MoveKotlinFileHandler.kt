@@ -91,7 +91,7 @@ class MoveKotlinFileHandler : MoveFileHandler() {
                         elementsToMove = psiFile.declarations.filterIsInstance<KtNamedDeclaration>(),
                         moveTarget = moveTarget,
                         delegate = MoveDeclarationsDelegate.TopLevel,
-                        updateInternalReferences = false
+                        scanEntireFile = true
                 ),
                 Mover.Idle
         )
@@ -122,7 +122,6 @@ class MoveKotlinFileHandler : MoveFileHandler() {
             usages += it.findUsages()
             usages += it.getConflictsAsUsages()
         }
-        newParent?.let { usages += findInternalUsages(psiFile, it) }
         return usages
     }
 

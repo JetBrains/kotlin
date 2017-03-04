@@ -145,10 +145,14 @@ class MoveConflictChecker(
         RefactoringConflictsUtil.analyzeModuleConflicts(project, elementsToMove, usages.toTypedArray(), sourceRoot, conflicts)
     }
 
-    fun checkModuleConflictsInDeclarations(conflicts: MultiMap<PsiElement, String>) {
+    private fun checkModuleConflictsInDeclarations(
+            internalUsages: MutableSet<UsageInfo>,
+            conflicts: MultiMap<PsiElement, String>
+    ) {
         val sourceRoot = moveTarget.targetFile ?: return
         val targetModule = ModuleUtilCore.findModuleForFile(sourceRoot, project) ?: return
         val resolveScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(targetModule)
+        val referencesToSkip = HashSet<KtReferenceExpression>()
         for (declaration in elementsToMove - doNotGoIn) {
             declaration.forEachDescendantOfType<KtReferenceExpression> { refExpr ->
                 val targetDescriptor = refExpr.analyze(BodyResolveMode.PARTIAL)[BindingContext.REFERENCE_TARGET, refExpr] ?: return@forEachDescendantOfType
@@ -172,8 +176,10 @@ class MoveConflictChecker(
                                                         scopeDescription,
                                                         CommonRefactoringUtil.htmlEmphasize(targetModule.name))
                 conflicts.putValue(target, CommonRefactoringUtil.capitalize(message))
+                referencesToSkip += refExpr
             }
         }
+        internalUsages.removeIf { it.reference?.element?.let { it in referencesToSkip } ?: false }
     }
 
     fun checkVisibilityInUsages(usages: List<UsageInfo>, conflicts: MultiMap<PsiElement, String>) {
@@ -205,7 +211,7 @@ class MoveConflictChecker(
         }
     }
 
-    fun checkVisibilityInDeclarations(conflicts: MultiMap<PsiElement, String>) {
+    private fun checkVisibilityInDeclarations(conflicts: MultiMap<PsiElement, String>) {
         val targetContainer = moveTarget.getContainerDescriptor() ?: return
         for (declaration in elementsToMove - doNotGoIn) {
             declaration.forEachDescendantOfType<KtReferenceExpression> { refExpr ->
@@ -227,10 +233,14 @@ class MoveConflictChecker(
         }
     }
 
-    fun checkAllConflicts(usages: List<UsageInfo>, conflicts: MultiMap<PsiElement, String>) {
-        checkModuleConflictsInUsages(usages, conflicts)
-        checkModuleConflictsInDeclarations(conflicts)
-        checkVisibilityInUsages(usages, conflicts)
+    fun checkAllConflicts(
+            externalUsages: List<UsageInfo>,
+            internalUsages: MutableSet<UsageInfo>,
+            conflicts: MultiMap<PsiElement, String>
+    ) {
+        checkModuleConflictsInUsages(externalUsages, conflicts)
+        checkModuleConflictsInDeclarations(internalUsages, conflicts)
+        checkVisibilityInUsages(externalUsages, conflicts)
         checkVisibilityInDeclarations(conflicts)
     }
 }

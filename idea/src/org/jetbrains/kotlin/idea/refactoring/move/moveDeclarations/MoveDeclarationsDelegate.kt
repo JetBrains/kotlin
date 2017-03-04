@@ -37,7 +37,7 @@ sealed class MoveDeclarationsDelegate {
     abstract fun findUsages(descriptor: MoveDeclarationsDescriptor): List<UsageInfo>
     abstract fun collectConflicts(
             descriptor: MoveDeclarationsDescriptor,
-            usages: MutableList<UsageInfo>,
+            internalUsages: MutableSet<UsageInfo>,
             conflicts: MultiMap<PsiElement, String>
     )
     abstract fun preprocessDeclaration(descriptor: MoveDeclarationsDescriptor, originalDeclaration: KtNamedDeclaration)
@@ -53,7 +53,7 @@ sealed class MoveDeclarationsDelegate {
 
         override fun collectConflicts(
                 descriptor: MoveDeclarationsDescriptor,
-                usages: MutableList<UsageInfo>,
+                internalUsages: MutableSet<UsageInfo>,
                 conflicts: MultiMap<PsiElement, String>
         ) {
 
@@ -90,10 +90,10 @@ sealed class MoveDeclarationsDelegate {
 
         override fun collectConflicts(
                 descriptor: MoveDeclarationsDescriptor,
-                usages: MutableList<UsageInfo>,
+                internalUsages: MutableSet<UsageInfo>,
                 conflicts: MultiMap<PsiElement, String>
         ) {
-            val usageIterator = usages.iterator()
+            val usageIterator = internalUsages.iterator()
             while (usageIterator.hasNext()) {
                 val usage = usageIterator.next()
                 val element = usage.element ?: continue

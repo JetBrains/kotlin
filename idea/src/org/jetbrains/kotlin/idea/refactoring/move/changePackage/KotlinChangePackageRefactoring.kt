@@ -57,7 +57,7 @@ class KotlinChangePackageRefactoring(val file: KtFile) {
                             override fun verify(file: PsiFile) = null
                         },
                         delegate = MoveDeclarationsDelegate.TopLevel,
-                        updateInternalReferences = false
+                        scanEntireFile = false
                 ),
                 Mover.Idle // we don't need to move any declarations physically
         )

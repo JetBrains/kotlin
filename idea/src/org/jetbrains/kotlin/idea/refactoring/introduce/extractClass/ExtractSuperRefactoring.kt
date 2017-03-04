@@ -67,6 +67,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import java.util.*
+import kotlin.collections.LinkedHashMap
+import kotlin.collections.LinkedHashSet
 
 data class ExtractSuperInfo(
         val originalClass: KtClassOrObject,
@@ -164,7 +166,7 @@ class ExtractSuperRefactoring(
                             }
                         }
                     }
-                    conflictChecker.checkAllConflicts(usages, conflicts)
+                    conflictChecker.checkAllConflicts(usages, LinkedHashSet<UsageInfo>(), conflicts)
                     if (targetParent is PsiDirectory) {
                         ExtractSuperClassUtil.checkSuperAccessible(targetParent, conflicts, originalClass.toLightClass())
                     }
