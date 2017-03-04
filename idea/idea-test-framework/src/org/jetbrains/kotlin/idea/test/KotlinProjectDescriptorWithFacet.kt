@@ -24,13 +24,14 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.KotlinFacetConfiguration
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
+import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
 import org.jetbrains.kotlin.test.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 
 class KotlinProjectDescriptorWithFacet(val languageVersion: LanguageVersion) : KotlinLightProjectDescriptor() {
     override fun configureModule(module: Module, model: ModifiableRootModel, contentEntry: ContentEntry) {
         configureKotlinFacet(module) { ->
-            settings.versionInfo.languageLevel = languageVersion
+            settings.languageLevel = languageVersion
         }
     }
 
@@ -43,6 +44,7 @@ fun configureKotlinFacet(module: Module, configureCallback: KotlinFacetConfigura
     val facetManager = FacetManager.getInstance(module)
     val facetModel = facetManager.createModifiableModel()
     val configuration = KotlinFacetConfiguration()
+    configuration.settings.initializeIfNeeded(module, null)
     configuration.settings.useProjectSettings = false
     configuration.configureCallback()
     val facet = facetManager.createFacet(KotlinFacetType.INSTANCE, "Kotlin", configuration, null)

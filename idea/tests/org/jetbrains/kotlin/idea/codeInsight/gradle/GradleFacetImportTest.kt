@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.gradle
 
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinFacetSettings
@@ -62,12 +63,12 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         importProject()
 
         with (facetSettings) {
-            Assert.assertEquals("1.1", versionInfo.languageLevel!!.versionString)
-            Assert.assertEquals("1.1", versionInfo.apiLevel!!.versionString)
-            Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8], versionInfo.targetPlatformKind)
-            Assert.assertEquals("1.7", compilerInfo.k2jvmCompilerArguments!!.jvmTarget)
+            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.1", apiLevel!!.versionString)
+            Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8], targetPlatformKind)
+            Assert.assertEquals("1.7", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals("-no-stdlib -no-reflect -module-name project_main -Xdump-declarations-to tmp -Xsingle-module -Xadd-compiler-builtins",
-                                compilerInfo.compilerSettings!!.additionalArguments)
+                                compilerSettings!!.additionalArguments)
         }
     }
 
@@ -105,7 +106,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         importProject()
 
         with (facetSettings) {
-            Assert.assertEquals(CoroutineSupport.ENABLED, compilerInfo.coroutineSupport)
+            Assert.assertEquals(CoroutineSupport.ENABLED, coroutineSupport)
         }
     }
 
@@ -144,16 +145,16 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         importProject()
 
         with (facetSettings) {
-            compilerInfo.k2jvmCompilerArguments!!.coroutinesEnable = true
-            compilerInfo.k2jvmCompilerArguments!!.coroutinesWarn = true
-            compilerInfo.k2jvmCompilerArguments!!.coroutinesError = true
+            compilerArguments!!.coroutinesEnable = true
+            compilerArguments!!.coroutinesWarn = true
+            compilerArguments!!.coroutinesError = true
 
             importProject()
 
-            Assert.assertEquals(CoroutineSupport.ENABLED, compilerInfo.coroutineSupport)
-            Assert.assertEquals(true, compilerInfo.k2jvmCompilerArguments!!.coroutinesEnable)
-            Assert.assertEquals(false, compilerInfo.k2jvmCompilerArguments!!.coroutinesWarn)
-            Assert.assertEquals(false, compilerInfo.k2jvmCompilerArguments!!.coroutinesError)
+            Assert.assertEquals(CoroutineSupport.ENABLED, coroutineSupport)
+            Assert.assertEquals(true, compilerArguments!!.coroutinesEnable)
+            Assert.assertEquals(false, compilerArguments!!.coroutinesWarn)
+            Assert.assertEquals(false, compilerArguments!!.coroutinesError)
         }
     }
 
@@ -186,7 +187,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         importProject()
 
         with (facetSettings) {
-            Assert.assertEquals(CoroutineSupport.ENABLED, compilerInfo.coroutineSupport)
+            Assert.assertEquals(CoroutineSupport.ENABLED, coroutineSupport)
         }
     }
 
@@ -261,7 +262,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         importProject()
 
         with (facetSettings) {
-            Assert.assertEquals(TargetPlatformKind.JavaScript, versionInfo.targetPlatformKind)
+            Assert.assertEquals(TargetPlatformKind.JavaScript, targetPlatformKind)
         }
     }
 
@@ -293,9 +294,9 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         importProject()
 
         with (facetSettings) {
-            Assert.assertEquals("1.1", versionInfo.languageLevel!!.versionString)
-            Assert.assertEquals("1.1", versionInfo.apiLevel!!.versionString)
-            Assert.assertEquals(TargetPlatformKind.Common, versionInfo.targetPlatformKind)
+            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.1", apiLevel!!.versionString)
+            Assert.assertEquals(TargetPlatformKind.Common, targetPlatformKind)
         }
     }
 }

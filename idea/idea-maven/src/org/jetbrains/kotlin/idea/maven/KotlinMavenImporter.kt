@@ -150,7 +150,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         val platform = detectPlatformByExecutions(mavenProject) ?: detectPlatformByLibraries(mavenProject)
 
         kotlinFacet.configureFacet(compilerVersion, CoroutineSupport.DEFAULT, platform, modifiableModelsProvider)
-        val configuredPlatform = kotlinFacet.configuration.settings.versionInfo.targetPlatformKind!!
+        val configuredPlatform = kotlinFacet.configuration.settings.targetPlatformKind!!
         val configuration = mavenPlugin.configurationElement
         val sharedArguments = configuration?.let { getCompilerArgumentsByConfigurationElement(it, configuredPlatform) } ?: emptyList()
         val executionArguments = mavenPlugin.executions?.filter { it.goals.any { it in compilationGoals } }

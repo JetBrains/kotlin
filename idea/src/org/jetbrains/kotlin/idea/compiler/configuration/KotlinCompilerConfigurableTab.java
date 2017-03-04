@@ -110,11 +110,10 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
     public KotlinCompilerConfigurableTab(
             Project project,
-            CommonCompilerArguments commonCompilerArguments,
-            K2JSCompilerArguments k2jsCompilerArguments,
-            CompilerSettings compilerSettings,
+            @NotNull CommonCompilerArguments commonCompilerArguments,
+            @NotNull K2JSCompilerArguments k2jsCompilerArguments,
+            @NotNull K2JVMCompilerArguments k2jvmCompilerArguments, CompilerSettings compilerSettings,
             @Nullable KotlinCompilerWorkspaceSettings compilerWorkspaceSettings,
-            @Nullable K2JVMCompilerArguments k2jvmCompilerArguments,
             boolean isProjectSettings,
             boolean isMultiEditor
     ) {
@@ -174,9 +173,9 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         this(project,
              KotlinCommonCompilerArgumentsHolder.getInstance(project).getSettings(),
              Kotlin2JsCompilerArgumentsHolder.getInstance(project).getSettings(),
+             Kotlin2JvmCompilerArgumentsHolder.getInstance(project).getSettings(),
              KotlinCompilerSettings.getInstance(project).getSettings(),
              ServiceManager.getService(project, KotlinCompilerWorkspaceSettings.class),
-             Kotlin2JvmCompilerArgumentsHolder.getInstance(project).getSettings(),
              true,
              false);
     }
@@ -323,7 +322,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                isModified(outputPrefixFile, k2jsCompilerArguments.outputPrefix) ||
                isModified(outputPostfixFile, k2jsCompilerArguments.outputPostfix) ||
                !getSelectedModuleKind().equals(getModuleKindOrDefault(k2jsCompilerArguments.moduleKind)) ||
-               (k2jvmCompilerArguments != null && !getSelectedJvmVersion().equals(getJvmVersionOrDefault(k2jvmCompilerArguments.jvmTarget)));
+
+               !getSelectedJvmVersion().equals(getJvmVersionOrDefault(k2jvmCompilerArguments.jvmTarget));
     }
 
     @NotNull
@@ -395,9 +395,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         k2jsCompilerArguments.outputPostfix = StringUtil.nullize(outputPostfixFile.getText(), true);
         k2jsCompilerArguments.moduleKind = getSelectedModuleKind();
 
-        if (k2jvmCompilerArguments != null) {
-            k2jvmCompilerArguments.jvmTarget = getSelectedJvmVersion();
-        }
+        k2jvmCompilerArguments.jvmTarget = getSelectedJvmVersion();
 
         BuildManager.getInstance().clearState(project);
     }
@@ -426,9 +424,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
         moduleKindComboBox.setSelectedItem(getModuleKindOrDefault(k2jsCompilerArguments.moduleKind));
 
-        if (k2jvmCompilerArguments != null) {
-            jvmVersionComboBox.setSelectedItem(getJvmVersionOrDefault(k2jvmCompilerArguments.jvmTarget));
-        }
+        jvmVersionComboBox.setSelectedItem(getJvmVersionOrDefault(k2jvmCompilerArguments.jvmTarget));
     }
 
     @Override
@@ -510,5 +506,13 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     public void setEnabled(boolean value) {
         isEnabled = value;
         UIUtil.setEnabled(getContentPane(), value, true);
+    }
+
+    public K2JSCompilerArguments getK2jsCompilerArguments() {
+        return k2jsCompilerArguments;
+    }
+
+    public K2JVMCompilerArguments getK2jvmCompilerArguments() {
+        return k2jvmCompilerArguments;
     }
 }

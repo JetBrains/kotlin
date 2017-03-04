@@ -54,7 +54,7 @@ fun getLibraryLanguageLevel(
         rootModel: ModuleRootModel?,
         targetPlatform: TargetPlatformKind<*>?
 ): LanguageVersion {
-    val minVersion = getRuntimeLibraryVersions(module, rootModel, targetPlatform ?: TargetPlatformKind.Jvm[JvmTarget.JVM_1_8])
+    val minVersion = getRuntimeLibraryVersions(module, rootModel, targetPlatform ?: TargetPlatformKind.DEFAULT_PLATFORM)
             .minWith(VersionComparatorUtil.COMPARATOR)
     return getDefaultLanguageLevel(module, minVersion)
 }
@@ -75,7 +75,7 @@ fun getDefaultLanguageLevel(
 }
 
 fun getRuntimeLibraryVersion(module: Module): String? {
-    val targetPlatform = KotlinFacetSettingsProvider.getInstance(module.project).getSettings(module).versionInfo.targetPlatformKind
-    val versions = getRuntimeLibraryVersions(module, null, targetPlatform ?: TargetPlatformKind.Jvm[JvmTarget.JVM_1_8])
+    val targetPlatform = KotlinFacetSettingsProvider.getInstance(module.project).getSettings(module).targetPlatformKind
+    val versions = getRuntimeLibraryVersions(module, null, targetPlatform ?: TargetPlatformKind.DEFAULT_PLATFORM)
     return versions.toSet().singleOrNull()
 }

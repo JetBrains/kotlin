@@ -28,10 +28,10 @@ internal fun modifyCompilerArgumentsForPlugin(
         pluginName: String,
         annotationOptionName: String
 ) {
-    val compileInfo = facet.configuration.settings.compilerInfo
+    val facetSettings = facet.configuration.settings
 
     // investigate why copyBean() sometimes throws exceptions
-    val commonArguments = compileInfo.commonCompilerArguments ?: CommonCompilerArguments.DummyImpl()
+    val commonArguments = facetSettings.compilerArguments ?: CommonCompilerArguments.DummyImpl()
 
     /** See [CommonCompilerArguments.PLUGIN_OPTION_FORMAT] **/
     val annotationOptions = setup?.annotationFqNames?.map { "plugin:$compilerPluginId:$annotationOptionName=$it" } ?: emptyList()
@@ -48,5 +48,5 @@ internal fun modifyCompilerArgumentsForPlugin(
     commonArguments.pluginOptions = newPluginOptions.toTypedArray()
     commonArguments.pluginClasspaths = newPluginClasspaths.toTypedArray()
 
-    compileInfo.commonCompilerArguments = commonArguments
+    facetSettings.compilerArguments = commonArguments
 }

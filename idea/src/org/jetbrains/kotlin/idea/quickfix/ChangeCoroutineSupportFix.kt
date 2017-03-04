@@ -26,6 +26,7 @@ import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.ui.Messages
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.CoroutineSupport
+import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -70,11 +71,11 @@ sealed class ChangeCoroutineSupportFix(
                 return
             }
 
-            val facetSettings = KotlinFacet.get(module)?.configuration?.settings ?: return
+            val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getSettings(module)
             ModuleRootModificationUtil.updateModel(module) {
-                facetSettings.compilerInfo.coroutineSupport = coroutineSupport
-                facetSettings.versionInfo.apiLevel = LanguageVersion.KOTLIN_1_1
-                facetSettings.versionInfo.languageLevel = LanguageVersion.KOTLIN_1_1
+                facetSettings.coroutineSupport = coroutineSupport
+                facetSettings.apiLevel = LanguageVersion.KOTLIN_1_1
+                facetSettings.languageLevel = LanguageVersion.KOTLIN_1_1
             }
         }
 

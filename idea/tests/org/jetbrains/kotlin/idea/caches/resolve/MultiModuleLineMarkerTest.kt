@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.config.TargetPlatformKind
 class MultiModuleLineMarkerTest : AbstractMultiModuleLineMarkerTest() {
     fun testFromCommonToJvmHeader() {
         val header = module("header")
-        header.setPlatformKind(TargetPlatformKind.Common)
+        header.createFacet(TargetPlatformKind.Common)
 
         val jvm = module("jvm")
-        jvm.setPlatformKind(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+        jvm.createFacet(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
         jvm.enableMultiPlatform()
         jvm.addDependency(header)
 
@@ -34,10 +34,10 @@ class MultiModuleLineMarkerTest : AbstractMultiModuleLineMarkerTest() {
 
     fun testFromCommonToJvmImpl() {
         val header = module("header")
-        header.setPlatformKind(TargetPlatformKind.Common)
+        header.createFacet(TargetPlatformKind.Common)
 
         val jvm = module("jvm")
-        jvm.setPlatformKind(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+        jvm.createFacet(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
         jvm.enableMultiPlatform()
         jvm.addDependency(header)
 
@@ -46,10 +46,10 @@ class MultiModuleLineMarkerTest : AbstractMultiModuleLineMarkerTest() {
 
     fun testFromClassToAlias() {
         val header = module("header")
-        header.setPlatformKind(TargetPlatformKind.Common)
+        header.createFacet(TargetPlatformKind.Common)
 
         val jvm = module("jvm")
-        jvm.setPlatformKind(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+        jvm.createFacet(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
         jvm.enableMultiPlatform()
         jvm.addDependency(header)
 

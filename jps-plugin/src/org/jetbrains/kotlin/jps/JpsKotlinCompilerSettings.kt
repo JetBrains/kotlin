@@ -66,11 +66,8 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
             val defaultArguments = getSettings(module.project).commonCompilerArguments
             val facetSettings = module.kotlinFacetExtension?.settings ?: return defaultArguments
             if (facetSettings.useProjectSettings) return defaultArguments
-            val (languageLevel, apiLevel) = facetSettings.versionInfo
-            val facetArguments = facetSettings.compilerInfo.commonCompilerArguments ?: return defaultArguments
+            val facetArguments = facetSettings.compilerArguments ?: return defaultArguments
             return copyBean(facetArguments).apply {
-                languageVersion = languageLevel?.description
-                apiVersion = apiLevel?.description
                 multiPlatform = module
                         .dependenciesList
                         .dependencies
@@ -86,11 +83,7 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
             val defaultArguments = getSettings(module.project).k2JvmCompilerArguments
             val facetSettings = module.kotlinFacetExtension?.settings ?: return defaultArguments
             if (facetSettings.useProjectSettings) return defaultArguments
-            val targetPlatform = facetSettings.versionInfo.targetPlatformKind as? TargetPlatformKind.Jvm ?: return defaultArguments
-            val arguments = facetSettings.compilerInfo.k2jvmCompilerArguments ?: defaultArguments
-            return copyBean(arguments).apply {
-                jvmTarget = targetPlatform.version.description
-            }
+            return facetSettings.compilerArguments as? K2JVMCompilerArguments ?: defaultArguments
         }
 
         fun setK2JvmCompilerArguments(project: JpsProject, k2JvmCompilerArguments: K2JVMCompilerArguments) {
@@ -101,7 +94,7 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
             val defaultArguments = getSettings(module.project).k2JsCompilerArguments
             val facetSettings = module.kotlinFacetExtension?.settings ?: return defaultArguments
             if (facetSettings.useProjectSettings) return defaultArguments
-            return facetSettings.compilerInfo.k2jsCompilerArguments ?: defaultArguments
+            return facetSettings.compilerArguments as? K2JSCompilerArguments ?: defaultArguments
         }
 
         fun setK2JsCompilerArguments(project: JpsProject, k2JsCompilerArguments: K2JSCompilerArguments) {
@@ -112,7 +105,7 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
             val defaultSettings = getSettings(module.project).compilerSettings
             val facetSettings = module.kotlinFacetExtension?.settings ?: return defaultSettings
             if (facetSettings.useProjectSettings) return defaultSettings
-            return facetSettings.compilerInfo.compilerSettings ?: defaultSettings
+            return facetSettings.compilerSettings ?: defaultSettings
         }
 
         fun setCompilerSettings(project: JpsProject, compilerSettings: CompilerSettings) {
@@ -122,4 +115,4 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
 }
 
 val JpsModule.targetPlatform: TargetPlatformKind<*>?
-    get() = kotlinFacetExtension?.settings?.versionInfo?.targetPlatformKind
+    get() = kotlinFacetExtension?.settings?.targetPlatformKind

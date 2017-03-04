@@ -50,7 +50,7 @@ class IdeAllOpenDeclarationAttributeAltererExtension(val project: Project) : Abs
 
         return cache.value.getOrPut(module) {
             val kotlinFacet = KotlinFacet.get(module) ?: return@getOrPut emptyList()
-            val commonArgs = kotlinFacet.configuration.settings.compilerInfo.commonCompilerArguments ?: return@getOrPut emptyList()
+            val commonArgs = kotlinFacet.configuration.settings.compilerArguments ?: return@getOrPut emptyList()
 
             commonArgs.pluginOptions?.filter { it.startsWith(ANNOTATION_OPTION_PREFIX) }
                                     ?.map { it.substring(ANNOTATION_OPTION_PREFIX.length) }

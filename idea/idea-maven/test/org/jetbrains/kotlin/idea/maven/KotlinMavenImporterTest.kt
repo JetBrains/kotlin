@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.maven
 
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
@@ -442,16 +444,16 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         assertImporterStatePresent()
 
         with (facetSettings) {
-            Assert.assertEquals("1.1", versionInfo.languageLevel!!.versionString)
-            Assert.assertEquals("1.1", compilerInfo.commonCompilerArguments!!.languageVersion)
-            Assert.assertEquals("1.0", versionInfo.apiLevel!!.versionString)
-            Assert.assertEquals("1.0", compilerInfo.commonCompilerArguments!!.apiVersion)
-            Assert.assertEquals(true, compilerInfo.commonCompilerArguments!!.suppressWarnings)
-            Assert.assertEquals("enable", compilerInfo.coroutineSupport.compilerArgument)
-            Assert.assertEquals("JVM 1.8", versionInfo.targetPlatformKind!!.description)
-            Assert.assertEquals("1.8", compilerInfo.k2jvmCompilerArguments!!.jvmTarget)
+            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.1", compilerArguments!!.languageVersion)
+            Assert.assertEquals("1.0", apiLevel!!.versionString)
+            Assert.assertEquals("1.0", compilerArguments!!.apiVersion)
+            Assert.assertEquals(true, compilerArguments!!.suppressWarnings)
+            Assert.assertEquals("enable", coroutineSupport.compilerArgument)
+            Assert.assertEquals("JVM 1.8", targetPlatformKind!!.description)
+            Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals("-cp foobar.jar -jdk-home JDK_HOME -Xmulti-platform",
-                                compilerInfo.compilerSettings!!.additionalArguments)
+                                compilerSettings!!.additionalArguments)
         }
     }
 
@@ -510,17 +512,19 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         assertImporterStatePresent()
 
         with (facetSettings) {
-            Assert.assertEquals("1.1", versionInfo.languageLevel!!.versionString)
-            Assert.assertEquals("1.1", compilerInfo.commonCompilerArguments!!.languageVersion)
-            Assert.assertEquals("1.0", versionInfo.apiLevel!!.versionString)
-            Assert.assertEquals("1.0", compilerInfo.commonCompilerArguments!!.apiVersion)
-            Assert.assertEquals(true, compilerInfo.commonCompilerArguments!!.suppressWarnings)
-            Assert.assertEquals("enable", compilerInfo.coroutineSupport.compilerArgument)
-            Assert.assertTrue(versionInfo.targetPlatformKind is TargetPlatformKind.JavaScript)
-            Assert.assertEquals(true, compilerInfo.k2jsCompilerArguments!!.sourceMap)
-            Assert.assertEquals("commonjs", compilerInfo.k2jsCompilerArguments!!.moduleKind)
+            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.1", compilerArguments!!.languageVersion)
+            Assert.assertEquals("1.0", apiLevel!!.versionString)
+            Assert.assertEquals("1.0", compilerArguments!!.apiVersion)
+            Assert.assertEquals(true, compilerArguments!!.suppressWarnings)
+            Assert.assertEquals("enable", coroutineSupport.compilerArgument)
+            Assert.assertTrue(targetPlatformKind is TargetPlatformKind.JavaScript)
+            with(compilerArguments as K2JSCompilerArguments) {
+                Assert.assertEquals(true, sourceMap)
+                Assert.assertEquals("commonjs", moduleKind)
+            }
             Assert.assertEquals("-output test.js -meta-info -Xmulti-platform",
-                                compilerInfo.compilerSettings!!.additionalArguments)
+                                compilerSettings!!.additionalArguments)
         }
     }
 
@@ -580,16 +584,16 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         assertImporterStatePresent()
 
         with (facetSettings) {
-            Assert.assertEquals("1.1", versionInfo.languageLevel!!.versionString)
-            Assert.assertEquals("1.1", compilerInfo.commonCompilerArguments!!.languageVersion)
-            Assert.assertEquals("1.0", versionInfo.apiLevel!!.versionString)
-            Assert.assertEquals("1.0", compilerInfo.commonCompilerArguments!!.apiVersion)
-            Assert.assertEquals(true, compilerInfo.commonCompilerArguments!!.suppressWarnings)
-            Assert.assertEquals("enable", compilerInfo.coroutineSupport.compilerArgument)
-            Assert.assertEquals("JVM 1.8", versionInfo.targetPlatformKind!!.description)
-            Assert.assertEquals("1.8", compilerInfo.k2jvmCompilerArguments!!.jvmTarget)
+            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.1", compilerArguments!!.languageVersion)
+            Assert.assertEquals("1.0", apiLevel!!.versionString)
+            Assert.assertEquals("1.0", compilerArguments!!.apiVersion)
+            Assert.assertEquals(true, compilerArguments!!.suppressWarnings)
+            Assert.assertEquals("enable", coroutineSupport.compilerArgument)
+            Assert.assertEquals("JVM 1.8", targetPlatformKind!!.description)
+            Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals("-cp foobar.jar -jdk-home JDK_HOME -Xmulti-platform",
-                                compilerInfo.compilerSettings!!.additionalArguments)
+                                compilerSettings!!.additionalArguments)
         }
     }
 
@@ -642,9 +646,9 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         assertImporterStatePresent()
 
         with (facetSettings) {
-            Assert.assertEquals("JVM 1.8", versionInfo.targetPlatformKind!!.description)
-            Assert.assertEquals("1.8", compilerInfo.k2jvmCompilerArguments!!.jvmTarget)
-            Assert.assertEquals("enable", compilerInfo.coroutineSupport.compilerArgument)
+            Assert.assertEquals("JVM 1.8", targetPlatformKind!!.description)
+            Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
+            Assert.assertEquals("enable", coroutineSupport.compilerArgument)
         }
     }
 

@@ -68,9 +68,9 @@ class LanguageFeatureQuickFixTest : LightPlatformCodeInsightFixtureTestCase() {
         resetProjectSettings(LanguageVersion.KOTLIN_1_1)
         myFixture.configureByText("foo.kt", "suspend fun foo()")
 
-        assertEquals(CoroutineSupport.ENABLED_WITH_WARNING, facet.configuration.settings.compilerInfo.coroutineSupport)
+        assertEquals(CoroutineSupport.ENABLED_WITH_WARNING, facet.configuration.settings.coroutineSupport)
         myFixture.launchAction(myFixture.findSingleIntention("Enable coroutine support in the current module"))
-        assertEquals(CoroutineSupport.ENABLED, facet.configuration.settings.compilerInfo.coroutineSupport)
+        assertEquals(CoroutineSupport.ENABLED, facet.configuration.settings.coroutineSupport)
     }
 
     fun testEnableCoroutines_UpdateRuntime() {
@@ -99,8 +99,8 @@ class LanguageFeatureQuickFixTest : LightPlatformCodeInsightFixtureTestCase() {
         configureRuntime("mockRuntime11")
         resetProjectSettings(LanguageVersion.KOTLIN_1_0)
         configureKotlinFacet(myModule) {
-            settings.versionInfo.languageLevel = LanguageVersion.KOTLIN_1_0
-            settings.versionInfo.apiLevel = LanguageVersion.KOTLIN_1_0
+            settings.languageLevel = LanguageVersion.KOTLIN_1_0
+            settings.apiLevel = LanguageVersion.KOTLIN_1_0
         }
         myFixture.configureByText("foo.kt", "val x get() = 1")
 
@@ -137,8 +137,8 @@ class LanguageFeatureQuickFixTest : LightPlatformCodeInsightFixtureTestCase() {
         val runtime = configureRuntime("mockRuntime106")
         resetProjectSettings(LanguageVersion.KOTLIN_1_0)
         configureKotlinFacet(myModule) {
-            settings.versionInfo.languageLevel = LanguageVersion.KOTLIN_1_0
-            settings.versionInfo.apiLevel = LanguageVersion.KOTLIN_1_0
+            settings.languageLevel = LanguageVersion.KOTLIN_1_0
+            settings.apiLevel = LanguageVersion.KOTLIN_1_0
         }
         myFixture.configureByText("foo.kt", "val x = <caret>\"s\"::length")
 

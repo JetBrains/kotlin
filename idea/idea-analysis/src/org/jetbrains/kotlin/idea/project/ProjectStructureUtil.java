@@ -68,7 +68,7 @@ public class ProjectStructureUtil {
     @Nullable
     private static TargetPlatform getPlatformConfiguredInFacet(@NotNull Module module) {
         KotlinFacetSettings settings = KotlinFacetSettingsProvider.Companion.getInstance(module.getProject()).getSettings(module);
-        TargetPlatformKind<?> kind = settings.getVersionInfo().getTargetPlatformKind();
+        TargetPlatformKind<?> kind = settings.getTargetPlatformKind();
         if (kind instanceof TargetPlatformKind.Jvm) {
             return JvmPlatform.INSTANCE;
         }

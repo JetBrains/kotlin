@@ -26,10 +26,10 @@ class QuickFixMultiModuleTest : AbstractQuickFixMultiModuleTest() {
                                     implName: String = "jvm",
                                     implKind: TargetPlatformKind<*> = TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]) {
         val header = module(headerName)
-        header.setPlatformKind(TargetPlatformKind.Common)
+        header.createFacet(TargetPlatformKind.Common)
 
         val jvm = module(implName)
-        jvm.setPlatformKind(implKind)
+        jvm.createFacet(implKind)
         jvm.enableMultiPlatform()
         jvm.addDependency(header)
 

@@ -24,9 +24,9 @@ import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
-import org.jetbrains.kotlin.noarg.diagnostic.AbstractNoArgDeclarationChecker
-import org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor.Companion.PLUGIN_ID
 import org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor.Companion.ANNOTATION_OPTION
+import org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor.Companion.PLUGIN_ID
+import org.jetbrains.kotlin.noarg.diagnostic.AbstractNoArgDeclarationChecker
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import java.util.*
 
@@ -45,7 +45,7 @@ class IdeNoArgDeclarationChecker(val project: Project) : AbstractNoArgDeclaratio
 
         return cache.value.getOrPut(module) {
             val kotlinFacet = KotlinFacet.get(module) ?: return@getOrPut emptyList()
-            val commonArgs = kotlinFacet.configuration.settings.compilerInfo.commonCompilerArguments ?: return@getOrPut emptyList()
+            val commonArgs = kotlinFacet.configuration.settings.compilerArguments ?: return@getOrPut emptyList()
 
             commonArgs.pluginOptions
                     ?.filter { it.startsWith(ANNOTATION_OPTION_PREFIX) }

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
+import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import java.io.File
@@ -74,11 +75,15 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
             exported: Boolean = false
     ) = ModuleRootModificationUtil.addDependency(this, other, dependencyScope, exported)
 
-    private fun Module.createFacet() {
+    protected fun Module.createFacet(platformKind: TargetPlatformKind<*>? = null) {
         val accessToken = WriteAction.start()
         try {
             val modelsProvider = IdeModifiableModelsProviderImpl(project)
-            getOrCreateFacet(modelsProvider, true)
+            getOrCreateFacet(modelsProvider, true).configuration.settings.initializeIfNeeded(
+                    this,
+                    modelsProvider.getModifiableRootModel(this),
+                    platformKind
+            )
             modelsProvider.commit()
         }
         finally {
@@ -86,20 +91,12 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
         }
     }
 
-    protected fun Module.setPlatformKind(platformKind: TargetPlatformKind<*>) {
-        createFacet()
-        val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getSettings(this)
-        val versionInfo = facetSettings.versionInfo
-        versionInfo.targetPlatformKind = platformKind
-    }
-
     protected fun Module.enableMultiPlatform() {
         createFacet()
         val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getSettings(this)
-        val compilerInfo = facetSettings.compilerInfo
         val compilerSettings = CompilerSettings()
         compilerSettings.additionalArguments += " -$multiPlatformArg"
-        compilerInfo.compilerSettings = compilerSettings
+        facetSettings.compilerSettings = compilerSettings
     }
 
     companion object {

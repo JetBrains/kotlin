@@ -63,10 +63,10 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
     fun testPlatformBasic() {
         val header = module("header")
-        header.setPlatformKind(TargetPlatformKind.Common)
+        header.createFacet(TargetPlatformKind.Common)
 
         val jvm = module("jvm")
-        jvm.setPlatformKind(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+        jvm.createFacet(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
         jvm.enableMultiPlatform()
         jvm.addDependency(header)
 
@@ -75,10 +75,10 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
     fun testPlatformClass() {
         val header = module("header")
-        header.setPlatformKind(TargetPlatformKind.Common)
+        header.createFacet(TargetPlatformKind.Common)
 
         val jvm = module("jvm")
-        jvm.setPlatformKind(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+        jvm.createFacet(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
         jvm.enableMultiPlatform()
         jvm.addDependency(header)
 
@@ -87,15 +87,15 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
     fun testPlatformNotImplementedForBoth() {
         val header = module("header")
-        header.setPlatformKind(TargetPlatformKind.Common)
+        header.createFacet(TargetPlatformKind.Common)
 
         val jvm = module("jvm")
-        jvm.setPlatformKind(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+        jvm.createFacet(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
         jvm.enableMultiPlatform()
         jvm.addDependency(header)
 
         val js = module("js")
-        js.setPlatformKind(TargetPlatformKind.JavaScript)
+        js.createFacet(TargetPlatformKind.JavaScript)
         js.enableMultiPlatform()
         js.addDependency(header)
 
@@ -104,10 +104,10 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
     fun testPlatformPartiallyImplemented() {
         val header = module("header")
-        header.setPlatformKind(TargetPlatformKind.Common)
+        header.createFacet(TargetPlatformKind.Common)
 
         val jvm = module("jvm")
-        jvm.setPlatformKind(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+        jvm.createFacet(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
         jvm.enableMultiPlatform()
         jvm.addDependency(header)
 
@@ -116,10 +116,10 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
     fun testPlatformFunctionProperty() {
         val header = module("header")
-        header.setPlatformKind(TargetPlatformKind.Common)
+        header.createFacet(TargetPlatformKind.Common)
 
         val jvm = module("jvm")
-        jvm.setPlatformKind(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+        jvm.createFacet(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
         jvm.enableMultiPlatform()
         jvm.addDependency(header)
 
@@ -128,10 +128,10 @@ class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
     fun testPlatformSuppress() {
         val header = module("header")
-        header.setPlatformKind(TargetPlatformKind.Common)
+        header.createFacet(TargetPlatformKind.Common)
 
         val jvm = module("jvm")
-        jvm.setPlatformKind(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
+        jvm.createFacet(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
         jvm.enableMultiPlatform()
         jvm.addDependency(header)
 

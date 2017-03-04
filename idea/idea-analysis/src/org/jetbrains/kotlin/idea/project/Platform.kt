@@ -47,7 +47,7 @@ fun Module.getAndCacheLanguageLevelByDependencies(): LanguageVersion {
     val languageLevel = getLibraryLanguageLevel(
             this,
             null,
-            KotlinFacetSettingsProvider.getInstance(project).getSettings(this).versionInfo.targetPlatformKind
+            KotlinFacetSettingsProvider.getInstance(project).getSettings(this).targetPlatformKind
     )
 
     // Preserve inferred version in facet/project settings
@@ -63,7 +63,7 @@ fun Module.getAndCacheLanguageLevelByDependencies(): LanguageVersion {
         }
     }
     else {
-        with(facetSettings.versionInfo) {
+        with(facetSettings) {
             if (this.languageLevel == null) {
                 this.languageLevel = languageLevel
             }
@@ -101,14 +101,13 @@ val Module.languageVersionSettings: LanguageVersionSettings
     get() {
         val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getSettings(this)
         if (facetSettings.useProjectSettings) return project.getLanguageVersionSettings(this)
-        val versionInfo = facetSettings.versionInfo
-        val languageVersion = versionInfo.languageLevel ?: getAndCacheLanguageLevelByDependencies()
-        val apiVersion = versionInfo.apiLevel ?: languageVersion
+        val languageVersion = facetSettings.languageLevel ?: getAndCacheLanguageLevelByDependencies()
+        val apiVersion = facetSettings.apiLevel ?: languageVersion
 
         val extraLanguageFeatures = getExtraLanguageFeatures(
-                versionInfo.targetPlatformKind ?: TargetPlatformKind.Common,
-                facetSettings.compilerInfo.coroutineSupport,
-                facetSettings.compilerInfo.compilerSettings,
+                facetSettings.targetPlatformKind ?: TargetPlatformKind.Common,
+                facetSettings.coroutineSupport,
+                facetSettings.compilerSettings,
                 this
         )
 
@@ -116,7 +115,7 @@ val Module.languageVersionSettings: LanguageVersionSettings
     }
 
 val Module.targetPlatform: TargetPlatformKind<*>?
-    get() = KotlinFacetSettingsProvider.getInstance(project).getSettings(this).versionInfo.targetPlatformKind
+    get() = KotlinFacetSettingsProvider.getInstance(project).getSettings(this).targetPlatformKind
 
 private val Module.implementsCommonModule: Boolean
     get() = targetPlatform != TargetPlatformKind.Common

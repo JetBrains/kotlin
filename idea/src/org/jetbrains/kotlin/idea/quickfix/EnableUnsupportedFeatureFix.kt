@@ -29,6 +29,7 @@ import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.ui.Messages
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -64,8 +65,8 @@ sealed class EnableUnsupportedFeatureFix(
                runtimeVersion < feature.sinceApiVersion
             } ?: false
 
-            val facetSettings = KotlinFacet.get(module)?.configuration?.settings ?: return
-            val targetApiLevel = facetSettings.versionInfo.apiLevel?.let { apiLevel ->
+            val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getSettings(module)
+            val targetApiLevel = facetSettings.apiLevel?.let { apiLevel ->
                 if (ApiVersion.createByLanguageVersion(apiLevel) < feature.sinceApiVersion)
                     feature.sinceApiVersion.versionString
                 else
@@ -97,7 +98,7 @@ sealed class EnableUnsupportedFeatureFix(
             }
 
             ModuleRootModificationUtil.updateModel(module) {
-                with(facetSettings.versionInfo) {
+                with(facetSettings) {
                     if (!apiVersionOnly) {
                         languageLevel = targetVersion
                     }
