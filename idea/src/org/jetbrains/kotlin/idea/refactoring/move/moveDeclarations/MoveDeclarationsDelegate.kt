@@ -41,7 +41,7 @@ sealed class MoveDeclarationsDelegate {
             conflicts: MultiMap<PsiElement, String>
     )
     abstract fun preprocessDeclaration(descriptor: MoveDeclarationsDescriptor, originalDeclaration: KtNamedDeclaration)
-    abstract fun preprocessUsages(project: Project, usages: List<UsageInfo>)
+    abstract fun preprocessUsages(project: Project, descriptor: MoveDeclarationsDescriptor, usages: List<UsageInfo>)
 
     object TopLevel : MoveDeclarationsDelegate() {
         override fun getContainerChangeInfo(originalDeclaration: KtNamedDeclaration, moveTarget: KotlinMoveTarget): ContainerChangeInfo {
@@ -63,7 +63,7 @@ sealed class MoveDeclarationsDelegate {
 
         }
 
-        override fun preprocessUsages(project: Project, usages: List<UsageInfo>) {
+        override fun preprocessUsages(project: Project, descriptor: MoveDeclarationsDescriptor, usages: List<UsageInfo>) {
 
         }
     }
@@ -136,19 +136,24 @@ sealed class MoveDeclarationsDelegate {
             }
         }
 
-        override fun preprocessUsages(project: Project, usages: List<UsageInfo>) {
+        override fun preprocessUsages(project: Project, descriptor: MoveDeclarationsDescriptor, usages: List<UsageInfo>) {
             if (outerInstanceParameterName == null) return
             val psiFactory = KtPsiFactory(project)
             val newOuterInstanceRef = psiFactory.createExpression(outerInstanceParameterName)
+            val classToMove = descriptor.elementsToMove.singleOrNull() as? KtClass
 
             for (usage in usages) {
-                val referencedNestedClass = (usage as? MoveRenameUsageInfo)?.referencedElement?.unwrapped as? KtClassOrObject
-                val outerClass = referencedNestedClass?.containingClassOrObject
-                val lightOuterClass = outerClass?.toLightClass()
-                if (lightOuterClass != null) {
-                    MoveInnerClassUsagesHandler.EP_NAME
-                            .forLanguage(usage.element!!.language)
-                            ?.correctInnerClassUsage(usage, lightOuterClass)
+                if (usage is MoveRenameUsageInfo) {
+                    val referencedNestedClass = usage.referencedElement?.unwrapped as? KtClassOrObject
+                    if (referencedNestedClass == classToMove) {
+                        val outerClass = referencedNestedClass?.containingClassOrObject
+                        val lightOuterClass = outerClass?.toLightClass()
+                        if (lightOuterClass != null) {
+                            MoveInnerClassUsagesHandler.EP_NAME
+                                    .forLanguage(usage.element!!.language)
+                                    ?.correctInnerClassUsage(usage, lightOuterClass)
+                        }
+                    }
                 }
 
                 when (usage) {

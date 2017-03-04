@@ -233,8 +233,8 @@ class MoveKotlinDeclarationsProcessor(
                     usageList.partition { it is UsagesToProcessBeforeMoveWrapper }
             val usagesToProcessBeforeMove = usagesToProcessBeforeMoveWrappers.flatMap { (it as UsagesToProcessBeforeMoveWrapper).usages }
 
-            descriptor.delegate.preprocessUsages(project, usagesToProcessBeforeMove)
-            descriptor.delegate.preprocessUsages(project, usagesToProcessAfterMove)
+            descriptor.delegate.preprocessUsages(project, descriptor, usagesToProcessBeforeMove)
+            descriptor.delegate.preprocessUsages(project, descriptor, usagesToProcessAfterMove)
 
             postProcessMoveUsages(usagesToProcessBeforeMove, shorteningMode = ShorteningMode.NO_SHORTENING)
 
