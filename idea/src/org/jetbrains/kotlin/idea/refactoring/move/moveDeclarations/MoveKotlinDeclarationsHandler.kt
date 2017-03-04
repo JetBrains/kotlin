@@ -46,7 +46,11 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
     private fun getUniqueContainer(elements: Array<out PsiElement>): PsiElement? {
         val getContainer: (PsiElement) -> PsiElement? =
                 if (elements.any { it.parent !is KtFile }) { e ->
-                    (e as? KtNamedDeclaration)?.containingClassOrObject
+                    when (e) {
+                        is KtNamedDeclaration -> e.containingClassOrObject ?: e.parent
+                        is KtFile -> e.parent
+                        else -> null
+                    }
                 }
                 else { e ->
                     e.containingFile?.parent
@@ -69,7 +73,13 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
             return false
         }
 
-        val elementsToSearch = elements.mapTo(LinkedHashSet()) { it as KtNamedDeclaration }
+        val elementsToSearch = elements.flatMapTo(LinkedHashSet<KtNamedDeclaration>()) {
+            when (it) {
+                is KtNamedDeclaration -> listOf(it)
+                is KtFile -> it.declarations.filterIsInstance<KtNamedDeclaration>()
+                else -> emptyList()
+            }
+        }
 
         // todo: allow moving companion object
         if (elementsToSearch.any { it is KtObjectDeclaration && it.isCompanion() }) {
@@ -142,10 +152,14 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
         }
 
         return elements.all { e ->
-            if (e is KtClass || (e is KtObjectDeclaration && !e.isObjectLiteral()) || e is KtNamedFunction || e is KtProperty) {
-                (editorMode || (e as KtNamedDeclaration).canMove()) && e.canRefactor()
+            when {
+                e is KtClass || e is KtObjectDeclaration && !e.isObjectLiteral() || e is KtNamedFunction || e is KtProperty ->
+                    (editorMode || (e as KtNamedDeclaration).canMove()) && e.canRefactor()
+                e is KtFile ->
+                    e.declarations.any { it is KtNamedDeclaration } && e.canRefactor()
+                else ->
+                    false
             }
-            else false
         }
     }
 

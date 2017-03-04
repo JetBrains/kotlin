@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.test
 
-import com.intellij.concurrency.IdeaForkJoinWorkerThreadFactory
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.module.Module
@@ -30,7 +29,6 @@ import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.impl.file.impl.FileManagerImpl
 import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.testFramework.ThreadTracker
 import com.intellij.util.Consumer
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
@@ -42,8 +40,6 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
 import java.lang.IllegalArgumentException
 import java.util.*
-import java.util.concurrent.ForkJoinPool
-import java.util.concurrent.atomic.AtomicBoolean
 
 enum class ModuleKind {
     KOTLIN_JVM_WITH_STDLIB_SOURCES,
@@ -129,20 +125,28 @@ fun invalidateLibraryCache(project: Project) {
 }
 
 fun Document.extractMarkerOffset(project: Project, caretMarker: String = "<caret>"): Int {
-    val offset = runWriteAction {
+    return extractMultipleMarkerOffsets(project, caretMarker).singleOrNull() ?: -1
+}
+
+fun Document.extractMultipleMarkerOffsets(project: Project, caretMarker: String = "<caret>"): List<Int> {
+    val offsets = ArrayList<Int>()
+
+    runWriteAction {
         val text = StringBuilder(text)
-        val offset = text.indexOf(caretMarker)
+        while (true) {
+            val offset = text.indexOf(caretMarker)
+            if (offset >= 0) {
+                text.delete(offset, offset + caretMarker.length)
+                setText(text.toString())
 
-        if (offset >= 0) {
-            text.delete(offset, offset + caretMarker.length)
-            setText(text.toString())
+                offsets += offset
+            }
+            else break
         }
-
-        offset
     }
 
     PsiDocumentManager.getInstance(project).commitAllDocuments()
     PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(this)
 
-    return offset
+    return offsets
 }
