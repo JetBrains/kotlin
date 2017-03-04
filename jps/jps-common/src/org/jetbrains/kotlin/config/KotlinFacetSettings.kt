@@ -19,11 +19,10 @@ package org.jetbrains.kotlin.config
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.util.xmlb.annotations.Property
-import com.intellij.util.xmlb.annotations.Transient
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.utils.DescriptionAware
 
 sealed class TargetPlatformKind<out Version : DescriptionAware>(
@@ -45,22 +44,10 @@ sealed class TargetPlatformKind<out Version : DescriptionAware>(
     object Common : TargetPlatformKind<DescriptionAware.NoVersion>(DescriptionAware.NoVersion, "Common (experimental)")
 
     companion object {
-
         val ALL_PLATFORMS: List<TargetPlatformKind<*>> by lazy { Jvm.JVM_PLATFORMS + JavaScript + Common }
+        val DEFAULT_PLATFORM: TargetPlatformKind<*>
+            get() = Jvm[JvmTarget.DEFAULT]
     }
-}
-
-data class KotlinVersionInfo(
-        var languageLevel: LanguageVersion? = null,
-        var apiLevel: LanguageVersion? = null,
-        @get:Transient var targetPlatformKind: TargetPlatformKind<*>? = null
-) {
-    // To be serialized
-    var targetPlatformName: String
-        get() = targetPlatformKind?.description ?: ""
-        set(value) {
-            targetPlatformKind = TargetPlatformKind.ALL_PLATFORMS.firstOrNull { it.description == value }
-        }
 }
 
 enum class CoroutineSupport(
@@ -90,38 +77,62 @@ enum class CoroutineSupport(
     }
 }
 
-class KotlinCompilerInfo {
-    // To be serialized
-    @Property private var _commonCompilerArguments: CommonCompilerArguments.DummyImpl? = null
-    @get:Transient var commonCompilerArguments: CommonCompilerArguments?
-        get() = _commonCompilerArguments
-        set(value) {
-            _commonCompilerArguments = value as? CommonCompilerArguments.DummyImpl
-        }
-    var k2jsCompilerArguments: K2JSCompilerArguments? = null
-    var k2jvmCompilerArguments: K2JVMCompilerArguments? = null
-    var compilerSettings: CompilerSettings? = null
-
-    @get:Transient var coroutineSupport: CoroutineSupport
-        get() = CoroutineSupport.byCompilerArguments(commonCompilerArguments)
-        set(value) {
-            commonCompilerArguments?.coroutinesEnable = value == CoroutineSupport.ENABLED
-            commonCompilerArguments?.coroutinesWarn = value == CoroutineSupport.ENABLED_WITH_WARNING
-            commonCompilerArguments?.coroutinesError = value == CoroutineSupport.DISABLED
-        }
-}
-
 class KotlinFacetSettings {
     companion object {
         // Increment this when making serialization-incompatible changes to configuration data
-        val CURRENT_VERSION = 1
+        val CURRENT_VERSION = 2
         val DEFAULT_VERSION = 0
     }
 
     var useProjectSettings: Boolean = true
 
-    var versionInfo = KotlinVersionInfo()
-    var compilerInfo = KotlinCompilerInfo()
+    var compilerArguments: CommonCompilerArguments? = null
+    var compilerSettings: CompilerSettings? = null
+
+    var languageLevel: LanguageVersion?
+        get() = compilerArguments?.languageVersion?.let { LanguageVersion.fromFullVersionString(it) }
+        set(value) {
+            compilerArguments!!.languageVersion = value?.versionString
+        }
+
+    var apiLevel: LanguageVersion?
+        get() = compilerArguments?.apiVersion?.let { LanguageVersion.fromFullVersionString(it) }
+        set(value) {
+            compilerArguments!!.apiVersion = value?.versionString
+        }
+
+    val targetPlatformKind: TargetPlatformKind<*>?
+        get() = compilerArguments?.let {
+            when (it) {
+                is K2JVMCompilerArguments -> {
+                    val jvmTarget = it.jvmTarget ?: JvmTarget.DEFAULT.description
+                    TargetPlatformKind.Jvm.JVM_PLATFORMS.firstOrNull { it.version.description >= jvmTarget }
+                }
+                is K2JSCompilerArguments -> TargetPlatformKind.JavaScript
+                is K2MetadataCompilerArguments -> TargetPlatformKind.Common
+                else -> null
+            }
+        }
+
+    var coroutineSupport: CoroutineSupport
+        get() = CoroutineSupport.byCompilerArguments(compilerArguments)
+        set(value) {
+            with(compilerArguments!!) {
+                coroutinesEnable = value == CoroutineSupport.ENABLED
+                coroutinesWarn = value == CoroutineSupport.ENABLED_WITH_WARNING
+                coroutinesError = value == CoroutineSupport.DISABLED
+            }
+        }
+}
+
+fun TargetPlatformKind<*>.createCompilerArguments(): CommonCompilerArguments {
+    return when (this) {
+        is TargetPlatformKind.Jvm -> {
+            K2JVMCompilerArguments().apply { jvmTarget = this@createCompilerArguments.version.description }
+        }
+        is TargetPlatformKind.JavaScript -> K2JSCompilerArguments()
+        is TargetPlatformKind.Common -> K2MetadataCompilerArguments()
+    }
 }
 
 interface KotlinFacetSettingsProvider {
