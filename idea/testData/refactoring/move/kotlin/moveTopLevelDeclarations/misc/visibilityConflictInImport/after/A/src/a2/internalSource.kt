@@ -1,3 +1,3 @@
 package a2
 
-import b.internalTargetVal
+import a1.internalTargetVal

@@ -1,5 +1,5 @@
 package a2
 
-import b.internalTargetVal
+import a1.internalTargetVal
 
-internal val sourceVal = b.internalTargetVal
+internal val sourceVal = internalTargetVal

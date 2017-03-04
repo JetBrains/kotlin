@@ -99,7 +99,6 @@ class MoveDeclarationToSeparateFileIntention :
                 delegate = MoveDeclarationsDelegate.TopLevel,
                 searchInCommentsAndStrings = false,
                 searchInNonCode = false,
-                updateInternalReferences = true,
                 moveCallback = MoveCallback {
                     val newFile = directory.findFile(targetFileName) as KtFile
                     val newDeclaration = newFile.declarations.first()

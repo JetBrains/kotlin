@@ -34,10 +34,10 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 sealed class MoveDeclarationsDelegate {
     abstract fun getContainerChangeInfo(originalDeclaration: KtNamedDeclaration, moveTarget: KotlinMoveTarget): ContainerChangeInfo
-    abstract fun findUsages(descriptor: MoveDeclarationsDescriptor): List<UsageInfo>
+    abstract fun findInternalUsages(descriptor: MoveDeclarationsDescriptor): List<UsageInfo>
     abstract fun collectConflicts(
             descriptor: MoveDeclarationsDescriptor,
-            usages: MutableList<UsageInfo>,
+            internalUsages: MutableSet<UsageInfo>,
             conflicts: MultiMap<PsiElement, String>
     )
     abstract fun preprocessDeclaration(descriptor: MoveDeclarationsDescriptor, originalDeclaration: KtNamedDeclaration)
@@ -49,11 +49,11 @@ sealed class MoveDeclarationsDelegate {
                                        ContainerInfo.Package(moveTarget.targetContainerFqName!!))
         }
 
-        override fun findUsages(descriptor: MoveDeclarationsDescriptor): List<UsageInfo> = emptyList()
+        override fun findInternalUsages(descriptor: MoveDeclarationsDescriptor): List<UsageInfo> = emptyList()
 
         override fun collectConflicts(
                 descriptor: MoveDeclarationsDescriptor,
-                usages: MutableList<UsageInfo>,
+                internalUsages: MutableSet<UsageInfo>,
                 conflicts: MultiMap<PsiElement, String>
         ) {
 
@@ -83,17 +83,17 @@ sealed class MoveDeclarationsDelegate {
             return ContainerChangeInfo(originalInfo, newInfo)
         }
 
-        override fun findUsages(descriptor: MoveDeclarationsDescriptor): List<UsageInfo> {
+        override fun findInternalUsages(descriptor: MoveDeclarationsDescriptor): List<UsageInfo> {
             val classToMove = descriptor.elementsToMove.singleOrNull() as? KtClass ?: return emptyList()
             return collectOuterInstanceReferences(classToMove)
         }
 
         override fun collectConflicts(
                 descriptor: MoveDeclarationsDescriptor,
-                usages: MutableList<UsageInfo>,
+                internalUsages: MutableSet<UsageInfo>,
                 conflicts: MultiMap<PsiElement, String>
         ) {
-            val usageIterator = usages.iterator()
+            val usageIterator = internalUsages.iterator()
             while (usageIterator.hasNext()) {
                 val usage = usageIterator.next()
                 val element = usage.element ?: continue

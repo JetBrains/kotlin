@@ -1,3 +1,3 @@
 package a
 
-val val2 = target.val1
+val val2 = val1

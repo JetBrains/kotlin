@@ -303,7 +303,7 @@ private fun updateJavaReference(reference: PsiReferenceExpression, oldElement: P
 /**
  * Perform usage postprocessing and return non-code usages
  */
-fun postProcessMoveUsages(usages: List<UsageInfo>,
+fun postProcessMoveUsages(usages: Collection<UsageInfo>,
                           oldToNewElementsMapping: Map<PsiElement, PsiElement> = Collections.emptyMap(),
                           shorteningMode: ShorteningMode = ShorteningMode.DELAYED_SHORTENING
 ): List<NonCodeUsageInfo> {
