@@ -2,20 +2,20 @@
 // PARAM_TYPES: kotlin.Int
 // PARAM_TYPES: kotlin.Int
 // PARAM_TYPES: kotlin.Int
-// PARAM_DESCRIPTOR: value-parameter a: kotlin.Int defined in foo
 // PARAM_DESCRIPTOR: var b: kotlin.Int defined in foo
+// PARAM_DESCRIPTOR: value-parameter a: kotlin.Int defined in foo
 // PARAM_DESCRIPTOR: var c: kotlin.Int defined in foo
 // SIBLING:
 fun foo(a: Int): Int {
     var b: Int = 1
     var c: Int = 1
 
-    b = i(a, b, c)
+    b = i(b, a, c)
 
     return b
 }
 
-private fun i(a: Int, b: Int, c: Int): Int {
+private fun i(b: Int, a: Int, c: Int): Int {
     var b1 = b
     var c1 = c
     b1 += a
