@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.cfg.pseudocode.getExpectedTypePredicate
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithReceivers
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
@@ -47,7 +45,6 @@ import org.jetbrains.kotlin.resolve.calls.tasks.isSynthesizedInvoke
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
@@ -62,7 +59,7 @@ import java.util.*
 internal class ParametersInfo {
     var errorMessage: AnalysisResult.ErrorMessage? = null
     val originalRefToParameter = MultiMap.create<KtSimpleNameExpression, MutableParameter>()
-    val parameters = HashSet<MutableParameter>()
+    val parameters = LinkedHashSet<MutableParameter>()
     val typeParameters = HashSet<TypeParameter>()
     val nonDenotableTypes = HashSet<KotlinType>()
     val replacementMap = MultiMap.create<KtSimpleNameExpression, Replacement>()
@@ -78,7 +75,7 @@ internal fun ExtractionData.inferParametersInfo(
 ): ParametersInfo {
     val info = ParametersInfo()
 
-    val extractedDescriptorToParameter = HashMap<DeclarationDescriptor, MutableParameter>()
+    val extractedDescriptorToParameter = LinkedHashMap<DeclarationDescriptor, MutableParameter>()
 
     for (refInfo in getBrokenReferencesInfo(virtualBlock)) {
         val ref = refInfo.refExpr
