@@ -48,78 +48,94 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.resolve.ImportPath
 import java.util.*
 
 class KotlinUnusedImportInspection : AbstractKotlinInspection() {
+    data class ImportData(
+            val unusedImports: List<KtImportDirective>,
+            val optimizerData: OptimizedImportsBuilder.InputData
+    )
+
+    companion object {
+        fun analyzeImports(file: KtFile): ImportData? {
+            if (file is KtCodeFragment) return null
+            if (!file.manager.isInProject(file)) return null
+            if (file.importDirectives.isEmpty()) return null
+
+            val optimizerData = KotlinImportOptimizer.collectDescriptorsToImport(file)
+
+            val directives = file.importDirectives
+            val explicitlyImportedFqNames = directives
+                    .asSequence()
+                    .mapNotNull { it.importPath }
+                    .filter { !it.isAllUnder && !it.hasAlias() }
+                    .map { it.fqName }
+                    .toSet()
+
+            val fqNames = HashSet<FqName>()
+            val parentFqNames = HashSet<FqName>()
+            for (descriptor in optimizerData.descriptorsToImport) {
+                val fqName = descriptor.importableFqName!!
+                fqNames.add(fqName)
+
+                if (fqName !in explicitlyImportedFqNames) { // we don't add parents of explicitly imported fq-names because such imports are not needed
+                    val parentFqName = fqName.parent()
+                    if (!parentFqName.isRoot) {
+                        parentFqNames.add(parentFqName)
+                    }
+                }
+            }
+
+            val importPaths = HashSet<ImportPath>(directives.size)
+            val unusedImports = ArrayList<KtImportDirective>()
+
+            for (directive in directives) {
+                val importPath = directive.importPath ?: continue
+                if (importPath.alias != null) continue // highlighting of unused alias imports not supported yet
+
+                val isUsed = if (!importPaths.add(importPath)) {
+                    false
+                }
+                else if (importPath.isAllUnder) {
+                    importPath.fqName in parentFqNames
+                }
+                else {
+                    importPath.fqName in fqNames
+                }
+
+                if (!isUsed) {
+                    if (directive.targetDescriptors().isEmpty()) continue // do not highlight unresolved imports as unused
+                    unusedImports += directive
+                }
+            }
+
+            return ImportData(unusedImports, optimizerData)
+        }
+    }
+
     override fun runForWholeFile() = true
 
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<out ProblemDescriptor>? {
-        if (file !is KtFile || file is KtCodeFragment) return null
-        if (!file.manager.isInProject(file)) return null
-        if (file.importDirectives.isEmpty()) return null
+        if (file !is KtFile) return null
+        val data = analyzeImports(file) ?: return null
 
-        val data = KotlinImportOptimizer.collectDescriptorsToImport(file)
-
-        val directives = file.importDirectives
-        val explicitlyImportedFqNames = directives
-                .asSequence()
-                .mapNotNull { it.importPath }
-                .filter { !it.isAllUnder && !it.hasAlias() }
-                .map { it.fqName }
-                .toSet()
-
-        val fqNames = HashSet<FqName>()
-        val parentFqNames = HashSet<FqName>()
-        for (descriptor in data.descriptorsToImport) {
-            val fqName = descriptor.importableFqName!!
-            fqNames.add(fqName)
-
-            if (fqName !in explicitlyImportedFqNames) { // we don't add parents of explicitly imported fq-names because such imports are not needed
-                val parentFqName = fqName.parent()
-                if (!parentFqName.isRoot) {
-                    parentFqNames.add(parentFqName)
-                }
+        val problems = data.unusedImports.map {
+            val fixes = arrayListOf<LocalQuickFix>()
+            fixes.add(OptimizeImportsQuickFix(file))
+            if (!CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY) {
+                fixes.add(EnableOptimizeImportsOnTheFlyFix(file))
             }
-        }
-
-        val problems = ArrayList<ProblemDescriptor>()
-
-        val importPaths = HashSet<ImportPath>(directives.size)
-
-        for (directive in directives) {
-            val importPath = directive.importPath ?: continue
-            if (importPath.alias != null) continue // highlighting of unused alias imports not supported yet
-
-            val isUsed = if (!importPaths.add(importPath)) {
-                false
-            }
-            else if (importPath.isAllUnder) {
-                importPath.fqName in parentFqNames
-            }
-            else {
-                importPath.fqName in fqNames
-            }
-
-            if (!isUsed) {
-                if (directive.targetDescriptors().isEmpty()) continue // do not highlight unresolved imports as unused
-
-                val fixes = arrayListOf<LocalQuickFix>()
-                fixes.add(OptimizeImportsQuickFix(file))
-                if (!CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY) {
-                    fixes.add(EnableOptimizeImportsOnTheFlyFix(file))
-                }
-
-                problems.add(manager.createProblemDescriptor(directive,
-                                                             "Unused import directive",
-                                                             isOnTheFly,
-                                                             fixes.toTypedArray(),
-                                                             ProblemHighlightType.LIKE_UNUSED_SYMBOL))
-            }
+            manager.createProblemDescriptor(it,
+                                            "Unused import directive",
+                                            isOnTheFly,
+                                            fixes.toTypedArray(),
+                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL)
         }
 
         if (isOnTheFly) {
-            scheduleOptimizeImportsOnTheFly(file, data)
+            scheduleOptimizeImportsOnTheFly(file, data.optimizerData)
         }
 
         return problems.toTypedArray()
