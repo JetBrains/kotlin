@@ -1,6 +1,5 @@
 package c
 
-import a.*
 import b.TEST
 import b.Test
 import b.test

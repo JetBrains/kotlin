@@ -1,7 +1,6 @@
 package b
 
 import a.f2
-import b.f3
 import c.f4
 
 fun test() {
