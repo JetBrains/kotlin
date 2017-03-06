@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -166,10 +165,12 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
 
         private fun createDefaultClassForEnumEntries(): IrClass? {
             if (!irClass.declarations.any({ it is IrEnumEntry && it.correspondingClass == null })) return null
+            val startOffset = irClass.startOffset
+            val endOffset = irClass.endOffset
             val descriptor = irClass.descriptor
             val defaultClassDescriptor = ClassDescriptorImpl(descriptor, "DEFAULT".synthesizedName, Modality.FINAL,
                     ClassKind.CLASS, descriptor.defaultType.singletonList(), SourceElement.NO_SOURCE, false)
-            val defaultClass = IrClassImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, defaultClassDescriptor)
+            val defaultClass = IrClassImpl(startOffset, endOffset, IrDeclarationOrigin.DEFINED, defaultClassDescriptor)
 
             val constructors = mutableSetOf<ClassConstructorDescriptor>()
 
@@ -199,8 +200,10 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
         }
 
         private fun createImplObject() {
+            val startOffset = irClass.startOffset
+            val endOffset = irClass.endOffset
             val implObjectDescriptor = loweredEnum.implObjectDescriptor
-            val implObject = IrClassImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, implObjectDescriptor)
+            val implObject = IrClassImpl(startOffset, endOffset, IrDeclarationOrigin.DEFINED, implObjectDescriptor)
 
             val enumEntries = mutableListOf<IrEnumEntry>()
             var i = 0
@@ -238,20 +241,22 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
             val irValuesInitializer = context.createArrayOfExpression(irClass.descriptor.defaultType,
                     enumEntries.sortedBy { it.descriptor.name }.map { it.initializerExpression })
 
-            val irField = IrFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, DECLARATION_ORIGIN_ENUM,
+            val startOffset = irClass.startOffset
+            val endOffset = irClass.endOffset
+            val irField = IrFieldImpl(startOffset, endOffset, DECLARATION_ORIGIN_ENUM,
                     loweredEnum.valuesProperty,
-                    IrExpressionBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irValuesInitializer))
+                    IrExpressionBodyImpl(startOffset, endOffset, irValuesInitializer))
 
-            val getter = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, DECLARATION_ORIGIN_ENUM, loweredEnum.valuesGetter)
+            val getter = IrFunctionImpl(startOffset, endOffset, DECLARATION_ORIGIN_ENUM, loweredEnum.valuesGetter)
 
-            val receiver = IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            val receiver = IrGetObjectValueImpl(startOffset, endOffset,
                     loweredEnum.implObjectDescriptor.defaultType, loweredEnum.implObjectDescriptor)
-            val value = IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, loweredEnum.valuesProperty, receiver)
-            val returnStatement = IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            val value = IrGetFieldImpl(startOffset, endOffset, loweredEnum.valuesProperty, receiver)
+            val returnStatement = IrReturnImpl(startOffset, endOffset,
                     loweredEnum.valuesGetter.returnType!!, loweredEnum.valuesGetter, value)
-            getter.body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(returnStatement))
+            getter.body = IrBlockBodyImpl(startOffset, endOffset, listOf(returnStatement))
 
-            val irProperty = IrPropertyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, DECLARATION_ORIGIN_ENUM,
+            val irProperty = IrPropertyImpl(startOffset, endOffset, DECLARATION_ORIGIN_ENUM,
                     false, loweredEnum.valuesProperty, irField, getter, null)
             return irProperty
         }
@@ -264,44 +269,48 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
         private val genericValuesFun = context.builtIns.getKonanInternalFunctions("valuesForEnum").single()
 
         private fun createSyntheticValuesMethodDeclaration(): IrFunction {
+            val startOffset = irClass.startOffset
+            val endOffset = irClass.endOffset
             val typeParameterT = genericValuesFun.typeParameters[0]
             val enumClassType = irClass.descriptor.defaultType
             val typeSubstitutor = TypeSubstitutor.create(mapOf(typeParameterT.typeConstructor to TypeProjectionImpl(enumClassType)))
             val substitutedValueOf = genericValuesFun.substitute(typeSubstitutor)!!
 
-            val irValuesCall = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, substitutedValueOf, mapOf(typeParameterT to enumClassType))
+            val irValuesCall = IrCallImpl(startOffset, endOffset, substitutedValueOf, mapOf(typeParameterT to enumClassType))
                     .apply {
-                        val receiver = IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        val receiver = IrGetObjectValueImpl(startOffset, endOffset,
                                 loweredEnum.implObjectDescriptor.defaultType, loweredEnum.implObjectDescriptor)
-                        putValueArgument(0, IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, loweredEnum.valuesProperty, receiver))
+                        putValueArgument(0, IrGetFieldImpl(startOffset, endOffset, loweredEnum.valuesProperty, receiver))
                     }
 
             val body = IrBlockBodyImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    listOf(IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, loweredEnum.valuesFunction, irValuesCall))
+                    startOffset, endOffset,
+                    listOf(IrReturnImpl(startOffset, endOffset, loweredEnum.valuesFunction, irValuesCall))
             )
-            return IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, DECLARATION_ORIGIN_ENUM, loweredEnum.valuesFunction, body)
+            return IrFunctionImpl(startOffset, endOffset, DECLARATION_ORIGIN_ENUM, loweredEnum.valuesFunction, body)
         }
 
         private fun createSyntheticValueOfMethodDeclaration(): IrFunction {
+            val startOffset = irClass.startOffset
+            val endOffset = irClass.endOffset
             val typeParameterT = genericValueOfFun.typeParameters[0]
             val enumClassType = irClass.descriptor.defaultType
             val typeSubstitutor = TypeSubstitutor.create(mapOf(typeParameterT.typeConstructor to TypeProjectionImpl(enumClassType)))
             val substitutedValueOf = genericValueOfFun.substitute(typeSubstitutor)!!
 
-            val irValueOfCall = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, substitutedValueOf, mapOf(typeParameterT to enumClassType))
+            val irValueOfCall = IrCallImpl(startOffset, endOffset, substitutedValueOf, mapOf(typeParameterT to enumClassType))
                     .apply {
-                        putValueArgument(0, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, loweredEnum.valueOfFunction.valueParameters[0]))
-                        val receiver = IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        putValueArgument(0, IrGetValueImpl(startOffset, endOffset, loweredEnum.valueOfFunction.valueParameters[0]))
+                        val receiver = IrGetObjectValueImpl(startOffset, endOffset,
                                 loweredEnum.implObjectDescriptor.defaultType, loweredEnum.implObjectDescriptor)
-                        putValueArgument(1, IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, loweredEnum.valuesProperty, receiver))
+                        putValueArgument(1, IrGetFieldImpl(startOffset, endOffset, loweredEnum.valuesProperty, receiver))
                     }
 
             val body = IrBlockBodyImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    listOf(IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, loweredEnum.valueOfFunction, irValueOfCall))
+                    startOffset, endOffset,
+                    listOf(IrReturnImpl(startOffset, endOffset, loweredEnum.valueOfFunction, irValueOfCall))
             )
-            return IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, DECLARATION_ORIGIN_ENUM, loweredEnum.valueOfFunction, body)
+            return IrFunctionImpl(startOffset, endOffset, DECLARATION_ORIGIN_ENUM, loweredEnum.valueOfFunction, body)
         }
 
         private fun lowerEnumConstructors(irClass: IrClass) {

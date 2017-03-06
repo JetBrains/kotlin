@@ -45,7 +45,7 @@ fun <T: Enum<T>> valueOfForEnum(name: String, values: Array<T>) : T
 
 fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T>
 {
-    val result = Array<T?>(values.size, { null })
+    val result = Array<T?>(values.size)
     for (value in values)
         result[value.ordinal] = value
     return result as Array<T>
