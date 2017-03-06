@@ -618,9 +618,16 @@ class BasicCompletionSession(
     }
 
     private fun addReferenceVariantElements(lookupElementFactory: LookupElementFactory, descriptorKindFilter: DescriptorKindFilter) {
-        val (imported, notImported) = referenceVariantsCollector!!.collectReferenceVariants(descriptorKindFilter).excludeNonInitializedVariable()
-        collector.addDescriptorElements(imported, lookupElementFactory)
-        collector.addDescriptorElements(notImported, lookupElementFactory, notImported = true)
+        fun addReferenceVariants(referenceVariants: ReferenceVariants) {
+            collector.addDescriptorElements(referenceVariantsHelper.excludeNonInitializedVariable(referenceVariants.imported, position), lookupElementFactory)
+            collector.addDescriptorElements(referenceVariants.notImportedExtensions, lookupElementFactory, notImported = true)
+        }
+
+        val referenceVariantsCollector = referenceVariantsCollector!!
+        referenceVariantsCollector.collectReferenceVariants(descriptorKindFilter) { referenceVariants ->
+            addReferenceVariants(referenceVariants)
+            flushToResultSet()
+        }
     }
 }
 

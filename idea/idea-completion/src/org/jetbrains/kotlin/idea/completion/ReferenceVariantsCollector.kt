@@ -36,6 +36,10 @@ import java.util.*
 
 data class ReferenceVariants(val imported: Collection<DeclarationDescriptor>, val notImportedExtensions: Collection<CallableDescriptor>)
 
+private operator fun ReferenceVariants.plus(other: ReferenceVariants): ReferenceVariants {
+    return ReferenceVariants(imported.union(other.imported), notImportedExtensions.union(other.notImportedExtensions))
+}
+
 class ReferenceVariantsCollector(
         private val referenceVariantsHelper: ReferenceVariantsHelper,
         private val indicesHelper: KotlinIndicesHelper,
@@ -48,6 +52,12 @@ class ReferenceVariantsCollector(
         private val configuration: CompletionSessionConfiguration,
         private val runtimeReceiver: ExpressionReceiver? = null
 ) {
+
+    data class FilterConfiguration internal constructor(val descriptorKindFilter: DescriptorKindFilter,
+                                                        val additionalPropertyNameFilter: ((String) -> Boolean)?,
+                                                        val shadowedDeclarationsFilter: ShadowedDeclarationsFilter?,
+                                                        val completeExtensionsFromIndices: Boolean)
+
     private val prefix = prefixMatcher.prefix
     private val descriptorNameFilter = prefixMatcher.asStringNameFilter()
 
@@ -68,15 +78,37 @@ class ReferenceVariantsCollector(
 
     fun collectReferenceVariants(descriptorKindFilter: DescriptorKindFilter): ReferenceVariants {
         assert(!isCollectingFinished)
-        val variants = doCollectReferenceVariants(descriptorKindFilter)
-        collectedImported.addAll(variants.imported)
-        collectedNotImportedExtensions.addAll(variants.notImportedExtensions)
+        val config = configure(descriptorKindFilter)
+
+        val basic = collectBasicVariants(config)
+        return basic + collectExtensionVariants(config, basic)
+    }
+
+    fun collectReferenceVariants(descriptorKindFilter: DescriptorKindFilter, consumer: (ReferenceVariants) -> Unit) {
+        assert(!isCollectingFinished)
+        val config = configure(descriptorKindFilter)
+
+        val basic = collectBasicVariants(config)
+        consumer(basic)
+        val extensions = collectExtensionVariants(config, basic)
+        consumer(extensions)
+    }
+
+    private fun collectBasicVariants(filterConfiguration: FilterConfiguration): ReferenceVariants {
+        val variants = doCollectBasicVariants(filterConfiguration)
+        collectedImported += variants.imported
         return variants
     }
 
-    private val GET_SET_PREFIXES = listOf("get", "set", "ge", "se", "g", "s")
+    private fun collectExtensionVariants(filterConfiguration: FilterConfiguration, basicVariants: ReferenceVariants): ReferenceVariants {
+        val variants = doCollectExtensionVariants(filterConfiguration, basicVariants)
+        collectedImported += variants.imported
+        collectedNotImportedExtensions += variants.notImportedExtensions
+        return variants
+    }
 
-    private fun doCollectReferenceVariants(descriptorKindFilter: DescriptorKindFilter): ReferenceVariants {
+
+    fun configure(descriptorKindFilter: DescriptorKindFilter): FilterConfiguration {
         val completeExtensionsFromIndices = descriptorKindFilter.kindMask.and(DescriptorKindFilter.CALLABLES_MASK) != 0
                                             && DescriptorKindExclude.Extensions !in descriptorKindFilter.excludes
                                             && callTypeAndReceiver !is CallTypeAndReceiver.IMPORT_DIRECTIVE
@@ -86,6 +118,20 @@ class ReferenceVariantsCollector(
         else
             descriptorKindFilter
 
+        val getOrSetPrefix = GET_SET_PREFIXES.firstOrNull { prefix.startsWith(it) }
+        val additionalPropertyNameFilter: ((String) -> Boolean)? = getOrSetPrefix
+                ?.let { prefixMatcher.cloneWithPrefix(prefix.removePrefix(getOrSetPrefix).decapitalizeSmart()).asStringNameFilter() }
+
+        val shadowedDeclarationsFilter = if (runtimeReceiver != null)
+            ShadowedDeclarationsFilter(bindingContext, resolutionFacade, nameExpression, runtimeReceiver)
+        else
+            ShadowedDeclarationsFilter.create(bindingContext, resolutionFacade, nameExpression, callTypeAndReceiver)
+
+        return ReferenceVariantsCollector.FilterConfiguration(descriptorKindFilter, additionalPropertyNameFilter, shadowedDeclarationsFilter, completeExtensionsFromIndices)
+    }
+
+
+    private fun doCollectBasicVariants(filterConfiguration: FilterConfiguration): ReferenceVariants {
         fun getReferenceVariants(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
             return referenceVariantsHelper.getReferenceVariants(
                     nameExpression,
@@ -97,18 +143,19 @@ class ReferenceVariantsCollector(
                     useReceiverType = runtimeReceiver?.type)
         }
 
-        var variants = getReferenceVariants(descriptorKindFilter, descriptorNameFilter.toNameFilter())
+        val (descriptorKindFilter, additionalPropertyNameFilter) = filterConfiguration
 
-        val getOrSetPrefix = GET_SET_PREFIXES.firstOrNull { prefix.startsWith(it) }
-        val additionalPropertyNameFilter: ((String) -> Boolean)? = getOrSetPrefix
-                ?.let { prefixMatcher.cloneWithPrefix(prefix.removePrefix(getOrSetPrefix).decapitalizeSmart()).asStringNameFilter() }
+        var basicVariants = getReferenceVariants(descriptorKindFilter, descriptorNameFilter.toNameFilter())
         if (additionalPropertyNameFilter != null) {
-            variants += getReferenceVariants(descriptorKindFilter.intersect(DescriptorKindFilter.VARIABLES),
-                                             additionalPropertyNameFilter.toNameFilter())
-            variants = variants.distinct()
+            basicVariants += getReferenceVariants(descriptorKindFilter.intersect(DescriptorKindFilter.VARIABLES), additionalPropertyNameFilter.toNameFilter())
+            basicVariants = basicVariants.distinct()
         }
+        return ReferenceVariants(filterConfiguration.filterVariants(basicVariants).toHashSet(), emptyList())
+    }
 
-        var notImportedExtensions: Collection<CallableDescriptor> = emptyList()
+    fun doCollectExtensionVariants(filterConfiguration: FilterConfiguration, basicVariants: ReferenceVariants): ReferenceVariants {
+        val (_, additionalPropertyNameFilter, shadowedDeclarationsFilter, completeExtensionsFromIndices) = filterConfiguration
+
         if (completeExtensionsFromIndices) {
             val nameFilter = if (additionalPropertyNameFilter != null)
                 descriptorNameFilter or additionalPropertyNameFilter
@@ -119,33 +166,41 @@ class ReferenceVariantsCollector(
             else
                 indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, nameExpression, bindingContext, nameFilter)
 
-            val pair = extensions.partition { importableFqNameClassifier.isImportableDescriptorImported(it) }
-            variants += pair.first
-            notImportedExtensions = pair.second
+            val (extensionsVariants, notImportedExtensions) = extensions.partition { importableFqNameClassifier.isImportableDescriptorImported(it) }
+
+            val notImportedDeclarationsFilter =
+                    shadowedDeclarationsFilter?.createNonImportedDeclarationsFilter<CallableDescriptor>(importedDeclarations = basicVariants.imported + extensionsVariants)
+
+            val filteredImported = filterConfiguration.filterVariants(extensionsVariants + basicVariants.imported)
+
+            val importedExtensionsVariants = filteredImported.filter { it !in basicVariants.imported }
+
+            return ReferenceVariants(
+                    importedExtensionsVariants,
+                    notImportedExtensions.let { variants -> notImportedDeclarationsFilter?.invoke(variants) ?: variants }
+            )
         }
 
-        val shadowedDeclarationsFilter = if (runtimeReceiver != null)
-            ShadowedDeclarationsFilter(bindingContext, resolutionFacade, nameExpression, runtimeReceiver)
-        else
-            ShadowedDeclarationsFilter.create(bindingContext, resolutionFacade, nameExpression, callTypeAndReceiver)
-
-        if (shadowedDeclarationsFilter != null) {
-            variants = shadowedDeclarationsFilter.filter(variants)
-            notImportedExtensions = shadowedDeclarationsFilter
-                    .createNonImportedDeclarationsFilter<CallableDescriptor>(importedDeclarations = variants)
-                    .invoke(notImportedExtensions)
-        }
-
-        if (!configuration.javaGettersAndSetters) {
-            variants = referenceVariantsHelper.filterOutJavaGettersAndSetters(variants)
-        }
-
-        if (!configuration.dataClassComponentFunctions) {
-            variants = variants.filter { !isDataClassComponentFunction(it) }
-        }
-
-        return ReferenceVariants(variants, notImportedExtensions)
+        return ReferenceVariants(emptyList(), emptyList())
     }
+
+    fun <TDescriptor : DeclarationDescriptor> FilterConfiguration.filterVariants(_variants: Collection<TDescriptor>): Collection<TDescriptor> {
+        var variants = _variants
+
+        if (shadowedDeclarationsFilter != null)
+            variants = shadowedDeclarationsFilter.filter(variants)
+
+        if (!configuration.javaGettersAndSetters)
+            variants = referenceVariantsHelper.filterOutJavaGettersAndSetters(variants)
+
+        if (!configuration.dataClassComponentFunctions)
+            variants = variants.filter { !isDataClassComponentFunction(it) }
+
+        return variants
+    }
+
+
+    private val GET_SET_PREFIXES = listOf("get", "set", "ge", "se", "g", "s")
 
     private object TopLevelExtensionsExclude : DescriptorKindExclude() {
         override fun excludes(descriptor: DeclarationDescriptor): Boolean {

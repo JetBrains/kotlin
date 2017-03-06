@@ -95,7 +95,7 @@ class ReferenceVariantsHelper(
         return variants
     }
 
-    fun filterOutJavaGettersAndSetters(variants: Collection<DeclarationDescriptor>): Collection<DeclarationDescriptor> {
+    fun <TDescriptor: DeclarationDescriptor> filterOutJavaGettersAndSetters(variants: Collection<TDescriptor>): Collection<TDescriptor> {
         val accessorMethodsToRemove = HashSet<FunctionDescriptor>()
         val filteredVariants = variants.filter { it !is SyntheticJavaPropertyDescriptor || !it.suppressedByNotPropertyList(notProperties) }
 
