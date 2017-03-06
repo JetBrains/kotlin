@@ -16,16 +16,9 @@
 
 package org.jetbrains.kotlin.psi2ir
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.psi2ir.containsNull
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.isNullabilityFlexible
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import org.jetbrains.kotlin.types.upperIfFlexible
 
 fun IrVariable.defaultLoad(): IrExpression =
         IrGetValueImpl(startOffset, endOffset, descriptor)
