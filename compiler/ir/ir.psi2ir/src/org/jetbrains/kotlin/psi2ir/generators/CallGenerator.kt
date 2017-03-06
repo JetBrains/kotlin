@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
-import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -106,13 +105,8 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
                 IrGetValueImpl(startOffset, endOffset, descriptor, origin)
 
     fun generateDelegatingConstructorCall(startOffset: Int, endOffset: Int, call: CallBuilder) : IrExpression {
-        val descriptor = call.descriptor.let { callDescriptor ->
-            when (callDescriptor) {
-                is ClassConstructorDescriptor -> callDescriptor
-                is TypeAliasConstructorDescriptor -> callDescriptor.underlyingConstructorDescriptor
-                else -> throw AssertionError("Unexpected constructor descriptor: $callDescriptor")
-            }
-        }
+        val descriptor = call.descriptor as? ClassConstructorDescriptor
+                         ?: throw AssertionError("Class constructor expected: ${call.descriptor}")
 
         return call.callReceiver.call { dispatchReceiver, extensionReceiver ->
             val irCall = IrDelegatingConstructorCallImpl(startOffset, endOffset, descriptor, getTypeArguments(call.original))
@@ -215,7 +209,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
             irArgumentValues[valueParameter] = irArgumentValue
         }
 
-        resolvedCall.valueArgumentsByIndex!!.forEachIndexed { index, valueArgument ->
+        resolvedCall.valueArgumentsByIndex!!.forEachIndexed { index, _ ->
             val valueParameter = valueParameters[index]
             irCall.putValueArgument(index, irArgumentValues[valueParameter]?.load())
         }

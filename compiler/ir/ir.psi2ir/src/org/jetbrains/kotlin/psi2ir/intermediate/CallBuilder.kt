@@ -25,9 +25,10 @@ import org.jetbrains.kotlin.psi2ir.isValueArgumentReorderingRequired
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 
-class CallBuilder(val original: ResolvedCall<*>) {
-    val descriptor: CallableDescriptor = original.resultingDescriptor
-
+class CallBuilder(
+        val original: ResolvedCall<*>,
+        val descriptor: CallableDescriptor
+) {
     var superQualifier: ClassDescriptor? = null
 
     lateinit var callReceiver: CallReceiver

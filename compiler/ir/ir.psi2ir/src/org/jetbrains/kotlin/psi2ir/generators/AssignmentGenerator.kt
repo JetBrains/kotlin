@@ -140,7 +140,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         }
 
         val propertyReceiver = statementGenerator.generateCallReceiver(
-                ktLeft, resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver,
+                ktLeft, descriptor, resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver,
                 isSafe = resolvedCall.call.isSafeCall(),
                 isAssignmentReceiver = true)
 

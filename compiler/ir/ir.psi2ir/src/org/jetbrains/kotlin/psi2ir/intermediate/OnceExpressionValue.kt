@@ -21,6 +21,13 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.psi2ir.generators.CallGenerator
 import org.jetbrains.kotlin.types.KotlinType
 
+abstract class ExpressionValue(override val type: KotlinType) : IntermediateValue
+
+inline fun generateExpressionValue(type: KotlinType, crossinline generate: () -> IrExpression) =
+        object : ExpressionValue(type) {
+            override fun load(): IrExpression = generate()
+        }
+
 class OnceExpressionValue(val irExpression: IrExpression) : LValue, AssignmentReceiver {
     private var instantiated = false
 
