@@ -55,4 +55,10 @@ internal fun constructAnnotation(psi: KtAnnotationEntry, targetClass: KClass<out
     }
 }
 
-class InvalidScriptResolverAnnotation(val name: String, val annParams: List<Pair<String?, Any?>>?, val error: Exception? = null) : Annotation
+// NOTE: this class is used for error reporting. But in order to pass plugin verification, it should derive directly from java's Annotation
+// and implement annotationType method (see #KT-16621 for details).
+// TODO: instead of the workaround described above, consider using a sum-type for returning errors from constructAnnotation
+@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+class InvalidScriptResolverAnnotation(val name: String, val annParams: List<Pair<String?, Any?>>?, val error: Exception? = null) : Annotation, java.lang.annotation.Annotation {
+    override fun annotationType(): Class<out Annotation> = InvalidScriptResolverAnnotation::class.java
+}
