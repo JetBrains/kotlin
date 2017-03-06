@@ -416,6 +416,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("booleanConstsInAndAndOrOr.kt")
+        public void testBooleanConstsInAndAndOrOr() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/booleanConstsInAndAndOrOr.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("booleanOperators.kt")
         public void testBooleanOperators() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/booleanOperators.kt");

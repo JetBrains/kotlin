@@ -45,7 +45,7 @@ fun IrGeneratorContext.throwNpe(startOffset: Int, endOffset: Int, origin: IrStat
 // a || b == if (a) true else b
 fun IrGeneratorContext.oror(startOffset: Int, endOffset: Int, a: IrExpression, b: IrExpression, origin: IrStatementOrigin = IrStatementOrigin.OROR): IrWhen =
         IrIfThenElseImpl(startOffset, endOffset, builtIns.booleanType,
-                         a, IrConstImpl.constTrue(b.startOffset, b.endOffset, b.type), b,
+                         a, IrConstImpl.constTrue(b.startOffset, b.endOffset, builtIns.booleanType), b,
                          origin)
 
 fun IrGeneratorContext.oror(a: IrExpression, b: IrExpression, origin: IrStatementOrigin = IrStatementOrigin.OROR): IrWhen =
@@ -57,7 +57,7 @@ fun IrGeneratorContext.whenComma(a: IrExpression, b: IrExpression): IrWhen =
 // a && b == if (a) b else false
 fun IrGeneratorContext.andand(startOffset: Int, endOffset: Int, a: IrExpression, b: IrExpression, origin: IrStatementOrigin = IrStatementOrigin.ANDAND): IrWhen =
         IrIfThenElseImpl(startOffset, endOffset, builtIns.booleanType,
-                         a, b, IrConstImpl.constFalse(b.startOffset, b.endOffset, b.type),
+                         a, b, IrConstImpl.constFalse(b.startOffset, b.endOffset, builtIns.booleanType),
                          origin)
 
 fun IrGeneratorContext.andand(a: IrExpression, b: IrExpression, origin: IrStatementOrigin = IrStatementOrigin.ANDAND): IrWhen =
