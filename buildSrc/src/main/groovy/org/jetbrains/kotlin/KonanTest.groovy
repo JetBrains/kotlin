@@ -51,6 +51,12 @@ abstract class KonanTest extends JavaExec {
     }
 
     @Override
+    void setJvmArgs(Iterable<?> arguments) {
+        super.setJvmArgs(arguments + "-Dkonan.home=${dist.canonicalPath}" +
+                "-Djava.library.path=${dist.canonicalPath}/konan/nativelib")
+    }
+
+    @Override
     void exec() {
         // Perhaps later we will return this exec() back but for now rest of infrastructure expects
         // compilation begins on runCompiler call, to emulate this behaviour we call super.exec() after
@@ -64,9 +70,7 @@ abstract class KonanTest extends JavaExec {
         try {
             main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
             classpath = project.configurations.cli_bc
-            jvmArgs =["-ea",
-                       "-Dkonan.home=${dist.canonicalPath}",
-                       "-Djava.library.path=${dist.canonicalPath}/konan/nativelib"]
+            enableAssertions = true
             args = ["-output", output,
                      *filesToCompile,
                      *moreArgs,
