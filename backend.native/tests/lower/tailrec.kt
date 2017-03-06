@@ -13,6 +13,9 @@ fun main(args: Array<String>) {
 
     println(Integer(5).isLessOrEqualThan(7))
     println(Integer(42).isLessOrEqualThan(1))
+
+    println(DefaultArgGetter().foo("non-default"))
+    println(EitherDelegatedOrNot(NotDelegated()).get42())
 }
 
 tailrec fun add(x: Int, y: Int): Int = if (x > 0) add(x - 1, y + 1) else y
@@ -61,4 +64,26 @@ open class Integer(val value: Int) {
             return false
         }
     }
+}
+
+open class DefaultArgHolder {
+    open fun foo(s: String = "default") = s
+}
+
+class DefaultArgGetter : DefaultArgHolder() {
+    override tailrec fun foo(s: String): String {
+        return if (s == "default") s else foo()
+    }
+}
+
+open class EitherDelegatedOrNot(val delegate: EitherDelegatedOrNot?) {
+    open tailrec fun get42(): Int = if (delegate != null) {
+        delegate.get42()
+    } else {
+        throw Error()
+    }
+}
+
+class NotDelegated : EitherDelegatedOrNot(null) {
+    override fun get42() = 42
 }

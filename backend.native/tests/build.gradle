@@ -1308,7 +1308,9 @@ task tailrec(type: RunKonanTest) {
             "1\n" +
             "3 ...\n2 ...\n1 ...\nready!\n" +
             "2\n-1\n" +
-            "true\nfalse\n"
+            "true\nfalse\n" +
+            "default\n" +
+            "42\n"
     source = "lower/tailrec.kt"
 }
 
