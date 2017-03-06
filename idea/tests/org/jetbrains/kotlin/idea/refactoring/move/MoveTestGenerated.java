@@ -492,6 +492,12 @@ public class MoveTestGenerated extends AbstractMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/moveInternalToAnotherModule/moveInternalToAnotherModule.test")
+    public void testKotlin_moveTopLevelDeclarations_misc_moveInternalToAnotherModule_MoveInternalToAnotherModule() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/moveInternalToAnotherModule/moveInternalToAnotherModule.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveTopLevelDeclarations/misc/moveToUnrelatedModuleConflict/moveToUnrelatedModuleConflict.test")
     public void testKotlin_moveTopLevelDeclarations_misc_moveToUnrelatedModuleConflict_MoveToUnrelatedModuleConflict() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/moveToUnrelatedModuleConflict/moveToUnrelatedModuleConflict.test");

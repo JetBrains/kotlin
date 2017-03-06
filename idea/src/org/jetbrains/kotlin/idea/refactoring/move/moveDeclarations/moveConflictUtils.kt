@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.*
 import com.intellij.usageView.UsageInfo
@@ -35,11 +36,9 @@ import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.refactoring.getUsageContext
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.contains
-import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -83,13 +82,13 @@ class MoveConflictChecker(
 
             is KotlinDirectoryBasedMoveTarget -> {
                 val packageFqName = targetContainerFqName ?: return null
-                val targetDir = directory
+                val targetDir = directory?.virtualFile ?: targetFile
                 val targetModuleDescriptor = if (targetDir != null) {
-                    val targetModule = ModuleUtilCore.findModuleForPsiElement(targetDir) ?: return null
+                    val targetModule = ModuleUtilCore.findModuleForFile(targetDir, project) ?: return null
                     val moduleFileIndex = ModuleRootManager.getInstance(targetModule).fileIndex
                     val targetModuleInfo = when {
-                        moduleFileIndex.isInSourceContent(targetDir.virtualFile) -> targetModule.productionSourceInfo()
-                        moduleFileIndex.isInTestSourceContent(targetDir.virtualFile) -> targetModule.testSourceInfo()
+                        moduleFileIndex.isInSourceContent(targetDir) -> targetModule.productionSourceInfo()
+                        moduleFileIndex.isInTestSourceContent(targetDir) -> targetModule.testSourceInfo()
                         else -> return null
                     }
                     resolutionFacade.findModuleDescriptor(targetModuleInfo) ?: return null
@@ -242,6 +241,35 @@ class MoveConflictChecker(
         }
     }
 
+    private fun isToBeMoved(element: PsiElement): Boolean = elementsToMove.any { it.isAncestor(element, false) }
+
+    private fun checkInternalMemberUsages(conflicts: MultiMap<PsiElement, String>) {
+        val sourceRoot = moveTarget.targetFile ?: return
+        val targetModule = ModuleUtilCore.findModuleForFile(sourceRoot, project) ?: return
+
+        val membersToCheck = LinkedHashSet<KtDeclaration>()
+        val memberCollector = object : KtVisitorVoid() {
+            override fun visitClassOrObject(classOrObject: KtClassOrObject) {
+                val declarations = classOrObject.declarations
+                declarations.filterTo(membersToCheck) { it.hasModifier(KtTokens.INTERNAL_KEYWORD) }
+                declarations.forEach { it.accept(this) }
+            }
+        }
+        elementsToMove.forEach { it.accept(memberCollector) }
+
+        for (memberToCheck in membersToCheck) {
+            for (reference in ReferencesSearch.search(memberToCheck)) {
+                val element = reference.element ?: continue
+                val usageModule = ModuleUtilCore.findModuleForPsiElement(element)
+                if (usageModule != targetModule && !isToBeMoved(element)) {
+                    val container = element.getUsageContext()
+                    val message = "${render(container)} uses internal ${render(memberToCheck)} which will be inaccessible after move"
+                    conflicts.putValue(element, message.capitalize())
+                }
+            }
+        }
+    }
+
     fun checkAllConflicts(
             externalUsages: MutableSet<UsageInfo>,
             internalUsages: MutableSet<UsageInfo>,
@@ -251,5 +279,6 @@ class MoveConflictChecker(
         checkModuleConflictsInDeclarations(internalUsages, conflicts)
         checkVisibilityInUsages(externalUsages, conflicts)
         checkVisibilityInDeclarations(conflicts)
+        checkInternalMemberUsages(conflicts)
     }
 }
