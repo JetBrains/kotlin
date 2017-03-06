@@ -63,4 +63,4 @@ internal fun IrMemberAccessExpression.addArguments(args: List<Pair<ParameterDesc
 internal fun IrExpression.isNullConst() = this is IrConst<*> && this.kind == IrConstKind.Null
 
 fun IrCall.usesDefaultArguments(): Boolean =
-        this.descriptor.valueParameters.any { this.getValueArgument(it) != null }
+        this.descriptor.valueParameters.any { this.getValueArgument(it) == null }
