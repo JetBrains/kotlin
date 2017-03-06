@@ -7,7 +7,6 @@ import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
 
-// TODO: add support for smap tests
 abstract class KonanTest extends JavaExec {
     protected String source
     def backendNative = project.project(":backend.native")

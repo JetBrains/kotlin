@@ -5,10 +5,24 @@ apply plugin: NativeInteropPlugin
 
 configurations {
     cli_bc
+    update_tests
+}
+
+repositories {
+    ivy {
+        ivyPattern      'http://teamcity.jetbrains.com/guestAuth/repository/download/[module]/[revision]/teamcity-ivy.xml'
+        artifactPattern 'http://teamcity.jetbrains.com/guestAuth/repository/download/[module]/[revision]/[artifact](.[ext])'
+    }
 }
 
 dependencies {
     cli_bc project(path: ':backend.native', configuration: 'cli_bc')
+    update_tests (group: 'org',  name: 'bt345', version: testDataVersion) {
+        artifact {
+            name = 'internal/kotlin-test-data'
+            type = 'zip'
+        }
+    }
 }
 
 def testOutputRoot = rootProject.file("test.output").absolutePath
@@ -29,6 +43,36 @@ allprojects {
     }
 }
 
+task update_external_tests() {
+    doLast {
+        // Unzip.
+        delete temporaryDir
+        copy {
+            configurations.update_tests.asFileTree.each {
+                from(zipTree(it)) {
+                    include 'compiler/**'
+                }
+            }
+            into(temporaryDir)
+        }
+
+        // Copy only used tests into the test directory.
+        externalTestsDir.mkdirs()
+        delete(externalTestsDir.listFiles())
+
+        copy {
+            from temporaryDir.absolutePath + "/compiler"
+            into(externalTestsDir)
+            include 'codegen/box/**'
+            include 'codegen/boxInline/**'
+            include 'compileKotlinAgainstKotlin/**'
+        }
+
+        //clean tmp dir.
+        delete temporaryDir
+    }
+}
+
 task clean {
     doLast {
         delete(rootProject.file(testOutputRoot))
@@ -42,6 +86,7 @@ task run() {
     else
         dependsOn(tasks.withType(KonanTest).matching { !(it instanceof RunExternalTestGroup) && it.enabled })
 }
+
 
 task run_external () {
     // TODO Consider test output directory cleaning before execution.
