@@ -32,13 +32,11 @@ import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.typeUtil.builtIns
-import org.jetbrains.kotlin.types.upperIfFlexible
+import org.jetbrains.kotlin.types.TypeUtils
 import java.lang.Exception
 
 fun KotlinType.containsNull() =
-        KotlinTypeChecker.DEFAULT.isSubtypeOf(builtIns.nullableNothingType, this.upperIfFlexible())
+        TypeUtils.isNullableType(this)
 
 fun KtElement.deparenthesize(): KtElement =
         if (this is KtExpression) KtPsiUtil.safeDeparenthesize(this) else this

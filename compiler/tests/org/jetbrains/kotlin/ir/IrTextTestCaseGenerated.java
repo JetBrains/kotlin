@@ -74,6 +74,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("dataClassesGeneric.kt")
+        public void testDataClassesGeneric() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/dataClassesGeneric.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("delegatedImplementation.kt")
         public void testDelegatedImplementation() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/delegatedImplementation.kt");

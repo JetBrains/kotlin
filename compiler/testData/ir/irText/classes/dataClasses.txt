@@ -155,3 +155,90 @@ FILE /dataClasses.kt
               CONST Boolean type=kotlin.Boolean value='false'
         RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
           CONST Boolean type=kotlin.Boolean value='true'
+  CLASS CLASS Test2
+    CONSTRUCTOR public constructor Test2(x: kotlin.Any?)
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test2'
+    PROPERTY public final val x: kotlin.Any?
+      FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Any?
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Any?
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): Any?'
+            GET_FIELD 'x: Any?' type=kotlin.Any? origin=null
+              receiver: GET_VAR '<receiver: Test2>' type=Test2 origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component1(): kotlin.Any?
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='component1(): Any?'
+          CALL '<get-x>(): Any?' type=kotlin.Any? origin=GET_PROPERTY
+            $this: GET_VAR '<receiver: Test2>' type=Test2 origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public final fun copy(x: kotlin.Any? = ...): Test2
+      x: EXPRESSION_BODY
+        CALL '<get-x>(): Any?' type=kotlin.Any? origin=GET_PROPERTY
+          $this: GET_VAR '<receiver: Test2>' type=Test2 origin=null
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='copy(Any? = ...): Test2'
+          CALL 'constructor Test2(Any?)' type=Test2 origin=null
+            x: GET_VAR 'value-parameter x: Any? = ...' type=kotlin.Any? origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public open override fun toString(): kotlin.String
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='toString(): String'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value='Test2('
+            CONST String type=kotlin.String value='x='
+            CALL '<get-x>(): Any?' type=kotlin.Any? origin=GET_PROPERTY
+              $this: GET_VAR '<receiver: Test2>' type=Test2 origin=null
+            CONST String type=kotlin.String value=')'
+    FUN GENERATED_DATA_CLASS_MEMBER public open override fun hashCode(): kotlin.Int
+      BLOCK_BODY
+        VAR IR_TEMPORARY_VARIABLE var tmp0_result: kotlin.Int
+          CONST Int type=kotlin.Int value='0'
+        SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
+          BLOCK type=kotlin.Int origin=null
+            VAR IR_TEMPORARY_VARIABLE val tmp1: kotlin.Any?
+              CALL '<get-x>(): Any?' type=kotlin.Any? origin=GET_PROPERTY
+                $this: GET_VAR '<receiver: Test2>' type=Test2 origin=null
+            WHEN type=kotlin.Int origin=null
+              BRANCH
+                if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+                  arg0: GET_VAR 'tmp1: Any?' type=kotlin.Any? origin=null
+                  arg1: CONST Null type=kotlin.Nothing? value='null'
+                then: CONST Int type=kotlin.Int value='0'
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value='true'
+                then: CALL 'hashCode(): Int' type=kotlin.Int origin=null
+                  $this: GET_VAR 'tmp1: Any?' type=kotlin.Any? origin=null
+        RETURN type=kotlin.Nothing from='hashCode(): Int'
+          GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'EQEQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQEQ
+              arg0: GET_VAR '<receiver: Test2>' type=Test2 origin=null
+              arg1: GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='true'
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=Test2
+              GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
+        VAR IR_TEMPORARY_VARIABLE val tmp0_other_with_cast: Test2
+          TYPE_OP type=Test2 origin=CAST typeOperand=Test2
+            GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-x>(): Any?' type=kotlin.Any? origin=GET_PROPERTY
+                  $this: GET_VAR '<receiver: Test2>' type=Test2 origin=null
+                arg1: CALL '<get-x>(): Any?' type=kotlin.Any? origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: Test2' type=Test2 origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value='false'
+        RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+          CONST Boolean type=kotlin.Boolean value='true'
