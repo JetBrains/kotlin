@@ -554,15 +554,8 @@ private fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractCompi
     // Since we cannot update classpath statically, java not able to detect changes in the classpath after kotlin compiler.
     // Therefore this (probably inefficient since java cannot decide "uptodateness" by the list of changed class files, but told
     // explicitly being out of date whenever any kotlin files are compiled
-    kotlinTask.anyClassesCompiled = false
 
-    javaTask.outputs.upToDateWhen { task ->
-        val kotlinClassesCompiled = kotlinTask.anyClassesCompiled
-        if (kotlinClassesCompiled) {
-            logger.info("Marking $task out of date, because kotlin classes are changed")
-        }
-        !kotlinClassesCompiled
-    }
+    javaTask.inputs.dir(kotlinTask.destinationDir!!)
 
     javaTask.dependsOn(kotlinTask.name)
     /*
