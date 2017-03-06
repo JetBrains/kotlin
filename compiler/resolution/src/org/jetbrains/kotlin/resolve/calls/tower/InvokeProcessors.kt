@@ -150,7 +150,9 @@ private fun ImplicitScopeTower.getExtensionInvokeCandidateDescriptor(
     if (!type.isBuiltinExtensionFunctionalType) return null // todo: missing smart cast?
 
     val invokeDescriptor = type.memberScope.getContributedFunctions(OperatorNameConventions.INVOKE, location).single()
-    val synthesizedInvoke = createSynthesizedInvokes(listOf(invokeDescriptor)).single()
+    val synthesizedInvokes = createSynthesizedInvokes(listOf(invokeDescriptor))
+    val synthesizedInvoke = synthesizedInvokes.singleOrNull()
+                            ?: error("No single synthesized invoke for $invokeDescriptor: $synthesizedInvokes")
 
     // here we don't add SynthesizedDescriptor diagnostic because it should has priority as member
     return CandidateWithBoundDispatchReceiverImpl(extensionFunctionReceiver, synthesizedInvoke, listOf())

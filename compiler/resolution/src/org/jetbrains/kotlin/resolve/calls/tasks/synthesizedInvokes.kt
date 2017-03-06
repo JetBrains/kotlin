@@ -16,35 +16,40 @@
 
 package org.jetbrains.kotlin.resolve.calls.tasks
 
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor.Kind.Function
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor.Kind.SuspendFunction
-import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
+import org.jetbrains.kotlin.builtins.getFunctionalClassKind
+import org.jetbrains.kotlin.builtins.isBuiltinFunctionClass
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
-private val BUILTIN_FUNCTIONS = setOf(Function, SuspendFunction)
-
+// Creates a descriptor denoting an extension function for a collection of non-extension "invoke"s from function types.
+// For example, `fun invoke(param: P): R` becomes `fun P.invoke(): R`
 fun createSynthesizedInvokes(functions: Collection<FunctionDescriptor>): Collection<FunctionDescriptor> {
     val result = ArrayList<FunctionDescriptor>(1)
 
     for (invoke in functions) {
-        if (invoke !is FunctionInvokeDescriptor || invoke.getValueParameters().isEmpty()) continue
+        if (invoke.name != OperatorNameConventions.INVOKE) continue
 
-        val synthesized = if ((invoke.getContainingDeclaration() as? FunctionClassDescriptor)?.functionKind in BUILTIN_FUNCTIONS) {
+        // "invoke" must have at least one parameter, which will become the receiver parameter of the synthesized "invoke"
+        if (invoke.valueParameters.isEmpty()) continue
+
+        val containerClassId = (invoke.containingDeclaration as ClassDescriptor).classId
+        val synthesized = if (containerClassId != null && isBuiltinFunctionClass(containerClassId)) {
             createSynthesizedFunctionWithFirstParameterAsReceiver(invoke)
         }
         else {
-            val invokeDeclaration = invoke.getOverriddenDescriptors().single()
+            val invokeDeclaration = invoke.overriddenDescriptors.singleOrNull()
+                                    ?: error("No single overridden invoke for $invoke: ${invoke.overriddenDescriptors}")
             val synthesizedSuperFun = createSynthesizedFunctionWithFirstParameterAsReceiver(invokeDeclaration)
             val fakeOverride = synthesizedSuperFun.copy(
-                    invoke.getContainingDeclaration(),
+                    invoke.containingDeclaration,
                     synthesizedSuperFun.modality,
                     synthesizedSuperFun.visibility,
                     CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
@@ -54,7 +59,7 @@ fun createSynthesizedInvokes(functions: Collection<FunctionDescriptor>): Collect
             fakeOverride
         }
 
-        result.add(synthesized.substitute(TypeSubstitutor.create(invoke.getDispatchReceiverParameter()!!.type)) ?: continue)
+        result.add(synthesized.substitute(TypeSubstitutor.create(invoke.dispatchReceiverParameter!!.type)) ?: continue)
     }
 
     return result
@@ -80,5 +85,5 @@ fun isSynthesizedInvoke(descriptor: DeclarationDescriptor): Boolean {
     }
 
     return real.kind == CallableMemberDescriptor.Kind.SYNTHESIZED &&
-           real.containingDeclaration is FunctionClassDescriptor
+           real.containingDeclaration.getFunctionalClassKind() != null
 }
