@@ -128,7 +128,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                     val blockBody = declaration.body as? IrBlockBody ?: throw AssertionError("Unexpected constructor body: ${declaration.body}")
                     blockBody.statements.transformFlat {
                         if (it is IrEnumConstructorCall)
-                            listOf(it, IrInstanceInitializerCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                            listOf(it, IrInstanceInitializerCallImpl(declaration.startOffset, declaration.startOffset,
                                     irClass.descriptor))
                         else null
                     }
