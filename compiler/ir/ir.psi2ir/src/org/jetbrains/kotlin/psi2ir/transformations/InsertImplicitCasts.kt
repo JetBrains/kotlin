@@ -184,7 +184,7 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
             KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType.makeNotNullable(), expectedType) ->
                 this
             KotlinBuiltIns.isInt(valueType) && notNullableExpectedType.isBuiltInIntegerType() ->
-                IrTypeOperatorCallImpl(startOffset, endOffset, expectedType,
+                IrTypeOperatorCallImpl(startOffset, endOffset, notNullableExpectedType,
                                        IrTypeOperator.IMPLICIT_INTEGER_COERCION, notNullableExpectedType, this)
             else ->
                 IrTypeOperatorCallImpl(startOffset, endOffset, expectedType,
