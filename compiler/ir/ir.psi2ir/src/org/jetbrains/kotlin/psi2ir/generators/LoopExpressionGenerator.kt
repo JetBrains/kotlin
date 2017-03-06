@@ -39,13 +39,42 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
                                     IrDoWhileLoopImpl(ktDoWhile.startOffset, ktDoWhile.endOffset,
                                                       context.builtIns.unitType, IrStatementOrigin.DO_WHILE_LOOP))
 
-    private fun generateConditionalLoop(ktLoop: KtWhileExpressionBase, irLoop: IrLoopBase): IrLoop {
+    private fun generateConditionalLoop(ktLoop: KtWhileExpressionBase, irLoop: IrLoopBase): IrExpression {
         irLoop.condition = statementGenerator.generateExpression(ktLoop.condition!!)
         statementGenerator.bodyGenerator.putLoop(ktLoop, irLoop)
-        irLoop.body = ktLoop.body?.let { statementGenerator.generateExpression(ktLoop.body!!) }
+        irLoop.body = ktLoop.body?.let { ktLoopBody ->
+            if (ktLoopBody is KtBlockExpression) {
+                if (ktLoop is KtDoWhileExpression)
+                    generateDoWhileLoopBody(ktLoopBody)
+                else
+                    generateWhileLoopBody(ktLoopBody)
+            }
+            else
+                statementGenerator.generateExpression(ktLoopBody)
+        }
         irLoop.label = getLoopLabel(ktLoop)
-        return irLoop
+
+        return if (ktLoop is KtDoWhileExpression) {
+            IrBlockImpl(ktLoop.startOffset, ktLoop.endOffset, context.builtIns.unitType).apply {
+                statements.add(irLoop)
+            }
+        }
+        else
+            irLoop
     }
+
+    private fun generateWhileLoopBody(ktLoopBody: KtBlockExpression): IrExpression =
+            IrBlockImpl(
+                    ktLoopBody.startOffset, ktLoopBody.endOffset, context.builtIns.unitType, null,
+                    ktLoopBody.statements.map { statementGenerator.generateStatement(it) }
+            )
+
+
+    private fun generateDoWhileLoopBody(ktLoopBody: KtBlockExpression): IrExpression =
+            IrCompositeImpl(
+                    ktLoopBody.startOffset, ktLoopBody.endOffset, context.builtIns.unitType, null,
+                    ktLoopBody.statements.map { statementGenerator.generateStatement(it) }
+            )
 
     fun generateBreak(ktBreak: KtBreakExpression): IrExpression {
         val parentLoop = findParentLoop(ktBreak) ?:
