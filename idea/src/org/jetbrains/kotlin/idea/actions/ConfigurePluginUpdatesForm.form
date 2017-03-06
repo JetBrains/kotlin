@@ -28,8 +28,8 @@
         <properties>
           <model>
             <item value="Stable"/>
-            <item value="Early Access Preview 1.0.x"/>
-            <item value="Early Access Preview 1.1"/>
+            <item value="Early Access Preview 1.1.x"/>
+            <item value="Early Access Preview 1.2"/>
           </model>
         </properties>
       </component>
