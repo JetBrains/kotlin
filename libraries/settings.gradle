@@ -1,15 +1,17 @@
 rootProject.name = 'kotlin-libraries'
 include ':kotlin-runtime'
 include ':kotlin-script-runtime'
-include ':kotlin-js-library'
-include ':kotlin-test-parent'
-include ':kotlin-test-parent:kotlin-test'
-include ':kotlin-test-parent:kotlin-test-junit'
-//include ':kotlin-stdlib-common'
+//include ':kotlin-js-library'
+include ':kotlin-test'
+include ':kotlin-test:kotlin-test-common'
+include ':kotlin-test:kotlin-test-jvm'
+include ':kotlin-test:kotlin-test-junit'
+//include ':kotlin-test:kotlin-test-js'
+include ':kotlin-stdlib-common'
 include ':kotlin-stdlib'
 include ':kotlin-stdlib-jre7'
 include ':kotlin-stdlib-jre8'
-include ':kotlin-reflect'
+//include ':kotlin-reflect'
 
 //include ':kotlin-compiler'
 //include ':kotlin-compiler-embeddable'
@@ -50,15 +52,17 @@ include ':kotlin-reflect'
 
 project(':kotlin-runtime').projectDir = "$rootDir/tools/runtime" as File
 project(':kotlin-script-runtime').projectDir = "$rootDir/tools/script-runtime" as File
-project(':kotlin-js-library').projectDir = "$rootDir/tools/kotlin-js-library" as File
-project(':kotlin-test-parent').projectDir = "$rootDir/kotlin.test" as File
-project(':kotlin-test-parent:kotlin-test').projectDir = "$rootDir/kotlin.test/shared" as File
-project(':kotlin-test-parent:kotlin-test-junit').projectDir = "$rootDir/kotlin.test/junit" as File
-//project(':kotlin-stdlib-common').projectDir = "$rootDir/stdlib/common" as File
+//project(':kotlin-js-library').projectDir = "$rootDir/tools/kotlin-js-library" as File
+project(':kotlin-test').projectDir = "$rootDir/kotlin.test" as File
+project(':kotlin-test:kotlin-test-common').projectDir = "$rootDir/kotlin.test/common" as File
+project(':kotlin-test:kotlin-test-jvm').projectDir = "$rootDir/kotlin.test/jvm" as File
+project(':kotlin-test:kotlin-test-junit').projectDir = "$rootDir/kotlin.test/junit" as File
+//project(':kotlin-test:kotlin-test-js').projectDir = "$rootDir/kotlin.test/js" as File
+project(':kotlin-stdlib-common').projectDir = "$rootDir/stdlib/common" as File
 project(':kotlin-stdlib').projectDir = "$rootDir/stdlib" as File
 project(':kotlin-stdlib-jre7').projectDir = "$rootDir/stdlib/jre7" as File
 project(':kotlin-stdlib-jre8').projectDir = "$rootDir/stdlib/jre8" as File
-project(':kotlin-reflect').projectDir = "$rootDir/tools/kotlin-reflect" as File
+//project(':kotlin-reflect').projectDir = "$rootDir/tools/kotlin-reflect" as File
 
 //project(':kotlin-compiler').projectDir = "$rootDir/tools/kotlin-compiler" as File
 //project(':kotlin-compiler-embeddable').projectDir = "$rootDir/tools/kotlin-compiler-embeddable" as File

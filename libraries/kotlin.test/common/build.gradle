@@ -1,37 +1,22 @@
-description = 'Kotlin Common Standard Library'
+description = 'Kotlin Test Common'
 
 apply plugin: 'kotlin-platform-common'
 
-ext.commonSrcDir = "${buildDir}/common-sources"
+dependencies {
+    compile project(':kotlin-stdlib-common')
+}
 
 sourceSets {
-    main {
+    test {
         kotlin {
-            srcDir 'src'
-            srcDir commonSrcDir
+            srcDir 'src/test'
+            exclude '**'
         }
     }
 }
 
-ant.properties.baseDir = projectDir
-ant.properties.commonSrcDir = commonSrcDir
-ant.properties.kotlinCompiler = bootstrapCompilerFile.path
-ant.properties.compilerPreloader = compilerPreloaderFile.path
 
-ant.importBuild('tasks.xml')
-
-compileKotlinCommon.dependsOn commonSources
-
-/*
-// TODO: currently unsupported
-compileKotlinCommon {
-    kotlinOptions {
-        freeCompilerArgs = [
-                "-module-name", "${project.name}".toString()
-        ]
-    }
-}
-*/
+// common block
 
 compileKotlinCommon.compilerJarFile = bootstrapCompilerFile
 
@@ -65,4 +50,6 @@ task javadocJar(type: Jar, dependsOn:javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
+
+
 

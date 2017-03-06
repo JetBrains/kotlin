@@ -14,6 +14,8 @@ buildscript {
 ext.JDK_16 = System.getenv("JDK_16")
 ext.JDK_17 = System.getenv("JDK_17")
 ext.JDK_18 = System.getenv("JDK_18")
+ext.bootstrapCompilerFile = project.file("${rootDir}/../dist/kotlinc/lib/kotlin-compiler.jar")
+ext.compilerPreloaderFile = project.file("${rootDir}/../dist/kotlinc/lib/kotlin-preloader.jar")
 
 allprojects  {
     apply plugin: 'maven'
@@ -23,44 +25,11 @@ allprojects  {
 }
 
 subprojects {
-    apply plugin: 'kotlin'
     apply plugin: 'signing'
 
     repositories {
         mavenCentral()
     }
-
-    jar {
-        baseName = project.name
-        manifest {
-            attributes 'Implementation-Vendor': 'JetBrains',
-                    'Implementation-Title': "${project.description ?: project.name}", // TODO: project.description is resolved after evaluating this, therefore this attribute is repeated in the projects; seek for a solution
-                    'Implementation-Version': version,
-                    'Build-Jdk': System.getProperty('java.version'),
-                    'Built-By': 'JetBrains'
-        }
-        from("${rootDir}/../dist/kotlinc/build.txt") { into("META-INF/") }
-    }
-
-    // TODO: use dokka instead?
-    javadoc {
-        failOnError = false
-    }
-
-    task sourcesJar(type: Jar, dependsOn:classes) {
-        classifier = 'sources'
-        from sourceSets.main.kotlin
-    }
-
-    task javadocJar(type: Jar, dependsOn:javadoc) {
-        classifier = 'javadoc'
-        from javadoc.destinationDir
-    }
-
-    compileKotlin.compilerJarFile = project.file("${rootDir}/../dist/kotlinc/lib/kotlin-compiler.jar")
-    compileTestKotlin.compilerJarFile = project.file("${rootDir}/../dist/kotlinc/lib/kotlin-compiler.jar")
-
-    compileKotlin.kotlinOptions.jdkHome = JDK_16
 
     signing {
         required { project.ext.has('signing.keyId') }
@@ -83,9 +52,65 @@ subprojects {
     }
 }
 
-static def manifestAttributes(Manifest manifest, Project project, String component) {
-    manifest.attributes \
-        'Kotlin-Runtime-Component': component,
-        'Kotlin-Version': "${project.kotlin_language_version}",
-        'Implementation-Title': "${project.description ?: project.name}"
+// plain kotlin jvm projects
+configure(subprojects.findAll {it.name in [
+        'kotlin-runtime', 'kotlin-script-runtime',
+        'kotlin-stdlib', 'kotlin-stdlib-jre7', 'kotlin-stdlib-jre8',
+        'kotlin-test-junit']}) {
+
+    apply plugin: 'kotlin'
+
+    commonJvmProjectConfiguration(project)
+
 }
+
+static def commonJvmProjectConfiguration(Project project) {
+    project.configure(project) {
+        jar {
+            manifest {
+                attributes 'Implementation-Vendor': 'JetBrains',
+                        'Implementation-Title': "${project.description ?: project.name}", // TODO: project.description is resolved after evaluating this, therefore this attribute is repeated in the projects; seek for a solution
+                        'Implementation-Version': version,
+                        'Build-Jdk': System.getProperty('java.version'),
+                        'Built-By': 'JetBrains'
+            }
+            from("${rootDir}/../dist/kotlinc/build.txt") { into("META-INF/") }
+        }
+
+
+        // TODO: use dokka instead?
+        javadoc {
+            failOnError = false
+        }
+
+        task sourcesJar(type: Jar, dependsOn:classes) {
+            classifier = 'sources'
+            from sourceSets.main.kotlin
+        }
+
+        task javadocJar(type: Jar, dependsOn:javadoc) {
+            classifier = 'javadoc'
+            from javadoc.destinationDir
+        }
+
+        compileKotlin.compilerJarFile = bootstrapCompilerFile
+        compileTestKotlin.compilerJarFile = bootstrapCompilerFile
+
+        compileKotlin.kotlinOptions.jdkHome = JDK_16
+        compileTestKotlin.kotlinOptions.jdkHome = JDK_16
+
+        test {
+            executable = "$JDK_16/bin/java"
+        }
+    }
+}
+
+static def manifestAttributes(Manifest manifest, Project project, String component) {
+    project.configure(manifest) {
+        attributes \
+                'Kotlin-Runtime-Component': component,
+                'Kotlin-Version': "${project.kotlin_language_version}",
+                'Implementation-Title': "${project.description ?: project.name}"
+    }
+}
+

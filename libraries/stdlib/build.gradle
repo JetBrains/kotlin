@@ -18,15 +18,6 @@ sourceSets {
             srcDir 'src'
         }
     }
-    testLib {
-        kotlin {
-            srcDir '../kotlin.test/common/src/main/kotlin'
-            srcDir '../kotlin.test/jvm/src/main/kotlin'
-            srcDir '../kotlin.test/junit/src/main/kotlin'
-
-            //resources '../kotlin.test/junit/src/main/resources'
-        }
-    }
     test {
         kotlin {
             srcDir 'test'
@@ -37,14 +28,8 @@ sourceSets {
 dependencies {
     builtinsCompile group: 'org.jetbrains', name: 'annotations', version:'13.0'
     compile sourceSets.builtins.output
-//    compile project(':kotlin-runtime')
-//    testCompile project(':kotlin-test-parent:kotlin-test-junit')
-
-    testLibCompile sourceSets.builtins.output
-    //testLibCompile sourceSets.main.output
-    testLibCompile('junit:junit:4.12')
-    testCompile configurations.testLibCompile
-    testCompile sourceSets.testLib.output
+    
+    testCompile project(':kotlin-test:kotlin-test-junit')
 }
 
 jar {
@@ -71,9 +56,11 @@ artifacts {
 }
 
 compileBuiltinsKotlin {
+    compilerJarFile = bootstrapCompilerFile
     kotlinOptions {
         jdkHome = JDK_16
         freeCompilerArgs = [
+                "-version",
                 "-Xallow-kotlin-package",
                 "-Xdump-declarations-to", "${buildDir}/runtime-declarations.json",
                 "-cp", "${rootDir}/../dist/builtins",
@@ -85,17 +72,11 @@ compileKotlin {
     kotlinOptions {
         jdkHome = JDK_16
         freeCompilerArgs = [
+                "-version",
                 "-Xallow-kotlin-package",
                 "-Xmultifile-parts-inherit",
                 "-Xdump-declarations-to", "${buildDir}/stdlib-declarations.json",
                 "-module-name", project.name
         ]
-    }
-}
-
-compileTestLibKotlin {
-    kotlinOptions {
-        jdkHome = JDK_16
-        freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform"]
     }
 }

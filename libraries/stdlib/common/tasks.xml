@@ -1,0 +1,20 @@
+<project>
+    <target name="commonSources">
+        <delete dir="${commonSrcDir}" failonerror="false"/>
+        <mkdir dir="${commonSrcDir}"/>
+        <java classname="org.jetbrains.kotlin.preloading.Preloader" failonerror="true" fork="true">
+            <classpath>
+                <pathelement location="${compilerPreloader}"/>
+            </classpath>
+            <assertions>
+                <enable/>
+            </assertions>
+            <arg value="-cp"/>
+            <arg value="${kotlinCompiler}"/>
+            <arg value="org.jetbrains.kotlin.preprocessor.PreprocessorCLI"/>
+            <arg value="${basedir}/../src/kotlin"/>
+            <arg value="${commonSrcDir}"/>
+            <arg value="JS"/>
+        </java>
+    </target>
+</project>

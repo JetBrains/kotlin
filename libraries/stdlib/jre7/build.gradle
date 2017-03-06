@@ -1,8 +1,9 @@
 description = 'Kotlin Standard Library JRE 7 extension'
 
+
 dependencies {
     compile project(':kotlin-stdlib')
-    testCompile project(':kotlin-test-parent:kotlin-test-junit')
+    testCompile project(':kotlin-test:kotlin-test-junit')
 }
 
 sourceSets {
@@ -42,3 +43,19 @@ compileTestKotlin {
     kotlinOptions.jdkHome = JDK_17
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
 }
+
+test {
+    executable = "$JDK_17/bin/java"
+}
+
+task testJre6Tests(type: Test) {
+    dependsOn project(':kotlin-stdlib').tasks.testClasses
+    group = "verification"
+
+    executable = "$JDK_17/bin/java"
+
+    testClassesDir = project.file('../build/classes/test')
+    classpath = project.files('../build/classes/test') + sourceSets.test.compileClasspath
+}
+
+check.dependsOn testJre6Tests

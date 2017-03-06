@@ -1,0 +1,37 @@
+
+description = 'Kotlin Test'
+
+apply plugin: 'kotlin-platform-jvm'
+
+dependencies {
+    implement project(':kotlin-test:kotlin-test-common')
+    compile project(':kotlin-stdlib')
+    testCompile('junit:junit:4.12')
+}
+
+commonJvmProjectConfiguration(project)
+
+archivesBaseName = 'kotlin-test'
+
+jar {
+    manifest {
+        attributes 'addDefaultImplementationEntries': true,
+                'Implementation-Title': "${project.description ?: project.name}"
+    }
+    dependsOn classes
+    from sourceSets.main.output
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+compileKotlin {
+    // TODO: Why "-Xmulti-platfrom" ?
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform", "-module-name", project.archivesBaseName]
+}
+
+compileTestKotlin {
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+}

@@ -2,25 +2,10 @@
 description = 'Kotlin Test JUnit'
 
 dependencies {
-  compile project(':kotlin-runtime')
-  compile project(':kotlin-test-parent:kotlin-test')
+  compile project(':kotlin-test:kotlin-test-jvm')
   compile('junit:junit:4.12')
 }
 
-sourceSets {
-  main {
-    kotlin {
-      srcDir 'src/main/kotlin'
-      srcDir 'src/main/kotlin.jvm'
-    }
-  }
-  test {
-    kotlin {
-      srcDir 'src/test/kotlin'
-      srcDir 'src/test/kotlin.jvm'
-    }
-  }
-}
 
 jar {
   manifest {

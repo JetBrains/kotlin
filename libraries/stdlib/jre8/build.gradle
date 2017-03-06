@@ -3,7 +3,7 @@ description = 'Kotlin Standard Library JRE 8 extension'
 dependencies {
     compile project(':kotlin-stdlib')
     compile project(':kotlin-stdlib-jre7')
-    testCompile project(':kotlin-test-parent:kotlin-test-junit')
+    testCompile project(':kotlin-test:kotlin-test-junit')
 }
 
 sourceSets {
@@ -46,3 +46,20 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = 1.8
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
 }
+
+test {
+    executable = "$JDK_18/bin/java"
+}
+
+
+task testJre6Tests(type: Test) {
+    dependsOn project(':kotlin-stdlib').tasks.testClasses
+    group = "verification"
+
+    executable = "$JDK_18/bin/java"
+
+    testClassesDir = project.file('../build/classes/test')
+    classpath = project.files('../build/classes/test') + sourceSets.test.compileClasspath
+}
+
+check.dependsOn testJre6Tests
