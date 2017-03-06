@@ -112,6 +112,15 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         val actualType = when (this) {
             is IrCall -> this.descriptor.original.returnType ?: this.type
             is IrGetField -> this.descriptor.original.type
+
+            is IrTypeOperatorCall -> when (this.operator) {
+                IrTypeOperator.IMPLICIT_INTEGER_COERCION ->
+                    // TODO: is it a workaround for inconsistent IR?
+                    this.typeOperand
+
+                else -> this.type
+            }
+
             else -> this.type
         }
 
