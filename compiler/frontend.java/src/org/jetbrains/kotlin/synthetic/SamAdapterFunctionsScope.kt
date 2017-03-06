@@ -167,10 +167,13 @@ class SamAdapterFunctionsScope(
             }
         }
 
+        override fun newCopyBuilder(substitutor: TypeSubstitutor): CopyConfiguration =
+                super.newCopyBuilder(substitutor).setOriginal(this.original)
+
         override fun doSubstitute(configuration: CopyConfiguration): FunctionDescriptor? {
             val descriptor = super.doSubstitute(configuration) as MyFunctionDescriptor? ?: return null
             val original = configuration.original
-                           ?: throw UnsupportedOperationException("doSubstitute with no original should not be called for synthetic extension")
+                           ?: throw UnsupportedOperationException("doSubstitute with no original should not be called for synthetic extension $this")
 
             original as MyFunctionDescriptor
             assert(original.original == original) { "original in doSubstitute should have no other original" }
