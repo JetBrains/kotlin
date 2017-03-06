@@ -56,7 +56,7 @@ class PomFile(val xmlFile: XmlFile) {
             override fun visitElement(element: PsiElement) {
                 super.visitElement(element)
 
-                if (element is XmlTag && element.localName in recommendedElementsOrder && element.parent === projectElement) {
+                if (element is XmlTag && element.localName in recommendedElementsOrder) {
                     nodesByName[element.localName] = element
                 }
                 else if (element is XmlTag && element.localName == "project") {
