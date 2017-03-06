@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -234,6 +235,10 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
                 if (isFunctionWithSuspendStateMachine(ownerDescriptor, typeMapper.bindingContext) ||
                     (ownerDescriptor is CallableDescriptor && ownerDeclaration is KtElement && CoroutineCodegen.shouldCreateByLambda(ownerDescriptor, ownerDeclaration))) {
                     Name.identifier(DO_RESUME_METHOD_NAME)
+                }
+                else if (ownerDescriptor is PropertyDescriptor && lexicalScope.kind == LexicalScopeKind.PROPERTY_INITIALIZER_OR_DELEGATE &&
+                         ownerDescriptor.containingDeclaration is ClassDescriptor) {
+                    (ownerDescriptor.containingDeclaration as ClassDescriptor).constructors.first().name
                 }
                 else {
                     ownerDescriptor.name
