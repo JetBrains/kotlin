@@ -109,7 +109,7 @@ class KaptIT: BaseGradleIT() {
 
     private fun doTestIncrementalBuild(projectName: String, compileTasks: Array<String>) {
         val compileTasksUpToDate = compileTasks.map { it + " UP-TO-DATE" }.toTypedArray()
-        val project = Project(projectName, GRADLE_VERSION)
+        val project = Project(projectName, "2.10")
 
         project.build("build") {
             assertSuccessful()
