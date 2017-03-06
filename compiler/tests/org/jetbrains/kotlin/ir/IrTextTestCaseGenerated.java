@@ -86,6 +86,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("delegatingConstructorCallToTypeAliasConstructor.kt")
+        public void testDelegatingConstructorCallToTypeAliasConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/delegatingConstructorCallToTypeAliasConstructor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("delegatingConstructorCallsInSecondaryConstructors.kt")
         public void testDelegatingConstructorCallsInSecondaryConstructors() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/classes/delegatingConstructorCallsInSecondaryConstructors.kt");

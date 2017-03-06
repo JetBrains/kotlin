@@ -154,7 +154,7 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
                 generateEnumSuperConstructorCall(irBlockBody, ktConstructor)
             }
             else {
-                generateAnySuperConstructorCAll(irBlockBody, ktConstructor)
+                generateAnySuperConstructorCall(irBlockBody, ktConstructor)
             }
             return
         }
@@ -230,12 +230,12 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
                 // Thus, super class should be Any.
                 val superClass = classDescriptor.getSuperClassOrAny()
                 assert(KotlinBuiltIns.isAny(superClass)) { "$classDescriptor: Super class should be any: $superClass" }
-                generateAnySuperConstructorCAll(irBlockBody, ktClassOrObject)
+                generateAnySuperConstructorCall(irBlockBody, ktClassOrObject)
             }
         }
     }
 
-    private fun generateAnySuperConstructorCAll(irBlockBody: IrBlockBodyImpl, ktElement: KtElement) {
+    private fun generateAnySuperConstructorCall(irBlockBody: IrBlockBodyImpl, ktElement: KtElement) {
         val anyConstructor = context.builtIns.any.constructors.single()
         irBlockBody.statements.add(IrDelegatingConstructorCallImpl(ktElement.startOffset, ktElement.endOffset, anyConstructor, null))
     }
