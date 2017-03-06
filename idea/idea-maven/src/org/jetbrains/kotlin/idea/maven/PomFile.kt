@@ -44,9 +44,8 @@ import java.util.*
 fun kotlinPluginId(version: String?) = MavenId(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID, version)
 
 
-class PomFile private constructor(val xmlFile: XmlFile, val domModel: MavenDomProjectModel) {
-    constructor(xmlFile: XmlFile) : this(xmlFile, MavenDomUtil.getMavenDomProjectModel(xmlFile.project, xmlFile.virtualFile) ?: throw IllegalStateException("No DOM model found for pom ${xmlFile.name}"))
-
+class PomFile(val xmlFile: XmlFile) {
+    val domModel = MavenDomUtil.getMavenDomProjectModel(xmlFile.project, xmlFile.virtualFile) ?: throw IllegalStateException("No DOM model found for pom ${xmlFile.name}")
     private val nodesByName = HashMap<String, XmlTag>()
     private val projectElement: XmlTag
 
@@ -484,8 +483,6 @@ class PomFile private constructor(val xmlFile: XmlFile, val domModel: MavenDomPr
     }
 
     companion object {
-        fun forFileOrNull(xmlFile: XmlFile): PomFile? = MavenDomUtil.getMavenDomProjectModel(xmlFile.project, xmlFile.virtualFile)?.let { PomFile(xmlFile, it) }
-
         @Deprecated("We shouldn't use phase but additional compiler configuration in most cases")
         fun getPhase(hasJavaFiles: Boolean, isTest: Boolean) = when {
             hasJavaFiles -> when {
