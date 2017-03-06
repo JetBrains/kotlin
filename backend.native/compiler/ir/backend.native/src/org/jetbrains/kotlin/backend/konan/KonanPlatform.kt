@@ -63,13 +63,11 @@ class KonanBuiltIns(storageManager: StorageManager) : KotlinBuiltIns(storageMana
 
 object KonanPlatform : TargetPlatform("Konan") {
     override val multiTargetPlatform = MultiTargetPlatform.Specific(platformName)
-    override fun getDefaultImports(languageVersionSettings: LanguageVersionSettings): List<ImportPath> =
-            Default.getDefaultImports(languageVersionSettings) + listOf(
-                    ImportPath("kotlin.*"),
-                    ImportPath("kotlin.collections.*"),
-                    ImportPath("kotlin.io.*"),
-                    ImportPath("konan.*")
-            )
+    override fun getDefaultImports(languageVersionSettings: LanguageVersionSettings): List<ImportPath> {
+       return Default.getDefaultImports(languageVersionSettings) + listOf(
+                ImportPath("konan.*")
+        )
+    }
 
     override val platformConfigurator: PlatformConfigurator = KonanPlatformConfigurator
 

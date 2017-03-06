@@ -14,5 +14,3 @@ public interface Comparable<in T> {
     public operator fun compareTo(other: T): Int
 }
 
-typealias Comparator<T> = kotlin.comparisons.Comparator<T>
-
