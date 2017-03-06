@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.gradle
 
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.JvmTarget
@@ -29,7 +30,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     private val facetSettings: KotlinFacetSettings
         get() = KotlinFacet.get(getModule("project_main"))!!.configuration.settings
 
-    // TODO: Update this test to 1.1-RC when it's available
     @Test
     fun testJvmImport() {
         createProjectSubFile("build.gradle", """
@@ -45,14 +45,14 @@ class GradleFacetImportTest : GradleImportingTestCase() {
                 }
 
                 dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0-beta-38")
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
                 }
             }
 
             apply plugin: 'kotlin'
 
             dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0-beta-38"
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
             }
 
             compileKotlin {
@@ -67,7 +67,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8], targetPlatformKind)
             Assert.assertEquals("1.7", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals("-no-stdlib -no-reflect -module-name project_main -Xdump-declarations-to tmp -Xsingle-module -Xadd-compiler-builtins",
+            Assert.assertEquals("-Xdump-declarations-to tmp -Xsingle-module",
                                 compilerSettings!!.additionalArguments)
         }
     }
@@ -87,14 +87,14 @@ class GradleFacetImportTest : GradleImportingTestCase() {
                 }
 
                 dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0-beta-38")
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
                 }
             }
 
             apply plugin: 'kotlin'
 
             dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0-beta-38"
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
             }
 
             kotlin {
@@ -125,14 +125,14 @@ class GradleFacetImportTest : GradleImportingTestCase() {
                 }
 
                 dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0-beta-38")
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
                 }
             }
 
             apply plugin: 'kotlin'
 
             dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0-beta-38"
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
             }
 
             kotlin {
@@ -174,14 +174,14 @@ class GradleFacetImportTest : GradleImportingTestCase() {
                 }
 
                 dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0-beta-38")
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
                 }
             }
 
             apply plugin: 'kotlin'
 
             dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0-beta-38"
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.0"
             }
         """)
         importProject()
@@ -191,8 +191,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         }
     }
 
-    // TODO: Uncomment the test below when 1.1-RC is available (see KT-16174)
-    /*@Test
+    @Test
     fun testJsImport() {
         createProjectSubFile("build.gradle", """
             group 'Again'
@@ -207,14 +206,14 @@ class GradleFacetImportTest : GradleImportingTestCase() {
                 }
 
                 dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0-rc")
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
                 }
             }
 
             apply plugin: 'kotlin2js'
 
             dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-js:1.1.0-rc"
+                compile "org.jetbrains.kotlin:kotlin-stdlib-js:1.1.0"
             }
 
             compileKotlin2Js {
@@ -225,14 +224,17 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         importProject()
 
         with (facetSettings) {
-            Assert.assertEquals("1.1", versionInfo.languageLevel!!.versionString)
-            Assert.assertEquals("1.1", versionInfo.apiLevel!!.versionString)
-            Assert.assertEquals(TargetPlatformKind.JavaScript, versionInfo.targetPlatformKind)
-            Assert.assertEquals(true, compilerInfo.k2jsCompilerArguments!!.sourceMap)
-            Assert.assertEquals("-source-map -module-kind plain -target v5 -main call",
-                                compilerInfo.compilerSettings!!.additionalArguments)
+            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.1", apiLevel!!.versionString)
+            Assert.assertEquals(TargetPlatformKind.JavaScript, targetPlatformKind)
+            with(compilerArguments as K2JSCompilerArguments) {
+                Assert.assertEquals(true, sourceMap)
+                Assert.assertEquals("plain", moduleKind)
+            }
+            Assert.assertEquals("-version",
+                                compilerSettings!!.additionalArguments)
         }
-    }*/
+    }
 
     @Test
     fun testDetectOldJsStdlib() {
@@ -281,14 +283,14 @@ class GradleFacetImportTest : GradleImportingTestCase() {
                 }
 
                 dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0-beta-38")
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
                 }
             }
 
             apply plugin: 'kotlin'
 
             dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.1.0-beta-38"
+                compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.1.0"
             }
         """)
         importProject()
