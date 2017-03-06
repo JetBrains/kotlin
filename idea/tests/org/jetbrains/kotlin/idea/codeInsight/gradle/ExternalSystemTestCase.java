@@ -55,7 +55,7 @@ import java.util.List;
 public abstract class ExternalSystemTestCase extends UsefulTestCase {
   private File ourTempDir;
 
-  private IdeaProjectTestFixture myTestFixture;
+  protected IdeaProjectTestFixture myTestFixture;
 
   protected Project myProject;
 
@@ -141,7 +141,7 @@ public abstract class ExternalSystemTestCase extends UsefulTestCase {
 
   protected abstract String getTestsTempDir();
 
-  private void setUpFixtures() throws Exception {
+  protected void setUpFixtures() throws Exception {
     myTestFixture = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getName()).getFixture();
     myTestFixture.setUp();
   }
@@ -176,7 +176,7 @@ public abstract class ExternalSystemTestCase extends UsefulTestCase {
     }
   }
 
-  private void tearDownFixtures() throws Exception {
+  protected void tearDownFixtures() throws Exception {
     myTestFixture.tearDown();
     myTestFixture = null;
   }
