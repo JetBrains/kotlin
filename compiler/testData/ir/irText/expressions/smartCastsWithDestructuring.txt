@@ -13,7 +13,7 @@ FILE /smartCastsWithDestructuring.kt
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
-          if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=I2
+          if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=I2
             GET_VAR 'value-parameter x: I1' type=I1 origin=null
           then: RETURN type=kotlin.Nothing from='test(I1): Unit'
             GET_OBJECT 'Unit' type=kotlin.Unit
@@ -25,5 +25,5 @@ FILE /smartCastsWithDestructuring.kt
             $receiver: GET_VAR 'tmp0_container: I1' type=I1 origin=null
         VAR val c2: kotlin.String
           CALL 'component2() on I2: String' type=kotlin.String origin=COMPONENT_N(index=2)
-            $receiver: TYPE_OP origin=IMPLICIT_CAST typeOperand=I2
+            $receiver: TYPE_OP type=I2 origin=IMPLICIT_CAST typeOperand=I2
               GET_VAR 'tmp0_container: I1' type=I1 origin=null

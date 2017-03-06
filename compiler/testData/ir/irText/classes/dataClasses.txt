@@ -116,12 +116,12 @@ FILE /dataClasses.kt
               CONST Boolean type=kotlin.Boolean value='true'
         WHEN type=kotlin.Unit origin=null
           BRANCH
-            if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=Test1
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=Test1
               GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
             then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
               CONST Boolean type=kotlin.Boolean value='false'
         VAR IR_TEMPORARY_VARIABLE val tmp0_other_with_cast: Test1
-          TYPE_OP origin=CAST typeOperand=Test1
+          TYPE_OP type=Test1 origin=CAST typeOperand=Test1
             GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

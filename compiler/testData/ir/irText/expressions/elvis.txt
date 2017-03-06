@@ -45,13 +45,13 @@ FILE /elvis.kt
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
-          if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=kotlin.String
+          if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR 'value-parameter b: Any?' type=kotlin.Any? origin=null
           then: RETURN type=kotlin.Nothing from='test3(Any?, Any?): String'
             CONST String type=kotlin.String value=''
       WHEN type=kotlin.Unit origin=null
         BRANCH
-          if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=kotlin.String?
+          if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String?
             GET_VAR 'value-parameter a: Any?' type=kotlin.Any? origin=null
           then: RETURN type=kotlin.Nothing from='test3(Any?, Any?): String'
             CONST String type=kotlin.String value=''
@@ -64,11 +64,11 @@ FILE /elvis.kt
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? origin=null
                 arg1: CONST Null type=kotlin.Nothing? value='null'
-              then: TYPE_OP origin=IMPLICIT_CAST typeOperand=kotlin.String
+              then: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
                 GET_VAR 'value-parameter b: Any?' type=kotlin.Any? origin=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value='true'
-              then: TYPE_OP origin=IMPLICIT_CAST typeOperand=kotlin.String
+              then: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
                 GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? origin=null
   FUN public fun test4(x: kotlin.Any): kotlin.Any
     BLOCK_BODY

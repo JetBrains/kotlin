@@ -9,5 +9,5 @@ FILE /whenCoercedToUnit.kt
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
               arg1: CONST Int type=kotlin.Int value='0'
-            then: TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+            then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
               CONST Int type=kotlin.Int value='0'

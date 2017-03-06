@@ -141,7 +141,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "STRING_CONCATENATION type=${expression.type.render()}"
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Nothing?): String =
-            "TYPE_OP origin=${expression.operator} typeOperand=${expression.typeOperand.render()}"
+            "TYPE_OP type=${expression.type.render()} origin=${expression.operator} typeOperand=${expression.typeOperand.render()}"
 
     override fun visitWhen(expression: IrWhen, data: Nothing?): String =
             "WHEN type=${expression.type.render()} origin=${expression.origin}"

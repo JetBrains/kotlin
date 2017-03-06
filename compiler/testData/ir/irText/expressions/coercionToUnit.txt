@@ -6,7 +6,7 @@ FILE /coercionToUnit.kt
           FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.Unit
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
-                TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                   CONST Int type=kotlin.Int value='42'
           CALLABLE_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test1>(): () -> kotlin.Unit
@@ -15,13 +15,13 @@ FILE /coercionToUnit.kt
           GET_FIELD 'test1: () -> Unit' type=() -> kotlin.Unit origin=null
   FUN public fun test2(mc: kotlin.collections.MutableCollection<kotlin.String>): kotlin.Unit
     BLOCK_BODY
-      TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'add(String): Boolean' type=kotlin.Boolean origin=null
           $this: GET_VAR 'value-parameter mc: MutableCollection<String>' type=kotlin.collections.MutableCollection<kotlin.String> origin=null
           element: CONST String type=kotlin.String value=''
   FUN public fun test3(): kotlin.Unit
     BLOCK_BODY
-      TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=kotlin.Unit? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: java.io.PrintStream!
             GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
@@ -34,10 +34,10 @@ FILE /coercionToUnit.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value='true'
               then: CALL 'println(String!): Unit' type=kotlin.Unit origin=null
-                $this: TYPE_OP origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
+                $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
                   GET_VAR 'tmp0_safe_receiver: PrintStream!' type=java.io.PrintStream! origin=null
                 p0: CONST String type=kotlin.String value='Hello,'
-      TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=kotlin.Unit? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE val tmp1_safe_receiver: java.io.PrintStream!
             GET_FIELD 'out: PrintStream!' type=java.io.PrintStream! origin=GET_PROPERTY
@@ -50,6 +50,6 @@ FILE /coercionToUnit.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value='true'
               then: CALL 'println(String!): Unit' type=kotlin.Unit origin=null
-                $this: TYPE_OP origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
+                $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
                   GET_VAR 'tmp1_safe_receiver: PrintStream!' type=java.io.PrintStream! origin=null
                 p0: CONST String type=kotlin.String value='world!'

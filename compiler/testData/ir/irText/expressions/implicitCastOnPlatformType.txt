@@ -2,6 +2,6 @@ FILE /implicitCastOnPlatformType.kt
   FUN public fun test(): kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test(): String'
-        TYPE_OP origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+        TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
           CALL 'getProperty(String!): String!' type=kotlin.String! origin=null
             p0: CONST String type=kotlin.String value='test'

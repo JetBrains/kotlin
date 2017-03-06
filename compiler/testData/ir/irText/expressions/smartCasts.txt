@@ -15,45 +15,45 @@ FILE /smartCasts.kt
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
-          if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=kotlin.String
+          if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
           then: RETURN type=kotlin.Nothing from='test1(Any): Unit'
             GET_OBJECT 'Unit' type=kotlin.Unit
       CALL 'println(Int): Unit' type=kotlin.Unit origin=null
         message: CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
-          $this: TYPE_OP origin=IMPLICIT_CAST typeOperand=kotlin.String
+          $this: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
       CALL 'expectsString(String): Unit' type=kotlin.Unit origin=null
-        s: TYPE_OP origin=IMPLICIT_CAST typeOperand=kotlin.String
+        s: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
           GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
       CALL 'expectsInt(Int): Unit' type=kotlin.Unit origin=null
         i: CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
-          $this: TYPE_OP origin=IMPLICIT_CAST typeOperand=kotlin.String
+          $this: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
       CALL 'expectsString(String): Unit' type=kotlin.Unit origin=null
         s: CALL 'overloaded(String): String' type=kotlin.String origin=null
-          s: TYPE_OP origin=IMPLICIT_CAST typeOperand=kotlin.String
+          s: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
   FUN public fun test2(x: kotlin.Any): kotlin.String
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
-          if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=kotlin.String
+          if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
           then: RETURN type=kotlin.Nothing from='test2(Any): String'
             CONST String type=kotlin.String value=''
       RETURN type=kotlin.Nothing from='test2(Any): String'
         CALL 'overloaded(String): String' type=kotlin.String origin=null
-          s: TYPE_OP origin=IMPLICIT_CAST typeOperand=kotlin.String
+          s: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
   FUN public fun test3(x: kotlin.Any): kotlin.String
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
-          if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=kotlin.String
+          if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
           then: RETURN type=kotlin.Nothing from='test3(Any): String'
             CONST String type=kotlin.String value=''
       RETURN type=kotlin.Nothing from='test3(Any): String'
-        TYPE_OP origin=IMPLICIT_CAST typeOperand=kotlin.String
+        TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
           GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null

@@ -26,7 +26,7 @@ FILE /primitivesImplicitConversions.kt
   PROPERTY public val test4: kotlin.Long = -42.toLong()
     FIELD PROPERTY_BACKING_FIELD public val test4: kotlin.Long = -42.toLong()
       EXPRESSION_BODY
-        TYPE_OP origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
+        TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value='42'
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test4>(): kotlin.Long
@@ -36,7 +36,7 @@ FILE /primitivesImplicitConversions.kt
   PROPERTY public val test5: kotlin.Short = -42.toShort()
     FIELD PROPERTY_BACKING_FIELD public val test5: kotlin.Short = -42.toShort()
       EXPRESSION_BODY
-        TYPE_OP origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Short
+        TYPE_OP type=kotlin.Short origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Short
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value='42'
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test5>(): kotlin.Short
@@ -46,7 +46,7 @@ FILE /primitivesImplicitConversions.kt
   PROPERTY public val test6: kotlin.Byte = -42.toByte()
     FIELD PROPERTY_BACKING_FIELD public val test6: kotlin.Byte = -42.toByte()
       EXPRESSION_BODY
-        TYPE_OP origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Byte
+        TYPE_OP type=kotlin.Byte origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Byte
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value='42'
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test6>(): kotlin.Byte
@@ -64,27 +64,27 @@ FILE /primitivesImplicitConversions.kt
       VAR val test4: kotlin.Long? = -1.toLong()
         CONST Long type=kotlin.Long value='-1'
       VAR val test5: kotlin.Long? = -1.toLong()
-        TYPE_OP origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
+        TYPE_OP type=kotlin.Long? origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value='1'
       VAR val test6: kotlin.Short? = -1.toShort()
-        TYPE_OP origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Short
+        TYPE_OP type=kotlin.Short? origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Short
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value='1'
       VAR val test7: kotlin.Byte? = -1.toByte()
-        TYPE_OP origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Byte
+        TYPE_OP type=kotlin.Byte? origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Byte
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value='1'
   FUN public fun testImplicitArguments(x: kotlin.Long = ...): kotlin.Unit
     x: EXPRESSION_BODY
-      TYPE_OP origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
+      TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
         CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
           $this: CONST Int type=kotlin.Int value='1'
     BLOCK_BODY
   CLASS CLASS TestImplicitArguments
     CONSTRUCTOR public constructor TestImplicitArguments(x: kotlin.Long = ...)
       x: EXPRESSION_BODY
-        TYPE_OP origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
+        TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value='1'
       BLOCK_BODY

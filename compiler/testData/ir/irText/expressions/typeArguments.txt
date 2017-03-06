@@ -4,11 +4,11 @@ FILE /typeArguments.kt
       RETURN type=kotlin.Nothing from='test1(Any): Boolean'
         WHEN type=kotlin.Boolean origin=ANDAND
           BRANCH
-            if: TYPE_OP origin=INSTANCEOF typeOperand=kotlin.Array<*>
+            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Array<*>
               GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
             then: CALL 'isArrayOf() on Array<*>: Boolean' type=kotlin.Boolean origin=null
               <reified T : Any>: String
-              $receiver: TYPE_OP origin=IMPLICIT_CAST typeOperand=kotlin.Array<*>
+              $receiver: TYPE_OP type=kotlin.Array<*> origin=IMPLICIT_CAST typeOperand=kotlin.Array<*>
                 GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value='true'

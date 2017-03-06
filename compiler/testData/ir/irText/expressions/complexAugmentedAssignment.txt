@@ -60,7 +60,7 @@ FILE /complexAugmentedAssignment.kt
     BLOCK_BODY
       VAR var i: kotlin.Int
         CONST Int type=kotlin.Int value='0'
-      TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE val tmp1_array: kotlin.IntArray
             GET_VAR 'value-parameter a: IntArray' type=kotlin.IntArray origin=null
@@ -84,7 +84,7 @@ FILE /complexAugmentedAssignment.kt
           GET_VAR 'tmp3: Int' type=kotlin.Int origin=null
   FUN public fun test2(): kotlin.Unit
     BLOCK_BODY
-      TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE val tmp0_this: X1
             GET_OBJECT 'X1' type=X1
@@ -97,7 +97,7 @@ FILE /complexAugmentedAssignment.kt
               <set-?>: CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
                 $this: GET_VAR 'tmp1: Int' type=kotlin.Int origin=null
             GET_VAR 'tmp1: Int' type=kotlin.Int origin=null
-      TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE val tmp2_this: X1.X2
             GET_OBJECT 'X2' type=X1.X2
@@ -110,7 +110,7 @@ FILE /complexAugmentedAssignment.kt
               <set-?>: CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
                 $this: GET_VAR 'tmp3: Int' type=kotlin.Int origin=null
             GET_VAR 'tmp3: Int' type=kotlin.Int origin=null
-      TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
           VAR IR_TEMPORARY_VARIABLE val tmp4_this: X1.X2.X3
             GET_OBJECT 'X3' type=X1.X2.X3

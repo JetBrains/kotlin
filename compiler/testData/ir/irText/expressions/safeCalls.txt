@@ -83,7 +83,7 @@ FILE /safeCalls.kt
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'tmp0_safe_receiver: Ref?' type=Ref? origin=null
               arg1: CONST Null type=kotlin.Nothing? value='null'
-            then: TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+            then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
               CONST Null type=kotlin.Nothing? value='null'
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value='true'
@@ -113,7 +113,7 @@ FILE /safeCalls.kt
         CONST Int type=kotlin.Int value='239'
   FUN public fun box(): kotlin.Unit
     BLOCK_BODY
-      TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=kotlin.Int? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: kotlin.Int
             CONST Int type=kotlin.Int value='42'

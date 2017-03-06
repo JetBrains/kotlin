@@ -7,9 +7,9 @@ FILE /throw.kt
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
-          if: TYPE_OP origin=INSTANCEOF typeOperand=kotlin.Throwable
+          if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Throwable
             GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
           then: BLOCK type=kotlin.Nothing origin=null
             THROW type=kotlin.Nothing
-              TYPE_OP origin=IMPLICIT_CAST typeOperand=kotlin.Throwable
+              TYPE_OP type=kotlin.Throwable origin=IMPLICIT_CAST typeOperand=kotlin.Throwable
                 GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null

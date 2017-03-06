@@ -29,7 +29,7 @@ CONTENT
       2 VAR IR_TEMPORARY_VARIABLE val tmp0: kotlin.Int
       3 SET_VAR 'count: Int' type=kotlin.Unit origin=POSTFIX_INCR
       4 GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
-      5 TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+      5 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
 OUTGOING -> BB 3
     When exit: WHEN type=kotlin.Unit origin=null
 BB 3

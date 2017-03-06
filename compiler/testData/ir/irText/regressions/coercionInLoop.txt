@@ -12,7 +12,7 @@ FILE /coercionInLoop.kt
       WHILE label=null origin=WHILE_LOOP
         condition: CALL 'hasNext(): Boolean' type=kotlin.Boolean origin=null
           $this: GET_VAR 'x: DoubleIterator' type=kotlin.collections.DoubleIterator origin=null
-        body: TYPE_OP origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        body: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           BLOCK type=kotlin.Int origin=null
             WHEN type=kotlin.Unit origin=null
               BRANCH

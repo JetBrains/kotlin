@@ -22,7 +22,7 @@ FILE /when.kt
                 arg1: GET_OBJECT 'A' type=A
               then: CONST String type=kotlin.String value='A'
             BRANCH
-              if: TYPE_OP origin=INSTANCEOF typeOperand=kotlin.String
+              if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
                 GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
               then: CONST String type=kotlin.String value='String'
             BRANCH
@@ -50,7 +50,7 @@ FILE /when.kt
               arg1: GET_OBJECT 'A' type=A
             then: CONST String type=kotlin.String value='A'
           BRANCH
-            if: TYPE_OP origin=INSTANCEOF typeOperand=kotlin.String
+            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
               GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
             then: CONST String type=kotlin.String value='String'
           BRANCH

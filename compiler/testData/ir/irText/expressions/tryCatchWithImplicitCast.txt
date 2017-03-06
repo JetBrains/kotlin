@@ -3,14 +3,14 @@ FILE /tryCatchWithImplicitCast.kt
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
-          if: TYPE_OP origin=NOT_INSTANCEOF typeOperand=kotlin.String
+          if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
           then: RETURN type=kotlin.Nothing from='testImplicitCast(Any): Unit'
             GET_OBJECT 'Unit' type=kotlin.Unit
       VAR val t: kotlin.String
         TRY type=kotlin.String
           try: BLOCK type=kotlin.String origin=null
-            TYPE_OP origin=IMPLICIT_CAST typeOperand=kotlin.String
+            TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
               GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
           CATCH parameter=e: Throwable
             BLOCK type=kotlin.String origin=null
