@@ -14725,6 +14725,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("rawSamOverrides.kt")
+            public void testRawSamOverrides() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawSamOverrides.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("safeCall.kt")
             public void testSafeCall() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/safeCall.kt");
