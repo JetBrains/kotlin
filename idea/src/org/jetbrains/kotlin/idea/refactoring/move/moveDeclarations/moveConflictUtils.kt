@@ -41,8 +41,11 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.utils.SmartSet
 import java.util.*
 
@@ -232,6 +235,15 @@ class MoveConflictChecker(
                                                        is PsiMember -> target.getJavaMemberDescriptor()
                                                        else -> null
                                                    } ?: return@forEach
+                            if (targetDescriptor is CallableMemberDescriptor &&
+                                targetDescriptor.visibility.normalize() == Visibilities.PROTECTED) {
+                                val resolvedCall = refExpr.getResolvedCall(refExpr.analyze(BodyResolveMode.PARTIAL)) ?: return@forEach
+                                val dispatchReceiver = resolvedCall.dispatchReceiver
+                                if (dispatchReceiver is ExpressionReceiver && dispatchReceiver.expression is KtSuperExpression) return@forEach
+                                val receiverClass = resolvedCall.dispatchReceiver?.type?.constructor?.declarationDescriptor?.source?.getPsi()
+                                if (receiverClass != null && receiverClass.isInsideOf(elementsToMove)) return@forEach
+                            }
+
                             if (!targetDescriptor.isVisibleIn(targetContainer)) {
                                 val message = "${render(declaration)} uses ${render(target)} which will be inaccessible after move"
                                 conflicts.putValue(refExpr, message.capitalize())

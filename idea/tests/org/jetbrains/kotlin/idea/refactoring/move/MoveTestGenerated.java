@@ -665,4 +665,16 @@ public class MoveTestGenerated extends AbstractMoveTest {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/movePropertyToPackageWithConflicts/movePropertyToPackageWithConflicts.test");
         doTest(fileName);
     }
+
+    @TestMetadata("kotlin/moveTopLevelDeclarations/protectedMemberUsageWithSuper/protectedMemberUsageWithSuper.test")
+    public void testKotlin_moveTopLevelDeclarations_protectedMemberUsageWithSuper_ProtectedMemberUsageWithSuper() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/protectedMemberUsageWithSuper/protectedMemberUsageWithSuper.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveTopLevelDeclarations/protectedMemberUsageWithThis/protectedMemberUsageWithThis.test")
+    public void testKotlin_moveTopLevelDeclarations_protectedMemberUsageWithThis_ProtectedMemberUsageWithThis() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/protectedMemberUsageWithThis/protectedMemberUsageWithThis.test");
+        doTest(fileName);
+    }
 }
