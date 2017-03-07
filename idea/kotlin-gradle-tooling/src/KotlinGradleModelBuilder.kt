@@ -33,19 +33,22 @@ interface KotlinGradleModel : Serializable {
     val currentCompilerArgumentsBySourceSet: CompilerArgumentsBySourceSet
     val defaultCompilerArgumentsBySourceSet: CompilerArgumentsBySourceSet
     val coroutines: String?
+    val platformPluginId: String?
 }
 
 class KotlinGradleModelImpl(
         override val implements: String?,
         override val currentCompilerArgumentsBySourceSet: CompilerArgumentsBySourceSet,
         override val defaultCompilerArgumentsBySourceSet: CompilerArgumentsBySourceSet,
-        override val coroutines: String?
+        override val coroutines: String?,
+        override val platformPluginId: String?
 ) : KotlinGradleModel
 
 class KotlinGradleModelBuilder : ModelBuilderService {
     companion object {
         val kotlinCompileTaskClasses = listOf("org.jetbrains.kotlin.gradle.tasks.KotlinCompile_Decorated",
                                               "org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile_Decorated")
+        val platformPluginIds = listOf("kotlin-platform-jvm", "kotlin-platform-js", "kotlin-platform-common")
     }
 
     override fun getErrorMessageBuilder(project: Project, e: Exception): ErrorMessageBuilder {
@@ -127,7 +130,8 @@ class KotlinGradleModelBuilder : ModelBuilderService {
                 getImplements(project),
                 currentCompilerArgumentsBySourceSet,
                 defaultCompilerArgumentsBySourceSet,
-                getCoroutines(project)
+                getCoroutines(project),
+                platformPluginIds.singleOrNull { project.plugins.findPlugin(it) != null }
         )
     }
 }

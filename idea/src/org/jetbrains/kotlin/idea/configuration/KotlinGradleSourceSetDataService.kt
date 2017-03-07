@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
 import org.jetbrains.kotlin.idea.inspections.gradle.getResolvedKotlinStdlibVersionByModuleData
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
-import org.jetbrains.plugins.gradle.service.project.data.ExternalProjectDataService
 import java.util.*
 
 interface GradleProjectImportHandler {
@@ -90,15 +89,11 @@ class KotlinGradleProjectDataService : AbstractProjectDataService<ModuleData, Vo
 }
 
 private fun detectPlatformByPlugin(moduleNode: DataNode<ModuleData>): TargetPlatformKind<*>? {
-    val projectNode = ExternalSystemApiUtil.findParent(moduleNode, ProjectKeys.PROJECT)
-    val externalProjectNode = ExternalSystemApiUtil.find(projectNode as DataNode<*>, ExternalProjectDataService.KEY)
-    return externalProjectNode?.let {
-        when (it.data.plugins.values.map { it.id }.firstOrNull { it.startsWith("kotlin-platform-") }) {
-            "kotlin-platform-jvm" -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
-            "kotlin-platform-js" -> TargetPlatformKind.JavaScript
-            "kotlin-platform-common" -> TargetPlatformKind.Common
-            else -> null
-        }
+    return when (moduleNode.platformPluginId) {
+        "kotlin-platform-jvm" -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
+        "kotlin-platform-js" -> TargetPlatformKind.JavaScript
+        "kotlin-platform-common" -> TargetPlatformKind.Common
+        else -> null
     }
 }
 

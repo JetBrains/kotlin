@@ -40,6 +40,8 @@ var DataNode<ModuleData>.defaultCompilerArgumentsBySourceSet
         by UserDataProperty(Key.create<CompilerArgumentsBySourceSet>("DEFAULT_COMPILER_ARGUMENTS"))
 var DataNode<ModuleData>.coroutines
         by UserDataProperty(Key.create<String>("KOTLIN_COROUTINES"))
+var DataNode<ModuleData>.platformPluginId
+        by UserDataProperty(Key.create<String>("PLATFORM_PLUGIN_ID"))
 
 class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() {
     override fun getToolingExtensionsClasses(): Set<Class<out Any>> {
@@ -68,6 +70,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         ideModule.currentCompilerArgumentsBySourceSet = gradleModel.currentCompilerArgumentsBySourceSet
         ideModule.defaultCompilerArgumentsBySourceSet = gradleModel.defaultCompilerArgumentsBySourceSet
         ideModule.coroutines = gradleModel.coroutines
+        ideModule.platformPluginId = gradleModel.platformPluginId
 
         super.populateModuleDependencies(gradleModule, ideModule, ideProject)
     }
