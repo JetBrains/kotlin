@@ -109,7 +109,7 @@ private fun KotlinType.containsLocalTypes(): Boolean {
         }
     }
 
-    if (arguments.any { it.type.containsLocalTypes() }) {
+    if (arguments.any { !it.isStarProjection && it.type.containsLocalTypes() }) {
         return true
     }
 
