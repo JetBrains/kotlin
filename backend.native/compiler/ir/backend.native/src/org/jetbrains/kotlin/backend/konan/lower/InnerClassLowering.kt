@@ -99,7 +99,7 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
 
                     var irThis: IrExpression
                     var innerClass: ClassDescriptor
-                    if (constructorDescriptor == null) {
+                    if (constructorDescriptor == null || constructorDescriptor.constructedClass != classDescriptor) {
                         innerClass = classDescriptor
                         irThis = IrGetValueImpl(startOffset, endOffset, classDescriptor.thisAsReceiverParameter, origin)
                     } else {
