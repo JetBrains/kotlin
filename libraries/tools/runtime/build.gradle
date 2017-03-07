@@ -6,6 +6,7 @@ dependencies {
 }
 
 sourceSets {
+    if(!System.properties.'idea.active')
     main {
         java {
             srcDir "${rootDir}/../core/builtins/src"

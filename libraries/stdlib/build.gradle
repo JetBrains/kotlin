@@ -80,3 +80,5 @@ compileKotlin {
         ]
     }
 }
+
+kotlin.experimental.coroutines 'enable'

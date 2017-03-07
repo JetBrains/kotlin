@@ -15,7 +15,9 @@ sourceSets {
     test {
         kotlin {
             srcDir 'test'
-            srcDir '../test'
+            if(!System.properties.'idea.active') {
+                srcDir '../test'
+            }
         }
     }
 }
@@ -43,6 +45,8 @@ compileTestKotlin {
     kotlinOptions.jdkHome = JDK_17
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
 }
+
+kotlin.experimental.coroutines 'enable'
 
 test {
     executable = "$JDK_17/bin/java"
