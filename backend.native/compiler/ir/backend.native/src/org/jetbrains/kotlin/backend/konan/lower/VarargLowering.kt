@@ -49,22 +49,32 @@ class VarargInjectionLowering internal constructor(val context: Context): Declar
     private fun lower(owner:DeclarationDescriptor, element: IrElement?) {
         element?.transformChildrenVoid(object: IrElementTransformerVoid() {
             val transformer = this
-            override fun visitCall(expression: IrCall): IrExpression {
+
+            private fun replaceEmptyParameterWithEmptyArray(expression: IrMemberAccessExpression) {
                 log("call of: ${expression.descriptor}")
                 context.createIrBuilder(owner, expression.startOffset, expression.endOffset).apply {
                     expression.descriptor.valueParameters.forEach {
                         log("varargElementType: ${it.varargElementType} expr: ${ir2string(expression.getValueArgument(it))}")
                     }
-                    expression.descriptor.valueParameters.filter{it.varargElementType != null && expression.getValueArgument(it) == null}.forEach {
+                    expression.descriptor.valueParameters.filter { it.varargElementType != null && expression.getValueArgument(it) == null }.forEach {
                         expression.putValueArgument(it.index,
-                            IrVarargImpl(startOffset       = startOffset,
-                                         endOffset         = endOffset,
-                                         type              = it.type,
-                                         varargElementType = it.varargElementType!!)
+                                IrVarargImpl(startOffset       = startOffset,
+                                             endOffset         = endOffset,
+                                             type              = it.type,
+                                             varargElementType = it.varargElementType!!)
                         )
                     }
                 }
                 expression.transformChildrenVoid(this)
+            }
+
+            override fun visitCall(expression: IrCall): IrExpression {
+                replaceEmptyParameterWithEmptyArray(expression)
+                return expression
+            }
+
+            override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
+                replaceEmptyParameterWithEmptyArray(expression)
                 return expression
             }
 
