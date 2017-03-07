@@ -15,11 +15,22 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.lang.System.out
+import java.util.*
+import kotlin.reflect.KProperty
 
 internal class SpecialDescriptorsFactory(val context: Context) {
     private val enumSpecialDescriptorsFactory by lazy { EnumSpecialDescriptorsFactory(context) }
@@ -106,11 +117,77 @@ internal class SpecialDescriptorsFactory(val context: Context) {
     }
 }
 
+
+class ReflectionTypes(module: ModuleDescriptor) {
+    val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")
+    val KONAN_INTERNAL_FQ_NAME = FqName("konan.internal")
+
+    private val kotlinReflectScope: MemberScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        module.getPackage(KOTLIN_REFLECT_FQ_NAME).memberScope
+    }
+
+    private val konanInternalScope: MemberScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        module.getPackage(KONAN_INTERNAL_FQ_NAME).memberScope
+    }
+
+    private fun find(memberScope: MemberScope, className: String): ClassDescriptor {
+        val name = Name.identifier(className)
+        return memberScope.getContributedClassifier(name, NoLookupLocation.FROM_REFLECTION) as ClassDescriptor
+    }
+
+    private class ClassLookup(val memberScope: MemberScope) {
+        operator fun getValue(types: ReflectionTypes, property: KProperty<*>): ClassDescriptor {
+            return types.find(memberScope, property.name.capitalize())
+        }
+    }
+
+    private fun getFunctionTypeArgumentProjections(
+            receiverType: KotlinType?,
+            parameterTypes: List<KotlinType>,
+            returnType: KotlinType
+    ): List<TypeProjection> {
+        val arguments = ArrayList<TypeProjection>(parameterTypes.size + (if (receiverType != null) 1 else 0) + 1)
+
+        arguments.addIfNotNull(receiverType?.asTypeProjection())
+
+        parameterTypes.mapTo(arguments, KotlinType::asTypeProjection)
+
+        arguments.add(returnType.asTypeProjection())
+
+        return arguments
+    }
+
+    fun getKFunction(n: Int): ClassDescriptor = find(kotlinReflectScope, "KFunction$n")
+
+    val kClass: ClassDescriptor by ClassLookup(kotlinReflectScope)
+    val kProperty0: ClassDescriptor by ClassLookup(kotlinReflectScope)
+    val kProperty1: ClassDescriptor by ClassLookup(kotlinReflectScope)
+    val kProperty2: ClassDescriptor by ClassLookup(kotlinReflectScope)
+    val kProperty0Impl: ClassDescriptor by ClassLookup(konanInternalScope)
+    val kProperty1Impl: ClassDescriptor by ClassLookup(konanInternalScope)
+    val kMutableProperty0Impl: ClassDescriptor by ClassLookup(konanInternalScope)
+    val kMutableProperty1Impl: ClassDescriptor by ClassLookup(konanInternalScope)
+    val kMutableProperty0: ClassDescriptor by ClassLookup(kotlinReflectScope)
+    val kMutableProperty1: ClassDescriptor by ClassLookup(kotlinReflectScope)
+
+    fun getKFunctionType(
+            annotations: Annotations,
+            receiverType: KotlinType?,
+            parameterTypes: List<KotlinType>,
+            returnType: KotlinType
+    ): KotlinType {
+        val arguments = getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType)
+        val classDescriptor = getKFunction(arguments.size - 1 /* return type */)
+        return KotlinTypeFactory.simpleNotNullType(annotations, classDescriptor, arguments)
+    }
+}
+
 internal class Context(val config: KonanConfig) : KonanBackendContext() {
 
     var moduleDescriptor: ModuleDescriptor? = null
 
     val specialDescriptorsFactory = SpecialDescriptorsFactory(this)
+    val reflectionTypes: ReflectionTypes by lazy { ReflectionTypes(moduleDescriptor!!) }
     private val vtableBuilders = mutableMapOf<ClassDescriptor, ClassVtablesBuilder>()
 
     fun getVtableBuilder(classDescriptor: ClassDescriptor) = vtableBuilders.getOrPut(classDescriptor) {
