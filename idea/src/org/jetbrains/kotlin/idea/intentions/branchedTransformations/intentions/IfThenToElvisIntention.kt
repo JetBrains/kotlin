@@ -145,7 +145,7 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
                                               it.typeReference!!)
         }
         val checkedExpression = condition.checkedExpression()!!
-        val elvis = runWriteAction {
+        val elvis = tryRunWriteAction {
             val replacedLeft = if (left.evaluatesTo(checkedExpression)) {
                 if (condition is KtIsExpression) newReceiver!! else left
             }

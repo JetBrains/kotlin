@@ -67,7 +67,7 @@ class IfThenToSafeAccessIntention : SelfTargetingOffsetIndependentIntention<KtIf
                 }
 
         val newExpr = KtPsiFactory(element).createExpressionByPattern("$0?.$1", receiverExpression, selectorExpression) as KtSafeQualifiedExpression
-        val safeAccessExpr = runWriteAction {
+        val safeAccessExpr = tryRunWriteAction {
             element.replaced(newExpr)
         }
 
