@@ -602,9 +602,45 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
             doTest(fileName);
         }
 
+        @TestMetadata("expressionReceiver.kt")
+        public void testExpressionReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/expressionReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fields.kt")
+        public void testFields() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/fields.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implements.kt")
+        public void testImplements() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/implements.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("methods.kt")
         public void testMethods() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/methods.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multifile.kt")
+        public void testMultifile() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/multifile.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("objectExpression.kt")
+        public void testObjectExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/objectExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("return.kt")
+        public void testReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/protocols/return.kt");
             doTest(fileName);
         }
     }

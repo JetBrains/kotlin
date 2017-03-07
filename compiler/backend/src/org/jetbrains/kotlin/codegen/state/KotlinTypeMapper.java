@@ -201,7 +201,7 @@ public class KotlinTypeMapper {
             return Type.getObjectType(packageMemberOwner);
         }
         else if (container instanceof ClassDescriptor) {
-            return mapClass((ClassDescriptor) container);
+            return mapClassForCall((ClassDescriptor) container);
         }
         else {
             throw new UnsupportedOperationException("Don't know how to map owner for " + descriptor);
@@ -431,8 +431,13 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
-    public Type mapClass(@NotNull ClassifierDescriptor classifier) {
+    public Type mapClassForCall(@NotNull ClassifierDescriptor classifier) {
         return mapType(classifier.getDefaultType(), null, TypeMappingMode.DEFAULT);
+    }
+
+    @NotNull
+    public Type mapClass(@NotNull ClassifierDescriptor classifier) {
+        return mapType(classifier.getDefaultType(), null, TypeMappingMode.KEEP_PROTOCOL);
     }
 
     @NotNull
@@ -478,7 +483,14 @@ public class KotlinTypeMapper {
     @NotNull
     public Type mapDefaultImpls(@NotNull ClassDescriptor descriptor) {
         String defaultImplsClassName = typeMappingConfiguration.getInnerClassNameFactory().invoke(
-                mapType(descriptor).getInternalName(), JvmAbi.DEFAULT_IMPLS_CLASS_NAME);
+                mapClass(descriptor).getInternalName(), JvmAbi.DEFAULT_IMPLS_CLASS_NAME);
+        return Type.getObjectType(defaultImplsClassName);
+    }
+
+    @NotNull
+    public Type mapDefaultImplsProto(@NotNull ClassDescriptor descriptor) {
+        String defaultImplsClassName = typeMappingConfiguration.getInnerClassNameFactory().invoke(
+                mapType(descriptor.getDefaultType(), null, TypeMappingMode.DEFAULT).getInternalName(), JvmAbi.DEFAULT_IMPLS_CLASS_NAME);
         return Type.getObjectType(defaultImplsClassName);
     }
 
@@ -757,7 +769,7 @@ public class KotlinTypeMapper {
             ClassDescriptor ownerForDefault = (ClassDescriptor) baseMethodDescriptor.getContainingDeclaration();
             ownerForDefaultImpl =
                     isJvmInterface(ownerForDefault) && !isJvm8InterfaceWithDefaults(ownerForDefault) ?
-                    mapDefaultImpls(ownerForDefault) : mapClass(ownerForDefault);
+                    mapDefaultImplsProto(ownerForDefault) : mapClass(ownerForDefault);
 
             if (isInterface && (superCall || descriptor.getVisibility() == Visibilities.PRIVATE || isAccessor(descriptor))) {
                 thisClass = mapClass(currentOwner);
@@ -804,7 +816,7 @@ public class KotlinTypeMapper {
                 ClassDescriptor receiver = (currentIsInterface && !originalIsInterface) || currentOwner instanceof FunctionClassDescriptor
                                            ? declarationOwner
                                            : currentOwner;
-                owner = mapClass(receiver);
+                owner = mapClassForCall(receiver);
                 thisClass = owner;
             }
         }
