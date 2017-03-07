@@ -21,23 +21,25 @@ import com.intellij.debugger.engine.NamedMethodFilter
 import com.intellij.util.Range
 import com.sun.jdi.Location
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.getDirectlyOverriddenDeclarations
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
-import org.jetbrains.kotlin.resolve.findTopMostOverriddenDescriptors
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 class KotlinBasicStepMethodFilter(
-        val descriptor: CallableDescriptor,
+        val targetDescriptor: CallableMemberDescriptor,
         val myCallingExpressionLines: Range<Int>
 ) : NamedMethodFilter {
-    private val myTargetMethodName = when (descriptor) {
+    private val myTargetMethodName = when (targetDescriptor) {
         is ClassDescriptor, is ConstructorDescriptor -> "<init>"
-        is PropertyAccessorDescriptor -> JvmAbi.getterName(descriptor.correspondingProperty.name.asString())
-        else -> descriptor.name.asString()
+        is PropertyAccessorDescriptor -> JvmAbi.getterName(targetDescriptor.correspondingProperty.name.asString())
+        else -> targetDescriptor.name.asString()
     }
 
     override fun getCallingExpressionLines() = myCallingExpressionLines
@@ -50,7 +52,7 @@ class KotlinBasicStepMethodFilter(
 
         val positionManager = process.positionManager ?: return false
 
-        val descriptor = runReadAction {
+        val currentDescriptor = runReadAction {
             val elementAt = positionManager.getSourcePosition(location)?.elementAt
 
             val declaration = elementAt?.getParentOfTypesAndPredicate(false, KtDeclaration::class.java) {
@@ -62,21 +64,34 @@ class KotlinBasicStepMethodFilter(
             } else {
                 declaration?.resolveToDescriptor()
             }
-        } ?: return true
+        } ?: return false // TODO: Check that we can always find a descriptor (libraries with sources, libraries without sources)
 
-        fun compareDescriptors(d1: DeclarationDescriptor, d2: DeclarationDescriptor): Boolean {
-            return d1 == d2 || d1.original == d2.original
+        @Suppress("FoldInitializerAndIfToElvis")
+        if (currentDescriptor !is CallableMemberDescriptor) return false
+        if (currentDescriptor.kind != DECLARATION) return false
+
+        if (compareDescriptors(currentDescriptor, targetDescriptor)) return true
+
+        // We should stop if current descriptor overrides the target one or some base descriptor of target
+        // (if target descriptor is delegation or fake override)
+
+        val baseDescriptors = when (targetDescriptor.kind) {
+            DELEGATION, FAKE_OVERRIDE ->
+                targetDescriptor.getDirectlyOverriddenDeclarations()
+            DECLARATION, SYNTHESIZED ->
+                listOf(targetDescriptor)
         }
 
-        if (compareDescriptors(descriptor, this.descriptor)) return true
-
-        if (descriptor is CallableDescriptor) {
-           return descriptor.findTopMostOverriddenDescriptors().any { compareDescriptors(it, this.descriptor) } ||
-                  this.descriptor.findTopMostOverriddenDescriptors().any { compareDescriptors(it, descriptor)}
+        if (baseDescriptors.any { baseOfTarget -> compareDescriptors(baseOfTarget, currentDescriptor) }) {
+            return true
         }
 
-        return false
+        return DescriptorUtils.getAllOverriddenDescriptors(currentDescriptor).any { baseOfCurrent ->
+            baseDescriptors.any { baseOfTarget -> compareDescriptors(baseOfCurrent, baseOfTarget) }
+        }
     }
+}
 
-
+private fun compareDescriptors(d1: DeclarationDescriptor, d2: DeclarationDescriptor): Boolean {
+    return d1 == d2 || d1.original == d2.original
 }
