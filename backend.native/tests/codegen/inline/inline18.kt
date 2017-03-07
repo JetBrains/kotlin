@@ -16,14 +16,3 @@ fun bar(): Boolean {
 fun main(args: Array<String>) {
     println(bar().toString())
 }
-
-public inline fun foo(): Any? {
-    var result = null
-    return result
-}
-
-fun bar() {
-    foo()
-    foo()
-}
-
