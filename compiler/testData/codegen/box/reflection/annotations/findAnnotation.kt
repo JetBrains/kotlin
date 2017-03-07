@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, NATIVE
 // WITH_REFLECT
 
 import kotlin.reflect.full.findAnnotation
