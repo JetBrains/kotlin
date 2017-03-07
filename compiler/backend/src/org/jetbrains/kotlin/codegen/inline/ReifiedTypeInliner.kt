@@ -247,7 +247,7 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
     }
 }
 
-private val MethodInsnNode.reificationArgument: ReificationArgument?
+val MethodInsnNode.reificationArgument: ReificationArgument?
     get() {
         val prev = previous!!
 

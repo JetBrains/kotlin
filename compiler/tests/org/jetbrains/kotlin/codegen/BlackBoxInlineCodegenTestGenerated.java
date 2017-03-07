@@ -1886,6 +1886,18 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             doTest(fileName);
         }
 
+        @TestMetadata("kt15997.kt")
+        public void testKt15997() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/kt15997.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt15997_2.kt")
+        public void testKt15997_2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/kt15997_2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt6988.kt")
         public void testKt6988() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/kt6988.kt");

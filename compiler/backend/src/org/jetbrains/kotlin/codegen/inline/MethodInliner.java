@@ -252,6 +252,7 @@ public class MethodInliner {
                     //TODO add skipped this and receiver
                     InlineResult lambdaResult = inliner.doInline(this.mv, remapper, true, info, invokeCall.finallyDepthShift);
                     result.mergeWithNotChangeInfo(lambdaResult);
+                    result.getReifiedTypeParametersUsages().mergeAll(lambdaResult.getReifiedTypeParametersUsages());
 
                     //return value boxing/unboxing
                     Method bridge = typeMapper.mapAsmMethod(ClosureCodegen.getErasedInvokeFunction(info.getFunctionDescriptor()));
@@ -485,6 +486,11 @@ public class MethodInliner {
                                 )
                         );
                         awaitClassReification = false;
+                    }
+                    else if (inliningContext.isInliningLambda && ReifiedTypeInliner.Companion.isOperationReifiedMarker(cur)) {
+                        ReificationArgument reificationArgument = ReifiedTypeInlinerKt.getReificationArgument((MethodInsnNode) cur);
+                        String parameterName = reificationArgument.getParameterName();
+                        result.getReifiedTypeParametersUsages().addUsedReifiedParameter(parameterName);
                     }
                 }
                 else if (cur.getOpcode() == Opcodes.GETSTATIC) {
