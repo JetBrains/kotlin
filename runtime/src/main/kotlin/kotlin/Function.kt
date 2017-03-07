@@ -5,4 +5,5 @@ package kotlin
  *
  * @param R return type of the function.
  */
+@FixmeReflection
 public interface Function<out R>
