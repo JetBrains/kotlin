@@ -651,6 +651,36 @@ task delegatedProperty_map(type: RunKonanTest) {
     source = "codegen/delegatedProperty/map.kt"
 }
 
+task propertyCallableReference_valClass(type: RunKonanTest) {
+    goldValue = "42\n117\n"
+    source = "codegen/propertyCallableReference/valClass.kt"
+}
+
+task propertyCallableReference_valModule(type: RunKonanTest) {
+    goldValue = "42\n"
+    source = "codegen/propertyCallableReference/valModule.kt"
+}
+
+task propertyCallableReference_varClass(type: RunKonanTest) {
+    goldValue = "117\n117\n42\n42\n"
+    source = "codegen/propertyCallableReference/varClass.kt"
+}
+
+task propertyCallableReference_varModule(type: RunKonanTest) {
+    goldValue = "117\n117\n"
+    source = "codegen/propertyCallableReference/varModule.kt"
+}
+
+task propertyCallableReference_valExtension(type: RunKonanTest) {
+    goldValue = "42\n117\n"
+    source = "codegen/propertyCallableReference/valExtension.kt"
+}
+
+task propertyCallableReference_varExtension(type: RunKonanTest) {
+    goldValue = "117\n117\n42\n42\n"
+    source = "codegen/propertyCallableReference/varExtension.kt"
+}
+
 task array0(type: RunKonanTest) {
     goldValue = "5\n6\n7\n8\n9\n10\n11\n12\n13\n"
     source = "runtime/collections/array0.kt"
