@@ -9,7 +9,7 @@ dependencies {
 
 android {
     compileSdkVersion 22
-    buildToolsVersion "21.1.2"
+    buildToolsVersion "23.0.1"
 
     sourceSets {
         main.java.srcDirs += 'src/main/java2'
