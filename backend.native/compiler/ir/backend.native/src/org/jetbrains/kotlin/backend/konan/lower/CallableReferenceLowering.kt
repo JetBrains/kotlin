@@ -101,6 +101,7 @@ private class CallableReferencesUnbinder(val lower: CallableReferenceLowering,
     }
 
     override fun visitCallableReference(expression: IrCallableReference): IrExpression {
+        expression.transformChildrenVoid(this)
         if (!expression.type.isFunctionOrKFunctionType) {
             // Not a subject of this lowering.
             return expression
