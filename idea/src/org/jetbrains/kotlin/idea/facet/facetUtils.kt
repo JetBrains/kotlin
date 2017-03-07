@@ -23,6 +23,7 @@ import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
+import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.*
@@ -180,7 +181,11 @@ fun parseCompilerArgumentsToFacet(arguments: List<String>, defaultArguments: Lis
 
         val additionalArgumentsString = with(compilerArguments.javaClass.newInstance()) {
             copyFieldsSatisfying(compilerArguments, this, ::exposeAsAdditionalArgument)
-            ArgumentUtils.convertArgumentsToStringList(this).joinToString(separator = " ")
+            ArgumentUtils.convertArgumentsToStringList(this).joinToString(separator = " ") {
+                if (StringUtil.containsWhitespaces(it) || it.startsWith('"')) {
+                    StringUtil.wrapWithDoubleQuote(StringUtil.escapeQuotes(it))
+                } else it
+            }
         }
         compilerSettings?.additionalArguments =
                 if (additionalArgumentsString.isNotEmpty()) additionalArgumentsString else CompilerSettings.DEFAULT_ADDITIONAL_ARGUMENTS

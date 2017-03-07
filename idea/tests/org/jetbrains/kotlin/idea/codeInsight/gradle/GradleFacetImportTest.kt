@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.idea.codeInsight.gradle
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.config.CoroutineSupport
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.KotlinFacetSettings
-import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.junit.Assert
 import org.junit.Test
@@ -569,6 +566,41 @@ class GradleFacetImportTest : GradleImportingTestCase() {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.1", apiLevel!!.versionString)
             Assert.assertEquals(TargetPlatformKind.Common, targetPlatformKind)
+        }
+    }
+
+    @Test
+    fun testArgumentEscaping() {
+        createProjectSubFile("build.gradle", """
+            group 'Again'
+            version '1.0-SNAPSHOT'
+
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    maven {
+                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                    }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
+                }
+            }
+
+            apply plugin: 'kotlin-platform-jvm'
+
+            compileKotlin {
+                kotlinOptions.jdkHome = "c:\\program files\\jdk1.8"
+            }
+        """)
+        importProject()
+
+        with (facetSettings) {
+            Assert.assertEquals(
+                    listOf("-jdk-home", "c:\\program files\\jdk1.8", "-Xmulti-platform"),
+                    compilerSettings!!.additionalArgumentsAsList
+            )
         }
     }
 }

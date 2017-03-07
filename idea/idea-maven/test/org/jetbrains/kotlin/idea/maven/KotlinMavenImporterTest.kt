@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.config.additionalArgumentsAsList
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.junit.Assert
 import java.io.File
@@ -635,6 +636,8 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                             <arg>-jvm-target</arg>
                             <arg>1.8</arg>
                             <arg>-Xcoroutines=enable</arg>
+                            <arg>-jdk-home</arg>
+                            <arg>c:\program files\jdk1.8</arg>
                         </args>
                     </configuration>
                 </plugin>
@@ -649,6 +652,10 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("JVM 1.8", targetPlatformKind!!.description)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals("enable", coroutineSupport.compilerArgument)
+            Assert.assertEquals(
+                    listOf("-jdk-home", "c:\\program files\\jdk1.8"),
+                    compilerSettings!!.additionalArgumentsAsList
+            )
         }
     }
 
