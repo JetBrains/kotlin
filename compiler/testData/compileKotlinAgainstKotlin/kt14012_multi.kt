@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: NATIVE
 // FILE: A.kt
 @file:JvmName("TTest")
 @file:JvmMultifileClass
