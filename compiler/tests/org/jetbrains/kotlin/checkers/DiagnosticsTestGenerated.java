@@ -21783,6 +21783,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("withMethodOverriddenInAnotherSupertype.kt")
+                public void testWithMethodOverriddenInAnotherSupertype() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/thisAndSuper/unqualifiedSuper/withMethodOverriddenInAnotherSupertype.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("withMethodsOfAny.kt")
                 public void testWithMethodsOfAny() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/thisAndSuper/unqualifiedSuper/withMethodsOfAny.kt");
