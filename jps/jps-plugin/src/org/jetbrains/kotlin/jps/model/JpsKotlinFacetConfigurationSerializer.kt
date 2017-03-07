@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.jps.model
 
-import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.Element
 import org.jetbrains.jps.model.JpsElement
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.model.serialization.facet.JpsFacetConfigurationSerializer
-import org.jetbrains.kotlin.config.KotlinFacetSettings
+import org.jetbrains.kotlin.config.deserializeFacetSettings
+import org.jetbrains.kotlin.config.serializeFacetSettings
 
 object JpsKotlinFacetConfigurationSerializer : JpsFacetConfigurationSerializer<JpsKotlinFacetModuleExtension>(
         JpsKotlinFacetModuleExtension.KIND,
@@ -34,7 +34,7 @@ object JpsKotlinFacetConfigurationSerializer : JpsFacetConfigurationSerializer<J
             parent: JpsElement?,
             module: JpsModule
     ): JpsKotlinFacetModuleExtension {
-        return JpsKotlinFacetModuleExtension(XmlSerializer.deserialize(facetConfigurationElement, KotlinFacetSettings::class.java)!!)
+        return JpsKotlinFacetModuleExtension(deserializeFacetSettings(facetConfigurationElement))
     }
 
     override fun saveExtension(
@@ -42,6 +42,6 @@ object JpsKotlinFacetConfigurationSerializer : JpsFacetConfigurationSerializer<J
             facetConfigurationTag: Element,
             module: JpsModule
     ) {
-        XmlSerializer.serializeInto((extension as JpsKotlinFacetModuleExtension).settings, facetConfigurationTag)
+        (extension as JpsKotlinFacetModuleExtension).settings.serializeFacetSettings(facetConfigurationTag)
     }
 }
