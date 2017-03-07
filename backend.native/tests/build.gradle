@@ -681,6 +681,12 @@ task propertyCallableReference_varExtension(type: RunKonanTest) {
     source = "codegen/propertyCallableReference/varExtension.kt"
 }
 
+task propertyCallableReference_linkTest(type: LinkKonanTest) {
+    goldValue = "42\n117\n"
+    source = "codegen/propertyCallableReference/linkTest_main.kt"
+    lib = "codegen/propertyCallableReference/linkTest_lib.kt"
+}
+
 task array0(type: RunKonanTest) {
     goldValue = "5\n6\n7\n8\n9\n10\n11\n12\n13\n"
     source = "runtime/collections/array0.kt"
