@@ -59,7 +59,7 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "verify_descriptors", description = "Verify descriptor tree")
     public boolean verifyDescriptors;
 
-    @Argument(value = "verify_bitcode", description = "Verify llvm bitcode")
+    @Argument(value = "verify_bitcode", description = "Verify llvm bitcode after each method")
     public boolean verifyBitCode;
 
     @Argument(value = "enable", description = "Enable backend phase")

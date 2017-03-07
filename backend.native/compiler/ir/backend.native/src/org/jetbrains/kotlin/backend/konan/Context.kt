@@ -106,7 +106,7 @@ internal class SpecialDescriptorsFactory(val context: Context) {
     }
 }
 
-internal final class Context(val config: KonanConfig) : KonanBackendContext() {
+internal class Context(val config: KonanConfig) : KonanBackendContext() {
 
     var moduleDescriptor: ModuleDescriptor? = null
 

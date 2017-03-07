@@ -64,7 +64,7 @@ internal fun verifyModule(llvmModule: LLVMModuleRef, current: String = "") {
         // TODO: use LLVMDisposeMessage() on errorRef, once possible in interop.
         if (LLVMVerifyModule(
                 llvmModule, LLVMVerifierFailureAction.LLVMPrintMessageAction, errorRef.ptr) == 1) {
-            if (current.length > 0)
+            if (current.isNotEmpty())
                 println("Error in ${current}")
             LLVMDumpModule(llvmModule)
             throw Error("Invalid module");
@@ -513,7 +513,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         codegen.epilogue()
 
-        verifyModule(context.llvmModule!!,
+        if (context.shouldVerifyBitCode())
+            verifyModule(context.llvmModule!!,
                 "${declaration.descriptor.containingDeclaration}::${ir2string(declaration)}")
     }
 

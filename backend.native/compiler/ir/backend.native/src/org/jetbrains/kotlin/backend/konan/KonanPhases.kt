@@ -92,9 +92,9 @@ internal class PhaseManager(val context: Context)  {
             if (shouldVerifyIr()) {
                 verifyIr()
             }
-            if (shouldVerifyBitCode()) {
-                verifyBitCode()
-            }
+
+            // We always verify bitcode to prevent hard to debug bugs.
+            verifyBitCode()
 
             if (shouldPrintDescriptors()) {
                 printDescriptors()
