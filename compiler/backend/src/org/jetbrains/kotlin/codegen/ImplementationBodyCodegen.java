@@ -1207,9 +1207,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     }
                 }
                 else if (descriptor instanceof VariableDescriptor) {
-                    if (descriptor.getContainingDeclaration() instanceof ConstructorDescriptor) {
-                        ClassDescriptor classDescriptor =
-                                (ClassDescriptor) descriptor.getContainingDeclaration().getContainingDeclaration();
+                    DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+                    if (containingDeclaration instanceof ConstructorDescriptor) {
+                        ClassDescriptor classDescriptor = ((ConstructorDescriptor) containingDeclaration).getConstructedClass();
                         if (classDescriptor == ImplementationBodyCodegen.this.descriptor) return;
                     }
                     lookupInContext(descriptor);
