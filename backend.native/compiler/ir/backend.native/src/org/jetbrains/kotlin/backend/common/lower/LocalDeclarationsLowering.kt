@@ -199,12 +199,17 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
             }
 
             override fun visitConstructor(declaration: IrConstructor): IrStatement {
-                // Body is transformed separately.
+                // Body is transformed separately. See loop over constructors in rewriteDeclarations().
 
                 val transformedDescriptor = localClassConstructors[declaration.descriptor]?.transformedDescriptor
                 if (transformedDescriptor != null) {
                     return IrConstructorImpl(declaration.startOffset, declaration.endOffset, declaration.origin,
-                            transformedDescriptor, declaration.body!!)
+                            transformedDescriptor, declaration.body!!).apply {
+                        declaration.descriptor.valueParameters.filter { it.declaresDefaultValue() }.forEach { argument ->
+                            val body = declaration.getDefault(argument)!!
+                            this.putDefault(oldParameterToNew[argument] as ValueParameterDescriptor, body)
+                        }
+                    }
                 } else {
                     return super.visitConstructor(declaration)
                 }
@@ -482,8 +487,8 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
         }
 
         private fun createTransformedValueParameters(localContext: LocalContextWithClosureAsParameters,
-                                                     capturedValues: List<ValueDescriptor>
-        ): List<ValueParameterDescriptor> {
+                                                     capturedValues: List<ValueDescriptor>)
+                : List<ValueParameterDescriptor> {
 
             val oldDescriptor = localContext.descriptor
             val newDescriptor = localContext.transformedDescriptor
