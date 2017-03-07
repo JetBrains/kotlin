@@ -62,7 +62,7 @@ class KotlinGradleSourceSetDataService : AbstractProjectDataService<GradleSource
             val ideModule = modelsProvider.findIdeModule(sourceSetData) ?: continue
 
             val moduleNode = ExternalSystemApiUtil.findParent(sourceSetNode, ProjectKeys.MODULE) ?: continue
-            val kotlinFacet = configureFacetByGradleModule(moduleNode, ideModule, modelsProvider) ?: continue
+            val kotlinFacet = configureFacetByGradleModule(moduleNode, sourceSetNode, ideModule, modelsProvider) ?: continue
             GradleProjectImportHandler.getInstances(project).forEach { it.importBySourceSet(kotlinFacet, sourceSetNode) }
         }
     }
@@ -83,7 +83,7 @@ class KotlinGradleProjectDataService : AbstractProjectDataService<ModuleData, Vo
 
             val moduleData = moduleNode.data
             val ideModule = modelsProvider.findIdeModule(moduleData) ?: continue
-            val kotlinFacet = configureFacetByGradleModule(moduleNode, ideModule, modelsProvider) ?: continue
+            val kotlinFacet = configureFacetByGradleModule(moduleNode, null, ideModule, modelsProvider) ?: continue
             GradleProjectImportHandler.getInstances(project).forEach { it.importByModule(kotlinFacet, moduleNode) }
         }
     }
@@ -108,6 +108,7 @@ private fun detectPlatformByLibrary(moduleNode: DataNode<ModuleData>): TargetPla
 
 private fun configureFacetByGradleModule(
         moduleNode: DataNode<ModuleData>,
+        sourceSetNode: DataNode<GradleSourceSetData>?,
         ideModule: Module,
         modelsProvider: IdeModifiableModelsProvider
 ): KotlinFacet? {
@@ -121,8 +122,10 @@ private fun configureFacetByGradleModule(
     val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider, false)
     kotlinFacet.configureFacet(compilerVersion, coroutinesProperty, platformKind, modelsProvider)
 
-    val currentCompilerArguments = moduleNode.currentCompilerArguments
-    val defaultCompilerArguments = moduleNode.defaultCompilerArguments ?: emptyList()
+    val sourceSetName = sourceSetNode?.data?.id?.let { it.substring(it.lastIndexOf(':') + 1) } ?: "main"
+
+    val currentCompilerArguments = moduleNode.currentCompilerArgumentsBySourceSet?.get(sourceSetName)
+    val defaultCompilerArguments = moduleNode.defaultCompilerArgumentsBySourceSet?.get(sourceSetName) ?: emptyList()
     if (currentCompilerArguments != null) {
         parseCompilerArgumentsToFacet(currentCompilerArguments, defaultCompilerArguments, kotlinFacet)
     }
