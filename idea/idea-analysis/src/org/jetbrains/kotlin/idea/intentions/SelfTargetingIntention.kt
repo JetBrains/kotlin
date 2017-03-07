@@ -20,6 +20,7 @@ import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.daemon.HighlightDisplayKey
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInspection.LocalInspectionEP
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
@@ -30,6 +31,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.containsInside
@@ -55,6 +57,10 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
     abstract fun isApplicableTo(element: TElement, caretOffset: Int): Boolean
 
     abstract fun applyTo(element: TElement, editor: Editor?)
+
+    protected fun <R> tryRunWriteAction(action: () -> R): R =
+            if (ApplicationManager.getApplication().isDispatchThread) runWriteAction(action)
+            else run(action)
 
     private fun getTarget(editor: Editor, file: PsiFile): TElement? {
         val offset = editor.caretModel.offset
