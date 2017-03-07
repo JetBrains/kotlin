@@ -99,20 +99,19 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
                 val propertyDescriptor = expression.descriptor as? VariableDescriptorWithAccessors
                 if (propertyDescriptor == null) return expression
                 val receiversCount = listOf(expression.dispatchReceiver, expression.extensionReceiver).count { it != null }
-                when (receiversCount) {
-                    0 -> { // Cache KProperties with no arguments.
-                        val field = kProperties.getOrPut(propertyDescriptor) {
-                            createKProperty(expression, propertyDescriptor) to kProperties.size
-                        }
-
-                        return IrCallImpl(expression.startOffset, expression.endOffset, substitutedArrayItemGetter).apply {
-                            dispatchReceiver = IrGetFieldImpl(expression.startOffset, expression.endOffset, kPropertiesField)
-                            putValueArgument(0, IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, field.second))
-                        }
+                if (receiversCount == 1 || propertyDescriptor !is PropertyDescriptor) // Has receiver or is local delegated.
+                    return createKProperty(expression, propertyDescriptor)
+                else if (receiversCount == 0) { // Cache KProperties with no arguments.
+                    val field = kProperties.getOrPut(propertyDescriptor) {
+                        createKProperty(expression, propertyDescriptor) to kProperties.size
                     }
-                    1 -> return createKProperty(expression, propertyDescriptor)
-                    else -> throw AssertionError("Callable reference to properties with two receivers is not allowed: $propertyDescriptor")
+
+                    return IrCallImpl(expression.startOffset, expression.endOffset, substitutedArrayItemGetter).apply {
+                        dispatchReceiver = IrGetFieldImpl(expression.startOffset, expression.endOffset, kPropertiesField)
+                        putValueArgument(0, IrConstImpl.int(startOffset, endOffset, context.builtIns.intType, field.second))
+                    }
                 }
+                else throw AssertionError("Callable reference to properties with two receivers is not allowed: $propertyDescriptor")
             }
         })
 
