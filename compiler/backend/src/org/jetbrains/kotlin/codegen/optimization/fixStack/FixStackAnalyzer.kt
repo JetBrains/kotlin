@@ -58,16 +58,9 @@ internal class FixStackAnalyzer(
         for (marker in context.fakeAlwaysFalseIfeqMarkers) {
             val next = marker.next
             if (next is JumpInsnNode) {
-                val nop = InsnNode(Opcodes.NOP)
-                expectedStackNode[next.label] = nop
-                method.instructions.insert(next, nop)
-                method.instructions.remove(marker)
-                method.instructions.remove(next)
-                context.nodesToRemoveOnCleanup.add(nop)
+                expectedStackNode[next.label] = marker
             }
         }
-
-        context.fakeAlwaysFalseIfeqMarkers.clear()
     }
 
     private val analyzer = InternalAnalyzer(owner, method, context)

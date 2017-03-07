@@ -39,31 +39,51 @@ class FixStackMethodTransformer : MethodTransformer() {
         }
 
         if (context.isAnalysisRequired()) {
-            val analyzer = FixStackAnalyzer(internalClassName, methodNode, context)
-            analyzer.analyze()
-
-            methodNode.maxStack = methodNode.maxStack + analyzer.maxExtraStackSize
-
-            val actions = arrayListOf<() -> Unit>()
-
-            transformBreakContinueGotos(methodNode, context, actions, analyzer)
-
-            transformSaveRestoreStackMarkers(methodNode, context, actions, analyzer)
-
-            actions.forEach { it() }
+            analyzeAndTransformBreakContinueGotos(context, internalClassName, methodNode)
+            removeAlwaysFalseIfeqMarkers(context, methodNode)
+            analyzeAndTransformSaveRestoreStack(context, internalClassName, methodNode)
         }
 
-        context.fakeAlwaysTrueIfeqMarkers.forEach { marker ->
-            replaceAlwaysTrueIfeqWithGoto(methodNode, marker)
-        }
+        removeAlwaysTrueIfeqMarkers(context, methodNode)
+        removeAlwaysFalseIfeqMarkers(context, methodNode)
+    }
 
+    private fun analyzeAndTransformBreakContinueGotos(context: FixStackContext, internalClassName: String, methodNode: MethodNode) {
+        val analyzer = FixStackAnalyzer(internalClassName, methodNode, context)
+        analyzer.analyze()
+
+        methodNode.maxStack = methodNode.maxStack + analyzer.maxExtraStackSize
+
+        val actions = arrayListOf<() -> Unit>()
+
+        transformBreakContinueGotos(methodNode, context, actions, analyzer)
+
+        actions.forEach { it() }
+    }
+
+    private fun analyzeAndTransformSaveRestoreStack(context: FixStackContext, internalClassName: String, methodNode: MethodNode) {
+        val analyzer = FixStackAnalyzer(internalClassName, methodNode, context)
+        analyzer.analyze()
+
+        val actions = arrayListOf<() -> Unit>()
+
+        transformSaveRestoreStackMarkers(methodNode, context, actions, analyzer)
+
+        actions.forEach { it() }
+    }
+
+    private fun removeAlwaysFalseIfeqMarkers(context: FixStackContext, methodNode: MethodNode) {
         context.fakeAlwaysFalseIfeqMarkers.forEach { marker ->
             removeAlwaysFalseIfeq(methodNode, marker)
         }
+        context.fakeAlwaysFalseIfeqMarkers.clear()
+    }
 
-        context.nodesToRemoveOnCleanup.forEach {
-            methodNode.instructions.remove(it)
+    private fun removeAlwaysTrueIfeqMarkers(context: FixStackContext, methodNode: MethodNode) {
+        context.fakeAlwaysTrueIfeqMarkers.forEach { marker ->
+            replaceAlwaysTrueIfeqWithGoto(methodNode, marker)
         }
+        context.fakeAlwaysTrueIfeqMarkers.clear()
     }
 
     private fun transformBreakContinueGotos(
