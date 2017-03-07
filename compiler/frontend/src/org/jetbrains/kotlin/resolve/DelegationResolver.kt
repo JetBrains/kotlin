@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 
@@ -91,20 +90,17 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
     }
 
 
-    private fun getDelegatableMembers(interfaceType: KotlinType): Collection<T> {
-        val classSupertypeMembers =
-                TypeUtils.getAllSupertypes(interfaceType).firstOrNull {
-                    val typeConstructor = it.constructor.declarationDescriptor
-                    typeConstructor is ClassDescriptor && typeConstructor.kind != ClassKind.INTERFACE
-                }?.let {
-                    memberExtractor.getMembersByType(it)
-                } ?: emptyList<CallableMemberDescriptor>()
-        return memberExtractor.getMembersByType(interfaceType).filter { descriptor ->
-            descriptor.isOverridable &&
-            !classSupertypeMembers.any { isOverridableBy(it, descriptor) } &&
-            delegationFilter.filter(descriptor, languageVersionSettings)
-        }
-    }
+    private fun getDelegatableMembers(interfaceType: KotlinType): Collection<T> =
+            memberExtractor.getMembersByType(interfaceType).filter { descriptor ->
+                descriptor.isOverridable &&
+                (descriptor.kind.isReal || !descriptor.overridesClassMembersOnly()) &&
+                delegationFilter.filter(descriptor, languageVersionSettings)
+            }
+
+    private fun T.overridesClassMembersOnly() =
+            DescriptorUtils.getAllOverriddenDeclarations(this).all {
+                DescriptorUtils.isClass(it.containingDeclaration)
+            }
 
     interface MemberExtractor<out T : CallableMemberDescriptor> {
         fun getMembersByType(type: KotlinType): Collection<T>
