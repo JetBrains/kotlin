@@ -2208,13 +2208,18 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         boolean isSuspensionPoint = CoroutineCodegenUtilKt.isSuspensionPointInStateMachine(resolvedCall, bindingContext);
         CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
 
+        int receiverTmp = myFrameMap.enterTemp(OBJECT_TYPE);
         putReceiverAndInlineMarkerIfNeeded(callableMethod, resolvedCall, receiver, isSuspensionPoint, false);
+        v.store(receiverTmp, OBJECT_TYPE);
+
+        v.load(receiverTmp, OBJECT_TYPE);
         protocolGenerator.putInvokerAndGenerateIfNeeded((CallableMethod) callableMethod, resolvedCall);
 
-        putReceiverAndInlineMarkerIfNeeded(callableMethod, resolvedCall, receiver, isSuspensionPoint, false);
-
+        v.load(receiverTmp, OBJECT_TYPE);
         protocolGenerator.putArguments(this, generator, resolvedCall, callableMethod);
         protocolGenerator.invokeMethod(callableMethod);
+
+        myFrameMap.leaveTemp(OBJECT_TYPE);
 
         if (isSuspensionPoint) {
             v.invokestatic(

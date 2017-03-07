@@ -6,14 +6,17 @@ protocol interface Proto {
     fun foo(): String
 }
 
-class Impl() {
+class Impl {
     companion object {
         var tmp = ""
     }
 
-    fun foo(): String {
+    init {
         tmp = "OK$tmp"
-        return "OK$tmp"
+    }
+
+    fun foo(): String {
+        return tmp
     }
 }
 

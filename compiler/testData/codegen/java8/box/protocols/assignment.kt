@@ -12,5 +12,6 @@ class Foo {
 
 fun box(): String {
     val impl: Proto = Foo()
-    return impl.x()
+    val x: Proto = impl
+    return x.x()
 }
