@@ -146,9 +146,7 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
                 annotations = Annotations.EMPTY,
                 receiverType = receiverType,
                 parameterTypes = listOf(),
-                parameterNames = null,
-                returnType = propertyDescriptor.type,
-                builtIns = context.builtIns)
+                returnType = propertyDescriptor.type)
         val getterCallableReference = IrCallableReferenceImpl(startOffset, endOffset, getterKFunctionType, getter, null).apply {
             dispatchReceiver = expression.dispatchReceiver
             extensionReceiver = expression.extensionReceiver
@@ -161,9 +159,7 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
                         annotations = Annotations.EMPTY,
                         receiverType = receiverType,
                         parameterTypes = listOf(propertyDescriptor.type),
-                        parameterNames = null,
-                        returnType = context.builtIns.unitType,
-                        builtIns = context.builtIns)
+                        returnType = context.builtIns.unitType)
                 IrCallableReferenceImpl(startOffset, endOffset, setterKFunctionType, it, null).apply {
                     dispatchReceiver = expression.dispatchReceiver
                     extensionReceiver = expression.extensionReceiver

@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.Llvm
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmDeclarations
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.getFunctionTypeArgumentProjections
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -27,7 +25,11 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.lang.System.out
+import java.util.*
 import kotlin.reflect.KProperty
 
 internal class SpecialDescriptorsFactory(val context: Context) {
@@ -139,6 +141,22 @@ class ReflectionTypes(module: ModuleDescriptor) {
         }
     }
 
+    private fun getFunctionTypeArgumentProjections(
+            receiverType: KotlinType?,
+            parameterTypes: List<KotlinType>,
+            returnType: KotlinType
+    ): List<TypeProjection> {
+        val arguments = ArrayList<TypeProjection>(parameterTypes.size + (if (receiverType != null) 1 else 0) + 1)
+
+        arguments.addIfNotNull(receiverType?.asTypeProjection())
+
+        parameterTypes.mapTo(arguments, KotlinType::asTypeProjection)
+
+        arguments.add(returnType.asTypeProjection())
+
+        return arguments
+    }
+
     fun getKFunction(n: Int): ClassDescriptor = find(kotlinReflectScope, "KFunction$n")
 
     val kClass: ClassDescriptor by ClassLookup(kotlinReflectScope)
@@ -156,11 +174,9 @@ class ReflectionTypes(module: ModuleDescriptor) {
             annotations: Annotations,
             receiverType: KotlinType?,
             parameterTypes: List<KotlinType>,
-            parameterNames: List<Name>?,
-            returnType: KotlinType,
-            builtIns: KotlinBuiltIns
+            returnType: KotlinType
     ): KotlinType {
-        val arguments = getFunctionTypeArgumentProjections(receiverType, parameterTypes, parameterNames, returnType, builtIns)
+        val arguments = getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType)
         val classDescriptor = getKFunction(arguments.size - 1 /* return type */)
         return KotlinTypeFactory.simpleNotNullType(annotations, classDescriptor, arguments)
     }
