@@ -61,6 +61,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     fun testKotlincSimple() {
         runProcess(
                 "kotlinc",
+                "-Xskip-java-check",
                 "$testDataDirectory/helloWorld.kt",
                 "-d", tmpdir.path
         )
@@ -69,6 +70,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     fun testKotlincJvmSimple() {
         runProcess(
                 "kotlinc-jvm",
+                "-Xskip-java-check",
                 "$testDataDirectory/helloWorld.kt",
                 "-d", tmpdir.path
         )
@@ -77,6 +79,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     fun testKotlincJsSimple() {
         runProcess(
                 "kotlinc-js",
+                "-Xskip-java-check",
                 "$testDataDirectory/emptyMain.kt",
                 "-no-stdlib",
                 "-output", File(tmpdir, "out.js").path
@@ -86,6 +89,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     fun testKotlinNoReflect() {
         runProcess(
                 "kotlinc",
+                "-Xskip-java-check",
                 "$testDataDirectory/reflectionUsage.kt",
                 "-d", tmpdir.path
         )
