@@ -1,0 +1,4 @@
+{
+  "mainFile": "test.kt",
+  "intentionClass": "org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveDeclarationToSeparateFileIntention"
+}
