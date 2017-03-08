@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 import org.jetbrains.kotlin.console.KotlinConsoleRunner
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.junit.Test
-import kotlin.properties.Delegates
+import kotlin.reflect.KMutableProperty0
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class IdeReplExecutionTest : PlatformTestCase() {
-    private var consoleRunner: KotlinConsoleRunner by Delegates.notNull()
+    private lateinit var consoleRunner: KotlinConsoleRunner
     private var commandsSent = 0
 
     override fun setUp() {
@@ -38,6 +38,7 @@ class IdeReplExecutionTest : PlatformTestCase() {
 
     override fun tearDown() {
         consoleRunner.dispose()
+        (this::consoleRunner as KMutableProperty0<KotlinConsoleRunner?>).set(null)
         super.tearDown()
     }
 
