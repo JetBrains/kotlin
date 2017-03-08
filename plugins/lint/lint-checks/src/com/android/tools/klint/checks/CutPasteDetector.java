@@ -139,7 +139,7 @@ public class CutPasteDetector extends Detector implements Detector.UastScanner {
 
     @Nullable
     private static String getLhs(@NonNull UCallExpression call) {
-        UElement parent = call.getContainingElement();
+        UElement parent = call.getUastParent();
         while (parent != null && !(parent instanceof UBlockExpression)) {
             if (parent instanceof ULocalVariable) {
                 return ((ULocalVariable) parent).getName();
@@ -152,7 +152,7 @@ public class CutPasteDetector extends Detector implements Detector.UastScanner {
                     return aa.getReceiver().asSourceString();
                 }
             }
-            parent = parent.getContainingElement();
+            parent = parent.getUastParent();
         }
         return null;
     }
@@ -291,7 +291,7 @@ public class CutPasteDetector extends Detector implements Detector.UastScanner {
         }
 
         private static UExpression getBreakedExpression(UBreakExpression node) {
-            UElement parent = node.getContainingElement();
+            UElement parent = node.getUastParent();
             String label = node.getLabel();
             while (parent != null) {
                 if (label != null) {
@@ -306,13 +306,13 @@ public class CutPasteDetector extends Detector implements Detector.UastScanner {
                         return (UExpression) parent;
                     }
                 }
-                parent = parent.getContainingElement();
+                parent = parent.getUastParent();
             }
             return null;
         }
 
         private static UExpression getContinuedExpression(UContinueExpression node) {
-            UElement parent = node.getContainingElement();
+            UElement parent = node.getUastParent();
             String label = node.getLabel();
             while (parent != null) {
                 if (label != null) {
@@ -327,7 +327,7 @@ public class CutPasteDetector extends Detector implements Detector.UastScanner {
                         return (UExpression) parent;
                     }
                 }
-                parent = parent.getContainingElement();
+                parent = parent.getUastParent();
             }
             return null;
         }

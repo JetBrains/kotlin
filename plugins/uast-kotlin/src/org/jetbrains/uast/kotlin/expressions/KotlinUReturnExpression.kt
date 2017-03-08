@@ -22,7 +22,7 @@ import org.jetbrains.uast.UReturnExpression
 
 class KotlinUReturnExpression(
         override val psi: KtReturnExpression,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : KotlinAbstractUExpression(), UReturnExpression, KotlinUElementWithType {
     override val returnExpression by lz { KotlinConverter.convertOrNull(psi.returnedExpression, this) }
 }

@@ -29,7 +29,7 @@ import org.jetbrains.uast.kotlin.*
 
 open class KotlinUMethod(
         psi: KtLightMethod,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : UMethod, JavaUElementWithComments, PsiMethod by psi {
     override val psi: KtLightMethod = unwrap<UMethod, KtLightMethod>(psi)
 

@@ -261,7 +261,7 @@ public class IntellijLintUtils {
           }
         }
       }
-      element = element.getContainingElement();
+      element = element.getUastParent();
     }
 
     return false;

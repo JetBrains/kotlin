@@ -79,7 +79,7 @@ public class ServiceCastDetector extends Detector implements Detector.UastScanne
     public void visitMethod(@NonNull JavaContext context, @Nullable UastVisitor visitor,
             @NonNull UCallExpression call, @NonNull UMethod method) {
         UElement parent = LintUtils.skipParentheses(
-                UastUtils.getQualifiedParentOrThis(call).getContainingElement());
+                UastUtils.getQualifiedParentOrThis(call).getUastParent());
         if (UastExpressionUtils.isTypeCast(parent)) {
             UBinaryExpressionWithType cast = (UBinaryExpressionWithType) parent;
 

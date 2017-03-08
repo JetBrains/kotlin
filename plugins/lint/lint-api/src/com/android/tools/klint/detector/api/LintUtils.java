@@ -16,41 +16,6 @@
 
 package com.android.tools.klint.detector.api;
 
-import static com.android.SdkConstants.ANDROID_MANIFEST_XML;
-import static com.android.SdkConstants.ANDROID_PREFIX;
-import static com.android.SdkConstants.ANDROID_URI;
-import static com.android.SdkConstants.ATTR_LOCALE;
-import static com.android.SdkConstants.BIN_FOLDER;
-import static com.android.SdkConstants.DOT_GIF;
-import static com.android.SdkConstants.DOT_JPEG;
-import static com.android.SdkConstants.DOT_JPG;
-import static com.android.SdkConstants.DOT_PNG;
-import static com.android.SdkConstants.DOT_WEBP;
-import static com.android.SdkConstants.DOT_XML;
-import static com.android.SdkConstants.FN_BUILD_GRADLE;
-import static com.android.SdkConstants.ID_PREFIX;
-import static com.android.SdkConstants.NEW_ID_PREFIX;
-import static com.android.SdkConstants.TOOLS_URI;
-import static com.android.SdkConstants.UTF_8;
-import static com.android.ide.common.resources.configuration.FolderConfiguration.QUALIFIER_SPLITTER;
-import static com.android.ide.common.resources.configuration.LocaleQualifier.BCP_47_PREFIX;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_BOOLEAN;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_BOOLEAN_WRAPPER;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_BYTE;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_BYTE_WRAPPER;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_CHAR;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_CHARACTER_WRAPPER;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_DOUBLE;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_DOUBLE_WRAPPER;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_FLOAT;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_FLOAT_WRAPPER;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_INT;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_INTEGER_WRAPPER;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_LONG;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_LONG_WRAPPER;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_SHORT;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_SHORT_WRAPPER;
-
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.builder.model.AndroidProject;
@@ -78,21 +43,14 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.intellij.psi.CommonClassNames;
-import com.intellij.psi.PsiClassType;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiImportStatement;
-import com.intellij.psi.PsiLiteral;
-import com.intellij.psi.PsiParenthesizedExpression;
-import com.intellij.psi.PsiType;
-import com.intellij.psi.PsiWhiteSpace;
-
-import org.jetbrains.uast.UElement;
-import org.jetbrains.uast.UParenthesizedExpression;
+import com.intellij.psi.*;
+import lombok.ast.ImportDeclaration;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.ClassNode;
 import org.jetbrains.org.objectweb.asm.tree.FieldNode;
+import org.jetbrains.uast.UElement;
+import org.jetbrains.uast.UParenthesizedExpression;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -100,17 +58,15 @@ import org.w3c.dom.NodeList;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import lombok.ast.ImportDeclaration;
+import static com.android.SdkConstants.*;
+import static com.android.ide.common.resources.configuration.FolderConfiguration.QUALIFIER_SPLITTER;
+import static com.android.ide.common.resources.configuration.LocaleQualifier.BCP_47_PREFIX;
+import static com.android.tools.klint.client.api.JavaParser.*;
 
 
 /**
@@ -1299,7 +1255,7 @@ public class LintUtils {
     @Nullable
     public static UElement skipParentheses(@Nullable UElement element) {
         while (element instanceof UParenthesizedExpression) {
-            element = element.getContainingElement();
+            element = element.getUastParent();
         }
 
         return element;

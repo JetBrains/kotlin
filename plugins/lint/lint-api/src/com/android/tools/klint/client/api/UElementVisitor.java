@@ -477,7 +477,7 @@ public class UElementVisitor {
                     }
                 }
 
-                cls = cls.getUastSuperClass();
+                cls = cls.getSuperClass();
                 depth++;
                 if (depth == 500) {
                     // Shouldn't happen in practice; this prevents the IDE from

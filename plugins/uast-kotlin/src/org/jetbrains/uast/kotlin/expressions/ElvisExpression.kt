@@ -14,7 +14,7 @@ private fun createVariableReferenceExpression(variable: UVariable, containingEle
         object : USimpleNameReferenceExpression {
             override val psi: PsiElement? = null
             override fun resolve(): PsiElement? = variable
-            override val containingElement: UElement? = containingElement
+            override val uastParent: UElement? = containingElement
             override val resolvedName: String? = variable.name
             override val annotations: List<UAnnotation> = emptyList()
             override val identifier: String = variable.name.orAnonymous()
@@ -23,7 +23,7 @@ private fun createVariableReferenceExpression(variable: UVariable, containingEle
 private fun createNullLiteralExpression(containingElement: UElement?) =
         object : ULiteralExpression {
             override val psi: PsiElement? = null
-            override val containingElement: UElement? = containingElement
+            override val uastParent: UElement? = containingElement
             override val value: Any? = null
             override val annotations: List<UAnnotation> = emptyList()
         }
@@ -31,7 +31,7 @@ private fun createNullLiteralExpression(containingElement: UElement?) =
 private fun createNotEqWithNullExpression(variable: UVariable, containingElement: UElement?) =
         object : UBinaryExpression {
             override val psi: PsiElement? = null
-            override val containingElement: UElement? = containingElement
+            override val uastParent: UElement? = containingElement
             override val leftOperand: UExpression by lz { createVariableReferenceExpression(variable, this) }
             override val rightOperand: UExpression by lz { createNullLiteralExpression(this) }
             override val operator: UastBinaryOperator = UastBinaryOperator.NOT_EQUALS
@@ -53,7 +53,7 @@ private fun createElvisExpressions(
 
     val ifExpression = object : UIfExpression {
         override val psi: PsiElement? = null
-        override val containingElement: UElement? = containingElement
+        override val uastParent: UElement? = containingElement
         override val condition: UExpression by lz { createNotEqWithNullExpression(tempVariable, this) }
         override val thenExpression: UExpression? by lz { createVariableReferenceExpression(tempVariable, this) }
         override val elseExpression: UExpression? by lz { KotlinConverter.convertExpression(right, this) }
@@ -73,7 +73,7 @@ fun createElvisExpression(elvisExpression: KtBinaryExpression, containingElement
     return object : UExpressionList, KotlinEvaluatableUElement, KotlinUElementWithType {
         override val psi: PsiElement? = elvisExpression
         override val kind = KotlinSpecialExpressionKinds.ELVIS
-        override val containingElement: UElement? = containingElement
+        override val uastParent: UElement? = containingElement
         override val annotations: List<UAnnotation> = emptyList()
         override val expressions: List<UExpression> by lz {
             createElvisExpressions(left, right, this, elvisExpression.parent)

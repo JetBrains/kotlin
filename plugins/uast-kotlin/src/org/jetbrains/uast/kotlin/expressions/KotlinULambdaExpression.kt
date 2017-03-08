@@ -25,7 +25,7 @@ import org.jetbrains.uast.withMargin
 
 class KotlinULambdaExpression(
         override val psi: KtLambdaExpression,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : KotlinAbstractUExpression(), ULambdaExpression, KotlinUElementWithType {
     override val body by lz { KotlinConverter.convertOrEmpty(psi.bodyExpression, this) }
     

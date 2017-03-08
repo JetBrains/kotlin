@@ -51,7 +51,7 @@ abstract class AbstractKotlinUVariable : AbstractJavaUVariable() {
 
 class KotlinUVariable(
         psi: PsiVariable,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : AbstractKotlinUVariable(), UVariable, PsiVariable by psi {
     override val psi = unwrap<UVariable, PsiVariable>(psi)
 
@@ -81,7 +81,7 @@ class KotlinUVariable(
 
 open class KotlinUParameter(
         psi: PsiParameter,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : AbstractKotlinUVariable(), UParameter, PsiParameter by psi {
 
     override val psi = unwrap<UParameter, PsiParameter>(psi)
@@ -97,7 +97,7 @@ open class KotlinUParameter(
 
 open class KotlinUField(
         psi: PsiField,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : AbstractKotlinUVariable(), UField, PsiField by psi {
 
     override val psi = unwrap<UField, PsiField>(psi)
@@ -113,7 +113,7 @@ open class KotlinUField(
 
 open class KotlinULocalVariable(
         psi: PsiLocalVariable,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : AbstractKotlinUVariable(), ULocalVariable, PsiLocalVariable by psi {
 
     override val psi = unwrap<ULocalVariable, PsiLocalVariable>(psi)
@@ -130,7 +130,7 @@ open class KotlinULocalVariable(
 
 open class KotlinUEnumConstant(
         psi: PsiEnumConstant,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : AbstractKotlinUVariable(), UEnumConstant, PsiEnumConstant by psi {
     override val initializingClass: UClass? by lz { getLanguagePlugin().convertOpt<UClass>(psi.initializingClass, this) }
 
@@ -177,7 +177,7 @@ open class KotlinUEnumConstant(
 
     private class KotlinEnumConstantClassReference(
             override val psi: PsiEnumConstant,
-            override val containingElement: UElement?
+            override val uastParent: UElement?
     ) : JavaAbstractUExpression(), USimpleNameReferenceExpression {
         override fun resolve() = psi.containingClass
         override val resolvedName: String?

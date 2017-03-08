@@ -16,60 +16,27 @@
 
 package com.android.tools.klint.checks;
 
-import static com.android.SdkConstants.CLASS_CONTENTPROVIDER;
-import static com.android.SdkConstants.CLASS_CONTEXT;
-import static com.android.tools.klint.detector.api.LintUtils.skipParentheses;
-import static org.jetbrains.uast.UastUtils.getOutermostQualified;
-import static org.jetbrains.uast.UastUtils.getParentOfType;
-import static org.jetbrains.uast.UastUtils.getQualifiedChain;
-
 import com.android.SdkConstants;
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.tools.klint.client.api.JavaEvaluator;
-import com.android.tools.klint.detector.api.Category;
-import com.android.tools.klint.detector.api.Detector;
-import com.android.tools.klint.detector.api.Implementation;
-import com.android.tools.klint.detector.api.Issue;
-import com.android.tools.klint.detector.api.JavaContext;
-import com.android.tools.klint.detector.api.Location;
-import com.android.tools.klint.detector.api.Scope;
-import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.*;
 import com.google.common.collect.Lists;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiClassType;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiLocalVariable;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiType;
-import com.intellij.psi.PsiVariable;
-
+import com.intellij.psi.*;
 import com.intellij.psi.util.InheritanceUtil;
 import com.intellij.util.containers.Predicate;
-import org.jetbrains.uast.UBinaryExpression;
-import org.jetbrains.uast.UCallExpression;
-import org.jetbrains.uast.UDoWhileExpression;
-import org.jetbrains.uast.UElement;
-import org.jetbrains.uast.UExpression;
-import org.jetbrains.uast.UField;
-import org.jetbrains.uast.UIfExpression;
-import org.jetbrains.uast.ULocalVariable;
-import org.jetbrains.uast.UMethod;
-import org.jetbrains.uast.UQualifiedReferenceExpression;
-import org.jetbrains.uast.UReturnExpression;
-import org.jetbrains.uast.UUnaryExpression;
-import org.jetbrains.uast.UVariable;
-import org.jetbrains.uast.UWhileExpression;
-import org.jetbrains.uast.UastCallKind;
-import org.jetbrains.uast.UastUtils;
-import org.jetbrains.uast.UReferenceExpression;
+import org.jetbrains.uast.*;
 import org.jetbrains.uast.util.UastExpressionUtils;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static com.android.SdkConstants.CLASS_CONTENTPROVIDER;
+import static com.android.SdkConstants.CLASS_CONTEXT;
+import static com.android.tools.klint.detector.api.LintUtils.skipParentheses;
+import static org.jetbrains.uast.UastUtils.*;
 
 /**
  * Checks for missing {@code recycle} calls on resources that encourage it, and
@@ -718,10 +685,10 @@ public class CleanupDetector extends Detector implements Detector.UastScanner {
             // apply if the return value is not considered
 
             UElement qualifiedNode = node;
-            UElement parent = skipParentheses(node.getContainingElement());
+            UElement parent = skipParentheses(node.getUastParent());
             while (parent instanceof UReferenceExpression) {
                 qualifiedNode = parent;
-                parent = skipParentheses(parent.getContainingElement());
+                parent = skipParentheses(parent.getUastParent());
             }
             boolean returnValueIgnored = true;
 
@@ -761,7 +728,7 @@ public class CleanupDetector extends Detector implements Detector.UastScanner {
     public static PsiVariable getVariableElement(@NonNull UCallExpression rhs,
             boolean allowChainedCalls) {
         UElement parent = skipParentheses(
-                UastUtils.getQualifiedParentOrThis(rhs).getContainingElement());
+                UastUtils.getQualifiedParentOrThis(rhs).getUastParent());
 
         // Handle some types of chained calls; e.g. you might have
         //    var = prefs.edit().put(key,value)
@@ -769,9 +736,9 @@ public class CleanupDetector extends Detector implements Detector.UastScanner {
         if (allowChainedCalls) {
             while (true) {
                 if ((parent instanceof UQualifiedReferenceExpression)) {
-                    UElement parentParent = skipParentheses(parent.getContainingElement());
+                    UElement parentParent = skipParentheses(parent.getUastParent());
                     if ((parentParent instanceof UQualifiedReferenceExpression)) {
-                        parent = skipParentheses(parentParent.getContainingElement());
+                        parent = skipParentheses(parentParent.getUastParent());
                     } else if (parentParent instanceof UVariable
                                || parentParent instanceof UBinaryExpression) {
                         parent = parentParent;

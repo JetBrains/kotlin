@@ -734,7 +734,7 @@ public class SupportAnnotationDetector extends Detector implements Detector.Uast
     }
 
     private static boolean isExpressionValueUnused(UExpression expression) {
-        return getQualifiedParentOrThis(expression).getContainingElement()
+        return getQualifiedParentOrThis(expression).getUastParent()
                 instanceof UBlockExpression;
     }
 

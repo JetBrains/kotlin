@@ -16,51 +16,17 @@
 
 package com.android.tools.klint.checks;
 
-import static com.android.SdkConstants.SUPPORT_LIB_ARTIFACT;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_BOOLEAN;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_BOOLEAN_WRAPPER;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_BYTE_WRAPPER;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_CHARACTER_WRAPPER;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_DOUBLE_WRAPPER;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_FLOAT_WRAPPER;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_INT;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_INTEGER_WRAPPER;
-import static com.android.tools.klint.client.api.JavaParser.TYPE_LONG_WRAPPER;
-import static com.android.tools.klint.detector.api.LintUtils.skipParentheses;
-
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.tools.klint.client.api.JavaEvaluator;
-import com.android.tools.klint.detector.api.Category;
-import com.android.tools.klint.detector.api.Detector;
-import com.android.tools.klint.detector.api.Implementation;
-import com.android.tools.klint.detector.api.Issue;
-import com.android.tools.klint.detector.api.JavaContext;
-import com.android.tools.klint.detector.api.Scope;
-import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.TextFormat;
+import com.android.tools.klint.detector.api.*;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiType;
-
-import org.jetbrains.uast.UBinaryExpression;
-import org.jetbrains.uast.UCallExpression;
-import org.jetbrains.uast.UElement;
-import org.jetbrains.uast.UExpression;
-import org.jetbrains.uast.UIfExpression;
-import org.jetbrains.uast.UMethod;
-import org.jetbrains.uast.UParenthesizedExpression;
-import org.jetbrains.uast.UPrefixExpression;
-import org.jetbrains.uast.UQualifiedReferenceExpression;
-import org.jetbrains.uast.USimpleNameReferenceExpression;
-import org.jetbrains.uast.USuperExpression;
-import org.jetbrains.uast.UThisExpression;
-import org.jetbrains.uast.UThrowExpression;
-import org.jetbrains.uast.UastUtils;
-import org.jetbrains.uast.UReferenceExpression;
+import org.jetbrains.uast.*;
 import org.jetbrains.uast.util.UastExpressionUtils;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
@@ -69,6 +35,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+
+import static com.android.SdkConstants.SUPPORT_LIB_ARTIFACT;
+import static com.android.tools.klint.client.api.JavaParser.*;
+import static com.android.tools.klint.detector.api.LintUtils.skipParentheses;
 
 /**
  * Looks for performance issues in Java files, such as memory allocations during
@@ -237,7 +207,7 @@ public class JavaPerformanceDetector extends Detector implements Detector.UastSc
             }
 
             if (mFlagAllocations
-                    && !(skipParentheses(node.getContainingElement()) instanceof UThrowExpression)
+                    && !(skipParentheses(node.getUastParent()) instanceof UThrowExpression)
                     && mCheckAllocations) {
                 // Make sure we're still inside the method declaration that marked
                 // mInDraw as true, in case we've left it and we're in a static
@@ -316,7 +286,7 @@ public class JavaPerformanceDetector extends Detector implements Detector.UastSc
          * </pre>
          */
         private static boolean isLazilyInitialized(UElement node) {
-            UElement curr = node.getContainingElement();
+            UElement curr = node.getUastParent();
             while (curr != null) {
                 if (curr instanceof UMethod) {
                     return false;
@@ -347,7 +317,7 @@ public class JavaPerformanceDetector extends Detector implements Detector.UastSc
                     return false;
 
                 }
-                curr = curr.getContainingElement();
+                curr = curr.getUastParent();
             }
 
             return false;

@@ -26,7 +26,7 @@ import org.jetbrains.uast.UastPrefixOperator
 
 class KotlinUPrefixExpression(
         override val psi: KtPrefixExpression,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : KotlinAbstractUExpression(), UPrefixExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val operand by lz { KotlinConverter.convertOrEmpty(psi.baseExpression, this) }
 

@@ -23,7 +23,7 @@ import org.jetbrains.uast.UastBinaryExpressionWithTypeKind
 
 class KotlinUTypeCheckExpression(
         override val psi: KtIsExpression,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : KotlinAbstractUExpression(), UBinaryExpressionWithType, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val operand by lz { KotlinConverter.convertOrEmpty(psi.leftHandSide, this) }
     

@@ -23,7 +23,7 @@ import org.jetbrains.uast.*
 
 class KotlinUPostfixExpression(
         override val psi: KtPostfixExpression,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : KotlinAbstractUExpression(), UPostfixExpression, KotlinUElementWithType, KotlinEvaluatableUElement, UResolvable {
     override val operand by lz { KotlinConverter.convertOrEmpty(psi.baseExpression, this) }
 

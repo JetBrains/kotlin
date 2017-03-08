@@ -24,7 +24,7 @@ import org.jetbrains.uast.UThisExpression
 
 class KotlinUThisExpression(
         override val psi: KtThisExpression,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : KotlinAbstractUExpression(), UThisExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val label: String?
         get() = psi.getLabelName()

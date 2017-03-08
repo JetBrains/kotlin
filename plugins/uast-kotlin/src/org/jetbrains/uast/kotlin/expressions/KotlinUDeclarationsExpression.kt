@@ -19,7 +19,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.uast.kotlin.KotlinAbstractUExpression
 
 class KotlinUDeclarationsExpression(
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : KotlinAbstractUExpression(), UDeclarationsExpression {
     override val psi: PsiElement?
         get() = null

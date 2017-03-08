@@ -25,7 +25,7 @@ import org.jetbrains.uast.UExpression
 
 class KotlinUCallableReferenceExpression(
         override val psi: KtCallableReferenceExpression,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : KotlinAbstractUExpression(), UCallableReferenceExpression, KotlinUElementWithType {
     override val qualifierExpression: UExpression?
         get() {

@@ -22,7 +22,7 @@ import org.jetbrains.uast.UExpression
 
 class UnknownKotlinExpression(
         override val psi: KtExpression,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : KotlinAbstractUExpression(), UExpression {
     override fun asLogString() = "[!] UnknownKotlinExpression ($psi)"
 }

@@ -24,7 +24,7 @@ import org.jetbrains.uast.UastBinaryOperator
 
 class KotlinStringTemplateUPolyadicExpression(
         override val psi: KtStringTemplateExpression,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : KotlinAbstractUExpression(),
         UPolyadicExpression,
         KotlinUElementWithType,

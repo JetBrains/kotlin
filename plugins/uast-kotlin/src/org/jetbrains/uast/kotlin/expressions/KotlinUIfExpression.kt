@@ -23,7 +23,7 @@ import org.jetbrains.uast.UIfExpression
 
 class KotlinUIfExpression(
         override val psi: KtIfExpression,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : KotlinAbstractUExpression(), UIfExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val condition by lz { KotlinConverter.convertOrEmpty(psi.condition, this) }
     override val thenExpression by lz { KotlinConverter.convertOrNull(psi.then, this) }

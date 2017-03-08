@@ -102,7 +102,7 @@ class ResourceFoldingBuilder : FoldingBuilderEx() {
 
         val element = getOutermostQualified() ?: this
 
-        (element.containingElement as? UCallExpression)?.run {
+        (element.uastParent as? UCallExpression)?.run {
             if (isFoldableGetResourceValueCall()) {
                 return getOutermostQualified()?.createFoldingDescriptor() ?: createFoldingDescriptor()
             }

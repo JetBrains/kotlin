@@ -16,35 +16,27 @@
 
 package com.android.tools.klint.checks;
 
-import static com.android.SdkConstants.CLASS_VIEW;
-import static com.android.SdkConstants.SUPPORT_ANNOTATIONS_PREFIX;
-import static com.android.tools.klint.checks.SupportAnnotationDetector.filterRelevantAnnotations;
-import static com.android.tools.klint.detector.api.LintUtils.skipParentheses;
-
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.tools.klint.client.api.JavaEvaluator;
-import com.android.tools.klint.detector.api.Category;
-import com.android.tools.klint.detector.api.Detector;
-import com.android.tools.klint.detector.api.Implementation;
-import com.android.tools.klint.detector.api.Issue;
-import com.android.tools.klint.detector.api.JavaContext;
-import com.android.tools.klint.detector.api.Location;
-import com.android.tools.klint.detector.api.Scope;
-import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.*;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
-
 import org.jetbrains.uast.UElement;
 import org.jetbrains.uast.UMethod;
-import org.jetbrains.uast.USuperExpression;
 import org.jetbrains.uast.UReferenceExpression;
+import org.jetbrains.uast.USuperExpression;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
 
 import java.util.Collections;
 import java.util.List;
+
+import static com.android.SdkConstants.CLASS_VIEW;
+import static com.android.SdkConstants.SUPPORT_ANNOTATIONS_PREFIX;
+import static com.android.tools.klint.checks.SupportAnnotationDetector.filterRelevantAnnotations;
+import static com.android.tools.klint.detector.api.LintUtils.skipParentheses;
 
 /**
  * Makes sure that methods call super when overriding methods.
@@ -185,7 +177,7 @@ public class CallSuperDetector extends Detector implements Detector.UastScanner 
 
         @Override
         public boolean visitSuperExpression(USuperExpression node) {
-            UElement parent = skipParentheses(node.getContainingElement());
+            UElement parent = skipParentheses(node.getUastParent());
             if (parent instanceof UReferenceExpression) {
                 PsiElement resolved = ((UReferenceExpression) parent).resolve();
                 if (mMethod.equals(resolved)) {

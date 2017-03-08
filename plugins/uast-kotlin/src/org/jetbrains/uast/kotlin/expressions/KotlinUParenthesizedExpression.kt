@@ -22,7 +22,7 @@ import org.jetbrains.uast.UParenthesizedExpression
 
 class KotlinUParenthesizedExpression(
         override val psi: KtParenthesizedExpression,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : KotlinAbstractUExpression(), UParenthesizedExpression, KotlinUElementWithType {
     override val expression by lz { KotlinConverter.convertOrEmpty(psi.expression, this) }
 }

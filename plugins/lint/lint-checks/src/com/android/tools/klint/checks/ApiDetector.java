@@ -851,7 +851,7 @@ public class ApiDetector extends ResourceXmlDetector
 
         // It's okay to reference the constant as a case constant (since that
         // code path won't be taken) or in a condition of an if statement
-        UElement curr = node.getContainingElement();
+        UElement curr = node.getUastParent();
         while (curr != null) {
             if (curr instanceof USwitchClauseExpression) {
                 List<UExpression> caseValues = ((USwitchClauseExpression) curr).getCaseValues();
@@ -869,7 +869,7 @@ public class ApiDetector extends ResourceXmlDetector
             } else if (curr instanceof UMethod || curr instanceof UClass) {
                 break;
             }
-            curr = curr.getContainingElement();
+            curr = curr.getUastParent();
         }
 
         return false;
@@ -1536,7 +1536,7 @@ public class ApiDetector extends ResourceXmlDetector
                     return targetApi;
                 }
             }
-            scope = scope.getContainingElement();
+            scope = scope.getUastParent();
             if (scope instanceof PsiFile) {
                 break;
             }
@@ -1730,7 +1730,7 @@ public class ApiDetector extends ResourceXmlDetector
             int api,
             JavaContext context
     ) {
-        UElement current = element.getContainingElement();
+        UElement current = element.getUastParent();
         UElement prev = element;
         while (current != null) {
             if (current instanceof UIfExpression) {
@@ -1747,7 +1747,7 @@ public class ApiDetector extends ResourceXmlDetector
                 return false;
             }
             prev = current;
-            current = current.getContainingElement();
+            current = current.getUastParent();
         }
 
         return false;

@@ -17,28 +17,13 @@
 package com.android.tools.klint.checks;
 
 
-import static com.android.tools.klint.checks.CutPasteDetector.isReachableFrom;
-
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.tools.klint.client.api.JavaEvaluator;
-import com.android.tools.klint.detector.api.Category;
-import com.android.tools.klint.detector.api.Detector;
-import com.android.tools.klint.detector.api.Implementation;
-import com.android.tools.klint.detector.api.Issue;
-import com.android.tools.klint.detector.api.JavaContext;
-import com.android.tools.klint.detector.api.Scope;
-import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.*;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiField;
-import com.intellij.psi.PsiLocalVariable;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiParameter;
-import com.intellij.psi.PsiVariable;
-
+import com.intellij.psi.*;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.util.UastExpressionUtils;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
@@ -46,6 +31,8 @@ import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static com.android.tools.klint.checks.CutPasteDetector.isReachableFrom;
 
 /**
  * Checks related to RecyclerView usage.
@@ -171,7 +158,7 @@ public class RecyclerViewDetector extends Detector implements Detector.UastScann
                 // want
                 UExpression statement = UastUtils.getParentOfType(reference, UExpression.class, true);
                 if (statement != null) {
-                    parentToChildren.put(statement.getContainingElement(), reference);
+                    parentToChildren.put(statement.getUastParent(), reference);
                 }
             }
 

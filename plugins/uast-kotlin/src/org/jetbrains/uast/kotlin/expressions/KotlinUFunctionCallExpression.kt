@@ -34,7 +34,7 @@ import org.jetbrains.uast.visitor.UastVisitor
 
 class KotlinUFunctionCallExpression(
         override val psi: KtCallExpression,
-        override val containingElement: UElement?,
+        override val uastParent: UElement?,
         private val _resolvedCall: ResolvedCall<*>? = null
 ) : KotlinAbstractUExpression(), UCallExpression, KotlinUElementWithType {
     companion object {
@@ -96,8 +96,8 @@ class KotlinUFunctionCallExpression(
 
     override val receiver: UExpression?
         get() {
-            return if (containingElement is UQualifiedReferenceExpression && containingElement.selector == this)
-                containingElement.receiver
+            return if (uastParent is UQualifiedReferenceExpression && uastParent.selector == this)
+                uastParent.receiver
             else
                 null
         }

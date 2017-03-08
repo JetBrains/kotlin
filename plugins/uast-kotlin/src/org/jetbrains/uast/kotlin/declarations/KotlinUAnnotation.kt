@@ -9,7 +9,7 @@ import org.jetbrains.uast.*
 
 class KotlinUAnnotation(
         override val psi: KtAnnotationEntry,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : UAnnotation {
     private val resolvedAnnotation by lz { psi.analyze()[BindingContext.ANNOTATION, psi] }
 
@@ -40,7 +40,7 @@ class KotlinUAnnotation(
     }
 }
 
-class KotlinUNamedExpression(override val name: String, override val containingElement: UElement?) : UNamedExpression {
+class KotlinUNamedExpression(override val name: String, override val uastParent: UElement?) : UNamedExpression {
     override lateinit var expression: UExpression
 
     override val annotations: List<UAnnotation>

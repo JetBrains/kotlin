@@ -179,7 +179,7 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
             }
 
             if (FQCN_SUPPRESS_LINT.equals(type)) {
-                UElement parent = annotation.getContainingElement();
+                UElement parent = annotation.getUastParent();
                 if (parent == null) {
                     return false;
                 }
@@ -218,8 +218,8 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
             } else if (type.startsWith(SUPPORT_ANNOTATIONS_PREFIX)) {
                 if (CHECK_RESULT_ANNOTATION.equals(type)) {
                     // Check that the return type of this method is not void!
-                    if (annotation.getContainingElement() instanceof UMethod) {
-                        UMethod method = (UMethod) annotation.getContainingElement();
+                    if (annotation.getUastParent() instanceof UMethod) {
+                        UMethod method = (UMethod) annotation.getUastParent();
                         if (!method.isConstructor()
                             && PsiType.VOID.equals(method.getReturnType())) {
                             mContext.report(ANNOTATION_USAGE, annotation.getPsi(),
@@ -284,7 +284,7 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
                            PERMISSION_ANNOTATION_WRITE.equals(type)) {
                     // Check that if there are no arguments, this is specified on a parameter,
                     // and conversely, on methods and fields there is a valid argument.
-                    if (annotation.getContainingElement() instanceof UMethod) {
+                    if (annotation.getUastParent() instanceof UMethod) {
                         String value = PermissionRequirement.getAnnotationStringValue(annotation, ATTR_VALUE);
                         String[] anyOf = PermissionRequirement.getAnnotationStringValues(annotation, ATTR_ANY_OF);
                         String[] allOf = PermissionRequirement.getAnnotationStringValues(annotation, ATTR_ALL_OF);
@@ -342,7 +342,7 @@ public class AnnotationDetector extends Detector implements Detector.UastScanner
 
         private void checkTargetType(@NonNull UAnnotation node, @NonNull String type1,
                 @Nullable String type2, boolean allowCollection) {
-            UElement parent = node.getContainingElement();
+            UElement parent = node.getUastParent();
             PsiType type;
 
             if (parent instanceof UDeclarationsExpression) {

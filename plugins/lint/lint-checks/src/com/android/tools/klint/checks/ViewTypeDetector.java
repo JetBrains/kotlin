@@ -16,14 +16,6 @@
 
 package com.android.tools.klint.checks;
 
-import static com.android.SdkConstants.ANDROID_URI;
-import static com.android.SdkConstants.ATTR_CLASS;
-import static com.android.SdkConstants.ATTR_ID;
-import static com.android.SdkConstants.DOT_XML;
-import static com.android.SdkConstants.ID_PREFIX;
-import static com.android.SdkConstants.NEW_ID_PREFIX;
-import static com.android.SdkConstants.VIEW_TAG;
-
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.ide.common.res2.AbstractResourceRepository;
@@ -33,51 +25,20 @@ import com.android.ide.common.resources.ResourceUrl;
 import com.android.resources.ResourceFolderType;
 import com.android.resources.ResourceType;
 import com.android.tools.klint.client.api.LintClient;
-import com.android.tools.klint.detector.api.Category;
-import com.android.tools.klint.detector.api.Context;
-import com.android.tools.klint.detector.api.Detector;
-import com.android.tools.klint.detector.api.Implementation;
-import com.android.tools.klint.detector.api.Issue;
-import com.android.tools.klint.detector.api.JavaContext;
-import com.android.tools.klint.detector.api.LintUtils;
-import com.android.tools.klint.detector.api.ResourceEvaluator;
-import com.android.tools.klint.detector.api.ResourceXmlDetector;
-import com.android.tools.klint.detector.api.Scope;
-import com.android.tools.klint.detector.api.Severity;
-import com.android.tools.klint.detector.api.Speed;
-import com.android.tools.klint.detector.api.XmlContext;
+import com.android.tools.klint.detector.api.*;
 import com.android.utils.XmlUtils;
 import com.google.common.base.Joiner;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import com.intellij.psi.PsiClassType;
 import com.intellij.psi.PsiType;
-
-import org.jetbrains.uast.UBinaryExpressionWithType;
-import org.jetbrains.uast.UCallExpression;
-import org.jetbrains.uast.UElement;
-import org.jetbrains.uast.UExpression;
-import org.jetbrains.uast.UMethod;
-import org.jetbrains.uast.UParenthesizedExpression;
+import org.jetbrains.uast.*;
 import org.jetbrains.uast.visitor.UastVisitor;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import static com.android.SdkConstants.*;
 
 /** Detector for finding inconsistent usage of views and casts
  * <p>
@@ -189,11 +150,11 @@ public class ViewTypeDetector extends ResourceXmlDetector implements Detector.Ua
         }
         assert method.getName().equals("findViewById");
         UElement node = LintUtils.skipParentheses(call);
-        while (node != null && node.getContainingElement() instanceof UParenthesizedExpression) {
-            node = node.getContainingElement();
+        while (node != null && node.getUastParent() instanceof UParenthesizedExpression) {
+            node = node.getUastParent();
         }
-        if (node.getContainingElement() instanceof UBinaryExpressionWithType) {
-            UBinaryExpressionWithType cast = (UBinaryExpressionWithType) node.getContainingElement();
+        if (node.getUastParent() instanceof UBinaryExpressionWithType) {
+            UBinaryExpressionWithType cast = (UBinaryExpressionWithType) node.getUastParent();
             PsiType type = cast.getType();
             String castType = null;
             if (type instanceof PsiClassType) {

@@ -2622,7 +2622,7 @@ public class LintDriver {
                 return true;
             }
 
-            scope = scope.getContainingElement();
+            scope = scope.getUastParent();
             if (scope instanceof PsiFile) {
                 return false;
             }
