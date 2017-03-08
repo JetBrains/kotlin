@@ -78,6 +78,12 @@ public class MultiFileIntentionTestGenerated extends AbstractMultiFileIntentionT
         doTest(fileName);
     }
 
+    @TestMetadata("moveDeclarationToSeparateFile/moveClassToFileInDefaultPackage/moveClassToFileInDefaultPackage.test")
+    public void testMoveDeclarationToSeparateFile_moveClassToFileInDefaultPackage_MoveClassToFileInDefaultPackage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/moveDeclarationToSeparateFile/moveClassToFileInDefaultPackage/moveClassToFileInDefaultPackage.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("moveDeclarationToSeparateFile/moveSingleToFile/moveSingleToFile.test")
     public void testMoveDeclarationToSeparateFile_moveSingleToFile_MoveSingleToFile() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/moveDeclarationToSeparateFile/moveSingleToFile/moveSingleToFile.test");

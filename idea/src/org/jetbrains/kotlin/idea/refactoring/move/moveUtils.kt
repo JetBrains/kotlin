@@ -188,7 +188,8 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
                     val prefix = containerFqName.asString()
                     val prefixOffset = it.indexOf(prefix)
                     val newFqName = if (prefix.isEmpty()) {
-                        FqName("${newContainer.fqName!!.asString()}.$it")
+                        val newContainerFqName = newContainer.fqName!!
+                        FqName(if (newContainerFqName.isRoot) it else "${newContainer.fqName!!.asString()}.$it")
                     }
                     else {
                         FqName(it.replaceRange(prefixOffset..prefixOffset + prefix.length - 1, newContainer.fqName!!.asString()))
