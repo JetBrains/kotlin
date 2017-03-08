@@ -79,6 +79,9 @@ object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>(
             val file = inputData.file
             try {
                 val moduleMapping = ModuleMapping.create(content, file.toString(), DeserializationConfiguration.Default)
+                if (moduleMapping === ModuleMapping.CORRUPTED) {
+                    file.refresh(true, false)
+                }
                 return@DataIndexer moduleMapping.packageFqName2Parts
             }
             catch(e: Exception) {

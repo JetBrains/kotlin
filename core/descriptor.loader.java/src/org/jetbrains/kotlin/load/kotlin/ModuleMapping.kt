@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfigu
 import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable
 import java.io.ByteArrayInputStream
 import java.io.DataInputStream
+import java.io.IOException
 
 class ModuleMapping private constructor(val packageFqName2Parts: Map<String, PackageParts>, private val debugName: String) {
     fun findPackageParts(packageFqName: String): PackageParts? {
@@ -35,6 +36,9 @@ class ModuleMapping private constructor(val packageFqName2Parts: Map<String, Pac
         @JvmField
         val EMPTY: ModuleMapping = ModuleMapping(emptyMap(), "EMPTY")
 
+        @JvmField
+        val CORRUPTED: ModuleMapping = ModuleMapping(emptyMap(), "CORRUPTED")
+
         fun create(
                 bytes: ByteArray?,
                 debugName: String,
@@ -45,7 +49,15 @@ class ModuleMapping private constructor(val packageFqName2Parts: Map<String, Pac
             }
 
             val stream = DataInputStream(ByteArrayInputStream(bytes))
-            val version = JvmMetadataVersion(*IntArray(stream.readInt()) { stream.readInt() })
+
+            val versionNumber = try {
+                IntArray(stream.readInt()) { stream.readInt() }
+            }
+            catch (e: IOException) {
+                return CORRUPTED
+            }
+
+            val version = JvmMetadataVersion(*versionNumber)
 
             if (configuration.skipMetadataVersionCheck || version.isCompatible()) {
                 val table = JvmPackageTable.PackageTable.parseFrom(stream) ?: return EMPTY
