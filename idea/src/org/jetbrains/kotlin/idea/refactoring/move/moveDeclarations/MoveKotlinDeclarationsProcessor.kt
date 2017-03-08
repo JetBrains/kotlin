@@ -260,6 +260,8 @@ class MoveKotlinDeclarationsProcessor(
             )
             for ((sourceFile, kotlinToLightElements) in kotlinToLightElementsBySourceFile) {
                 for ((oldDeclaration, oldLightElements) in kotlinToLightElements) {
+                    val elementListener = transaction!!.getElementListener(oldDeclaration)
+
                     val newDeclaration = moveDeclaration(oldDeclaration, descriptor.moveTarget)
                     if (newDeclaration == null) {
                         for (oldElement in oldLightElements) {
@@ -270,7 +272,7 @@ class MoveKotlinDeclarationsProcessor(
 
                     oldToNewElementsMapping[sourceFile] = newDeclaration.containingKtFile
 
-                    transaction!!.getElementListener(oldDeclaration).elementMoved(newDeclaration)
+                    elementListener.elementMoved(newDeclaration)
                     for ((oldElement, newElement) in oldLightElements.asSequence().zip(newDeclaration.toLightElements().asSequence())) {
                         oldToNewElementsMapping[oldElement] = newElement
                     }
