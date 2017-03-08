@@ -30,6 +30,7 @@ public class AsmTypes {
     public static final Type JAVA_THROWABLE_TYPE = getType(Throwable.class);
     public static final Type JAVA_CLASS_TYPE = getType(Class.class);
     public static final Type ENUM_TYPE = getType(Enum.class);
+    public static final Type NUMBER_TYPE = getType(Number.class);
 
     public static final Type UNIT_TYPE = Type.getObjectType("kotlin/Unit");
 
