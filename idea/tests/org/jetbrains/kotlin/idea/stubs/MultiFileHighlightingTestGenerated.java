@@ -60,6 +60,12 @@ public class MultiFileHighlightingTestGenerated extends AbstractMultiFileHighlig
         doTest(fileName);
     }
 
+    @TestMetadata("missingDependencyClass.kt")
+    public void testMissingDependencyClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileHighlighting/missingDependencyClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("referencesFunWithUnspecifiedType.kt")
     public void testReferencesFunWithUnspecifiedType() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileHighlighting/referencesFunWithUnspecifiedType.kt");
