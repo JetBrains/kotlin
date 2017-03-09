@@ -90,7 +90,7 @@ public class ProjectStructureUtil {
                 ModuleRootManager.getInstance(module).orderEntries().librariesOnly().forEachLibrary(new Processor<Library>() {
                     @Override
                     public boolean process(Library library) {
-                        if (JsLibraryStdDetectionUtil.hasJsStdlibJar(library)) {
+                        if (JsLibraryStdDetectionUtil.INSTANCE.hasJsStdlibJar(library)) {
                             jsLibrary.set(library);
                             return false;
                         }

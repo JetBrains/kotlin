@@ -44,7 +44,7 @@ public class JSLibraryStdPresentationProvider extends LibraryPresentationProvide
     @Nullable
     @Override
     public LibraryVersionProperties detect(@NotNull List<VirtualFile> classesRoots) {
-        String version = JsLibraryStdDetectionUtil.getJsLibraryStdVersion(classesRoots);
+        String version = JsLibraryStdDetectionUtil.INSTANCE.getJsLibraryStdVersion(classesRoots);
         return version == null ? null : new LibraryVersionProperties(version);
     }
 }

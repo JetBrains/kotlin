@@ -14,68 +14,63 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.framework;
+package org.jetbrains.kotlin.idea.framework
 
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.impl.libraries.LibraryEx;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.io.JarUtil;
-import com.intellij.openapi.vfs.StandardFileSystems;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.utils.LibraryUtils;
+import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.impl.libraries.LibraryEx
+import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.io.JarUtil
+import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.utils.LibraryUtils
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.jar.Attributes;
+import java.io.File
+import java.util.Arrays
+import java.util.jar.Attributes
 
-public class JsLibraryStdDetectionUtil {
-    private static final Key<Boolean> IS_JS_LIBRARY_STD_LIB = Key.create("IS_JS_LIBRARY_STD_LIB");
+object JsLibraryStdDetectionUtil {
+    private val IS_JS_LIBRARY_STD_LIB = Key.create<Boolean>("IS_JS_LIBRARY_STD_LIB")
 
-    public static boolean hasJsStdlibJar(@NotNull Library library) {
-        if (library instanceof LibraryEx && ((LibraryEx) library).isDisposed()) return false;
+    fun hasJsStdlibJar(library: Library): Boolean {
+        if (library is LibraryEx && library.isDisposed) return false
 
-        if (!KotlinJavaScriptLibraryDetectionUtil.isKotlinJavaScriptLibrary(library)) return false;
+        if (!KotlinJavaScriptLibraryDetectionUtil.isKotlinJavaScriptLibrary(library)) return false
 
-        List<VirtualFile> classes = Arrays.asList(library.getFiles(OrderRootType.CLASSES));
-        return getJsLibraryStdVersion(classes) != null;
+        val classes = Arrays.asList(*library.getFiles(OrderRootType.CLASSES))
+        return getJsLibraryStdVersion(classes) != null
     }
 
-    public static String getJsLibraryStdVersion(@NotNull List<VirtualFile> classesRoots) {
+    fun getJsLibraryStdVersion(classesRoots: List<VirtualFile>): String? {
         if (JavaRuntimeDetectionUtil.getJavaRuntimeVersion(classesRoots) != null) {
             // Prevent clashing with java runtime, in case when library collects all roots.
-            return null;
+            return null
         }
 
-        VirtualFile jar = getJsStdLibJar(classesRoots);
-        if (jar == null) return null;
+        val jar = getJsStdLibJar(classesRoots) ?: return null
 
-        return JarUtil.getJarAttribute(VfsUtilCore.virtualToIoFile(jar), Attributes.Name.IMPLEMENTATION_VERSION);
+        return JarUtil.getJarAttribute(VfsUtilCore.virtualToIoFile(jar), Attributes.Name.IMPLEMENTATION_VERSION)
     }
 
-    @Nullable
-    private static VirtualFile getJsStdLibJar(@NotNull List<VirtualFile> classesRoots) {
-        for (VirtualFile root : classesRoots) {
-            if (root.getFileSystem().getProtocol() != StandardFileSystems.JAR_PROTOCOL) continue;
+    private fun getJsStdLibJar(classesRoots: List<VirtualFile>): VirtualFile? {
+        for (root in classesRoots) {
+            if (root.fileSystem.protocol !== StandardFileSystems.JAR_PROTOCOL) continue
 
-            VirtualFile jar = VfsUtilCore.getVirtualFileForJar(root);
+            val jar = VfsUtilCore.getVirtualFileForJar(root)
             if (jar != null) {
-                Boolean isJSStdLib = jar.getUserData(IS_JS_LIBRARY_STD_LIB);
+                var isJSStdLib = jar.getUserData(IS_JS_LIBRARY_STD_LIB)
                 if (isJSStdLib == null) {
-                    isJSStdLib = LibraryUtils.isKotlinJavascriptStdLibrary(new File(jar.getPath()));
-                    jar.putUserData(IS_JS_LIBRARY_STD_LIB, isJSStdLib);
+                    isJSStdLib = LibraryUtils.isKotlinJavascriptStdLibrary(File(jar.path))
+                    jar.putUserData(IS_JS_LIBRARY_STD_LIB, isJSStdLib)
                 }
 
                 if (isJSStdLib) {
-                    return jar;
+                    return jar
                 }
             }
         }
 
-        return null;
+        return null
     }
 }
