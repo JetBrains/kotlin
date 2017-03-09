@@ -7,6 +7,7 @@ import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
 
+// TODO: add support for smap tests
 abstract class KonanTest extends JavaExec {
     protected String source
     def backendNative = project.project(":backend.native")
@@ -101,6 +102,14 @@ abstract class KonanTest extends JavaExec {
         return str.replaceAll(~/<!.*?!>(.*?)<!>/) { all, text -> text }
     }
 
+    protected List<String> registerKtFile(List<String> sourceFiles, String newFilePath, String newFileContent) {
+        createFile(newFilePath, newFileContent)
+        if (newFilePath.endsWith(".kt")) {
+            sourceFiles.add(newFilePath)
+        }
+        return sourceFiles
+    }
+
     // TODO refactor
     List<String> buildCompileList() {
         def result = []
@@ -112,8 +121,7 @@ abstract class KonanTest extends JavaExec {
         if (!matcher.find()) {
             // There is only one file in the input
             def filePath = "$outputDirectory/${srcFile.name}"
-            createFile(filePath, srcText)
-            result.add(filePath)
+            registerKtFile(result, filePath, srcText)
         } else {
             // There are several files
             def processedChars = 0
@@ -124,8 +132,7 @@ abstract class KonanTest extends JavaExec {
                 def end = nextFileExists ? matcher.start() : srcText.length()
                 def fileText = srcText.substring(start, end)
                 processedChars = end
-                createFile(filePath, fileText)
-                result.add(filePath)
+                registerKtFile(result, filePath, fileText)
                 if (!nextFileExists) break
             }
         }
