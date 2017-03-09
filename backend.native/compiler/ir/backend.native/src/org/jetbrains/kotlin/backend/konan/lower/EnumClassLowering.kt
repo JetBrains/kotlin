@@ -257,8 +257,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
             val receiver = IrGetObjectValueImpl(startOffset, endOffset,
                     loweredEnum.implObjectDescriptor.defaultType, loweredEnum.implObjectDescriptor)
             val value = IrGetFieldImpl(startOffset, endOffset, loweredEnum.valuesProperty, receiver)
-            val returnStatement = IrReturnImpl(startOffset, endOffset,
-                    loweredEnum.valuesGetter.returnType!!, loweredEnum.valuesGetter, value)
+            val returnStatement = IrReturnImpl(startOffset, endOffset, loweredEnum.valuesGetter, value)
             getter.body = IrBlockBodyImpl(startOffset, endOffset, listOf(returnStatement))
 
             val irProperty = IrPropertyImpl(startOffset, endOffset, DECLARATION_ORIGIN_ENUM,
