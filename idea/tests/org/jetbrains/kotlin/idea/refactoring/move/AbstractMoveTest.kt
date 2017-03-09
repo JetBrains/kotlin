@@ -21,6 +21,7 @@ import com.google.gson.JsonParser
 import com.intellij.codeInsight.TargetElementUtilBase
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -67,13 +68,18 @@ abstract class AbstractMoveTest : KotlinMultiFileTestCase() {
 
         val conflictFile = File(testDir + "/conflicts.txt")
 
-        val withRuntime = config["withRuntime"]?.asBoolean ?: false
-        if (withRuntime) {
-            ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
-        }
         isMultiModule = config["isMultiModule"]?.asBoolean ?: false
 
         doTest({ rootDir, _ ->
+            val withRuntime = config["withRuntime"]?.asBoolean ?: false
+            if (withRuntime) {
+                val moduleManager = ModuleManager.getInstance(project)
+                val modulesToConfigure =
+                        (config["modulesWithRuntime"]?.asJsonArray?.map { moduleManager.findModuleByName(it.asString!!)!! }
+                         ?: moduleManager.modules.toList())
+                modulesToConfigure.forEach { ConfigLibraryUtil.configureKotlinRuntimeAndSdk(it, PluginTestCaseBase.mockJdk()) }
+            }
+
             val mainFile = rootDir.findFileByRelativePath(mainFilePath)!!
             val mainPsiFile = PsiManager.getInstance(project!!).findFile(mainFile)!!
             val document = FileDocumentManager.getInstance().getDocument(mainFile)!!
