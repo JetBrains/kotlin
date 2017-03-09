@@ -345,7 +345,7 @@ class StubGenerator(
 
         is PointerType -> {
             val pointeeType = type.pointeeType
-            if (pointeeType is VoidType) {
+            if (pointeeType.unwrapTypedefs() is VoidType) {
                 val info = TypeInfo.Pointer("COpaque")
                 TypeMirror.ByValue("COpaquePointerVar", info, "COpaquePointer")
             } else if (pointeeType is FunctionType) {
@@ -438,7 +438,7 @@ class StubGenerator(
     }
 
     fun getCallbackRetValBinding(type: Type): OutValueBinding {
-        if (type is VoidType) {
+        if (type.unwrapTypedefs() is VoidType) {
             return OutValueBinding(
                     kotlinType = "Unit",
                     kotlinConv = { throw UnsupportedOperationException() },
@@ -468,7 +468,7 @@ class StubGenerator(
     }
 
     fun getCFunctionRetValBinding(type: Type): InValueBinding {
-        when (type) {
+        when (type.unwrapTypedefs()) {
             is VoidType -> return InValueBinding("Unit")
         }
 
@@ -610,7 +610,7 @@ class StubGenerator(
         }.toMutableList()
 
         val retValType = func.returnType
-        if (retValType is RecordType) {
+        if (retValType.unwrapTypedefs() is RecordType) {
             val retValMirror = mirror(retValType)
 
             paramBindings.add(OutValueBinding(
@@ -636,7 +636,7 @@ class StubGenerator(
             }
         }.toMutableList()
 
-        if (func.returnType is RecordType) {
+        if (func.returnType.unwrapTypedefs() is RecordType) {
             paramNames.add("retValPlacement")
         }
 
@@ -730,11 +730,12 @@ class StubGenerator(
                 }
                 getFfiStructType(def.fields.map { it.type })
             }
+            is Typedef -> getFfiType(type.def.aliased)
             else -> throw NotImplementedError(type.toString())
         }
     }
 
-    private fun getArgFfiType(type: Type) = when (type) {
+    private fun getArgFfiType(type: Type) = when (type.unwrapTypedefs()) {
         is ArrayType -> "Pointer"
         else -> getFfiType(type)
     }
@@ -773,7 +774,7 @@ class StubGenerator(
                 val args = type.parameterTypes.mapIndexed { i, paramType ->
                     val pointedTypeName = mirror(paramType).pointedTypeName
                     val ref = "args[$i].value!!.reinterpret<$pointedTypeName>().pointed"
-                    when (paramType) {
+                    when (paramType.unwrapTypedefs()) {
                         is RecordType -> ref
                         else -> "$ref.value"
                     }
@@ -781,7 +782,7 @@ class StubGenerator(
 
                 out("val res = function($args)")
 
-                when (type.returnType) {
+                when (type.returnType.unwrapTypedefs()) {
                     is RecordType -> throw NotImplementedError()
                     is VoidType -> {} // nothing to do
                     else -> {
