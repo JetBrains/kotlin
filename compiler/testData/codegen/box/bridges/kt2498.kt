@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: NATIVE
+
 open class BaseStringList: ArrayList<String>() {
 }
 

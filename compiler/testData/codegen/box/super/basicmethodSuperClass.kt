@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: NATIVE
+
 class N() : ArrayList<Any>() {
     override fun add(el: Any)  : Boolean {
         if (!super<ArrayList>.add(el)) {
