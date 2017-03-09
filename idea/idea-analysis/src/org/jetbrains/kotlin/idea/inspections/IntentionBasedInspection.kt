@@ -78,7 +78,7 @@ abstract class IntentionBasedInspection<TElement : PsiElement>(
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
 
         val intentionsAndCheckers = intentionInfos.map {
-            val instance = it.intention.constructors.single().call()
+            val instance = it.intention.constructors.single { it.parameters.isEmpty() } .call()
             instance.inspection = this
             instance to it.additionalChecker
         }

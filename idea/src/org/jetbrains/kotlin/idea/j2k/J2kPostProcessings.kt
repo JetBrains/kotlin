@@ -69,8 +69,8 @@ object J2KPostProcessingRegistrar {
         _processings.add(RemoveRedundantCastToNullableProcessing())
 
         registerIntentionBasedProcessing(ConvertToExpressionBodyIntention(convertEmptyToUnit = false)) { it is KtPropertyAccessor }
-        registerIntentionBasedProcessing(IfThenToSafeAccessIntention())
-        registerIntentionBasedProcessing(IfThenToElvisIntention())
+        registerIntentionBasedProcessing(IfThenToSafeAccessIntention(fromJ2K = true))
+        registerIntentionBasedProcessing(IfThenToElvisIntention(fromJ2K = true))
         registerIntentionBasedProcessing(FoldInitializerAndIfToElvisIntention())
         registerIntentionBasedProcessing(SimplifyNegatedBinaryExpressionIntention())
         registerIntentionBasedProcessing(ReplaceGetOrSetIntention(), additionalChecker = ReplaceGetOrSetInspection.additionalChecker)

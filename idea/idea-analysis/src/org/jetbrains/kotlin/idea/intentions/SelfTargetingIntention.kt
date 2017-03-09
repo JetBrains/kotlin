@@ -58,8 +58,8 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
 
     abstract fun applyTo(element: TElement, editor: Editor?)
 
-    protected fun <R> tryRunWriteAction(action: () -> R): R =
-            if (ApplicationManager.getApplication().isDispatchThread) runWriteAction(action)
+    protected fun <R> runInWriteActionOrHere(inWriteAction: Boolean = true, action: () -> R): R =
+            if (inWriteAction) runWriteAction(action)
             else run(action)
 
     private fun getTarget(editor: Editor, file: PsiFile): TElement? {

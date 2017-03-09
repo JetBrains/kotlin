@@ -41,10 +41,12 @@ class IfThenToElvisInspection : IntentionBasedInspection<KtIfExpression>(
         { it -> it.isUsedAsExpression(it.analyze(BodyResolveMode.PARTIAL)) }
 )
 
-class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(
+class IfThenToElvisIntention(private val fromJ2K: Boolean) : SelfTargetingOffsetIndependentIntention<KtIfExpression>(
         KtIfExpression::class.java,
         "Replace 'if' expression with elvis expression"
 ) {
+    @Suppress("unused")
+    constructor(): this(fromJ2K = false)
 
     private fun KtExpression.clausesReplaceableByElvis(firstClause: KtExpression, secondClause: KtExpression, context: BindingContext) =
             !firstClause.isNullOrBlockExpression() &&
@@ -145,7 +147,7 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
                                               it.typeReference!!)
         }
         val checkedExpression = condition.checkedExpression()!!
-        val elvis = tryRunWriteAction {
+        val elvis = runInWriteActionOrHere(inWriteAction = !fromJ2K) {
             val replacedLeft = if (left.evaluatesTo(checkedExpression)) {
                 if (condition is KtIsExpression) newReceiver!! else left
             }
