@@ -28,6 +28,10 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "nolink", description = "Don't link, just produce a bitcode file")
     public boolean nolink;
 
+    @Argument(value = "linkerArg", description = "Add argument to linker")
+    @ValueDescription("<arg>")
+    public String[] linkerArguments;
+
     @Argument(value = "nostdlib", description = "Don't link with stdlib")
     public boolean nostdlib;
 

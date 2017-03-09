@@ -60,6 +60,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             put(LIBRARY_FILES, 
                 arguments.libraries.toNonNullList())
 
+            put(LINKER_ARGS, arguments.linkerArguments.toNonNullList())
+
             put(NATIVE_LIBRARY_FILES,
                     arguments.nativeLibraries.toNonNullList())
 

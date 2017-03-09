@@ -178,7 +178,9 @@ internal class LinkStage(val context: Context) {
     fun link(objectFiles: List<ObjectFile>): ExecutableFile {
         val executable = config.get(KonanConfigKeys.EXECUTABLE_FILE)!!
 
-        val linkCommand = platform.linkCommand(objectFiles, executable, optimize)
+        val linkCommand = platform.linkCommand(objectFiles, executable, optimize) +
+                config.getNotNull(KonanConfigKeys.LINKER_ARGS)
+
         runTool(*linkCommand.toTypedArray())
 
         return executable
