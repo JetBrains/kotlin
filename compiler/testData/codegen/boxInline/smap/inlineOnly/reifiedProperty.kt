@@ -29,7 +29,7 @@ _2Kt
 test/_1Kt
 *L
 1#1,12:1
-5#2:13
+6#2:13
 *E
 *S KotlinDebug
 *F
