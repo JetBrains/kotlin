@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrContainerExpressionBase
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrMemberAccessExpressionBase
-import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -87,9 +84,9 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
         val result = super.visitCall(irCall)
         if (functionDeclaration == null) return result                                      // Function is declared in another module.
-//        print("inline function ${currentFile!!.name} ")                                   // TODO debug output
-//        print("function: ${currentFunction!!.descriptor.name} ")                          // TODO debug output
-//        println("call: ${functionDescriptor.name} ${irCall.startOffset}")                 // TODO debug output
+        print("file: ${currentFile!!.fileEntry.name} ")                                     // TODO debug output
+        print("function: ${currentFunction!!.descriptor.name} ")                            // TODO debug output
+        println("call: ${functionDescriptor.name} ${irCall.startOffset}")                   // TODO debug output
 
         val copyFuncDeclaration = functionDeclaration.accept(DeepCopyIrTree(),              // Create copy of the function.
             null) as IrFunction
@@ -117,8 +114,10 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     override fun visitCall(expression: IrCall): IrExpression {
 
         val fqName = currentFile!!.packageFragmentDescriptor.fqName.asString()              // TODO to be removed after stdlib compilation
-        if(fqName.contains("kotlin")) return super.visitCall(expression)                    // TODO to be removed after stdlib compilation
-        // if (currentFunction!!.descriptor.isInline) return super.visitCall(expression)       // TODO workaround
+        // if(fqName.contains("kotlin")) return super.visitCall(expression)                    // TODO to be removed after stdlib compilation
+        val fileName = currentFile!!.fileEntry.name
+        if (fileName.contains("cinterop")) return super.visitCall(expression)
+        if (currentFunction!!.descriptor.isInline) return super.visitCall(expression)       // TODO workaround
 
         val functionDescriptor = expression.descriptor as FunctionDescriptor
         if (functionDescriptor.isInline) return inlineFunction(expression)                  // Return newly created IrInlineBody instead of IrCall.
@@ -246,7 +245,6 @@ internal class ParametersTransformer(val parameterToArgument: MutableList<Pair<D
     override fun visitTypeOperator(oldExpression: IrTypeOperatorCall): IrExpression {
 
         val expression = super.visitTypeOperator(oldExpression) as IrTypeOperatorCall
-
         if (expression.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {              // Nothing to do for IMPLICIT_COERCION_TO_UNIT
             return expression
         }
@@ -254,11 +252,12 @@ internal class ParametersTransformer(val parameterToArgument: MutableList<Pair<D
         val typeArgsMap = (callSite as IrMemberAccessExpressionBase).typeArguments          // If there are no type args - do nothing.
         if (typeArgsMap == null) return expression
 
-        val typeDescriptor = expression.typeOperand.constructor.declarationDescriptor
-        if (typeDescriptor !is TypeParameterDescriptor) return expression                   // It is not TypeParameter - do nothing
+        val operandTypeDescriptor = expression.typeOperand.constructor.declarationDescriptor
+        if (operandTypeDescriptor !is TypeParameterDescriptor) return expression            // It is not TypeParameter - do nothing
 
-        val typeOld         = typeDescriptor
-        val typeNew         = typeArgsMap[typeOld]!!
+        println("typeArgsMap: $typeArgsMap")
+        println("operandTypeDescriptor: $operandTypeDescriptor")
+        val typeNew         = typeArgsMap[operandTypeDescriptor]!!
         val startOffset     = expression.startOffset
         val endOffset       = expression.endOffset
         val type            = expression.type
