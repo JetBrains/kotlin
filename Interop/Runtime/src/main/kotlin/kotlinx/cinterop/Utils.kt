@@ -146,6 +146,15 @@ fun NativePlacement.allocArrayOf(elements: ByteArray): CArray<CInt8Var> {
     return res
 }
 
+fun NativePlacement.allocArrayOf(vararg elements: Float): CArray<CFloat32Var> {
+    val res = allocArray<CFloat32Var>(elements.size)
+    var index = 0
+    for (element in elements) {
+        res[index++].value = element
+    }
+    return res
+}
+
 fun <T : CPointed> NativePlacement.allocPointerTo() = alloc<CPointerVar<T>>()
 
 /**
