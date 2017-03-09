@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: NATIVE
+
 var result = ""
 
 public abstract class AbstractFoo<K, V> : Map<K, V> {
