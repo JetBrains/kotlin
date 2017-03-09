@@ -6,6 +6,7 @@ import kotlin.reflect.KProperty2
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KMutableProperty2
+import kotlin.UnsupportedOperationException
 
 @FixmeReflection
 open class KProperty0Impl<out R>(override val name: String, val getter: () -> R): KProperty0<R> {
@@ -47,7 +48,7 @@ class KMutableProperty0Impl<R>(name: String, getter: () -> R, val setter: (R) ->
 }
 
 @FixmeReflection
-public class KMutableProperty1Impl<T, R>(name: String, getter: (T) -> R, val setter: (T, R) -> Unit)
+class KMutableProperty1Impl<T, R>(name: String, getter: (T) -> R, val setter: (T, R) -> Unit)
     : KProperty1Impl<T, R>(name, getter), KMutableProperty1<T, R> {
     override fun set(receiver: T, value: R): Unit {
         setter(receiver, value)
@@ -55,9 +56,24 @@ public class KMutableProperty1Impl<T, R>(name: String, getter: (T) -> R, val set
 }
 
 @FixmeReflection
-public class KMutableProperty2Impl<T1, T2, R>(name: String, getter: (T1, T2) -> R, val setter: (T1, T2, R) -> Unit)
+class KMutableProperty2Impl<T1, T2, R>(name: String, getter: (T1, T2) -> R, val setter: (T1, T2, R) -> Unit)
     : KProperty2Impl<T1, T2, R>(name, getter), KMutableProperty2<T1, T2, R> {
     override fun set(receiver1: T1, receiver2: T2, value: R): Unit {
         setter(receiver1, receiver2, value)
+    }
+}
+
+open class KLocalDelegatedPropertyImpl<out R>(override val name: String): KProperty0<R> {
+    override fun get(): R {
+        throw UnsupportedOperationException("Not supported for local property reference.")
+    }
+    override fun invoke(): R {
+        throw UnsupportedOperationException("Not supported for local property reference.")
+    }
+}
+
+class KLocalDelegatedMutablePropertyImpl<R>(name: String): KLocalDelegatedPropertyImpl<R>(name), KMutableProperty0<R> {
+    override fun set(value: R): Unit {
+        throw UnsupportedOperationException("Not supported for local property reference.")
     }
 }
