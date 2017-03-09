@@ -603,4 +603,44 @@ class GradleFacetImportTest : GradleImportingTestCase() {
             )
         }
     }
+
+    @Test
+    fun testNoPluginsInAdditionalArgs() {
+        createProjectSubFile("build.gradle", """
+            group 'Again'
+            version '1.0-SNAPSHOT'
+
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    maven {
+                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                    }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
+                    classpath("org.jetbrains.kotlin:kotlin-allopen:1.1.0")
+                }
+            }
+
+            apply plugin: 'kotlin'
+            apply plugin: "kotlin-spring"
+        """)
+        importProject()
+
+        with (facetSettings) {
+            Assert.assertEquals(
+                    "-version",
+                    compilerSettings!!.additionalArguments
+            )
+            Assert.assertEquals(
+                    listOf("plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.stereotype.Component",
+                           "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.transaction.annotation.Transactional",
+                           "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.scheduling.annotation.Async",
+                           "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.cache.annotation.Cacheable"),
+                    compilerArguments!!.pluginOptions.toList()
+            )
+        }
+    }
 }

@@ -1218,6 +1218,74 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         Assert.assertEquals(TargetPlatformKind.Common, facetSettings.targetPlatformKind)
     }
 
+    fun testNoPluginsInAdditionalArgs() {
+        createProjectSubDirs("src/main/kotlin", "src/main/kotlin.jvm", "src/test/kotlin", "src/test/kotlin.jvm")
+
+        importProject("""
+        <groupId>test</groupId>
+        <artifactId>project</artifactId>
+        <version>1.0.0</version>
+
+        <dependencies>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>1.1.0</version>
+            </dependency>
+        </dependencies>
+
+        <build>
+            <sourceDirectory>src/main/kotlin</sourceDirectory>
+
+            <plugins>
+                <plugin>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>compile</id>
+                            <goals>
+                                <goal>js</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.jetbrains.kotlin</groupId>
+                            <artifactId>kotlin-maven-allopen</artifactId>
+                            <version>1.1.0</version>
+                        </dependency>
+                    </dependencies>
+
+                    <configuration>
+                        <compilerPlugins>
+                            <plugin>spring</plugin>
+                        </compilerPlugins>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+        """)
+
+        assertModules("project")
+        assertImporterStatePresent()
+
+        with(facetSettings) {
+            Assert.assertEquals(
+                    "-version",
+                    compilerSettings!!.additionalArguments
+            )
+            Assert.assertEquals(
+                    listOf("plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.stereotype.Component",
+                           "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.transaction.annotation.Transactional",
+                           "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.scheduling.annotation.Async",
+                           "plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.cache.annotation.Cacheable"),
+                    compilerArguments!!.pluginOptions.toList()
+            )
+        }
+    }
+
     private fun assertImporterStatePresent() {
         assertNotNull("Kotlin importer component is not present", myTestFixture.module.getComponent(KotlinImporterComponent::class.java))
     }
