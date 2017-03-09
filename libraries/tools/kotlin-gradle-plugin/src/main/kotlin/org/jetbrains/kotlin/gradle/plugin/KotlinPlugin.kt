@@ -551,10 +551,7 @@ internal open class KotlinAndroidPlugin(
 }
 
 private fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractCompile, logger: Logger) {
-    // Since we cannot update classpath statically, java not able to detect changes in the classpath after kotlin compiler.
-    // Therefore this (probably inefficient since java cannot decide "uptodateness" by the list of changed class files, but told
-    // explicitly being out of date whenever any kotlin files are compiled
-
+    // Make Gradle check if the javaTask up-to-date based on the Kotlin classes
     javaTask.inputs.dir(kotlinTask.destinationDir!!)
 
     javaTask.dependsOn(kotlinTask.name)
