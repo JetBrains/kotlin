@@ -59,7 +59,7 @@ fun LexicalScope.getVariableFromImplicitReceivers(name: Name): VariableDescripto
     return null
 }
 
-fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolutionFacade: ResolutionFacade/*TODO: get rid of this parameter*/): LexicalScope {
+fun PsiElement.getResolutionScope(bindingContext: BindingContext): LexicalScope? {
     for (parent in parentsWithSelf) {
         if (parent is KtElement) {
             val scope = bindingContext[BindingContext.LEXICAL_SCOPE, parent]
@@ -72,12 +72,20 @@ fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolutionFaca
                 return classDescriptor.scopeForMemberDeclarationResolution
             }
         }
-
         if (parent is KtFile) {
-            return resolutionFacade.getFileResolutionScope(parent)
+            break
         }
     }
-    error("Not in KtFile")
+
+    return null
+}
+
+fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolutionFacade: ResolutionFacade/*TODO: get rid of this parameter*/): LexicalScope {
+    return getResolutionScope(bindingContext) ?:
+           when (containingFile) {
+               is KtFile -> resolutionFacade.getFileResolutionScope(containingFile as KtFile)
+               else -> error("Not in KtFile")
+           }
 }
 
 fun KtElement.getResolutionScope(): LexicalScope {
