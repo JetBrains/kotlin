@@ -105,26 +105,31 @@ private fun runCmd(command: Array<String>, workDir: File, verbose: Boolean = fal
 private fun Properties.defaultCompilerOpts(dependencies: String): List<String> {
     val sysRootDir = this.getOsSpecific("sysRoot")!!
     val sysRoot= "$dependencies/$sysRootDir"
+    val llvmHomeDir = this.getOsSpecific("llvmHome")!!
+    val llvmHome = "$dependencies/$llvmHomeDir"
+    val llvmVersion = this.getProperty("llvmVersion")!!
+
+    // StubGenerator passes the arguments to libclang which 
+    // works not exactly the same way as the clang binary and 
+    // (in particular) uses different default header search path.
+    // See e.g. http://lists.llvm.org/pipermail/cfe-dev/2013-November/033680.html
+    // We workaround the problem with -isystem flag below.
+    val isystem = "$llvmHome/lib/clang/$llvmVersion/include"
+
     val host = detectHost()
     when (host) {
-        "osx" -> return listOf(
-            "-B$sysRoot/usr/bin",
-            "--sysroot=$sysRoot",
-            "-mmacosx-version-min=10.10")
+        "osx" -> 
+            return listOf(
+                "-isystem", isystem,
+                "-B$sysRoot/usr/bin",
+                "--sysroot=$sysRoot",
+                "-mmacosx-version-min=10.10")
         "linux" -> {
-            val llvmHomeDir = this.getOsSpecific("llvmHome")!!
-            val llvmHome = "$dependencies/$llvmHomeDir"
-            val llvmVersion = this.getProperty("llvmVersion")!!
             val gccToolChainDir = this.getOsSpecific("gccToolChain")!!
             val gccToolChain= "$dependencies/$gccToolChainDir"
-// StubGenerator passes the arguments to libclang which 
-// works not exactly the same way as the clang binary and 
-// (in particular) uses different default header search path.
-// See e.g. http://lists.llvm.org/pipermail/cfe-dev/2013-November/033680.html
-// We workaround the problem with -isystem flag below.
+
             return listOf(
-                "-isystem", 
-                "$llvmHome/lib/clang/$llvmVersion/include",
+                "-isystem", isystem,
                 "--gcc-toolchain=$gccToolChain",
                 "-L$llvmHome/lib",
                 "-B$sysRoot/../bin",
