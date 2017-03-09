@@ -740,6 +740,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepOverTest(fileName);
         }
 
+        @TestMetadata("stopInInlineCallInFieldInDelegate.kt")
+        public void testStopInInlineCallInFieldInDelegate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInInlineCallInFieldInDelegate.kt");
+            doStepOverTest(fileName);
+        }
+
         @TestMetadata("stopInInlineCallInFieldInLocalClass.kt")
         public void testStopInInlineCallInFieldInLocalClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOver/stopInInlineCallInFieldInLocalClass.kt");
