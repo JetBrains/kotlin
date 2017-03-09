@@ -171,7 +171,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
                 PomFile.KotlinGoals.MetaData -> TargetPlatformKind.Common
                 else -> null
             }
-        }?.singleOrNull()
+        }?.distinct()?.singleOrNull()
     }
 
     private fun detectPlatformByLibraries(mavenProject: MavenProject): TargetPlatformKind<*>? {
