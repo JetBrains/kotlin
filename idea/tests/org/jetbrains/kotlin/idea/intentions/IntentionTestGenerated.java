@@ -4436,9 +4436,27 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("memberExplicit.kt")
+        public void testMemberExplicit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/memberExplicit.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("memberExtension.kt")
         public void testMemberExtension() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/memberExtension.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("memberExternalParameter.kt")
+        public void testMemberExternalParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/memberExternalParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("memberInLambdaArgument.kt")
+        public void testMemberInLambdaArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/memberInLambdaArgument.kt");
             doTest(fileName);
         }
 

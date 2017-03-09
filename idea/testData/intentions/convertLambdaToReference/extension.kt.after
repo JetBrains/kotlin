@@ -1,7 +1,7 @@
 // IS_APPLICABLE: true
 
 class Owner(val z: Int) {
-    val x = { arg: Int <caret> -> foo(arg) }
+    val x = this::foo
 }
 
 fun Owner.foo(y: Int) = y + z

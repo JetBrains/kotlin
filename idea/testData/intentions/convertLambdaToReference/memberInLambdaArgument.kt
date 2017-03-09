@@ -1,6 +1,7 @@
 // IS_APPLICABLE: true
+// WITH_RUNTIME
 
 class Owner(val z: Int) {
     fun foo(y: Int) = y + z
-    val x = { arg: Int <caret> -> foo(arg) }
+    val x = 7.let {<caret> foo(it) }
 }
