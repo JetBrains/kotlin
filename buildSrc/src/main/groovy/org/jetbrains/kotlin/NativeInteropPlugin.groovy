@@ -32,7 +32,7 @@ class NamedNativeInteropConfig implements Named {
     private List<String> compilerOpts = []
     private List<String> headers;
     private String linker
-    private List<String> linkerOpts = []
+    List<String> linkerOpts = []
     private FileCollection linkFiles;
     private List<String> linkTasks = []
 
@@ -177,6 +177,8 @@ class NamedNativeInteropConfig implements Named {
 
             // defer as much as possible
             doFirst {
+                List<String> linkerOpts = this.linkerOpts
+
                 linkTasks.each {
                     linkerOpts += project.tasks.getByPath(it).outputs.files.files
                 }
