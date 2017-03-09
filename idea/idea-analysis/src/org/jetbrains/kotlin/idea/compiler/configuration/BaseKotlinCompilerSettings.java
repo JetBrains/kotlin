@@ -22,6 +22,9 @@ import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.config.SettingConstants;
 
 import static com.intellij.openapi.components.StoragePathMacros.PROJECT_CONFIG_DIR;
@@ -29,7 +32,11 @@ import static com.intellij.openapi.components.StoragePathMacros.PROJECT_CONFIG_D
 public abstract class BaseKotlinCompilerSettings<T> implements PersistentStateComponent<Element> {
     public static final String KOTLIN_COMPILER_SETTINGS_PATH = PROJECT_CONFIG_DIR + "/" + SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE;
 
-    private static final SkipDefaultValuesSerializationFilters SKIP_DEFAULT_VALUES = new SkipDefaultValuesSerializationFilters();
+    private static final SkipDefaultValuesSerializationFilters SKIP_DEFAULT_VALUES = new SkipDefaultValuesSerializationFilters(
+            CommonCompilerArguments.createDefaultInstance(),
+            K2JVMCompilerArguments.createDefaultInstance(),
+            K2JSCompilerArguments.createDefaultInstance()
+    );
     @NotNull
     private T settings;
 

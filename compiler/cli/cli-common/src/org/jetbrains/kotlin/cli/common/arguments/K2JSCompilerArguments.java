@@ -71,6 +71,13 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("<path>")
     public String outputPostfix;
 
+    @NotNull
+    public static K2JSCompilerArguments createDefaultInstance() {
+        K2JSCompilerArguments arguments = new K2JSCompilerArguments();
+        arguments.moduleKind = K2JsArgumentConstants.MODULE_PLAIN;
+        return arguments;
+    }
+
     @Override
     @NotNull
     public String executableScriptFileName() {

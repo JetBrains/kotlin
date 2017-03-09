@@ -21,8 +21,8 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 
-import static org.jetbrains.kotlin.idea.compiler.configuration.BaseKotlinCompilerSettings.KOTLIN_COMPILER_SETTINGS_PATH;
 import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION;
+import static org.jetbrains.kotlin.idea.compiler.configuration.BaseKotlinCompilerSettings.KOTLIN_COMPILER_SETTINGS_PATH;
 
 @State(
     name = KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION,
@@ -33,13 +33,13 @@ import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_TO_JVM_COMPILE
 )
 public class Kotlin2JvmCompilerArgumentsHolder extends BaseKotlinCompilerSettings<K2JVMCompilerArguments> {
 
+    public static Kotlin2JvmCompilerArgumentsHolder getInstance(Project project) {
+        return ServiceManager.getService(project, Kotlin2JvmCompilerArgumentsHolder.class);
+    }
+
     @NotNull
     @Override
     protected K2JVMCompilerArguments createSettings() {
-        return new K2JVMCompilerArguments();
-    }
-
-    public static Kotlin2JvmCompilerArgumentsHolder getInstance(Project project) {
-        return ServiceManager.getService(project, Kotlin2JvmCompilerArgumentsHolder.class);
+        return K2JVMCompilerArguments.createDefaultInstance();
     }
 }

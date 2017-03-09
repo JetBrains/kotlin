@@ -33,13 +33,13 @@ import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_TO_JS_COMPILER
 )
 public class Kotlin2JsCompilerArgumentsHolder extends BaseKotlinCompilerSettings<K2JSCompilerArguments> {
 
+    public static Kotlin2JsCompilerArgumentsHolder getInstance(Project project) {
+        return ServiceManager.getService(project, Kotlin2JsCompilerArgumentsHolder.class);
+    }
+
     @NotNull
     @Override
     protected K2JSCompilerArguments createSettings() {
-        return new K2JSCompilerArguments();
-    }
-
-    public static Kotlin2JsCompilerArgumentsHolder getInstance(Project project) {
-        return ServiceManager.getService(project, Kotlin2JsCompilerArgumentsHolder.class);
+        return K2JSCompilerArguments.createDefaultInstance();
     }
 }

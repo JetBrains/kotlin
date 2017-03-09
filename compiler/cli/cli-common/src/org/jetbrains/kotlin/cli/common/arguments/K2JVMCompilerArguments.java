@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.cli.common.arguments;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.parser.com.sampullara.cli.Argument;
+import org.jetbrains.kotlin.config.JvmTarget;
 
 public class K2JVMCompilerArguments extends CommonCompilerArguments {
     public static final long serialVersionUID = 0L;
@@ -113,10 +114,16 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     // Paths to output directories for friend modules.
     public String[] friendPaths;
 
+    @NotNull
+    public static K2JVMCompilerArguments createDefaultInstance() {
+        K2JVMCompilerArguments arguments = new K2JVMCompilerArguments();
+        arguments.jvmTarget = JvmTarget.DEFAULT.getDescription();
+        return arguments;
+    }
+
     @Override
     @NotNull
     public String executableScriptFileName() {
         return "kotlinc-jvm";
     }
-
 }

@@ -100,6 +100,15 @@ public abstract class CommonCompilerArguments implements Serializable {
     public List<String> unknownExtraFlags = new SmartList<String>();
 
     @NotNull
+    public static CommonCompilerArguments createDefaultInstance() {
+        DummyImpl arguments = new DummyImpl();
+        arguments.coroutinesEnable = false;
+        arguments.coroutinesWarn = true;
+        arguments.coroutinesError = false;
+        return arguments;
+    }
+
+    @NotNull
     public String executableScriptFileName() {
         return "kotlinc";
     }
