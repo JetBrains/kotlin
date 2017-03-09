@@ -18,13 +18,23 @@ class StubGenerator(
         val dumpShims: Boolean,
         val platform: KotlinPlatform = KotlinPlatform.JVM) {
 
+    val keywords = setOf("object") // TODO
+
+    fun String.mangleIfKeyword(): String {
+        return if (this in keywords) {
+            "_" + this
+        } else {
+            this
+        }
+    }
+
     /**
      * The names that should not be used for struct classes to prevent name clashes
      */
     val forbiddenStructNames = run {
         val functionNames = nativeIndex.functions.map { it.name }
         val fieldNames = nativeIndex.structs.mapNotNull { it.def }.flatMap { it.fields }.map { it.name }
-        (functionNames + fieldNames).toSet()
+        (functionNames + fieldNames).toSet() + keywords
     }
 
     val StructDecl.isAnonymous: Boolean
@@ -620,7 +630,7 @@ class StubGenerator(
         val paramNames = func.parameters.mapIndexed { i: Int, parameter: Parameter ->
             val name = parameter.name
             if (name != null && name != "") {
-                name
+                name.mangleIfKeyword()
             } else {
                 "arg$i"
             }
@@ -1056,7 +1066,7 @@ class StubGenerator(
 
         val funcDecl = when (platform) {
             KotlinPlatform.JVM -> "JNIEXPORT $cReturnType JNICALL $jniFuncName (JNIEnv *env, jobject obj$args)"
-            KotlinPlatform.NATIVE -> "$cReturnType $jniFuncName (void* obj$args)"
+            KotlinPlatform.NATIVE -> "$cReturnType $jniFuncName (void* externalsObj$args)"
         }
 
         block(funcDecl) {
