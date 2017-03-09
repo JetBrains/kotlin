@@ -1500,6 +1500,7 @@ task interop_echo_server(type: RunInteropKonanTest) {
     if (isLinux()) {
         disabled = true
     }
+    run = false
     source = "interop/basics/echo_server.kt"
     interop = 'sockets'
 }

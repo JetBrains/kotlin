@@ -2,7 +2,8 @@ import kotlinx.cinterop.*
 import sockets.*
 
 fun main(args: Array<String>) {
-    if (args.size == 0) {
+    if (args.size < 1) {
+        println("Usage: ./echo_server <port>")
         return
     }
 

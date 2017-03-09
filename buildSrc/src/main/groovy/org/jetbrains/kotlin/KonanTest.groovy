@@ -25,6 +25,7 @@ abstract class KonanTest extends JavaExec {
     List<String> arguments = null
 
     boolean enabled = true
+    boolean run = true
 
     void setDisabled(boolean value) {
         this.enabled = !value
@@ -141,6 +142,11 @@ abstract class KonanTest extends JavaExec {
         def exe = buildExePath()
 
         compileTest(buildCompileList(), exe)
+
+        if (!run) {
+            println "to be executed manually: $exe"
+            return
+        }
         println "execution :$exe"
 
         def out = null
