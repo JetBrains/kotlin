@@ -25,9 +25,9 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.utils.LibraryUtils
-
+import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
-import java.util.Arrays
+import java.util.*
 import java.util.jar.Attributes
 
 object JsLibraryStdDetectionUtil {
@@ -57,8 +57,12 @@ object JsLibraryStdDetectionUtil {
         for (root in classesRoots) {
             if (root.fileSystem.protocol !== StandardFileSystems.JAR_PROTOCOL) continue
 
-            val jar = VfsUtilCore.getVirtualFileForJar(root)
-            if (jar != null) {
+            val jar = VfsUtilCore.getVirtualFileForJar(root) ?: continue
+            val name = jar.name
+            if (name == PathUtil.JS_LIB_JAR_NAME || name == PathUtil.JS_LIB_10_JAR_NAME ||
+                    PathUtil.KOTLIN_STDLIB_JS_JAR_PATTERN.matcher(name).matches() ||
+                    PathUtil.KOTLIN_JS_LIBRARY_JAR_PATTERN.matcher(name).matches()) {
+
                 var isJSStdLib = jar.getUserData(IS_JS_LIBRARY_STD_LIB)
                 if (isJSStdLib == null) {
                     isJSStdLib = LibraryUtils.isKotlinJavascriptStdLibrary(File(jar.path))

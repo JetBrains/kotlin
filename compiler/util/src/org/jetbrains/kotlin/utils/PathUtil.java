@@ -30,6 +30,7 @@ public class PathUtil {
     public static final String JPS_KOTLIN_HOME_PROPERTY = "jps.kotlin.home";
 
     public static final String JS_LIB_JAR_NAME = "kotlin-stdlib-js.jar";
+    public static final String JS_LIB_10_JAR_NAME = "kotlin-jslib.jar";
     public static final String ALLOPEN_PLUGIN_JAR_NAME = "allopen-compiler-plugin.jar";
     public static final String NOARG_PLUGIN_JAR_NAME = "noarg-compiler-plugin.jar";
     public static final String JS_LIB_SRC_JAR_NAME = "kotlin-stdlib-js-sources.jar";
@@ -43,6 +44,8 @@ public class PathUtil {
     public static final String KOTLIN_COMPILER_JAR = "kotlin-compiler.jar";
 
     public static final Pattern KOTLIN_RUNTIME_JAR_PATTERN = Pattern.compile("kotlin-(stdlib|runtime)(-\\d[\\d.]+(-.+)?)?\\.jar");
+    public static final Pattern KOTLIN_STDLIB_JS_JAR_PATTERN = Pattern.compile("kotlin-stdlib-js.*\\.jar");
+    public static final Pattern KOTLIN_JS_LIBRARY_JAR_PATTERN = Pattern.compile("kotlin-js-library.*\\.jar");
 
     public static final String HOME_FOLDER_NAME = "kotlinc";
     private static final File NO_PATH = new File("<no_path>");
