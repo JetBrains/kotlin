@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
+import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
 import org.jetbrains.kotlin.resolve.calls.CallExpressionElement
 import org.jetbrains.kotlin.resolve.calls.unrollToLeftMostQualifiedExpression
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -119,7 +120,10 @@ class QualifiedExpressionResolver {
 
     private fun checkNotEnumEntry(descriptor: DeclarationDescriptor?, trace: BindingTrace, expression: KtSimpleNameExpression) {
         if (descriptor != null && DescriptorUtils.isEnumEntry(descriptor)) {
-            trace.report(Errors.ENUM_ENTRY_AS_TYPE.on(expression))
+            val qualifiedParent = expression.getTopmostParentQualifiedExpressionForSelector()
+            if (qualifiedParent == null || qualifiedParent.parent !is KtDoubleColonExpression) {
+                trace.report(Errors.ENUM_ENTRY_AS_TYPE.on(expression))
+            }
         }
     }
 

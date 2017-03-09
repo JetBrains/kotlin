@@ -423,7 +423,9 @@ class DoubleColonExpressionResolver(
                 val classDescriptor = resultingDescriptor.classDescriptor
                 if (classDescriptor.companionObjectDescriptor != null) return null
 
-                if (DescriptorUtils.isObject(classDescriptor)) {
+                if (DescriptorUtils.isObject(classDescriptor) ||
+                    (!languageVersionSettings.supportsFeature(LanguageFeature.BoundCallableReferences) &&
+                     DescriptorUtils.isEnumEntry(classDescriptor))) {
                     return DoubleColonLHS.Expression(typeInfo, isObjectQualifier = true)
                 }
             }

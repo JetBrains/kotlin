@@ -7,6 +7,10 @@ val ok2 = C.Companion::class
 object O
 val ok3 = O::class
 
+enum class E {
+    Entry
+}
+val ok4 = E.Entry::class
 
 val fail1 = <!UNSUPPORTED_FEATURE!>""<!>::class
 val fail2 = <!NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>String?::class<!>
