@@ -32,7 +32,7 @@ fun box(): String {
     }
 
     val k = create<TwoNonDefaults>("OK", Int::class)
-    assertEquals(Int::class, k.klass as KClass<*> /* TODO: KT-9453 */)
+    assertEquals(Int::class, k.klass)
 
     return k.string
 }

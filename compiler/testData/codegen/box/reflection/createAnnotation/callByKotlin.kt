@@ -42,7 +42,7 @@ fun box(): String {
     assertFails { create<TwoParamsOneDefault>(mapOf("s" to "Fail", "x" to "Fail")) }
 
     val t5 = create<TwoParamsOneDefaultKClass>(mapOf("string" to "OK"))
-    assertEquals(Number::class, t5.klass as KClass<*> /* TODO: KT-9453 */)
+    assertEquals(Number::class, t5.klass)
 
     assertFails("KClass (not Class) instances should be passed as arguments") {
         create<TwoNonDefaults>(mapOf("klass" to String::class.java, "string" to "Fail"))

@@ -75,8 +75,7 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
                     sameSignature(function, resolveMethod)
                 }?.annotations?.filterIsInstance<AcceptedAnnotations>()
         resolverMethodAnnotations?.flatMap {
-            val v = it.supportedAnnotationClasses
-            v.toList() // TODO: inline after KT-9453 is resolved (now it fails with "java.lang.Class cannot be cast to kotlin.reflect.KClass")
+            it.supportedAnnotationClasses.toList()
         }
         ?: emptyList()
     }
