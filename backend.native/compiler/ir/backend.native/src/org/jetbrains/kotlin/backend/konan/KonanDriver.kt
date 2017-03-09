@@ -1,6 +1,8 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.backend.common.messageCollector
+import org.jetbrains.kotlin.backend.common.validateIrModule
 import org.jetbrains.kotlin.backend.konan.ir.ModuleIndex
 import org.jetbrains.kotlin.backend.konan.llvm.emitLLVM
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -40,12 +42,10 @@ public fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEn
 
     if (config.kotlinSourceRoots.isEmpty()) return
 
-    val collector = config.getNotNull(
-        CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-
-    val analyzerWithCompilerReport = AnalyzerWithCompilerReport(collector)
-
     val context = Context(konanConfig)
+
+    val analyzerWithCompilerReport = AnalyzerWithCompilerReport(context.messageCollector)
+
     val phaser = PhaseManager(context)
 
     phaser.phase(KonanPhase.FRONTEND) {
@@ -67,10 +67,13 @@ public fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEn
             environment.getSourceFiles(), bindingContext)
 
         context.irModule = module
+
+        validateIrModule(context, module)
     }
     phaser.phase(KonanPhase.BACKEND) {
         phaser.phase(KonanPhase.LOWER) {
             KonanLower(context).lower()
+            validateIrModule(context, context.ir.irModule)
             context.ir.moduleIndexForCodegen = ModuleIndex(context.ir.irModule)
         }
         phaser.phase(KonanPhase.BITCODE) {

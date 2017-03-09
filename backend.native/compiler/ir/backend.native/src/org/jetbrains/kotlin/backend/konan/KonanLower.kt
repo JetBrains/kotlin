@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.validateIrFile
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 
@@ -67,6 +68,7 @@ internal class KonanLower(val context: Context) {
             DirectBridgesCallsLowering(context).runOnFilePostfix(irFile)
         }
         phaser.phase(KonanPhase.AUTOBOX) {
+            validateIrFile(context, irFile)
             Autoboxing(context).lower(irFile)
         }
     }

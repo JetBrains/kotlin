@@ -184,7 +184,7 @@ class ReflectionTypes(module: ModuleDescriptor) {
     }
 }
 
-internal class Context(val config: KonanConfig) : KonanBackendContext() {
+internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     var moduleDescriptor: ModuleDescriptor? = null
 
