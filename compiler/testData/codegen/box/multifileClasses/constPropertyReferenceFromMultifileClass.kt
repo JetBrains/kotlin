@@ -1,6 +1,4 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
+// TARGET_BACKEND: JVM
 // WITH_REFLECT
 // FILE: 1.kt
 

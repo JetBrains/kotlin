@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS
+// TARGET_BACKEND: JVM
 // WITH_RUNTIME
 
 @file:JvmMultifileClass
