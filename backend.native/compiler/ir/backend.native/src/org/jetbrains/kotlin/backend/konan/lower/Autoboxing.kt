@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.util.isNullConst
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 /**
  * Boxes and unboxes values of value types when necessary.
@@ -75,8 +76,11 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
             IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST,
             IrTypeOperator.IMPLICIT_NOTNULL, IrTypeOperator.SAFE_CAST -> {
 
-                // Codegen produces the object reference:
-                val newExpressionType = builtIns.nullableAnyType
+                val newExpressionType = if (expression.operator == IrTypeOperator.SAFE_CAST) {
+                    newTypeOperand.makeNullable()
+                } else {
+                    newTypeOperand
+                }
 
                 IrTypeOperatorCallImpl(expression.startOffset, expression.endOffset,
                         newExpressionType, expression.operator, newTypeOperand,
