@@ -23,3 +23,8 @@
 - [`KT-16598`](https://youtrack.jetbrains.com/issue/KT-16598) Incorrect error: The feature "bound callable references" is only available since language version 1.1
 - [`KT-16621`](https://youtrack.jetbrains.com/issue/KT-16621) Kotlin compiler doesn't report an error if a class implements Annotation interface but doesn't implement annotationType method
 - [`KT-16441`](https://youtrack.jetbrains.com/issue/KT-16441) `NoSuchFieldError: $$delegatedProperties` when delegating through `provideDelegate` in companion object
+
+### Previous releases
+
+This release also includes the fixes and improvements from the previous
+[`1.1`](https://github.com/JetBrains/kotlin/blob/1.1.0/ChangeLog.md) release.
