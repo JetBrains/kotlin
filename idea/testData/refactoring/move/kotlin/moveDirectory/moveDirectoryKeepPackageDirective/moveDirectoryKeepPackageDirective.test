@@ -1,0 +1,7 @@
+{
+  "mainFile": "A/r1/x/test.kt",
+  "type": "MOVE_DIRECTORY_WITH_CLASSES",
+  "sourceDir": "A/r1/x",
+  "targetDir": "A/r1/z",
+  "isMultiModule": "true"
+}
