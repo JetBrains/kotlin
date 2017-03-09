@@ -90,7 +90,11 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
         moveContextMap[file] = MoveContext(moveDestination,
                                            fileHandler.findInternalUsages(file, moveDestination),
                                            moveDeclarationsProcessor)
-        moveDestination.getPackage()?.let { newPackage -> file.packageDirective?.fqName = FqName(newPackage.qualifiedName).quoteIfNeeded() }
+        if (moveDeclarationsProcessor != null) {
+            moveDestination.getPackage()?.let { newPackage ->
+                file.packageDirective?.fqName = FqName(newPackage.qualifiedName).quoteIfNeeded()
+            }
+        }
         return true
     }
 
@@ -109,10 +113,12 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
                     val moveContext = fileToMoveContext[file] ?: return@body
 
                     MoveFilesOrDirectoriesUtil.doMoveFile(file, moveContext.newParent)
+
+                    val moveDeclarationsProcessor = moveContext.moveDeclarationsProcessor ?: return@body
                     val movedFile = moveContext.newParent.findFile(file.name) ?: return@body
 
                     usagesToProcessAfterMove +=
-                            FileUsagesWrapper(movedFile, it.usages + moveContext.internalUsages, moveContext.moveDeclarationsProcessor)
+                            FileUsagesWrapper(movedFile, it.usages + moveContext.internalUsages, moveDeclarationsProcessor)
                 }
             usagesToProcessAfterMove.forEach { fileHandler.retargetUsages(it.usages, it.moveDeclarationsProcessor!!) }
         }
