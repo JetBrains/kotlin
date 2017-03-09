@@ -342,7 +342,7 @@ private fun FunctionDescriptor.generateDefaultsDescription(context: Context): Fu
                 val name = Name.identifier("$name\$default")
 
                 SimpleFunctionDescriptorImpl.create(
-                        /* containingDeclaration = */ if (DescriptorUtils.isOverride(this)) this.overriddenDescriptors.first().containingDeclaration as ClassDescriptor else containingDeclaration,
+                        /* containingDeclaration = */ containingDeclaration,
                         /* annotations           = */ annotations,
                         /* name                  = */ name,
                         /* kind                  = */ CallableMemberDescriptor.Kind.SYNTHESIZED,
