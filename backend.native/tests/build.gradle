@@ -1470,6 +1470,16 @@ kotlinNativeInterop {
         defFile 'interop/basics/sockets.def'
         target 'native'
     }
+
+    if (isMac()) {
+        opengl {
+            target 'native'
+            compilerOpts '-framework', 'OpenGL', '-framework', 'GLUT'
+            linkerOpts '-framework', 'OpenGL', '-framework', 'GLUT'
+            pkg 'opengl'
+            headers 'GLUT/glut.h'
+        }
+    }
 }
 
 task interop0(type: RunInteropKonanTest) {
@@ -1503,4 +1513,12 @@ task interop_echo_server(type: RunInteropKonanTest) {
     run = false
     source = "interop/basics/echo_server.kt"
     interop = 'sockets'
+}
+
+if (isMac()) {
+    task interop_opengl_teapot(type: RunInteropKonanTest) {
+        run = false
+        source = "interop/basics/opengl_teapot.kt"
+        interop = 'opengl'
+    }
 }
