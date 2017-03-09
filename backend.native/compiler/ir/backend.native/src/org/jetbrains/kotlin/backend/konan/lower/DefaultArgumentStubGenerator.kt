@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 class DefaultArgumentStubGenerator internal constructor(val context: Context): DeclarationContainerLoweringPass {
@@ -205,7 +206,7 @@ private fun nullConst(expression: IrElement, type: KotlinType): IrExpression? {
         KotlinBuiltIns.isShort(type)   -> return IrConstImpl.short     (expression.startOffset, expression.endOffset, type, 0)
         KotlinBuiltIns.isInt(type)     -> return IrConstImpl.int       (expression.startOffset, expression.endOffset, type, 0)
         KotlinBuiltIns.isLong(type)    -> return IrConstImpl.long      (expression.startOffset, expression.endOffset, type, 0)
-        else                           -> return IrConstImpl.constNull (expression.startOffset, expression.endOffset, type)
+        else                           -> return IrConstImpl.constNull (expression.startOffset, expression.endOffset, type.builtIns.nullableNothingType)
     }
 }
 
