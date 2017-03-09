@@ -52,11 +52,15 @@ class MoveFilesWithDeclarationsProcessor(
     override fun preprocessUsages(refUsages: Ref<Array<UsageInfo>>): Boolean {
         val usages = refUsages.get()
 
-        val distinctConflictUsages = UsageViewUtil.removeDuplicatedUsages(usages.filterIsInstance<ConflictUsageInfo>().toTypedArray())
+        val (conflictUsages, usagesToProcess) = usages.partition { it is ConflictUsageInfo }
+
+        val distinctConflictUsages = UsageViewUtil.removeDuplicatedUsages(conflictUsages.toTypedArray())
         val conflicts = MultiMap<PsiElement, String>()
         for (conflictUsage in distinctConflictUsages) {
             conflicts.putValues(conflictUsage.element, (conflictUsage as ConflictUsageInfo).messages)
         }
+
+        refUsages.set(usagesToProcess.toTypedArray())
 
         return showConflicts(conflicts, usages)
     }
