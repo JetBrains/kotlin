@@ -31,7 +31,7 @@ class KotlinUCallableReferenceExpression(
         get() {
             if (qualifierType != null) return null
             val receiverExpression = psi.receiverExpression ?: return null
-            return KotlinConverter.convertExpression(receiverExpression, this)
+            return KotlinConverter.convertExpression(receiverExpression, { this })
         }
 
     override val qualifierType by lz {

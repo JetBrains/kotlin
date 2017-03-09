@@ -16,10 +16,10 @@
 
 package org.jetbrains.uast.kotlin
 
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtConstantExpression
+import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.ULiteralExpression
 
@@ -36,10 +36,13 @@ class KotlinULiteralExpression(
 class KotlinStringULiteralExpression(
         override val psi: PsiElement,
         override val uastParent: UElement?,
-        val text: String? = null
+        val text: String
 ) : KotlinAbstractUExpression(), ULiteralExpression, KotlinUElementWithType{
+    constructor(psi: PsiElement, uastParent: UElement?)
+            : this(psi, uastParent, if (psi is KtEscapeStringTemplateEntry) psi.unescapedValue else psi.text)
+
     override val value: String
-        get() = text ?: StringUtil.unescapeStringCharacters(psi.text)
+        get() = text
 
     override fun evaluate() = value
 }

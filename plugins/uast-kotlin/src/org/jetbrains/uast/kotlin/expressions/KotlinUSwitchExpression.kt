@@ -28,7 +28,7 @@ class KotlinUSwitchExpression(
     override val expression by lz { KotlinConverter.convertOrNull(psi.subjectExpression, this) }
 
     override val body: UExpressionList by lz {
-        object : KotlinUExpressionList(psi, KotlinSpecialExpressionKinds.WHEN, this) {
+        object : KotlinUExpressionList(psi, KotlinSpecialExpressionKinds.WHEN, this@KotlinUSwitchExpression) {
             override fun asRenderString() = expressions.joinToString("\n") { it.asRenderString().withMargin }
         }.apply {
             expressions = this@KotlinUSwitchExpression.psi.entries.map { KotlinUSwitchEntry(it, this) }
@@ -77,7 +77,7 @@ class KotlinUSwitchEntry(
     }
 
     override val body: UExpressionList by lz {
-        object : KotlinUExpressionList(psi, KotlinSpecialExpressionKinds.WHEN_ENTRY, this) {
+        object : KotlinUExpressionList(psi, KotlinSpecialExpressionKinds.WHEN_ENTRY, this@KotlinUSwitchEntry) {
             override fun asRenderString() = buildString {
                 appendln("{")
                 expressions.forEach { appendln(it.asRenderString().withMargin) }

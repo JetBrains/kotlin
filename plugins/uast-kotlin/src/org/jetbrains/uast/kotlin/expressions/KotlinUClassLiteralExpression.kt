@@ -35,6 +35,6 @@ class KotlinUClassLiteralExpression(
         get() {
             if (type != null) return null
             val receiverExpression = psi.receiverExpression ?: return null
-            return KotlinConverter.convertExpression(receiverExpression, this)
+            return KotlinConverter.convertExpression(receiverExpression, { this })
         }
 }

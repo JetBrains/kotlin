@@ -35,7 +35,7 @@ import org.jetbrains.uast.visitor.UastVisitor
 class KotlinUFunctionCallExpression(
         override val psi: KtCallExpression,
         override val uastParent: UElement?,
-        private val _resolvedCall: ResolvedCall<*>? = null
+        private val _resolvedCall: ResolvedCall<*>?
 ) : KotlinAbstractUExpression(), UCallExpression, KotlinUElementWithType {
     companion object {
         fun resolveSource(descriptor: DeclarationDescriptor, source: PsiElement?): PsiMethod? {
@@ -52,6 +52,8 @@ class KotlinUFunctionCallExpression(
             }
         }
     }
+
+    constructor(psi: KtCallExpression, uastParent: UElement?): this(psi, uastParent, null)
 
     private val resolvedCall by lz {
         _resolvedCall ?: psi.getResolvedCall(psi.analyze())

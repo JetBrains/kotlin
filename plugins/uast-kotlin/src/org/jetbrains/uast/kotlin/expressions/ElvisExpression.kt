@@ -56,7 +56,7 @@ private fun createElvisExpressions(
         override val uastParent: UElement? = containingElement
         override val condition: UExpression by lz { createNotEqWithNullExpression(tempVariable, this) }
         override val thenExpression: UExpression? by lz { createVariableReferenceExpression(tempVariable, this) }
-        override val elseExpression: UExpression? by lz { KotlinConverter.convertExpression(right, this) }
+        override val elseExpression: UExpression? by lz { KotlinConverter.convertExpression(right, this.toCallback() ) }
         override val isTernary: Boolean = false
         override val annotations: List<UAnnotation> = emptyList()
         override val ifIdentifier: UIdentifier = UIdentifier(null, this)
@@ -66,9 +66,9 @@ private fun createElvisExpressions(
     return listOf(declaration, ifExpression)
 }
 
-fun createElvisExpression(elvisExpression: KtBinaryExpression, containingElement: UElement?): UExpressionList? {
-    val left = elvisExpression.left ?: return null
-    val right = elvisExpression.right ?: return null
+fun createElvisExpression(elvisExpression: KtBinaryExpression, containingElement: UElement?): UExpression {
+    val left = elvisExpression.left ?: return UastEmptyExpression
+    val right = elvisExpression.right ?: return UastEmptyExpression
 
     return object : UExpressionList, KotlinEvaluatableUElement, KotlinUElementWithType {
         override val psi: PsiElement? = elvisExpression

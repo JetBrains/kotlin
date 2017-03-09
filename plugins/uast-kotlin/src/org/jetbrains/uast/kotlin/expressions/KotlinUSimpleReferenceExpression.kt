@@ -35,10 +35,11 @@ import org.jetbrains.uast.visitor.UastVisitor
 
 open class KotlinUSimpleReferenceExpression(
         override val psi: KtSimpleNameExpression,
-        override val identifier: String,
         override val uastParent: UElement?
 ) : KotlinAbstractUExpression(), USimpleNameReferenceExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
     private val resolvedDeclaration by lz { psi.resolveCallToDeclaration(this) }
+
+    override val identifier get() = psi.getReferencedName()
 
     override fun resolve() = resolvedDeclaration
 
