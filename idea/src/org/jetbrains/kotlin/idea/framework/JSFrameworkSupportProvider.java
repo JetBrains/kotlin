@@ -72,8 +72,6 @@ public class JSFrameworkSupportProvider extends FrameworkSupportInModuleProvider
                         JavaRuntimeLibraryDescription.SUITABLE_LIBRARY_KINDS,
                         JavaFrameworkType.getInstance());
 
-                FrameworksCompatibilityUtils.suggestRemoveOldJsLibrary(rootModel);
-
                 description.finishLibConfiguration(module, rootModel);
             }
 
