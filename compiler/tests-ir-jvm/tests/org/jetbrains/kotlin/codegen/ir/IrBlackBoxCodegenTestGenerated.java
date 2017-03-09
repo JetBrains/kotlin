@@ -10787,6 +10787,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("kt16077.kt")
+        public void testKt16077() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multifileClasses/kt16077.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("multifileClassPartsInitialization.kt")
         public void testMultifileClassPartsInitialization() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/multifileClasses/multifileClassPartsInitialization.kt");

@@ -57,7 +57,6 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.getDeprecatedAccessFlag;
 import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityForBackingField;
-import static org.jetbrains.kotlin.codegen.AsmUtil.isPropertyWithBackingFieldCopyInOuterClass;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.FIELD_FOR_PROPERTY;
@@ -189,7 +188,7 @@ public class PropertyCodegen {
         if (isCompanionObject(descriptor.getContainingDeclaration())) return true;
 
         // Non-const properties from multifile classes have accessors regardless of visibility
-        if (!descriptor.isConst() && JvmFileClassUtilKt.isInsideJvmMultifileClassFile(declaration)) return true;
+        if (isNonConstTopLevelPropertyInMultifileClass(declaration, descriptor)) return true;
 
         // Private class properties have accessors only in cases when those accessors are non-trivial
         if (Visibilities.isPrivate(descriptor.getVisibility())) {
@@ -197,6 +196,15 @@ public class PropertyCodegen {
         }
 
         return true;
+    }
+
+    private static boolean isNonConstTopLevelPropertyInMultifileClass(
+            @NotNull KtProperty declaration,
+            @NotNull PropertyDescriptor descriptor
+    ) {
+        return !descriptor.isConst() &&
+               descriptor.getContainingDeclaration() instanceof PackageFragmentDescriptor &&
+               JvmFileClassUtilKt.isInsideJvmMultifileClassFile(declaration);
     }
 
     private static boolean areAccessorsNeededForPrimaryConstructorProperty(
