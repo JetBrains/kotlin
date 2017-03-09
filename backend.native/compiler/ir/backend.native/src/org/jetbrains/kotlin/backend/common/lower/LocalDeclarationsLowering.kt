@@ -170,7 +170,12 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
                                 original.startOffset, original.endOffset, original.origin,
                                 it.transformedDescriptor,
                                 original.body
-                        )
+                        ).apply {
+                            original.descriptor.valueParameters.filter { it.declaresDefaultValue() }.forEach { argument ->
+                                val body = original.getDefault(argument)!!
+                                this.putDefault(oldParameterToNew[argument] as ValueParameterDescriptor, body)
+                            }
+                        }
                     }
 
                     localClasses.values.mapTo(this) {
