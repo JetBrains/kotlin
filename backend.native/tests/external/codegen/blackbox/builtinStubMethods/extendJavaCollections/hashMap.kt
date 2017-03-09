@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: NATIVE
 class A : HashMap<String, Double>()
 
 fun box(): String {
