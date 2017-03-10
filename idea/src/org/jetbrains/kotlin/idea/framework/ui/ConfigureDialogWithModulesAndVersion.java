@@ -35,6 +35,7 @@ import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
 import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt;
@@ -214,6 +215,12 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
         }
         finally {
             urlConnection.disconnect();
+        }
+
+        // Handle the case when the new version has just been released and the Maven search index hasn't been updated yet
+        if (!ConfigureKotlinInProjectUtilsKt.isEap(bundledRuntimeVersion) && !KotlinPluginUtil.isSnapshotVersion() &&
+            !bundledRuntimeVersion.contains("dev") && !versions.contains(bundledRuntimeVersion)) {
+            versions.add(0, bundledRuntimeVersion);
         }
 
         return versions;
