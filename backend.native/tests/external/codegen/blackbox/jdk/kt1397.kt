@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: NATIVE
 
 class IntArrayList(): ArrayList<Int>() {
     override fun get(index: Int): Int = super.get(index)

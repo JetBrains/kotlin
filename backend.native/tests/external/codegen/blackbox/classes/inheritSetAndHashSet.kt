@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: NATIVE
+
 interface A : Set<String>
 
 class B : A, HashSet<String>()
