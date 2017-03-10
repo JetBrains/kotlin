@@ -218,10 +218,8 @@ class JavaTypeResolver(
                 //   so we get A<*, *>.
                 // Summary result for upper bound of T is `A<A<*, *>, A<*, *>>..A<out A<*, *>, out A<*, *>>`
                 val erasedUpperBound =
-                        LazyWrappedType(c.storageManager) {
-                            parameter.getErasedUpperBound(attr.upperBoundOfTypeParameter) {
-                                constructor.declarationDescriptor!!.defaultType.replaceArgumentsWithStarProjections()
-                            }
+                        parameter.getErasedUpperBound(attr.upperBoundOfTypeParameter) {
+                            constructor.declarationDescriptor!!.defaultType.replaceArgumentsWithStarProjections()
                         }
 
                 RawSubstitution.computeProjection(parameter, attr, erasedUpperBound)
