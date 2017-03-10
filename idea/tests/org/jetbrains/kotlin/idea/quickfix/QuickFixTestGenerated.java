@@ -5970,6 +5970,51 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/invisibleMember")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InvisibleMember extends AbstractQuickFixTest {
+        public void testAllFilesPresentInInvisibleMember() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/invisibleMember"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("methodToInternal.kt")
+        public void testMethodToInternal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/invisibleMember/methodToInternal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodToProtected.kt")
+        public void testMethodToProtected() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/invisibleMember/methodToProtected.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodToPublic.kt")
+        public void testMethodToPublic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/invisibleMember/methodToPublic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyToInternal.kt")
+        public void testPropertyToInternal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/invisibleMember/propertyToInternal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyToProtected.kt")
+        public void testPropertyToProtected() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/invisibleMember/propertyToProtected.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyToPublic.kt")
+        public void testPropertyToPublic() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/invisibleMember/propertyToPublic.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/kdocMissingDocumentation")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
