@@ -7,6 +7,11 @@ external public fun print(message: String)
 public fun<T> print(message: T) {
     print(message.toString())
 } */
+
+public fun print(message: Any?) {
+    print(message.toString())
+}
+
 public fun print(message: Byte) {
     print(message.toString())
 }
@@ -41,6 +46,10 @@ public fun print(message: Boolean) {
 
 @SymbolName("Kotlin_io_Console_println")
 external public fun println(message: String)
+
+public fun println(message: Any?) {
+    println(message.toString())
+}
 
 public fun println(message: Byte) {
     println(message.toString())
