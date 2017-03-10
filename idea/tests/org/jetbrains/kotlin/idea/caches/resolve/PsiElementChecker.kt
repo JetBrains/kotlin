@@ -29,14 +29,14 @@ object PsiElementChecker {
     fun checkPsiElementStructure(lightClass: PsiClass) {
         checkPsiElement(lightClass)
 
-        lightClass.innerClasses.forEach { checkPsiElementStructure(it) }
-
         lightClass.methods.forEach {
             it.parameterList.parameters.forEach { checkPsiElement(it) }
             checkPsiElement(it)
         }
 
         lightClass.fields.forEach { checkPsiElement(it) }
+
+        lightClass.innerClasses.forEach { checkPsiElementStructure(it) }
     }
 
     private fun checkPsiElement(element: PsiElement) {
