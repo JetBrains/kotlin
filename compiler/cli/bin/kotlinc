@@ -67,6 +67,15 @@ then
 else
     [ -n "$KOTLIN_COMPILER" ] || KOTLIN_COMPILER=org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
     java_args=("${java_args[@]}" "-noverify")
+
+    if [[ -n $(command -v head) && -n $(command -v tail) && $($JAVACMD -version 2>&1 | head -2 | tail -1) =~ build\ 9 ]]; then
+        java_args=("${java_args[@]}" \
+            "--add-opens" "java.base/java.lang=ALL-UNNAMED" \
+            "--add-opens" "java.base/java.util=ALL-UNNAMED" \
+            "--add-opens" "java.base/java.util.concurrent.atomic=ALL-UNNAMED" \
+            "--add-opens" "java.base/jdk.internal.misc=ALL-UNNAMED")
+    fi
+
     kotlin_app=("${KOTLIN_HOME}/lib/kotlin-preloader.jar" "org.jetbrains.kotlin.preloading.Preloader" "-cp" "${KOTLIN_HOME}/lib/kotlin-compiler.jar" $KOTLIN_COMPILER)
 fi
 
