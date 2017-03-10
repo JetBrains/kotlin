@@ -19,10 +19,13 @@ package org.jetbrains.kotlin.idea.facet
 import com.intellij.facet.impl.ui.libraries.DelegatingLibrariesValidatorContext
 import com.intellij.facet.ui.*
 import com.intellij.facet.ui.libraries.FrameworkLibraryValidator
+import com.intellij.ide.actions.ShowSettingsUtilImpl
 import com.intellij.openapi.project.Project
 import com.intellij.ui.DocumentAdapter
+import com.intellij.ui.HoverHyperlinkLabel
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.ThreeStateCheckBox
+import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.compiler.configuration.*
@@ -30,6 +33,7 @@ import java.awt.BorderLayout
 import javax.swing.JComboBox
 import javax.swing.JComponent
 import javax.swing.JPanel
+import javax.swing.border.EmptyBorder
 import javax.swing.event.DocumentEvent
 
 class KotlinFacetEditorGeneralTab(
@@ -87,10 +91,23 @@ class KotlinFacetEditorGeneralTab(
                     setRenderer(DescriptionListCellRenderer())
                 }
 
+        private val projectSettingsLink = HoverHyperlinkLabel("Edit project settings").apply {
+            addHyperlinkListener {
+                ShowSettingsUtilImpl.showSettingsDialog(project, compilerConfigurable.id, "")
+                if (useProjectSettingsCheckBox.isSelected) {
+                    updateCompilerConfigurable()
+                }
+            }
+        }
+
         init {
             val contentPanel = FormBuilder
                     .createFormBuilder()
-                    .addComponent(useProjectSettingsCheckBox)
+                    .addComponent(JPanel(BorderLayout()).apply {
+                        border = EmptyBorder(0, 0, UIUtil.DEFAULT_VGAP, UIUtil.DEFAULT_VGAP)
+                        add(useProjectSettingsCheckBox, BorderLayout.WEST)
+                        add(projectSettingsLink, BorderLayout.EAST)
+                    })
                     .addLabeledComponent("&Target platform: ", targetPlatformComboBox)
                     .addComponent(compilerConfigurable.createComponent()!!)
                     .panel
@@ -250,15 +267,7 @@ class KotlinFacetEditorGeneralTab(
     override fun getDisplayName() = "General"
 
     override fun createComponent(): JComponent {
-        val mainPanel = JPanel(BorderLayout())
-        val contentPanel = FormBuilder
-                .createFormBuilder()
-                .addComponent(editor.useProjectSettingsCheckBox)
-                .addLabeledComponent("&Target platform: ", editor.targetPlatformComboBox)
-                .addComponent(editor.compilerConfigurable.createComponent()!!)
-                .panel
-        mainPanel.add(contentPanel, BorderLayout.NORTH)
-        return mainPanel
+        return editor
     }
 
     override fun disposeUIResources() {
