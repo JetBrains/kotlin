@@ -24,7 +24,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator
 import org.jetbrains.kotlin.idea.configuration.getAbleToRunConfigurators
 import org.jetbrains.kotlin.idea.configuration.getConfiguratorByName
-import org.jetbrains.kotlin.idea.configuration.getNonConfiguredModules
+import org.jetbrains.kotlin.idea.configuration.getNonConfiguredModulesWithKotlinFiles
 import org.jetbrains.kotlin.idea.configuration.ui.KotlinConfigurationCheckerComponent
 import javax.swing.event.HyperlinkEvent
 
@@ -60,7 +60,7 @@ class ConfigureKotlinNotification(
 
     companion object {
         fun getNotificationString(project: Project, excludeModules: Collection<Module>): String {
-            val modules = getNonConfiguredModules(project, excludeModules)
+            val modules = getNonConfiguredModulesWithKotlinFiles(project, excludeModules)
 
             val isOnlyOneModule = modules.size == 1
 

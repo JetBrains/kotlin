@@ -136,8 +136,12 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
 
         runReadAction {
             val configurator = findGradleModuleConfigurator()
-            val moduleNames = getNonConfiguredModules(myProject, configurator).map { it.name }
-            assertSameElements(moduleNames, "app", "project")
+
+            val moduleNames = getNonConfiguredModulesWithKotlinFiles(myProject).map { it.name }
+            assertSameElements(moduleNames, "app")
+
+            val moduleNamesFromConfigurator = getNonConfiguredModules(myProject, configurator).map { it.name }
+            assertSameElements(moduleNamesFromConfigurator, "app", "project")
 
             val moduleNamesWithKotlinFiles = getNonConfiguredModulesWithKotlinFiles(myProject, configurator).map { it.name }
             assertSameElements(moduleNamesWithKotlinFiles, "app")
