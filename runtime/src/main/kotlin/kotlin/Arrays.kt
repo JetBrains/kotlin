@@ -2089,6 +2089,33 @@ public fun <T> Array<out T>.sortedArrayWith(comparator: Comparator<in T>): Array
     return this.copyOf().apply { sortWith(comparator) }
 }
 
+/**
+ * Returns a string representation of the contents of the specified array as if it is [List].
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<out T>.contentToString(): String {
+    return this.subarrayContentToString(offset = 0, length = this.size)
+}
+
+/**
+ * Returns a string representation of the contents of the subarray of the specified array as if it is [List].
+ */
+@SinceKotlin("1.1")
+@kotlin.internal.InlineOnly
+public inline fun <T> Array<out T>.subarrayContentToString(offset: Int, length: Int): String {
+    val sb = StringBuilder(2 + length * 3)
+    sb.append("[")
+    var i = 0
+    while (i < length) {
+        if (i > 0) sb.append(", ")
+        sb.append(this[offset + i])
+        i++
+    }
+    sb.append("]")
+    return sb.toString()
+}
+
 // From Library.kt.
 /**
  * Returns an array of objects of the given type with the given [size], initialized with null values.
