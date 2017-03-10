@@ -4466,6 +4466,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("memberViaThis.kt")
+        public void testMemberViaThis() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/memberViaThis.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("name.kt")
         public void testName() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertLambdaToReference/name.kt");

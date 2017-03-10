@@ -240,22 +240,30 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
                         is KtNameReferenceExpression -> selector.getReferencedName()
                         else -> return null
                     }
-                    val receiver = singleStatement.receiverExpression as? KtNameReferenceExpression ?: return null
+                    val receiver = singleStatement.receiverExpression
                     val context = receiver.analyze()
-                    val receiverDescriptor = context[REFERENCE_TARGET, receiver] ?: return null
-                    val lambdaValueParameters = context[FUNCTION, lambdaExpression.functionLiteral]?.valueParameters ?: return null
-                    if (receiverDescriptor is ParameterDescriptor && receiverDescriptor == lambdaValueParameters.firstOrNull()) {
-                        val originalReceiverType = receiverDescriptor.type
-                        val receiverType = originalReceiverType.approximateFlexibleTypes(preferNotNull = true)
-                        if (shortTypes) {
-                            "${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(receiverType)}::$selectorReferenceName"
+                    when (receiver) {
+                        is KtNameReferenceExpression -> {
+                            val receiverDescriptor = context[REFERENCE_TARGET, receiver] ?: return null
+                            val lambdaValueParameters = context[FUNCTION, lambdaExpression.functionLiteral]?.valueParameters ?: return null
+                            if (receiverDescriptor is ParameterDescriptor && receiverDescriptor == lambdaValueParameters.firstOrNull()) {
+                                val originalReceiverType = receiverDescriptor.type
+                                val receiverType = originalReceiverType.approximateFlexibleTypes(preferNotNull = true)
+                                if (shortTypes) {
+                                    "${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(receiverType)}::$selectorReferenceName"
+                                }
+                                else {
+                                    "${IdeDescriptorRenderers.SOURCE_CODE.renderType(receiverType)}::$selectorReferenceName"
+                                }
+                            }
+                            else {
+                                "${receiverDescriptor.name}::$selectorReferenceName"
+                            }
                         }
-                        else {
-                            "${IdeDescriptorRenderers.SOURCE_CODE.renderType(receiverType)}::$selectorReferenceName"
+                        is KtThisExpression -> {
+                            "${receiver.text}::$selectorReferenceName"
                         }
-                    }
-                    else {
-                        "${receiverDescriptor.name}::$selectorReferenceName"
+                        else -> null
                     }
                 }
                 else -> null
