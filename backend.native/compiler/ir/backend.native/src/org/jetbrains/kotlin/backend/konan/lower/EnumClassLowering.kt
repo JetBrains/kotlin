@@ -126,11 +126,13 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                     declaration.transformChildrenVoid(this)
 
                     val blockBody = declaration.body as? IrBlockBody ?: throw AssertionError("Unexpected constructor body: ${declaration.body}")
-                    blockBody.statements.transformFlat {
-                        if (it is IrEnumConstructorCall)
-                            listOf(it, IrInstanceInitializerCallImpl(declaration.startOffset, declaration.startOffset,
-                                    irClass.descriptor))
-                        else null
+                    if (blockBody.statements.all { it !is IrInstanceInitializerCall }) {
+                        blockBody.statements.transformFlat {
+                            if (it is IrEnumConstructorCall)
+                                listOf(it, IrInstanceInitializerCallImpl(declaration.startOffset, declaration.startOffset,
+                                        irClass.descriptor))
+                            else null
+                        }
                     }
                     return declaration
                 }
@@ -173,6 +175,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
             val defaultClass = IrClassImpl(startOffset, endOffset, IrDeclarationOrigin.DEFINED, defaultClassDescriptor)
 
             val constructors = mutableSetOf<ClassConstructorDescriptor>()
+            var primaryConstructor: ClassConstructorDescriptor? = null
 
             descriptor.constructors.forEach {
                 val loweredEnumConstructor = loweredEnumConstructors[it]!!
@@ -181,6 +184,8 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                 constructors.add(constructorDescriptor)
                 defaultClass.declarations.add(constructor)
                 defaultEnumEntryConstructors.put(loweredEnumConstructor, constructorDescriptor)
+                if (loweredEnumConstructor.isPrimary)
+                    primaryConstructor = constructorDescriptor
 
                 val irConstructor = descriptorToIrConstructorWithDefaultArguments[loweredEnumConstructor]
                 if (irConstructor != null) {
@@ -194,7 +199,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
             }
 
             val memberScope = SimpleMemberScope(irClass.descriptor.unsubstitutedMemberScope.getContributedDescriptors().toList())
-            defaultClassDescriptor.initialize(memberScope, constructors, null)
+            defaultClassDescriptor.initialize(memberScope, constructors, primaryConstructor)
 
             return defaultClass
         }

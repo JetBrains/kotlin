@@ -25,11 +25,11 @@ internal class KonanLower(val context: Context) {
         phaser.phase(KonanPhase.LOWER_ENUMS) {
             EnumClassLowering(context).run(irFile)
         }
-        phaser.phase(KonanPhase.LOWER_SHARED_VARIABLES) {
-            SharedVariablesLowering(context).runOnFilePostfix(irFile)
-        }
         phaser.phase(KonanPhase.LOWER_INITIALIZERS) {
             InitializersLowering(context).runOnFilePostfix(irFile)
+        }
+        phaser.phase(KonanPhase.LOWER_SHARED_VARIABLES) {
+            SharedVariablesLowering(context).runOnFilePostfix(irFile)
         }
         phaser.phase(KonanPhase.LOWER_DELEGATION) {
             PropertyDelegationLowering(context).lower(irFile)

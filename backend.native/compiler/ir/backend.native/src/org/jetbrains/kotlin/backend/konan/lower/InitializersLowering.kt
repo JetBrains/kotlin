@@ -2,18 +2,22 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.js.descriptorUtils.hasPrimaryConstructor
 
 internal class InitializersLowering(val context: Context) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
@@ -25,11 +29,15 @@ internal class InitializersLowering(val context: Context) : ClassLoweringPass {
 
         fun lowerInitializers() {
             collectAndRemoveInitializers()
-            lowerConstructors()
+            val initializerMethodDescriptor = createInitializerMethod()
+            lowerConstructors(initializerMethodDescriptor)
         }
 
         object STATEMENT_ORIGIN_ANONYMOUS_INITIALIZER :
                 IrStatementOriginImpl("ANONYMOUS_INITIALIZER")
+
+        object DECLARATION_ORIGIN_ANONYMOUS_INITIALIZER :
+                IrDeclarationOriginImpl("ANONYMOUS_INITIALIZER")
 
         private fun collectAndRemoveInitializers() {
             // Do with one traversal in order to preserve initializers order.
@@ -67,8 +75,35 @@ internal class InitializersLowering(val context: Context) : ClassLoweringPass {
             }
         }
 
-        private fun lowerConstructors() {
+        private fun createInitializerMethod(): FunctionDescriptor? {
+            if (irClass.descriptor.hasPrimaryConstructor())
+                return null // Place initializers in the primary constructor.
+            val initializerMethodDescriptor = SimpleFunctionDescriptorImpl.create(
+                    /* containingDeclaration        = */ irClass.descriptor,
+                    /* annotations                  = */ Annotations.EMPTY,
+                    /* name                         = */ "INITIALIZER".synthesizedName,
+                    /* kind                         = */ CallableMemberDescriptor.Kind.DECLARATION,
+                    /* source                       = */ SourceElement.NO_SOURCE)
+            initializerMethodDescriptor.initialize(
+                    /* receiverParameterType        = */ null,
+                    /* dispatchReceiverParameter    = */ irClass.descriptor.thisAsReceiverParameter,
+                    /* typeParameters               = */ listOf(),
+                    /* unsubstitutedValueParameters = */ listOf(),
+                    /* returnType                   = */ context.builtIns.unitType,
+                    /* modality                     = */ Modality.FINAL,
+                    /* visibility                   = */ Visibilities.PRIVATE)
+            val startOffset = irClass.startOffset
+            val endOffset = irClass.endOffset
+            val initializer = IrFunctionImpl(startOffset, endOffset, DECLARATION_ORIGIN_ANONYMOUS_INITIALIZER,
+                    initializerMethodDescriptor, IrBlockBodyImpl(startOffset, endOffset, initializers))
+            irClass.declarations.add(initializer)
+
+            return initializerMethodDescriptor
+        }
+
+        private fun lowerConstructors(initializerMethodDescriptor: FunctionDescriptor?) {
             irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
+
                 override fun visitClass(declaration: IrClass): IrStatement {
                     // Skip nested.
                     return declaration
@@ -79,15 +114,26 @@ internal class InitializersLowering(val context: Context) : ClassLoweringPass {
 
                     blockBody.statements.transformFlat {
                         when {
-                            it is IrInstanceInitializerCall -> initializers
-                            /**
-                             * IR for kotlin.Any is:
-                             * BLOCK_BODY
-                             *   DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
-                             *   INSTANCE_INITIALIZER_CALL classDescriptor='Any'
-                             *
-                             *   to avoid possible recursion we manually reject body generation for Any.
-                             */
+                            it is IrInstanceInitializerCall -> {
+                                if (initializerMethodDescriptor == null) {
+                                    assert(declaration.descriptor.isPrimary)
+                                    initializers
+                                } else {
+                                    val startOffset = it.startOffset
+                                    val endOffset = it.endOffset
+                                    listOf(IrCallImpl(startOffset, endOffset, initializerMethodDescriptor).apply {
+                                        dispatchReceiver = IrGetValueImpl(startOffset, endOffset, irClass.descriptor.thisAsReceiverParameter)
+                                    })
+                                }
+                            }
+                        /**
+                         * IR for kotlin.Any is:
+                         * BLOCK_BODY
+                         *   DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+                         *   INSTANCE_INITIALIZER_CALL classDescriptor='Any'
+                         *
+                         *   to avoid possible recursion we manually reject body generation for Any.
+                         */
                             it is IrDelegatingConstructorCall && irClass.descriptor == context.builtIns.any
                                     && it.descriptor == declaration.descriptor -> listOf()
                             else -> null
