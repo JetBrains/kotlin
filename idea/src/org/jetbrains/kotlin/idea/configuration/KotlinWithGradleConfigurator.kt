@@ -62,13 +62,10 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
             return ConfigureKotlinStatus.CONFIGURED
         }
 
-        val moduleGradleFile = getBuildGradleFile(module.project, getModuleFilePath(module))
-        if (moduleGradleFile != null && !isFileConfigured(moduleGradleFile)) {
-            return ConfigureKotlinStatus.CAN_BE_CONFIGURED
-        }
-
-        val projectGradleFile = getBuildGradleFile(module.project, getTopLevelProjectFilePath(module.project))
-        if (projectGradleFile != null && !isFileConfigured(projectGradleFile)) {
+        val buildFiles = listOf(getBuildGradleFile(module.project, getModuleFilePath(module)),
+                                getBuildGradleFile(module.project, getTopLevelProjectFilePath(module.project)))
+                .filterNotNull()
+        if (buildFiles.none(this::isFileConfigured)) {
             return ConfigureKotlinStatus.CAN_BE_CONFIGURED
         }
 
