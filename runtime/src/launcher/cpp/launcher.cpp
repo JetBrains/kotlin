@@ -18,19 +18,23 @@ OBJ_GETTER(setupArgs, int argc, char** argv) {
 }
 
 //--- main --------------------------------------------------------------------//
-extern "C" void Konan_start(const ObjHeader* );
+extern "C" KInt Konan_start(const ObjHeader* );
 
 int main(int argc, char** argv) {
   RuntimeState* state = InitRuntime();
 
-  if (state != nullptr) {
+  if (state == nullptr) {
+    return 2;
+  }
+
+  KInt exitStatus;
+  {
     ObjHolder args;
     setupArgs(argc, argv, args.slot());
-    Konan_start(args.obj());
+    exitStatus = Konan_start(args.obj());
   }
 
   DeinitRuntime(state);
 
-  // Yes, we have to follow Java convention and return zero.
-  return 0;
+  return exitStatus;
 }
