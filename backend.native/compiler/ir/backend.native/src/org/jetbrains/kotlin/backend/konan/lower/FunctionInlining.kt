@@ -165,12 +165,32 @@ internal class LambdaInliner(val parameterToArgument:
 
     //-------------------------------------------------------------------------//
 
-    fun getLambdaFunction(lambdaArgument: IrBlock): IrFunction? {
-        val statements = (lambdaArgument as IrContainerExpressionBase).statements
+    fun getLambdaFunction(lambdaArgument: IrExpression): IrFunction? {
+        if (lambdaArgument !is IrBlock) return null
+
+        if (lambdaArgument.origin != IrStatementOrigin.ANONYMOUS_FUNCTION &&
+                lambdaArgument.origin != IrStatementOrigin.LAMBDA) {
+
+            return null
+        }
+
+        // TODO: the following checks must be asserts, however it is not sane until the bugs are fixed.
+
+        val statements = lambdaArgument.statements
+        if (statements.size != 2) return null
+
         val irFunction = statements[0]
         if (irFunction !is IrFunction) return null                                          // TODO
-        val lambdaFunction = irFunction as IrFunction
-        return lambdaFunction
+
+        val irCallableReference = statements[1]
+        if (irCallableReference !is IrCallableReference ||
+                irCallableReference.descriptor.original != irFunction.descriptor ||
+                irCallableReference.getArguments().isNotEmpty()) {
+
+            return null
+        }
+
+        return irFunction
     }
 
     //-------------------------------------------------------------------------//
@@ -184,7 +204,7 @@ internal class LambdaInliner(val parameterToArgument:
         if (parameterArgument == null) return super.visitCall(irCall)                       // It is not function parameter.
 
         val lambdaArgument = parameterArgument.second
-        val lambdaFunction = getLambdaFunction(lambdaArgument as IrBlock)
+        val lambdaFunction = getLambdaFunction(lambdaArgument)
 
         if (lambdaFunction == null) return super.visitCall(irCall)                          // TODO
 
