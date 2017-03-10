@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.idea.configuration;
 
 import com.intellij.framework.library.LibraryVersionProperties;
-import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
@@ -30,7 +27,6 @@ import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider;
 import org.jetbrains.kotlin.idea.framework.KotlinLibraryUtilKt;
 import org.jetbrains.kotlin.idea.project.PlatformKt;
 import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt;
-import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -172,15 +168,6 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         Library jsRuntime = KotlinRuntimeLibraryUtilKt.findAllUsedLibraries(myProject).keySet().iterator().next();
         LibraryVersionProperties properties = KotlinLibraryUtilKt.getLibraryProperties(JSLibraryStdPresentationProvider.getInstance(), jsRuntime);
         assertEquals("1.0.6", properties.getVersionString());
-    }
-
-    private void doTestConfigureModulesWithNonDefaultSetup(KotlinWithLibraryConfigurator configurator) {
-        assertNoFilesInDefaultPaths();
-
-        Module[] modules = getModules();
-        for (Module module : modules) {
-            assertNotConfigured(module, configurator);
-        }
     }
 
     @SuppressWarnings("ConstantConditions")

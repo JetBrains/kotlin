@@ -57,6 +57,7 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
 
     private static final String EAP_VERSIONS_URL =
             "https://bintray.com/kotlin/kotlin-eap/kotlin/";
+    @NotNull private final String minimumVersion;
 
     private final ChooseModulePanel chooseModulePanel;
 
@@ -70,12 +71,14 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
     public ConfigureDialogWithModulesAndVersion(
             @NotNull Project project,
             @NotNull KotlinProjectConfigurator configurator,
-            @NotNull Collection<Module> excludeModules
+            @NotNull Collection<Module> excludeModules,
+            @NotNull String minimumVersion
     ) {
         super(project);
 
         setTitle("Configure Kotlin in Project");
 
+        this.minimumVersion = minimumVersion;
         init();
 
         ProgressManager.getInstance().run(new Task.Backgroundable(project, "Find Kotlin Maven plugin versions", false) {
@@ -121,7 +124,7 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
     private void loadKotlinVersions() {
         Collection<String> items;
         try {
-            items = loadVersions();
+            items = loadVersions(minimumVersion);
             hideLoader();
         }
         catch (Throwable t) {
@@ -169,7 +172,7 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
     }
 
     @NotNull
-    protected static Collection<String> loadVersions() throws Exception {
+    protected static Collection<String> loadVersions(String minimumVersion) throws Exception {
         List<String> versions = Lists.newArrayList();
 
         String bundledRuntimeVersion = KotlinRuntimeLibraryUtilKt.bundledRuntimeVersion();
@@ -204,7 +207,7 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
 
                 for (JsonElement element : docsElements) {
                     String versionNumber = element.getAsJsonObject().get("v").getAsString();
-                    if (VersionComparatorUtil.compare("1.0.0", versionNumber) <= 0) {
+                    if (VersionComparatorUtil.compare(minimumVersion, versionNumber) <= 0) {
                         versions.add(versionNumber);
                     }
                 }

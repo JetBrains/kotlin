@@ -44,6 +44,8 @@ class KotlinJavascriptMavenConfigurator : KotlinMavenConfigurator(null, false, K
     override val targetPlatform: TargetPlatform
         get() = JsPlatform
 
+    override fun getMinimumSupportedVersion() = "1.1.0"
+
     companion object {
         private val NAME = "js maven"
         private val PRESENTABLE_TEXT = "JavaScript Maven"

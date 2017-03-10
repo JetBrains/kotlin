@@ -76,6 +76,8 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         return KotlinPluginUtil.isGradleModule(module) && !KotlinPluginUtil.isAndroidGradleModule(module)
     }
 
+    protected open fun getMinimumSupportedVersion() = "1.0.0"
+
     private fun isFileConfigured(projectGradleFile: GroovyFile): Boolean {
         val fileText = projectGradleFile.text
         return containsDirective(fileText, applyPluginDirective) &&
@@ -85,7 +87,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
 
     @JvmSuppressWildcards
     override fun configure(project: Project, excludeModules: Collection<Module>) {
-        val dialog = ConfigureDialogWithModulesAndVersion(project, this, excludeModules)
+        val dialog = ConfigureDialogWithModulesAndVersion(project, this, excludeModules, getMinimumSupportedVersion())
 
         dialog.show()
         if (!dialog.isOK) return

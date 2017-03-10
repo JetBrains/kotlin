@@ -97,7 +97,7 @@ abstract class KotlinMavenConfigurator
     }
 
     override fun configure(project: Project, excludeModules: Collection<Module>) {
-        val dialog = ConfigureDialogWithModulesAndVersion(project, this, excludeModules)
+        val dialog = ConfigureDialogWithModulesAndVersion(project, this, excludeModules, getMinimumSupportedVersion())
 
         dialog.show()
         if (!dialog.isOK) return
@@ -117,6 +117,8 @@ abstract class KotlinMavenConfigurator
             collector.showNotification()
         }
     }
+
+    protected open fun getMinimumSupportedVersion() = "1.0.0"
 
     protected abstract fun isKotlinModule(module: Module): Boolean
     protected abstract fun isRelevantGoal(goalName: String): Boolean
