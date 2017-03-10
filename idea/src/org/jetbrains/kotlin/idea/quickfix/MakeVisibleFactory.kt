@@ -40,11 +40,11 @@ object MakeVisibleFactory  : KotlinIntentionActionsFactory() {
         @Suppress("UNCHECKED_CAST")
         val factory = diagnostic.factory as DiagnosticFactory3<*, DeclarationDescriptor, *, DeclarationDescriptor>
         val descriptor = factory.cast(diagnostic).c as? DeclarationDescriptorWithVisibility ?: return emptyList()
-        val declaration = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) as? KtModifierListOwner ?: return emptyList()
+        val declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? KtModifierListOwner ?: return emptyList()
 
         val module = DescriptorUtils.getContainingModule(descriptor)
         val targetVisibilities = when (descriptor.visibility) {
-            PRIVATE -> if (module != usageModule) listOf(PUBLIC) else listOf(PUBLIC, INTERNAL)
+            PRIVATE, INVISIBLE_FAKE -> if (module != usageModule) listOf(PUBLIC) else listOf(PUBLIC, INTERNAL)
             else -> listOf(PUBLIC)
         }
 

@@ -1663,6 +1663,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/increaseVisibility/privateTopLevelVarWithSetterInFile.before.Main.kt");
             doTestWithExtraFile(fileName);
         }
+
     }
 
     @TestMetadata("idea/testData/quickfix/migration")
