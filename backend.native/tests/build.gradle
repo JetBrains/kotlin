@@ -1192,6 +1192,10 @@ task main_exception(type: RunKonanTest) {
     source = "runtime/basic/main_exception.kt"
 }
 
+task failed_assert(type: RunKonanTest) {
+    expectedExitStatus = 1
+    source = "runtime/basic/failed_assert.kt"
+}
 
 task initializers0(type: RunKonanTest) {
     goldValue = "main\n" +
