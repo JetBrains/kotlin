@@ -6,6 +6,8 @@ package kotlin
  * information on enum classes.
  */
 public abstract class Enum<E: Enum<E>>(public val name: String, public val ordinal: Int): Comparable<E> {
+    public companion object {
+    }
 
     public override final fun compareTo(other: E): Int { return ordinal - other.ordinal }
 

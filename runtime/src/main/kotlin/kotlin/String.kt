@@ -3,6 +3,9 @@ package kotlin
 
 @ExportTypeInfo("theStringTypeInfo")
 public final class String : Comparable<String>, CharSequence {
+    public companion object {
+    }
+
     @SymbolName("Kotlin_String_hashCode")
     external public override fun hashCode(): Int
 
