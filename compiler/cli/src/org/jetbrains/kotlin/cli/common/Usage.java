@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.cli.common;
 
-import com.sampullara.cli.Argument;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.ValueDescription;
+import org.jetbrains.kotlin.cli.common.parser.com.sampullara.cli.Argument;
 
 import java.io.PrintStream;
 import java.lang.reflect.Field;

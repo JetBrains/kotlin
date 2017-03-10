@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.cli.common.arguments;
 
 import com.intellij.util.SmartList;
-import com.sampullara.cli.Argument;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.cli.common.parser.com.sampullara.cli.Argument;
 
 import java.io.Serializable;
 import java.util.List;

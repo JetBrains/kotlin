@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.cli.common.arguments;
 
-import com.sampullara.cli.Argument;
+import org.jetbrains.kotlin.cli.common.parser.com.sampullara.cli.Argument;
 
 public class K2MetadataCompilerArguments extends CommonCompilerArguments {
     public static final long serialVersionUID = 0L;

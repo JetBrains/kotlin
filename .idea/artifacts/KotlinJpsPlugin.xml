@@ -11,7 +11,6 @@
       <element id="directory" name="META-INF">
         <element id="dir-copy" path="$PROJECT_DIR$/jps-plugin/src/META-INF" />
       </element>
-      <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/cli-parser-1.1.2.jar" path-in-jar="/" />
       <element id="module-output" name="cli-common" />
       <element id="module-output" name="idea-jps-common" />
       <element id="module-output" name="jps-plugin" />

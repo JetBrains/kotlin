@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.generators.arguments
 
-import com.sampullara.cli.Argument
 import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.cli.common.parser.com.sampullara.cli.Argument
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File

@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.compilerRunner;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ComparatorUtil;
-import com.sampullara.cli.Argument;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
+import org.jetbrains.kotlin.cli.common.parser.com.sampullara.cli.Argument;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

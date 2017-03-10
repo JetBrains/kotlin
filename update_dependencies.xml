@@ -1,4 +1,4 @@
-<project name="Update Dependencies" default="update" xmlns:if="ant:if" xmlns:unless="ant:unless">
+<project xmlns:if="ant:if" xmlns:unless="ant:unless" name="Update Dependencies" default="update">
     <import file="common.xml" optional="false"/>
 
     <property name="automerge_dummy" value="This property is used to trick git merge. Do not delete empty lines around."/>
@@ -226,9 +226,6 @@
 
         <!-- Android SDK platform -->
         <ant antfile="download_android_sdk.xml" target="download_android_sdk"/>
-
-        <!-- CLI Parser -->
-        <get-maven-library prefix="com/github/spullara/cli-parser" lib="cli-parser" version="1.1.2"/>
 
         <!-- Rhino -->
         <get-maven-library prefix="org/mozilla" lib="rhino" version="1.7.6"/>

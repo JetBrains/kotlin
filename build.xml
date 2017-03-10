@@ -1,4 +1,4 @@
-<project name="Kotlin" default="dist" xmlns:if="ant:if" xmlns:unless="ant:unless">
+<project xmlns:if="ant:if" xmlns:unless="ant:unless" name="Kotlin" default="dist">
     <import file="common.xml" optional="false"/>
     <property file="resources/kotlinManifest.properties"/>
 
@@ -72,7 +72,6 @@
         <fileset dir="${basedir}/lib" includes="**/*.jar"/>
         <fileset dir="${dependencies}" includes="jansi.jar"/>
         <fileset dir="${dependencies}" includes="jline.jar"/>
-        <fileset dir="${dependencies}" includes="cli-parser-1.1.2.jar"/>
         <fileset dir="${basedir}/ideaSDK/jps" includes="jps-model.jar"/>
     </path>
 
@@ -589,7 +588,6 @@
                 <zipfileset src="${idea.sdk}/lib/oromatcher.jar"/>
                 <zipfileset src="${idea.sdk}/jps/jps-model.jar"/>
                 <zipfileset src="${dependencies}/jline.jar"/>
-                <zipfileset src="${dependencies}/cli-parser-1.1.2.jar"/>
                 <zipfileset src="${protobuf.jar}"/>
 
                 <manifest>

@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.cli.common.arguments;
 
-import com.sampullara.cli.Argument;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.cli.common.parser.com.sampullara.cli.Argument;
 
 import static org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.CALL;
 import static org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.NO_CALL;

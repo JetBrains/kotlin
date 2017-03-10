@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import com.intellij.util.xmlb.XmlSerializerUtil
-import com.sampullara.cli.Args
+import org.jetbrains.kotlin.cli.common.parser.com.sampullara.cli.Args
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.util.*
