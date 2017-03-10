@@ -6,4 +6,6 @@ class KotlinUastTypesTest : AbstractKotlinTypesTest() {
     @Test fun testLocalDeclarations() = doTest("LocalDeclarations")
 
     @Test fun testUnexpectedContainerException() = doTest("UnexpectedContainerException")
+
+    @Test fun testCycleInTypeParameters() = doTest("cycleInTypeParameters")
 }
