@@ -142,6 +142,9 @@ public class AssertionError : Error {
     constructor(message: String) : super(message) {
     }
 
+    constructor(message: Any) : super(message.toString()) {
+    }
+
     constructor(message: String, cause: Throwable) : super(message, cause) {
     }
 }
