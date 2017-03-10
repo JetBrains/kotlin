@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,8 +68,7 @@ import java.util.List;
 
 import static kotlin.collections.CollectionsKt.firstOrNull;
 import static org.jetbrains.kotlin.descriptors.Visibilities.PUBLIC;
-import static org.jetbrains.kotlin.diagnostics.Errors.CYCLIC_INHERITANCE_HIERARCHY;
-import static org.jetbrains.kotlin.diagnostics.Errors.TYPE_PARAMETERS_IN_ENUM;
+import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.TYPE;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.*;
 
@@ -269,6 +268,9 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
                 if (classInfo.getClassKind() == ClassKind.ENUM_CLASS) {
                     c.getTrace().report(TYPE_PARAMETERS_IN_ENUM.on(typeParameterList));
+                }
+                if (classInfo.getClassKind() == ClassKind.OBJECT) {
+                    c.getTrace().report(TYPE_PARAMETERS_IN_OBJECT.on(typeParameterList));
                 }
 
                 List<KtTypeParameter> typeParameters = typeParameterList.getParameters();

@@ -3324,6 +3324,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classObjects/resolveFunctionInsideClassObject.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("typeParametersInObject.kt")
+            public void testTypeParametersInObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classObjects/typeParametersInObject.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/constructorConsistency")
