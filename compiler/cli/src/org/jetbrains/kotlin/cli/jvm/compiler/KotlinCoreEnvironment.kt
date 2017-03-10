@@ -85,6 +85,7 @@ import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
+import org.jetbrains.kotlin.extensions.PreprocessedVirtualFileFactoryExtension
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
@@ -160,6 +161,7 @@ class KotlinCoreEnvironment private constructor(
         PackageFragmentProviderExtension.registerExtensionPoint(project)
         StorageComponentContainerContributor.registerExtensionPoint(project)
         DeclarationAttributeAltererExtension.registerExtensionPoint(project)
+        PreprocessedVirtualFileFactoryExtension.registerExtensionPoint(project)
 
         for (registrar in configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
             registrar.registerProjectComponents(project, configuration)

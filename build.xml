@@ -766,7 +766,7 @@
                 <attribute name="Built-By" value="${manifest.impl.vendor}"/>
 
                 <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.daemon-client}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.daemon.client}"/>
                 <attribute name="Implementation-Version" value="${build.number}"/>
             </manifest>
         </jar>
@@ -784,6 +784,27 @@
                 <attribute name="Implementation-Version" value="${build.number}"/>
             </manifest>
         </jar>
+    </target>
+
+    <target name="compiler-client-embeddable">
+        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="dependencies/jarjar.jar"/>
+
+        <jarjar jarfile="${output}/kotlin-compiler-client-embeddable-before-shrink.jar">
+            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+            <zipfileset src="${kotlin-home}/lib/kotlin-daemon-client.jar"/>
+            <fileset dir="${output}/classes/compiler"
+                    includes="org/jetbrains/kotlin/daemon/common/** org/jetbrains/kotlin/cli/common/messages/CompilerMessage*  org/jetbrains/kotlin/cli/common/messages/Message*  org/jetbrains/kotlin/cli/common/repl/**"/>
+
+            <manifest>
+                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
+                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler.client,embeddable}"/>
+                <attribute name="Implementation-Version" value="${build.number}"/>
+                <attribute name="Class-Path" value="kotlin-stdlib.jar"/>
+            </manifest>
+        </jarjar>
+
+        <shrink configuration="${basedir}/compiler/compiler-client.pro"/>
     </target>
 
     <target name="android-extensions-compiler">
@@ -875,6 +896,29 @@
             <fileset dir="${output}/classes/sam-with-receiver-compiler-plugin"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
             <fileset dir="${basedir}/plugins/sam-with-receiver/sam-with-receiver-cli/src" includes="META-INF/services/**"/>
+        </jar>
+    </target>
+
+    <target name="source-sections-compiler-plugin">
+        <cleandir dir="${output}/classes/source-sections-compiler-plugin"/>
+        <javac2 destdir="${output}/classes/source-sections-compiler-plugin" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
+            <withKotlin modulename="source-sections">
+                <compilerarg value="-version"/>
+            </withKotlin>
+            <skip pattern="kotlin/Metadata"/>
+            <src>
+                <pathelement path="plugins/source-sections/source-sections-compiler/src"/>
+            </src>
+            <classpath>
+                <pathelement path="${idea.sdk}/core/intellij-core.jar"/>
+                <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
+            </classpath>
+        </javac2>
+
+        <jar destfile="${kotlin-home}/lib/source-sections-compiler-plugin.jar">
+            <fileset dir="${output}/classes/source-sections-compiler-plugin"/>
+            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+            <fileset dir="${basedir}/plugins/source-sections/source-sections-compiler/src" includes="META-INF/services/**"/>
         </jar>
     </target>
 
@@ -1340,11 +1384,11 @@
             depends="builtins,stdlib,kotlin-test,core,reflection,pack-runtime,pack-runtime-sources,script-runtime,mock-runtime-for-test"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler,allopen-compiler-plugin,noarg-compiler-plugin,sam-with-receiver-compiler-plugin,annotation-processing-under-jdk8,daemon-client,kotlin-build-common-test"
+            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler,allopen-compiler-plugin,noarg-compiler-plugin,sam-with-receiver-compiler-plugin,source-sections-compiler-plugin,annotation-processing-under-jdk8,daemon-client,kotlin-build-common-test"
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler,allopen-compiler-plugin,noarg-compiler-plugin,sam-with-receiver-compiler-plugin,annotation-processing-under-jdk8"
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler,allopen-compiler-plugin,noarg-compiler-plugin,sam-with-receiver-compiler-plugin,source-sections-compiler-plugin,annotation-processing-under-jdk8"
             description="Builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc"/>
 
     <target name="dist-quick-compiler-only"

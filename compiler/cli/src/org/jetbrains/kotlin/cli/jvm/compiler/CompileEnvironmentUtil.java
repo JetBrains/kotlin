@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleScriptData;
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
+import org.jetbrains.kotlin.extensions.PreprocessedFileCreator;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -161,6 +162,8 @@ public class CompileEnvironmentUtil {
         final Set<VirtualFile> processedFiles = Sets.newHashSet();
         final List<KtFile> result = Lists.newArrayList();
 
+        final PreprocessedFileCreator virtualFileCreator = new PreprocessedFileCreator(project);
+
         for (String sourceRootPath : sourceRoots) {
             if (sourceRootPath == null) {
                 continue;
@@ -190,7 +193,8 @@ public class CompileEnvironmentUtil {
                 @Override
                 public Unit invoke(File file) {
                     if (file.isFile()) {
-                        VirtualFile virtualFile = localFileSystem.findFileByPath(file.getAbsolutePath());
+                        VirtualFile originalVirtualFile = localFileSystem.findFileByPath(file.getAbsolutePath());
+                        VirtualFile virtualFile = originalVirtualFile != null ? virtualFileCreator.create(originalVirtualFile) : null;
                         if (virtualFile != null && !processedFiles.contains(virtualFile)) {
                             processedFiles.add(virtualFile);
                             PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
