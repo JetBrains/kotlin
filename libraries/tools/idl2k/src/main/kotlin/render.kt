@@ -17,6 +17,7 @@
 package org.jetbrains.idl2k
 
 import org.jetbrains.idl2k.util.mapEnumConstant
+import java.io.*
 import java.math.BigInteger
 
 private fun <O : Appendable> O.indent(commented: Boolean = false, level: Int) {
@@ -146,7 +147,14 @@ private fun GenerateFunction.isCommented(parent: String) =
 private fun GenerateAttribute.isRequiredFunctionArgument(owner: String, functionName: String) = "$owner.$functionName.$name" in requiredArguments
 private fun GenerateFunction.fixRequiredArguments(parent: String) = copy(arguments = arguments.map { arg -> arg.copy(initializer = if (arg.isRequiredFunctionArgument(parent, name)) null else arg.initializer) })
 
-fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, enums: List<EnumDefinition>, typeNamesToUnions: Map<String, List<String>>, iface: GenerateTraitOrClass, markerAnnotation: Boolean = false) {
+fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, enums: List<EnumDefinition>, typeNamesToUnions: Map<String, List<String>>, iface: GenerateTraitOrClass, markerAnnotation: Boolean = false, mdnCache: MDNDocumentationCache? = null) {
+    val url = "https://developer.mozilla.org/en/docs/Web/API/${iface.name}"
+    if (mdnCache?.checkInCache(url) == true) {
+        appendln("/**")
+        appendln(" * Exposes the JavaScript [${iface.name}]($url) to Kotlin")
+        appendln(" */")
+    }
+
     val allTypesAndEnums = allTypes.keys + enums.map { it.name }
 
     append("public external ")
@@ -374,12 +382,12 @@ fun Appendable.render(enumDefinition: EnumDefinition) {
     appendln()
 }
 
-fun Appendable.render(namespace: String, ifaces: List<GenerateTraitOrClass>, unions: GenerateUnionTypes, enums: List<EnumDefinition>) {
+fun Appendable.render(namespace: String, ifaces: List<GenerateTraitOrClass>, unions: GenerateUnionTypes, enums: List<EnumDefinition>, mdnCache: MDNDocumentationCache) {
     val declaredTypes = ifaces.associateBy { it.name }
 
     val allTypes = declaredTypes + unions.anonymousUnionsMap + unions.typedefsMarkersMap
     declaredTypes.values.filter { it.namespace == namespace }.forEach {
-        render(allTypes, enums, unions.typeNamesToUnionsMap, it)
+        render(allTypes, enums, unions.typeNamesToUnionsMap, it, mdnCache = mdnCache)
     }
 
     unions.anonymousUnionsMap.values.filter { it.namespace == "" || it.namespace == namespace }.forEach {

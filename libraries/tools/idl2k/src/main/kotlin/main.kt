@@ -1,10 +1,13 @@
 package org.jetbrains.idl2k
 
 import org.antlr.v4.runtime.ANTLRFileStream
-import java.io.File
+import java.io.*
+import java.net.*
 import java.util.*
+import kotlin.collections.HashSet
 
 fun main(args: Array<String>) {
+    val mdnCacheFile = File("target/mdn-cache.txt")
     val outDir = File("../../../js/js.libraries/src/generated")
     val srcDir = File("../../idl")
     if (!srcDir.exists()) {
@@ -26,7 +29,7 @@ fun main(args: Array<String>) {
         )
     }
 
-    println("Generating...")
+    println("Prepare...")
 
     val repository = repositoryPre.copy(typeDefs = repositoryPre.typeDefs.mapValues { it.value.copy(mapType(repositoryPre, it.value.types)) })
 
@@ -45,6 +48,35 @@ fun main(args: Array<String>) {
 
     outDir.deleteRecursively()
     outDir.mkdirs()
+
+    println("Processing MDN")
+    val oldMdnCache = if (mdnCacheFile.canRead()) MDNDocumentationCache.read(mdnCacheFile) else MDNDocumentationCache.Empty
+    val newMdnCacheExisting = HashSet(oldMdnCache.existing)
+    val newMdnCacheNonExisting = HashSet(oldMdnCache.nonExisting)
+
+    for (iface in definitions) {
+        val url = "https://developer.mozilla.org/en/docs/Web/API/${iface.name}"
+        val addUrl = when (oldMdnCache.checkInCache(url)) {
+            true -> true
+            false -> false
+            else -> try {
+                val text = URL(url).openStream().reader().use { it.readText() }
+                text.contains(iface.name, ignoreCase = true)
+            } catch (ignore: IOException) {
+                false
+            }
+        }
+
+        if (addUrl)
+            newMdnCacheExisting.add(url)
+        else
+            newMdnCacheNonExisting.add(url)
+    }
+
+    val mdnCache = MDNDocumentationCache(newMdnCacheExisting, newMdnCacheNonExisting)
+    MDNDocumentationCache.writeTo(mdnCache, mdnCacheFile)
+
+    println("Generating...")
 
     allPackages.forEach { pkg ->
         File(outDir, pkg + ".kt").bufferedWriter().use { w ->
@@ -68,7 +100,7 @@ fun main(args: Array<String>) {
             }
             w.appendln()
 
-            w.render(pkg, definitions, unions, repository.enums.values.toList())
+            w.render(pkg, definitions, unions, repository.enums.values.toList(), mdnCache)
         }
     }
 }
