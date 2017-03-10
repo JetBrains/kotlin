@@ -87,10 +87,10 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
@@ -152,6 +152,19 @@ class KotlinCoreEnvironment private constructor(
 
     init {
         val project = projectEnvironment.project
+
+        ExpressionCodegenExtension.registerExtensionPoint(project)
+        SyntheticResolveExtension.registerExtensionPoint(project)
+        ClassBuilderInterceptorExtension.registerExtensionPoint(project)
+        AnalysisHandlerExtension.registerExtensionPoint(project)
+        PackageFragmentProviderExtension.registerExtensionPoint(project)
+        StorageComponentContainerContributor.registerExtensionPoint(project)
+        DeclarationAttributeAltererExtension.registerExtensionPoint(project)
+
+        for (registrar in configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
+            registrar.registerProjectComponents(project, configuration)
+        }
+
         project.registerService(DeclarationProviderFactoryService::class.java, CliDeclarationProviderFactoryService(sourceFiles))
         project.registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl())
 
@@ -200,18 +213,6 @@ class KotlinCoreEnvironment private constructor(
         val finderFactory = CliVirtualFileFinderFactory(rootsIndex)
         project.registerService(MetadataFinderFactory::class.java, finderFactory)
         project.registerService(VirtualFileFinderFactory::class.java, finderFactory)
-
-        ExpressionCodegenExtension.registerExtensionPoint(project)
-        SyntheticResolveExtension.registerExtensionPoint(project)
-        ClassBuilderInterceptorExtension.registerExtensionPoint(project)
-        AnalysisHandlerExtension.registerExtensionPoint(project)
-        PackageFragmentProviderExtension.registerExtensionPoint(project)
-        StorageComponentContainerContributor.registerExtensionPoint(project)
-        DeclarationAttributeAltererExtension.registerExtensionPoint(project)
-
-        for (registrar in configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
-            registrar.registerProjectComponents(project, configuration)
-        }
     }
 
     private val applicationEnvironment: CoreApplicationEnvironment
