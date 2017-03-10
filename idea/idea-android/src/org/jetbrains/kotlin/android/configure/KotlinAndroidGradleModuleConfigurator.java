@@ -74,17 +74,17 @@ public class KotlinAndroidGradleModuleConfigurator extends KotlinWithGradleConfi
 
     @NotNull
     @Override
-    public String getRuntimeLibrary(@Nullable Sdk sdk) {
-        if (sdk != null) {
-            JavaSdkVersion version = JavaSdk.getInstance().getVersion(sdk);
-            if (version != null && version.isAtLeast(JavaSdkVersion.JDK_1_8)) {
+    public String getRuntimeLibrary(@Nullable Sdk sdk, @NotNull String version) {
+        if (sdk != null && KotlinRuntimeLibraryUtilKt.hasJreSpecificRuntime(version)) {
+            JavaSdkVersion sdkVersion = JavaSdk.getInstance().getVersion(sdk);
+            if (sdkVersion != null && sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8)) {
                 // Android dex can't convert our kotlin-stdlib-jre8 artifact, so use jre7 instead (KT-16530)
                 return KotlinWithGradleConfigurator.Companion.getDependencySnippet(
                         KotlinRuntimeLibraryUtilKt.getMAVEN_STDLIB_ID_JRE7());
             }
         }
 
-        return super.getRuntimeLibrary(sdk);
+        return super.getRuntimeLibrary(sdk, version);
     }
 
     KotlinAndroidGradleModuleConfigurator() {

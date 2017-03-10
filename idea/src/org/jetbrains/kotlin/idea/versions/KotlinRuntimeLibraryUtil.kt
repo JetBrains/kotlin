@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.idea.versions
 
-import com.google.common.collect.Sets
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModuleUtil
@@ -42,12 +40,10 @@ import com.intellij.util.PathUtil.getLocalPath
 import com.intellij.util.containers.MultiMap
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.ScalarIndexExtension
+import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
-import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
-import org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator
-import org.jetbrains.kotlin.idea.configuration.createConfigureKotlinNotificationCollector
-import org.jetbrains.kotlin.idea.configuration.getConfiguratorByName
+import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.framework.*
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
@@ -297,7 +293,11 @@ fun hasKotlinJsKjsmFile(project: Project, scope: GlobalSearchScope): Boolean {
     }
 }
 
-fun getStdlibArtifactId(sdk: Sdk?): String {
+fun getStdlibArtifactId(sdk: Sdk?, version: String): String {
+    if (!hasJreSpecificRuntime(version)) {
+        return MAVEN_STDLIB_ID
+    }
+
     val sdkVersion = sdk?.let { JavaSdk.getInstance().getVersion(it) }
     val artifactId = when (sdkVersion) {
         JavaSdkVersion.JDK_1_8, JavaSdkVersion.JDK_1_9 -> MAVEN_STDLIB_ID_JRE8
@@ -306,6 +306,11 @@ fun getStdlibArtifactId(sdk: Sdk?): String {
     }
     return artifactId
 }
+
+fun hasJreSpecificRuntime(version: String): Boolean =
+        VersionComparatorUtil.compare(version, "1.1.0") >= 0 ||
+        isSnapshot(version) ||
+        version == "default_version" /* for tests */
 
 val MAVEN_STDLIB_ID = "kotlin-stdlib"
 val MAVEN_STDLIB_ID_JRE7 = "kotlin-stdlib-jre7"

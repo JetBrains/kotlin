@@ -159,7 +159,7 @@ fun hasKotlinFilesInSources(module: Module): Boolean {
 }
 
 fun isSnapshot(version: String): Boolean {
-    return version.contains("SNAPSHOT")
+    return version.contains("SNAPSHOT", ignoreCase = true)
 }
 
 fun isEap(version: String): Boolean {

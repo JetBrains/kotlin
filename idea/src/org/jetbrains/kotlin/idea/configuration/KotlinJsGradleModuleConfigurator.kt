@@ -28,7 +28,7 @@ class KotlinJsGradleModuleConfigurator : KotlinWithGradleConfigurator() {
 
     override val applyPluginDirective: String = APPLY_KOTLIN_JS
 
-    override fun getDependencyDirective(sdk: Sdk?): String {
+    override fun getDependencyDirective(sdk: Sdk?, version: String): String {
         return KotlinWithGradleConfigurator.getDependencySnippet(MAVEN_JS_STDLIB_ID)
     }
 

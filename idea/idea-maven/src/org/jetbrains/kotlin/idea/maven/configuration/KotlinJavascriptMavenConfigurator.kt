@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 
 class KotlinJavascriptMavenConfigurator : KotlinMavenConfigurator(null, false, KotlinJavascriptMavenConfigurator.NAME, KotlinJavascriptMavenConfigurator.PRESENTABLE_TEXT) {
 
-    override fun getStdlibArtifactId(module: Module) = MAVEN_JS_STDLIB_ID
+    override fun getStdlibArtifactId(module: Module, version: String) = MAVEN_JS_STDLIB_ID
 
     override fun isKotlinModule(module: Module): Boolean {
         return hasKotlinJsRuntimeInScope(module)

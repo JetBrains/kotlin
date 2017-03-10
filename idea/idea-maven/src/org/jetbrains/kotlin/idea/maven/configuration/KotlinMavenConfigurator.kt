@@ -122,7 +122,7 @@ abstract class KotlinMavenConfigurator
     protected abstract fun isRelevantGoal(goalName: String): Boolean
 
     protected abstract fun createExecutions(pomFile: PomFile, kotlinPlugin: MavenDomPlugin, module: Module)
-    protected abstract fun getStdlibArtifactId(module: Module): String
+    protected abstract fun getStdlibArtifactId(module: Module, version: String): String
 
     fun changePomFile(
             module: Module,
@@ -140,7 +140,7 @@ abstract class KotlinMavenConfigurator
         val pom = PomFile.forFileOrNull(file as XmlFile) ?: return
         pom.addProperty(KOTLIN_VERSION_PROPERTY, version)
 
-        pom.addDependency(MavenId(GROUP_ID, getStdlibArtifactId(module), "\${$KOTLIN_VERSION_PROPERTY}"), MavenArtifactScope.COMPILE, null, false, null)
+        pom.addDependency(MavenId(GROUP_ID, getStdlibArtifactId(module, version), "\${$KOTLIN_VERSION_PROPERTY}"), MavenArtifactScope.COMPILE, null, false, null)
         if (testArtifactId != null) {
             pom.addDependency(MavenId(GROUP_ID, testArtifactId, "\${$KOTLIN_VERSION_PROPERTY}"), MavenArtifactScope.TEST, null, false, null)
         }
