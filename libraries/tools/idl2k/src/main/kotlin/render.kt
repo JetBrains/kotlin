@@ -159,7 +159,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, enums: List<E
         GenerateDefinitionKind.INTERFACE -> append("interface ")
     }
 
-    val allSuperTypes = iface.allSuperTypes(allTypes)
+    val allSuperTypes = iface.allSuperTypes(allTypes + kotlinBuiltinInterfaces)
     val allSuperTypesNames = allSuperTypes.map { it.name }.toSet()
 
     append(iface.name)
@@ -171,7 +171,8 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, enums: List<E
     val superTypesExclude = inheritanceExclude[iface.name] ?: emptySet()
     val superTypesWithCalls =
                     iface.superTypes.filter { it in allSuperTypesNames }.filter { it !in superTypesExclude } +
-                    (typeNamesToUnions[iface.name] ?: emptyList())
+                    (typeNamesToUnions[iface.name] ?: emptyList()) +
+                    (iface.superTypes.filter { it.substringBefore("<") in kotlinBuiltinInterfaces }) // TODO in theory we have to parse type but for now it is the only place needs it so let's just cut string
 
     if (superTypesWithCalls.isNotEmpty()) {
         superTypesWithCalls.joinTo(this, ", ", " : ")

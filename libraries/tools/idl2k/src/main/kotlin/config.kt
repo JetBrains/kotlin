@@ -77,3 +77,16 @@ val requiredArguments = setOf(
 val inheritanceExclude = mapOf(
         "SVGAElement" to setOf("HTMLHyperlinkElementUtils")
 )
+
+val kotlinBuiltinInterfaces = mapOf(
+        "ItemArrayLike" to GenerateTraitOrClass("ItemArrayLike", "org.w3c.dom", GenerateDefinitionKind.INTERFACE, emptyList(),
+                memberAttributes = mutableListOf(GenerateAttribute("length", SimpleType("Int", false), null, false, AttributeKind.VAL, false, false, false, false)),
+                memberFunctions = mutableListOf(GenerateFunction("item", DynamicType, listOf(
+                        GenerateAttribute("index", SimpleType("Int", false), null, false, AttributeKind.ARGUMENT, false, false, false, false)
+                ), NativeGetterOrSetter.NONE, false, false)),
+                constants = emptyList(),
+                generateBuilderFunction = false,
+                primaryConstructor = null,
+                secondaryConstructors = emptyList()
+                )
+)

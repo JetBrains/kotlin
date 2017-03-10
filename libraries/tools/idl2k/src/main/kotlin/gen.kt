@@ -161,7 +161,7 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateT
         ConstructorWithSuperTypeCall(constructorAsFunction, secondaryConstructor)
     }
 
-    return GenerateTraitOrClass(iface.name, iface.namespace, entityKind, (iface.superTypes + extensions.map { it.name }).distinct(),
+    val result = GenerateTraitOrClass(iface.name, iface.namespace, entityKind, (iface.superTypes + extensions.map { it.name }).distinct(),
             memberAttributes = iface.mapAttributes(repository).toMutableList(),
             memberFunctions = iface.mapOperations(repository).toMutableList(),
             constants = (iface.constants.map { it.mapConstant(repository) } + extensions.flatMap { it.constants.map { it.mapConstant(repository) } }.distinct().toList()),
@@ -169,6 +169,19 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateT
             secondaryConstructors = secondaryConstructorsWithCall,
             generateBuilderFunction = iface.dictionary
     )
+
+    return markAsArrayLikeIfApplicable(result)
+}
+
+fun markAsArrayLikeIfApplicable(iface: GenerateTraitOrClass): GenerateTraitOrClass {
+    fun isInt(type: Type) = type is SimpleType && type.type == "Int"
+
+    val lengthProperty = iface.memberAttributes.singleOrNull { it.name == "length" && isInt(it.type)  }
+    val itemAccessFunction = iface.memberFunctions.singleOrNull { it.name == "item" && it.arguments.map { isInt(it.type) } == listOf(true) && it.returnType != UnitType }
+
+    if (lengthProperty == null || itemAccessFunction == null) return iface
+
+    return iface.copy(superTypes = iface.superTypes + "ItemArrayLike<${itemAccessFunction.returnType.dropNullable().render()}>")
 }
 
 fun generateConstructorAsFunction(repository: Repository, constructor: ExtendedAttribute) = generateFunction(

@@ -50,7 +50,7 @@ fun GenerateTraitOrClass.allSuperTypes(all: Map<String, GenerateTraitOrClass>) =
 
 tailrec fun allSuperTypesImpl(roots: List<GenerateTraitOrClass>, all: Map<String, GenerateTraitOrClass>, result: MutableSet<GenerateTraitOrClass>) {
     if (roots.isNotEmpty()) {
-        allSuperTypesImpl(roots.flatMap { it.superTypes }.map { all[it] }.filterNotNull().filter { result.add(it) }, all, result)
+        allSuperTypesImpl(roots.flatMap { it.superTypes }.map { all[it] ?: all[it.substringBefore("<")] }.filterNotNull().filter { result.add(it) }, all, result)
     }
 }
 
