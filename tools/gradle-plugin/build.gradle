@@ -1,0 +1,74 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: "java"
+apply plugin: "kotlin"
+
+// TODO: move this code to top level (the same for backend.native)
+// Copied from backend.native
+allprojects {
+    repositories {
+        maven {
+            url 'http://oss.sonatype.org/content/repositories/snapshots'
+        }
+    }
+
+    configurations.all {
+        // kotlin-compiler module includes Kotlin runtime bundled;
+        // make Gradle aware of this to avoid multiple Kotlin runtimes in classpath:
+        resolutionStrategy.dependencySubstitution {
+            substitute module('org.jetbrains.kotlin:kotlin-runtime') with module(kotlinCompilerModule)
+            substitute module('org.jetbrains.kotlin:kotlin-stdlib')  with module(kotlinCompilerModule)
+            substitute module('org.jetbrains.kotlin:kotlin-reflect') with module(kotlinCompilerModule)
+        }
+        // TODO: probably we should use kotlin-compiler without bundled runtime
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    konanCompiler
+}
+
+evaluationDependsOn(':tools:helpers')
+dependencies {
+    // TODO: do we need it?
+    konanCompiler project(':backend.native')
+
+    compile project(':tools:helpers')
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile gradleApi()
+}
+
+jar {
+    dependsOn(':tools:helpers:jar')
+    from (rootProject.findProject(':tools:helpers').sourceSets.main.output)
+}
+
+task dist(type: Copy) {
+    dependsOn(jar)
+    destinationDir project.file('dist')
+    from jar.outputs.files
+}
+
+task copy_to_samples(type: Copy) {
+    dependsOn(dist)
+    destinationDir rootProject.file('samples')
+    from dist.outputs.files
+}
+
+clean {
+    doFirst {
+        delete project.file('dist')
+    }
+}
