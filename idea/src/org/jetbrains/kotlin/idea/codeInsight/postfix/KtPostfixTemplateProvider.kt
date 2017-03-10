@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiverOrThis
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -107,16 +108,29 @@ internal object KtPostfixTemplatePsiInfo : PostfixTemplatePsiInfo() {
 }
 
 internal fun createExpressionSelector(
-        // Do not suggest expressions like 'val a = 1'/'for ...'
         checkCanBeUsedAsValue: Boolean = true,
         statementsOnly: Boolean = false,
         typePredicate: ((KotlinType) -> Boolean)? = null
-): PostfixTemplateExpressionSelector = KtExpressionPostfixTemplateSelector(statementsOnly, checkCanBeUsedAsValue, typePredicate)
+): PostfixTemplateExpressionSelector {
+    val predicate: ((KtExpression, BindingContext) -> Boolean)? =
+            if (typePredicate != null) { expression, bindingContext ->
+                    expression.getType(bindingContext)?.let(typePredicate) ?: false
+            }
+            else null
+    return createExpressionSelectorWithComplexFilter(checkCanBeUsedAsValue, statementsOnly, predicate)
+}
+
+internal fun createExpressionSelectorWithComplexFilter(
+        // Do not suggest expressions like 'val a = 1'/'for ...'
+        checkCanBeUsedAsValue: Boolean = true,
+        statementsOnly: Boolean = false,
+        predicate: ((KtExpression, BindingContext) -> Boolean)? = null
+): PostfixTemplateExpressionSelector = KtExpressionPostfixTemplateSelector(checkCanBeUsedAsValue, statementsOnly, predicate)
 
 private class KtExpressionPostfixTemplateSelector(
-        private val statementsOnly: Boolean,
         private val checkCanBeUsedAsValue: Boolean,
-        private val typePredicate: ((KotlinType) -> Boolean)?
+        private val statementsOnly: Boolean,
+        private val predicate: ((KtExpression, BindingContext) -> Boolean)?
 ) : PostfixTemplateExpressionSelector {
 
     private fun filterElement(element: PsiElement): Boolean {
@@ -136,7 +150,7 @@ private class KtExpressionPostfixTemplateSelector(
         }
         if (checkCanBeUsedAsValue && !element.canBeUsedAsValue()) return false
 
-        return typePredicate == null || element.getType(bindingContext)?.let { typePredicate.invoke(it) } ?: false
+        return predicate?.invoke(element, bindingContext) ?: true
     }
 
     private fun KtExpression.canBeUsedAsValue() =
