@@ -2,4 +2,4 @@
 
 val x = 1
 
-val y = <caret>x::hashCode
+val y = { x.hashCode() }
