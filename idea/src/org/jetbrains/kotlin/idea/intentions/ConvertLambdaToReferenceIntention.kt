@@ -99,8 +99,8 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
         val lambdaParameterAsExplicitReceiver = explicitReceiverDescriptor != null &&
                                                 explicitReceiverDescriptor == lambdaValueParameterDescriptors.firstOrNull()
         val explicitReceiverShift = if (lambdaParameterAsExplicitReceiver) 1 else 0
-        val lambdaParametersCount =
-                if (lambdaExpression.functionLiteral.hasParameterSpecification()) lambdaExpression.valueParameters.size else 1
+
+        val lambdaParametersCount = lambdaValueParameterDescriptors.size
         if (lambdaParametersCount != callableArgumentsCount + explicitReceiverShift) return false
 
         if (explicitReceiver != null && explicitReceiverDescriptor != null && lambdaParameterAsExplicitReceiver) {
