@@ -36,6 +36,7 @@ import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.JvmTarget
@@ -131,10 +132,10 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
             }
         }
 
-        return ArrayList<String>().apply {
-            this += ArgumentUtils.convertArgumentsToStringList(arguments)
-            configuration.getChild("args")?.getChildren("arg")?.mapNotNullTo(this) { it.text }
-        }
+        val additionalArgs = configuration.getChild("args")?.getChildren("arg")?.mapNotNull { it.text } ?: emptyList()
+        parseArguments(additionalArgs.toTypedArray(), arguments, true)
+
+        return ArgumentUtils.convertArgumentsToStringList(arguments)
     }
 
     private val compilationGoals = listOf(PomFile.KotlinGoals.Compile,

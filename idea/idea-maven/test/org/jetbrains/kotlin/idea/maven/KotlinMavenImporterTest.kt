@@ -1286,6 +1286,75 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         }
     }
 
+    fun testArgsOverridingInFacet() {
+        createProjectSubDirs("src/main/kotlin", "src/main/kotlin.jvm", "src/test/kotlin", "src/test/kotlin.jvm")
+
+        importProject("""
+        <groupId>test</groupId>
+        <artifactId>project</artifactId>
+        <version>1.0.0</version>
+
+        <dependencies>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>$kotlinVersion</version>
+            </dependency>
+        </dependencies>
+
+        <build>
+            <sourceDirectory>src/main/kotlin</sourceDirectory>
+
+            <plugins>
+                <plugin>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+
+                    <executions>
+                        <execution>
+                            <id>compile</id>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <jvmTarget>1.6</jvmTarget>
+                        <jdkHome>temp</jdkHome>
+                        <languageVersion>1.0</languageVersion>
+                        <apiVersion>1.0</apiVersion>
+                        <args>
+                            <arg>-jvm-target</arg>
+                            <arg>1.8</arg>
+                            <arg>-language-version</arg>
+                            <arg>1.1</arg>
+                            <arg>-api-version</arg>
+                            <arg>1.1</arg>
+                            <arg>-jdk-home</arg>
+                            <arg>c:\program files\jdk1.8</arg>
+                        </args>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+        """)
+
+        assertModules("project")
+        assertImporterStatePresent()
+
+        with (facetSettings) {
+            Assert.assertEquals("JVM 1.8", targetPlatformKind!!.description)
+            Assert.assertEquals("1.1", languageLevel!!.description)
+            Assert.assertEquals("1.1", apiLevel!!.description)
+            Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
+            Assert.assertEquals(
+                    listOf("-jdk-home", "c:\\program files\\jdk1.8"),
+                    compilerSettings!!.additionalArgumentsAsList
+            )
+        }
+    }
+
     private fun assertImporterStatePresent() {
         assertNotNull("Kotlin importer component is not present", myTestFixture.module.getComponent(KotlinImporterComponent::class.java))
     }
