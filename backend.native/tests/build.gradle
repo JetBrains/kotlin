@@ -1436,6 +1436,12 @@ task inline19(type: RunKonanTest) {
     source = "codegen/inline/inline19.kt"
 }
 
+task inline20(type: RunKonanTest) {
+    disabled = true
+    goldValue = "def\n"
+    source = "codegen/inline/inline20.kt"
+}
+
 kotlinNativeInterop {
     sysstat {
         pkg 'sysstat'
