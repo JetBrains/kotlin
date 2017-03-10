@@ -5,6 +5,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.ParallelizableTask
 import org.gradle.api.tasks.TaskAction
+import org.gradle.process.ExecResult
 
 abstract class KonanTest extends JavaExec {
     protected String source
@@ -20,6 +21,7 @@ abstract class KonanTest extends JavaExec {
     String outputDirectory = null
     String goldValue = null
     String testData = null
+    int expectedExitStatus = 0
     List<String> arguments = null
 
     boolean enabled = true
@@ -143,7 +145,7 @@ abstract class KonanTest extends JavaExec {
 
         def out = null
         //TODO Add test timeout
-        project.exec {
+        ExecResult execResult = project.exec {
             commandLine exe
             if (arguments != null) {
                 args arguments
@@ -156,7 +158,14 @@ abstract class KonanTest extends JavaExec {
                 standardOutput = out
             }
 
+            ignoreExitValue = true
         }
+
+        if (execResult.exitValue != expectedExitStatus) {
+            throw new TestFailedException(
+                    "Test failed. Expected exit status: $expectedExitStatus, actual: ${execResult.exitValue}")
+        }
+
         if (goldValue != null && goldValue != out.toString()) {
             throw new TestFailedException("Test failed. Expected output: $goldValue, actual output: ${out.toString()}")
         }
