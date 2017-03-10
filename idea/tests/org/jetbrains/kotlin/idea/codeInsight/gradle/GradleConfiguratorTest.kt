@@ -20,15 +20,14 @@ import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import com.intellij.openapi.module.ModuleManager
-import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinStatus
-import org.jetbrains.kotlin.idea.configuration.KotlinGradleModuleConfigurator
-import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator
-import org.jetbrains.kotlin.idea.configuration.createConfigureKotlinNotificationCollector
+import org.jetbrains.kotlin.idea.configuration.*
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.test.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.junit.Test
 
 class GradleConfiguratorTest : GradleImportingTestCase() {
+
     @Test
     fun testProjectWithModule() {
         createProjectSubFile("settings.gradle", "include ':app'")
@@ -58,8 +57,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
                 myProject.baseDir.createChildData(null, "build.gradle")
 
                 val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
-                val configurator = Extensions.findExtension(KotlinProjectConfigurator.EP_NAME,
-                                                            KotlinGradleModuleConfigurator::class.java)
+                val configurator = findGradleModuleConfigurator()
                 // We have a Kotlin runtime in build.gradle but not in the classpath, so it doesn't make sense
                 // to suggest configuring it
                 assertEquals(ConfigureKotlinStatus.BROKEN, configurator.getStatus(module))
@@ -84,8 +82,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         runInEdtAndWait {
             runWriteAction {
                 val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
-                val configurator = Extensions.findExtension(KotlinProjectConfigurator.EP_NAME,
-                                                            KotlinGradleModuleConfigurator::class.java)
+                val configurator = findGradleModuleConfigurator()
                 val collector = createConfigureKotlinNotificationCollector(myProject)
                 configurator.configureWithVersion(myProject, listOf(module), "1.0.6", collector)
 
@@ -111,6 +108,36 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
                 }
                 """.trimIndent(), content)
             }
+        }
+    }
+
+    private fun findGradleModuleConfigurator() = Extensions.findExtension(KotlinProjectConfigurator.EP_NAME,
+                                                                          KotlinGradleModuleConfigurator::class.java)
+
+    @Test
+    fun testListNonConfiguredModules() {
+        createProjectSubFile("settings.gradle", "include ':app'")
+        createProjectSubFile("app/build.gradle", """
+        buildscript {
+            repositories {
+                jcenter()
+                mavenCentral()
+            }
+        }
+
+        apply plugin: 'java'
+        """.trimIndent())
+        createProjectSubFile("app/src/main/java/foo.kt", "")
+
+        importProject()
+
+        runReadAction {
+            val configurator = findGradleModuleConfigurator()
+            val moduleNames = getNonConfiguredModules(myProject, configurator).map { it.name }
+            assertSameElements(moduleNames, "app", "project")
+
+            val moduleNamesWithKotlinFiles = getNonConfiguredModulesWithKotlinFiles(myProject, configurator).map { it.name }
+            assertSameElements(moduleNamesWithKotlinFiles, "app")
         }
     }
 }
