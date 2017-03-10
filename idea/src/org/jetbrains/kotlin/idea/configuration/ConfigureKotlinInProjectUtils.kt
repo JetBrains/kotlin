@@ -130,9 +130,13 @@ fun allConfigurators() = Extensions.getExtensions(KotlinProjectConfigurator.EP_N
 
 fun getNonConfiguredModules(project: Project, configurator: KotlinProjectConfigurator): List<Module> {
     return project.allModules()
-            .filter { module -> configurator.getStatus(module) == ConfigureKotlinStatus.CAN_BE_CONFIGURED }
+            .filter { module -> configurator.canConfigure(module) }
             .excludeSourceRootModules()
 }
+
+private fun KotlinProjectConfigurator.canConfigure(module: Module) =
+        getStatus(module) == ConfigureKotlinStatus.CAN_BE_CONFIGURED &&
+        (allConfigurators().toList() - this).none { it.getStatus(module) == ConfigureKotlinStatus.CONFIGURED }
 
 fun Collection<Module>.excludeSourceRootModules(): List<Module> {
     val pathMap = buildExternalPathMap()
