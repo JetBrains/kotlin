@@ -65,6 +65,9 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("list backend phases")
         val TIME_PHASES: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("time backend phases")
+
+        val ENABLE_ASSERTIONS: CompilerConfigurationKey<Boolean>
+                = CompilerConfigurationKey.create("enable runtime assertions in generated code")
     }
 }
 

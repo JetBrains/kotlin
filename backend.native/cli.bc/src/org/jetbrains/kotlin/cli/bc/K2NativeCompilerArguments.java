@@ -83,5 +83,8 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
 
     @Argument(value = "time", description = "Report execution time for compiler phases")
     public boolean timePhases;
+
+    @Argument(value = "enable_assertions", alias = "ea", description = "Enable runtime assertions in generated code")
+    public boolean enableAssertions;
 }
 

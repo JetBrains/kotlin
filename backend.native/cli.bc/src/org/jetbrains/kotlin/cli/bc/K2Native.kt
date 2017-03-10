@@ -105,6 +105,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 arguments.verbosePhases.toNonNullList())
             put(LIST_PHASES, arguments.listPhases)
             put(TIME_PHASES, arguments.timePhases)
+
+            put(ENABLE_ASSERTIONS, arguments.enableAssertions)
         }}
     }
 

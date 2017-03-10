@@ -75,9 +75,10 @@ abstract class KonanTest extends JavaExec {
             classpath = project.configurations.cli_bc
             enableAssertions = true
             args = ["-output", output,
-                     *filesToCompile,
-                     *moreArgs,
-                     *project.globalArgs]
+                    "-ea",
+                    *filesToCompile,
+                    *moreArgs,
+                    *project.globalArgs]
             standardOutput = log
             errorOutput = log
             super.exec()
