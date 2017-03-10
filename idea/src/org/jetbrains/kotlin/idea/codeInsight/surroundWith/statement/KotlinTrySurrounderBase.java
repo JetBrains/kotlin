@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.surroundWith.statement;
 
-import com.intellij.codeInsight.CodeInsightUtilBase;
+import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
@@ -51,7 +51,7 @@ public abstract class KotlinTrySurrounderBase extends KotlinStatementsSurrounder
         // Delete statements from original code
         container.deleteChildRange(statements[0], statements[statements.length - 1]);
 
-        tryExpression = CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(tryExpression);
+        tryExpression = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(tryExpression);
 
         return getTextRangeForCaret(tryExpression);
     }
