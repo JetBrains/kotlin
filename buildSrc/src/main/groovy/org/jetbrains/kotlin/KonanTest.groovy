@@ -242,7 +242,6 @@ class RunExternalTestGroup extends RunKonanTest {
     Statistics statistics = new Statistics()
 
     RunExternalTestGroup() {
-        goldValue = "OK"
     }
 
     static enum TestStatus {
@@ -324,11 +323,11 @@ class RunExternalTestGroup extends RunKonanTest {
 import kotlin.test.TestFailedException
 
 fun main(args : Array<String>) {
-  try { 
-    @Suppress("USELESS_ELVIS")
-    print(${pkg}box()?:"null")
-  } catch (e:TestFailedException) {
-    print("FAIL")
+  @Suppress("USELESS_ELVIS")
+  val result = ${pkg}box()?:"null"
+  println(result)
+  if (result != "OK") {
+    throw TestFailedException(result)
   }
 }
 """)
