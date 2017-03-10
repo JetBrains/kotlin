@@ -25,9 +25,7 @@ import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.ThreeStateCheckBox
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
-import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
-import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerConfigurableTab
+import org.jetbrains.kotlin.idea.compiler.configuration.*
 import java.awt.BorderLayout
 import javax.swing.JComboBox
 import javax.swing.JComponent
@@ -40,41 +38,46 @@ class KotlinFacetEditorGeneralTab(
         validatorsManager: FacetValidatorsManager
 ) : FacetEditorTab() {
     class EditorComponent(
-            project: Project,
+            private val project: Project,
             configuration: KotlinFacetConfiguration?
     ) : JPanel(BorderLayout()) {
         private val isMultiEditor = configuration == null
 
-        val compilerConfigurable = with(configuration?.settings) {
+        var editableCommonArguments: CommonCompilerArguments
+        var editableJvmArguments: K2JVMCompilerArguments
+        var editableJsArguments: K2JSCompilerArguments
+        var editableCompilerSettings: CompilerSettings
+
+        val compilerConfigurable: KotlinCompilerConfigurableTab
+
+        init {
             if (isMultiEditor) {
-                KotlinCompilerConfigurableTab(
-                        project,
-                        object : CommonCompilerArguments() {},
-                        K2JSCompilerArguments(),
-                        K2JVMCompilerArguments(),
-                        CompilerSettings(),
-                        null,
-                        false,
-                        true
-                )
+                editableCommonArguments = object : CommonCompilerArguments() {}
+                editableJvmArguments = K2JVMCompilerArguments()
+                editableJsArguments = K2JSCompilerArguments()
+                editableCompilerSettings = CompilerSettings()
+
+
             }
             else {
-                val compilerArguments = configuration!!.settings.compilerArguments!!
-                val k2jvmCompilerArguments = compilerArguments as? K2JVMCompilerArguments
-                                    ?: copyBean(Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings)
-                val k2jsCompilerArguments = compilerArguments as? K2JSCompilerArguments
-                                    ?: copyBean(Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings)
-                KotlinCompilerConfigurableTab(
-                        project,
-                        compilerArguments,
-                        k2jsCompilerArguments,
-                        k2jvmCompilerArguments,
-                        configuration.settings.compilerSettings!!,
-                        null,
-                        false,
-                        false
-                )
+                editableCommonArguments = configuration!!.settings.compilerArguments!!
+                editableJvmArguments = editableCommonArguments as? K2JVMCompilerArguments
+                                       ?: copyBean(Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings)
+                editableJsArguments = editableCommonArguments as? K2JSCompilerArguments
+                                      ?: copyBean(Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings)
+                editableCompilerSettings = configuration.settings.compilerSettings!!
             }
+
+            compilerConfigurable = KotlinCompilerConfigurableTab(
+                    project,
+                    editableCommonArguments,
+                    editableJsArguments,
+                    editableJvmArguments,
+                    editableCompilerSettings,
+                    null,
+                    false,
+                    isMultiEditor
+            )
         }
 
         val useProjectSettingsCheckBox = ThreeStateCheckBox("Use project settings").apply { isThirdStateEnabled = isMultiEditor }
@@ -103,8 +106,22 @@ class KotlinFacetEditorGeneralTab(
         }
 
         internal fun updateCompilerConfigurable() {
+            val useProjectSettings = useProjectSettingsCheckBox.isSelected
             compilerConfigurable.setTargetPlatform(chosenPlatform)
-            compilerConfigurable.setEnabled(!useProjectSettingsCheckBox.isSelected)
+            compilerConfigurable.setEnabled(!useProjectSettings)
+            if (useProjectSettings) {
+                compilerConfigurable.commonCompilerArguments = copyBean(KotlinCommonCompilerArgumentsHolder.getInstance(project).settings)
+                compilerConfigurable.k2jvmCompilerArguments = copyBean(Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings)
+                compilerConfigurable.k2jsCompilerArguments = copyBean(Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings)
+                compilerConfigurable.compilerSettings = copyBean(KotlinCompilerSettings.getInstance(project).settings)
+            }
+            else {
+                compilerConfigurable.commonCompilerArguments = editableCommonArguments
+                compilerConfigurable.k2jvmCompilerArguments = editableJvmArguments
+                compilerConfigurable.k2jsCompilerArguments = editableJsArguments
+                compilerConfigurable.compilerSettings = editableCompilerSettings
+            }
+            compilerConfigurable.reset()
         }
 
         val chosenPlatform: TargetPlatformKind<*>?

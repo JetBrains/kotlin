@@ -69,14 +69,14 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_UMD, "UMD (detect AMD or CommonJS if available, fallback to plain)");
     }
 
-    private final CommonCompilerArguments commonCompilerArguments;
-    private final K2JSCompilerArguments k2jsCompilerArguments;
-    private final K2JVMCompilerArguments k2jvmCompilerArguments;
-    private final CompilerSettings compilerSettings;
     @Nullable
     private final KotlinCompilerWorkspaceSettings compilerWorkspaceSettings;
     private final Project project;
     private final boolean isProjectSettings;
+    private CommonCompilerArguments commonCompilerArguments;
+    private K2JSCompilerArguments k2jsCompilerArguments;
+    private K2JVMCompilerArguments k2jvmCompilerArguments;
+    private CompilerSettings compilerSettings;
     private JPanel contentPane;
     private ThreeStateCheckBox generateNoWarningsCheckBox;
     private RawCommandLineEditor additionalArgsOptionsField;
@@ -508,11 +508,35 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         UIUtil.setEnabled(getContentPane(), value, true);
     }
 
+    public CommonCompilerArguments getCommonCompilerArguments() {
+        return commonCompilerArguments;
+    }
+
+    public void setCommonCompilerArguments(CommonCompilerArguments commonCompilerArguments) {
+        this.commonCompilerArguments = commonCompilerArguments;
+    }
+
     public K2JSCompilerArguments getK2jsCompilerArguments() {
         return k2jsCompilerArguments;
     }
 
+    public void setK2jsCompilerArguments(K2JSCompilerArguments k2jsCompilerArguments) {
+        this.k2jsCompilerArguments = k2jsCompilerArguments;
+    }
+
     public K2JVMCompilerArguments getK2jvmCompilerArguments() {
         return k2jvmCompilerArguments;
+    }
+
+    public void setK2jvmCompilerArguments(K2JVMCompilerArguments k2jvmCompilerArguments) {
+        this.k2jvmCompilerArguments = k2jvmCompilerArguments;
+    }
+
+    public CompilerSettings getCompilerSettings() {
+        return compilerSettings;
+    }
+
+    public void setCompilerSettings(CompilerSettings compilerSettings) {
+        this.compilerSettings = compilerSettings;
     }
 }
