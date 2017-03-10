@@ -1,4 +1,5 @@
-fun bar() = 1
-fun foo() {
-    val bar = bar()
+fun foo(list: List<String>) {
+    for (s in list) {
+
+    }
 }
