@@ -22,6 +22,9 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
+/**
+ * Exposes the JavaScript [CSSStyleDeclaration](https://developer.mozilla.org/en/docs/Web/API/CSSStyleDeclaration) to Kotlin
+ */
 public external abstract class CSSStyleDeclaration : ItemArrayLike<String> {
     open var cssText: String
     override val length: Int
@@ -272,6 +275,9 @@ public external abstract class MediaList : ItemArrayLike<String> {
 }
 @kotlin.internal.InlineOnly inline operator fun MediaList.get(index: Int): String? = asDynamic()[index]
 
+/**
+ * Exposes the JavaScript [StyleSheet](https://developer.mozilla.org/en/docs/Web/API/StyleSheet) to Kotlin
+ */
 public external abstract class StyleSheet {
     open val type: String
     open val href: String?
@@ -282,6 +288,9 @@ public external abstract class StyleSheet {
     open var disabled: Boolean
 }
 
+/**
+ * Exposes the JavaScript [CSSStyleSheet](https://developer.mozilla.org/en/docs/Web/API/CSSStyleSheet) to Kotlin
+ */
 public external abstract class CSSStyleSheet : StyleSheet {
     open val ownerRule: CSSRule?
     open val cssRules: CSSRuleList
@@ -289,22 +298,34 @@ public external abstract class CSSStyleSheet : StyleSheet {
     fun deleteRule(index: Int): Unit
 }
 
+/**
+ * Exposes the JavaScript [StyleSheetList](https://developer.mozilla.org/en/docs/Web/API/StyleSheetList) to Kotlin
+ */
 public external abstract class StyleSheetList : ItemArrayLike<StyleSheet> {
     override val length: Int
     override fun item(index: Int): StyleSheet?
 }
 @kotlin.internal.InlineOnly inline operator fun StyleSheetList.get(index: Int): StyleSheet? = asDynamic()[index]
 
+/**
+ * Exposes the JavaScript [LinkStyle](https://developer.mozilla.org/en/docs/Web/API/LinkStyle) to Kotlin
+ */
 public external interface LinkStyle {
     val sheet: StyleSheet?
 }
 
+/**
+ * Exposes the JavaScript [CSSRuleList](https://developer.mozilla.org/en/docs/Web/API/CSSRuleList) to Kotlin
+ */
 public external abstract class CSSRuleList : ItemArrayLike<CSSRule> {
     override val length: Int
     override fun item(index: Int): CSSRule?
 }
 @kotlin.internal.InlineOnly inline operator fun CSSRuleList.get(index: Int): CSSRule? = asDynamic()[index]
 
+/**
+ * Exposes the JavaScript [CSSRule](https://developer.mozilla.org/en/docs/Web/API/CSSRule) to Kotlin
+ */
 public external abstract class CSSRule {
     open val type: Short
     open var cssText: String
@@ -323,6 +344,9 @@ public external abstract class CSSRule {
     }
 }
 
+/**
+ * Exposes the JavaScript [CSSStyleRule](https://developer.mozilla.org/en/docs/Web/API/CSSStyleRule) to Kotlin
+ */
 public external abstract class CSSStyleRule : CSSRule {
     open var selectorText: String
     open val style: CSSStyleDeclaration
@@ -334,16 +358,25 @@ public external abstract class CSSImportRule : CSSRule {
     open val styleSheet: CSSStyleSheet
 }
 
+/**
+ * Exposes the JavaScript [CSSGroupingRule](https://developer.mozilla.org/en/docs/Web/API/CSSGroupingRule) to Kotlin
+ */
 public external abstract class CSSGroupingRule : CSSRule {
     open val cssRules: CSSRuleList
     fun insertRule(rule: String, index: Int): Int
     fun deleteRule(index: Int): Unit
 }
 
+/**
+ * Exposes the JavaScript [CSSMediaRule](https://developer.mozilla.org/en/docs/Web/API/CSSMediaRule) to Kotlin
+ */
 public external abstract class CSSMediaRule : CSSGroupingRule {
     open val media: MediaList
 }
 
+/**
+ * Exposes the JavaScript [CSSPageRule](https://developer.mozilla.org/en/docs/Web/API/CSSPageRule) to Kotlin
+ */
 public external abstract class CSSPageRule : CSSGroupingRule {
     open var selectorText: String
     open val style: CSSStyleDeclaration
@@ -354,6 +387,9 @@ public external abstract class CSSMarginRule : CSSRule {
     open val style: CSSStyleDeclaration
 }
 
+/**
+ * Exposes the JavaScript [CSSNamespaceRule](https://developer.mozilla.org/en/docs/Web/API/CSSNamespaceRule) to Kotlin
+ */
 public external abstract class CSSNamespaceRule : CSSRule {
     open val namespaceURI: String
     open val prefix: String
@@ -363,6 +399,9 @@ public external interface ElementCSSInlineStyle {
     val style: CSSStyleDeclaration
 }
 
+/**
+ * Exposes the JavaScript [CSS](https://developer.mozilla.org/en/docs/Web/API/CSS) to Kotlin
+ */
 public external abstract class CSS {
 
     companion object {

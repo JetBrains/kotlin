@@ -22,10 +22,16 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
+/**
+ * Exposes the JavaScript [DOMParser](https://developer.mozilla.org/en/docs/Web/API/DOMParser) to Kotlin
+ */
 public external open class DOMParser {
     fun parseFromString(str: String, type: dynamic): Document
 }
 
+/**
+ * Exposes the JavaScript [XMLSerializer](https://developer.mozilla.org/en/docs/Web/API/XMLSerializer) to Kotlin
+ */
 public external open class XMLSerializer {
     fun serializeToString(root: Node): String
 }

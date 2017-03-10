@@ -22,6 +22,9 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
+/**
+ * Exposes the JavaScript [URL](https://developer.mozilla.org/en/docs/Web/API/URL) to Kotlin
+ */
 public external open class URL(url: String, base: String = definedExternally) {
     var href: String
     open val origin: String
@@ -45,6 +48,9 @@ public external open class URL(url: String, base: String = definedExternally) {
     }
 }
 
+/**
+ * Exposes the JavaScript [URLSearchParams](https://developer.mozilla.org/en/docs/Web/API/URLSearchParams) to Kotlin
+ */
 public external open class URLSearchParams(init: dynamic = definedExternally) {
     fun append(name: String, value: String): Unit
     fun delete(name: String): Unit

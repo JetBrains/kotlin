@@ -22,6 +22,9 @@ import org.w3c.notifications.*
 import org.w3c.performance.*
 import org.w3c.xhr.*
 
+/**
+ * Exposes the JavaScript [ServiceWorkerRegistration](https://developer.mozilla.org/en/docs/Web/API/ServiceWorkerRegistration) to Kotlin
+ */
 public external abstract class ServiceWorkerRegistration : EventTarget {
     open val installing: ServiceWorker?
     open val waiting: ServiceWorker?
@@ -36,6 +39,9 @@ public external abstract class ServiceWorkerRegistration : EventTarget {
     fun getNotifications(filter: GetNotificationOptions = definedExternally): Promise<dynamic>
 }
 
+/**
+ * Exposes the JavaScript [ServiceWorkerGlobalScope](https://developer.mozilla.org/en/docs/Web/API/ServiceWorkerGlobalScope) to Kotlin
+ */
 public external abstract class ServiceWorkerGlobalScope : WorkerGlobalScope {
     open val clients: Clients
     open val registration: ServiceWorkerRegistration
@@ -50,6 +56,9 @@ public external abstract class ServiceWorkerGlobalScope : WorkerGlobalScope {
     fun skipWaiting(): Promise<Unit>
 }
 
+/**
+ * Exposes the JavaScript [ServiceWorker](https://developer.mozilla.org/en/docs/Web/API/ServiceWorker) to Kotlin
+ */
 public external abstract class ServiceWorker : EventTarget, AbstractWorker, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker {
     open val scriptURL: String
     open val state: ServiceWorkerState
@@ -57,6 +66,9 @@ public external abstract class ServiceWorker : EventTarget, AbstractWorker, Unio
     fun postMessage(message: Any?, transfer: Array<dynamic> = definedExternally): Unit
 }
 
+/**
+ * Exposes the JavaScript [ServiceWorkerContainer](https://developer.mozilla.org/en/docs/Web/API/ServiceWorkerContainer) to Kotlin
+ */
 public external abstract class ServiceWorkerContainer : EventTarget {
     open val controller: ServiceWorker?
     open val ready: Promise<ServiceWorkerRegistration>
@@ -87,6 +99,9 @@ public inline fun RegistrationOptions(scope: String? = null, type: WorkerType? =
     return o
 }
 
+/**
+ * Exposes the JavaScript [ServiceWorkerMessageEvent](https://developer.mozilla.org/en/docs/Web/API/ServiceWorkerMessageEvent) to Kotlin
+ */
 public external open class ServiceWorkerMessageEvent(type: String, eventInitDict: ServiceWorkerMessageEventInit = definedExternally) : Event {
     open val data: Any?
     open val origin: String
@@ -129,6 +144,9 @@ public inline fun ServiceWorkerMessageEventInit(data: Any? = null, origin: Strin
     return o
 }
 
+/**
+ * Exposes the JavaScript [Client](https://developer.mozilla.org/en/docs/Web/API/Client) to Kotlin
+ */
 public external abstract class Client : UnionClientOrMessagePortOrServiceWorker {
     open val url: String
     open val frameType: FrameType
@@ -136,6 +154,9 @@ public external abstract class Client : UnionClientOrMessagePortOrServiceWorker 
     fun postMessage(message: Any?, transfer: Array<dynamic> = definedExternally): Unit
 }
 
+/**
+ * Exposes the JavaScript [WindowClient](https://developer.mozilla.org/en/docs/Web/API/WindowClient) to Kotlin
+ */
 public external abstract class WindowClient : Client {
     open val visibilityState: dynamic
     open val focused: Boolean
@@ -143,6 +164,9 @@ public external abstract class WindowClient : Client {
     fun navigate(url: String): Promise<WindowClient>
 }
 
+/**
+ * Exposes the JavaScript [Clients](https://developer.mozilla.org/en/docs/Web/API/Clients) to Kotlin
+ */
 public external abstract class Clients {
     fun get(id: String): Promise<Any?>
     fun matchAll(options: ClientQueryOptions = definedExternally): Promise<dynamic>
@@ -169,6 +193,9 @@ public inline fun ClientQueryOptions(includeUncontrolled: Boolean? = false, type
     return o
 }
 
+/**
+ * Exposes the JavaScript [ExtendableEvent](https://developer.mozilla.org/en/docs/Web/API/ExtendableEvent) to Kotlin
+ */
 public external open class ExtendableEvent(type: String, eventInitDict: ExtendableEventInit = definedExternally) : Event {
     fun waitUntil(f: Promise<Any?>): Unit
 }
@@ -187,6 +214,9 @@ public inline fun ExtendableEventInit(bubbles: Boolean? = false, cancelable: Boo
     return o
 }
 
+/**
+ * Exposes the JavaScript [InstallEvent](https://developer.mozilla.org/en/docs/Web/API/InstallEvent) to Kotlin
+ */
 public external open class InstallEvent(type: String, eventInitDict: ExtendableEventInit = definedExternally) : ExtendableEvent {
     fun registerForeignFetch(options: ForeignFetchOptions): Unit
 }
@@ -210,6 +240,9 @@ public inline fun ForeignFetchOptions(scopes: Array<String>?, origins: Array<Str
     return o
 }
 
+/**
+ * Exposes the JavaScript [FetchEvent](https://developer.mozilla.org/en/docs/Web/API/FetchEvent) to Kotlin
+ */
 public external open class FetchEvent(type: String, eventInitDict: FetchEventInit) : ExtendableEvent {
     open val request: Request
     open val clientId: String?
@@ -294,6 +327,9 @@ public inline fun ForeignFetchResponse(response: Response?, origin: String? = nu
     return o
 }
 
+/**
+ * Exposes the JavaScript [ExtendableMessageEvent](https://developer.mozilla.org/en/docs/Web/API/ExtendableMessageEvent) to Kotlin
+ */
 public external open class ExtendableMessageEvent(type: String, eventInitDict: ExtendableMessageEventInit = definedExternally) : ExtendableEvent {
     open val data: Any?
     open val origin: String
@@ -336,6 +372,9 @@ public inline fun ExtendableMessageEventInit(data: Any? = null, origin: String? 
     return o
 }
 
+/**
+ * Exposes the JavaScript [Cache](https://developer.mozilla.org/en/docs/Web/API/Cache) to Kotlin
+ */
 public external abstract class Cache {
     fun match(request: dynamic, options: CacheQueryOptions = definedExternally): Promise<Any?>
     fun matchAll(request: dynamic = definedExternally, options: CacheQueryOptions = definedExternally): Promise<dynamic>
@@ -400,6 +439,9 @@ public inline fun CacheBatchOperation(type: String? = null, request: Request? = 
     return o
 }
 
+/**
+ * Exposes the JavaScript [CacheStorage](https://developer.mozilla.org/en/docs/Web/API/CacheStorage) to Kotlin
+ */
 public external abstract class CacheStorage {
     fun match(request: dynamic, options: CacheQueryOptions = definedExternally): Promise<Any?>
     fun has(cacheName: String): Promise<Boolean>
