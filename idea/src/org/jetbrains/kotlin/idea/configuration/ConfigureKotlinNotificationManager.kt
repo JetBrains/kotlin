@@ -24,7 +24,10 @@ import org.jetbrains.kotlin.idea.configuration.ui.notifications.ConfigureKotlinN
 
 object ConfigureKotlinNotificationManager: KotlinSingleNotificationManager<ConfigureKotlinNotification> {
     fun notify(project: Project, excludeModules: List<Module> = emptyList()) {
-        notify(project, ConfigureKotlinNotification(project, excludeModules))
+        val notificationString = ConfigureKotlinNotification.getNotificationString(project, excludeModules)
+        if (notificationString != null) {
+            notify(project, ConfigureKotlinNotification(project, excludeModules, notificationString))
+        }
     }
 }
 
