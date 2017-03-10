@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.codeInsight.CodeInsightUtilCore
 import com.intellij.ide.actions.OpenFileAction
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtil
@@ -65,12 +66,14 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         val buildFiles = listOf(getBuildGradleFile(module.project, getModuleFilePath(module)),
                                 getBuildGradleFile(module.project, getTopLevelProjectFilePath(module.project)))
                 .filterNotNull()
-        if (buildFiles.none(this::isFileConfigured)) {
+        if (buildFiles.none { buildFile -> allGradleConfigurators.any { it.isFileConfigured(buildFile) } })
             return ConfigureKotlinStatus.CAN_BE_CONFIGURED
-        }
 
         return ConfigureKotlinStatus.BROKEN
     }
+
+    private val allGradleConfigurators: Collection<KotlinWithGradleConfigurator>
+        get() = Extensions.getExtensions(KotlinProjectConfigurator.EP_NAME).filterIsInstance<KotlinWithGradleConfigurator>()
 
     protected open fun isApplicable(module: Module): Boolean {
         return KotlinPluginUtil.isGradleModule(module) && !KotlinPluginUtil.isAndroidGradleModule(module)
