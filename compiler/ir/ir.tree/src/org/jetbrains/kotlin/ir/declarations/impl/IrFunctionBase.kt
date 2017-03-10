@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -28,8 +29,10 @@ abstract class IrFunctionBase(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin
-) : IrGeneralFunctionBase(startOffset, endOffset, origin), IrFunction {
+) : IrDeclarationBase(startOffset, endOffset, origin), IrFunction {
     private val defaults = LinkedHashMap<ValueParameterDescriptor, IrExpressionBody>()
+
+    final override var body: IrBody? = null
 
     override fun getDefault(parameter: ValueParameterDescriptor): IrExpressionBody? =
             defaults[parameter]
