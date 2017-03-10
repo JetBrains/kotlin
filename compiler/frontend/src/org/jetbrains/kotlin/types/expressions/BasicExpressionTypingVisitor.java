@@ -1681,13 +1681,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             parent = parent.getParent();
         }
 
-        return isParentForBlockLevelExpression(parent);
-    }
-
-    private static boolean isParentForBlockLevelExpression(@Nullable PsiElement parent) {
-        return parent instanceof KtBlockExpression ||
-               parent instanceof KtContainerNodeForControlStructureBody ||
-               parent instanceof KtWhenEntry;
+        return KtPsiUtil.isStatementContainer(parent);
     }
 
     @Override

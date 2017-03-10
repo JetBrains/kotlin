@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiverOrThis
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
@@ -145,8 +144,11 @@ private class KtExpressionPostfixTemplateSelector(
         val bindingContext by lazy { element.analyze(BodyResolveMode.PARTIAL) }
 
         if (statementsOnly) {
-            val elementToCheck = element.getQualifiedExpressionForReceiverOrThis()
-            if (elementToCheck.parent !is KtBlockExpression && !elementToCheck.isUsedAsStatement(bindingContext)) return false
+            // We use getQualifiedExpressionForReceiverOrThis because when postfix completion is run on some statement like:
+            // foo().try<caret>
+            // `element` points to `foo()` call, while we need to select the whole statement with `try` selector
+            // to check if it's in a statement position
+            if (!KtPsiUtil.isStatement(element.getQualifiedExpressionForReceiverOrThis())) return false
         }
         if (checkCanBeUsedAsValue && !element.canBeUsedAsValue()) return false
 

@@ -180,9 +180,21 @@ public class PostfixTemplateProviderTestGenerated extends AbstractPostfixTemplat
         doTest(fileName);
     }
 
+    @TestMetadata("tryInLocalClass.kt")
+    public void testTryInLocalClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/tryInLocalClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("tryOnFor.kt")
     public void testTryOnFor() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/tryOnFor.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("tryOnImportStatement.kt")
+    public void testTryOnImportStatement() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/postfix/tryOnImportStatement.kt");
         doTest(fileName);
     }
 
