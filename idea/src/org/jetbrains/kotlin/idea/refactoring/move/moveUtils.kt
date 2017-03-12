@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.KotlinFileReferencesResolver
@@ -354,8 +355,13 @@ fun postProcessMoveUsages(usages: Collection<UsageInfo>,
 
             is UnqualifiableMoveRenameUsageInfo -> {
                 val file = with(usage) { if (addImportToOriginalFile) originalFile else counterpart(originalFile) } as KtFile
-                val declaration = counterpart(usage.referencedElement!!).unwrapped as KtDeclaration
-                ImportInsertHelper.getInstance(usage.project).importDescriptor(file, declaration.resolveToDescriptor())
+                val declaration = counterpart(usage.referencedElement!!).unwrapped
+                val referencedDescriptor = when (declaration) {
+                                               is KtDeclaration -> declaration.resolveToDescriptor()
+                                               is PsiMember -> declaration.getJavaMemberDescriptor()
+                                               else -> null
+                                           } ?: continue@usageLoop
+                ImportInsertHelper.getInstance(usage.project).importDescriptor(file, referencedDescriptor)
             }
 
             is MoveRenameUsageInfo -> {
