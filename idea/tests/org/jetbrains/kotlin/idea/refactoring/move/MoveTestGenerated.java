@@ -414,6 +414,30 @@ public class MoveTestGenerated extends AbstractMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/companionExtensionMemberRef/companionExtensionMemberRef.test")
+    public void testKotlin_moveTopLevelDeclarations_misc_companionExtensionMemberRef_CompanionExtensionMemberRef() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/companionExtensionMemberRef/companionExtensionMemberRef.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/companionMemberRefDelegation/companionMemberRefDelegation.test")
+    public void testKotlin_moveTopLevelDeclarations_misc_companionMemberRefDelegation_CompanionMemberRefDelegation() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/companionMemberRefDelegation/companionMemberRefDelegation.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/companionMemberRefFakeOverride/companionMemberRefFakeOverride.test")
+    public void testKotlin_moveTopLevelDeclarations_misc_companionMemberRefFakeOverride_CompanionMemberRefFakeOverride() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/companionMemberRefFakeOverride/companionMemberRefFakeOverride.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/companionMemberRefWithJavaParent/companionMemberRefWithJavaParent.test")
+    public void testKotlin_moveTopLevelDeclarations_misc_companionMemberRefWithJavaParent_CompanionMemberRefWithJavaParent() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/companionMemberRefWithJavaParent/companionMemberRefWithJavaParent.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveTopLevelDeclarations/misc/delegateInObject/delegateInObject.test")
     public void testKotlin_moveTopLevelDeclarations_misc_delegateInObject_DelegateInObject() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/delegateInObject/delegateInObject.test");
