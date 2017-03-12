@@ -142,7 +142,7 @@ class MoveKotlinDeclarationsProcessor(
                         .search(lightElement, projectScope, false)
                         .mapNotNullTo(ArrayList()) { ref ->
                             if (foundReferences.add(ref) && elementsToMove.all { !it.isAncestor(ref.element)}) {
-                                createMoveUsageInfoIfPossible(ref, lightElement, true)
+                                createMoveUsageInfoIfPossible(ref, lightElement, true, null)
                             }
                             else null
                         }

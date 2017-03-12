@@ -121,8 +121,13 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
 
     fun processReference(refExpr: KtSimpleNameExpression, bindingContext: BindingContext): ((KtSimpleNameExpression) -> UsageInfo?)? {
         val descriptor = bindingContext[BindingContext.REFERENCE_TARGET, refExpr]?.getImportableDescriptor() ?: return null
+        val containingDescriptor = descriptor.containingDeclaration ?: return null
 
         val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) ?: return null
+        val callableKind = (descriptor as? CallableMemberDescriptor)?.kind
+        val containingDeclarationForNonRealMember = if (callableKind != CallableMemberDescriptor.Kind.DECLARATION) {
+            DescriptorToSourceUtilsIde.getAnyDeclaration(project, containingDescriptor) as? KtClassOrObject
+        } else null
 
         // Special case for enum entry superclass references (they have empty text and don't need to be processed by the refactoring)
         if (refExpr.textRange.isEmpty) return null
@@ -134,7 +139,6 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
         val isCallableReference = isCallableReference(refExpr.mainReference)
 
         if (isCallable && !isCallableReference) {
-            val containingDescriptor = descriptor.containingDeclaration
             if (isExtension && containingDescriptor is ClassDescriptor) {
                 val implicitClass = (refExpr.getResolvedCall(bindingContext)?.dispatchReceiver as? ImplicitClassReceiver)?.classDescriptor
                 if (DescriptorUtils.isCompanionObject(implicitClass)) {
@@ -174,7 +178,8 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
                 .firstOrNull()
 
         fun doCreateUsageInfo(refExpr: KtSimpleNameExpression): UsageInfo? {
-            if (isAncestor(declaration, false)) {
+            // Check container instead of declaration itself as the latter may be not real (e.g. fake override)
+            if (isAncestor(containingDeclarationForNonRealMember ?: declaration, false)) {
                 if (descriptor.importableFqName == null) return null
                 if (isUnqualifiedExtensionReference(refExpr.mainReference, declaration)) return null
                 if (isCallableReference(refExpr.mainReference)) return null
@@ -192,7 +197,7 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
                 }
             }
 
-            return createMoveUsageInfoIfPossible(refExpr.mainReference, declaration, false)
+            return createMoveUsageInfoIfPossible(refExpr.mainReference, declaration, false, fqName.toSafe())
         }
 
         if (isExtension || isCallableReference || containerFqName != null || isImported(descriptor)) return ::doCreateUsageInfo
@@ -226,10 +231,20 @@ class MoveRenameSelfUsageInfo(ref: KtSimpleNameReference, refTarget: PsiElement,
     override fun getReference() = super.getReference() as? KtSimpleNameReference
 }
 
+class QualifiableMoveRenameUsageInfo(
+        element: PsiElement,
+        reference: PsiReference,
+        startOffset: Int,
+        endOffset: Int,
+        referencedElement: PsiElement,
+        val newFqName: FqName?
+): MoveRenameUsageInfo(element, reference, startOffset, endOffset, referencedElement, false)
+
 fun createMoveUsageInfoIfPossible(
         reference: PsiReference,
         referencedElement: PsiElement,
-        addImportToOriginalFile: Boolean
+        addImportToOriginalFile: Boolean,
+        newFqName: FqName?
 ): UsageInfo? {
     val element = reference.element
     if (element.getStrictParentOfType<KtSuperExpression>() != null) return null
@@ -243,7 +258,7 @@ fun createMoveUsageInfoIfPossible(
                 element, reference, startOffset, endOffset, referencedElement, element.containingFile!!, addImportToOriginalFile
         )
     }
-    return MoveRenameUsageInfo(element, reference, startOffset, endOffset, referencedElement, false)
+    return QualifiableMoveRenameUsageInfo(element, reference, startOffset, endOffset, referencedElement, newFqName)
 }
 
 private fun isUnqualifiedExtensionReference(reference: PsiReference, referencedElement: PsiElement): Boolean {
@@ -351,7 +366,15 @@ fun postProcessMoveUsages(usages: Collection<UsageInfo>,
                 val reference = usage.reference ?: (usage.element as? KtSimpleNameExpression)?.mainReference
                 try {
                     when {
-                        reference is KtSimpleNameReference -> reference.bindToElement(newElement, shorteningMode)
+                        reference is KtSimpleNameReference -> {
+                            val newFqName = (usage as? QualifiableMoveRenameUsageInfo)?.newFqName
+                            if (newFqName != null) {
+                                reference.bindToFqName(newFqName, shorteningMode)
+                            }
+                            else {
+                                reference.bindToElement(newElement, shorteningMode)
+                            }
+                        }
                         reference is PsiReferenceExpression && updateJavaReference(reference, oldElement, newElement) -> continue@usageLoop
                         else -> reference?.bindToElement(newElement)
                     }
