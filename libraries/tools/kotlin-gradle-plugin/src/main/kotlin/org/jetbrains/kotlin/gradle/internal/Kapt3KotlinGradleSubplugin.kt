@@ -240,6 +240,8 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             kaptTask.pluginOptions.addClasspathEntry(it)
         }
 
+        kaptTask.stubsDir = getKaptStubsDir(project, sourceSetName)
+
         kaptTask.mapClasspath { kotlinCompile.classpath }
         kaptTask.destinationDir = sourcesOutputDir
         kaptTask.classesDir = classesOutputDir

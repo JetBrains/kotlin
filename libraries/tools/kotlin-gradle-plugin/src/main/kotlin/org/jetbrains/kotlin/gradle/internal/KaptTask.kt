@@ -39,15 +39,17 @@ open class KaptTask : AbstractCompile() {
     }
 
     lateinit var classesDir: File
+    lateinit var stubsDir: File
 
     @TaskAction
     override fun compile() {
         /** Delete everything inside the [destinationDir] */
-        destinationDir.deleteRecursively()
-        destinationDir.mkdirs()
+        destinationDir.clearDirectory()
 
-        classesDir.deleteRecursively()
-        classesDir.mkdirs()
+        classesDir.clearDirectory()
+
+        // Kapt3 doesn't support incremental compilation so we should delete the existing stubs
+        stubsDir.clearDirectory()
 
         val sourceRoots = SourceRoots.ForJvm.create(getSource(), rawSourceRoots)
 
@@ -68,5 +70,10 @@ open class KaptTask : AbstractCompile() {
         val compilerRunner = GradleCompilerRunner(project)
         val exitCode = compilerRunner.runJvmCompiler(sourceRoots.kotlinSourceFiles, sourceRoots.javaSourceRoots, args, environment)
         throwGradleExceptionIfError(exitCode)
+    }
+
+    private fun File.clearDirectory() {
+        deleteRecursively()
+        mkdirs()
     }
 }
