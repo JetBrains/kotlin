@@ -117,7 +117,7 @@ sealed class KtLightFieldImpl<T: PsiField>(
     }
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
-        if (another is KtLightField && kotlinOrigin == another.kotlinOrigin && clsDelegate == another.clsDelegate) {
+        if (another is KtLightField && this == another) {
             return true
         }
         return super.isEquivalentTo(another)

@@ -179,7 +179,7 @@ class KtLightMethodImpl private constructor(
     }
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
-        if (another is KtLightMethod && kotlinOrigin == another.kotlinOrigin && clsDelegate == another.clsDelegate) {
+        if (another is KtLightMethod && this == another) {
             return true
         }
 
