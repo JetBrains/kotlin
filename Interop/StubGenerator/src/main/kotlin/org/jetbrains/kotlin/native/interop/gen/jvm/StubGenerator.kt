@@ -23,7 +23,7 @@ class StubGenerator(
     val excludedFunctions: Set<String>
         get() = configuration.excludedFunctions
 
-    val keywords = setOf("object") // TODO
+    val keywords = setOf("object", "val") // TODO
 
     fun String.mangleIfKeyword(): String {
         return if (this in keywords) {

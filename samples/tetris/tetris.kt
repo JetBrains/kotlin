@@ -22,6 +22,9 @@ enum class PlacementResult(val linesCleared: Int = 0, val bonus: Int = 0) {
 }
 
 val EMPTY: Byte = 0
+val CELL1: Byte = 1
+val CELL2: Byte = 2
+val CELL3: Byte = 3
 val BRICK: Byte = -1
 
 class Point(var x: Int, var y: Int)
@@ -65,97 +68,97 @@ class PiecePosition(piece: Piece, private val origin: Point) {
  * We use Nintendo Rotation System, right-handed version.
  * See https://tetris.wiki/Nintendo_Rotation_System
  */
-enum class Piece(private val origin_: Point, vararg val states: Field) {
+enum class Piece(private val origin_: Point, private vararg val states: Field) {
     T(Point(-1, -2),
             arrayOf(
-                    byteArrayOf(0, 0, 0),
-                    byteArrayOf(1, 1, 1),
-                    byteArrayOf(0, 1, 0)),
+                    byteArrayOf(EMPTY, EMPTY, EMPTY),
+                    byteArrayOf(CELL1, CELL1, CELL1),
+                    byteArrayOf(EMPTY, CELL1, EMPTY)),
             arrayOf(
-                    byteArrayOf(0, 1, 0),
-                    byteArrayOf(1, 1, 0),
-                    byteArrayOf(0, 1, 0)),
+                    byteArrayOf(EMPTY, CELL1, EMPTY),
+                    byteArrayOf(CELL1, CELL1, EMPTY),
+                    byteArrayOf(EMPTY, CELL1, EMPTY)),
             arrayOf(
-                    byteArrayOf(0, 1, 0),
-                    byteArrayOf(1, 1, 1),
-                    byteArrayOf(0, 0, 0)),
+                    byteArrayOf(EMPTY, CELL1, EMPTY),
+                    byteArrayOf(CELL1, CELL1, CELL1),
+                    byteArrayOf(EMPTY, EMPTY, EMPTY)),
             arrayOf(
-                    byteArrayOf(0, 1, 0),
-                    byteArrayOf(0, 1, 1),
-                    byteArrayOf(0, 1, 0))
+                    byteArrayOf(EMPTY, CELL1, EMPTY),
+                    byteArrayOf(EMPTY, CELL1, CELL1),
+                    byteArrayOf(EMPTY, CELL1, EMPTY))
     ),
     J(Point(-1, -2),
             arrayOf(
-                    byteArrayOf(0, 0, 0),
-                    byteArrayOf(2, 2, 2),
-                    byteArrayOf(0, 0, 2)),
+                    byteArrayOf(EMPTY, EMPTY, EMPTY),
+                    byteArrayOf(CELL2, CELL2, CELL2),
+                    byteArrayOf(EMPTY, EMPTY, CELL2)),
             arrayOf(
-                    byteArrayOf(0, 2, 0),
-                    byteArrayOf(0, 2, 0),
-                    byteArrayOf(2, 2, 0)),
+                    byteArrayOf(EMPTY, CELL2, EMPTY),
+                    byteArrayOf(EMPTY, CELL2, EMPTY),
+                    byteArrayOf(CELL2, CELL2, EMPTY)),
             arrayOf(
-                    byteArrayOf(2, 0, 0),
-                    byteArrayOf(2, 2, 2),
-                    byteArrayOf(0, 0, 0)),
+                    byteArrayOf(CELL2, EMPTY, EMPTY),
+                    byteArrayOf(CELL2, CELL2, CELL2),
+                    byteArrayOf(EMPTY, EMPTY, EMPTY)),
             arrayOf(
-                    byteArrayOf(0, 2, 2),
-                    byteArrayOf(0, 2, 0),
-                    byteArrayOf(0, 2, 0))
+                    byteArrayOf(EMPTY, CELL2, CELL2),
+                    byteArrayOf(EMPTY, CELL2, EMPTY),
+                    byteArrayOf(EMPTY, CELL2, EMPTY))
     ),
     Z(Point(-1, -2),
             arrayOf(
-                    byteArrayOf(0, 0, 0),
-                    byteArrayOf(3, 3, 0),
-                    byteArrayOf(0, 3, 3)),
+                    byteArrayOf(EMPTY, EMPTY, EMPTY),
+                    byteArrayOf(CELL3, CELL3, EMPTY),
+                    byteArrayOf(EMPTY, CELL3, CELL3)),
             arrayOf(
-                    byteArrayOf(0, 0, 3),
-                    byteArrayOf(0, 3, 3),
-                    byteArrayOf(0, 3, 0))
+                    byteArrayOf(EMPTY, EMPTY, CELL3),
+                    byteArrayOf(EMPTY, CELL3, CELL3),
+                    byteArrayOf(EMPTY, CELL3, EMPTY))
     ),
-    O(Point(0, -2),
+    O(Point(0, -1),
             arrayOf(
-                    byteArrayOf(1, 1),
-                    byteArrayOf(1, 1))
+                    byteArrayOf(CELL1, CELL1),
+                    byteArrayOf(CELL1, CELL1))
     ),
     S(Point(-1, -2),
             arrayOf(
-                    byteArrayOf(0, 0, 0),
-                    byteArrayOf(0, 2, 2),
-                    byteArrayOf(2, 2, 0)),
+                    byteArrayOf(EMPTY, EMPTY, EMPTY),
+                    byteArrayOf(EMPTY, CELL2, CELL2),
+                    byteArrayOf(CELL2, CELL2, EMPTY)),
             arrayOf(
-                    byteArrayOf(0, 2, 0),
-                    byteArrayOf(0, 2, 2),
-                    byteArrayOf(0, 0, 2))
+                    byteArrayOf(EMPTY, CELL2, EMPTY),
+                    byteArrayOf(EMPTY, CELL2, CELL2),
+                    byteArrayOf(EMPTY, EMPTY, CELL2))
     ),
     L(Point(-1, -2),
             arrayOf(
-                    byteArrayOf(0, 0, 0),
-                    byteArrayOf(3, 3, 3),
-                    byteArrayOf(3, 0, 0)),
+                    byteArrayOf(EMPTY, EMPTY, EMPTY),
+                    byteArrayOf(CELL3, CELL3, CELL3),
+                    byteArrayOf(CELL3, EMPTY, EMPTY)),
             arrayOf(
-                    byteArrayOf(3, 3, 0),
-                    byteArrayOf(0, 3, 0),
-                    byteArrayOf(0, 3, 0)),
+                    byteArrayOf(CELL3, CELL3, EMPTY),
+                    byteArrayOf(EMPTY, CELL3, EMPTY),
+                    byteArrayOf(EMPTY, CELL3, EMPTY)),
             arrayOf(
-                    byteArrayOf(0, 0, 3),
-                    byteArrayOf(3, 3, 3),
-                    byteArrayOf(0, 0, 0)),
+                    byteArrayOf(EMPTY, EMPTY, CELL3),
+                    byteArrayOf(CELL3, CELL3, CELL3),
+                    byteArrayOf(EMPTY, EMPTY, EMPTY)),
             arrayOf(
-                    byteArrayOf(0, 3, 0),
-                    byteArrayOf(0, 3, 0),
-                    byteArrayOf(0, 3, 3))
+                    byteArrayOf(EMPTY, CELL3, EMPTY),
+                    byteArrayOf(EMPTY, CELL3, EMPTY),
+                    byteArrayOf(EMPTY, CELL3, CELL3))
     ),
     I(Point(-2, -2),
             arrayOf(
-                    byteArrayOf(0, 0, 0, 0),
-                    byteArrayOf(0, 0, 0, 0),
-                    byteArrayOf(1, 1, 1, 1),
-                    byteArrayOf(0, 0, 0, 0)),
+                    byteArrayOf(EMPTY, EMPTY, EMPTY, EMPTY),
+                    byteArrayOf(EMPTY, EMPTY, EMPTY, EMPTY),
+                    byteArrayOf(CELL1, CELL1, CELL1, CELL1),
+                    byteArrayOf(EMPTY, EMPTY, EMPTY, EMPTY)),
             arrayOf(
-                    byteArrayOf(0, 0, 1, 0),
-                    byteArrayOf(0, 0, 1, 0),
-                    byteArrayOf(0, 0, 1, 0),
-                    byteArrayOf(0, 0, 1, 0))
+                    byteArrayOf(EMPTY, EMPTY, CELL1, EMPTY),
+                    byteArrayOf(EMPTY, EMPTY, CELL1, EMPTY),
+                    byteArrayOf(EMPTY, EMPTY, CELL1, EMPTY),
+                    byteArrayOf(EMPTY, EMPTY, CELL1, EMPTY))
     );
 
     val origin get() = Point(origin_.x, origin_.y)
@@ -448,7 +451,6 @@ class Game(width: Int, height: Int, val visualizer: GameFieldVisualizer, val use
         var attemptsToLock = 0
         while (!gameOver) {
             sleep(1000 / 60) // Refresh rate - 60 frames per second.
-            //sleep(200)
             val commands = userInput.readCommands()
             for (cmd in commands) {
                 val success: Boolean
@@ -493,17 +495,23 @@ fun main(args: Array<String>) {
     SDL_main(args)
 }
 
-fun print_SDL_Error() {
-    externals.printf(SDL_GetError()!!.rawValue)
-}
+fun get_SDL_Error() = SDL_GetError()!!.asCString().toString()
 
 class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, UserInput {
     private val CELL_SIZE = 20
+    private val COLORS = 10
+    private val CELLS_WIDTH = COLORS * CELL_SIZE
+    private val CELLS_HEIGHT = 3 * CELL_SIZE
     private val SYMBOL_SIZE = 21
     private val INFO_MARGIN = 10
     private val MARGIN = 2
     private val BORDER_WIDTH = 18
     private val INFO_SPACE_WIDTH = SYMBOL_SIZE * (2 + 8)
+    private val LINES_LABEL_WIDTH = 104
+    private val SCORE_LABEL_WIDTH = 107
+    private val LEVEL_LABEL_WIDTH = 103
+    private val NEXT_LABEL_WIDTH = 85
+    private val TETRISES_LABEL_WIDTH = 162
 
     private val field: Field = Array<ByteArray>(height) { ByteArray(width) }
     private val nextPieceField: Field = Array<ByteArray>(4) { ByteArray(4) }
@@ -516,57 +524,35 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
     private val fieldHeight: Int
     private val window: CPointer<SDL_Window>
     private val renderer: CPointer<SDL_Renderer>
-    private val cells: CPointer<SDL_Texture>
-    private val texts: CPointer<SDL_Texture>
+    private val texture: CPointer<SDL_Texture>
 
     init {
         if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-            //println("SDL_Init error: ${SDL_GetError()}")
-            print("SDL_CreateWindow Error: ")
-            print_SDL_Error()
-            println()
+            println("SDL_Init Error: ${get_SDL_Error()}")
             throw Error()
         }
 
         fieldWidth = width * (CELL_SIZE + MARGIN) + MARGIN + BORDER_WIDTH * 2
         fieldHeight = height * (CELL_SIZE + MARGIN) + MARGIN + BORDER_WIDTH * 2
-        val win = SDL_CreateWindow("Tetris", 100, 100, fieldWidth + INFO_SPACE_WIDTH,
-                fieldHeight, SDL_WindowFlags.SDL_WINDOW_SHOWN.value)
-        if (win == null) {
-            //println("SDL_CreateWindow Error: ${SDL_GetError()!!.asCString()}")
-            print("SDL_CreateWindow Error: ")
-            print_SDL_Error()
-            println()
+        val window = SDL_CreateWindow("Tetris", 100, 100, fieldWidth + INFO_SPACE_WIDTH,
+                fieldHeight, SDL_WINDOW_SHOWN)
+        if (window == null) {
+            println("SDL_CreateWindow Error: ${get_SDL_Error()}")
             SDL_Quit()
             throw Error()
         }
-        window = win
+        this.window = window
 
-        val ren = SDL_CreateRenderer(win, -1, (SDL_RendererFlags.SDL_RENDERER_ACCELERATED or SDL_RendererFlags.SDL_RENDERER_PRESENTVSYNC).value)
-        if (ren == null) {
-            SDL_DestroyWindow(win)
-            //println("SDL_CreateRenderer Error: ${SDL_GetError()!!.asCString()}")
-            println("SDL_CreateRenderer Error: ")
-            print_SDL_Error()
-            println()
+        val renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED or SDL_RENDERER_PRESENTVSYNC)
+        if (renderer == null) {
+            SDL_DestroyWindow(window)
+            println("SDL_CreateRenderer Error: ${get_SDL_Error()}")
             SDL_Quit()
             throw Error()
         }
-        renderer = ren
+        this.renderer = renderer
 
-        // TODO: merge together.
-        cells = loadImage(win, ren, "tetris_all.bmp")
-        texts = loadImage(win, ren, "tetris_cells_texts.bmp")
-//        if (SDL_SetTextureAlphaMod(tex, 63) != 0) {
-//            println("Unable to set alpha mod")
-//            print_SDL_Error()
-//            println()
-//        }
-//        if (SDL_SetTextureColorMod(tex, 127, 127, 127) != 0) {
-//            println("Unable to set color mod")
-//            print_SDL_Error()
-//            println()
-//        }
+        texture = loadImage(window, renderer, "tetris_all.bmp")
     }
 
     private fun loadImage(win: CPointer<SDL_Window>, ren: CPointer<SDL_Renderer>, imagePath: String): CPointer<SDL_Texture> {
@@ -574,10 +560,7 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
         if (bmp == null) {
             SDL_DestroyRenderer(ren)
             SDL_DestroyWindow(win)
-            //println("SDL_LoadBMP Error: ${SDL_GetError()!!.asCString()}")
-            println("SDL_LoadBMP Error: ")
-            print_SDL_Error()
-            println()
+            println("SDL_LoadBMP_RW Error: ${get_SDL_Error()}")
             SDL_Quit()
             throw Error()
         }
@@ -587,10 +570,7 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
         if (tex == null) {
             SDL_DestroyRenderer(ren)
             SDL_DestroyWindow(win)
-            //println("SDL_CreateTextureFromSurface Error: ${SDL_GetError()!!.asCString()}")
-            println("SDL_CreateTextureFromSurface Error: ")
-            print_SDL_Error()
-            println()
+            println("SDL_CreateTextureFromSurface Error: ${get_SDL_Error()}")
             SDL_Quit()
             throw Error()
         }
@@ -614,104 +594,182 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
 
     override fun refresh() {
         SDL_RenderClear(renderer)
-        drawBorder()
         drawField()
         drawInfo()
         drawNextPiece()
         SDL_RenderPresent(renderer)
     }
 
-    private fun drawBorder() {
-        memScoped {
-            val rect = alloc<SDL_Rect>()
-            rect.w.value = fieldWidth
-            rect.h.value = fieldHeight
-            rect.x.value = 0
-            rect.y.value = 0
-            SDL_SetRenderDrawColor(renderer, -128, 0, -128, -128)
-            SDL_RenderFillRect(renderer, rect.ptr.reinterpret())
-            rect.w.value = fieldWidth - BORDER_WIDTH * 2
-            rect.h.value = fieldHeight - BORDER_WIDTH * 2
-            rect.x.value = BORDER_WIDTH
-            rect.y.value = BORDER_WIDTH
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, -128)
-            SDL_RenderFillRect(renderer, rect.ptr.reinterpret())
+    private fun drawBorder(topLeftX: Int, topLeftY: Int, width: Int, height: Int) {
+        // Upper-left corner.
+        var srcX = CELLS_WIDTH
+        var srcY = 0
+        var destX = topLeftX
+        var destY = topLeftY
+        copyRect(srcX, srcY, destX, destY, BORDER_WIDTH + MARGIN, BORDER_WIDTH)
+
+        // Upper margin.
+        srcX += BORDER_WIDTH + MARGIN
+        destX += BORDER_WIDTH + MARGIN
+        for (i in 0..width - 1) {
+            copyRect(srcX, srcY, destX, destY, CELL_SIZE + MARGIN, BORDER_WIDTH)
+            destX += CELL_SIZE + MARGIN
         }
+
+        // Upper-right corner.
+        srcX += CELL_SIZE + MARGIN
+        copyRect(srcX, srcY, destX, destY, BORDER_WIDTH, BORDER_WIDTH + MARGIN)
+
+        // Right margin.
+        srcY += BORDER_WIDTH + MARGIN
+        destY += BORDER_WIDTH + MARGIN
+        for (j in 0..height - 1) {
+            copyRect(srcX, srcY, destX, destY, BORDER_WIDTH, CELL_SIZE + MARGIN)
+            destY += CELL_SIZE + MARGIN
+        }
+
+        // Left margin.
+        srcX = CELLS_WIDTH
+        srcY = BORDER_WIDTH
+        destX = topLeftX
+        destY = topLeftY + BORDER_WIDTH
+        for (j in 0..height - 1) {
+            copyRect(srcX, srcY, destX, destY, BORDER_WIDTH, CELL_SIZE + MARGIN)
+            destY += CELL_SIZE + MARGIN
+        }
+
+        // Left-down corner.
+        srcY += CELL_SIZE + MARGIN
+        copyRect(srcX, srcY, destX, destY, BORDER_WIDTH, BORDER_WIDTH + MARGIN)
+
+        // Down marign.
+        srcX += BORDER_WIDTH
+        srcY += MARGIN
+        destX += BORDER_WIDTH
+        destY += MARGIN
+        for (i in 0..width - 1) {
+            copyRect(srcX, srcY, destX, destY, CELL_SIZE + MARGIN, BORDER_WIDTH)
+            destX += CELL_SIZE + MARGIN
+
+        }
+        // Right-down corner.
+        srcX += CELL_SIZE + MARGIN
+        copyRect(srcX, srcY, destX, destY, BORDER_WIDTH + MARGIN, BORDER_WIDTH)
     }
 
     private fun drawField() {
-        drawField(field, width, height, MARGIN + BORDER_WIDTH, MARGIN + BORDER_WIDTH)
+        drawField(field    = field,
+                  topLeftX = 0,
+                  topLeftY = 0,
+                  width    = width,
+                  height   = height)
     }
 
     private fun drawNextPiece() {
-        drawInt(103, 60 + SYMBOL_SIZE, fieldWidth + SYMBOL_SIZE, SYMBOL_SIZE * 11 + INFO_MARGIN * 6, 85, 0, 0)
-        drawField(nextPieceField, 4, 4,
-                fieldWidth + SYMBOL_SIZE + MARGIN + CELL_SIZE + MARGIN,
-                SYMBOL_SIZE * 12 + INFO_MARGIN * 7 + MARGIN)
+        drawInt(labelSrcX   = LEVEL_LABEL_WIDTH,
+                labelSrcY   = CELLS_HEIGHT + SYMBOL_SIZE,
+                labelDestX  = fieldWidth + SYMBOL_SIZE,
+                labelDestY  = getInfoY(5),
+                labelWidth  = NEXT_LABEL_WIDTH,
+                totalDigits = 0,
+                value       = 0)
+        drawField(field    = nextPieceField,
+                  topLeftX = fieldWidth + SYMBOL_SIZE,
+                  topLeftY = getInfoY(6),
+                  width    = 4,
+                  height   = 4)
     }
 
-    private fun drawField(f: Field, w: Int, h: Int, x: Int, y: Int) {
-        memScoped {
-            val srcRect = alloc<SDL_Rect>()
-            val destRect = alloc<SDL_Rect>()
-            srcRect.w.value = CELL_SIZE
-            srcRect.h.value = CELL_SIZE
-            destRect.w.value = CELL_SIZE
-            destRect.h.value = CELL_SIZE
-            for (i in 0..h - 1)
-                for (j in 0..w - 1) {
-                    val cell = f[i][j].toInt()
-                    if (cell == 0) continue
-                    srcRect.x.value = (cell - 1) * CELL_SIZE
-                    srcRect.y.value = (level % 10) * CELL_SIZE
-                    destRect.x.value = x + j * (CELL_SIZE + MARGIN)
-                    destRect.y.value = y + i * (CELL_SIZE + MARGIN)
-                    SDL_RenderCopy(renderer, cells, srcRect.ptr.reinterpret(), destRect.ptr.reinterpret())
-                }
-        }
+    private fun drawField(field: Field, topLeftX: Int, topLeftY: Int, width: Int, height: Int) {
+        drawBorder(topLeftX = topLeftX,
+                   topLeftY = topLeftY,
+                   width    = width,
+                   height   = height)
+        for (i in 0..height - 1)
+            for (j in 0..width - 1) {
+                val cell = field[i][j].toInt()
+                if (cell == 0) continue
+                copyRect(srcX  = (level % COLORS) * CELL_SIZE,
+                         srcY  = (3 - cell) * CELL_SIZE,
+                         destX = topLeftX + BORDER_WIDTH + MARGIN + j * (CELL_SIZE + MARGIN),
+                         destY = topLeftY + BORDER_WIDTH + MARGIN + i * (CELL_SIZE + MARGIN),
+                         width = CELL_SIZE,
+                         height = CELL_SIZE)
+            }
     }
 
     private fun drawInfo() {
-        drawInt(104, 60, fieldWidth + SYMBOL_SIZE, SYMBOL_SIZE, 107, 6, score)
-        drawInt(0, 60, fieldWidth + SYMBOL_SIZE, SYMBOL_SIZE * 3 + INFO_MARGIN, 104, 3, linesCleared)
-        drawInt(0, 60 + SYMBOL_SIZE, fieldWidth + SYMBOL_SIZE, SYMBOL_SIZE * 5 + INFO_MARGIN * 2, 103, 2, level)
-        drawInt(0, 60 + SYMBOL_SIZE * 2, fieldWidth + SYMBOL_SIZE, SYMBOL_SIZE * 7 + INFO_MARGIN * 3, 162, 2, tetrises)
+        drawInt(labelSrcX   = LINES_LABEL_WIDTH,
+                labelSrcY   = CELLS_HEIGHT,
+                labelDestX  = fieldWidth + SYMBOL_SIZE,
+                labelDestY  = getInfoY(0),
+                labelWidth  = SCORE_LABEL_WIDTH,
+                totalDigits = 6,
+                value       = score)
+        drawInt(labelSrcX   = 0,
+                labelSrcY   = CELLS_HEIGHT,
+                labelDestX  = fieldWidth + SYMBOL_SIZE,
+                labelDestY  = getInfoY(1),
+                labelWidth  = LINES_LABEL_WIDTH,
+                totalDigits = 3,
+                value       = linesCleared)
+        drawInt(labelSrcX   = 0,
+                labelSrcY   = CELLS_HEIGHT + SYMBOL_SIZE,
+                labelDestX  = fieldWidth + SYMBOL_SIZE,
+                labelDestY  = getInfoY(2),
+                labelWidth  = LEVEL_LABEL_WIDTH,
+                totalDigits = 2,
+                value       = level)
+        drawInt(labelSrcX   = 0,
+                labelSrcY   = CELLS_HEIGHT + SYMBOL_SIZE * 2,
+                labelDestX  = fieldWidth + SYMBOL_SIZE,
+                labelDestY  = getInfoY(3),
+                labelWidth  = TETRISES_LABEL_WIDTH,
+                totalDigits = 2,
+                value       = tetrises)
+    }
+
+    private fun getInfoY(line: Int): Int {
+        return SYMBOL_SIZE * (2 * line + 1) + INFO_MARGIN * line
     }
 
     private fun drawInt(labelSrcX: Int, labelSrcY: Int, labelDestX: Int, labelDestY: Int,
                         labelWidth: Int, totalDigits: Int, value: Int) {
+        copyRect(srcX   = labelSrcX,
+                 srcY   = labelSrcY,
+                 destX  = labelDestX,
+                 destY  = labelDestY,
+                 width  = labelWidth,
+                 height = SYMBOL_SIZE)
+        val digits = IntArray(totalDigits)
+        var x = value
+        for (i in 0..totalDigits - 1) {
+            digits[totalDigits - 1 - i] = x % 10
+            x = x / 10
+        }
+        for (i in 0..totalDigits - 1) {
+            copyRect(srcX   = digits[i] * SYMBOL_SIZE,
+                     srcY   = CELLS_HEIGHT + 3 * SYMBOL_SIZE,
+                     destX  = labelDestX + SYMBOL_SIZE + i * SYMBOL_SIZE,
+                     destY  = labelDestY + SYMBOL_SIZE,
+                     width  = SYMBOL_SIZE,
+                     height = SYMBOL_SIZE)
+        }
+    }
+
+    private fun copyRect(srcX: Int, srcY: Int, destX: Int, destY: Int, width: Int, height: Int) {
         memScoped {
             val srcRect = alloc<SDL_Rect>()
             val destRect = alloc<SDL_Rect>()
-
-            srcRect.w.value = labelWidth
-            srcRect.h.value = SYMBOL_SIZE
-            srcRect.x.value = labelSrcX
-            srcRect.y.value = labelSrcY
-            destRect.w.value = labelWidth
-            destRect.h.value = SYMBOL_SIZE
-            destRect.x.value = labelDestX
-            destRect.y.value = labelDestY
-
-            SDL_RenderCopy(renderer, texts, srcRect.ptr.reinterpret(), destRect.ptr.reinterpret())
-
-            val digits = IntArray(totalDigits)
-            var x = value
-            for (i in 0..totalDigits - 1) {
-                digits[totalDigits - 1 - i] = x % 10
-                x = x / 10
-            }
-            srcRect.w.value = SYMBOL_SIZE
-            srcRect.h.value = SYMBOL_SIZE
-            destRect.w.value = SYMBOL_SIZE
-            destRect.h.value = SYMBOL_SIZE
-            for (i in 0..totalDigits - 1) {
-                srcRect.x.value = digits[i] * SYMBOL_SIZE
-                srcRect.y.value = 123 // TODO: constant.
-                destRect.x.value = labelDestX + SYMBOL_SIZE + i * SYMBOL_SIZE
-                destRect.y.value = labelDestY + SYMBOL_SIZE
-                SDL_RenderCopy(renderer, texts, srcRect.ptr.reinterpret(), destRect.ptr.reinterpret())
-            }
+            srcRect.w.value = width
+            srcRect.h.value = height
+            srcRect.x.value = srcX
+            srcRect.y.value = srcY
+            destRect.w.value = width
+            destRect.h.value = height
+            destRect.x.value = destX
+            destRect.y.value = destY
+            SDL_RenderCopy(renderer, texture, srcRect.ptr.reinterpret(), destRect.ptr.reinterpret())
         }
     }
 
@@ -741,21 +799,23 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
             val event = alloc<SDL_Event>()
             var currentCommands = 0
             while (SDL_PollEvent(event.ptr.reinterpret()) != 0) {
-                if (event.type.value == SDL_EventType.SDL_KEYDOWN.value
-                        || event.type.value == SDL_EventType.SDL_KEYUP.value) {
+                if (event.type.value == SDL_KEYDOWN
+                        || event.type.value == SDL_KEYUP) {
                     val keyboardEvent = event.ptr.reinterpret<SDL_KeyboardEvent>().pointed
                     val scancode = when (keyboardEvent.keysym.scancode.value) {
-                        SDL_Scancode.SDL_SCANCODE_LEFT -> LEFT_PRESSED
-                        SDL_Scancode.SDL_SCANCODE_RIGHT -> RIGHT_PRESSED
-                        SDL_Scancode.SDL_SCANCODE_DOWN -> DOWN_PRESSED
-                        SDL_Scancode.SDL_SCANCODE_Z -> Z_PRESSED
-                        SDL_Scancode.SDL_SCANCODE_UP -> UP_PRESSED
-                        SDL_Scancode.SDL_SCANCODE_ESCAPE -> ESC_PRESSED
+                        SDL_SCANCODE_LEFT -> LEFT_PRESSED
+                        SDL_SCANCODE_RIGHT -> RIGHT_PRESSED
+                        SDL_SCANCODE_DOWN -> DOWN_PRESSED
+                        SDL_SCANCODE_Z -> Z_PRESSED
+                        SDL_SCANCODE_UP -> UP_PRESSED
+                        SDL_SCANCODE_ESCAPE -> ESC_PRESSED
                         else -> 0
                     }
                     if (keyboardEvent.state.value.toInt() == SDL_PRESSED) {
-                        if (pressedKeys and scancode != 0)
+                        if (pressedKeys and scancode != 0) {
+                            // DAS - delayed auto shift: https://tetris.wiki/DAS
                             stickedKeys = stickedKeys or scancode
+                        }
                         currentCommands = currentCommands or scancode
                         pressedKeys = pressedKeys or scancode
                     }
@@ -785,7 +845,7 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
     }
 
     fun destroy() {
-        SDL_DestroyTexture(cells)
+        SDL_DestroyTexture(texture)
         SDL_DestroyRenderer(renderer)
         SDL_DestroyWindow(window)
         SDL_Quit()
