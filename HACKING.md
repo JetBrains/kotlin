@@ -15,3 +15,6 @@ There are several gradle flags one can use for Konan build.
 
         ./gradlew -Pfilter=overflowLong.kt run_external
 
+* **-Pperfix** allows one to choose external test directories to run. Only tests from directories with given prefix will be executed.
+
+        ./gradlew -Pfilter=external_codegen_box_cast run_external

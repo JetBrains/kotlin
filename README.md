@@ -23,3 +23,9 @@ For some tests, use:
 To run blackbox compiler tests from JVM Kotlin use (takes time):
 
     ./gradlew run_external
+
+To update the blackbox compiler tests set TeamCity build number in `gradle.properties`:
+
+    testDataVersion=<build number>:id
+
+and run `./gradlew update_external_tests`
