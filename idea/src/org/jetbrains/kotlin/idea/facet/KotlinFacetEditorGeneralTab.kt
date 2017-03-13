@@ -104,13 +104,17 @@ class KotlinFacetEditorGeneralTab(
             val contentPanel = FormBuilder
                     .createFormBuilder()
                     .addComponent(JPanel(BorderLayout()).apply {
-                        border = EmptyBorder(0, 0, UIUtil.DEFAULT_VGAP, UIUtil.DEFAULT_VGAP)
                         add(useProjectSettingsCheckBox, BorderLayout.WEST)
                         add(projectSettingsLink, BorderLayout.EAST)
                     })
                     .addLabeledComponent("&Target platform: ", targetPlatformComboBox)
-                    .addComponent(compilerConfigurable.createComponent()!!)
+                    .addComponent(compilerConfigurable.createComponent()!!.apply {
+                        border = null
+                    })
                     .panel
+                    .apply {
+                        border = EmptyBorder(10, 10, 10, 10)
+                    }
             add(contentPanel, BorderLayout.NORTH)
 
             useProjectSettingsCheckBox.addActionListener {

@@ -215,7 +215,7 @@
               <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.js.option.output.prefix"/>
             </properties>
           </component>
-          <component id="2d5b" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="outputPrefixFile">
+          <component id="dd0c2" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="outputPrefixFile">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -231,7 +231,7 @@
               <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.js.option.output.postfix"/>
             </properties>
           </component>
-          <component id="1292b" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="outputPostfixFile">
+          <component id="1bdb7" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="outputPostfixFile">
             <constraints>
               <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -245,7 +245,7 @@
               <text resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" key="kotlin.compiler.js.option.output.copy.dir"/>
             </properties>
           </component>
-          <component id="f1f6b" class="javax.swing.JTextField" binding="outputDirectory">
+          <component id="7c11a" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="outputDirectory">
             <constraints>
               <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
