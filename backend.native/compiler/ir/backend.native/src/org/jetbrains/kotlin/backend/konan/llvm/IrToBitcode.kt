@@ -1406,10 +1406,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 return
             }
                                                                                 // It is local return.
+            codegen.br(getExit()!!)                                             // Generate branch on exit block.
+
             if (KotlinBuiltIns.isUnit(inlineBody.type) == false) {              // If function returns more then "unit"
                 codegen.assignPhis(getResult()!! to value!!)                    // Assign return value to result PHI node.
             }
-            codegen.br(getExit()!!)                                             // Generate branch on exit block.
         }
     }
 
