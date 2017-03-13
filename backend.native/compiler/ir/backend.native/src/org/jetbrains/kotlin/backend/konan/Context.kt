@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import llvm.LLVMDumpModule
 import llvm.LLVMModuleRef
+import org.jetbrains.kotlin.backend.common.validateIrModule
 import org.jetbrains.kotlin.backend.jvm.descriptors.initialize
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.Ir
@@ -247,8 +248,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     }
 
     fun verifyIr() {
-        if (irModule == null) return
-        // TODO: We don't have it yet.
+        val module = irModule ?: return
+        validateIrModule(this, module)
     }
 
     fun printIr() {
