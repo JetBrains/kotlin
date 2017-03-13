@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.allopen
 
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.extensions.AnnotationBasedExtension
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.BindingContext
 
@@ -45,6 +45,10 @@ abstract class AbstractAllOpenDeclarationAttributeAltererExtension : Declaration
             bindingContext: BindingContext
     ): Modality? {
         if (currentModality != Modality.FINAL) {
+            return null
+        }
+
+        if (modifierListOwner.hasModifier(KtTokens.PRIVATE_KEYWORD) && modifierListOwner is KtCallableDeclaration) {
             return null
         }
 
