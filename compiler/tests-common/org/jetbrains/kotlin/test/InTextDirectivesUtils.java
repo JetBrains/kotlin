@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -236,7 +236,7 @@ public final class InTextDirectivesUtils {
     private static boolean isIgnoredTargetByPrefix(TargetBackend targetBackend, File file, String prefix) {
         if (targetBackend == TargetBackend.ANY) return false;
 
-        List<String> ignoredBackends = findLinesWithPrefixesRemoved(textWithDirectives(file), prefix);
+        List<String> ignoredBackends = findListWithPrefixes(textWithDirectives(file), prefix);
         return ignoredBackends.contains(targetBackend.name());
     }
 
