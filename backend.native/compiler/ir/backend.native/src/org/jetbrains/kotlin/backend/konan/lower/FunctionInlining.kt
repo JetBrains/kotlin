@@ -55,7 +55,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     //-------------------------------------------------------------------------//
 
     fun evaluateParameters(irCall: IrCall,
-        statements: MutableList<IrStatement>): MutableList<Pair<DeclarationDescriptor, IrExpression>> {
+        statements: MutableList<IrStatement>): MutableList<Pair<ValueDescriptor, IrExpression>> {
 
         val parametersOld  = irCall.getArguments()                                          // Create map call_site_argument -> inline_function_parameter.
         val parametersNew  = parametersOld.map {
@@ -82,8 +82,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         val functionDeclaration = context.ir.originalModuleIndex
             .functions[functionDescriptor.original]                                         // Get FunctionDeclaration by FunctionDescriptor.
 
-        val result = super.visitCall(irCall)
-        if (functionDeclaration == null) return result                                      // Function is declared in another module.
+        if (functionDeclaration == null) return irCall                                      // Function is declared in another module.
         print("file: ${currentFile!!.fileEntry.name} ")                                     // TODO debug output
         print("function: ${currentFunction!!.descriptor.name} ")                            // TODO debug output
         println("call: ${functionDescriptor.name} ${irCall.startOffset}")                   // TODO debug output
@@ -95,18 +94,20 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         val endOffset   = copyFuncDeclaration.endOffset
         val returnType  = copyFuncDeclaration.descriptor.returnType!!
 
-        if (copyFuncDeclaration.body == null) return result                                 // TODO workaround
+        if (copyFuncDeclaration.body == null) return irCall                                 // TODO workaround
         val blockBody   = copyFuncDeclaration.body!! as IrBlockBody
         val statements  = blockBody.statements
-        val parameters  = evaluateParameters(irCall, statements)                            // Evaluate parameters representing expression.
         val inlineBody  = IrInlineFunctionBody(startOffset, endOffset, returnType, null, statements)
 
-        val lambdaInliner = LambdaInliner(parameters)
-        inlineBody.accept(lambdaInliner, null)
-        val transformer = ParametersTransformer(parameters, irCall)
-        inlineBody.accept(transformer, null)                                                // Replace parameters with expression.
+        val newBody = super.visitBlock(inlineBody) as IrBlock
 
-        return super.visitBlock(inlineBody)
+        val parameters  = evaluateParameters(irCall, newBody.statements)                            // Evaluate parameters representing expression.
+        val lambdaInliner = LambdaInliner(parameters, functionScope!!)
+        newBody.accept(lambdaInliner, null)     // TODO
+        val transformer = ParametersTransformer(parameters, irCall, functionScope!!)
+        newBody.accept(transformer, null)       // TODO                                             // Replace parameters with expression.
+
+        return newBody
     }
 
     //-------------------------------------------------------------------------//
@@ -114,7 +115,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     override fun visitCall(expression: IrCall): IrExpression {
 
         val fqName = currentFile!!.packageFragmentDescriptor.fqName.asString()              // TODO to be removed after stdlib compilation
-        // if(fqName.contains("kotlin")) return super.visitCall(expression)                    // TODO to be removed after stdlib compilation
+        //if(fqName.contains("kotlin")) return super.visitCall(expression)                    // TODO to be removed after stdlib compilation
         val fileName = currentFile!!.fileEntry.name
         if (fileName.contains("cinterop")) return super.visitCall(expression)
         if (currentFunction!!.descriptor.isInline) return super.visitCall(expression)       // TODO workaround
@@ -133,7 +134,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 //-----------------------------------------------------------------------------//
 
 internal class LambdaInliner(val parameterToArgument:
-      MutableList<Pair<DeclarationDescriptor, IrExpression>>): IrElementTransformerVoid() {
+      MutableList<Pair<ValueDescriptor, IrExpression>>, val scope: Scope): IrElementTransformerVoid() {
 
     override fun visitElement(element: IrElement) = element.accept(this, null)
 
@@ -210,7 +211,7 @@ internal class LambdaInliner(val parameterToArgument:
         val parameters = lambdaFunction.descriptor.valueParameters                          // Lambda function parameters
         val res = parameters.map {
             val argument  = irCall.getValueArgument(it.index)
-            val parameter = it as DeclarationDescriptor
+            val parameter = it as ValueDescriptor
             parameter to argument!!
         }.toMutableList()
 
@@ -218,8 +219,8 @@ internal class LambdaInliner(val parameterToArgument:
         val lambdaReturnType = getLambdaReturnType(lambdaArgument)
         val inlineBody       = IrInlineFunctionBody(0, 0, lambdaReturnType, null, lambdaStatements)
 
-        val transformer = ParametersTransformer(res, irCall)
-        inlineBody.accept(transformer, null)                                                // Replace parameters with expression.
+        val transformer = ParametersTransformer(res, irCall, scope)
+        val aa = inlineBody.accept(transformer, null)          // TODO                                      // Replace parameters with expression.
 
         return inlineBody                                                                   // Replace call site with InlineFunctionBody.
     }
@@ -234,11 +235,10 @@ internal class LambdaInliner(val parameterToArgument:
 
 //-----------------------------------------------------------------------------//
 
-internal class ParametersTransformer(val parameterToArgument: MutableList<Pair<DeclarationDescriptor, IrExpression>>,
-                                     val callSite: IrCall): IrElementTransformerVoid() {
+internal class ParametersTransformer(val parameterToArgument: MutableList<Pair<ValueDescriptor, IrExpression>>,
+                                     val callSite: IrCall, val scope: Scope): IrElementTransformerVoid() {
 
     override fun visitElement(element: IrElement) = element.accept(this, null)
-    val scope  = Scope(callSite.descriptor as FunctionDescriptor)
 
     //-------------------------------------------------------------------------//
 
@@ -260,7 +260,7 @@ internal class ParametersTransformer(val parameterToArgument: MutableList<Pair<D
         val typeNew         = typeArgsMap[operandTypeDescriptor]!!
         val startOffset     = expression.startOffset
         val endOffset       = expression.endOffset
-        val type            = expression.type
+        val type            = expression.type               // TODO
         val operator        = expression.operator
         val argument        = expression.argument
 
@@ -295,32 +295,33 @@ internal class ParametersTransformer(val parameterToArgument: MutableList<Pair<D
     fun substituteType(variable: IrVariable): KotlinType? {
 
         val typeArgsMap = (callSite as IrMemberAccessExpressionBase).typeArguments
-        if (typeArgsMap == null) return null
-        val oldType     = variable.descriptor.type
+        if (typeArgsMap == null) return variable.descriptor.type
+        val oldType        = variable.descriptor.type
         val typeDescriptor = oldType.constructor.declarationDescriptor
-        return typeArgsMap[typeDescriptor]
+        val newType        = typeArgsMap[typeDescriptor]
+        if (newType == null) return variable.descriptor.type
+        return newType
     }
 
     //-------------------------------------------------------------------------//
 
     override fun visitVariable(declaration: IrVariable): IrStatement {
 
-        val result = super.visitVariable(declaration)
-        val type = substituteType(declaration)
-        if (type == null) {
-            return result
-        }
+//        println("visitVariableAkm ${declaration.descriptor.name}")
 
-        val newVar = newVariable(declaration, type)
-        val rr = parameterToArgument.find { it.first == declaration.descriptor }
-        if (rr == null) {
-            val getVal = IrGetValueImpl(0, 0, newVar.descriptor)                            // Create new IR element representing access the new variable.
-            parameterToArgument.add(declaration.descriptor to getVal)
-        } else {
-            return rr.second
-        }
+        val replacement = parameterToArgument.find {
+            if (it.second !is IrGetValue) return super.visitVariable(declaration)
+            val aa = it.second as IrGetValue
+            aa.descriptor == declaration.descriptor
+        }   // Try to find
+        if (replacement != null) return super.visitVariable(declaration)
 
-        return newVar
+        val nn = super.visitVariable(declaration) as IrVariable
+        val newType     = substituteType(nn)!!                                     // If variable type should be replaced with type arg.
+        val newVariable = newVariable(nn, newType)                                 // Create new local variable.
+        val getVal = IrGetValueImpl(0, 0, newVariable.descriptor)                       // Create new IR element representing access the new variable.
+        parameterToArgument.add(nn.descriptor to getVal)
+        return newVariable
     }
 
 }
