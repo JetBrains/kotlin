@@ -26,6 +26,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.ArrayUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -40,7 +41,7 @@ abstract class KtLightModifierListWithExplicitModifiers(
 ) : LightModifierList(owner.manager, KotlinLanguage.INSTANCE, *modifiers) {
     abstract val delegate: PsiAnnotationOwner
 
-    private val _annotations by lazy(LazyThreadSafetyMode.PUBLICATION) { computeAnnotations(this, delegate) }
+    private val _annotations by lazyPub { computeAnnotations(this, delegate) }
 
     override fun getParent() = owner
 
@@ -57,7 +58,7 @@ class KtLightModifierList(
         private val delegate: PsiModifierList,
         private val owner: PsiModifierListOwner
 ) : PsiModifierList by delegate {
-    private val _annotations by lazy(LazyThreadSafetyMode.PUBLICATION) { computeAnnotations(this, delegate) }
+    private val _annotations by lazyPub { computeAnnotations(this, delegate) }
 
     override fun getAnnotations(): Array<out PsiAnnotation> = _annotations.value
 

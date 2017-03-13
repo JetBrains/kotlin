@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassDataProviderForFileFacade
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -194,7 +195,7 @@ class KtLightClassForFacade private constructor(
 
     override fun copy() = KtLightClassForFacade(manager, facadeClassFqName, lightClassDataCache, files)
 
-    override val lightClassData by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    override val lightClassData by lazyPub {
         lightClassDataCache.value.findDataForFacade(facadeClassFqName)
     }
 

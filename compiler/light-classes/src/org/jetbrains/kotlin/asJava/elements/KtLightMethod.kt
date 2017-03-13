@@ -29,6 +29,7 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.builder.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.propertyNameByAccessor
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -51,10 +52,10 @@ class KtLightMethodImpl private constructor(
 ) : LightElement(containingClass.manager, containingClass.language), KtLightMethod {
     override val kotlinOrigin: KtDeclaration? get() = lightMethodOrigin?.originalElement as? KtDeclaration
 
-    override val clsDelegate by lazy(LazyThreadSafetyMode.PUBLICATION, computeRealDelegate)
+    override val clsDelegate by lazyPub(computeRealDelegate)
 
-    private val lightIdentifier by lazy(LazyThreadSafetyMode.PUBLICATION) { KtLightIdentifier(this, kotlinOrigin as? KtNamedDeclaration) }
-    private val returnTypeElem by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val lightIdentifier by lazyPub { KtLightIdentifier(this, kotlinOrigin as? KtNamedDeclaration) }
+    private val returnTypeElem by lazyPub {
         val delegateTypeElement = clsDelegate.returnTypeElement as? ClsTypeElementImpl
         delegateTypeElement?.let { ClsTypeElementImpl(this, it.canonicalText, /*ClsTypeElementImpl.VARIANCE_NONE */ 0.toChar()) }
     }
@@ -63,29 +64,31 @@ class KtLightMethodImpl private constructor(
 
     override fun getContainingClass(): KtLightClass = containingClass
 
-    private val paramsList: PsiParameterList by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val paramsList: PsiParameterList by lazyPub {
         KtLightParameterList(this, dummyDelegate?.parameterList?.parametersCount ?: clsDelegate.parameterList.parametersCount) {
             clsDelegate.parameterList.parameters.mapIndexed { index, clsParameter -> KtLightParameter(clsParameter, index, this@KtLightMethodImpl) }
         }
     }
 
-    private val typeParamsList: CachedValue<PsiTypeParameterList> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val typeParamsList: CachedValue<PsiTypeParameterList> by lazyPub {
         val cacheManager = CachedValuesManager.getManager(clsDelegate.project)
-        cacheManager.createCachedValue<PsiTypeParameterList>({
-             val origin = (lightMethodOrigin as? LightMemberOriginForDeclaration)?.originalElement
-             val list = if (origin != null) {
-                 if (origin is KtClassOrObject) {
-                     KotlinLightTypeParameterListBuilder(manager)
-                 }
-                 else {
-                     LightClassUtil.buildLightTypeParameterList(this@KtLightMethodImpl, origin)
-                 }
-             }
-             else {
-                 clsDelegate.typeParameterList
-             }
-             CachedValueProvider.Result.create(list, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
-         }, false)
+        cacheManager.createCachedValue<PsiTypeParameterList>(
+                {
+                    val origin = (lightMethodOrigin as? LightMemberOriginForDeclaration)?.originalElement
+                    val list = if (origin != null) {
+                        if (origin is KtClassOrObject) {
+                            KotlinLightTypeParameterListBuilder(manager)
+                        }
+                        else {
+                            LightClassUtil.buildLightTypeParameterList(this@KtLightMethodImpl, origin)
+                        }
+                    }
+                    else {
+                        clsDelegate.typeParameterList
+                    }
+                    CachedValueProvider.Result.create(list, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
+                }, false
+        )
     }
 
     override fun getNavigationElement(): PsiElement = kotlinOrigin?.navigationElement ?: super.getNavigationElement()
@@ -137,7 +140,7 @@ class KtLightMethodImpl private constructor(
         throw IncorrectOperationException(JavaCoreBundle.message("psi.error.attempt.to.edit.class.file"))
     }
 
-    private val _modifierList by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val _modifierList by lazyPub {
         if (lightMethodOrigin is LightMemberOriginForDeclaration)
             KtLightModifierList(clsDelegate.modifierList, this)
         else clsDelegate.modifierList

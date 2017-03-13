@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightFieldImpl
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 typealias LightClassBuilder = (LightClassConstructionContext) -> LightClassBuilderResult
@@ -36,11 +37,11 @@ class LazyLightClassDataHolder(
         dummyContextProvider: LightClassContextProvider?
 ) : LightClassDataHolder {
 
-    private val exactResultLazyValue = lazy(LazyThreadSafetyMode.PUBLICATION) { builder(exactContextProvider()) }
+    private val exactResultLazyValue = lazyPub { builder(exactContextProvider()) }
 
     private val exactResult: LightClassBuilderResult by exactResultLazyValue
 
-    private val lazyInexactResult by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val lazyInexactResult by lazyPub {
         dummyContextProvider?.let { builder.invoke(it()) }
     }
 
@@ -65,9 +66,9 @@ class LazyLightClassDataHolder(
             private val relyOnDummySupertypes: Boolean,
             findDelegate: (LightClassBuilderResult) -> PsiClass
     ) : LightClassData {
-        override val clsDelegate: PsiClass by lazy(LazyThreadSafetyMode.PUBLICATION) { findDelegate(exactResult) }
+        override val clsDelegate: PsiClass by lazyPub { findDelegate(exactResult) }
 
-        private val dummyDelegate: PsiClass? by lazy(LazyThreadSafetyMode.PUBLICATION) { inexactResult?.let(findDelegate) }
+        private val dummyDelegate: PsiClass? by lazyPub { inexactResult?.let(findDelegate) }
 
         override fun getOwnFields(containingClass: KtLightClass): List<KtLightField> {
             if (dummyDelegate == null) return clsDelegate.fields.map { KtLightFieldImpl.fromClsField(it, containingClass) }

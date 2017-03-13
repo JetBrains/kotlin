@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightModifierListWithExplicitModifiers
 import org.jetbrains.kotlin.asJava.elements.KtLightPsiReferenceList
 import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -62,13 +63,13 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
     : KtLazyLightClass(classOrObject.manager), StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     private val lightIdentifier = KtLightIdentifier(this, classOrObject)
 
-    private val _extendsList by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val listDelegate = super.getExtendsList() ?: return@lazy null
+    private val _extendsList by lazyPub {
+        val listDelegate = super.getExtendsList() ?: return@lazyPub null
         KtLightPsiReferenceList(listDelegate, this)
     }
 
-    private val _implementsList by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val listDelegate = super.getImplementsList() ?: return@lazy null
+    private val _implementsList by lazyPub {
+        val listDelegate = super.getImplementsList() ?: return@lazyPub null
         KtLightPsiReferenceList(listDelegate, this)
     }
 
@@ -80,7 +81,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
     override val clsDelegate: PsiClass get() = lightClassData.clsDelegate
 
-    override val lightClassData: LightClassData by lazy(LazyThreadSafetyMode.PUBLICATION) { findLightClassData() }
+    override val lightClassData: LightClassData by lazyPub { findLightClassData() }
 
     open protected fun findLightClassData() = getLightClassDataHolder().findDataForClassOrObject(classOrObject)
 
@@ -98,7 +99,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
         return lightClassData
     }
 
-    private val _containingFile: PsiFile by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val _containingFile: PsiFile by lazyPub {
         classOrObject.containingFile.virtualFile ?: error("No virtual file for " + classOrObject.text)
 
         object : FakeFileForLightClass(
@@ -165,7 +166,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
         return super.getContainingClass()
     }
 
-    private val _typeParameterList: PsiTypeParameterList by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val _typeParameterList: PsiTypeParameterList by lazyPub {
         LightClassUtil.buildLightTypeParameterList(this, classOrObject)
     }
 
@@ -175,7 +176,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
     override fun getName(): String? = classOrObject.nameAsName?.asString()
 
-    private val _modifierList: PsiModifierList by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val _modifierList: PsiModifierList by lazyPub {
         object : KtLightModifierListWithExplicitModifiers(this@KtLightClassForSourceDeclaration, computeModifiers()) {
             override val delegate: PsiAnnotationOwner
                 get() = this@KtLightClassForSourceDeclaration.delegate.modifierList!!

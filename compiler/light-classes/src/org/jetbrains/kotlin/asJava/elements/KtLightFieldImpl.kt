@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForEnumEntry
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
@@ -42,9 +43,9 @@ sealed class KtLightFieldImpl<T: PsiField>(
         private val containingClass: KtLightClass,
         private val dummyDelegate: PsiField?
 ) : LightElement(containingClass.manager, KotlinLanguage.INSTANCE), KtLightField {
-    private val lightIdentifier by lazy(LazyThreadSafetyMode.PUBLICATION) { KtLightIdentifier(this, kotlinOrigin as? KtNamedDeclaration) }
+    private val lightIdentifier by lazyPub { KtLightIdentifier(this, kotlinOrigin as? KtNamedDeclaration) }
 
-    override val clsDelegate: T by lazy(LazyThreadSafetyMode.PUBLICATION, computeRealDelegate)
+    override val clsDelegate: T by lazyPub(computeRealDelegate)
 
     @Throws(IncorrectOperationException::class)
     override fun setInitializer(initializer: PsiExpression?) = throw IncorrectOperationException("Not supported")
@@ -83,7 +84,7 @@ sealed class KtLightFieldImpl<T: PsiField>(
         return this
     }
 
-    private val _modifierList by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val _modifierList by lazyPub {
         if (lightMemberOrigin is LightMemberOriginForDeclaration)
             clsDelegate.modifierList?.let { KtLightModifierList(it, this) }
         else clsDelegate.modifierList
@@ -134,7 +135,7 @@ sealed class KtLightFieldImpl<T: PsiField>(
             containingClass: KtLightClass,
             dummyDelegate: PsiField?
     ) : KtLightFieldImpl<PsiEnumConstant>(origin, computeDelegate , containingClass, dummyDelegate), PsiEnumConstant {
-        private val initializingClass by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        private val initializingClass by lazyPub {
             val kotlinEnumEntry = (lightMemberOrigin as? LightMemberOriginForDeclaration)?.originalElement as? KtEnumEntry
             if (kotlinEnumEntry != null && kotlinEnumEntry.declarations.isNotEmpty()) {
                 KtLightClassForEnumEntry(kotlinEnumEntry, clsDelegate)

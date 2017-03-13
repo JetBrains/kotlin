@@ -21,6 +21,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -41,16 +42,16 @@ class KtLightAnnotation(
             val delegate: D,
             private val parent: PsiElement
     ) : PsiAnnotationMemberValue, PsiExpression by delegate {
-        val originalExpression: PsiElement? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-            val nameAndValue = delegate.getStrictParentOfType<PsiNameValuePair>() ?: return@lazy null
+        val originalExpression: PsiElement? by lazyPub {
+            val nameAndValue = delegate.getStrictParentOfType<PsiNameValuePair>() ?: return@lazyPub null
             val annotationEntry = this@KtLightAnnotation.kotlinOrigin
             val context = LightClassGenerationSupport.getInstance(project).analyze(annotationEntry)
-            val resolvedCall = annotationEntry.getResolvedCall(context) ?: return@lazy null
+            val resolvedCall = annotationEntry.getResolvedCall(context) ?: return@lazyPub null
             val annotationConstructor = resolvedCall.resultingDescriptor
             val parameterName = nameAndValue.name ?: "value"
             val parameter = annotationConstructor.valueParameters.singleOrNull { it.name.asString() == parameterName }
-                            ?: return@lazy null
-            val resolvedArgument = resolvedCall.valueArguments[parameter] ?: return@lazy null
+                            ?: return@lazyPub null
+            val resolvedArgument = resolvedCall.valueArguments[parameter] ?: return@lazyPub null
             when (resolvedArgument) {
                 is DefaultValueArgument -> {
                     val psi = parameter.source.getPsi()
@@ -129,7 +130,7 @@ class KtLightAnnotation(
             private val delegate: PsiArrayInitializerMemberValue,
             private val parent: PsiElement
     ) : PsiArrayInitializerMemberValue by delegate {
-        private val _initializers by lazy(LazyThreadSafetyMode.PUBLICATION) { delegate.initializers.map { wrapAnnotationValue(it, this) }.toTypedArray() }
+        private val _initializers by lazyPub { delegate.initializers.map { wrapAnnotationValue(it, this) }.toTypedArray() }
 
         override fun getInitializers() = _initializers
         override fun getLanguage() = KotlinLanguage.INSTANCE

@@ -20,6 +20,7 @@ import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -51,7 +52,7 @@ data class LightMemberOriginForCompiledField(val psiField: PsiField, val file: K
         return LightMemberOriginForCompiledField(psiField.copy() as PsiField, file)
     }
 
-    override val originalElement: KtDeclaration? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    override val originalElement: KtDeclaration? by lazyPub {
         val desc = MapPsiToAsmDesc.typeDesc(psiField.type)
         val signature = MemberSignature.fromFieldNameAndDesc(psiField.name!!, desc)
         findDeclarationInCompiledFile(file, psiField, signature)
@@ -63,7 +64,7 @@ data class LightMemberOriginForCompiledMethod(val psiMethod: PsiMethod, val file
         return LightMemberOriginForCompiledMethod(psiMethod.copy() as PsiMethod, file)
     }
 
-    override val originalElement: KtDeclaration? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    override val originalElement: KtDeclaration? by lazyPub {
         val desc = MapPsiToAsmDesc.methodDesc(psiMethod)
         val signature = MemberSignature.fromMethodNameAndDesc(psiMethod.name, desc)
         findDeclarationInCompiledFile(file, psiMethod, signature)

@@ -23,6 +23,7 @@ import com.intellij.psi.PsiReferenceList
 import com.intellij.psi.PsiReferenceList.Role
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtSuperTypeList
 import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
@@ -40,9 +41,9 @@ class KtLightPsiReferenceList (
         override fun getName() = null
         override fun setName(name: String) = throw UnsupportedOperationException()
 
-        override val kotlinOrigin by lazy(LazyThreadSafetyMode.PUBLICATION) {
-            val superTypeList = this@KtLightPsiReferenceList.kotlinOrigin ?: return@lazy null
-            val fqNameToFind = clsDelegate.qualifiedName ?: return@lazy null
+        override val kotlinOrigin by lazyPub {
+            val superTypeList = this@KtLightPsiReferenceList.kotlinOrigin ?: return@lazyPub null
+            val fqNameToFind = clsDelegate.qualifiedName ?: return@lazyPub null
             val context = LightClassGenerationSupport.getInstance(project).analyze(superTypeList)
             superTypeList.entries.firstOrNull {
                 val referencedType = context[BindingContext.TYPE, it.typeReference]
@@ -64,7 +65,7 @@ class KtLightPsiReferenceList (
     override val kotlinOrigin: KtSuperTypeList?
         get() = owner.kotlinOrigin?.getSuperTypeList()
 
-    private val _referenceElements by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val _referenceElements by lazyPub {
         clsDelegate.referenceElements.map { KtLightSuperTypeReference(it) }.toTypedArray()
     }
 

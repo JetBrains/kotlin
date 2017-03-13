@@ -18,13 +18,14 @@ package org.jetbrains.kotlin.asJava.elements
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightElement
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
 class KtLightParameterList(
         private val parent: KtLightMethod,
         private val parametersCount: Int,
         computeParameters: () -> List<PsiParameter>) : LightElement(parent.manager, KotlinLanguage.INSTANCE), PsiParameterList {
-    private val _parameters: Array<PsiParameter> by lazy { computeParameters().toTypedArray() }
+    private val _parameters: Array<PsiParameter> by lazyPub { computeParameters().toTypedArray() }
 
     override fun getParent() = parent
 
