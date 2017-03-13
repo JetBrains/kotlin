@@ -384,7 +384,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 val (bindingContext, moduleDescriptor, files) = fileForDebugger.checkForErrors(true, codeFragment.getContextContainingFile())
 
                 val generateClassFilter = object : GenerationState.GenerateClassFilter() {
-                    override fun shouldGeneratePackagePart(jetFile: KtFile) = jetFile == fileForDebugger
+                    override fun shouldGeneratePackagePart(ktFile: KtFile) = ktFile == fileForDebugger
                     override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject) = true
                     override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject) = processingClassOrObject.containingKtFile == fileForDebugger
                     override fun shouldGenerateScript(script: KtScript) = false

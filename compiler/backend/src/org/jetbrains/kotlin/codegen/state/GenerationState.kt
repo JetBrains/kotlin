@@ -69,7 +69,7 @@ class GenerationState @JvmOverloads constructor(
     abstract class GenerateClassFilter {
         abstract fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean
         abstract fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean
-        abstract fun shouldGeneratePackagePart(jetFile: KtFile): Boolean
+        abstract fun shouldGeneratePackagePart(ktFile: KtFile): Boolean
         abstract fun shouldGenerateScript(script: KtScript): Boolean
         open fun shouldGenerateClassMembers(processingClassOrObject: KtClassOrObject) = shouldGenerateClass(processingClassOrObject)
 
@@ -81,7 +81,7 @@ class GenerationState @JvmOverloads constructor(
 
                 override fun shouldGenerateScript(script: KtScript): Boolean = true
 
-                override fun shouldGeneratePackagePart(jetFile: KtFile): Boolean = true
+                override fun shouldGeneratePackagePart(ktFile: KtFile): Boolean = true
             }
         }
     }
