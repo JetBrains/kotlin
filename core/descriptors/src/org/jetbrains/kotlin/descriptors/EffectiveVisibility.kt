@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility.*
 import org.jetbrains.kotlin.descriptors.RelationToType.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
 
 sealed class EffectiveVisibility(val name: String, val publicApi: Boolean = false, val privateApi: Boolean = false) {
 
@@ -244,11 +245,6 @@ private fun Visibility.forVisibility(descriptor: DeclarationDescriptor, checkPub
         // NB: visibility must be already normalized here, so e.g. no JavaVisibilities are possible at this point
             else -> throw AssertionError("Visibility $name is not allowed in forVisibility")
         }
-
-private fun DeclarationDescriptor.isPublishedApi(): Boolean {
-    val descriptor = if (this is CallableMemberDescriptor) DescriptorUtils.getDirectMember(this) else this
-    return descriptor.annotations.hasAnnotation(KotlinBuiltIns.FQ_NAMES.publishedApi)
-}
 
 fun effectiveVisibility(visibility: Visibility, descriptor: DeclarationDescriptor, checkPublishedApi: Boolean = false) =
         visibility.forVisibility(descriptor, checkPublishedApi)
