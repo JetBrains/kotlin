@@ -58,7 +58,7 @@ fun KotlinFacetSettings.initializeIfNeeded(
     val project = module.project
 
     if (compilerSettings == null) {
-        compilerSettings = copyBean(KotlinCompilerSettings.getInstance(project).settings)
+        compilerSettings = KotlinCompilerSettings.getInstance(project).settings
     }
 
     val commonArguments = KotlinCommonCompilerArgumentsHolder.getInstance(module.project).settings

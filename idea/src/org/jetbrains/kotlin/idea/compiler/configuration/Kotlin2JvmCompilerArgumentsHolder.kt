@@ -29,6 +29,10 @@ import org.jetbrains.kotlin.idea.compiler.configuration.BaseKotlinCompilerSettin
 class Kotlin2JvmCompilerArgumentsHolder : BaseKotlinCompilerSettings<K2JVMCompilerArguments>() {
     override fun createSettings() = K2JVMCompilerArguments.createDefaultInstance()
 
+    override fun validateNewSettings(settings: K2JVMCompilerArguments) {
+        validateInheritedFieldsUnchanged(settings)
+    }
+
     companion object {
         fun getInstance(project: Project) = ServiceManager.getService(project, Kotlin2JvmCompilerArgumentsHolder::class.java)!!
     }

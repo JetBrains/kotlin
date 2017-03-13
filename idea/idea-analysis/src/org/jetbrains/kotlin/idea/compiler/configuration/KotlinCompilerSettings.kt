@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_SEC
 class KotlinCompilerSettings : BaseKotlinCompilerSettings<CompilerSettings>() {
     override fun createSettings() = CompilerSettings()
 
+
+
     companion object {
         fun getInstance(project: Project) = ServiceManager.getService(project, KotlinCompilerSettings::class.java)!!
     }

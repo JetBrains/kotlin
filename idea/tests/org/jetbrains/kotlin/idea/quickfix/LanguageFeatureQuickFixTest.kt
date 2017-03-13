@@ -165,7 +165,7 @@ class LanguageFeatureQuickFixTest : LightPlatformCodeInsightFixtureTestCase() {
     }
 
     private fun resetProjectSettings(version: LanguageVersion) {
-        with(KotlinCommonCompilerArgumentsHolder.getInstance(project).settings) {
+        KotlinCommonCompilerArgumentsHolder.getInstance(project).update {
             languageVersion = version.versionString
             apiVersion = version.versionString
             coroutinesEnable = false

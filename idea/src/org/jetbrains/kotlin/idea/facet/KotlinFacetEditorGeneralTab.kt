@@ -66,9 +66,9 @@ class KotlinFacetEditorGeneralTab(
             else {
                 editableCommonArguments = configuration!!.settings.compilerArguments!!
                 editableJvmArguments = editableCommonArguments as? K2JVMCompilerArguments
-                                       ?: copyBean(Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings)
+                                       ?: Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings
                 editableJsArguments = editableCommonArguments as? K2JSCompilerArguments
-                                      ?: copyBean(Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings)
+                                      ?: Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings
                 editableCompilerSettings = configuration.settings.compilerSettings!!
             }
 
@@ -127,10 +127,10 @@ class KotlinFacetEditorGeneralTab(
             compilerConfigurable.setTargetPlatform(chosenPlatform)
             compilerConfigurable.setEnabled(!useProjectSettings)
             if (useProjectSettings) {
-                compilerConfigurable.commonCompilerArguments = copyBean(KotlinCommonCompilerArgumentsHolder.getInstance(project).settings)
-                compilerConfigurable.k2jvmCompilerArguments = copyBean(Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings)
-                compilerConfigurable.k2jsCompilerArguments = copyBean(Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings)
-                compilerConfigurable.compilerSettings = copyBean(KotlinCompilerSettings.getInstance(project).settings)
+                compilerConfigurable.commonCompilerArguments = KotlinCommonCompilerArgumentsHolder.getInstance(project).settings
+                compilerConfigurable.k2jvmCompilerArguments = Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings
+                compilerConfigurable.k2jsCompilerArguments = Kotlin2JsCompilerArgumentsHolder.getInstance(project).settings
+                compilerConfigurable.compilerSettings = KotlinCompilerSettings.getInstance(project).settings
             }
             else {
                 compilerConfigurable.commonCompilerArguments = editableCommonArguments

@@ -94,7 +94,7 @@ sealed class ChangeCoroutineSupportFix(
                 if (!checkUpdateRuntime(project, LanguageFeature.Coroutines.sinceApiVersion)) return
             }
 
-            with(KotlinCommonCompilerArgumentsHolder.getInstance(project).settings) {
+            KotlinCommonCompilerArgumentsHolder.getInstance(project).update {
                 coroutinesEnable = coroutineSupport == LanguageFeature.State.ENABLED
                 coroutinesWarn = coroutineSupport == LanguageFeature.State.ENABLED_WITH_WARNING
                 coroutinesError = coroutineSupport == LanguageFeature.State.ENABLED_WITH_ERROR ||

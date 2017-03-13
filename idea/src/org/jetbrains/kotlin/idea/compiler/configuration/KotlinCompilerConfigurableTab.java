@@ -402,6 +402,13 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
         k2jvmCompilerArguments.jvmTarget = getSelectedJvmVersion();
 
+        if (isProjectSettings) {
+            KotlinCommonCompilerArgumentsHolder.Companion.getInstance(project).setSettings(commonCompilerArguments);
+            Kotlin2JvmCompilerArgumentsHolder.Companion.getInstance(project).setSettings(k2jvmCompilerArguments);
+            Kotlin2JsCompilerArgumentsHolder.Companion.getInstance(project).setSettings(k2jsCompilerArguments);
+            KotlinCompilerSettings.Companion.getInstance(project).setSettings(compilerSettings);
+        }
+
         BuildManager.getInstance().clearState(project);
     }
 

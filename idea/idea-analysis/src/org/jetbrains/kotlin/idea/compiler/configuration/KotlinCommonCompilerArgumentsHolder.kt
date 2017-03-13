@@ -48,9 +48,10 @@ class KotlinCommonCompilerArgumentsHolder : BaseKotlinCompilerSettings<CommonCom
         super.loadState(state)
 
         // To fix earlier configurations with incorrect combination of language and API version
-        val settings = settings
-        if (VersionComparatorUtil.compare(settings.languageVersion, settings.apiVersion) < 0) {
-            settings.apiVersion = settings.languageVersion
+        update {
+            if (VersionComparatorUtil.compare(languageVersion, apiVersion) < 0) {
+                apiVersion = languageVersion
+            }
         }
     }
 

@@ -89,7 +89,7 @@ private fun Any.copyValueIfNeeded(): Any {
     }
 }
 
-private fun collectFieldsToCopy(clazz: Class<*>, inheritedOnly: Boolean): List<Field> {
+fun collectFieldsToCopy(clazz: Class<*>, inheritedOnly: Boolean): List<Field> {
     val fromFields = ArrayList<Field>()
 
     var currentClass: Class<*>? = if (inheritedOnly) clazz.superclass else clazz

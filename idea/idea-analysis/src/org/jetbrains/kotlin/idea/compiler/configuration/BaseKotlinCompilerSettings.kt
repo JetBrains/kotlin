@@ -21,22 +21,43 @@ import com.intellij.openapi.components.StoragePathMacros.PROJECT_CONFIG_DIR
 import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters
 import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.Element
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.SettingConstants
 
 abstract class BaseKotlinCompilerSettings<T : Any> protected constructor() : PersistentStateComponent<Element>, Cloneable {
     @Suppress("LeakingThis")
-    var settings: T = createSettings()
-        private set
+    private var _settings: T = createSettings()
+
+    var settings: T
+        get() = copyBean(_settings)
+        set(value) {
+            validateNewSettings(value)
+            _settings = copyBean(value)
+        }
+
+    fun update(changer: T.() -> Unit) {
+        settings = settings.apply { changer() }
+    }
+
+    protected fun validateInheritedFieldsUnchanged(settings: T) {
+        val inheritedFields = collectFieldsToCopy(settings.javaClass, true)
+        val defaultInstance = createSettings()
+        val invalidFields = inheritedFields.filter { it.get(settings) != it.get(defaultInstance) }
+        if (invalidFields.isNotEmpty()) {
+            throw IllegalArgumentException("Following fields are expected to be left unchanged in ${settings.javaClass}: ${invalidFields.joinToString { it.name }}")
+        }
+    }
+
+    protected open fun validateNewSettings(settings: T) {
+
+    }
 
     protected abstract fun createSettings(): T
 
-    override fun getState() = XmlSerializer.serialize(settings, SKIP_DEFAULT_VALUES)
+    override fun getState() = XmlSerializer.serialize(_settings, SKIP_DEFAULT_VALUES)
 
     override fun loadState(state: Element) {
-        settings = XmlSerializer.deserialize(state, settings.javaClass) ?: createSettings()
+        _settings = XmlSerializer.deserialize(state, _settings.javaClass) ?: createSettings()
     }
 
     public override fun clone(): Any = super.clone()
