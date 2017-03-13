@@ -38,7 +38,8 @@ internal class EnumSpecialDescriptorsFactory(val context: Context) {
         val memberScope = MemberScope.Empty
 
         val constructorOfAny = context.builtIns.any.constructors.first()
-        val constructorDescriptor = implObjectDescriptor.createSimpleDelegatingConstructorDescriptor(constructorOfAny)
+        // TODO: why primary?
+        val constructorDescriptor = implObjectDescriptor.createSimpleDelegatingConstructorDescriptor(constructorOfAny, true)
 
         implObjectDescriptor.initialize(memberScope, setOf(constructorDescriptor), constructorDescriptor)
 

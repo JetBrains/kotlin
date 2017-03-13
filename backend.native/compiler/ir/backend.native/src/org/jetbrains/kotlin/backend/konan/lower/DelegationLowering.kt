@@ -132,7 +132,7 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
                     DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION,
                     kPropertiesField,
                     IrExpressionBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                            context.createArrayOfExpression(kPropertyImplType, initializers))))
+                            context.createArrayOfExpression(kPropertyImplType, initializers, UNDEFINED_OFFSET, UNDEFINED_OFFSET))))
         }
     }
 

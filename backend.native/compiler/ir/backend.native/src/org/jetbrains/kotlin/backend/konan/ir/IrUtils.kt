@@ -28,13 +28,13 @@ fun ir2stringWhole(ir: IrElement?): String {
   return strWriter.toString()
 }
 
-internal fun ClassDescriptor.createSimpleDelegatingConstructorDescriptor(superConstructorDescriptor: ClassConstructorDescriptor)
+internal fun ClassDescriptor.createSimpleDelegatingConstructorDescriptor(superConstructorDescriptor: ClassConstructorDescriptor, isPrimary: Boolean = false)
         : ClassConstructorDescriptor {
     val constructorDescriptor = ClassConstructorDescriptorImpl.createSynthesized(
-            this,
-            Annotations.EMPTY,
-            superConstructorDescriptor.isPrimary,
-            SourceElement.NO_SOURCE)
+            /* containingDeclaration = */ this,
+            /* annotations           = */ Annotations.EMPTY,
+            /* isPrimary             = */ isPrimary,
+            /* source                = */ SourceElement.NO_SOURCE)
     val valueParameters = superConstructorDescriptor.valueParameters.map {
         it.copy(constructorDescriptor, it.name, it.index)
     }
@@ -44,23 +44,25 @@ internal fun ClassDescriptor.createSimpleDelegatingConstructorDescriptor(superCo
 }
 
 internal fun ClassDescriptor.createSimpleDelegatingConstructor(superConstructorDescriptor: ClassConstructorDescriptor,
-                                                               constructorDescriptor: ClassConstructorDescriptor)
+                                                               constructorDescriptor: ClassConstructorDescriptor,
+                                                               startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin)
         : IrConstructor {
-    val body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+    val body = IrBlockBodyImpl(startOffset, endOffset,
             listOf(
-                    IrDelegatingConstructorCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, superConstructorDescriptor).apply {
+                    IrDelegatingConstructorCallImpl(startOffset, endOffset, superConstructorDescriptor).apply {
                         constructorDescriptor.valueParameters.forEachIndexed { idx, parameter ->
-                            putValueArgument(idx, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter))
+                            putValueArgument(idx, IrGetValueImpl(startOffset, endOffset, parameter))
                         }
                     },
-                    IrInstanceInitializerCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, this)
+                    IrInstanceInitializerCallImpl(startOffset, endOffset, this)
             )
     )
-    return IrConstructorImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, constructorDescriptor, body)
+    return IrConstructorImpl(startOffset, endOffset, origin, constructorDescriptor, body)
 }
 
 internal fun Context.createArrayOfExpression(arrayElementType: KotlinType,
-                                             arrayElements: List<IrExpression>): IrExpression {
+                                             arrayElements: List<IrExpression>,
+                                             startOffset: Int, endOffset: Int): IrExpression {
     val kotlinPackage = irModule!!.descriptor.getPackage(FqName("kotlin"))
     val genericArrayOfFun = kotlinPackage.memberScope.getContributedFunctions(Name.identifier("arrayOf"), NoLookupLocation.FROM_BACKEND).first()
     val typeParameter0 = genericArrayOfFun.typeParameters[0]
@@ -72,9 +74,9 @@ internal fun Context.createArrayOfExpression(arrayElementType: KotlinType,
     val valueParameter0 = substitutedArrayOfFun.valueParameters[0]
     val arg0VarargType = valueParameter0.type
     val arg0VarargElementType = valueParameter0.varargElementType!!
-    val arg0 = IrVarargImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, arg0VarargType, arg0VarargElementType, arrayElements)
+    val arg0 = IrVarargImpl(startOffset, endOffset, arg0VarargType, arg0VarargElementType, arrayElements)
 
-    return IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, substitutedArrayOfFun, typeArguments).apply {
+    return IrCallImpl(startOffset, endOffset, substitutedArrayOfFun, typeArguments).apply {
         putValueArgument(0, arg0)
     }
 }
