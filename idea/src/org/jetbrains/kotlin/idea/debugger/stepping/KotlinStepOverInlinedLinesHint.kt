@@ -80,7 +80,7 @@ class KotlinStepOverInlinedLinesHint(
     override fun getDepth(): Int = StepRequest.STEP_OVER
 
     // TODO: Copy of RequestHint.isTheSameFrame()
-    private fun isTheSameFrame(context: SuspendContextImpl): Boolean {
+    override fun isTheSameFrame(context: SuspendContextImpl): Boolean {
         if (mySteppedOut) return false
 
         val contextThread = context.thread

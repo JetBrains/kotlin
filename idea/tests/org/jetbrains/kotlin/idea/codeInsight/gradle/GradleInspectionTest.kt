@@ -25,7 +25,6 @@ import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.InspectionTestUtil
-import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection
@@ -172,7 +171,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
         val globalContext = CodeInsightTestFixtureImpl.createGlobalContextForTool(scope, myProject, inspectionManager, toolWrapper)
 
         val resultRef = Ref<List<String>>()
-        UsefulTestCase.edt {
+        runInEdtAndWait {
             InspectionTestUtil.runTool(toolWrapper, scope, globalContext)
             val presentation = globalContext.getPresentation(toolWrapper)
 

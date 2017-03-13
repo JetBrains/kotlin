@@ -29,9 +29,11 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -99,5 +101,11 @@ public final class K2JSRunConfiguration extends ModuleBasedConfiguration<RunConf
     public void writeExternal(Element element) throws WriteExternalException {
         super.writeExternal(element);
         element.addContent(XmlSerializer.serialize(settings()));
+    }
+
+    @Nullable
+    @Override
+    public GlobalSearchScope getSearchScope() {
+        return SearchScopeProvider.createSearchScope(this.getModules());
     }
 }

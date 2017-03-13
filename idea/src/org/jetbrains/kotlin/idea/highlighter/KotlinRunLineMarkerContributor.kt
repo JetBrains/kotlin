@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 
 
 class KotlinRunLineMarkerContributor : RunLineMarkerContributor() {
-    override fun getInfo(element: PsiElement?): RunLineMarkerContributor.Info? {
-        val function = element?.parent as? KtNamedFunction
+    override fun getInfo(element: PsiElement): RunLineMarkerContributor.Info? {
+        val function = element.parent as? KtNamedFunction
         if (function == null) return null
 
         if (function.nameIdentifier != element) return null

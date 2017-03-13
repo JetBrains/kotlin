@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+import com.intellij.codeInsight.daemon.quickFix.ActionHint
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.impl.ShowIntentionActionsHandler
@@ -26,7 +27,6 @@ import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.inspections.findExistingEditor
 import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider
-import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -62,10 +62,10 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest() {
             try {
                 val psiFile = actionFile
 
-                val pair = LightQuickFixTestCase.parseActionHint(psiFile, actionFileText)
-                val text = pair.getFirst()
+                val pair = ActionHint.parse(psiFile, actionFileText)
+                val text = pair.expectedText
 
-                val actionShouldBeAvailable = pair.getSecond()
+                val actionShouldBeAvailable = pair.shouldPresent()
 
                 if (psiFile is KtFile) {
                     DirectiveBasedActionUtils.checkForUnexpectedErrors(psiFile)
