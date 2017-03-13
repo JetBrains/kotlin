@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
-import org.jetbrains.org.objectweb.asm.Opcodes
 import java.io.File
 
 class GenerationState @JvmOverloads constructor(
@@ -92,7 +91,8 @@ class GenerationState @JvmOverloads constructor(
     val incrementalCacheForThisTarget: IncrementalCache?
     val packagesWithObsoleteParts: Set<FqName>
     val obsoleteMultifileClasses: List<FqName>
-    val deserializationConfiguration: DeserializationConfiguration = CompilerDeserializationConfiguration(configuration)
+    val deserializationConfiguration: DeserializationConfiguration =
+            CompilerDeserializationConfiguration(configuration.languageVersionSettings)
 
     init {
         val icComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)

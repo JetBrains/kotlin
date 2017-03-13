@@ -21,6 +21,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.PackageParts
@@ -33,7 +34,7 @@ class JvmPackagePartProvider(
 ) : PackagePartProvider {
     private data class ModuleMappingInfo(val root: VirtualFile, val mapping: ModuleMapping)
 
-    private val deserializationConfiguration = CompilerDeserializationConfiguration(env.configuration)
+    private val deserializationConfiguration = CompilerDeserializationConfiguration(env.configuration.languageVersionSettings)
 
     private val notLoadedRoots by lazy(LazyThreadSafetyMode.NONE) {
         env.configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS)

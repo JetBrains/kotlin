@@ -16,13 +16,12 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 
-class CompilerDeserializationConfiguration(configuration: CompilerConfiguration) : DeserializationConfiguration {
-    override val typeAliasesAllowed = configuration.languageVersionSettings.supportsFeature(LanguageFeature.TypeAliases)
+class CompilerDeserializationConfiguration(languageVersionSettings: LanguageVersionSettings) : DeserializationConfiguration {
+    override val typeAliasesAllowed = languageVersionSettings.supportsFeature(LanguageFeature.TypeAliases)
 
-    override val skipMetadataVersionCheck = configuration.languageVersionSettings.skipMetadataVersionCheck
+    override val skipMetadataVersionCheck = languageVersionSettings.skipMetadataVersionCheck
 }
