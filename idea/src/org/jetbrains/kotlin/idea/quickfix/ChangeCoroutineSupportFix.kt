@@ -40,15 +40,18 @@ import org.jetbrains.kotlin.psi.KtFile
 
 sealed class ChangeCoroutineSupportFix(
         element: PsiElement,
-        protected val coroutineSupport: CoroutineSupport
+        protected val coroutineSupport: LanguageFeature.State
 ) : KotlinQuickFixAction<PsiElement>(element) {
-    class InModule(element: PsiElement, coroutineSupport: CoroutineSupport) : ChangeCoroutineSupportFix(element, coroutineSupport) {
+    protected val coroutineSupportEnabled: Boolean
+            get() = coroutineSupport == LanguageFeature.State.ENABLED || coroutineSupport == LanguageFeature.State.ENABLED_WITH_WARNING
+
+    class InModule(element: PsiElement, coroutineSupport: LanguageFeature.State) : ChangeCoroutineSupportFix(element, coroutineSupport) {
         override fun getText() = "${super.getText()} in the current module"
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
             val module = ModuleUtilCore.findModuleForPsiElement(file) ?: return
 
-            val runtimeUpdateRequired = coroutineSupport != CoroutineSupport.DISABLED &&
+            val runtimeUpdateRequired = coroutineSupportEnabled &&
                                         (getRuntimeLibraryVersion(module)?.startsWith("1.0") ?: false)
 
             if (KotlinPluginUtil.isGradleModule(module)) {
@@ -60,9 +63,11 @@ sealed class ChangeCoroutineSupportFix(
                     return
                 }
 
-                val element = KotlinWithGradleConfigurator.changeCoroutineConfiguration(module, coroutineSupport.compilerArgument)
-                element?.let {
-                    OpenFileDescriptor(project, it.containingFile.virtualFile, it.textRange.startOffset).navigate(true)
+                val element = KotlinWithGradleConfigurator.changeCoroutineConfiguration(
+                        module, CoroutineSupport.getCompilerArgument(coroutineSupport)
+                )
+                if (element != null) {
+                    OpenFileDescriptor(project, element.containingFile.virtualFile, element.textRange.startOffset).navigate(true)
                 }
                 return
             }
@@ -81,18 +86,19 @@ sealed class ChangeCoroutineSupportFix(
 
     }
 
-    class InProject(element: PsiElement, coroutineSupport: CoroutineSupport) : ChangeCoroutineSupportFix(element, coroutineSupport) {
+    class InProject(element: PsiElement, coroutineSupport: LanguageFeature.State) : ChangeCoroutineSupportFix(element, coroutineSupport) {
         override fun getText() = "${super.getText()} in the project"
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-            if (coroutineSupport != CoroutineSupport.DISABLED) {
+            if (coroutineSupportEnabled) {
                 if (!checkUpdateRuntime(project, LanguageFeature.Coroutines.sinceApiVersion)) return
             }
 
-            with (KotlinCommonCompilerArgumentsHolder.getInstance(project).settings) {
-                coroutinesEnable = coroutineSupport == CoroutineSupport.ENABLED
-                coroutinesWarn = coroutineSupport == CoroutineSupport.ENABLED_WITH_WARNING
-                coroutinesError = coroutineSupport == CoroutineSupport.DISABLED
+            with(KotlinCommonCompilerArgumentsHolder.getInstance(project).settings) {
+                coroutinesEnable = coroutineSupport == LanguageFeature.State.ENABLED
+                coroutinesWarn = coroutineSupport == LanguageFeature.State.ENABLED_WITH_WARNING
+                coroutinesError = coroutineSupport == LanguageFeature.State.ENABLED_WITH_ERROR ||
+                                  coroutineSupport == LanguageFeature.State.DISABLED
             }
             ProjectRootManagerEx.getInstanceEx(project).makeRootsChange({}, false, true)
         }
@@ -103,9 +109,9 @@ sealed class ChangeCoroutineSupportFix(
 
     override fun getText(): String {
         return when (coroutineSupport) {
-            CoroutineSupport.DISABLED -> "Disable coroutine support"
-            CoroutineSupport.ENABLED_WITH_WARNING -> "Enable coroutine support (with warning)"
-            CoroutineSupport.ENABLED -> "Enable coroutine support"
+            LanguageFeature.State.ENABLED -> "Enable coroutine support"
+            LanguageFeature.State.ENABLED_WITH_WARNING -> "Enable coroutine support (with warning)"
+            LanguageFeature.State.ENABLED_WITH_ERROR, LanguageFeature.State.DISABLED -> "Disable coroutine support"
         }
     }
 
@@ -114,11 +120,11 @@ sealed class ChangeCoroutineSupportFix(
             val newCoroutineSupports = when (diagnostic.factory) {
                 Errors.EXPERIMENTAL_FEATURE_ERROR -> {
                     if (Errors.EXPERIMENTAL_FEATURE_ERROR.cast(diagnostic).a.first != LanguageFeature.Coroutines) return emptyList()
-                    listOf(CoroutineSupport.ENABLED_WITH_WARNING, CoroutineSupport.ENABLED)
+                    listOf(LanguageFeature.State.ENABLED_WITH_WARNING, LanguageFeature.State.ENABLED)
                 }
                 Errors.EXPERIMENTAL_FEATURE_WARNING -> {
                     if (Errors.EXPERIMENTAL_FEATURE_WARNING.cast(diagnostic).a.first != LanguageFeature.Coroutines) return emptyList()
-                    listOf(CoroutineSupport.ENABLED, CoroutineSupport.DISABLED)
+                    listOf(LanguageFeature.State.ENABLED, LanguageFeature.State.ENABLED_WITH_ERROR)
                 }
                 else -> return emptyList()
             }
@@ -128,7 +134,7 @@ sealed class ChangeCoroutineSupportFix(
 
             val configureInProject = (facetSettings == null || facetSettings.useProjectSettings) &&
                                      !KotlinPluginUtil.isGradleModule(module)
-            val quickFixConstructor: (PsiElement, CoroutineSupport) -> ChangeCoroutineSupportFix =
+            val quickFixConstructor: (PsiElement, LanguageFeature.State) -> ChangeCoroutineSupportFix =
                     if (configureInProject) ::InProject else ::InModule
             return newCoroutineSupports.map { quickFixConstructor(diagnostic.psiElement, it) }
         }

@@ -162,7 +162,7 @@ class KotlinFacetEditorGeneralTab(
 
     inner class CoroutineContradictionValidator : FacetEditorValidator() {
         override fun check(): ValidationResult {
-            val selectedOption = editor.compilerConfigurable.coroutineSupportComboBox.selectedItem as? CoroutineSupport
+            val selectedOption = editor.compilerConfigurable.coroutineSupportComboBox.selectedItem as? LanguageFeature.State
                                  ?: return ValidationResult.OK
             val parsedArguments = configuration.settings.compilerArguments?.javaClass?.newInstance()
                                   ?: return ValidationResult.OK

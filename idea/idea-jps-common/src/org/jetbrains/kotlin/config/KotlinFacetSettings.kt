@@ -50,31 +50,27 @@ sealed class TargetPlatformKind<out Version : TargetPlatformVersion>(
     }
 }
 
-// TODO: merge with LanguageFeature.State
-enum class CoroutineSupport(
-        override val description: String,
-        val compilerArgument: String
-) : DescriptionAware {
-    ENABLED("Enabled", "enable"),
-    ENABLED_WITH_WARNING("Enabled with warning", "warn"),
-    DISABLED("Disabled", "error");
+object CoroutineSupport {
+    @JvmStatic
+    fun byCompilerArguments(arguments: CommonCompilerArguments?): LanguageFeature.State =
+            byCompilerArgumentsOrNull(arguments) ?: LanguageFeature.Coroutines.defaultState
 
-    companion object {
-        val DEFAULT = ENABLED_WITH_WARNING
+    fun byCompilerArgumentsOrNull(arguments: CommonCompilerArguments?): LanguageFeature.State? = when {
+        arguments == null -> null
+        arguments.coroutinesEnable -> LanguageFeature.State.ENABLED
+        arguments.coroutinesWarn -> LanguageFeature.State.ENABLED_WITH_WARNING
+        arguments.coroutinesError -> LanguageFeature.State.ENABLED_WITH_ERROR
+        else -> null
+    }
 
-        @JvmStatic fun byCompilerArguments(arguments: CommonCompilerArguments?) = byCompilerArgumentsOrNull(arguments) ?: DEFAULT
+    fun byCompilerArgument(argument: String): LanguageFeature.State =
+            LanguageFeature.State.values().find { getCompilerArgument(it).equals(argument, ignoreCase = true) }
+            ?: LanguageFeature.Coroutines.defaultState
 
-        fun byCompilerArgumentsOrNull(arguments: CommonCompilerArguments?) = when {
-            arguments == null -> null
-            arguments.coroutinesEnable -> ENABLED
-            arguments.coroutinesWarn -> ENABLED_WITH_WARNING
-            arguments.coroutinesError -> DISABLED
-            else -> null
-        }
-
-        fun byCompilerArgument(argument: String): CoroutineSupport {
-            return CoroutineSupport.values().find { it.compilerArgument.equals(argument, ignoreCase = true) } ?: DEFAULT
-        }
+    fun getCompilerArgument(state: LanguageFeature.State): String = when (state) {
+        LanguageFeature.State.ENABLED -> "enable"
+        LanguageFeature.State.ENABLED_WITH_WARNING -> "warn"
+        LanguageFeature.State.ENABLED_WITH_ERROR, LanguageFeature.State.DISABLED -> "error"
     }
 }
 
@@ -115,13 +111,17 @@ class KotlinFacetSettings {
             }
         }
 
-    var coroutineSupport: CoroutineSupport
-        get() = CoroutineSupport.byCompilerArguments(compilerArguments)
+    var coroutineSupport: LanguageFeature.State
+        get() {
+            val languageVersion = languageLevel ?: return LanguageFeature.Coroutines.defaultState
+            if (languageVersion < LanguageFeature.Coroutines.sinceVersion!!) return LanguageFeature.State.DISABLED
+            return CoroutineSupport.byCompilerArguments(compilerArguments)
+        }
         set(value) {
             with(compilerArguments!!) {
-                coroutinesEnable = value == CoroutineSupport.ENABLED
-                coroutinesWarn = value == CoroutineSupport.ENABLED_WITH_WARNING
-                coroutinesError = value == CoroutineSupport.DISABLED
+                coroutinesEnable = value == LanguageFeature.State.ENABLED
+                coroutinesWarn = value == LanguageFeature.State.ENABLED_WITH_WARNING
+                coroutinesError = value == LanguageFeature.State.ENABLED_WITH_ERROR || value == LanguageFeature.State.DISABLED
             }
         }
 

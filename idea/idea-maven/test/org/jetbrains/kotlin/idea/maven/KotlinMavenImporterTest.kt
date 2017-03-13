@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.idea.maven
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.KotlinFacetSettings
-import org.jetbrains.kotlin.config.TargetPlatformKind
-import org.jetbrains.kotlin.config.additionalArgumentsAsList
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.junit.Assert
 import java.io.File
@@ -451,7 +448,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("1.0", apiLevel!!.versionString)
             Assert.assertEquals("1.0", compilerArguments!!.apiVersion)
             Assert.assertEquals(true, compilerArguments!!.suppressWarnings)
-            Assert.assertEquals("enable", coroutineSupport.compilerArgument)
+            Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
             Assert.assertEquals("JVM 1.8", targetPlatformKind!!.description)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals("-cp foobar.jar -jdk-home JDK_HOME -Xmulti-platform",
@@ -519,7 +516,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("1.0", apiLevel!!.versionString)
             Assert.assertEquals("1.0", compilerArguments!!.apiVersion)
             Assert.assertEquals(true, compilerArguments!!.suppressWarnings)
-            Assert.assertEquals("enable", coroutineSupport.compilerArgument)
+            Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
             Assert.assertTrue(targetPlatformKind is TargetPlatformKind.JavaScript)
             with(compilerArguments as K2JSCompilerArguments) {
                 Assert.assertEquals(true, sourceMap)
@@ -591,7 +588,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("1.0", apiLevel!!.versionString)
             Assert.assertEquals("1.0", compilerArguments!!.apiVersion)
             Assert.assertEquals(true, compilerArguments!!.suppressWarnings)
-            Assert.assertEquals("enable", coroutineSupport.compilerArgument)
+            Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
             Assert.assertEquals("JVM 1.8", targetPlatformKind!!.description)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals("-cp foobar.jar -jdk-home JDK_HOME -Xmulti-platform",
@@ -652,7 +649,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         with (facetSettings) {
             Assert.assertEquals("JVM 1.8", targetPlatformKind!!.description)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals("enable", coroutineSupport.compilerArgument)
+            Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
             Assert.assertEquals(
                     listOf("-jdk-home", "c:\\program files\\jdk1.8"),
                     compilerSettings!!.additionalArgumentsAsList

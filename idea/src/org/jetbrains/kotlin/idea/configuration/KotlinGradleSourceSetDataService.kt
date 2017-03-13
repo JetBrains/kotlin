@@ -27,6 +27,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.idea.facet.*
@@ -138,5 +139,5 @@ private fun findKotlinCoroutinesProperty(project: Project): String {
         properties.getProperty("kotlin.coroutines")?.let { return it }
     }
 
-    return CoroutineSupport.DEFAULT.compilerArgument
+    return CoroutineSupport.getCompilerArgument(LanguageFeature.Coroutines.defaultState)
 }

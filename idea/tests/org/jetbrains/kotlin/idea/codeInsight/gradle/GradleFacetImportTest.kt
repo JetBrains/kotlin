@@ -191,7 +191,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         importProject()
 
         with (facetSettings) {
-            Assert.assertEquals(CoroutineSupport.ENABLED, coroutineSupport)
+            Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
         }
     }
 
@@ -236,7 +236,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
             importProject()
 
-            Assert.assertEquals(CoroutineSupport.ENABLED, coroutineSupport)
+            Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
             Assert.assertEquals(true, compilerArguments!!.coroutinesEnable)
             Assert.assertEquals(false, compilerArguments!!.coroutinesWarn)
             Assert.assertEquals(false, compilerArguments!!.coroutinesError)
@@ -272,7 +272,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         importProject()
 
         with (facetSettings) {
-            Assert.assertEquals(CoroutineSupport.ENABLED, coroutineSupport)
+            Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
         }
     }
 

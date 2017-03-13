@@ -26,7 +26,6 @@ import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
@@ -68,9 +67,9 @@ class LanguageFeatureQuickFixTest : LightPlatformCodeInsightFixtureTestCase() {
         resetProjectSettings(LanguageVersion.KOTLIN_1_1)
         myFixture.configureByText("foo.kt", "suspend fun foo()")
 
-        assertEquals(CoroutineSupport.ENABLED_WITH_WARNING, facet.configuration.settings.coroutineSupport)
+        assertEquals(LanguageFeature.State.ENABLED_WITH_WARNING, facet.configuration.settings.coroutineSupport)
         myFixture.launchAction(myFixture.findSingleIntention("Enable coroutine support in the current module"))
-        assertEquals(CoroutineSupport.ENABLED, facet.configuration.settings.coroutineSupport)
+        assertEquals(LanguageFeature.State.ENABLED, facet.configuration.settings.coroutineSupport)
     }
 
     fun testEnableCoroutines_UpdateRuntime() {

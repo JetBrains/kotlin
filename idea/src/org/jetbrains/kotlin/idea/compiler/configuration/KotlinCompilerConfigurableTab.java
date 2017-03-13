@@ -55,12 +55,16 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Configurable.NoScroll{
     private static final Map<String, String> moduleKindDescriptions = new LinkedHashMap<String, String>();
+    private static final List<LanguageFeature.State> languageFeatureStates = Arrays.asList(
+            LanguageFeature.State.ENABLED, LanguageFeature.State.ENABLED_WITH_WARNING, LanguageFeature.State.ENABLED_WITH_ERROR
+    );
 
     static {
         moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_PLAIN, "Plain (put to global scope)");
@@ -261,7 +265,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
     @SuppressWarnings("unchecked")
     private void fillCoroutineSupportList() {
-        for (CoroutineSupport coroutineSupport : CoroutineSupport.values()) {
+        for (LanguageFeature.State coroutineSupport : languageFeatureStates) {
             coroutineSupportComboBox.addItem(coroutineSupport);
         }
         coroutineSupportComboBox.setRenderer(new DescriptionListCellRenderer());
@@ -370,10 +374,11 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         commonCompilerArguments.suppressWarnings = generateNoWarningsCheckBox.isSelected();
         commonCompilerArguments.languageVersion = getSelectedLanguageVersion();
         commonCompilerArguments.apiVersion = getSelectedAPIVersion();
-        CoroutineSupport coroutineSupport = (CoroutineSupport) coroutineSupportComboBox.getSelectedItem();
-        commonCompilerArguments.coroutinesEnable = coroutineSupport == CoroutineSupport.ENABLED;
-        commonCompilerArguments.coroutinesWarn = coroutineSupport == CoroutineSupport.ENABLED_WITH_WARNING;
-        commonCompilerArguments.coroutinesError = coroutineSupport == CoroutineSupport.DISABLED;
+        LanguageFeature.State coroutineSupport = (LanguageFeature.State) coroutineSupportComboBox.getSelectedItem();
+        commonCompilerArguments.coroutinesEnable = coroutineSupport == LanguageFeature.State.ENABLED;
+        commonCompilerArguments.coroutinesWarn = coroutineSupport == LanguageFeature.State.ENABLED_WITH_WARNING;
+        commonCompilerArguments.coroutinesError = coroutineSupport == LanguageFeature.State.ENABLED_WITH_ERROR ||
+                                                  coroutineSupport == LanguageFeature.State.DISABLED;
         compilerSettings.additionalArguments = additionalArgsOptionsField.getText();
         compilerSettings.scriptTemplates = scriptTemplatesField.getText();
         compilerSettings.scriptTemplatesClasspath = scriptTemplatesClasspathField.getText();

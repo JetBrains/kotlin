@@ -129,16 +129,12 @@ private val Module.implementsCommonModule: Boolean
 
 private fun getExtraLanguageFeatures(
         targetPlatformKind: TargetPlatformKind<*>,
-        coroutineSupport: CoroutineSupport,
+        coroutineSupport: LanguageFeature.State,
         compilerSettings: CompilerSettings?,
         module: Module?
 ): Map<LanguageFeature, LanguageFeature.State> {
     return mutableMapOf<LanguageFeature, LanguageFeature.State>().apply {
-        when (coroutineSupport) {
-            CoroutineSupport.ENABLED -> put(LanguageFeature.Coroutines, LanguageFeature.State.ENABLED)
-            CoroutineSupport.ENABLED_WITH_WARNING -> put(LanguageFeature.Coroutines, LanguageFeature.State.ENABLED_WITH_WARNING)
-            CoroutineSupport.DISABLED -> put(LanguageFeature.Coroutines, LanguageFeature.State.ENABLED_WITH_ERROR)
-        }
+        put(LanguageFeature.Coroutines, coroutineSupport)
         if (targetPlatformKind == TargetPlatformKind.Common ||
             // TODO: this is a dirty hack, parse arguments correctly here
             compilerSettings?.additionalArguments?.contains(multiPlatformProjectsArg) == true ||

@@ -113,7 +113,7 @@ fun Module.getOrCreateFacet(modelsProvider: IdeModifiableModelsProvider, useProj
 
 fun KotlinFacet.configureFacet(
         compilerVersion: String,
-        coroutineSupport: CoroutineSupport,
+        coroutineSupport: LanguageFeature.State,
         platformKind: TargetPlatformKind<*>?, // if null, detect by module dependencies
         modelsProvider: IdeModifiableModelsProvider
 ) {

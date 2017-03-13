@@ -63,11 +63,11 @@ enum class LanguageFeature(
 
     val presentableText get() = if (hintUrl == null) presentableName else "$presentableName (See: $hintUrl)"
 
-    enum class State {
-        ENABLED,
-        ENABLED_WITH_WARNING,
-        ENABLED_WITH_ERROR,
-        DISABLED;
+    enum class State(override val description: String) : DescriptionAware {
+        ENABLED("Enabled"),
+        ENABLED_WITH_WARNING("Enabled with warning"),
+        ENABLED_WITH_ERROR("Disabled"), // TODO: consider dropping this and using DISABLED instead
+        DISABLED("Disabled");
     }
 
     companion object {
