@@ -27,6 +27,7 @@ dependencies {
 
 def testOutputRoot = rootProject.file("test.output").absolutePath
 def externalTestsDir = project.file("external")
+externalTestsDir.mkdirs()
 
 allprojects {
     // Root directories for test output (logs, compiled files, statistics etc). Only single path must be in each set.
