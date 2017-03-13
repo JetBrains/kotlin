@@ -311,6 +311,12 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("unusedLambdaExpressionBody/inspectionData/inspections.test")
+        public void testUnusedLambdaExpressionBody_inspectionData_Inspections_test() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/unusedLambdaExpressionBody/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
         @TestMetadata("unusedReceiverParameter/inspectionData/inspections.test")
         public void testUnusedReceiverParameter_inspectionData_Inspections_test() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/inspections/unusedReceiverParameter/inspectionData/inspections.test");
