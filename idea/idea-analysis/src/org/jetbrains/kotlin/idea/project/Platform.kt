@@ -132,18 +132,18 @@ private fun getExtraLanguageFeatures(
         coroutineSupport: CoroutineSupport,
         compilerSettings: CompilerSettings?,
         module: Module?
-): List<LanguageFeature> {
-    return mutableListOf<LanguageFeature>().apply {
+): Map<LanguageFeature, LanguageFeature.State> {
+    return mutableMapOf<LanguageFeature, LanguageFeature.State>().apply {
         when (coroutineSupport) {
-            CoroutineSupport.ENABLED -> add(LanguageFeature.DoNotWarnOnCoroutines)
-            CoroutineSupport.ENABLED_WITH_WARNING -> {}
-            CoroutineSupport.DISABLED -> add(LanguageFeature.ErrorOnCoroutines)
+            CoroutineSupport.ENABLED -> put(LanguageFeature.Coroutines, LanguageFeature.State.ENABLED)
+            CoroutineSupport.ENABLED_WITH_WARNING -> put(LanguageFeature.Coroutines, LanguageFeature.State.ENABLED_WITH_WARNING)
+            CoroutineSupport.DISABLED -> put(LanguageFeature.Coroutines, LanguageFeature.State.ENABLED_WITH_ERROR)
         }
         if (targetPlatformKind == TargetPlatformKind.Common ||
             // TODO: this is a dirty hack, parse arguments correctly here
             compilerSettings?.additionalArguments?.contains(multiPlatformProjectsArg) == true ||
             (module != null && module.implementsCommonModule)) {
-            add(LanguageFeature.MultiPlatformProjects)
+            put(LanguageFeature.MultiPlatformProjects, LanguageFeature.State.ENABLED)
         }
     }
 }

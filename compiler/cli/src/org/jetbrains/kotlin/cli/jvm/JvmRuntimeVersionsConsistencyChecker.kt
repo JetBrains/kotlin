@@ -123,17 +123,13 @@ object JvmRuntimeVersionsConsistencyChecker {
                         if (@Suppress("DEPRECATION") languageVersionSettings.isApiVersionExplicit)
                             languageVersionSettings.apiVersion
                         else
+                            // "minOf" is needed in case when API version was inferred from language version and it's older than actualApi.
+                            // For example, in "kotlinc-1.2 -language-version 1.0 -cp kotlin-runtime-1.1.jar" we should still infer API = 1.0
                             minOf(languageVersionSettings.apiVersion, actualApi)
 
-                // "minOf" is needed in case when API version was inferred from language version and it's older than actualApi.
-                // For example, in "kotlinc-1.2 -language-version 1.0 -cp kotlin-runtime-1.1.jar" we should still infer API = 1.0
-                val newSettings = LanguageVersionSettingsImpl(
-                        languageVersionSettings.languageVersion,
-                        inferredApiVersion,
-                        languageVersionSettings.skipMetadataVersionCheck,
-                        languageVersionSettings.additionalFeatures,
-                        isApiVersionExplicit = false
-                )
+                val newSettings = object : LanguageVersionSettings by languageVersionSettings {
+                    override val apiVersion: ApiVersion get() = inferredApiVersion
+                }
 
                 messageCollector.issue(null, "Old runtime has been found in the classpath. " +
                                              "Initial language version settings: $languageVersionSettings. " +

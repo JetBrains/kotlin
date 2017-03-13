@@ -99,14 +99,6 @@ object ModifierCheckerCore {
             IMPL_KEYWORD      to LanguageFeature.MultiPlatformProjects
     )
 
-    val errorOnFeature = mapOf(
-            LanguageFeature.Coroutines to LanguageFeature.ErrorOnCoroutines
-    )
-
-    val noWarningOnFeature = mapOf(
-            LanguageFeature.Coroutines to LanguageFeature.DoNotWarnOnCoroutines
-    )
-
     val featureDependenciesTargets = mapOf(
             LanguageFeature.InlineProperties to setOf(PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER)
     )
@@ -280,27 +272,25 @@ object ModifierCheckerCore {
 
         val dependency = featureDependencies[modifier] ?: return true
 
-        val errorOnDependencyFeature = errorOnFeature[dependency]?.let { languageVersionSettings.supportsFeature(it) } ?: false
-        val supportsFeature = languageVersionSettings.supportsFeature(dependency)
+        val featureSupport = languageVersionSettings.getFeatureSupport(dependency)
 
         val diagnosticData = dependency to languageVersionSettings
-        if (!supportsFeature || errorOnDependencyFeature) {
+        if (featureSupport == LanguageFeature.State.ENABLED_WITH_ERROR || featureSupport == LanguageFeature.State.DISABLED) {
             val restrictedTargets = featureDependenciesTargets[dependency]
             if (restrictedTargets != null && actualTargets.intersect(restrictedTargets).isEmpty()) {
                 return true
             }
 
-            if (!supportsFeature) {
+            if (featureSupport == LanguageFeature.State.DISABLED) {
                 trace.report(Errors.UNSUPPORTED_FEATURE.on(node.psi, diagnosticData))
             }
-            else if (errorOnDependencyFeature) {
+            else {
                 trace.report(Errors.EXPERIMENTAL_FEATURE_ERROR.on(node.psi, diagnosticData))
             }
             return false
         }
 
-        val pairedNoWarningFeature = noWarningOnFeature[dependency]
-        if (pairedNoWarningFeature != null && !languageVersionSettings.supportsFeature(pairedNoWarningFeature)) {
+        if (featureSupport == LanguageFeature.State.ENABLED_WITH_WARNING) {
             trace.report(Errors.EXPERIMENTAL_FEATURE_WARNING.on(node.psi, diagnosticData))
         }
 

@@ -40,8 +40,9 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import static org.jetbrains.kotlin.cli.common.ExitCode.*;
@@ -261,17 +262,17 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             );
         }
 
-        List<LanguageFeature> extraLanguageFeatures = new ArrayList<LanguageFeature>(0);
+        Map<LanguageFeature, LanguageFeature.State> extraLanguageFeatures = new HashMap<LanguageFeature, LanguageFeature.State>(0);
         if (arguments.multiPlatform) {
-            extraLanguageFeatures.add(LanguageFeature.MultiPlatformProjects);
+            extraLanguageFeatures.put(LanguageFeature.MultiPlatformProjects, LanguageFeature.State.ENABLED);
         }
         if (arguments.noCheckImpl) {
-            extraLanguageFeatures.add(LanguageFeature.MultiPlatformDoNotCheckImpl);
+            extraLanguageFeatures.put(LanguageFeature.MultiPlatformDoNotCheckImpl, LanguageFeature.State.ENABLED);
         }
 
-        LanguageFeature coroutinesApplicabilityLevel = chooseCoroutinesApplicabilityLevel(configuration, arguments);
-        if (coroutinesApplicabilityLevel != null) {
-            extraLanguageFeatures.add(coroutinesApplicabilityLevel);
+        LanguageFeature.State coroutinesState = chooseCoroutinesApplicabilityLevel(configuration, arguments);
+        if (coroutinesState != null) {
+            extraLanguageFeatures.put(LanguageFeature.Coroutines, coroutinesState);
         }
 
         CommonConfigurationKeysKt.setLanguageVersionSettings(
@@ -287,15 +288,15 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
     }
 
     @Nullable
-    private static LanguageFeature chooseCoroutinesApplicabilityLevel(
+    private static LanguageFeature.State chooseCoroutinesApplicabilityLevel(
             @NotNull CompilerConfiguration configuration,
             @NotNull CommonCompilerArguments arguments
     ) {
         if (arguments.coroutinesError && !arguments.coroutinesWarn && !arguments.coroutinesEnable) {
-            return LanguageFeature.ErrorOnCoroutines;
+            return LanguageFeature.State.ENABLED_WITH_ERROR;
         }
         else if (arguments.coroutinesEnable && !arguments.coroutinesWarn && !arguments.coroutinesError) {
-            return LanguageFeature.DoNotWarnOnCoroutines;
+            return LanguageFeature.State.ENABLED;
         }
         else if (!arguments.coroutinesEnable && !arguments.coroutinesError) {
             return null;

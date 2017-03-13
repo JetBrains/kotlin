@@ -50,6 +50,7 @@ sealed class TargetPlatformKind<out Version : TargetPlatformVersion>(
     }
 }
 
+// TODO: merge with LanguageFeature.State
 enum class CoroutineSupport(
         override val description: String,
         val compilerArgument: String

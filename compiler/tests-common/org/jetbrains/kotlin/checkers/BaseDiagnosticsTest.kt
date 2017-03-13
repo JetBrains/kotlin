@@ -99,19 +99,16 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
     }
 
     data class DiagnosticTestLanguageVersionSettings(
-            private val languageFeatures: Map<LanguageFeature, Boolean>,
+            private val languageFeatures: Map<LanguageFeature, LanguageFeature.State>,
             override val apiVersion: ApiVersion,
             override val languageVersion: LanguageVersion
     ) : LanguageVersionSettings {
         private val delegate = LanguageVersionSettingsImpl(languageVersion, apiVersion)
 
-        override fun supportsFeature(feature: LanguageFeature): Boolean =
-                languageFeatures[feature] ?: delegate.supportsFeature(feature)
+        override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State =
+                languageFeatures[feature] ?: delegate.getFeatureSupport(feature)
 
         override val skipMetadataVersionCheck: Boolean get() = false
-
-        override val additionalFeatures: Collection<LanguageFeature>
-            get() = error("Must not be called")
 
         override val isApiVersionExplicit: Boolean
             get() = error("Must not be called")
@@ -286,10 +283,10 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
 
         val LANGUAGE_DIRECTIVE = "LANGUAGE"
         val LANGUAGE_VERSION = "LANGUAGE_VERSION"
-        private val LANGUAGE_PATTERN = Pattern.compile("([\\+\\-])(\\w+)\\s*")
+        private val LANGUAGE_PATTERN = Pattern.compile("(\\+|\\-|warn:)(\\w+)\\s*")
 
-        val DEFAULT_DIAGNOSTIC_TESTS_FEATURES = listOf(
-                LanguageFeature.DoNotWarnOnCoroutines
+        val DEFAULT_DIAGNOSTIC_TESTS_FEATURES = mapOf(
+                LanguageFeature.Coroutines to LanguageFeature.State.ENABLED
         )
 
         val API_VERSION_DIRECTIVE = "API_VERSION"
@@ -330,27 +327,32 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             return DiagnosticTestLanguageVersionSettings(languageFeatures, apiVersion, languageVersion)
         }
 
-        private fun collectLanguageFeatureMap(directives: String): Map<LanguageFeature, Boolean> {
+        private fun collectLanguageFeatureMap(directives: String): Map<LanguageFeature, LanguageFeature.State> {
             val matcher = LANGUAGE_PATTERN.matcher(directives)
             if (!matcher.find()) {
                 Assert.fail(
                         "Wrong syntax in the '// !$LANGUAGE_DIRECTIVE: ...' directive:\n" +
                         "found: '$directives'\n" +
-                        "Must be '([+-]LanguageFeatureName)+'\n" +
-                        "where '+' means 'enable' and '-' means 'disable'\n" +
+                        "Must be '((+|-|warn:)LanguageFeatureName)+'\n" +
+                        "where '+' means 'enable', '-' means 'disable', 'warn:' means 'enable with warning'\n" +
                         "and language feature names are names of enum entries in LanguageFeature enum class"
                 )
             }
 
-            val values = HashMap<LanguageFeature, Boolean>()
+            val values = HashMap<LanguageFeature, LanguageFeature.State>()
             do {
-                val enable = matcher.group(1) == "+"
+                val mode = when (matcher.group(1)) {
+                    "+" -> LanguageFeature.State.ENABLED
+                    "-" -> LanguageFeature.State.DISABLED
+                    "warn:" -> LanguageFeature.State.ENABLED_WITH_WARNING
+                    else -> error("Unknown mode for language feature: ${matcher.group(1)}")
+                }
                 val name = matcher.group(2)
                 val feature = LanguageFeature.fromString(name) ?: throw AssertionError(
                         "Language feature not found, please check spelling: $name\n" +
                         "Known features:\n    ${LanguageFeature.values().joinToString("\n    ")}"
                 )
-                if (values.put(feature, enable) != null) {
+                if (values.put(feature, mode) != null) {
                     Assert.fail("Duplicate entry for the language feature: $name")
                 }
             }

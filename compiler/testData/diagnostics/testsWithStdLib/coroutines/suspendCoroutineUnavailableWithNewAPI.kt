@@ -1,5 +1,5 @@
 // !API_VERSION: 1.1
-// !LANGUAGE: +DoNotWarnOnCoroutines
+// !LANGUAGE: +Coroutines
 // SKIP_TXT
 
 import kotlin.coroutines.experimental.*

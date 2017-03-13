@@ -1,16 +1,16 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !LANGUAGE: +ErrorOnCoroutines
+// !LANGUAGE: -Coroutines
 
-<!EXPERIMENTAL_FEATURE_ERROR!>suspend<!> fun suspendHere(): String = "OK"
+<!UNSUPPORTED_FEATURE!>suspend<!> fun suspendHere(): String = "OK"
 
-fun builder(c: <!EXPERIMENTAL_FEATURE_ERROR!>suspend<!> () -> Unit) {
+fun builder(c: <!UNSUPPORTED_FEATURE!>suspend<!> () -> Unit) {
 
 }
 
 fun box(): String {
     var result = ""
 
-    <!EXPERIMENTAL_FEATURE_ERROR!>builder<!> {
+    <!UNSUPPORTED_FEATURE!>builder<!> {
         suspendHere()
     }
 

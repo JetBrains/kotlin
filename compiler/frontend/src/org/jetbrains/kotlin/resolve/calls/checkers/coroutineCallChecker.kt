@@ -90,14 +90,18 @@ object BuilderFunctionsCallChecker : CallChecker {
 
 fun checkCoroutinesFeature(languageVersionSettings: LanguageVersionSettings, diagnosticHolder: DiagnosticSink, reportOn: PsiElement) {
     val diagnosticData = LanguageFeature.Coroutines to languageVersionSettings
-    if (!languageVersionSettings.supportsFeature(LanguageFeature.Coroutines)) {
-        diagnosticHolder.report(Errors.UNSUPPORTED_FEATURE.on(reportOn, diagnosticData))
-    }
-    else if (languageVersionSettings.supportsFeature(LanguageFeature.ErrorOnCoroutines)) {
-        diagnosticHolder.report(Errors.EXPERIMENTAL_FEATURE_ERROR.on(reportOn, diagnosticData))
-    }
-    else if (!languageVersionSettings.supportsFeature(LanguageFeature.DoNotWarnOnCoroutines)) {
-        diagnosticHolder.report(Errors.EXPERIMENTAL_FEATURE_WARNING.on(reportOn, diagnosticData))
+    when (languageVersionSettings.getFeatureSupport(LanguageFeature.Coroutines)) {
+        LanguageFeature.State.ENABLED -> {
+        }
+        LanguageFeature.State.ENABLED_WITH_WARNING -> {
+            diagnosticHolder.report(Errors.EXPERIMENTAL_FEATURE_WARNING.on(reportOn, diagnosticData))
+        }
+        LanguageFeature.State.ENABLED_WITH_ERROR -> {
+            diagnosticHolder.report(Errors.EXPERIMENTAL_FEATURE_ERROR.on(reportOn, diagnosticData))
+        }
+        LanguageFeature.State.DISABLED -> {
+            diagnosticHolder.report(Errors.UNSUPPORTED_FEATURE.on(reportOn, diagnosticData))
+        }
     }
 }
 

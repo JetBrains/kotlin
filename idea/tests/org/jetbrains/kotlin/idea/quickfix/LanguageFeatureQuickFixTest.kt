@@ -46,9 +46,9 @@ class LanguageFeatureQuickFixTest : LightPlatformCodeInsightFixtureTestCase() {
         myFixture.configureByText("foo.kt", "suspend fun foo()")
 
         assertFalse(KotlinCommonCompilerArgumentsHolder.getInstance(project).settings.coroutinesEnable)
-        assertFalse(LanguageFeature.DoNotWarnOnCoroutines in project.getLanguageVersionSettings().additionalFeatures)
+        assertEquals(LanguageFeature.State.ENABLED_WITH_WARNING, coroutineSupport)
         myFixture.launchAction(myFixture.findSingleIntention("Enable coroutine support in the project"))
-        assertTrue(LanguageFeature.DoNotWarnOnCoroutines in project.getLanguageVersionSettings().additionalFeatures)
+        assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
     }
 
     fun testDisableCoroutines() {
@@ -57,9 +57,9 @@ class LanguageFeatureQuickFixTest : LightPlatformCodeInsightFixtureTestCase() {
         myFixture.configureByText("foo.kt", "suspend fun foo()")
 
         assertFalse(KotlinCommonCompilerArgumentsHolder.getInstance(project).settings.coroutinesEnable)
-        assertFalse(LanguageFeature.ErrorOnCoroutines in project.getLanguageVersionSettings().additionalFeatures)
+        assertEquals(LanguageFeature.State.ENABLED_WITH_WARNING, coroutineSupport)
         myFixture.launchAction(myFixture.findSingleIntention("Disable coroutine support in the project"))
-        assertTrue(LanguageFeature.ErrorOnCoroutines in project.getLanguageVersionSettings().additionalFeatures)
+        assertEquals(LanguageFeature.State.ENABLED_WITH_ERROR, coroutineSupport)
     }
 
     fun testEnableCoroutinesFacet() {
@@ -78,9 +78,9 @@ class LanguageFeatureQuickFixTest : LightPlatformCodeInsightFixtureTestCase() {
         resetProjectSettings(LanguageVersion.KOTLIN_1_1)
         myFixture.configureByText("foo.kt", "suspend fun foo()")
 
-        assertFalse(LanguageFeature.DoNotWarnOnCoroutines in project.getLanguageVersionSettings().additionalFeatures)
+        assertEquals(LanguageFeature.State.ENABLED_WITH_WARNING, coroutineSupport)
         myFixture.launchAction(myFixture.findSingleIntention("Enable coroutine support in the project"))
-        assertTrue(LanguageFeature.DoNotWarnOnCoroutines in project.getLanguageVersionSettings().additionalFeatures)
+        assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
         assertEquals(bundledRuntimeVersion(), JavaRuntimeDetectionUtil.getJavaRuntimeVersion(listOf(runtime)))
     }
 
@@ -174,6 +174,9 @@ class LanguageFeatureQuickFixTest : LightPlatformCodeInsightFixtureTestCase() {
             coroutinesError = false
         }
     }
+
+    private val coroutineSupport: LanguageFeature.State
+        get() = project.getLanguageVersionSettings().getFeatureSupport(LanguageFeature.Coroutines)
 
     override fun tearDown() {
         FacetManager.getInstance(myModule).getFacetByType(KotlinFacetType.TYPE_ID)?.let {
