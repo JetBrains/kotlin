@@ -1,15 +1,19 @@
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, NATIVE
 //WITH_REFLECT
 class A {
     @PublishedApi
-    internal fun published() = "OK"
+    internal fun published() = "O"
 
-    inline fun test() = published()
+    @PublishedApi
+    internal var publishedProp = "K"
 
+    inline fun test() = published() + publishedProp
 }
 
 fun box() : String {
     val clazz = A::class.java
-    if (clazz.getDeclaredMethod("published") == null) return "fail"
-    return "OK"
+    if (clazz.getDeclaredMethod("published") == null) return "fail 1"
+    if (clazz.getDeclaredMethod("getPublishedProp") == null) return "fail 2"
+    if (clazz.getDeclaredMethod("setPublishedProp", String::class.java) == null) return "fail 3"
+    return A().test()
 }

@@ -397,3 +397,8 @@ fun ClassDescriptor.getNoArgsConstructor(): ClassConstructorDescriptor? =
 
 fun ClassDescriptor.getConstructorForEmptyArgumentsList(): List<ClassConstructorDescriptor> =
         constructors.filter { it.valueParameters.all { it.hasDefaultValue() || it.varargElementType != null } }
+
+fun DeclarationDescriptor.isPublishedApi(): Boolean {
+    val descriptor = if (this is CallableMemberDescriptor) DescriptorUtils.getDirectMember(this) else this
+    return descriptor.annotations.hasAnnotation(KotlinBuiltIns.FQ_NAMES.publishedApi)
+}
