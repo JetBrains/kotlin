@@ -14,32 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.compiler.configuration;
+package org.jetbrains.kotlin.idea.compiler.configuration
 
-import com.intellij.openapi.components.*;
-import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.config.CompilerSettings;
+import com.intellij.openapi.components.*
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_SECTION
 
-import static org.jetbrains.kotlin.idea.compiler.configuration.BaseKotlinCompilerSettings.KOTLIN_COMPILER_SETTINGS_PATH;
-import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMPILER_SETTINGS_SECTION;
+@State(name = KOTLIN_COMPILER_SETTINGS_SECTION,
+       storages = arrayOf(Storage(file = StoragePathMacros.PROJECT_FILE),
+                          Storage(file = BaseKotlinCompilerSettings.KOTLIN_COMPILER_SETTINGS_PATH, scheme = StorageScheme.DIRECTORY_BASED)))
+class KotlinCompilerSettings : BaseKotlinCompilerSettings<CompilerSettings>() {
+    override fun createSettings() = CompilerSettings()
 
-@State(
-    name = KOTLIN_COMPILER_SETTINGS_SECTION,
-    storages = {
-        @Storage(file = StoragePathMacros.PROJECT_FILE),
-        @Storage(file = KOTLIN_COMPILER_SETTINGS_PATH, scheme = StorageScheme.DIRECTORY_BASED)
-    }
-)
-public class KotlinCompilerSettings extends BaseKotlinCompilerSettings<CompilerSettings> {
-
-    public static KotlinCompilerSettings getInstance(Project project) {
-        return ServiceManager.getService(project, KotlinCompilerSettings.class);
-    }
-
-    @NotNull
-    @Override
-    protected CompilerSettings createSettings() {
-        return new CompilerSettings();
+    companion object {
+        fun getInstance(project: Project) = ServiceManager.getService(project, KotlinCompilerSettings::class.java)!!
     }
 }

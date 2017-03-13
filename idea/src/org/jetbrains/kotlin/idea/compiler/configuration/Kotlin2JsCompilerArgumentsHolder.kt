@@ -14,32 +14,21 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.compiler.configuration;
+package org.jetbrains.kotlin.idea.compiler.configuration
 
-import com.intellij.openapi.components.*;
-import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
+import com.intellij.openapi.components.*
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_TO_JS_COMPILER_ARGUMENTS_SECTION
+import org.jetbrains.kotlin.idea.compiler.configuration.BaseKotlinCompilerSettings.Companion.KOTLIN_COMPILER_SETTINGS_PATH
 
-import static org.jetbrains.kotlin.idea.compiler.configuration.BaseKotlinCompilerSettings.KOTLIN_COMPILER_SETTINGS_PATH;
-import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_TO_JS_COMPILER_ARGUMENTS_SECTION;
+@State(name = KOTLIN_TO_JS_COMPILER_ARGUMENTS_SECTION,
+       storages = arrayOf(Storage(file = StoragePathMacros.PROJECT_FILE),
+                          Storage(file = KOTLIN_COMPILER_SETTINGS_PATH, scheme = StorageScheme.DIRECTORY_BASED)))
+class Kotlin2JsCompilerArgumentsHolder : BaseKotlinCompilerSettings<K2JSCompilerArguments>() {
+    override fun createSettings() = K2JSCompilerArguments.createDefaultInstance()
 
-@State(
-    name = KOTLIN_TO_JS_COMPILER_ARGUMENTS_SECTION,
-    storages = {
-        @Storage(file = StoragePathMacros.PROJECT_FILE),
-        @Storage(file = KOTLIN_COMPILER_SETTINGS_PATH, scheme = StorageScheme.DIRECTORY_BASED)
-    }
-)
-public class Kotlin2JsCompilerArgumentsHolder extends BaseKotlinCompilerSettings<K2JSCompilerArguments> {
-
-    public static Kotlin2JsCompilerArgumentsHolder getInstance(Project project) {
-        return ServiceManager.getService(project, Kotlin2JsCompilerArgumentsHolder.class);
-    }
-
-    @NotNull
-    @Override
-    protected K2JSCompilerArguments createSettings() {
-        return K2JSCompilerArguments.createDefaultInstance();
+    companion object {
+        fun getInstance(project: Project) = ServiceManager.getService(project, Kotlin2JsCompilerArgumentsHolder::class.java)!!
     }
 }

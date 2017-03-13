@@ -14,70 +14,52 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.compiler.configuration;
+package org.jetbrains.kotlin.idea.compiler.configuration
 
-import com.intellij.openapi.components.*;
-import com.intellij.openapi.project.Project;
-import com.intellij.util.text.VersionComparatorUtil;
-import org.jdom.Attribute;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
-import org.jetbrains.kotlin.config.FacetSerializationKt;
-import org.jetbrains.kotlin.config.LanguageVersion;
+import com.intellij.openapi.components.*
+import com.intellij.openapi.project.Project
+import com.intellij.util.text.VersionComparatorUtil
+import org.jdom.Element
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION
+import org.jetbrains.kotlin.config.getOption
 
-import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION;
-
-@State(
-    name = KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION,
-    storages = {
-        @Storage(file = StoragePathMacros.PROJECT_FILE),
-        @Storage(file = BaseKotlinCompilerSettings.KOTLIN_COMPILER_SETTINGS_PATH, scheme = StorageScheme.DIRECTORY_BASED)
-    }
-)
-public class KotlinCommonCompilerArgumentsHolder extends BaseKotlinCompilerSettings<CommonCompilerArguments> {
-    private static String DEFAULT_LANGUAGE_VERSION = LanguageVersion.LATEST.getVersionString();
-
-    public static KotlinCommonCompilerArgumentsHolder getInstance(Project project) {
-        return ServiceManager.getService(project, KotlinCommonCompilerArgumentsHolder.class);
-    }
-
-    private static void dropElementIfDefault(@Nullable Element element) {
-        if (element == null) return;
-
-        Attribute versionAttribute = element.getAttribute("value");
-        String version = versionAttribute != null ? versionAttribute.getValue() : null;
-        if (DEFAULT_LANGUAGE_VERSION.equals(version)) {
-            element.detach();
+@State(name = KOTLIN_COMMON_COMPILER_ARGUMENTS_SECTION,
+       storages = arrayOf(Storage(file = StoragePathMacros.PROJECT_FILE),
+                          Storage(file = BaseKotlinCompilerSettings.KOTLIN_COMPILER_SETTINGS_PATH,
+                                  scheme = StorageScheme.DIRECTORY_BASED)))
+class KotlinCommonCompilerArgumentsHolder : BaseKotlinCompilerSettings<CommonCompilerArguments>() {
+    private fun Element.dropElementIfDefault() {
+        if (DEFAULT_LANGUAGE_VERSION == getAttribute("value")?.value) {
+            detach()
         }
     }
 
-    @Override
-    public Element getState() {
-        Element element = super.getState();
-        if (element != null) {
+    override fun getState(): Element {
+        return super.getState().apply {
             // Do not serialize language/api version if they correspond to the default language version
-            dropElementIfDefault(FacetSerializationKt.getOption(element, "languageVersion"));
-            dropElementIfDefault(FacetSerializationKt.getOption(element, "apiVersion"));
+            getOption("languageVersion")?.dropElementIfDefault()
+            getOption("apiVersion")?.dropElementIfDefault()
         }
-        return element;
     }
 
-    @Override
-    public void loadState(Element state) {
-        super.loadState(state);
+    override fun loadState(state: Element) {
+        super.loadState(state)
 
         // To fix earlier configurations with incorrect combination of language and API version
-        CommonCompilerArguments settings = getSettings();
+        val settings = settings
         if (VersionComparatorUtil.compare(settings.languageVersion, settings.apiVersion) < 0) {
-            settings.apiVersion = settings.languageVersion;
+            settings.apiVersion = settings.languageVersion
         }
     }
 
-    @NotNull
-    @Override
-    protected CommonCompilerArguments createSettings() {
-        return CommonCompilerArguments.createDefaultInstance();
+    override fun createSettings() = CommonCompilerArguments.createDefaultInstance()
+
+    companion object {
+        private val DEFAULT_LANGUAGE_VERSION = LanguageVersion.LATEST.versionString
+
+        fun getInstance(project: Project) =
+                ServiceManager.getService<KotlinCommonCompilerArgumentsHolder>(project, KotlinCommonCompilerArgumentsHolder::class.java)!!
     }
 }

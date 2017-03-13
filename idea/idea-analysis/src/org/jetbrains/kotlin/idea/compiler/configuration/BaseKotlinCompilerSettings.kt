@@ -14,67 +14,40 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.compiler.configuration;
+package org.jetbrains.kotlin.idea.compiler.configuration
 
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters;
-import com.intellij.util.xmlb.XmlSerializer;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
-import org.jetbrains.kotlin.config.SettingConstants;
+import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.components.StoragePathMacros.PROJECT_CONFIG_DIR
+import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters
+import com.intellij.util.xmlb.XmlSerializer
+import org.jdom.Element
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.config.SettingConstants
 
-import static com.intellij.openapi.components.StoragePathMacros.PROJECT_CONFIG_DIR;
+abstract class BaseKotlinCompilerSettings<T : Any> protected constructor() : PersistentStateComponent<Element>, Cloneable {
+    @Suppress("LeakingThis")
+    var settings: T = createSettings()
+        private set
 
-public abstract class BaseKotlinCompilerSettings<T> implements PersistentStateComponent<Element> {
-    public static final String KOTLIN_COMPILER_SETTINGS_PATH = PROJECT_CONFIG_DIR + "/" + SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE;
+    protected abstract fun createSettings(): T
 
-    private static final SkipDefaultValuesSerializationFilters SKIP_DEFAULT_VALUES = new SkipDefaultValuesSerializationFilters(
-            CommonCompilerArguments.createDefaultInstance(),
-            K2JVMCompilerArguments.createDefaultInstance(),
-            K2JSCompilerArguments.createDefaultInstance()
-    );
-    @NotNull
-    private T settings;
+    override fun getState() = XmlSerializer.serialize(settings, SKIP_DEFAULT_VALUES)
 
-    protected BaseKotlinCompilerSettings() {
-        //noinspection AbstractMethodCallInConstructor
-        this.settings = createSettings();
+    override fun loadState(state: Element) {
+        settings = XmlSerializer.deserialize(state, settings.javaClass) ?: createSettings()
     }
 
-    @NotNull
-    public T getSettings() {
-        return settings;
-    }
+    public override fun clone(): Any = super.clone()
 
-    @NotNull
-    protected abstract T createSettings();
+    companion object {
+        const val KOTLIN_COMPILER_SETTINGS_PATH = PROJECT_CONFIG_DIR + "/" + SettingConstants.KOTLIN_COMPILER_SETTINGS_FILE
 
-    @Override
-    public Element getState() {
-        return XmlSerializer.serialize(settings, SKIP_DEFAULT_VALUES);
-    }
-
-    @Override
-    public void loadState(Element state) {
-        //noinspection unchecked
-        T newSettings = (T) XmlSerializer.deserialize(state, settings.getClass());
-        if (newSettings == null)
-            newSettings = createSettings();
-
-        settings = newSettings;
-    }
-
-    @Override
-    @Nullable
-    public Object clone() {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException e) {
-            return null;
-        }
+        private val SKIP_DEFAULT_VALUES = SkipDefaultValuesSerializationFilters(
+                CommonCompilerArguments.createDefaultInstance(),
+                K2JVMCompilerArguments.createDefaultInstance(),
+                K2JSCompilerArguments.createDefaultInstance()
+        )
     }
 }

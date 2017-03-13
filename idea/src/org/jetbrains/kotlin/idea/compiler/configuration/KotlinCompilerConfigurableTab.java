@@ -175,10 +175,10 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     @SuppressWarnings("unused")
     public KotlinCompilerConfigurableTab(Project project) {
         this(project,
-             KotlinCommonCompilerArgumentsHolder.getInstance(project).getSettings(),
-             Kotlin2JsCompilerArgumentsHolder.getInstance(project).getSettings(),
-             Kotlin2JvmCompilerArgumentsHolder.getInstance(project).getSettings(),
-             KotlinCompilerSettings.getInstance(project).getSettings(),
+             KotlinCommonCompilerArgumentsHolder.Companion.getInstance(project).getSettings(),
+             Kotlin2JsCompilerArgumentsHolder.Companion.getInstance(project).getSettings(),
+             Kotlin2JvmCompilerArgumentsHolder.Companion.getInstance(project).getSettings(),
+             KotlinCompilerSettings.Companion.getInstance(project).getSettings(),
              ServiceManager.getService(project, KotlinCompilerWorkspaceSettings.class),
              true,
              false);

@@ -14,32 +14,22 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.compiler.configuration;
+package org.jetbrains.kotlin.idea.compiler.configuration
 
-import com.intellij.openapi.components.*;
-import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
+import com.intellij.openapi.components.*
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 
-import static org.jetbrains.kotlin.config.SettingConstants.KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION;
-import static org.jetbrains.kotlin.idea.compiler.configuration.BaseKotlinCompilerSettings.KOTLIN_COMPILER_SETTINGS_PATH;
+import org.jetbrains.kotlin.config.SettingConstants.KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION
+import org.jetbrains.kotlin.idea.compiler.configuration.BaseKotlinCompilerSettings.Companion.KOTLIN_COMPILER_SETTINGS_PATH
 
-@State(
-    name = KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION,
-    storages = {
-        @Storage(file = StoragePathMacros.PROJECT_FILE),
-        @Storage(file = KOTLIN_COMPILER_SETTINGS_PATH, scheme = StorageScheme.DIRECTORY_BASED)
-    }
-)
-public class Kotlin2JvmCompilerArgumentsHolder extends BaseKotlinCompilerSettings<K2JVMCompilerArguments> {
+@State(name = KOTLIN_TO_JVM_COMPILER_ARGUMENTS_SECTION,
+       storages = arrayOf(Storage(file = StoragePathMacros.PROJECT_FILE),
+                          Storage(file = KOTLIN_COMPILER_SETTINGS_PATH, scheme = StorageScheme.DIRECTORY_BASED)))
+class Kotlin2JvmCompilerArgumentsHolder : BaseKotlinCompilerSettings<K2JVMCompilerArguments>() {
+    override fun createSettings() = K2JVMCompilerArguments.createDefaultInstance()
 
-    public static Kotlin2JvmCompilerArgumentsHolder getInstance(Project project) {
-        return ServiceManager.getService(project, Kotlin2JvmCompilerArgumentsHolder.class);
-    }
-
-    @NotNull
-    @Override
-    protected K2JVMCompilerArguments createSettings() {
-        return K2JVMCompilerArguments.createDefaultInstance();
+    companion object {
+        fun getInstance(project: Project) = ServiceManager.getService(project, Kotlin2JvmCompilerArgumentsHolder::class.java)!!
     }
 }
