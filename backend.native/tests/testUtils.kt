@@ -15,3 +15,8 @@ fun assertTrue(actual: Boolean, message: String? = null) {
 fun assertFalse(actual: Boolean, message: String? = null) {
     assertTrue(!actual, message ?: "Expected value to be false.")
 }
+
+/** Fails the current test with the specified [message]. */
+fun fail(message: String? = null) {
+    throw TestFailedException(message ?: "Expected value to be true.")
+}
