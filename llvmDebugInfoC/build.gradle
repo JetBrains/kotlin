@@ -1,0 +1,85 @@
+/*
+ * Copyright 2010-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: "cpp"
+apply plugin: "c"
+
+model {
+  components {
+    debugInfo(NativeLibrarySpec) {
+      sources.cpp.source.srcDirs "src/main/cpp"
+      
+        binaries.all {
+          cppCompiler.args "--std=c++11", "-g", "-fPIC", "-I${llvmDir}/include", "-I${projectDir}/src/main/include"
+          linker.args "-L${llvmDir}/lib", "-lLLVMCore", "-lLLVMSupport"
+        }
+    }
+    
+    demosimple(NativeExecutableSpec) {
+      //dependsOn project("debugInfoStaticLibrary")
+      sources.c.source.srcDirs "src/demo-simple/c"
+      binaries.all {
+         cCompiler.args "-g", "-I${llvmDir}/include",
+                  "-I${projectDir}/src/main/include"
+         if (targetPlatform.operatingSystem.linux) {
+             linker.args "-L${buildDir}/libs/debugInfo/static", "-ldebugInfo",
+	             "-L${llvmDir}/lib", "-Wl,-(", "-lLLVMSupport", "-lLLVMCore", "-Wl,-)",
+                     "-L/usr/lib/x86_64-linux-gnu", "-L/lib/x86_64-linux-gnu", "-lncurses",
+		      "-ldl", "-lpthread"
+         } else {
+	     linker.args "-L${llvmDir}/lib", "-lLLVMCore", "-lLLVMSupport",
+                     "-lncurses", "-L${buildDir}/libs/debugInfo/static", "-ldebugInfo"
+	 }
+      }
+    }
+
+    demogenerated(NativeExecutableSpec) {
+      //dependsOn project("debugInfoStaticLibrary")
+      sources.c.source.srcDirs "src/demo-generated/c"
+      binaries.all {
+         cCompiler.args "-g", "-I${llvmDir}/include",
+                  "-I${projectDir}/src/main/include"
+         if (targetPlatform.operatingSystem.linux) {
+             linker.args "-L${buildDir}/libs/debugInfo/static", "-ldebugInfo",
+	             "-L${llvmDir}/lib", "-Wl,-(", "-lLLVMSupport", "-lLLVMAnalysis", "-lLLVMProfileData", "-lLLVMCore", "-Wl,-)",
+                     "-L/usr/lib/x86_64-linux-gnu", "-L/lib/x86_64-linux-gnu", "-lncurses", "-lz",
+		      "-ldl", "-lpthread"
+         } else {
+	     linker.args "-L${llvmDir}/lib", "-lLLVMCore", "-lLLVMSupport",
+                     "-lncurses", "-L${buildDir}/libs/debugInfo/static", "-ldebugInfo"
+	 }
+      }
+    }
+
+    demolocalvariable(NativeExecutableSpec) {
+      //dependsOn project("debugInfoStaticLibrary")
+      sources.c.source.srcDirs "src/demo-local-variable/c"
+      binaries.all {
+         cCompiler.args "-g", "-I${llvmDir}/include",
+                  "-I${projectDir}/src/main/include"
+         if (targetPlatform.operatingSystem.linux) {
+             linker.args "-L${buildDir}/libs/debugInfo/static", "-ldebugInfo",
+	             "-L${llvmDir}/lib", "-Wl,-(", "-lLLVMSupport", "-lLLVMAnalysis", "-lLLVMProfileData", "-lLLVMCore", "-Wl,-)",
+                     "-L/usr/lib/x86_64-linux-gnu", "-L/lib/x86_64-linux-gnu", "-lncurses", "-lz",
+		      "-ldl", "-lpthread"
+         } else {
+	     linker.args "-L${llvmDir}/lib", "-lLLVMCore", "-lLLVMSupport", "-lLLVMAnalysis", "-lLLVMProfileData",
+                     "-lncurses", "-L${buildDir}/libs/debugInfo/static", "-ldebugInfo", "-lz"
+	 }
+      }
+    }
+  }
+}

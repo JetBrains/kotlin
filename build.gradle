@@ -202,6 +202,11 @@ task dist_compiler(type: Copy) {
         into('konan/nativelib')
     }
 
+    from(project(':llvmDebugInfoC').file('build/libs/debugInfo/shared')) {
+        into('konan/nativelib')
+    }
+
+
     from(file('cmd')) {
         fileMode(0755)
         into('bin')
@@ -233,6 +238,11 @@ task dist_compiler(type: Copy) {
                 commandLine "install_name_tool"
                 args '-add_rpath', '@loader_path/', 
                     'dist/konan/nativelib/libclangstubs.dylib'
+            }
+            exec {
+                commandLine "install_name_tool"
+                args '-add_rpath', '@loader_path/',
+                        'dist/konan/nativelib/libdebugInfostubs.dylib'
             }
         }
     }
