@@ -384,6 +384,7 @@ fun main(args : Array<String>) {
     @Override
     void executeTest() {
         createOutputDirectory()
+        def outputRootDirectory = outputDirectory
 
         // Form the test list.
         List<File> ktFiles = project.file(groupDirectory).listFiles(new FileFilter() {
@@ -406,6 +407,9 @@ fun main(args : Array<String>) {
         testSuite.start()
         ktFiles.each {
             source = project.relativePath(it)
+            // Create separate output directory for each test in the group.
+            outputDirectory = outputRootDirectory + "/${it.name}"
+            project.file(outputDirectory).mkdirs()
             println("TEST: $it.name ($statistics.total/${ktFiles.size()}, passed: $statistics.passed, skipped: $statistics.skipped)")
             def testCase = testSuite.createTestCase(it.name)
             testCase.start()
@@ -430,7 +434,7 @@ fun main(args : Array<String>) {
         testSuite.finish()
 
         // Save the report.
-        def reportFile = project.file("${outputDirectory}/results.json")
+        def reportFile = project.file("${outputRootDirectory}/results.json")
         def json = JsonOutput.toJson(["statistics" : statistics, "tests" : results])
         reportFile.write(JsonOutput.prettyPrint(json))
         println("TOTAL PASSED: $statistics.passed/$statistics.total (SKIPPED: $statistics.skipped)")
