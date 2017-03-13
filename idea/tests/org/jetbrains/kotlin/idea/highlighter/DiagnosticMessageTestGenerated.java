@@ -72,6 +72,12 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest(fileName);
     }
 
+    @TestMetadata("complexTypeMismatchWithTypeParametersAndTypeAlias.kt")
+    public void testComplexTypeMismatchWithTypeParametersAndTypeAlias() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/complexTypeMismatchWithTypeParametersAndTypeAlias.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("conflictingOverloadsClass.kt")
     public void testConflictingOverloadsClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/conflictingOverloadsClass.kt");
