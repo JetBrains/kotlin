@@ -24,5 +24,13 @@ fun local() {
 }
 
 fun noOverflow() {
-    (-1).<!DEPRECATION!>mod<!>(5)
+    (-1).mod(5)
+}
+
+fun builtIns(b: Byte, s: Short) {
+    var a = 1 % 2
+    a %= 3
+    1.mod(2)
+    b % s
+    1.0 % 2.0
 }

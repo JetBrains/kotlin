@@ -1,5 +1,6 @@
 package
 
+public fun builtIns(/*0*/ b: kotlin.Byte, /*1*/ s: kotlin.Short): kotlin.Unit
 public fun local(): kotlin.Unit
 public fun noOverflow(): kotlin.Unit
 public operator fun Baz.rem(/*0*/ x: kotlin.Int): kotlin.Unit
