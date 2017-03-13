@@ -40,9 +40,6 @@
     <component>
       <implementation-class>org.jetbrains.kotlin.idea.project.KotlinCodeBlockModificationListener</implementation-class>
     </component>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.facet.FacetConfigurator</implementation-class>
-    </component>
   </project-components>
 
   <application-components>
@@ -761,8 +758,6 @@
     <usageToPsiElementProvider implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinUsageToPsiElementProvider"/>
 
     <facetType implementation="org.jetbrains.kotlin.idea.facet.KotlinFacetType"/>
-
-    <framework.detector implementation="org.jetbrains.kotlin.idea.facet.KotlinFrameworkDetector"/>
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.FoldInitializerAndIfToElvisIntention</className>
