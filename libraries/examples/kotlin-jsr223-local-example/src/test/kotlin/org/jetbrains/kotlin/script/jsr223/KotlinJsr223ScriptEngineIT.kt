@@ -152,7 +152,7 @@ obj
 
         fun Long.ms() = TimeUnit.NANOSECONDS.toMillis(this)
         Assert.assertTrue("eval in eval is too long: ${times.joinToString { "(${it.first.ms()}, ${it.second.ms()})" }} (expecting no more than 5x difference)",
-                adjustedMaxDiff.third < 10 || adjustedMaxDiff.first * 5 > adjustedMaxDiff.second )
+                adjustedMaxDiff.third < 20 /* assuming it measurement error */ || adjustedMaxDiff.first * 5 > adjustedMaxDiff.second )
     }
 }
 
