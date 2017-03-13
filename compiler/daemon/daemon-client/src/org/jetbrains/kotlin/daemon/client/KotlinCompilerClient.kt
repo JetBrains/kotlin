@@ -50,6 +50,7 @@ object KotlinCompilerClient {
 
     val verboseReporting = System.getProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY) != null
 
+    data class ServiceWithSession(val service: CompileService, val sessionId: Int)
 
     fun connectToCompileService(compilerId: CompilerId,
                                 daemonJVMOptions: DaemonJVMOptions,
@@ -81,7 +82,7 @@ object KotlinCompilerClient {
                             reportingTargets,
                             autostart,
                             leaseSession = false,
-                            sessionAliveFlagFile = null)?.first
+                            sessionAliveFlagFile = null)?.service
 
 
     fun connectAndLease(compilerId: CompilerId,
@@ -92,19 +93,19 @@ object KotlinCompilerClient {
                         autostart: Boolean,
                         leaseSession: Boolean,
                         sessionAliveFlagFile: File? = null
-    ): Pair<CompileService, Int>? = connectLoop(reportingTargets) {
+    ): ServiceWithSession? = connectLoop(reportingTargets) {
         val (service, newJVMOptions) = tryFindSuitableDaemonOrNewOpts(File(daemonOptions.runFilesPath), compilerId, daemonJVMOptions, { cat, msg -> reportingTargets.report(cat, msg) })
         if (service != null) {
             // the newJVMOptions could be checked here for additional parameters, if needed
             service.registerClient(clientAliveFlagFile.absolutePath)
             reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
-            if (!leaseSession) service to CompileService.NO_SESSION
+            if (!leaseSession) ServiceWithSession(service, CompileService.NO_SESSION)
             else {
                 val sessionId = service.leaseCompileSession(sessionAliveFlagFile?.absolutePath)
                 if (sessionId is CompileService.CallResult.Dying)
                     null
                 else
-                    service to sessionId.get()
+                    ServiceWithSession(service, sessionId.get())
             }
         } else {
             reportingTargets.report(DaemonReportCategory.DEBUG, "no suitable daemon found")

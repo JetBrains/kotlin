@@ -425,13 +425,13 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                         val daemonWithSession = KotlinCompilerClient.connectAndLease(compilerId, flagFile, daemonJVMOptions, daemonOptions,
                                                                                      DaemonReportingTargets(out = System.err), autostart = true,
                                                                                      leaseSession = true, sessionAliveFlagFile = sessionFlagFile)
-                        if (daemonWithSession?.first == null) {
+                        if (daemonWithSession?.service == null) {
                             fail("failed to connect daemon:\n${logFile.readLines().joinToString("\n")}\n------")
                         }
                         val jar = tmpdir.absolutePath + File.separator + "hello.$threadNo.jar"
                         val res = KotlinCompilerClient.compile(
-                                daemonWithSession!!.first,
-                                daemonWithSession.second,
+                                daemonWithSession!!.service,
+                                daemonWithSession.sessionId,
                                 CompileService.TargetPlatform.JVM,
                                 arrayOf(File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar),
                                 outStreams[threadNo])
