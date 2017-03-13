@@ -314,20 +314,20 @@ class RunExternalTestGroup extends RunKonanTest {
     }
 
     List<String> buildCompileList() {
-        def packagePattern = ~/(?m)package\s*([a-zA-z-][a-zA-Z0-9._-]*)/
-        def boxPattern = ~/(?m)fun\s*box\s*\(\s*\)/
-        def boxPackage = ""
+        def packagePattern = ~/(?m)^\s*package\s+([a-zA-z-][a-zA-Z0-9._-]+)/
+        def boxPattern = ~/(?m)fun\s+box\s*\(\s*\)/
+        def imports = []
 
         def result = super.buildCompileList()
         for (String filePath : result) {
             def text = project.file(filePath).text
             if (text =~ boxPattern && text =~ packagePattern){
-                boxPackage = (text =~ packagePattern)[0][1]
-                boxPackage += '.'
+                def pkg = (text =~ packagePattern)[0][1]
+                imports.add("$pkg.*")
                 break
             }
         }
-        createLauncherFile("$outputDirectory/_launcher.kt", boxPackage)
+        createLauncherFile("$outputDirectory/_launcher.kt", imports)
         result.add("$outputDirectory/_launcher.kt")
         result.add(project.file("testUtils.kt"))
         return result
@@ -336,19 +336,23 @@ class RunExternalTestGroup extends RunKonanTest {
     /**
      * There are tests that require non-trivial 'package foo' in test launcher.
      */
-    void createLauncherFile(String file, String pkg) {
-        createFile(file, """
-import kotlin.test.TestFailedException
-
+    void createLauncherFile(String file, List<String> imports) {
+        StringBuilder text = new StringBuilder("import kotlin.test.TestFailedException\n")
+        for (v in imports) {
+            text.append("import ").append(v).append('\n')
+        }
+        text.append(
+"""
 fun main(args : Array<String>) {
   @Suppress("USELESS_ELVIS")
-  val result = ${pkg}box()?:"null"
+  val result = box()?:"null"
   println(result)
   if (result != "OK") {
     throw TestFailedException(result)
   }
 }
 """)
+        createFile(file, text.toString())
     }
 
     List<String> findLinesWithPrefixesRemoved(String text, String prefix) {
