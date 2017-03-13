@@ -19,7 +19,7 @@ private class EnumDefImpl(spelling: String, type: PrimitiveType) : EnumDef(spell
     override val values = mutableListOf<EnumValue>()
 }
 
-internal class NativeIndexImpl : NativeIndex() {
+internal class NativeIndexImpl(val language: Language) : NativeIndex() {
 
     private data class DeclarationID(val usr: String)
 
@@ -260,7 +260,11 @@ internal class NativeIndexImpl : NativeIndex() {
                     Parameter(argName, type)
                 }
 
-                functionByName[name] = FunctionDecl(name, args, returnType)
+                val binaryName = when (language) {
+                    Language.C -> clang_Cursor_getMangling(cursor, memScope).convertAndDispose()
+                }
+
+                functionByName[name] = FunctionDecl(name, args, returnType, binaryName)
             }
 
             CXIdxEntity_Enum -> {
@@ -288,7 +292,7 @@ internal class NativeIndexImpl : NativeIndex() {
 }
 
 fun buildNativeIndexImpl(library: NativeLibrary): NativeIndex {
-    val result = NativeIndexImpl()
+    val result = NativeIndexImpl(library.language)
     indexDeclarations(library, result)
     findMacroConstants(library, result)
     return result

@@ -421,21 +421,19 @@ class StubGenerator(
     }
 
     fun getCFunctionParamBinding(type: Type): OutValueBinding {
-        when (type) {
-            is PointerType -> {
-                when (type.pointeeType) {
-                    is Int8Type -> return OutValueBinding(
-                            kotlinType = "String?",
-                            kotlinConv = { name -> "$name?.toCString(memScope).rawPtr" },
-                            memScoped = true,
-                            kotlinJniBridgeType = "NativePtr"
-                    )
-                }
-            }
+        if (treatCFunctionParameterAsString(type)) {
+            return OutValueBinding(
+                    kotlinType = "String?",
+                    kotlinConv = { name -> "$name?.toCString(memScope).rawPtr" },
+                    memScoped = true,
+                    kotlinJniBridgeType = "NativePtr"
+            )
         }
 
         return getOutValueBinding(type)
     }
+
+    private fun treatCFunctionParameterAsString(type: Type) = type is PointerType && type.pointeeType is Int8Type
 
     fun getCallbackRetValBinding(type: Type): OutValueBinding {
         if (type.unwrapTypedefs() is VoidType) {
@@ -657,8 +655,15 @@ class StubGenerator(
 
         val header = "fun ${func.name}($args): ${retValBinding.kotlinType}"
 
+        if (!func.requiresKotlinAdapter()) {
+            assert(platform == KotlinPlatform.NATIVE)
+            out(func.symbolNameAnnotation)
+            out("external $header")
+            return
+        }
+
         fun generateBody(memScoped: Boolean) {
-            val externalParamNames = paramNames.mapIndexed { i: Int, name: String ->
+            val arguments = paramNames.mapIndexed { i: Int, name: String ->
                 val binding = paramBindings[i]
                 val externalParamName: String
 
@@ -672,7 +677,11 @@ class StubGenerator(
                 externalParamName
 
             }
-            out("val res = externals.${func.name}(" + externalParamNames.joinToString(", ") + ")")
+            val callee = when (platform) {
+                KotlinPlatform.JVM -> "externals.${func.name}"
+                KotlinPlatform.NATIVE -> func.kotlinExternalName
+            }
+            out("val res = $callee(" + arguments.joinToString(", ") + ")")
 
             val result = retValBinding.conv("res")
             if (dumpShims) {
@@ -701,6 +710,28 @@ class StubGenerator(
                 generateBody(false)
             }
         }
+    }
+
+    /**
+     * Returns the expression to be parsed by Kotlin as string literal with given contents,
+     * i.e. transforms `foo$bar` to `"foo\$bar"`.
+     */
+    private fun String.quoteAsKotlinLiteral(): String {
+        val sb = StringBuilder()
+        sb.append('"')
+
+        this.forEach { c ->
+            val escaped = when (c) {
+                in 'a' .. 'z', in 'A' .. 'Z', in '0' .. '9', '_' -> c.toString()
+                '$' -> "\\$"
+                // TODO: improve result readability by preserving more characters.
+                else -> "\\u" + "%04X".format(c.toInt())
+            }
+            sb.append(escaped)
+        }
+
+        sb.append('"')
+        return sb.toString()
     }
 
     private fun getFfiStructType(elementTypes: List<Type>) =
@@ -747,13 +778,39 @@ class StubGenerator(
         KotlinPlatform.NATIVE -> generateNativeFunctionType(type, name)
     }
 
-    private fun requiresAdapterOnNative(type: FunctionType): Boolean {
+    /**
+     * Returns `true` iff the function binding for Kotlin Native
+     * requires non-trivial Kotlin adapter to convert arguments.
+     */
+    private fun FunctionDecl.requiresKotlinAdapter(): Boolean {
+        if (platform != KotlinPlatform.NATIVE) {
+            return true
+        }
+
+        return this.parameters.any { treatCFunctionParameterAsString(it.type) } ||
+                this.returnType.unwrapTypedefs() is RecordType
+    }
+
+    /**
+     * Returns `true` iff the function binding for Kotlin Native
+     * requires non-trivial C adapter to convert arguments.
+     */
+    private fun FunctionDecl.requiresCAdapter(): Boolean {
+        if (platform != KotlinPlatform.NATIVE) {
+            return true
+        }
+
+        val parameterTypes = this.parameters.map { it.type }
+        return (parameterTypes + returnType).any { it.unwrapTypedefs() is RecordType }
+    }
+
+    private fun FunctionType.requiresAdapterOnNative(): Boolean {
         assert (platform == KotlinPlatform.NATIVE)
-        return (type.parameterTypes + type.returnType).any { it.unwrapTypedefs() is RecordType }
+        return (parameterTypes + returnType).any { it.unwrapTypedefs() is RecordType }
     }
 
     private fun generateNativeFunctionType(type: FunctionType, name: String) {
-        if (requiresAdapterOnNative(type)) {
+        if (type.requiresAdapterOnNative()) {
             out("object $name : CFunctionType {}")
         } else {
             val kotlinFunctionType = getKotlinFunctionType(type)
@@ -853,10 +910,39 @@ class StubGenerator(
         out("val ${constant.name}: $kotlinType = $literal")
     }
 
-    private val FunctionDecl.stubSymbolName: String
+    /**
+     * The name of C adapter to be used for the function binding for Kotlin Native.
+     */
+    private val FunctionDecl.cStubName: String
         get() {
             require(platform == KotlinPlatform.NATIVE)
             return "kni_" + pkgName.replace('/', '_') + '_' + this.name
+        }
+
+    private val FunctionDecl.kotlinExternalName: String
+        get() {
+            require(platform == KotlinPlatform.NATIVE)
+            require(this.requiresKotlinAdapter())
+            return "kni_$name"
+        }
+
+    /**
+     * The annotation for an external function on Kotlin Native
+     * to bind it to either the C function itself or the C adapter.
+     */
+    private val FunctionDecl.symbolNameAnnotation: String
+        get() {
+            require(platform == KotlinPlatform.NATIVE)
+            val symbolName = if (requiresCAdapter()) {
+                cStubName
+            } else {
+                // `@SymbolName` annotation on Kotlin Native defines the LLVM function name
+                // which is assumed to match the C function name.
+                // However on some platforms (e.g. macOS) C function names are being mangled.
+                // Using `0x01` prefix prevents LLVM from mangling the name.
+                "\u0001${binaryName}"
+            }
+            return "@SymbolName(${symbolName.quoteAsKotlinLiteral()})"
         }
 
     /**
@@ -871,10 +957,16 @@ class StubGenerator(
             "$name: " + paramBindings[i].kotlinJniBridgeType
         }.joinToString(", ")
 
-        if (platform == KotlinPlatform.NATIVE) {
-            out("@SymbolName(\"${func.stubSymbolName}\")")
+        when (platform) {
+            KotlinPlatform.JVM -> {
+                out("external fun ${func.name}($args): ${retValBinding.kotlinJniBridgeType}")
+            }
+            KotlinPlatform.NATIVE -> {
+                out(func.symbolNameAnnotation)
+                out("private external fun ${func.kotlinExternalName}($args): ${retValBinding.kotlinJniBridgeType}")
+            }
+            else -> TODO(platform.toString())
         }
-        out("external fun ${func.name}($args): ${retValBinding.kotlinJniBridgeType}")
     }
 
     /**
@@ -936,10 +1028,12 @@ class StubGenerator(
             out("")
         }
 
-        block("object externals") {
-            if (platform == KotlinPlatform.JVM) {
-                out("init { System.loadLibrary(\"$libName\") }")
-            }
+        generateKotlinExternals()
+    }
+
+    private fun generateKotlinExternals() = when (platform) {
+        KotlinPlatform.JVM -> block("object externals") {
+            out("init { System.loadLibrary(\"$libName\") }")
             functionsToBind.forEach {
                 try {
                     transaction {
@@ -949,6 +1043,19 @@ class StubGenerator(
                 } catch (e: Throwable) {
                     println("Warning: cannot generate external definition for function ${it.name}")
                 }
+            }
+        }
+
+        KotlinPlatform.NATIVE -> functionsToBind.forEach {
+            try {
+                transaction {
+                    if (it.requiresKotlinAdapter()) {
+                        generateKotlinExternalMethod(it)
+                        out("")
+                    }
+                }
+            } catch (e: Throwable) {
+                println("Warning: cannot generate external definition for function ${it.name}")
             }
         }
     }
@@ -1004,7 +1111,9 @@ class StubGenerator(
 
         functionsToBind.forEach { func ->
             try {
-                generateCJniFunction(func)
+                if (func.requiresCAdapter()) {
+                    generateCJniFunction(func)
+                }
             } catch (e: Throwable) {
                 System.err.println("Warning: cannot generate C JNI function definition ${func.name}")
             }
@@ -1026,17 +1135,36 @@ class StubGenerator(
         val paramBindings = paramBindings(func)
         val retValBinding = retValBinding(func)
 
-        val args =
-                if (paramBindings.isEmpty())
-                    ""
-                else paramBindings
-                        .map { getCBridgeType(it.kotlinJniBridgeType) }
-                        .mapIndexed { i, type -> "$type ${paramNames[i]}" }
-                        .joinToString(separator = ", ", prefix = ", ")
+        val parameters = paramBindings
+                .map { getCBridgeType(it.kotlinJniBridgeType) }
+                .mapIndexed { i, type -> "$type ${paramNames[i]}" }
 
         val cReturnType = getCBridgeType(retValBinding.kotlinJniBridgeType)
 
-        val params = func.parameters.mapIndexed { i, parameter ->
+        val funcDecl = when (platform) {
+            KotlinPlatform.JVM -> {
+                val joinedParameters = if (!parameters.isEmpty()) {
+                    parameters.joinToString(separator = ", ", prefix = ", ")
+                } else {
+                    ""
+                }
+
+                val funcFullName = if (pkgName.isEmpty()) {
+                    "externals.${func.name}"
+                } else {
+                    "$pkgName.externals.${func.name}"
+                }
+                val functionName = "Java_" + funcFullName.replace("_", "_1").replace('.', '_').replace("$", "_00024")
+                "JNIEXPORT $cReturnType JNICALL $functionName (JNIEnv *env, jobject obj$joinedParameters)"
+            }
+            KotlinPlatform.NATIVE -> {
+                val joinedParameters = parameters.joinToString(", ")
+                val functionName = func.cStubName
+                "$cReturnType $functionName ($joinedParameters)"
+            }
+        }
+
+        val arguments = func.parameters.mapIndexed { i, parameter ->
             val cType = parameter.type.getStringRepresentation()
             val name = paramNames[i]
             val unwrappedType = parameter.type.unwrapTypedefs()
@@ -1050,25 +1178,7 @@ class StubGenerator(
             }
         }.joinToString(", ")
 
-        val callExpr = "${func.name}($params)"
-        val jniFuncName = when (platform) {
-            KotlinPlatform.JVM -> {
-                val funcFullName = if (pkgName.isEmpty()) {
-                    "externals.${func.name}"
-                } else {
-                    "$pkgName.externals.${func.name}"
-                }
-                "Java_" + funcFullName.replace("_", "_1").replace('.', '_').replace("$", "_00024")
-            }
-            KotlinPlatform.NATIVE -> {
-                func.stubSymbolName
-            }
-        }
-
-        val funcDecl = when (platform) {
-            KotlinPlatform.JVM -> "JNIEXPORT $cReturnType JNICALL $jniFuncName (JNIEnv *env, jobject obj$args)"
-            KotlinPlatform.NATIVE -> "$cReturnType $jniFuncName (void* externalsObj$args)"
-        }
+        val callExpr = "${func.name}($arguments)"
 
         block(funcDecl) {
 
