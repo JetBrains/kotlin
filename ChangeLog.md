@@ -35,6 +35,10 @@
 - [`KT-16621`](https://youtrack.jetbrains.com/issue/KT-16621) Kotlin compiler doesn't report an error if a class implements Annotation interface but doesn't implement annotationType method
 - [`KT-16441`](https://youtrack.jetbrains.com/issue/KT-16441) `NoSuchFieldError: $$delegatedProperties` when delegating through `provideDelegate` in companion object
 
+### JavaScript support
+- Prohibit function types with receiver as parameter types of external declarations
+- Remove extension receiver for function parameters in `jQuery` declarations
+
 ### Previous releases
 
 This release also includes the fixes and improvements from the previous
