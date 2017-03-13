@@ -112,17 +112,13 @@ interface LanguageVersionSettings {
     val languageVersion: LanguageVersion
 
     val skipMetadataVersionCheck: Boolean
-
-    @Deprecated("This is a temporary solution, please do not use.")
-    val isApiVersionExplicit: Boolean
 }
 
 class LanguageVersionSettingsImpl @JvmOverloads constructor(
         override val languageVersion: LanguageVersion,
         override val apiVersion: ApiVersion,
         override val skipMetadataVersionCheck: Boolean = false,
-        private val specificFeatures: Map<LanguageFeature, LanguageFeature.State> = emptyMap(),
-        override val isApiVersionExplicit: Boolean = false
+        private val specificFeatures: Map<LanguageFeature, LanguageFeature.State> = emptyMap()
 ) : LanguageVersionSettings {
     override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State {
         specificFeatures[feature]?.let { return it }

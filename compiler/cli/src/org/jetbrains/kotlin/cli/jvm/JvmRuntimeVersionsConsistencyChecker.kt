@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cli.jvm
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -120,7 +121,7 @@ object JvmRuntimeVersionsConsistencyChecker {
             val actualApi = ApiVersion.parse(actualRuntimeVersion.toString())
             if (actualApi != null) {
                 val inferredApiVersion =
-                        if (@Suppress("DEPRECATION") languageVersionSettings.isApiVersionExplicit)
+                        if (configuration.getBoolean(CLIConfigurationKeys.IS_API_VERSION_EXPLICIT))
                             languageVersionSettings.apiVersion
                         else
                             // "minOf" is needed in case when API version was inferred from language version and it's older than actualApi.

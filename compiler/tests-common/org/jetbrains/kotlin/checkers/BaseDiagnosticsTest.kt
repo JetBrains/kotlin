@@ -109,9 +109,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 languageFeatures[feature] ?: delegate.getFeatureSupport(feature)
 
         override val skipMetadataVersionCheck: Boolean get() = false
-
-        override val isApiVersionExplicit: Boolean
-            get() = error("Must not be called")
     }
 
     inner class TestFile(

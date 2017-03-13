@@ -247,10 +247,14 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             // If only "-api-version" is specified, language version is assumed to be the latest
             languageVersion = LanguageVersion.LATEST;
         }
+
         if (apiVersion == null) {
             // If only "-language-version" is specified, API version is assumed to be equal to the language version
             // (API version cannot be greater than the language version)
             apiVersion = languageVersion;
+        }
+        else {
+            configuration.put(CLIConfigurationKeys.IS_API_VERSION_EXPLICIT, true);
         }
 
         if (apiVersion.compareTo(languageVersion) > 0) {
@@ -281,8 +285,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
                         languageVersion,
                         ApiVersion.createByLanguageVersion(apiVersion),
                         arguments.skipMetadataVersionCheck,
-                        extraLanguageFeatures,
-                        arguments.apiVersion != null
+                        extraLanguageFeatures
                 )
         );
     }
