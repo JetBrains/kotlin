@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -25,5 +24,5 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfigu
 class CompilerDeserializationConfiguration(configuration: CompilerConfiguration) : DeserializationConfiguration {
     override val typeAliasesAllowed = configuration.languageVersionSettings.supportsFeature(LanguageFeature.TypeAliases)
 
-    override val skipMetadataVersionCheck = configuration.getBoolean(CommonConfigurationKeys.SKIP_METADATA_VERSION_CHECK)
+    override val skipMetadataVersionCheck = configuration.languageVersionSettings.skipMetadataVersionCheck
 }

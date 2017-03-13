@@ -108,6 +108,8 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         override fun supportsFeature(feature: LanguageFeature): Boolean =
                 languageFeatures[feature] ?: delegate.supportsFeature(feature)
 
+        override val skipMetadataVersionCheck: Boolean get() = false
+
         override val additionalFeatures: Collection<LanguageFeature>
             get() = error("Must not be called")
 

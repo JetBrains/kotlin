@@ -130,6 +130,7 @@ object JvmRuntimeVersionsConsistencyChecker {
                 val newSettings = LanguageVersionSettingsImpl(
                         languageVersionSettings.languageVersion,
                         inferredApiVersion,
+                        languageVersionSettings.skipMetadataVersionCheck,
                         languageVersionSettings.additionalFeatures,
                         isApiVersionExplicit = false
                 )

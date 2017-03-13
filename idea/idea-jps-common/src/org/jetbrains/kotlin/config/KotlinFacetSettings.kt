@@ -123,6 +123,12 @@ class KotlinFacetSettings {
                 coroutinesError = value == CoroutineSupport.DISABLED
             }
         }
+
+    var skipMetadataVersionCheck: Boolean
+        get() = compilerArguments?.skipMetadataVersionCheck == true
+        set(value) {
+            compilerArguments!!.skipMetadataVersionCheck = value
+        }
 }
 
 fun TargetPlatformKind<*>.createCompilerArguments(): CommonCompilerArguments {

@@ -100,6 +100,8 @@ interface LanguageVersionSettings {
     // Please do not use this to enable/disable specific features/checks. Instead add a new LanguageFeature entry and call supportsFeature
     val languageVersion: LanguageVersion
 
+    val skipMetadataVersionCheck: Boolean
+
     val additionalFeatures: Collection<LanguageFeature>
 
     @Deprecated("This is a temporary solution, please do not use.")
@@ -109,6 +111,7 @@ interface LanguageVersionSettings {
 class LanguageVersionSettingsImpl @JvmOverloads constructor(
         override val languageVersion: LanguageVersion,
         override val apiVersion: ApiVersion,
+        override val skipMetadataVersionCheck: Boolean = false,
         additionalFeatures: Collection<LanguageFeature> = emptySet(),
         override val isApiVersionExplicit: Boolean = false
 ) : LanguageVersionSettings {

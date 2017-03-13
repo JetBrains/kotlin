@@ -21,9 +21,6 @@ object CommonConfigurationKeys {
     val LANGUAGE_VERSION_SETTINGS = CompilerConfigurationKey<LanguageVersionSettings>("language version settings")
 
     @JvmField
-    val SKIP_METADATA_VERSION_CHECK = CompilerConfigurationKey<Boolean>("skip metadata version check")
-
-    @JvmField
     val DISABLE_INLINE = CompilerConfigurationKey<Boolean>("disable inline")
 
     @JvmField

@@ -93,6 +93,7 @@ fun Project.getLanguageVersionSettings(contextModule: Module? = null): LanguageV
     return LanguageVersionSettingsImpl(
             languageVersion,
             apiVersion,
+            arguments.skipMetadataVersionCheck,
             extraLanguageFeatures
     )
 }
@@ -111,7 +112,12 @@ val Module.languageVersionSettings: LanguageVersionSettings
                 this
         )
 
-        return LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(apiVersion), extraLanguageFeatures)
+        return LanguageVersionSettingsImpl(
+                languageVersion,
+                ApiVersion.createByLanguageVersion(apiVersion),
+                facetSettings.skipMetadataVersionCheck,
+                extraLanguageFeatures
+        )
     }
 
 val Module.targetPlatform: TargetPlatformKind<*>?
