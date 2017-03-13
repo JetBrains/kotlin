@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys.Companion.ENABLE_ASSERTIONS
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalFunctions
+import org.jetbrains.kotlin.backend.konan.isValueType
 import org.jetbrains.kotlin.backend.konan.util.atMostOne
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptor
@@ -76,6 +77,8 @@ private class BuiltinOperatorTransformer(val context: Context) : IrElementTransf
                 lowerEqeq(binary.argument0, binary.argument1, expression.startOffset, expression.endOffset)
             }
 
+            irBuiltins.eqeqeq -> lowerEqeqeq(expression)
+
             irBuiltins.throwNpe -> IrCallImpl(expression.startOffset, expression.endOffset,
                     builtIns.getKonanInternalFunctions("ThrowNullPointerException").single())
 
@@ -83,6 +86,19 @@ private class BuiltinOperatorTransformer(val context: Context) : IrElementTransf
                     builtIns.getKonanInternalFunctions("ThrowNoWhenBranchMatchedException").single())
 
             else -> expression
+        }
+    }
+
+    private fun lowerEqeqeq(expression: IrCall): IrExpression {
+        val lhs = expression.getValueArgument(0)!!
+        val rhs = expression.getValueArgument(1)!!
+
+        return if (lhs.type.isValueType() && rhs.type.isValueType()) {
+            // Achieve the same behavior as with JVM BE: if both sides of `===` are values, then compare by value:
+            lowerEqeq(lhs, rhs, expression.startOffset, expression.endOffset)
+            // Note: such comparisons are deprecated.
+        } else {
+            expression
         }
     }
 
