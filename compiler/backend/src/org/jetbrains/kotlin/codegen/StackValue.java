@@ -594,8 +594,8 @@ public abstract class StackValue {
         return field(FieldInfo.createForSingleton(classDescriptor, typeMapper), none());
     }
 
-    public static Field singletonViaInstance(ClassDescriptor classDescriptor, KotlinTypeMapper typeMapper) {
-        return field(FieldInfo.createSingletonViaInstance(classDescriptor, typeMapper), none());
+    public static Field createSingletonViaInstance(@NotNull ClassDescriptor classDescriptor, @NotNull KotlinTypeMapper typeMapper, @NotNull String name) {
+        return field(FieldInfo.createSingletonViaInstance(classDescriptor, typeMapper, name), none());
     }
 
     public static StackValue operation(Type type, Function1<InstructionAdapter, Unit> lambda) {

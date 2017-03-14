@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode;
 import org.jetbrains.kotlin.name.ClassId;
@@ -79,6 +78,7 @@ import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isGenericToArray;
 import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isNonGenericToArray;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
+import static org.jetbrains.kotlin.load.java.JvmAbi.*;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getDelegationConstructorCall;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getNotNull;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
@@ -352,6 +352,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         generatePropertyMetadataArrayFieldIfNeeded(classAsmType);
 
         generateFieldForSingleton();
+
+        initializeObjects();
 
         generateCompanionObjectBackingFieldCopies();
 
@@ -810,20 +812,20 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateFieldForSingleton() {
+        if (isCompanionObjectInInterfaceNotIntrinsic(descriptor)) {
+            StackValue.Field field = StackValue.createSingletonViaInstance(descriptor, typeMapper, HIDDEN_INSTANCE_FIELD);
+            //hidden instance in interface companion
+            v.newField(JvmDeclarationOriginKt.OtherOrigin(descriptor),
+                       ACC_SYNTHETIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
+        }
+
         if (isEnumEntry(descriptor) || isCompanionObject(descriptor)) return;
 
         if (isNonCompanionObject(descriptor)) {
-            StackValue.Field field = StackValue.singletonViaInstance(descriptor, typeMapper);
+            StackValue.Field field = StackValue.createSingletonViaInstance(descriptor, typeMapper, INSTANCE_FIELD);
             v.newField(JvmDeclarationOriginKt.OtherOrigin(myClass),
                        ACC_PUBLIC | ACC_STATIC | ACC_FINAL,
                        field.name, field.type.getDescriptor(), null, null);
-
-            if (!state.getClassBuilderMode().generateBodies) return;
-            // Invoke the object constructor but ignore the result because INSTANCE will be initialized in the first line of <init>
-            InstructionAdapter v = createOrGetClInitCodegen().v;
-            markLineNumberForElement(element.getPsiOrParent(), v);
-            v.anew(classAsmType);
-            v.invokespecial(classAsmType.getInternalName(), "<init>", "()V", false);
 
             return;
         }
@@ -838,6 +840,60 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         StackValue.Field field = StackValue.singleton(companionObjectDescriptor, typeMapper);
         v.newField(JvmDeclarationOriginKt.OtherOrigin(companionObject == null ? myClass.getPsiOrParent() : companionObject),
                    ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
+    }
+
+    private void initializeObjects() {
+        if (!DescriptorUtils.isObject(descriptor)) return;
+        if (!state.getClassBuilderMode().generateBodies) return;
+
+        boolean isNonCompanionObject = isNonCompanionObject(descriptor);
+        boolean isInterfaceCompanion = isCompanionObjectInInterfaceNotIntrinsic(descriptor);
+        boolean isMappedIntrinsicCompanionObject = isMappedIntrinsicCompanionObject(descriptor);
+        if (isNonCompanionObject || isInterfaceCompanion || isMappedIntrinsicCompanionObject) {
+            ExpressionCodegen clInitCodegen = createOrGetClInitCodegen();
+            InstructionAdapter v = clInitCodegen.v;
+            markLineNumberForElement(element.getPsiOrParent(), v);
+            v.anew(classAsmType);
+            v.dup();
+            v.invokespecial(classAsmType.getInternalName(), "<init>", "()V", false);
+
+            //local0 emulates this in object constructor
+            int local0Index = clInitCodegen.getFrameMap().enterTemp(classAsmType);
+            assert local0Index == 0 : "Local variable with index 0 in clInit should be used only for singleton instance keeping";
+            StackValue.Local local0 = StackValue.local(0, classAsmType);
+            local0.store(StackValue.onStack(classAsmType), clInitCodegen.v);
+            StackValue.Field singleton =
+                    StackValue.createSingletonViaInstance(
+                            descriptor, typeMapper, isInterfaceCompanion ? HIDDEN_INSTANCE_FIELD : INSTANCE_FIELD
+            );
+            singleton.store(local0, clInitCodegen.v);
+
+            generateInitializers(clInitCodegen);
+
+            if (isInterfaceCompanion) {
+                //initialize singleton instance in outer by hidden instance
+                StackValue.singleton(descriptor, typeMapper).store(
+                        singleton, getParentCodegen().createOrGetClInitCodegen().v, true
+                );
+            }
+        }
+        else if (isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
+            ImplementationBodyCodegen parentCodegen = (ImplementationBodyCodegen) getParentCodegen();
+            ExpressionCodegen parentClInitCodegen = parentCodegen.createOrGetClInitCodegen();
+            InstructionAdapter parentVisitor = parentClInitCodegen.v;
+
+            FunctionDescriptor constructor = (FunctionDescriptor) parentCodegen.context.accessibleDescriptor(
+                    CollectionsKt.single(descriptor.getConstructors()), /* superCallExpression = */ null
+            );
+            parentCodegen.generateMethodCallTo(constructor, null, parentVisitor);
+            StackValue instance = StackValue.onStack(parentCodegen.typeMapper.mapClass(descriptor));
+            StackValue.singleton(descriptor, parentCodegen.typeMapper).store(instance, parentVisitor, true);
+
+            generateInitializers(parentClInitCodegen);
+        }
+        else {
+            assert false : "Unknown object type: " + descriptor;
+        }
     }
 
     private void generateCompanionObjectBackingFieldCopies() {
@@ -885,17 +941,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         StackValue.Field field = StackValue
                 .field(property.type, classAsmType, propertyDescriptor.getName().asString(), true, StackValue.none(), propertyDescriptor);
         field.store(property, codegen.v);
-    }
-
-    private void generateCompanionObjectInitializer(@NotNull ClassDescriptor companionObject) {
-        ExpressionCodegen codegen = createOrGetClInitCodegen();
-
-        FunctionDescriptor constructor = (FunctionDescriptor) context.accessibleDescriptor(
-                CollectionsKt.single(companionObject.getConstructors()), /* superCallExpression = */ null
-        );
-        generateMethodCallTo(constructor, null, codegen.v);
-        StackValue instance = StackValue.onStack(typeMapper.mapClass(companionObject));
-        StackValue.singleton(companionObject, typeMapper).store(instance, codegen.v, true);
     }
 
     private void generatePrimaryConstructor(DelegationFieldsInfo delegationFieldsInfo) {
@@ -965,10 +1010,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         generateDelegatorToConstructorCall(iv, codegen, constructorDescriptor,
                                            getDelegationConstructorCall(bindingContext, constructorDescriptor));
 
-        if (isNonCompanionObject(descriptor)) {
-            StackValue.singletonViaInstance(descriptor, typeMapper).store(StackValue.LOCAL_0, iv);
-        }
-
         for (KtSuperTypeListEntry specifier : myClass.getSuperTypeListEntries()) {
             if (specifier instanceof KtDelegatedSuperTypeEntry) {
                 genCallToDelegatorByExpressionSpecifier(iv, codegen, (KtDelegatedSuperTypeEntry) specifier, fieldsInfo);
@@ -990,18 +1031,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             curParam++;
         }
 
-        if (isCompanionObject(descriptor)) {
-            ImplementationBodyCodegen parentCodegen = (ImplementationBodyCodegen) getParentCodegen();
-            parentCodegen.generateCompanionObjectInitializer(descriptor);
-        }
-
-        if (JvmAbi.isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
-            generateInitializers(((ImplementationBodyCodegen) getParentCodegen())::createOrGetClInitCodegen);
-        }
-        else {
+        //object initialization was moved to initializeObjects()
+        if (!isObject(descriptor)) {
             generateInitializers(codegen);
         }
-
         iv.visitInsn(RETURN);
     }
 
@@ -1146,7 +1179,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
                     if (asmType == null) continue;
 
-                    result.addField((KtDelegatedSuperTypeEntry) specifier, asmType, JvmAbi.DELEGATE_SUPER_FIELD_PREFIX + n);
+                    result.addField((KtDelegatedSuperTypeEntry) specifier, asmType, DELEGATE_SUPER_FIELD_PREFIX + n);
                 }
                 n++;
             }
