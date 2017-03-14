@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.backend.konan.KonanBuiltIns
-import org.jetbrains.kotlin.backend.konan.KonanPlatform
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.context.ContextForNewModule
@@ -37,21 +35,19 @@ object TopDownAnalyzerFacadeForKonan {
             Name.special("<${config.moduleId}>")
         }
 
-        val context = ContextForNewModule(ProjectContext(config.project), moduleName, KonanPlatform.builtIns, null)
+        val projectContext = ProjectContext(config.project)
+        val builtIns = KonanBuiltIns(projectContext.storageManager)
+        val context = ContextForNewModule(projectContext, moduleName, builtIns, null)
 
         val module = context.module
+        builtIns.builtInsModule = module
         assert (module.isStdlib() == config.compileAsStdlib)
 
         if (!module.isStdlib()) {
-            context.setDependencies(listOf(module) + config.moduleDescriptors + KonanPlatform.builtIns.builtInsModule)
+            context.setDependencies(listOf(module) + config.moduleDescriptors)
         } else {
-            KonanPlatform.builtIns.createBuiltInsModule(module)
             assert (config.moduleDescriptors.isEmpty())
             context.setDependencies(module)
-
-            // TODO: stdlib should probably also depend on builtInsModule.
-            // However this would lead to mutual dependency between stdlib and builtInsModule,
-            // and the compiler can't handle it.
         }
 
         return analyzeFilesWithGivenTrace(files, BindingTraceContext(), context, config)

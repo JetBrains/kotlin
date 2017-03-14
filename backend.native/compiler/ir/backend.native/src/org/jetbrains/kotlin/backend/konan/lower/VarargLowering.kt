@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanPlatform
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.konan.ir.ir2string
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 
 
@@ -246,11 +246,11 @@ class VarargInjectionLowering internal constructor(val context: Context): Declar
             sizeDescriptor        = sizeMethodDescriptor(descriptor)!!,
             copyRangeToDescriptor = copyRangeToFunctionDescriptor(descriptor))
 
-    private fun copyRangeToFunctionDescriptor(descriptor:ClassDescriptor):FunctionDescriptor {
-        val packageViewDescriptor = KonanPlatform.builtIns.builtInsModule.getPackage(FqName("kotlin.collections"))
-        return packageViewDescriptor.memberScope.getContributedFunctions(Name.identifier("copyRangeTo"), NoLookupLocation.FROM_BACKEND).filter {
-            it.extensionReceiverParameter != null && DescriptorUtils.getClassDescriptorForType(it.extensionReceiverParameter!!.type) == descriptor
-        }.first()
+    private fun copyRangeToFunctionDescriptor(descriptor: ClassDescriptor): FunctionDescriptor {
+        val packageViewDescriptor = descriptor.module.getPackage(KotlinBuiltIns.COLLECTIONS_PACKAGE_FQ_NAME)
+        return packageViewDescriptor.memberScope.getContributedFunctions(Name.identifier("copyRangeTo"), NoLookupLocation.FROM_BACKEND).first {
+            it.extensionReceiverParameter?.type?.constructor?.declarationDescriptor == descriptor
+        }
     }
     private fun setMethodDescriptor(descriptor:ClassDescriptor) = methodDescriptor(descriptor, "set")
     private fun sizeMethodDescriptor(descriptor:ClassDescriptor) = descriptor(descriptor, "size")

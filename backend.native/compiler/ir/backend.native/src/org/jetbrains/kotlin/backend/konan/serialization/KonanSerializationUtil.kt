@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanPlatform
+import org.jetbrains.kotlin.backend.konan.KonanBuiltIns
 import org.jetbrains.kotlin.backend.konan.llvm.base64Decode
 import org.jetbrains.kotlin.backend.konan.llvm.base64Encode
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -67,9 +67,11 @@ internal fun deserializeModule(configuration: CompilerConfiguration,
     base64: String, moduleName: String): ModuleDescriptorImpl {
 
     val storageManager = LockBasedStorageManager()
+    val builtIns = KonanBuiltIns(storageManager)
     val moduleDescriptor = ModuleDescriptorImpl(
-            Name.special(moduleName), storageManager, KonanPlatform.builtIns)
-    val deserialization_config = CompilerDeserializationConfiguration(configuration)
+            Name.special(moduleName), storageManager, builtIns)
+    builtIns.builtInsModule = moduleDescriptor
+    val deserializationConfiguration = CompilerDeserializationConfiguration(configuration)
 
 
     val libraryAsByteArray = base64Decode(base64)
@@ -78,9 +80,9 @@ internal fun deserializeModule(configuration: CompilerConfiguration,
 
     val provider = createKonanPackageFragmentProvider(
         libraryProto.packageFragmentList, storageManager, 
-        moduleDescriptor, deserialization_config) 
+        moduleDescriptor, deserializationConfiguration)
 
-    moduleDescriptor.initialize(provider ?: PackageFragmentProvider.Empty)
+    moduleDescriptor.initialize(provider)
 
     return moduleDescriptor
 }

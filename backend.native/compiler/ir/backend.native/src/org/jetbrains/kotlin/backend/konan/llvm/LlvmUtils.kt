@@ -2,10 +2,6 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.backend.common.descriptors.allParameters
-import org.jetbrains.kotlin.backend.konan.KonanPlatform
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
 internal val LLVMValueRef.type: LLVMTypeRef
     get() = LLVMTypeOf(this)!!
@@ -111,10 +107,6 @@ internal val int8TypePtr = pointerType(int8Type)
 
 internal val voidType = LLVMVoidType()!!
 
-internal val ContextUtils.kTheAnyTypeInfo: LLVMValueRef
-    get() = KonanPlatform.builtIns.any.llvmTypeInfoPtr
-internal val ContextUtils.kTheArrayTypeInfo: LLVMValueRef
-    get() = KonanPlatform.builtIns.array.llvmTypeInfoPtr
 internal val RuntimeAware.kTypeInfo: LLVMTypeRef
     get() = runtime.typeInfoType
 internal val RuntimeAware.kObjHeader: LLVMTypeRef

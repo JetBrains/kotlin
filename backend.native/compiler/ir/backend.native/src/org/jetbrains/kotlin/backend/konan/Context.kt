@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.lang.System.out
 import java.util.*
+import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KProperty
 
 internal class SpecialDescriptorsFactory(val context: Context) {
@@ -188,11 +189,12 @@ class ReflectionTypes(module: ModuleDescriptor) {
 }
 
 internal class Context(config: KonanConfig) : KonanBackendContext(config) {
+    lateinit var moduleDescriptor: ModuleDescriptor
 
-    var moduleDescriptor: ModuleDescriptor? = null
+    override val builtIns: KonanBuiltIns by lazy(PUBLICATION) { moduleDescriptor.builtIns as KonanBuiltIns }
 
     val specialDescriptorsFactory = SpecialDescriptorsFactory(this)
-    val reflectionTypes: ReflectionTypes by lazy { ReflectionTypes(moduleDescriptor!!) }
+    val reflectionTypes: ReflectionTypes by lazy(PUBLICATION) { ReflectionTypes(moduleDescriptor) }
     private val vtableBuilders = mutableMapOf<ClassDescriptor, ClassVtablesBuilder>()
 
     fun getVtableBuilder(classDescriptor: ClassDescriptor) = vtableBuilders.getOrPut(classDescriptor) {
@@ -244,9 +246,11 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     }
 
     fun printDescriptors() {
-        if (moduleDescriptor == null) return
+        // A workaround to check if the lateinit field is assigned, see KT-9327
+        try { moduleDescriptor } catch (e: UninitializedPropertyAccessException) { return }
+
         separator("Descriptors after: ${phase?.description}")
-        moduleDescriptor!!.deepPrint()
+        moduleDescriptor.deepPrint()
     }
 
     fun verifyIr() {

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.replace
-import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 internal data class LoweredEnum(val implObjectDescriptor: ClassDescriptor,
                                 val valuesProperty: PropertyDescriptor,
@@ -28,7 +27,7 @@ internal data class LoweredEnum(val implObjectDescriptor: ClassDescriptor,
 internal class EnumSpecialDescriptorsFactory(val context: Context) {
     fun createLoweredEnum(enumClassDescriptor: ClassDescriptor): LoweredEnum {
         val implObjectDescriptor = ClassDescriptorImpl(enumClassDescriptor, "OBJECT".synthesizedName, Modality.FINAL,
-                ClassKind.OBJECT, KonanPlatform.builtIns.anyType.singletonList(), SourceElement.NO_SOURCE, false)
+                ClassKind.OBJECT, listOf(context.builtIns.anyType), SourceElement.NO_SOURCE, false)
 
         val valuesProperty = createEnumValuesField(enumClassDescriptor, implObjectDescriptor)
         val valuesFunction = createValuesFunctionDescriptor(enumClassDescriptor, implObjectDescriptor)

@@ -5,7 +5,8 @@ import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanPlatform
+import org.jetbrains.kotlin.backend.konan.KonanBuiltIns
+import org.jetbrains.kotlin.backend.konan.descriptors.konanInternal
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.ir2string
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
@@ -30,12 +32,13 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 class DefaultArgumentStubGenerator internal constructor(val context: Context): DeclarationContainerLoweringPass {
@@ -81,8 +84,10 @@ class DefaultArgumentStubGenerator internal constructor(val context: Context): D
                     params.add(temporaryVariableDescriptor)
                     variables.put(valueParameter, temporaryVariableDescriptor)
                     if (valueParameter.hasDefaultValue()) {
-
-                        val condition = irNotEquals(irCall(Helper.kIntAnd).apply {
+                        val kIntAnd = valueParameter.builtIns.intType.memberScope
+                                .getContributedFunctions(OperatorNameConventions.AND, NoLookupLocation.FROM_BACKEND)
+                                .single()
+                        val condition = irNotEquals(irCall(kIntAnd).apply {
                             dispatchReceiver = irGet(maskParameterDescriptor(descriptor, valueParameter.index / 32))
                             putValueArgument(0, irInt(1 shl (valueParameter.index % 32)))
                         }, irInt(0))
@@ -194,7 +199,7 @@ private fun getDefaultParameterExpressionBody(irFunction: IrFunction, valueParam
 
 private fun maskParameterDescriptor(descriptor: FunctionDescriptor, number:Int)= descriptor.valueParameters.single { it.name == parameterMaskName(number) }
 
-private fun markerParameterDescriptor(descriptor: FunctionDescriptor) = descriptor.valueParameters.single {it.name == Helper.kConstructorMarkerName}
+private fun markerParameterDescriptor(descriptor: FunctionDescriptor) = descriptor.valueParameters.single { it.name == kConstructorMarkerName }
 
 private fun nullConst(expression: IrElement, type: KotlinType): IrExpression? {
     when {
@@ -296,15 +301,16 @@ class DefaultParameterInjector internal constructor(val context: Context): BodyL
                     params += maskParameterDescriptor(realDescriptor, i) to IrConstImpl.int(
                             startOffset = irBody.startOffset,
                             endOffset   = irBody.endOffset,
-                            type        = KonanPlatform.builtIns.intType,
+                            type        = descriptor.builtIns.intType,
                             value       = maskValue)
                 }
                 if (expression.descriptor is ClassConstructorDescriptor) {
+                    val defaultArgumentMarker = getDefaultArgumentMarkerClassDescriptor(context.builtIns)
                     params += markerParameterDescriptor(realDescriptor) to IrGetObjectValueImpl(
                             startOffset = irBody.startOffset,
                             endOffset   = irBody.endOffset,
-                            type        = Helper.kDefaultArgumentMarkerClassDescriptor.defaultType,
-                            descriptor  = Helper.kDefaultArgumentMarkerClassDescriptor)
+                            type        = defaultArgumentMarker.defaultType,
+                            descriptor  = defaultArgumentMarker)
                 }
                 params.forEach {
                     log("descriptor::${realDescriptor.name.asString()}#${it.first.index}: ${it.first.name.asString()}")
@@ -345,13 +351,13 @@ private fun FunctionDescriptor.generateDefaultsDescription(context: Context): Fu
             else -> TODO("FIXME: $this")
         }
 
-        val syntheticParameters = mutableListOf<ValueParameterDescriptor>(*Array(valueParameters.size / 32 + 1, {
-            valueParameter(descriptor, valueParameters.size + it, parameterMaskName(it), KonanPlatform.builtIns.intType)
-        }))
+        val syntheticParameters = MutableList(valueParameters.size / 32 + 1) { i ->
+            valueParameter(descriptor, valueParameters.size + i, parameterMaskName(i), descriptor.builtIns.intType)
+        }
         if (this is ClassConstructorDescriptor) {
             syntheticParameters += valueParameter(descriptor, syntheticParameters.last().index + 1,
-                    Helper.kConstructorMarkerName,
-                    Helper.kDefaultArgumentMarkerClassDescriptor.defaultType)
+                    kConstructorMarkerName,
+                    getDefaultArgumentMarkerClassDescriptor(context.builtIns).defaultType)
         }
         descriptor.initialize(
                 /* receiverParameterType         = */ extensionReceiverParameter?.type,
@@ -410,16 +416,11 @@ private fun valueParameter(descriptor: FunctionDescriptor, index: Int, name: Nam
     )
 }
 
-internal object Helper {
-    val kIntDesctiptor = DescriptorUtils.getClassDescriptorForType(KonanPlatform.builtIns.intType)
-    val kIntAnd = DescriptorUtils.getFunctionByName(kIntDesctiptor.unsubstitutedMemberScope, Name.identifier("and"))
+internal val kConstructorMarkerName = "marker".synthesizedName
 
-    val kKonanInternalPackageDescriptor       = KonanPlatform.builtIns.builtInsModule.getPackage(FqName("konan.internal"))
-    val kDefaultArgumentMarkerName            = Name.identifier("DefaultArgumentMarker")
-    val kConstructorMarkerName                = "marker".synthesizedName
-    val kDefaultArgumentMarkerClassDescriptor = DescriptorUtils.getAllDescriptors(kKonanInternalPackageDescriptor.memberScope)
-        .first{ it is ClassDescriptor && it.name == kDefaultArgumentMarkerName} as ClassDescriptor
-}
+private fun getDefaultArgumentMarkerClassDescriptor(builtIns: KonanBuiltIns): ClassDescriptor =
+        builtIns.konanInternal.getContributedClassifier(
+                Name.identifier("DefaultArgumentMarker"), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
 
 internal fun IrBuilderWithScope.irGet(descriptor: ReceiverParameterDescriptor):IrGetValue = IrGetValueImpl(startOffset, endOffset, descriptor)
 private fun parameterMaskName(number: Int) = "mask$number".synthesizedName

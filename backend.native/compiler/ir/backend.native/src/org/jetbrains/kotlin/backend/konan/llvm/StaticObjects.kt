@@ -1,17 +1,19 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import llvm.*
-import org.jetbrains.kotlin.backend.konan.KonanPlatform
+import llvm.LLVMLinkage
+import llvm.LLVMSetLinkage
+import llvm.LLVMTypeRef
+import llvm.LLVMValueRef
 import org.jetbrains.kotlin.backend.konan.descriptors.isUnit
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.replace
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 private fun StaticData.objHeader(typeInfo: ConstPointer): Struct {
     val containerOffsetNegative = 0 // Static object mark.
@@ -24,13 +26,12 @@ private fun StaticData.arrayHeader(typeInfo: ConstPointer, length: Int): Struct 
     return Struct(runtime.arrayHeaderType, typeInfo, Int32(containerOffsetNegative), Int32(length))
 }
 
-internal fun StaticData.createKotlinStringLiteral(value: IrConst<String>) = createKotlinStringLiteral(value.value)
-
-internal fun StaticData.createKotlinStringLiteral(value: String): ConstPointer {
+internal fun StaticData.createKotlinStringLiteral(type: KotlinType, irConst: IrConst<String>): ConstPointer {
+    val value = irConst.value
     val name = "kstr:" + value.globalHashBase64
     val elements = value.toCharArray().map(::Char16)
 
-    val objRef = createKotlinArray(KonanPlatform.builtIns.stringType, elements)
+    val objRef = createKotlinArray(type, elements)
 
     val res = createAlias(name, objRef)
     LLVMSetLinkage(res.llvm, LLVMLinkage.LLVMWeakAnyLinkage)
