@@ -1,0 +1,47 @@
+package
+
+public fun builtIns(/*0*/ b: kotlin.Byte, /*1*/ s: kotlin.Short): kotlin.Unit
+public fun local(): kotlin.Unit
+public fun noOverflow(): kotlin.Unit
+public operator fun Baz.rem(/*0*/ x: kotlin.Int): kotlin.Unit
+
+public final class Bar {
+    public constructor Bar()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun remAssign(/*0*/ x: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Baz {
+    public constructor Baz()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final operator fun rem(/*0*/ x: kotlin.Int): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public final operator fun kotlin.Int.rem(/*0*/ x: kotlin.Int): kotlin.Unit
+    }
+}
+
+public final class Foo {
+    public constructor Foo()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun rem(/*0*/ x: kotlin.Int): Foo
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class WithMod {
+    public constructor WithMod()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun mod(/*0*/ other: WithMod): WithMod
+    public final fun test(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -29,15 +28,15 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.resolve.DeprecationLevelValue.*
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.resolve.calls.checkers.hasSubpackageOfKotlin
+import org.jetbrains.kotlin.resolve.calls.checkers.isOperatorMod
+import org.jetbrains.kotlin.resolve.calls.checkers.shouldWarnAboutDeprecatedModFromBuiltIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfo
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.SmartList
 
 private val JAVA_DEPRECATED = FqName("java.lang.Deprecated")
@@ -186,8 +185,10 @@ private fun DeclarationDescriptor.getOwnDeprecations(languageVersionSettings: La
     }
 
     // The problem is that declaration `mod` in built-ins has @Deprecated annotation but actually it was deprecated only in version 1.1
-    if (!languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem) && isOperatorModFromBuiltIns(this)) {
-        return emptyList()
+    if (this is FunctionDescriptor && this.isOperatorMod() && this.hasSubpackageOfKotlin()) {
+        if (!shouldWarnAboutDeprecatedModFromBuiltIns(languageVersionSettings)) {
+            return emptyList()
+        }
     }
 
     val result = SmartList<Deprecation>()
@@ -280,15 +281,4 @@ fun DeclarationDescriptor.isHiddenInResolution(languageVersionSettings: Language
     if (!checkSinceKotlinVersionAccessibility(languageVersionSettings)) return true
 
     return isDeprecatedHidden(languageVersionSettings)
-}
-
-private fun isOperatorModFromBuiltIns(descriptor: DeclarationDescriptor): Boolean {
-    if (descriptor is FunctionDescriptor && descriptor.isOperator) {
-        val isOperatorMod = descriptor.name == OperatorNameConventions.MOD
-
-        val descriptorFqName = descriptor.fqNameOrNull() ?: return false
-        return isOperatorMod && descriptorFqName.isSubpackageOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
-    }
-
-    return false
 }

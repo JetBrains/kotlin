@@ -13795,6 +13795,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("noWarningForModFromBuiltinsWhenApi1_0.kt")
+            public void testNoWarningForModFromBuiltinsWhenApi1_0() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/noWarningForModFromBuiltinsWhenApi1_0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("numberRemConversions.kt")
             public void testNumberRemConversions() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/operatorRem/numberRemConversions.kt");
