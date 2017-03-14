@@ -388,8 +388,12 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         return getLanguageVersionOrDefault((String) apiVersionComboBox.getSelectedItem());
     }
 
-    @Override
-    public void apply() throws ConfigurationException {
+    public void applyTo(
+            CommonCompilerArguments commonCompilerArguments,
+            K2JVMCompilerArguments k2jvmCompilerArguments,
+            K2JSCompilerArguments k2jsCompilerArguments,
+            CompilerSettings compilerSettings
+    ) throws ConfigurationException {
         if (isProjectSettings) {
             boolean shouldInvalidateCaches =
                     commonCompilerArguments.languageVersion != getSelectedLanguageVersion() ||
@@ -448,6 +452,11 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         }
 
         BuildManager.getInstance().clearState(project);
+    }
+
+    @Override
+    public void apply() throws ConfigurationException {
+        applyTo(commonCompilerArguments, k2jvmCompilerArguments, k2jsCompilerArguments, compilerSettings);
     }
 
     @Override

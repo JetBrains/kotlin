@@ -133,21 +133,26 @@ fun KotlinFacet.configureFacet(
 
 // "Primary" fields are written to argument beans directly and thus not presented in the "additional arguments" string
 // Update these lists when facet/project settings UI changes
-private val commonPrimaryFields = listOf("languageVersion",
-                                         "apiVersion",
-                                         "suppressWarnings",
-                                         "coroutinesEnable",
-                                         "coroutinesWarn",
-                                         "coroutinesError",
-                                         "pluginClasspaths",
-                                         "pluginOptions")
-private val jvmPrimaryFields = commonPrimaryFields +
-                               listOf("jvmTarget")
-private val jsPrimaryFields = commonPrimaryFields +
-                              listOf("sourceMap",
-                                     "outputPrefix",
-                                     "outputPostfix",
-                                     "moduleKind")
+val commonUIExposedFields = listOf("languageVersion",
+                                   "apiVersion",
+                                   "suppressWarnings",
+                                   "coroutinesEnable",
+                                   "coroutinesWarn",
+                                   "coroutinesError")
+private val commonUIHiddenFields = listOf("pluginClasspaths",
+                                          "pluginOptions")
+private val commonPrimaryFields = commonUIExposedFields + commonUIHiddenFields
+
+private val jvmSpecificUIExposedFields = listOf("jvmTarget")
+val jvmUIExposedFields = commonUIExposedFields + jvmSpecificUIExposedFields
+private val jvmPrimaryFields = commonPrimaryFields + jvmSpecificUIExposedFields
+
+private val jsSpecificUIExposedFields = listOf("sourceMap",
+                                               "outputPrefix",
+                                               "outputPostfix",
+                                               "moduleKind")
+val jsUIExposedFields = commonUIExposedFields + jsSpecificUIExposedFields
+private val jsPrimaryFields = commonPrimaryFields + jsSpecificUIExposedFields
 
 private val CommonCompilerArguments.primaryFields: List<String>
     get() = when (this) {

@@ -32,6 +32,8 @@ class CompilerSettings {
 }
 
 val CompilerSettings.additionalArgumentsAsList: List<String>
-    get() = StringUtil.splitHonorQuotes(additionalArguments, ' ').map {
-        if (it.startsWith('"')) StringUtil.unescapeChar(StringUtil.unquoteString(it), '"') else it
-    }
+    get() = splitArgumentString(additionalArguments)
+
+fun splitArgumentString(arguments: String) = StringUtil.splitHonorQuotes(arguments, ' ').map {
+    if (it.startsWith('"')) StringUtil.unescapeChar(StringUtil.unquoteString(it), '"') else it
+}
