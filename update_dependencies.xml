@@ -3,7 +3,7 @@
     <import file="node_utils.xml" optional="false"/>
 
     <property name="automerge_dummy" value="This property is used to trick git merge. Do not delete empty lines around."/>
-    <property name="ideaVersion" value="163.6110-EAP-CANDIDATE-SNAPSHOT"/>
+    <property name="ideaVersion" value="2016.3.5"/>
     <property name="idea.kotlin.branch" value="rc"/>
 
 
