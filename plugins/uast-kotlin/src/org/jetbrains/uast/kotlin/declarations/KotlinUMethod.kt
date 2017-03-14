@@ -20,24 +20,16 @@ import com.intellij.psi.PsiCodeBlock
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiNameIdentifierOwner
-import org.jetbrains.kotlin.asJava.elements.KtLightElement
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
+import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.uast.*
 import org.jetbrains.uast.java.internal.JavaUElementWithComments
-import org.jetbrains.uast.kotlin.KotlinUAnnotation
-import org.jetbrains.uast.kotlin.KotlinUParameter
-import org.jetbrains.uast.kotlin.lz
-import org.jetbrains.uast.kotlin.unwrap
+import org.jetbrains.uast.kotlin.*
 
 open class KotlinUMethod(
         psi: KtLightMethod,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : UMethod, JavaUElementWithComments, PsiMethod by psi {
     override val psi: KtLightMethod = unwrap<UMethod, KtLightMethod>(psi)
 
@@ -56,7 +48,16 @@ open class KotlinUMethod(
 
 
     override val uastBody by lz {
-        val bodyExpression = (kotlinOrigin as? KtFunction)?.bodyExpression ?: return@lz null
+        val bodyExpression = when (kotlinOrigin) {
+            is KtFunction -> kotlinOrigin.bodyExpression
+            is KtProperty -> when {
+                psi.isGetter -> kotlinOrigin.getter?.bodyExpression
+                psi.isSetter -> kotlinOrigin.setter?.bodyExpression
+                else -> null
+            }
+            else -> null
+        } ?: return@lz null
+
         getLanguagePlugin().convertElement(bodyExpression, this) as? UExpression
     }
 
@@ -66,6 +67,10 @@ open class KotlinUMethod(
     override fun getBody(): PsiCodeBlock? = super.getBody()
 
     override fun getOriginalElement(): PsiElement? = super.getOriginalElement()
+
+    override fun equals(other: Any?) = other is KotlinUMethod && psi == other.psi
+
+    override fun hashCode() = psi.hashCode()
 
     companion object {
         fun create(psi: KtLightMethod, containingElement: UElement?) = when (psi) {

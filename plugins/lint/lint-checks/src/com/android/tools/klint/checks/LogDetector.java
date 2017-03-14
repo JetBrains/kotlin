@@ -16,36 +16,18 @@
 
 package com.android.tools.klint.checks;
 
-import static com.android.tools.klint.client.api.JavaParser.TYPE_STRING;
-
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.tools.klint.client.api.JavaEvaluator;
 import com.android.tools.klint.client.api.UastLintUtils;
-import com.android.tools.klint.detector.api.Category;
-import com.android.tools.klint.detector.api.ConstantEvaluator;
-import com.android.tools.klint.detector.api.Detector;
-import com.android.tools.klint.detector.api.Implementation;
-import com.android.tools.klint.detector.api.Issue;
-import com.android.tools.klint.detector.api.JavaContext;
-import com.android.tools.klint.detector.api.Location;
-import com.android.tools.klint.detector.api.Scope;
-import com.android.tools.klint.detector.api.Severity;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.PsiParameterList;
-import com.intellij.psi.PsiVariable;
-
+import com.android.tools.klint.detector.api.*;
+import com.intellij.psi.*;
 import org.jetbrains.uast.*;
 import org.jetbrains.uast.visitor.UastVisitor;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
+
+import static com.android.tools.klint.client.api.JavaParser.TYPE_STRING;
 
 /**
  * Detector for finding inefficiencies and errors in logging calls.
@@ -142,7 +124,7 @@ public class LogDetector extends Detector implements Detector.UastScanner {
 
         String name = method.getName();
         boolean withinConditional = IS_LOGGABLE.equals(name) ||
-                checkWithinConditional(context, node.getContainingElement(), node);
+                checkWithinConditional(context, node.getUastParent(), node);
 
         // See if it's surrounded by an if statement (and it's one of the non-error, spammy
         // log methods (info, verbose, etc))
@@ -249,7 +231,7 @@ public class LogDetector extends Detector implements Detector.UastScanner {
                        || curr instanceof UClass) { // static block
                 break;
             }
-            curr = curr.getContainingElement();
+            curr = curr.getUastParent();
         }
         return false;
     }

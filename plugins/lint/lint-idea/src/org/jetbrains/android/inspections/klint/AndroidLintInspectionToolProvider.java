@@ -1,49 +1,19 @@
 package org.jetbrains.android.inspections.klint;
 
-import com.android.SdkConstants;
-import com.android.ide.common.repository.GradleCoordinate;
-import com.android.ide.common.resources.ResourceUrl;
-import com.android.ide.common.resources.configuration.FolderConfiguration;
-import com.android.ide.common.resources.configuration.VersionQualifier;
-import com.android.resources.ResourceFolderType;
-import com.android.sdklib.AndroidVersion;
-import com.android.sdklib.IAndroidTarget;
-import com.android.sdklib.SdkVersionInfo;
-import com.android.tools.idea.actions.OverrideResourceAction;
-import com.android.tools.idea.templates.RepositoryUrlManager;
 import com.android.tools.klint.checks.*;
 import com.android.tools.klint.detector.api.Issue;
-import com.google.common.collect.Lists;
-import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.android.tools.lint.detector.api.TextFormat;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.*;
-import com.intellij.psi.codeStyle.CodeStyleManager;
+import com.intellij.psi.JavaPsiFacade;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.psi.xml.XmlFile;
-import com.intellij.psi.xml.XmlTag;
-import org.jetbrains.android.facet.AndroidFacet;
-import org.jetbrains.android.sdk.AndroidSdkData;
 import org.jetbrains.android.util.AndroidBundle;
-import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.android.SdkConstants.*;
 import static com.android.tools.klint.checks.ApiDetector.REQUIRES_API_ANNOTATION;
 import static com.android.tools.klint.checks.FragmentDetector.ISSUE;
-import static com.android.tools.klint.detector.api.TextFormat.RAW;
-import static com.android.xml.AndroidManifest.*;
 
 /**
  * Registrations for all the various Lint rules as local IDE inspections, along with quickfixes for many of them
@@ -410,6 +380,28 @@ public class AndroidLintInspectionToolProvider {
       super(AndroidBundle.message("android.lint.inspections.new.api"), ApiDetector.UNSUPPORTED);
     }
 
+    @NotNull
+    @Override
+    public AndroidLintQuickFix[] getQuickFixes(@NotNull PsiElement startElement, @NotNull PsiElement endElement, @NotNull String message) {
+      int api = ApiDetector.getRequiredVersion(TextFormat.RAW.toText(message));
+      if (api == -1) {
+        return AndroidLintQuickFix.EMPTY_ARRAY;
+      }
+
+      Project project = startElement.getProject();
+      if (JavaPsiFacade.getInstance(project).findClass(REQUIRES_API_ANNOTATION, GlobalSearchScope.allScope(project)) != null) {
+        return new AndroidLintQuickFix[] {
+                new AddTargetApiQuickFix(api, true),
+                new AddTargetApiQuickFix(api, false),
+                new AddTargetVersionCheckQuickFix(api)
+        };
+      }
+
+      return new AndroidLintQuickFix[] {
+              new AddTargetApiQuickFix(api, false),
+              new AddTargetVersionCheckQuickFix(api)
+      };
+    }
   }
 
   public static class AndroidKLintInlinedApiInspection extends AndroidLintInspectionBase {

@@ -20,24 +20,19 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
-import org.jetbrains.uast.UBinaryExpressionWithType
-import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UExpression
-import org.jetbrains.uast.UastBinaryExpressionWithTypeKind
-import org.jetbrains.uast.expressions.UTypeReferenceExpression
-import org.jetbrains.uast.psi.PsiElementBacked
+import org.jetbrains.uast.*
 
 class KotlinUBinaryExpressionWithType(
         override val psi: KtBinaryExpressionWithTypeRHS,
-        override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UBinaryExpressionWithType, PsiElementBacked, 
+        override val uastParent: UElement?
+) : KotlinAbstractUExpression(), UBinaryExpressionWithType,
         KotlinUElementWithType, KotlinEvaluatableUElement {
     
-    override val operand by lz { KotlinConverter.convertExpression(psi.left, this) }
+    override val operand by lz { KotlinConverter.convertOrEmpty(psi.left, this) }
     override val type by lz { psi.right.toPsiType(this) }
     
     override val typeReference by lz { 
-        psi.right?.let { KotlinUTypeReferenceExpression(it.toPsiType(this), it, this) } 
+        psi.right?.let { LazyKotlinUTypeReferenceExpression(it, this) { it.toPsiType(this) } }
     }
     
     override val operationKind = when (psi.operationReference.getReferencedNameElementType()) {
@@ -49,17 +44,16 @@ class KotlinUBinaryExpressionWithType(
 
 class KotlinCustomUBinaryExpressionWithType(
         override val psi: PsiElement,
-        override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UBinaryExpressionWithType, PsiElementBacked {
+        override val uastParent: UElement?
+) : KotlinAbstractUExpression(), UBinaryExpressionWithType {
     lateinit override var operand: UExpression
         internal set
 
     lateinit override var operationKind: UastBinaryExpressionWithTypeKind
         internal set
 
-    lateinit override var type: PsiType
-        internal set
-    
+    override val type: PsiType by lz { typeReference?.type ?: UastErrorType }
+
     override var typeReference: UTypeReferenceExpression? = null
         internal set
 }

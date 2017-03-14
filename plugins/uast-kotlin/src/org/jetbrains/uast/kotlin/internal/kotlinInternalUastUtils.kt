@@ -109,11 +109,7 @@ private fun KotlinType.containsLocalTypes(): Boolean {
         }
     }
 
-    if (arguments.any { it.type.containsLocalTypes() }) {
-        return true
-    }
-
-    return false
+    return arguments.any { !it.isStarProjection && it.type.containsLocalTypes() }
 }
 
 internal fun KtTypeReference?.toPsiType(source: UElement, boxed: Boolean = false): PsiType {

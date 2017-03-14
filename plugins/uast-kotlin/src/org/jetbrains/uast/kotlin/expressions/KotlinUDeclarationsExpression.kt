@@ -15,11 +15,16 @@
  */
 package org.jetbrains.uast
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.uast.kotlin.KotlinAbstractUExpression
 
 class KotlinUDeclarationsExpression(
-        override val containingElement: UElement?
+        override val psi: PsiElement?,
+        override val uastParent: UElement?
 ) : KotlinAbstractUExpression(), UDeclarationsExpression {
+
+    constructor(uastParent: UElement?) : this(null, uastParent)
+
     override lateinit var declarations: List<UDeclaration>
         internal set
 }

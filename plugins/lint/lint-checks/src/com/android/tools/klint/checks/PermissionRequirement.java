@@ -16,31 +16,27 @@
 package com.android.tools.klint.checks;
 
 
-import static com.android.SdkConstants.ATTR_VALUE;
-import static com.android.tools.klint.checks.SupportAnnotationDetector.ATTR_ALL_OF;
-import static com.android.tools.klint.checks.SupportAnnotationDetector.ATTR_ANY_OF;
-import static com.android.tools.klint.checks.SupportAnnotationDetector.ATTR_CONDITIONAL;
-
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.annotations.VisibleForTesting;
 import com.android.sdklib.AndroidVersion;
 import com.android.tools.klint.detector.api.ConstantEvaluator;
-import com.android.tools.klint.detector.api.JavaContext;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.psi.JavaTokenType;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiAnnotationMemberValue;
-import com.intellij.psi.PsiArrayInitializerMemberValue;
 import com.intellij.psi.tree.IElementType;
-import org.jetbrains.uast.*;
+import org.jetbrains.uast.UAnnotation;
+import org.jetbrains.uast.UCallExpression;
+import org.jetbrains.uast.UExpression;
 import org.jetbrains.uast.util.UastExpressionUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import static com.android.SdkConstants.ATTR_VALUE;
+import static com.android.tools.klint.checks.SupportAnnotationDetector.*;
 
 /**
  * A permission requirement is a boolean expression of permission names that a
@@ -140,7 +136,7 @@ public abstract class PermissionRequirement {
     public static Boolean getAnnotationBooleanValue(@Nullable UAnnotation annotation,
             @NonNull String name) {
         if (annotation != null) {
-            UNamedExpression attributeValue = annotation.findDeclaredAttributeValue(name);
+            UExpression attributeValue = annotation.findDeclaredAttributeValue(name);
             if (attributeValue == null && ATTR_VALUE.equals(name)) {
                 attributeValue = annotation.findDeclaredAttributeValue(null);
             }
@@ -160,7 +156,7 @@ public abstract class PermissionRequirement {
     public static Long getAnnotationLongValue(@Nullable UAnnotation annotation,
             @NonNull String name) {
         if (annotation != null) {
-            UNamedExpression attributeValue = annotation.findDeclaredAttributeValue(name);
+            UExpression attributeValue = annotation.findDeclaredAttributeValue(name);
             if (attributeValue == null && ATTR_VALUE.equals(name)) {
                 attributeValue = annotation.findDeclaredAttributeValue(null);
             }
@@ -180,7 +176,7 @@ public abstract class PermissionRequirement {
     public static Double getAnnotationDoubleValue(@Nullable UAnnotation annotation,
             @NonNull String name) {
         if (annotation != null) {
-            UNamedExpression attributeValue = annotation.findDeclaredAttributeValue(name);
+            UExpression attributeValue = annotation.findDeclaredAttributeValue(name);
             if (attributeValue == null && ATTR_VALUE.equals(name)) {
                 attributeValue = annotation.findDeclaredAttributeValue(null);
             }
@@ -200,7 +196,7 @@ public abstract class PermissionRequirement {
     public static String getAnnotationStringValue(@Nullable UAnnotation annotation,
             @NonNull String name) {
         if (annotation != null) {
-            UNamedExpression attributeValue = annotation.findDeclaredAttributeValue(name);
+            UExpression attributeValue = annotation.findDeclaredAttributeValue(name);
             if (attributeValue == null && ATTR_VALUE.equals(name)) {
                 attributeValue = annotation.findDeclaredAttributeValue(null);
             }
@@ -220,16 +216,16 @@ public abstract class PermissionRequirement {
     public static String[] getAnnotationStringValues(@Nullable UAnnotation annotation,
             @NonNull String name) {
         if (annotation != null) {
-            UNamedExpression attributeValue = annotation.findDeclaredAttributeValue(name);
+            UExpression attributeValue = annotation.findDeclaredAttributeValue(name);
             if (attributeValue == null && ATTR_VALUE.equals(name)) {
                 attributeValue = annotation.findDeclaredAttributeValue(null);
             }
             if (attributeValue == null) {
                 return null;
             }
-            if (UastExpressionUtils.isArrayInitializer(attributeValue.getExpression())) {
+            if (UastExpressionUtils.isArrayInitializer(attributeValue)) {
                 List<UExpression> initializers =
-                        ((UCallExpression) attributeValue.getExpression()).getValueArguments();
+                        ((UCallExpression) attributeValue).getValueArguments();
                 List<String> result = Lists.newArrayListWithCapacity(initializers.size());
                 ConstantEvaluator constantEvaluator = new ConstantEvaluator(null);
                 for (UExpression element : initializers) {
@@ -245,7 +241,7 @@ public abstract class PermissionRequirement {
                 }
             } else {
                 // Use constant evaluator since we want to resolve field references as well
-                Object o = ConstantEvaluator.evaluate(null, attributeValue.getExpression());
+                Object o = ConstantEvaluator.evaluate(null, attributeValue);
                 if (o instanceof String) {
                     return new String[]{(String) o};
                 } else if (o instanceof String[]) {

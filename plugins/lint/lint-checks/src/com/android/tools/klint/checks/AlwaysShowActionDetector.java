@@ -38,7 +38,7 @@ import com.android.tools.klint.detector.api.XmlContext;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiField;
 
-import org.jetbrains.uast.expressions.UReferenceExpression;
+import org.jetbrains.uast.UReferenceExpression;
 import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Attr;
 

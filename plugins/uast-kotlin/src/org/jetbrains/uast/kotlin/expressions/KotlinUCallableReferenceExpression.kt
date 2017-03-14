@@ -16,22 +16,22 @@
 
 package org.jetbrains.uast.kotlin
 
+import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext.DOUBLE_COLON_LHS
 import org.jetbrains.uast.UCallableReferenceExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUCallableReferenceExpression(
         override val psi: KtCallableReferenceExpression,
-        override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UCallableReferenceExpression, PsiElementBacked, KotlinUElementWithType {
+        override val uastParent: UElement?
+) : KotlinAbstractUExpression(), UCallableReferenceExpression, KotlinUElementWithType {
     override val qualifierExpression: UExpression?
         get() {
             if (qualifierType != null) return null
             val receiverExpression = psi.receiverExpression ?: return null
-            return KotlinConverter.convertExpression(receiverExpression, this)
+            return KotlinConverter.convertExpression(receiverExpression, { this })
         }
 
     override val qualifierType by lz {
@@ -41,4 +41,9 @@ class KotlinUCallableReferenceExpression(
 
     override val callableName: String
         get() = psi.callableReference.getReferencedName()
+
+    override val resolvedName: String?
+        get() = (resolve() as? PsiNamedElement)?.name
+
+    override fun resolve() = psi.callableReference.resolveCallToDeclaration(this)
 }

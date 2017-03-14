@@ -40,7 +40,6 @@ import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
-import org.jetbrains.uast.psi.PsiElementBacked;
 import org.jetbrains.uast.psi.UElementWithLocation;
 import org.jetbrains.uast.util.UastExpressionUtils;
 
@@ -116,11 +115,9 @@ public class IntellijLintUtils {
     }
 
     TextRange textRange = null;
-    if (element instanceof PsiElementBacked) {
-      PsiElement psi = ((PsiElementBacked) element).getPsi();
-      if (psi != null) {
-        textRange = psi.getTextRange();
-      }
+    PsiElement psi = element.getPsi();
+    if (psi != null) {
+      textRange = psi.getTextRange();
     } else if (element instanceof UElementWithLocation) {
       UElementWithLocation elementWithLocation = (UElementWithLocation) element;
       textRange = new TextRange(
@@ -264,7 +261,7 @@ public class IntellijLintUtils {
           }
         }
       }
-      element = element.getContainingElement();
+      element = element.getUastParent();
     }
 
     return false;

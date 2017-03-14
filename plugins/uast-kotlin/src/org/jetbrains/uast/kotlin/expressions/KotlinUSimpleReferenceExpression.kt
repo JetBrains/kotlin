@@ -31,16 +31,15 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.addToStdlib.constant
 import org.jetbrains.uast.*
-import org.jetbrains.uast.expressions.UReferenceExpression
-import org.jetbrains.uast.psi.PsiElementBacked
 import org.jetbrains.uast.visitor.UastVisitor
 
 open class KotlinUSimpleReferenceExpression(
         override val psi: KtSimpleNameExpression,
-        override val identifier: String,
-        override val containingElement: UElement?
-) : KotlinAbstractUExpression(), USimpleNameReferenceExpression, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
+        override val uastParent: UElement?
+) : KotlinAbstractUExpression(), USimpleNameReferenceExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
     private val resolvedDeclaration by lz { psi.resolveCallToDeclaration(this) }
+
+    override val identifier get() = psi.getReferencedName()
 
     override fun resolve() = resolvedDeclaration
 
@@ -92,17 +91,17 @@ open class KotlinUSimpleReferenceExpression(
 
     class KotlinAccessorCallExpression(
             override val psi: KtElement,
-            override val containingElement: KotlinUSimpleReferenceExpression,
+            override val uastParent: KotlinUSimpleReferenceExpression,
             private val resolvedCall: ResolvedCall<*>,
             private val accessorDescriptor: DeclarationDescriptor,
             val setterValue: KtExpression?
-    ) : UCallExpression, PsiElementBacked {
+    ) : UCallExpression {
         override val methodName: String?
             get() = accessorDescriptor.name.asString()
 
         override val receiver: UExpression?
             get() {
-                val containingElement = containingElement.containingElement
+                val containingElement = uastParent.uastParent
                 return if (containingElement is UQualifiedReferenceExpression && containingElement.selector == this)
                     containingElement.receiver
                 else
@@ -118,7 +117,7 @@ open class KotlinUSimpleReferenceExpression(
         }
 
         override val methodIdentifier: UIdentifier?
-            get() = UIdentifier(containingElement.psi, this)
+            get() = UIdentifier(uastParent.psi, this)
 
         override val classReference: UReferenceExpression?
             get() = null
@@ -186,8 +185,8 @@ open class KotlinUSimpleReferenceExpression(
 class KotlinClassViaConstructorUSimpleReferenceExpression(
         override val psi: KtCallExpression,
         override val identifier: String,
-        override val containingElement: UElement?
-) : KotlinAbstractUExpression(), USimpleNameReferenceExpression, PsiElementBacked, KotlinUElementWithType {
+        override val uastParent: UElement?
+) : KotlinAbstractUExpression(), USimpleNameReferenceExpression, KotlinUElementWithType {
     override val resolvedName: String?
         get() = (psi.getResolvedCall(psi.analyze())?.resultingDescriptor as? ConstructorDescriptor)
                 ?.containingDeclaration?.name?.asString()
@@ -202,8 +201,10 @@ class KotlinClassViaConstructorUSimpleReferenceExpression(
 
 class KotlinStringUSimpleReferenceExpression(
         override val identifier: String,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : KotlinAbstractUExpression(), USimpleNameReferenceExpression {
+    override val psi: PsiElement?
+        get() = null
     override fun resolve() = null
     override val resolvedName: String?
         get() = identifier

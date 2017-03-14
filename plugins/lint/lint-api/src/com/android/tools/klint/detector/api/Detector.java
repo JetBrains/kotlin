@@ -23,44 +23,21 @@ import com.android.resources.ResourceType;
 import com.android.tools.klint.client.api.JavaParser.ResolvedClass;
 import com.android.tools.klint.client.api.JavaParser.ResolvedMethod;
 import com.android.tools.klint.client.api.LintDriver;
-import com.android.tools.klint.client.api.UElementVisitor;
 import com.google.common.annotations.Beta;
-import com.intellij.psi.JavaElementVisitor;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiJavaCodeReferenceElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiMethodCallExpression;
-import com.intellij.psi.PsiNewExpression;
-
-import com.intellij.psi.PsiTypeParameter;
-
-import org.jetbrains.uast.UCallExpression;
-import org.jetbrains.uast.UClass;
-import org.jetbrains.uast.UElement;
-import org.jetbrains.uast.UMethod;
-import org.jetbrains.uast.expressions.UReferenceExpression;
-import org.jetbrains.uast.visitor.UastVisitor;
+import com.intellij.psi.*;
+import lombok.ast.*;
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.ClassNode;
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
+import org.jetbrains.uast.*;
+import org.jetbrains.uast.visitor.UastVisitor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-
-import lombok.ast.AstVisitor;
-import lombok.ast.ClassDeclaration;
-import lombok.ast.ConstructorInvocation;
-import lombok.ast.MethodInvocation;
-import lombok.ast.Node;
+import java.util.*;
 
 /**
  * A detector is able to find a particular problem (or a set of related problems).

@@ -16,41 +16,12 @@
 
 package com.android.tools.klint.checks;
 
-import static com.android.SdkConstants.RESOURCE_CLZ_ID;
-import static com.android.tools.klint.detector.api.LintUtils.skipParentheses;
-
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
-import com.android.tools.klint.detector.api.Category;
-import com.android.tools.klint.detector.api.Detector;
-import com.android.tools.klint.detector.api.Implementation;
-import com.android.tools.klint.detector.api.Issue;
-import com.android.tools.klint.detector.api.JavaContext;
-import com.android.tools.klint.detector.api.Location;
-import com.android.tools.klint.detector.api.Scope;
-import com.android.tools.klint.detector.api.Severity;
+import com.android.tools.klint.detector.api.*;
 import com.google.common.collect.Maps;
-import com.intellij.psi.PsiBreakStatement;
-import com.intellij.psi.PsiContinueStatement;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiIfStatement;
-import com.intellij.psi.PsiJavaToken;
-import com.intellij.psi.PsiLoopStatement;
 import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiReturnStatement;
-import com.intellij.psi.PsiStatement;
-import com.intellij.psi.PsiWhiteSpace;
-
-import org.jetbrains.uast.UArrayAccessExpression;
 import org.jetbrains.uast.*;
-import org.jetbrains.uast.UCallExpression;
-import org.jetbrains.uast.UElement;
-import org.jetbrains.uast.UExpression;
-import org.jetbrains.uast.ULocalVariable;
-import org.jetbrains.uast.UMethod;
-import org.jetbrains.uast.UQualifiedReferenceExpression;
-import org.jetbrains.uast.UastUtils;
-import org.jetbrains.uast.expressions.UReferenceExpression;
 import org.jetbrains.uast.util.UastExpressionUtils;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
@@ -58,6 +29,8 @@ import org.jetbrains.uast.visitor.UastVisitor;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static com.android.SdkConstants.RESOURCE_CLZ_ID;
 
 /**
  * Detector looking for cut &amp; paste issues
@@ -166,7 +139,7 @@ public class CutPasteDetector extends Detector implements Detector.UastScanner {
 
     @Nullable
     private static String getLhs(@NonNull UCallExpression call) {
-        UElement parent = call.getContainingElement();
+        UElement parent = call.getUastParent();
         while (parent != null && !(parent instanceof UBlockExpression)) {
             if (parent instanceof ULocalVariable) {
                 return ((ULocalVariable) parent).getName();
@@ -179,7 +152,7 @@ public class CutPasteDetector extends Detector implements Detector.UastScanner {
                     return aa.getReceiver().asSourceString();
                 }
             }
-            parent = parent.getContainingElement();
+            parent = parent.getUastParent();
         }
         return null;
     }
@@ -318,7 +291,7 @@ public class CutPasteDetector extends Detector implements Detector.UastScanner {
         }
 
         private static UExpression getBreakedExpression(UBreakExpression node) {
-            UElement parent = node.getContainingElement();
+            UElement parent = node.getUastParent();
             String label = node.getLabel();
             while (parent != null) {
                 if (label != null) {
@@ -333,13 +306,13 @@ public class CutPasteDetector extends Detector implements Detector.UastScanner {
                         return (UExpression) parent;
                     }
                 }
-                parent = parent.getContainingElement();
+                parent = parent.getUastParent();
             }
             return null;
         }
 
         private static UExpression getContinuedExpression(UContinueExpression node) {
-            UElement parent = node.getContainingElement();
+            UElement parent = node.getUastParent();
             String label = node.getLabel();
             while (parent != null) {
                 if (label != null) {
@@ -354,7 +327,7 @@ public class CutPasteDetector extends Detector implements Detector.UastScanner {
                         return (UExpression) parent;
                     }
                 }
-                parent = parent.getContainingElement();
+                parent = parent.getUastParent();
             }
             return null;
         }

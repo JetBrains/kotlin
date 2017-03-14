@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.uast.kotlin.kinds
+package org.jetbrains.android.inspections.klint
 
-import org.jetbrains.uast.UastSpecialExpressionKind
+import com.android.sdklib.SdkVersionInfo
 
-object KotlinSpecialExpressionKinds {
-    @JvmField
-    val WHEN = UastSpecialExpressionKind("when")
 
-    @JvmField
-    val WHEN_ENTRY = UastSpecialExpressionKind("when_entry")
-
-    @JvmField
-    val CLASS_BODY = UastSpecialExpressionKind("class_body")
-
-    @JvmField
-    val ELVIS = UastSpecialExpressionKind("elvis")
-}
+fun getVersionField(api: Int, fullyQualified: Boolean): String = SdkVersionInfo.getBuildCode(api)?.let {
+    if (fullyQualified) "android.os.Build.VERSION_CODES.$it" else it
+} ?: api.toString()

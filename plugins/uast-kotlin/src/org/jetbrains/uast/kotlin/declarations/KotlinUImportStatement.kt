@@ -25,11 +25,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UImportStatement
 import org.jetbrains.uast.USimpleNameReferenceExpression
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinUImportStatement(
         override val psi: KtImportDirective,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : UImportStatement {
     override val isOnDemand: Boolean
         get() = psi.isAllUnder
@@ -48,9 +47,9 @@ class KotlinUImportStatement(
     private class ImportReference(
             override val psi: KtExpression,
             override val identifier: String,
-            override val containingElement: UElement?,
+            override val uastParent: UElement?,
             private val importDirective: KtImportDirective
-    ) : KotlinAbstractUExpression(), USimpleNameReferenceExpression, PsiElementBacked {
+    ) : KotlinAbstractUExpression(), USimpleNameReferenceExpression {
         override val resolvedName: String?
             get() = identifier
 

@@ -20,8 +20,8 @@ import org.jetbrains.uast.UastBinaryExpressionWithTypeKind
 
 object KotlinBinaryExpressionWithTypeKinds {
     @JvmField
-    val NEGATED_INSTANCE_CHECK = UastBinaryExpressionWithTypeKind("!is")
+    val NEGATED_INSTANCE_CHECK = UastBinaryExpressionWithTypeKind.InstanceCheck("!is")
 
     @JvmField
-    val SAFE_TYPE_CAST = UastBinaryExpressionWithTypeKind("!is")
+    val SAFE_TYPE_CAST = UastBinaryExpressionWithTypeKind.TypeCast("as?")
 }

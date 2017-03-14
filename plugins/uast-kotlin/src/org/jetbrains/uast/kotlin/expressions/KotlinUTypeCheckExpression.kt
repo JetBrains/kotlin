@@ -19,19 +19,23 @@ package org.jetbrains.uast.kotlin
 import org.jetbrains.kotlin.psi.KtIsExpression
 import org.jetbrains.uast.UBinaryExpressionWithType
 import org.jetbrains.uast.UElement
-import org.jetbrains.uast.psi.PsiElementBacked
+import org.jetbrains.uast.UastBinaryExpressionWithTypeKind
 
 class KotlinUTypeCheckExpression(
         override val psi: KtIsExpression,
-        override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UBinaryExpressionWithType, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
-    override val operand by lz { KotlinConverter.convertExpression(psi.leftHandSide, this) }
+        override val uastParent: UElement?
+) : KotlinAbstractUExpression(), UBinaryExpressionWithType, KotlinUElementWithType, KotlinEvaluatableUElement {
+    override val operand by lz { KotlinConverter.convertOrEmpty(psi.leftHandSide, this) }
     
     override val type by lz { psi.typeReference.toPsiType(this) }
     
-    override val typeReference by lz { 
-        psi.typeReference?.let { KotlinUTypeReferenceExpression(it.toPsiType(this), it, this) } 
+    override val typeReference = psi.typeReference?.let {
+        LazyKotlinUTypeReferenceExpression(it, this) { it.toPsiType(this) }
     }
     
-    override val operationKind = KotlinBinaryExpressionWithTypeKinds.NEGATED_INSTANCE_CHECK
+    override val operationKind =
+            if(psi.isNegated)
+                KotlinBinaryExpressionWithTypeKinds.NEGATED_INSTANCE_CHECK
+            else
+                UastBinaryExpressionWithTypeKind.INSTANCE_CHECK
 }

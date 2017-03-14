@@ -19,9 +19,12 @@ package org.jetbrains.uast.kotlin
 import com.intellij.psi.PsiAnonymousClass
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightMethods
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.uast.*
 import org.jetbrains.uast.java.AbstractJavaUClass
@@ -29,9 +32,11 @@ import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
 
 class KotlinUClass private constructor(
         psi: KtLightClass,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : AbstractJavaUClass(), PsiClass by psi {
+
     val ktClass = psi.kotlinOrigin
+
     override val psi = unwrap<UClass, PsiClass>(psi)
 
     override fun getOriginalElement(): PsiElement? {
@@ -43,21 +48,38 @@ class KotlinUClass private constructor(
 
     override val uastAnchor: UElement
         get() = UIdentifier(psi.nameIdentifier, this)
-    
-    override val uastMethods: List<UMethod> by lz {
+
+    override fun getInnerClasses(): Array<UClass> {
+        // filter DefaultImpls to avoid processing same methods from original interface multiple times
+        // filter Enum entry classes to avoid duplication with PsiEnumConstant initializer class
+        return psi.innerClasses.filter {
+            it.name != JvmAbi.DEFAULT_IMPLS_CLASS_NAME && !it.isEnumEntryLightClass()
+        }.map {
+            getLanguagePlugin().convert<UClass>(it, this)
+        }.toTypedArray()
+    }
+
+    override fun getSuperClass(): UClass? = super.getSuperClass()
+    override fun getFields(): Array<UField> = super.getFields()
+    override fun getInitializers(): Array<UClassInitializer> = super.getInitializers()
+
+    override fun getMethods(): Array<UMethod> {
         val primaryConstructor = ktClass?.getPrimaryConstructor()?.toLightMethods()?.firstOrNull()
         val initBlocks = ktClass?.getAnonymousInitializers() ?: emptyList()
 
-        psi.methods.map {
-            if (it is KtLightMethod && it.isConstructor && initBlocks.isNotEmpty()
-                && (primaryConstructor == null || it == primaryConstructor)) {
-                object : KotlinUMethod(it, this@KotlinUClass) {
+        fun createUMethod(psiMethod: PsiMethod): UMethod {
+            return if (psiMethod is KtLightMethod && psiMethod.isConstructor && initBlocks.isNotEmpty()
+                    && (primaryConstructor == null || psiMethod == primaryConstructor)) {
+                object : KotlinUMethod(psiMethod, this@KotlinUClass) {
                     override val uastBody by lz {
                         val initializers = ktClass?.getAnonymousInitializers() ?: return@lz UastEmptyExpression
                         val containingMethod = this
 
                         object : UBlockExpression {
-                            override val containingElement: UElement?
+                            override val psi: PsiElement?
+                                 get() = null
+
+                            override val uastParent: UElement?
                                 get() = containingMethod
 
                             override val annotations: List<UAnnotation>
@@ -71,12 +93,21 @@ class KotlinUClass private constructor(
                         }
                     }
                 }
+            } else {
+                getLanguagePlugin().convert<UMethod>(psiMethod, this)
             }
-            else {
-                getLanguagePlugin().convert<UMethod>(it, this)
-            }
-        } 
+        }
+
+        fun isDelegatedMethod(psiMethod: PsiMethod) = psiMethod is KtLightMethod && psiMethod.isDelegated
+
+        return psi.methods.asSequence()
+                .filterNot(::isDelegatedMethod)
+                .map(::createUMethod)
+                .toList()
+                .toTypedArray()
     }
+
+    private fun PsiClass.isEnumEntryLightClass() = (this as? KtLightClass)?.kotlinOrigin is KtEnumEntry
 
     companion object {
         fun create(psi: KtLightClass, containingElement: UElement?): UClass {
@@ -90,13 +121,20 @@ class KotlinUClass private constructor(
 
 class KotlinUAnonymousClass(
         psi: PsiAnonymousClass,
-        override val containingElement: UElement?
+        override val uastParent: UElement?
 ) : AbstractJavaUClass(), UAnonymousClass, PsiAnonymousClass by psi {
+
     override val psi: PsiAnonymousClass = unwrap<UAnonymousClass, PsiAnonymousClass>(psi)
 
     override fun getOriginalElement(): PsiElement? {
         return super<AbstractJavaUClass>.getOriginalElement()
     }
+
+    override fun getSuperClass(): UClass? = super<AbstractJavaUClass>.getSuperClass()
+    override fun getFields(): Array<UField> = super<AbstractJavaUClass>.getFields()
+    override fun getMethods(): Array<UMethod> = super<AbstractJavaUClass>.getMethods()
+    override fun getInitializers(): Array<UClassInitializer> = super<AbstractJavaUClass>.getInitializers()
+    override fun getInnerClasses(): Array<UClass> = super<AbstractJavaUClass>.getInnerClasses()
 
     override val uastAnchor: UElement?
         get() {

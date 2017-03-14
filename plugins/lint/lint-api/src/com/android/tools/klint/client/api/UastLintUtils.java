@@ -26,7 +26,7 @@ import com.google.common.base.Joiner;
 import com.intellij.psi.*;
 
 import org.jetbrains.uast.*;
-import org.jetbrains.uast.expressions.UReferenceExpression;
+import org.jetbrains.uast.UReferenceExpression;
 import org.jetbrains.uast.java.JavaAbstractUExpression;
 import org.jetbrains.uast.java.JavaUDeclarationsExpression;
 

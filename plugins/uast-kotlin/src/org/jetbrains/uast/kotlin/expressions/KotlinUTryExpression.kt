@@ -16,25 +16,24 @@
 
 package org.jetbrains.uast.kotlin
 
-import com.intellij.psi.PsiResourceListElement
 import org.jetbrains.kotlin.psi.KtTryExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.UTryExpression
-import org.jetbrains.uast.psi.PsiElementBacked
+import org.jetbrains.uast.UVariable
 
 class KotlinUTryExpression(
         override val psi: KtTryExpression,
-        override val containingElement: UElement?
-) : KotlinAbstractUExpression(), UTryExpression, PsiElementBacked, KotlinUElementWithType {
-    override val tryClause by lz { KotlinConverter.convertExpression(psi.tryBlock, this) }
+        override val uastParent: UElement?
+) : KotlinAbstractUExpression(), UTryExpression, KotlinUElementWithType {
+    override val tryClause by lz { KotlinConverter.convertOrEmpty(psi.tryBlock, this) }
     override val catchClauses by lz { psi.catchClauses.map { KotlinUCatchClause(it, this) } }
-    override val finallyClause by lz { psi.finallyBlock?.finalExpression?.let { KotlinConverter.convertExpression(it, this) } }
+    override val finallyClause by lz { psi.finallyBlock?.finalExpression?.let { KotlinConverter.convertExpression(it, { this }) } }
 
-    override val resources: List<PsiResourceListElement>?
-        get() = null
+    override val resourceVariables: List<UVariable>
+        get() = emptyList()
 
-    override val isResources: Boolean
+    override val hasResources: Boolean
         get() = false
 
     override val tryIdentifier: UIdentifier

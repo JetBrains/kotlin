@@ -37,8 +37,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.android.inspections.klint.IntellijLintUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.*;
-import org.jetbrains.uast.expressions.UReferenceExpression;
-import org.jetbrains.uast.expressions.UTypeReferenceExpression;
 import org.jetbrains.uast.util.UastExpressionUtils;
 import org.jetbrains.uast.visitor.AbstractUastVisitor;
 import org.jetbrains.uast.visitor.UastVisitor;
@@ -49,6 +47,8 @@ import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.android.SdkConstants.*;
 import static com.android.tools.klint.detector.api.ClassContext.getFqcn;
@@ -99,9 +99,9 @@ public class ApiDetector extends ResourceXmlDetector
             Severity.ERROR,
             new Implementation(
                     ApiDetector.class,
-                    EnumSet.of(Scope.CLASS_FILE, Scope.RESOURCE_FILE, Scope.MANIFEST),
+                    EnumSet.of(Scope.JAVA_FILE, Scope.RESOURCE_FILE, Scope.MANIFEST),
+                    Scope.JAVA_FILE_SCOPE,
                     Scope.RESOURCE_FILE_SCOPE,
-                    Scope.CLASS_FILE_SCOPE,
                     Scope.MANIFEST_SCOPE));
 
     /** Accessing an inlined API on older platforms */
@@ -848,7 +848,7 @@ public class ApiDetector extends ResourceXmlDetector
 
         // It's okay to reference the constant as a case constant (since that
         // code path won't be taken) or in a condition of an if statement
-        UElement curr = node.getContainingElement();
+        UElement curr = node.getUastParent();
         while (curr != null) {
             if (curr instanceof USwitchClauseExpression) {
                 List<UExpression> caseValues = ((USwitchClauseExpression) curr).getCaseValues();
@@ -866,10 +866,20 @@ public class ApiDetector extends ResourceXmlDetector
             } else if (curr instanceof UMethod || curr instanceof UClass) {
                 break;
             }
-            curr = curr.getContainingElement();
+            curr = curr.getUastParent();
         }
 
         return false;
+    }
+
+    public static int getRequiredVersion(String errorMessage) {
+        Pattern pattern = Pattern.compile("\\s(\\d+)\\s");
+        Matcher matcher = pattern.matcher(errorMessage);
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group(1));
+        }
+
+        return -1;
     }
 
     private final class ApiVisitor extends AbstractUastVisitor {
@@ -1024,6 +1034,10 @@ public class ApiDetector extends ResourceXmlDetector
                             }
                         }
                     }
+                }
+            } else {
+                for (UTypeReferenceExpression t : aClass.getUastSuperTypes()) {
+                    checkType(t.getType(), t);
                 }
             }
 
@@ -1258,34 +1272,28 @@ public class ApiDetector extends ResourceXmlDetector
         }
 
         @Override
-        public boolean visitVariable(@NotNull UVariable node) {
-            if (node instanceof ULocalVariable) {
-                visitLocalVariable((ULocalVariable) node);
-            }
-            return super.visitVariable(node);
-        }
-
-        private void visitLocalVariable(ULocalVariable variable) {
+        public boolean visitLocalVariable(ULocalVariable variable) {
             UExpression initializer = variable.getUastInitializer();
             if (initializer == null) {
-                return;
+                return true;
             }
 
             PsiType initializerType = initializer.getExpressionType();
             if (!(initializerType instanceof PsiClassType)) {
-                return;
+                return true;
             }
 
             PsiType interfaceType = variable.getType();
             if (initializerType.equals(interfaceType)) {
-                return;
+                return true;
             }
 
             if (!(interfaceType instanceof PsiClassType)) {
-                return;
+                return true;
             }
 
             checkCast(initializer, (PsiClassType)initializerType, (PsiClassType)interfaceType);
+            return true;
         }
 
         @Override
@@ -1317,8 +1325,8 @@ public class ApiDetector extends ResourceXmlDetector
         }
 
         @Override
-        public boolean visitTryExpression(UTryExpression statement) {
-            if (statement.isResources()) {
+        public boolean visitTryExpression(@NotNull UTryExpression statement) {
+            if (statement.getHasResources()) {
                 int api = 19; // minSdk for try with resources
                 int minSdk = getMinSdk(mContext);
 
@@ -1525,7 +1533,7 @@ public class ApiDetector extends ResourceXmlDetector
                     return targetApi;
                 }
             }
-            scope = scope.getContainingElement();
+            scope = scope.getUastParent();
             if (scope instanceof PsiFile) {
                 break;
             }
@@ -1719,7 +1727,7 @@ public class ApiDetector extends ResourceXmlDetector
             int api,
             JavaContext context
     ) {
-        UElement current = element.getContainingElement();
+        UElement current = element.getUastParent();
         UElement prev = element;
         while (current != null) {
             if (current instanceof UIfExpression) {
@@ -1736,7 +1744,7 @@ public class ApiDetector extends ResourceXmlDetector
                 return false;
             }
             prev = current;
-            current = current.getContainingElement();
+            current = current.getUastParent();
         }
 
         return false;

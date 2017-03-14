@@ -16,18 +16,17 @@
 
 package org.jetbrains.uast.kotlin
 
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.psi.KtConstantExpression
+import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.ULiteralExpression
-import org.jetbrains.uast.psi.PsiElementBacked
 
 class KotlinULiteralExpression(
         override val psi: KtConstantExpression,
-        override val containingElement: UElement?
-) : KotlinAbstractUExpression(), ULiteralExpression, PsiElementBacked, KotlinUElementWithType, KotlinEvaluatableUElement {
+        override val uastParent: UElement?
+) : KotlinAbstractUExpression(), ULiteralExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val isNull: Boolean
         get() = psi.unwrapBlockOrParenthesis().node?.elementType == KtNodeTypes.NULL
 
@@ -36,11 +35,14 @@ class KotlinULiteralExpression(
 
 class KotlinStringULiteralExpression(
         override val psi: PsiElement,
-        override val containingElement: UElement?,
-        val text: String? = null
-) : KotlinAbstractUExpression(), ULiteralExpression, PsiElementBacked, KotlinUElementWithType{
+        override val uastParent: UElement?,
+        val text: String
+) : KotlinAbstractUExpression(), ULiteralExpression, KotlinUElementWithType{
+    constructor(psi: PsiElement, uastParent: UElement?)
+            : this(psi, uastParent, if (psi is KtEscapeStringTemplateEntry) psi.unescapedValue else psi.text)
+
     override val value: String
-        get() = text ?: StringUtil.unescapeStringCharacters(psi.text)
+        get() = text
 
     override fun evaluate() = value
 }
