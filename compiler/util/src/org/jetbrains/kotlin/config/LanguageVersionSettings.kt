@@ -106,20 +106,32 @@ interface LanguageVersionSettings {
     fun supportsFeature(feature: LanguageFeature): Boolean =
             getFeatureSupport(feature).let { it == LanguageFeature.State.ENABLED || it == LanguageFeature.State.ENABLED_WITH_WARNING }
 
+    fun isFlagEnabled(flag: AnalysisFlag): Boolean
+
     val apiVersion: ApiVersion
 
     // Please do not use this to enable/disable specific features/checks. Instead add a new LanguageFeature entry and call supportsFeature
     val languageVersion: LanguageVersion
-
-    val skipMetadataVersionCheck: Boolean
 }
 
 class LanguageVersionSettingsImpl @JvmOverloads constructor(
         override val languageVersion: LanguageVersion,
         override val apiVersion: ApiVersion,
-        override val skipMetadataVersionCheck: Boolean = false,
         private val specificFeatures: Map<LanguageFeature, LanguageFeature.State> = emptyMap()
 ) : LanguageVersionSettings {
+    private val enabledFlags = hashSetOf<AnalysisFlag>()
+
+    override fun isFlagEnabled(flag: AnalysisFlag): Boolean = flag in enabledFlags
+
+    fun switchFlag(flag: AnalysisFlag, enable: Boolean) {
+        if (enable) {
+            enabledFlags.add(flag)
+        }
+        else {
+            enabledFlags.remove(flag)
+        }
+    }
+
     override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State {
         specificFeatures[feature]?.let { return it }
 

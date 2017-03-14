@@ -53,7 +53,9 @@ open class KotlinJvmReplService(
         addJvmClasspathRoots(templateClasspath)
         put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script")
         put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS,
-            LanguageVersionSettingsImpl(LanguageVersion.LATEST, ApiVersion.LATEST, skipMetadataVersionCheck = true))
+            LanguageVersionSettingsImpl(LanguageVersion.LATEST, ApiVersion.LATEST).apply {
+                switchFlag(AnalysisFlags.skipMetadataVersionCheck, true)
+            })
     }
 
     protected fun makeScriptDefinition(templateClasspath: List<File>, templateClassName: String): KotlinScriptDefinition? {

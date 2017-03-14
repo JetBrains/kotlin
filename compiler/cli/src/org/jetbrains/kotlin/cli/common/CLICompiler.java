@@ -279,15 +279,10 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             extraLanguageFeatures.put(LanguageFeature.Coroutines, coroutinesState);
         }
 
-        CommonConfigurationKeysKt.setLanguageVersionSettings(
-                configuration,
-                new LanguageVersionSettingsImpl(
-                        languageVersion,
-                        ApiVersion.createByLanguageVersion(apiVersion),
-                        arguments.skipMetadataVersionCheck,
-                        extraLanguageFeatures
-                )
-        );
+        LanguageVersionSettingsImpl settings =
+                new LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(apiVersion), extraLanguageFeatures);
+        settings.switchFlag(AnalysisFlags.getSkipMetadataVersionCheck(), arguments.skipMetadataVersionCheck);
+        CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, settings);
     }
 
     @Nullable
