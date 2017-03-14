@@ -56,7 +56,9 @@ import java.util.*
 class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT }) {
     data class Options(
             val removeThisLabels: Boolean = false,
-            val removeThis: Boolean = false
+            val removeThis: Boolean = false,
+            // TODO: remove this option and all related stuff (RETAIN_COMPANION etc.) after KT-13934 fixed
+            val removeExplicitCompanion: Boolean = true
     ) {
         companion object {
             val DEFAULT = Options()
@@ -67,6 +69,8 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
     companion object {
         @JvmField
         val DEFAULT = ShortenReferences()
+
+        val RETAIN_COMPANION = ShortenReferences { Options(removeExplicitCompanion = false) }
 
         private fun DeclarationDescriptor.asString()
                 = DescriptorRenderer.FQ_NAMES_IN_TYPES.render(this)
@@ -152,6 +156,15 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
         val failedToImportDescriptors = LinkedHashSet<DeclarationDescriptor>()
 
+        val companionElementFilter = { element: PsiElement ->
+            if (element is KtElement && !options(element).removeExplicitCompanion) {
+                FilterResult.SKIP
+            }
+            else {
+                elementFilter(element)
+            }
+        }
+
         while (true) {
             // Processors order is important here so that enclosing elements are not shortened before their children are, e.g.
             // test.foo(this@A) -> foo(this)
@@ -159,7 +172,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                     ShortenTypesProcessor(file, elementFilter, failedToImportDescriptors),
                     ShortenThisExpressionsProcessor(file, elementFilter, failedToImportDescriptors),
                     ShortenQualifiedExpressionsProcessor(file, elementFilter, failedToImportDescriptors),
-                    RemoveExplicitCompanionObjectReferenceProcessor(file, elementFilter, failedToImportDescriptors)
+                    RemoveExplicitCompanionObjectReferenceProcessor(file, companionElementFilter, failedToImportDescriptors)
             )
 
             // step 1: collect qualified elements to analyze (no resolve at this step)

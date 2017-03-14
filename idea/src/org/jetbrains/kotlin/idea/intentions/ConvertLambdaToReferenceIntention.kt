@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.isVisible
+import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
@@ -171,7 +172,7 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
         if (lambdaArgument == null) {
             // Without lambda argument syntax, just replace lambda with reference
             val callableReferenceExpr = factory.createCallableReferenceExpression(referenceName) ?: return
-            (element.replace(callableReferenceExpr) as? KtElement)?.let { ShortenReferences.DEFAULT.process(it) }
+            (element.replace(callableReferenceExpr) as? KtElement)?.let { ShortenReferences.RETAIN_COMPANION.process(it) }
         }
         else {
             // Otherwise, replace the whole argument list for lambda argument-using call
@@ -204,11 +205,11 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
             }
             val argumentList = outerCallExpression.valueArgumentList
             if (argumentList == null) {
-                (lambdaArgument.replace(newArgumentList) as? KtElement)?.let { ShortenReferences.DEFAULT.process(it) }
+                (lambdaArgument.replace(newArgumentList) as? KtElement)?.let { ShortenReferences.RETAIN_COMPANION.process(it) }
             }
             else {
                 (argumentList.replace(newArgumentList) as? KtValueArgumentList)?.let {
-                    ShortenReferences.DEFAULT.process(it.arguments.last())
+                    ShortenReferences.RETAIN_COMPANION.process(it.arguments.last())
                 }
                 lambdaArgument.delete()
             }
@@ -257,7 +258,8 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
                                 }
                             }
                             else {
-                                "${receiverDescriptor.name}::$selectorReferenceName"
+                                val receiverName = receiverDescriptor.importableFqName ?: receiverDescriptor.name
+                                "$receiverName::$selectorReferenceName"
                             }
                         }
                         is KtThisExpression -> {
