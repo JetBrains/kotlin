@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.util
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
-import org.jetbrains.kotlin.resolve.calls.tower.getTypeAliasConstructors
+
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
@@ -81,7 +81,7 @@ fun TypeConstructor.supertypesWithAny(): Collection<KotlinType> {
 
 val ClassifierDescriptorWithTypeParameters.constructors: Collection<ConstructorDescriptor>
     get() = when (this) {
-        is TypeAliasDescriptor -> getTypeAliasConstructors()
+        is TypeAliasDescriptor -> this.constructors
         is ClassDescriptor -> this.constructors
         else -> emptyList()
     }

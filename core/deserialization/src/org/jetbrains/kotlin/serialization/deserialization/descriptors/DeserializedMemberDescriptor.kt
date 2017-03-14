@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
@@ -173,6 +174,7 @@ class DeserializedClassConstructorDescriptor(
 }
 
 class DeserializedTypeAliasDescriptor(
+        override val storageManager: StorageManager,
         containingDeclaration: DeclarationDescriptor,
         annotations: Annotations,
         name: Name,
@@ -184,6 +186,7 @@ class DeserializedTypeAliasDescriptor(
         override val containerSource: DeserializedContainerSource?
 ) : AbstractTypeAliasDescriptor(containingDeclaration, annotations, name, SourceElement.NO_SOURCE, visibility),
         DeserializedMemberDescriptor {
+    override lateinit var constructors: Collection<TypeAliasConstructorDescriptor> private set
 
     override lateinit var underlyingType: SimpleType private set
     override lateinit var expandedType: SimpleType private set
@@ -200,6 +203,7 @@ class DeserializedTypeAliasDescriptor(
         this.expandedType = expandedType
         typeConstructorParameters = computeConstructorTypeParameters()
         defaultTypeImpl = computeDefaultType()
+        constructors = getTypeAliasConstructors()
     }
 
     override val classDescriptor: ClassDescriptor?
@@ -211,7 +215,16 @@ class DeserializedTypeAliasDescriptor(
     override fun substitute(substitutor: TypeSubstitutor): TypeAliasDescriptor {
         if (substitutor.isEmpty) return this
         val substituted = DeserializedTypeAliasDescriptor(
-                containingDeclaration, annotations, name, visibility, proto, nameResolver, typeTable, sinceKotlinInfoTable, containerSource
+                storageManager,
+                containingDeclaration,
+                annotations,
+                name,
+                visibility,
+                proto,
+                nameResolver,
+                typeTable,
+                sinceKotlinInfoTable,
+                containerSource
         )
         substituted.initialize(declaredTypeParameters,
                                substitutor.safeSubstitute(underlyingType, Variance.INVARIANT).asSimpleType(),

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeConstructor
@@ -35,6 +36,8 @@ abstract class AbstractTypeAliasDescriptor(
         private val visibilityImpl: Visibility
 ) : DeclarationDescriptorNonRootImpl(containingDeclaration, annotations, name, sourceElement),
         TypeAliasDescriptor {
+
+    protected abstract val storageManager: StorageManager
 
     // TODO kotlinize some interfaces
     private lateinit var declaredTypeParametersImpl: List<TypeParameterDescriptor>
@@ -57,6 +60,15 @@ abstract class AbstractTypeAliasDescriptor(
                     constructorDescriptor.containingDeclaration != this@AbstractTypeAliasDescriptor
                 }
             }
+
+
+    fun getTypeAliasConstructors(): Collection<TypeAliasConstructorDescriptor> {
+        val classDescriptor = this.classDescriptor ?: return emptyList()
+
+        return classDescriptor.constructors.mapNotNull {
+            TypeAliasConstructorDescriptorImpl.createIfAvailable(storageManager, this, it)
+        }
+    }
 
     override fun getDeclaredTypeParameters(): List<TypeParameterDescriptor> =
             declaredTypeParametersImpl

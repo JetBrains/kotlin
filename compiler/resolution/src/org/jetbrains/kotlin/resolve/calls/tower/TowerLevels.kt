@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
@@ -280,13 +278,12 @@ private fun ResolutionScope.getContributedFunctionsAndConstructors(
 }
 
 private fun ClassifierDescriptor.getCallableConstructors(): Collection<FunctionDescriptor> =
-        when (this) {
-            is TypeAliasDescriptor ->
-                getTypeAliasConstructors()
-            is ClassDescriptor ->
-                if (canHaveCallableConstructors) constructors else emptyList()
-            else -> emptyList()
-        }
+    when (this) {
+        is TypeAliasDescriptor -> if (canHaveCallableConstructors) constructors else emptyList()
+        is ClassDescriptor -> if (canHaveCallableConstructors) constructors else emptyList()
+        else -> emptyList()
+    }
+
 
 private fun ResolutionScope.getContributedObjectVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
     val objectDescriptor = getFakeDescriptorForObject(getContributedClassifier(name, location))
@@ -319,11 +316,5 @@ private fun getClassWithConstructors(classifier: ClassifierDescriptor?): ClassDe
 private val ClassDescriptor.canHaveCallableConstructors: Boolean
     get() = !ErrorUtils.isError(this) && !kind.isSingleton
 
-fun TypeAliasDescriptor.getTypeAliasConstructors(withDispatchReceiver: Boolean = false): Collection<TypeAliasConstructorDescriptor> {
-    val classDescriptor = this.classDescriptor ?: return emptyList()
-    if (!classDescriptor.canHaveCallableConstructors) return emptyList()
-
-    return classDescriptor.constructors.mapNotNull {
-        TypeAliasConstructorDescriptorImpl.createIfAvailable(this, it, withDispatchReceiver)
-    }
-}
+private val TypeAliasDescriptor.canHaveCallableConstructors: Boolean
+    get() = classDescriptor != null && !ErrorUtils.isError(classDescriptor) && classDescriptor!!.canHaveCallableConstructors

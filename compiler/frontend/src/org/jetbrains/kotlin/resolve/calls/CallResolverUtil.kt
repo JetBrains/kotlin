@@ -21,6 +21,7 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.getNestedTypeVariables
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate
-import org.jetbrains.kotlin.resolve.calls.tower.getTypeAliasConstructors
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -210,7 +210,7 @@ fun createResolutionCandidatesForConstructors(
             else
                 null
 
-    val constructors = typeAliasDescriptor?.getTypeAliasConstructors(withDispatchReceiver = true) ?: classWithConstructors.constructors
+    val constructors = typeAliasDescriptor?.constructors?.mapNotNull(TypeAliasConstructorDescriptor::withDispatchReceiver) ?: classWithConstructors.constructors
 
     if (constructors.isEmpty()) return emptyList()
 

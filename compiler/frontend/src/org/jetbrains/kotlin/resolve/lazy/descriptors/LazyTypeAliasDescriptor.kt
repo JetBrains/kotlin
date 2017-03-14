@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractTypeAliasDescriptor
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtTypeAlias
@@ -27,13 +28,14 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.asSimpleType
 
 class LazyTypeAliasDescriptor(
-        private val storageManager: StorageManager,
+        override val storageManager: StorageManager,
         private val trace: BindingTrace,
         containingDeclaration: DeclarationDescriptor,
         annotations: Annotations,
@@ -42,6 +44,9 @@ class LazyTypeAliasDescriptor(
         visibility: Visibility
 ) : AbstractTypeAliasDescriptor(containingDeclaration, annotations, name, sourceElement, visibility),
         TypeAliasDescriptor {
+    override val constructors: Collection<TypeAliasConstructorDescriptor> by storageManager.createLazyValue {
+        getTypeAliasConstructors()
+    }
 
     private lateinit var underlyingTypeImpl: NotNullLazyValue<SimpleType>
     private lateinit var expandedTypeImpl: NotNullLazyValue<SimpleType>

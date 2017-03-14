@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.calls.tower.getTypeAliasConstructors
+
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import java.util.*
 
@@ -68,7 +68,7 @@ class OverloadResolver(
         for (typeAlias in c.typeAliases.values) {
             val containingDeclaration = typeAlias.containingDeclaration
             if (containingDeclaration is ClassDescriptor) {
-                constructorsByOuterClass.putValues(containingDeclaration, typeAlias.getTypeAliasConstructors())
+                constructorsByOuterClass.putValues(containingDeclaration, typeAlias.constructors)
             }
         }
 
@@ -104,7 +104,7 @@ class OverloadResolver(
                     else
                         functions
                 is TypeAliasDescriptor ->
-                    functions + classifier.getTypeAliasConstructors()
+                    functions + classifier.constructors
                 else ->
                     functions
             }
