@@ -12,6 +12,5 @@
     <orderEntry type="library" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="android-annotations" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
-    <orderEntry type="library" exported="" name="uast-java" level="project" />
   </component>
 </module>
