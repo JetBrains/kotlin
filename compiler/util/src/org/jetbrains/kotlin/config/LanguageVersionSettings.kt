@@ -52,8 +52,7 @@ enum class LanguageFeature(
 
     Coroutines(KOTLIN_1_1, ApiVersion.KOTLIN_1_1, "https://kotlinlang.org/docs/diagnostics/experimental-coroutines", State.ENABLED_WITH_WARNING),
 
-    MultiPlatformProjects(null, defaultState = State.DISABLED),
-    MultiPlatformDoNotCheckImpl(null, defaultState = State.DISABLED),
+    MultiPlatformProjects(sinceVersion = null, defaultState = State.DISABLED),
 
     ;
 

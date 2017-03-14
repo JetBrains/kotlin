@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -57,7 +58,7 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
 
         if (descriptor !is MemberDescriptor) return
 
-        val checkImpl = !languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformDoNotCheckImpl)
+        val checkImpl = !languageVersionSettings.isFlagEnabled(AnalysisFlags.multiPlatformDoNotCheckImpl)
         if (descriptor.isHeader && declaration.hasModifier(KtTokens.HEADER_KEYWORD)) {
             checkHeaderDeclarationHasImplementation(declaration, descriptor, diagnosticHolder, checkImpl)
         }

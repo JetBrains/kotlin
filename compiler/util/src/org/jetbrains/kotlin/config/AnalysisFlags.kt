@@ -39,4 +39,7 @@ private operator fun AnalysisFlag.Companion.provideDelegate(instance: Any?, prop
 object AnalysisFlags {
     @JvmStatic
     val skipMetadataVersionCheck by AnalysisFlag
+
+    @JvmStatic
+    val multiPlatformDoNotCheckImpl by AnalysisFlag
 }

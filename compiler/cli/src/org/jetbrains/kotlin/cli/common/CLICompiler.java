@@ -270,9 +270,6 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         if (arguments.multiPlatform) {
             extraLanguageFeatures.put(LanguageFeature.MultiPlatformProjects, LanguageFeature.State.ENABLED);
         }
-        if (arguments.noCheckImpl) {
-            extraLanguageFeatures.put(LanguageFeature.MultiPlatformDoNotCheckImpl, LanguageFeature.State.ENABLED);
-        }
 
         LanguageFeature.State coroutinesState = chooseCoroutinesApplicabilityLevel(configuration, arguments);
         if (coroutinesState != null) {
@@ -282,6 +279,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         LanguageVersionSettingsImpl settings =
                 new LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(apiVersion), extraLanguageFeatures);
         settings.switchFlag(AnalysisFlags.getSkipMetadataVersionCheck(), arguments.skipMetadataVersionCheck);
+        settings.switchFlag(AnalysisFlags.getMultiPlatformDoNotCheckImpl(), arguments.noCheckImpl);
         CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, settings);
     }
 
