@@ -23,13 +23,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.ClassFileViewProvider
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl
-import com.intellij.psi.stubs.StubElement
-import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.name.FqName
@@ -47,20 +44,12 @@ fun buildLightClass(
         generate: (state: GenerationState, files: Collection<KtFile>) -> Unit
 ): LightClassBuilderResult {
     val project = files.first().project
-    val javaFileStub = createJavaFileStub(project, packageFqName, files)
-    val bindingContext: BindingContext
-
-    val state: GenerationState
 
     try {
-        val stubStack = Stack<StubElement<PsiElement>>()
-
-        @Suppress("UNCHECKED_CAST")
-        stubStack.push(javaFileStub as StubElement<PsiElement>)
-
-        state = GenerationState(
+        val classBuilderFactory = KotlinLightClassBuilderFactory(createJavaFileStub(project, packageFqName, files))
+        val state = GenerationState(
                 project,
-                KotlinLightClassBuilderFactory(stubStack),
+                classBuilderFactory,
                 context.module,
                 context.bindingContext,
                 files.toList(),
@@ -70,17 +59,12 @@ fun buildLightClass(
         )
         state.beforeCompile()
 
-        bindingContext = state.bindingContext
-
         generate(state, files)
 
-        val pop = stubStack.pop()
-        if (pop !== javaFileStub) {
-            LOG.error("Unbalanced stack operations: " + pop)
-        }
+        val javaFileStub = classBuilderFactory.result()
 
         ServiceManager.getService(project, StubComputationTracker::class.java)?.onStubComputed(javaFileStub, context)
-        return LightClassBuilderResult(javaFileStub, bindingContext, state.collectedExtraJvmDiagnostics)
+        return LightClassBuilderResult(javaFileStub, context.bindingContext, state.collectedExtraJvmDiagnostics)
     }
     catch (e: ProcessCanceledException) {
         throw e

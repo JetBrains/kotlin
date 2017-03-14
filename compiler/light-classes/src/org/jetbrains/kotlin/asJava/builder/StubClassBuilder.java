@@ -50,14 +50,16 @@ public class StubClassBuilder extends AbstractClassBuilder {
         }
     };
     private final StubElement parent;
+    private final PsiJavaFileStub fileStub;
     private StubBuildingVisitor v;
     private final Stack<StubElement> parentStack;
     private boolean isPackageClass = false;
     private int memberIndex = 0;
 
-    public StubClassBuilder(@NotNull Stack<StubElement> parentStack) {
+    public StubClassBuilder(@NotNull Stack<StubElement> parentStack, @NotNull PsiJavaFileStub fileStub) {
         this.parentStack = parentStack;
         this.parent = parentStack.peek();
+        this.fileStub = fileStub;
     }
 
     @NotNull
@@ -102,7 +104,8 @@ public class StubClassBuilder extends AbstractClassBuilder {
     @Nullable
     private String calculateShortName(@NotNull String internalName) {
         if (parent instanceof PsiJavaFileStub) {
-            String packagePrefix = getPackageInternalNamePrefix((PsiJavaFileStub) parent);
+            assert parent == fileStub;
+            String packagePrefix = getPackageInternalNamePrefix();
             assert internalName.startsWith(packagePrefix) : internalName + " : " + packagePrefix;
             return internalName.substring(packagePrefix.length());
         }
@@ -118,8 +121,6 @@ public class StubClassBuilder extends AbstractClassBuilder {
 
     @Nullable
     private String getClassInternalNamePrefix(@NotNull PsiClassStub classStub) {
-        PsiJavaFileStub fileStub = (PsiJavaFileStub) parentStack.get(0);
-
         String packageName = fileStub.getPackageName();
 
         String classStubQualifiedName = classStub.getQualifiedName();
@@ -135,7 +136,7 @@ public class StubClassBuilder extends AbstractClassBuilder {
 
 
     @NotNull
-    private static String getPackageInternalNamePrefix(@NotNull PsiJavaFileStub fileStub) {
+    private String getPackageInternalNamePrefix() {
         String packageName = fileStub.getPackageName();
         if (packageName.isEmpty()) {
             return "";
