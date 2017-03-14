@@ -20,6 +20,8 @@ import com.intellij.compiler.options.ComparingUtils;
 import com.intellij.compiler.server.BuildManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
@@ -48,6 +50,7 @@ import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.PluginStartupComponent;
 import org.jetbrains.kotlin.idea.facet.DescriptionListCellRenderer;
+import org.jetbrains.kotlin.idea.facet.KotlinFacet;
 import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
 
 import javax.swing.*;
@@ -109,6 +112,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private JPanel scriptPanel;
     private JLabel labelForOutputPrefixFile;
     private JLabel labelForOutputPostfixFile;
+    private JLabel warningLabel;
 
     private boolean isEnabled = true;
 
@@ -183,6 +187,26 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         generateSourceMapsCheckBox.setThirdStateEnabled(isMultiEditor);
         copyRuntimeFilesCheckBox.setThirdStateEnabled(isMultiEditor);
         keepAliveCheckBox.setThirdStateEnabled(isMultiEditor);
+
+        if (isProjectSettings) {
+            List<String> modulesOverridingProjectSettings = ArraysKt.mapNotNull(
+                    ModuleManager.getInstance(project).getModules(),
+                    new Function1<Module, String>() {
+                        @Override
+                        public String invoke(Module module) {
+                            KotlinFacet facet = KotlinFacet.Companion.get(module);
+                            if (facet == null) return null;
+                            KotlinFacetSettings facetSettings = facet.getConfiguration().getSettings();
+                            if (facetSettings.getUseProjectSettings()) return null;
+                            return "<strong>" + module.getName() + "</strong>";
+                        }
+                    }
+            );
+            if (!modulesOverridingProjectSettings.isEmpty()) {
+                warningLabel.setVisible(true);
+                warningLabel.setText("<html>Following modules override project settings: " + StringUtil.join(modulesOverridingProjectSettings, ", "));
+            }
+        }
     }
 
     @SuppressWarnings("unused")
