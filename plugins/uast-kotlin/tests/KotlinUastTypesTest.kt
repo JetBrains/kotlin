@@ -7,5 +7,5 @@ class KotlinUastTypesTest : AbstractKotlinTypesTest() {
 
     @Test fun testUnexpectedContainerException() = doTest("UnexpectedContainerException")
 
-    @Test fun testCycleInTypeParameters() = doTest("cycleInTypeParameters")
+    @Test fun testCycleInTypeParameters() = doTest("CycleInTypeParameters")
 }
