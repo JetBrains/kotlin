@@ -4,7 +4,7 @@
     <import file="node_utils.xml" optional="false"/>
 
     <property name="automerge_dummy" value="This property is used to trick git merge. Do not delete empty lines around."/>
-    <property name="ideaVersion" value="162.2946"/>
+    <property name="ideaVersion" value="2016.3.5"/>
     <property name="idea.kotlin.branch" value="rc"/>
 
 
@@ -230,8 +230,8 @@
         <!-- jansi -->
         <get-maven-library prefix="org/fusesource/jansi" lib="jansi" version="1.16" target.jar.name.base="jansi"/>
 
-        <!-- Guava 17 sources-->
-        <get-maven-library prefix="com/google/guava" lib="guava" version="17.0" bin="false"/>
+        <!-- Guava 19 sources-->
+        <get-maven-library prefix="com/google/guava" lib="guava" version="19.0" bin="false"/>
 
         <!-- ASM -->
         <get src="https://raw.github.com/JetBrains/intellij-community/162/lib/src/asm5-src.zip"
@@ -563,7 +563,7 @@
                     <resources>
                         <file file="@{download.dir.intellij-core}/intellij-core.jar"/>
                         <file file="@{download.dir.intellij-core}/annotations.jar"/>
-                        <file file="@{download.dir.intellij-core}/guava-17.0.jar"/>
+                        <file file="@{download.dir.intellij-core}/guava-19.0.jar"/>
                         <file file="@{download.dir.intellij-core}/picocontainer.jar"/>
                         <file file="@{download.dir.intellij-core}/trove4j.jar"/>
 
@@ -695,7 +695,7 @@
                 <mkdir dir="${core.dir}"/>
                 <get src="${content.base.url}/core/intellij-core.jar" dest="${core.dir}/intellij-core.jar"/>
                 <get src="${content.base.url}/core/annotations.jar" dest="${core.dir}/annotations.jar"/>
-                <get src="${content.base.url}/core/guava-17.0.jar" dest="${core.dir}/guava-17.0.jar"/>
+                <get src="${content.base.url}/core/guava-19.0.jar" dest="${core.dir}/guava-19.0.jar"/>
                 <get src="${content.base.url}/core/picocontainer.jar" dest="${core.dir}/picocontainer.jar"/>
                 <get src="${content.base.url}/core/trove4j.jar" dest="${core.dir}/trove4j.jar"/>
 
