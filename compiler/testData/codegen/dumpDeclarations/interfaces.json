@@ -49,7 +49,8 @@
 		"class": "PublicInterface$Companion",
 		"members": [
 			{"visibility": "private",	"declaration": "constructor Companion()", "name": "<init>", "desc": "()V"},
-			{"visibility": "private",	"declaration": "constructor Companion()", "name": "<init>", "desc": "(Lkotlin/jvm/internal/DefaultConstructorMarker;)V"}
+			{"visibility": "public",	"declaration": "companion object", "name": "$$INSTANCE", "desc": "LPublicInterface$Companion;"},
+			{"visibility": "public",	"declaration": "companion object", "name": "<clinit>", "desc": "()V"}
 		]
 	},
 	{
@@ -75,7 +76,8 @@
 		"class": "InternalInterface$Companion",
 		"members": [
 			{"visibility": "private",	"declaration": "constructor Companion()", "name": "<init>", "desc": "()V"},
-			{"visibility": "private",	"declaration": "constructor Companion()", "name": "<init>", "desc": "(Lkotlin/jvm/internal/DefaultConstructorMarker;)V"}
+			{"visibility": "public",	"declaration": "companion object", "name": "$$INSTANCE", "desc": "LInternalInterface$Companion;"},
+			{"visibility": "public",	"declaration": "companion object", "name": "<clinit>", "desc": "()V"}
 		]
 	},
 	{
@@ -101,7 +103,8 @@
 		"class": "InternalInterfacePrivateCompanion$Companion",
 		"members": [
 			{"visibility": "private",	"declaration": "constructor Companion()", "name": "<init>", "desc": "()V"},
-			{"visibility": "private",	"declaration": "constructor Companion()", "name": "<init>", "desc": "(Lkotlin/jvm/internal/DefaultConstructorMarker;)V"}
+			{"visibility": "private",	"declaration": "companion object", "name": "$$INSTANCE", "desc": "LInternalInterfacePrivateCompanion$Companion;"},
+			{"visibility": "private",	"declaration": "companion object", "name": "<clinit>", "desc": "()V"}
 		]
 	},
 	{
@@ -163,7 +166,8 @@
 		"class": "PrivateInterface$Companion",
 		"members": [
 			{"visibility": "private",	"declaration": "constructor Companion()", "name": "<init>", "desc": "()V"},
-			{"visibility": "private",	"declaration": "constructor Companion()", "name": "<init>", "desc": "(Lkotlin/jvm/internal/DefaultConstructorMarker;)V"}
+			{"visibility": "public",	"declaration": "companion object", "name": "$$INSTANCE", "desc": "LPrivateInterface$Companion;"},
+			{"visibility": "public",	"declaration": "companion object", "name": "<clinit>", "desc": "()V"}
 		]
 	},
 	{
@@ -189,7 +193,8 @@
 		"class": "PrivateInterfacePrivateCompanion$Companion",
 		"members": [
 			{"visibility": "private",	"declaration": "constructor Companion()", "name": "<init>", "desc": "()V"},
-			{"visibility": "private",	"declaration": "constructor Companion()", "name": "<init>", "desc": "(Lkotlin/jvm/internal/DefaultConstructorMarker;)V"}
+			{"visibility": "private",	"declaration": "companion object", "name": "$$INSTANCE", "desc": "LPrivateInterfacePrivateCompanion$Companion;"},
+			{"visibility": "private",	"declaration": "companion object", "name": "<clinit>", "desc": "()V"}
 		]
 	},
 	{
