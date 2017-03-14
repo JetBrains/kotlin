@@ -80,9 +80,8 @@ class DelegatedPropertyGenerator(override val context: GeneratorContext) : Gener
     }
 
     private fun getKPropertyTypeForDelegatedProperty(propertyDescriptor: PropertyDescriptor): KotlinType {
-        val propertyReceiverType = propertyDescriptor.extensionReceiverParameter?.type ?:
-                                   propertyDescriptor.dispatchReceiverParameter?.type
-        return context.reflectionTypes.getKPropertyType(Annotations.EMPTY, propertyReceiverType, propertyDescriptor.type, propertyDescriptor.isVar)
+        val receivers = listOfNotNull(propertyDescriptor.extensionReceiverParameter, propertyDescriptor.dispatchReceiverParameter)
+        return context.reflectionTypes.getKPropertyType(Annotations.EMPTY, receivers.map{ it.type }, propertyDescriptor.type, propertyDescriptor.isVar)
     }
 
     private fun generateDelegateFieldForProperty(
@@ -195,7 +194,7 @@ class DelegatedPropertyGenerator(override val context: GeneratorContext) : Gener
     }
 
     private fun getKPropertyTypeForLocalDelegatedProperty(variableDescriptor: VariableDescriptorWithAccessors) =
-            context.reflectionTypes.getKPropertyType(Annotations.EMPTY, null, variableDescriptor.type, variableDescriptor.isVar)
+            context.reflectionTypes.getKPropertyType(Annotations.EMPTY, emptyList(), variableDescriptor.type, variableDescriptor.isVar)
 
     private fun createPropertyDelegateDescriptor(
             propertyDescriptor: PropertyDescriptor,

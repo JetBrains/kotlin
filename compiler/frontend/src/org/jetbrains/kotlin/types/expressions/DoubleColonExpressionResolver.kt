@@ -772,7 +772,7 @@ class DoubleColonExpressionResolver(
                         val setter = descriptor.setter
                         setter == null || Visibilities.isVisible(receiverType?.let(::TransientReceiver), setter, scopeOwnerDescriptor)
                     }
-                    reflectionTypes.getKPropertyType(Annotations.EMPTY, receiverType, descriptor.type, mutable)
+                    reflectionTypes.getKPropertyType(Annotations.EMPTY, listOfNotNull(receiverType), descriptor.type, mutable)
                 }
                 is VariableDescriptor -> null
                 else -> throw UnsupportedOperationException("Callable reference resolved to an unsupported descriptor: $descriptor")

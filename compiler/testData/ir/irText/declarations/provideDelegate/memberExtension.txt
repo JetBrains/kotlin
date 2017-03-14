@@ -37,7 +37,7 @@ FILE /memberExtension.kt
             $this: GET_VAR '<receiver: Host>' type=Host origin=null
             $receiver: CONST String type=kotlin.String value='K'
             host: GET_VAR '<receiver: Host>' type=Host origin=null
-            p: CALLABLE_REFERENCE 'plusK: String on String' type=kotlin.reflect.KProperty1<kotlin.String, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            p: CALLABLE_REFERENCE 'plusK: String on String' type=kotlin.reflect.KProperty2<kotlin.String, Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
       FUN DELEGATED_PROPERTY_ACCESSOR public final fun kotlin.String.<get-plusK>(): kotlin.String
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-plusK>() on String: String'
@@ -45,7 +45,7 @@ FILE /memberExtension.kt
               $this: GET_FIELD '`plusK$delegate`: Host.StringDelegate' type=Host.StringDelegate origin=null
                 receiver: GET_VAR '<receiver: Host>' type=Host origin=null
               receiver: GET_VAR '<receiver: plusK: String on String>' type=kotlin.String origin=null
-              p: CALLABLE_REFERENCE 'plusK: String on String' type=kotlin.reflect.KProperty1<kotlin.String, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              p: CALLABLE_REFERENCE 'plusK: String on String' type=kotlin.reflect.KProperty2<kotlin.String, Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     PROPERTY public final val ok: kotlin.String
       FIELD PROPERTY_BACKING_FIELD public final val ok: kotlin.String
         EXPRESSION_BODY

@@ -60,6 +60,7 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
     val kProperty2: ClassDescriptor by ClassLookup(3)
     val kMutableProperty0: ClassDescriptor by ClassLookup(1)
     val kMutableProperty1: ClassDescriptor by ClassLookup(2)
+    val kMutableProperty2: ClassDescriptor by ClassLookup(3)
 
     fun getKClassType(annotations: Annotations, type: KotlinType, variance: Variance): KotlinType =
             KotlinTypeFactory.simpleNotNullType(annotations, kClass, listOf(TypeProjectionImpl(variance, type)))
@@ -77,23 +78,24 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
         return KotlinTypeFactory.simpleNotNullType(annotations, classDescriptor, arguments)
     }
 
-    fun getKPropertyType(annotations: Annotations, receiverType: KotlinType?, returnType: KotlinType, mutable: Boolean): KotlinType {
-        val classDescriptor = when {
-            receiverType != null -> when {
-                mutable -> kMutableProperty1
-                else -> kProperty1
-            }
-            else -> when {
+    fun getKPropertyType(annotations: Annotations, receiverTypes: List<KotlinType>, returnType: KotlinType, mutable: Boolean): KotlinType {
+        val classDescriptor = when (receiverTypes.size) {
+            0 -> when {
                 mutable -> kMutableProperty0
                 else -> kProperty0
             }
+            1 -> when {
+                mutable -> kMutableProperty1
+                else -> kProperty1
+            }
+            2 ->  when {
+                mutable -> kMutableProperty2
+                else -> kProperty2
+            }
+            else -> throw AssertionError("More than 2 receivers is not allowed")
         }
 
-        val arguments = ArrayList<TypeProjection>(2)
-        if (receiverType != null) {
-            arguments.add(TypeProjectionImpl(receiverType))
-        }
-        arguments.add(TypeProjectionImpl(returnType))
+        val arguments = (receiverTypes + returnType).map(::TypeProjectionImpl)
         return KotlinTypeFactory.simpleNotNullType(annotations, classDescriptor, arguments)
     }
 
