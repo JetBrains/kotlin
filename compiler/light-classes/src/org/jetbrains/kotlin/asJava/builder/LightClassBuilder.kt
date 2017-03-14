@@ -40,14 +40,13 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 data class LightClassBuilderResult(val stub: PsiJavaFileStub, val bindingContext: BindingContext, val diagnostics: Diagnostics)
 
 fun buildLightClass(
-        project: Project,
         packageFqName: FqName,
         files: Collection<KtFile>,
         generateClassFilter: GenerationState.GenerateClassFilter,
         context: LightClassConstructionContext,
         generate: (state: GenerationState, files: Collection<KtFile>) -> Unit
 ): LightClassBuilderResult {
-
+    val project = files.first().project
     val javaFileStub = createJavaFileStub(project, packageFqName, files)
     val bindingContext: BindingContext
 
@@ -64,7 +63,7 @@ fun buildLightClass(
                 KotlinLightClassBuilderFactory(stubStack),
                 context.module,
                 context.bindingContext,
-                files.toMutableList(),
+                files.toList(),
                 CompilerConfiguration.EMPTY,
                 generateClassFilter,
                 wantsDiagnostics = false
@@ -93,7 +92,7 @@ fun buildLightClass(
 }
 
 private fun createJavaFileStub(project: Project, packageFqName: FqName, files: Collection<KtFile>): PsiJavaFileStub {
-    val javaFileStub = PsiJavaFileStubImpl(packageFqName.asString(), true)
+    val javaFileStub = PsiJavaFileStubImpl(packageFqName.asString(), /*compiled = */true)
     javaFileStub.psiFactory = ClsWrapperStubPsiFactory.INSTANCE
 
     val manager = PsiManager.getInstance(project)
@@ -124,4 +123,4 @@ private fun logErrorWithOSInfo(cause: Throwable?, fqName: FqName, virtualFile: V
     )
 }
 
-private val LOG = Logger.getInstance(LightClassDataProvider::class.java)
+private val LOG = Logger.getInstance(LightClassBuilderResult::class.java)

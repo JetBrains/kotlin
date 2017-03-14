@@ -36,37 +36,14 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 
-abstract class LightClassDataProvider<T : LightClassDataHolder>(
-        private val project: Project
-) : CachedValueProvider<T> {
-    abstract val isLocal: Boolean
+class LightClassDataProviderForClassOrObject(private val classOrObject: KtClassOrObject) : CachedValueProvider<LightClassDataHolder> {
 
-    open val valueAbsent: Boolean = false
-
-    override fun compute(): CachedValueProvider.Result<T>? {
-        if (valueAbsent) return null
-
-        return CachedValueProvider.Result.create(
-                computeLightClassData(),
-                if (isLocal) PsiModificationTracker.MODIFICATION_COUNT else PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
-        )
-    }
-
-    abstract fun computeLightClassData(): T
-}
-
-class LightClassDataProviderForClassOrObject(private val classOrObject: KtClassOrObject) :
-        LightClassDataProvider<LightClassDataHolder>(classOrObject.project) {
-
-    override val isLocal: Boolean get() = classOrObject.isLocal
-
-
-    override fun computeLightClassData(): LightClassDataHolder {
+    private fun computeLightClassData(): LightClassDataHolder {
         val file = classOrObject.containingKtFile
         val packageFqName = file.packageFqName
         return LightClassGenerationSupport.getInstance(classOrObject.project).createLightClassDataHolderForClassOrObject(classOrObject) {
             constructionContext ->
-            buildLightClass(classOrObject.project, packageFqName, listOf(file), ClassFilterForClassOrObject(classOrObject), constructionContext) {
+            buildLightClass(packageFqName, listOf(file), ClassFilterForClassOrObject(classOrObject), constructionContext) {
                 state, files ->
                 val packageCodegen = state.factory.forPackage(packageFqName, files)
                 val packagePartType = state.fileClassesProvider.getFileClassType(file)
@@ -77,6 +54,13 @@ class LightClassDataProviderForClassOrObject(private val classOrObject: KtClassO
         }
     }
 
+    override fun compute(): CachedValueProvider.Result<LightClassDataHolder>? {
+        return CachedValueProvider.Result.create(
+                computeLightClassData(),
+                if (classOrObject.isLocal()) PsiModificationTracker.MODIFICATION_COUNT else PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
+        )
+    }
+
     override fun toString(): String {
         return this::class.java.name + " for " + classOrObject.name
     }
@@ -84,27 +68,21 @@ class LightClassDataProviderForClassOrObject(private val classOrObject: KtClassO
 
 sealed class LightClassDataProviderForFileFacade constructor(
         protected val project: Project, protected val facadeFqName: FqName
-) : LightClassDataProvider<LightClassDataHolder>(project) {
-    override val isLocal: Boolean get() = false
-    abstract val files: Collection<KtFile>
+) : CachedValueProvider<LightClassDataHolder> {
+    abstract fun findFiles(): Collection<KtFile>
 
-    override val valueAbsent: Boolean
-        get() = files.isEmpty()
-
-    override fun computeLightClassData(): LightClassDataHolder {
+    private fun computeLightClassData(files: Collection<KtFile>): LightClassDataHolder {
         return LightClassGenerationSupport.getInstance(project).createLightClassDataHolderForFacade(files) {
             constructionContext ->
-            buildLightClass(project, facadeFqName.parent(), files, ClassFilterForFacade, constructionContext) generate@ {
+            buildLightClass(facadeFqName.parent(), files, ClassFilterForFacade, constructionContext) generate@ {
                 state, files ->
-                if (!files.isEmpty()) {
-                    val representativeFile = files.iterator().next()
-                    val fileClassInfo = NoResolveFileClassesProvider.getFileClassInfo(representativeFile)
-                    if (!fileClassInfo.withJvmMultifileClass) {
-                        val codegen = state.factory.forPackage(representativeFile.packageFqName, files)
-                        codegen.generate(CompilationErrorHandler.THROW_EXCEPTION)
-                        state.factory.asList()
-                        return@generate
-                    }
+                val representativeFile = files.first()
+                val fileClassInfo = NoResolveFileClassesProvider.getFileClassInfo(representativeFile)
+                if (!fileClassInfo.withJvmMultifileClass) {
+                    val codegen = state.factory.forPackage(representativeFile.packageFqName, files)
+                    codegen.generate(CompilationErrorHandler.THROW_EXCEPTION)
+                    state.factory.asList()
+                    return@generate
                 }
 
                 val codegen = state.factory.forMultifileClass(facadeFqName, files)
@@ -112,6 +90,16 @@ sealed class LightClassDataProviderForFileFacade constructor(
                 state.factory.asList()
             }
         }
+    }
+
+    override fun compute(): CachedValueProvider.Result<LightClassDataHolder>? {
+        val files = findFiles()
+        if (files.isEmpty()) return null
+
+        return CachedValueProvider.Result.create(
+                computeLightClassData(files),
+                PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
+        )
     }
 
     override fun toString(): String {
@@ -124,8 +112,7 @@ sealed class LightClassDataProviderForFileFacade constructor(
             facadeFqName: FqName,
             private val searchScope: GlobalSearchScope
     ) : LightClassDataProviderForFileFacade(project, facadeFqName) {
-        override val files: Collection<KtFile>
-            get() = LightClassGenerationSupport.getInstance(project).findFilesForFacade(facadeFqName, searchScope)
+        override fun findFiles() = LightClassGenerationSupport.getInstance(project).findFilesForFacade(facadeFqName, searchScope)
     }
 
     // create delegate by single file
@@ -134,8 +121,7 @@ sealed class LightClassDataProviderForFileFacade constructor(
             facadeFqName: FqName,
             private val file: KtFile
     ) : LightClassDataProviderForFileFacade(project, facadeFqName) {
-        override val files: Collection<KtFile>
-            get() = listOf(file)
+        override fun findFiles() = listOf(file)
     }
 }
 
