@@ -14,11 +14,20 @@
     <orderEntry type="module" module-name="frontend.java" />
     <orderEntry type="module" module-name="light-classes" />
     <orderEntry type="module" module-name="util.runtime" />
-    <orderEntry type="library" name="uast-java" level="project" />
     <orderEntry type="module" module-name="cli" scope="TEST" />
     <orderEntry type="module" module-name="util" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="junit-4.12" level="project" />
     <orderEntry type="module" module-name="idea-android" scope="TEST" />
     <orderEntry type="module" module-name="tests-common" scope="TEST" />
+    <orderEntry type="library" name="uast-android-studio" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../dependencies/uast-tests.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
