@@ -12,11 +12,16 @@ enum class KotlinPlatform {
 
 class StubGenerator(
         val nativeIndex: NativeIndex,
-        val pkgName: String,
+        val configuration: InteropConfiguration,
         val libName: String,
-        val excludedFunctions: Set<String>,
         val dumpShims: Boolean,
         val platform: KotlinPlatform = KotlinPlatform.JVM) {
+
+    val pkgName: String
+        get() = configuration.pkgName
+
+    val excludedFunctions: Set<String>
+        get() = configuration.excludedFunctions
 
     val keywords = setOf("object") // TODO
 
@@ -69,10 +74,27 @@ class StubGenerator(
     /**
      * Indicates whether this enum should be represented as Kotlin enum.
      */
-    val EnumDef.isKotlinEnum: Boolean
+    val EnumDef.isStrictEnum: Boolean
             // TODO: if an anonymous enum defines e.g. a function return value or struct field type,
             // then it probably should be represented as Kotlin enum
-        get() = !isAnonymous
+        get() {
+            if (this.isAnonymous) {
+                return false
+            }
+
+            val name = this.kotlinName
+
+            if (name in configuration.strictEnums) {
+                return true
+            }
+
+            if (name in configuration.nonStrictEnums) {
+                return false
+            }
+
+            // Let the simple heuristic decide:
+            return !this.constants.any { it.isExplicitlyDefined }
+        }
 
     /**
      * The name to be used for this enum in Kotlin
@@ -87,12 +109,6 @@ class StubGenerator(
 
     val RecordType.kotlinName: String
         get() = decl.kotlinName
-
-    val EnumType.isKotlinEnum: Boolean
-        get() = def.isKotlinEnum
-
-    val EnumType.kotlinName: String
-        get() = def.kotlinName
 
 
     val functionsToBind = nativeIndex.functions.filter { it.name !in excludedFunctions }
@@ -309,7 +325,7 @@ class StubGenerator(
         }
     }
 
-    private fun mirror(type: PrimitiveType): TypeMirror {
+    private fun mirror(type: PrimitiveType): TypeMirror.ByValue {
         val varTypeName = when (type) {
             is Int8Type, is UInt8Type -> "CInt8Var"
             is Int16Type, is UInt16Type -> "CInt16Var"
@@ -335,12 +351,18 @@ class StubGenerator(
 
         is RecordType -> byRefTypeMirror(type.kotlinName)
 
-        is EnumType -> if (type.isKotlinEnum) {
-            val className = type.kotlinName
-            val info = TypeInfo.Enum(className, type.def.baseType.kotlinType)
-            TypeMirror.ByValue("$className.Var", info, className)
-        } else {
-            mirror(type.def.baseType)
+        is EnumType -> when {
+            type.def.isStrictEnum -> {
+                val className = type.def.kotlinName
+                val info = TypeInfo.Enum(className, type.def.baseType.kotlinType)
+                TypeMirror.ByValue("$className.Var", info, className)
+            }
+            !type.def.isAnonymous -> {
+                val baseTypeMirror = mirror(type.def.baseType)
+                val name = type.def.kotlinName
+                TypeMirror.ByValue("${name}Var", baseTypeMirror.info, name)
+            }
+            else -> mirror(type.def.baseType)
         }
 
         is PointerType -> {
@@ -527,15 +549,15 @@ class StubGenerator(
      * Produces to [out] the Kotlin definitions for given enum.
      */
     private fun generateEnum(e: EnumDef) {
-        if (!e.isKotlinEnum) {
-            generateEnumAsValues(e)
+        if (!e.isStrictEnum) {
+            generateEnumAsConstants(e)
             return
         }
 
         val baseTypeMirror = mirror(e.baseType)
 
         block("enum class ${e.kotlinName}(val value: ${e.baseType.kotlinType})") {
-            e.values.forEach {
+            e.constants.forEach {
                 out("${it.name}(${it.value}),")
             }
             out(";")
@@ -556,24 +578,45 @@ class StubGenerator(
     /**
      * Produces to [out] the Kotlin definitions for given enum which shouldn't be represented as Kotlin enum.
      *
-     * @see isKotlinEnum
+     * @see isStrictEnum
      */
-    private fun generateEnumAsValues(e: EnumDef) {
+    private fun generateEnumAsConstants(e: EnumDef) {
         // TODO: if this enum defines e.g. a type of struct field, then it should be generated inside the struct class
         // to prevent name clashing
 
-        if (e.values.isEmpty()) {
-            return
+        val constants = e.constants.filter {
+            // Macro "overrides" the original enum constant.
+            it.name !in macroConstantsByName
         }
 
-        out("// ${e.spelling}")
-        for (value in e.values) {
-            if (value.name in macroConstantsByName) {
-                // Macro "overrides" the original enum constant.
-                continue
+        val typeName: String
+
+        if (e.isAnonymous) {
+            if (constants.isNotEmpty()) {
+                out("// ${e.spelling}:")
             }
 
-            out("val ${value.name}: ${e.baseType.kotlinType} = ${value.value}")
+            typeName = e.baseType.kotlinType
+        } else {
+            val typeMirror = mirror(EnumType(e))
+            if (typeMirror !is TypeMirror.ByValue) {
+                error("unexpected enum type mirror: $typeMirror")
+            }
+
+            // Generate as typedef:
+            val varTypeName = typeMirror.info.constructPointedType(typeMirror.valueTypeName)
+            out("typealias ${typeMirror.pointedTypeName} = $varTypeName")
+            out("typealias ${typeMirror.valueTypeName} = ${e.baseType.kotlinType}")
+
+            if (constants.isNotEmpty()) {
+                out("")
+            }
+
+            typeName = typeMirror.valueTypeName
+        }
+
+        for (constant in constants) {
+            out("val ${constant.name}: $typeName = ${constant.value}")
         }
     }
 

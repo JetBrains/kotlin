@@ -21,3 +21,5 @@ linkerOpts.osx = \
 linkerOpts.linux=\
      -Wl,-z,noexecstack \
      -lrt -ldl -lpthread -lz -lm
+
+strictEnums = LLVMIntPredicate LLVMOpcode LLVMDLLStorageClass LLVMCallConv LLVMThreadLocalMode LLVMAtomicOrdering

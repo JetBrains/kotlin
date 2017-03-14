@@ -208,10 +208,6 @@ fun llvmtype2string(type: LLVMTypeRef?): String {
     return LLVMPrintTypeToString(type)!!.asCString().toString()
 }
 
-internal operator fun LLVMAttributeSet.contains(attribute: LLVMAttribute): Boolean {
-    return (this and attribute.value) != 0
-}
-
 fun getStructElements(type: LLVMTypeRef): List<LLVMTypeRef> {
     val count = LLVMCountStructElementTypes(type)
     return (0 until count).map {

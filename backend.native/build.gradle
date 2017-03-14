@@ -1,9 +1,6 @@
 buildscript {
    repositories {
        mavenCentral()
-       maven {
-           url "http://dl.bintray.com/kotlin/kotlin-eap-1.1"
-       }
    }
 
    dependencies {
@@ -135,7 +132,6 @@ List<String> llvmLinkerOpts() {
 kotlinNativeInterop {
    llvm {
      defFile 'llvm.def'
-     headers files('LlvmHacks.h')
      compilerOpts "-fPIC", "-I$llvmDir/include"
      linkerOpts llvmLinkerOpts()
    }

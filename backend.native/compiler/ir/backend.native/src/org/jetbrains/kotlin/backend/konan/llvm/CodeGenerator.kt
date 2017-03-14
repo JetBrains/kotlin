@@ -281,7 +281,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
             val rargs = allocArrayOf(args)[0].ptr
 
             if (LLVMIsAFunction(llvmFunction) != null /* the function declaration */ &&
-                    LLVMAttribute.LLVMNoUnwindAttribute in LLVMGetFunctionAttrSet(llvmFunction)) {
+                    (LLVMGetFunctionAttr(llvmFunction) and LLVMNoUnwindAttribute) != 0) {
 
                 return LLVMBuildCall(builder, llvmFunction, rargs, args.size, "")!!
             } else {

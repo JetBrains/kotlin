@@ -153,27 +153,27 @@ fun nanosleep(__rqtp: CPointer<timespec>?, __rmtp: CPointer<timespec>?): Int {
 }
 
 fun clock_getres(__clock_id: clockid_t, __res: CPointer<timespec>?): Int {
-    val ___clock_id = __clock_id.value
+    val ___clock_id = __clock_id
     val ___res = __res.rawValue
     val res = externals.clock_getres(___clock_id, ___res)
     return res
 }
 
 fun clock_gettime(__clock_id: clockid_t, __tp: CPointer<timespec>?): Int {
-    val ___clock_id = __clock_id.value
+    val ___clock_id = __clock_id
     val ___tp = __tp.rawValue
     val res = externals.clock_gettime(___clock_id, ___tp)
     return res
 }
 
 fun clock_gettime_nsec_np(__clock_id: clockid_t): __uint64_t {
-    val ___clock_id = __clock_id.value
+    val ___clock_id = __clock_id
     val res = externals.clock_gettime_nsec_np(___clock_id)
     return res
 }
 
 fun clock_settime(__clock_id: clockid_t, __tp: CPointer<timespec>?): Int {
-    val ___clock_id = __clock_id.value
+    val ___clock_id = __clock_id
     val ___tp = __tp.rawValue
     val res = externals.clock_settime(___clock_id, ___tp)
     return res
@@ -1338,7 +1338,7 @@ fun clang_Type_getTemplateArgumentAsType(T: CXType, i: Int, retValPlacement: Nat
 fun clang_Type_getCXXRefQualifier(T: CXType): CXRefQualifierKind {
     val _T = T.rawPtr
     val res = externals.clang_Type_getCXXRefQualifier(_T)
-    return CXRefQualifierKind.byValue(res)
+    return res
 }
 
 fun clang_Cursor_isBitField(C: CXCursor): Int {
@@ -2234,6 +2234,276 @@ fun clang_Type_visitFields(T: CXType, visitor: CXFieldVisitor?, client_data: CXC
     return res
 }
 
+val __llvm__: Int = 1
+val __clang__: Int = 1
+val __clang_major__: Int = 3
+val __clang_minor__: Int = 9
+val __clang_patchlevel__: Int = 0
+val __GNUC_MINOR__: Int = 2
+val __GNUC_PATCHLEVEL__: Int = 1
+val __GNUC__: Int = 4
+val __GXX_ABI_VERSION: Int = 1002
+val __ATOMIC_RELAXED: Int = 0
+val __ATOMIC_CONSUME: Int = 1
+val __ATOMIC_ACQUIRE: Int = 2
+val __ATOMIC_RELEASE: Int = 3
+val __ATOMIC_ACQ_REL: Int = 4
+val __ATOMIC_SEQ_CST: Int = 5
+val __PRAGMA_REDEFINE_EXTNAME: Int = 1
+val __STRICT_ANSI__: Int = 1
+val __CONSTANT_CFSTRINGS__: Int = 1
+val __BLOCKS__: Int = 1
+val __ORDER_LITTLE_ENDIAN__: Int = 1234
+val __ORDER_BIG_ENDIAN__: Int = 4321
+val __ORDER_PDP_ENDIAN__: Int = 3412
+val __BYTE_ORDER__: Int = 1234
+val __LITTLE_ENDIAN__: Int = 1
+val _LP64: Int = 1
+val __LP64__: Int = 1
+val __CHAR_BIT__: Int = 8
+val __SCHAR_MAX__: Int = 127
+val __SHRT_MAX__: Int = 32767
+val __INT_MAX__: Int = 2147483647
+val __LONG_MAX__: Long = 9223372036854775807
+val __LONG_LONG_MAX__: Long = 9223372036854775807
+val __WCHAR_MAX__: Int = 2147483647
+val __INTMAX_MAX__: Long = 9223372036854775807
+val __SIZE_MAX__: Long = -1
+val __UINTMAX_MAX__: Long = -1
+val __PTRDIFF_MAX__: Long = 9223372036854775807
+val __INTPTR_MAX__: Long = 9223372036854775807
+val __UINTPTR_MAX__: Long = -1
+val __SIZEOF_DOUBLE__: Int = 8
+val __SIZEOF_FLOAT__: Int = 4
+val __SIZEOF_INT__: Int = 4
+val __SIZEOF_LONG__: Int = 8
+val __SIZEOF_LONG_DOUBLE__: Int = 16
+val __SIZEOF_LONG_LONG__: Int = 8
+val __SIZEOF_POINTER__: Int = 8
+val __SIZEOF_SHORT__: Int = 2
+val __SIZEOF_PTRDIFF_T__: Int = 8
+val __SIZEOF_SIZE_T__: Int = 8
+val __SIZEOF_WCHAR_T__: Int = 4
+val __SIZEOF_WINT_T__: Int = 4
+val __SIZEOF_INT128__: Int = 16
+val __INTMAX_WIDTH__: Int = 64
+val __PTRDIFF_WIDTH__: Int = 64
+val __INTPTR_WIDTH__: Int = 64
+val __SIZE_WIDTH__: Int = 64
+val __WCHAR_WIDTH__: Int = 32
+val __WINT_WIDTH__: Int = 32
+val __SIG_ATOMIC_WIDTH__: Int = 32
+val __SIG_ATOMIC_MAX__: Int = 2147483647
+val __UINTMAX_WIDTH__: Int = 64
+val __UINTPTR_WIDTH__: Int = 64
+val __FLT_DENORM_MIN__: Float = bitsToFloat(1) /* == 1.4E-45 */
+val __FLT_HAS_DENORM__: Int = 1
+val __FLT_DIG__: Int = 6
+val __FLT_DECIMAL_DIG__: Int = 9
+val __FLT_EPSILON__: Float = bitsToFloat(872415232) /* == 1.1920929E-7 */
+val __FLT_HAS_INFINITY__: Int = 1
+val __FLT_HAS_QUIET_NAN__: Int = 1
+val __FLT_MANT_DIG__: Int = 24
+val __FLT_MAX_10_EXP__: Int = 38
+val __FLT_MAX_EXP__: Int = 128
+val __FLT_MAX__: Float = bitsToFloat(2139095039) /* == 3.4028235E38 */
+val __FLT_MIN_10_EXP__: Int = -37
+val __FLT_MIN_EXP__: Int = -125
+val __FLT_MIN__: Float = bitsToFloat(8388608) /* == 1.17549435E-38 */
+val __DBL_DENORM_MIN__: Double = bitsToDouble(1) /* == 4.9E-324 */
+val __DBL_HAS_DENORM__: Int = 1
+val __DBL_DIG__: Int = 15
+val __DBL_DECIMAL_DIG__: Int = 17
+val __DBL_EPSILON__: Double = bitsToDouble(4372995238176751616) /* == 2.220446049250313E-16 */
+val __DBL_HAS_INFINITY__: Int = 1
+val __DBL_HAS_QUIET_NAN__: Int = 1
+val __DBL_MANT_DIG__: Int = 53
+val __DBL_MAX_10_EXP__: Int = 308
+val __DBL_MAX_EXP__: Int = 1024
+val __DBL_MAX__: Double = bitsToDouble(9218868437227405311) /* == 1.7976931348623157E308 */
+val __DBL_MIN_10_EXP__: Int = -307
+val __DBL_MIN_EXP__: Int = -1021
+val __DBL_MIN__: Double = bitsToDouble(4503599627370496) /* == 2.2250738585072014E-308 */
+val __LDBL_HAS_DENORM__: Int = 1
+val __LDBL_DIG__: Int = 18
+val __LDBL_DECIMAL_DIG__: Int = 21
+val __LDBL_HAS_INFINITY__: Int = 1
+val __LDBL_HAS_QUIET_NAN__: Int = 1
+val __LDBL_MANT_DIG__: Int = 64
+val __LDBL_MAX_10_EXP__: Int = 4932
+val __LDBL_MAX_EXP__: Int = 16384
+val __LDBL_MIN_10_EXP__: Int = -4931
+val __LDBL_MIN_EXP__: Int = -16381
+val __POINTER_WIDTH__: Int = 64
+val __BIGGEST_ALIGNMENT__: Int = 16
+val __UINT8_MAX__: Int = 255
+val __INT8_MAX__: Int = 127
+val __UINT16_MAX__: Int = 65535
+val __INT16_MAX__: Int = 32767
+val __UINT32_MAX__: Int = -1
+val __INT32_MAX__: Int = 2147483647
+val __UINT64_MAX__: Long = -1
+val __INT64_MAX__: Long = 9223372036854775807
+val __INT_LEAST8_MAX__: Int = 127
+val __UINT_LEAST8_MAX__: Int = 255
+val __INT_LEAST16_MAX__: Int = 32767
+val __UINT_LEAST16_MAX__: Int = 65535
+val __INT_LEAST32_MAX__: Int = 2147483647
+val __UINT_LEAST32_MAX__: Int = -1
+val __INT_LEAST64_MAX__: Long = 9223372036854775807
+val __UINT_LEAST64_MAX__: Long = -1
+val __INT_FAST8_MAX__: Int = 127
+val __UINT_FAST8_MAX__: Int = 255
+val __INT_FAST16_MAX__: Int = 32767
+val __UINT_FAST16_MAX__: Int = 65535
+val __INT_FAST32_MAX__: Int = 2147483647
+val __UINT_FAST32_MAX__: Int = -1
+val __INT_FAST64_MAX__: Long = 9223372036854775807
+val __UINT_FAST64_MAX__: Long = -1
+val __FINITE_MATH_ONLY__: Int = 0
+val __GNUC_STDC_INLINE__: Int = 1
+val __GCC_ATOMIC_TEST_AND_SET_TRUEVAL: Int = 1
+val __GCC_ATOMIC_BOOL_LOCK_FREE: Int = 2
+val __GCC_ATOMIC_CHAR_LOCK_FREE: Int = 2
+val __GCC_ATOMIC_CHAR16_T_LOCK_FREE: Int = 2
+val __GCC_ATOMIC_CHAR32_T_LOCK_FREE: Int = 2
+val __GCC_ATOMIC_WCHAR_T_LOCK_FREE: Int = 2
+val __GCC_ATOMIC_SHORT_LOCK_FREE: Int = 2
+val __GCC_ATOMIC_INT_LOCK_FREE: Int = 2
+val __GCC_ATOMIC_LONG_LOCK_FREE: Int = 2
+val __GCC_ATOMIC_LLONG_LOCK_FREE: Int = 2
+val __GCC_ATOMIC_POINTER_LOCK_FREE: Int = 2
+val __NO_INLINE__: Int = 1
+val __PIC__: Int = 2
+val __pic__: Int = 2
+val __FLT_EVAL_METHOD__: Int = 0
+val __FLT_RADIX__: Int = 2
+val __DECIMAL_DIG__: Int = 21
+val __SSP__: Int = 1
+val __amd64__: Int = 1
+val __amd64: Int = 1
+val __x86_64: Int = 1
+val __x86_64__: Int = 1
+val __core2: Int = 1
+val __core2__: Int = 1
+val __tune_core2__: Int = 1
+val __NO_MATH_INLINES: Int = 1
+val __FXSR__: Int = 1
+val __GCC_HAVE_SYNC_COMPARE_AND_SWAP_16: Int = 1
+val __SSSE3__: Int = 1
+val __SSE3__: Int = 1
+val __SSE2__: Int = 1
+val __SSE2_MATH__: Int = 1
+val __SSE__: Int = 1
+val __SSE_MATH__: Int = 1
+val __MMX__: Int = 1
+val __GCC_HAVE_SYNC_COMPARE_AND_SWAP_1: Int = 1
+val __GCC_HAVE_SYNC_COMPARE_AND_SWAP_2: Int = 1
+val __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4: Int = 1
+val __GCC_HAVE_SYNC_COMPARE_AND_SWAP_8: Int = 1
+val __APPLE_CC__: Int = 6000
+val __APPLE__: Int = 1
+val OBJC_NEW_PROPERTIES: Int = 1
+val __DYNAMIC__: Int = 1
+val __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__: Int = 101000
+val __MACH__: Int = 1
+val __STDC__: Int = 1
+val __STDC_HOSTED__: Int = 1
+val __STDC_VERSION__: Long = 199901
+val __STDC_UTF_16__: Int = 1
+val __STDC_UTF_32__: Int = 1
+val __DARWIN_ONLY_64_BIT_INO_T: Int = 0
+val __DARWIN_ONLY_VERS_1050: Int = 0
+val __DARWIN_ONLY_UNIX_CONFORMANCE: Int = 1
+val __DARWIN_UNIX03: Int = 1
+val __DARWIN_64_BIT_INO_T: Int = 1
+val __DARWIN_VERS_1050: Int = 1
+val __DARWIN_NON_CANCELABLE: Int = 0
+val __DARWIN_C_ANSI: Long = 4096
+val __DARWIN_C_FULL: Long = 900000
+val __DARWIN_C_LEVEL: Long = 900000
+val _DARWIN_FEATURE_64_BIT_INODE: Int = 1
+val _DARWIN_FEATURE_ONLY_UNIX_CONFORMANCE: Int = 1
+val _DARWIN_FEATURE_UNIX_CONFORMANCE: Int = 3
+val __PTHREAD_SIZE__: Int = 8176
+val __PTHREAD_ATTR_SIZE__: Int = 56
+val __PTHREAD_MUTEXATTR_SIZE__: Int = 8
+val __PTHREAD_MUTEX_SIZE__: Int = 56
+val __PTHREAD_CONDATTR_SIZE__: Int = 8
+val __PTHREAD_COND_SIZE__: Int = 40
+val __PTHREAD_ONCE_SIZE__: Int = 8
+val __PTHREAD_RWLOCK_SIZE__: Int = 192
+val __PTHREAD_RWLOCKATTR_SIZE__: Int = 16
+val __DARWIN_WCHAR_MAX: Int = 2147483647
+val __DARWIN_WCHAR_MIN: Int = -2147483648
+val __DARWIN_WEOF: __darwin_wint_t = -1
+val _FORTIFY_SOURCE: Int = 2
+val __MAC_10_0: Int = 1000
+val __MAC_10_1: Int = 1010
+val __MAC_10_2: Int = 1020
+val __MAC_10_3: Int = 1030
+val __MAC_10_4: Int = 1040
+val __MAC_10_5: Int = 1050
+val __MAC_10_6: Int = 1060
+val __MAC_10_7: Int = 1070
+val __MAC_10_8: Int = 1080
+val __MAC_10_9: Int = 1090
+val __MAC_10_10: Int = 101000
+val __MAC_10_10_2: Int = 101002
+val __MAC_10_10_3: Int = 101003
+val __MAC_10_11: Int = 101100
+val __MAC_10_11_2: Int = 101102
+val __MAC_10_11_3: Int = 101103
+val __MAC_10_11_4: Int = 101104
+val __MAC_10_12: Int = 101200
+val __IPHONE_2_0: Int = 20000
+val __IPHONE_2_1: Int = 20100
+val __IPHONE_2_2: Int = 20200
+val __IPHONE_3_0: Int = 30000
+val __IPHONE_3_1: Int = 30100
+val __IPHONE_3_2: Int = 30200
+val __IPHONE_4_0: Int = 40000
+val __IPHONE_4_1: Int = 40100
+val __IPHONE_4_2: Int = 40200
+val __IPHONE_4_3: Int = 40300
+val __IPHONE_5_0: Int = 50000
+val __IPHONE_5_1: Int = 50100
+val __IPHONE_6_0: Int = 60000
+val __IPHONE_6_1: Int = 60100
+val __IPHONE_7_0: Int = 70000
+val __IPHONE_7_1: Int = 70100
+val __IPHONE_8_0: Int = 80000
+val __IPHONE_8_1: Int = 80100
+val __IPHONE_8_2: Int = 80200
+val __IPHONE_8_3: Int = 80300
+val __IPHONE_8_4: Int = 80400
+val __IPHONE_9_0: Int = 90000
+val __IPHONE_9_1: Int = 90100
+val __IPHONE_9_2: Int = 90200
+val __IPHONE_9_3: Int = 90300
+val __IPHONE_10_0: Int = 100000
+val __TVOS_9_0: Int = 90000
+val __TVOS_9_1: Int = 90100
+val __TVOS_9_2: Int = 90200
+val __TVOS_10_0: Int = 100000
+val __WATCHOS_1_0: Int = 10000
+val __WATCHOS_2_0: Int = 20000
+val __WATCHOS_3_0: Int = 30000
+val __MAC_OS_X_VERSION_MIN_REQUIRED: Int = 101000
+val __MAC_OS_X_VERSION_MAX_ALLOWED: Int = 101200
+val CLOCKS_PER_SEC: Int = 1000000
+val CLOCK_REALTIME: Int = 0
+val CLOCK_MONOTONIC: Int = 6
+val CLOCK_MONOTONIC_RAW: Int = 4
+val CLOCK_MONOTONIC_RAW_APPROX: Int = 5
+val CLOCK_UPTIME_RAW: Int = 8
+val CLOCK_UPTIME_RAW_APPROX: Int = 9
+val CLOCK_PROCESS_CPUTIME_ID: Int = 12
+val CLOCK_THREAD_CPUTIME_ID: Int = 16
+val CINDEX_VERSION_MAJOR: Int = 0
+val CINDEX_VERSION_MINOR: Int = 35
+val CINDEX_VERSION: Int = 35
+
 class __mbstate_t(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(128, 8)
@@ -2717,7 +2987,7 @@ class CXIdxAttrInfo(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(64, 8)
     
-    val kind: CXIdxAttrKind.Var
+    val kind: CXIdxAttrKindVar
         get() = memberAt(0)
     
     val cursor: CXCursor
@@ -2735,10 +3005,10 @@ class CXIdxEntityInfo(override val rawPtr: NativePtr) : CStructVar() {
     val kind: CXIdxEntityKind.Var
         get() = memberAt(0)
     
-    val templateKind: CXIdxEntityCXXTemplateKind.Var
+    val templateKind: CXIdxEntityCXXTemplateKindVar
         get() = memberAt(4)
     
-    val lang: CXIdxEntityLanguage.Var
+    val lang: CXIdxEntityLanguageVar
         get() = memberAt(8)
     
     val name: CPointerVar<CInt8Var>
@@ -2837,7 +3107,7 @@ class CXIdxObjCContainerDeclInfo(override val rawPtr: NativePtr) : CStructVar() 
     val declInfo: CPointerVar<CXIdxDeclInfo>
         get() = memberAt(0)
     
-    val kind: CXIdxObjCContainerKind.Var
+    val kind: CXIdxObjCContainerKindVar
         get() = memberAt(8)
     
 }
@@ -2954,7 +3224,7 @@ class CXIdxEntityRefInfo(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(88, 8)
     
-    val kind: CXIdxEntityRefKind.Var
+    val kind: CXIdxEntityRefKindVar
         get() = memberAt(0)
     
     val cursor: CXCursor
@@ -3004,28 +3274,17 @@ class IndexerCallbacks(override val rawPtr: NativePtr) : CStructVar() {
     
 }
 
-enum class clockid_t(val value: Int) {
-    _CLOCK_REALTIME(0),
-    _CLOCK_MONOTONIC(6),
-    _CLOCK_MONOTONIC_RAW(4),
-    _CLOCK_MONOTONIC_RAW_APPROX(5),
-    _CLOCK_UPTIME_RAW(8),
-    _CLOCK_UPTIME_RAW_APPROX(9),
-    _CLOCK_PROCESS_CPUTIME_ID(12),
-    _CLOCK_THREAD_CPUTIME_ID(16),
-    ;
-    
-    companion object {
-        fun byValue(value: Int) = clockid_t.values().find { it.value == value }!!
-    }
-    
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
-        companion object : Type(CInt32Var.size.toInt())
-        var value: clockid_t
-            get() = byValue(this.reinterpret<CInt32Var>().value)
-            set(value) { this.reinterpret<CInt32Var>().value = value.value }
-    }
-}
+typealias clockid_tVar = CInt32VarWithValueMappedTo<clockid_t>
+typealias clockid_t = Int
+
+val _CLOCK_REALTIME: clockid_t = 0
+val _CLOCK_MONOTONIC: clockid_t = 6
+val _CLOCK_MONOTONIC_RAW: clockid_t = 4
+val _CLOCK_MONOTONIC_RAW_APPROX: clockid_t = 5
+val _CLOCK_UPTIME_RAW: clockid_t = 8
+val _CLOCK_UPTIME_RAW_APPROX: clockid_t = 9
+val _CLOCK_PROCESS_CPUTIME_ID: clockid_t = 12
+val _CLOCK_THREAD_CPUTIME_ID: clockid_t = 16
 
 enum class CXErrorCode(val value: Int) {
     CXError_Success(0),
@@ -3066,24 +3325,13 @@ enum class CXAvailabilityKind(val value: Int) {
     }
 }
 
-enum class CXGlobalOptFlags(val value: Int) {
-    CXGlobalOpt_None(0),
-    CXGlobalOpt_ThreadBackgroundPriorityForIndexing(1),
-    CXGlobalOpt_ThreadBackgroundPriorityForEditing(2),
-    CXGlobalOpt_ThreadBackgroundPriorityForAll(3),
-    ;
-    
-    companion object {
-        fun byValue(value: Int) = CXGlobalOptFlags.values().find { it.value == value }!!
-    }
-    
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
-        companion object : Type(CInt32Var.size.toInt())
-        var value: CXGlobalOptFlags
-            get() = byValue(this.reinterpret<CInt32Var>().value)
-            set(value) { this.reinterpret<CInt32Var>().value = value.value }
-    }
-}
+typealias CXGlobalOptFlagsVar = CInt32VarWithValueMappedTo<CXGlobalOptFlags>
+typealias CXGlobalOptFlags = Int
+
+val CXGlobalOpt_None: CXGlobalOptFlags = 0
+val CXGlobalOpt_ThreadBackgroundPriorityForIndexing: CXGlobalOptFlags = 1
+val CXGlobalOpt_ThreadBackgroundPriorityForEditing: CXGlobalOptFlags = 2
+val CXGlobalOpt_ThreadBackgroundPriorityForAll: CXGlobalOptFlags = 3
 
 enum class CXDiagnosticSeverity(val value: Int) {
     CXDiagnostic_Ignored(0),
@@ -3124,68 +3372,35 @@ enum class CXLoadDiag_Error(val value: Int) {
     }
 }
 
-enum class CXDiagnosticDisplayOptions(val value: Int) {
-    CXDiagnostic_DisplaySourceLocation(1),
-    CXDiagnostic_DisplayColumn(2),
-    CXDiagnostic_DisplaySourceRanges(4),
-    CXDiagnostic_DisplayOption(8),
-    CXDiagnostic_DisplayCategoryId(16),
-    CXDiagnostic_DisplayCategoryName(32),
-    ;
-    
-    companion object {
-        fun byValue(value: Int) = CXDiagnosticDisplayOptions.values().find { it.value == value }!!
-    }
-    
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
-        companion object : Type(CInt32Var.size.toInt())
-        var value: CXDiagnosticDisplayOptions
-            get() = byValue(this.reinterpret<CInt32Var>().value)
-            set(value) { this.reinterpret<CInt32Var>().value = value.value }
-    }
-}
+typealias CXDiagnosticDisplayOptionsVar = CInt32VarWithValueMappedTo<CXDiagnosticDisplayOptions>
+typealias CXDiagnosticDisplayOptions = Int
 
-enum class CXTranslationUnit_Flags(val value: Int) {
-    CXTranslationUnit_None(0),
-    CXTranslationUnit_DetailedPreprocessingRecord(1),
-    CXTranslationUnit_Incomplete(2),
-    CXTranslationUnit_PrecompiledPreamble(4),
-    CXTranslationUnit_CacheCompletionResults(8),
-    CXTranslationUnit_ForSerialization(16),
-    CXTranslationUnit_CXXChainedPCH(32),
-    CXTranslationUnit_SkipFunctionBodies(64),
-    CXTranslationUnit_IncludeBriefCommentsInCodeCompletion(128),
-    CXTranslationUnit_CreatePreambleOnFirstParse(256),
-    CXTranslationUnit_KeepGoing(512),
-    ;
-    
-    companion object {
-        fun byValue(value: Int) = CXTranslationUnit_Flags.values().find { it.value == value }!!
-    }
-    
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
-        companion object : Type(CInt32Var.size.toInt())
-        var value: CXTranslationUnit_Flags
-            get() = byValue(this.reinterpret<CInt32Var>().value)
-            set(value) { this.reinterpret<CInt32Var>().value = value.value }
-    }
-}
+val CXDiagnostic_DisplaySourceLocation: CXDiagnosticDisplayOptions = 1
+val CXDiagnostic_DisplayColumn: CXDiagnosticDisplayOptions = 2
+val CXDiagnostic_DisplaySourceRanges: CXDiagnosticDisplayOptions = 4
+val CXDiagnostic_DisplayOption: CXDiagnosticDisplayOptions = 8
+val CXDiagnostic_DisplayCategoryId: CXDiagnosticDisplayOptions = 16
+val CXDiagnostic_DisplayCategoryName: CXDiagnosticDisplayOptions = 32
 
-enum class CXSaveTranslationUnit_Flags(val value: Int) {
-    CXSaveTranslationUnit_None(0),
-    ;
-    
-    companion object {
-        fun byValue(value: Int) = CXSaveTranslationUnit_Flags.values().find { it.value == value }!!
-    }
-    
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
-        companion object : Type(CInt32Var.size.toInt())
-        var value: CXSaveTranslationUnit_Flags
-            get() = byValue(this.reinterpret<CInt32Var>().value)
-            set(value) { this.reinterpret<CInt32Var>().value = value.value }
-    }
-}
+typealias CXTranslationUnit_FlagsVar = CInt32VarWithValueMappedTo<CXTranslationUnit_Flags>
+typealias CXTranslationUnit_Flags = Int
+
+val CXTranslationUnit_None: CXTranslationUnit_Flags = 0
+val CXTranslationUnit_DetailedPreprocessingRecord: CXTranslationUnit_Flags = 1
+val CXTranslationUnit_Incomplete: CXTranslationUnit_Flags = 2
+val CXTranslationUnit_PrecompiledPreamble: CXTranslationUnit_Flags = 4
+val CXTranslationUnit_CacheCompletionResults: CXTranslationUnit_Flags = 8
+val CXTranslationUnit_ForSerialization: CXTranslationUnit_Flags = 16
+val CXTranslationUnit_CXXChainedPCH: CXTranslationUnit_Flags = 32
+val CXTranslationUnit_SkipFunctionBodies: CXTranslationUnit_Flags = 64
+val CXTranslationUnit_IncludeBriefCommentsInCodeCompletion: CXTranslationUnit_Flags = 128
+val CXTranslationUnit_CreatePreambleOnFirstParse: CXTranslationUnit_Flags = 256
+val CXTranslationUnit_KeepGoing: CXTranslationUnit_Flags = 512
+
+typealias CXSaveTranslationUnit_FlagsVar = CInt32VarWithValueMappedTo<CXSaveTranslationUnit_Flags>
+typealias CXSaveTranslationUnit_Flags = Int
+
+val CXSaveTranslationUnit_None: CXSaveTranslationUnit_Flags = 0
 
 enum class CXSaveError(val value: Int) {
     CXSaveError_None(0),
@@ -3206,21 +3421,10 @@ enum class CXSaveError(val value: Int) {
     }
 }
 
-enum class CXReparse_Flags(val value: Int) {
-    CXReparse_None(0),
-    ;
-    
-    companion object {
-        fun byValue(value: Int) = CXReparse_Flags.values().find { it.value == value }!!
-    }
-    
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
-        companion object : Type(CInt32Var.size.toInt())
-        var value: CXReparse_Flags
-            get() = byValue(this.reinterpret<CInt32Var>().value)
-            set(value) { this.reinterpret<CInt32Var>().value = value.value }
-    }
-}
+typealias CXReparse_FlagsVar = CInt32VarWithValueMappedTo<CXReparse_Flags>
+typealias CXReparse_Flags = Int
+
+val CXReparse_None: CXReparse_Flags = 0
 
 enum class CXTUResourceUsageKind(val value: Int) {
     CXTUResourceUsage_AST(1),
@@ -3673,43 +3877,21 @@ enum class CXTemplateArgumentKind(val value: Int) {
     }
 }
 
-enum class CXTypeLayoutError(val value: Int) {
-    CXTypeLayoutError_Invalid(-1),
-    CXTypeLayoutError_Incomplete(-2),
-    CXTypeLayoutError_Dependent(-3),
-    CXTypeLayoutError_NotConstantSize(-4),
-    CXTypeLayoutError_InvalidFieldName(-5),
-    ;
-    
-    companion object {
-        fun byValue(value: Int) = CXTypeLayoutError.values().find { it.value == value }!!
-    }
-    
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
-        companion object : Type(CInt32Var.size.toInt())
-        var value: CXTypeLayoutError
-            get() = byValue(this.reinterpret<CInt32Var>().value)
-            set(value) { this.reinterpret<CInt32Var>().value = value.value }
-    }
-}
+typealias CXTypeLayoutErrorVar = CInt32VarWithValueMappedTo<CXTypeLayoutError>
+typealias CXTypeLayoutError = Int
 
-enum class CXRefQualifierKind(val value: Int) {
-    CXRefQualifier_None(0),
-    CXRefQualifier_LValue(1),
-    CXRefQualifier_RValue(2),
-    ;
-    
-    companion object {
-        fun byValue(value: Int) = CXRefQualifierKind.values().find { it.value == value }!!
-    }
-    
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
-        companion object : Type(CInt32Var.size.toInt())
-        var value: CXRefQualifierKind
-            get() = byValue(this.reinterpret<CInt32Var>().value)
-            set(value) { this.reinterpret<CInt32Var>().value = value.value }
-    }
-}
+val CXTypeLayoutError_Invalid: CXTypeLayoutError = -1
+val CXTypeLayoutError_Incomplete: CXTypeLayoutError = -2
+val CXTypeLayoutError_Dependent: CXTypeLayoutError = -3
+val CXTypeLayoutError_NotConstantSize: CXTypeLayoutError = -4
+val CXTypeLayoutError_InvalidFieldName: CXTypeLayoutError = -5
+
+typealias CXRefQualifierKindVar = CInt32VarWithValueMappedTo<CXRefQualifierKind>
+typealias CXRefQualifierKind = Int
+
+val CXRefQualifier_None: CXRefQualifierKind = 0
+val CXRefQualifier_LValue: CXRefQualifierKind = 1
+val CXRefQualifier_RValue: CXRefQualifierKind = 2
 
 enum class CX_CXXAccessSpecifier(val value: Int) {
     CX_CXXInvalidAccessSpecifier(0),
@@ -3771,74 +3953,41 @@ enum class CXChildVisitResult(val value: Int) {
     }
 }
 
-enum class CXObjCPropertyAttrKind(val value: Int) {
-    CXObjCPropertyAttr_noattr(0),
-    CXObjCPropertyAttr_readonly(1),
-    CXObjCPropertyAttr_getter(2),
-    CXObjCPropertyAttr_assign(4),
-    CXObjCPropertyAttr_readwrite(8),
-    CXObjCPropertyAttr_retain(16),
-    CXObjCPropertyAttr_copy(32),
-    CXObjCPropertyAttr_nonatomic(64),
-    CXObjCPropertyAttr_setter(128),
-    CXObjCPropertyAttr_atomic(256),
-    CXObjCPropertyAttr_weak(512),
-    CXObjCPropertyAttr_strong(1024),
-    CXObjCPropertyAttr_unsafe_unretained(2048),
-    CXObjCPropertyAttr_class(4096),
-    ;
-    
-    companion object {
-        fun byValue(value: Int) = CXObjCPropertyAttrKind.values().find { it.value == value }!!
-    }
-    
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
-        companion object : Type(CInt32Var.size.toInt())
-        var value: CXObjCPropertyAttrKind
-            get() = byValue(this.reinterpret<CInt32Var>().value)
-            set(value) { this.reinterpret<CInt32Var>().value = value.value }
-    }
-}
+typealias CXObjCPropertyAttrKindVar = CInt32VarWithValueMappedTo<CXObjCPropertyAttrKind>
+typealias CXObjCPropertyAttrKind = Int
 
-enum class CXObjCDeclQualifierKind(val value: Int) {
-    CXObjCDeclQualifier_None(0),
-    CXObjCDeclQualifier_In(1),
-    CXObjCDeclQualifier_Inout(2),
-    CXObjCDeclQualifier_Out(4),
-    CXObjCDeclQualifier_Bycopy(8),
-    CXObjCDeclQualifier_Byref(16),
-    CXObjCDeclQualifier_Oneway(32),
-    ;
-    
-    companion object {
-        fun byValue(value: Int) = CXObjCDeclQualifierKind.values().find { it.value == value }!!
-    }
-    
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
-        companion object : Type(CInt32Var.size.toInt())
-        var value: CXObjCDeclQualifierKind
-            get() = byValue(this.reinterpret<CInt32Var>().value)
-            set(value) { this.reinterpret<CInt32Var>().value = value.value }
-    }
-}
+val CXObjCPropertyAttr_noattr: CXObjCPropertyAttrKind = 0
+val CXObjCPropertyAttr_readonly: CXObjCPropertyAttrKind = 1
+val CXObjCPropertyAttr_getter: CXObjCPropertyAttrKind = 2
+val CXObjCPropertyAttr_assign: CXObjCPropertyAttrKind = 4
+val CXObjCPropertyAttr_readwrite: CXObjCPropertyAttrKind = 8
+val CXObjCPropertyAttr_retain: CXObjCPropertyAttrKind = 16
+val CXObjCPropertyAttr_copy: CXObjCPropertyAttrKind = 32
+val CXObjCPropertyAttr_nonatomic: CXObjCPropertyAttrKind = 64
+val CXObjCPropertyAttr_setter: CXObjCPropertyAttrKind = 128
+val CXObjCPropertyAttr_atomic: CXObjCPropertyAttrKind = 256
+val CXObjCPropertyAttr_weak: CXObjCPropertyAttrKind = 512
+val CXObjCPropertyAttr_strong: CXObjCPropertyAttrKind = 1024
+val CXObjCPropertyAttr_unsafe_unretained: CXObjCPropertyAttrKind = 2048
+val CXObjCPropertyAttr_class: CXObjCPropertyAttrKind = 4096
 
-enum class CXNameRefFlags(val value: Int) {
-    CXNameRange_WantQualifier(1),
-    CXNameRange_WantTemplateArgs(2),
-    CXNameRange_WantSinglePiece(4),
-    ;
-    
-    companion object {
-        fun byValue(value: Int) = CXNameRefFlags.values().find { it.value == value }!!
-    }
-    
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
-        companion object : Type(CInt32Var.size.toInt())
-        var value: CXNameRefFlags
-            get() = byValue(this.reinterpret<CInt32Var>().value)
-            set(value) { this.reinterpret<CInt32Var>().value = value.value }
-    }
-}
+typealias CXObjCDeclQualifierKindVar = CInt32VarWithValueMappedTo<CXObjCDeclQualifierKind>
+typealias CXObjCDeclQualifierKind = Int
+
+val CXObjCDeclQualifier_None: CXObjCDeclQualifierKind = 0
+val CXObjCDeclQualifier_In: CXObjCDeclQualifierKind = 1
+val CXObjCDeclQualifier_Inout: CXObjCDeclQualifierKind = 2
+val CXObjCDeclQualifier_Out: CXObjCDeclQualifierKind = 4
+val CXObjCDeclQualifier_Bycopy: CXObjCDeclQualifierKind = 8
+val CXObjCDeclQualifier_Byref: CXObjCDeclQualifierKind = 16
+val CXObjCDeclQualifier_Oneway: CXObjCDeclQualifierKind = 32
+
+typealias CXNameRefFlagsVar = CInt32VarWithValueMappedTo<CXNameRefFlags>
+typealias CXNameRefFlags = Int
+
+val CXNameRange_WantQualifier: CXNameRefFlags = 1
+val CXNameRange_WantTemplateArgs: CXNameRefFlags = 2
+val CXNameRange_WantSinglePiece: CXNameRefFlags = 4
 
 enum class CXTokenKind(val value: Int) {
     CXToken_Punctuation(0),
@@ -3896,62 +4045,40 @@ enum class CXCompletionChunkKind(val value: Int) {
     }
 }
 
-enum class CXCodeComplete_Flags(val value: Int) {
-    CXCodeComplete_IncludeMacros(1),
-    CXCodeComplete_IncludeCodePatterns(2),
-    CXCodeComplete_IncludeBriefComments(4),
-    ;
-    
-    companion object {
-        fun byValue(value: Int) = CXCodeComplete_Flags.values().find { it.value == value }!!
-    }
-    
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
-        companion object : Type(CInt32Var.size.toInt())
-        var value: CXCodeComplete_Flags
-            get() = byValue(this.reinterpret<CInt32Var>().value)
-            set(value) { this.reinterpret<CInt32Var>().value = value.value }
-    }
-}
+typealias CXCodeComplete_FlagsVar = CInt32VarWithValueMappedTo<CXCodeComplete_Flags>
+typealias CXCodeComplete_Flags = Int
 
-enum class CXCompletionContext(val value: Int) {
-    CXCompletionContext_Unexposed(0),
-    CXCompletionContext_AnyType(1),
-    CXCompletionContext_AnyValue(2),
-    CXCompletionContext_ObjCObjectValue(4),
-    CXCompletionContext_ObjCSelectorValue(8),
-    CXCompletionContext_CXXClassTypeValue(16),
-    CXCompletionContext_DotMemberAccess(32),
-    CXCompletionContext_ArrowMemberAccess(64),
-    CXCompletionContext_ObjCPropertyAccess(128),
-    CXCompletionContext_EnumTag(256),
-    CXCompletionContext_UnionTag(512),
-    CXCompletionContext_StructTag(1024),
-    CXCompletionContext_ClassTag(2048),
-    CXCompletionContext_Namespace(4096),
-    CXCompletionContext_NestedNameSpecifier(8192),
-    CXCompletionContext_ObjCInterface(16384),
-    CXCompletionContext_ObjCProtocol(32768),
-    CXCompletionContext_ObjCCategory(65536),
-    CXCompletionContext_ObjCInstanceMessage(131072),
-    CXCompletionContext_ObjCClassMessage(262144),
-    CXCompletionContext_ObjCSelectorName(524288),
-    CXCompletionContext_MacroName(1048576),
-    CXCompletionContext_NaturalLanguage(2097152),
-    CXCompletionContext_Unknown(4194303),
-    ;
-    
-    companion object {
-        fun byValue(value: Int) = CXCompletionContext.values().find { it.value == value }!!
-    }
-    
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
-        companion object : Type(CInt32Var.size.toInt())
-        var value: CXCompletionContext
-            get() = byValue(this.reinterpret<CInt32Var>().value)
-            set(value) { this.reinterpret<CInt32Var>().value = value.value }
-    }
-}
+val CXCodeComplete_IncludeMacros: CXCodeComplete_Flags = 1
+val CXCodeComplete_IncludeCodePatterns: CXCodeComplete_Flags = 2
+val CXCodeComplete_IncludeBriefComments: CXCodeComplete_Flags = 4
+
+typealias CXCompletionContextVar = CInt32VarWithValueMappedTo<CXCompletionContext>
+typealias CXCompletionContext = Int
+
+val CXCompletionContext_Unexposed: CXCompletionContext = 0
+val CXCompletionContext_AnyType: CXCompletionContext = 1
+val CXCompletionContext_AnyValue: CXCompletionContext = 2
+val CXCompletionContext_ObjCObjectValue: CXCompletionContext = 4
+val CXCompletionContext_ObjCSelectorValue: CXCompletionContext = 8
+val CXCompletionContext_CXXClassTypeValue: CXCompletionContext = 16
+val CXCompletionContext_DotMemberAccess: CXCompletionContext = 32
+val CXCompletionContext_ArrowMemberAccess: CXCompletionContext = 64
+val CXCompletionContext_ObjCPropertyAccess: CXCompletionContext = 128
+val CXCompletionContext_EnumTag: CXCompletionContext = 256
+val CXCompletionContext_UnionTag: CXCompletionContext = 512
+val CXCompletionContext_StructTag: CXCompletionContext = 1024
+val CXCompletionContext_ClassTag: CXCompletionContext = 2048
+val CXCompletionContext_Namespace: CXCompletionContext = 4096
+val CXCompletionContext_NestedNameSpecifier: CXCompletionContext = 8192
+val CXCompletionContext_ObjCInterface: CXCompletionContext = 16384
+val CXCompletionContext_ObjCProtocol: CXCompletionContext = 32768
+val CXCompletionContext_ObjCCategory: CXCompletionContext = 65536
+val CXCompletionContext_ObjCInstanceMessage: CXCompletionContext = 131072
+val CXCompletionContext_ObjCClassMessage: CXCompletionContext = 262144
+val CXCompletionContext_ObjCSelectorName: CXCompletionContext = 524288
+val CXCompletionContext_MacroName: CXCompletionContext = 1048576
+val CXCompletionContext_NaturalLanguage: CXCompletionContext = 2097152
+val CXCompletionContext_Unknown: CXCompletionContext = 4194303
 
 enum class CXEvalResultKind(val value: Int) {
     CXEval_Int(1),
@@ -4052,134 +4179,57 @@ enum class CXIdxEntityKind(val value: Int) {
     }
 }
 
-enum class CXIdxEntityLanguage(val value: Int) {
-    CXIdxEntityLang_None(0),
-    CXIdxEntityLang_C(1),
-    CXIdxEntityLang_ObjC(2),
-    CXIdxEntityLang_CXX(3),
-    ;
-    
-    companion object {
-        fun byValue(value: Int) = CXIdxEntityLanguage.values().find { it.value == value }!!
-    }
-    
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
-        companion object : Type(CInt32Var.size.toInt())
-        var value: CXIdxEntityLanguage
-            get() = byValue(this.reinterpret<CInt32Var>().value)
-            set(value) { this.reinterpret<CInt32Var>().value = value.value }
-    }
-}
+typealias CXIdxEntityLanguageVar = CInt32VarWithValueMappedTo<CXIdxEntityLanguage>
+typealias CXIdxEntityLanguage = Int
 
-enum class CXIdxEntityCXXTemplateKind(val value: Int) {
-    CXIdxEntity_NonTemplate(0),
-    CXIdxEntity_Template(1),
-    CXIdxEntity_TemplatePartialSpecialization(2),
-    CXIdxEntity_TemplateSpecialization(3),
-    ;
-    
-    companion object {
-        fun byValue(value: Int) = CXIdxEntityCXXTemplateKind.values().find { it.value == value }!!
-    }
-    
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
-        companion object : Type(CInt32Var.size.toInt())
-        var value: CXIdxEntityCXXTemplateKind
-            get() = byValue(this.reinterpret<CInt32Var>().value)
-            set(value) { this.reinterpret<CInt32Var>().value = value.value }
-    }
-}
+val CXIdxEntityLang_None: CXIdxEntityLanguage = 0
+val CXIdxEntityLang_C: CXIdxEntityLanguage = 1
+val CXIdxEntityLang_ObjC: CXIdxEntityLanguage = 2
+val CXIdxEntityLang_CXX: CXIdxEntityLanguage = 3
 
-enum class CXIdxAttrKind(val value: Int) {
-    CXIdxAttr_Unexposed(0),
-    CXIdxAttr_IBAction(1),
-    CXIdxAttr_IBOutlet(2),
-    CXIdxAttr_IBOutletCollection(3),
-    ;
-    
-    companion object {
-        fun byValue(value: Int) = CXIdxAttrKind.values().find { it.value == value }!!
-    }
-    
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
-        companion object : Type(CInt32Var.size.toInt())
-        var value: CXIdxAttrKind
-            get() = byValue(this.reinterpret<CInt32Var>().value)
-            set(value) { this.reinterpret<CInt32Var>().value = value.value }
-    }
-}
+typealias CXIdxEntityCXXTemplateKindVar = CInt32VarWithValueMappedTo<CXIdxEntityCXXTemplateKind>
+typealias CXIdxEntityCXXTemplateKind = Int
 
-enum class CXIdxDeclInfoFlags(val value: Int) {
-    CXIdxDeclFlag_Skipped(1),
-    ;
-    
-    companion object {
-        fun byValue(value: Int) = CXIdxDeclInfoFlags.values().find { it.value == value }!!
-    }
-    
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
-        companion object : Type(CInt32Var.size.toInt())
-        var value: CXIdxDeclInfoFlags
-            get() = byValue(this.reinterpret<CInt32Var>().value)
-            set(value) { this.reinterpret<CInt32Var>().value = value.value }
-    }
-}
+val CXIdxEntity_NonTemplate: CXIdxEntityCXXTemplateKind = 0
+val CXIdxEntity_Template: CXIdxEntityCXXTemplateKind = 1
+val CXIdxEntity_TemplatePartialSpecialization: CXIdxEntityCXXTemplateKind = 2
+val CXIdxEntity_TemplateSpecialization: CXIdxEntityCXXTemplateKind = 3
 
-enum class CXIdxObjCContainerKind(val value: Int) {
-    CXIdxObjCContainer_ForwardRef(0),
-    CXIdxObjCContainer_Interface(1),
-    CXIdxObjCContainer_Implementation(2),
-    ;
-    
-    companion object {
-        fun byValue(value: Int) = CXIdxObjCContainerKind.values().find { it.value == value }!!
-    }
-    
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
-        companion object : Type(CInt32Var.size.toInt())
-        var value: CXIdxObjCContainerKind
-            get() = byValue(this.reinterpret<CInt32Var>().value)
-            set(value) { this.reinterpret<CInt32Var>().value = value.value }
-    }
-}
+typealias CXIdxAttrKindVar = CInt32VarWithValueMappedTo<CXIdxAttrKind>
+typealias CXIdxAttrKind = Int
 
-enum class CXIdxEntityRefKind(val value: Int) {
-    CXIdxEntityRef_Direct(1),
-    CXIdxEntityRef_Implicit(2),
-    ;
-    
-    companion object {
-        fun byValue(value: Int) = CXIdxEntityRefKind.values().find { it.value == value }!!
-    }
-    
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
-        companion object : Type(CInt32Var.size.toInt())
-        var value: CXIdxEntityRefKind
-            get() = byValue(this.reinterpret<CInt32Var>().value)
-            set(value) { this.reinterpret<CInt32Var>().value = value.value }
-    }
-}
+val CXIdxAttr_Unexposed: CXIdxAttrKind = 0
+val CXIdxAttr_IBAction: CXIdxAttrKind = 1
+val CXIdxAttr_IBOutlet: CXIdxAttrKind = 2
+val CXIdxAttr_IBOutletCollection: CXIdxAttrKind = 3
 
-enum class CXIndexOptFlags(val value: Int) {
-    CXIndexOpt_None(0),
-    CXIndexOpt_SuppressRedundantRefs(1),
-    CXIndexOpt_IndexFunctionLocalSymbols(2),
-    CXIndexOpt_IndexImplicitTemplateInstantiations(4),
-    CXIndexOpt_SuppressWarnings(8),
-    CXIndexOpt_SkipParsedBodiesInSession(16),
-    ;
-    
-    companion object {
-        fun byValue(value: Int) = CXIndexOptFlags.values().find { it.value == value }!!
-    }
-    
-    class Var(override val rawPtr: NativePtr) : CEnumVar() {
-        companion object : Type(CInt32Var.size.toInt())
-        var value: CXIndexOptFlags
-            get() = byValue(this.reinterpret<CInt32Var>().value)
-            set(value) { this.reinterpret<CInt32Var>().value = value.value }
-    }
-}
+typealias CXIdxDeclInfoFlagsVar = CInt32VarWithValueMappedTo<CXIdxDeclInfoFlags>
+typealias CXIdxDeclInfoFlags = Int
+
+val CXIdxDeclFlag_Skipped: CXIdxDeclInfoFlags = 1
+
+typealias CXIdxObjCContainerKindVar = CInt32VarWithValueMappedTo<CXIdxObjCContainerKind>
+typealias CXIdxObjCContainerKind = Int
+
+val CXIdxObjCContainer_ForwardRef: CXIdxObjCContainerKind = 0
+val CXIdxObjCContainer_Interface: CXIdxObjCContainerKind = 1
+val CXIdxObjCContainer_Implementation: CXIdxObjCContainerKind = 2
+
+typealias CXIdxEntityRefKindVar = CInt32VarWithValueMappedTo<CXIdxEntityRefKind>
+typealias CXIdxEntityRefKind = Int
+
+val CXIdxEntityRef_Direct: CXIdxEntityRefKind = 1
+val CXIdxEntityRef_Implicit: CXIdxEntityRefKind = 2
+
+typealias CXIndexOptFlagsVar = CInt32VarWithValueMappedTo<CXIndexOptFlags>
+typealias CXIndexOptFlags = Int
+
+val CXIndexOpt_None: CXIndexOptFlags = 0
+val CXIndexOpt_SuppressRedundantRefs: CXIndexOptFlags = 1
+val CXIndexOpt_IndexFunctionLocalSymbols: CXIndexOptFlags = 2
+val CXIndexOpt_IndexImplicitTemplateInstantiations: CXIndexOptFlags = 4
+val CXIndexOpt_SuppressWarnings: CXIndexOptFlags = 8
+val CXIndexOpt_SkipParsedBodiesInSession: CXIndexOptFlags = 16
 
 typealias __darwin_time_tVar = CInt64VarWithValueMappedTo<__darwin_time_t>
 typealias __darwin_time_t = Long
@@ -4261,6 +4311,9 @@ typealias CXIdxClientFile = COpaquePointer
 
 typealias CXFieldVisitorVar = CPointerVarWithValueMappedTo<CXFieldVisitor>
 typealias CXFieldVisitor = CFunctionPointer<CFunctionType4>
+
+typealias __darwin_wint_tVar = CInt32VarWithValueMappedTo<__darwin_wint_t>
+typealias __darwin_wint_t = Int
 
 object CFunctionType1 : CAdaptedFunctionTypeImpl<(CXCursor, CXCursor, COpaquePointer?) -> CXChildVisitResult>(UInt32, Struct(UInt32, SInt32, Struct(Pointer, Pointer, Pointer)), Struct(UInt32, SInt32, Struct(Pointer, Pointer, Pointer)), Pointer) {
     override fun invoke(function: (CXCursor, CXCursor, COpaquePointer?) -> CXChildVisitResult,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {

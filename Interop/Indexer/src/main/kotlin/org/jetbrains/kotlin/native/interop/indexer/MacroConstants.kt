@@ -199,7 +199,7 @@ private fun collectMacroConstantsNames(library: NativeLibrary): List<String> {
     val index = clang_createIndex(excludeDeclarationsFromPCH = 0, displayDiagnostics = 0)!!
     try {
         // Include macros into AST:
-        val options = CXTranslationUnit_Flags.CXTranslationUnit_DetailedPreprocessingRecord.value
+        val options = CXTranslationUnit_DetailedPreprocessingRecord
 
         val translationUnit = library.parse(index, options).ensureNoCompileErrors()
         try {

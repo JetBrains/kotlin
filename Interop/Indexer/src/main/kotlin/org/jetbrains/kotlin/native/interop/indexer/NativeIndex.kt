@@ -51,14 +51,14 @@ abstract class StructDef(val size: Long, val align: Int,
 /**
  * C enum value.
  */
-class EnumValue(val name: String, val value: Long)
+class EnumConstant(val name: String, val value: Long, val isExplicitlyDefined: Boolean)
 
 /**
  * C enum definition.
  */
 abstract class EnumDef(val spelling: String, val baseType: PrimitiveType) {
 
-    abstract val values: List<EnumValue>
+    abstract val constants: List<EnumConstant>
 }
 
 /**

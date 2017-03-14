@@ -207,9 +207,18 @@ private fun processLib(konanHome: String,
 
     val libName = fqParts.joinToString("") + "stubs"
 
-    val nativeIndex = buildNativeIndex(NativeLibrary(headerFiles, compilerOpts, language))
+    val library = NativeLibrary(headerFiles, compilerOpts, language)
+    val configuration = InteropConfiguration(
+            library = library,
+            pkgName = outKtPkg,
+            excludedFunctions = excludedFunctions,
+            strictEnums = config.getSpaceSeparated("strictEnums").toSet(),
+            nonStrictEnums = config.getSpaceSeparated("nonStrictEnums").toSet()
+    )
 
-    val gen = StubGenerator(nativeIndex, outKtPkg, libName, excludedFunctions, generateShims, platform)
+    val nativeIndex = buildNativeIndex(library)
+
+    val gen = StubGenerator(nativeIndex, configuration, libName, generateShims, platform)
 
     outKtFile.parentFile.mkdirs()
     outKtFile.bufferedWriter().use { out ->
@@ -218,16 +227,15 @@ private fun processLib(konanHome: String,
         }
     }
 
+    File(nativeLibsDir).mkdirs()
 
-    val outCFile = createTempFile(suffix = ".c")
+    val outCFile = File("$nativeLibsDir/$libName.c") // TODO: select the better location.
 
     outCFile.bufferedWriter().use { out ->
         gen.withOutput({ out.appendln(it) }) {
             gen.generateCFile(headerFiles)
         }
     }
-
-    File(nativeLibsDir).mkdirs()
 
     val workDir = defFile?.parentFile ?: File(System.getProperty("java.io.tmpdir"))
 
@@ -260,6 +268,4 @@ private fun processLib(konanHome: String,
 
         runCmd(compilerCmd, workDir, verbose)
     }
-
-    outCFile.delete()
 }

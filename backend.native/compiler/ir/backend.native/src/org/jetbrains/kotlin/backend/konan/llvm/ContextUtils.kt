@@ -187,12 +187,8 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
         val functionType = getFunctionType(externalFunction)
         val function = LLVMAddFunction(llvmModule, name, functionType)!!
-        val attributes = LLVMGetFunctionAttrSet(externalFunction)
-        for (attribute in LLVMAttribute.values()) {
-            if (attribute in attributes) {
-                LLVMAddFunctionAttr(function, attribute)
-            }
-        }
+        val attributes = LLVMGetFunctionAttr(externalFunction)
+        LLVMAddFunctionAttr(function, attributes)
         return function
     }
 
@@ -217,7 +213,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
     private fun externalNounwindFunction(name: String, type: LLVMTypeRef): LLVMValueRef {
         val function = externalFunction(name, type)
-        LLVMAddFunctionAttr(function, LLVMAttribute.LLVMNoUnwindAttribute)
+        LLVMAddFunctionAttr(function, LLVMNoUnwindAttribute)
         return function
     }
 

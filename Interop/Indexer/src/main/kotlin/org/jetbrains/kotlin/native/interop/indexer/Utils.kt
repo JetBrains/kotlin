@@ -99,6 +99,17 @@ internal fun visitChildren(translationUnit: CXTranslationUnit, visitor: CursorVi
     }
 }
 
+internal fun CXCursor.isLeaf(): Boolean {
+    var hasChildren = false
+
+    visitChildren(this) { _, _ ->
+        hasChildren = true
+        CXChildVisitResult.CXChildVisit_Break
+    }
+
+    return !hasChildren
+}
+
 internal fun List<String>.toNativeStringArray(placement: NativePlacement): CArray<CPointerVar<CInt8Var>> {
     return placement.allocArray(this.size) { index ->
         this.value = this@toNativeStringArray[index].toCString(placement)!!.asCharPtr()
@@ -141,7 +152,7 @@ internal fun NativeLibrary.precompileHeaders(): NativeLibrary {
 
     val index = clang_createIndex(excludeDeclarationsFromPCH = 0, displayDiagnostics = 0)!!
     try {
-        val options = CXTranslationUnit_Flags.CXTranslationUnit_ForSerialization.value
+        val options = CXTranslationUnit_ForSerialization
         val translationUnit = this.parse(index, options).ensureNoCompileErrors()
         try {
             clang_saveTranslationUnit(translationUnit, precompiledHeader.absolutePath, 0)

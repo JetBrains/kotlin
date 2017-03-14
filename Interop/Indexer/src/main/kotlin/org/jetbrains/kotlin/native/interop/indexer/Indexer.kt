@@ -16,7 +16,7 @@ private class StructDefImpl(size: Long, align: Int, decl: StructDecl, hasNatural
 }
 
 private class EnumDefImpl(spelling: String, type: PrimitiveType) : EnumDef(spelling, type) {
-    override val values = mutableListOf<EnumValue>()
+    override val constants = mutableListOf<EnumConstant>()
 }
 
 internal class NativeIndexImpl(val language: Language) : NativeIndex() {
@@ -276,14 +276,15 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
                 val name = entityName!!
                 val value = clang_getEnumConstantDeclValue(info.cursor)
 
-                val values = getEnumDefAt(container.cursor).values
-                val existingValue = values.find { it.name == name }
-                if (existingValue == null) {
-                    values.add(EnumValue(name, value))
+                val constants = getEnumDefAt(container.cursor).constants
+                val existingConstant = constants.find { it.name == name }
+                if (existingConstant == null) {
+                    val constant = EnumConstant(name, value, isExplicitlyDefined = !cursor.isLeaf())
+                    constants.add(constant)
                 } else {
                     // in some cases Clang may index the same definition multiple times; ignore redeclaration
                     // TODO: implement the same fix for structs
-                    assert (existingValue.value == value)
+                    assert (existingConstant.value == value)
                 }
             }
         }
