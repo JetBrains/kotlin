@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.types.KotlinType
 
 //-----------------------------------------------------------------------------//
@@ -70,7 +71,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         val functionDescriptor = expression.descriptor as FunctionDescriptor
         if (functionDescriptor.isInline) {
             val inlineFunctionBody = inlineFunction(expression)
-//            inlineFunctionBody.accept(this, null)                                         //
+//            inlineFunctionBody.transformChildrenVoid(this)                                         // TODO
             return inlineFunctionBody                                                       // Return newly created IrInlineBody instead of IrCall.
         }
 
@@ -86,9 +87,9 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
             .functions[functionDescriptor.original]                                         // Get FunctionDeclaration by FunctionDescriptor.
 
         if (functionDeclaration == null) return irCall                                      // Function is declared in another module.
-        print("  inline file: ${currentFile!!.fileEntry.name} ")                            // TODO debug output
-        print("function: ${currentFunction!!.descriptor.name} ")                            // TODO debug output
-        println("call: ${functionDescriptor.name} ${irCall.startOffset}")                   // TODO debug output
+//        print("  inline file: ${currentFile!!.fileEntry.name} ")                            // TODO debug output
+//        print("function: ${currentFunction!!.descriptor.name} ")                            // TODO debug output
+//        println("call: ${functionDescriptor.name} ${irCall.startOffset}")                   // TODO debug output
 
         val copyFuncDeclaration = functionDeclaration.accept(DeepCopyIrTree(),              // Create copy of the function.
             null) as IrFunction
@@ -102,16 +103,15 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         val statements  = blockBody.statements
         val inlineBody  = IrInlineFunctionBody(startOffset, endOffset, returnType, null, statements)
 
-
         val parameterToArgument: MutableList <Pair <ValueDescriptor, IrExpression>> = irCall.getArguments().toMutableList()
-        val typeArgsMap = (irCall as IrMemberAccessExpressionBase).typeArguments      // If there are no type args - do nothing.
+        val lambdaInliner = LambdaInliner(parameterToArgument)
+        inlineBody.transformChildrenVoid(lambdaInliner)
+
+        val typeArgsMap = (irCall as IrMemberAccessExpressionBase).typeArguments
         val statementsBuf = mutableListOf<IrStatement>()
         val transformer = ParametersTransformer(parameterToArgument, typeArgsMap, statementsBuf)
-        inlineBody.accept(transformer, null)                                                // Replace parameters with expression.
+        inlineBody.transformChildrenVoid(transformer)                                                // Replace parameters with expression.
         inlineBody.statements.addAll(0, statementsBuf)
-
-        val lambdaInliner = LambdaInliner(parameterToArgument)
-        inlineBody.accept(lambdaInliner, null)
 
         return inlineBody
     }
@@ -251,51 +251,51 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
         //---------------------------------------------------------------------//
 
-    fun getLambdaFunction(lambdaArgument: IrExpression): IrFunction? {
-        if (lambdaArgument !is IrBlock) return null
+        fun getLambdaFunction(lambdaArgument: IrExpression): IrFunction? {
+            if (lambdaArgument !is IrBlock) return null
 
-        if (lambdaArgument.origin != IrStatementOrigin.ANONYMOUS_FUNCTION &&
-                lambdaArgument.origin != IrStatementOrigin.LAMBDA) {
+            if (lambdaArgument.origin != IrStatementOrigin.ANONYMOUS_FUNCTION &&
+                    lambdaArgument.origin != IrStatementOrigin.LAMBDA) {
 
-            return null
-        }
+                return null
+            }
 
-        // TODO: the following checks must be asserts, however it is not sane until the bugs are fixed.
+            // TODO: the following checks must be asserts, however it is not sane until the bugs are fixed.
 
-        val statements = lambdaArgument.statements
-        if (statements.size != 2) return null
+            val statements = lambdaArgument.statements
+            if (statements.size != 2) return null
 
-        val irFunction = statements[0]
-        if (irFunction !is IrFunction) return null                                          // TODO
+            val irFunction = statements[0]
+            if (irFunction !is IrFunction) return null                                          // TODO
 
-        val irCallableReference = statements[1]
-        if (irCallableReference !is IrCallableReference ||
+            val irCallableReference = statements[1]
+            if (irCallableReference !is IrCallableReference ||
                 irCallableReference.descriptor.original != irFunction.descriptor ||
                 irCallableReference.getArguments().isNotEmpty()) {
 
-            return null
-        }
+                return null
+            }
 
-        return irFunction
-    }
+            return irFunction
+        }
 
         //---------------------------------------------------------------------//
 
         fun inlineLambda(irCall: IrCall): IrExpression {
 
             val dispatchReceiver = irCall.dispatchReceiver as IrGetValue                    //
-            val substitute = substituteMap.find {                                         // Find expression to replace this parameter.
+            val substitute = substituteMap.find {                                           // Find expression to replace this parameter.
                 it.first == dispatchReceiver.descriptor
             }
             if (substitute == null) return super.visitCall(irCall)                          // It is not function parameter - nothing to substitute.
 
-        val lambdaArgument = substitute.second
-        val lambdaFunction = getLambdaFunction(lambdaArgument)
+            val lambdaArgument = substitute.second
+            val lambdaFunction = getLambdaFunction(lambdaArgument)
 
-        if (lambdaFunction == null) return super.visitCall(irCall)                          // TODO
+            if (lambdaFunction == null) return super.visitCall(irCall)                      // TODO
 
             val parameters = lambdaFunction.descriptor.valueParameters                      // Get lambda function parameters.
-            val substituteMap = parameters.map {                                                // Iterate parameters.
+            val substituteMap = parameters.map {                                            // Iterate parameters.
                 val parameter = it as ValueDescriptor
                 val argument  = irCall.getValueArgument(it.index)                           // Get corresponding argument.
                 parameter to argument!!                                                     // Create (parameter -> argument) pair.

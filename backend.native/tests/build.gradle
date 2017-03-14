@@ -1454,6 +1454,11 @@ task inline10(type: RunKonanTest) {
     source = "codegen/inline/inline10.kt"
 }
 
+task inline13(type: RunKonanTest) {
+    goldValue = "true\n"
+    source = "codegen/inline/inline13.kt"
+}
+
 task inline14(type: RunKonanTest) {
     goldValue = "9\n"
     source = "codegen/inline/inline14.kt"
@@ -1496,6 +1501,11 @@ task inline20(type: RunKonanTest) {
 task inline21(type: RunKonanTest) {
     goldValue = "OK\n"
     source = "codegen/inline/inline21.kt"
+}
+
+task inline22(type: RunKonanTest) {
+    goldValue = "14\n"
+    source = "codegen/inline/inline22.kt"
 }
 
 kotlinNativeInterop {
