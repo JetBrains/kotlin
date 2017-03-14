@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.ShortenReferences
-import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -109,15 +107,6 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
             // No exotic receiver types
             if (receiverType.isTypeParameter() || receiverType.isError || receiverType.isDynamic() ||
                 !receiverType.constructor.isDenotable || receiverType.isFunctionType) return false
-            val receiverDeclarationDescriptor = receiverType.constructor.declarationDescriptor
-            if (receiverDeclarationDescriptor is ClassDescriptor) {
-                // No references to object members
-                if (receiverDeclarationDescriptor.kind == ClassKind.OBJECT) return false
-                // No invisible receiver types
-                if (!receiverDeclarationDescriptor.isVisible(
-                        explicitReceiver, null, context, explicitReceiver.getResolutionFacade()
-                )) return false
-            }
         }
 
         // Same lambda / references function parameter order
