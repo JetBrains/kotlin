@@ -1352,10 +1352,260 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         }
     }
 
+    fun testSubmoduleArgsInheritance() {
+        createProjectSubDirs("src/main/kotlin", "myModule1/src/main/kotlin", "myModule2/src/main/kotlin", "myModule3/src/main/kotlin")
+
+        val mainPom = createProjectPom("""
+        <groupId>test</groupId>
+        <artifactId>project</artifactId>
+        <version>1.0.0</version>
+        <packaging>pom</packaging>
+
+        <dependencies>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>$kotlinVersion</version>
+            </dependency>
+        </dependencies>
+
+        <build>
+            <sourceDirectory>src/main/kotlin</sourceDirectory>
+
+            <plugins>
+                <plugin>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+
+                    <executions>
+                        <execution>
+                            <id>compile</id>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <jvmTarget>1.7</jvmTarget>
+                        <jdkHome>temp</jdkHome>
+                        <languageVersion>1.1</languageVersion>
+                        <apiVersion>1.0</apiVersion>
+                        <args>
+                            <arg>-java-parameters</arg>
+                            <arg>-Xdump-declarations-to</arg>
+                            <arg>dumpDir</arg>
+                        </args>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+        """)
+
+        val modulePom1 = createModulePom(
+                "myModule1",
+                """
+
+                <parent>
+                    <groupId>test</groupId>
+                    <artifactId>project</artifactId>
+                    <version>1.0.0</version>
+                </parent>
+
+                <groupId>test</groupId>
+                <artifactId>myModule1</artifactId>
+                <version>1.0.0</version>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-stdlib</artifactId>
+                        <version>$kotlinVersion</version>
+                    </dependency>
+                </dependencies>
+
+                <build>
+                    <sourceDirectory>myModule1/src/main/kotlin</sourceDirectory>
+
+                    <plugins>
+                        <plugin>
+                            <groupId>org.jetbrains.kotlin</groupId>
+                            <artifactId>kotlin-maven-plugin</artifactId>
+
+                            <executions>
+                                <execution>
+                                    <id>compile</id>
+                                    <phase>compile</phase>
+                                    <goals>
+                                        <goal>compile</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+
+                            <configuration>
+                                <jvmTarget>1.8</jvmTarget>
+                                <args>
+                                    <arg>-Xdump-declarations-to</arg>
+                                    <arg>dumpDir2</arg>
+                                </args>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </build>
+                """
+        )
+
+        val modulePom2 = createModulePom(
+                "myModule2",
+                """
+
+                <parent>
+                    <groupId>test</groupId>
+                    <artifactId>project</artifactId>
+                    <version>1.0.0</version>
+                </parent>
+
+                <groupId>test</groupId>
+                <artifactId>myModule2</artifactId>
+                <version>1.0.0</version>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-stdlib</artifactId>
+                        <version>$kotlinVersion</version>
+                    </dependency>
+                </dependencies>
+
+                <build>
+                    <sourceDirectory>myModule2/src/main/kotlin</sourceDirectory>
+
+                    <plugins>
+                        <plugin>
+                            <groupId>org.jetbrains.kotlin</groupId>
+                            <artifactId>kotlin-maven-plugin</artifactId>
+
+                            <executions>
+                                <execution>
+                                    <id>compile</id>
+                                    <phase>compile</phase>
+                                    <goals>
+                                        <goal>compile</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+
+                            <configuration>
+                                <jvmTarget>1.8</jvmTarget>
+                                <args combine.children="append">
+                                    <arg>-jdk-home</arg>
+                                    <arg>temp2</arg>
+                                </args>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </build>
+                """
+        )
+
+        val modulePom3 = createModulePom(
+                "myModule3",
+                """
+
+                <parent>
+                    <groupId>test</groupId>
+                    <artifactId>project</artifactId>
+                    <version>1.0.0</version>
+                </parent>
+
+                <groupId>test</groupId>
+                <artifactId>myModule3</artifactId>
+                <version>1.0.0</version>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-stdlib</artifactId>
+                        <version>$kotlinVersion</version>
+                    </dependency>
+                </dependencies>
+
+                <build>
+                    <sourceDirectory>myModule3/src/main/kotlin</sourceDirectory>
+
+                    <plugins>
+                        <plugin>
+                            <groupId>org.jetbrains.kotlin</groupId>
+                            <artifactId>kotlin-maven-plugin</artifactId>
+
+                            <executions>
+                                <execution>
+                                    <id>compile</id>
+                                    <phase>compile</phase>
+                                    <goals>
+                                        <goal>compile</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+
+                            <configuration combine.self="override">
+                                <jvmTarget>1.8</jvmTarget>
+                                <args>
+                                    <arg>-jdk-home</arg>
+                                    <arg>temp2</arg>
+                                </args>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </build>
+                """
+        )
+
+        importProjects(mainPom, modulePom1, modulePom2, modulePom3)
+
+        assertModules("project", "myModule1", "myModule2", "myModule3")
+        assertImporterStatePresent()
+
+        with (facetSettings("myModule1")) {
+            Assert.assertEquals("JVM 1.8", targetPlatformKind!!.description)
+            Assert.assertEquals("1.1", languageLevel!!.description)
+            Assert.assertEquals("1.0", apiLevel!!.description)
+            Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
+            Assert.assertEquals(
+                    listOf("-jdk-home", "temp", "-Xdump-declarations-to", "dumpDir2"),
+                    compilerSettings!!.additionalArgumentsAsList
+            )
+        }
+
+        with (facetSettings("myModule2")) {
+            Assert.assertEquals("JVM 1.8", targetPlatformKind!!.description)
+            Assert.assertEquals("1.1", languageLevel!!.description)
+            Assert.assertEquals("1.0", apiLevel!!.description)
+            Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
+            Assert.assertEquals(
+                    listOf("-jdk-home", "temp2", "-java-parameters", "-Xdump-declarations-to", "dumpDir"),
+                    compilerSettings!!.additionalArgumentsAsList
+            )
+        }
+
+        with (facetSettings("myModule3")) {
+            Assert.assertEquals("JVM 1.8", targetPlatformKind!!.description)
+            Assert.assertEquals("1.1", languageLevel!!.description)
+            Assert.assertEquals("1.1", apiLevel!!.description)
+            Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
+            Assert.assertEquals(
+                    listOf("-jdk-home", "temp2"),
+                    compilerSettings!!.additionalArgumentsAsList
+            )
+        }
+    }
+
     private fun assertImporterStatePresent() {
         assertNotNull("Kotlin importer component is not present", myTestFixture.module.getComponent(KotlinImporterComponent::class.java))
     }
 
+    private fun facetSettings(moduleName: String) = KotlinFacet.get(getModule(moduleName))!!.configuration.settings
+
     private val facetSettings: KotlinFacetSettings
-        get() = KotlinFacet.get(getModule("project"))!!.configuration.settings
+        get() = facetSettings("project")
 }
