@@ -10108,6 +10108,69 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/typeOfAnnotationMember")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TypeOfAnnotationMember extends AbstractQuickFixTest {
+        public void testAllFilesPresentInTypeOfAnnotationMember() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeOfAnnotationMember"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("boolean.kt")
+        public void testBoolean() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeOfAnnotationMember/boolean.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("byte.kt")
+        public void testByte() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeOfAnnotationMember/byte.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("char.kt")
+        public void testChar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeOfAnnotationMember/char.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("float.kt")
+        public void testFloat() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeOfAnnotationMember/float.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("int.kt")
+        public void testInt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeOfAnnotationMember/int.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("long.kt")
+        public void testLong() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeOfAnnotationMember/long.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("short.kt")
+        public void testShort() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeOfAnnotationMember/short.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("star.kt")
+        public void testStar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeOfAnnotationMember/star.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("string.kt")
+        public void testString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeOfAnnotationMember/string.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/typeParameters")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
