@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="uast-android-studio">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/uast-common-1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/uast-java-1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
