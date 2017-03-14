@@ -16,9 +16,9 @@
 @file:JvmName("PreprocessorCLI")
 package org.jetbrains.kotlin.preprocessor
 
-import com.intellij.util.concurrency.AppExecutorUtil
-import com.intellij.util.concurrency.AppScheduledExecutorService
 import java.io.File
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 
 fun main(args: Array<String>) {
     if (args.size != 3) {
@@ -32,12 +32,5 @@ fun main(args: Array<String>) {
     val profile = createProfile(args[2], targetPath)
 
     println("Preprocessing sources in $sourcePath to $targetPath with profile ${profile.name}")
-
-    try {
-        Preprocessor().processSources(sourcePath, profile)
-    }
-    finally {
-        val service = AppExecutorUtil.getAppScheduledExecutorService() as AppScheduledExecutorService
-        service.shutdownAppScheduledExecutorService()
-    }
+    Preprocessor().processSources(sourcePath, profile)
 }

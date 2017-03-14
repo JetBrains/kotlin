@@ -105,7 +105,6 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.script.KotlinScriptExternalImportsProvider
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
-import java.lang.IllegalStateException
 import java.util.*
 
 class KotlinCoreEnvironment private constructor(
