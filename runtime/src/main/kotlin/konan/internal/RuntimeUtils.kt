@@ -7,7 +7,7 @@ fun ThrowNullPointerException(): Nothing {
 
 @ExportForCppRuntime
 internal fun ThrowArrayIndexOutOfBoundsException(): Nothing {
-    throw IndexOutOfBoundsException()
+    throw ArrayIndexOutOfBoundsException()
 }
 
 @ExportForCppRuntime

@@ -54,7 +54,7 @@ public class NullPointerException : RuntimeException {
     }
 }
 
-public class NoSuchElementException : RuntimeException {
+public open class NoSuchElementException : RuntimeException {
 
     constructor() : super() {
     }
@@ -63,22 +63,7 @@ public class NoSuchElementException : RuntimeException {
     }
 }
 
-public class IllegalArgumentException : RuntimeException {
-
-    constructor() : super() {
-    }
-
-    constructor(s: String) : super(s) {
-    }
-
-    constructor(message: String, cause: Throwable) : super(message, cause) {
-    }
-
-    constructor(cause: Throwable) : super(cause) {
-    }
-}
-
-public class IllegalStateException : RuntimeException {
+public open class IllegalArgumentException : RuntimeException {
 
     constructor() : super() {
     }
@@ -93,7 +78,22 @@ public class IllegalStateException : RuntimeException {
     }
 }
 
-public class UnsupportedOperationException : RuntimeException {
+public open class IllegalStateException : RuntimeException {
+
+    constructor() : super() {
+    }
+
+    constructor(s: String) : super(s) {
+    }
+
+    constructor(message: String, cause: Throwable) : super(message, cause) {
+    }
+
+    constructor(cause: Throwable) : super(cause) {
+    }
+}
+
+public open class UnsupportedOperationException : RuntimeException {
 
     constructor() {
     }
@@ -108,7 +108,7 @@ public class UnsupportedOperationException : RuntimeException {
     }
 }
 
-public class IndexOutOfBoundsException : RuntimeException {
+public open class IndexOutOfBoundsException : RuntimeException {
 
     constructor() : super() {
     }
@@ -117,7 +117,7 @@ public class IndexOutOfBoundsException : RuntimeException {
     }
 }
 
-public class ClassCastException : RuntimeException {
+public open class ArrayIndexOutOfBoundsException : IndexOutOfBoundsException {
 
     constructor() : super() {
     }
@@ -126,7 +126,8 @@ public class ClassCastException : RuntimeException {
     }
 }
 
-public class ArithmeticException : RuntimeException {
+public open class ClassCastException : RuntimeException {
+
     constructor() : super() {
     }
 
@@ -134,7 +135,24 @@ public class ArithmeticException : RuntimeException {
     }
 }
 
-public class AssertionError : Error {
+public open class TypeCastException : ClassCastException {
+
+    constructor() : super() {
+    }
+
+    constructor(s: String) : super(s) {
+    }
+}
+
+public open class ArithmeticException : RuntimeException {
+    constructor() : super() {
+    }
+
+    constructor(s: String) : super(s) {
+    }
+}
+
+public open class AssertionError : Error {
 
     constructor() {
     }
@@ -149,7 +167,7 @@ public class AssertionError : Error {
     }
 }
 
-public class NoWhenBranchMatchedException : RuntimeException {
+public open class NoWhenBranchMatchedException : RuntimeException {
 
     constructor() : super() {
     }
@@ -158,7 +176,7 @@ public class NoWhenBranchMatchedException : RuntimeException {
     }
 }
 
-public class OutOfMemoryError : Error {
+public open class OutOfMemoryError : Error {
 
     constructor() : super() {
     }
