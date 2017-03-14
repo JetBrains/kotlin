@@ -55,34 +55,34 @@ public inline operator fun BigDecimal.unaryMinus() : BigDecimal = this.negate()
 /**
  * Enables the use of the unary `+` operator for [BigDecimal] instances.
  */
-@SinceKotlin("1.1")
+@SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 public inline operator fun BigDecimal.unaryPlus() : BigDecimal = this
 
 /**
  * Enables the use of the unary `++` operator for [BigDecimal] instances.
  */
-@SinceKotlin("1.1")
+@SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 public inline operator fun BigDecimal.inc() : BigDecimal = this.add(BigDecimal.ONE)
 
 /**
  * Enables the use of the unary `--` operator for [BigDecimal] instances.
  */
-@SinceKotlin("1.1")
+@SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 public inline operator fun BigDecimal.dec() : BigDecimal = this.subtract(BigDecimal.ONE)
 
 
-@SinceKotlin("1.1")
+@SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 public inline fun String.toBigDecimal() : BigDecimal = BigDecimal(this)
 
-@SinceKotlin("1.1")
+@SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 public inline fun Int.toBigDecimal() : BigDecimal = BigDecimal(this)
 
-@SinceKotlin("1.1")
+@SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 public inline fun Long.toBigDecimal() : BigDecimal = BigDecimal(this)
 
@@ -90,7 +90,7 @@ public inline fun Long.toBigDecimal() : BigDecimal = BigDecimal(this)
  * JDK documentation recommends using `BigDecimal(String)` instead of `BigDecimal(double)`
  * For more details consult http://docs.oracle.com/javase/7/docs/api/java/math/BigDecimal.html
  */
-@SinceKotlin("1.1")
+@SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 public inline fun Float.toBigDecimal() : BigDecimal = BigDecimal(this.toString())
 
@@ -98,6 +98,6 @@ public inline fun Float.toBigDecimal() : BigDecimal = BigDecimal(this.toString()
  * JDK documentation recommends using `BigDecimal(String)` instead of `BigDecimal(double)`
  * For more details consult http://docs.oracle.com/javase/7/docs/api/java/math/BigDecimal.html
  */
-@SinceKotlin("1.1")
+@SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 public inline fun Double.toBigDecimal() : BigDecimal = BigDecimal(this.toString())
