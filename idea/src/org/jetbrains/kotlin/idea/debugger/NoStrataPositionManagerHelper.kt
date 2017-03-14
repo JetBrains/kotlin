@@ -141,7 +141,7 @@ private fun readClassFileImpl(project: Project,
 
         val fileFinder = VirtualFileFinder.getInstance(project)
         val classFile = fileFinder.findVirtualFileWithHeader(classId) ?: return null
-        return classFile.contentsToByteArray()
+        return classFile.contentsToByteArray(false)
     }
 
     fun readFromOutput(isForTestClasses: Boolean): ByteArray? {

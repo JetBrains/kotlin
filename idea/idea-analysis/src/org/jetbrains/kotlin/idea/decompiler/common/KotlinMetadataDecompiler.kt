@@ -72,7 +72,7 @@ abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
         if (!file.isValid) return null
 
         return try {
-            readFile(file.contentsToByteArray(), file)
+            readFile(file.contentsToByteArray(false), file)
         }
         catch (e: IOException) {
             // This is needed because sometimes we're given VirtualFile instances that point to non-existent .jar entries.

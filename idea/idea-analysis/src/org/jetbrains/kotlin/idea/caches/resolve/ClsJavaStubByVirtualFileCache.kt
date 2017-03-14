@@ -48,7 +48,7 @@ class ClsJavaStubByVirtualFileCache {
         if (file.fileType !== JavaClassFileType.INSTANCE) return null
 
         try {
-            return ClsFileImpl.buildFileStub(file, file.contentsToByteArray())
+            return ClsFileImpl.buildFileStub(file, file.contentsToByteArray(false))
         }
         catch (e: ClsFormatException) {
             LOG.error("Failed to build java cls class for " + file.canonicalPath!!, e)
