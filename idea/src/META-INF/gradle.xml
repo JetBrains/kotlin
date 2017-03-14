@@ -44,5 +44,6 @@
         <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleModuleConfigurator"/>
         <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinJsGradleModuleConfigurator"/>
         <versionInfoProvider implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinVersionInfoProvider"/>
+        <platformGradleDetector implementation="org.jetbrains.kotlin.idea.inspections.gradle.DefaultPlatformGradleDetector"/>
     </extensions>
 </idea-plugin>
