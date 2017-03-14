@@ -55,6 +55,7 @@ INTEROP_TOOL=org.jetbrains.kotlin.native.interop.gen.jvm.MainKt
 TARGET_ARG=-target:native
 
 LIBCLANG_DISABLE_CRASH_RECOVERY=1 \
+LD_LIBRARY_PATH=${NATIVE_LIB} \
 $JAVACMD $JAVA_OPTS ${java_args[@]} \
     -cp $INTEROP_CLASSPATH \
     $INTEROP_TOOL \
