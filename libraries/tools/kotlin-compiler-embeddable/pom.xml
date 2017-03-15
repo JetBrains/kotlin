@@ -140,10 +140,6 @@
                                     <shadedPattern>${kotlin.relocated.package}.com.google</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>com.sampullara</pattern>
-                                    <shadedPattern>${kotlin.relocated.package}.com.sampullara</shadedPattern>
-                                </relocation>
-                                <relocation>
                                     <pattern>org.apache</pattern>
                                     <shadedPattern>${kotlin.relocated.package}.org.apache</shadedPattern>
                                 </relocation>
