@@ -37,6 +37,7 @@ import com.intellij.util.text.VersionComparatorUtil;
 import com.intellij.util.ui.ThreeStateCheckBox;
 import com.intellij.util.ui.UIUtil;
 import kotlin.collections.ArraysKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.Nls;
@@ -68,6 +69,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private static final List<LanguageFeature.State> languageFeatureStates = Arrays.asList(
             LanguageFeature.State.ENABLED, LanguageFeature.State.ENABLED_WITH_WARNING, LanguageFeature.State.ENABLED_WITH_ERROR
     );
+    private static final int MAX_WARNING_SIZE = 75;
 
     static {
         moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_PLAIN, "Plain (put to global scope)");
@@ -111,7 +113,6 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private JLabel labelForOutputPrefixFile;
     private JLabel labelForOutputPostfixFile;
     private JLabel warningLabel;
-
     private boolean isEnabled = true;
 
     public KotlinCompilerConfigurableTab(
@@ -196,13 +197,14 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                             if (facet == null) return null;
                             KotlinFacetSettings facetSettings = facet.getConfiguration().getSettings();
                             if (facetSettings.getUseProjectSettings()) return null;
-                            return "<strong>" + module.getName() + "</strong>";
+                            return module.getName();
                         }
                     }
             );
+            CollectionsKt.sort(modulesOverridingProjectSettings);
             if (!modulesOverridingProjectSettings.isEmpty()) {
                 warningLabel.setVisible(true);
-                warningLabel.setText("<html>Following modules override project settings: " + StringUtil.join(modulesOverridingProjectSettings, ", "));
+                warningLabel.setText(buildOverridingModulesWarning(modulesOverridingProjectSettings));
             }
         }
     }
@@ -217,6 +219,47 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
              ServiceManager.getService(project, KotlinCompilerWorkspaceSettings.class),
              true,
              false);
+    }
+
+    private static int calculateNameCountToShowInWarning(List<String> allNames) {
+        int lengthSoFar = 0;
+        int size = allNames.size();
+        for (int i = 0; i < size; i++) {
+            lengthSoFar = (i > 0 ? lengthSoFar + 2 : 0) + allNames.get(i).length();
+            if (lengthSoFar > MAX_WARNING_SIZE) return i;
+        }
+        return size;
+    }
+
+    @NotNull
+    private static String buildOverridingModulesWarning(List<String> modulesOverridingProjectSettings) {
+        int nameCountToShow = calculateNameCountToShowInWarning(modulesOverridingProjectSettings);
+        int allNamesCount = modulesOverridingProjectSettings.size();
+        if (nameCountToShow == 0) {
+            return String.valueOf(allNamesCount) + " modules override project settings";
+        }
+
+        StringBuilder builder = new StringBuilder();
+        builder.append("<html>Following modules override project settings: ");
+        CollectionsKt.joinTo(
+                modulesOverridingProjectSettings.subList(0, nameCountToShow),
+                builder,
+                ", ",
+                "",
+                "",
+                -1,
+                "",
+                new Function1<String, CharSequence>() {
+                    @Override
+                    public CharSequence invoke(String s) {
+                        return "<strong>" + s + "</strong>";
+                    }
+                }
+        );
+        if (nameCountToShow < allNamesCount) {
+            builder.append(" and ").append(allNamesCount - nameCountToShow).append(" other(s)");
+        }
+        return builder.toString();
     }
 
     @NotNull
