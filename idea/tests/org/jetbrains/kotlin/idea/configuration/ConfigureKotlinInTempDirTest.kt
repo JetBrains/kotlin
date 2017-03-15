@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.impl.ApplicationImpl
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
@@ -61,5 +62,19 @@ class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
         Assert.assertEquals(LanguageVersion.KOTLIN_1_1, myProject.getLanguageVersionSettings(null).languageVersion)
         Assert.assertEquals(LanguageVersion.KOTLIN_1_1, module.languageVersionSettings.languageVersion)
         Assert.assertTrue(project.baseDir.findFileByRelativePath(".idea/kotlinc.xml") == null)
+    }
+
+    fun testProject106InconsistentVersionInConfig() {
+        val settings = KotlinFacetSettingsProvider.getInstance(myProject).getSettings(module)
+        Assert.assertEquals(false, settings.useProjectSettings)
+        Assert.assertEquals("1.0", settings.languageLevel!!.description)
+        Assert.assertEquals("1.0", settings.apiLevel!!.description)
+    }
+
+    fun testProject107InconsistentVersionInConfig() {
+        val settings = KotlinFacetSettingsProvider.getInstance(myProject).getSettings(module)
+        Assert.assertEquals(false, settings.useProjectSettings)
+        Assert.assertEquals("1.0", settings.languageLevel!!.description)
+        Assert.assertEquals("1.0", settings.apiLevel!!.description)
     }
 }
