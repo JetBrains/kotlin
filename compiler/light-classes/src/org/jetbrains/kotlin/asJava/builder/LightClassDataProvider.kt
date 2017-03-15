@@ -49,7 +49,7 @@ class LightClassDataProviderForClassOrObject(private val classOrObject: KtClassO
                 val packagePartType = state.fileClassesProvider.getFileClassType(file)
                 val context = state.rootContext.intoPackagePart(packageCodegen.packageFragment, packagePartType, file)
                 packageCodegen.generateClassOrObject(getOutermostClassOrObject(classOrObject), context)
-                state.factory.asList()
+                state.factory.done()
             }
         }
     }
@@ -81,13 +81,13 @@ sealed class LightClassDataProviderForFileFacade constructor(
                 if (!fileClassInfo.withJvmMultifileClass) {
                     val codegen = state.factory.forPackage(representativeFile.packageFqName, files)
                     codegen.generate(CompilationErrorHandler.THROW_EXCEPTION)
-                    state.factory.asList()
+                    state.factory.done()
                     return@generate
                 }
 
                 val codegen = state.factory.forMultifileClass(facadeFqName, files)
                 codegen.generate(CompilationErrorHandler.THROW_EXCEPTION)
-                state.factory.asList()
+                state.factory.done()
             }
         }
     }

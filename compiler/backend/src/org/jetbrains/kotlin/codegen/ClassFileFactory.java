@@ -82,7 +82,7 @@ public class ClassFileFactory implements OutputFileCollection {
         return answer;
     }
 
-    void done() {
+    public void done() {
         if (!isDone) {
             isDone = true;
             writeModuleMappings();
