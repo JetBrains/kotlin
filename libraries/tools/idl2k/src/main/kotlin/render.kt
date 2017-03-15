@@ -194,7 +194,11 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, enums: List<E
     val superSignatures = superAttributes.map { it.signature } merge superFunctions.map { it.signature }
 
     iface.memberAttributes
-        .filter { it !in superAttributes && !it.static && (it.isVar || (it.isVal && superAttributesByName[it.name]?.hasNoVars() ?: true)) }
+        .filter { //it !in superAttributes
+                !it.static
+                && (it.isVar || (it.isVal && superAttributesByName[it.name]?.hasNoVars() ?: true))
+//                && (iface.kind != GenerateDefinitionKind.INTERFACE && allSuperTypes.any { st -> st.kind == GenerateDefinitionKind.INTERFACE && st.memberAttributes.any { sa -> sa.signature == it.signature } })
+        }
         .map { it.dynamicIfUnknownType(allTypesAndEnums) }
         .groupBy { it.name }
         .mapValues { it.value.filter { "${iface.name}.${it.name}" !in commentOutDeclarations && "${iface.name}.${it.name}: ${it.type.render()}" !in commentOutDeclarations  } }
@@ -207,6 +211,10 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, enums: List<E
                 else -> MemberModality.FINAL
             }
 
+            if (iface.name == "XMLDocument" && attribute.name == "onabort") {
+                println()
+            }
+
             if (attribute.name in superAttributesByName && attribute.signature !in superSignatures) {
                 System.err.println("Property ${iface.name}.${attribute.name} has different type in super type(s) so will not be generated: ")
                 for ((superTypeName, attributes) in allSuperTypes.map { it.name to it.memberAttributes.filter { it.name == attribute.name }.distinct() }) {
@@ -214,6 +222,12 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, enums: List<E
                         System.err.println("  $superTypeName.${attribute.name}: ${superAttribute.type.render()}")
                     }
                 }
+            } else if (modality == MemberModality.OVERRIDE
+                    && superAttributesByName[attribute.name].orEmpty().all { it.kind == attribute.kind }
+                    && (iface.kind == GenerateDefinitionKind.INTERFACE
+                    || allSuperTypes.none { st -> st.kind == GenerateDefinitionKind.INTERFACE && st.memberAttributes.any { it.signature == attribute.signature } }
+                    || allSuperTypes.any { st -> st.kind != GenerateDefinitionKind.INTERFACE && st.memberAttributes.any { it.signature == attribute.signature } })) {
+                // then don't generate
             } else {
                 renderAttributeDeclarationAsProperty(attribute,
                         modality = modality,
