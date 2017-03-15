@@ -51,7 +51,6 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     override fun visitFunction(declaration: IrFunction): IrStatement {
         currentFunction = declaration
         functionScope   = Scope(declaration.descriptor)
-        // println("visitFunction ${declaration.descriptor.name}")
         return super.visitFunction(declaration)
     }
 
