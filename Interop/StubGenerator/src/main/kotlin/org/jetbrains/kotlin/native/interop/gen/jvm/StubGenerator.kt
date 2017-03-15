@@ -189,8 +189,7 @@ class StubGenerator(
             is PointerType -> {
                 val pointeeType = this.pointeeType
                 if (pointeeType is FunctionType) {
-                    pointeeType.returnType.getStringRepresentation() + " (*)(" +
-                            pointeeType.parameterTypes.map { it.getStringRepresentation() }.joinToString(", ") + ")"
+                    "void*" // TODO
                 } else {
                     pointeeType.getStringRepresentation() + "*"
                 }
@@ -370,10 +369,6 @@ class StubGenerator(
             if (pointeeType.unwrapTypedefs() is VoidType) {
                 val info = TypeInfo.Pointer("COpaque")
                 TypeMirror.ByValue("COpaquePointerVar", info, "COpaquePointer")
-            } else if (pointeeType is FunctionType) {
-                val kotlinName = pointeeType.kotlinName
-                val info = TypeInfo.Pointer("CFunction<$kotlinName>")
-                TypeMirror.ByValue("CFunctionPointerVar<$kotlinName>", info, "CFunctionPointer<$kotlinName>")
             } else {
                 val pointeeMirror = mirror(pointeeType)
                 val info = TypeInfo.Pointer(pointeeMirror.pointedTypeName)
@@ -386,6 +381,8 @@ class StubGenerator(
             val elemMirror = mirror(type.elemType)
             byRefTypeMirror("CArray<${elemMirror.pointedTypeName}>")
         }
+
+        is FunctionType -> byRefTypeMirror("CFunction<${type.kotlinName}>")
 
         is Typedef -> {
             val baseType = mirror(type.def.aliased)
@@ -793,6 +790,8 @@ class StubGenerator(
             is UInt32Type -> "UInt32"
             is IntPtrType, is UIntPtrType, // TODO
             is PointerType -> "Pointer"
+            is Int64Type -> "SInt64"
+            is UInt64Type -> "UInt64"
             is ConstArrayType -> getFfiStructType(
                     Array(type.length.toInt(), { type.elemType }).toList()
             )
@@ -800,7 +799,7 @@ class StubGenerator(
             is RecordType -> {
                 val def = type.decl.def!!
                 if (!def.hasNaturalLayout) {
-                    throw NotImplementedError() // TODO: represent pointer to function as NativePtr instead
+                    throw NotImplementedError(type.kotlinName)
                 }
                 getFfiStructType(def.fields.map { it.type })
             }
@@ -864,8 +863,15 @@ class StubGenerator(
     private fun generateJvmFunctionType(type: FunctionType, name: String) {
         val kotlinFunctionType = getKotlinFunctionType(type)
 
-        val constructorArgs = listOf(getRetValFfiType(type.returnType)) +
-                type.parameterTypes.map { getArgFfiType(it) }
+        val constructorArgs = try {
+            listOf(getRetValFfiType(type.returnType)) +
+                    type.parameterTypes.map { getArgFfiType(it) }
+
+        } catch (e: Throwable) {
+            println("Warning: cannot generate definition for function type $name")
+            out("object $name : CFunctionType {}")
+            return
+        }
 
         val constructorArgsStr = constructorArgs.joinToString(", ")
 
@@ -1198,7 +1204,7 @@ class StubGenerator(
                     "$pkgName.externals.${func.name}"
                 }
                 val functionName = "Java_" + funcFullName.replace("_", "_1").replace('.', '_').replace("$", "_00024")
-                "JNIEXPORT $cReturnType JNICALL $functionName (JNIEnv *env, jobject obj$joinedParameters)"
+                "JNIEXPORT $cReturnType JNICALL $functionName (JNIEnv *jniEnv, jobject externalsObj$joinedParameters)"
             }
             KotlinPlatform.NATIVE -> {
                 val joinedParameters = parameters.joinToString(", ")

@@ -281,10 +281,12 @@ class CFunction<T : CFunctionType>(override val rawPtr: NativePtr) : CPointed
 
 /**
  * The pointer to [CFunction].
+ * TODO: remove.
  */
 typealias CFunctionPointer<T> = CPointer<CFunction<T>>
 
 /**
  * The variable containing a [CFunctionPointer].
+ * TODO: remove.
  */
 typealias CFunctionPointerVar<T> = CPointerVarWithValueMappedTo<CFunctionPointer<T>>
