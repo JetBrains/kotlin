@@ -1,4 +1,4 @@
-// "Make member visibility 'internal'" "true"
+// "Make 'foo' internal" "true"
 
 open class A {
     private val foo = 1

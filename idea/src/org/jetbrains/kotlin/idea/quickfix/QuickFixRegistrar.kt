@@ -173,6 +173,7 @@ class QuickFixRegistrar : QuickFixContributor {
         INVISIBLE_REFERENCE.registerFactory(MakeVisibleFactory)
         INVISIBLE_MEMBER.registerFactory(MakeVisibleFactory)
         INVISIBLE_SETTER.registerFactory(MakeVisibleFactory)
+        INVISIBLE_MEMBER.registerFactory(InvisibleMemberFixFactory)
 
         for (exposed in listOf(EXPOSED_FUNCTION_RETURN_TYPE, EXPOSED_PARAMETER_TYPE, EXPOSED_PROPERTY_TYPE, EXPOSED_RECEIVER_TYPE,
                                EXPOSED_SUPER_CLASS, EXPOSED_SUPER_INTERFACE, EXPOSED_TYPE_PARAMETER_BOUND)) {
@@ -482,7 +483,5 @@ class QuickFixRegistrar : QuickFixContributor {
 
         UNRESOLVED_REFERENCE.registerFactory(CreateLabelFix)
         YIELD_IS_RESERVED.registerFactory(UnsupportedYieldFix)
-
-        INVISIBLE_MEMBER.registerFactory(InvisibleMemberToInternalFix, InvisibleMemberToProtectedFix, InvisibleMemberToPublicFix)
     }
 }

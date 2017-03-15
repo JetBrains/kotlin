@@ -1,4 +1,4 @@
-// "Make member visibility 'internal'" "true"
+// "Make 'doSth' internal" "true"
 
 open class A {
     private fun doSth() {

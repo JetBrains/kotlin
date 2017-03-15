@@ -1,4 +1,4 @@
-// "Make member visibility 'public'" "true"
+// "Make 'doSth' public" "true"
 
 open class A {
     private fun doSth() {

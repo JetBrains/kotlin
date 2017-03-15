@@ -1,4 +1,4 @@
-// "Make member visibility 'protected'" "true"
+// "Make 'doSth' protected" "true"
 
 open class A {
     private fun doSth() {
