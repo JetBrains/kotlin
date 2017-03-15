@@ -237,7 +237,7 @@ class KotlinFacetEditorGeneralTab(
         validatorsManager.registerValidator(coroutineValidator)
 
         with(editor.compilerConfigurable) {
-            generateNoWarningsCheckBox.validateOnChange()
+            reportWarningsCheckBox.validateOnChange()
             additionalArgsOptionsField.textField.validateOnChange()
             generateSourceMapsCheckBox.validateOnChange()
             outputPrefixFile.textField.validateOnChange()

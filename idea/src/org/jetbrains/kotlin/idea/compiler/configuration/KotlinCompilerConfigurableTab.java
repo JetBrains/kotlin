@@ -85,7 +85,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private K2JVMCompilerArguments k2jvmCompilerArguments;
     private CompilerSettings compilerSettings;
     private JPanel contentPane;
-    private ThreeStateCheckBox generateNoWarningsCheckBox;
+    private ThreeStateCheckBox reportWarningsCheckBox;
     private RawCommandLineEditor additionalArgsOptionsField;
     private JLabel additionalArgsLabel;
     private ThreeStateCheckBox generateSourceMapsCheckBox;
@@ -105,9 +105,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     private JPanel k2jsPanel;
     private JComboBox jvmVersionComboBox;
     private JComboBox languageVersionComboBox;
-    private JPanel languageVersionPanel;
     private JComboBox coroutineSupportComboBox;
-    private JPanel apiVersionPanel;
     private JComboBox apiVersionComboBox;
     private JPanel scriptPanel;
     private JLabel labelForOutputPrefixFile;
@@ -183,7 +181,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
             k2jvmPanel.setVisible(false);
         }
 
-        generateNoWarningsCheckBox.setThirdStateEnabled(isMultiEditor);
+        reportWarningsCheckBox.setThirdStateEnabled(isMultiEditor);
         generateSourceMapsCheckBox.setThirdStateEnabled(isMultiEditor);
         copyRuntimeFilesCheckBox.setThirdStateEnabled(isMultiEditor);
         keepAliveCheckBox.setThirdStateEnabled(isMultiEditor);
@@ -346,7 +344,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
     @Override
     public boolean isModified() {
-        return ComparingUtils.isModified(generateNoWarningsCheckBox, commonCompilerArguments.suppressWarnings) ||
+        return ComparingUtils.isModified(reportWarningsCheckBox, !commonCompilerArguments.suppressWarnings) ||
                !getSelectedLanguageVersion().equals(getLanguageVersionOrDefault(commonCompilerArguments.languageVersion)) ||
                !getSelectedAPIVersion().equals(getLanguageVersionOrDefault(commonCompilerArguments.apiVersion)) ||
                !coroutineSupportComboBox.getSelectedItem().equals(CoroutineSupport.byCompilerArguments(commonCompilerArguments)) ||
@@ -413,7 +411,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
             }
         }
 
-        commonCompilerArguments.suppressWarnings = generateNoWarningsCheckBox.isSelected();
+        commonCompilerArguments.suppressWarnings = !reportWarningsCheckBox.isSelected();
         commonCompilerArguments.languageVersion = getSelectedLanguageVersion();
         commonCompilerArguments.apiVersion = getSelectedAPIVersion();
         LanguageFeature.State coroutineSupport = (LanguageFeature.State) coroutineSupportComboBox.getSelectedItem();
@@ -461,7 +459,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
     @Override
     public void reset() {
-        generateNoWarningsCheckBox.setSelected(commonCompilerArguments.suppressWarnings);
+        reportWarningsCheckBox.setSelected(!commonCompilerArguments.suppressWarnings);
         languageVersionComboBox.setSelectedItem(getLanguageVersionOrDefault(commonCompilerArguments.languageVersion));
         apiVersionComboBox.setSelectedItem(getLanguageVersionOrDefault(commonCompilerArguments.apiVersion));
         restrictAPIVersions();
@@ -506,8 +504,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         return contentPane;
     }
 
-    public ThreeStateCheckBox getGenerateNoWarningsCheckBox() {
-        return generateNoWarningsCheckBox;
+    public ThreeStateCheckBox getReportWarningsCheckBox() {
+        return reportWarningsCheckBox;
     }
 
     public RawCommandLineEditor getAdditionalArgsOptionsField() {

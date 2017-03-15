@@ -41,7 +41,7 @@ class MultipleKotlinFacetEditor(
             helper.bind(useProjectSettingsCheckBox, editors) { it.tabEditor.useProjectSettingsCheckBox }
             helper.bind(targetPlatformComboBox, editors) { it.tabEditor.targetPlatformComboBox }
             with(compilerConfigurable) {
-                helper.bind(generateNoWarningsCheckBox, editors) { it.compilerConfigurable.generateNoWarningsCheckBox }
+                helper.bind(reportWarningsCheckBox, editors) { it.compilerConfigurable.reportWarningsCheckBox }
                 helper.bind(additionalArgsOptionsField.textField, editors) { it.compilerConfigurable.additionalArgsOptionsField.textField }
                 helper.bind(generateSourceMapsCheckBox, editors) { it.compilerConfigurable.generateSourceMapsCheckBox}
                 helper.bind(outputPrefixFile.textField, editors) { it.compilerConfigurable.outputPrefixFile.textField }
