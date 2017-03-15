@@ -17,12 +17,11 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
 
 class IrClassImpl(
@@ -40,6 +39,8 @@ class IrClassImpl(
 
     override val declarations: MutableList<IrDeclaration> = ArrayList()
 
+    override val typeParameters: MutableList<IrTypeParameter> = SmartList()
+
     fun addMember(member: IrDeclaration) {
         declarations.add(member)
     }
@@ -52,12 +53,12 @@ class IrClassImpl(
             visitor.visitClass(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        typeParameters.forEach { it.accept(visitor, data) }
         declarations.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        declarations.forEachIndexed { i, irDeclaration ->
-            declarations[i] = irDeclaration.transform(transformer, data) as IrDeclaration
-        }
+        typeParameters.transform { it.transform(transformer, data) }
+        declarations.transform { it.transform(transformer, data) as IrDeclaration }
     }
 }

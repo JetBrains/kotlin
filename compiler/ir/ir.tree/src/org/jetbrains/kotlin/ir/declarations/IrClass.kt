@@ -23,6 +23,8 @@ interface IrClass : IrDeclaration, IrDeclarationContainer {
         get() = IrDeclarationKind.CLASS
 
     override val descriptor: ClassDescriptor
+
+    val typeParameters: MutableList<IrTypeParameter>
 }
 
 fun IrClass.getInstanceInitializerMembers() =

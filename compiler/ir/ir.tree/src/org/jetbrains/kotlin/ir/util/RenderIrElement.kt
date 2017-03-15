@@ -70,6 +70,12 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Nothing?): String =
             "ANONYMOUS_INITIALIZER ${declaration.descriptor.ref()}"
 
+    override fun visitTypeParameter(declaration: IrTypeParameter, data: Nothing?): String =
+            "TYPE_PARAMETER ${declaration.renderDeclared()}"
+
+    override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?): String =
+            "VALUE_PARAMETER ${declaration.renderDeclared()}"
+
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String =
             "LOCAL_DELEGATED_PROPERTY ${declaration.renderOrigin()}${declaration.renderDeclared()}"
 

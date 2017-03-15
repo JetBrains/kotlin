@@ -23,6 +23,11 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 
 interface IrFunction : IrDeclaration {
     override val descriptor: FunctionDescriptor
+
+    val typeParameters: MutableList<IrTypeParameter>
+
+    val valueParameters: MutableList<IrValueParameter>
+
     var body: IrBody?
 
     override val declarationKind: IrDeclarationKind

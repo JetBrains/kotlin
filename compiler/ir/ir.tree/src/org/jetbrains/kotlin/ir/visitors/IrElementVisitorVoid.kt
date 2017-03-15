@@ -63,6 +63,12 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) = visitDeclaration(declaration)
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Nothing?) = visitAnonymousInitializer(declaration)
 
+    fun visitTypeParameter(declaration: IrTypeParameter) = visitDeclaration(declaration)
+    override fun visitTypeParameter(declaration: IrTypeParameter, data: Nothing?) = visitTypeParameter(declaration)
+
+    fun visitValueParameter(declaration: IrValueParameter) = visitDeclaration(declaration)
+    override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?) = visitValueParameter(declaration)
+
     fun visitBody(body: IrBody) = visitElement(body)
     override fun visitBody(body: IrBody, data: Nothing?) = visitBody(body)
 

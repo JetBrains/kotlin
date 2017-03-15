@@ -61,6 +61,12 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     open fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) = visitDeclaration(declaration)
     override final fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Nothing?) = visitAnonymousInitializer(declaration)
 
+    open fun visitTypeParameter(declaration: IrTypeParameter) = visitDeclaration(declaration)
+    override final fun visitTypeParameter(declaration: IrTypeParameter, data: Nothing?): IrStatement = visitTypeParameter(declaration)
+
+    open fun visitValueParameter(declaration: IrValueParameter) = visitDeclaration(declaration)
+    override final fun visitValueParameter(declaration: IrValueParameter, data: Nothing?): IrStatement = visitValueParameter(declaration)
+
     open fun visitVariable(declaration: IrVariable) = visitDeclaration(declaration)
     override final fun visitVariable(declaration: IrVariable, data: Nothing?) = visitVariable(declaration)
 

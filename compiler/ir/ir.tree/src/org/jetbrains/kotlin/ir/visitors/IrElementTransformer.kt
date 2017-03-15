@@ -44,6 +44,8 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitEnumEntry(declaration: IrEnumEntry, data: D) = visitDeclaration(declaration, data)
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: D) = visitDeclaration(declaration, data)
     override fun visitVariable(declaration: IrVariable, data: D) = visitDeclaration(declaration, data)
+    override fun visitTypeParameter(declaration: IrTypeParameter, data: D) = visitDeclaration(declaration, data)
+    override fun visitValueParameter(declaration: IrValueParameter, data: D) = visitDeclaration(declaration, data)
 
     override fun visitBody(body: IrBody, data: D): IrBody =
             body.apply { transformChildren(this@IrElementTransformer, data) }

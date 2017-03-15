@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,17 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
-interface IrProperty : IrDeclaration {
-    override val descriptor: PropertyDescriptor
-    val typeParameters: MutableList<IrTypeParameter>
-    val isDelegated: Boolean
-    var backingField: IrField?
-    var getter: IrFunction?
-    var setter: IrFunction?
-
+interface IrValueParameter : IrDeclaration {
     override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.PROPERTY
-}
+        get() = IrDeclarationKind.VALUE_PARAMETER
 
-interface IrField : IrDeclaration {
-    override val descriptor: PropertyDescriptor
+    override val descriptor: ParameterDescriptor
 
-    override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.FIELD
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrValueParameter
 
-    var initializer: IrExpressionBody?
+    var defaultValue: IrExpressionBody?
 }

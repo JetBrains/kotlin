@@ -64,31 +64,35 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
                     }
                 }
             }
-            declaration.declarations.forEach { it.accept(this, "") }
+            declaration.declarations.dumpElements()
         }
     }
 
     override fun visitFunction(declaration: IrFunction, data: String) {
-        visitFunctionWithParameters(declaration, data)
+        declaration.dumpLabeledElementWith(data) {
+            declaration.typeParameters.dumpElements()
+            declaration.valueParameters.dumpElements()
+            declaration.body?.accept(this, "")
+        }
     }
 
-    override fun visitConstructor(declaration: IrConstructor, data: String) {
-        visitFunctionWithParameters(declaration, data)
+    override fun visitProperty(declaration: IrProperty, data: String) {
+        declaration.dumpLabeledElementWith(data) {
+            declaration.typeParameters.dumpElements()
+            declaration.backingField?.accept(this, "")
+            declaration.getter?.accept(this, "")
+            declaration.setter?.accept(this, "")
+        }
+    }
+
+    private fun List<IrElement>.dumpElements() {
+        forEach { it.accept(this@DumpIrTreeVisitor, "") }
     }
 
     override fun visitErrorCallExpression(expression: IrErrorCallExpression, data: String) {
         expression.dumpLabeledElementWith(data) {
             expression.explicitReceiver?.accept(this, "receiver")
-            expression.arguments.forEach { it.accept(this, "") }
-        }
-    }
-
-    private fun visitFunctionWithParameters(declaration: IrFunction, data: String) {
-        declaration.dumpLabeledElementWith(data) {
-            declaration.descriptor.valueParameters.forEach { valueParameter ->
-                declaration.getDefault(valueParameter)?.accept(this, valueParameter.name.asString())
-            }
-            declaration.body?.accept(this, "")
+            expression.arguments.dumpElements()
         }
     }
 
@@ -135,9 +139,7 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
 
     override fun visitWhen(expression: IrWhen, data: String) {
         expression.dumpLabeledElementWith(data) {
-            expression.branches.forEach {
-                it.accept(this, "")
-            }
+            expression.branches.dumpElements()
         }
     }
 
@@ -165,9 +167,7 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
     override fun visitTry(aTry: IrTry, data: String) {
         aTry.dumpLabeledElementWith(data) {
             aTry.tryResult.accept(this, "try")
-            for (aCatch in aTry.catches) {
-                aCatch.accept(this, "")
-            }
+            aTry.catches.dumpElements()
             aTry.finallyExpression?.accept(this, "finally")
         }
     }

@@ -36,6 +36,8 @@ interface IrElementVisitor<out R, in D> {
     fun visitVariable(declaration: IrVariable, data: D) = visitDeclaration(declaration, data)
     fun visitEnumEntry(declaration: IrEnumEntry, data: D) = visitDeclaration(declaration, data)
     fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: D) = visitDeclaration(declaration, data)
+    fun visitTypeParameter(declaration: IrTypeParameter, data: D) = visitDeclaration(declaration, data)
+    fun visitValueParameter(declaration: IrValueParameter, data: D) = visitDeclaration(declaration, data)
 
     fun visitBody(body: IrBody, data: D) = visitElement(body, data)
     fun visitExpressionBody(body: IrExpressionBody, data: D) = visitBody(body, data)

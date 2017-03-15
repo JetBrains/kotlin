@@ -44,6 +44,8 @@ enum class IrDeclarationKind {
     LOCAL_PROPERTY_ACCESSOR,
     TYPEALIAS,
     ANONYMOUS_INITIALIZER,
+    TYPE_PARAMETER,
+    VALUE_PARAMETER,
     ERROR;
 }
 
