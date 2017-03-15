@@ -1,5 +1,6 @@
 FILE /ifElseIf.kt
   FUN public fun test(i: kotlin.Int): kotlin.Int
+    VALUE_PARAMETER value-parameter i: kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test(Int): Int'
         WHEN type=kotlin.Int origin=WHEN

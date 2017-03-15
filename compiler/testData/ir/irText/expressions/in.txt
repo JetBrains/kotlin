@@ -1,11 +1,15 @@
 FILE /in.kt
   FUN public fun test1(a: kotlin.Any, x: kotlin.collections.Collection<kotlin.Any>): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Any
+    VALUE_PARAMETER value-parameter x: kotlin.collections.Collection<kotlin.Any>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(Any, Collection<Any>): Boolean'
         CALL 'contains(Any): Boolean' type=kotlin.Boolean origin=IN
           $this: GET_VAR 'value-parameter x: Collection<Any>' type=kotlin.collections.Collection<kotlin.Any> origin=null
           element: GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
   FUN public fun test2(a: kotlin.Any, x: kotlin.collections.Collection<kotlin.Any>): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Any
+    VALUE_PARAMETER value-parameter x: kotlin.collections.Collection<kotlin.Any>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(Any, Collection<Any>): Boolean'
         CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=NOT_IN
@@ -13,12 +17,18 @@ FILE /in.kt
             $this: GET_VAR 'value-parameter x: Collection<Any>' type=kotlin.collections.Collection<kotlin.Any> origin=null
             element: GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
   FUN public fun <T> test3(a: T, x: kotlin.collections.Collection<T>): kotlin.Boolean
+    TYPE_PARAMETER <T>
+    VALUE_PARAMETER value-parameter a: T
+    VALUE_PARAMETER value-parameter x: kotlin.collections.Collection<T>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test3(T, Collection<T>): Boolean'
         CALL 'contains(T): Boolean' type=kotlin.Boolean origin=IN
           $this: GET_VAR 'value-parameter x: Collection<T>' type=kotlin.collections.Collection<T> origin=null
           element: GET_VAR 'value-parameter a: T' type=T origin=null
   FUN public fun <T> test4(a: T, x: kotlin.collections.Collection<T>): kotlin.Boolean
+    TYPE_PARAMETER <T>
+    VALUE_PARAMETER value-parameter a: T
+    VALUE_PARAMETER value-parameter x: kotlin.collections.Collection<T>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test4(T, Collection<T>): Boolean'
         CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=NOT_IN

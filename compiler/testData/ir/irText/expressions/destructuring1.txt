@@ -10,14 +10,19 @@ FILE /destructuring1.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='B'
     FUN public final operator fun A.component1(): kotlin.Int
+      $this: VALUE_PARAMETER <receiver: B>
+      $receiver: VALUE_PARAMETER <receiver: component1() on A: Int>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='component1() on A: Int'
           CONST Int type=kotlin.Int value='1'
     FUN public final operator fun A.component2(): kotlin.Int
+      $this: VALUE_PARAMETER <receiver: B>
+      $receiver: VALUE_PARAMETER <receiver: component2() on A: Int>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='component2() on A: Int'
           CONST Int type=kotlin.Int value='2'
   FUN public fun B.test(): kotlin.Unit
+    $receiver: VALUE_PARAMETER <receiver: test() on B: Unit>
     BLOCK_BODY
       COMPOSITE type=kotlin.Unit origin=DESTRUCTURING_DECLARATION
         VAR IR_TEMPORARY_VARIABLE val tmp0_container: A

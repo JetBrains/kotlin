@@ -8,6 +8,7 @@ FILE /field.kt
         RETURN type=kotlin.Nothing from='<get-testSimple>(): Int'
           GET_FIELD 'testSimple: Int' type=kotlin.Int origin=null
     FUN public fun <set-testSimple>(value: kotlin.Int): kotlin.Unit
+      VALUE_PARAMETER value-parameter value: kotlin.Int
       BLOCK_BODY
         SET_FIELD 'testSimple: Int' type=kotlin.Unit origin=EQ
           value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
@@ -20,6 +21,7 @@ FILE /field.kt
         RETURN type=kotlin.Nothing from='<get-testAugmented>(): Int'
           GET_FIELD 'testAugmented: Int' type=kotlin.Int origin=null
     FUN public fun <set-testAugmented>(value: kotlin.Int): kotlin.Unit
+      VALUE_PARAMETER value-parameter value: kotlin.Int
       BLOCK_BODY
         SET_FIELD 'testAugmented: Int' type=kotlin.Unit origin=PLUSEQ
           value: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUSEQ

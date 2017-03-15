@@ -18,14 +18,20 @@ package org.jetbrains.kotlin.ir
 
 import com.intellij.openapi.util.text.StringUtil
 import junit.framework.TestCase
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
-import java.util.*
 import java.util.regex.Pattern
 
 abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
@@ -52,10 +58,13 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
         for (irTreeFileLabel in expectations.irTreeFileLabels) {
             val actualTrees = irFile.dumpTreesFromLineNumber(irTreeFileLabel.lineNumber)
             KotlinTestUtils.assertEqualsToFile(irTreeFileLabel.expectedTextFile, actualTrees)
+            verify(irFile, irFileDump)
 
             // Check that deep copy produces an equivalent result
-            val copiedTrees = irFile.transform(DeepCopyIrTree(), null).dumpTreesFromLineNumber(irTreeFileLabel.lineNumber)
-            KotlinTestUtils.assertEqualsToFile(irTreeFileLabel.expectedTextFile, copiedTrees)
+            val irFileCopy = irFile.transform(DeepCopyIrTree(), null)
+            val copiedTrees = irFileCopy.dumpTreesFromLineNumber(irTreeFileLabel.lineNumber)
+            TestCase.assertEquals("IR dump mismatch after deep copy", actualTrees, copiedTrees)
+            verify(irFileCopy, irFileCopy.dump())
         }
 
         try {
@@ -64,6 +73,84 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
         catch (e: Throwable) {
             println(irFileDump)
             throw rethrow(e)
+        }
+    }
+
+    private fun verify(irFile: IrFile, dump: String) {
+        val irVerifier = IrVerifier()
+        irVerifier.verify(irFile)
+        TestCase.assertFalse(irVerifier.errorsAsMessage + "\n\n\n" + dump, irVerifier.hasErrors)
+    }
+
+    private class IrVerifier : IrElementVisitorVoid {
+        private val errors = ArrayList<String>()
+
+        val hasErrors get() = errors.isNotEmpty()
+
+        val errorsAsMessage get() = errors.joinToString(prefix = "IR verifier errors:\n", separator = "\n")
+
+        private fun error(message: String) {
+            errors.add(message)
+        }
+
+        fun verify(irFile: IrFile) {
+            irFile.acceptChildrenVoid(this)
+        }
+
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitFunction(declaration: IrFunction) {
+            val functionDescriptor = declaration.descriptor
+
+            checkTypeParameters(functionDescriptor, declaration, functionDescriptor.typeParameters)
+
+            declaration.dispatchReceiverParameter?.descriptor.let { dispatchReceiverDescriptor ->
+                if (dispatchReceiverDescriptor != functionDescriptor.dispatchReceiverParameter) {
+                    error("$functionDescriptor: Dispatch receiver parameter mismatch: " +
+                          "$dispatchReceiverDescriptor != ${functionDescriptor.dispatchReceiverParameter}")
+                }
+            }
+
+            declaration.extensionReceiverParameter?.descriptor.let { extensionReceiverDescriptor ->
+                if (extensionReceiverDescriptor != functionDescriptor.extensionReceiverParameter) {
+                    error("$functionDescriptor: Extension receiver parameter mismatch: " +
+                          "$extensionReceiverDescriptor != ${functionDescriptor.extensionReceiverParameter}")
+                }
+            }
+
+            val declaredValueParameters = declaration.valueParameters.map { it.descriptor }
+            val actualValueParameters = functionDescriptor.valueParameters
+            if (declaredValueParameters.size != actualValueParameters.size) {
+                error("$functionDescriptor: Value parameters mismatch: $declaredValueParameters != $actualValueParameters")
+            }
+            else {
+                declaredValueParameters.zip(actualValueParameters).forEach { (declaredValueParameter, actualValueParameter) ->
+                    if (declaredValueParameter != actualValueParameter) {
+                        error("$functionDescriptor: Value parameters mismatch: $declaredValueParameter != $actualValueParameter")
+                    }
+                }
+            }
+        }
+
+        override fun visitClass(declaration: IrClass) {
+            checkTypeParameters(declaration.descriptor, declaration, declaration.descriptor.declaredTypeParameters)
+        }
+
+        private fun checkTypeParameters(descriptor: DeclarationDescriptor, declaration: IrTypeParametersContainer, expectedTypeParameters: List<TypeParameterDescriptor>) {
+            val declaredTypeParameters = declaration.typeParameters.map { it.descriptor }
+
+            if (declaredTypeParameters.size != expectedTypeParameters.size) {
+                error("$descriptor: Type parameters mismatch: $declaredTypeParameters != $expectedTypeParameters")
+            }
+            else {
+                declaredTypeParameters.zip(expectedTypeParameters).forEach { (declaredTypeParameter, expectedTypeParameter) ->
+                    if (declaredTypeParameter != expectedTypeParameter) {
+                        error("$descriptor: Type parameters mismatch: $declaredTypeParameter != $expectedTypeParameter")
+                    }
+                }
+            }
         }
     }
 

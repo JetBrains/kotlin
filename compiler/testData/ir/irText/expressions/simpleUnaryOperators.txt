@@ -1,5 +1,6 @@
 FILE /simpleUnaryOperators.kt
   FUN public fun test1(x: kotlin.Int): kotlin.Int
+    VALUE_PARAMETER value-parameter x: kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(Int): Int'
         CALL 'unaryMinus(): Int' type=kotlin.Int origin=UMINUS
@@ -9,6 +10,7 @@ FILE /simpleUnaryOperators.kt
       RETURN type=kotlin.Nothing from='test2(): Int'
         CONST Int type=kotlin.Int value='-42'
   FUN public fun test3(x: kotlin.Int): kotlin.Int
+    VALUE_PARAMETER value-parameter x: kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test3(Int): Int'
         CALL 'unaryPlus(): Int' type=kotlin.Int origin=UPLUS
@@ -18,6 +20,7 @@ FILE /simpleUnaryOperators.kt
       RETURN type=kotlin.Nothing from='test4(): Int'
         CONST Int type=kotlin.Int value='42'
   FUN public fun test5(x: kotlin.Boolean): kotlin.Boolean
+    VALUE_PARAMETER value-parameter x: kotlin.Boolean
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test5(Boolean): Boolean'
         CALL 'not(): Boolean' type=kotlin.Boolean origin=EXCL

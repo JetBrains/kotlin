@@ -5,6 +5,7 @@ FILE /reflectionLiterals.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
     FUN public final fun foo(): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: A>
       BLOCK_BODY
   FUN public fun bar(): kotlin.Unit
     BLOCK_BODY

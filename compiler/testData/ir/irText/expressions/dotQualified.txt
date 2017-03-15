@@ -1,10 +1,12 @@
 FILE /dotQualified.kt
   FUN public fun length(s: kotlin.String): kotlin.Int
+    VALUE_PARAMETER value-parameter s: kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='length(String): Int'
         CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
           $this: GET_VAR 'value-parameter s: String' type=kotlin.String origin=null
   FUN public fun lengthN(s: kotlin.String?): kotlin.Int?
+    VALUE_PARAMETER value-parameter s: kotlin.String?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='lengthN(String?): Int?'
         BLOCK type=kotlin.Int? origin=SAFE_CALL

@@ -36,20 +36,6 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
     override val scope = Scope(scopeOwner)
     private val loopTable = HashMap<KtLoopExpression, IrLoop>()
 
-    fun generateDefaultParameters(ktFunction: KtFunction, irFunction: IrFunctionBase) {
-        generateDefaultParameters(ktFunction.valueParameterList ?: return, irFunction)
-    }
-
-    fun generateDefaultParameters(ktParameterList: KtParameterList, irFunction: IrFunctionBase) {
-        val statementGenerator = createStatementGenerator()
-        for (ktParameter in ktParameterList.parameters) {
-            val ktDefaultValue = ktParameter.defaultValue ?: continue
-            val valueParameter = getOrFail(BindingContext.VALUE_PARAMETER, ktParameter) as? ValueParameterDescriptor ?: continue
-            val irDefaultValue = statementGenerator.generateExpression(ktDefaultValue)
-            irFunction.putDefault(valueParameter, IrExpressionBodyImpl(irDefaultValue))
-        }
-    }
-
     fun generateFunctionBody(ktBody: KtExpression): IrBody {
         val statementGenerator = createStatementGenerator()
 
@@ -64,8 +50,8 @@ class BodyGenerator(val scopeOwner: DeclarationDescriptor, override val context:
         return irBlockBody
     }
 
-    fun generatePropertyInitializerBody(ktInitializer: KtExpression): IrExpressionBody =
-            IrExpressionBodyImpl(createStatementGenerator().generateExpression(ktInitializer))
+    fun generateExpressionBody(ktExpression: KtExpression): IrExpressionBody =
+            IrExpressionBodyImpl(createStatementGenerator().generateExpression(ktExpression))
 
     fun generateLambdaBody(ktFun: KtFunctionLiteral): IrBody {
         val statementGenerator = createStatementGenerator()

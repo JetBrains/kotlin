@@ -5,28 +5,35 @@ FILE /outerClassAccess.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
     FUN public final fun foo(): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: Outer>
       BLOCK_BODY
     CLASS CLASS Inner
       CONSTRUCTOR public constructor Inner()
+        $this: VALUE_PARAMETER <receiver: Outer>
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='Inner'
       FUN public final fun test(): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: Inner>
         BLOCK_BODY
           CALL 'foo(): Unit' type=kotlin.Unit origin=null
             $this: GET_VAR '<receiver: Outer>' type=Outer origin=null
       CLASS CLASS Inner2
         CONSTRUCTOR public constructor Inner2()
+          $this: VALUE_PARAMETER <receiver: Inner>
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
             INSTANCE_INITIALIZER_CALL classDescriptor='Inner2'
         FUN public final fun test2(): kotlin.Unit
+          $this: VALUE_PARAMETER <receiver: Inner2>
           BLOCK_BODY
             CALL 'test(): Unit' type=kotlin.Unit origin=null
               $this: GET_VAR '<receiver: Inner>' type=Outer.Inner origin=null
             CALL 'foo(): Unit' type=kotlin.Unit origin=null
               $this: GET_VAR '<receiver: Outer>' type=Outer origin=null
         FUN public final fun Outer.test3(): kotlin.Unit
+          $this: VALUE_PARAMETER <receiver: Inner2>
+          $receiver: VALUE_PARAMETER <receiver: test3() on Outer: Unit>
           BLOCK_BODY
             CALL 'foo(): Unit' type=kotlin.Unit origin=null
               $this: GET_VAR '<receiver: test3() on Outer: Unit>' type=Outer origin=null

@@ -10,9 +10,11 @@ FILE /delegatingConstructorCallsInSecondaryConstructors.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test'
     CONSTRUCTOR public constructor Test(xx: kotlin.Int)
+      VALUE_PARAMETER value-parameter xx: kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test'
     CONSTRUCTOR public constructor Test(xx: kotlin.Short)
+      VALUE_PARAMETER value-parameter xx: kotlin.Short
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Test()'

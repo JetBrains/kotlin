@@ -5,6 +5,7 @@ FILE /companion.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Z'
     FUN public final fun test2(): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: Z>
       BLOCK_BODY
         CALL 'test(): Unit' type=kotlin.Unit origin=null
           $this: GET_OBJECT 'companion object of Z' type=Z.Companion
@@ -14,4 +15,5 @@ FILE /companion.kt
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='companion object of Z'
       FUN public final fun test(): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: companion object of Z>
         BLOCK_BODY

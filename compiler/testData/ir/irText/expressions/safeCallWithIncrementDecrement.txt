@@ -6,12 +6,16 @@ FILE /safeCallWithIncrementDecrement.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='C'
   PROPERTY public var test.C?.p: kotlin.Int
     FUN public fun test.C?.<get-p>(): kotlin.Int
+      $receiver: VALUE_PARAMETER <receiver: p: Int on C?>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-p>() on C?: Int'
           CONST Int type=kotlin.Int value='42'
     FUN public fun test.C?.<set-p>(value: kotlin.Int): kotlin.Unit
+      $receiver: VALUE_PARAMETER <receiver: p: Int on C?>
+      VALUE_PARAMETER value-parameter value: kotlin.Int
       BLOCK_BODY
   FUN public operator fun kotlin.Int?.inc(): kotlin.Int?
+    $receiver: VALUE_PARAMETER <receiver: inc() on Int?: Int?>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='inc() on Int?: Int?'
         BLOCK type=kotlin.Int? origin=SAFE_CALL
@@ -28,12 +32,18 @@ FILE /safeCallWithIncrementDecrement.kt
               then: CALL 'inc(): Int' type=kotlin.Int origin=null
                 $this: GET_VAR 'tmp0_safe_receiver: Int?' type=kotlin.Int? origin=null
   FUN public operator fun kotlin.Int?.get(index: kotlin.Int): kotlin.Int
+    $receiver: VALUE_PARAMETER <receiver: get(Int) on Int?: Int>
+    VALUE_PARAMETER value-parameter index: kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='get(Int) on Int?: Int'
         CONST Int type=kotlin.Int value='42'
   FUN public operator fun kotlin.Int?.set(index: kotlin.Int, value: kotlin.Int): kotlin.Unit
+    $receiver: VALUE_PARAMETER <receiver: set(Int, Int) on Int?: Unit>
+    VALUE_PARAMETER value-parameter index: kotlin.Int
+    VALUE_PARAMETER value-parameter value: kotlin.Int
     BLOCK_BODY
   FUN public fun testProperty(nc: test.C?): kotlin.Unit
+    VALUE_PARAMETER value-parameter nc: test.C?
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=SAFE_CALL
         VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: test.C?
@@ -61,6 +71,7 @@ FILE /safeCallWithIncrementDecrement.kt
                       $receiver: GET_VAR 'tmp2: Int' type=kotlin.Int origin=null
                   GET_VAR 'tmp2: Int' type=kotlin.Int origin=null
   FUN public fun testArrayAccess(nc: test.C?): kotlin.Unit
+    VALUE_PARAMETER value-parameter nc: test.C?
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=kotlin.Int origin=POSTFIX_INCR

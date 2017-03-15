@@ -1,6 +1,7 @@
 FILE /safeAssignment.kt
   CLASS CLASS C
     CONSTRUCTOR public constructor C(x: kotlin.Int)
+      VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='C'
@@ -9,16 +10,20 @@ FILE /safeAssignment.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: C>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: C>' type=C origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-x>(<set-?>: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: C>
+        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
         BLOCK_BODY
           SET_FIELD 'x: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: C>' type=C origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
   FUN public fun test(nc: C?): kotlin.Unit
+    VALUE_PARAMETER value-parameter nc: C?
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=SAFE_CALL
         VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: C?

@@ -76,17 +76,19 @@ FILE /primitivesImplicitConversions.kt
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value='1'
   FUN public fun testImplicitArguments(x: kotlin.Long = ...): kotlin.Unit
-    x: EXPRESSION_BODY
-      TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
-        CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
-          $this: CONST Int type=kotlin.Int value='1'
-    BLOCK_BODY
-  CLASS CLASS TestImplicitArguments
-    CONSTRUCTOR public constructor TestImplicitArguments(x: kotlin.Long = ...)
-      x: EXPRESSION_BODY
+    VALUE_PARAMETER value-parameter x: kotlin.Long = ...
+      EXPRESSION_BODY
         TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
           CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
             $this: CONST Int type=kotlin.Int value='1'
+    BLOCK_BODY
+  CLASS CLASS TestImplicitArguments
+    CONSTRUCTOR public constructor TestImplicitArguments(x: kotlin.Long = ...)
+      VALUE_PARAMETER value-parameter x: kotlin.Long = ...
+        EXPRESSION_BODY
+          TYPE_OP type=kotlin.Long origin=IMPLICIT_INTEGER_COERCION typeOperand=kotlin.Long
+            CALL 'unaryMinus(): Int' type=kotlin.Int origin=null
+              $this: CONST Int type=kotlin.Int value='1'
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestImplicitArguments'
@@ -95,6 +97,7 @@ FILE /primitivesImplicitConversions.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Long = ...' type=kotlin.Long origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Long
+        $this: VALUE_PARAMETER <receiver: TestImplicitArguments>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Long'
             GET_FIELD 'x: Long' type=kotlin.Long origin=null

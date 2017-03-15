@@ -1,6 +1,9 @@
 FILE /delegatingConstructorCallToTypeAliasConstructor.kt
   CLASS CLASS Cell
+    TYPE_PARAMETER <T>
     CONSTRUCTOR public constructor Cell<T>(value: T)
+      TYPE_PARAMETER <T>
+      VALUE_PARAMETER value-parameter value: T
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Cell'
@@ -9,6 +12,7 @@ FILE /delegatingConstructorCallToTypeAliasConstructor.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: T' type=T origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value>(): T
+        $this: VALUE_PARAMETER <receiver: Cell>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-value>(): T'
             GET_FIELD 'value: T' type=T origin=null

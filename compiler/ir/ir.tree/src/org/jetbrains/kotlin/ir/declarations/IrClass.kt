@@ -18,13 +18,19 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 
-interface IrClass : IrDeclaration, IrDeclarationContainer {
+interface IrClass : IrDeclaration, IrDeclarationContainer, IrTypeParametersContainer {
     override val declarationKind: IrDeclarationKind
         get() = IrDeclarationKind.CLASS
 
     override val descriptor: ClassDescriptor
+}
 
-    val typeParameters: MutableList<IrTypeParameter>
+fun IrClass.addMember(member: IrDeclaration) {
+    declarations.add(member)
+}
+
+fun IrClass.addAll(members: List<IrDeclaration>) {
+    declarations.addAll(members)
 }
 
 fun IrClass.getInstanceInitializerMembers() =

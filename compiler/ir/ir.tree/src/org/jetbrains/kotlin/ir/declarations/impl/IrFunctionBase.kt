@@ -35,30 +35,27 @@ abstract class IrFunctionBase(
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrFunction {
     override val typeParameters: MutableList<IrTypeParameter> = SmartList()
 
+    override var dispatchReceiverParameter: IrValueParameter? = null
+    override var extensionReceiverParameter: IrValueParameter? = null
     override val valueParameters: MutableList<IrValueParameter> = ArrayList()
 
     final override var body: IrBody? = null
 
-    private fun getIrValueParameter(parameter: ValueParameterDescriptor): IrValueParameter =
-            valueParameters.getOrElse(parameter.index) {
-                throw AssertionError("No IrValueParameter for $parameter")
-            }
-
-    override fun getDefault(parameter: ValueParameterDescriptor): IrExpressionBody? =
-            getIrValueParameter(parameter).defaultValue
-
-    override fun putDefault(parameter: ValueParameterDescriptor, expressionBody: IrExpressionBody) {
-        getIrValueParameter(parameter).defaultValue = expressionBody
-    }
-
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }
+
+        dispatchReceiverParameter?.accept(visitor, data)
+        extensionReceiverParameter?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
+
         body?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         typeParameters.transform { it.transform(transformer, data) }
+
+        dispatchReceiverParameter = dispatchReceiverParameter?.transform(transformer, data)
+        extensionReceiverParameter = extensionReceiverParameter?.transform(transformer, data)
         valueParameters.transform { it.transform(transformer, data) }
 
         body = body?.transform(transformer, data)

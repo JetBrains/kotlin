@@ -14,6 +14,7 @@ FILE /enum.kt
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS TestEnum2
     CONSTRUCTOR private constructor TestEnum2(x: kotlin.Int)
+      VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum2'
@@ -22,6 +23,7 @@ FILE /enum.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: TestEnum2>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
@@ -52,16 +54,19 @@ FILE /enum.kt
             ENUM_CONSTRUCTOR_CALL 'constructor TestEnum3()'
             INSTANCE_INITIALIZER_CALL classDescriptor='TEST'
         FUN public open override fun foo(): kotlin.Unit
+          $this: VALUE_PARAMETER <receiver: TEST>
           BLOCK_BODY
             CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
               message: CONST String type=kotlin.String value='Hello, world!'
     FUN public abstract fun foo(): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: TestEnum3>
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<TestEnum3>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): TestEnum3
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS TestEnum4
     CONSTRUCTOR private constructor TestEnum4(x: kotlin.Int)
+      VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum4'
@@ -70,6 +75,7 @@ FILE /enum.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: TestEnum4>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
@@ -83,6 +89,7 @@ FILE /enum.kt
               x: CONST Int type=kotlin.Int value='1'
             INSTANCE_INITIALIZER_CALL classDescriptor='TEST1'
         FUN public open override fun foo(): kotlin.Unit
+          $this: VALUE_PARAMETER <receiver: TEST1>
           BLOCK_BODY
             CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
               message: GET_ENUM 'TEST1' type=TestEnum4
@@ -97,6 +104,7 @@ FILE /enum.kt
         PROPERTY public final val z: kotlin.Int
           FIELD PROPERTY_BACKING_FIELD public final val z: kotlin.Int
           FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-z>(): kotlin.Int
+            $this: VALUE_PARAMETER <receiver: TEST2>
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<get-z>(): Int'
                 GET_FIELD 'z: Int' type=kotlin.Int origin=null
@@ -108,18 +116,21 @@ FILE /enum.kt
               value: CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
                 $this: GET_VAR '<receiver: TEST2>' type=TestEnum4.TEST2 origin=null
         FUN public open override fun foo(): kotlin.Unit
+          $this: VALUE_PARAMETER <receiver: TEST2>
           BLOCK_BODY
             CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
               message: GET_ENUM 'TEST2' type=TestEnum4
     FUN public abstract fun foo(): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: TestEnum4>
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<TestEnum4>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): TestEnum4
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS TestEnum5
     CONSTRUCTOR private constructor TestEnum5(x: kotlin.Int = ...)
-      x: EXPRESSION_BODY
-        CONST Int type=kotlin.Int value='0'
+      VALUE_PARAMETER value-parameter x: kotlin.Int = ...
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value='0'
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestEnum5'
@@ -128,6 +139,7 @@ FILE /enum.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int = ...' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: TestEnum5>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null

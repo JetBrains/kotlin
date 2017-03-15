@@ -21,19 +21,32 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 
-interface IrFunction : IrDeclaration {
+interface IrFunction : IrDeclaration, IrTypeParametersContainer {
     override val descriptor: FunctionDescriptor
 
-    val typeParameters: MutableList<IrTypeParameter>
-
+    var dispatchReceiverParameter: IrValueParameter?
+    var extensionReceiverParameter: IrValueParameter?
     val valueParameters: MutableList<IrValueParameter>
 
     var body: IrBody?
 
     override val declarationKind: IrDeclarationKind
         get() = IrDeclarationKind.FUNCTION
-
-    fun putDefault(parameter: ValueParameterDescriptor, expressionBody: IrExpressionBody)
-    fun getDefault(parameter: ValueParameterDescriptor): IrExpressionBody?
 }
 
+
+fun IrFunction.getIrValueParameter(parameter: ValueParameterDescriptor): IrValueParameter =
+        valueParameters.getOrElse(parameter.index) {
+            throw AssertionError("No IrValueParameter for $parameter")
+        }.also { found ->
+            assert(found.descriptor == parameter) {
+                "Parameter indices mismatch at $descriptor: $parameter != ${found.descriptor}"
+            }
+        }
+
+fun IrFunction.getDefault(parameter: ValueParameterDescriptor): IrExpressionBody? =
+        getIrValueParameter(parameter).defaultValue
+
+fun IrFunction.putDefault(parameter: ValueParameterDescriptor, expressionBody: IrExpressionBody) {
+    getIrValueParameter(parameter).defaultValue = expressionBody
+}

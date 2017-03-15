@@ -1,5 +1,6 @@
 FILE /typeArguments.kt
   FUN public fun test1(x: kotlin.Any): kotlin.Boolean
+    VALUE_PARAMETER value-parameter x: kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(Any): Boolean'
         WHEN type=kotlin.Boolean origin=ANDAND

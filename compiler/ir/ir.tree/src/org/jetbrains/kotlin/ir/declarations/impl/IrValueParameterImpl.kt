@@ -36,7 +36,7 @@ class IrValueParameterImpl(
             endOffset: Int,
             origin: IrDeclarationOrigin,
             descriptor: ParameterDescriptor,
-            defaultValue: IrExpressionBody
+            defaultValue: IrExpressionBody?
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.defaultValue = defaultValue
     }

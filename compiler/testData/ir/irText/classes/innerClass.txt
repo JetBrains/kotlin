@@ -6,11 +6,13 @@ FILE /innerClass.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
     CLASS CLASS TestInnerClass
       CONSTRUCTOR public constructor TestInnerClass()
+        $this: VALUE_PARAMETER <receiver: Outer>
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='TestInnerClass'
     CLASS CLASS DerivedInnerClass
       CONSTRUCTOR public constructor DerivedInnerClass()
+        $this: VALUE_PARAMETER <receiver: Outer>
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor TestInnerClass()'
             $this: GET_VAR '<receiver: Outer>' type=Outer origin=null

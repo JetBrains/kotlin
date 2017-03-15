@@ -1,6 +1,7 @@
 FILE /topLevel.kt
   CLASS CLASS Delegate
     CONSTRUCTOR public constructor Delegate(value: kotlin.String)
+      VALUE_PARAMETER value-parameter value: kotlin.String
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Delegate'
@@ -9,17 +10,22 @@ FILE /topLevel.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value>(): kotlin.String
+        $this: VALUE_PARAMETER <receiver: Delegate>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-value>(): String'
             GET_FIELD 'value: String' type=kotlin.String origin=null
               receiver: GET_VAR '<receiver: Delegate>' type=Delegate origin=null
     FUN public final operator fun getValue(thisRef: kotlin.Any?, property: kotlin.Any?): kotlin.String
+      $this: VALUE_PARAMETER <receiver: Delegate>
+      VALUE_PARAMETER value-parameter thisRef: kotlin.Any?
+      VALUE_PARAMETER value-parameter property: kotlin.Any?
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='getValue(Any?, Any?): String'
           CALL '<get-value>(): String' type=kotlin.String origin=GET_PROPERTY
             $this: GET_VAR '<receiver: Delegate>' type=Delegate origin=null
   CLASS CLASS DelegateProvider
     CONSTRUCTOR public constructor DelegateProvider(value: kotlin.String)
+      VALUE_PARAMETER value-parameter value: kotlin.String
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='DelegateProvider'
@@ -28,11 +34,15 @@ FILE /topLevel.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value>(): kotlin.String
+        $this: VALUE_PARAMETER <receiver: DelegateProvider>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-value>(): String'
             GET_FIELD 'value: String' type=kotlin.String origin=null
               receiver: GET_VAR '<receiver: DelegateProvider>' type=DelegateProvider origin=null
     FUN public final operator fun provideDelegate(thisRef: kotlin.Any?, property: kotlin.Any?): Delegate
+      $this: VALUE_PARAMETER <receiver: DelegateProvider>
+      VALUE_PARAMETER value-parameter thisRef: kotlin.Any?
+      VALUE_PARAMETER value-parameter property: kotlin.Any?
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='provideDelegate(Any?, Any?): Delegate'
           CALL 'constructor Delegate(String)' type=Delegate origin=null

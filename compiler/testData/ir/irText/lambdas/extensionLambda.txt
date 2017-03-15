@@ -8,6 +8,7 @@ FILE /extensionLambda.kt
           $receiver: CONST String type=kotlin.String value='42'
           block: BLOCK type=kotlin.String.() -> kotlin.Int origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun kotlin.String.<anonymous>(): kotlin.Int
+              $receiver: VALUE_PARAMETER <receiver: <anonymous>() on String: Int>
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='<anonymous>() on String: Int'
                   CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY

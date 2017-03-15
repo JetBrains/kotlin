@@ -1,15 +1,21 @@
 FILE /defaultArguments.kt
   FUN public fun test1(x: kotlin.Int, y: kotlin.Int = ..., z: kotlin.String = ...): kotlin.Unit
-    y: EXPRESSION_BODY
-      CONST Int type=kotlin.Int value='0'
-    z: EXPRESSION_BODY
-      CONST String type=kotlin.String value='abc'
+    VALUE_PARAMETER value-parameter x: kotlin.Int
+    VALUE_PARAMETER value-parameter y: kotlin.Int = ...
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value='0'
+    VALUE_PARAMETER value-parameter z: kotlin.String = ...
+      EXPRESSION_BODY
+        CONST String type=kotlin.String value='abc'
     BLOCK_BODY
       FUN local final fun local(xx: kotlin.Int = ..., yy: kotlin.Int = ..., zz: kotlin.String = ...): kotlin.Unit
-        xx: EXPRESSION_BODY
-          GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
-        yy: EXPRESSION_BODY
-          GET_VAR 'value-parameter y: Int = ...' type=kotlin.Int origin=null
-        zz: EXPRESSION_BODY
-          GET_VAR 'value-parameter z: String = ...' type=kotlin.String origin=null
+        VALUE_PARAMETER value-parameter xx: kotlin.Int = ...
+          EXPRESSION_BODY
+            GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
+        VALUE_PARAMETER value-parameter yy: kotlin.Int = ...
+          EXPRESSION_BODY
+            GET_VAR 'value-parameter y: Int = ...' type=kotlin.Int origin=null
+        VALUE_PARAMETER value-parameter zz: kotlin.String = ...
+          EXPRESSION_BODY
+            GET_VAR 'value-parameter z: String = ...' type=kotlin.String origin=null
         BLOCK_BODY

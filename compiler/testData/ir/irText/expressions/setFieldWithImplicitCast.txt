@@ -5,6 +5,8 @@ FILE /Derived.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Derived'
     FUN public final fun setValue(v: kotlin.Any): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: Derived>
+      VALUE_PARAMETER value-parameter v: kotlin.Any
       BLOCK_BODY
         WHEN type=kotlin.Unit origin=null
           BRANCH

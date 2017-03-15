@@ -25,6 +25,7 @@ FILE /references.kt
       RETURN type=kotlin.Nothing from='test1(): String'
         CALL '<get-ok>(): String' type=kotlin.String origin=GET_PROPERTY
   FUN public fun test2(x: kotlin.String): kotlin.String
+    VALUE_PARAMETER value-parameter x: kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(String): String'
         GET_VAR 'value-parameter x: String' type=kotlin.String origin=null
@@ -40,10 +41,12 @@ FILE /references.kt
         CALL '<get-ok3>(): String' type=kotlin.String origin=GET_PROPERTY
   PROPERTY public val kotlin.String.okext: kotlin.String
     FUN public fun kotlin.String.<get-okext>(): kotlin.String
+      $receiver: VALUE_PARAMETER <receiver: okext: String on String>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-okext>() on String: String'
           CONST String type=kotlin.String value='OK'
   FUN public fun kotlin.String.test5(): kotlin.String
+    $receiver: VALUE_PARAMETER <receiver: test5() on String: String>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test5() on String: String'
         CALL '<get-okext>() on String: String' type=kotlin.String origin=GET_PROPERTY

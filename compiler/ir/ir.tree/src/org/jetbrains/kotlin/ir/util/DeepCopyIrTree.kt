@@ -85,7 +85,9 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
                     mapDeclarationOrigin(declaration.origin),
                     mapClassDeclaration(declaration.descriptor),
                     declaration.declarations.map { it.transform(this, null) as IrDeclaration }
-            )
+            ).apply {
+                transformTypeParameters(declaration, descriptor.declaredTypeParameters)
+            }
 
     override fun visitTypeAlias(declaration: IrTypeAlias): IrTypeAlias =
             IrTypeAliasImpl(
@@ -100,7 +102,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
                     mapDeclarationOrigin(declaration.origin),
                     mapFunctionDeclaration(declaration.descriptor),
                     declaration.body?.transform(this, null)
-            ).transformDefaults(declaration)
+            ).transformParameters(declaration)
 
     override fun visitConstructor(declaration: IrConstructor): IrConstructor =
             IrConstructorImpl(
@@ -108,17 +110,59 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
                     mapDeclarationOrigin(declaration.origin),
                     mapConstructorDeclaration(declaration.descriptor),
                     declaration.body!!.transform(this, null)
-            ).transformDefaults(declaration)
+            ).transformParameters(declaration)
 
-    private fun <T : IrFunction> T.transformDefaults(original: T): T {
-        for (originalValueParameter in original.descriptor.valueParameters) {
-            val valueParameter = descriptor.valueParameters[originalValueParameter.index]
-            original.getDefault(originalValueParameter)?.let { irDefaultParameterValue ->
-                putDefault(valueParameter, irDefaultParameterValue.transform(this@DeepCopyIrTree, null))
+    private fun <T : IrTypeParametersContainer> T.transformTypeParameters(original: T, myTypeParameters: List<TypeParameterDescriptor>): T =
+            apply {
+                original.typeParameters.mapTo(typeParameters) { originalTypeParameter ->
+                    copyTypeParameter(originalTypeParameter, myTypeParameters[originalTypeParameter.descriptor.index])
+                }
             }
-        }
-        return this
-    }
+
+    private fun <T : IrFunction> T.transformParameters(original: T): T =
+            apply {
+                transformTypeParameters(original, descriptor.typeParameters)
+                transformValueParameters(original)
+            }
+
+    private fun <T : IrFunction> T.transformValueParameters(original: T) =
+            apply {
+                dispatchReceiverParameter = original.dispatchReceiverParameter?.let {
+                    copyValueParameter(it, descriptor.dispatchReceiverParameter ?: throw AssertionError("No dispatch receiver in $descriptor"))
+                }
+
+                extensionReceiverParameter = original.extensionReceiverParameter?.let {
+                    copyValueParameter(it, descriptor.extensionReceiverParameter ?: throw AssertionError("No extension receiver in $descriptor"))
+                }
+
+                original.valueParameters.mapIndexedTo(valueParameters) { i, originalValueParameter ->
+                    copyValueParameter(originalValueParameter, descriptor.valueParameters[i])
+                }
+            }
+
+    private fun copyTypeParameter(
+            originalTypeParameter: IrTypeParameter,
+            newTypeParameterDescriptor: TypeParameterDescriptor
+    ): IrTypeParameterImpl =
+            IrTypeParameterImpl(
+                    originalTypeParameter.startOffset, originalTypeParameter.endOffset,
+                    mapDeclarationOrigin(originalTypeParameter.origin),
+                    newTypeParameterDescriptor
+            )
+
+    private fun copyValueParameter(
+            originalValueParameter: IrValueParameter,
+            newParameterDescriptor: ParameterDescriptor
+    ): IrValueParameterImpl =
+            IrValueParameterImpl(
+                    originalValueParameter.startOffset, originalValueParameter.endOffset,
+                    mapDeclarationOrigin(originalValueParameter.origin),
+                    newParameterDescriptor,
+                    originalValueParameter.defaultValue?.transform(this@DeepCopyIrTree, null)
+            )
+
+    // TODO visitTypeParameter
+    // TODO visitValueParameter
 
     override fun visitProperty(declaration: IrProperty): IrProperty =
             IrPropertyImpl(

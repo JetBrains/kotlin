@@ -14,6 +14,7 @@ FILE /coercionToUnit.kt
         RETURN type=kotlin.Nothing from='<get-test1>(): () -> Unit'
           GET_FIELD 'test1: () -> Unit' type=() -> kotlin.Unit origin=null
   FUN public fun test2(mc: kotlin.collections.MutableCollection<kotlin.String>): kotlin.Unit
+    VALUE_PARAMETER value-parameter mc: kotlin.collections.MutableCollection<kotlin.String>
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'add(String): Boolean' type=kotlin.Boolean origin=null

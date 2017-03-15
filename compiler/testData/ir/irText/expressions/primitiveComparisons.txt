@@ -1,5 +1,7 @@
 FILE /primitiveComparisons.kt
   FUN public fun btest1(a: kotlin.Byte, b: kotlin.Byte): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Byte
+    VALUE_PARAMETER value-parameter b: kotlin.Byte
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='btest1(Byte, Byte): Boolean'
         CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
@@ -7,6 +9,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Byte' type=kotlin.Byte origin=null
             other: GET_VAR 'value-parameter b: Byte' type=kotlin.Byte origin=null
   FUN public fun btest2(a: kotlin.Byte, b: kotlin.Byte): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Byte
+    VALUE_PARAMETER value-parameter b: kotlin.Byte
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='btest2(Byte, Byte): Boolean'
         CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
@@ -14,6 +18,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Byte' type=kotlin.Byte origin=null
             other: GET_VAR 'value-parameter b: Byte' type=kotlin.Byte origin=null
   FUN public fun btest3(a: kotlin.Byte, b: kotlin.Byte): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Byte
+    VALUE_PARAMETER value-parameter b: kotlin.Byte
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='btest3(Byte, Byte): Boolean'
         CALL 'GTEQ0(Int): Boolean' type=kotlin.Boolean origin=GTEQ
@@ -21,6 +27,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Byte' type=kotlin.Byte origin=null
             other: GET_VAR 'value-parameter b: Byte' type=kotlin.Byte origin=null
   FUN public fun btest4(a: kotlin.Byte, b: kotlin.Byte): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Byte
+    VALUE_PARAMETER value-parameter b: kotlin.Byte
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='btest4(Byte, Byte): Boolean'
         CALL 'LTEQ0(Int): Boolean' type=kotlin.Boolean origin=LTEQ
@@ -28,6 +36,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Byte' type=kotlin.Byte origin=null
             other: GET_VAR 'value-parameter b: Byte' type=kotlin.Byte origin=null
   FUN public fun stest1(a: kotlin.Short, b: kotlin.Short): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Short
+    VALUE_PARAMETER value-parameter b: kotlin.Short
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='stest1(Short, Short): Boolean'
         CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
@@ -35,6 +45,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Short' type=kotlin.Short origin=null
             other: GET_VAR 'value-parameter b: Short' type=kotlin.Short origin=null
   FUN public fun stest2(a: kotlin.Short, b: kotlin.Short): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Short
+    VALUE_PARAMETER value-parameter b: kotlin.Short
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='stest2(Short, Short): Boolean'
         CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
@@ -42,6 +54,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Short' type=kotlin.Short origin=null
             other: GET_VAR 'value-parameter b: Short' type=kotlin.Short origin=null
   FUN public fun stest3(a: kotlin.Short, b: kotlin.Short): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Short
+    VALUE_PARAMETER value-parameter b: kotlin.Short
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='stest3(Short, Short): Boolean'
         CALL 'GTEQ0(Int): Boolean' type=kotlin.Boolean origin=GTEQ
@@ -49,6 +63,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Short' type=kotlin.Short origin=null
             other: GET_VAR 'value-parameter b: Short' type=kotlin.Short origin=null
   FUN public fun stest4(a: kotlin.Short, b: kotlin.Short): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Short
+    VALUE_PARAMETER value-parameter b: kotlin.Short
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='stest4(Short, Short): Boolean'
         CALL 'LTEQ0(Int): Boolean' type=kotlin.Boolean origin=LTEQ
@@ -56,6 +72,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Short' type=kotlin.Short origin=null
             other: GET_VAR 'value-parameter b: Short' type=kotlin.Short origin=null
   FUN public fun itest1(a: kotlin.Int, b: kotlin.Int): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Int
+    VALUE_PARAMETER value-parameter b: kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='itest1(Int, Int): Boolean'
         CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
@@ -63,6 +81,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
             other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
   FUN public fun itest2(a: kotlin.Int, b: kotlin.Int): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Int
+    VALUE_PARAMETER value-parameter b: kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='itest2(Int, Int): Boolean'
         CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
@@ -70,6 +90,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
             other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
   FUN public fun itest3(a: kotlin.Int, b: kotlin.Int): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Int
+    VALUE_PARAMETER value-parameter b: kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='itest3(Int, Int): Boolean'
         CALL 'GTEQ0(Int): Boolean' type=kotlin.Boolean origin=GTEQ
@@ -77,6 +99,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
             other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
   FUN public fun itest4(a: kotlin.Int, b: kotlin.Int): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Int
+    VALUE_PARAMETER value-parameter b: kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='itest4(Int, Int): Boolean'
         CALL 'LTEQ0(Int): Boolean' type=kotlin.Boolean origin=LTEQ
@@ -84,6 +108,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
             other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
   FUN public fun ltest1(a: kotlin.Long, b: kotlin.Long): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Long
+    VALUE_PARAMETER value-parameter b: kotlin.Long
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='ltest1(Long, Long): Boolean'
         CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
@@ -91,6 +117,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Long' type=kotlin.Long origin=null
             other: GET_VAR 'value-parameter b: Long' type=kotlin.Long origin=null
   FUN public fun ltest2(a: kotlin.Long, b: kotlin.Long): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Long
+    VALUE_PARAMETER value-parameter b: kotlin.Long
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='ltest2(Long, Long): Boolean'
         CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
@@ -98,6 +126,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Long' type=kotlin.Long origin=null
             other: GET_VAR 'value-parameter b: Long' type=kotlin.Long origin=null
   FUN public fun ltest3(a: kotlin.Long, b: kotlin.Long): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Long
+    VALUE_PARAMETER value-parameter b: kotlin.Long
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='ltest3(Long, Long): Boolean'
         CALL 'GTEQ0(Int): Boolean' type=kotlin.Boolean origin=GTEQ
@@ -105,6 +135,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Long' type=kotlin.Long origin=null
             other: GET_VAR 'value-parameter b: Long' type=kotlin.Long origin=null
   FUN public fun ltest4(a: kotlin.Long, b: kotlin.Long): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Long
+    VALUE_PARAMETER value-parameter b: kotlin.Long
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='ltest4(Long, Long): Boolean'
         CALL 'LTEQ0(Int): Boolean' type=kotlin.Boolean origin=LTEQ
@@ -112,6 +144,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Long' type=kotlin.Long origin=null
             other: GET_VAR 'value-parameter b: Long' type=kotlin.Long origin=null
   FUN public fun ftest1(a: kotlin.Float, b: kotlin.Float): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Float
+    VALUE_PARAMETER value-parameter b: kotlin.Float
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='ftest1(Float, Float): Boolean'
         CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
@@ -119,6 +153,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Float' type=kotlin.Float origin=null
             other: GET_VAR 'value-parameter b: Float' type=kotlin.Float origin=null
   FUN public fun ftest2(a: kotlin.Float, b: kotlin.Float): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Float
+    VALUE_PARAMETER value-parameter b: kotlin.Float
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='ftest2(Float, Float): Boolean'
         CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
@@ -126,6 +162,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Float' type=kotlin.Float origin=null
             other: GET_VAR 'value-parameter b: Float' type=kotlin.Float origin=null
   FUN public fun ftest3(a: kotlin.Float, b: kotlin.Float): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Float
+    VALUE_PARAMETER value-parameter b: kotlin.Float
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='ftest3(Float, Float): Boolean'
         CALL 'GTEQ0(Int): Boolean' type=kotlin.Boolean origin=GTEQ
@@ -133,6 +171,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Float' type=kotlin.Float origin=null
             other: GET_VAR 'value-parameter b: Float' type=kotlin.Float origin=null
   FUN public fun ftest4(a: kotlin.Float, b: kotlin.Float): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Float
+    VALUE_PARAMETER value-parameter b: kotlin.Float
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='ftest4(Float, Float): Boolean'
         CALL 'LTEQ0(Int): Boolean' type=kotlin.Boolean origin=LTEQ
@@ -140,6 +180,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Float' type=kotlin.Float origin=null
             other: GET_VAR 'value-parameter b: Float' type=kotlin.Float origin=null
   FUN public fun dtest1(a: kotlin.Double, b: kotlin.Double): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Double
+    VALUE_PARAMETER value-parameter b: kotlin.Double
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='dtest1(Double, Double): Boolean'
         CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
@@ -147,6 +189,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Double' type=kotlin.Double origin=null
             other: GET_VAR 'value-parameter b: Double' type=kotlin.Double origin=null
   FUN public fun dtest2(a: kotlin.Double, b: kotlin.Double): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Double
+    VALUE_PARAMETER value-parameter b: kotlin.Double
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='dtest2(Double, Double): Boolean'
         CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
@@ -154,6 +198,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Double' type=kotlin.Double origin=null
             other: GET_VAR 'value-parameter b: Double' type=kotlin.Double origin=null
   FUN public fun dtest3(a: kotlin.Double, b: kotlin.Double): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Double
+    VALUE_PARAMETER value-parameter b: kotlin.Double
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='dtest3(Double, Double): Boolean'
         CALL 'GTEQ0(Int): Boolean' type=kotlin.Boolean origin=GTEQ
@@ -161,6 +207,8 @@ FILE /primitiveComparisons.kt
             $this: GET_VAR 'value-parameter a: Double' type=kotlin.Double origin=null
             other: GET_VAR 'value-parameter b: Double' type=kotlin.Double origin=null
   FUN public fun dtest4(a: kotlin.Double, b: kotlin.Double): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Double
+    VALUE_PARAMETER value-parameter b: kotlin.Double
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='dtest4(Double, Double): Boolean'
         CALL 'LTEQ0(Int): Boolean' type=kotlin.Boolean origin=LTEQ

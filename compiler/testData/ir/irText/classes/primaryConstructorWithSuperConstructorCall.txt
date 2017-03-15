@@ -16,6 +16,8 @@ FILE /primaryConstructorWithSuperConstructorCall.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='TestExplicitPrimaryConstructor'
   CLASS CLASS TestWithDelegatingConstructor
     CONSTRUCTOR public constructor TestWithDelegatingConstructor(x: kotlin.Int, y: kotlin.Int)
+      VALUE_PARAMETER value-parameter x: kotlin.Int
+      VALUE_PARAMETER value-parameter y: kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestWithDelegatingConstructor'
@@ -24,6 +26,7 @@ FILE /primaryConstructorWithSuperConstructorCall.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: TestWithDelegatingConstructor>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
@@ -33,11 +36,13 @@ FILE /primaryConstructorWithSuperConstructorCall.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: TestWithDelegatingConstructor>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): Int'
             GET_FIELD 'y: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: TestWithDelegatingConstructor>' type=TestWithDelegatingConstructor origin=null
     CONSTRUCTOR public constructor TestWithDelegatingConstructor(x: kotlin.Int)
+      VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor TestWithDelegatingConstructor(Int, Int)'
           x: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null

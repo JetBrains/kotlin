@@ -13,6 +13,7 @@ FILE /arrayAugmentedAssignment1.kt
         CONST Int type=kotlin.Int value='42'
   CLASS CLASS C
     CONSTRUCTOR public constructor C(x: kotlin.IntArray)
+      VALUE_PARAMETER value-parameter x: kotlin.IntArray
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='C'
@@ -21,6 +22,7 @@ FILE /arrayAugmentedAssignment1.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: IntArray' type=kotlin.IntArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.IntArray
+        $this: VALUE_PARAMETER <receiver: C>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): IntArray'
             GET_FIELD 'x: IntArray' type=kotlin.IntArray origin=null
@@ -58,6 +60,7 @@ FILE /arrayAugmentedAssignment1.kt
               index: GET_VAR 'tmp1_index0: Int' type=kotlin.Int origin=null
             other: CONST Int type=kotlin.Int value='2'
   FUN public fun testMember(c: C): kotlin.Unit
+    VALUE_PARAMETER value-parameter c: C
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=kotlin.Int origin=POSTFIX_INCR

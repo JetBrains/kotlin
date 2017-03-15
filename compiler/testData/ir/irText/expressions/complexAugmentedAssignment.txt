@@ -9,11 +9,14 @@ FILE /complexAugmentedAssignment.kt
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value='0'
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x1>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: X1>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x1>(): Int'
             GET_FIELD 'x1: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: X1>' type=X1 origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-x1>(<set-?>: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: X1>
+        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
         BLOCK_BODY
           SET_FIELD 'x1: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: X1>' type=X1 origin=null
@@ -28,11 +31,14 @@ FILE /complexAugmentedAssignment.kt
           EXPRESSION_BODY
             CONST Int type=kotlin.Int value='0'
         FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x2>(): kotlin.Int
+          $this: VALUE_PARAMETER <receiver: X2>
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-x2>(): Int'
               GET_FIELD 'x2: Int' type=kotlin.Int origin=null
                 receiver: GET_VAR '<receiver: X2>' type=X1.X2 origin=null
         FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-x2>(<set-?>: kotlin.Int): kotlin.Unit
+          $this: VALUE_PARAMETER <receiver: X2>
+          VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
           BLOCK_BODY
             SET_FIELD 'x2: Int' type=kotlin.Unit origin=null
               receiver: GET_VAR '<receiver: X2>' type=X1.X2 origin=null
@@ -47,16 +53,20 @@ FILE /complexAugmentedAssignment.kt
             EXPRESSION_BODY
               CONST Int type=kotlin.Int value='0'
           FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x3>(): kotlin.Int
+            $this: VALUE_PARAMETER <receiver: X3>
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<get-x3>(): Int'
                 GET_FIELD 'x3: Int' type=kotlin.Int origin=null
                   receiver: GET_VAR '<receiver: X3>' type=X1.X2.X3 origin=null
           FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-x3>(<set-?>: kotlin.Int): kotlin.Unit
+            $this: VALUE_PARAMETER <receiver: X3>
+            VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
             BLOCK_BODY
               SET_FIELD 'x3: Int' type=kotlin.Unit origin=null
                 receiver: GET_VAR '<receiver: X3>' type=X1.X2.X3 origin=null
                 value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
   FUN public fun test1(a: kotlin.IntArray): kotlin.Unit
+    VALUE_PARAMETER value-parameter a: kotlin.IntArray
     BLOCK_BODY
       VAR var i: kotlin.Int
         CONST Int type=kotlin.Int value='0'
@@ -125,8 +135,9 @@ FILE /complexAugmentedAssignment.kt
             GET_VAR 'tmp5: Int' type=kotlin.Int origin=null
   CLASS CLASS B
     CONSTRUCTOR public constructor B(s: kotlin.Int = ...)
-      s: EXPRESSION_BODY
-        CONST Int type=kotlin.Int value='0'
+      VALUE_PARAMETER value-parameter s: kotlin.Int = ...
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value='0'
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='B'
@@ -135,11 +146,14 @@ FILE /complexAugmentedAssignment.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter s: Int = ...' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-s>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: B>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-s>(): Int'
             GET_FIELD 's: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: B>' type=B origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-s>(<set-?>: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: B>
+        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
         BLOCK_BODY
           SET_FIELD 's: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: B>' type=B origin=null
@@ -150,6 +164,9 @@ FILE /complexAugmentedAssignment.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Host'
     FUN public final operator fun B.plusAssign(b: B): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: Host>
+      $receiver: VALUE_PARAMETER <receiver: plusAssign(B) on B: Unit>
+      VALUE_PARAMETER value-parameter b: B
       BLOCK_BODY
         BLOCK type=kotlin.Unit origin=PLUSEQ
           VAR IR_TEMPORARY_VARIABLE val tmp0_this: B
@@ -162,6 +179,8 @@ FILE /complexAugmentedAssignment.kt
               other: CALL '<get-s>(): Int' type=kotlin.Int origin=GET_PROPERTY
                 $this: GET_VAR 'value-parameter b: B' type=B origin=null
   FUN public fun Host.test3(v: B): kotlin.Unit
+    $receiver: VALUE_PARAMETER <receiver: test3(B) on Host: Unit>
+    VALUE_PARAMETER value-parameter v: B
     BLOCK_BODY
       CALL 'plusAssign(B) on B: Unit' type=kotlin.Unit origin=PLUSEQ
         $this: GET_VAR '<receiver: test3(B) on Host: Unit>' type=Host origin=null

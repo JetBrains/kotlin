@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
-import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -37,11 +34,11 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi2ir.endOffsetOrUndefined
+import org.jetbrains.kotlin.psi2ir.startOffsetOrUndefined
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class PropertyGenerator(val declarationGenerator: DeclarationGenerator) : Generator {
-    override val context: GeneratorContext get() = declarationGenerator.context
-
+class PropertyGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
     fun generatePropertyDeclaration(ktProperty: KtProperty): IrProperty {
         val propertyDescriptor = getPropertyDescriptor(ktProperty)
         val ktDelegate = ktProperty.delegate
@@ -65,25 +62,32 @@ class PropertyGenerator(val declarationGenerator: DeclarationGenerator) : Genera
 
         val getter = propertyDescriptor.getter ?:
                      throw AssertionError("Property declared in primary constructor has no getter: $propertyDescriptor")
-        val irGetter = IrFunctionImpl(ktParameter.startOffset, ktParameter.endOffset, IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR, getter)
-        irProperty.getter = irGetter
-        irGetter.body = generateDefaultGetterBody(ktParameter, getter)
+        irProperty.getter = generateDefaultAccessor(getter, ktParameter, isGetter = true)
 
         if (propertyDescriptor.isVar) {
             val setter = propertyDescriptor.setter ?:
                          throw AssertionError("Property declared in primary constructor has no setter: $propertyDescriptor")
-            val irSetter = IrFunctionImpl(ktParameter.startOffset, ktParameter.endOffset, IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR, setter)
-            irSetter.body = generateDefaultSetterBody(ktParameter, setter)
-            irProperty.setter = irSetter
+            irProperty.setter = generateDefaultAccessor(setter, ktParameter, isGetter = false)
         }
 
         return irProperty
     }
 
+    fun generateDefaultAccessor(descriptor: PropertyAccessorDescriptor, ktElement: KtElement, isGetter: Boolean): IrFunction {
+        val irAccessor = IrFunctionImpl(ktElement.startOffsetOrUndefined, ktElement.endOffsetOrUndefined, IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR, descriptor)
+        val accessorDescriptor = irAccessor.descriptor
+        declarationGenerator.generateTypeParameterDeclarations(irAccessor, accessorDescriptor.typeParameters)
+        FunctionGenerator(declarationGenerator).generateSyntheticFunctionParameterDeclarations(irAccessor)
+        irAccessor.body =
+                if (isGetter) generateDefaultGetterBody(ktElement, descriptor as PropertyGetterDescriptor)
+                else generateDefaultSetterBody(ktElement, descriptor as PropertySetterDescriptor)
+        return irAccessor
+    }
+
     private fun generateDelegatedProperty(ktProperty: KtProperty, ktDelegate: KtPropertyDelegate, propertyDescriptor: PropertyDescriptor): IrProperty {
         val ktDelegateExpression = ktDelegate.expression!!
         val irDelegateInitializer = declarationGenerator.generateInitializerBody(propertyDescriptor, ktDelegateExpression)
-        return DelegatedPropertyGenerator(context).generateDelegatedProperty(ktProperty, ktDelegate, propertyDescriptor, irDelegateInitializer)
+        return DelegatedPropertyGenerator(declarationGenerator).generateDelegatedProperty(ktProperty, ktDelegate, propertyDescriptor, irDelegateInitializer)
     }
 
     private fun generateSimpleProperty(ktProperty: KtProperty, propertyDescriptor: PropertyDescriptor): IrProperty {
@@ -114,6 +118,7 @@ class PropertyGenerator(val declarationGenerator: DeclarationGenerator) : Genera
         val irGetter = ktGetter?.let {
             IrFunctionImpl(it.startOffset, it.endOffset, IrDeclarationOrigin.DEFINED, getter)
         } ?: IrFunctionImpl(ktProperty.startOffset, ktProperty.endOffset, IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR, getter)
+        FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarations(irGetter, ktProperty, ktProperty.receiverTypeReference)
 
         irGetter.body = ktGetter?.bodyExpression?.let {
             declarationGenerator.generateFunctionBody(getter, it )
@@ -131,6 +136,7 @@ class PropertyGenerator(val declarationGenerator: DeclarationGenerator) : Genera
         val irSetter = ktSetter?.let {
             IrFunctionImpl(it.startOffset, it.endOffset, IrDeclarationOrigin.DEFINED, setter)
         } ?: IrFunctionImpl(ktProperty.startOffset, ktProperty.endOffset, IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR, setter)
+        FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarations(irSetter, ktProperty, ktProperty.receiverTypeReference)
 
         irSetter.body = ktSetter?.bodyExpression?.let {
             declarationGenerator.generateFunctionBody(setter, it )

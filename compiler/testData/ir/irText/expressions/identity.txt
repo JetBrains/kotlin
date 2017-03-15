@@ -1,11 +1,15 @@
 FILE /identity.kt
   FUN public fun test1(a: kotlin.Int, b: kotlin.Int): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Int
+    VALUE_PARAMETER value-parameter b: kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(Int, Int): Boolean'
         CALL 'EQEQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQEQ
           arg0: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           arg1: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
   FUN public fun test2(a: kotlin.Int, b: kotlin.Int): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Int
+    VALUE_PARAMETER value-parameter b: kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(Int, Int): Boolean'
         CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQEQ
@@ -13,6 +17,8 @@ FILE /identity.kt
             arg0: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
             arg1: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
   FUN public fun test3(a: kotlin.Any?, b: kotlin.Any?): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.Any?
+    VALUE_PARAMETER value-parameter b: kotlin.Any?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test3(Any?, Any?): Boolean'
         CALL 'EQEQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQEQ

@@ -1,6 +1,7 @@
 FILE /initVal.kt
   CLASS CLASS TestInitValFromParameter
     CONSTRUCTOR public constructor TestInitValFromParameter(x: kotlin.Int)
+      VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestInitValFromParameter'
@@ -9,6 +10,7 @@ FILE /initVal.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: TestInitValFromParameter>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
@@ -23,6 +25,7 @@ FILE /initVal.kt
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value='0'
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: TestInitValInClass>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
@@ -35,6 +38,7 @@ FILE /initVal.kt
     PROPERTY public final val x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: TestInitValInInitBlock>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null

@@ -5,17 +5,20 @@ FILE /boundCallableReferences.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
     FUN public final fun foo(): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: A>
       BLOCK_BODY
     PROPERTY public final val bar: kotlin.Int = 0
       FIELD PROPERTY_BACKING_FIELD public final val bar: kotlin.Int = 0
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value='0'
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-bar>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: A>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-bar>(): Int'
             GET_FIELD 'bar: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: A>' type=A origin=null
   FUN public fun A.qux(): kotlin.Unit
+    $receiver: VALUE_PARAMETER <receiver: qux() on A: Unit>
     BLOCK_BODY
   PROPERTY public val test1: kotlin.reflect.KFunction0<kotlin.Unit>
     FIELD PROPERTY_BACKING_FIELD public val test1: kotlin.reflect.KFunction0<kotlin.Unit>

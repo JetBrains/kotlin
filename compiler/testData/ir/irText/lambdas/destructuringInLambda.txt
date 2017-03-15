@@ -1,6 +1,8 @@
 FILE /destructuringInLambda.kt
   CLASS CLASS A
     CONSTRUCTOR public constructor A(x: kotlin.Int, y: kotlin.Int)
+      VALUE_PARAMETER value-parameter x: kotlin.Int
+      VALUE_PARAMETER value-parameter y: kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
@@ -9,6 +11,7 @@ FILE /destructuringInLambda.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: A>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
@@ -18,33 +21,40 @@ FILE /destructuringInLambda.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: A>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): Int'
             GET_FIELD 'y: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: A>' type=A origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component1(): kotlin.Int
+      $this: VALUE_PARAMETER <receiver: A>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='component1(): Int'
           CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR '<receiver: A>' type=A origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component2(): kotlin.Int
+      $this: VALUE_PARAMETER <receiver: A>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='component2(): Int'
           CALL '<get-y>(): Int' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR '<receiver: A>' type=A origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public final fun copy(x: kotlin.Int = ..., y: kotlin.Int = ...): A
-      x: EXPRESSION_BODY
-        CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
-          $this: GET_VAR '<receiver: A>' type=A origin=null
-      y: EXPRESSION_BODY
-        CALL '<get-y>(): Int' type=kotlin.Int origin=GET_PROPERTY
-          $this: GET_VAR '<receiver: A>' type=A origin=null
+      $this: VALUE_PARAMETER <receiver: A>
+      VALUE_PARAMETER value-parameter x: kotlin.Int = ...
+        EXPRESSION_BODY
+          CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
+            $this: GET_VAR '<receiver: A>' type=A origin=null
+      VALUE_PARAMETER value-parameter y: kotlin.Int = ...
+        EXPRESSION_BODY
+          CALL '<get-y>(): Int' type=kotlin.Int origin=GET_PROPERTY
+            $this: GET_VAR '<receiver: A>' type=A origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='copy(Int = ..., Int = ...): A'
           CALL 'constructor A(Int, Int)' type=A origin=null
             x: GET_VAR 'value-parameter x: Int = ...' type=kotlin.Int origin=null
             y: GET_VAR 'value-parameter y: Int = ...' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER <receiver: A>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
           STRING_CONCATENATION type=kotlin.String
@@ -58,6 +68,7 @@ FILE /destructuringInLambda.kt
               $this: GET_VAR '<receiver: A>' type=A origin=null
             CONST String type=kotlin.String value=')'
     FUN GENERATED_DATA_CLASS_MEMBER public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER <receiver: A>
       BLOCK_BODY
         VAR IR_TEMPORARY_VARIABLE var tmp0_result: kotlin.Int
           CONST Int type=kotlin.Int value='0'
@@ -76,6 +87,8 @@ FILE /destructuringInLambda.kt
         RETURN type=kotlin.Nothing from='hashCode(): Int'
           GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER <receiver: A>
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
       BLOCK_BODY
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -120,6 +133,7 @@ FILE /destructuringInLambda.kt
       EXPRESSION_BODY
         BLOCK type=(A) -> kotlin.Int origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(<name for destructuring parameter 0>: A): kotlin.Int
+            VALUE_PARAMETER value-parameter <name for destructuring parameter 0>: A
             BLOCK_BODY
               VAR val y: kotlin.Int
                 CALL 'component2(): Int' type=kotlin.Int origin=COMPONENT_N(index=2)
@@ -134,6 +148,7 @@ FILE /destructuringInLambda.kt
         RETURN type=kotlin.Nothing from='<get-fn>(): (A) -> Int'
           GET_FIELD 'fn: (A) -> Int' type=(A) -> kotlin.Int origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <set-fn>(<set-?>: (A) -> kotlin.Int): kotlin.Unit
+      VALUE_PARAMETER value-parameter <set-?>: (A) -> kotlin.Int
       BLOCK_BODY
         SET_FIELD 'fn: (A) -> Int' type=kotlin.Unit origin=null
           value: GET_VAR 'value-parameter <set-?>: (A) -> Int' type=(A) -> kotlin.Int origin=null

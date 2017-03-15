@@ -1,5 +1,7 @@
 FILE /stringComparisons.kt
   FUN public fun test1(a: kotlin.String, b: kotlin.String): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.String
+    VALUE_PARAMETER value-parameter b: kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(String, String): Boolean'
         CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
@@ -7,6 +9,8 @@ FILE /stringComparisons.kt
             $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
             other: GET_VAR 'value-parameter b: String' type=kotlin.String origin=null
   FUN public fun test2(a: kotlin.String, b: kotlin.String): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.String
+    VALUE_PARAMETER value-parameter b: kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(String, String): Boolean'
         CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
@@ -14,6 +18,8 @@ FILE /stringComparisons.kt
             $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
             other: GET_VAR 'value-parameter b: String' type=kotlin.String origin=null
   FUN public fun test3(a: kotlin.String, b: kotlin.String): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.String
+    VALUE_PARAMETER value-parameter b: kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test3(String, String): Boolean'
         CALL 'GTEQ0(Int): Boolean' type=kotlin.Boolean origin=GTEQ
@@ -21,6 +27,8 @@ FILE /stringComparisons.kt
             $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
             other: GET_VAR 'value-parameter b: String' type=kotlin.String origin=null
   FUN public fun test4(a: kotlin.String, b: kotlin.String): kotlin.Boolean
+    VALUE_PARAMETER value-parameter a: kotlin.String
+    VALUE_PARAMETER value-parameter b: kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test4(String, String): Boolean'
         CALL 'LTEQ0(Int): Boolean' type=kotlin.Boolean origin=LTEQ

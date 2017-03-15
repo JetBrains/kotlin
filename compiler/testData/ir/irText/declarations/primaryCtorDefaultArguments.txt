@@ -1,8 +1,9 @@
 FILE /primaryCtorDefaultArguments.kt
   CLASS CLASS Test
     CONSTRUCTOR public constructor Test(x: kotlin.Int = ...)
-      x: EXPRESSION_BODY
-        CONST Int type=kotlin.Int value='0'
+      VALUE_PARAMETER value-parameter x: kotlin.Int = ...
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value='0'
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test'
@@ -11,6 +12,7 @@ FILE /primaryCtorDefaultArguments.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int = ...' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: Test>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null

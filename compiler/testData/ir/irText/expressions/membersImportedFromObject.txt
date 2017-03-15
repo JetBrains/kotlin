@@ -5,10 +5,13 @@ FILE /membersImportedFromObject.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
     FUN public final fun foo(): kotlin.Int
+      $this: VALUE_PARAMETER <receiver: A>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='foo(): Int'
           CONST Int type=kotlin.Int value='1'
     FUN public final fun kotlin.Int.fooExt(): kotlin.Int
+      $this: VALUE_PARAMETER <receiver: A>
+      $receiver: VALUE_PARAMETER <receiver: fooExt() on Int: Int>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='fooExt() on Int: Int'
           CONST Int type=kotlin.Int value='2'
@@ -17,12 +20,15 @@ FILE /membersImportedFromObject.kt
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value='42'
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-bar>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: A>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-bar>(): Int'
             GET_FIELD 'bar: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: A>' type=A origin=null
     PROPERTY public final val kotlin.Int.barExt: kotlin.Int
       FUN public final fun kotlin.Int.<get-barExt>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: A>
+        $receiver: VALUE_PARAMETER <receiver: barExt: Int on Int>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-barExt>() on Int: Int'
             CONST Int type=kotlin.Int value='43'

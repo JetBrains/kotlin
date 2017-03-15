@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.addMember
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSyntheticBodyImpl
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
@@ -39,7 +40,10 @@ class EnumClassMembersGenerator(override val context: GeneratorContext) : Genera
 
         irClass.addMember(
                 IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
-                               valuesFunction, IrSyntheticBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrSyntheticBodyKind.ENUM_VALUES)))
+                               valuesFunction,
+                               IrSyntheticBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrSyntheticBodyKind.ENUM_VALUES)
+                )
+        )
     }
 
     private fun generateValueOf(irClass: IrClassImpl) {
@@ -51,6 +55,9 @@ class EnumClassMembersGenerator(override val context: GeneratorContext) : Genera
 
         irClass.addMember(
                 IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
-                               valueOfFunction, IrSyntheticBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrSyntheticBodyKind.ENUM_VALUEOF)))
+                               valueOfFunction,
+                               IrSyntheticBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrSyntheticBodyKind.ENUM_VALUEOF)
+                )
+        )
     }
 }

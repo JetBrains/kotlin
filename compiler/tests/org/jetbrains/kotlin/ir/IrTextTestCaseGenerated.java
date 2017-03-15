@@ -287,6 +287,69 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("compiler/testData/ir/irText/declarations/parameters")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Parameters extends AbstractIrTextTestCase {
+            public void testAllFilesPresentInParameters() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/declarations/parameters"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("class.kt")
+            public void testClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/parameters/class.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("constructor.kt")
+            public void testConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/parameters/constructor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("dataClassMembers.kt")
+            public void testDataClassMembers() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/parameters/dataClassMembers.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("defaultPropertyAccessors.kt")
+            public void testDefaultPropertyAccessors() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/parameters/defaultPropertyAccessors.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("delegatedMembers.kt")
+            public void testDelegatedMembers() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/parameters/delegatedMembers.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("fun.kt")
+            public void testFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/parameters/fun.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdas.kt")
+            public void testLambdas() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/parameters/lambdas.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("localFun.kt")
+            public void testLocalFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/parameters/localFun.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyAccessors.kt")
+            public void testPropertyAccessors() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/parameters/propertyAccessors.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/ir/irText/declarations/provideDelegate")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

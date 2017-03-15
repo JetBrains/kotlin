@@ -30,12 +30,14 @@ FILE /nonLocalReturn.kt
                 GET_OBJECT 'Unit' type=kotlin.Unit
           CALLABLE_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
   FUN public fun testLrmFoo1(ints: kotlin.collections.List<kotlin.Int>): kotlin.Unit
+    VALUE_PARAMETER value-parameter ints: kotlin.collections.List<kotlin.Int>
     BLOCK_BODY
       CALL 'forEach((Int) -> Unit) on Iterable<Int>: Unit' type=kotlin.Unit origin=null
         <T>: Int
         $receiver: GET_VAR 'value-parameter ints: List<Int>' type=kotlin.collections.List<kotlin.Int> origin=null
         action: BLOCK type=(kotlin.Int) -> kotlin.Unit origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(it: kotlin.Int): kotlin.Unit
+            VALUE_PARAMETER value-parameter it: kotlin.Int
             BLOCK_BODY
               WHEN type=kotlin.Unit origin=null
                 BRANCH
@@ -49,12 +51,14 @@ FILE /nonLocalReturn.kt
                   message: GET_VAR 'value-parameter it: Int' type=kotlin.Int origin=null
           CALLABLE_REFERENCE '<anonymous>(Int): Unit' type=(kotlin.Int) -> kotlin.Unit origin=LAMBDA
   FUN public fun testLrmFoo2(ints: kotlin.collections.List<kotlin.Int>): kotlin.Unit
+    VALUE_PARAMETER value-parameter ints: kotlin.collections.List<kotlin.Int>
     BLOCK_BODY
       CALL 'forEach((Int) -> Unit) on Iterable<Int>: Unit' type=kotlin.Unit origin=null
         <T>: Int
         $receiver: GET_VAR 'value-parameter ints: List<Int>' type=kotlin.collections.List<kotlin.Int> origin=null
         action: BLOCK type=(kotlin.Int) -> kotlin.Unit origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(it: kotlin.Int): kotlin.Unit
+            VALUE_PARAMETER value-parameter it: kotlin.Int
             BLOCK_BODY
               WHEN type=kotlin.Unit origin=null
                 BRANCH

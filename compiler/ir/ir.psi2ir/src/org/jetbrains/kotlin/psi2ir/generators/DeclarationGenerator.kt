@@ -17,23 +17,27 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrAnonymousInitializerImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrErrorDeclarationImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrTypeAliasImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi2ir.isConstructorDelegatingToSuper
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 class DeclarationGenerator(override val context: GeneratorContext) : Generator {
     fun generateMemberDeclaration(ktDeclaration: KtDeclaration): IrDeclaration =
             when (ktDeclaration) {
                 is KtNamedFunction ->
-                    generateFunctionDeclaration(ktDeclaration)
+                    FunctionGenerator(this).generateFunctionDeclaration(ktDeclaration)
                 is KtProperty ->
                     PropertyGenerator(this).generatePropertyDeclaration(ktDeclaration)
                 is KtClassOrObject ->
@@ -52,7 +56,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
                 is KtAnonymousInitializer ->
                     generateAnonymousInitializerDeclaration(ktDeclaration, classDescriptor)
                 is KtSecondaryConstructor ->
-                    generateSecondaryConstructor(ktDeclaration)
+                    FunctionGenerator(this).generateSecondaryConstructor(ktDeclaration)
                 is KtEnumEntry ->
                     generateEnumEntryDeclaration(ktDeclaration)
                 else ->
@@ -76,44 +80,28 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         return irAnonymousInitializer
     }
 
-    fun generateFunctionDeclaration(ktFunction: KtNamedFunction): IrFunction {
-        val functionDescriptor = getOrFail(BindingContext.FUNCTION, ktFunction)
-        val irFunction = IrFunctionImpl(ktFunction.startOffset, ktFunction.endOffset, IrDeclarationOrigin.DEFINED, functionDescriptor)
-        val bodyGenerator = createBodyGenerator(functionDescriptor)
-        bodyGenerator.generateDefaultParameters(ktFunction, irFunction)
-        irFunction.body = ktFunction.bodyExpression?.let { bodyGenerator.generateFunctionBody(it) }
-        return irFunction
-    }
-
-    fun generateSecondaryConstructor(ktConstructor: KtSecondaryConstructor): IrFunction {
-        if (ktConstructor.isConstructorDelegatingToSuper(context.bindingContext)) {
-            return generateSecondaryConstructorWithNestedInitializers(ktConstructor)
+    fun generateTypeParameterDeclarations(
+            irTypeParametersOwner: IrTypeParametersContainer,
+            from: List<TypeParameterDescriptor>
+    ) {
+        from.mapTo(irTypeParametersOwner.typeParameters) { typeParameterDescriptor ->
+            val ktTypeParameterDeclaration = DescriptorToSourceUtils.getSourceFromDescriptor(typeParameterDescriptor)
+            val startOffset = ktTypeParameterDeclaration?.startOffset ?: UNDEFINED_OFFSET
+            val endOffset = ktTypeParameterDeclaration?.endOffset ?: UNDEFINED_OFFSET
+            IrTypeParameterImpl(startOffset, endOffset, IrDeclarationOrigin.DEFINED, typeParameterDescriptor)
         }
-        val constructorDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor) as ClassConstructorDescriptor
-        val irConstructor = IrConstructorImpl(ktConstructor.startOffset, ktConstructor.endOffset, IrDeclarationOrigin.DEFINED, constructorDescriptor)
-        val bodyGenerator = createBodyGenerator(constructorDescriptor)
-        bodyGenerator.generateDefaultParameters(ktConstructor, irConstructor)
-        irConstructor.body = bodyGenerator.generateSecondaryConstructorBody(ktConstructor)
-        return irConstructor
-    }
-
-
-    private fun generateSecondaryConstructorWithNestedInitializers(ktConstructor: KtSecondaryConstructor): IrFunction {
-        val constructorDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor) as ClassConstructorDescriptor
-        val irConstructor = IrConstructorImpl(ktConstructor.startOffset, ktConstructor.endOffset, IrDeclarationOrigin.DEFINED, constructorDescriptor)
-        val bodyGenerator = createBodyGenerator(constructorDescriptor)
-        bodyGenerator.generateDefaultParameters(ktConstructor, irConstructor)
-        irConstructor.body = createBodyGenerator(constructorDescriptor).generateSecondaryConstructorBodyWithNestedInitializers(ktConstructor)
-        return irConstructor
     }
 
     fun generateFunctionBody(scopeOwner: CallableDescriptor, ktBody: KtExpression): IrBody =
             createBodyGenerator(scopeOwner).generateFunctionBody(ktBody)
 
     fun generateInitializerBody(scopeOwner: CallableDescriptor, ktBody: KtExpression): IrExpressionBody =
-            createBodyGenerator(scopeOwner).generatePropertyInitializerBody(ktBody)
-
-    private fun createBodyGenerator(descriptor: CallableDescriptor) =
-            BodyGenerator(descriptor, context)
-
+            createBodyGenerator(scopeOwner).generateExpressionBody(ktBody)
 }
+
+abstract class DeclarationGeneratorExtension(val declarationGenerator: DeclarationGenerator) : Generator {
+    override val context: GeneratorContext get() = declarationGenerator.context
+}
+
+fun Generator.createBodyGenerator(scopeOwnerDescriptor: CallableDescriptor) =
+        BodyGenerator(scopeOwnerDescriptor, context)

@@ -1,0 +1,27 @@
+FILE /class.kt
+  CLASS INTERFACE TestInterface
+    TYPE_PARAMETER <T>
+    CLASS INTERFACE TestNestedInterface
+      TYPE_PARAMETER <TT>
+  CLASS CLASS Test
+    TYPE_PARAMETER <T0>
+    CONSTRUCTOR public constructor Test<T0>()
+      TYPE_PARAMETER <T0>
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test'
+    CLASS CLASS TestNested
+      TYPE_PARAMETER <T1>
+      CONSTRUCTOR public constructor TestNested<T1>()
+        TYPE_PARAMETER <T1>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+          INSTANCE_INITIALIZER_CALL classDescriptor='TestNested'
+    CLASS CLASS TestInner
+      TYPE_PARAMETER <T2>
+      CONSTRUCTOR public constructor TestInner<T2>()
+        TYPE_PARAMETER <T2>
+        $this: VALUE_PARAMETER <receiver: Test>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+          INSTANCE_INITIALIZER_CALL classDescriptor='TestInner'

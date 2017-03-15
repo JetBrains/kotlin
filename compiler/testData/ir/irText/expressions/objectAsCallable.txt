@@ -16,10 +16,14 @@ FILE /objectAsCallable.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): En
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   FUN public operator fun A.invoke(i: kotlin.Int): kotlin.Int
+    $receiver: VALUE_PARAMETER <receiver: invoke(Int) on A: Int>
+    VALUE_PARAMETER value-parameter i: kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='invoke(Int) on A: Int'
         GET_VAR 'value-parameter i: Int' type=kotlin.Int origin=null
   FUN public operator fun En.invoke(i: kotlin.Int): kotlin.Int
+    $receiver: VALUE_PARAMETER <receiver: invoke(Int) on En: Int>
+    VALUE_PARAMETER value-parameter i: kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='invoke(Int) on En: Int'
         GET_VAR 'value-parameter i: Int' type=kotlin.Int origin=null

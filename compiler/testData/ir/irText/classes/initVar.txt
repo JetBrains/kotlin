@@ -1,6 +1,7 @@
 FILE /initVar.kt
   CLASS CLASS TestInitVarFromParameter
     CONSTRUCTOR public constructor TestInitVarFromParameter(x: kotlin.Int)
+      VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestInitVarFromParameter'
@@ -9,11 +10,14 @@ FILE /initVar.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: TestInitVarFromParameter>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: TestInitVarFromParameter>' type=TestInitVarFromParameter origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-x>(<set-?>: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: TestInitVarFromParameter>
+        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
         BLOCK_BODY
           SET_FIELD 'x: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: TestInitVarFromParameter>' type=TestInitVarFromParameter origin=null
@@ -28,11 +32,14 @@ FILE /initVar.kt
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value='0'
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: TestInitVarInClass>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: TestInitVarInClass>' type=TestInitVarInClass origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-x>(<set-?>: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: TestInitVarInClass>
+        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
         BLOCK_BODY
           SET_FIELD 'x: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: TestInitVarInClass>' type=TestInitVarInClass origin=null
@@ -45,11 +52,14 @@ FILE /initVar.kt
     PROPERTY public final var x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final var x: kotlin.Int
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: TestInitVarInInitBlock>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: TestInitVarInInitBlock>' type=TestInitVarInInitBlock origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-x>(<set-?>: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: TestInitVarInInitBlock>
+        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
         BLOCK_BODY
           SET_FIELD 'x: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: TestInitVarInInitBlock>' type=TestInitVarInInitBlock origin=null
@@ -69,11 +79,14 @@ FILE /initVar.kt
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value='0'
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: TestInitVarWithCustomSetter>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: TestInitVarWithCustomSetter>' type=TestInitVarWithCustomSetter origin=null
       FUN public final fun <set-x>(value: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: TestInitVarWithCustomSetter>
+        VALUE_PARAMETER value-parameter value: kotlin.Int
         BLOCK_BODY
           SET_FIELD 'x: Int' type=kotlin.Unit origin=EQ
             receiver: GET_VAR '<receiver: TestInitVarWithCustomSetter>' type=TestInitVarWithCustomSetter origin=null
@@ -82,11 +95,14 @@ FILE /initVar.kt
     PROPERTY public final var x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final var x: kotlin.Int
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: TestInitVarWithCustomSetterWithExplicitCtor>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: TestInitVarWithCustomSetterWithExplicitCtor>' type=TestInitVarWithCustomSetterWithExplicitCtor origin=null
       FUN public final fun <set-x>(value: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: TestInitVarWithCustomSetterWithExplicitCtor>
+        VALUE_PARAMETER value-parameter value: kotlin.Int
         BLOCK_BODY
           SET_FIELD 'x: Int' type=kotlin.Unit origin=EQ
             receiver: GET_VAR '<receiver: TestInitVarWithCustomSetterWithExplicitCtor>' type=TestInitVarWithCustomSetterWithExplicitCtor origin=null
@@ -104,11 +120,14 @@ FILE /initVar.kt
     PROPERTY public final var x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final var x: kotlin.Int
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: TestInitVarWithCustomSetterInCtor>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: TestInitVarWithCustomSetterInCtor>' type=TestInitVarWithCustomSetterInCtor origin=null
       FUN public final fun <set-x>(value: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: TestInitVarWithCustomSetterInCtor>
+        VALUE_PARAMETER value-parameter value: kotlin.Int
         BLOCK_BODY
           SET_FIELD 'x: Int' type=kotlin.Unit origin=EQ
             receiver: GET_VAR '<receiver: TestInitVarWithCustomSetterInCtor>' type=TestInitVarWithCustomSetterInCtor origin=null

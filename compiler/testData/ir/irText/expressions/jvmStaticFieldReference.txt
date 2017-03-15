@@ -15,6 +15,7 @@ FILE /jvmStaticFieldReference.kt
         RETURN type=kotlin.Nothing from='<get-testProp>(): Any'
           CONST Int type=kotlin.Int value='42'
     FUN public fun <set-testProp>(value: kotlin.Any): kotlin.Unit
+      VALUE_PARAMETER value-parameter value: kotlin.Any
       BLOCK_BODY
         CALL 'println(String!): Unit' type=kotlin.Unit origin=null
           $this: TYPE_OP type=java.io.PrintStream origin=IMPLICIT_NOTNULL typeOperand=java.io.PrintStream
@@ -38,6 +39,7 @@ FILE /jvmStaticFieldReference.kt
                   p0: CONST String type=kotlin.String value='TestClass/test'
                 CONST Int type=kotlin.Int value='42'
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-test>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: TestClass>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test>(): Int'
             GET_FIELD 'test: Int' type=kotlin.Int origin=null

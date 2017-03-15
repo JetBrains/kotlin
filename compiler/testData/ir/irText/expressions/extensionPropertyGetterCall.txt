@@ -1,10 +1,12 @@
 FILE /extensionPropertyGetterCall.kt
   PROPERTY public val kotlin.String.okext: kotlin.String
     FUN public fun kotlin.String.<get-okext>(): kotlin.String
+      $receiver: VALUE_PARAMETER <receiver: okext: String on String>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-okext>() on String: String'
           CONST String type=kotlin.String value='OK'
   FUN public fun kotlin.String.test5(): kotlin.String
+    $receiver: VALUE_PARAMETER <receiver: test5() on String: String>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test5() on String: String'
         CALL '<get-okext>() on String: String' type=kotlin.String origin=GET_PROPERTY

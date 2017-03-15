@@ -1,6 +1,7 @@
 FILE /objectLiteralExpressions.kt
   CLASS INTERFACE IFoo
     FUN public abstract fun foo(): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: IFoo>
   PROPERTY public val test1: kotlin.Any
     FIELD PROPERTY_BACKING_FIELD public val test1: kotlin.Any
       EXPRESSION_BODY
@@ -25,6 +26,7 @@ FILE /objectLiteralExpressions.kt
                 DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
                 INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
             FUN public open override fun foo(): kotlin.Unit
+              $this: VALUE_PARAMETER <receiver: <no name provided>>
               BLOCK_BODY
                 CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
                   message: CONST String type=kotlin.String value='foo'
@@ -40,10 +42,12 @@ FILE /objectLiteralExpressions.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
     CLASS CLASS Inner
       CONSTRUCTOR public constructor Inner()
+        $this: VALUE_PARAMETER <receiver: Outer>
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='Inner'
     FUN public final fun test3(): Outer.Inner
+      $this: VALUE_PARAMETER <receiver: Outer>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='test3(): Outer.Inner'
           BLOCK type=Outer.test3.<no name provided> origin=OBJECT_LITERAL
@@ -54,11 +58,13 @@ FILE /objectLiteralExpressions.kt
                     $this: GET_VAR '<receiver: Outer>' type=Outer origin=null
                   INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
               FUN public open override fun foo(): kotlin.Unit
+                $this: VALUE_PARAMETER <receiver: <no name provided>>
                 BLOCK_BODY
                   CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
                     message: CONST String type=kotlin.String value='foo'
             CALL 'constructor <no name provided>()' type=Outer.test3.<no name provided> origin=OBJECT_LITERAL
   FUN public fun Outer.test4(): Outer.Inner
+    $receiver: VALUE_PARAMETER <receiver: test4() on Outer: Outer.Inner>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test4() on Outer: Outer.Inner'
         BLOCK type=test4.<no name provided> origin=OBJECT_LITERAL
@@ -69,6 +75,7 @@ FILE /objectLiteralExpressions.kt
                   $this: GET_VAR '<receiver: test4() on Outer: Outer.Inner>' type=Outer origin=null
                 INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
             FUN public open override fun foo(): kotlin.Unit
+              $this: VALUE_PARAMETER <receiver: <no name provided>>
               BLOCK_BODY
                 CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
                   message: CONST String type=kotlin.String value='foo'

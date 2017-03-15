@@ -5,6 +5,7 @@ FILE /object.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Z'
     FUN public final fun test(): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: Z>
       BLOCK_BODY
     CLASS CLASS A
       CONSTRUCTOR public constructor A()
@@ -12,6 +13,7 @@ FILE /object.kt
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='A'
       FUN public final fun test2(): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: A>
         BLOCK_BODY
           CALL 'test(): Unit' type=kotlin.Unit origin=null
             $this: GET_OBJECT 'Z' type=Z

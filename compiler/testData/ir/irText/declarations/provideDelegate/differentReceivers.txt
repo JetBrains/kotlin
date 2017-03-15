@@ -1,6 +1,7 @@
 FILE /differentReceivers.kt
   CLASS CLASS MyClass
     CONSTRUCTOR public constructor MyClass(value: kotlin.String)
+      VALUE_PARAMETER value-parameter value: kotlin.String
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='MyClass'
@@ -9,16 +10,23 @@ FILE /differentReceivers.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value>(): kotlin.String
+        $this: VALUE_PARAMETER <receiver: MyClass>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-value>(): String'
             GET_FIELD 'value: String' type=kotlin.String origin=null
               receiver: GET_VAR '<receiver: MyClass>' type=MyClass origin=null
   FUN public operator fun MyClass.provideDelegate(host: kotlin.Any?, p: kotlin.Any): kotlin.String
+    $receiver: VALUE_PARAMETER <receiver: provideDelegate(Any?, Any) on MyClass: String>
+    VALUE_PARAMETER value-parameter host: kotlin.Any?
+    VALUE_PARAMETER value-parameter p: kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='provideDelegate(Any?, Any) on MyClass: String'
         CALL '<get-value>(): String' type=kotlin.String origin=GET_PROPERTY
           $this: GET_VAR '<receiver: provideDelegate(Any?, Any) on MyClass: String>' type=MyClass origin=null
   FUN public operator fun kotlin.String.getValue(receiver: kotlin.Any?, p: kotlin.Any): kotlin.String
+    $receiver: VALUE_PARAMETER <receiver: getValue(Any?, Any) on String: String>
+    VALUE_PARAMETER value-parameter receiver: kotlin.Any?
+    VALUE_PARAMETER value-parameter p: kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='getValue(Any?, Any) on String: String'
         GET_VAR '<receiver: getValue(Any?, Any) on String: String>' type=kotlin.String origin=null

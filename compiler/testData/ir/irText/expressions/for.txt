@@ -1,5 +1,6 @@
 FILE /for.kt
   FUN public fun testEmpty(ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
+    VALUE_PARAMETER value-parameter ss: kotlin.collections.List<kotlin.String>
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=FOR_LOOP
         VAR IR_TEMPORARY_VARIABLE val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
@@ -13,6 +14,7 @@ FILE /for.kt
               CALL 'next(): String' type=kotlin.String origin=FOR_LOOP_NEXT
                 $this: GET_VAR 'tmp0_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
   FUN public fun testIterable(ss: kotlin.collections.List<kotlin.String>): kotlin.Unit
+    VALUE_PARAMETER value-parameter ss: kotlin.collections.List<kotlin.String>
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=FOR_LOOP
         VAR IR_TEMPORARY_VARIABLE val tmp0_iterator: kotlin.collections.Iterator<kotlin.String>
@@ -29,6 +31,7 @@ FILE /for.kt
               CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
                 message: GET_VAR 's: String' type=kotlin.String origin=null
   FUN public fun testDestructuring(pp: kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.String>>): kotlin.Unit
+    VALUE_PARAMETER value-parameter pp: kotlin.collections.List<kotlin.Pair<kotlin.Int, kotlin.String>>
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=FOR_LOOP
         VAR IR_TEMPORARY_VARIABLE val tmp0_iterator: kotlin.collections.Iterator<kotlin.Pair<kotlin.Int, kotlin.String>>

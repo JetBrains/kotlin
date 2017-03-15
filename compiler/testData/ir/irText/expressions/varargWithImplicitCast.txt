@@ -1,5 +1,6 @@
 FILE /varargWithImplicitCast.kt
   FUN public fun testScalar(a: kotlin.Any): kotlin.IntArray
+    VALUE_PARAMETER value-parameter a: kotlin.Any
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
@@ -13,6 +14,7 @@ FILE /varargWithImplicitCast.kt
             TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
               GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
   FUN public fun testSpread(a: kotlin.Any): kotlin.IntArray
+    VALUE_PARAMETER value-parameter a: kotlin.Any
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH

@@ -6,6 +6,7 @@ FILE /forWithImplicitReceivers.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='FiveTimes'
   CLASS CLASS IntCell
     CONSTRUCTOR public constructor IntCell(value: kotlin.Int)
+      VALUE_PARAMETER value-parameter value: kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='IntCell'
@@ -14,22 +15,29 @@ FILE /forWithImplicitReceivers.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: IntCell>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-value>(): Int'
             GET_FIELD 'value: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: IntCell>' type=IntCell origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-value>(<set-?>: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: IntCell>
+        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
         BLOCK_BODY
           SET_FIELD 'value: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: IntCell>' type=IntCell origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
   CLASS INTERFACE IReceiver
     FUN public open operator fun FiveTimes.iterator(): IntCell
+      $this: VALUE_PARAMETER <receiver: IReceiver>
+      $receiver: VALUE_PARAMETER <receiver: iterator() on FiveTimes: IntCell>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='iterator() on FiveTimes: IntCell'
           CALL 'constructor IntCell(Int)' type=IntCell origin=null
             value: CONST Int type=kotlin.Int value='5'
     FUN public open operator fun IntCell.hasNext(): kotlin.Boolean
+      $this: VALUE_PARAMETER <receiver: IReceiver>
+      $receiver: VALUE_PARAMETER <receiver: hasNext() on IntCell: Boolean>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='hasNext() on IntCell: Boolean'
           CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
@@ -38,6 +46,8 @@ FILE /forWithImplicitReceivers.kt
                 $this: GET_VAR '<receiver: hasNext() on IntCell: Boolean>' type=IntCell origin=null
               other: CONST Int type=kotlin.Int value='0'
     FUN public open operator fun IntCell.next(): kotlin.Int
+      $this: VALUE_PARAMETER <receiver: IReceiver>
+      $receiver: VALUE_PARAMETER <receiver: next() on IntCell: Int>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='next() on IntCell: Int'
           BLOCK type=kotlin.Int origin=POSTFIX_DECR
@@ -53,6 +63,7 @@ FILE /forWithImplicitReceivers.kt
                   $this: GET_VAR 'tmp1: Int' type=kotlin.Int origin=null
               GET_VAR 'tmp1: Int' type=kotlin.Int origin=null
   FUN public fun IReceiver.test(): kotlin.Unit
+    $receiver: VALUE_PARAMETER <receiver: test() on IReceiver: Unit>
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=FOR_LOOP
         VAR IR_TEMPORARY_VARIABLE val tmp0_iterator: IntCell

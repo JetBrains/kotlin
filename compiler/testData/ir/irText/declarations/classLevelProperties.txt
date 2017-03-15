@@ -9,12 +9,14 @@ FILE /classLevelProperties.kt
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value='0'
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-test1>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: C>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test1>(): Int'
             GET_FIELD 'test1: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: C>' type=C origin=null
     PROPERTY public final val test2: kotlin.Int
       FUN public final fun <get-test2>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: C>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test2>(): Int'
             CONST Int type=kotlin.Int value='0'
@@ -23,11 +25,14 @@ FILE /classLevelProperties.kt
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value='0'
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-test3>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: C>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test3>(): Int'
             GET_FIELD 'test3: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: C>' type=C origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-test3>(<set-?>: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: C>
+        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
         BLOCK_BODY
           SET_FIELD 'test3: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: C>' type=C origin=null
@@ -37,11 +42,14 @@ FILE /classLevelProperties.kt
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value='1'
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-test4>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: C>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test4>(): Int'
             GET_FIELD 'test4: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: C>' type=C origin=null
       FUN public final fun <set-test4>(value: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: C>
+        VALUE_PARAMETER value-parameter value: kotlin.Int
         BLOCK_BODY
           SET_FIELD 'test4: Int' type=kotlin.Unit origin=EQ
             receiver: GET_VAR '<receiver: C>' type=C origin=null
@@ -51,11 +59,14 @@ FILE /classLevelProperties.kt
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value='1'
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-test5>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: C>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test5>(): Int'
             GET_FIELD 'test5: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: C>' type=C origin=null
       FUN private final fun <set-test5>(<set-?>: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: C>
+        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
         BLOCK_BODY
           SET_FIELD 'test5: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: C>' type=C origin=null
@@ -65,6 +76,7 @@ FILE /classLevelProperties.kt
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value='1'
       FUN public final fun <get-test6>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: C>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test6>(): Int'
             GET_FIELD 'test6: Int' type=kotlin.Int origin=null
@@ -81,6 +93,7 @@ FILE /classLevelProperties.kt
                     CONST Int type=kotlin.Int value='42'
               CALLABLE_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int origin=LAMBDA
       FUN DELEGATED_PROPERTY_ACCESSOR public final fun <get-test7>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: C>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test7>(): Int'
             CALL 'getValue(Any?, KProperty<*>) on Lazy<Int>: Int' type=kotlin.Int origin=null
@@ -96,6 +109,7 @@ FILE /classLevelProperties.kt
             <K>: String
             <V>: Int
       FUN DELEGATED_PROPERTY_ACCESSOR public final fun <get-test8>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: C>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test8>(): Int'
             CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, in Int>: Int' type=kotlin.Int origin=null
@@ -105,6 +119,8 @@ FILE /classLevelProperties.kt
               thisRef: GET_VAR '<receiver: C>' type=C origin=null
               property: CALLABLE_REFERENCE 'test8: Int' type=kotlin.reflect.KMutableProperty1<C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
       FUN DELEGATED_PROPERTY_ACCESSOR public final fun <set-test8>(<set-?>: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: C>
+        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<set-test8>(Int): Unit'
             CALL 'setValue(Any?, KProperty<*>, Int) on MutableMap<in String, in Int>: Unit' type=kotlin.Unit origin=null

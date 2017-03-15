@@ -5,14 +5,17 @@ FILE /chainOfSafeCalls.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='C'
     FUN public final fun foo(): C
+      $this: VALUE_PARAMETER <receiver: C>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='foo(): C'
           GET_VAR '<receiver: C>' type=C origin=null
     FUN public final fun bar(): C?
+      $this: VALUE_PARAMETER <receiver: C>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='bar(): C?'
           GET_VAR '<receiver: C>' type=C origin=null
   FUN public fun test(nc: C?): C?
+    VALUE_PARAMETER value-parameter nc: C?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test(C?): C?'
         BLOCK type=C? origin=SAFE_CALL

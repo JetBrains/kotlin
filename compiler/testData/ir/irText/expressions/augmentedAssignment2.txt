@@ -5,14 +5,24 @@ FILE /augmentedAssignment2.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
   FUN public operator fun A.plusAssign(s: kotlin.String): kotlin.Unit
+    $receiver: VALUE_PARAMETER <receiver: plusAssign(String) on A: Unit>
+    VALUE_PARAMETER value-parameter s: kotlin.String
     BLOCK_BODY
   FUN public operator fun A.minusAssign(s: kotlin.String): kotlin.Unit
+    $receiver: VALUE_PARAMETER <receiver: minusAssign(String) on A: Unit>
+    VALUE_PARAMETER value-parameter s: kotlin.String
     BLOCK_BODY
   FUN public operator fun A.timesAssign(s: kotlin.String): kotlin.Unit
+    $receiver: VALUE_PARAMETER <receiver: timesAssign(String) on A: Unit>
+    VALUE_PARAMETER value-parameter s: kotlin.String
     BLOCK_BODY
   FUN public operator fun A.divAssign(s: kotlin.String): kotlin.Unit
+    $receiver: VALUE_PARAMETER <receiver: divAssign(String) on A: Unit>
+    VALUE_PARAMETER value-parameter s: kotlin.String
     BLOCK_BODY
   FUN public operator fun A.modAssign(s: kotlin.String): kotlin.Unit
+    $receiver: VALUE_PARAMETER <receiver: modAssign(String) on A: Unit>
+    VALUE_PARAMETER value-parameter s: kotlin.String
     BLOCK_BODY
   PROPERTY public val p: A
     FIELD PROPERTY_BACKING_FIELD public val p: A

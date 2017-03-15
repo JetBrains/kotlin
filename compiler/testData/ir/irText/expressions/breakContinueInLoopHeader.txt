@@ -1,5 +1,6 @@
 FILE /breakContinueInLoopHeader.kt
   FUN public fun test1(c: kotlin.Boolean?): kotlin.Unit
+    VALUE_PARAMETER value-parameter c: kotlin.Boolean?
     BLOCK_BODY
       WHILE label=L origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value='true'
@@ -18,6 +19,7 @@ FILE /breakContinueInLoopHeader.kt
                   if: CONST Boolean type=kotlin.Boolean value='true'
                   then: GET_VAR 'tmp0_elvis_lhs: Boolean?' type=kotlin.Boolean? origin=null
   FUN public fun test2(c: kotlin.Boolean?): kotlin.Unit
+    VALUE_PARAMETER value-parameter c: kotlin.Boolean?
     BLOCK_BODY
       WHILE label=L origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value='true'
@@ -36,6 +38,7 @@ FILE /breakContinueInLoopHeader.kt
                   if: CONST Boolean type=kotlin.Boolean value='true'
                   then: GET_VAR 'tmp0_elvis_lhs: Boolean?' type=kotlin.Boolean? origin=null
   FUN public fun test3(ss: kotlin.collections.List<kotlin.String>?): kotlin.Unit
+    VALUE_PARAMETER value-parameter ss: kotlin.collections.List<kotlin.String>?
     BLOCK_BODY
       WHILE label=L origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value='true'
@@ -63,6 +66,7 @@ FILE /breakContinueInLoopHeader.kt
                   CALL 'next(): String' type=kotlin.String origin=FOR_LOOP_NEXT
                     $this: GET_VAR 'tmp1_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
   FUN public fun test4(ss: kotlin.collections.List<kotlin.String>?): kotlin.Unit
+    VALUE_PARAMETER value-parameter ss: kotlin.collections.List<kotlin.String>?
     BLOCK_BODY
       WHILE label=L origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value='true'

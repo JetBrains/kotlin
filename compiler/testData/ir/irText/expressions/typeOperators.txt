@@ -1,21 +1,25 @@
 FILE /typeOperators.kt
   CLASS INTERFACE IThing
   FUN public fun test1(x: kotlin.Any): kotlin.Boolean
+    VALUE_PARAMETER value-parameter x: kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(Any): Boolean'
         TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=IThing
           GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
   FUN public fun test2(x: kotlin.Any): kotlin.Boolean
+    VALUE_PARAMETER value-parameter x: kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(Any): Boolean'
         TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=IThing
           GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
   FUN public fun test3(x: kotlin.Any): IThing
+    VALUE_PARAMETER value-parameter x: kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test3(Any): IThing'
         TYPE_OP type=IThing origin=CAST typeOperand=IThing
           GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
   FUN public fun test4(x: kotlin.Any): IThing?
+    VALUE_PARAMETER value-parameter x: kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test4(Any): IThing?'
         TYPE_OP type=IThing? origin=SAFE_CAST typeOperand=IThing

@@ -1,17 +1,21 @@
 FILE /qualifiedSuperCalls.kt
   CLASS INTERFACE ILeft
     FUN public open fun foo(): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: ILeft>
       BLOCK_BODY
     PROPERTY public open val bar: kotlin.Int
       FUN public open fun <get-bar>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: ILeft>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-bar>(): Int'
             CONST Int type=kotlin.Int value='1'
   CLASS INTERFACE IRight
     FUN public open fun foo(): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: IRight>
       BLOCK_BODY
     PROPERTY public open val bar: kotlin.Int
       FUN public open fun <get-bar>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: IRight>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-bar>(): Int'
             CONST Int type=kotlin.Int value='2'
@@ -21,6 +25,7 @@ FILE /qualifiedSuperCalls.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='CBoth'
     FUN public open override fun foo(): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: CBoth>
       BLOCK_BODY
         CALL 'foo(): Unit' superQualifier=ILeft type=kotlin.Unit origin=null
           $this: GET_VAR '<receiver: CBoth>' type=CBoth origin=null
@@ -28,6 +33,7 @@ FILE /qualifiedSuperCalls.kt
           $this: GET_VAR '<receiver: CBoth>' type=CBoth origin=null
     PROPERTY public open override val bar: kotlin.Int
       FUN public open override fun <get-bar>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: CBoth>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-bar>(): Int'
             CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS

@@ -2,30 +2,38 @@ FILE /interfaceProperties.kt
   CLASS INTERFACE C
     PROPERTY public abstract val test1: kotlin.Int
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-test1>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: C>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test1>(): Int'
             GET_FIELD 'test1: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: C>' type=C origin=null
     PROPERTY public open val test2: kotlin.Int
       FUN public open fun <get-test2>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: C>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test2>(): Int'
             CONST Int type=kotlin.Int value='0'
     PROPERTY public abstract var test3: kotlin.Int
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-test3>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: C>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test3>(): Int'
             GET_FIELD 'test3: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: C>' type=C origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <set-test3>(<set-?>: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: C>
+        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
         BLOCK_BODY
           SET_FIELD 'test3: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: C>' type=C origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     PROPERTY public open var test4: kotlin.Int
       FUN public open fun <get-test4>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: C>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-test4>(): Int'
             CONST Int type=kotlin.Int value='0'
       FUN public open fun <set-test4>(value: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: C>
+        VALUE_PARAMETER value-parameter value: kotlin.Int
         BLOCK_BODY

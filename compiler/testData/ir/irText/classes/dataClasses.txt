@@ -1,6 +1,9 @@
 FILE /dataClasses.kt
   CLASS CLASS Test1
     CONSTRUCTOR public constructor Test1(x: kotlin.Int, y: kotlin.String, z: kotlin.Any)
+      VALUE_PARAMETER value-parameter x: kotlin.Int
+      VALUE_PARAMETER value-parameter y: kotlin.String
+      VALUE_PARAMETER value-parameter z: kotlin.Any
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
@@ -9,6 +12,7 @@ FILE /dataClasses.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: Test1>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
@@ -18,6 +22,7 @@ FILE /dataClasses.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter y: String' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.String
+        $this: VALUE_PARAMETER <receiver: Test1>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): String'
             GET_FIELD 'y: String' type=kotlin.String origin=null
@@ -27,35 +32,43 @@ FILE /dataClasses.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter z: Any' type=kotlin.Any origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-z>(): kotlin.Any
+        $this: VALUE_PARAMETER <receiver: Test1>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-z>(): Any'
             GET_FIELD 'z: Any' type=kotlin.Any origin=null
               receiver: GET_VAR '<receiver: Test1>' type=Test1 origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component1(): kotlin.Int
+      $this: VALUE_PARAMETER <receiver: Test1>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='component1(): Int'
           CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR '<receiver: Test1>' type=Test1 origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component2(): kotlin.String
+      $this: VALUE_PARAMETER <receiver: Test1>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='component2(): String'
           CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
             $this: GET_VAR '<receiver: Test1>' type=Test1 origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component3(): kotlin.Any
+      $this: VALUE_PARAMETER <receiver: Test1>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='component3(): Any'
           CALL '<get-z>(): Any' type=kotlin.Any origin=GET_PROPERTY
             $this: GET_VAR '<receiver: Test1>' type=Test1 origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public final fun copy(x: kotlin.Int = ..., y: kotlin.String = ..., z: kotlin.Any = ...): Test1
-      x: EXPRESSION_BODY
-        CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
-          $this: GET_VAR '<receiver: Test1>' type=Test1 origin=null
-      y: EXPRESSION_BODY
-        CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
-          $this: GET_VAR '<receiver: Test1>' type=Test1 origin=null
-      z: EXPRESSION_BODY
-        CALL '<get-z>(): Any' type=kotlin.Any origin=GET_PROPERTY
-          $this: GET_VAR '<receiver: Test1>' type=Test1 origin=null
+      $this: VALUE_PARAMETER <receiver: Test1>
+      VALUE_PARAMETER value-parameter x: kotlin.Int = ...
+        EXPRESSION_BODY
+          CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
+            $this: GET_VAR '<receiver: Test1>' type=Test1 origin=null
+      VALUE_PARAMETER value-parameter y: kotlin.String = ...
+        EXPRESSION_BODY
+          CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
+            $this: GET_VAR '<receiver: Test1>' type=Test1 origin=null
+      VALUE_PARAMETER value-parameter z: kotlin.Any = ...
+        EXPRESSION_BODY
+          CALL '<get-z>(): Any' type=kotlin.Any origin=GET_PROPERTY
+            $this: GET_VAR '<receiver: Test1>' type=Test1 origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='copy(Int = ..., String = ..., Any = ...): Test1'
           CALL 'constructor Test1(Int, String, Any)' type=Test1 origin=null
@@ -63,6 +76,7 @@ FILE /dataClasses.kt
             y: GET_VAR 'value-parameter y: String = ...' type=kotlin.String origin=null
             z: GET_VAR 'value-parameter z: Any = ...' type=kotlin.Any origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER <receiver: Test1>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
           STRING_CONCATENATION type=kotlin.String
@@ -80,6 +94,7 @@ FILE /dataClasses.kt
               $this: GET_VAR '<receiver: Test1>' type=Test1 origin=null
             CONST String type=kotlin.String value=')'
     FUN GENERATED_DATA_CLASS_MEMBER public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER <receiver: Test1>
       BLOCK_BODY
         VAR IR_TEMPORARY_VARIABLE var tmp0_result: kotlin.Int
           CONST Int type=kotlin.Int value='0'
@@ -106,6 +121,8 @@ FILE /dataClasses.kt
         RETURN type=kotlin.Nothing from='hashCode(): Int'
           GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER <receiver: Test1>
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
       BLOCK_BODY
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -157,6 +174,7 @@ FILE /dataClasses.kt
           CONST Boolean type=kotlin.Boolean value='true'
   CLASS CLASS Test2
     CONSTRUCTOR public constructor Test2(x: kotlin.Any?)
+      VALUE_PARAMETER value-parameter x: kotlin.Any?
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test2'
@@ -165,24 +183,29 @@ FILE /dataClasses.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Any?
+        $this: VALUE_PARAMETER <receiver: Test2>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Any?'
             GET_FIELD 'x: Any?' type=kotlin.Any? origin=null
               receiver: GET_VAR '<receiver: Test2>' type=Test2 origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public final operator fun component1(): kotlin.Any?
+      $this: VALUE_PARAMETER <receiver: Test2>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='component1(): Any?'
           CALL '<get-x>(): Any?' type=kotlin.Any? origin=GET_PROPERTY
             $this: GET_VAR '<receiver: Test2>' type=Test2 origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public final fun copy(x: kotlin.Any? = ...): Test2
-      x: EXPRESSION_BODY
-        CALL '<get-x>(): Any?' type=kotlin.Any? origin=GET_PROPERTY
-          $this: GET_VAR '<receiver: Test2>' type=Test2 origin=null
+      $this: VALUE_PARAMETER <receiver: Test2>
+      VALUE_PARAMETER value-parameter x: kotlin.Any? = ...
+        EXPRESSION_BODY
+          CALL '<get-x>(): Any?' type=kotlin.Any? origin=GET_PROPERTY
+            $this: GET_VAR '<receiver: Test2>' type=Test2 origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='copy(Any? = ...): Test2'
           CALL 'constructor Test2(Any?)' type=Test2 origin=null
             x: GET_VAR 'value-parameter x: Any? = ...' type=kotlin.Any? origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public open override fun toString(): kotlin.String
+      $this: VALUE_PARAMETER <receiver: Test2>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
           STRING_CONCATENATION type=kotlin.String
@@ -192,6 +215,7 @@ FILE /dataClasses.kt
               $this: GET_VAR '<receiver: Test2>' type=Test2 origin=null
             CONST String type=kotlin.String value=')'
     FUN GENERATED_DATA_CLASS_MEMBER public open override fun hashCode(): kotlin.Int
+      $this: VALUE_PARAMETER <receiver: Test2>
       BLOCK_BODY
         VAR IR_TEMPORARY_VARIABLE var tmp0_result: kotlin.Int
           CONST Int type=kotlin.Int value='0'
@@ -213,6 +237,8 @@ FILE /dataClasses.kt
         RETURN type=kotlin.Nothing from='hashCode(): Int'
           GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      $this: VALUE_PARAMETER <receiver: Test2>
+      VALUE_PARAMETER value-parameter other: kotlin.Any?
       BLOCK_BODY
         WHEN type=kotlin.Unit origin=null
           BRANCH

@@ -1,57 +1,82 @@
 FILE /delegatedImplementation.kt
   CLASS INTERFACE IBase
     FUN public abstract fun foo(x: kotlin.Int, s: kotlin.String): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: IBase>
+      VALUE_PARAMETER value-parameter x: kotlin.Int
+      VALUE_PARAMETER value-parameter s: kotlin.String
     FUN public abstract fun bar(): kotlin.Int
+      $this: VALUE_PARAMETER <receiver: IBase>
     FUN public abstract fun kotlin.String.qux(): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: IBase>
+      $receiver: VALUE_PARAMETER <receiver: qux() on String: Unit>
   CLASS OBJECT BaseImpl
     CONSTRUCTOR private constructor BaseImpl()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='BaseImpl'
     FUN public open override fun foo(x: kotlin.Int, s: kotlin.String): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: BaseImpl>
+      VALUE_PARAMETER value-parameter x: kotlin.Int
+      VALUE_PARAMETER value-parameter s: kotlin.String
       BLOCK_BODY
     FUN public open override fun bar(): kotlin.Int
+      $this: VALUE_PARAMETER <receiver: BaseImpl>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='bar(): Int'
           CONST Int type=kotlin.Int value='42'
     FUN public open override fun kotlin.String.qux(): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: BaseImpl>
+      $receiver: VALUE_PARAMETER <receiver: qux() on String: Unit>
       BLOCK_BODY
   CLASS INTERFACE IOther
     PROPERTY public abstract val x: kotlin.String
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-x>(): kotlin.String
+        $this: VALUE_PARAMETER <receiver: IOther>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): String'
             GET_FIELD 'x: String' type=kotlin.String origin=null
               receiver: GET_VAR '<receiver: IOther>' type=IOther origin=null
     PROPERTY public abstract var y: kotlin.Int
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-y>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: IOther>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): Int'
             GET_FIELD 'y: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: IOther>' type=IOther origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <set-y>(<set-?>: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: IOther>
+        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
         BLOCK_BODY
           SET_FIELD 'y: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: IOther>' type=IOther origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     PROPERTY public abstract val kotlin.Byte.z1: kotlin.Int
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun kotlin.Byte.<get-z1>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: IOther>
+        $receiver: VALUE_PARAMETER <receiver: z1: Int on Byte>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-z1>() on Byte: Int'
             GET_FIELD 'z1: Int on Byte' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: IOther>' type=IOther origin=null
     PROPERTY public abstract var kotlin.Byte.z2: kotlin.Int
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun kotlin.Byte.<get-z2>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: IOther>
+        $receiver: VALUE_PARAMETER <receiver: z2: Int on Byte>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-z2>() on Byte: Int'
             GET_FIELD 'z2: Int on Byte' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: IOther>' type=IOther origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun kotlin.Byte.<set-z2>(<set-?>: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: IOther>
+        $receiver: VALUE_PARAMETER <receiver: z2: Int on Byte>
+        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
         BLOCK_BODY
           SET_FIELD 'z2: Int on Byte' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: IOther>' type=IOther origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
   FUN public fun otherImpl(x0: kotlin.String, y0: kotlin.Int): IOther
+    VALUE_PARAMETER value-parameter x0: kotlin.String
+    VALUE_PARAMETER value-parameter y0: kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='otherImpl(String, Int): IOther'
         BLOCK type=otherImpl.<no name provided> origin=OBJECT_LITERAL
@@ -65,6 +90,7 @@ FILE /delegatedImplementation.kt
                 EXPRESSION_BODY
                   GET_VAR 'value-parameter x0: String' type=kotlin.String origin=null
               FUN DEFAULT_PROPERTY_ACCESSOR public open override fun <get-x>(): kotlin.String
+                $this: VALUE_PARAMETER <receiver: <no name provided>>
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='<get-x>(): String'
                     GET_FIELD 'x: String' type=kotlin.String origin=null
@@ -74,26 +100,36 @@ FILE /delegatedImplementation.kt
                 EXPRESSION_BODY
                   GET_VAR 'value-parameter y0: Int' type=kotlin.Int origin=null
               FUN DEFAULT_PROPERTY_ACCESSOR public open override fun <get-y>(): kotlin.Int
+                $this: VALUE_PARAMETER <receiver: <no name provided>>
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='<get-y>(): Int'
                     GET_FIELD 'y: Int' type=kotlin.Int origin=null
                       receiver: GET_VAR '<receiver: <no name provided>>' type=otherImpl.<no name provided> origin=null
               FUN DEFAULT_PROPERTY_ACCESSOR public open override fun <set-y>(<set-?>: kotlin.Int): kotlin.Unit
+                $this: VALUE_PARAMETER <receiver: <no name provided>>
+                VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
                 BLOCK_BODY
                   SET_FIELD 'y: Int' type=kotlin.Unit origin=null
                     receiver: GET_VAR '<receiver: <no name provided>>' type=otherImpl.<no name provided> origin=null
                     value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
             PROPERTY public open override val kotlin.Byte.z1: kotlin.Int
               FUN public open override fun kotlin.Byte.<get-z1>(): kotlin.Int
+                $this: VALUE_PARAMETER <receiver: <no name provided>>
+                $receiver: VALUE_PARAMETER <receiver: z1: Int on Byte>
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='<get-z1>() on Byte: Int'
                     CONST Int type=kotlin.Int value='1'
             PROPERTY public open override var kotlin.Byte.z2: kotlin.Int
               FUN public open override fun kotlin.Byte.<get-z2>(): kotlin.Int
+                $this: VALUE_PARAMETER <receiver: <no name provided>>
+                $receiver: VALUE_PARAMETER <receiver: z2: Int on Byte>
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='<get-z2>() on Byte: Int'
                     CONST Int type=kotlin.Int value='2'
               FUN public open override fun kotlin.Byte.<set-z2>(value: kotlin.Int): kotlin.Unit
+                $this: VALUE_PARAMETER <receiver: <no name provided>>
+                $receiver: VALUE_PARAMETER <receiver: z2: Int on Byte>
+                VALUE_PARAMETER value-parameter value: kotlin.Int
                 BLOCK_BODY
           CALL 'constructor <no name provided>()' type=otherImpl.<no name provided> origin=OBJECT_LITERAL
   CLASS CLASS Test1
@@ -105,12 +141,16 @@ FILE /delegatedImplementation.kt
       EXPRESSION_BODY
         GET_OBJECT 'BaseImpl' type=BaseImpl
     FUN DELEGATED_MEMBER public open override fun bar(): kotlin.Int
+      $this: VALUE_PARAMETER <receiver: Test1>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='bar(): Int'
           CALL 'bar(): Int' type=kotlin.Int origin=null
             $this: GET_FIELD '`Test1$IBase$delegate`: BaseImpl' type=BaseImpl origin=null
               receiver: GET_VAR '<receiver: Test1>' type=Test1 origin=null
     FUN DELEGATED_MEMBER public open override fun foo(x: kotlin.Int, s: kotlin.String): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: Test1>
+      VALUE_PARAMETER value-parameter x: kotlin.Int
+      VALUE_PARAMETER value-parameter s: kotlin.String
       BLOCK_BODY
         CALL 'foo(Int, String): Unit' type=kotlin.Unit origin=null
           $this: GET_FIELD '`Test1$IBase$delegate`: BaseImpl' type=BaseImpl origin=null
@@ -118,6 +158,8 @@ FILE /delegatedImplementation.kt
           x: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
           s: GET_VAR 'value-parameter s: String' type=kotlin.String origin=null
     FUN DELEGATED_MEMBER public open override fun kotlin.String.qux(): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: Test1>
+      $receiver: VALUE_PARAMETER <receiver: qux() on String: Unit>
       BLOCK_BODY
         CALL 'qux() on String: Unit' type=kotlin.Unit origin=null
           $this: GET_FIELD '`Test1$IBase$delegate`: BaseImpl' type=BaseImpl origin=null
@@ -132,12 +174,16 @@ FILE /delegatedImplementation.kt
       EXPRESSION_BODY
         GET_OBJECT 'BaseImpl' type=BaseImpl
     FUN DELEGATED_MEMBER public open override fun bar(): kotlin.Int
+      $this: VALUE_PARAMETER <receiver: Test2>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='bar(): Int'
           CALL 'bar(): Int' type=kotlin.Int origin=null
             $this: GET_FIELD '`Test2$IBase$delegate`: BaseImpl' type=BaseImpl origin=null
               receiver: GET_VAR '<receiver: Test2>' type=Test2 origin=null
     FUN DELEGATED_MEMBER public open override fun foo(x: kotlin.Int, s: kotlin.String): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: Test2>
+      VALUE_PARAMETER value-parameter x: kotlin.Int
+      VALUE_PARAMETER value-parameter s: kotlin.String
       BLOCK_BODY
         CALL 'foo(Int, String): Unit' type=kotlin.Unit origin=null
           $this: GET_FIELD '`Test2$IBase$delegate`: BaseImpl' type=BaseImpl origin=null
@@ -145,6 +191,8 @@ FILE /delegatedImplementation.kt
           x: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
           s: GET_VAR 'value-parameter s: String' type=kotlin.String origin=null
     FUN DELEGATED_MEMBER public open override fun kotlin.String.qux(): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: Test2>
+      $receiver: VALUE_PARAMETER <receiver: qux() on String: Unit>
       BLOCK_BODY
         CALL 'qux() on String: Unit' type=kotlin.Unit origin=null
           $this: GET_FIELD '`Test2$IBase$delegate`: BaseImpl' type=BaseImpl origin=null
@@ -157,6 +205,8 @@ FILE /delegatedImplementation.kt
           y0: CONST Int type=kotlin.Int value='42'
     PROPERTY DELEGATED_MEMBER public open override val kotlin.Byte.z1: kotlin.Int
       FUN DELEGATED_MEMBER public open override fun kotlin.Byte.<get-z1>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: Test2>
+        $receiver: VALUE_PARAMETER <receiver: z1: Int on Byte>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-z1>() on Byte: Int'
             CALL '<get-z1>() on Byte: Int' type=kotlin.Int origin=null
@@ -165,6 +215,7 @@ FILE /delegatedImplementation.kt
               $receiver: GET_VAR '<receiver: z1: Int on Byte>' type=kotlin.Byte origin=null
     PROPERTY DELEGATED_MEMBER public open override val x: kotlin.String
       FUN DELEGATED_MEMBER public open override fun <get-x>(): kotlin.String
+        $this: VALUE_PARAMETER <receiver: Test2>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): String'
             CALL '<get-x>(): String' type=kotlin.String origin=null
@@ -172,6 +223,8 @@ FILE /delegatedImplementation.kt
                 receiver: GET_VAR '<receiver: Test2>' type=Test2 origin=null
     PROPERTY DELEGATED_MEMBER public open override var kotlin.Byte.z2: kotlin.Int
       FUN DELEGATED_MEMBER public open override fun kotlin.Byte.<get-z2>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: Test2>
+        $receiver: VALUE_PARAMETER <receiver: z2: Int on Byte>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-z2>() on Byte: Int'
             CALL '<get-z2>() on Byte: Int' type=kotlin.Int origin=null
@@ -179,6 +232,9 @@ FILE /delegatedImplementation.kt
                 receiver: GET_VAR '<receiver: Test2>' type=Test2 origin=null
               $receiver: GET_VAR '<receiver: z2: Int on Byte>' type=kotlin.Byte origin=null
       FUN DELEGATED_MEMBER public open override fun kotlin.Byte.<set-z2>(<set-?>: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: Test2>
+        $receiver: VALUE_PARAMETER <receiver: z2: Int on Byte>
+        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
         BLOCK_BODY
           CALL '<set-z2>(Int) on Byte: Unit' type=kotlin.Unit origin=null
             $this: GET_FIELD '`Test2$IOther$delegate`: IOther' type=IOther origin=null
@@ -187,12 +243,15 @@ FILE /delegatedImplementation.kt
             <set-?>: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     PROPERTY DELEGATED_MEMBER public open override var y: kotlin.Int
       FUN DELEGATED_MEMBER public open override fun <get-y>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: Test2>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): Int'
             CALL '<get-y>(): Int' type=kotlin.Int origin=null
               $this: GET_FIELD '`Test2$IOther$delegate`: IOther' type=IOther origin=null
                 receiver: GET_VAR '<receiver: Test2>' type=Test2 origin=null
       FUN DELEGATED_MEMBER public open override fun <set-y>(<set-?>: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: Test2>
+        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
         BLOCK_BODY
           CALL '<set-y>(Int): Unit' type=kotlin.Unit origin=null
             $this: GET_FIELD '`Test2$IOther$delegate`: IOther' type=IOther origin=null

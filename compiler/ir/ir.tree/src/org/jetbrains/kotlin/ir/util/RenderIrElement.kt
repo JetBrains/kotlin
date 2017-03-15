@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.util.RenderIrElementVisitor.Companion.ref
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -209,14 +211,17 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         internal fun IrDeclaration.name(): String =
                 descriptor.name.toString()
 
-        internal fun IrDeclaration.renderDeclared(): String =
-                DECLARATION_RENDERER.render(this.descriptor)
-        
-        internal fun DeclarationDescriptor.ref(): String =
-                if (this is ReceiverParameterDescriptor)
-                    "<receiver: ${containingDeclaration.ref()}>"
+        internal fun DescriptorRenderer.renderDescriptor(descriptor: DeclarationDescriptor): String =
+                if (descriptor is ReceiverParameterDescriptor)
+                    "<receiver: ${descriptor.containingDeclaration.ref()}>"
                 else
-                    REFERENCE_RENDERER.render(this)
+                    render(descriptor)
+
+        internal fun IrDeclaration.renderDeclared(): String =
+                DECLARATION_RENDERER.renderDescriptor(this.descriptor)
+
+        internal fun DeclarationDescriptor.ref(): String =
+                REFERENCE_RENDERER.renderDescriptor(this)
 
         internal fun KotlinType.render(): String =
                 DECLARATION_RENDERER.renderType(this)

@@ -2,7 +2,13 @@ FILE /conventionComparisons.kt
   CLASS INTERFACE IA
   CLASS INTERFACE IB
     FUN public abstract operator fun IA.compareTo(other: IA): kotlin.Int
+      $this: VALUE_PARAMETER <receiver: IB>
+      $receiver: VALUE_PARAMETER <receiver: compareTo(IA) on IA: Int>
+      VALUE_PARAMETER value-parameter other: IA
   FUN public fun IB.test1(a1: IA, a2: IA): kotlin.Boolean
+    $receiver: VALUE_PARAMETER <receiver: test1(IA, IA) on IB: Boolean>
+    VALUE_PARAMETER value-parameter a1: IA
+    VALUE_PARAMETER value-parameter a2: IA
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(IA, IA) on IB: Boolean'
         CALL 'GT0(Int): Boolean' type=kotlin.Boolean origin=GT
@@ -11,6 +17,9 @@ FILE /conventionComparisons.kt
             $receiver: GET_VAR 'value-parameter a1: IA' type=IA origin=null
             other: GET_VAR 'value-parameter a2: IA' type=IA origin=null
   FUN public fun IB.test2(a1: IA, a2: IA): kotlin.Boolean
+    $receiver: VALUE_PARAMETER <receiver: test2(IA, IA) on IB: Boolean>
+    VALUE_PARAMETER value-parameter a1: IA
+    VALUE_PARAMETER value-parameter a2: IA
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(IA, IA) on IB: Boolean'
         CALL 'GTEQ0(Int): Boolean' type=kotlin.Boolean origin=GTEQ
@@ -19,6 +28,9 @@ FILE /conventionComparisons.kt
             $receiver: GET_VAR 'value-parameter a1: IA' type=IA origin=null
             other: GET_VAR 'value-parameter a2: IA' type=IA origin=null
   FUN public fun IB.test3(a1: IA, a2: IA): kotlin.Boolean
+    $receiver: VALUE_PARAMETER <receiver: test3(IA, IA) on IB: Boolean>
+    VALUE_PARAMETER value-parameter a1: IA
+    VALUE_PARAMETER value-parameter a2: IA
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test3(IA, IA) on IB: Boolean'
         CALL 'LT0(Int): Boolean' type=kotlin.Boolean origin=LT
@@ -27,6 +39,9 @@ FILE /conventionComparisons.kt
             $receiver: GET_VAR 'value-parameter a1: IA' type=IA origin=null
             other: GET_VAR 'value-parameter a2: IA' type=IA origin=null
   FUN public fun IB.test4(a1: IA, a2: IA): kotlin.Boolean
+    $receiver: VALUE_PARAMETER <receiver: test4(IA, IA) on IB: Boolean>
+    VALUE_PARAMETER value-parameter a1: IA
+    VALUE_PARAMETER value-parameter a2: IA
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test4(IA, IA) on IB: Boolean'
         CALL 'LTEQ0(Int): Boolean' type=kotlin.Boolean origin=LTEQ

@@ -36,8 +36,9 @@ import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
 
+class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
+    constructor(context: GeneratorContext) : this(DeclarationGenerator(context))
 
-class DelegatedPropertyGenerator(override val context: GeneratorContext) : Generator {
     fun generateDelegatedProperty(
             ktProperty: KtProperty,
             ktDelegate: KtPropertyDelegate,
@@ -55,29 +56,39 @@ class DelegatedPropertyGenerator(override val context: GeneratorContext) : Gener
 
         val delegateReceiverValue = createBackingFieldValueForDelegate(delegateDescriptor, ktDelegate)
         val getterDescriptor = propertyDescriptor.getter!!
-        irProperty.getter = IrFunctionImpl(
-                ktDelegate.startOffset, ktDelegate.endOffset, IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR,
-                getterDescriptor,
-                generateDelegatedPropertyGetterBody(
-                        ktDelegate, getterDescriptor, delegateReceiverValue,
-                        createCallableReference(ktDelegate, kPropertyType, propertyDescriptor)
-                )
-        )
+        irProperty.getter = generateDelegatedPropertyAccessorExceptBody(ktProperty, ktDelegate, getterDescriptor).also { irGetter ->
+            irGetter.body = generateDelegatedPropertyGetterBody(
+                    ktDelegate, getterDescriptor, delegateReceiverValue,
+                    createCallableReference(ktDelegate, kPropertyType, propertyDescriptor)
+            )
+        }
 
         if (propertyDescriptor.isVar) {
             val setterDescriptor = propertyDescriptor.setter!!
-            irProperty.setter = IrFunctionImpl(
-                    ktDelegate.startOffset, ktDelegate.endOffset, IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR,
-                    setterDescriptor,
-                    generateDelegatedPropertySetterBody(
-                            ktDelegate, setterDescriptor, delegateReceiverValue,
-                            createCallableReference(ktDelegate, kPropertyType, propertyDescriptor)
-                    )
-            )
+            irProperty.setter = generateDelegatedPropertyAccessorExceptBody(ktProperty, ktDelegate, setterDescriptor).also { irSetter ->
+                irSetter.body = generateDelegatedPropertySetterBody(
+                        ktDelegate, setterDescriptor, delegateReceiverValue,
+                        createCallableReference(ktDelegate, kPropertyType, propertyDescriptor)
+                )
+            }
         }
 
         return irProperty
     }
+
+    private fun generateDelegatedPropertyAccessorExceptBody(
+            ktProperty: KtProperty,
+            ktDelegate: KtPropertyDelegate,
+            accessorDescriptor: PropertyAccessorDescriptor
+    ): IrFunction =
+            IrFunctionImpl(
+                    ktDelegate.startOffset, ktDelegate.endOffset,
+                    IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR,
+                    accessorDescriptor
+            ).also { irGetter ->
+                FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarations(irGetter, ktProperty, null)
+            }
+
 
     private fun getKPropertyTypeForDelegatedProperty(propertyDescriptor: PropertyDescriptor): KotlinType {
         val receivers = listOfNotNull(propertyDescriptor.extensionReceiverParameter, propertyDescriptor.dispatchReceiverParameter)

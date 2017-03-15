@@ -1,6 +1,7 @@
 FILE /safeCalls.kt
   CLASS CLASS Ref
     CONSTRUCTOR public constructor Ref(value: kotlin.Int)
+      VALUE_PARAMETER value-parameter value: kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Ref'
@@ -9,22 +10,28 @@ FILE /safeCalls.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: Ref>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-value>(): Int'
             GET_FIELD 'value: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: Ref>' type=Ref origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-value>(<set-?>: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: Ref>
+        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
         BLOCK_BODY
           SET_FIELD 'value: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: Ref>' type=Ref origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
   CLASS INTERFACE IHost
     FUN public open fun kotlin.String.extLength(): kotlin.Int
+      $this: VALUE_PARAMETER <receiver: IHost>
+      $receiver: VALUE_PARAMETER <receiver: extLength() on String: Int>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='extLength() on String: Int'
           CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR '<receiver: extLength() on String: Int>' type=kotlin.String origin=null
   FUN public fun test1(x: kotlin.String?): kotlin.Int?
+    VALUE_PARAMETER value-parameter x: kotlin.String?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(String?): Int?'
         BLOCK type=kotlin.Int? origin=SAFE_CALL
@@ -41,6 +48,7 @@ FILE /safeCalls.kt
               then: CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
                 $this: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? origin=null
   FUN public fun test2(x: kotlin.String?): kotlin.Int?
+    VALUE_PARAMETER value-parameter x: kotlin.String?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(String?): Int?'
         BLOCK type=kotlin.Int? origin=SAFE_CALL
@@ -57,6 +65,8 @@ FILE /safeCalls.kt
               then: CALL 'hashCode(): Int' type=kotlin.Int origin=null
                 $this: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? origin=null
   FUN public fun test3(x: kotlin.String?, y: kotlin.Any?): kotlin.Boolean?
+    VALUE_PARAMETER value-parameter x: kotlin.String?
+    VALUE_PARAMETER value-parameter y: kotlin.Any?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test3(String?, Any?): Boolean?'
         BLOCK type=kotlin.Boolean? origin=SAFE_CALL
@@ -74,6 +84,7 @@ FILE /safeCalls.kt
                 $this: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? origin=null
                 other: GET_VAR 'value-parameter y: Any?' type=kotlin.Any? origin=null
   FUN public fun test4(x: Ref?): kotlin.Unit
+    VALUE_PARAMETER value-parameter x: Ref?
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=SAFE_CALL
         VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: Ref?
@@ -91,6 +102,8 @@ FILE /safeCalls.kt
               $this: GET_VAR 'tmp0_safe_receiver: Ref?' type=Ref? origin=null
               <set-?>: CONST Int type=kotlin.Int value='0'
   FUN public fun IHost.test5(s: kotlin.String?): kotlin.Int?
+    $receiver: VALUE_PARAMETER <receiver: test5(String?) on IHost: Int?>
+    VALUE_PARAMETER value-parameter s: kotlin.String?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test5(String?) on IHost: Int?'
         BLOCK type=kotlin.Int? origin=SAFE_CALL
@@ -108,6 +121,7 @@ FILE /safeCalls.kt
                 $this: GET_VAR '<receiver: test5(String?) on IHost: Int?>' type=IHost origin=null
                 $receiver: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? origin=null
   FUN public fun kotlin.Int.foo(): kotlin.Int
+    $receiver: VALUE_PARAMETER <receiver: foo() on Int: Int>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='foo() on Int: Int'
         CONST Int type=kotlin.Int value='239'

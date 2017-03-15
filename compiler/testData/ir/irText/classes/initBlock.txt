@@ -9,6 +9,7 @@ FILE /initBlock.kt
         CALL 'println(): Unit' type=kotlin.Unit origin=null
   CLASS CLASS Test2
     CONSTRUCTOR public constructor Test2(x: kotlin.Int)
+      VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test2'
@@ -17,6 +18,7 @@ FILE /initBlock.kt
         EXPRESSION_BODY
           GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: Test2>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): Int'
             GET_FIELD 'x: Int' type=kotlin.Int origin=null
@@ -56,6 +58,7 @@ FILE /initBlock.kt
           message: CONST String type=kotlin.String value='1'
     CLASS CLASS TestInner
       CONSTRUCTOR public constructor TestInner()
+        $this: VALUE_PARAMETER <receiver: Test5>
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='TestInner'

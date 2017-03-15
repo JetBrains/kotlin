@@ -71,6 +71,8 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
     override fun visitFunction(declaration: IrFunction, data: String) {
         declaration.dumpLabeledElementWith(data) {
             declaration.typeParameters.dumpElements()
+            declaration.dispatchReceiverParameter?.accept(this, "\$this")
+            declaration.extensionReceiverParameter?.accept(this, "\$receiver")
             declaration.valueParameters.dumpElements()
             declaration.body?.accept(this, "")
         }

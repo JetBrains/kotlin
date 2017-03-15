@@ -17,36 +17,29 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallableReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.BindingContext
 
 class LocalFunctionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
     fun generateLambda(ktLambda: KtLambdaExpression): IrStatement {
         val ktFun = ktLambda.functionLiteral
         val lambdaExpressionType = getInferredTypeWithImplicitCastsOrFail(ktLambda)
-        val lambdaDescriptor = getOrFail(BindingContext.FUNCTION, ktFun)
+        val irLambdaFunction = FunctionGenerator(context).generateLambdaFunctionDeclaration(ktFun)
+
         val irBlock = IrBlockImpl(ktLambda.startOffset, ktLambda.endOffset, lambdaExpressionType, IrStatementOrigin.LAMBDA)
-
-        val irFun = IrFunctionImpl(ktFun.startOffset, ktFun.endOffset, IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA, lambdaDescriptor)
-        irFun.body = BodyGenerator(lambdaDescriptor, statementGenerator.context).generateLambdaBody(ktFun)
-        irBlock.statements.add(irFun)
-
+        irBlock.statements.add(irLambdaFunction)
         irBlock.statements.add(
                 IrCallableReferenceImpl(
                         ktLambda.startOffset, ktLambda.endOffset, lambdaExpressionType,
-                        lambdaDescriptor, null, IrStatementOrigin.LAMBDA
+                        irLambdaFunction.descriptor, null, IrStatementOrigin.LAMBDA
                 )
         )
-
         return irBlock
     }
 
@@ -73,6 +66,5 @@ class LocalFunctionGenerator(statementGenerator: StatementGenerator) : Statement
             }
 
     private fun generateFunctionDeclaration(ktFun: KtNamedFunction): IrFunction =
-            DeclarationGenerator(context).generateFunctionDeclaration(ktFun)
-
+            FunctionGenerator(context).generateFunctionDeclaration(ktFun)
 }

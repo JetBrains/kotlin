@@ -25,6 +25,7 @@ FILE /smoke.kt
         RETURN type=kotlin.Nothing from='<get-testSimpleVar>(): Int'
           GET_FIELD 'testSimpleVar: Int' type=kotlin.Int origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <set-testSimpleVar>(<set-?>: kotlin.Int): kotlin.Unit
+      VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
       BLOCK_BODY
         SET_FIELD 'testSimpleVar: Int' type=kotlin.Unit origin=null
           value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
@@ -34,4 +35,5 @@ FILE /smoke.kt
         RETURN type=kotlin.Nothing from='<get-testVarWithAccessors>(): Int'
           CONST Int type=kotlin.Int value='42'
     FUN public fun <set-testVarWithAccessors>(v: kotlin.Int): kotlin.Unit
+      VALUE_PARAMETER value-parameter v: kotlin.Int
       BLOCK_BODY
