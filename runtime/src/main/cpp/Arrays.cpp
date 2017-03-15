@@ -44,17 +44,6 @@ void Kotlin_Array_set(KRef thiz, KInt index, KConstRef value) {
   UpdateGlobalRef(ArrayAddressOfElementAt(array, index), value);
 }
 
-OBJ_GETTER(Kotlin_Array_clone, KConstRef thiz) {
-  const ArrayHeader* array = thiz->array();
-  ArrayHeader* result = AllocArrayInstance(
-      array->type_info(), array->count_, OBJ_RESULT)->array();
-  for (int index = 0; index < array->count_; index++) {
-    SetGlobalRef(
-         ArrayAddressOfElementAt(result, index), *ArrayAddressOfElementAt(array, index));
-  }
-  RETURN_OBJ(result->obj());
-}
-
 KInt Kotlin_Array_getArrayLength(KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   return array->count_;
@@ -109,17 +98,6 @@ void Kotlin_ByteArray_set(KRef thiz, KInt index, KByte value) {
   *ByteArrayAddressOfElementAt(array, index) = value;
 }
 
-OBJ_GETTER(Kotlin_ByteArray_clone, KConstRef thiz) {
-  const ArrayHeader* array = thiz->array();
-  ArrayHeader* result = AllocArrayInstance(
-      array->type_info(), array->count_, OBJ_RESULT)->array();
-  memcpy(
-      ByteArrayAddressOfElementAt(result, 0),
-      ByteArrayAddressOfElementAt(array, 0),
-      ArrayDataSizeBytes(array));
-  RETURN_OBJ(result->obj());
-}
-
 KInt Kotlin_ByteArray_getArrayLength(KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   return array->count_;
@@ -139,17 +117,6 @@ void Kotlin_CharArray_set(KRef thiz, KInt index, KChar value) {
     ThrowArrayIndexOutOfBoundsException();
   }
   *PrimitiveArrayAddressOfElementAt<KChar>(array, index) = value;
-}
-
-OBJ_GETTER(Kotlin_CharArray_clone, KConstRef thiz) {
-  const ArrayHeader* array = thiz->array();
-  ArrayHeader* result = AllocArrayInstance(
-      array->type_info(), array->count_, OBJ_RESULT)->array();
-  memcpy(
-      PrimitiveArrayAddressOfElementAt<KChar>(result, 0),
-      PrimitiveArrayAddressOfElementAt<KChar>(array, 0),
-      ArrayDataSizeBytes(array));
-  RETURN_OBJ(result->obj());
 }
 
 OBJ_GETTER(Kotlin_CharArray_copyOf, KConstRef thiz, KInt newSize) {
@@ -185,17 +152,6 @@ void Kotlin_ShortArray_set(KRef thiz, KInt index, KShort value) {
   *PrimitiveArrayAddressOfElementAt<KShort>(array, index) = value;
 }
 
-OBJ_GETTER(Kotlin_ShortArray_clone, KConstRef thiz) {
-  const ArrayHeader* array = thiz->array();
-  ArrayHeader* result = AllocArrayInstance(
-      array->type_info(), array->count_, OBJ_RESULT)->array();
-  memcpy(
-      PrimitiveArrayAddressOfElementAt<KShort>(result, 0),
-      PrimitiveArrayAddressOfElementAt<KShort>(array, 0),
-      ArrayDataSizeBytes(array));
-  RETURN_OBJ(result->obj());
-}
-
 KInt Kotlin_ShortArray_getArrayLength(KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   return array->count_;
@@ -215,17 +171,6 @@ void Kotlin_IntArray_set(KRef thiz, KInt index, KInt value) {
     ThrowArrayIndexOutOfBoundsException();
   }
   *PrimitiveArrayAddressOfElementAt<KInt>(array, index) = value;
-}
-
-OBJ_GETTER(Kotlin_IntArray_clone, KConstRef thiz) {
-  const ArrayHeader* array = thiz->array();
-  ArrayHeader* result = AllocArrayInstance(
-      array->type_info(), array->count_, OBJ_RESULT)->array();
-  memcpy(
-      PrimitiveArrayAddressOfElementAt<KInt>(result, 0),
-      PrimitiveArrayAddressOfElementAt<KInt>(array, 0),
-      ArrayDataSizeBytes(array));
-  RETURN_OBJ(result->obj());
 }
 
 KInt Kotlin_IntArray_getArrayLength(KConstRef thiz) {
@@ -300,17 +245,6 @@ void Kotlin_LongArray_set(KRef thiz, KInt index, KLong value) {
   *PrimitiveArrayAddressOfElementAt<KLong>(array, index) = value;
 }
 
-OBJ_GETTER(Kotlin_LongArray_clone, KConstRef thiz) {
-  const ArrayHeader* array = thiz->array();
-  ArrayHeader* result = AllocArrayInstance(
-      array->type_info(), array->count_, OBJ_RESULT)->array();
-  memcpy(
-      PrimitiveArrayAddressOfElementAt<KLong>(result, 0),
-      PrimitiveArrayAddressOfElementAt<KLong>(array, 0),
-      ArrayDataSizeBytes(array));
-  RETURN_OBJ(result->obj());
-}
-
 KInt Kotlin_LongArray_getArrayLength(KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   return array->count_;
@@ -330,17 +264,6 @@ void Kotlin_FloatArray_set(KRef thiz, KInt index, KFloat value) {
     ThrowArrayIndexOutOfBoundsException();
   }
   *PrimitiveArrayAddressOfElementAt<KFloat>(array, index) = value;
-}
-
-OBJ_GETTER(Kotlin_FloatArray_clone, KConstRef thiz) {
-  const ArrayHeader* array = thiz->array();
-  ArrayHeader* result = AllocArrayInstance(
-      array->type_info(), array->count_, OBJ_RESULT)->array();
-  memcpy(
-      PrimitiveArrayAddressOfElementAt<KFloat>(result, 0),
-      PrimitiveArrayAddressOfElementAt<KFloat>(array, 0),
-      ArrayDataSizeBytes(array));
-  RETURN_OBJ(result->obj());
 }
 
 KInt Kotlin_FloatArray_getArrayLength(KConstRef thiz) {
@@ -364,17 +287,6 @@ void Kotlin_DoubleArray_set(KRef thiz, KInt index, KDouble value) {
   *PrimitiveArrayAddressOfElementAt<KDouble>(array, index) = value;
 }
 
-OBJ_GETTER(Kotlin_DoubleArray_clone, KConstRef thiz) {
-  const ArrayHeader* array = thiz->array();
-  ArrayHeader* result = AllocArrayInstance(
-      array->type_info(), array->count_, OBJ_RESULT)->array();
-  memcpy(
-      PrimitiveArrayAddressOfElementAt<KDouble>(result, 0),
-      PrimitiveArrayAddressOfElementAt<KDouble>(array, 0),
-      ArrayDataSizeBytes(array));
-  RETURN_OBJ(result->obj());
-}
-
 KInt Kotlin_DoubleArray_getArrayLength(KConstRef thiz) {
   const ArrayHeader* array = thiz->array();
   return array->count_;
@@ -394,17 +306,6 @@ void Kotlin_BooleanArray_set(KRef thiz, KInt index, KBoolean value) {
     ThrowArrayIndexOutOfBoundsException();
   }
   *PrimitiveArrayAddressOfElementAt<KBoolean>(array, index) = value;
-}
-
-OBJ_GETTER(Kotlin_BooleanArray_clone, KConstRef thiz) {
-  const ArrayHeader* array = thiz->array();
-  ArrayHeader* result = AllocArrayInstance(
-      array->type_info(), array->count_, OBJ_RESULT)->array();
-  memcpy(
-      PrimitiveArrayAddressOfElementAt<KBoolean>(result, 0),
-      PrimitiveArrayAddressOfElementAt<KBoolean>(array, 0),
-      ArrayDataSizeBytes(array));
-  RETURN_OBJ(result->obj());
 }
 
 KInt Kotlin_BooleanArray_getArrayLength(KConstRef thiz) {

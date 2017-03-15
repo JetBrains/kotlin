@@ -3,7 +3,7 @@ import konan.internal.ExportForCompiler
 
 // TODO: remove that, as RTTI shall be per instantiation.
 @ExportTypeInfo("theArrayTypeInfo")
-public final class Array<T> : Cloneable {
+public final class Array<T> {
     // Constructors are handled with compiler magic.
     public constructor(size: Int, init: (Int) -> T) {
         var index = 0
@@ -18,9 +18,6 @@ public final class Array<T> : Cloneable {
 
     public val size: Int
         get() = getArrayLength()
-
-    @SymbolName("Kotlin_Array_clone")
-    external public override fun clone(): Any
 
     @SymbolName("Kotlin_Array_get")
     external public operator fun get(index: Int): T

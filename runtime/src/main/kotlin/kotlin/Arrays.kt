@@ -11,7 +11,7 @@ import kotlin.util.sortArrayWith
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 @ExportTypeInfo("theByteArrayTypeInfo")
-public final class ByteArray : Cloneable {
+public final class ByteArray {
     // Constructors are handled with compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -23,9 +23,6 @@ public final class ByteArray : Cloneable {
 
     @SymbolName("Kotlin_ByteArray_set")
     external public operator fun set(index: Int, value: Byte): Unit
-
-    @SymbolName("Kotlin_ByteArray_clone")
-    external public override fun clone(): Any
 
     @SymbolName("Kotlin_ByteArray_getArrayLength")
     external private fun getArrayLength(): Int
@@ -54,7 +51,7 @@ private class ByteIteratorImpl(val collection: ByteArray) : ByteIterator() {
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 @ExportTypeInfo("theCharArrayTypeInfo")
-public final class CharArray : Cloneable {
+public final class CharArray {
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -66,9 +63,6 @@ public final class CharArray : Cloneable {
 
     @SymbolName("Kotlin_CharArray_set")
     external public operator fun set(index: Int, value: Char): Unit
-
-    @SymbolName("Kotlin_CharArray_clone")
-    external public override fun clone(): Any
 
     @SymbolName("Kotlin_CharArray_copyOf")
     external public fun copyOf(newSize: Int): CharArray
@@ -99,7 +93,7 @@ private class CharIteratorImpl(val collection: CharArray) : CharIterator() {
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 @ExportTypeInfo("theShortArrayTypeInfo")
-public final class ShortArray : Cloneable {
+public final class ShortArray {
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -111,9 +105,6 @@ public final class ShortArray : Cloneable {
 
     @SymbolName("Kotlin_ShortArray_set")
     external public operator fun set(index: Int, value: Short): Unit
-
-    @SymbolName("Kotlin_ShortArray_clone")
-    external public override fun clone(): Any
 
     @SymbolName("Kotlin_ShortArray_getArrayLength")
     external private fun getArrayLength(): Int
@@ -141,7 +132,7 @@ private class ShortIteratorImpl(val collection: ShortArray) : ShortIterator() {
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 @ExportTypeInfo("theIntArrayTypeInfo")
-public final class IntArray : Cloneable {
+public final class IntArray {
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -153,9 +144,6 @@ public final class IntArray : Cloneable {
 
     @SymbolName("Kotlin_IntArray_set")
     external public operator fun set(index: Int, value: Int): Unit
-
-    @SymbolName("Kotlin_IntArray_clone")
-    external public override fun clone(): Any
 
     @SymbolName("Kotlin_IntArray_getArrayLength")
     external private fun getArrayLength(): Int
@@ -183,7 +171,7 @@ private class IntIteratorImpl(val collection: IntArray) : IntIterator() {
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 @ExportTypeInfo("theLongArrayTypeInfo")
-public final class LongArray : Cloneable {
+public final class LongArray {
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -195,9 +183,6 @@ public final class LongArray : Cloneable {
 
     @SymbolName("Kotlin_LongArray_set")
     external public operator fun set(index: Int, value: Long): Unit
-
-    @SymbolName("Kotlin_LongArray_clone")
-    external public override fun clone(): Any
 
     @SymbolName("Kotlin_LongArray_getArrayLength")
     external private fun getArrayLength(): Int
@@ -225,7 +210,7 @@ private class LongIteratorImpl(val collection: LongArray) : LongIterator() {
  * @constructor Creates a new array of the specified [size], with all elements initialized to zero.
  */
 @ExportTypeInfo("theFloatArrayTypeInfo")
-public final class FloatArray : Cloneable {
+public final class FloatArray {
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -237,9 +222,6 @@ public final class FloatArray : Cloneable {
 
     @SymbolName("Kotlin_FloatArray_set")
     external public operator fun set(index: Int, value: Float): Unit
-
-    @SymbolName("Kotlin_FloatArray_clone")
-    external public override fun clone(): Any
 
     @SymbolName("Kotlin_FloatArray_getArrayLength")
     external private fun getArrayLength(): Int
@@ -263,7 +245,7 @@ private class FloatIteratorImpl(val collection: FloatArray) : FloatIterator() {
 }
 
 @ExportTypeInfo("theDoubleArrayTypeInfo")
-public final class DoubleArray : Cloneable {
+public final class DoubleArray {
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -275,9 +257,6 @@ public final class DoubleArray : Cloneable {
 
     @SymbolName("Kotlin_DoubleArray_set")
     external public operator fun set(index: Int, value: Double): Unit
-
-    @SymbolName("Kotlin_DoubleArray_clone")
-    external public override fun clone(): Any
 
     @SymbolName("Kotlin_DoubleArray_getArrayLength")
     external private fun getArrayLength(): Int
@@ -301,7 +280,7 @@ private class DoubleIteratorImpl(val collection: DoubleArray) : DoubleIterator()
 }
 
 @ExportTypeInfo("theBooleanArrayTypeInfo")
-public final class BooleanArray : Cloneable {
+public final class BooleanArray {
     // Constructors are handled with the compiler magic.
     public constructor(@Suppress("UNUSED_PARAMETER") size: Int) {}
 
@@ -313,9 +292,6 @@ public final class BooleanArray : Cloneable {
 
     @SymbolName("Kotlin_BooleanArray_set")
     external public operator fun set(index: Int, value: Boolean): Unit
-
-    @SymbolName("Kotlin_BooleanArray_clone")
-    external public override fun clone(): Any
 
     @SymbolName("Kotlin_BooleanArray_getArrayLength")
     external private fun getArrayLength(): Int
