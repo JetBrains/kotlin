@@ -61,13 +61,10 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
         val fqName = currentFile!!.packageFragmentDescriptor.fqName.asString()              // TODO to be removed after stdlib compilation
         if(fqName.contains("kotlin")) return super.visitCall(expression)                    // TODO to be removed after stdlib compilation
-        val fileName = currentFile!!.fileEntry.name
-        if (fileName.contains("cinterop")) return super.visitCall(expression)
 
         if (currentFunction == null) return super.visitCall(expression)
         if (currentFunction!!.descriptor.isInline) return super.visitCall(expression)       // TODO workaround
 
-        // println("visitCall ${expression.descriptor.name}")
         val functionDescriptor = expression.descriptor as FunctionDescriptor
         if (functionDescriptor.isInline) {
             val inlineFunctionBody = inlineFunction(expression)
@@ -129,9 +126,6 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
             .functions[functionDescriptor.original]                                         // Get FunctionDeclaration by FunctionDescriptor.
 
         if (functionDeclaration == null) return irCall                                      // Function is declared in another module.
-//        print("  inline file: ${currentFile!!.fileEntry.name} ")                            // TODO debug output
-//        print("function: ${currentFunction!!.descriptor.name} ")                            // TODO debug output
-//        println("call: ${functionDescriptor.name} ${irCall.startOffset}")                   // TODO debug output
 
         val copyFuncDeclaration = functionDeclaration.accept(DeepCopyIrTree(),              // Create copy of the function.
             null) as IrFunction
@@ -193,7 +187,6 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         //---------------------------------------------------------------------//
 
         override fun visitGetValue(expression: IrGetValue): IrExpression {
-            // println("    visitGetValue ${expression.descriptor.name}")
             val newExpression = super.visitGetValue(expression) as IrGetValue
             val descriptor = newExpression.descriptor
             val argument = substituteMap[descriptor]                                      // Find expression to replace this parameter.
@@ -213,7 +206,6 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
         override fun visitVariable(declaration: IrVariable): IrStatement {
 
-            // println("    visitVariable ${declaration.descriptor.name}")
             val newDeclaration = super.visitVariable(declaration) as IrVariable             // Process variable initializer.
             val newVariable    = newVariable(newDeclaration)                                // Create new local variable.
             val getVal         = IrGetValueImpl(0, 0, newVariable.descriptor)               // Create new IR element representing access the new variable.
