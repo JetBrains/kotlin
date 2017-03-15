@@ -27,6 +27,9 @@ import java.io.File
 import java.util.*
 
 class KotlinCompilerAdapter : Javac13() {
+    private val NO_STDLIB = "-no-stdlib"
+    private val NO_REFLECT = "-no-reflect"
+
     var moduleName: String? = null
 
     var additionalArguments: MutableList<Commandline.Argument> = ArrayList(0)
@@ -96,8 +99,8 @@ class KotlinCompilerAdapter : Javac13() {
 
     private fun addRuntimeToJavacClasspath(kotlinc: Kotlin2JvmTask) {
         // If "-no-stdlib" (or "-no-reflect") was specified explicitly, probably the user also wanted the javac classpath to not have it
-        val addStdlib = "-no-stdlib" !in kotlinc.args
-        val addReflect = "-no-reflect" !in kotlinc.args
+        val addStdlib = NO_STDLIB !in kotlinc.args
+        val addReflect = NO_REFLECT !in kotlinc.args
 
         if (!addStdlib && !addReflect) return
 
@@ -105,11 +108,40 @@ class KotlinCompilerAdapter : Javac13() {
             compileClasspath = Path(getProject())
         }
         if (addStdlib) {
-            compileClasspath.add(Path(getProject(), KotlinAntTaskUtil.runtimeJar.absolutePath))
+            val runtimeJar = KotlinAntTaskUtil.runtimeJar ?: throwJarNotFoundException(KotlinAntTaskUtil.RUNTIME_JAR_NAME, NO_STDLIB)
+            compileClasspath.add(Path(getProject(), runtimeJar.absolutePath))
         }
         // "-no-stdlib" implies "-no-reflect", see K2JVMCompiler.Companion.getClasspath
         if (addReflect && addStdlib) {
-            compileClasspath.add(Path(getProject(), KotlinAntTaskUtil.reflectJar.absolutePath))
+            val reflectJar = KotlinAntTaskUtil.reflectJar ?: throwJarNotFoundException(KotlinAntTaskUtil.REFLECT_JAR_NAME, NO_REFLECT)
+            compileClasspath.add(Path(getProject(), reflectJar.absolutePath))
+        }
+    }
+
+    private fun throwJarNotFoundException(jarName: String, argName: String): File {
+        val error =
+          "\nYou asked to load $jarName from the compiler distribution,\n" +
+          "but seems you have a custom installation\n"
+
+        val recommendation =
+          "Disable the jar loading from the compiler distribution ($argName)\n" +
+          "and if you still need the library,\n" +
+          "add it manually to the Kotlin Ant task's classpath."
+
+        if (KotlinAntTaskUtil.libPath === null) {
+            throw UnsupportedOperationException(
+              error +
+              "and Kotlin Ant task wasn't loaded from a JAR file\n" +
+              "thus we are not able to determine the location of the compiler distribution.\n" +
+              recommendation
+            )
+        } else {
+            throw IllegalStateException(
+              error +
+              "and the file is not found in ${KotlinAntTaskUtil.libPath}\n" +
+              "1. Add it to that directory\n" +
+              "or 2. $recommendation"
+            )
         }
     }
 
