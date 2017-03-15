@@ -23,7 +23,7 @@ class NamedNativeInteropConfig implements Named {
     private SourceSet interopStubs
     final JavaExec genTask
 
-    private String target = "jvm"
+    private String flavor = "jvm"
 
     private String defFile
 
@@ -38,8 +38,8 @@ class NamedNativeInteropConfig implements Named {
 
     Configuration configuration
 
-    void target(String value) {
-        target = value
+    void flavor(String value) {
+        flavor = value
     }
 
     void defFile(String value) {
@@ -188,7 +188,7 @@ class NamedNativeInteropConfig implements Named {
                 args "-properties:" + project.findProject(":backend.native").file("konan.properties")
                 args "-generated:" + generatedSrcDir
                 args "-natives:" + nativeLibsDir
-                args "-target:" + this.target
+                args "-flavor:" + this.flavor
                 // Uncomment to debug.
                 //args "-verbose:true"
 

@@ -1508,29 +1508,29 @@ kotlinNativeInterop {
     sysstat {
         pkg 'sysstat'
         headers 'sys/stat.h'
-        target 'native'
+        flavor 'native'
     }
 
     cstdlib {
         pkg 'cstdlib'
         headers 'stdlib.h'
-        target 'native'
+        flavor 'native'
     }
 
     cstdio {
         defFile 'interop/basics/cstdio.def'
-        target 'native'
+        flavor 'native'
         compilerOpts '-D_POSIX_SOURCE' // Exclude Darwin extensions causing link errors.
     }
 
     sockets {
         defFile 'interop/basics/sockets.def'
-        target 'native'
+        flavor 'native'
     }
 
     if (isMac()) {
         opengl {
-            target 'native'
+            flavor 'native'
             compilerOpts '-framework', 'OpenGL', '-framework', 'GLUT'
             linkerOpts '-framework', 'OpenGL', '-framework', 'GLUT'
             pkg 'opengl'

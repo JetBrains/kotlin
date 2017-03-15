@@ -52,13 +52,13 @@ INTEROP_RUNTIME_JAR="${KONAN_HOME}/konan/lib/Runtime.jar"
 INTEROP_CLASSPATH="$STUB_GENERATOR_JAR:$KOTLIN_JAR:$INTEROP_INDEXER_JAR:$INTEROP_RUNTIME_JAR"
 INTEROP_TOOL=org.jetbrains.kotlin.native.interop.gen.jvm.MainKt
 
-TARGET_ARG=-target:native
+FLAVOR_ARG=-flavor:native
 
 LIBCLANG_DISABLE_CRASH_RECOVERY=1 \
 LD_LIBRARY_PATH=${NATIVE_LIB} \
 $JAVACMD $JAVA_OPTS ${java_args[@]} \
     -cp $INTEROP_CLASSPATH \
     $INTEROP_TOOL \
-    $TARGET_ARG ${interop_args[@]} \
+    $FLAVOR_ARG ${interop_args[@]} \
 
 

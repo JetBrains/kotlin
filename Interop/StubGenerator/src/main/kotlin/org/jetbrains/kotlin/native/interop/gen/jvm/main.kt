@@ -171,9 +171,9 @@ private fun processLib(konanHome: String,
     val userDir = System.getProperty("user.dir")
     val ktGenRoot = args["-generated"]?.single() ?: userDir
     val nativeLibsDir = args["-natives"]?.single() ?: userDir
-    val platformName = args["-target"]?.single() ?: "jvm"
+    val flavorName = args["-flavor"]?.single() ?: "jvm"
 
-    val platform = KotlinPlatform.values().single { it.name.equals(platformName, ignoreCase = true) }
+    val flavor = KotlinPlatform.values().single { it.name.equals(flavorName, ignoreCase = true) }
 
     val defFile = args["-def"]?.single()?.let { File(it) }
 
@@ -238,7 +238,7 @@ private fun processLib(konanHome: String,
 
     val nativeIndex = buildNativeIndex(library)
 
-    val gen = StubGenerator(nativeIndex, configuration, libName, generateShims, platform)
+    val gen = StubGenerator(nativeIndex, configuration, libName, generateShims, flavor)
 
     outKtFile.parentFile.mkdirs()
     outKtFile.bufferedWriter().use { out ->
@@ -259,7 +259,7 @@ private fun processLib(konanHome: String,
 
     val workDir = defFile?.parentFile ?: File(System.getProperty("java.io.tmpdir"))
 
-    if (platform == KotlinPlatform.JVM) {
+    if (flavor == KotlinPlatform.JVM) {
 
         val outOFile = createTempFile(suffix = ".o")
 
@@ -280,7 +280,7 @@ private fun processLib(konanHome: String,
         runCmd(linkerCmd, workDir, verbose)
 
         outOFile.delete()
-    } else if (platform == KotlinPlatform.NATIVE) {
+    } else if (flavor == KotlinPlatform.NATIVE) {
         val outBcName = libName + ".bc"
         val outLib = nativeLibsDir + "/" + outBcName
         val compilerCmd = arrayOf("$llvmInstallPath/bin/$compiler", *compilerOpts.toTypedArray(),
