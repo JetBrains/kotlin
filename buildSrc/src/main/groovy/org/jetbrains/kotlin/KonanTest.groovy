@@ -218,7 +218,7 @@ class RunInteropKonanTest extends KonanTest {
         List<String> linkerArguments = interopConf.linkerOpts // TODO: add arguments from .def file
 
         List<String> compilerArguments = ["-library", interopBc, "-nativelibrary", interopStubsBc] +
-                linkerArguments.collectMany { ["-linkerArg", it] }
+                linkerArguments.collectMany { ["-linkerArgs", it] }
 
         runCompiler(filesToCompile, exe, compilerArguments)
     }
