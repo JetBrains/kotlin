@@ -61,6 +61,7 @@ class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
         application.doNotSave(false)
         Assert.assertEquals(LanguageVersion.KOTLIN_1_1, myProject.getLanguageVersionSettings(null).languageVersion)
         Assert.assertEquals(LanguageVersion.KOTLIN_1_1, module.languageVersionSettings.languageVersion)
+        application.saveAll()
         Assert.assertTrue(project.baseDir.findFileByRelativePath(".idea/kotlinc.xml") == null)
     }
 
