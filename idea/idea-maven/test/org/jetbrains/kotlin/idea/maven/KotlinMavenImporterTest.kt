@@ -451,7 +451,8 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
             Assert.assertEquals("JVM 1.8", targetPlatformKind!!.description)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals("-cp foobar.jar -jdk-home JDK_HOME -Xmulti-platform",
+            Assert.assertEquals("foobar.jar", (compilerArguments as K2JVMCompilerArguments).classpath)
+            Assert.assertEquals("-jdk-home JDK_HOME -Xmulti-platform",
                                 compilerSettings!!.additionalArguments)
         }
     }
@@ -591,7 +592,8 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
             Assert.assertEquals("JVM 1.8", targetPlatformKind!!.description)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals("-cp foobar.jar -jdk-home JDK_HOME -Xmulti-platform",
+            Assert.assertEquals("foobar.jar", (compilerArguments as K2JVMCompilerArguments).classpath)
+            Assert.assertEquals("-jdk-home JDK_HOME -Xmulti-platform",
                                 compilerSettings!!.additionalArguments)
         }
     }

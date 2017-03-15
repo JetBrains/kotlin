@@ -143,7 +143,9 @@ private val commonUIHiddenFields = listOf("pluginClasspaths",
                                           "pluginOptions")
 private val commonPrimaryFields = commonUIExposedFields + commonUIHiddenFields
 
-private val jvmSpecificUIExposedFields = listOf("jvmTarget")
+private val jvmSpecificUIExposedFields = listOf("jvmTarget",
+                                                "destination",
+                                                "classpath")
 val jvmUIExposedFields = commonUIExposedFields + jvmSpecificUIExposedFields
 private val jvmPrimaryFields = commonPrimaryFields + jvmSpecificUIExposedFields
 
