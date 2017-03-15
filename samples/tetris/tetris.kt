@@ -778,15 +778,19 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
         memScoped {
             val event = alloc<SDL_Event>()
             while (SDL_PollEvent(event.ptr.reinterpret()) != 0) {
-                if (event.type.value == SDL_KEYDOWN) {
-                    val keyboardEvent = event.ptr.reinterpret<SDL_KeyboardEvent>().pointed
-                    when (keyboardEvent.keysym.scancode.value) {
-                        SDL_SCANCODE_LEFT -> commands.add(UserCommand.LEFT)
-                        SDL_SCANCODE_RIGHT -> commands.add(UserCommand.RIGHT)
-                        SDL_SCANCODE_DOWN -> commands.add(UserCommand.DOWN)
-                        SDL_SCANCODE_Z -> commands.add(UserCommand.ROTATE)
-                        SDL_SCANCODE_UP -> commands.add(UserCommand.DROP)
-                        SDL_SCANCODE_ESCAPE -> commands.add(UserCommand.EXIT)
+                val eventType = event.type.value
+                when (eventType) {
+                    SDL_QUIT -> commands.add(UserCommand.EXIT)
+                    SDL_KEYDOWN -> {
+                        val keyboardEvent = event.ptr.reinterpret<SDL_KeyboardEvent>().pointed
+                        when (keyboardEvent.keysym.scancode.value) {
+                            SDL_SCANCODE_LEFT -> commands.add(UserCommand.LEFT)
+                            SDL_SCANCODE_RIGHT -> commands.add(UserCommand.RIGHT)
+                            SDL_SCANCODE_DOWN -> commands.add(UserCommand.DOWN)
+                            SDL_SCANCODE_Z -> commands.add(UserCommand.ROTATE)
+                            SDL_SCANCODE_UP -> commands.add(UserCommand.DROP)
+                            SDL_SCANCODE_ESCAPE -> commands.add(UserCommand.EXIT)
+                        }
                     }
                 }
             }
