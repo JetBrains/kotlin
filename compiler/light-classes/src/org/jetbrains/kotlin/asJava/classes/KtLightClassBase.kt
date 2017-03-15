@@ -14,161 +14,71 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.asJava.classes;
+package org.jetbrains.kotlin.asJava.classes
 
-import com.intellij.lang.Language;
-import com.intellij.navigation.ItemPresentation;
-import com.intellij.navigation.ItemPresentationProviders;
-import com.intellij.psi.*;
-import com.intellij.psi.impl.PsiClassImplUtil;
-import com.intellij.psi.impl.light.AbstractLightClass;
-import com.intellij.psi.impl.source.ClassInnerStuffCache;
-import com.intellij.psi.impl.source.PsiExtensibleClass;
-import com.intellij.psi.scope.PsiScopeProcessor;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
-import kotlin.collections.ArraysKt;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.asJava.elements.KtLightFieldImpl;
-import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl;
-import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.psi.KtClassOrObject;
+import com.intellij.navigation.ItemPresentationProviders
+import com.intellij.psi.*
+import com.intellij.psi.impl.PsiClassImplUtil
+import com.intellij.psi.impl.light.AbstractLightClass
+import com.intellij.psi.impl.source.ClassInnerStuffCache
+import com.intellij.psi.impl.source.PsiExtensibleClass
+import com.intellij.psi.scope.PsiScopeProcessor
+import org.jetbrains.kotlin.asJava.elements.KtLightFieldImpl
+import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
+import org.jetbrains.kotlin.idea.KotlinLanguage
 
-import java.util.List;
+abstract class KtLightClassBase protected constructor(manager: PsiManager)
+    : AbstractLightClass(manager, KotlinLanguage.INSTANCE), KtLightClass, PsiExtensibleClass {
+    private val myInnersCache = ClassInnerStuffCache(this)
 
-public abstract class KtLightClassBase extends AbstractLightClass implements KtLightClass, PsiExtensibleClass {
-    private final ClassInnerStuffCache myInnersCache = new ClassInnerStuffCache(this);
+    override fun getDelegate() = clsDelegate
 
-    protected KtLightClassBase(PsiManager manager) {
-        super(manager, KotlinLanguage.INSTANCE);
-    }
+    override fun getFields() = myInnersCache.fields
 
-    @NotNull
-    @Override
-    public PsiClass getDelegate() {
-        return getClsDelegate();
-    }
+    override fun getMethods() = myInnersCache.methods
 
-    @Override
-    @NotNull
-    public PsiField[] getFields() {
-        return myInnersCache.getFields();
-    }
+    override fun getConstructors() = myInnersCache.constructors
 
-    @Override
-    @NotNull
-    public PsiMethod[] getMethods() {
-        return myInnersCache.getMethods();
-    }
+    override fun getInnerClasses() = myInnersCache.innerClasses
 
-    @Override
-    @NotNull
-    public PsiMethod[] getConstructors() {
-        return myInnersCache.getConstructors();
-    }
+    override fun getAllFields() = PsiClassImplUtil.getAllFields(this)
 
-    @Override
-    @NotNull
-    public PsiClass[] getInnerClasses() {
-        return myInnersCache.getInnerClasses();
-    }
+    override fun getAllMethods() = PsiClassImplUtil.getAllMethods(this)
 
-    @Override
-    @NotNull
-    public PsiField[] getAllFields() {
-        return PsiClassImplUtil.getAllFields(this);
-    }
+    override fun getAllInnerClasses() = PsiClassImplUtil.getAllInnerClasses(this)
 
-    @Override
-    @NotNull
-    public PsiMethod[] getAllMethods() {
-        return PsiClassImplUtil.getAllMethods(this);
-    }
+    override fun findFieldByName(name: String, checkBases: Boolean) = myInnersCache.findFieldByName(name, checkBases)
 
-    @Override
-    @NotNull
-    public PsiClass[] getAllInnerClasses() {
-        return PsiClassImplUtil.getAllInnerClasses(this);
-    }
+    override fun findMethodsByName(name: String, checkBases: Boolean) = myInnersCache.findMethodsByName(name, checkBases)
 
-    @Override
-    public PsiField findFieldByName(String name, boolean checkBases) {
-        return myInnersCache.findFieldByName(name, checkBases);
-    }
+    override fun findInnerClassByName(name: String, checkBases: Boolean) = myInnersCache.findInnerClassByName(name, checkBases)
 
-    @Override
-    @NotNull
-    public PsiMethod[] findMethodsByName(String name, boolean checkBases) {
-        return myInnersCache.findMethodsByName(name, checkBases);
-    }
+    override fun getOwnFields(): List<PsiField> = KtLightFieldImpl.fromClsFields(delegate, this)
 
-    @Override
-    public PsiClass findInnerClassByName(String name, boolean checkBases) {
-        return myInnersCache.findInnerClassByName(name, checkBases);
-    }
+    override fun getOwnMethods(): List<PsiMethod> = KtLightMethodImpl.fromClsMethods(delegate, this)
 
-    /**
-     * @see org.jetbrains.kotlin.codegen.binding.CodegenBinding#ENUM_ENTRY_CLASS_NEED_SUBCLASS
-      */
-    @NotNull
-    @Override
-    public List<PsiField> getOwnFields() {
-        return ContainerUtil.map(getDelegate().getFields(), new Function<PsiField, PsiField>() {
-            @Override
-            public PsiField fun(PsiField field) {
-                return KtLightFieldImpl.Factory.fromClsField(field, KtLightClassBase.this);
-            }
-        });
-    }
-
-    @NotNull
-    @Override
-    public List<PsiMethod> getOwnMethods() {
-        return ArraysKt.map(getDelegate().getMethods(), new Function1<PsiMethod, PsiMethod>() {
-            @Override
-            public PsiMethod invoke(PsiMethod method) {
-                return KtLightMethodImpl.fromClsMethod(method, KtLightClassBase.this);
-            }
-        });
-    }
-
-    @Override
-    public boolean processDeclarations(
-            @NotNull PsiScopeProcessor processor, @NotNull ResolveState state, PsiElement lastParent, @NotNull PsiElement place
-    ) {
-        if (isEnum()) {
-            if (!PsiClassImplUtil.processDeclarationsInEnum(processor, state, myInnersCache)) return false;
+    override fun processDeclarations(
+            processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement
+    ): Boolean {
+        if (isEnum) {
+            if (!PsiClassImplUtil.processDeclarationsInEnum(processor, state, myInnersCache)) return false
         }
 
-        return super.processDeclarations(processor, state, lastParent, place);
+        return super.processDeclarations(processor, state, lastParent, place)
     }
 
-    @Override
-    public String getText() {
-        KtClassOrObject origin = getKotlinOrigin();
-        return origin == null ? "" : origin.getText();
+    override fun getText(): String {
+        val origin = kotlinOrigin
+        return if (origin == null) "" else origin.text
     }
 
-    @NotNull
-    @Override
-    public Language getLanguage() {
-        return KotlinLanguage.INSTANCE;
-    }
+    override fun getLanguage() = KotlinLanguage.INSTANCE
 
-    @Override
-    public ItemPresentation getPresentation() {
-        return ItemPresentationProviders.getItemPresentation(this);
-    }
+    override fun getPresentation() = ItemPresentationProviders.getItemPresentation(this)
 
-    @Override
-    public abstract boolean equals(Object obj);
+    abstract override fun equals(other: Any?): Boolean
 
-    @Override
-    public abstract int hashCode();
+    abstract override fun hashCode(): Int
 
-    @Override
-    public PsiElement getContext() {
-        return getParent();
-    }
+    override fun getContext() = parent
 }

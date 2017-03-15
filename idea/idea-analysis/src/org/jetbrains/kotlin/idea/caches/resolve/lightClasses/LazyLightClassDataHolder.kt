@@ -79,7 +79,7 @@ sealed class LazyLightClassDataHolder(
         private val dummyDelegate: PsiClass? by lazyPub { inexactResult?.let(findDelegate) }
 
         override fun getOwnFields(containingClass: KtLightClass): List<KtLightField> {
-            if (dummyDelegate == null) return clsDelegate.fields.map { KtLightFieldImpl.fromClsField(it, containingClass) }
+            if (dummyDelegate == null) return KtLightFieldImpl.fromClsFields(clsDelegate, containingClass)
 
             return dummyDelegate!!.fields.map { dummyField ->
                 val memberOrigin = ClsWrapperStubPsiFactory.getMemberOrigin(dummyField)!!
@@ -93,7 +93,7 @@ sealed class LazyLightClassDataHolder(
         }
 
         override fun getOwnMethods(containingClass: KtLightClass): List<KtLightMethod> {
-            if (dummyDelegate == null) return clsDelegate.methods.map { KtLightMethodImpl.fromClsMethod(it, containingClass) }
+            if (dummyDelegate == null) return KtLightMethodImpl.fromClsMethods(clsDelegate, containingClass)
 
             return dummyDelegate!!.methods.map { dummyMethod ->
                 val methodName = dummyMethod.name

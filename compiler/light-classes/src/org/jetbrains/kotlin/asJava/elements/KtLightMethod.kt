@@ -238,13 +238,6 @@ class KtLightMethodImpl private constructor(
             return KtLightMethodImpl({ delegate}, origin, containingClass)
         }
 
-        @JvmStatic
-        fun fromClsMethod(method: PsiMethod, containingClass: KtLightClass): KtLightMethodImpl {
-            val origin = ClsWrapperStubPsiFactory.getMemberOrigin(method)
-            return KtLightMethodImpl.create(method, adjustMethodOrigin(origin), containingClass)
-        }
-
-        @JvmStatic
         fun lazy(
                 dummyDelegate: PsiMethod?,
                 containingClass: KtLightClass,
@@ -252,6 +245,11 @@ class KtLightMethodImpl private constructor(
                 computeRealDelegate: () -> PsiMethod
         ): KtLightMethodImpl {
             return KtLightMethodImpl(computeRealDelegate, adjustMethodOrigin(origin), containingClass, dummyDelegate)
+        }
+
+        fun fromClsMethods(delegateClass: PsiClass, containingClass: KtLightClass) = delegateClass.methods.map {
+            val origin = ClsWrapperStubPsiFactory.getMemberOrigin(it)
+            KtLightMethodImpl.create(it, adjustMethodOrigin(origin), containingClass)
         }
     }
 

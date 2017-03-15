@@ -66,13 +66,9 @@ interface LightClassData {
 }
 
 class LightClassDataImpl(override val clsDelegate: PsiClass) : LightClassData {
-    override fun getOwnFields(containingClass: KtLightClass): List<KtLightField> {
-        return clsDelegate.fields.map { KtLightFieldImpl.fromClsField(it, containingClass) }
-    }
+    override fun getOwnFields(containingClass: KtLightClass) = KtLightFieldImpl.fromClsFields(clsDelegate, containingClass)
 
-    override fun getOwnMethods(containingClass: KtLightClass): List<KtLightMethod> {
-        return clsDelegate.methods.map { KtLightMethodImpl.fromClsMethod(it, containingClass) }
-    }
+    override fun getOwnMethods(containingClass: KtLightClass) = KtLightMethodImpl.fromClsMethods(clsDelegate, containingClass)
 }
 
 object InvalidLightClassDataHolder : LightClassDataHolder.ForClass {

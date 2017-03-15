@@ -183,10 +183,9 @@ sealed class KtLightFieldImpl<T: PsiField>(
             return KtLightFieldForDeclaration(origin, computeRealDelegate, containingClass, dummyDelegate)
         }
 
-        @JvmStatic
-        fun fromClsField(field: PsiField, containingClass: KtLightClass): KtLightField {
-            val origin = ClsWrapperStubPsiFactory.getMemberOrigin(field)
-            return KtLightFieldImpl.create(origin, field, containingClass)
+        fun fromClsFields(delegateClass: PsiClass, containingClass: KtLightClass) = delegateClass.fields.map {
+            val origin = ClsWrapperStubPsiFactory.getMemberOrigin(it)
+            KtLightFieldImpl.create(origin, it, containingClass)
         }
     }
 }
