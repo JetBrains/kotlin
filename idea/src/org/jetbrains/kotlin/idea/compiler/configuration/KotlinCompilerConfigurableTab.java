@@ -309,6 +309,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
     public void setTargetPlatform(@Nullable TargetPlatformKind<?> targetPlatform) {
         k2jsPanel.setVisible(TargetPlatformKind.JavaScript.INSTANCE.equals(targetPlatform));
+        scriptPanel.setVisible(targetPlatform instanceof TargetPlatformKind.Jvm);
     }
 
     @SuppressWarnings("unchecked")
