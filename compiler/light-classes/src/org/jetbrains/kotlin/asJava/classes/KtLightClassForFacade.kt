@@ -32,7 +32,6 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassDataProviderForFileFacade
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
-import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -50,17 +49,17 @@ import javax.swing.Icon
 class KtLightClassForFacade private constructor(
         manager: PsiManager,
         private val facadeClassFqName: FqName,
-        private val lightClassDataCache: CachedValue<LightClassDataHolder>,
+        private val lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade>,
         files: Collection<KtFile>
 ) : KtLazyLightClass(manager) {
     private data class StubCacheKey(val fqName: FqName, val searchScope: GlobalSearchScope)
 
     class FacadeStubCache(private val project: Project) {
         private inner class FacadeCacheData {
-            val cache = object : SLRUCache<StubCacheKey, CachedValue<LightClassDataHolder>>(20, 30) {
-                override fun createValue(key: StubCacheKey): CachedValue<LightClassDataHolder> {
+            val cache = object : SLRUCache<StubCacheKey, CachedValue<LightClassDataHolder.ForFacade>>(20, 30) {
+                override fun createValue(key: StubCacheKey): CachedValue<LightClassDataHolder.ForFacade> {
                     val stubProvider = LightClassDataProviderForFileFacade.ByProjectSource(project, key.fqName, key.searchScope)
-                    return CachedValuesManager.getManager(project).createCachedValue<LightClassDataHolder>(stubProvider, /*trackValue = */false)
+                    return CachedValuesManager.getManager(project).createCachedValue<LightClassDataHolder.ForFacade>(stubProvider, /*trackValue = */false)
                 }
             }
         }
@@ -69,7 +68,7 @@ class KtLightClassForFacade private constructor(
                 { CachedValueProvider.Result.create(FacadeCacheData(), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT) },
                 /*trackValue = */ false)
 
-        operator fun get(qualifiedName: FqName, searchScope: GlobalSearchScope): CachedValue<LightClassDataHolder> {
+        operator fun get(qualifiedName: FqName, searchScope: GlobalSearchScope): CachedValue<LightClassDataHolder.ForFacade> {
             synchronized (cachedValue) {
                 return cachedValue.value.cache.get(StubCacheKey(qualifiedName, searchScope))
             }
@@ -273,7 +272,7 @@ class KtLightClassForFacade private constructor(
         ): KtLightClassForFacade {
             // TODO: refactor, using cached value doesn't make sense for this case
             val cachedValue = CachedValuesManager.getManager(manager.project).
-                    createCachedValue<LightClassDataHolder>(
+                    createCachedValue<LightClassDataHolder.ForFacade>(
                             LightClassDataProviderForFileFacade.ByFile(manager.project, facadeClassFqName, file), /*trackValue = */false
                     )
             return KtLightClassForFacade(manager, facadeClassFqName, cachedValue, listOf(file))

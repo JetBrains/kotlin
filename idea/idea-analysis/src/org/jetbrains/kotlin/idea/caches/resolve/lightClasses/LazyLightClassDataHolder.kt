@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 
 typealias LightClassContextProvider = () -> LightClassConstructionContext
 
-class LazyLightClassDataHolder(
+sealed class LazyLightClassDataHolder(
         builder: LightClassBuilder,
         exactContextProvider: LightClassContextProvider,
         dummyContextProvider: LightClassContextProvider?
@@ -57,10 +57,18 @@ class LazyLightClassDataHolder(
                 findDelegate(lightClassBuilderResult.stub)
             }
 
-    override fun findDataForClassOrObject(classOrObject: KtClassOrObject): LightClassData =
-            LazyLightClassData(relyOnDummySupertypes = classOrObject.getSuperTypeList() == null) { lightClassBuilderResult ->
-                lightClassBuilderResult.stub.findDelegate(classOrObject)
-            }
+    class ForClass(
+            builder: LightClassBuilder, exactContextProvider: LightClassContextProvider, dummyContextProvider: LightClassContextProvider?
+    ) : LazyLightClassDataHolder(builder, exactContextProvider, dummyContextProvider), LightClassDataHolder.ForClass {
+        override fun findDataForClassOrObject(classOrObject: KtClassOrObject): LightClassData =
+                LazyLightClassData(relyOnDummySupertypes = classOrObject.getSuperTypeList() == null) { lightClassBuilderResult ->
+                    lightClassBuilderResult.stub.findDelegate(classOrObject)
+                }
+    }
+
+    class ForFacade(
+            builder: LightClassBuilder, exactContextProvider: LightClassContextProvider, dummyContextProvider: LightClassContextProvider?
+    ) : LazyLightClassDataHolder(builder, exactContextProvider, dummyContextProvider), LightClassDataHolder.ForFacade
 
     private inner class LazyLightClassData(
             private val relyOnDummySupertypes: Boolean,

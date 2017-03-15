@@ -76,7 +76,9 @@ class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSup
         trace.setKotlinCodeAnalyzer(codeAnalyzer)
     }
 
-    override fun createDataHolderForClassOrObject(classOrObject: KtClassOrObject, builder: LightClassBuilder): LightClassDataHolder {
+    override fun createDataHolderForClass(
+            classOrObject: KtClassOrObject, builder: LightClassBuilder
+    ): LightClassDataHolder.ForClass {
         //force resolve companion for light class generation
         bindingContext.get(BindingContext.CLASS, classOrObject)?.companionObjectDescriptor
 
@@ -172,7 +174,7 @@ class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSup
         }
     }
 
-    override fun createDataHolderForFacade(files: Collection<KtFile>, builder: LightClassBuilder): LightClassDataHolder {
+    override fun createDataHolderForFacade(files: Collection<KtFile>, builder: LightClassBuilder): LightClassDataHolder.ForFacade {
         val (stub, _, diagnostics) = builder(getContext())
         return LightClassDataHolderImpl(stub, diagnostics)
     }

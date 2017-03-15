@@ -60,16 +60,16 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     private val scopeFileComparator = JavaElementFinder.byClasspathComparator(GlobalSearchScope.allScope(project))
     private val psiManager: PsiManager = PsiManager.getInstance(project)
 
-    override fun createDataHolderForClassOrObject(classOrObject: KtClassOrObject, builder: LightClassBuilder): LightClassDataHolder {
+    override fun createDataHolderForClass(classOrObject: KtClassOrObject, builder: LightClassBuilder): LightClassDataHolder.ForClass {
         return if (classOrObject.isLocal) {
-            LazyLightClassDataHolder(
+            LazyLightClassDataHolder.ForClass(
                     builder,
                     exactContextProvider = { IDELightClassContexts.contextForLocalClassOrObject(classOrObject) },
                     dummyContextProvider = null
             )
         }
         else {
-            LazyLightClassDataHolder(
+            LazyLightClassDataHolder.ForClass(
                     builder,
                     exactContextProvider = { IDELightClassContexts.contextForNonLocalClassOrObject(classOrObject) },
                     dummyContextProvider = { IDELightClassContexts.lightContextForClassOrObject(classOrObject) }
@@ -78,12 +78,12 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     }
 
 
-    override fun createDataHolderForFacade(files: Collection<KtFile>, builder: LightClassBuilder): LightClassDataHolder {
+    override fun createDataHolderForFacade(files: Collection<KtFile>, builder: LightClassBuilder): LightClassDataHolder.ForFacade {
         assert(!files.isEmpty()) { "No files in facade" }
 
         val sortedFiles = files.sortedWith(scopeFileComparator)
 
-        return LazyLightClassDataHolder(
+        return LazyLightClassDataHolder.ForFacade(
                 builder,
                 exactContextProvider = { IDELightClassContexts.contextForFacade(sortedFiles) },
                 dummyContextProvider = { IDELightClassContexts.lightContextForFacade(sortedFiles) }

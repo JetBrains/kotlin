@@ -42,13 +42,18 @@ interface LightClassDataHolder {
 
     fun findData(findDelegate: (PsiJavaFileStub) -> PsiClass): LightClassData
 
-    fun findDataForDefaultImpls(classOrObject: KtClassOrObject) = findData {
-        it.findDelegate(classOrObject).findInnerClassByName(JvmAbi.DEFAULT_IMPLS_CLASS_NAME, false)
-        ?: throw IllegalStateException("Couldn't get delegate for $this\n in ${DebugUtil.stubTreeToString(it)}")
+    interface ForClass : LightClassDataHolder {
+        fun findDataForDefaultImpls(classOrObject: KtClassOrObject) = findData {
+            it.findDelegate(classOrObject).findInnerClassByName(JvmAbi.DEFAULT_IMPLS_CLASS_NAME, false)
+            ?: throw IllegalStateException("Couldn't get delegate for $this\n in ${DebugUtil.stubTreeToString(it)}")
+        }
+
+        fun findDataForClassOrObject(classOrObject: KtClassOrObject): LightClassData = findData { it.findDelegate(classOrObject) }
     }
 
-    fun findDataForClassOrObject(classOrObject: KtClassOrObject): LightClassData = findData { it.findDelegate(classOrObject) }
-    fun findDataForFacade(classFqName: FqName): LightClassData = findData { it.findDelegate(classFqName) }
+    interface ForFacade : LightClassDataHolder {
+        fun findDataForFacade(classFqName: FqName): LightClassData = findData { it.findDelegate(classFqName) }
+    }
 }
 
 interface LightClassData {
@@ -70,7 +75,7 @@ class LightClassDataImpl(override val clsDelegate: PsiClass) : LightClassData {
     }
 }
 
-object InvalidLightClassDataHolder : LightClassDataHolder {
+object InvalidLightClassDataHolder : LightClassDataHolder.ForClass {
     override val javaFileStub: PsiJavaFileStub
         get() = shouldNotBeCalled()
 
@@ -85,7 +90,7 @@ object InvalidLightClassDataHolder : LightClassDataHolder {
 class LightClassDataHolderImpl(
         override val javaFileStub: PsiJavaFileStub,
         override val extraDiagnostics: Diagnostics
-) : LightClassDataHolder {
+) : LightClassDataHolder.ForClass, LightClassDataHolder.ForFacade {
     override fun findData(findDelegate: (PsiJavaFileStub) -> PsiClass) = findDelegate(javaFileStub).let(::LightClassDataImpl)
 }
 

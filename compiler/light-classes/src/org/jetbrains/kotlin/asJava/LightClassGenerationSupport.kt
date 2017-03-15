@@ -20,9 +20,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.asJava.builder.LightClassBuilderResult
-import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
-import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
+import org.jetbrains.kotlin.asJava.builder.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -36,9 +34,9 @@ typealias LightClassBuilder = (LightClassConstructionContext) -> LightClassBuild
 
 abstract class LightClassGenerationSupport {
 
-    abstract fun createDataHolderForClassOrObject(classOrObject: KtClassOrObject, builder: LightClassBuilder): LightClassDataHolder
+    abstract fun createDataHolderForClass(classOrObject: KtClassOrObject, builder: LightClassBuilder): LightClassDataHolder.ForClass
 
-    abstract fun createDataHolderForFacade(files: Collection<KtFile>, builder: LightClassBuilder): LightClassDataHolder
+    abstract fun createDataHolderForFacade(files: Collection<KtFile>, builder: LightClassBuilder): LightClassDataHolder.ForFacade
 
     abstract fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject>
 
