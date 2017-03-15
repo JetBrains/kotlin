@@ -4,6 +4,7 @@
     <property name="dokka.path" value="../dependencies/dokka" />
     <property name="js.stdlib.src.path" value="../dependencies/js-stdlib-src" />
     <property name="docs.output" value="${basedir}/doc" />
+    <property name="dokka.format" value="kotlin-website-samples"/>
 
     <typedef resource="dokka-antlib.xml">
         <classpath>
@@ -29,7 +30,7 @@
     </target>
 
     <target name="document" depends="clean,build-js-stdlib-sources">
-        <dokka samples="stdlib/samples/test" outputDir="${docs.output}/jre8" moduleName="kotlin-stdlib" skipDeprecated="true" outputFormat="kotlin-website-samples" jdkversion="8" impliedplatforms="JVM,JS"
+        <dokka samples="stdlib/samples/test" outputDir="${docs.output}/jre8" moduleName="kotlin-stdlib" skipDeprecated="true" outputFormat="${dokka.format}" jdkversion="8" impliedplatforms="JVM,JS"
                include="stdlib/src/Module.md">
 
             <sourceRoot path="stdlib/src" platforms="JVM"/>
@@ -44,7 +45,7 @@
 
             <sourcelink path=".." url="http://github.com/JetBrains/kotlin/blob/${github.revision}" linesuffix="#L"/>
         </dokka>
-        <dokka outputDir="${docs.output}/jre8" moduleName="kotlin-test" skipDeprecated="true" outputFormat="kotlin-website-samples" jdkversion="8" impliedplatforms="JVM,JS">
+        <dokka outputDir="${docs.output}/jre8" moduleName="kotlin-test" skipDeprecated="true" outputFormat="${dokka.format}" jdkversion="8" impliedplatforms="JVM,JS">
 
             <sourceRoot path="kotlin.test/common/src/main/kotlin" platforms="JVM,JS"/>
             <sourceRoot path="kotlin.test/jvm/src/main/kotlin" platforms="JVM"/>
