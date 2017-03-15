@@ -67,7 +67,7 @@ public inline fun FilePropertyBag(lastModified: Int? = null, type: String? = "")
 }
 
 public external abstract class FileList : ItemArrayLike<File> {
-    override open val length: Int
+    override val length: Int
     override fun item(index: Int): File?
 }
 @kotlin.internal.InlineOnly inline operator fun FileList.get(index: Int): File? = asDynamic()[index]

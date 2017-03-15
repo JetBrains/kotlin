@@ -22,9 +22,9 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-public external abstract class CSSStyleDeclaration {
+public external abstract class CSSStyleDeclaration : ItemArrayLike<String> {
     open var cssText: String
-    open val length: Int
+    override val length: Int
     open val parentRule: CSSRule?
     open var cssFloat: String
     open var _dashed_attribute: String
@@ -253,7 +253,7 @@ public external abstract class CSSStyleDeclaration {
     open var wordWrap: String
     open var writingMode: String
     open var zIndex: String
-    fun item(index: Int): String
+    override fun item(index: Int): String
     fun getPropertyValue(property: String): String
     fun getPropertyPriority(property: String): String
     fun setProperty(property: String, value: String, priority: String = definedExternally): Unit
@@ -263,10 +263,10 @@ public external abstract class CSSStyleDeclaration {
 }
 @kotlin.internal.InlineOnly inline operator fun CSSStyleDeclaration.get(index: Int): String? = asDynamic()[index]
 
-public external abstract class MediaList {
+public external abstract class MediaList : ItemArrayLike<String> {
     open var mediaText: String
-    open val length: Int
-    fun item(index: Int): String?
+    override val length: Int
+    override fun item(index: Int): String?
     fun appendMedium(medium: String): Unit
     fun deleteMedium(medium: String): Unit
 }
@@ -289,9 +289,9 @@ public external abstract class CSSStyleSheet : StyleSheet {
     fun deleteRule(index: Int): Unit
 }
 
-public external abstract class StyleSheetList {
-    open val length: Int
-    fun item(index: Int): StyleSheet?
+public external abstract class StyleSheetList : ItemArrayLike<StyleSheet> {
+    override val length: Int
+    override fun item(index: Int): StyleSheet?
 }
 @kotlin.internal.InlineOnly inline operator fun StyleSheetList.get(index: Int): StyleSheet? = asDynamic()[index]
 
@@ -299,9 +299,9 @@ public external interface LinkStyle {
     val sheet: StyleSheet?
 }
 
-public external abstract class CSSRuleList {
-    open val length: Int
-    fun item(index: Int): CSSRule?
+public external abstract class CSSRuleList : ItemArrayLike<CSSRule> {
+    override val length: Int
+    override fun item(index: Int): CSSRule?
 }
 @kotlin.internal.InlineOnly inline operator fun CSSRuleList.get(index: Int): CSSRule? = asDynamic()[index]
 

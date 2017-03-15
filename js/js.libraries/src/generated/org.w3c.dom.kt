@@ -192,6 +192,7 @@ public external open class Document : Node, GlobalEventHandlers, DocumentAndElem
 @kotlin.internal.InlineOnly inline operator fun Document.get(name: String): dynamic = asDynamic()[name]
 
 public external abstract class Window : EventTarget, GlobalEventHandlers, WindowEventHandlers, WindowOrWorkerGlobalScope, WindowSessionStorage, WindowLocalStorage, GlobalPerformance, UnionMessagePortOrWindow {
+    override val performance: Performance
     open val window: Window
     open val self: Window
     open val document: Document
@@ -975,7 +976,7 @@ public external abstract class HTMLButtonElement : HTMLElement {
     fun setCustomValidity(error: String): Unit
 }
 
-public external abstract class HTMLSelectElement : HTMLElement {
+public external abstract class HTMLSelectElement : HTMLElement, ItemArrayLike<Element> {
     open var autocomplete: String
     open var autofocus: Boolean
     open var disabled: Boolean
@@ -986,7 +987,7 @@ public external abstract class HTMLSelectElement : HTMLElement {
     open var size: Int
     open val type: String
     open val options: HTMLOptionsCollection
-    open var length: Int
+    override var length: Int
     open val selectedOptions: HTMLCollection
     open var selectedIndex: Int
     open var value: String
@@ -994,7 +995,7 @@ public external abstract class HTMLSelectElement : HTMLElement {
     open val validity: ValidityState
     open val validationMessage: String
     open val labels: NodeList
-    fun item(index: Int): Element?
+    override fun item(index: Int): Element?
     fun namedItem(name: String): HTMLOptionElement?
     fun add(element: UnionHTMLOptGroupElementOrHTMLOptionElement, before: dynamic = definedExternally): Unit
     fun remove(index: Int): Unit
@@ -1949,29 +1950,29 @@ public external interface NavigatorPlugins {
     fun javaEnabled(): Boolean
 }
 
-public external abstract class PluginArray {
-    open val length: Int
+public external abstract class PluginArray : ItemArrayLike<Plugin> {
+    override val length: Int
     fun refresh(reload: Boolean = definedExternally): Unit
-    fun item(index: Int): Plugin?
+    override fun item(index: Int): Plugin?
     fun namedItem(name: String): Plugin?
 }
 @kotlin.internal.InlineOnly inline operator fun PluginArray.get(index: Int): Plugin? = asDynamic()[index]
 @kotlin.internal.InlineOnly inline operator fun PluginArray.get(name: String): Plugin? = asDynamic()[name]
 
-public external abstract class MimeTypeArray {
-    open val length: Int
-    fun item(index: Int): MimeType?
+public external abstract class MimeTypeArray : ItemArrayLike<MimeType> {
+    override val length: Int
+    override fun item(index: Int): MimeType?
     fun namedItem(name: String): MimeType?
 }
 @kotlin.internal.InlineOnly inline operator fun MimeTypeArray.get(index: Int): MimeType? = asDynamic()[index]
 @kotlin.internal.InlineOnly inline operator fun MimeTypeArray.get(name: String): MimeType? = asDynamic()[name]
 
-public external abstract class Plugin {
+public external abstract class Plugin : ItemArrayLike<MimeType> {
     open val name: String
     open val description: String
     open val filename: String
-    open val length: Int
-    fun item(index: Int): MimeType?
+    override val length: Int
+    override fun item(index: Int): MimeType?
     fun namedItem(name: String): MimeType?
 }
 @kotlin.internal.InlineOnly inline operator fun Plugin.get(index: Int): MimeType? = asDynamic()[index]
@@ -2500,13 +2501,13 @@ public external interface Slotable {
 }
 
 public external abstract class NodeList : ItemArrayLike<Node> {
-    override open val length: Int
+    override val length: Int
     override fun item(index: Int): Node?
 }
 @kotlin.internal.InlineOnly inline operator fun NodeList.get(index: Int): Node? = asDynamic()[index]
 
 public external abstract class HTMLCollection : UnionElementOrHTMLCollection, ItemArrayLike<Element> {
-    override open val length: Int
+    override val length: Int
     override fun item(index: Int): Element?
     fun namedItem(name: String): Element?
 }
@@ -2776,7 +2777,7 @@ public inline fun ShadowRootInit(mode: ShadowRootMode?): ShadowRootInit {
 }
 
 public external abstract class NamedNodeMap : ItemArrayLike<Attr> {
-    override open val length: Int
+    override val length: Int
     override fun item(index: Int): Attr?
     fun getNamedItem(qualifiedName: String): Attr?
     fun getNamedItemNS(namespace: String?, localName: String): Attr?
@@ -2936,7 +2937,7 @@ public external interface NodeFilter {
 }
 
 public external abstract class DOMTokenList : ItemArrayLike<String> {
-    override open val length: Int
+    override val length: Int
     open var value: String
     override fun item(index: Int): String?
     fun contains(token: String): Boolean
@@ -3038,7 +3039,6 @@ public inline fun DOMRectInit(x: Double? = 0.0, y: Double? = 0.0, width: Double?
 }
 
 public external interface DOMRectList : ItemArrayLike<DOMRect> {
-    override val length: Int
     override fun item(index: Int): DOMRect?
 }
 @kotlin.internal.InlineOnly inline operator fun DOMRectList.get(index: Int): DOMRect? = asDynamic()[index]
