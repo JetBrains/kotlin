@@ -194,8 +194,6 @@ internal class LinkStage(val context: Context) {
         val linkCommand = platform.linkCommand(objectFiles, executable, optimize) +
                 asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS))
 
-        println(linkCommand.joinToString("|||"))
-
         runTool(*linkCommand.toTypedArray())
 
         return executable
