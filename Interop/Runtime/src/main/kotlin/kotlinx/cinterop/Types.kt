@@ -5,6 +5,8 @@ package kotlinx.cinterop
  * Subtypes are supposed to represent interpretations of the pointed data or code.
  *
  * This interface is likely to be handled by compiler magic and shouldn't be subtyped by arbitrary classes.
+ *
+ * TODO: the behavior of [equals], [hashCode] and [toString] differs on Native and JVM backends.
  */
 interface NativePointed {
     val rawPtr: NativePtr

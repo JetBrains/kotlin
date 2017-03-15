@@ -324,6 +324,10 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
         val llvmFunctionType = getLlvmFunctionType(descriptor)
 
         val llvmFunction = if (descriptor.isExternal) {
+            if (descriptor.isIntrinsic) {
+                return
+            }
+
             context.llvm.externalFunction(descriptor.symbolName, llvmFunctionType)
         } else {
             val symbolName = if (descriptor.isExported()) {

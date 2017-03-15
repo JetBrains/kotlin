@@ -24,7 +24,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     private var localAllocs = 0
     private var arenaSlot: LLVMValueRef? = null
 
-    private val intPtrType = LLVMIntPtrType(llvmTargetData)!!
+    val intPtrType = LLVMIntPtrType(llvmTargetData)!!
     private val immOneIntPtrType = LLVMConstInt(intPtrType, 1, 1)!!
 
     fun prologue(descriptor: FunctionDescriptor) {

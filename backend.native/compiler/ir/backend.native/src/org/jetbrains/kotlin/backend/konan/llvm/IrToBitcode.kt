@@ -1711,6 +1711,16 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             interop.nativePtrPlusLong -> codegen.gep(args[0], args[1])
             interop.getNativeNullPtr -> kNullInt8Ptr
             interop.getPointerSize -> Int32(LLVMPointerSize(codegen.llvmTargetData)).llvm
+            interop.nativePtrToLong -> {
+                val intPtrValue = codegen.ptrToInt(args.single(), codegen.intPtrType)
+                val resultType = codegen.getLLVMType(descriptor.returnType!!)
+
+                if (resultType == intPtrValue.type) {
+                    intPtrValue
+                } else {
+                    LLVMBuildSExt(codegen.builder, intPtrValue, resultType, "")!!
+                }
+            }
             else -> TODO(callee.descriptor.original.toString())
         }
     }

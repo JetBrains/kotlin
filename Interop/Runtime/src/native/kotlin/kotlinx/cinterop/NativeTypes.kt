@@ -4,6 +4,14 @@ import konan.internal.Intrinsic
 
 class NativePtr private constructor() {
     @Intrinsic external operator fun plus(offset: Long): NativePtr
+
+    @Intrinsic private external fun toLong(): Long
+
+    override fun equals(other: Any?) = (other is NativePtr) && konan.internal.areEqualByValue(this, other)
+
+    override fun hashCode() = this.toLong().hashCode()
+
+    override fun toString() = this.toLong().toString() // TODO: format as hex.
 }
 
 inline val nativeNullPtr: NativePtr

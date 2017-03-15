@@ -27,9 +27,12 @@ class NativePointedBox(val value: NativePointed) {
         return this.value == other.value
     }
 
-    override fun hashCode() = value.hashCode()
+    // TODO: can't delegate the following methods to `this.value`
+    // because `NativePointed` doesn't provide them.
 
-    override fun toString() = value.toString()
+    override fun hashCode() = this.value.rawPtr.hashCode()
+
+    override fun toString() = "NativePointed(raw=${this.value.rawPtr})"
 }
 
 fun boxNativePointed(value: NativePointed?) = if (value != null) NativePointedBox(value) else null

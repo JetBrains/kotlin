@@ -112,6 +112,8 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val nativePtrPlusLong = nativePtr.unsubstitutedMemberScope.getContributedFunctions("plus").single()
 
+    val nativePtrToLong = nativePtr.unsubstitutedMemberScope.getContributedFunctions("toLong").single()
+
     val bitsToFloat = packageScope.getContributedFunctions("bitsToFloat").single()
 
     val bitsToDouble = packageScope.getContributedFunctions("bitsToDouble").single()
