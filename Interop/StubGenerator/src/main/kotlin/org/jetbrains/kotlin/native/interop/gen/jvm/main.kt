@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
 }
 
 private fun detectHost():String {
-    val os =System.getProperty("os.name")
+    val os = System.getProperty("os.name")
     when (os) {
         "Linux" -> return "linux"
         "Windows" -> return "win"
@@ -53,19 +53,19 @@ private fun substitute(properties: Properties, substitutions: Map<String, String
     }
 }
 
-private fun getArgPrefix(arg: String): String? {
+private fun getArgPrefix(arg: String): String {
     val index = arg.indexOf(':')
     if (index == -1) {
-        return null
+        return ""
     } else {
         return arg.substring(0, index)
     }
 }
 
-private fun dropPrefix(arg: String): String? {
+private fun dropPrefix(arg: String): String {
     val index = arg.indexOf(':')
     if (index == -1) {
-        return null
+        return ""
     } else {
         return arg.substring(index + 1)
     }
@@ -148,11 +148,25 @@ private fun loadProperties(file: File?, substitutions: Map<String, String>): Pro
     return result
 }
 
+private fun usage() {
+    println("""
+Run interop tool with -def:<def_file_for_lib>.def
+Following flags are supported:
+  -def:<file>.def specifies library definition file
+  -copt:<c compiler flags> specifies flags passed to clang
+  -lopt:<linker flags> specifies flags passed to linker
+  -verbose increases verbosity
+  -shims adds generation of shims tracing native library calls
+  -pkg:<fully qualified package name>
+  -h:<file>.h header files to parse
+""")
+}
+
 private fun processLib(konanHome: String,
                        substitutions: Map<String, String>,
                        commandArgs: List<String>) {
 
-    val args = commandArgs.groupBy ({ getArgPrefix(it)!! }, { dropPrefix(it)!! }) // TODO
+    val args = commandArgs.groupBy ({ getArgPrefix(it) }, { dropPrefix(it) }) // TODO
 
     val userDir = System.getProperty("user.dir")
     val ktGenRoot = args["-generated"]?.single() ?: userDir
@@ -162,6 +176,12 @@ private fun processLib(konanHome: String,
     val platform = KotlinPlatform.values().single { it.name.equals(platformName, ignoreCase = true) }
 
     val defFile = args["-def"]?.single()?.let { File(it) }
+
+    if (defFile == null && args["-pkg"] == null) {
+        usage()
+        return
+    }
+
     val config = loadProperties(defFile, substitutions)
 
     val konanFileName = args["-properties"]?.single() ?:

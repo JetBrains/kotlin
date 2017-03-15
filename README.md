@@ -10,11 +10,11 @@ Then build the compiler:
 
 After that you should be able to compile your programs like that:
 
-	./dist/bin/konanc hello.kt -o hello
+	./dist/bin/kotlinc hello.kt -o hello
 
 For an optimized compilation use -opt:
 
-	./dist/bin/konanc hello.kt -o hello -opt
+	./dist/bin/kotlinc hello.kt -o hello -opt
 
 For some tests, use:
 

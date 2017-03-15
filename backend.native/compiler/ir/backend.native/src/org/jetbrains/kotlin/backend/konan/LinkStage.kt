@@ -175,11 +175,26 @@ internal class LinkStage(val context: Context) {
         return objectFile
     }
 
+    fun asLinkerArgs(args: List<String>): List<String> {
+        val result = mutableListOf<String>()
+        for (arg in args) {
+            // If user passes compiler arguments to us - transform them to linker ones.
+            if (arg.startsWith("-Wl,")) {
+                result.addAll(arg.substring(4).split(','))
+            } else {
+                result.add(arg)
+            }
+        }
+        return result
+    }
+
     fun link(objectFiles: List<ObjectFile>): ExecutableFile {
         val executable = config.get(KonanConfigKeys.EXECUTABLE_FILE)!!
 
         val linkCommand = platform.linkCommand(objectFiles, executable, optimize) +
-                config.getNotNull(KonanConfigKeys.LINKER_ARGS)
+                asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS))
+
+        println(linkCommand.joinToString("|||"))
 
         runTool(*linkCommand.toTypedArray())
 

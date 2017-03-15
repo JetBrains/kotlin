@@ -31,13 +31,12 @@ while [ $# -gt 0 ]; do
       shift
       ;;
      *)
-      konan_args=("${konan_args[@]}" "$1")
+      konan_args[${#konan_args[@]}]=$1
       shift
       ;;
   esac
 done
 
-# Based on findScalaHome() from scalac script
 findHome() {
     local source="${BASH_SOURCE[0]}"
     while [ -h "$source" ] ; do
@@ -64,5 +63,5 @@ JAVA_OPTS=-ea
 
 java_args=("${java_args[@]} -noverify -Dkonan.home=${KONAN_HOME} -Djava.library.path=${NATIVE_LIB}")
 
-$JAVACMD $JAVA_OPTS ${java_args[@]} -cp $KONAN_CLASSPATH $KONAN_COMPILER ${konan_args[@]}
+$JAVACMD $JAVA_OPTS ${java_args[@]} -cp $KONAN_CLASSPATH $KONAN_COMPILER "${konan_args[@]}"
 

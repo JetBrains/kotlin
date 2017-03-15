@@ -44,9 +44,9 @@ between threads are allowed.
 
  Download Kotlin N redistributable and unpack it. You can run command line compiler with
 
-	./dist/bin/kotlinnc <some_file>.kt <dir_with_kt_files> -o <executable>.kexe
+	./dist/bin/kotlinc <some_file>.kt <dir_with_kt_files> -o <executable>.kexe
 
-  One may use `'-h'` flag to `kotlinnc` to see available flags.
+  One may use `'-h'` flag to `kotlinc` to see available flags.
 
   For documentation on C interoperability stubs see INTEROP.md.
 
