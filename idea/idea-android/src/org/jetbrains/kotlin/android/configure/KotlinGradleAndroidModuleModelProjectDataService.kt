@@ -46,7 +46,7 @@ class KotlinGradleAndroidModuleModelProjectDataService : AbstractProjectDataServ
             val moduleNode = ExternalSystemApiUtil.findParent(moduleModelNode, ProjectKeys.MODULE) ?: continue
             val moduleData = moduleNode.data
             val ideModule = modelsProvider.findIdeModule(moduleData) ?: continue
-            val kotlinFacet = configureFacetByGradleModule(moduleNode, ideModule, modelsProvider) ?: continue
+            val kotlinFacet = configureFacetByGradleModule(moduleNode, null, ideModule, modelsProvider) ?: continue
             GradleProjectImportHandler.getInstances(project).forEach { it.importByModule(kotlinFacet, moduleNode) }
         }
     }
