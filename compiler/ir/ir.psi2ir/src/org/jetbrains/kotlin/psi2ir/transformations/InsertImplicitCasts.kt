@@ -113,8 +113,8 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
 
     override fun visitFunction(declaration: IrFunction): IrStatement =
             declaration.transformPostfix {
-                descriptor.valueParameters.forEach {
-                    getDefault(it)?.coerceInnerExpression(it.type)
+                valueParameters.forEach {
+                    it.defaultValue?.coerceInnerExpression(it.descriptor.type)
                 }
             }
 
