@@ -187,11 +187,4 @@ class GradleInspectionTest : GradleImportingTestCase() {
 
         return resultRef.get()
     }
-
-
-    override fun invokeTestRunnable(runnable: Runnable) {
-        runInEdtAndWait {
-            runnable.run()
-        }
-    }
 }
