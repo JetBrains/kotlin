@@ -2305,6 +2305,18 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("lambdaExpressionInString_1.kt")
+            public void testLambdaExpressionInString_1() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/recovery/lambdaExpressionInString_1.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("lambdaExpressionInString_2.kt")
+            public void testLambdaExpressionInString_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/recovery/lambdaExpressionInString_2.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("MissingCommaInConstructorValueParameterList.kt")
             public void testMissingCommaInConstructorValueParameterList() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/recovery/MissingCommaInConstructorValueParameterList.kt");

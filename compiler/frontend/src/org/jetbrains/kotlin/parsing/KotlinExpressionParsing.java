@@ -764,9 +764,24 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
             advance(); // LONG_TEMPLATE_ENTRY_START
 
-            parseExpression();
+            while (!eof()) {
+                int offset = myBuilder.getCurrentOffset();
 
-            expect(LONG_TEMPLATE_ENTRY_END, "Expecting '}'", TokenSet.create(CLOSING_QUOTE, DANGLING_NEWLINE, REGULAR_STRING_PART, ESCAPE_SEQUENCE, SHORT_TEMPLATE_ENTRY_START));
+                parseExpression();
+
+                if (_at(LONG_TEMPLATE_ENTRY_END)) {
+                    advance();
+                    break;
+                }
+                else {
+                    error("Expecting '}'");
+                    if (offset == myBuilder.getCurrentOffset()) {
+                        // Prevent hang if can't advance with parseExpression()
+                        advance();
+                    }
+                }
+            }
+
             longTemplateEntry.done(LONG_STRING_TEMPLATE_ENTRY);
         }
         else {
