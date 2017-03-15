@@ -413,7 +413,6 @@ class Game(width: Int, height: Int, val visualizer: GameFieldVisualizer, val use
     private fun placePiece() {
         val placementResult = field.place()
         ticks = 0
-        println(placementResult.toString())
         when (placementResult) {
             PlacementResult.NOTHING -> return
             PlacementResult.GAMEOVER -> {
@@ -508,6 +507,73 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
     private val LEVEL_LABEL_WIDTH = 103
     private val NEXT_LABEL_WIDTH = 85
     private val TETRISES_LABEL_WIDTH = 162
+    private val GAMEPAD_HEIGHT = 100
+
+    inner class GamePadButtons(val width: Int, val height: Int) {
+        val arena = Arena()
+        val leftRect: SDL_Rect
+        val rightRect: SDL_Rect
+        val downRect: SDL_Rect
+        val dropRect: SDL_Rect
+        val rotateRect: SDL_Rect
+
+        init {
+            val s = 30
+            val m = 15
+            val x = (width - 3 * s - 2 * m - 3 * s) / 2
+            val y1 = (GAMEPAD_HEIGHT - s) / 2
+            val y2 = (GAMEPAD_HEIGHT - 2 * s - m) / 2
+            leftRect = arena.alloc<SDL_Rect>()
+            leftRect.w.value = s
+            leftRect.h.value = s
+            leftRect.x.value = x
+            leftRect.y.value = height - GAMEPAD_HEIGHT + y2 + s + m
+
+            downRect = arena.alloc<SDL_Rect>()
+            downRect.w.value = s
+            downRect.h.value = s
+            downRect.x.value = x + s + m
+            downRect.y.value = leftRect.y.value
+
+            dropRect = arena.alloc<SDL_Rect>()
+            dropRect.w.value = s
+            dropRect.h.value = s
+            dropRect.x.value = downRect.x.value
+            dropRect.y.value = height - GAMEPAD_HEIGHT + y2
+
+            rightRect = arena.alloc<SDL_Rect>()
+            rightRect.w.value = s
+            rightRect.h.value = s
+            rightRect.x.value = x + 2 * s + 2 * m
+            rightRect.y.value = height - GAMEPAD_HEIGHT + y2 + s + m
+
+            rotateRect = arena.alloc<SDL_Rect>()
+            rotateRect.w.value = s
+            rotateRect.h.value = s
+            rotateRect.x.value = x + 3 * s + 2 * m + 2 * s
+            rotateRect.y.value = height - GAMEPAD_HEIGHT + y1
+        }
+
+        fun getCommandAt(x: Int, y: Int): UserCommand? {
+            return when {
+                inside(leftRect, x, y) -> UserCommand.LEFT
+                inside(rightRect, x, y) -> UserCommand.RIGHT
+                inside(downRect, x, y) -> UserCommand.DOWN
+                inside(dropRect, x, y) -> UserCommand.DROP
+                inside(rotateRect, x, y) -> UserCommand.ROTATE
+                else -> null
+            }
+        }
+
+        private fun inside(rect: SDL_Rect, x: Int, y: Int): Boolean {
+            return x >= rect.x.value && x <= rect.x.value + rect.w.value
+                   && y >= rect.y.value && y <= rect.y.value + rect.h.value
+        }
+
+        fun destroy() {
+            arena.clear()
+        }
+    }
 
     private val field: Field = Array<ByteArray>(height) { ByteArray(width) }
     private val nextPieceField: Field = Array<ByteArray>(4) { ByteArray(4) }
@@ -516,11 +582,18 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
     private var score: Int = 0
     private var tetrises: Int = 0
 
+    private var displayWidth: Int = 0
+    private var displayHeight: Int = 0
     private val fieldWidth: Int
     private val fieldHeight: Int
+    private val windowWidth: Int
+    private val windowHeight: Int
+    private val windowX: Int
+    private val windowY: Int
     private val window: CPointer<SDL_Window>
     private val renderer: CPointer<SDL_Renderer>
     private val texture: CPointer<SDL_Texture>
+    private val gamePadButtons: GamePadButtons
 
     init {
         if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
@@ -528,10 +601,24 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
             throw Error()
         }
 
+        memScoped {
+            val displayMode = alloc<SDL_DisplayMode>()
+            if (SDL_GetCurrentDisplayMode(0, displayMode.ptr.reinterpret()) != 0) {
+                println("SDL_GetCurrentDisplayMode Error: ${get_SDL_Error()}")
+                SDL_Quit()
+                throw Error()
+            }
+            displayWidth = displayMode.w.value
+            displayHeight = displayMode.h.value
+        }
         fieldWidth = width * (CELL_SIZE + MARGIN) + MARGIN + BORDER_WIDTH * 2
         fieldHeight = height * (CELL_SIZE + MARGIN) + MARGIN + BORDER_WIDTH * 2
-        val window = SDL_CreateWindow("Tetris", 100, 100, fieldWidth + INFO_SPACE_WIDTH,
-                fieldHeight, SDL_WINDOW_SHOWN)
+        windowWidth = fieldWidth + INFO_SPACE_WIDTH
+        windowHeight = fieldHeight + GAMEPAD_HEIGHT
+        gamePadButtons = GamePadButtons(windowWidth, windowHeight)
+        windowX = (displayWidth - windowWidth) / 2
+        windowY = (displayHeight - windowHeight) / 2
+        val window = SDL_CreateWindow("Tetris", windowX, windowY, windowWidth, windowHeight, SDL_WINDOW_SHOWN)
         if (window == null) {
             println("SDL_CreateWindow Error: ${get_SDL_Error()}")
             SDL_Quit()
@@ -593,6 +680,7 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
         drawField()
         drawInfo()
         drawNextPiece()
+        drawGamePad()
         SDL_RenderPresent(renderer)
     }
 
@@ -753,6 +841,16 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
         }
     }
 
+    private fun drawGamePad() {
+        SDL_SetRenderDrawColor(renderer, 127, 127, 127, SDL_ALPHA_OPAQUE.toByte())
+        SDL_RenderFillRect(renderer, gamePadButtons.leftRect.ptr.reinterpret())
+        SDL_RenderFillRect(renderer, gamePadButtons.downRect.ptr.reinterpret())
+        SDL_RenderFillRect(renderer, gamePadButtons.dropRect.ptr.reinterpret())
+        SDL_RenderFillRect(renderer, gamePadButtons.rightRect.ptr.reinterpret())
+        SDL_RenderFillRect(renderer, gamePadButtons.rotateRect.ptr.reinterpret())
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE.toByte())
+    }
+
     private fun copyRect(srcX: Int, srcY: Int, destX: Int, destY: Int, width: Int, height: Int) {
         memScoped {
             val srcRect = alloc<SDL_Rect>()
@@ -788,6 +886,22 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
                             SDL_SCANCODE_ESCAPE -> commands.add(UserCommand.EXIT)
                         }
                     }
+                    SDL_MOUSEBUTTONDOWN -> {
+                        val mouseEvent = event.ptr.reinterpret<SDL_MouseButtonEvent>().pointed
+                        val x = mouseEvent.x.value
+                        val y = mouseEvent.y.value
+                        val command = gamePadButtons.getCommandAt(x, y)
+                        if (command != null)
+                            commands.add(command)
+                    }
+                    SDL_FINGERDOWN -> {
+                        val touchFingerEvent = event.ptr.reinterpret<SDL_TouchFingerEvent>().pointed
+                        val x = (touchFingerEvent.x.value * displayWidth).toInt() - windowX
+                        val y = (touchFingerEvent.y.value * displayHeight).toInt() - windowY
+                        val command = getCommandAt(x, y)
+                        if (command != null)
+                            commands.add(command)
+                    }
                 }
             }
         }
@@ -799,6 +913,7 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
         SDL_DestroyRenderer(renderer)
         SDL_DestroyWindow(window)
         SDL_Quit()
+        gamePadButtons.destroy()
     }
 }
 
