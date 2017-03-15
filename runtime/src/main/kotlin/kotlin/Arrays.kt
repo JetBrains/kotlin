@@ -2142,6 +2142,10 @@ public inline fun <reified T> Collection<T>.toTypedArray(): Array<T> {
  */
 public inline fun <reified @PureReifiable T> arrayOf(vararg elements: T): Array<T> = elements as Array<T>
 
+private val kEmptyArray = arrayOf<Any>()
+
+public fun <T> emptyArray() = kEmptyArray as Array<T>
+
 /**
  * Returns an array containing the specified [Double] numbers.
  */
