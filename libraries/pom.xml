@@ -76,6 +76,8 @@
     <modules>
         <module>tools/kotlin-compiler</module>
         <module>tools/kotlin-compiler-embeddable</module>
+        <module>tools/kotlin-compiler-client-embeddable</module>
+        <module>tools/kotlin-compiler-client-embeddable-test</module>
         <module>tools/native-platform</module>
         <module>tools/kotlin-compiler-runner</module>
         <module>tools/kotlin-daemon-client</module>
