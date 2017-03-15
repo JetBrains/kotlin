@@ -1382,21 +1382,6 @@ task inline0(type: RunKonanTest) {
     source = "codegen/inline/inline0.kt"
 }
 
-task inline1(type: RunKonanTest) {
-    goldValue = "Hello world\n"
-    source = "codegen/inline/inline1.kt"
-}
-
-task inline2(type: RunKonanTest) {
-    goldValue = "hello 1 8\n"
-    source = "codegen/inline/inline2.kt"
-}
-
-task inline3(type: RunKonanTest) {
-    goldValue = "5\n"
-    source = "codegen/inline/inline3.kt"
-}
-
 task vararg0(type: RunKonanTest) {
     source = "lower/vararg.kt"
 }
@@ -1417,6 +1402,21 @@ task tailrec(type: RunKonanTest) {
             "default\n" +
             "42\n"
     source = "lower/tailrec.kt"
+}
+
+task inline1(type: RunKonanTest) {
+    goldValue = "Hello world\n"
+    source = "codegen/inline/inline1.kt"
+}
+
+task inline2(type: RunKonanTest) {
+    goldValue = "hello 1 8\n"
+    source = "codegen/inline/inline2.kt"
+}
+
+task inline3(type: RunKonanTest) {
+    goldValue = "5\n"
+    source = "codegen/inline/inline3.kt"
 }
 
 task inline4(type: RunKonanTest) {
@@ -1470,7 +1470,6 @@ task inline15(type: RunKonanTest) {
 }
 
 task inline16(type: RunKonanTest) {
-    disabled = true
     goldValue = "false\n"
     source = "codegen/inline/inline16.kt"
 }
@@ -1481,19 +1480,16 @@ task inline17(type: RunKonanTest) {
 }
 
 task inline18(type: RunKonanTest) {
-    disabled = true
     goldValue = "true\n"
     source = "codegen/inline/inline18.kt"
 }
 
 task inline19(type: RunKonanTest) {
-    disabled = true
     goldValue = "6\n"
     source = "codegen/inline/inline19.kt"
 }
 
 task inline20(type: RunKonanTest) {
-    disabled = true
     goldValue = "def\n"
     source = "codegen/inline/inline20.kt"
 }

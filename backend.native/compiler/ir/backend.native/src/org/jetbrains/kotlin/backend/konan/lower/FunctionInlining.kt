@@ -217,7 +217,8 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
             val newDeclaration = super.visitVariable(declaration) as IrVariable             // Process variable initializer.
             val newVariable    = newVariable(newDeclaration)                                // Create new local variable.
             val getVal         = IrGetValueImpl(0, 0, newVariable.descriptor)               // Create new IR element representing access the new variable.
-            substituteMap[declaration.descriptor.original] to getVal
+            val descriptor     = declaration.descriptor.original as ValueDescriptor
+            substituteMap[descriptor] = getVal
             return newVariable
         }
     }
