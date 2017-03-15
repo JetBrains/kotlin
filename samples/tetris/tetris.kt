@@ -773,72 +773,22 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
         }
     }
 
-    private val LEFT_PRESSED = 1
-    private val RIGHT_PRESSED = 2
-    private val DOWN_PRESSED = 4
-    private val UP_PRESSED = 8
-    private val Z_PRESSED = 16
-    private val ESC_PRESSED = 32
-    private var pressedKeys = 0
-    private var stickedKeys = 0
-
-    private fun keyToCommand(key: Int): UserCommand? =
-        when (key) {
-            LEFT_PRESSED -> (UserCommand.LEFT)
-            RIGHT_PRESSED -> (UserCommand.RIGHT)
-            DOWN_PRESSED -> (UserCommand.DOWN)
-            Z_PRESSED -> (UserCommand.ROTATE)
-            UP_PRESSED -> (UserCommand.RELEASE)
-            ESC_PRESSED -> (UserCommand.EXIT)
-            else -> null
-        }
-
     override fun readCommands(): List<UserCommand> {
         val commands = mutableListOf<UserCommand>()
         memScoped {
             val event = alloc<SDL_Event>()
-            var currentCommands = 0
             while (SDL_PollEvent(event.ptr.reinterpret()) != 0) {
-                if (event.type.value == SDL_KEYDOWN
-                        || event.type.value == SDL_KEYUP) {
+                if (event.type.value == SDL_KEYDOWN) {
                     val keyboardEvent = event.ptr.reinterpret<SDL_KeyboardEvent>().pointed
-                    val scancode = when (keyboardEvent.keysym.scancode.value) {
-                        SDL_SCANCODE_LEFT -> LEFT_PRESSED
-                        SDL_SCANCODE_RIGHT -> RIGHT_PRESSED
-                        SDL_SCANCODE_DOWN -> DOWN_PRESSED
-                        SDL_SCANCODE_Z -> Z_PRESSED
-                        SDL_SCANCODE_UP -> UP_PRESSED
-                        SDL_SCANCODE_ESCAPE -> ESC_PRESSED
-                        else -> 0
-                    }
-                    if (keyboardEvent.state.value.toInt() == SDL_PRESSED) {
-                        if (pressedKeys and scancode != 0) {
-                            // DAS - delayed auto shift: https://tetris.wiki/DAS
-                            stickedKeys = stickedKeys or scancode
-                        }
-                        currentCommands = currentCommands or scancode
-                        pressedKeys = pressedKeys or scancode
-                    }
-                    else if (keyboardEvent.state.value.toInt() == SDL_RELEASED) {
-                        pressedKeys = pressedKeys and scancode.inv()
-                        stickedKeys = stickedKeys and scancode.inv()
+                    when (keyboardEvent.keysym.scancode.value) {
+                        SDL_SCANCODE_LEFT -> commands.add(UserCommand.LEFT)
+                        SDL_SCANCODE_RIGHT -> commands.add(UserCommand.RIGHT)
+                        SDL_SCANCODE_DOWN -> commands.add(UserCommand.DOWN)
+                        SDL_SCANCODE_Z -> commands.add(UserCommand.ROTATE)
+                        SDL_SCANCODE_UP -> commands.add(UserCommand.RELEASE)
+                        SDL_SCANCODE_ESCAPE -> commands.add(UserCommand.EXIT)
                     }
                 }
-            }
-            currentCommands = currentCommands or stickedKeys
-            var temp = currentCommands
-            while (temp != 0) {
-                val next = temp and (temp - 1)
-                val curKey = temp - next
-                when (curKey) {
-                    LEFT_PRESSED -> commands.add(UserCommand.LEFT)
-                    RIGHT_PRESSED -> commands.add(UserCommand.RIGHT)
-                    DOWN_PRESSED -> commands.add(UserCommand.DOWN)
-                    Z_PRESSED -> commands.add(UserCommand.ROTATE)
-                    UP_PRESSED -> commands.add(UserCommand.RELEASE)
-                    ESC_PRESSED -> commands.add(UserCommand.EXIT)
-                }
-                temp = next
             }
         }
         return commands
