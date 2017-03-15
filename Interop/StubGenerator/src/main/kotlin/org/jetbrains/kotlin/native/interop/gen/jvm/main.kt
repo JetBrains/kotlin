@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
     processLib(konanHome, substitutions, args.asList())
 }
 
-private fun detectHost():String {
+private fun detectHost(): String {
     val os = System.getProperty("os.name")
     when (os) {
         "Linux" -> return "linux"
@@ -32,6 +32,18 @@ private fun detectHost():String {
         }
     }
 }
+
+private fun defaultTarget() = detectHost()
+
+private val knownTargets = mapOf(
+    "linux" to "linux",
+    "macbook" to "osx",
+    "iphone" to "osx-ios",
+    "iphone_sim" to "osx-ios-sim")
+
+
+private fun String.targetSuffix(): String =
+    knownTargets[this] ?: error("Unsupported target $this.")
 
 // Performs substitution similar to:
 //  foo = ${foo} ${foo.${arch}} ${foo.${os}}
@@ -84,8 +96,9 @@ private fun Properties.getSpaceSeparated(name: String): List<String> {
     return this.getProperty(name)?.split(' ') ?: emptyList()
 }
 
-private fun Properties.getOsSpecific(name: String): String? {
-    val host = detectHost()
+private fun Properties.getOsSpecific(name: String, 
+    host: String = detectHost()): String? {
+
     return this.getProperty("$name.$host")
 }
 
@@ -102,10 +115,13 @@ private fun runCmd(command: Array<String>, workDir: File, verbose: Boolean = fal
                 .runExpectingSuccess()
 }
 
-private fun Properties.defaultCompilerOpts(dependencies: String): List<String> {
-    val sysRootDir = this.getOsSpecific("sysRoot")!!
-    val sysRoot= "$dependencies/$sysRootDir"
-    val llvmHomeDir = this.getOsSpecific("llvmHome")!!
+private fun Properties.defaultCompilerOpts(target: String, dependencies: String): List<String> {
+
+    val sysRootDir = this.getOsSpecific("sysRoot", target)!!
+    val sysRoot = "$dependencies/$sysRootDir"
+    val targetSysRootDir = this.getOsSpecific("targetSysRoot", target)
+    val targetSysRoot = "$dependencies/$targetSysRootDir"
+    val llvmHomeDir = this.getOsSpecific("llvmHome", target)!!
     val llvmHome = "$dependencies/$llvmHomeDir"
     val llvmVersion = this.getProperty("llvmVersion")!!
 
@@ -116,16 +132,29 @@ private fun Properties.defaultCompilerOpts(dependencies: String): List<String> {
     // We workaround the problem with -isystem flag below.
     val isystem = "$llvmHome/lib/clang/$llvmVersion/include"
 
-    val host = detectHost()
-    when (host) {
+    when (target) {
         "osx" -> 
             return listOf(
                 "-isystem", isystem,
                 "-B$sysRoot/usr/bin",
                 "--sysroot=$sysRoot",
                 "-mmacosx-version-min=10.10")
+        "osx-ios" -> 
+            return listOf(
+                "-arch", "arm64",
+                "-isystem", isystem,
+                "-B$sysRoot/usr/bin",
+                "--sysroot=$targetSysRoot",
+                "-miphoneos-version-min=5.0.0")
+        "osx-ios-sim" -> 
+            return listOf(
+                "-arch", "amd64",
+                "-isystem", isystem,
+                "-B$sysRoot/usr/bin",
+                "--sysroot=$targetSysRoot",
+                "-mios-simulator-version-min=5.0.0")
         "linux" -> {
-            val gccToolChainDir = this.getOsSpecific("gccToolChain")!!
+            val gccToolChainDir = this.getOsSpecific("gccToolChain", target)!!
             val gccToolChain= "$dependencies/$gccToolChainDir"
 
             return listOf(
@@ -135,7 +164,7 @@ private fun Properties.defaultCompilerOpts(dependencies: String): List<String> {
                 "-B$sysRoot/../bin",
                 "--sysroot=$sysRoot")
         }
-        else -> error("Unexpected host: ${host}")
+        else -> error("Unexpected target: ${target}")
     }
 }
 
@@ -172,8 +201,8 @@ private fun processLib(konanHome: String,
     val ktGenRoot = args["-generated"]?.single() ?: userDir
     val nativeLibsDir = args["-natives"]?.single() ?: userDir
     val flavorName = args["-flavor"]?.single() ?: "jvm"
-
     val flavor = KotlinPlatform.values().single { it.name.equals(flavorName, ignoreCase = true) }
+    val target = args["-target"]?.single()?.targetSuffix() ?: defaultTarget()
 
     val defFile = args["-def"]?.single()?.let { File(it) }
 
@@ -202,7 +231,7 @@ private fun processLib(konanHome: String,
     val generateShims = args["-shims"].isTrue()
     val verbose = args["-verbose"].isTrue()
 
-    val defaultOpts = konanProperties.defaultCompilerOpts(dependencies)
+    val defaultOpts = konanProperties.defaultCompilerOpts(target, dependencies)
     val headerFiles = config.getSpaceSeparated("headers") + additionalHeaders
     val compilerOpts = 
         config.getSpaceSeparated("compilerOpts") +
