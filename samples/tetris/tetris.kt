@@ -5,20 +5,20 @@ import sdl.*
 typealias Field = Array<ByteArray>
 
 enum class Move {
-    Left,
-    Right,
-    Down,
-    Rotate
+    LEFT,
+    RIGHT,
+    DOWN,
+    ROTATE
 }
 
 enum class PlacementResult(val linesCleared: Int = 0, val bonus: Int = 0) {
-    Nothing,
-    GameOver,
+    NOTHING,
+    GAMEOVER,
     // For values of bonuses see https://tetris.wiki/Scoring
-    Single(1, 40),
-    Double(2, 100),
-    Triple(3, 300),
-    Tetris(4, 1200)
+    SINGLE(1, 40),
+    DOUBLE(2, 100),
+    TRIPLE(3, 300),
+    TETRIS(4, 1200)
 }
 
 val EMPTY: Byte = 0
@@ -47,19 +47,19 @@ class PiecePosition(piece: Piece, private val origin: Point) {
 
     fun makeMove(move: Move) {
         when (move) {
-            Move.Left -> --p.y
-            Move.Right -> ++p.y
-            Move.Down -> ++p.x
-            Move.Rotate -> state = (state + 1) % numberOfStates
+            Move.LEFT -> --p.y
+            Move.RIGHT -> ++p.y
+            Move.DOWN -> ++p.x
+            Move.ROTATE -> state = (state + 1) % numberOfStates
         }
     }
 
     fun unMakeMove(move: Move) {
         when (move) {
-            Move.Left -> ++p.y
-            Move.Right -> --p.y
-            Move.Down -> --p.x
-            Move.Rotate -> state = (state + numberOfStates - 1) % numberOfStates
+            Move.LEFT -> ++p.y
+            Move.RIGHT -> --p.y
+            Move.DOWN -> --p.x
+            Move.ROTATE -> state = (state + numberOfStates - 1) % numberOfStates
         }
     }
 }
@@ -215,7 +215,7 @@ enum class UserCommand {
     LEFT,
     RIGHT,
     DOWN,
-    RELEASE,
+    DROP,
     ROTATE,
     EXIT
 }
@@ -296,16 +296,16 @@ class GameField(val width: Int, val height: Int, val visualizer: GameFieldVisual
     fun place(): PlacementResult {
         currentPiece.place(field, currentPosition)
         val linesCleared = clearLines()
-        if (isOutOfBorders()) return PlacementResult.GameOver
+        if (isOutOfBorders()) return PlacementResult.GAMEOVER
         switchCurrentPiece()
         if (!currentPiece.canBePlaced(field, currentPosition))
-            return PlacementResult.GameOver
+            return PlacementResult.GAMEOVER
         when (linesCleared) {
-            1 -> return PlacementResult.Single
-            2 -> return PlacementResult.Double
-            3 -> return PlacementResult.Triple
-            4 -> return PlacementResult.Tetris
-            else -> return PlacementResult.Nothing
+            1 -> return PlacementResult.SINGLE
+            2 -> return PlacementResult.DOUBLE
+            3 -> return PlacementResult.TRIPLE
+            4 -> return PlacementResult.TETRIS
+            else -> return PlacementResult.NOTHING
         }
     }
 
@@ -415,8 +415,8 @@ class Game(width: Int, height: Int, val visualizer: GameFieldVisualizer, val use
         ticks = 0
         println(placementResult.toString())
         when (placementResult) {
-            PlacementResult.Nothing -> return
-            PlacementResult.GameOver -> {
+            PlacementResult.NOTHING -> return
+            PlacementResult.GAMEOVER -> {
                 gameOver = true
                 return
             }
@@ -424,7 +424,7 @@ class Game(width: Int, height: Int, val visualizer: GameFieldVisualizer, val use
                 linesCleared += placementResult.linesCleared
                 linesClearedAtCurrentLevel += placementResult.linesCleared
                 score += placementResult.bonus * (level + 1)
-                if (placementResult == PlacementResult.Tetris)
+                if (placementResult == PlacementResult.TETRIS)
                     ++tetrises
                 val levelUpThreshold = levelUpThreshold
                 if (linesClearedAtCurrentLevel >= levelUpThreshold) {
@@ -456,15 +456,15 @@ class Game(width: Int, height: Int, val visualizer: GameFieldVisualizer, val use
                 val success: Boolean
                 when (cmd) {
                     UserCommand.EXIT -> return
-                    UserCommand.LEFT -> success = field.makeMove(Move.Left)
-                    UserCommand.RIGHT -> success = field.makeMove(Move.Right)
-                    UserCommand.ROTATE -> success = field.makeMove(Move.Rotate)
+                    UserCommand.LEFT -> success = field.makeMove(Move.LEFT)
+                    UserCommand.RIGHT -> success = field.makeMove(Move.RIGHT)
+                    UserCommand.ROTATE -> success = field.makeMove(Move.ROTATE)
                     UserCommand.DOWN -> {
-                        success = field.makeMove(Move.Down)
+                        success = field.makeMove(Move.DOWN)
                         if (!success) placePiece()
                     }
-                    UserCommand.RELEASE -> {
-                        while (field.makeMove(Move.Down)) {
+                    UserCommand.DROP -> {
+                        while (field.makeMove(Move.DOWN)) {
                         }
                         success = true
                         placePiece()
@@ -477,7 +477,7 @@ class Game(width: Int, height: Int, val visualizer: GameFieldVisualizer, val use
             }
             ++ticks
             if (ticks < speed) continue
-            if (!field.makeMove(Move.Down)) {
+            if (!field.makeMove(Move.DOWN)) {
                 if (++attemptsToLock >= LOCK_DELAY) {
                     placePiece()
                     attemptsToLock = 0
@@ -785,7 +785,7 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
                         SDL_SCANCODE_RIGHT -> commands.add(UserCommand.RIGHT)
                         SDL_SCANCODE_DOWN -> commands.add(UserCommand.DOWN)
                         SDL_SCANCODE_Z -> commands.add(UserCommand.ROTATE)
-                        SDL_SCANCODE_UP -> commands.add(UserCommand.RELEASE)
+                        SDL_SCANCODE_UP -> commands.add(UserCommand.DROP)
                         SDL_SCANCODE_ESCAPE -> commands.add(UserCommand.EXIT)
                     }
                 }
