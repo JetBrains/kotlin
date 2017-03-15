@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.caches.resolve.lightClasses
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiClassType
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
+import org.jetbrains.kotlin.asJava.LightClassBuilder
 import org.jetbrains.kotlin.asJava.builder.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-typealias LightClassBuilder = (LightClassConstructionContext) -> LightClassBuilderResult
 typealias LightClassContextProvider = () -> LightClassConstructionContext
 
 class LazyLightClassDataHolder(

@@ -41,7 +41,7 @@ class LightClassDataProviderForClassOrObject(private val classOrObject: KtClassO
     private fun computeLightClassData(): LightClassDataHolder {
         val file = classOrObject.containingKtFile
         val packageFqName = file.packageFqName
-        return LightClassGenerationSupport.getInstance(classOrObject.project).createLightClassDataHolderForClassOrObject(classOrObject) {
+        return LightClassGenerationSupport.getInstance(classOrObject.project).createDataHolderForClassOrObject(classOrObject) {
             constructionContext ->
             buildLightClass(packageFqName, listOf(file), ClassFilterForClassOrObject(classOrObject), constructionContext) {
                 state, files ->
@@ -72,7 +72,7 @@ sealed class LightClassDataProviderForFileFacade constructor(
     abstract fun findFiles(): Collection<KtFile>
 
     private fun computeLightClassData(files: Collection<KtFile>): LightClassDataHolder {
-        return LightClassGenerationSupport.getInstance(project).createLightClassDataHolderForFacade(files) {
+        return LightClassGenerationSupport.getInstance(project).createDataHolderForFacade(files) {
             constructionContext ->
             buildLightClass(facadeFqName.parent(), files, ClassFilterForFacade, constructionContext) generate@ {
                 state, files ->

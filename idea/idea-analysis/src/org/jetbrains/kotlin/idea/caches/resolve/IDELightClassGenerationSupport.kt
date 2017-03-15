@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.ClassFileViewProvider
@@ -27,6 +26,7 @@ import com.intellij.psi.impl.compiled.ClsClassImpl
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.asJava.LightClassBuilder
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
@@ -38,7 +38,10 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
-import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.*
+import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.ClsJavaStubByVirtualFileCache
+import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.IDELightClassContexts
+import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.LazyLightClassDataHolder
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
 import org.jetbrains.kotlin.idea.decompiler.navigation.SourceNavigationHelper
 import org.jetbrains.kotlin.idea.stubindex.*
@@ -57,9 +60,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     private val scopeFileComparator = JavaElementFinder.byClasspathComparator(GlobalSearchScope.allScope(project))
     private val psiManager: PsiManager = PsiManager.getInstance(project)
 
-    override fun createLightClassDataHolderForClassOrObject(
-            classOrObject: KtClassOrObject, builder: LightClassBuilder
-    ): LightClassDataHolder {
+    override fun createDataHolderForClassOrObject(classOrObject: KtClassOrObject, builder: LightClassBuilder): LightClassDataHolder {
         return if (classOrObject.isLocal) {
             LazyLightClassDataHolder(
                     builder,
@@ -77,7 +78,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     }
 
 
-    override fun createLightClassDataHolderForFacade(files: Collection<KtFile>, builder: LightClassBuilder): LightClassDataHolder {
+    override fun createDataHolderForFacade(files: Collection<KtFile>, builder: LightClassBuilder): LightClassDataHolder {
         assert(!files.isEmpty()) { "No files in facade" }
 
         val sortedFiles = files.sortedWith(scopeFileComparator)

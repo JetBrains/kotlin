@@ -25,6 +25,7 @@ import com.intellij.util.Function
 import com.intellij.util.SmartList
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.asJava.LightClassBuilder
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -75,7 +76,7 @@ class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSup
         trace.setKotlinCodeAnalyzer(codeAnalyzer)
     }
 
-    override fun createLightClassDataHolderForClassOrObject(classOrObject: KtClassOrObject, builder: (LightClassConstructionContext) -> LightClassBuilderResult): LightClassDataHolder {
+    override fun createDataHolderForClassOrObject(classOrObject: KtClassOrObject, builder: LightClassBuilder): LightClassDataHolder {
         //force resolve companion for light class generation
         bindingContext.get(BindingContext.CLASS, classOrObject)?.companionObjectDescriptor
 
@@ -171,8 +172,8 @@ class CliLightClassGenerationSupport(project: Project) : LightClassGenerationSup
         }
     }
 
-    override fun createLightClassDataHolderForFacade(files: Collection<KtFile>, build: (LightClassConstructionContext) -> LightClassBuilderResult): LightClassDataHolder {
-        val (stub, _, diagnostics) = build(getContext())
+    override fun createDataHolderForFacade(files: Collection<KtFile>, builder: LightClassBuilder): LightClassDataHolder {
+        val (stub, _, diagnostics) = builder(getContext())
         return LightClassDataHolderImpl(stub, diagnostics)
     }
 

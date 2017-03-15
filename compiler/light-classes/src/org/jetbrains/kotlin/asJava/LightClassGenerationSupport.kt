@@ -32,15 +32,13 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 
+typealias LightClassBuilder = (LightClassConstructionContext) -> LightClassBuilderResult
+
 abstract class LightClassGenerationSupport {
 
-    abstract fun createLightClassDataHolderForClassOrObject(
-            classOrObject: KtClassOrObject, builder: (LightClassConstructionContext) -> LightClassBuilderResult
-    ): LightClassDataHolder
+    abstract fun createDataHolderForClassOrObject(classOrObject: KtClassOrObject, builder: LightClassBuilder): LightClassDataHolder
 
-    abstract fun createLightClassDataHolderForFacade(
-            files: Collection<KtFile>, build: (LightClassConstructionContext) -> LightClassBuilderResult
-    ): LightClassDataHolder
+    abstract fun createDataHolderForFacade(files: Collection<KtFile>, builder: LightClassBuilder): LightClassDataHolder
 
     abstract fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject>
 
