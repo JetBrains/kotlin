@@ -21,11 +21,11 @@ enum class PlacementResult(val linesCleared: Int = 0, val bonus: Int = 0) {
     TETRIS(4, 1200)
 }
 
-val EMPTY: Byte = 0
-val CELL1: Byte = 1
-val CELL2: Byte = 2
-val CELL3: Byte = 3
-val BRICK: Byte = -1
+const val EMPTY: Byte = 0
+const val CELL1: Byte = 1
+const val CELL2: Byte = 2
+const val CELL3: Byte = 3
+const val BRICK: Byte = -1
 
 class Point(var x: Int, var y: Int)
 
@@ -229,7 +229,7 @@ fun sleep(millis: Int) {
 }
 
 class GameField(val width: Int, val height: Int, val visualizer: GameFieldVisualizer) {
-    val MARGIN = 4
+    private val MARGIN = 4
 
     private val field: Field
     private val origin: Point
