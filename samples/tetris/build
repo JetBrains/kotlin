@@ -1,0 +1,2 @@
+./dist/bin/interop -def:sdl_test/sdl.def
+./dist/bin/konanc sdl_test/tetris.kt SDL/SDL.kt -nativelibrary sdlstubs.bc -linkerArg -F -linkerArg /Library/Frameworks -linkerArg -framework -linkerArg SDL2
