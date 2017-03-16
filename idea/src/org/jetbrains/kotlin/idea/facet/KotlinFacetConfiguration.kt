@@ -46,6 +46,9 @@ class KotlinFacetConfiguration : FacetConfiguration {
         settings.initializeIfNeeded(editorContext.module, editorContext.rootModel)
 
         val tabs = arrayListOf<FacetEditorTab>(KotlinFacetEditorGeneralTab(this, editorContext, validatorsManager))
+        if (KotlinFacetCompilerPluginsTab.parsePluginOptions(this).isNotEmpty()) {
+            tabs += KotlinFacetCompilerPluginsTab(this, validatorsManager)
+        }
         KotlinFacetConfigurationExtension.EP_NAME.extensions.flatMapTo(tabs) { it.createEditorTabs(editorContext, validatorsManager) }
         return tabs.toTypedArray()
     }
