@@ -1,4 +1,5 @@
 #include <locale.h>
+#include <stdio.h>
 
 #include "Runtime.h"
 
@@ -39,7 +40,7 @@ void AppendToInitializersTail(struct InitNode *next) {
 RuntimeState* InitRuntime() {
    // Set Unicode locale, otherwise towlower() and friends do not work properly.
   if (setlocale(LC_CTYPE, "en_US.UTF-8") == nullptr) {
-    return nullptr;
+    fprintf(stderr, "Cannot set locale, string ops may suffer\n");
   }
   RuntimeState* result = new RuntimeState();
   result->memoryState = InitMemory();
@@ -49,8 +50,10 @@ RuntimeState* InitRuntime() {
 }
 
 void DeinitRuntime(RuntimeState* state) {
-   DeinitMemory(state->memoryState);
-   delete state;
+  if (state != nullptr) {
+    DeinitMemory(state->memoryState);
+    delete state;
+  }
 }
 
 #ifdef __cplusplus
