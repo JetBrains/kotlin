@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
 import org.jetbrains.kotlin.backend.konan.ir.IrInlineFunctionBody
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -93,9 +94,33 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
     //-------------------------------------------------------------------------//
 
+    fun getArguments(irCall: IrCall): List<Pair<ParameterDescriptor, IrExpression>> {
+        val result = mutableListOf<Pair<ParameterDescriptor, IrExpression>>()
+        val descriptor = irCall.descriptor.original
+
+        irCall.dispatchReceiver?.let {
+            result += (descriptor.dispatchReceiverParameter!! to it)
+        }
+
+        irCall.extensionReceiver?.let {
+            result += (descriptor.extensionReceiverParameter!! to it)
+        }
+
+        descriptor.valueParameters.forEach {
+            val arg = irCall.getValueArgument(it.index)
+            if (arg != null) {
+                result += (it to arg)
+            }
+        }
+
+        return result
+    }
+
+    //-------------------------------------------------------------------------//
+
     fun evaluateParameters(irCall: IrCall, statements: MutableList<IrStatement>): MutableMap<ValueDescriptor, IrExpression> {
 
-        val parametersOld = irCall.getArguments()                                          // Create map call_site_argument -> inline_function_parameter.
+        val parametersOld = getArguments(irCall)                                          // Create map call_site_argument -> inline_function_parameter.
         val parametersNew = mutableMapOf<ValueDescriptor, IrExpression> ()
 
         parametersOld.forEach {
@@ -161,24 +186,24 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
         //---------------------------------------------------------------------//
 
-        override fun visitTypeOperator(oldExpression: IrTypeOperatorCall): IrExpression {
+        override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
 
-            val expression = super.visitTypeOperator(oldExpression) as IrTypeOperatorCall
-            if (expression.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {          // Nothing to do for IMPLICIT_COERCION_TO_UNIT
-                return expression
+            val newExpression = super.visitTypeOperator(expression) as IrTypeOperatorCall
+            if (newExpression.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {          // Nothing to do for IMPLICIT_COERCION_TO_UNIT
+                return newExpression
             }
 
-            if (typeArgsMap == null) return expression
+            if (typeArgsMap == null) return newExpression
 
-            val operandTypeDescriptor = expression.typeOperand.constructor.declarationDescriptor
-            if (operandTypeDescriptor !is TypeParameterDescriptor) return expression        // It is not TypeParameter - do nothing
+            val operandTypeDescriptor = newExpression.typeOperand.constructor.declarationDescriptor
+            if (operandTypeDescriptor !is TypeParameterDescriptor) return newExpression        // It is not TypeParameter - do nothing
 
             val typeNew         = typeArgsMap[operandTypeDescriptor]!!
-            val startOffset     = expression.startOffset
-            val endOffset       = expression.endOffset
-            val type            = expression.type                                           // TODO
-            val operator        = expression.operator
-            val argument        = expression.argument
+            val startOffset     = newExpression.startOffset
+            val endOffset       = newExpression.endOffset
+            val type            = newExpression.type                                           // TODO
+            val operator        = newExpression.operator
+            val argument        = newExpression.argument
 
             return IrTypeOperatorCallImpl(startOffset, endOffset, type, operator, typeNew, argument)
         }
@@ -261,8 +286,16 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         //---------------------------------------------------------------------//
 
         fun buildParameterToArgument(lambdaFunction: IrFunction, irCall: IrCall): MutableMap<ValueDescriptor, IrExpression> {
-            val parameters = lambdaFunction.descriptor.valueParameters                      // Get lambda function parameters.
+            val descriptor = lambdaFunction.descriptor
             val parameterToArgument = mutableMapOf<ValueDescriptor, IrExpression>()
+
+            irCall.extensionReceiver?.let {
+                val parameter = descriptor.extensionReceiverParameter!!
+                val argument  = it
+                parameterToArgument[parameter] = argument
+            }
+
+            val parameters = descriptor.valueParameters                                     // Get lambda function parameters.
             parameters.forEach {                                                            // Iterate parameters.
                 val parameter = it
                 val argument  = irCall.getValueArgument(it.index)                           // Get corresponding argument.
