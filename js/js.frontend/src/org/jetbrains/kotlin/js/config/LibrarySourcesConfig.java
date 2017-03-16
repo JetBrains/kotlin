@@ -27,6 +27,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.config.AnalysisFlags;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.utils.JsMetadataVersion;
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata;
@@ -38,6 +39,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.jetbrains.kotlin.config.CommonConfigurationKeysKt.getLanguageVersionSettings;
 import static org.jetbrains.kotlin.utils.PathUtil.getKotlinPathsForDistDirectory;
 
 public class LibrarySourcesConfig extends JsConfig {
@@ -100,6 +102,9 @@ public class LibrarySourcesConfig extends JsConfig {
 
         Set<String> modules = new HashSet<String>();
 
+        boolean skipMetadataVersionCheck =
+                getLanguageVersionSettings(getConfiguration()).isFlagEnabled(AnalysisFlags.getSkipMetadataVersionCheck());
+
         for (String path : libraries) {
             VirtualFile file;
 
@@ -128,15 +133,16 @@ public class LibrarySourcesConfig extends JsConfig {
             }
 
             for (KotlinJavascriptMetadata metadata : metadataList) {
-                if (!metadata.getVersion().isCompatible()) {
+                if (!metadata.getVersion().isCompatible() && !skipMetadataVersionCheck) {
                     report.error("File '" + path + "' was compiled with an incompatible version of Kotlin. " +
-                                  "The binary version of its metadata is " + metadata.getVersion() +
-                                  ", expected version is " + JsMetadataVersion.INSTANCE);
+                                 "The binary version of its metadata is " + metadata.getVersion() +
+                                 ", expected version is " + JsMetadataVersion.INSTANCE);
                     return true;
                 }
                 if (!modules.add(metadata.getModuleName())) {
-                        report.warning("Module \"" + metadata.getModuleName() + "\" is defined in more, than one file");
-                    }}
+                    report.warning("Module \"" + metadata.getModuleName() + "\" is defined in more than one file");
+                }
+            }
 
             if (action != null) {
                 action.invoke(file);

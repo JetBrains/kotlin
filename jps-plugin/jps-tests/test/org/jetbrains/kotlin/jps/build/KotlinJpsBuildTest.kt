@@ -393,7 +393,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
         val warnings = buildResult.getMessages(BuildMessage.Kind.WARNING)
         assertEquals("Warning about duplicate module definition: $warnings", 1, warnings.size)
-        assertEquals("Module \"srcAndTests\" is defined in more, than one file", warnings[0].messageText)
+        assertEquals("Module \"srcAndTests\" is defined in more than one file", warnings[0].messageText)
     }
 
     fun testKotlinJavaScriptProjectWithTwoSrcModuleDependency() {

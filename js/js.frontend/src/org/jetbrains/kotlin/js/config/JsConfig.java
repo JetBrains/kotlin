@@ -21,9 +21,7 @@ import com.intellij.util.SmartList;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.config.CommonConfigurationKeys;
-import org.jetbrains.kotlin.config.CommonConfigurationKeysKt;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
@@ -121,7 +119,9 @@ public abstract class JsConfig {
     }
 
     private JsModuleDescriptor<ModuleDescriptorImpl> createModuleDescriptor(KotlinJavascriptMetadata metadata) {
-        assert metadata.getVersion().isCompatible() :
+        LanguageVersionSettings languageVersionSettings = CommonConfigurationKeysKt.getLanguageVersionSettings(configuration);
+        assert metadata.getVersion().isCompatible() ||
+               languageVersionSettings.isFlagEnabled(AnalysisFlags.getSkipMetadataVersionCheck()) :
                 "Expected JS metadata version " + JsMetadataVersion.INSTANCE + ", but actual metadata version is " + metadata.getVersion();
 
         ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(
@@ -130,7 +130,7 @@ public abstract class JsConfig {
 
         JsModuleDescriptor<PackageFragmentProvider> rawDescriptor = KotlinJavascriptSerializationUtil.readModule(
                 metadata.getBody(), storageManager, moduleDescriptor,
-                new CompilerDeserializationConfiguration(CommonConfigurationKeysKt.getLanguageVersionSettings(configuration))
+                new CompilerDeserializationConfiguration(languageVersionSettings)
         );
 
         PackageFragmentProvider provider = rawDescriptor.getData();
