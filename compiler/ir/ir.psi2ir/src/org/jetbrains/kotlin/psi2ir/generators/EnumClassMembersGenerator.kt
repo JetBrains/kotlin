@@ -17,21 +17,21 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.addMember
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrSyntheticBodyImpl
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
+import org.jetbrains.kotlin.ir.expressions.impl.IrSyntheticBodyImpl
 import org.jetbrains.kotlin.psi2ir.findFirstFunction
 
 class EnumClassMembersGenerator(override val context: GeneratorContext) : Generator {
-    fun generateSpecialMembers(irClass: IrClassImpl) {
+    fun generateSpecialMembers(irClass: IrClass) {
         generateValues(irClass)
         generateValueOf(irClass)
     }
 
-    private fun generateValues(irClass: IrClassImpl) {
+    private fun generateValues(irClass: IrClass) {
         val valuesFunction = irClass.descriptor.staticScope.findFirstFunction("values") {
             it.dispatchReceiverParameter == null &&
             it.extensionReceiverParameter == null &&
@@ -46,7 +46,7 @@ class EnumClassMembersGenerator(override val context: GeneratorContext) : Genera
         )
     }
 
-    private fun generateValueOf(irClass: IrClassImpl) {
+    private fun generateValueOf(irClass: IrClass) {
         val valueOfFunction = irClass.descriptor.staticScope.findFirstFunction("valueOf") {
             it.dispatchReceiverParameter == null &&
             it.extensionReceiverParameter == null &&

@@ -85,7 +85,7 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
         }
     }
 
-    private fun generateMembersDeclaredInSupertypeList(irClass: IrClassImpl, ktClassOrObject: KtClassOrObject) {
+    private fun generateMembersDeclaredInSupertypeList(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
         ktClassOrObject.getSuperTypeList()?.let { ktSuperTypeList ->
             val delegatedMembers = irClass.descriptor.unsubstitutedMemberScope
                     .getContributedDescriptors(DescriptorKindFilter.CALLABLES)
@@ -102,8 +102,11 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
         }
     }
 
-    private fun generateDelegatedImplementationMembers(irClass: IrClassImpl, ktEntry: KtDelegatedSuperTypeEntry,
-                                                       delegatedMembers: List<CallableMemberDescriptor>) {
+    private fun generateDelegatedImplementationMembers(
+            irClass: IrClass,
+            ktEntry: KtDelegatedSuperTypeEntry,
+            delegatedMembers: List<CallableMemberDescriptor>
+    ) {
         val ktDelegateExpression = ktEntry.delegateExpression!!
         val delegateType = getInferredTypeWithImplicitCastsOrFail(ktDelegateExpression)
         val superType = getOrFail(BindingContext.TYPE, ktEntry.typeReference!!)
@@ -194,15 +197,15 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
         return irBlockBody
     }
 
-    private fun generateAdditionalMembersForDataClass(irClass: IrClassImpl, ktClassOrObject: KtClassOrObject) {
+    private fun generateAdditionalMembersForDataClass(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
         DataClassMembersGenerator(declarationGenerator).generate(ktClassOrObject, irClass)
     }
 
-    private fun generateAdditionalMembersForEnumClass(irClass: IrClassImpl) {
+    private fun generateAdditionalMembersForEnumClass(irClass: IrClass) {
         EnumClassMembersGenerator(context).generateSpecialMembers(irClass)
     }
 
-    private fun generatePrimaryConstructor(irClass: IrClassImpl, ktClassOrObject: KtClassOrObject) {
+    private fun generatePrimaryConstructor(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
         val classDescriptor = irClass.descriptor
         if (DescriptorUtils.isAnnotationClass(classDescriptor)) return
 
@@ -213,22 +216,20 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
         irClass.addMember(irPrimaryConstructor)
     }
 
-    private fun generatePropertiesDeclaredInPrimaryConstructor(irClass: IrClassImpl, ktClassOrObject: KtClassOrObject) {
+    private fun generatePropertiesDeclaredInPrimaryConstructor(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
         ktClassOrObject.primaryConstructor?.let { ktPrimaryConstructor ->
             for (ktParameter in ktPrimaryConstructor.valueParameters) {
                 if (ktParameter.hasValOrVar()) {
-                    val irProperty = PropertyGenerator(declarationGenerator).generatePropertyForPrimaryConstructorParameter(ktParameter)
-                    irClass.addMember(irProperty)
+                    irClass.addMember(PropertyGenerator(declarationGenerator).generatePropertyForPrimaryConstructorParameter(ktParameter))
                 }
             }
         }
     }
 
-    private fun generateMembersDeclaredInClassBody(irClass: IrClassImpl, ktClassOrObject: KtClassOrObject) {
+    private fun generateMembersDeclaredInClassBody(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
         ktClassOrObject.getBody()?.let { ktClassBody ->
-            for (ktDeclaration in ktClassBody.declarations) {
-                val irMember = declarationGenerator.generateClassMemberDeclaration(ktDeclaration, irClass.descriptor)
-                irClass.addMember(irMember)
+            ktClassBody.declarations.mapTo(irClass.declarations) { ktDeclaration ->
+                declarationGenerator.generateClassMemberDeclaration(ktDeclaration, irClass.descriptor)
             }
         }
     }

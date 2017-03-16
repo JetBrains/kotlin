@@ -33,8 +33,8 @@ class ArrayAccessAssignmentReceiver(
         val endOffset: Int,
         val origin: IrStatementOrigin
 ) : AssignmentReceiver {
-    private val type: KotlinType = indexedGetCall?.let { it.descriptor.returnType!! } ?:
-                                   indexedSetCall?.let { it.descriptor.valueParameters.last().type } ?:
+    private val type: KotlinType = indexedGetCall?.run { descriptor.returnType!! } ?:
+                                   indexedSetCall?.run { descriptor.valueParameters.last().type } ?:
                                    throw AssertionError("Array access should have either indexed-get call or indexed-set call")
 
     override fun assign(withLValue: (LValue) -> IrExpression): IrExpression {
