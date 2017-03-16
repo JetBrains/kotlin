@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationDeserializer
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragmentImpl
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
@@ -40,8 +41,9 @@ class KotlinJavascriptPackageFragment(
         storageManager: StorageManager,
         module: ModuleDescriptor,
         proto: ProtoBuf.PackageFragment,
-        header: JsProtoBuf.Header
-) : DeserializedPackageFragmentImpl(fqName, storageManager, module, proto, JsContainerSource(fqName, header)) {
+        header: JsProtoBuf.Header,
+        configuration: DeserializationConfiguration
+) : DeserializedPackageFragmentImpl(fqName, storageManager, module, proto, JsContainerSource(fqName, header, configuration)) {
     private val fileMap: Map<Int, FileHolder> by storageManager.createLazyValue {
         this.proto.getExtension(JsProtoBuf.packageFragmentFiles).fileList.withIndex().associate { (index, file) ->
             (if (file.hasId()) file.id else index) to FileHolder(file.annotationList)
@@ -72,7 +74,11 @@ class KotlinJavascriptPackageFragment(
         }
     }
 
-    private class JsContainerSource(private val fqName: FqName, private val header: JsProtoBuf.Header) : DeserializedContainerSource {
+    private class JsContainerSource(
+            private val fqName: FqName,
+            header: JsProtoBuf.Header,
+            configuration: DeserializationConfiguration
+    ) : DeserializedContainerSource {
         // TODO
         override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 
@@ -81,10 +87,9 @@ class KotlinJavascriptPackageFragment(
         override val incompatibility: IncompatibleVersionErrorData<*>?
             get() = null
 
-        override val isPreReleaseInvisible: Boolean
-            get() = (header.flags and 1) != 0 && !KotlinCompilerVersion.isPreRelease()
+        override val isPreReleaseInvisible: Boolean =
+                !configuration.skipMetadataVersionCheck && (header.flags and 1) != 0 && !KotlinCompilerVersion.isPreRelease()
 
-        // TODO: this is not a class
         override val presentableString: String
             get() = "Package '$fqName'"
     }

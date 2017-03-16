@@ -316,12 +316,12 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         KotlinTestUtils.assertEqualsToFile(new File(getTestDataDirectory(), "output.txt"), normalizeOutput(output));
     }
 
-    @SuppressWarnings("deprecation")
     private void doTestPreReleaseKotlinLibrary(
             @NotNull CLICompiler<?> compiler,
             @NotNull String libraryName,
             @NotNull File destination,
             @NotNull File result,
+            @NotNull File usageDestination,
             @NotNull String... additionalOptions
     ) throws Exception {
         // Compiles the library with the "pre-release" flag, then compiles a usage of this library in the release mode
@@ -337,7 +337,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         Pair<String, ExitCode> output;
         try {
             System.setProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY, "false");
-            output = compileKotlin(compiler, "source.kt", tmpdir, Arrays.asList(additionalOptions), result);
+            output = compileKotlin(compiler, "source.kt", usageDestination, Arrays.asList(additionalOptions), result);
         }
         finally {
             System.clearProperty(TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY);
@@ -459,19 +459,33 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
     public void testReleaseCompilerAgainstPreReleaseLibrary() throws Exception {
         File destination = new File(tmpdir, "library.jar");
-        doTestPreReleaseKotlinLibrary(new K2JVMCompiler(), "library", destination, destination);
+        doTestPreReleaseKotlinLibrary(new K2JVMCompiler(), "library", destination, destination, tmpdir);
     }
 
     public void testReleaseCompilerAgainstPreReleaseLibraryJs() throws Exception {
-        doTestPreReleaseKotlinLibrary(new K2JSCompiler(), "library",
-                                      new File(tmpdir, "library.js"),
-                                      new File(tmpdir, "library.meta.js"));
+        doTestPreReleaseKotlinLibrary(
+                new K2JSCompiler(), "library",
+                new File(tmpdir, "library.js"), new File(tmpdir, "library.meta.js"),
+                new File(tmpdir, "usage.js")
+        );
     }
 
     public void testReleaseCompilerAgainstPreReleaseLibrarySkipVersionCheck() throws Exception {
         File destination = new File(tmpdir, "library.jar");
-        doTestPreReleaseKotlinLibrary(new K2JVMCompiler(), "library", destination, destination,
-                                      "-Xskip-metadata-version-check");
+        doTestPreReleaseKotlinLibrary(
+                new K2JVMCompiler(), "library",
+                destination, destination, tmpdir,
+                "-Xskip-metadata-version-check"
+        );
+    }
+
+    public void testReleaseCompilerAgainstPreReleaseLibraryJsSkipVersionCheck() throws Exception {
+        doTestPreReleaseKotlinLibrary(
+                new K2JSCompiler(), "library",
+                new File(tmpdir, "library.js"), new File(tmpdir, "library.meta.js"),
+                new File(tmpdir, "usage.js"),
+                "-Xskip-metadata-version-check"
+        );
     }
 
     public void testWrongMetadataVersion() throws Exception {

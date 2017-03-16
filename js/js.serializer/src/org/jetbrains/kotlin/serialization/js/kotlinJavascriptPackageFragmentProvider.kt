@@ -34,7 +34,7 @@ fun createKotlinJavascriptPackageFragmentProvider(
 ): PackageFragmentProvider {
     val packageFragments = packageFragmentProtos.mapNotNull { proto ->
         proto.fqName?.let { fqName ->
-            KotlinJavascriptPackageFragment(fqName, storageManager, module, proto, header)
+            KotlinJavascriptPackageFragment(fqName, storageManager, module, proto, header, configuration)
         }
     }
 
