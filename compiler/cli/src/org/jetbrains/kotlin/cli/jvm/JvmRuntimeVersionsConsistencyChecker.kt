@@ -136,7 +136,7 @@ object JvmRuntimeVersionsConsistencyChecker {
                                              "Initial language version settings: $languageVersionSettings. " +
                                              "Updated language version settings: $newSettings", CompilerMessageSeverity.LOGGING)
 
-                configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, newSettings)
+                configuration.languageVersionSettings = newSettings
             }
             else {
                 messageCollector.issue(null, "Could not parse runtime JAR version: $actualRuntimeVersion")
