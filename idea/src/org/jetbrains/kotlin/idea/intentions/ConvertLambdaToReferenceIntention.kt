@@ -20,11 +20,13 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.psi.*
@@ -81,6 +83,9 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
         }
 
         if (!descriptorHasReceiver && explicitReceiver != null) return false
+        val noBoundReferences = !callableExpression.languageVersionSettings.supportsFeature(LanguageFeature.BoundCallableReferences)
+        if (noBoundReferences && descriptorHasReceiver && explicitReceiver == null) return false
+
         val callableArgumentsCount = (callableExpression as? KtCallExpression)?.valueArguments?.size ?: 0
         if (calleeDescriptor.valueParameters.size != callableArgumentsCount) return false
         if (lambdaMustReturnUnit) {
@@ -95,8 +100,10 @@ class ConvertLambdaToReferenceIntention : SelfTargetingOffsetIndependentIntentio
                     context[REFERENCE_TARGET, it]
                 } as? ValueDescriptor
         val lambdaValueParameterDescriptors = context[FUNCTION, lambdaExpression.functionLiteral]?.valueParameters ?: return false
-        val lambdaParameterAsExplicitReceiver = explicitReceiverDescriptor != null &&
-                                                explicitReceiverDescriptor == lambdaValueParameterDescriptors.firstOrNull()
+        val lambdaParameterAsExplicitReceiver = when (noBoundReferences) {
+            true -> explicitReceiver != null
+            false -> explicitReceiverDescriptor != null && explicitReceiverDescriptor == lambdaValueParameterDescriptors.firstOrNull()
+        }
         val explicitReceiverShift = if (lambdaParameterAsExplicitReceiver) 1 else 0
 
         val lambdaParametersCount = lambdaValueParameterDescriptors.size
