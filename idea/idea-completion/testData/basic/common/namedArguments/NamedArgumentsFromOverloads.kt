@@ -11,7 +11,7 @@ fun other() {
 }
 
 // EXIST: nLocal
-// EXIST: { lookupString:"nFirst", itemText:"nFirst =", tailText: " String" }
+// EXIST: { lookupString:"nFirst =", itemText:"nFirst =", tailText: " String" }
 // EXIST: { itemText: "nClassParam =", tailText: " String" }
 // EXIST: { itemText: "nClassField =", tailText: " String" }
 // EXIST: { itemText: "nSecond =", tailText: " String?" }

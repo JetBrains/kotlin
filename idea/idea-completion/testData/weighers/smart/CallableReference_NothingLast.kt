@@ -8,5 +8,6 @@ fun f() {
 }
 
 // ORDER: {...}
-// ORDER: { Int -> ... }
+// ORDER: { i -> ... }
+// ORDER: { i: Int -> ... }
 // ORDER: ::fff2

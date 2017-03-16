@@ -262,6 +262,8 @@ fun CallableDescriptor.callableReferenceType(resolutionFacade: ResolutionFacade,
 
 enum class SmartCompletionItemPriority {
     MULTIPLE_ARGUMENTS_ITEM,
+    LAMBDA_SIGNATURE,
+    LAMBDA_SIGNATURE_EXPLICIT_PARAMETER_TYPES,
     IT,
     TRUE,
     FALSE,

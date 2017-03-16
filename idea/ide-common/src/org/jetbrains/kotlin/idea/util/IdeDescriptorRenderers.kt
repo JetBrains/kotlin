@@ -65,5 +65,6 @@ object IdeDescriptorRenderers {
     @JvmField val SOURCE_CODE_SHORT_NAMES_IN_TYPES: DescriptorRenderer = BASE.withOptions {
         classifierNamePolicy = ClassifierNamePolicy.SHORT
         typeNormalizer = { APPROXIMATE_FLEXIBLE_TYPES(unwrapAnonymousType(it)) }
+        modifiers -= DescriptorRendererModifier.ANNOTATIONS
     }
 }

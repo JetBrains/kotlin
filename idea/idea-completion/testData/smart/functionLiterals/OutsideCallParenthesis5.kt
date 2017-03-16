@@ -4,5 +4,6 @@ fun bar(handler: (String, Char) -> Unit) {
     "" foo <caret>
 }
 
-// EXIST: "{ String, Char -> ... }"
+// EXIST: "{ s, c -> ... }"
+// EXIST: "{ s: String, c: Char -> ... }"
 // EXIST: handler

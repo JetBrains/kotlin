@@ -102,6 +102,12 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("LambdaSignature.kt")
+    public void testLambdaSignature() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/LambdaSignature.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("LocalFileBeforeImported.kt")
     public void testLocalFileBeforeImported() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/LocalFileBeforeImported.kt");

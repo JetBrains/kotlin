@@ -150,7 +150,6 @@ class BasicCompletionSession(
             val smartCompletionInBasicWeigher = SmartCompletionInBasicWeigher(smartCompletion, callTypeAndReceiver, resolutionFacade, bindingContext)
             sorter = sorter.weighBefore(KindWeigher.toString(),
                                         smartCompletionInBasicWeigher,
-                                        SmartCompletionPriorityWeigher,
                                         CallableReferenceWeigher(callTypeAndReceiver.callType))
         }
 

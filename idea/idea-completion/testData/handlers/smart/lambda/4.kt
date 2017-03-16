@@ -5,4 +5,4 @@ fun bar() {
     foo(<caret>)
 }
 
-// ELEMENT: "{ String, StringBuilder -> ... }"
+// ELEMENT: "{ s, stringBuilder -> ... }"

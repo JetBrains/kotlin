@@ -6,5 +6,5 @@ fun other() {
     Foo(p<caret>)
 }
 
-// EXIST: {"lookupString":"pFirst","tailText":" String?","itemText":"pFirst ="}
-// EXIST: {"lookupString":"pSecond","tailText":" Int","itemText":"pSecond ="}
+// EXIST: {"lookupString":"pFirst =","tailText":" String?","itemText":"pFirst ="}
+// EXIST: {"lookupString":"pSecond =","tailText":" Int","itemText":"pSecond ="}

@@ -4,4 +4,4 @@ fun bar() {
     foo(<caret>)
 }
 
-// ELEMENT: "{ Int -> ... }"
+// ELEMENT: "{ i -> ... }"

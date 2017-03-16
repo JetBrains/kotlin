@@ -6,6 +6,6 @@ fun test(tri: Boolean, trb: Int) {
 
 // ORDER: true
 // ORDER: tri
-// ORDER: tra
+// ORDER: "tra ="
 // ORDER: trb
 // ORDER: try

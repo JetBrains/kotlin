@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.handlers.GenerateLambdaInfo
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
-import org.jetbrains.kotlin.idea.completion.handlers.lambdaPresentation
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.ReceiverType
@@ -146,7 +145,7 @@ class LookupElementFactory(
             val insertHandler = insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler.Normal
             if (insertHandler.lambdaInfo == null) {
                 val functionParameterCount = getValueParametersCountFromFunctionType(parameterType)
-                add(createFunctionCallElementWithLambda(descriptor, parameterType, functionParameterCount > 1, useReceiverTypes))
+                add(createFunctionCallElementWithLambda(descriptor, parameterType, useReceiverTypes, explicitLambdaParameters = functionParameterCount > 1))
             }
 
             if (isSingleParameter) {
@@ -161,11 +160,19 @@ class LookupElementFactory(
         }
     }
 
-    private fun createFunctionCallElementWithLambda(descriptor: FunctionDescriptor, parameterType: KotlinType, explicitLambdaParameters: Boolean, useReceiverTypes: Boolean): LookupElement {
+    private fun createFunctionCallElementWithLambda(
+            descriptor: FunctionDescriptor,
+            parameterType: KotlinType,
+            useReceiverTypes: Boolean,
+            explicitLambdaParameters: Boolean
+    ): LookupElement {
         var lookupElement = createLookupElement(descriptor, useReceiverTypes)
         val inputTypeArguments = (insertHandlerProvider.insertHandler(descriptor) as KotlinFunctionInsertHandler.Normal).inputTypeArguments
         val lambdaInfo = GenerateLambdaInfo(parameterType, explicitLambdaParameters)
-        val lambdaPresentation = lambdaPresentation(if (explicitLambdaParameters) parameterType else null)
+        val lambdaPresentation = if (explicitLambdaParameters)
+            LambdaSignatureTemplates.lambdaPresentation(parameterType, LambdaSignatureTemplates.SignaturePresentation.NAMES_OR_TYPES)
+        else
+            LambdaSignatureTemplates.DEFAULT_LAMBDA_PRESENTATION
 
         // render only the last parameter because all other should be optional and will be omitted
         var parametersRenderer = BasicLookupElementFactory.SHORT_NAMES_RENDERER

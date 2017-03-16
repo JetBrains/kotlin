@@ -11,5 +11,5 @@ fun test(insa: Any) {
 }
 
 // ORDER: instance
-// ORDER: insp
+// ORDER: "insp ="
 // ORDER: insa

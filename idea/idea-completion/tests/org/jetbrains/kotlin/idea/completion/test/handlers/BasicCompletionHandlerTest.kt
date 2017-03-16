@@ -65,9 +65,9 @@ import java.io.File
 
     fun testNamedParametersCompletion() = doTest()
 
-    fun testNamedParametersCompletionOnEqual() = doTest(0, "paramTest", "paramTest =", null, '=')
+    fun testNamedParametersCompletionOnEqual() = doTest(0, "paramTest =", "paramTest =", null, '=')
 
-    fun testNamedParameterKeywordName() = doTest(1, "class", "class =", null, '\n')
+    fun testNamedParameterKeywordName() = doTest(1, "class =", "class =", null, '\n')
 
     fun testInsertJavaClassImport() = doTest()
 

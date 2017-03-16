@@ -4,5 +4,7 @@ fun bar() {
     foo(<caret>)
 }
 
+// WITH_ORDER
 // EXIST: "{...}"
-// EXIST: "{ Int -> ... }"
+// EXIST: "{ i -> ... }"
+// EXIST: "{ i: Int -> ... }"

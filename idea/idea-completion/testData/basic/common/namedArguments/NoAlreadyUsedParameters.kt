@@ -4,8 +4,8 @@ fun test() {
     foo("str", paramThird = "test", param<caret>)
 }
 
-// ABSENT: paramFirst
-// EXIST: paramSecond
-// ABSENT: paramThird
-// EXIST: paramFourth
+// ABSENT: "paramFirst ="
+// EXIST: "paramSecond ="
+// ABSENT: "paramThird ="
+// EXIST: "paramFourth ="
 

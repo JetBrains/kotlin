@@ -8,5 +8,5 @@ fun bar(b: I2, a: I1, c: I1) {
 }
 
 // ORDER: a
-// ORDER: c
 // ORDER: "a, b, c"
+// ORDER: c

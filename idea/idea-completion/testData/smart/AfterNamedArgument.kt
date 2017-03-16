@@ -4,7 +4,7 @@ fun bar(pInt: Int, pString: String) {
     foo(param2 = 1, <caret>)
 }
 
-// EXIST: { lookupString: "param1", itemText: "param1 =" }
-// EXIST: { lookupString: "param3", itemText: "param3 =" }
+// EXIST: { lookupString: "param1 =", itemText: "param1 =" }
+// EXIST: { lookupString: "param3 =", itemText: "param3 =" }
 // ABSENT: param2
 // NOTHING_ELSE

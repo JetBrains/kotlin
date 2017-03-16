@@ -1031,6 +1031,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smart/functionLiterals"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("ExplicitParameterTypesRequired.kt")
+        public void testExplicitParameterTypesRequired() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/functionLiterals/ExplicitParameterTypesRequired.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("OutsideCallParenthesis1.kt")
         public void testOutsideCallParenthesis1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/functionLiterals/OutsideCallParenthesis1.kt");
@@ -1448,6 +1454,45 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         @TestMetadata("GenericClass6.kt")
         public void testGenericClass6() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/inheritors/GenericClass6.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/idea-completion/testData/smart/lambdaSignature")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class LambdaSignature extends AbstractJvmSmartCompletionTest {
+        public void testAllFilesPresentInLambdaSignature() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smart/lambdaSignature"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("ExplicitParameterTypesRequired.kt")
+        public void testExplicitParameterTypesRequired() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/lambdaSignature/ExplicitParameterTypesRequired.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("MultipleParameters.kt")
+        public void testMultipleParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/lambdaSignature/MultipleParameters.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NotAfterComma.kt")
+        public void testNotAfterComma() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/lambdaSignature/NotAfterComma.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NotInBody.kt")
+        public void testNotInBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/lambdaSignature/NotInBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SingleParameter.kt")
+        public void testSingleParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/lambdaSignature/SingleParameter.kt");
             doTest(fileName);
         }
     }
