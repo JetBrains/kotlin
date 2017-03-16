@@ -6537,6 +6537,45 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
     }
 
+    @TestMetadata("js/js.translator/testData/box/package")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Package extends AbstractBoxJsTest {
+        public void testAllFilesPresentInPackage() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/package"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
+        }
+
+        @TestMetadata("classCreatedInDeeplyNestedPackage.kt")
+        public void testClassCreatedInDeeplyNestedPackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/package/classCreatedInDeeplyNestedPackage.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("deeplyNestedPackage.kt")
+        public void testDeeplyNestedPackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/package/deeplyNestedPackage.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("deeplyNestedPackageFunctionCalled.kt")
+        public void testDeeplyNestedPackageFunctionCalled() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/package/deeplyNestedPackageFunctionCalled.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("initializersOfNestedPackagesExecute.kt")
+        public void testInitializersOfNestedPackagesExecute() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/package/initializersOfNestedPackagesExecute.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedPackage.kt")
+        public void testNestedPackage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/package/nestedPackage.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("js/js.translator/testData/box/propertyAccess")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

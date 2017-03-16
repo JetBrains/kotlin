@@ -1,3 +1,3 @@
 package foo.bar
 
-fun box() = true
+fun box() = "OK"
