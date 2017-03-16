@@ -813,7 +813,7 @@
 
         <sequential unless:set="have.android.version">
             <loadresource property="android.version">
-                <url url="http://tools.android.com/download/studio/canary/latest"/>
+                <url url="http://tools.android.com/download/studio/builds/2-3-0"/>
                 <filterchain>
                     <tokenfilter>
                         <filetokenizer/>
@@ -824,7 +824,7 @@
                 </filterchain>
             </loadresource>
             <loadresource property="android.build.version">
-                <url url="http://tools.android.com/download/studio/canary/latest"/>
+                <url url="http://tools.android.com/download/studio/builds/2-3-0"/>
                 <filterchain>
                     <tokenfilter>
                         <filetokenizer/>
