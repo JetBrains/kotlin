@@ -3,10 +3,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
 import org.jetbrains.kotlin.backend.konan.ir.IrInlineFunctionBody
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.Scope
@@ -14,10 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrContainerExpressionBase
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrMemberAccessExpressionBase
-import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -223,7 +217,8 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
         fun newVariable(oldVariable: IrVariable): IrVariable {
             val initializer = oldVariable.initializer!!
-            return functionScope!!.createTemporaryVariable(initializer, "inline", false)    // Create new variable and init it with the parameter expression.
+            val isMutable   = oldVariable.descriptor.isVar
+            return functionScope!!.createTemporaryVariable(initializer, "inline", isMutable)    // Create new variable and init it with the parameter expression.
         }
 
         //---------------------------------------------------------------------//
@@ -236,6 +231,23 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
             val descriptor     = declaration.descriptor.original as ValueDescriptor
             substituteMap[descriptor] = getVal
             return newVariable
+        }
+
+        //---------------------------------------------------------------------//
+
+        override fun visitSetVariable(expression: IrSetVariable): IrExpression {
+
+            val result = super.visitSetVariable(expression)
+            val substitute = substituteMap[expression.descriptor]                           // Get substitution for this variable.
+            if (substitute == null) return result                                           // If there is no substitution - do nothing.
+
+            val startOffset = expression.startOffset
+            val endOffset   = expression.endOffset
+            val descriptor  = (substitute as IrGetValue).descriptor as VariableDescriptor
+            val value       = expression.value
+            val origin      = expression.origin
+
+            return IrSetVariableImpl(startOffset, endOffset, descriptor, value, origin)     // Create SetVariable expression for the new descriptor.
         }
     }
 
