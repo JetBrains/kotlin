@@ -65,12 +65,13 @@ public abstract class AbstractCompileJavaAgainstKotlinTest extends TestCaseWithT
         Assert.assertTrue(ktFilePath.endsWith(".kt"));
         File ktFile = new File(ktFilePath);
         File javaFile = new File(ktFilePath.replaceFirst("\\.kt$", ".java"));
-        File expectedFile = new File(ktFilePath.replaceFirst("\\.kt$", ".txt"));
         File javaErrorFile = new File(ktFilePath.replaceFirst("\\.kt$", ".javaerr.txt"));
 
         File out = new File(tmpdir, "out");
-        compileKotlinWithJava(Collections.singletonList(javaFile), Collections.singletonList(ktFile),
-                              out, getTestRootDisposable(), javaErrorFile);
+        boolean compiledSuccessfully =
+                compileKotlinWithJava(Collections.singletonList(javaFile), Collections.singletonList(ktFile),
+                                      out, getTestRootDisposable(), javaErrorFile);
+        if (!compiledSuccessfully) return;
 
         KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForTests(
                 getTestRootDisposable(),
@@ -82,6 +83,7 @@ public abstract class AbstractCompileJavaAgainstKotlinTest extends TestCaseWithT
         PackageViewDescriptor packageView = analysisResult.getModuleDescriptor().getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME);
         assertFalse("Nothing found in package " + LoadDescriptorUtil.TEST_PACKAGE_FQNAME, packageView.isEmpty());
 
+        File expectedFile = new File(ktFilePath.replaceFirst("\\.kt$", ".txt"));
         validateAndCompareDescriptorWithFile(packageView, CONFIGURATION, expectedFile);
     }
 }

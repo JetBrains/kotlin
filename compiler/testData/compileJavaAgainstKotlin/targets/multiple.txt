@@ -1,5 +1,0 @@
-package test
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION}) public final annotation class multiple : kotlin.Annotation {
-    public constructor multiple()
-}

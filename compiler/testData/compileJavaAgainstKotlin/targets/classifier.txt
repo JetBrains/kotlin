@@ -1,5 +1,0 @@
-package test
-
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) public final annotation class classifier : kotlin.Annotation {
-    public constructor classifier()
-}
