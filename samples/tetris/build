@@ -1,2 +1,24 @@
-./dist/bin/interop -def:sdl_test/sdl.def
-./dist/bin/konanc sdl_test/tetris.kt SDL/SDL.kt -nativelibrary sdlstubs.bc -linkerArg -F -linkerArg /Library/Frameworks -linkerArg -framework -linkerArg SDL2
+#!/usr/bin/env bash
+
+DIR=.
+DIST=../../dist
+OSX_CFLAGS=-I/Library/Frameworks/SDL2.framework/Headers
+OSX_LINKER_ARGS="-F /Library/Frameworks -framework SDL2"
+LINUX_CFLAGS=-I/usr/include/SDL2
+LINUX_LINKER_ARGS="-L/usr/lib/x86_64-linux-gnu -lSDL2"
+
+case "$OSTYPE" in
+  darwin*)  OS=OSX ;;
+  linux*)   OS=LINUX ;;
+  *)        echo "unknown: $OSTYPE" && exit 1;;
+esac
+
+var=${OS}_CFLAGS
+CFLAGS=${!var}
+var=${OS}_LINKER_ARGS
+LINKER_ARGS=${!var}
+
+$DIST/bin/interop -def:$DIR/sdl.def -copt:$CFLAGS || exit 1
+$DIST/bin/konanc -opt $DIR/tetris.kt sdl -nativelibrary sdlstubs.bc -linkerArgs "$LINKER_ARGS" -o tetris.kexe || exit 1
+strip tetris.kexe
+
