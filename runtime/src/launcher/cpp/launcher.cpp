@@ -38,3 +38,8 @@ extern "C" int Konan_main(int argc, char** argv) {
 
   return exitStatus;
 }
+
+// Allow override of entry point for cases like SDL.
+int  __attribute__((weak)) main(int argc, char** argv) {
+  return Konan_main(argc, argv);
+}
