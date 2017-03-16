@@ -164,12 +164,6 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
 
             @NotNull
             @Override
-            public CopyBuilder<SimpleFunctionDescriptor> setSource(@NotNull SourceElement source) {
-                return this;
-            }
-
-            @NotNull
-            @Override
             public CopyBuilder<SimpleFunctionDescriptor> setDropOriginalInContainingParts() {
                 return this;
             }

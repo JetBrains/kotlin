@@ -369,7 +369,6 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         private List<TypeParameterDescriptor> newTypeParameters = null;
         private Annotations additionalAnnotations = null;
         private boolean isHiddenForResolutionEverywhereBesideSupercalls = isHiddenForResolutionEverywhereBesideSupercalls();
-        private SourceElement sourceElement;
         private Map<UserDataKey<?>, Object> userDataMap = new LinkedHashMap<UserDataKey<?>, Object>();
         private Boolean newHasSynthesizedParameterNames = null;
 
@@ -493,13 +492,6 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             return this;
         }
 
-        @NotNull
-        @Override
-        public CopyBuilder<FunctionDescriptor> setSource(@NotNull SourceElement source) {
-            this.sourceElement = source;
-            return this;
-        }
-
         @Override
         @NotNull
         public CopyConfiguration setDropOriginalInContainingParts() {
@@ -587,7 +579,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
         FunctionDescriptorImpl substitutedDescriptor = createSubstitutedCopy(
                 configuration.newOwner, configuration.original, configuration.kind, configuration.name, resultAnnotations,
-                getSourceToUseForCopy(configuration.preserveSourceElement, configuration.original, configuration.sourceElement));
+                getSourceToUseForCopy(configuration.preserveSourceElement, configuration.original));
 
         List<TypeParameterDescriptor> unsubstitutedTypeParameters =
                 configuration.newTypeParameters == null ? getTypeParameters() : configuration.newTypeParameters;
@@ -745,14 +737,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     );
 
     @NotNull
-    private SourceElement getSourceToUseForCopy(
-            boolean preserveSource,
-            @Nullable FunctionDescriptor original,
-            @Nullable SourceElement sourceElement
-    ) {
-        if (sourceElement != null) return sourceElement;
+    private SourceElement getSourceToUseForCopy(boolean preserveSource, @Nullable FunctionDescriptor original) {
         return preserveSource
-               ? (original != null ? original.getSource() : getOriginal().getSource())
+               ? (original != null ? original : getOriginal()).getSource()
                : SourceElement.NO_SOURCE;
     }
 
