@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
-import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
 import org.jetbrains.kotlin.js.inline.util.IdentitySet
 import org.jetbrains.kotlin.js.inline.util.isCallInvocation
 import org.jetbrains.kotlin.js.parser.parseFunction
@@ -65,8 +64,7 @@ class FunctionReader(private val context: TranslationContext) {
     private val moduleNameToInfo = HashMultimap.create<String, ModuleInfo>()
 
     init {
-        val config = context.config as LibrarySourcesConfig
-        val libs = config.libraries.map(::File)
+        val libs = context.config.libraries.map(::File)
 
         JsLibraryUtils.traverseJsLibraries(libs) { fileContent, _ ->
             var current = 0

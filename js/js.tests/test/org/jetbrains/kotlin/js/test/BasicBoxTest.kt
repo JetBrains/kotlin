@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
-import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
 import org.jetbrains.kotlin.js.facade.K2JSTranslator
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationResult
@@ -260,7 +259,7 @@ abstract class BasicBoxTest(
                     LanguageVersionSettingsImpl(languageVersion, LanguageVersionSettingsImpl.DEFAULT.apiVersion)
         }
 
-        configuration.put(JSConfigurationKeys.LIBRARIES, LibrarySourcesConfig.JS_STDLIB + LibrarySourcesConfig.JS_KOTLIN_TEST + dependencies)
+        configuration.put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST + dependencies)
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, module.name.removeSuffix(OLD_MODULE_SUFFIX))
         configuration.put(JSConfigurationKeys.MODULE_KIND, module.moduleKind)
@@ -269,7 +268,7 @@ abstract class BasicBoxTest(
         //configuration.put(JSConfigurationKeys.SOURCE_MAP, shouldGenerateSourceMap())
         configuration.put(JSConfigurationKeys.META_INFO, multiModule)
 
-        return LibrarySourcesConfig(project, configuration)
+        return JsConfig(project, configuration)
     }
 
     private inner class TestFileFactoryImpl : TestFileFactory<TestModule, TestFile>, Closeable {

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.js.test;
 
 import com.google.common.collect.Lists;
-import org.jetbrains.kotlin.js.backend.ast.JsProgram;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.StandardFileSystems;
@@ -39,10 +38,10 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.js.JavaScript;
+import org.jetbrains.kotlin.js.backend.ast.JsProgram;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
 import org.jetbrains.kotlin.js.config.JsConfig;
-import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.facade.K2JSTranslator;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.facade.TranslationResult;
@@ -316,7 +315,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
 
         configuration.put(CommonConfigurationKeys.DISABLE_INLINE, hasNoInline(files));
 
-        List<String> librariesWithStdlib = new ArrayList<String>(LibrarySourcesConfig.JS_STDLIB);
+        List<String> librariesWithStdlib = new ArrayList<String>(JsConfig.JS_STDLIB);
         if (libraries != null) {
             librariesWithStdlib.addAll(libraries);
         }
@@ -332,7 +331,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
 
         configuration.put(JSConfigurationKeys.UNIT_TEST_CONFIG, shouldBeTranslateAsUnitTestClass());
 
-        return new LibrarySourcesConfig(project, configuration);
+        return new JsConfig(project, configuration);
     }
 
     private static boolean hasNoInline(@NotNull List<KtFile> files) {

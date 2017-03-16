@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
-import org.jetbrains.kotlin.js.config.LibrarySourcesConfig
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.js.resolve.MODULE_KIND
 import org.jetbrains.kotlin.name.Name
@@ -45,9 +44,9 @@ abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractDiagnosticsTest() {
 
     override fun setUp() {
         super.setUp()
-        config = LibrarySourcesConfig(project, environment.configuration.copy().apply {
+        config = JsConfig(project, environment.configuration.copy().apply {
             put(CommonConfigurationKeys.MODULE_NAME, KotlinTestUtils.TEST_MODULE_NAME)
-            put(JSConfigurationKeys.LIBRARIES, LibrarySourcesConfig.JS_STDLIB)
+            put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB)
         })
     }
 
