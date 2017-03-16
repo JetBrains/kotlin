@@ -61,7 +61,7 @@ open class KtLightClassForLocalDeclaration(
             if (createWrapper) {
                 return object : LightMethod(myManager, method, containingClass!!, KotlinLanguage.INSTANCE) {
                     override fun getParent(): PsiElement {
-                        return getContainingClass()
+                        return getContainingClass()!!
                     }
 
                     override fun getName(): String {
