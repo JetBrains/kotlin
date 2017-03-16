@@ -24,13 +24,13 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ex.InspectionManagerEx
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import java.io.File
 
 abstract class AbstractMultiFileInspectionTest : KotlinMultiFileTestCase() {
@@ -44,19 +44,18 @@ abstract class AbstractMultiFileInspectionTest : KotlinMultiFileTestCase() {
         val inspection = LocalInspectionToolWrapper(Class.forName(config.getString("inspectionClass")).newInstance() as LocalInspectionTool)
 
         val withRuntime = config["withRuntime"]?.asBoolean ?: false
-        if (withRuntime) {
-            ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
-        }
-
         val withFullJdk = config["withFullJdk"]?.asBoolean ?: false
+        isMultiModule = config["isMultiModule"]?.asBoolean ?: false
 
         doTest({ _, _ ->
                    try {
                        if (withRuntime) {
-                           ConfigLibraryUtil.configureKotlinRuntimeAndSdk(
-                                   module,
-                                   if (withFullJdk) PluginTestCaseBase.fullJdk() else PluginTestCaseBase.mockJdk()
-                           )
+                           project.allModules().forEach { module ->
+                               ConfigLibraryUtil.configureKotlinRuntimeAndSdk(
+                                       module,
+                                       if (withFullJdk) PluginTestCaseBase.fullJdk() else PluginTestCaseBase.mockJdk()
+                               )
+                           }
                        }
 
                        val scope = AnalysisScope(myProject)
@@ -74,7 +73,12 @@ abstract class AbstractMultiFileInspectionTest : KotlinMultiFileTestCase() {
                    }
                    finally {
                        if (withRuntime) {
-                           ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(module, IdeaTestUtil.getMockJdk17())
+                           project.allModules().forEach { module ->
+                               ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(
+                                       module,
+                                       if (withFullJdk) PluginTestCaseBase.fullJdk() else PluginTestCaseBase.mockJdk()
+                               )
+                           }
                        }
                    }
                },

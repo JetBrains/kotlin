@@ -2074,6 +2074,14 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinInternalInJavaInspection"
+                     displayName="Usage of Kotlin internal declarations from Java"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="ERROR"
+                     language="JAVA"
+    />
+
 
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
 
