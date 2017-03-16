@@ -1,0 +1,8 @@
+class Point(val x: Double, val y: Double) {
+    // After sqr inlining, only first usage of sqr is replaced
+    fun distance(other: Point): Double {
+        val x = x - other.x
+        // See KT-17022
+        return Math.sqrt(x * x + sqr(y - other.y))
+    }
+}

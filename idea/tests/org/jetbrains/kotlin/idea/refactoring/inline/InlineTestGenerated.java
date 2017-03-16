@@ -50,6 +50,18 @@ public class InlineTestGenerated extends AbstractInlineTest {
             doTest(fileName);
         }
 
+        @TestMetadata("LocalCapturing.kt")
+        public void testLocalCapturing() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/LocalCapturing.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LocalSimple.kt")
+        public void testLocalSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/LocalSimple.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("MultipleReturns.kt")
         public void testMultipleReturns() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/MultipleReturns.kt");
@@ -65,6 +77,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
         @TestMetadata("UnitReturnType.kt")
         public void testUnitReturnType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/UnitReturnType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("UnitReturnType2.kt")
+        public void testUnitReturnType2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/UnitReturnType2.kt");
             doTest(fileName);
         }
 
@@ -109,6 +127,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
             @TestMetadata("FunctionalParameterPassed.kt")
             public void testFunctionalParameterPassed() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/FunctionalParameterPassed.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("MultipleInExpression.kt")
+            public void testMultipleInExpression() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/MultipleInExpression.kt");
                 doTest(fileName);
             }
 
@@ -160,6 +184,18 @@ public class InlineTestGenerated extends AbstractInlineTest {
             @TestMetadata("MultipleStatements.kt")
             public void testMultipleStatements() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/MultipleStatements.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("PrivateMember.kt")
+            public void testPrivateMember() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/PrivateMember.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("PublicMember.kt")
+            public void testPublicMember() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/PublicMember.kt");
                 doTest(fileName);
             }
 
