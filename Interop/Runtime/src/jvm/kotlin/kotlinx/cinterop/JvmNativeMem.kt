@@ -60,6 +60,8 @@ object nativeMemUtils {
         unsafe.copyMemory(source, baseOffset, null, dest.address, length.toLong())
     }
 
+    fun zeroMemory(dest: NativePointed, length: Int): Unit = unsafe.setMemory(dest.address, length.toLong(), 0)
+
     internal class NativeAllocated(override val rawPtr: NativePtr) : NativePointed
 
     fun alloc(size: Long, align: Int): NativePointed {

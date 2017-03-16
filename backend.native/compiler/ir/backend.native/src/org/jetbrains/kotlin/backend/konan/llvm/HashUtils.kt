@@ -28,7 +28,7 @@ public fun base64Encode(data: ByteArray): String {
         val bytes = allocArrayOf(data)
         EncodeBase64(bytes.ptr, data.size, result.ptr, resultSize)
         // TODO: any better way to do that without two copies?
-        return CString.fromArray(result).toString()
+        return result[0].ptr.toKString()
     }
 }
 

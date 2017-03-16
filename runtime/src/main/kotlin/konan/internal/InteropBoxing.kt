@@ -38,7 +38,7 @@ class NativePointedBox(val value: NativePointed) {
 fun boxNativePointed(value: NativePointed?) = if (value != null) NativePointedBox(value) else null
 fun unboxNativePointed(box: NativePointedBox?) = box?.value
 
-class CPointerBox(val value: CPointer<*>) {
+class CPointerBox(val value: CPointer<CPointed>) : CValuesRef<CPointed>() {
     override fun equals(other: Any?): Boolean {
         if (other !is CPointerBox) {
             return false
@@ -50,7 +50,9 @@ class CPointerBox(val value: CPointer<*>) {
     override fun hashCode() = value.hashCode()
 
     override fun toString() = value.toString()
+
+    override fun getPointer(placement: NativePlacement) = value.getPointer(placement)
 }
 
-fun boxCPointer(value: CPointer<*>?) = if (value != null) CPointerBox(value) else null
+fun boxCPointer(value: CPointer<CPointed>?) = if (value != null) CPointerBox(value) else null
 fun unboxCPointer(box: CPointerBox?) = box?.value

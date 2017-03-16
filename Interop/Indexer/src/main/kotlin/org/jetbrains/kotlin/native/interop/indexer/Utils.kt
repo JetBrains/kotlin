@@ -4,23 +4,28 @@ import clang.*
 import kotlinx.cinterop.*
 import java.io.File
 
-internal fun CXString.convertAndDispose(): String {
+internal val CValue<CXType>.kind: CXTypeKind get() = this.useContents { kind.value }
+
+internal val CValue<CXCursor>.kind: CXCursorKind get() = this.useContents { kind.value }
+
+internal fun CValue<CXString>.convertAndDispose(): String {
     try {
-        return clang_getCString(this)!!.asCString().toString()
+        return clang_getCString(this)!!.toKString()
     } finally {
         clang_disposeString(this)
     }
 }
 
-internal fun getCursorSpelling(cursor: CXCursor) = memScoped {
-    clang_getCursorSpelling(cursor, memScope).convertAndDispose()
-}
+internal fun getCursorSpelling(cursor: CValue<CXCursor>) =
+        clang_getCursorSpelling(cursor).convertAndDispose()
 
-internal fun convertUnqualifiedPrimitiveType(type: CXType): Type = when (type.kind.value) {
+internal fun convertUnqualifiedPrimitiveType(type: CValue<CXType>): Type = when (type.kind) {
     // TODO: is e.g. CXType_Int guaranteed to be int32_t?
 
-    CXTypeKind.CXType_Char_U, CXTypeKind.CXType_UChar -> UInt8Type
-    CXTypeKind.CXType_Char_S, CXTypeKind.CXType_SChar -> Int8Type
+    CXTypeKind.CXType_Char_U, CXTypeKind.CXType_Char_S -> CharType
+
+    CXTypeKind.CXType_UChar -> UInt8Type
+    CXTypeKind.CXType_SChar -> Int8Type
 
     CXTypeKind.CXType_UShort -> UInt16Type
     CXTypeKind.CXType_Short -> Int16Type
@@ -71,9 +76,7 @@ internal fun getCompileErrors(translationUnit: CXTranslationUnit): Sequence<Stri
                 severity == CXDiagnosticSeverity.CXDiagnostic_Error ||
                         severity == CXDiagnosticSeverity.CXDiagnostic_Fatal
             }.map {
-                memScoped {
-                    clang_formatDiagnostic(it, clang_defaultDiagnosticDisplayOptions(), memScope).convertAndDispose()
-                }
+                clang_formatDiagnostic(it, clang_defaultDiagnosticDisplayOptions()).convertAndDispose()
             }
 }
 
@@ -82,24 +85,21 @@ internal fun CXTranslationUnit.ensureNoCompileErrors(): CXTranslationUnit {
     throw Error(firstError)
 }
 
-internal typealias CursorVisitor = (cursor: CXCursor, parent: CXCursor) -> CXChildVisitResult
+internal typealias CursorVisitor = (cursor: CValue<CXCursor>, parent: CValue<CXCursor>) -> CXChildVisitResult
 
-internal fun visitChildren(parent: CXCursor, visitor: CursorVisitor) {
+internal fun visitChildren(parent: CValue<CXCursor>, visitor: CursorVisitor) {
     val visitorPtr = StableObjPtr.create(visitor)
     val clientData = visitorPtr.value
     clang_visitChildren(parent, staticCFunction { cursor, parent, clientData ->
         val visitor = StableObjPtr.fromValue(clientData!!).get() as CursorVisitor
-        visitor(cursor, parent)
+        visitor(cursor.readValue(), parent.readValue())
     }, clientData)
 }
 
-internal fun visitChildren(translationUnit: CXTranslationUnit, visitor: CursorVisitor) {
-    memScoped {
-        visitChildren(clang_getTranslationUnitCursor(translationUnit, memScope), visitor)
-    }
-}
+internal fun visitChildren(translationUnit: CXTranslationUnit, visitor: CursorVisitor) =
+        visitChildren(clang_getTranslationUnitCursor(translationUnit), visitor)
 
-internal fun CXCursor.isLeaf(): Boolean {
+internal fun CValue<CXCursor>.isLeaf(): Boolean {
     var hasChildren = false
 
     visitChildren(this) { _, _ ->
@@ -112,7 +112,7 @@ internal fun CXCursor.isLeaf(): Boolean {
 
 internal fun List<String>.toNativeStringArray(placement: NativePlacement): CArray<CPointerVar<CInt8Var>> {
     return placement.allocArray(this.size) { index ->
-        this.value = this@toNativeStringArray[index].toCString(placement)!!.asCharPtr()
+        this.value = this@toNativeStringArray[index].cstr.getPointer(placement)
     }
 }
 

@@ -173,7 +173,8 @@ class StubGenerator(
         return when (this) {
 
             is VoidType -> "void"
-            is Int8Type -> "char"
+            is CharType -> "char"
+            is Int8Type -> "signed char"
             is UInt8Type -> "unsigned char"
             is Int16Type -> "short"
             is UInt16Type -> "unsigned short"
@@ -214,7 +215,7 @@ class StubGenerator(
     val PrimitiveType.kotlinType: String
         get() = when (this) {
 
-            is Int8Type, is UInt8Type -> "Byte"
+            is CharType, is Int8Type, is UInt8Type -> "Byte"
             is Int16Type, is UInt16Type -> "Short"
             is Int32Type, is UInt32Type -> "Int"
             is IntPtrType, is UIntPtrType, // TODO: 64-bit specific
@@ -326,7 +327,7 @@ class StubGenerator(
 
     private fun mirror(type: PrimitiveType): TypeMirror.ByValue {
         val varTypeName = when (type) {
-            is Int8Type, is UInt8Type -> "CInt8Var"
+            is CharType, is Int8Type, is UInt8Type -> "CInt8Var"
             is Int16Type, is UInt16Type -> "CInt16Var"
             is Int32Type, is UInt32Type -> "CInt32Var"
             is IntPtrType, is UIntPtrType, // TODO: 64-bit specific
@@ -439,11 +440,52 @@ class StubGenerator(
         )
     }
 
+    fun representCFunctionParameterAsValuesRef(type: Type): Type? {
+        val pointeeType = when (type) {
+            is PointerType -> type.pointeeType
+            is ArrayType -> type.elemType
+            else -> return null
+        }
+
+        val unwrappedPointeeType = pointeeType.unwrapTypedefs()
+        if (unwrappedPointeeType is VoidType || unwrappedPointeeType is FunctionType) {
+            // Passing `void`s or function by value is not very sane:
+            return null
+        }
+
+        return pointeeType
+    }
+
+    fun representCFunctionParameterAsString(type: Type): Boolean {
+        val unwrappedType = type.unwrapTypedefs()
+        return unwrappedType is PointerToConstType && unwrappedType.pointeeType.unwrapTypedefs() == CharType
+    }
+
     fun getCFunctionParamBinding(type: Type): OutValueBinding {
-        if (treatCFunctionParameterAsString(type)) {
+        if (representCFunctionParameterAsString(type)) {
             return OutValueBinding(
-                    kotlinType = "String?",
-                    kotlinConv = { name -> "$name?.toCString(memScope).rawPtr" },
+                    kotlinType = "String?", // TODO: mention the C type (e.g. with annotation).
+                    kotlinConv = { name -> "$name?.cstr?.getPointer(memScope).rawValue" },
+                    memScoped = true,
+                    kotlinJniBridgeType = "NativePtr"
+            )
+        }
+
+        representCFunctionParameterAsValuesRef(type)?.let {
+            val pointeeMirror = mirror(it)
+            return OutValueBinding(
+                    kotlinType = "CValuesRef<${pointeeMirror.pointedTypeName}>?",
+                    kotlinConv = { name -> "$name?.getPointer(memScope).rawValue" },
+                    memScoped = true,
+                    kotlinJniBridgeType = "NativePtr"
+            )
+        }
+        if (type.unwrapTypedefs() is RecordType) {
+            // TODO: this case should probably be handled more generally.
+            val typeMirror = mirror(type)
+            return OutValueBinding(
+                    kotlinType = "CValue<${typeMirror.pointedTypeName}>",
+                    kotlinConv = { name -> "$name.getPointer(memScope).rawValue" }, // TODO: eliminate this copying
                     memScoped = true,
                     kotlinJniBridgeType = "NativePtr"
             )
@@ -451,8 +493,6 @@ class StubGenerator(
 
         return getOutValueBinding(type)
     }
-
-    private fun treatCFunctionParameterAsString(type: Type) = type is PointerType && type.pointeeType is Int8Type
 
     fun getCallbackRetValBinding(type: Type): OutValueBinding {
         if (type.unwrapTypedefs() is VoidType) {
@@ -484,12 +524,21 @@ class StubGenerator(
         )
     }
 
-    fun getCFunctionRetValBinding(type: Type): InValueBinding {
-        when (type.unwrapTypedefs()) {
-            is VoidType -> return InValueBinding("Unit")
+    fun getCFunctionRetValBinding(func: FunctionDecl): InValueBinding {
+        when {
+            func.returnsVoid() -> return InValueBinding("Unit")
+            func.returnsRecord() -> {
+                // TODO: this case should probably be handled more generally.
+                val typeMirror = mirror(func.returnType)
+                return InValueBinding(
+                        kotlinJniBridgeType = "NativePtr",
+                        conv = { name -> "interpretPointed<${typeMirror.pointedTypeName}>($name).readValue()" },
+                        kotlinType = "CValue<${typeMirror.pointedTypeName}>"
+                )
+            }
         }
 
-        return getInValueBinding(type)
+        return getInValueBinding(func.returnType)
     }
 
     fun getCallbackParamBinding(type: Type): InValueBinding {
@@ -637,7 +686,10 @@ class StubGenerator(
     /**
      * Constructs [InValueBinding] for return value of Kotlin binding for given C function.
      */
-    private fun retValBinding(func: FunctionDecl) = getCFunctionRetValBinding(func.returnType)
+    private fun retValBinding(func: FunctionDecl) = getCFunctionRetValBinding(func)
+
+    private fun FunctionDecl.returnsRecord(): Boolean = this.returnType.unwrapTypedefs() is RecordType
+    private fun FunctionDecl.returnsVoid(): Boolean = this.returnType.unwrapTypedefs() is VoidType
 
     /**
      * Constructs [OutValueBinding]s for parameters of Kotlin binding for given C function.
@@ -647,13 +699,10 @@ class StubGenerator(
             getCFunctionParamBinding(param.type)
         }.toMutableList()
 
-        val retValType = func.returnType
-        if (retValType.unwrapTypedefs() is RecordType) {
-            val retValMirror = mirror(retValType)
-
+        if (func.returnsRecord()) {
             paramBindings.add(OutValueBinding(
-                    kotlinType = "NativePlacement",
-                    kotlinConv = { name -> "$name.alloc<${retValMirror.pointedTypeName}>().rawPtr" },
+                    kotlinType = "should not be used",
+                    kotlinConv = { throw UnsupportedOperationException() },
                     kotlinJniBridgeType = "NativePtr"
             ))
         }
@@ -674,7 +723,7 @@ class StubGenerator(
             }
         }.toMutableList()
 
-        if (func.returnType.unwrapTypedefs() is RecordType) {
+        if (func.returnsRecord()) {
             paramNames.add("retValPlacement")
         }
 
@@ -685,7 +734,14 @@ class StubGenerator(
      * Produces to [out] the definition of Kotlin binding for given C function.
      */
     private fun generateKotlinBindingMethod(func: FunctionDecl) {
-        val paramNames = paramNames(func)
+        val paramNames = paramNames(func).toList().let {
+            if (func.returnsRecord()) {
+                // The last parameter should be present only in C adapter.
+                it.dropLast(1)
+            } else {
+                it
+            }
+        }
         val paramBindings = paramBindings(func)
         val retValBinding = retValBinding(func)
 
@@ -716,7 +772,13 @@ class StubGenerator(
 
                 externalParamName
 
+            }.toMutableList()
+
+            if (func.returnsRecord()) {
+                val retValMirror = mirror(func.returnType)
+                arguments.add("alloc<${retValMirror.pointedTypeName}>().rawPtr")
             }
+
             val callee = when (platform) {
                 KotlinPlatform.JVM -> "externals.${func.name}"
                 KotlinPlatform.NATIVE -> func.kotlinExternalName
@@ -741,7 +803,7 @@ class StubGenerator(
         }
 
         block(header) {
-            val memScoped = paramBindings.any { it.memScoped }
+            val memScoped = paramBindings.any { it.memScoped } || func.returnsRecord()
             if (memScoped) {
                 block("return memScoped") {
                     generateBody(true)
@@ -782,7 +844,8 @@ class StubGenerator(
     private fun getFfiType(type: Type): String {
         return when(type) {
             is VoidType -> "Void"
-            is Int8Type -> "SInt8"
+            is CharType, is Int8Type -> "SInt8"
+            // TODO: libffi has separate representation for char type.
             is UInt8Type -> "UInt8"
             is Int16Type -> "SInt16"
             is UInt16Type -> "UInt16"
@@ -829,8 +892,12 @@ class StubGenerator(
             return true
         }
 
-        return this.parameters.any { treatCFunctionParameterAsString(it.type) } ||
-                this.returnType.unwrapTypedefs() is RecordType
+        return this.returnsRecord() ||
+                this.parameters.map { it.type }.any {
+                    it.unwrapTypedefs() is RecordType ||
+                            representCFunctionParameterAsString(it) ||
+                            representCFunctionParameterAsValuesRef(it) != null
+                }
     }
 
     /**
@@ -842,8 +909,8 @@ class StubGenerator(
             return true
         }
 
-        val parameterTypes = this.parameters.map { it.type }
-        return (parameterTypes + returnType).any { it.unwrapTypedefs() is RecordType }
+        return this.returnsRecord() ||
+                this.parameters.map { it.type }.any { it.unwrapTypedefs() is RecordType }
     }
 
     private fun FunctionType.requiresAdapterOnNative(): Boolean {
@@ -1187,7 +1254,6 @@ class StubGenerator(
      * Produces to [out] the implementation of JNI function used in Kotlin binding for given C function.
      */
     private fun generateCJniFunction(func: FunctionDecl) {
-        val funcReturnType = func.returnType.unwrapTypedefs()
         val paramNames = paramNames(func)
         val paramBindings = paramBindings(func)
         val retValBinding = retValBinding(func)
@@ -1241,8 +1307,8 @@ class StubGenerator(
 
             if (cReturnType == "void") {
                 out("$callExpr;")
-            } else if (funcReturnType is RecordType) {
-                out("*(${funcReturnType.decl.spelling}*)retValPlacement = $callExpr;")
+            } else if (func.returnsRecord()) {
+                out("*(${func.returnType.getStringRepresentation()}*)retValPlacement = $callExpr;")
                 out("return ($cReturnType) retValPlacement;")
             } else {
                 out("return ($cReturnType) ($callExpr);")

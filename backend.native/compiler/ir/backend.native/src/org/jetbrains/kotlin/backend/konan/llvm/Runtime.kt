@@ -21,7 +21,7 @@ class Runtime(private val bitcodeFile: String) {
 
             val res = LLVMCreateMemoryBufferWithContentsOfFile(bitcodeFile, bufRef.ptr, errorRef.ptr)
             if (res != 0) {
-                throw Error(errorRef.value?.asCString()?.toString())
+                throw Error(errorRef.value?.toKString())
             }
 
             val moduleRef = alloc<LLVMModuleRefVar>()
@@ -45,9 +45,9 @@ class Runtime(private val bitcodeFile: String) {
     val objHeaderType = getStructType("ObjHeader")
     val arrayHeaderType = getStructType("ArrayHeader")
 
-    val target = LLVMGetTarget(llvmModule)!!.asCString().toString()
+    val target = LLVMGetTarget(llvmModule)!!.toKString()
 
-    val dataLayout = LLVMGetDataLayout(llvmModule)!!.asCString().toString()
+    val dataLayout = LLVMGetDataLayout(llvmModule)!!.toKString()
 
     val targetData = LLVMCreateTargetData(dataLayout)!!
 

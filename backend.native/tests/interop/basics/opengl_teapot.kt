@@ -65,16 +65,9 @@ fun initialize() {
     // specify implementation-specific hints
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
 
-    memScoped {
-        val ambLight: CArray<GLfloatVar> = allocArrayOf(0.1f, 0.1f, 0.1f, 1.0f)
-        val diffuse: CArray<GLfloatVar> = allocArrayOf(0.6f, 0.6f, 0.6f, 1.0f)
-        val specular: CArray<GLfloatVar> = allocArrayOf(0.7f, 0.7f, 0.3f, 1.0f)
-
-        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambLight[0].ptr)
-        glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse[0].ptr)
-        glLightfv(GL_LIGHT0, GL_SPECULAR, specular[0].ptr)
-    }
-
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, cValuesOf(0.1f, 0.1f, 0.1f, 1.0f))
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, cValuesOf(0.6f, 0.6f, 0.6f, 1.0f))
+    glLightfv(GL_LIGHT0, GL_SPECULAR, cValuesOf(0.7f, 0.7f, 0.3f, 1.0f))
 
     glEnable(GL_LIGHT0)
     glEnable(GL_COLOR_MATERIAL)

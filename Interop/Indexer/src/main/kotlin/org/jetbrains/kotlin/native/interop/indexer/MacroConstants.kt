@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.native.interop.indexer
 
 import clang.*
-import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.CValue
 import java.io.File
 
 /**
@@ -16,7 +16,7 @@ internal fun findMacroConstants(library: NativeLibrary, nativeIndex: NativeIndex
     nativeIndex.macroConstants.addAll(constants)
 }
 
-private typealias TypeConverter = (CXType) -> Type
+private typealias TypeConverter = (CValue<CXType>) -> Type
 
 /**
  * For each name expands the macro with this name declared in the library,
@@ -123,8 +123,8 @@ private fun processCodeSnippet(
     var longValue: Long? = null
     var doubleValue: Double? = null
 
-    val visitor: CursorVisitor = { cursor: CXCursor, parent: CXCursor ->
-        val kind = cursor.kind.value
+    val visitor: CursorVisitor = { cursor, parent ->
+        val kind = cursor.kind
         when {
             state == VisitorState.EXPECT_VARIABLE && kind == CXCursorKind.CXCursor_VarDecl -> {
                 state = VisitorState.EXPECT_VARIABLE_VALUE
@@ -144,10 +144,7 @@ private fun processCodeSnippet(
 
             state == VisitorState.EXPECT_VARIABLE_VALUE && clang_isExpression(kind) != 0 -> {
                 state = VisitorState.EXPECT_ENUM
-                type = memScoped {
-                    val cursorType = clang_getCursorType(cursor, memScope)
-                    typeConverter(cursorType)
-                }
+                type = typeConverter(clang_getCursorType(cursor))
                 CXChildVisitResult.CXChildVisit_Continue
             }
 
@@ -204,7 +201,7 @@ private fun collectMacroConstantsNames(library: NativeLibrary): List<String> {
         val translationUnit = library.parse(index, options).ensureNoCompileErrors()
         try {
             visitChildren(translationUnit) { cursor, parent ->
-                if (cursor.kind.value == CXCursorKind.CXCursor_MacroDefinition && canMacroBeConstant(cursor)) {
+                if (cursor.kind == CXCursorKind.CXCursor_MacroDefinition && canMacroBeConstant(cursor)) {
                     val spelling = getCursorSpelling(cursor)
                     result.add(spelling)
                 }
@@ -221,7 +218,7 @@ private fun collectMacroConstantsNames(library: NativeLibrary): List<String> {
     return result.toList()
 }
 
-private fun canMacroBeConstant(cursor: CXCursor): Boolean {
+private fun canMacroBeConstant(cursor: CValue<CXCursor>): Boolean {
 
     if (clang_Cursor_isMacroFunctionLike(cursor) != 0) {
         return false

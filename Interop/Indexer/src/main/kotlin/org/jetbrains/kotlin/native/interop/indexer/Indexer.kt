@@ -45,25 +45,23 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
 
     override val macroConstants = mutableListOf<ConstantDef>()
 
-    private fun getDeclarationId(cursor: CXCursor): DeclarationID = memScoped {
-        val usr = clang_getCursorUSR(cursor, memScope).convertAndDispose()
-        DeclarationID(usr)
+    private fun getDeclarationId(cursor: CValue<CXCursor>): DeclarationID {
+        val usr = clang_getCursorUSR(cursor).convertAndDispose()
+        return DeclarationID(usr)
     }
 
-    private fun getStructDeclAt(cursor: CXCursor): StructDeclImpl {
+    private fun getStructDeclAt(cursor: CValue<CXCursor>): StructDeclImpl {
         val declId = getDeclarationId(cursor)
 
         return structById.getOrPut(declId) {
-            memScoped {
-                val cursorType = clang_getCursorType(cursor, memScope)
-                val typeSpelling = clang_getTypeSpelling(cursorType, memScope).convertAndDispose()
+            val cursorType = clang_getCursorType(cursor)
+            val typeSpelling = clang_getTypeSpelling(cursorType).convertAndDispose()
 
-                StructDeclImpl(typeSpelling)
-            }
+            StructDeclImpl(typeSpelling)
         }
     }
 
-    private fun getEnumDefAt(cursor: CXCursor): EnumDefImpl {
+    private fun getEnumDefAt(cursor: CValue<CXCursor>): EnumDefImpl {
         if (clang_isCursorDefinition(cursor) == 0) {
             TODO("support enum forward declarations")
         }
@@ -71,19 +69,17 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
         val declId = getDeclarationId(cursor)
 
         return enumById.getOrPut(declId) {
-            memScoped {
-                val cursorType = clang_getCursorType(cursor, memScope)
-                val typeSpelling = clang_getTypeSpelling(cursorType, memScope).convertAndDispose()
+            val cursorType = clang_getCursorType(cursor)
+            val typeSpelling = clang_getTypeSpelling(cursorType).convertAndDispose()
 
-                val baseType = convertType(clang_getEnumDeclIntegerType(cursor, memScope)) as PrimitiveType
+            val baseType = convertType(clang_getEnumDeclIntegerType(cursor)) as PrimitiveType
 
-                EnumDefImpl(typeSpelling, baseType)
-            }
+            EnumDefImpl(typeSpelling, baseType)
         }
     }
 
-    private fun builtinVaListType(type: CXType, name: String, underlying: Type): Type {
-        assert (type.kind.value == CXType_Typedef)
+    private fun builtinVaListType(type: CValue<CXType>, name: String, underlying: Type): Type {
+        assert (type.kind == CXType_Typedef)
         val declarationId = DeclarationID("c:@T@$name")
 
         val structDeclaration = structById.getOrPut(declarationId) {
@@ -100,11 +96,11 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
         return ConstArrayType(RecordType(structDeclaration), 1)
     }
 
-    fun getTypedef(type: CXType): Type = memScoped {
-        val declCursor = clang_getTypeDeclaration(type, memScope)
+    fun getTypedef(type: CValue<CXType>): Type {
+        val declCursor = clang_getTypeDeclaration(type)
         val name = getCursorSpelling(declCursor)
 
-        val underlying = convertType(clang_getTypedefDeclUnderlyingType(declCursor, memScope))
+        val underlying = convertType(clang_getTypedefDeclUnderlyingType(declCursor))
 
         if (name == "__builtin_va_list") {
             // On some platforms (e.g. macOS) libclang reports `__builtin_va_list` to be defined as array using
@@ -136,8 +132,8 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
     /**
      * Computes [StructDef.hasNaturalLayout] property.
      */
-    fun structHasNaturalLayout(structDefCursor: CXCursor): Boolean {
-        val defKind = structDefCursor.kind.value
+    fun structHasNaturalLayout(structDefCursor: CValue<CXCursor>): Boolean {
+        val defKind = structDefCursor.kind
 
         when (defKind) {
 
@@ -161,23 +157,22 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
         }
     }
 
-    private fun convertCursorType(cursor: CXCursor) = memScoped {
-        convertType(clang_getCursorType(cursor, memScope))
-    }
+    private fun convertCursorType(cursor: CValue<CXCursor>) =
+        convertType(clang_getCursorType(cursor))
 
-    fun convertType(type: CXType): Type = memScoped {
+    fun convertType(type: CValue<CXType>): Type {
         val primitiveType = convertUnqualifiedPrimitiveType(type)
         if (primitiveType != UnsupportedType) {
             return primitiveType
         }
 
-        val kind = type.kind.value
+        val kind = type.kind
         return when (kind) {
-            CXType_Elaborated -> convertType(clang_Type_getNamedType(type, memScope))
+            CXType_Elaborated -> convertType(clang_Type_getNamedType(type))
 
             CXType_Unexposed -> {
-                val canonicalType = clang_getCanonicalType(type, memScope)
-                if (canonicalType.kind.value != CXType_Unexposed) {
+                val canonicalType = clang_getCanonicalType(type)
+                if (canonicalType.kind != CXType_Unexposed) {
                     convertType(canonicalType)
                 } else {
                     throw NotImplementedError()
@@ -188,19 +183,27 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
 
             CXType_Typedef -> getTypedef(type)
 
-            CXType_Record -> RecordType(getStructDeclAt(clang_getTypeDeclaration(type, memScope)))
-            CXType_Enum -> EnumType(getEnumDefAt(clang_getTypeDeclaration(type, memScope)))
+            CXType_Record -> RecordType(getStructDeclAt(clang_getTypeDeclaration(type)))
+            CXType_Enum -> EnumType(getEnumDefAt(clang_getTypeDeclaration(type)))
 
-            CXType_Pointer -> PointerType(convertType(clang_getPointeeType(type, memScope)))
+            CXType_Pointer -> {
+                val pointeeType = clang_getPointeeType(type)
+                val canonicalPointeeType = clang_getCanonicalType(pointeeType)
+                if (clang_isConstQualifiedType(canonicalPointeeType) != 0) {
+                    PointerToConstType(convertType(pointeeType))
+                } else {
+                    PointerType(convertType(pointeeType))
+                }
+            }
 
             CXType_ConstantArray -> {
-                val elemType = convertType(clang_getArrayElementType(type, memScope))
+                val elemType = convertType(clang_getArrayElementType(type))
                 val length = clang_getArraySize(type)
                 ConstArrayType(elemType, length)
             }
 
             CXType_IncompleteArray -> {
-                val elemType = convertType(clang_getArrayElementType(type, memScope))
+                val elemType = convertType(clang_getArrayElementType(type))
                 IncompleteArrayType(elemType)
             }
 
@@ -208,10 +211,10 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
                 if (clang_isFunctionTypeVariadic(type) != 0) {
                     UnsupportedType
                 } else {
-                    val returnType = convertType(clang_getResultType(type, memScope))
+                    val returnType = convertType(clang_getResultType(type))
                     val numArgs = clang_getNumArgTypes(type)
                     val paramTypes = (0..numArgs - 1).map {
-                        convertType(clang_getArgType(type, it, memScope))
+                        convertType(clang_getArgType(type, it))
                     }
                     FunctionType(paramTypes, returnType)
                 }
@@ -221,12 +224,11 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
         }
     }
 
-    fun indexDeclaration(info: CXIdxDeclInfo): Unit = memScoped {
-        val cursor = info.cursor
+    fun indexDeclaration(info: CXIdxDeclInfo): Unit {
+        val cursor = info.cursor.readValue()
         val entityInfo = info.entityInfo.pointed!!
-        val entityName = entityInfo.name.value?.asCString()?.toString()
+        val entityName = entityInfo.name.value?.toKString()
         val kind = entityInfo.kind.value
-
         when (kind) {
             CXIdxEntity_Field -> {
                 val name = entityName!!
@@ -234,14 +236,14 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
                 val offset = clang_Cursor_getOffsetOfField(cursor)
 
                 val container = info.semanticContainer.pointed!!
-                val structDef = getStructDeclAt(container.cursor).def!!
+                val structDef = getStructDeclAt(container.cursor.readValue()).def!!
                 structDef.fields.add(Field(name, type, offset))
             }
 
             CXIdxEntity_Struct, CXIdxEntity_Union -> {
                 val structDecl = getStructDeclAt(cursor)
                 if (clang_isCursorDefinition(cursor) != 0) {
-                    val type = clang_getCursorType(cursor, memScope)
+                    val type = clang_getCursorType(cursor)
                     val size = clang_Type_getSizeOf(type)
                     val align = clang_Type_getAlignOf(type).toInt()
                     val hasNaturalLayout = structHasNaturalLayout(cursor)
@@ -251,17 +253,17 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
 
             CXIdxEntity_Function -> {
                 val name = entityName!!
-                val returnType = convertType(clang_getCursorResultType(cursor, memScope))
+                val returnType = convertType(clang_getCursorResultType(cursor))
                 val argNum = clang_Cursor_getNumArguments(cursor)
                 val args = (0 .. argNum - 1).map {
-                    val argCursor = clang_Cursor_getArgument(cursor, it, memScope)
+                    val argCursor = clang_Cursor_getArgument(cursor, it)
                     val argName = getCursorSpelling(argCursor)
                     val type = convertCursorType(argCursor)
                     Parameter(argName, type)
                 }
 
                 val binaryName = when (language) {
-                    Language.C -> clang_Cursor_getMangling(cursor, memScope).convertAndDispose()
+                    Language.C -> clang_Cursor_getMangling(cursor).convertAndDispose()
                 }
 
                 functionByName[name] = FunctionDecl(name, args, returnType, binaryName)
@@ -274,9 +276,9 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
             CXIdxEntity_EnumConstant -> {
                 val container = info.semanticContainer.pointed!!
                 val name = entityName!!
-                val value = clang_getEnumConstantDeclValue(info.cursor)
+                val value = clang_getEnumConstantDeclValue(info.cursor.readValue())
 
-                val constants = getEnumDefAt(container.cursor).constants
+                val constants = getEnumDefAt(container.cursor.readValue()).constants
                 val existingConstant = constants.find { it.name == name }
                 if (existingConstant == null) {
                     val constant = EnumConstant(name, value, isExplicitlyDefined = !cursor.isLeaf())

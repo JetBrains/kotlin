@@ -24,7 +24,7 @@ fun main(args: Array<String>) = memScoped {
     }
     val error = errorRef.value
     if (error != null) {
-        println(error.asCString().toString())
+        println(error.toKString())
         return
     }
 

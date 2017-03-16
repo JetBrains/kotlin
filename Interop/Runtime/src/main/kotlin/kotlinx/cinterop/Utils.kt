@@ -43,8 +43,6 @@ class Arena(private val parent: NativeFreeablePlacement = nativeHeap) : NativePl
 
 }
 
-fun NativePlacement.alloc(size: Int, align: Int) = alloc(size.toLong(), align)
-
 /**
  * Allocates variable of given type.
  *
@@ -138,12 +136,9 @@ inline fun <reified T : CPointer<*>>
 }
 
 fun NativePlacement.allocArrayOf(elements: ByteArray): CArray<CInt8Var> {
-    val res = allocArray<CInt8Var>(elements.size)
-    var index = 0
-    for (byte in elements) {
-        res[index++].value = byte
-    }
-    return res
+    val result = allocArray<CInt8Var>(elements.size)
+    nativeMemUtils.putByteArray(elements, result, elements.size)
+    return result
 }
 
 fun NativePlacement.allocArrayOf(vararg elements: Float): CArray<CFloat32Var> {
@@ -157,55 +152,138 @@ fun NativePlacement.allocArrayOf(vararg elements: Float): CArray<CFloat32Var> {
 
 fun <T : CPointed> NativePlacement.allocPointerTo() = alloc<CPointerVar<T>>()
 
+fun <T : CVariable> zeroValue(size: Int, align: Int): CValue<T> = object : CValue<T>() {
+    override fun getPointer(placement: NativePlacement): CPointer<T> {
+        val result = placement.alloc(size, align)
+        nativeMemUtils.zeroMemory(result, size)
+        return interpretCPointer(result.rawPtr)!!
+    }
+}
+
+inline fun <reified T : CVariable> zeroValue(): CValue<T> =
+        zeroValue<T>(sizeOf<T>().toInt(), alignOf<T>())
+
+private fun <T : CPointed> NativePlacement.placeBytes(bytes: ByteArray, align: Int): CPointer<T> {
+    val result = this.alloc(size = bytes.size, align = align)
+    nativeMemUtils.putByteArray(bytes, result, bytes.size)
+    return interpretCPointer(result.rawPtr)!!
+}
+
+fun <T : CVariable> CPointed.readValues(size: Int, align: Int): CValues<T> {
+    val bytes = ByteArray(size)
+    nativeMemUtils.getByteArray(this, bytes, size)
+
+    return object : CValues<T>() {
+        override fun getPointer(placement: NativePlacement): CPointer<T> = placement.placeBytes(bytes, align)
+    }
+}
+
+inline fun <reified T : CVariable> T.readValues(count: Int): CValues<T> =
+        this.readValues<T>(size = count * sizeOf<T>().toInt(), align = alignOf<T>())
+
+fun <T : CVariable> CPointed.readValue(size: Int, align: Int): CValue<T> {
+    val bytes = ByteArray(size)
+    nativeMemUtils.getByteArray(this, bytes, size)
+    return object : CValue<T>() {
+        override fun getPointer(placement: NativePlacement): CPointer<T> = placement.placeBytes(bytes, align)
+    }
+}
+
+// Note: can't be declared as property due to possible clash with a struct field.
+// TODO: find better name.
+inline fun <reified T : CStructVar> T.readValue(): CValue<T> = this.readValue(sizeOf<T>().toInt(), alignOf<T>())
+
 /**
- * The zero-terminated string.
+ * Calls the [block] with temporary copy if this value as receiver.
  */
-class CString(override val rawPtr: NativePtr) : CPointed {
+inline fun <reified T : CStructVar, R> CValue<T>.useContents(block: T.() -> R): R = memScoped {
+    this@useContents.placeTo(memScope).pointed.block()
+}
 
-    companion object {
-        fun fromArray(array: CArray<CInt8Var>) = array.reinterpret<CString>()
-    }
+inline fun <reified T : CStructVar> CValue<T>.copy(modify: T.() -> Unit): CValue<T> = useContents {
+    this.modify()
+    this.readValue()
+}
 
-    fun length(): Int {
-        val array = reinterpret<CArray<CInt8Var>>()
+inline fun <reified T : CStructVar> cValue(initialize: T.() -> Unit): CValue<T> =
+    zeroValue<T>().copy(modify = initialize)
 
-        var res = 0
-        while (array[res].value != 0.toByte()) {
-            ++res
+inline fun <reified T : CVariable> createValues(count: Int, initializer: T.(index: Int) -> Unit) = memScoped {
+    val array = allocArray<T>(count, initializer)
+    array[0].readValues(count)
+}
+
+fun cValuesOf(vararg elements: Byte): CValues<CInt8Var> = object : CValues<CInt8Var>() {
+    override fun getPointer(placement: NativePlacement) = placement.allocArrayOf(elements)[0].ptr
+}
+
+// TODO: optimize other [cValuesOf] methods:
+
+fun cValuesOf(vararg elements: Short): CValues<CInt16Var> =
+        createValues(elements.size) { index -> this.value = elements[index] }
+
+fun cValuesOf(vararg elements: Int): CValues<CInt32Var> =
+        createValues(elements.size) { index -> this.value = elements[index] }
+
+fun cValuesOf(vararg elements: Long): CValues<CInt64Var> =
+        createValues(elements.size) { index -> this.value = elements[index] }
+
+fun cValuesOf(vararg elements: Float): CValues<CFloat32Var> = object : CValues<CFloat32Var>() {
+    override fun getPointer(placement: NativePlacement) = placement.allocArrayOf(*elements)[0].ptr
+}
+
+fun cValuesOf(vararg elements: Double): CValues<CFloat64Var> =
+        createValues(elements.size) { index -> this.value = elements[index] }
+
+fun <T : CPointed> cValuesOf(vararg elements: CPointer<T>?): CValues<CPointerVar<T>> =
+        createValues(elements.size) { index -> this.value = elements[index] }
+
+fun ByteArray.toCValues() = cValuesOf(*this)
+fun ShortArray.toCValues() = cValuesOf(*this)
+fun IntArray.toCValues() = cValuesOf(*this)
+fun LongArray.toCValues() = cValuesOf(*this)
+fun FloatArray.toCValues() = cValuesOf(*this)
+fun DoubleArray.toCValues() = cValuesOf(*this)
+fun <T : CPointed> Array<CPointer<T>?>.toCValues() = cValuesOf(*this)
+
+fun <T : CPointed> List<CPointer<T>?>.toCValues() = this.toTypedArray().toCValues()
+
+/**
+ * TODO: should the name of the function reflect the encoding?
+ *
+ * @return the value of zero-terminated UTF-8-encoded C string constructed from given [kotlin.String].
+ */
+val String.cstr: CValues<CInt8Var>
+    get() {
+        val bytes = encodeToUtf8(this)
+
+        return object : CValues<CInt8Var>() {
+            override fun getPointer(placement: NativePlacement): CPointer<CInt8Var> {
+                val result = placement.allocArray<CInt8Var>(bytes.size + 1)
+                nativeMemUtils.putByteArray(bytes, result, bytes.size)
+                result[bytes.size].value = 0.toByte()
+                return result[0].ptr
+            }
         }
-        return res
     }
 
-    override fun toString(): String {
-        val array = reinterpret<CArray<CInt8Var>>()
+/**
+ * TODO: should the name of the function reflect the encoding?
+ *
+ * @return the [kotlin.String] decoded from given zero-terminated UTF-8-encoded C string.
+ */
+fun CPointer<CInt8Var>.toKString(): String {
+    val nativeBytes = this.reinterpret<CArray<CInt8Var>>().pointed
 
-        val len = this.length()
-        val bytes = ByteArray(len)
-
-        nativeMemUtils.getByteArray(array[0], bytes, len)
-        return decodeFromUtf8(bytes) // TODO: encoding
+    var length = 0
+    while (nativeBytes[length].value != 0.toByte()) {
+        ++length
     }
 
-    fun asCharPtr() = reinterpret<CInt8Var>().ptr
+    val bytes = ByteArray(length)
+    nativeMemUtils.getByteArray(nativeBytes, bytes, length)
+    return decodeFromUtf8(bytes)
 }
-
-fun CString.Companion.fromString(str: String?, placement: NativePlacement): CString? {
-    if (str == null) {
-        return null
-    }
-
-    val bytes = encodeToUtf8(str) // TODO: encoding
-    val len = bytes.size
-    val nativeBytes = placement.allocArray<CInt8Var>(len + 1)
-
-    nativeMemUtils.putByteArray(bytes, nativeBytes[0], len)
-    nativeBytes[len].value = 0
-
-    return CString.fromArray(nativeBytes)
-}
-
-fun CPointer<CInt8Var>.asCString() = CString.fromArray(this.reinterpret<CArray<CInt8Var>>().pointed)
-fun String.toCString(placement: NativePlacement) = CString.fromString(this, placement)
 
 class MemScope : NativePlacement {
 

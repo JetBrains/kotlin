@@ -276,12 +276,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     // Creates static struct InitNode $nodeName = {$initName, NULL};
 
     fun createInitNode(initFunction: LLVMValueRef, nodeName: String): LLVMValueRef {
-        memScoped {
-            val nextInitNode = LLVMConstNull(pointerType(kNodeInitType))                    // Set InitNode.next = NULL.
-            val argList      = allocArrayOf(initFunction, nextInitNode)[0].ptr              // Allocate array of args.
-            val initNode     = LLVMConstNamedStruct(kNodeInitType, argList, 2)!!            // Create static object of class InitNode.
-            return context.llvm.staticData.placeGlobal(nodeName, constPointer(initNode)).llvmGlobal     // Put the object in global var with name "nodeName".
-        }
+        val nextInitNode = LLVMConstNull(pointerType(kNodeInitType))                    // Set InitNode.next = NULL.
+        val argList      = cValuesOf(initFunction, nextInitNode)                        // Construct array of args.
+        val initNode     = LLVMConstNamedStruct(kNodeInitType, argList, 2)!!            // Create static object of class InitNode.
+        return context.llvm.staticData.placeGlobal(nodeName, constPointer(initNode)).llvmGlobal     // Put the object in global var with name "nodeName".
     }
 
     //-------------------------------------------------------------------------//
@@ -1334,13 +1332,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val fieldInfo = context.llvmDeclarations.forField(value)
 
         val typePtr = pointerType(fieldInfo.classBodyType)
-        memScoped {
-            val args = allocArrayOf(kImmOne)
-            val objectPtr = LLVMBuildGEP(codegen.builder, thisPtr,  args[0].ptr, 1, "")
-            val typedObjPtr = codegen.bitcast(typePtr, objectPtr!!)
-            val fieldPtr = LLVMBuildStructGEP(codegen.builder, typedObjPtr, fieldInfo.index, "")
-            return fieldPtr!!
-        }
+        val objectPtr = LLVMBuildGEP(codegen.builder, thisPtr, cValuesOf(kImmOne), 1, "")
+        val typedObjPtr = codegen.bitcast(typePtr, objectPtr!!)
+        val fieldPtr = LLVMBuildStructGEP(codegen.builder, typedObjPtr, fieldInfo.index, "")
+        return fieldPtr!!
     }
 
     //-------------------------------------------------------------------------//
@@ -1893,21 +1888,23 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
     // Create type { i32, void ()*, i8* }
 
-    val kCtorType = memScoped {
-        val ctorType = LLVMPointerType(kVoidFuncType, 0)
-        val typeList = allocArrayOf(LLVMInt32Type(), ctorType, kInt8Ptr)[0].ptr
-        LLVMStructType(typeList, 3, 0)
-    }!!
+    val kCtorType = LLVMStructType(
+            cValuesOf(
+                    LLVMInt32Type(),
+                    LLVMPointerType(kVoidFuncType, 0),
+                    kInt8Ptr
+            ),
+            3, 0)!!
 
     //-------------------------------------------------------------------------//
     // Create object { i32, void ()*, i8* } { i32 1, void ()* @ctorFunction, i8* null }
 
-    fun createGlobalCtor(ctorFunction: LLVMValueRef) = memScoped {
+    fun createGlobalCtor(ctorFunction: LLVMValueRef): ConstPointer {
         val priority = kImmInt32One
         val data     = kNullInt8Ptr
-        val argList  = allocArrayOf(priority, ctorFunction, data)[0].ptr
+        val argList  = cValuesOf(priority, ctorFunction, data)
         val ctorItem = LLVMConstNamedStruct(kCtorType, argList, 3)!!
-        constPointer(ctorItem)
+        return constPointer(ctorItem)
     }
 
     //-------------------------------------------------------------------------//

@@ -31,24 +31,15 @@ internal fun constPointer(value: LLVMValueRef) = object : ConstPointer {
 }
 
 private class ConstGetElementPtr(val pointer: ConstPointer, val index: Int) : ConstPointer {
-    override val llvm = memScoped {
-        // TODO: squash multiple GEPs
-        val indices = intArrayOf(0, index).map { Int32(it).llvm }
-        val indicesArray = allocArrayOf(indices)
-        LLVMConstInBoundsGEP(pointer.llvm, indicesArray[0].ptr, indices.size)!!
-    }
+    override val llvm = LLVMConstInBoundsGEP(pointer.llvm, cValuesOf(Int32(0).llvm, Int32(index).llvm), 2)!!
+    // TODO: squash multiple GEPs
 }
 
 internal fun ConstPointer.bitcast(toType: LLVMTypeRef) = constPointer(LLVMConstBitCast(this.llvm, toType)!!)
 
 internal class ConstArray(val elemType: LLVMTypeRef?, val elements: List<ConstValue>) : ConstValue {
 
-    override val llvm = memScoped {
-        val values = elements.map { it.llvm }.toTypedArray()
-
-        val valuesNativeArrayPtr = allocArrayOf(*values)[0].ptr
-        LLVMConstArray(elemType, valuesNativeArrayPtr, values.size)!!
-    }
+    override val llvm = LLVMConstArray(elemType, elements.map { it.llvm }.toCValues(), elements.size)!!
 }
 
 internal open class Struct(val type: LLVMTypeRef?, val elements: List<ConstValue>) : ConstValue {
@@ -57,11 +48,7 @@ internal open class Struct(val type: LLVMTypeRef?, val elements: List<ConstValue
 
     constructor(vararg elements: ConstValue) : this(structType(elements.map { it.llvmType }), *elements)
 
-    override val llvm = memScoped {
-        val values = elements.map { it.llvm }.toTypedArray()
-        val valuesNativeArrayPtr = allocArrayOf(*values)[0].ptr
-        LLVMConstNamedStruct(type, valuesNativeArrayPtr, values.size)!!
-    }
+    override val llvm = LLVMConstNamedStruct(type, elements.map { it.llvm }.toCValues(), elements.size)!!
 }
 
 internal class Int1(val value: Byte) : ConstValue {
@@ -143,9 +130,8 @@ internal fun pointerType(pointeeType: LLVMTypeRef) = LLVMPointerType(pointeeType
 
 internal fun structType(vararg types: LLVMTypeRef): LLVMTypeRef = structType(types.toList())
 
-internal fun structType(types: List<LLVMTypeRef>): LLVMTypeRef = memScoped {
-    LLVMStructType(allocArrayOf(types)[0].ptr, types.size, 0)!!
-}
+internal fun structType(types: List<LLVMTypeRef>): LLVMTypeRef =
+    LLVMStructType(types.toCValues(), types.size, 0)!!
 
 internal fun ContextUtils.numParameters(functionType: LLVMTypeRef) : Int {
     // Note that type is usually function pointer, so we have to dereference it.
@@ -192,20 +178,21 @@ internal fun ContextUtils.externalGlobal(name: String, type: LLVMTypeRef): LLVMV
 }
 
 internal fun functionType(returnType: LLVMTypeRef, isVarArg: Boolean = false, vararg paramTypes: LLVMTypeRef) =
-        memScoped {
-            val paramTypesPtr = allocArrayOf(*paramTypes)[0].ptr
-            LLVMFunctionType(returnType, paramTypesPtr, paramTypes.size, if (isVarArg) 1 else 0)!!
-        }
+        LLVMFunctionType(
+                returnType,
+                cValuesOf(*paramTypes), paramTypes.size,
+                if (isVarArg) 1 else 0
+        )!!
 
 
 fun llvm2string(value: LLVMValueRef?): String {
   if (value == null) return "<null>"
-  return LLVMPrintValueToString(value)!!.asCString().toString()
+  return LLVMPrintValueToString(value)!!.toKString()
 }
 
 fun llvmtype2string(type: LLVMTypeRef?): String {
     if (type == null) return "<null type>"
-    return LLVMPrintTypeToString(type)!!.asCString().toString()
+    return LLVMPrintTypeToString(type)!!.toKString()
 }
 
 fun getStructElements(type: LLVMTypeRef): List<LLVMTypeRef> {

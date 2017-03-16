@@ -193,11 +193,9 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     }
 
     private fun importMemset() : LLVMValueRef {
-        memScoped {
-            val parameterTypes = allocArrayOf(int8TypePtr, int8Type, int32Type, int32Type, int1Type)
-            val functionType = LLVMFunctionType(LLVMVoidType(), parameterTypes[0].ptr, 5, 0)
-            return LLVMAddFunction(llvmModule, "llvm.memset.p0i8.i32", functionType)!!
-        }
+        val parameterTypes = cValuesOf(int8TypePtr, int8Type, int32Type, int32Type, int1Type)
+        val functionType = LLVMFunctionType(LLVMVoidType(), parameterTypes, 5, 0)
+        return LLVMAddFunction(llvmModule, "llvm.memset.p0i8.i32", functionType)!!
     }
 
     internal fun externalFunction(name: String, type: LLVMTypeRef): LLVMValueRef {

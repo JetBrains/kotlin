@@ -123,14 +123,12 @@ private fun ContextUtils.getDeclaredFields(classDescriptor: ClassDescriptor): Li
 }
 
 private fun ContextUtils.createClassBodyType(name: String, fields: List<PropertyDescriptor>): LLVMTypeRef {
-    val fieldTypes = fields.map { getLLVMType(if (it.isDelegated) context.builtIns.nullableAnyType else it.type) }.toTypedArray()
+    val fieldTypes = fields.map { getLLVMType(if (it.isDelegated) context.builtIns.nullableAnyType else it.type) }
 
     val classType = LLVMStructCreateNamed(LLVMGetModuleContext(context.llvmModule), name)!!
 
-    memScoped {
-        val fieldTypesNativeArrayPtr = allocArrayOf(*fieldTypes)[0].ptr
-        LLVMStructSetBody(classType, fieldTypesNativeArrayPtr, fieldTypes.size, 0)
-    }
+    LLVMStructSetBody(classType, fieldTypes.toCValues(), fieldTypes.size, 0)
+
     return classType
 }
 

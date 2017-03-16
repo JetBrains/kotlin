@@ -491,7 +491,7 @@ class Game(width: Int, height: Int, val visualizer: GameFieldVisualizer, val use
 
 }
 
-fun get_SDL_Error() = SDL_GetError()!!.asCString().toString()
+fun get_SDL_Error() = SDL_GetError()!!.toKString()
 
 class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, UserInput {
     private val CELL_SIZE = 20

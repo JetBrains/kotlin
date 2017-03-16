@@ -61,7 +61,7 @@ class MetadataReader(file: File) : Closeable {
             val errorRef = allocPointerTo<CInt8Var>()
             val res = LLVMCreateMemoryBufferWithContentsOfFile(file.toString(), bufRef.ptr, errorRef.ptr)
             if (res != 0) {
-                throw Error(errorRef.value?.asCString()?.toString())
+                throw Error(errorRef.value?.toKString())
             }
 
             llvmContext = LLVMContextCreate()!!
@@ -80,7 +80,7 @@ class MetadataReader(file: File) : Closeable {
         memScoped { 
             val len = alloc<CInt32Var>()
             val str1 = LLVMGetMDString(node, len.ptr)!!
-            val str = str1.asCString().toString() 
+            val str = str1.toKString()
             return str
 
         }
@@ -117,10 +117,7 @@ class MetadataReader(file: File) : Closeable {
 internal class MetadataGenerator(override val context: Context): ContextUtils {
 
     private fun metadataNode(args: List<LLVMValueRef?>): LLVMValueRef {
-        memScoped {
-            val references = allocArrayOf(args)
-            return LLVMMDNode(references[0].ptr, args.size)!!
-        }
+        return LLVMMDNode(args.toCValues(), args.size)!!
     }
 
     private fun metadataFun(fn: LLVMValueRef, info: String): LLVMValueRef {

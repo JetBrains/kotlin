@@ -30,6 +30,7 @@ object nativeMemUtils {
     @Intrinsic external fun getNativePtr(mem: NativePointed): NativePtr
     @Intrinsic external fun putNativePtr(mem: NativePointed, value: NativePtr)
 
+    // TODO: optimize
     fun getByteArray(source: NativePointed, dest: ByteArray, length: Int) {
         val sourceArray: CArray<CInt8Var> = source.reinterpret()
         for (index in 0 .. length - 1) {
@@ -37,10 +38,19 @@ object nativeMemUtils {
         }
     }
 
+    // TODO: optimize
     fun putByteArray(source: ByteArray, dest: NativePointed, length: Int) {
         val destArray: CArray<CInt8Var> = dest.reinterpret()
         for (index in 0 .. length - 1) {
             destArray[index].value = source[index]
+        }
+    }
+
+    // TODO: optimize
+    fun zeroMemory(dest: NativePointed, length: Int): Unit {
+        val destArray: CArray<CInt8Var> = dest.reinterpret()
+        for (index in 0 .. length - 1) {
+            destArray[index].value = 0
         }
     }
 

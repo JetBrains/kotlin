@@ -34,9 +34,48 @@ inline fun <reified T : NativePointed> NativePointed.reinterpret(): T = interpre
 interface CPointed : NativePointed
 
 /**
+ * Represents a reference to (possibly empty) sequence of C values.
+ * It can be either a stable pointer [CPointer] or a sequence of immutable values [CValues].
+ *
+ * [CValuesRef] is designed to be used as Kotlin representation of pointer-typed parameters of C functions.
+ * When passing [CPointer] as [CValuesRef] to the Kotlin binding method, the C function receives exactly this pointer.
+ * Passing [CValues] has nearly the same semantics as passing by value: the C function receives
+ * the pointer to the temporary copy of these values, and the caller can't observe the modifications to this copy.
+ * The copy is valid until the C function returns.
+ */
+abstract class CValuesRef<T : CPointed> {
+    /**
+     * If this reference is [CPointer], returns this pointer.
+     * Otherwise copies the referenced values to [placement] and returns the pointer to the copy.
+     */
+    abstract fun getPointer(placement: NativePlacement): CPointer<T>
+}
+
+/**
+ * The (possibly empty) sequence of immutable C values.
+ * It is self-contained and doesn't depend on native memory.
+ */
+abstract class CValues<T : CVariable> : CValuesRef<T>() {
+    /**
+     * Copies the values to [placement] and returns the pointer to the copy.
+     */
+    override abstract fun getPointer(placement: NativePlacement): CPointer<T>
+}
+
+fun <T : CVariable> CValues<T>.placeTo(placement: NativePlacement) = this.getPointer(placement)
+
+/**
+ * The single immutable C value.
+ * It is self-contained and doesn't depend on native memory.
+ *
+ * TODO: consider providing an adapter instead of subtyping [CValues].
+ */
+abstract class CValue<T : CVariable> : CValues<T>()
+
+/**
  * C pointer.
  */
-class CPointer<T : CPointed> internal constructor(val rawValue: NativePtr) {
+class CPointer<T : CPointed> internal constructor(val rawValue: NativePtr) : CValuesRef<T>() {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -51,6 +90,8 @@ class CPointer<T : CPointed> internal constructor(val rawValue: NativePtr) {
     }
 
     override fun toString() = this.cPointerToString()
+
+    override fun getPointer(placement: NativePlacement) = this
 }
 
 /**
@@ -69,7 +110,7 @@ inline val <reified T : CPointed> CPointer<T>.pointed: T
 
 // `null` value of `CPointer?` is mapped to `nativeNullPtr`
 val CPointer<*>?.rawValue: NativePtr
-    get() = this?.rawValue ?: nativeNullPtr
+    get() = if (this != null) this.rawValue else nativeNullPtr
 
 fun <T : CPointed> CPointer<*>.reinterpret(): CPointer<T> = interpretCPointer(this.rawValue)!!
 
@@ -217,7 +258,7 @@ typealias CPointerVar<T> = CPointerVarWithValueMappedTo<CPointer<T>>
 /**
  * The value of this variable.
  */
-inline var <reified P : CPointer<*>> CPointerVarWithValueMappedTo<P>.value: P?
+inline var <P : CPointer<*>> CPointerVarWithValueMappedTo<P>.value: P?
     get() = interpretCPointer<CPointed>(nativeMemUtils.getNativePtr(this)) as P?
     set(value) = nativeMemUtils.putNativePtr(this, value.rawValue)
 

@@ -140,7 +140,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     private var cleanupLandingpad: LLVMBasicBlockRef? = null
 
     fun setName(value: LLVMValueRef, name: String) = LLVMSetValueName(value, name)
-    fun getName(value: LLVMValueRef) = LLVMGetValueName(value)?.asCString().toString()
+    fun getName(value: LLVMValueRef) = LLVMGetValueName(value)?.toKString()
 
     fun plus  (arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildAdd (builder, arg0, arg1, name)!!
     fun mul   (arg0: LLVMValueRef, arg1: LLVMValueRef, name: String = ""): LLVMValueRef = LLVMBuildMul (builder, arg0, arg1, name)!!
@@ -221,10 +221,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
     }
 
     fun gep(base: LLVMValueRef, index: LLVMValueRef): LLVMValueRef {
-        memScoped {
-            val args = allocArrayOf(index)
-            return LLVMBuildGEP(builder, base, args[0].ptr, 1, "")!!
-        }
+        return LLVMBuildGEP(builder, base, cValuesOf(index), 1, "")!!
     }
 
     fun updateReturnRef(value: LLVMValueRef, address: LLVMValueRef) {
@@ -277,30 +274,28 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     private fun callRaw(llvmFunction: LLVMValueRef, args: List<LLVMValueRef>,
              lazyLandingpad: () -> LLVMBasicBlockRef?): LLVMValueRef {
-        memScoped {
-            val rargs = allocArrayOf(args)[0].ptr
 
-            if (LLVMIsAFunction(llvmFunction) != null /* the function declaration */ &&
-                    (LLVMGetFunctionAttr(llvmFunction) and LLVMNoUnwindAttribute) != 0) {
+        val rargs = args.toCValues()
+        if (LLVMIsAFunction(llvmFunction) != null /* the function declaration */ &&
+                (LLVMGetFunctionAttr(llvmFunction) and LLVMNoUnwindAttribute) != 0) {
 
-                return LLVMBuildCall(builder, llvmFunction, rargs, args.size, "")!!
-            } else {
-                val landingpad = lazyLandingpad()
+            return LLVMBuildCall(builder, llvmFunction, rargs, args.size, "")!!
+        } else {
+            val landingpad = lazyLandingpad()
 
-                if (landingpad == null) {
-                    // When calling a function that is not marked as nounwind (can throw an exception),
-                    // it is required to specify a landingpad to handle exceptions properly.
-                    // Runtime C++ function can be marked as non-throwing using `RUNTIME_NOTHROW`.
-                    val functionName = getName(llvmFunction)
-                    val message = "no landingpad specified when calling function $functionName without nounwind attr"
-                    throw IllegalArgumentException(message)
-                }
-
-                val success = basicBlock()
-                val result = LLVMBuildInvoke(builder, llvmFunction, rargs, args.size, success, landingpad, "")!!
-                positionAtEnd(success)
-                return result
+            if (landingpad == null) {
+                // When calling a function that is not marked as nounwind (can throw an exception),
+                // it is required to specify a landingpad to handle exceptions properly.
+                // Runtime C++ function can be marked as non-throwing using `RUNTIME_NOTHROW`.
+                val functionName = getName(llvmFunction)
+                val message = "no landingpad specified when calling function $functionName without nounwind attr"
+                throw IllegalArgumentException(message)
             }
+
+            val success = basicBlock()
+            val result = LLVMBuildInvoke(builder, llvmFunction, rargs, args.size, success, landingpad, "")!!
+            positionAtEnd(success)
+            return result
         }
     }
 
@@ -312,10 +307,10 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     fun addPhiIncoming(phi: LLVMValueRef, vararg incoming: Pair<LLVMBasicBlockRef, LLVMValueRef>) {
         memScoped {
-            val incomingValues = allocArrayOf(incoming.map { it.second })
-            val incomingBlocks = allocArrayOf(incoming.map { it.first })
+            val incomingValues = incoming.map { it.second }.toCValues()
+            val incomingBlocks = incoming.map { it.first }.toCValues()
 
-            LLVMAddIncoming(phi, incomingValues[0].ptr, incomingBlocks[0].ptr, incoming.size)
+            LLVMAddIncoming(phi, incomingValues, incomingBlocks, incoming.size)
         }
     }
 
