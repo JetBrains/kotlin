@@ -131,27 +131,29 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
             origin: IrStatementOrigin,
             ktLeft: KtExpression,
             resolvedCall: ResolvedCall<*>
-    ): AssignmentReceiver {
-        if (isValInitializationInConstructor(descriptor, resolvedCall)) {
-            val thisClass = getThisClass()
-            val irThis = IrGetValueImpl(ktLeft.startOffset, ktLeft.endOffset, thisClass.thisAsReceiverParameter)
-            return BackingFieldLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor,
-                                      RematerializableValue(irThis), null)
-        }
+    ): AssignmentReceiver =
+            if (isValInitializationInConstructor(descriptor, resolvedCall)) {
+                val thisClass = getThisClass()
+                val irThis = IrGetValueImpl(ktLeft.startOffset, ktLeft.endOffset, thisClass.thisAsReceiverParameter)
 
-        val propertyReceiver = statementGenerator.generateCallReceiver(
-                ktLeft, descriptor, resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver,
-                isSafe = resolvedCall.call.isSafeCall(),
-                isAssignmentReceiver = true)
+                BackingFieldLValue(ktLeft.startOffset, ktLeft.endOffset, descriptor,
+                                   RematerializableValue(irThis), null)
+            }
+            else {
+                val propertyReceiver = statementGenerator.generateCallReceiver(
+                        ktLeft, descriptor, resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver,
+                        isSafe = resolvedCall.call.isSafeCall(),
+                        isAssignmentReceiver = true)
 
-        val superQualifier = getSuperQualifier(resolvedCall)
+                val superQualifier = getSuperQualifier(resolvedCall)
 
-        return SimplePropertyLValue(context, scope, ktLeft.startOffset, ktLeft.endOffset, origin, descriptor,
-                                    getTypeArguments(resolvedCall), propertyReceiver, superQualifier)
-    }
+                SimplePropertyLValue(context, scope, ktLeft.startOffset, ktLeft.endOffset, origin, descriptor,
+                                     getTypeArguments(resolvedCall), propertyReceiver, superQualifier)
+            }
 
     private fun isValInitializationInConstructor(descriptor: PropertyDescriptor, resolvedCall: ResolvedCall<*>): Boolean =
             !descriptor.isVar &&
+            descriptor.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
             statementGenerator.scopeOwner.let { it is ConstructorDescriptor || it is ClassDescriptor } &&
             resolvedCall.dispatchReceiver is ThisClassReceiver
 

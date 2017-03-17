@@ -1,0 +1,67 @@
+FILE /kt16904.kt
+  CLASS CLASS A
+    CONSTRUCTOR public constructor A()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='A'
+    PROPERTY public final val x: B
+      FIELD PROPERTY_BACKING_FIELD public final val x: B
+        EXPRESSION_BODY
+          CALL 'constructor B()' type=B origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): B
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): B'
+            GET_FIELD 'x: B' type=B origin=null
+              receiver: GET_VAR '<receiver: A>' type=A origin=null
+    PROPERTY public final var y: kotlin.Int
+      FIELD PROPERTY_BACKING_FIELD public final var y: kotlin.Int
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value='0'
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.Int
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-y>(): Int'
+            GET_FIELD 'y: Int' type=kotlin.Int origin=null
+              receiver: GET_VAR '<receiver: A>' type=A origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-y>(<set-?>: kotlin.Int): kotlin.Unit
+        BLOCK_BODY
+          SET_FIELD 'y: Int' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<receiver: A>' type=A origin=null
+            value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
+  CLASS CLASS B
+    CONSTRUCTOR public constructor B()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='B'
+    FUN public final operator fun plusAssign(x: kotlin.Int): kotlin.Unit
+      BLOCK_BODY
+  CLASS CLASS Test1
+    CONSTRUCTOR public constructor Test1()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor A()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
+        BLOCK type=kotlin.Unit origin=PLUSEQ
+          VAR IR_TEMPORARY_VARIABLE val tmp0_this: Test1
+            GET_VAR '<receiver: Test1>' type=Test1 origin=null
+          CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
+            $this: CALL '<get-x>(): B' type=B origin=PLUSEQ
+              $this: GET_VAR 'tmp0_this: Test1' type=Test1 origin=null
+            x: CONST Int type=kotlin.Int value='42'
+        BLOCK type=kotlin.Unit origin=PLUSEQ
+          VAR IR_TEMPORARY_VARIABLE val tmp1_this: Test1
+            GET_VAR '<receiver: Test1>' type=Test1 origin=null
+          CALL '<set-y>(Int): Unit' type=kotlin.Unit origin=PLUSEQ
+            $this: GET_VAR 'tmp1_this: Test1' type=Test1 origin=null
+            <set-?>: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUSEQ
+              $this: CALL '<get-y>(): Int' type=kotlin.Int origin=PLUSEQ
+                $this: GET_VAR 'tmp1_this: Test1' type=Test1 origin=null
+              other: CONST Int type=kotlin.Int value='42'
+  CLASS CLASS Test2
+    CONSTRUCTOR public constructor Test2()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor J()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test2'
+    ANONYMOUS_INITIALIZER Test2
+      BLOCK_BODY
+        SET_FIELD 'field: Int' type=kotlin.Unit origin=EQ
+          receiver: GET_VAR '<receiver: Test2>' type=Test2 origin=null
+          value: CONST Int type=kotlin.Int value='42'
