@@ -349,6 +349,10 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
     @Override
     protected void checkTestOutput() throws Exception {
+        if (KotlinTestUtils.isAllFilesPresentTest(getTestName(false))) {
+            return;
+        }
+
         try {
             super.checkTestOutput();
         }
