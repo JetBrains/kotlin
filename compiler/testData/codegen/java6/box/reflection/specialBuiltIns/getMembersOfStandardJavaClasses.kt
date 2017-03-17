@@ -1,12 +1,11 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE, JVM
+// IGNORE_BACKEND: JS, NATIVE
 
 // WITH_REFLECT
 // FULL_JDK
 // See KT-11258 Incorrect resolution sequence for Java field
 
-//SHOULD BE enabled after KT-16616 fix
-
+//SHOULD BE deleted after KT-16616 fix
 import java.util.*
 
 fun box(): String {
