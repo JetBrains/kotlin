@@ -1,0 +1,53 @@
+FILE /enumEntryAsReceiver.kt
+  CLASS ENUM_CLASS X
+    CONSTRUCTOR private constructor X()
+      BLOCK_BODY
+        ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
+        INSTANCE_INITIALIZER_CALL classDescriptor='X'
+    ENUM_ENTRY enum entry B
+      init: ENUM_CONSTRUCTOR_CALL 'constructor B()'
+      class: CLASS ENUM_ENTRY B
+        CONSTRUCTOR private constructor B()
+          BLOCK_BODY
+            ENUM_CONSTRUCTOR_CALL 'constructor X()'
+            INSTANCE_INITIALIZER_CALL classDescriptor='B'
+        PROPERTY public final val value2: kotlin.String = "OK"
+          FIELD PROPERTY_BACKING_FIELD public final val value2: kotlin.String = "OK"
+            EXPRESSION_BODY
+              CONST String type=kotlin.String value='OK'
+          FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value2>(): kotlin.String
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='<get-value2>(): String'
+                GET_FIELD 'value2: String' type=kotlin.String origin=null
+                  receiver: GET_VAR '<receiver: B>' type=X.B origin=null
+        PROPERTY public open override val value: () -> kotlin.String
+          FIELD PROPERTY_BACKING_FIELD public open override val value: () -> kotlin.String
+            EXPRESSION_BODY
+              BLOCK type=() -> kotlin.String origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA local final fun <anonymous>(): kotlin.String
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='<anonymous>(): String'
+                      CALL '<get-value2>(): String' type=kotlin.String origin=GET_PROPERTY
+                        $this: GET_ENUM 'B' type=X.B
+                CALLABLE_REFERENCE '<anonymous>(): String' type=() -> kotlin.String origin=LAMBDA
+          FUN DEFAULT_PROPERTY_ACCESSOR public open override fun <get-value>(): () -> kotlin.String
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='<get-value>(): () -> String'
+                GET_FIELD 'value: () -> String' type=() -> kotlin.String origin=null
+                  receiver: GET_VAR '<receiver: B>' type=X.B origin=null
+    PROPERTY public abstract val value: () -> kotlin.String
+      FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-value>(): () -> kotlin.String
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-value>(): () -> String'
+            GET_FIELD 'value: () -> String' type=() -> kotlin.String origin=null
+              receiver: GET_VAR '<receiver: X>' type=X origin=null
+    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<X>
+      SYNTHETIC_BODY kind=ENUM_VALUES
+    FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): X
+      SYNTHETIC_BODY kind=ENUM_VALUEOF
+  FUN public fun box(): kotlin.String
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='box(): String'
+        CALL 'invoke(): String' type=kotlin.String origin=INVOKE
+          $this: CALL '<get-value>(): () -> String' type=() -> kotlin.String origin=GET_PROPERTY
+            $this: GET_ENUM 'B' type=X

@@ -66,17 +66,7 @@ class CallGenerator(statementGenerator: StatementGenerator): StatementGeneratorE
                     generateValueReference(startOffset, endOffset, descriptor.classDescriptor!!, null, origin)
                 is ClassDescriptor -> {
                     val classValueType = descriptor.classValueType!!
-                    when {
-                        DescriptorUtils.isObject(descriptor) ->
-                            IrGetObjectValueImpl(startOffset, endOffset, classValueType, descriptor)
-                        DescriptorUtils.isEnumEntry(descriptor) ->
-                            IrGetEnumValueImpl(startOffset, endOffset, classValueType, descriptor)
-                        else -> {
-                            val companionObjectDescriptor = descriptor.companionObjectDescriptor
-                                                            ?: throw java.lang.AssertionError("Class value without companion object: $descriptor")
-                            IrGetObjectValueImpl(startOffset, endOffset, classValueType, companionObjectDescriptor)
-                        }
-                    }
+                    generateSingletonReference(descriptor, startOffset, endOffset, classValueType)
                 }
                 is PropertyDescriptor -> {
                     generateCall(startOffset, endOffset, statementGenerator.pregenerateCall(resolvedCall!!))

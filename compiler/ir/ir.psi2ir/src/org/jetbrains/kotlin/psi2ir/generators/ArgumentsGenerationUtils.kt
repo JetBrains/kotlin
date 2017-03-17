@@ -22,17 +22,16 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
+import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionWithCopy
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrSpreadElementImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getSuperCallExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
@@ -54,14 +53,11 @@ fun StatementGenerator.generateReceiver(startOffset: Int, endOffset: Int, receiv
 
     val receiverExpression = when (receiver) {
         is ImplicitClassReceiver -> {
-            if (receiver.classDescriptor.kind.isSingleton &&
-                this.scopeOwner != receiver.classDescriptor && //For anonymous initializers
-                this.scopeOwner.containingDeclaration != receiver.classDescriptor) {
-                IrGetObjectValueImpl(startOffset, endOffset, receiver.type, receiver.classDescriptor)
-            }
-            else {
-                IrGetValueImpl(startOffset, endOffset, receiver.classDescriptor.thisAsReceiverParameter)
-            }
+            val receiverClassDescriptor = receiver.classDescriptor
+            if (shouldGenerateReceiverAsSingletonReference(receiverClassDescriptor))
+                generateSingletonReference(receiverClassDescriptor, startOffset, endOffset, receiver.type)
+            else
+                IrGetValueImpl(startOffset, endOffset, receiverClassDescriptor.thisAsReceiverParameter)
         }
         is ThisClassReceiver ->
             generateThisOrSuperReceiver(receiver, receiver.classDescriptor)
@@ -82,6 +78,25 @@ fun StatementGenerator.generateReceiver(startOffset: Int, endOffset: Int, receiv
         RematerializableValue(receiverExpression)
     else
         OnceExpressionValue(receiverExpression)
+}
+
+fun generateSingletonReference(descriptor: ClassDescriptor, startOffset: Int, endOffset: Int, type: KotlinType): IrDeclarationReference =
+        when {
+            DescriptorUtils.isObject(descriptor) ->
+                IrGetObjectValueImpl(startOffset, endOffset, type, descriptor)
+            DescriptorUtils.isEnumEntry(descriptor) ->
+                IrGetEnumValueImpl(startOffset, endOffset, type, descriptor)
+            else -> {
+                val companionObjectDescriptor = descriptor.companionObjectDescriptor
+                                                ?: throw java.lang.AssertionError("Class value without companion object: $descriptor")
+                IrGetObjectValueImpl(startOffset, endOffset, type, companionObjectDescriptor)
+            }
+        }
+
+private fun StatementGenerator.shouldGenerateReceiverAsSingletonReference(receiverClassDescriptor: ClassDescriptor): Boolean {
+    return receiverClassDescriptor.kind.isSingleton &&
+           this.scopeOwner != receiverClassDescriptor && //For anonymous initializers
+           this.scopeOwner.containingDeclaration != receiverClassDescriptor
 }
 
 private fun generateThisOrSuperReceiver(receiver: ReceiverValue, classDescriptor: ClassDescriptor): IrExpression {

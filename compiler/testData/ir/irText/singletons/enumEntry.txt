@@ -21,7 +21,7 @@ FILE /enumEntry.kt
           FUN public final fun test2(): kotlin.Unit
             BLOCK_BODY
               CALL 'test(): Unit' type=kotlin.Unit origin=null
-                $this: GET_OBJECT 'ENTRY' type=Z.ENTRY
+                $this: GET_ENUM 'ENTRY' type=Z.ENTRY
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<Z>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): Z

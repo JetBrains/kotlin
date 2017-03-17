@@ -524,6 +524,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("enumEntryAsReceiver.kt")
+        public void testEnumEntryAsReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/enumEntryAsReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("equality.kt")
         public void testEquality() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/expressions/equality.kt");
