@@ -74,6 +74,18 @@ abstract class AbstractKotlinAndroidGradleTests(
     }
 
     @Test
+    fun testAssembleAndroidTestFirst() {
+        val project = Project("AndroidProject", gradleVersion)
+
+        // Execute 'assembleAndroidTest' first, without 'build' side effects
+        project.build("assembleAndroidTest") {
+            assertSuccessful()
+            assertContains(":copyFlavor1DebugKotlinClasses")
+            assertContains(":copyFlavor2DebugKotlinClasses")
+        }
+    }
+
+    @Test
     fun testIncrementalCompile() {
         val project = Project("AndroidIncrementalSingleModuleProject", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = true)

@@ -458,14 +458,16 @@ internal open class KotlinAndroidPlugin(
                         variantDataName, rootKotlinOptions, subpluginEnvironment, tasksProvider)
             }
 
-            configureSources(kotlinTask, variantData)
-            if (isAndroidTestVariant) {
-                configureSources(kotlinTask, testedVariantData!!)
+            for (task in listOfNotNull(kotlinTask, kotlinAfterJavaTask)) {
+                configureSources(task, variantData)
             }
 
-            if (kotlinAfterJavaTask != null) {
-                configureSources(kotlinAfterJavaTask, variantData)
+            if (isAndroidTestVariant) {
+                // Android Gradle plugin bypasses the Gradle finalizedBy for its tasks in some cases, and
+                // the Kotlin classes may not be copied for the tested variant. Make sure they are.
+                kotlinTask.dependsOn(syncOutputTaskName(testedVariantData!!.name))
             }
+
             appliedPlugins
                     .flatMap { it.getSubpluginKotlinTasks(project, kotlinTask) }
                     .forEach { configureSources(it, variantData) }
@@ -485,7 +487,8 @@ internal open class KotlinAndroidPlugin(
         }
     }
 
-    private fun configureSources(compileTask: AbstractCompile, variantData: BaseVariantData<out BaseVariantOutputData>) {
+    private fun configureSources(compileTask: AbstractCompile,
+                                 variantData: BaseVariantData<out BaseVariantOutputData>) {
         val logger = compileTask.project.logger
 
         for (provider in variantData.sourceProviders) {
@@ -542,6 +545,8 @@ private fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractCompi
     javaTask.appendClasspathDynamically(kotlinTask.destinationDir!!)
 }
 
+private fun syncOutputTaskName(variantName: String) = "copy${variantName.capitalize()}KotlinClasses"
+
 private fun createSyncOutputTask(
         project: Project,
         kotlinTask: KotlinCompile,
@@ -553,7 +558,7 @@ private fun createSyncOutputTask(
     val kotlinCompile = kotlinAfterJavaTask ?: kotlinTask
     val kotlinDir = kotlinCompile.destinationDir
     val javaDir = javaTask.destinationDir
-    val taskName = "copy${variantName.capitalize()}KotlinClasses"
+    val taskName = syncOutputTaskName(variantName)
 
     val syncTask = project.tasks.create(taskName, SyncOutputTask::class.java)
     syncTask.kotlinOutputDir = kotlinDir

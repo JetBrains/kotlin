@@ -23,5 +23,8 @@ class InternalDummyApplicationTest : ApplicationTestCase<Application>(Applicatio
     init {
         val dummy = InternalDummy("World")
         assert("Hello World!" == dummy.greeting) { "Expected: 'Hello World!'. Actual value: ${dummy.greeting}" }
+
+        // Check that the Java sources from the tested variant are available
+        val bar = foo.FooJavaClass()
     }
 }
