@@ -1495,7 +1495,7 @@ task inline20(type: RunKonanTest) {
 }
 
 task inline21(type: RunKonanTest) {
-    goldValue = "OK\n"
+    goldValue = "bar\nfoo1\nfoo2\n33\n"
     source = "codegen/inline/inline21.kt"
 }
 
