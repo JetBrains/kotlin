@@ -1,0 +1,29 @@
+FILE /kt16905.kt
+  CLASS CLASS Outer
+    CONSTRUCTOR public constructor Outer()
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
+    CLASS CLASS Inner
+      CONSTRUCTOR public constructor Inner()
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+          INSTANCE_INITIALIZER_CALL classDescriptor='Inner'
+    CLASS CLASS InnerDerived0
+      CONSTRUCTOR public constructor InnerDerived0()
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Inner()'
+            $this: GET_VAR '<receiver: Outer>' type=Outer origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='InnerDerived0'
+    CLASS CLASS InnerDerived1
+      CONSTRUCTOR public constructor InnerDerived1()
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'constructor Inner()'
+            $this: GET_VAR '<receiver: Outer>' type=Outer origin=null
+          INSTANCE_INITIALIZER_CALL classDescriptor='InnerDerived1'
+  TYPEALIAS typealias OI = Outer.Inner type=Outer.Inner
+  FUN public fun test(): Outer.Inner
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='test(): Outer.Inner'
+        CALL 'constructor Inner()' type=Outer.Inner origin=null
+          $this: CALL 'constructor Outer()' type=Outer origin=null

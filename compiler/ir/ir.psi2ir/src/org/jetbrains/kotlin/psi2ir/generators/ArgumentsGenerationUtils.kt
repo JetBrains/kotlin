@@ -109,17 +109,29 @@ fun StatementGenerator.generateCallReceiver(
         isSafe: Boolean,
         isAssignmentReceiver: Boolean = false
 ) : CallReceiver {
-    val dispatchReceiverValue: IntermediateValue? =
-            if (calleeDescriptor is ImportedFromObjectCallableDescriptor<*>) {
-                assert(dispatchReceiver == null) {
-                    "Call for member imported from object $calleeDescriptor has non-null dispatch receiver $dispatchReceiver"
-                }
-                generateReceiverForCalleeImportedFromObject(ktDefaultElement.startOffset, ktDefaultElement.endOffset, calleeDescriptor)
+    val dispatchReceiverValue: IntermediateValue?
+    val extensionReceiverValue: IntermediateValue?
+    when (calleeDescriptor) {
+        is ImportedFromObjectCallableDescriptor<*> -> {
+            assert(dispatchReceiver == null) {
+                "Call for member imported from object $calleeDescriptor has non-null dispatch receiver $dispatchReceiver"
             }
-            else
-                generateReceiverOrNull(ktDefaultElement, dispatchReceiver)
-
-    val extensionReceiverValue = generateReceiverOrNull(ktDefaultElement, extensionReceiver)
+            dispatchReceiverValue = generateReceiverForCalleeImportedFromObject(ktDefaultElement.startOffset, ktDefaultElement.endOffset, calleeDescriptor)
+            extensionReceiverValue = generateReceiverOrNull(ktDefaultElement, extensionReceiver)
+        }
+        is TypeAliasConstructorDescriptor -> {
+            assert(!(dispatchReceiver != null && extensionReceiver != null)) {
+                "Type alias constructor call for $calleeDescriptor can't have both dispatch receiver and extension receiver: " +
+                "$dispatchReceiver, $extensionReceiver"
+            }
+            dispatchReceiverValue = generateReceiverOrNull(ktDefaultElement, extensionReceiver ?: dispatchReceiver)
+            extensionReceiverValue = null
+        }
+        else -> {
+            dispatchReceiverValue = generateReceiverOrNull(ktDefaultElement, dispatchReceiver)
+            extensionReceiverValue = generateReceiverOrNull(ktDefaultElement, extensionReceiver)
+        }
+    }
 
     return when {
         !isSafe ->
