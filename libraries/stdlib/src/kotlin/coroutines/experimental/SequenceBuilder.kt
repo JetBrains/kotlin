@@ -94,10 +94,11 @@ public abstract class SequenceBuilder<in T> internal constructor() {
 
 private typealias State = Int
 private const val State_NotReady: State = 0
-private const val State_ManyReady: State = 1
-private const val State_Ready: State = 2
-private const val State_Done: State = 3
-private const val State_Failed: State = 4
+private const val State_ManyNotReady: State = 1
+private const val State_ManyReady: State = 2
+private const val State_Ready: State = 3
+private const val State_Done: State = 4
+private const val State_Failed: State = 5
 
 private class SequenceBuilderIterator<T> : SequenceBuilder<T>(), Iterator<T>, Continuation<Unit> {
     private var state = State_NotReady
@@ -109,10 +110,15 @@ private class SequenceBuilderIterator<T> : SequenceBuilder<T>(), Iterator<T>, Co
         while (true) {
             when (state) {
                 State_NotReady -> {}
-                State_ManyReady ->
-                    if (nextIterator!!.hasNext()) return true else nextIterator = null
+                State_ManyNotReady ->
+                    if (nextIterator!!.hasNext()) {
+                        state = State_ManyReady
+                        return true
+                    } else {
+                        nextIterator = null
+                    }
                 State_Done -> return false
-                State_Ready -> return true
+                State_Ready, State_ManyReady -> return true
                 else -> throw exceptionalState()
             }
 
@@ -125,8 +131,11 @@ private class SequenceBuilderIterator<T> : SequenceBuilder<T>(), Iterator<T>, Co
 
     override fun next(): T {
         when (state) {
-            State_NotReady -> return nextNotReady()
-            State_ManyReady -> return nextIterator!!.next()
+            State_NotReady, State_ManyNotReady -> return nextNotReady()
+            State_ManyReady -> {
+                state = State_ManyNotReady
+                return nextIterator!!.next()
+            }
             State_Ready -> {
                 state = State_NotReady
                 val result = nextValue as T
