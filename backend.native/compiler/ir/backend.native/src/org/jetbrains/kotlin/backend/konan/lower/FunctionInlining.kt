@@ -56,13 +56,10 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         val fqName = currentFile!!.packageFragmentDescriptor.fqName.asString()              // TODO to be removed after stdlib compilation
         if(fqName.contains("kotlin")) return super.visitCall(expression)                    // TODO to be removed after stdlib compilation
 
-        if (currentFunction == null) return super.visitCall(expression)
-        if (currentFunction!!.descriptor.isInline) return super.visitCall(expression)       // TODO workaround
-
         val functionDescriptor = expression.descriptor as FunctionDescriptor
         if (functionDescriptor.isInline) {
             val inlineFunctionBody = inlineFunction(expression)
-            inlineFunctionBody.transformChildrenVoid(this)                                         // TODO
+            inlineFunctionBody.transformChildrenVoid(this)
             return inlineFunctionBody                                                       // Return newly created IrInlineBody instead of IrCall.
         }
 
