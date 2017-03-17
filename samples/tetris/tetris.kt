@@ -491,10 +491,6 @@ class Game(width: Int, height: Int, val visualizer: GameFieldVisualizer, val use
 
 }
 
-fun main(args: Array<String>) {
-    SDL_main(args)
-}
-
 fun get_SDL_Error() = SDL_GetError()!!.asCString().toString()
 
 class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, UserInput {
@@ -806,8 +802,7 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
     }
 }
 
-@ExportForCppRuntime("SDL_main")
-fun SDL_main(args: Array<String>) {
+fun main(args: Array<String>) {
     var startLevel = 0
     var width = 10
     var height = 20

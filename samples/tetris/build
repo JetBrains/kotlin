@@ -4,6 +4,8 @@ DIR=.
 DIST=../../dist
 OSX_CFLAGS=-I/Library/Frameworks/SDL2.framework/Headers
 OSX_LINKER_ARGS="-F /Library/Frameworks -framework SDL2"
+#OSX_CFLAGS=-I/opt/local/include/SDL2
+#OSX_LINKER_ARGS="-L/opt/local/lib -lSDL2"
 LINUX_CFLAGS=-I/usr/include/SDL2
 LINUX_LINKER_ARGS="-L/usr/lib/x86_64-linux-gnu -lSDL2"
 

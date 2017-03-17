@@ -238,6 +238,7 @@ private fun processLib(konanHome: String,
         defaultOpts + additionalCompilerOpts 
     val compiler = "clang"
     val language = Language.C
+    val entryPoint = config.getSpaceSeparated("entryPoint").singleOrNull()
     val linkerOpts = 
         config.getSpaceSeparated("linkerOpts").toTypedArray() +
         defaultOpts + additionalLinkerOpts 
@@ -282,7 +283,7 @@ private fun processLib(konanHome: String,
 
     outCFile.bufferedWriter().use { out ->
         gen.withOutput({ out.appendln(it) }) {
-            gen.generateCFile(headerFiles)
+            gen.generateCFile(headerFiles, entryPoint)
         }
     }
 

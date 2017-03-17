@@ -1148,7 +1148,7 @@ class StubGenerator(
     /**
      * Produces to [out] the contents of C source file to be compiled into JNI lib used for Kotlin bindings impl.
      */
-    fun generateCFile(headerFiles: List<String>) {
+    fun generateCFile(headerFiles: List<String>, entryPoint: String?) {
         out("#include <stdint.h>")
         if (platform == KotlinPlatform.JVM) {
             out("#include <jni.h>")
@@ -1166,6 +1166,14 @@ class StubGenerator(
             } catch (e: Throwable) {
                 System.err.println("Warning: cannot generate C JNI function definition ${func.name}")
             }
+        }
+
+        if (entryPoint != null) {
+            out("extern int Konan_main(int argc, char** argv);")
+            out("")
+            out("int $entryPoint(int argc, char** argv) {")
+            out("  return  Konan_main(argc, argv);")
+            out("}")
         }
     }
 

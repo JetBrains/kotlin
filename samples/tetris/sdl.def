@@ -2,6 +2,7 @@ headers = SDL.h stdio.h string.h unistd.h stdlib.h time.h
 excludedFunctions = _IO_flockfile _IO_funlockfile _IO_ftrylockfile \
     _IO_cleanup_region_start _IO_cleanup_region_end \
     mkstemp_dprotected_np 
+entryPoint = SDL_main
 
 compilerOpts.osx = -D_POSIX_SOURCE -mxsave -mavx -mf16c
 compilerOpts.linux = -D_REENTRANT

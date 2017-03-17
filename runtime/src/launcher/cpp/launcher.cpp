@@ -18,9 +18,9 @@ OBJ_GETTER(setupArgs, int argc, char** argv) {
 }
 
 //--- main --------------------------------------------------------------------//
-extern "C" KInt Konan_start(const ObjHeader* );
+extern "C" KInt Konan_start(const ObjHeader*);
 
-int main(int argc, char** argv) {
+extern "C" int Konan_main(int argc, char** argv) {
   RuntimeState* state = InitRuntime();
 
   if (state == nullptr) {
