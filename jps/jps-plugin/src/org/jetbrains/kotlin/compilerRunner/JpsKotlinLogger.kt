@@ -34,4 +34,7 @@ internal class JpsKotlinLogger(private val log: Logger) : KotlinLogger {
     override fun debug(msg: String) {
         log.debug(msg)
     }
+
+    override val isDebugEnabled: Boolean
+        get() = log.isDebugEnabled
 }
