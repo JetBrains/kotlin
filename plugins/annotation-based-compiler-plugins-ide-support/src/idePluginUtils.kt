@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.annotation.plugin.ide
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import java.io.File
 
 internal class AnnotationBasedCompilerPluginSetup(val annotationFqNames: List<String>, val classpath: List<String>)
 
@@ -40,7 +41,7 @@ internal fun modifyCompilerArgumentsForPlugin(
     val newPluginOptions = oldPluginOptions + annotationOptions
 
     val oldPluginClasspaths = (commonArguments.pluginClasspaths ?: emptyArray()).filterTo(mutableListOf()) {
-        !it.substringAfterLast('/', missingDelimiterValue = "").matches("(kotlin-)?(maven-)?$pluginName-.*\\.jar".toRegex())
+        !it.substringAfterLast(File.separatorChar, missingDelimiterValue = "").matches("(kotlin-)?(maven-)?$pluginName-.*\\.jar".toRegex())
     }
 
     val newPluginClasspaths = oldPluginClasspaths + (setup?.classpath ?: emptyList())
