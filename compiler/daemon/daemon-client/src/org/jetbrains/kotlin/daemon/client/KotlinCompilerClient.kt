@@ -94,6 +94,7 @@ object KotlinCompilerClient {
                         leaseSession: Boolean,
                         sessionAliveFlagFile: File? = null
     ): ServiceWithSession? = connectLoop(reportingTargets) {
+        setupServerHostName()
         val (service, newJVMOptions) = tryFindSuitableDaemonOrNewOpts(File(daemonOptions.runFilesPath), compilerId, daemonJVMOptions, { cat, msg -> reportingTargets.report(cat, msg) })
         if (service != null) {
             // the newJVMOptions could be checked here for additional parameters, if needed
@@ -370,9 +371,7 @@ object KotlinCompilerClient {
         val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
         val platformSpecificOptions = listOf(
                 // hide daemon window
-                "-Djava.awt.headless=true",
-                // prevent host name resolution
-                "-Djava.rmi.server.hostname=${LoopbackNetworkInterface.loopbackInetAddressName}")
+                "-Djava.awt.headless=true")
         val args = listOf(
                    javaExecutable.absolutePath, "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)) +
                    platformSpecificOptions +

@@ -96,3 +96,10 @@ fun findPortAndCreateRegistry(attempts: Int, portRangeStart: Int, portRangeEnd: 
     throw IllegalStateException("Cannot find free port in $attempts attempts", lastException)
 }
 
+/**
+ * Needs to be set up on both client and server to prevent localhost resolution,
+ * which may be slow and can cause a timeout when there is a network problem/misconfiguration.
+ */
+fun setupServerHostName() {
+    System.setProperty("java.rmi.server.hostname", LoopbackNetworkInterface.loopbackInetAddressName)
+}
