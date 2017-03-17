@@ -1,2 +1,4 @@
-impl typealias <lineMarker>Header</lineMarker> = String
+// !CHECK_HIGHLIGHTING
+
+impl typealias Header = String
 
