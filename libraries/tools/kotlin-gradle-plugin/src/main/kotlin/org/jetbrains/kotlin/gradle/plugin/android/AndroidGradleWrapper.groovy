@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.android
 
-import com.android.build.api.transform.*
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.api.AndroidSourceSet
@@ -24,8 +23,6 @@ import com.android.build.gradle.api.ApkVariant
 import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.api.TestVariant
 import com.android.build.gradle.internal.VariantManager
-import com.android.build.gradle.internal.pipeline.OriginalStream
-import com.android.build.gradle.internal.pipeline.TransformTask
 import com.android.build.gradle.internal.variant.BaseVariantData
 import com.android.builder.model.SourceProvider
 import org.gradle.api.file.ConfigurableFileTree
@@ -80,12 +77,7 @@ class AndroidGradleWrapper {
 
   @Nullable
   static AbstractCompile getJavaTask(@NotNull Object variantData) {
-      if (isJackEnabled(variantData)) {
-          return getJavacTask(variantData)
-      }
-      else {
-          return getJavaCompile(variantData)
-      }
+    return getJavaCompile(variantData)
   }
 
   @Nullable
@@ -94,53 +86,6 @@ class AndroidGradleWrapper {
       return baseVariantData.javacTask
     }
     return null
-  }
-
-  @Nullable
-  private static TransformTask getJackTask(@NotNull Object variantData) {
-    def compilerTask = variantData.javaCompilerTask
-    if (compilerTask instanceof TransformTask) {
-      return compilerTask
-    }
-    return null
-  }
-
-  @Nullable
-  private static getJackTransform(@NotNull Object variantData) {
-    return getJackTask(variantData)?.transform
-  }
-
-  static addSourceToJack(@NotNull Object variantData, @NotNull File sourceFolder) {
-    getJackTransform(variantData)?.addSource(sourceFolder)
-  }
-
-  static disableJackAnnotationProcessing(@NotNull Object variantData) {
-    def jackOptions = getJackTransform(variantData)?.options
-    jackOptions?.setAnnotationProcessorOutputDirectory(null)
-    jackOptions?.setAnnotationProcessorNames([])
-    jackOptions?.setAnnotationProcessorClassPath([])
-    jackOptions?.setAnnotationProcessorOptions([:])
-  }
-
-  static configureJackTask(
-          @NotNull Object variantData,
-          @NotNull File jillOutputFile,
-          @NotNull String kotlinJillTaskName) {
-    def jackTask = getJackTask(variantData)
-    // There is no Jack task for some variants
-    if (jackTask == null) {
-      return
-    }
-
-    def jillOutputStream = OriginalStream.builder()
-            .addContentType(QualifiedContent.DefaultContentType.CLASSES)
-            .addScope(QualifiedContent.Scope.PROJECT)
-            .setJar(jillOutputFile)
-            .setDependency(kotlinJillTaskName)
-            .build()
-
-    jackTask.consumedInputStreams.add(jillOutputStream)
-    jackTask.dependsOn(kotlinJillTaskName)
   }
 
   @Nullable
