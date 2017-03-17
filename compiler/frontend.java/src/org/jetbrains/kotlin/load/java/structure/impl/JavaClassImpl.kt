@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.KtPsiUtil
 
 class JavaClassImpl(psiClass: PsiClass) : JavaClassifierImpl<PsiClass>(psiClass), JavaClass, JavaAnnotationOwnerImpl, JavaModifierListOwnerImpl {
     init {
@@ -45,7 +45,7 @@ class JavaClassImpl(psiClass: PsiClass) : JavaClassifierImpl<PsiClass>(psiClass)
         }
 
     override val name: Name
-        get() = SpecialNames.safeIdentifier(psi.name)
+        get() = KtPsiUtil.safeName(psi.name)
 
     override val isInterface: Boolean
         get() = psi.isInterface
