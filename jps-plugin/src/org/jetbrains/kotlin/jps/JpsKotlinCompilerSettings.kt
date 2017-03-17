@@ -63,7 +63,7 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
         }
 
         fun getCommonCompilerArguments(module: JpsModule): CommonCompilerArguments {
-            val defaultArguments = getSettings(module.project).commonCompilerArguments
+            val defaultArguments = copyBean(getSettings(module.project).commonCompilerArguments)
             val facetSettings = module.kotlinFacetExtension?.settings ?: return defaultArguments
             if (facetSettings.useProjectSettings) return defaultArguments
             val facetArguments = facetSettings.compilerArguments ?: return defaultArguments
@@ -80,7 +80,7 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
         }
 
         fun getK2JvmCompilerArguments(module: JpsModule): K2JVMCompilerArguments {
-            val defaultArguments = getSettings(module.project).k2JvmCompilerArguments
+            val defaultArguments = copyBean(getSettings(module.project).k2JvmCompilerArguments)
             val facetSettings = module.kotlinFacetExtension?.settings ?: return defaultArguments
             if (facetSettings.useProjectSettings) return defaultArguments
             return facetSettings.compilerArguments as? K2JVMCompilerArguments ?: defaultArguments
@@ -91,7 +91,7 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
         }
 
         fun getK2JsCompilerArguments(module: JpsModule): K2JSCompilerArguments {
-            val defaultArguments = getSettings(module.project).k2JsCompilerArguments
+            val defaultArguments = copyBean(getSettings(module.project).k2JsCompilerArguments)
             val facetSettings = module.kotlinFacetExtension?.settings ?: return defaultArguments
             if (facetSettings.useProjectSettings) return defaultArguments
             return facetSettings.compilerArguments as? K2JSCompilerArguments ?: defaultArguments
@@ -102,7 +102,7 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
         }
 
         fun getCompilerSettings(module: JpsModule): CompilerSettings {
-            val defaultSettings = getSettings(module.project).compilerSettings
+            val defaultSettings = copyBean(getSettings(module.project).compilerSettings)
             val facetSettings = module.kotlinFacetExtension?.settings ?: return defaultSettings
             if (facetSettings.useProjectSettings) return defaultSettings
             return facetSettings.compilerSettings ?: defaultSettings
