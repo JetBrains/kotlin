@@ -309,20 +309,18 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                 elementAt.textOffset
             }
 
-            var result = PsiTreeUtil.findElementOfClassAtOffset(containingFile, lineStartOffset, KtExpression::class.java, false)
-            if (result.check()) {
-                return CodeInsightUtils.getTopmostElementAtOffset(result!!, lineStartOffset, KtExpression::class.java)
-            }
+            fun KtElement.takeIfAcceptedAsCodeFragmentContext() = takeIf { KotlinEditorTextProvider.isAcceptedAsCodeFragmentContext(it) }
 
-            result = KotlinEditorTextProvider.findExpressionInner(elementAt, true)
-            if (result.check()) {
-                return result
-            }
+            PsiTreeUtil.findElementOfClassAtOffset(containingFile, lineStartOffset, KtExpression::class.java, false)
+                    ?.takeIfAcceptedAsCodeFragmentContext()
+                    ?.let { return CodeInsightUtils.getTopmostElementAtOffset(it, lineStartOffset, KtExpression::class.java) }
+
+            KotlinEditorTextProvider.findExpressionInner(elementAt, true)
+                    ?.takeIfAcceptedAsCodeFragmentContext()
+                    ?.let { return it }
 
             return containingFile
         }
-
-        private fun KtElement?.check(): Boolean = this != null && KotlinEditorTextProvider.isAcceptedAsCodeFragmentContext(this)
 
         //internal for tests
         fun createCodeFragmentForLabeledObjects(project: Project, markupMap: Map<*, ValueMarkup>): Pair<String, Map<String, Value>> {
