@@ -42,6 +42,8 @@ interface KotlinLogger {
     fun warn(msg: String)
     fun info(msg: String)
     fun debug(msg: String)
+
+    val isDebugEnabled: Boolean
 }
 
 abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
@@ -61,11 +63,15 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
         val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = true, inheritAdditionalProperties = true)
 
         val daemonReportMessages = ArrayList<DaemonReportMessage>()
+        val daemonReportingTargets = when {
+            log.isDebugEnabled ->  DaemonReportingTargets(messages = daemonReportMessages)
+            else ->  DaemonReportingTargets(messageCollector = environment.messageCollector)
+        }
 
         val profiler = if (daemonOptions.reportPerf) WallAndThreadAndMemoryTotalProfiler(withGC = false) else DummyProfiler()
 
         val connection = profiler.withMeasure(null) {
-            val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(null, daemonReportMessages), true, true)
+            val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, daemonReportingTargets, true, true)
             DaemonConnection(daemon, daemon?.leaseCompileSession(flagFile.absolutePath)?.get() ?: CompileService.NO_SESSION)
         }
 

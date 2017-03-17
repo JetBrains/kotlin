@@ -395,11 +395,13 @@ object KotlinCompilerClient {
                         daemon.inputStream
                                 .reader()
                                 .forEachLine {
+                                    reportingTargets.report(DaemonReportCategory.DEBUG, it, "daemon")
+
                                     if (it == COMPILE_DAEMON_IS_READY_MESSAGE) {
+                                        reportingTargets.report(DaemonReportCategory.DEBUG, "Received the message signalling that the daemon is ready")
                                         isEchoRead.release()
                                         return@forEachLine
                                     }
-                                    reportingTargets.report(DaemonReportCategory.DEBUG, it, "daemon")
                                 }
                     }
                     finally {

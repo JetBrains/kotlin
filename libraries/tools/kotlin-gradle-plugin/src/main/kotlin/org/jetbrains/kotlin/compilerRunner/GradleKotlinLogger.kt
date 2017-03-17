@@ -34,4 +34,7 @@ internal class GradleKotlinLogger(private val log: Logger) : KotlinLogger {
     override fun warn(msg: String) {
         log.warn(msg)
     }
+
+    override val isDebugEnabled: Boolean
+        get() = log.isDebugEnabled
 }
