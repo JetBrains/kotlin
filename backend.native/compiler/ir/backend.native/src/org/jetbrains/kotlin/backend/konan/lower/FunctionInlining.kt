@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 //-----------------------------------------------------------------------------//
 
@@ -177,14 +178,29 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
         //---------------------------------------------------------------------//
 
+        fun getTypeOperatorReturnType(operator: IrTypeOperator, type: KotlinType) : KotlinType {
+            return when (operator) {
+                IrTypeOperator.CAST,
+                IrTypeOperator.IMPLICIT_CAST,
+                IrTypeOperator.IMPLICIT_NOTNULL,
+                IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
+                IrTypeOperator.IMPLICIT_INTEGER_COERCION    -> type
+                IrTypeOperator.SAFE_CAST                    -> type.makeNullable()
+                IrTypeOperator.INSTANCEOF,
+                IrTypeOperator.NOT_INSTANCEOF               -> context.builtIns.booleanType
+            }
+        }
+
+        //---------------------------------------------------------------------//
+
         override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
 
             val newExpression = super.visitTypeOperator(expression) as IrTypeOperatorCall
+            if (typeArgsMap == null) return newExpression
+
             if (newExpression.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {          // Nothing to do for IMPLICIT_COERCION_TO_UNIT
                 return newExpression
             }
-
-            if (typeArgsMap == null) return newExpression
 
             val operandTypeDescriptor = newExpression.typeOperand.constructor.declarationDescriptor
             if (operandTypeDescriptor !is TypeParameterDescriptor) return newExpression        // It is not TypeParameter - do nothing
@@ -192,9 +208,9 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
             val typeNew         = typeArgsMap[operandTypeDescriptor]!!
             val startOffset     = newExpression.startOffset
             val endOffset       = newExpression.endOffset
-            val type            = newExpression.type                                           // TODO
             val operator        = newExpression.operator
             val argument        = newExpression.argument
+            val type            = getTypeOperatorReturnType(operator, typeNew)
 
             return IrTypeOperatorCallImpl(startOffset, endOffset, type, operator, typeNew, argument)
         }
