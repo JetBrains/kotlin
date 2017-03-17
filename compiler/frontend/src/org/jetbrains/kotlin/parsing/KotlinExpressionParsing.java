@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,7 +111,9 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
             IDENTIFIER, // SimpleName
 
-            AT // Just for better recovery and maybe for annotations
+            AT, // Just for better recovery and maybe for annotations
+
+            LBRACKET // Collection literal expression
     );
 
     private static final TokenSet STATEMENT_FIRST = TokenSet.orSet(
@@ -613,6 +615,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   : functionLiteral
      *   : declaration
      *   : SimpleName
+     *   : collectionLiteral
      *   ;
      */
     private boolean parseAtomicExpression() {
@@ -620,6 +623,9 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
         if (at(LPAR)) {
             parseParenthesizedExpression();
+        }
+        else if (at(LBRACKET)) {
+            parseCollectionLiteralExpression();
         }
         else if (at(THIS_KEYWORD)) {
             parseThisExpression();
@@ -987,28 +993,59 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   ;
      */
     private void parseArrayAccess() {
+        parseAsCollectionLiteralExpression(INDICES, false, "Expecting an index element");
+    }
+
+    /*
+     * collectionLiteral
+     *   : "[" element{","}? "]"
+     *   ;
+     */
+    private void parseCollectionLiteralExpression() {
+        parseAsCollectionLiteralExpression(COLLECTION_LITERAL_EXPRESSION, true, "Expecting an element");
+    }
+
+    private void parseAsCollectionLiteralExpression(KtNodeType nodeType, boolean canBeEmpty, String missingElementErrorMessage) {
         assert _at(LBRACKET);
 
-        PsiBuilder.Marker indices = mark();
+        PsiBuilder.Marker innerExpressions = mark();
 
         myBuilder.disableNewlines();
         advance(); // LBRACKET
 
-        while (true) {
-            if (at(COMMA)) errorAndAdvance("Expecting an index element");
-            if (at(RBRACKET)) {
-                error("Expecting an index element");
-                break;
-            }
-            parseExpression();
-            if (!at(COMMA)) break;
-            advance(); // COMMA
+        if (!canBeEmpty && at(RBRACKET)) {
+            error(missingElementErrorMessage);
+        }
+        else {
+            parseInnerExpressions(missingElementErrorMessage);
         }
 
         expect(RBRACKET, "Expecting ']'");
         myBuilder.restoreNewlinesState();
 
-        indices.done(INDICES);
+        innerExpressions.done(nodeType);
+    }
+
+    private void parseInnerExpressions(String missingElementErrorMessage) {
+        boolean firstElement = true;
+        while (true) {
+            if (at(COMMA)) errorAndAdvance(missingElementErrorMessage);
+            if (at(RBRACKET)) {
+                if (firstElement) {
+                    break;
+                }
+                else {
+                    error(missingElementErrorMessage);
+                }
+                break;
+            }
+            parseExpression();
+
+            firstElement = false;
+
+            if (!at(COMMA)) break;
+            advance(); // COMMA
+        }
     }
 
     /*

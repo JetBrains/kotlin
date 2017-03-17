@@ -120,6 +120,7 @@ atomicExpression
   : objectLiteral
   : jump
   : loop
+  : collectionLiteral
   : SimpleName
   ;
 
@@ -274,4 +275,8 @@ arrayAccess
 
 objectLiteral
   : "object" (":" delegationSpecifier{","})? classBody
+  ;
+
+collectionLiteral
+  : "[" element{","}? "]"
   ;
