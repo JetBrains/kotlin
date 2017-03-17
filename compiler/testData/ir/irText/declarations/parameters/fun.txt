@@ -38,3 +38,6 @@ FILE /fun.kt
       VALUE_PARAMETER value-parameter i: kotlin.Int
       VALUE_PARAMETER value-parameter j: T
       BLOCK_BODY
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

@@ -9,6 +9,9 @@ FILE /delegatedImplementation.kt
     FUN public abstract fun kotlin.String.qux(): kotlin.Unit
       $this: VALUE_PARAMETER <receiver: IBase>
       $receiver: VALUE_PARAMETER <receiver: qux() on String: Unit>
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS OBJECT BaseImpl
     CONSTRUCTOR private constructor BaseImpl()
       BLOCK_BODY
@@ -28,6 +31,9 @@ FILE /delegatedImplementation.kt
       $this: VALUE_PARAMETER <receiver: BaseImpl>
       $receiver: VALUE_PARAMETER <receiver: qux() on String: Unit>
       BLOCK_BODY
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS INTERFACE IOther
     PROPERTY public abstract val x: kotlin.String
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-x>(): kotlin.String
@@ -74,6 +80,9 @@ FILE /delegatedImplementation.kt
           SET_FIELD 'z2: Int on Byte' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: IOther>' type=IOther origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   FUN public fun otherImpl(x0: kotlin.String, y0: kotlin.Int): IOther
     VALUE_PARAMETER value-parameter x0: kotlin.String
     VALUE_PARAMETER value-parameter y0: kotlin.Int
@@ -131,6 +140,9 @@ FILE /delegatedImplementation.kt
                 $receiver: VALUE_PARAMETER <receiver: z2: Int on Byte>
                 VALUE_PARAMETER value-parameter value: kotlin.Int
                 BLOCK_BODY
+            FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+            FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+            FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
           CALL 'constructor <no name provided>()' type=otherImpl.<no name provided> origin=OBJECT_LITERAL
   CLASS CLASS Test1
     CONSTRUCTOR public constructor Test1()
@@ -165,6 +177,9 @@ FILE /delegatedImplementation.kt
           $this: GET_FIELD '`Test1$IBase$delegate`: BaseImpl' type=BaseImpl origin=null
             receiver: GET_VAR '<receiver: Test1>' type=Test1 origin=null
           $receiver: GET_VAR '<receiver: qux() on String: Unit>' type=kotlin.String origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test2
     CONSTRUCTOR public constructor Test2()
       BLOCK_BODY
@@ -257,3 +272,6 @@ FILE /delegatedImplementation.kt
             $this: GET_FIELD '`Test2$IOther$delegate`: IOther' type=IOther origin=null
               receiver: GET_VAR '<receiver: Test2>' type=Test2 origin=null
             <set-?>: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

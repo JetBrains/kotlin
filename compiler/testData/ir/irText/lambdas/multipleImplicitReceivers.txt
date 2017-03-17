@@ -4,11 +4,17 @@ FILE /multipleImplicitReceivers.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS OBJECT B
     CONSTRUCTOR private constructor B()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='B'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS INTERFACE IFoo
     PROPERTY public open val A.foo: B
       FUN public open fun A.<get-foo>(): B
@@ -17,6 +23,9 @@ FILE /multipleImplicitReceivers.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-foo>() on A: B'
             GET_OBJECT 'B' type=B
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS INTERFACE IInvoke
     FUN public open operator fun B.invoke(): kotlin.Int
       $this: VALUE_PARAMETER <receiver: IInvoke>
@@ -24,6 +33,9 @@ FILE /multipleImplicitReceivers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='invoke() on B: Int'
           CONST Int type=kotlin.Int value='42'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   FUN public fun test(fooImpl: IFoo, invokeImpl: IInvoke): kotlin.Unit
     VALUE_PARAMETER value-parameter fooImpl: IFoo
     VALUE_PARAMETER value-parameter invokeImpl: IInvoke

@@ -2,6 +2,9 @@ FILE /objectLiteralExpressions.kt
   CLASS INTERFACE IFoo
     FUN public abstract fun foo(): kotlin.Unit
       $this: VALUE_PARAMETER <receiver: IFoo>
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   PROPERTY public val test1: kotlin.Any
     FIELD PROPERTY_BACKING_FIELD public val test1: kotlin.Any
       EXPRESSION_BODY
@@ -11,6 +14,9 @@ FILE /objectLiteralExpressions.kt
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
                 INSTANCE_INITIALIZER_CALL classDescriptor='<no name provided>'
+            FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+            FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+            FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
           CALL 'constructor <no name provided>()' type=test1.<no name provided> origin=OBJECT_LITERAL
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test1>(): kotlin.Any
       BLOCK_BODY
@@ -30,6 +36,9 @@ FILE /objectLiteralExpressions.kt
               BLOCK_BODY
                 CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
                   message: CONST String type=kotlin.String value='foo'
+            FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+            FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+            FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
           CALL 'constructor <no name provided>()' type=test2.<no name provided> origin=OBJECT_LITERAL
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test2>(): IFoo
       BLOCK_BODY
@@ -46,6 +55,10 @@ FILE /objectLiteralExpressions.kt
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='Inner'
+      FUN FAKE_OVERRIDE public abstract override fun foo(): kotlin.Unit
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     FUN public final fun test3(): Outer.Inner
       $this: VALUE_PARAMETER <receiver: Outer>
       BLOCK_BODY
@@ -62,7 +75,13 @@ FILE /objectLiteralExpressions.kt
                 BLOCK_BODY
                   CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
                     message: CONST String type=kotlin.String value='foo'
+              FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+              FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+              FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
             CALL 'constructor <no name provided>()' type=Outer.test3.<no name provided> origin=OBJECT_LITERAL
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   FUN public fun Outer.test4(): Outer.Inner
     $receiver: VALUE_PARAMETER <receiver: test4() on Outer: Outer.Inner>
     BLOCK_BODY
@@ -79,4 +98,7 @@ FILE /objectLiteralExpressions.kt
               BLOCK_BODY
                 CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
                   message: CONST String type=kotlin.String value='foo'
+            FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+            FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+            FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
           CALL 'constructor <no name provided>()' type=test4.<no name provided> origin=OBJECT_LITERAL

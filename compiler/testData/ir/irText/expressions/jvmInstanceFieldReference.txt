@@ -22,3 +22,7 @@ FILE /Derived.kt
         SET_FIELD 'value: Int' type=kotlin.Unit origin=EQ
           receiver: GET_VAR '<receiver: Derived>' type=Derived origin=null
           value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
+    PROPERTY FAKE_OVERRIDE public final override var value: kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

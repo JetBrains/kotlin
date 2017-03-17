@@ -4,6 +4,9 @@ FILE /secondaryConstructorWithInitializersFromClassBody.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Base'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestProperty
     PROPERTY public final val x: kotlin.Int = 0
       FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int = 0
@@ -19,6 +22,9 @@ FILE /secondaryConstructorWithInitializersFromClassBody.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestProperty'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestInitBlock
     PROPERTY public final val x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final val x: kotlin.Int
@@ -46,3 +52,6 @@ FILE /secondaryConstructorWithInitializersFromClassBody.kt
       VALUE_PARAMETER value-parameter y: kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor TestInitBlock()'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

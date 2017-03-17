@@ -65,6 +65,15 @@ FILE /complexAugmentedAssignment.kt
               SET_FIELD 'x3: Int' type=kotlin.Unit origin=null
                 receiver: GET_VAR '<receiver: X3>' type=X1.X2.X3 origin=null
                 value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
+        FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+        FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+        FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   FUN public fun test1(a: kotlin.IntArray): kotlin.Unit
     VALUE_PARAMETER value-parameter a: kotlin.IntArray
     BLOCK_BODY
@@ -158,6 +167,9 @@ FILE /complexAugmentedAssignment.kt
           SET_FIELD 's: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: B>' type=B origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS OBJECT Host
     CONSTRUCTOR private constructor Host()
       BLOCK_BODY
@@ -178,6 +190,9 @@ FILE /complexAugmentedAssignment.kt
                 $this: GET_VAR 'tmp0_this: B' type=B origin=null
               other: CALL '<get-s>(): Int' type=kotlin.Int origin=GET_PROPERTY
                 $this: GET_VAR 'value-parameter b: B' type=B origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   FUN public fun Host.test3(v: B): kotlin.Unit
     $receiver: VALUE_PARAMETER <receiver: test3(B) on Host: Unit>
     VALUE_PARAMETER value-parameter v: B

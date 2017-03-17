@@ -20,6 +20,9 @@ FILE /sealedClasses.kt
             RETURN type=kotlin.Nothing from='<get-number>(): Double'
               GET_FIELD 'number: Double' type=kotlin.Double origin=null
                 receiver: GET_VAR '<receiver: Const>' type=Expr.Const origin=null
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     CLASS CLASS Sum
       CONSTRUCTOR public constructor Sum(e1: Expr, e2: Expr)
         VALUE_PARAMETER value-parameter e1: Expr
@@ -47,8 +50,17 @@ FILE /sealedClasses.kt
             RETURN type=kotlin.Nothing from='<get-e2>(): Expr'
               GET_FIELD 'e2: Expr' type=Expr origin=null
                 receiver: GET_VAR '<receiver: Sum>' type=Expr.Sum origin=null
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     CLASS OBJECT NotANumber
       CONSTRUCTOR private constructor NotANumber()
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Expr()'
           INSTANCE_INITIALIZER_CALL classDescriptor='NotANumber'
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

@@ -16,6 +16,9 @@ FILE /delegatedMembers.kt
       $this: VALUE_PARAMETER <receiver: IBase>
       VALUE_PARAMETER value-parameter t: T
       VALUE_PARAMETER value-parameter x: X
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test
     TYPE_PARAMETER <TT>
     CONSTRUCTOR public constructor Test<TT>(impl: IBase<TT>)
@@ -55,3 +58,6 @@ FILE /delegatedMembers.kt
             CALL '<get-bar>(): Int' type=kotlin.Int origin=null
               $this: GET_FIELD '`Test$IBase$delegate`: IBase<TT>' type=IBase<TT> origin=null
                 receiver: GET_VAR '<receiver: Test>' type=Test<TT> origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

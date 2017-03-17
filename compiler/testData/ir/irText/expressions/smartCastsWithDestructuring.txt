@@ -1,6 +1,12 @@
 FILE /smartCastsWithDestructuring.kt
   CLASS INTERFACE I1
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS INTERFACE I2
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   FUN public operator fun I1.component1(): kotlin.Int
     $receiver: VALUE_PARAMETER <receiver: component1() on I1: Int>
     BLOCK_BODY

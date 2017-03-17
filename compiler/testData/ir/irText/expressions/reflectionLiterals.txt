@@ -7,6 +7,9 @@ FILE /reflectionLiterals.kt
     FUN public final fun foo(): kotlin.Unit
       $this: VALUE_PARAMETER <receiver: A>
       BLOCK_BODY
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   FUN public fun bar(): kotlin.Unit
     BLOCK_BODY
   PROPERTY public val qux: kotlin.Int = 42

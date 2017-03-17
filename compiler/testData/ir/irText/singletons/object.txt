@@ -17,3 +17,9 @@ FILE /object.kt
         BLOCK_BODY
           CALL 'test(): Unit' type=kotlin.Unit origin=null
             $this: GET_OBJECT 'Z' type=Z
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

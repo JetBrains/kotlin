@@ -7,6 +7,9 @@ FILE /suppressedNonPublicCall.kt
     FUN internal final fun bar(): kotlin.Unit
       $this: VALUE_PARAMETER <receiver: C>
       BLOCK_BODY
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   FUN public inline fun C.foo(): kotlin.Unit
     $receiver: VALUE_PARAMETER <receiver: foo() on C: Unit>
     BLOCK_BODY

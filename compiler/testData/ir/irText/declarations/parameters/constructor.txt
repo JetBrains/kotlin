@@ -30,6 +30,9 @@ FILE /constructor.kt
           RETURN type=kotlin.Nothing from='<get-y>(): T2'
             GET_FIELD 'y: T2' type=T2 origin=null
               receiver: GET_VAR '<receiver: Test1>' type=Test1<T1, T2> origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test2
     CONSTRUCTOR public constructor Test2(x: kotlin.Int, y: kotlin.String)
       VALUE_PARAMETER value-parameter x: kotlin.Int
@@ -76,6 +79,12 @@ FILE /constructor.kt
             <Z>: Z
             $this: GET_VAR '<receiver: Test2>' type=Test2 origin=null
             z: GET_VAR 'value-parameter z: Z' type=Z origin=null
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test3
     CONSTRUCTOR public constructor Test3(x: kotlin.Int, y: kotlin.String = ...)
       VALUE_PARAMETER value-parameter x: kotlin.Int
@@ -105,6 +114,9 @@ FILE /constructor.kt
           RETURN type=kotlin.Nothing from='<get-y>(): String'
             GET_FIELD 'y: String' type=kotlin.String origin=null
               receiver: GET_VAR '<receiver: Test3>' type=Test3 origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test4
     TYPE_PARAMETER <T>
     CONSTRUCTOR public constructor Test4<T>(x: kotlin.Int)
@@ -135,3 +147,6 @@ FILE /constructor.kt
           x: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
             $this: GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=null
             other: GET_VAR 'value-parameter y: Int = ...' type=kotlin.Int origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

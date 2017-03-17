@@ -239,6 +239,12 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             doTest(fileName);
         }
 
+        @TestMetadata("fakeOverrides.kt")
+        public void testFakeOverrides() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/fakeOverrides.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("fileWithAnnotations.kt")
         public void testFileWithAnnotations() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/irText/declarations/fileWithAnnotations.kt");

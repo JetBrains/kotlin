@@ -17,6 +17,9 @@ FILE /boundCallableReferences.kt
           RETURN type=kotlin.Nothing from='<get-bar>(): Int'
             GET_FIELD 'bar: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: A>' type=A origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   FUN public fun A.qux(): kotlin.Unit
     $receiver: VALUE_PARAMETER <receiver: qux() on A: Unit>
     BLOCK_BODY

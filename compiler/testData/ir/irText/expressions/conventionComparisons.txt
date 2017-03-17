@@ -1,10 +1,16 @@
 FILE /conventionComparisons.kt
   CLASS INTERFACE IA
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS INTERFACE IB
     FUN public abstract operator fun IA.compareTo(other: IA): kotlin.Int
       $this: VALUE_PARAMETER <receiver: IB>
       $receiver: VALUE_PARAMETER <receiver: compareTo(IA) on IA: Int>
       VALUE_PARAMETER value-parameter other: IA
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   FUN public fun IB.test1(a1: IA, a2: IA): kotlin.Boolean
     $receiver: VALUE_PARAMETER <receiver: test1(IA, IA) on IB: Boolean>
     VALUE_PARAMETER value-parameter a1: IA

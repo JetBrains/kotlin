@@ -82,6 +82,9 @@ FILE /delegatedProperties.kt
               thisRef: GET_VAR '<receiver: C>' type=C origin=null
               property: CALLABLE_REFERENCE 'test3: Any' type=kotlin.reflect.KMutableProperty1<C, kotlin.Any> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               value: GET_VAR 'value-parameter <set-?>: Any' type=kotlin.Any origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   PROPERTY public var test4: kotlin.Any
     FIELD DELEGATE val `test4$delegate`: kotlin.collections.HashMap<kotlin.String, kotlin.Any> /* = java.util.HashMap<kotlin.String, kotlin.Any> */
       EXPRESSION_BODY

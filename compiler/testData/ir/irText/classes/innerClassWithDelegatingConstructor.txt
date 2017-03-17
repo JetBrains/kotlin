@@ -27,3 +27,9 @@ FILE /innerClassWithDelegatingConstructor.kt
           DELEGATING_CONSTRUCTOR_CALL 'constructor Inner(Int)'
             $this: GET_VAR '<receiver: Outer>' type=Outer origin=null
             x: CONST Int type=kotlin.Int value='0'
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

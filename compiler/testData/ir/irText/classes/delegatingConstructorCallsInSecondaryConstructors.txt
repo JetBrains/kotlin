@@ -4,6 +4,9 @@ FILE /delegatingConstructorCallsInSecondaryConstructors.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Base'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test
     CONSTRUCTOR public constructor Test()
       BLOCK_BODY
@@ -18,3 +21,6 @@ FILE /delegatingConstructorCallsInSecondaryConstructors.kt
       VALUE_PARAMETER value-parameter xx: kotlin.Short
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Test()'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

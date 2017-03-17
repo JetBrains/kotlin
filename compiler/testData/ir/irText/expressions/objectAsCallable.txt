@@ -4,6 +4,9 @@ FILE /objectAsCallable.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS ENUM_CLASS En
     CONSTRUCTOR private constructor En()
       BLOCK_BODY
@@ -11,6 +14,17 @@ FILE /objectAsCallable.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='En'
     ENUM_ENTRY enum entry X
       init: ENUM_CONSTRUCTOR_CALL 'constructor En()'
+    FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
+    FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
+    FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<En!>!
+    FUN FAKE_OVERRIDE public final override fun compareTo(other: En): kotlin.Int
+    FUN FAKE_OVERRIDE public final override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public final override fun hashCode(): kotlin.Int
+    PROPERTY FAKE_OVERRIDE public final override val name: kotlin.String
+      FUN FAKE_OVERRIDE public final override fun <get-name>(): kotlin.String
+    PROPERTY FAKE_OVERRIDE public final override val ordinal: kotlin.Int
+      FUN FAKE_OVERRIDE public final override fun <get-ordinal>(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<En>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): En

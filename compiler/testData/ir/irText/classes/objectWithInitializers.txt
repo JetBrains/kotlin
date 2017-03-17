@@ -4,6 +4,9 @@ FILE /objectWithInitializers.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Base'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS OBJECT Test
     CONSTRUCTOR private constructor Test()
       BLOCK_BODY
@@ -33,3 +36,6 @@ FILE /objectWithInitializers.kt
           receiver: GET_VAR '<receiver: Test>' type=Test origin=null
           value: CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR '<receiver: Test>' type=Test origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

@@ -4,6 +4,9 @@ FILE /destructuring1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS OBJECT B
     CONSTRUCTOR private constructor B()
       BLOCK_BODY
@@ -21,6 +24,9 @@ FILE /destructuring1.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='component2() on A: Int'
           CONST Int type=kotlin.Int value='2'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   FUN public fun B.test(): kotlin.Unit
     $receiver: VALUE_PARAMETER <receiver: test() on B: Unit>
     BLOCK_BODY

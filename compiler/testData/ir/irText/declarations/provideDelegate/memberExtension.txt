@@ -30,6 +30,9 @@ FILE /memberExtension.kt
               $this: GET_VAR 'value-parameter receiver: String' type=kotlin.String origin=null
               other: CALL '<get-s>(): String' type=kotlin.String origin=GET_PROPERTY
                 $this: GET_VAR '<receiver: StringDelegate>' type=Host.StringDelegate origin=null
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     FUN public final operator fun kotlin.String.provideDelegate(host: kotlin.Any?, p: kotlin.Any): Host.StringDelegate
       $this: VALUE_PARAMETER <receiver: Host>
       $receiver: VALUE_PARAMETER <receiver: provideDelegate(Any?, Any) on String: Host.StringDelegate>
@@ -69,3 +72,6 @@ FILE /memberExtension.kt
           RETURN type=kotlin.Nothing from='<get-ok>(): String'
             GET_FIELD 'ok: String' type=kotlin.String origin=null
               receiver: GET_VAR '<receiver: Host>' type=Host origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

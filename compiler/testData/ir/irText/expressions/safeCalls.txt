@@ -22,6 +22,9 @@ FILE /safeCalls.kt
           SET_FIELD 'value: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: Ref>' type=Ref origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS INTERFACE IHost
     FUN public open fun kotlin.String.extLength(): kotlin.Int
       $this: VALUE_PARAMETER <receiver: IHost>
@@ -30,6 +33,9 @@ FILE /safeCalls.kt
         RETURN type=kotlin.Nothing from='extLength() on String: Int'
           CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR '<receiver: extLength() on String: Int>' type=kotlin.String origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   FUN public fun test1(x: kotlin.String?): kotlin.Int?
     VALUE_PARAMETER value-parameter x: kotlin.String?
     BLOCK_BODY

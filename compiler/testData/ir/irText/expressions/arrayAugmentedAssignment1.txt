@@ -27,6 +27,9 @@ FILE /arrayAugmentedAssignment1.kt
           RETURN type=kotlin.Nothing from='<get-x>(): IntArray'
             GET_FIELD 'x: IntArray' type=kotlin.IntArray origin=null
               receiver: GET_VAR '<receiver: C>' type=C origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   FUN public fun testVariable(): kotlin.Unit
     BLOCK_BODY
       VAR var x: kotlin.IntArray

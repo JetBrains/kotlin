@@ -7,6 +7,9 @@ FILE /initBlock.kt
     ANONYMOUS_INITIALIZER Test1
       BLOCK_BODY
         CALL 'println(): Unit' type=kotlin.Unit origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test2
     CONSTRUCTOR public constructor Test2(x: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
@@ -26,6 +29,9 @@ FILE /initBlock.kt
     ANONYMOUS_INITIALIZER Test2
       BLOCK_BODY
         CALL 'println(): Unit' type=kotlin.Unit origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test3
     ANONYMOUS_INITIALIZER Test3
       BLOCK_BODY
@@ -34,6 +40,9 @@ FILE /initBlock.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test3'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test4
     ANONYMOUS_INITIALIZER Test4
       BLOCK_BODY
@@ -47,6 +56,9 @@ FILE /initBlock.kt
       BLOCK_BODY
         CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
           message: CONST String type=kotlin.String value='2'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test5
     CONSTRUCTOR public constructor Test5()
       BLOCK_BODY
@@ -66,3 +78,9 @@ FILE /initBlock.kt
         BLOCK_BODY
           CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
             message: CONST String type=kotlin.String value='2'
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

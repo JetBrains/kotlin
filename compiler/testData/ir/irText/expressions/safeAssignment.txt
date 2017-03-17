@@ -22,6 +22,9 @@ FILE /safeAssignment.kt
           SET_FIELD 'x: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: C>' type=C origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   FUN public fun test(nc: C?): kotlin.Unit
     VALUE_PARAMETER value-parameter nc: C?
     BLOCK_BODY

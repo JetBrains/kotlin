@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.lang.AssertionError
 import java.util.*
 
@@ -53,6 +54,8 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
 
         generateMembersDeclaredInClassBody(irClass, ktClassOrObject)
 
+        generateFakeOverrideMemberDeclarations(irClass)
+
         if (descriptor.isData) {
             generateAdditionalMembersForDataClass(irClass, ktClassOrObject)
         }
@@ -64,7 +67,20 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
         return irClass
     }
 
-    private object StableDelegatesComparator : Comparator<CallableMemberDescriptor> {
+    private fun generateFakeOverrideMemberDeclarations(irClass: IrClass) {
+        irClass.descriptor.unsubstitutedMemberScope.getContributedDescriptors()
+                .mapNotNull {
+                    it.safeAs<CallableMemberDescriptor>().takeIf {
+                        it?.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+                    }
+                }
+                .sortedWith(StableCallableMembersComparator)
+                .forEach { fakeOverride ->
+                    irClass.addMember(declarationGenerator.generateFakeOverrideDeclaration(fakeOverride))
+                }
+    }
+
+    private object StableCallableMembersComparator : Comparator<CallableMemberDescriptor> {
         override fun compare(member1: CallableMemberDescriptor?, member2: CallableMemberDescriptor?): Int {
             if (member1 == member2) return 0
             if (member1 == null) return -1
@@ -91,7 +107,7 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
                     .getContributedDescriptors(DescriptorKindFilter.CALLABLES)
                     .filterIsInstance<CallableMemberDescriptor>()
                     .filter { it.kind == CallableMemberDescriptor.Kind.DELEGATION }
-                    .sortedWith(StableDelegatesComparator)
+                    .sortedWith(StableCallableMembersComparator)
             if (delegatedMembers.isEmpty()) return
 
             for (ktEntry in ktSuperTypeList.entries) {

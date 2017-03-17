@@ -16,15 +16,10 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrAnonymousInitializerImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrErrorDeclarationImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrTypeAliasImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
+import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.psi.*
@@ -99,6 +94,38 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
 
     fun generateInitializerBody(scopeOwner: CallableDescriptor, ktBody: KtExpression): IrExpressionBody =
             createBodyGenerator(scopeOwner).generateExpressionBody(ktBody)
+
+    fun generateFakeOverrideDeclaration(memberDescriptor: CallableMemberDescriptor, ktElement: KtElement? = null): IrDeclaration {
+        assert(memberDescriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            "Fake override expected: $memberDescriptor"
+        }
+        return when (memberDescriptor) {
+            is FunctionDescriptor ->
+                generateFakeOverrideFunction(memberDescriptor, ktElement)
+            is PropertyDescriptor ->
+                generateFakeOverrideProperty(memberDescriptor, ktElement)
+            else ->
+                throw AssertionError("Unexpected member descriptor: $memberDescriptor")
+        }
+    }
+
+    private fun generateFakeOverrideProperty(propertyDescriptor: PropertyDescriptor, ktElement: KtElement?): IrProperty =
+            IrPropertyImpl(
+                    ktElement.startOffsetOrUndefined, ktElement.endOffsetOrUndefined,
+                    IrDeclarationOrigin.FAKE_OVERRIDE,
+                    false,
+                    propertyDescriptor,
+                    null,
+                    propertyDescriptor.getter?.let { generateFakeOverrideFunction(it, ktElement) },
+                    propertyDescriptor.setter?.let { generateFakeOverrideFunction(it, ktElement) }
+            )
+
+    private fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtElement?): IrFunction =
+            IrFunctionImpl(
+                    ktElement.startOffsetOrUndefined, ktElement.endOffsetOrUndefined,
+                    IrDeclarationOrigin.FAKE_OVERRIDE,
+                    functionDescriptor
+            )
 }
 
 abstract class DeclarationGeneratorExtension(val declarationGenerator: DeclarationGenerator) : Generator {

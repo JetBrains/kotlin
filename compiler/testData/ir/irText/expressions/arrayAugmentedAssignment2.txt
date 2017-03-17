@@ -3,12 +3,18 @@ FILE /arrayAugmentedAssignment2.kt
     FUN public abstract operator fun get(index: kotlin.String): kotlin.Int
       $this: VALUE_PARAMETER <receiver: IA>
       VALUE_PARAMETER value-parameter index: kotlin.String
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS INTERFACE IB
     FUN public abstract operator fun IA.set(index: kotlin.String, value: kotlin.Int): kotlin.Unit
       $this: VALUE_PARAMETER <receiver: IB>
       $receiver: VALUE_PARAMETER <receiver: set(String, Int) on IA: Unit>
       VALUE_PARAMETER value-parameter index: kotlin.String
       VALUE_PARAMETER value-parameter value: kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   FUN public fun IB.test(a: IA): kotlin.Unit
     $receiver: VALUE_PARAMETER <receiver: test(IA) on IB: Unit>
     VALUE_PARAMETER value-parameter a: IA

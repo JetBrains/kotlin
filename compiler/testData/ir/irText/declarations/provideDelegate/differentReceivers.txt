@@ -15,6 +15,9 @@ FILE /differentReceivers.kt
           RETURN type=kotlin.Nothing from='<get-value>(): String'
             GET_FIELD 'value: String' type=kotlin.String origin=null
               receiver: GET_VAR '<receiver: MyClass>' type=MyClass origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   FUN public operator fun MyClass.provideDelegate(host: kotlin.Any?, p: kotlin.Any): kotlin.String
     $receiver: VALUE_PARAMETER <receiver: provideDelegate(Any?, Any) on MyClass: String>
     VALUE_PARAMETER value-parameter host: kotlin.Any?

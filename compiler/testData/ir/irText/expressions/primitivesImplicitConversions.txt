@@ -102,3 +102,6 @@ FILE /primitivesImplicitConversions.kt
           RETURN type=kotlin.Nothing from='<get-x>(): Long'
             GET_FIELD 'x: Long' type=kotlin.Long origin=null
               receiver: GET_VAR '<receiver: TestImplicitArguments>' type=TestImplicitArguments origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

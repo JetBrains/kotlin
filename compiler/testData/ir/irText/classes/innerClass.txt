@@ -10,6 +10,9 @@ FILE /innerClass.kt
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='TestInnerClass'
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     CLASS CLASS DerivedInnerClass
       CONSTRUCTOR public constructor DerivedInnerClass()
         $this: VALUE_PARAMETER <receiver: Outer>
@@ -17,3 +20,9 @@ FILE /innerClass.kt
           DELEGATING_CONSTRUCTOR_CALL 'constructor TestInnerClass()'
             $this: GET_VAR '<receiver: Outer>' type=Outer origin=null
           INSTANCE_INITIALIZER_CALL classDescriptor='DerivedInnerClass'
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

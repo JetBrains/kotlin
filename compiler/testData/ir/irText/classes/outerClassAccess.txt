@@ -37,3 +37,12 @@ FILE /outerClassAccess.kt
           BLOCK_BODY
             CALL 'foo(): Unit' type=kotlin.Unit origin=null
               $this: GET_VAR '<receiver: test3() on Outer: Unit>' type=Outer origin=null
+        FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+        FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+        FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

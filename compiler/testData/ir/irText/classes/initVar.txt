@@ -22,6 +22,9 @@ FILE /initVar.kt
           SET_FIELD 'x: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: TestInitVarFromParameter>' type=TestInitVarFromParameter origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestInitVarInClass
     CONSTRUCTOR public constructor TestInitVarInClass()
       BLOCK_BODY
@@ -44,6 +47,9 @@ FILE /initVar.kt
           SET_FIELD 'x: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: TestInitVarInClass>' type=TestInitVarInClass origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestInitVarInInitBlock
     CONSTRUCTOR public constructor TestInitVarInInitBlock()
       BLOCK_BODY
@@ -69,6 +75,9 @@ FILE /initVar.kt
         CALL '<set-x>(Int): Unit' type=kotlin.Unit origin=EQ
           $this: GET_VAR '<receiver: TestInitVarInInitBlock>' type=TestInitVarInInitBlock origin=null
           <set-?>: CONST Int type=kotlin.Int value='0'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestInitVarWithCustomSetter
     CONSTRUCTOR public constructor TestInitVarWithCustomSetter()
       BLOCK_BODY
@@ -91,6 +100,9 @@ FILE /initVar.kt
           SET_FIELD 'x: Int' type=kotlin.Unit origin=EQ
             receiver: GET_VAR '<receiver: TestInitVarWithCustomSetter>' type=TestInitVarWithCustomSetter origin=null
             value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestInitVarWithCustomSetterWithExplicitCtor
     PROPERTY public final var x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final var x: kotlin.Int
@@ -116,6 +128,9 @@ FILE /initVar.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestInitVarWithCustomSetterWithExplicitCtor'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestInitVarWithCustomSetterInCtor
     PROPERTY public final var x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final var x: kotlin.Int
@@ -139,3 +154,6 @@ FILE /initVar.kt
         CALL '<set-x>(Int): Unit' type=kotlin.Unit origin=EQ
           $this: GET_VAR '<receiver: TestInitVarWithCustomSetterInCtor>' type=TestInitVarWithCustomSetterInCtor origin=null
           value: CONST Int type=kotlin.Int value='42'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

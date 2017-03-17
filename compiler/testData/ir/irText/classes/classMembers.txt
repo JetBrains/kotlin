@@ -99,6 +99,9 @@ FILE /classMembers.kt
         BLOCK_BODY
           CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
             message: CONST String type=kotlin.String value='4'
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     CLASS INTERFACE NestedInterface
       FUN public abstract fun foo(): kotlin.Unit
         $this: VALUE_PARAMETER <receiver: NestedInterface>
@@ -108,8 +111,17 @@ FILE /classMembers.kt
           RETURN type=kotlin.Nothing from='bar(): Unit'
             CALL 'foo(): Unit' type=kotlin.Unit origin=null
               $this: GET_VAR '<receiver: NestedInterface>' type=C.NestedInterface origin=null
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     CLASS OBJECT companion object of C
       CONSTRUCTOR private constructor Companion()
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='companion object of C'
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

@@ -4,6 +4,9 @@ FILE /delegatedImplementationWithExplicitOverride.kt
       $this: VALUE_PARAMETER <receiver: IFooBar>
     FUN public abstract fun bar(): kotlin.Unit
       $this: VALUE_PARAMETER <receiver: IFooBar>
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS OBJECT FooBarImpl
     CONSTRUCTOR private constructor FooBarImpl()
       BLOCK_BODY
@@ -15,6 +18,9 @@ FILE /delegatedImplementationWithExplicitOverride.kt
     FUN public open override fun bar(): kotlin.Unit
       $this: VALUE_PARAMETER <receiver: FooBarImpl>
       BLOCK_BODY
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS C
     CONSTRUCTOR public constructor C()
       BLOCK_BODY
@@ -32,3 +38,6 @@ FILE /delegatedImplementationWithExplicitOverride.kt
     FUN public open override fun bar(): kotlin.Unit
       $this: VALUE_PARAMETER <receiver: C>
       BLOCK_BODY
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

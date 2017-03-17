@@ -21,6 +21,17 @@ FILE /enumWithSecondaryCtor.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Test0(Int)'
           x: CONST Int type=kotlin.Int value='0'
+    FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
+    FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
+    FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<Test0!>!
+    FUN FAKE_OVERRIDE public final override fun compareTo(other: Test0): kotlin.Int
+    FUN FAKE_OVERRIDE public final override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public final override fun hashCode(): kotlin.Int
+    PROPERTY FAKE_OVERRIDE public final override val name: kotlin.String
+      FUN FAKE_OVERRIDE public final override fun <get-name>(): kotlin.String
+    PROPERTY FAKE_OVERRIDE public final override val ordinal: kotlin.Int
+      FUN FAKE_OVERRIDE public final override fun <get-ordinal>(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<Test0>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): Test0
@@ -50,6 +61,17 @@ FILE /enumWithSecondaryCtor.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Test1(Int)'
           x: CONST Int type=kotlin.Int value='0'
+    FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
+    FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
+    FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<Test1!>!
+    FUN FAKE_OVERRIDE public final override fun compareTo(other: Test1): kotlin.Int
+    FUN FAKE_OVERRIDE public final override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public final override fun hashCode(): kotlin.Int
+    PROPERTY FAKE_OVERRIDE public final override val name: kotlin.String
+      FUN FAKE_OVERRIDE public final override fun <get-name>(): kotlin.String
+    PROPERTY FAKE_OVERRIDE public final override val ordinal: kotlin.Int
+      FUN FAKE_OVERRIDE public final override fun <get-ordinal>(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<Test1>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): Test1
@@ -82,6 +104,19 @@ FILE /enumWithSecondaryCtor.kt
           BLOCK_BODY
             CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
               message: CONST String type=kotlin.String value='ZERO'
+        FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
+        FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
+        FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<Test2!>!
+        FUN FAKE_OVERRIDE public final override fun compareTo(other: Test2): kotlin.Int
+        FUN FAKE_OVERRIDE public final override fun equals(other: kotlin.Any?): kotlin.Boolean
+        FUN FAKE_OVERRIDE public final override fun hashCode(): kotlin.Int
+        PROPERTY FAKE_OVERRIDE public final override val name: kotlin.String
+          FUN FAKE_OVERRIDE public final override fun <get-name>(): kotlin.String
+        PROPERTY FAKE_OVERRIDE public final override val ordinal: kotlin.Int
+          FUN FAKE_OVERRIDE public final override fun <get-ordinal>(): kotlin.Int
+        PROPERTY FAKE_OVERRIDE public final override val x: kotlin.Int
+          FUN FAKE_OVERRIDE public final override fun <get-x>(): kotlin.Int
+        FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     ENUM_ENTRY enum entry ONE
       init: ENUM_CONSTRUCTOR_CALL 'constructor ONE()'
       class: CLASS ENUM_ENTRY ONE
@@ -95,12 +130,36 @@ FILE /enumWithSecondaryCtor.kt
           BLOCK_BODY
             CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
               message: CONST String type=kotlin.String value='ONE'
+        FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
+        FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
+        FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<Test2!>!
+        FUN FAKE_OVERRIDE public final override fun compareTo(other: Test2): kotlin.Int
+        FUN FAKE_OVERRIDE public final override fun equals(other: kotlin.Any?): kotlin.Boolean
+        FUN FAKE_OVERRIDE public final override fun hashCode(): kotlin.Int
+        PROPERTY FAKE_OVERRIDE public final override val name: kotlin.String
+          FUN FAKE_OVERRIDE public final override fun <get-name>(): kotlin.String
+        PROPERTY FAKE_OVERRIDE public final override val ordinal: kotlin.Int
+          FUN FAKE_OVERRIDE public final override fun <get-ordinal>(): kotlin.Int
+        PROPERTY FAKE_OVERRIDE public final override val x: kotlin.Int
+          FUN FAKE_OVERRIDE public final override fun <get-x>(): kotlin.Int
+        FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     CONSTRUCTOR private constructor Test2()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Test2(Int)'
           x: CONST Int type=kotlin.Int value='0'
     FUN public abstract fun foo(): kotlin.Unit
       $this: VALUE_PARAMETER <receiver: Test2>
+    FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
+    FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
+    FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<Test2!>!
+    FUN FAKE_OVERRIDE public final override fun compareTo(other: Test2): kotlin.Int
+    FUN FAKE_OVERRIDE public final override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public final override fun hashCode(): kotlin.Int
+    PROPERTY FAKE_OVERRIDE public final override val name: kotlin.String
+      FUN FAKE_OVERRIDE public final override fun <get-name>(): kotlin.String
+    PROPERTY FAKE_OVERRIDE public final override val ordinal: kotlin.Int
+      FUN FAKE_OVERRIDE public final override fun <get-ordinal>(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<Test2>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): Test2

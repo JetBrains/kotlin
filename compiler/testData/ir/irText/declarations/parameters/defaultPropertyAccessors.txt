@@ -52,6 +52,9 @@ FILE /defaultPropertyAccessors.kt
           SET_FIELD 'testMember2: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: Host>' type=Host origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS InPrimaryCtor
     TYPE_PARAMETER <T>
     CONSTRUCTOR public constructor InPrimaryCtor<T>(testInPrimaryCtor1: T, testInPrimaryCtor2: kotlin.Int = ...)
@@ -90,3 +93,6 @@ FILE /defaultPropertyAccessors.kt
           SET_FIELD 'testInPrimaryCtor2: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: InPrimaryCtor>' type=InPrimaryCtor<T> origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

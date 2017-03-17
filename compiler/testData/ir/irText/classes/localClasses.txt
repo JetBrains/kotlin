@@ -9,5 +9,8 @@ FILE /localClasses.kt
         FUN public final fun foo(): kotlin.Unit
           $this: VALUE_PARAMETER <receiver: LocalClass>
           BLOCK_BODY
+        FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+        FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+        FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
       CALL 'foo(): Unit' type=kotlin.Unit origin=null
         $this: CALL 'constructor LocalClass()' type=outer.LocalClass origin=null

@@ -17,6 +17,9 @@ FILE /delegatingConstructorCallToTypeAliasConstructor.kt
           RETURN type=kotlin.Nothing from='<get-value>(): T'
             GET_FIELD 'value: T' type=T origin=null
               receiver: GET_VAR '<receiver: Cell>' type=Cell<T> origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   TYPEALIAS typealias CT = Cell<T> type=Cell<T>
   TYPEALIAS typealias CStr = Cell<String> type=Cell<kotlin.String>
   CLASS CLASS C1
@@ -25,9 +28,19 @@ FILE /delegatingConstructorCallToTypeAliasConstructor.kt
         DELEGATING_CONSTRUCTOR_CALL 'constructor Cell(String)'
           value: CONST String type=kotlin.String value='O'
         INSTANCE_INITIALIZER_CALL classDescriptor='C1'
+    PROPERTY FAKE_OVERRIDE public final override val value: kotlin.String
+      FUN FAKE_OVERRIDE public final override fun <get-value>(): kotlin.String
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS C2
     CONSTRUCTOR public constructor C2()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Cell(String)'
           value: CONST String type=kotlin.String value='K'
         INSTANCE_INITIALIZER_CALL classDescriptor='C2'
+    PROPERTY FAKE_OVERRIDE public final override val value: kotlin.String
+      FUN FAKE_OVERRIDE public final override fun <get-value>(): kotlin.String
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

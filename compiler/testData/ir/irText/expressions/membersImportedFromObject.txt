@@ -32,6 +32,9 @@ FILE /membersImportedFromObject.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-barExt>() on Int: Int'
             CONST Int type=kotlin.Int value='43'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   PROPERTY public val test1: kotlin.Int
     FIELD PROPERTY_BACKING_FIELD public val test1: kotlin.Int
       EXPRESSION_BODY

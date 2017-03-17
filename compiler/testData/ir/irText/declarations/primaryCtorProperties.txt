@@ -33,3 +33,6 @@ FILE /primaryCtorProperties.kt
           SET_FIELD 'test2: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: C>' type=C origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

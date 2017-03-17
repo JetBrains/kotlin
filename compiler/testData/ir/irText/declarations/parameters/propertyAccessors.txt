@@ -105,3 +105,6 @@ FILE /propertyAccessors.kt
         $receiver: VALUE_PARAMETER <receiver: testMemExt4: Int on TT>
         VALUE_PARAMETER value-parameter value: kotlin.Int
         BLOCK_BODY
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

@@ -17,6 +17,9 @@ FILE /superCalls.kt
           RETURN type=kotlin.Nothing from='<get-bar>(): String'
             GET_FIELD 'bar: String' type=kotlin.String origin=null
               receiver: GET_VAR '<receiver: Base>' type=Base origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Derived
     CONSTRUCTOR public constructor Derived()
       BLOCK_BODY
@@ -34,3 +37,6 @@ FILE /superCalls.kt
           RETURN type=kotlin.Nothing from='<get-bar>(): String'
             CALL '<get-bar>(): String' superQualifier=Base type=kotlin.String origin=GET_PROPERTY
               $this: GET_VAR '<receiver: Derived>' type=Derived origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

@@ -6,6 +6,17 @@ FILE /values.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='Enum'
     ENUM_ENTRY enum entry A
       init: ENUM_CONSTRUCTOR_CALL 'constructor Enum()'
+    FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
+    FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
+    FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<Enum!>!
+    FUN FAKE_OVERRIDE public final override fun compareTo(other: Enum): kotlin.Int
+    FUN FAKE_OVERRIDE public final override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public final override fun hashCode(): kotlin.Int
+    PROPERTY FAKE_OVERRIDE public final override val name: kotlin.String
+      FUN FAKE_OVERRIDE public final override fun <get-name>(): kotlin.String
+    PROPERTY FAKE_OVERRIDE public final override val ordinal: kotlin.Int
+      FUN FAKE_OVERRIDE public final override fun <get-ordinal>(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<Enum>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): Enum
@@ -15,6 +26,9 @@ FILE /values.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   PROPERTY public val a: kotlin.Int = 0
     FIELD PROPERTY_BACKING_FIELD public val a: kotlin.Int = 0
       EXPRESSION_BODY
@@ -33,6 +47,12 @@ FILE /values.kt
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='companion object of Z'
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   FUN public fun test1(): Enum
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(): Enum'
