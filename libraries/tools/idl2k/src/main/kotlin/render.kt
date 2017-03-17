@@ -202,10 +202,9 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, enums: List<E
     val superSignatures = superAttributes.map { it.signature } merge superFunctions.map { it.signature }
 
     iface.memberAttributes
-        .filter { //it !in superAttributes
+        .filter {
                 !it.static
                 && (it.isVar || (it.isVal && superAttributesByName[it.name]?.hasNoVars() ?: true))
-//                && (iface.kind != GenerateDefinitionKind.INTERFACE && allSuperTypes.any { st -> st.kind == GenerateDefinitionKind.INTERFACE && st.memberAttributes.any { sa -> sa.signature == it.signature } })
         }
         .map { it.dynamicIfUnknownType(allTypesAndEnums) }
         .groupBy { it.name }
@@ -219,10 +218,6 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, enums: List<E
                 else -> MemberModality.FINAL
             }
 
-            if (iface.name == "XMLDocument" && attribute.name == "onabort") {
-                println()
-            }
-
             if (attribute.name in superAttributesByName && attribute.signature !in superSignatures) {
                 System.err.println("Property ${iface.name}.${attribute.name} has different type in super type(s) so will not be generated: ")
                 for ((superTypeName, attributes) in allSuperTypes.map { it.name to it.memberAttributes.filter { it.name == attribute.name }.distinct() }) {
@@ -231,10 +226,9 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, enums: List<E
                     }
                 }
             } else if (modality == MemberModality.OVERRIDE
-                    && superAttributesByName[attribute.name].orEmpty().all { it.kind == attribute.kind }
-                    && (iface.kind == GenerateDefinitionKind.INTERFACE
-                    || allSuperTypes.none { st -> st.kind == GenerateDefinitionKind.INTERFACE && st.memberAttributes.any { it.signature == attribute.signature } }
-                    || allSuperTypes.any { st -> st.kind != GenerateDefinitionKind.INTERFACE && st.memberAttributes.any { it.signature == attribute.signature } })) {
+                    && attribute.kindNotChanged(superAttributesByName)
+                    && (iface.kind == GenerateDefinitionKind.INTERFACE || attribute.hasSuperImplementation(allSuperTypes))
+            ) {
                 // then don't generate
             } else {
                 renderAttributeDeclarationAsProperty(attribute,
@@ -287,6 +281,10 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, enums: List<E
         renderBuilderFunction(iface, allSuperTypes, allTypesAndEnums)
     }
 }
+
+private fun GenerateAttribute.kindNotChanged(superAttributesByName: Map<String, List<GenerateAttribute>>) = superAttributesByName[name].orEmpty().all { it.kind == kind }
+
+private fun GenerateAttribute.hasSuperImplementation(allSuperTypes: List<GenerateTraitOrClass>) = allSuperTypes.any { st -> st.kind != GenerateDefinitionKind.INTERFACE && st.memberAttributes.any { it.signature == signature } }
 
 fun Appendable.renderBuilderFunction(dictionary: GenerateTraitOrClass, allSuperTypes: List<GenerateTraitOrClass>, allTypes: Set<String>) {
     val fields = (dictionary.memberAttributes + allSuperTypes.flatMap { it.memberAttributes })
