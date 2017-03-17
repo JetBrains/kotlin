@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.types.replace
 internal data class LoweredEnum(val implObjectDescriptor: ClassDescriptor,
                                 val valuesProperty: PropertyDescriptor,
                                 val valuesGetter: FunctionDescriptor,
-                                val valuesFunction: FunctionDescriptor,
-                                val valueOfFunction: FunctionDescriptor,
                                 val itemGetter: FunctionDescriptor,
                                 val entriesMap: Map<Name, Int>)
 
@@ -30,8 +28,6 @@ internal class EnumSpecialDescriptorsFactory(val context: Context) {
                 ClassKind.OBJECT, listOf(context.builtIns.anyType), SourceElement.NO_SOURCE, false)
 
         val valuesProperty = createEnumValuesField(enumClassDescriptor, implObjectDescriptor)
-        val valuesFunction = createValuesFunctionDescriptor(enumClassDescriptor, implObjectDescriptor)
-        val valueOfFunction = createValueOfFunctionDescriptor(enumClassDescriptor, implObjectDescriptor)
         val valuesGetter = createValuesGetterDescriptor(enumClassDescriptor, implObjectDescriptor)
 
         val memberScope = MemberScope.Empty
@@ -42,28 +38,8 @@ internal class EnumSpecialDescriptorsFactory(val context: Context) {
 
         implObjectDescriptor.initialize(memberScope, setOf(constructorDescriptor), constructorDescriptor)
 
-        return LoweredEnum(implObjectDescriptor, valuesProperty, valuesGetter, valuesFunction, valueOfFunction,
+        return LoweredEnum(implObjectDescriptor, valuesProperty, valuesGetter,
                 getEnumItemGetter(enumClassDescriptor), createEnumEntriesMap(enumClassDescriptor))
-    }
-
-    private fun createValuesFunctionDescriptor(enumClassDescriptor: ClassDescriptor, implObjectDescriptor: ClassDescriptor)
-            : FunctionDescriptor {
-        val returnType = genericArrayType.defaultType.replace(listOf(TypeProjectionImpl(enumClassDescriptor.defaultType)))
-        val result = SimpleFunctionDescriptorImpl.create(
-                /* containingDeclaration        = */ implObjectDescriptor,
-                /* annotations                  = */ Annotations.EMPTY,
-                /* name                         = */ "values".synthesizedName,
-                /* kind                         = */ CallableMemberDescriptor.Kind.SYNTHESIZED,
-                /* source                       = */ SourceElement.NO_SOURCE)
-        result.initialize(
-                /* receiverParameterType        = */ null,
-                /* dispatchReceiverParameter    = */ null,
-                /* typeParameters               = */ listOf(),
-                /* unsubstitutedValueParameters = */ listOf(),
-                /* unsubstitutedReturnType      = */ returnType,
-                /* modality                     = */ Modality.FINAL,
-                /* visibility                   = */ Visibilities.PUBLIC)
-        return result
     }
 
     private fun createValuesGetterDescriptor(enumClassDescriptor: ClassDescriptor, implObjectDescriptor: ClassDescriptor)
@@ -81,37 +57,6 @@ internal class EnumSpecialDescriptorsFactory(val context: Context) {
                 /* typeParameters               = */ listOf(),
                 /* unsubstitutedValueParameters = */ listOf(),
                 /* unsubstitutedReturnType      = */ returnType,
-                /* modality                     = */ Modality.FINAL,
-                /* visibility                   = */ Visibilities.PUBLIC)
-        return result
-    }
-
-    private fun createValueOfFunctionDescriptor(enumClassDescriptor: ClassDescriptor, implObjectDescriptor: ClassDescriptor)
-            : FunctionDescriptor {
-        val result = SimpleFunctionDescriptorImpl.create(
-                /* containingDeclaration        = */ implObjectDescriptor,
-                /* annotations                  = */ Annotations.EMPTY,
-                /* name                         = */ "valueOf".synthesizedName,
-                /* kind                         = */ CallableMemberDescriptor.Kind.SYNTHESIZED,
-                /* source                       = */ SourceElement.NO_SOURCE)
-        val nameParameterDescriptor = ValueParameterDescriptorImpl(
-                containingDeclaration = result,
-                original = null,
-                index = 0,
-                annotations = Annotations.EMPTY,
-                name = Name.identifier("name"),
-                outType = context.builtIns.stringType,
-                declaresDefaultValue = false,
-                isCrossinline = false,
-                isNoinline = false,
-                varargElementType = null,
-                source = SourceElement.NO_SOURCE)
-        result.initialize(
-                /* receiverParameterType        = */ null,
-                /* dispatchReceiverParameter    = */ null,
-                /* typeParameters               = */ listOf(),
-                /* unsubstitutedValueParameters = */ listOf(nameParameterDescriptor),
-                /* unsubstitutedReturnType      = */ enumClassDescriptor.defaultType,
                 /* modality                     = */ Modality.FINAL,
                 /* visibility                   = */ Visibilities.PUBLIC)
         return result

@@ -58,24 +58,6 @@ internal class EnumUsageLowering(val context: Context)
             putValueArgument(0, IrConstImpl.int(startOffset, endOffset, enumClassDescriptor.module.builtIns.intType, ordinal))
         }
     }
-
-    override fun visitCall(expression: IrCall): IrExpression {
-        expression.transformChildrenVoid(this)
-        val functionDescriptor = expression.descriptor as? FunctionDescriptor
-        if (functionDescriptor == null) return expression
-        if (functionDescriptor.kind != CallableMemberDescriptor.Kind.SYNTHESIZED) return expression
-        val classDescriptor = functionDescriptor.containingDeclaration as? ClassDescriptor
-        if (classDescriptor == null || classDescriptor.kind != ClassKind.ENUM_CLASS) return expression
-        val loweredEnum = context.specialDescriptorsFactory.getLoweredEnum(classDescriptor)
-        val loweredFunction = when (functionDescriptor.name.asString()) {
-            "values" -> loweredEnum.valuesFunction
-            "valueOf" -> loweredEnum.valueOfFunction
-            else -> throw AssertionError("Unexpected synthetic enum function: $functionDescriptor")
-        }
-        return IrCallImpl(expression.startOffset, expression.endOffset, loweredFunction).apply {
-            expression.descriptor.valueParameters.forEach { p -> putValueArgument(p, expression.getValueArgument(p)) }
-        }
-    }
 }
 
 internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
@@ -125,7 +107,8 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                 override fun visitConstructor(declaration: IrConstructor): IrStatement {
                     declaration.transformChildrenVoid(this)
 
-                    val blockBody = declaration.body as? IrBlockBody ?: throw AssertionError("Unexpected constructor body: ${declaration.body}")
+                    val blockBody = declaration.body as? IrBlockBody
+                            ?: throw AssertionError("Unexpected constructor body: ${declaration.body}")
                     if (blockBody.statements.all { it !is IrInstanceInitializerCall }) {
                         blockBody.statements.transformFlat {
                             if (it is IrEnumConstructorCall)
@@ -220,8 +203,15 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                         delete = true
                     }
                     is IrFunction -> {
-                        if (declaration.body is IrSyntheticBody)
-                            delete = true
+                        val body = declaration.body
+                        if (body is IrSyntheticBody) {
+                            when (body.kind) {
+                                IrSyntheticBodyKind.ENUM_VALUEOF ->
+                                    declaration.body = createSyntheticValueOfMethodBody(declaration.descriptor)
+                                IrSyntheticBodyKind.ENUM_VALUES ->
+                                    declaration.body = createSyntheticValuesMethodBody(declaration.descriptor)
+                            }
+                        }
                     }
                 }
                 if (delete)
@@ -237,8 +227,6 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
 
             implObject.declarations.add(constructor)
             implObject.declarations.add(createSyntheticValuesPropertyDeclaration(enumEntries))
-            implObject.declarations.add(createSyntheticValuesMethodDeclaration())
-            implObject.declarations.add(createSyntheticValueOfMethodDeclaration())
 
             irClass.declarations.add(implObject)
         }
@@ -273,7 +261,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
 
         private val genericValuesFun = context.builtIns.getKonanInternalFunctions("valuesForEnum").single()
 
-        private fun createSyntheticValuesMethodDeclaration(): IrFunction {
+        private fun createSyntheticValuesMethodBody(descriptor: FunctionDescriptor): IrBody {
             val startOffset = irClass.startOffset
             val endOffset = irClass.endOffset
             val typeParameterT = genericValuesFun.typeParameters[0]
@@ -288,14 +276,13 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                         putValueArgument(0, IrGetFieldImpl(startOffset, endOffset, loweredEnum.valuesProperty, receiver))
                     }
 
-            val body = IrBlockBodyImpl(
+            return IrBlockBodyImpl(
                     startOffset, endOffset,
-                    listOf(IrReturnImpl(startOffset, endOffset, loweredEnum.valuesFunction, irValuesCall))
+                    listOf(IrReturnImpl(startOffset, endOffset, descriptor, irValuesCall))
             )
-            return IrFunctionImpl(startOffset, endOffset, DECLARATION_ORIGIN_ENUM, loweredEnum.valuesFunction, body)
         }
 
-        private fun createSyntheticValueOfMethodDeclaration(): IrFunction {
+        private fun createSyntheticValueOfMethodBody(descriptor: FunctionDescriptor): IrBody {
             val startOffset = irClass.startOffset
             val endOffset = irClass.endOffset
             val typeParameterT = genericValueOfFun.typeParameters[0]
@@ -305,17 +292,16 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
 
             val irValueOfCall = IrCallImpl(startOffset, endOffset, substitutedValueOf, mapOf(typeParameterT to enumClassType))
                     .apply {
-                        putValueArgument(0, IrGetValueImpl(startOffset, endOffset, loweredEnum.valueOfFunction.valueParameters[0]))
+                        putValueArgument(0, IrGetValueImpl(startOffset, endOffset, descriptor.valueParameters[0]))
                         val receiver = IrGetObjectValueImpl(startOffset, endOffset,
                                 loweredEnum.implObjectDescriptor.defaultType, loweredEnum.implObjectDescriptor)
                         putValueArgument(1, IrGetFieldImpl(startOffset, endOffset, loweredEnum.valuesProperty, receiver))
                     }
 
-            val body = IrBlockBodyImpl(
+            return IrBlockBodyImpl(
                     startOffset, endOffset,
-                    listOf(IrReturnImpl(startOffset, endOffset, loweredEnum.valueOfFunction, irValueOfCall))
+                    listOf(IrReturnImpl(startOffset, endOffset, descriptor, irValueOfCall))
             )
-            return IrFunctionImpl(startOffset, endOffset, DECLARATION_ORIGIN_ENUM, loweredEnum.valueOfFunction, body)
         }
 
         private fun lowerEnumConstructors(irClass: IrClass) {
