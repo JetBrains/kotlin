@@ -1,6 +1,8 @@
 package test.ranges
 
 import org.junit.Test
+import test.collections.behaviors.iteratorBehavior
+import test.collections.compare
 import kotlin.test.*
 
 public open class RangeIterationTestBase {
@@ -41,6 +43,10 @@ public open class RangeIterationTestBase {
             assertTrue(sequence.none())
         else
             assertEquals(expectedElements, sequence.toList())
+
+        compare(expectedElements.iterator(), sequence.iterator()) {
+            iteratorBehavior()
+        }
     }
 
 }
