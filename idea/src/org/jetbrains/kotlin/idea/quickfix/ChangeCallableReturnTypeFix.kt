@@ -75,7 +75,7 @@ abstract class ChangeCallableReturnTypeFix(
         val name = element.name
         if (name != null) {
             val container = element.resolveToDescriptor().containingDeclaration as? ClassDescriptor
-            val containerName = container?.name?.takeIf { !it.isSpecial }?.asString()
+            val containerName = container?.name?.takeUnless { it.isSpecial }?.asString()
             val fullName = if (containerName != null) "'$containerName.$name'" else "'$name'"
             if (element is KtParameter) {
                 return "property $fullName"

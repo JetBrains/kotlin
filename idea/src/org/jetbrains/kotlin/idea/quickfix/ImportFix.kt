@@ -488,8 +488,8 @@ internal class ImportForMismatchingArgumentsFix(
         return callExpression.valueArguments +
                callExpression.valueArguments.mapNotNull { it.getArgumentExpression() } +
                callExpression.valueArguments.mapNotNull { it.getArgumentName()?.referenceExpression } +
-               listOfNotNull(callExpression.valueArgumentList) +
-               listOfNotNull(callExpression.referenceExpression())
+               listOfNotNull(callExpression.valueArgumentList,
+                             callExpression.referenceExpression())
     }
 
     override fun fillCandidates(

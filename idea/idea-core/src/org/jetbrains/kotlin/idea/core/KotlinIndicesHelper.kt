@@ -478,7 +478,7 @@ class KotlinIndicesHelper(
             val translatedDeclaration = declarationTranslator(this) ?: return emptyList()
             if (!psiFilter(translatedDeclaration)) return emptyList()
 
-            return listOfNotNull((resolutionFacade.resolveToDescriptor(translatedDeclaration)))
+            return listOfNotNull(resolutionFacade.resolveToDescriptor(translatedDeclaration))
         }
     }
 }

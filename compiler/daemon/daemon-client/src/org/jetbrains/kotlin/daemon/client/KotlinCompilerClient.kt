@@ -61,7 +61,7 @@ object KotlinCompilerClient {
     ): CompileService? {
         val flagFile = System.getProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY)
                                ?.let(String::trimQuotes)
-                               ?.takeIf { !it.isBlank() }
+                               ?.takeUnless(String::isBlank)
                                ?.let(::File)
                                ?.takeIf(File::exists)
                                ?: makeAutodeletingFlagFile(baseDir = File(daemonOptions.runFilesPathOrDefault))

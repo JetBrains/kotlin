@@ -322,7 +322,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             return containingFile
         }
 
-        private fun KtElement?.check(): Boolean = this != null && this.takeIf { KotlinEditorTextProvider.isAcceptedAsCodeFragmentContext(it) } != null
+        private fun KtElement?.check(): Boolean = this != null && KotlinEditorTextProvider.isAcceptedAsCodeFragmentContext(this)
 
         //internal for tests
         fun createCodeFragmentForLabeledObjects(project: Project, markupMap: Map<*, ValueMarkup>): Pair<String, Map<String, Value>> {
@@ -397,7 +397,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
 
         val sb = StringBuilder()
 
-        javaFile?.packageName?.takeIf { !it.isBlank() }?.let {
+        javaFile?.packageName?.takeUnless { it.isBlank() }?.let {
             sb.append("package ").append(it.quoteIfNeeded()).append("\n")
         }
 

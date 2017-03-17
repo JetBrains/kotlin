@@ -63,8 +63,7 @@ object BuiltinSpecialBridgesUtil {
 
         val specialBridgeExists = function.getSpecialBridgeSignatureIfExists(signatureByDescriptor) != null
         val specialBridgesSignaturesInSuperClass = function.overriddenTreeAsSequence(useOriginal = true).mapNotNull {
-            if (it === function) return@mapNotNull null
-            it.getSpecialBridgeSignatureIfExists(signatureByDescriptor)
+            it.takeUnless { it === function }?.getSpecialBridgeSignatureIfExists(signatureByDescriptor)
         }
         val isTherePossibleClashWithSpecialBridge =
                 specialBridgeSignature in specialBridgesSignaturesInSuperClass

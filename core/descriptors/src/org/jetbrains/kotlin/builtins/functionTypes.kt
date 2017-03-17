@@ -166,7 +166,7 @@ fun getFunctionTypeArgumentProjections(
     arguments.addIfNotNull(receiverType?.asTypeProjection())
 
     parameterTypes.mapIndexedTo(arguments) { index, type ->
-        val name = parameterNames?.get(index)?.takeIf { !it.isSpecial }
+        val name = parameterNames?.get(index)?.takeUnless { it.isSpecial }
         val typeToUse = if (name != null) {
             val annotationClass = builtIns.getBuiltInClassByName(KotlinBuiltIns.FQ_NAMES.parameterName.shortName())
             val nameValue = ConstantValueFactory(builtIns).createStringValue(name.asString())

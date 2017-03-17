@@ -288,7 +288,7 @@ class CoroutineCodegen private constructor(
     }
 
     private fun allFunctionParameters() =
-            listOfNotNull(originalSuspendFunctionDescriptor.extensionReceiverParameter) +
+            originalSuspendFunctionDescriptor.extensionReceiverParameter.let(::listOfNotNull) +
             originalSuspendFunctionDescriptor.valueParameters.orEmpty()
 
     private fun ParameterDescriptor.getFieldInfoForCoroutineLambdaParameter() =

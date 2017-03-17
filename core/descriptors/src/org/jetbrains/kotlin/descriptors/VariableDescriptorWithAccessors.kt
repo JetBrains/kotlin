@@ -33,4 +33,4 @@ interface VariableDescriptorWithAccessors : VariableDescriptor {
 }
 
 val VariableDescriptorWithAccessors.accessors: List<VariableAccessorDescriptor>
-    get() = listOfNotNull(getter) + listOfNotNull(setter)
+    get() = listOfNotNull(getter, setter)

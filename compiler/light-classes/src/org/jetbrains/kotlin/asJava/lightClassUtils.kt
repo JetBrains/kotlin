@@ -50,12 +50,10 @@ fun KtElement.toLightElements(): List<PsiNamedElement> =
             is KtSecondaryConstructor -> LightClassUtil.getLightClassMethods(this as KtFunction)
             is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this).allDeclarations
             is KtPropertyAccessor -> listOfNotNull(LightClassUtil.getLightClassAccessorMethod(this))
-            is KtParameter -> ArrayList<PsiNamedElement>().let { elements ->
+            is KtParameter -> mutableListOf<PsiNamedElement>().also { elements ->
                 toPsiParameters().toCollection(elements)
                 LightClassUtil.getLightClassPropertyMethods(this).toCollection(elements)
-                toAnnotationLightMethod()?.let { elements.add(it) }
-
-                elements
+                toAnnotationLightMethod()?.let(elements::add)
             }
             is KtTypeParameter -> toPsiTypeParameters()
             is KtFile -> listOfNotNull(findFacadeClass())

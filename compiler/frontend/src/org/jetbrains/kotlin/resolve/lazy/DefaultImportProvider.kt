@@ -55,7 +55,7 @@ class DefaultImportProvider(
                 defaultImports
                         .filter { it.isAllUnder }
                         .mapNotNull {
-                            it.fqName.takeIf { !it.isSubpackageOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) }
+                            it.fqName.takeUnless { it.isSubpackageOf(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) }
                         }
         val nonKotlinAliasedTypeFqNames =
                 builtinTypeAliases
