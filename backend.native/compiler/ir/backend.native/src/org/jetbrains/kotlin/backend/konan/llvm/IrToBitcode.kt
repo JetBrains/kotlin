@@ -1659,6 +1659,11 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 assert(args.size >= 1 && args[0].type == int32Type)
                 codegen.allocArray(codegen.typeInfoValue(constructedClass), args[0],
                         resultLifetime(callee))
+            } else if (constructedClass == context.builtIns.string) {
+                // TODO: consider returning the empty string literal instead.
+                assert(args.size == 0)
+                codegen.allocArray(codegen.typeInfoValue(constructedClass), count = kImmZero,
+                        lifetime = resultLifetime(callee))
             } else {
                 codegen.allocInstance(codegen.typeInfoValue(constructedClass), resultLifetime(callee))
             }
