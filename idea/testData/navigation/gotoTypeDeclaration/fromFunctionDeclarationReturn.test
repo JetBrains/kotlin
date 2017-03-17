@@ -1,0 +1,12 @@
+// FILE: before.kt
+interface Foo1
+interface Bar1
+
+fun Foo1.test(): <caret>Bar1 = null!!
+
+
+// FILE: after.kt
+interface Foo1
+interface Bar1
+
+fun Foo1.test(): <caret>Bar1 = null!!

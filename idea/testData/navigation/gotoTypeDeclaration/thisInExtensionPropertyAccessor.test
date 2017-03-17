@@ -1,0 +1,19 @@
+// FILE: before.kt
+interface Foo
+interface Bar
+
+val Foo.test: Bar
+    get() {
+        <caret>this
+        return null!!
+    }
+
+// FILE: after.kt
+interface <caret>Foo
+interface Bar
+
+val Foo.test: Bar
+    get() {
+        this
+        return null!!
+    }
