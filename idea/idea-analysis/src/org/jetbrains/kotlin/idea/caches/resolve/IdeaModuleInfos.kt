@@ -214,7 +214,7 @@ open class LibraryInfo(val project: Project, val library: Library) : IdeaModuleI
     override fun hashCode(): Int = 43 * library.hashCode()
 }
 
-internal data class LibrarySourceInfo(val project: Project, val library: Library) : IdeaModuleInfo {
+data class LibrarySourceInfo(val project: Project, val library: Library) : IdeaModuleInfo {
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
 
