@@ -14,501 +14,354 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.decompiler.navigation;
+package org.jetbrains.kotlin.idea.decompiler.navigation
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.DumbService;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.OrderEntry;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.search.EverythingGlobalScope;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.stubs.StringStubIndexExtension;
-import com.intellij.util.containers.ContainerUtil;
-import gnu.trove.THashSet;
-import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
-import org.jetbrains.kotlin.context.ContextKt;
-import org.jetbrains.kotlin.context.MutableModuleContext;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.frontend.di.InjectionKt;
-import org.jetbrains.kotlin.idea.stubindex.*;
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.name.ClassId;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.OrderEntry
+import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiClass
+import com.intellij.psi.search.EverythingGlobalScope
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.stubs.StringStubIndexExtension
+import com.intellij.util.containers.ContainerUtil
+import gnu.trove.THashSet
+import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.context.ContextForNewModule
+import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.frontend.di.createLazyResolveSession
+import org.jetbrains.kotlin.idea.decompiler.navigation.MemberMatching.*
+import org.jetbrains.kotlin.idea.stubindex.*
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.debugText.getDebugText
+import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+object SourceNavigationHelper {
+    private val LOG = Logger.getInstance(SourceNavigationHelper::class.java)
 
-import static org.jetbrains.kotlin.asJava.LightClassUtilsKt.toLightClass;
-import static org.jetbrains.kotlin.idea.decompiler.navigation.MemberMatching.*;
-
-public class SourceNavigationHelper {
-    private static final Logger LOG = Logger.getInstance(SourceNavigationHelper.class);
-
-    public enum NavigationKind {
+    enum class NavigationKind {
         CLASS_FILES_TO_SOURCES,
         SOURCES_TO_CLASS_FILES
     }
 
-    private static boolean forceResolve = false;
+    private var forceResolve = false
 
-    private SourceNavigationHelper() {
+    @TestOnly
+    fun setForceResolve(forceResolve: Boolean) {
+        SourceNavigationHelper.forceResolve = forceResolve
     }
 
-    @NotNull
-    private static GlobalSearchScope createLibraryOrSourcesScope(
-            @NotNull KtNamedDeclaration declaration,
-            @NotNull NavigationKind navigationKind
-    ) {
-        KtFile containingFile = declaration.getContainingKtFile();
-        VirtualFile libraryFile = containingFile.getVirtualFile();
-        if (libraryFile == null) return GlobalSearchScope.EMPTY_SCOPE;
+    private fun createLibraryOrSourcesScope(
+            declaration: KtNamedDeclaration,
+            navigationKind: NavigationKind
+    ): GlobalSearchScope {
+        val containingFile = declaration.containingKtFile
+        containingFile.virtualFile ?: return GlobalSearchScope.EMPTY_SCOPE
 
-        boolean includeLibrarySources = navigationKind == NavigationKind.CLASS_FILES_TO_SOURCES;
+        val includeLibrarySources = navigationKind == NavigationKind.CLASS_FILES_TO_SOURCES
         if (ProjectRootsUtil.isInContent(declaration, false, includeLibrarySources, !includeLibrarySources, true)) {
-            return GlobalSearchScope.EMPTY_SCOPE;
+            return GlobalSearchScope.EMPTY_SCOPE
         }
 
-        Project project = declaration.getProject();
-        return includeLibrarySources
-               ? KotlinSourceFilterScope.librarySources(new EverythingGlobalScope(project), project)
-               : KotlinSourceFilterScope.libraryClassFiles(new EverythingGlobalScope(project), project);
+        val project = declaration.project
+        return if (includeLibrarySources)
+            KotlinSourceFilterScope.librarySources(EverythingGlobalScope(project), project)
+        else
+            KotlinSourceFilterScope.libraryClassFiles(EverythingGlobalScope(project), project)
     }
 
-    private static List<KtFile> getContainingFiles(@NotNull Iterable<KtNamedDeclaration> declarations) {
-        Set<KtFile> result = Sets.newHashSet();
-        for (KtNamedDeclaration declaration : declarations) {
-            PsiFile containingFile = declaration.getContainingFile();
-            if (containingFile instanceof KtFile) {
-                result.add((KtFile) containingFile);
-            }
-        }
-        return Lists.newArrayList(result);
-    }
+    private fun haveRenamesInImports(files: Collection<KtFile>) = files.any { it.importDirectives.any { it.aliasName != null } }
 
-    private static boolean haveRenamesInImports(@NotNull List<KtFile> files) {
-        for (KtFile file : files) {
-            for (KtImportDirective importDirective : file.getImportDirectives()) {
-                if (importDirective.getAliasName() != null) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    @Nullable
-    private static KtNamedDeclaration findSpecialProperty(@NotNull Name memberName, @NotNull KtClass containingClass) {
+    private fun findSpecialProperty(memberName: Name, containingClass: KtClass): KtNamedDeclaration? {
         // property constructor parameters
-        List<KtParameter> constructorParameters = containingClass.getPrimaryConstructorParameters();
-        for (KtParameter constructorParameter : constructorParameters) {
-            if (memberName.equals(constructorParameter.getNameAsName()) && constructorParameter.hasValOrVar()) {
-                return constructorParameter;
+        val constructorParameters = containingClass.primaryConstructorParameters
+        for (constructorParameter in constructorParameters) {
+            if (memberName == constructorParameter.nameAsName && constructorParameter.hasValOrVar()) {
+                return constructorParameter
             }
         }
 
         // enum entries
         if (containingClass.hasModifier(KtTokens.ENUM_KEYWORD)) {
-            for (KtEnumEntry enumEntry : ContainerUtil.findAll(containingClass.getDeclarations(), KtEnumEntry.class)) {
-                if (memberName.equals(enumEntry.getNameAsName())) {
-                    return enumEntry;
+            for (enumEntry in ContainerUtil.findAll<KtDeclaration, KtEnumEntry>(containingClass.declarations, KtEnumEntry::class.java)) {
+                if (memberName == enumEntry.nameAsName) {
+                    return enumEntry
                 }
             }
         }
-        return null;
+        return null
     }
 
-    @Nullable
-    private static KtNamedDeclaration convertPropertyOrFunction(
-            @NotNull KtNamedDeclaration declaration,
-            @NotNull NavigationKind navigationKind
-    ) {
-        if (declaration instanceof KtPrimaryConstructor) {
-            KtClassOrObject sourceClassOrObject =
-                    findClassOrObject(((KtPrimaryConstructor) declaration).getContainingClassOrObject(), navigationKind);
-            KtPrimaryConstructor primaryConstructor = sourceClassOrObject != null ? sourceClassOrObject.getPrimaryConstructor() : null;
-            return primaryConstructor != null ? primaryConstructor : sourceClassOrObject;
+    private fun convertPropertyOrFunction(
+            declaration: KtNamedDeclaration,
+            navigationKind: NavigationKind
+    ): KtNamedDeclaration? {
+        if (declaration is KtPrimaryConstructor) {
+            val sourceClassOrObject = findClassOrObject(declaration.getContainingClassOrObject(), navigationKind)
+            return sourceClassOrObject?.primaryConstructor ?: sourceClassOrObject
         }
 
-        String memberNameAsString = declaration.getName();
+        val memberNameAsString = declaration.name
         if (memberNameAsString == null) {
-            LOG.debug("JetSourceNavigationHelper.convertPropertyOrFunction(): null name for declaration " + declaration);
-            return null;
+            LOG.debug("Declaration with null name:" + declaration.getDebugText())
+            return null
         }
-        Name memberName = Name.identifier(memberNameAsString);
+        val memberName = Name.identifier(memberNameAsString)
 
-        PsiElement decompiledContainer = declaration.getParent();
+        val decompiledContainer = declaration.parent
 
-        Collection<KtNamedDeclaration> candidates;
-        if (decompiledContainer instanceof KtFile) {
-            candidates = getInitialTopLevelCandidates(declaration, navigationKind);
-        }
-        else if (decompiledContainer instanceof KtClassBody) {
-            KtClassOrObject decompiledClassOrObject = (KtClassOrObject) decompiledContainer.getParent();
-            KtClassOrObject sourceClassOrObject = findClassOrObject(decompiledClassOrObject, navigationKind);
+        var candidates: Collection<KtNamedDeclaration>
+        when (decompiledContainer) {
+            is KtFile -> candidates = getInitialTopLevelCandidates(declaration, navigationKind)
+            is KtClassBody -> {
+                val decompiledClassOrObject = decompiledContainer.getParent() as KtClassOrObject
+                val sourceClassOrObject = findClassOrObject(decompiledClassOrObject, navigationKind)
 
-            //noinspection unchecked
-            candidates = sourceClassOrObject == null
-                         ? Collections.<KtNamedDeclaration>emptyList()
-                         : getInitialMemberCandidates(sourceClassOrObject, memberName,
-                                                      (Class<KtNamedDeclaration>) declaration.getClass());
+                candidates = sourceClassOrObject?.let {
+                    getInitialMemberCandidates(sourceClassOrObject, memberName, declaration::class.java)
+                }.orEmpty()
 
-            if (candidates.isEmpty()) {
-                if (declaration instanceof KtProperty && sourceClassOrObject instanceof KtClass) {
-                    return findSpecialProperty(memberName, (KtClass) sourceClassOrObject);
+                if (candidates.isEmpty()) {
+                    if (declaration is KtProperty && sourceClassOrObject is KtClass) {
+                        return findSpecialProperty(memberName, sourceClassOrObject)
+                    }
                 }
             }
-        }
-        else {
-            throw new IllegalStateException("Unexpected container of " +
-                                            (navigationKind == NavigationKind.CLASS_FILES_TO_SOURCES ? "decompiled" : "source") +
-                                            " declaration: " +
-                                            decompiledContainer.getClass().getSimpleName());
+            else -> throw IllegalStateException("Unexpected container of " +
+                                                (if (navigationKind == NavigationKind.CLASS_FILES_TO_SOURCES) "decompiled" else "source") +
+                                                " declaration: " +
+                                                decompiledContainer::class.java.simpleName)
         }
 
         if (candidates.isEmpty()) {
-            return null;
+            return null
         }
 
-        candidates = filterByOrderEntries(declaration, candidates);
+        candidates = filterByOrderEntries(declaration, candidates)
 
         if (!forceResolve) {
-            candidates = filterByReceiverPresenceAndParametersCount(declaration, candidates);
+            candidates = candidates.filter { sameReceiverPresenceAndParametersCount(it, declaration) }
 
-            if (candidates.size() <= 1) {
-                return candidates.isEmpty() ? null : candidates.iterator().next();
+            if (candidates.size <= 1) {
+                return candidates.firstOrNull()
             }
 
-            if (!haveRenamesInImports(getContainingFiles(candidates))) {
-                candidates = filterByReceiverAndParameterTypes(declaration, candidates);
+            if (!haveRenamesInImports(candidates.getContainingFiles())) {
+                candidates = candidates.filter { receiverAndParametersShortTypesMatch(it, declaration) }
 
-                if (candidates.size() <= 1) {
-                    return candidates.isEmpty() ? null : candidates.iterator().next();
+
+                if (candidates.size <= 1) {
+                    return candidates.firstOrNull()
                 }
             }
         }
 
-        KotlinCodeAnalyzer analyzer = createAnalyzer(candidates, declaration.getProject());
+        val analyzer = createAnalyzer(candidates, declaration.project)
 
-        for (KtNamedDeclaration candidate : candidates) {
-            //noinspection unchecked
-            CallableDescriptor candidateDescriptor = (CallableDescriptor) analyzer.resolveToDescriptor(candidate);
+        for (candidate in candidates) {
+            val candidateDescriptor = analyzer.resolveToDescriptor(candidate) as CallableDescriptor
             if (receiversMatch(declaration, candidateDescriptor)
                 && valueParametersTypesMatch(declaration, candidateDescriptor)
-                && typeParametersMatch((KtTypeParameterListOwner) declaration, candidateDescriptor.getTypeParameters())) {
-                return candidate;
+                && typeParametersMatch(declaration as KtTypeParameterListOwner, candidateDescriptor.typeParameters)) {
+                return candidate
             }
         }
 
-        return null;
+        return null
     }
 
-    @NotNull
-    private static KotlinCodeAnalyzer createAnalyzer(
-            @NotNull Collection<KtNamedDeclaration> candidates,
-            @NotNull Project project
-    ) {
-        MutableModuleContext context = ContextKt.ContextForNewModule(
-                ContextKt.ProjectContext(project), Name.special("<library module>"), DefaultBuiltIns.getInstance(), null
-        );
-        context.setDependencies(context.getModule(), context.getModule().getBuiltIns().getBuiltInsModule());
-        ResolveSession resolveSession = InjectionKt.createLazyResolveSession(context, getContainingFiles(candidates));
-        context.initializeModuleContents(resolveSession.getPackageFragmentProvider());
-        return resolveSession;
+    private fun createAnalyzer(
+            candidates: Collection<KtNamedDeclaration>,
+            project: Project
+    ): KotlinCodeAnalyzer {
+        val context = ContextForNewModule(
+                ProjectContext(project), Name.special("<library module>"), DefaultBuiltIns.Instance, null
+        )
+        context.setDependencies(context.module, context.module.builtIns.builtInsModule)
+        val resolveSession = createLazyResolveSession(context, candidates.getContainingFiles())
+        context.initializeModuleContents(resolveSession.packageFragmentProvider)
+        return resolveSession
     }
 
-    @Nullable
-    private static <T extends KtNamedDeclaration> T findFirstMatchingInIndex(
-            @NotNull T entity,
-            @NotNull NavigationKind navigationKind,
-            @NotNull StringStubIndexExtension<T> index
-    ) {
-        FqName classFqName = entity.getFqName();
-        assert classFqName != null;
+    private fun <T : KtNamedDeclaration> findFirstMatchingInIndex(
+            entity: T,
+            navigationKind: NavigationKind,
+            index: StringStubIndexExtension<T>
+    ): T? {
+        val classFqName = entity.fqName!!
 
-        GlobalSearchScope librarySourcesScope = createLibraryOrSourcesScope(entity, navigationKind);
-        if (librarySourcesScope == GlobalSearchScope.EMPTY_SCOPE) { // .getProject() == null for EMPTY_SCOPE, and this breaks code
-            return null;
+        val librarySourcesScope = createLibraryOrSourcesScope(entity, navigationKind)
+        if (librarySourcesScope === GlobalSearchScope.EMPTY_SCOPE) { // .getProject() == null for EMPTY_SCOPE, and this breaks code
+            return null
         }
-        Collection<T> classes = index.get(classFqName.asString(), entity.getProject(), librarySourcesScope);
-        if (classes.isEmpty()) {
-            return null;
+        return index.get(classFqName.asString(), entity.project, librarySourcesScope).firstOrNull()
+    }
+
+    private fun findClassOrObject(decompiledClassOrObject: KtClassOrObject, navigationKind: NavigationKind): KtClassOrObject? {
+        return findFirstMatchingInIndex<KtClassOrObject>(decompiledClassOrObject, navigationKind, KotlinFullClassNameIndex.getInstance())
+    }
+
+    private fun getInitialTopLevelCandidates(
+            declaration: KtNamedDeclaration,
+            navigationKind: NavigationKind
+    ): Collection<KtNamedDeclaration> {
+        val librarySourcesScope = createLibraryOrSourcesScope(declaration, navigationKind)
+        if (librarySourcesScope === GlobalSearchScope.EMPTY_SCOPE) { // .getProject() == null for EMPTY_SCOPE, and this breaks code
+            return emptyList()
         }
-        return classes.iterator().next(); // if there are more than one with this FQ, find first of them
+
+        val index = getIndexForTopLevelPropertyOrFunction(declaration)
+        return index.get(declaration.fqName!!.asString(), declaration.project, librarySourcesScope)
     }
 
-    @Nullable
-    private static KtClassOrObject findClassOrObject(
-            @NotNull KtClassOrObject decompiledClassOrObject,
-            @NotNull NavigationKind navigationKind
-    ) {
-        return findFirstMatchingInIndex(decompiledClassOrObject, navigationKind, KotlinFullClassNameIndex.getInstance());
-    }
-
-    @NotNull
-    private static Collection<KtNamedDeclaration> getInitialTopLevelCandidates(
-            @NotNull KtNamedDeclaration declaration,
-            @NotNull NavigationKind navigationKind
-    ) {
-        FqName memberFqName = declaration.getFqName();
-        assert memberFqName != null;
-
-        GlobalSearchScope librarySourcesScope = createLibraryOrSourcesScope(declaration, navigationKind);
-        if (librarySourcesScope == GlobalSearchScope.EMPTY_SCOPE) { // .getProject() == null for EMPTY_SCOPE, and this breaks code
-            return Collections.emptyList();
+    private fun getIndexForTopLevelPropertyOrFunction(
+            decompiledDeclaration: KtNamedDeclaration
+    ): StringStubIndexExtension<out KtNamedDeclaration> {
+        when (decompiledDeclaration) {
+            is KtNamedFunction -> return KotlinTopLevelFunctionFqnNameIndex.getInstance()
+            is KtProperty -> return KotlinTopLevelPropertyFqnNameIndex.getInstance()
+            else -> throw IllegalArgumentException("Neither function nor declaration: " + decompiledDeclaration::class.java.name)
         }
-        //noinspection unchecked
-        StringStubIndexExtension<KtNamedDeclaration> index =
-                (StringStubIndexExtension<KtNamedDeclaration>) getIndexForTopLevelPropertyOrFunction(declaration);
-        return index.get(memberFqName.asString(), declaration.getProject(), librarySourcesScope);
     }
 
-    private static StringStubIndexExtension<? extends KtNamedDeclaration> getIndexForTopLevelPropertyOrFunction(
-            @NotNull KtNamedDeclaration decompiledDeclaration
-    ) {
-        if (decompiledDeclaration instanceof KtNamedFunction) {
-            return KotlinTopLevelFunctionFqnNameIndex.getInstance();
+    private fun getInitialMemberCandidates(
+            sourceClassOrObject: KtClassOrObject,
+            name: Name,
+            declarationClass: Class<out KtNamedDeclaration>
+    ) = sourceClassOrObject.declarations.filterIsInstance(declarationClass).filter {
+        declaration ->
+        name == declaration.nameAsSafeName
+    }
+
+    private fun filterByOrderEntries(
+            declaration: KtNamedDeclaration,
+            candidates: Collection<KtNamedDeclaration>
+    ): List<KtNamedDeclaration> {
+        val fileIndex = ProjectRootManager.getInstance(declaration.project).fileIndex
+        val orderEntries = fileIndex.getOrderEntriesForFile(declaration.containingFile.virtualFile)
+
+        return candidates.filter {
+            val candidateOrderEntries = fileIndex.getOrderEntriesForFile(it.containingFile.virtualFile)
+            ContainerUtil.intersects<OrderEntry>(orderEntries, candidateOrderEntries)
         }
-        if (decompiledDeclaration instanceof KtProperty) {
-            return KotlinTopLevelPropertyFqnNameIndex.getInstance();
-        }
-        throw new IllegalArgumentException("Neither function nor declaration: " + decompiledDeclaration.getClass().getName());
     }
 
-    @NotNull
-    private static List<KtNamedDeclaration> getInitialMemberCandidates(
-            @NotNull KtClassOrObject sourceClassOrObject,
-            @NotNull final Name name,
-            @NotNull Class<KtNamedDeclaration> declarationClass
-    ) {
-        List<KtNamedDeclaration> allByClass = ContainerUtil.findAll(sourceClassOrObject.getDeclarations(), declarationClass);
-        return ContainerUtil.filter(allByClass, new Condition<KtNamedDeclaration>() {
-            @Override
-            public boolean value(KtNamedDeclaration declaration) {
-                return name.equals(declaration.getNameAsSafeName());
-            }
-        });
-    }
-
-    @NotNull
-    private static List<KtNamedDeclaration> filterByOrderEntries(
-            @NotNull KtNamedDeclaration declaration,
-            @NotNull Collection<KtNamedDeclaration> candidates
-    ) {
-        final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(declaration.getProject()).getFileIndex();
-        final List<OrderEntry> orderEntries = fileIndex.getOrderEntriesForFile(declaration.getContainingFile().getVirtualFile());
-
-        return CollectionsKt.filter(
-                candidates,
-                new Function1<KtNamedDeclaration, Boolean>() {
-                    @Override
-                    public Boolean invoke(KtNamedDeclaration candidate) {
-                        List<OrderEntry> candidateOrderEntries = fileIndex.getOrderEntriesForFile(candidate.getContainingFile().getVirtualFile());
-                        return ContainerUtil.intersects(orderEntries, candidateOrderEntries);
-                    }
-                }
-        );
-    }
-
-    @NotNull
-    private static List<KtNamedDeclaration> filterByReceiverPresenceAndParametersCount(
-            final @NotNull KtNamedDeclaration decompiledDeclaration,
-            @NotNull Collection<KtNamedDeclaration> candidates
-    ) {
-        return ContainerUtil.filter(candidates, new Condition<KtNamedDeclaration>() {
-            @Override
-            public boolean value(KtNamedDeclaration candidate) {
-                return sameReceiverPresenceAndParametersCount(candidate, decompiledDeclaration);
-            }
-        });
-    }
-
-    @NotNull
-    private static List<KtNamedDeclaration> filterByReceiverAndParameterTypes(
-            final @NotNull KtNamedDeclaration decompiledDeclaration,
-            @NotNull Collection<KtNamedDeclaration> candidates
-    ) {
-        return ContainerUtil.filter(candidates, new Condition<KtNamedDeclaration>() {
-            @Override
-            public boolean value(KtNamedDeclaration candidate) {
-                return receiverAndParametersShortTypesMatch(candidate, decompiledDeclaration);
-            }
-        });
-    }
-
-    @TestOnly
-    public static void setForceResolve(boolean forceResolve) {
-        SourceNavigationHelper.forceResolve = forceResolve;
-    }
-
-    @Nullable
-    public static PsiClass getOriginalPsiClassOrCreateLightClass(@NotNull KtClassOrObject classOrObject) {
-        FqName fqName = classOrObject.getFqName();
+    fun getOriginalPsiClassOrCreateLightClass(classOrObject: KtClassOrObject): PsiClass? {
+        val fqName = classOrObject.fqName
         if (fqName != null) {
-            ClassId javaClassId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(fqName.toUnsafe());
+            val javaClassId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(fqName.toUnsafe())
             if (javaClassId != null) {
-                return JavaPsiFacade.getInstance(classOrObject.getProject()).findClass(
+                return JavaPsiFacade.getInstance(classOrObject.project).findClass(
                         javaClassId.asSingleFqName().asString(),
-                        GlobalSearchScope.allScope(classOrObject.getProject())
-                );
+                        GlobalSearchScope.allScope(classOrObject.project)
+                )
             }
         }
-        return toLightClass(classOrObject);
+        return classOrObject.toLightClass()
     }
 
-    @Nullable
-    public static PsiClass getOriginalClass(@NotNull KtClassOrObject classOrObject) {
+    fun getOriginalClass(classOrObject: KtClassOrObject): PsiClass? {
         // Copied from JavaPsiImplementationHelperImpl:getOriginalClass()
-        FqName fqName = classOrObject.getFqName();
-        if (fqName == null) {
-            return null;
-        }
+        val fqName = classOrObject.fqName ?: return null
 
-        KtFile file = classOrObject.getContainingKtFile();
+        val file = classOrObject.containingKtFile
 
-        VirtualFile vFile = file.getVirtualFile();
-        Project project = file.getProject();
+        val vFile = file.virtualFile
+        val project = file.project
 
-        final ProjectFileIndex idx = ProjectRootManager.getInstance(project).getFileIndex();
+        val idx = ProjectRootManager.getInstance(project).fileIndex
 
-        if (vFile == null || !idx.isInLibrarySource(vFile)) return null;
-        final Set<OrderEntry> orderEntries = new THashSet<OrderEntry>(idx.getOrderEntriesForFile(vFile));
+        if (vFile == null || !idx.isInLibrarySource(vFile)) return null
+        val orderEntries = THashSet<OrderEntry>(idx.getOrderEntriesForFile(vFile))
 
-        return JavaPsiFacade.getInstance(project).findClass(fqName.asString(), new GlobalSearchScope(project) {
-            @Override
-            public int compare(@NotNull VirtualFile file1, @NotNull VirtualFile file2) {
-                return 0;
+        return JavaPsiFacade.getInstance(project).findClass(fqName.asString(), object : GlobalSearchScope(project) {
+            override fun compare(file1: VirtualFile, file2: VirtualFile): Int {
+                return 0
             }
 
-            @Override
-            public boolean contains(@NotNull VirtualFile file) {
-                List<OrderEntry> entries = idx.getOrderEntriesForFile(file);
-                for (OrderEntry entry : entries) {
-                    if (orderEntries.contains(entry)) return true;
+            override fun contains(file: VirtualFile): Boolean {
+                val entries = idx.getOrderEntriesForFile(file)
+                for (entry in entries) {
+                    if (orderEntries.contains(entry)) return true
                 }
-                return false;
+                return false
             }
 
-            @Override
-            public boolean isSearchInModuleContent(@NotNull Module aModule) {
-                return false;
+            override fun isSearchInModuleContent(aModule: Module): Boolean {
+                return false
             }
 
-            @Override
-            public boolean isSearchInLibraries() {
-                return true;
+            override fun isSearchInLibraries(): Boolean {
+                return true
             }
-        });
+        })
     }
 
-    @NotNull
-    public static KtDeclaration getNavigationElement(@NotNull KtDeclaration declaration) {
-        return navigateToDeclaration(declaration, NavigationKind.CLASS_FILES_TO_SOURCES);
+    fun getNavigationElement(declaration: KtDeclaration) = navigateToDeclaration(declaration, NavigationKind.CLASS_FILES_TO_SOURCES)
+
+    fun getOriginalElement(declaration: KtDeclaration) = navigateToDeclaration(declaration, NavigationKind.SOURCES_TO_CLASS_FILES)
+
+    private fun navigateToDeclaration(
+            from: KtDeclaration,
+            navigationKind: NavigationKind
+    ): KtDeclaration {
+        if (DumbService.isDumb(from.project)) return from
+
+        when (navigationKind) {
+            SourceNavigationHelper.NavigationKind.CLASS_FILES_TO_SOURCES -> if (!from.containingKtFile.isCompiled) return from
+            SourceNavigationHelper.NavigationKind.SOURCES_TO_CLASS_FILES -> {
+                if (from.containingKtFile.isCompiled) return from
+                if (!ProjectRootsUtil.isInContent(from, false, true, false, true)) return from
+                if (KtPsiUtil.isLocal(from)) return from
+            }
+        }
+
+        return from.accept(SourceAndDecompiledConversionVisitor(navigationKind), Unit) ?: from
     }
 
-    @NotNull
-    public static KtDeclaration getOriginalElement(@NotNull KtDeclaration declaration) {
-        return navigateToDeclaration(declaration, NavigationKind.SOURCES_TO_CLASS_FILES);
+    private class SourceAndDecompiledConversionVisitor(private val navigationKind: NavigationKind) : KtVisitor<KtDeclaration?, Unit>() {
+
+        override fun visitNamedFunction(function: KtNamedFunction, data: Unit) = convertPropertyOrFunction(function, navigationKind)
+
+        override fun visitProperty(property: KtProperty, data: Unit) = convertPropertyOrFunction(property, navigationKind)
+
+        override fun visitObjectDeclaration(declaration: KtObjectDeclaration, data: Unit) = findClassOrObject(declaration, navigationKind)
+
+        override fun visitClass(klass: KtClass, data: Unit) = findClassOrObject(klass, navigationKind)
+
+        override fun visitTypeAlias(typeAlias: KtTypeAlias, data: Unit)
+                = findFirstMatchingInIndex(typeAlias, navigationKind, KotlinTopLevelTypeAliasFqNameIndex.getInstance())
+
+        override fun visitParameter(parameter: KtParameter, data: Unit): KtDeclaration? {
+            val callableDeclaration = parameter.parent.parent as KtCallableDeclaration
+            val parameters = callableDeclaration.valueParameters
+            val index = parameters.indexOf(parameter)
+
+            val sourceCallable = callableDeclaration.accept(this, Unit) as? KtCallableDeclaration ?: return null
+            val sourceParameters = sourceCallable.valueParameters
+            if (sourceParameters.size != parameters.size) return null
+            return sourceParameters.get(index)
+        }
+
+        override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor, data: Unit)
+                = convertPropertyOrFunction(constructor, navigationKind)
+
+        override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor, data: Unit)
+                = convertPropertyOrFunction(constructor, navigationKind)
     }
+}
 
-    @NotNull
-    private static KtDeclaration navigateToDeclaration(
-            @NotNull KtDeclaration from,
-            @NotNull NavigationKind navigationKind
-    ) {
-        if (DumbService.isDumb(from.getProject())) return from;
-
-        switch (navigationKind) {
-            case CLASS_FILES_TO_SOURCES:
-                if (!from.getContainingKtFile().isCompiled()) return from;
-                break;
-            case SOURCES_TO_CLASS_FILES:
-                if (from.getContainingKtFile().isCompiled()) return from;
-                if (!ProjectRootsUtil.isInContent(from, false, true, false, true)) return from;
-                if (KtPsiUtil.isLocal(from)) return from;
-                break;
-        }
-
-        KtDeclaration result = from.accept(new SourceAndDecompiledConversionVisitor(navigationKind), null);
-        return result != null ? result : from;
-    }
-
-    private static class SourceAndDecompiledConversionVisitor extends KtVisitor<KtDeclaration, Void> {
-        private final NavigationKind navigationKind;
-
-        public SourceAndDecompiledConversionVisitor(@NotNull NavigationKind navigationKind) {
-            this.navigationKind = navigationKind;
-        }
-
-        @Override
-        public KtDeclaration visitNamedFunction(@NotNull KtNamedFunction function, Void data) {
-            return convertPropertyOrFunction(function, navigationKind);
-        }
-
-        @Override
-        public KtDeclaration visitProperty(@NotNull KtProperty property, Void data) {
-            return convertPropertyOrFunction(property, navigationKind);
-        }
-
-        @Override
-        public KtDeclaration visitObjectDeclaration(@NotNull KtObjectDeclaration declaration, Void data) {
-            return findClassOrObject(declaration, navigationKind);
-        }
-
-        @Override
-        public KtDeclaration visitClass(@NotNull KtClass klass, Void data) {
-            return findClassOrObject(klass, navigationKind);
-        }
-
-        @Override
-        public KtDeclaration visitTypeAlias(@NotNull KtTypeAlias typeAlias, Void data) {
-            return findFirstMatchingInIndex(typeAlias, navigationKind, KotlinTopLevelTypeAliasFqNameIndex.getInstance());
-        }
-
-        @Override
-        public KtDeclaration visitParameter(@NotNull KtParameter parameter, Void data) {
-            KtCallableDeclaration callableDeclaration = (KtCallableDeclaration) parameter.getParent().getParent();
-            List<KtParameter> parameters = callableDeclaration.getValueParameters();
-            int index = parameters.indexOf(parameter);
-
-            KtCallableDeclaration sourceCallable = (KtCallableDeclaration) callableDeclaration.accept(this, null);
-            if (sourceCallable == null) return null;
-            List<KtParameter> sourceParameters = sourceCallable.getValueParameters();
-            if (sourceParameters.size() != parameters.size()) return null;
-            return sourceParameters.get(index);
-        }
-
-        @Override
-        public KtDeclaration visitPrimaryConstructor(@NotNull KtPrimaryConstructor constructor, Void data) {
-            return convertPropertyOrFunction(constructor, navigationKind);
-        }
-
-        @Override
-        public KtDeclaration visitSecondaryConstructor(@NotNull KtSecondaryConstructor constructor, Void data) {
-            return convertPropertyOrFunction(constructor, navigationKind);
-        }
-    }
+private fun Collection<KtNamedDeclaration>.getContainingFiles(): Collection<KtFile> = mapNotNullTo(LinkedHashSet()) {
+    it.containingFile as? KtFile
 }
