@@ -54,6 +54,18 @@ public class ScriptConfigurationNavigationTestGenerated extends AbstractScriptCo
         doTest(fileName);
     }
 
+    @TestMetadata("kotlinLib")
+    public void testKotlinLib() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/navigation/kotlinLib/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlinLibWithSources")
+    public void testKotlinLibWithSources() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/navigation/kotlinLibWithSources/");
+        doTest(fileName);
+    }
+
     @TestMetadata("stdlib")
     public void testStdlib() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/navigation/stdlib/");
