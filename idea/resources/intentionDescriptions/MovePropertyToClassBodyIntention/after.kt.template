@@ -1,0 +1,3 @@
+class TestClass(text: String) {
+    private val text = text
+}

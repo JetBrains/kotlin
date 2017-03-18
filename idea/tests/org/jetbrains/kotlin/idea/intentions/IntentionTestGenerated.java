@@ -11179,6 +11179,96 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/movePropertyToClassBody")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MovePropertyToClassBody extends AbstractIntentionTest {
+        public void testAllFilesPresentInMovePropertyToClassBody() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/movePropertyToClassBody"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("annotationWithUseSite.kt")
+        public void testAnnotationWithUseSite() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/movePropertyToClassBody/annotationWithUseSite.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("parameterAnnotation.kt")
+        public void testParameterAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/movePropertyToClassBody/parameterAnnotation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyAnnotation.kt")
+        public void testPropertyAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/movePropertyToClassBody/propertyAnnotation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/movePropertyToClassBody/simple.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/intentions/movePropertyToConstructor")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MovePropertyToConstructor extends AbstractIntentionTest {
+        public void testAllFilesPresentInMovePropertyToConstructor() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/movePropertyToConstructor"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("annotationWithUseSite.kt")
+        public void testAnnotationWithUseSite() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/movePropertyToConstructor/annotationWithUseSite.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("delegated.kt")
+        public void testDelegated() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/movePropertyToConstructor/delegated.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("getter.kt")
+        public void testGetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/movePropertyToConstructor/getter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lateinit.kt")
+        public void testLateinit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/movePropertyToConstructor/lateinit.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("local.kt")
+        public void testLocal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/movePropertyToConstructor/local.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/movePropertyToConstructor/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleAnnotation.kt")
+        public void testSimpleAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/movePropertyToConstructor/simpleAnnotation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withoutMatchingParameter.kt")
+        public void testWithoutMatchingParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/movePropertyToConstructor/withoutMatchingParameter.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/moveToCompanion")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
