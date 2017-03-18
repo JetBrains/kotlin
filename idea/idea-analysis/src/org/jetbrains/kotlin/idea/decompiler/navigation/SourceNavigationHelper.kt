@@ -25,7 +25,6 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiClass
-import com.intellij.psi.search.EverythingGlobalScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StringStubIndexExtension
 import com.intellij.util.containers.ContainerUtil
@@ -37,8 +36,14 @@ import org.jetbrains.kotlin.context.ContextForNewModule
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.frontend.di.createLazyResolveSession
+import org.jetbrains.kotlin.idea.caches.resolve.BinaryModuleInfo
+import org.jetbrains.kotlin.idea.caches.resolve.SourceForBinaryModuleInfo
+import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfoByVirtualFile
 import org.jetbrains.kotlin.idea.decompiler.navigation.MemberMatching.*
-import org.jetbrains.kotlin.idea.stubindex.*
+import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyFqnNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelTypeAliasFqNameIndex
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -62,23 +67,15 @@ object SourceNavigationHelper {
         SourceNavigationHelper.forceResolve = forceResolve
     }
 
-    private fun createLibraryOrSourcesScope(
-            declaration: KtNamedDeclaration,
-            navigationKind: NavigationKind
-    ): GlobalSearchScope {
+    private fun targetScope(declaration: KtNamedDeclaration, navigationKind: NavigationKind): GlobalSearchScope? {
         val containingFile = declaration.containingKtFile
-        containingFile.virtualFile ?: return GlobalSearchScope.EMPTY_SCOPE
+        val vFile = containingFile.virtualFile ?: return null
+        val fromModuleInfo = getModuleInfoByVirtualFile(declaration.project, vFile)
 
-        val includeLibrarySources = navigationKind == NavigationKind.CLASS_FILES_TO_SOURCES
-        if (ProjectRootsUtil.isInContent(declaration, false, includeLibrarySources, !includeLibrarySources, true)) {
-            return GlobalSearchScope.EMPTY_SCOPE
+        return when (navigationKind) {
+            NavigationKind.CLASS_FILES_TO_SOURCES -> (fromModuleInfo as? BinaryModuleInfo)?.sourcesModuleInfo?.sourceScope()
+            NavigationKind.SOURCES_TO_CLASS_FILES -> (fromModuleInfo as? SourceForBinaryModuleInfo)?.binariesModuleInfo?.binariesScope()
         }
-
-        val project = declaration.project
-        return if (includeLibrarySources)
-            KotlinSourceFilterScope.librarySources(EverythingGlobalScope(project), project)
-        else
-            KotlinSourceFilterScope.libraryClassFiles(EverythingGlobalScope(project), project)
     }
 
     private fun haveRenamesInImports(files: Collection<KtFile>) = files.any { it.importDirectives.any { it.aliasName != null } }
@@ -148,8 +145,6 @@ object SourceNavigationHelper {
             return null
         }
 
-        candidates = filterByOrderEntries(declaration, candidates)
-
         if (!forceResolve) {
             candidates = candidates.filter { sameReceiverPresenceAndParametersCount(it, declaration) }
 
@@ -201,11 +196,8 @@ object SourceNavigationHelper {
     ): T? {
         val classFqName = entity.fqName!!
 
-        val librarySourcesScope = createLibraryOrSourcesScope(entity, navigationKind)
-        if (librarySourcesScope === GlobalSearchScope.EMPTY_SCOPE) { // .getProject() == null for EMPTY_SCOPE, and this breaks code
-            return null
-        }
-        return index.get(classFqName.asString(), entity.project, librarySourcesScope).firstOrNull()
+        val scope = targetScope(entity, navigationKind) ?: return null
+        return index.get(classFqName.asString(), entity.project, scope).firstOrNull()
     }
 
     private fun findClassOrObject(decompiledClassOrObject: KtClassOrObject, navigationKind: NavigationKind): KtClassOrObject? {
@@ -216,13 +208,9 @@ object SourceNavigationHelper {
             declaration: KtNamedDeclaration,
             navigationKind: NavigationKind
     ): Collection<KtNamedDeclaration> {
-        val librarySourcesScope = createLibraryOrSourcesScope(declaration, navigationKind)
-        if (librarySourcesScope === GlobalSearchScope.EMPTY_SCOPE) { // .getProject() == null for EMPTY_SCOPE, and this breaks code
-            return emptyList()
-        }
-
+        val scope = targetScope(declaration, navigationKind) ?: return emptyList()
         val index = getIndexForTopLevelPropertyOrFunction(declaration)
-        return index.get(declaration.fqName!!.asString(), declaration.project, librarySourcesScope)
+        return index.get(declaration.fqName!!.asString(), declaration.project, scope)
     }
 
     private fun getIndexForTopLevelPropertyOrFunction(
@@ -242,19 +230,6 @@ object SourceNavigationHelper {
     ) = sourceClassOrObject.declarations.filterIsInstance(declarationClass).filter {
         declaration ->
         name == declaration.nameAsSafeName
-    }
-
-    private fun filterByOrderEntries(
-            declaration: KtNamedDeclaration,
-            candidates: Collection<KtNamedDeclaration>
-    ): List<KtNamedDeclaration> {
-        val fileIndex = ProjectRootManager.getInstance(declaration.project).fileIndex
-        val orderEntries = fileIndex.getOrderEntriesForFile(declaration.containingFile.virtualFile)
-
-        return candidates.filter {
-            val candidateOrderEntries = fileIndex.getOrderEntriesForFile(it.containingFile.virtualFile)
-            ContainerUtil.intersects<OrderEntry>(orderEntries, candidateOrderEntries)
-        }
     }
 
     fun getOriginalPsiClassOrCreateLightClass(classOrObject: KtClassOrObject): PsiClass? {
