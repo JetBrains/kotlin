@@ -127,7 +127,7 @@ interface ModuleInfo {
     fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> = listOf()
     fun dependencyOnBuiltIns(): DependencyOnBuiltIns = DependenciesOnBuiltIns.LAST
     val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
-        get() = emptyMap()
+        get() = mapOf(Capability to this)
 
     //TODO: (module refactoring) provide dependency on builtins after runtime in IDEA
     interface DependencyOnBuiltIns {
@@ -145,6 +145,10 @@ interface ModuleInfo {
                 dependencies.add(builtinsModule)
             }
         };
+    }
+
+    companion object {
+        val Capability = ModuleDescriptor.Capability<ModuleInfo>("ModuleInfo")
     }
 }
 

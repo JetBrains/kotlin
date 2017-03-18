@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.idea.decompiler.navigation
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.EverythingGlobalScope
+import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.BinaryModuleInfo
+import org.jetbrains.kotlin.idea.caches.resolve.LOG
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledTextIndexer
 import org.jetbrains.kotlin.idea.stubindex.*
@@ -50,21 +52,16 @@ fun findDecompiledDeclaration(
     if (isLocal(referencedDescriptor)) return null
     if (referencedDescriptor is PackageFragmentDescriptor || referencedDescriptor is PackageViewDescriptor) return null
 
-    val decompiledFiles = findDecompiledFilesForDescriptor(project, referencedDescriptor)
+    val binaryInfo = referencedDescriptor.module.getCapability(ModuleInfo.Capability) as? BinaryModuleInfo
 
-    val referencedModule = referencedDescriptor.module
-    return decompiledFiles.asSequence().mapNotNull { file ->
-        val moduleInfo = file.getNullableModuleInfo()
-        val libraryInfo = when (moduleInfo) {
-            is LibraryInfo -> moduleInfo
-            is LibrarySourceInfo -> LibraryInfo(project, moduleInfo.library)
-            else -> null
-        }
-        val libraryModule = libraryInfo?.let { file.getResolutionFacade().findModuleDescriptor(it) }
-        if (libraryModule != null
-            && referencedModule.name != KotlinBuiltIns.BUILTINS_MODULE_NAME
-            && referencedModule.name != libraryModule.name) return@mapNotNull null
+    val scope = binaryInfo?.binariesScope() ?:
+                // TODO: can't return null right now, have to deal with builtins
+                KotlinSourceFilterScope.libraryClassFiles(EverythingGlobalScope(project), project)
 
+    val decompiledFiles = findDecompiledFilesForDescriptor(project, referencedDescriptor, scope)
+
+    return decompiledFiles.asSequence().mapNotNull {
+        file ->
         ByDescriptorIndexer.getDeclarationForDescriptor(referencedDescriptor, file)
     }.firstOrNull()
 }
@@ -80,19 +77,19 @@ private fun isLocal(descriptor: DeclarationDescriptor): Boolean {
 
 private fun findDecompiledFilesForDescriptor(
         project: Project,
-        referencedDescriptor: DeclarationDescriptor
+        referencedDescriptor: DeclarationDescriptor,
+        scope: GlobalSearchScope
 ): Collection<KtDecompiledFile> {
-    return findCandidateDeclarationsInIndex(project, referencedDescriptor).mapNotNullTo(LinkedHashSet()) {
+    return findCandidateDeclarationsInIndex(project, referencedDescriptor, scope).mapNotNullTo(LinkedHashSet()) {
         it?.containingFile as? KtDecompiledFile
     }
 }
 
 private fun findCandidateDeclarationsInIndex(
         project: Project,
-        referencedDescriptor: DeclarationDescriptor
+        referencedDescriptor: DeclarationDescriptor,
+        scope: GlobalSearchScope
 ): Collection<KtDeclaration?> {
-    val scope = KotlinSourceFilterScope.libraryClassFiles(EverythingGlobalScope(project), project)
-
     val containingClass = DescriptorUtils.getParentOfType(referencedDescriptor, ClassDescriptor::class.java, false)
     if (containingClass != null) {
         return KotlinFullClassNameIndex.getInstance().get(containingClass.fqNameSafe.asString(), project, scope)
