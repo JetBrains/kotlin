@@ -218,21 +218,13 @@ class LibraryInfo(val project: Project, val library: Library) : IdeaModuleInfo, 
 }
 
 data class LibrarySourceInfo(val project: Project, val library: Library) : IdeaModuleInfo, SourceForBinaryModuleInfo {
-    override val moduleOrigin: ModuleOrigin
-        get() = ModuleOrigin.OTHER
 
     override val name: Name = Name.special("<sources for library ${library.name}>")
-
-    override fun contentScope(): GlobalSearchScope = GlobalSearchScope.EMPTY_SCOPE
 
     override fun sourceScope(): GlobalSearchScope = LibrarySourceScope(project, library)
 
     override val isLibrary: Boolean
         get() = true
-
-    override fun dependencies(): List<IdeaModuleInfo> {
-        return listOf(this) + LibraryInfo(project, library).dependencies()
-    }
 
     override fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> {
         return listOf(LibraryInfo(project, library))
@@ -321,4 +313,16 @@ interface BinaryModuleInfo : IdeaModuleInfo {
 interface SourceForBinaryModuleInfo : IdeaModuleInfo {
     val binariesModuleInfo: BinaryModuleInfo
     fun sourceScope(): GlobalSearchScope
+
+    // module infos for library source do not have contents in the following sense:
+    // we can not provide a collection of files that is supposed to be analyzed in IDE independently
+    //
+    // as of now each source file is analyzed separately and depends on corresponding binaries
+    // see KotlinCacheServiceImpl#createFacadeForSyntheticFiles
+    override fun contentScope(): GlobalSearchScope = GlobalSearchScope.EMPTY_SCOPE
+
+    override fun dependencies() = listOf(this) + binariesModuleInfo.dependencies()
+
+    override val moduleOrigin: ModuleOrigin
+        get() = ModuleOrigin.OTHER
 }

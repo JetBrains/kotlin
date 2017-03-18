@@ -219,14 +219,28 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
                 )
             }
 
-            syntheticFileModule is ScriptDependenciesModuleInfo -> {
-                createFacadeForScriptDependencies(syntheticFileModule, files)
-            }
             syntheticFileModule is ScriptModuleInfo -> {
                 val facadeForScriptDependencies = getFacadeForScriptDependencies(syntheticFileModule)
                 val globalContext = facadeForScriptDependencies.globalContext.contextWithNewLockAndCompositeExceptionTracker()
                 ProjectResolutionFacade(
                         "facadeForSynthetic in ScriptModuleInfo",
+                        project, globalContext,
+                        makeGlobalResolveSessionProvider(
+                                reuseDataFrom = facadeForScriptDependencies,
+                                allModules = syntheticFileModule.dependencies(),
+                                moduleFilter = { it == syntheticFileModule }
+                        )
+                )
+            }
+            syntheticFileModule is ScriptDependenciesModuleInfo -> {
+                createFacadeForScriptDependencies(syntheticFileModule, files)
+            }
+            syntheticFileModule is ScriptDependenciesSourceModuleInfo -> {
+                // TODO: can be optimized by caching facadeForScriptDependencies
+                val facadeForScriptDependencies = createFacadeForScriptDependencies(syntheticFileModule.binariesModuleInfo, files)
+                val globalContext = facadeForScriptDependencies.globalContext.contextWithNewLockAndCompositeExceptionTracker()
+                ProjectResolutionFacade(
+                        "facadeForSynthetic in ScriptDependenciesSourceModuleInfo",
                         project, globalContext,
                         makeGlobalResolveSessionProvider(
                                 reuseDataFrom = facadeForScriptDependencies,

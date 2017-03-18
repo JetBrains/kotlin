@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.idea.caches.resolve.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.core.script.KotlinScriptConfigurationManager
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.isKotlinBinary
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -81,7 +82,11 @@ private fun PsiElement.getModuleInfo(onFailure: (String) -> IdeaModuleInfo?): Id
     )
 }
 
-fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFile, treatAsLibrarySource: Boolean): IdeaModuleInfo {
+fun getModuleInfoByVirtualFile(
+        project: Project, virtualFile: VirtualFile
+): IdeaModuleInfo = getModuleInfoByVirtualFile(project, virtualFile, treatAsLibrarySource = false)
+
+private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFile, treatAsLibrarySource: Boolean): IdeaModuleInfo {
     val projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project)
 
     val module = projectFileIndex.getModuleForFile(virtualFile)
@@ -130,8 +135,18 @@ fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFile, treat
         return ScriptModuleInfo(project, virtualFile, scriptDefinition)
     }
 
-    if (KotlinScriptConfigurationManager.getInstance(project).getAllScriptsClasspathScope().contains(virtualFile)) {
-        return ScriptDependenciesModuleInfo(project, null, null)
+    val isBinary = virtualFile.isKotlinBinary()
+    val scriptConfigurationManager = KotlinScriptConfigurationManager.getInstance(project)
+    if (isBinary && virtualFile in scriptConfigurationManager.getAllScriptsClasspathScope()) {
+        if (treatAsLibrarySource) {
+            return ScriptDependenciesSourceModuleInfo(project)
+        }
+        else {
+            return ScriptDependenciesModuleInfo(project, null, null)
+        }
+    }
+    if (!isBinary && virtualFile in scriptConfigurationManager.getAllLibrarySourcesScope()) {
+        return ScriptDependenciesSourceModuleInfo(project)
     }
 
     return NotUnderContentRootModuleInfo

@@ -74,7 +74,7 @@ class ScriptDependenciesModuleInfo(
         val project: Project,
         val dependencies: KotlinScriptExternalDependencies?,
         val scriptModuleInfo: ScriptModuleInfo?
-): IdeaModuleInfo {
+): IdeaModuleInfo, BinaryModuleInfo {
     override fun dependencies() = (listOf(this) + sdkDependencies(dependencies, project))
 
     override val name = Name.special("<Script dependencies>")
@@ -98,4 +98,21 @@ class ScriptDependenciesModuleInfo(
 
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.LIBRARY
+
+    override val sourcesModuleInfo: SourceForBinaryModuleInfo?
+        get() = ScriptDependenciesSourceModuleInfo(project)
+}
+
+data class ScriptDependenciesSourceModuleInfo(
+        val project: Project
+): IdeaModuleInfo, SourceForBinaryModuleInfo {
+    override val name = Name.special("<Source for script dependencies>")
+
+    override val binariesModuleInfo: ScriptDependenciesModuleInfo
+        get() = ScriptDependenciesModuleInfo(project, null, null)
+
+    override fun sourceScope(): GlobalSearchScope = KotlinSourceFilterScope.librarySources(
+            KotlinScriptConfigurationManager.getInstance(project).getAllLibrarySourcesScope(), project
+    )
+
 }
