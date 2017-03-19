@@ -1472,6 +1472,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("Map.kt")
+        public void testMap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/lambdaSignature/Map.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("MultipleParameters.kt")
         public void testMultipleParameters() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/lambdaSignature/MultipleParameters.kt");

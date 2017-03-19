@@ -35,10 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.*
 import java.util.*
 
@@ -281,14 +278,15 @@ class ExpectedInfos(
         var descriptor = candidate.resultingDescriptor
         if (descriptor.valueParameters.isEmpty()) return
 
-        var argumentToParameter = call.mapArgumentsToParameters(descriptor)
+        val argumentToParameter = call.mapArgumentsToParameters(descriptor)
         var parameter = argumentToParameter[argument]
+        var parameterType = parameter?.type
 
-        //TODO: we can loose partially inferred substitution here but what to do?
-        if (parameter != null && parameter.type.containsError()) {
+        if (parameterType != null && parameterType.containsError()) {
+            val originalParameter = descriptor.original.valueParameters[parameter!!.index]
+            parameter = originalParameter
             descriptor = descriptor.original
-            parameter = descriptor.valueParameters[parameter.index]!!
-            argumentToParameter = call.mapArgumentsToParameters(descriptor)
+            parameterType = fixSubstitutedType(parameterType, originalParameter.type)
         }
 
         val argumentName = argument.getArgumentName()?.asName
@@ -316,6 +314,7 @@ class ExpectedInfos(
         if (callType == Call.CallType.ARRAY_SET_METHOD) { // last parameter in set is used for value assigned
             if (parameter == parameters.last()) {
                 parameter = null
+                parameterType = null
             }
             parameters = parameters.dropLast(1)
         }
@@ -326,6 +325,7 @@ class ExpectedInfos(
             }
             return
         }
+        parameterType!!
 
         val expectedName = if (descriptor.hasSynthesizedParameterNames()) null else parameter.name.asString()
 
@@ -365,12 +365,11 @@ class ExpectedInfos(
             }
 
             val starOptions = if (!alreadyHasStar) ItemOptions.STAR_PREFIX else ItemOptions.DEFAULT
-            add(ExpectedInfo.createForArgument(parameter.type, expectedName, varargTail, argumentPositionData, starOptions))
+            add(ExpectedInfo.createForArgument(parameterType, expectedName, varargTail, argumentPositionData, starOptions))
         }
         else {
             if (alreadyHasStar) return
 
-            val parameterType = parameter.type
             if (isFunctionLiteralArgument) {
                 if (parameterType.isFunctionType) {
                     add(ExpectedInfo.createForArgument(parameterType, expectedName, null, argumentPositionData))
@@ -380,6 +379,15 @@ class ExpectedInfos(
                 add(ExpectedInfo.createForArgument(parameterType, expectedName, tail, argumentPositionData))
             }
         }
+    }
+
+    private fun fixSubstitutedType(substitutedType: KotlinType, originalType: KotlinType): KotlinType {
+        if (substitutedType.isError) return originalType
+        if (substitutedType.arguments.size != originalType.arguments.size) return originalType
+        val newTypeArguments = substitutedType.arguments.zip(originalType.arguments).map { (argument, originalArgument) ->
+            if (argument.type.containsError()) originalArgument else argument
+        }
+        return substitutedType.replace(newTypeArguments)
     }
 
     private fun <D : CallableDescriptor> ResolvedCall<D>.allArgumentsMatched()
