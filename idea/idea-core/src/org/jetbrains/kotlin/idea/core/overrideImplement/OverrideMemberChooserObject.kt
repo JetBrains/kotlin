@@ -125,7 +125,7 @@ fun OverrideMemberChooserObject.generateMember(project: Project, copyDoc: Boolea
 }
 
 private val OVERRIDE_RENDERER = DescriptorRenderer.withOptions {
-    renderDefaultValues = false
+    defaultParameterValueRenderer = null
     modifiers = setOf(DescriptorRendererModifier.OVERRIDE)
     withDefinedIn = false
     classifierNamePolicy = ClassifierNamePolicy.SOURCE_CODE_QUALIFIED

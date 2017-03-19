@@ -807,9 +807,9 @@ internal class DescriptorRendererImpl(
 
         renderVariable(valueParameter, includeName, builder, topLevel)
 
-        val withDefaultValue = renderDefaultValues && (if (debugMode) valueParameter.declaresDefaultValue() else valueParameter.hasDefaultValue())
+        val withDefaultValue = defaultParameterValueRenderer != null && (if (debugMode) valueParameter.declaresDefaultValue() else valueParameter.hasDefaultValue())
         if (withDefaultValue) {
-            builder.append(" = ...")
+            builder.append(" = ${defaultParameterValueRenderer!!(valueParameter)}")
         }
     }
 

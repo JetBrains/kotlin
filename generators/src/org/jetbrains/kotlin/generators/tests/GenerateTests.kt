@@ -834,6 +834,10 @@ fun main(args: Array<String>) {
             model("copyPaste/imports", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doTestCut", testClassName = "Cut", recursive = false)
         }
 
+        testClass<AbstractMoveOnCutPasteTest> {
+            model("copyPaste/moveDeclarations", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doTest")
+        }
+
         testClass<AbstractHighlightExitPointsTest> {
             model("exitPoints")
         }

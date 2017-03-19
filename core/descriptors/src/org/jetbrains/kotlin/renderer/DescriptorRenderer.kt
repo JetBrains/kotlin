@@ -206,7 +206,7 @@ interface DescriptorRendererOptions {
     var renderCompanionObjectName: Boolean
     var withoutSuperTypes: Boolean
     var typeNormalizer: (KotlinType) -> KotlinType
-    var renderDefaultValues: Boolean
+    var defaultParameterValueRenderer: ((ValueParameterDescriptor) -> String)?
     var secondaryConstructorsAsPrimary: Boolean
     var renderAccessors: Boolean
     var renderDefaultAnnotationArguments: Boolean

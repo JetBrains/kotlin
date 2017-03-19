@@ -35,6 +35,10 @@
       <implementation-class>org.jetbrains.kotlin.idea.highlighter.KotlinBeforeResolveHighlightingPass$Factory</implementation-class>
     </component>
     <component>
+      <implementation-class>org.jetbrains.kotlin.idea.refactoring.cutPaste.MoveDeclarationsPassFactory</implementation-class>
+      <skipForDefaultProject/>
+    </component>
+    <component>
       <implementation-class>org.jetbrains.kotlin.idea.completion.LookupCancelWatcher</implementation-class>
     </component>
     <component>
@@ -582,6 +586,7 @@
     <copyPastePostProcessor implementation="org.jetbrains.kotlin.idea.conversion.copy.ConvertTextJavaCopyPasteProcessor"/>
     <copyPastePostProcessor implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCopyPasteReferenceProcessor"/>
     <copyPastePreProcessor implementation="org.jetbrains.kotlin.idea.editor.KotlinLiteralCopyPasteProcessor"/>
+    <copyPastePostProcessor implementation="org.jetbrains.kotlin.idea.refactoring.cutPaste.MoveDeclarationsCopyPasteProcessor"/>
 
     <breadcrumbsInfoProvider implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinBreadcrumbsInfoProvider"/>
 
