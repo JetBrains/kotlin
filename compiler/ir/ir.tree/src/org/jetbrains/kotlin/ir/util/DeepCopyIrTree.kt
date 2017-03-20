@@ -96,7 +96,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
                     mapTypeAliasDeclaration(declaration.descriptor)
             )
 
-    override fun visitFunction(declaration: IrFunction): IrFunction =
+    override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction =
             IrFunctionImpl(
                     declaration.startOffset, declaration.endOffset,
                     mapDeclarationOrigin(declaration.origin),

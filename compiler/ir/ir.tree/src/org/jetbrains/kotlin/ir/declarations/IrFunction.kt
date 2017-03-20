@@ -29,7 +29,10 @@ interface IrFunction : IrDeclaration, IrTypeParametersContainer {
     val valueParameters: MutableList<IrValueParameter>
 
     var body: IrBody?
+}
 
+
+interface IrSimpleFunction : IrFunction {
     override val declarationKind: IrDeclarationKind
         get() = IrDeclarationKind.FUNCTION
 }

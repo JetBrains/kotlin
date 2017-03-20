@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -26,7 +27,7 @@ class IrFunctionImpl(
         endOffset: Int,
         origin: IrDeclarationOrigin,
         override val descriptor: FunctionDescriptor
-) : IrFunctionBase(startOffset, endOffset, origin) {
+) : IrFunctionBase(startOffset, endOffset, origin), IrSimpleFunction {
     constructor(
             startOffset: Int,
             endOffset: Int,

@@ -29,6 +29,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitClass(declaration: IrClass, data: D) = visitDeclaration(declaration, data)
     fun visitTypeAlias(declaration: IrTypeAlias, data: D) = visitDeclaration(declaration, data)
     fun visitFunction(declaration: IrFunction, data: D) = visitDeclaration(declaration, data)
+    fun visitSimpleFunction(declaration: IrSimpleFunction, data: D) = visitFunction(declaration, data)
     fun visitConstructor(declaration: IrConstructor, data: D) = visitFunction(declaration, data)
     fun visitProperty(declaration: IrProperty, data: D) = visitDeclaration(declaration, data)
     fun visitField(declaration: IrField, data: D) = visitDeclaration(declaration, data)

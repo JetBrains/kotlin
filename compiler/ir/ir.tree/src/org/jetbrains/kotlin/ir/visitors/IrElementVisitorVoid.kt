@@ -42,6 +42,9 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitFunction(declaration: IrFunction) = visitDeclaration(declaration)
     override fun visitFunction(declaration: IrFunction, data: Nothing?) = visitFunction(declaration)
 
+    fun visitSimpleFunction(declaration: IrSimpleFunction) = visitFunction(declaration)
+    override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?) = visitSimpleFunction(declaration)
+
     fun visitConstructor(declaration: IrConstructor) = visitFunction(declaration)
     override fun visitConstructor(declaration: IrConstructor, data: Nothing?) = visitConstructor(declaration)
 
@@ -167,6 +170,9 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
 
     fun visitBranch(branch: IrBranch) = visitElement(branch)
     override fun visitBranch(branch: IrBranch, data: Nothing?) = visitBranch(branch)
+
+    fun visitElseBranch(branch: IrElseBranch) = visitBranch(branch)
+    override fun visitElseBranch(branch: IrElseBranch, data: Nothing?) = visitElseBranch(branch)
 
     fun visitLoop(loop: IrLoop) = visitExpression(loop)
     override fun visitLoop(loop: IrLoop, data: Nothing?) = visitLoop(loop)

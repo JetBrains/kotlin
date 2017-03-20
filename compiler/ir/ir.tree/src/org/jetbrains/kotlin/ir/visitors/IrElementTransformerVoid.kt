@@ -43,6 +43,9 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     open fun visitFunction(declaration: IrFunction) = visitDeclaration(declaration)
     override final fun visitFunction(declaration: IrFunction, data: Nothing?) = visitFunction(declaration)
 
+    open fun visitSimpleFunction(declaration: IrSimpleFunction) = visitFunction(declaration)
+    override final fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?) = visitSimpleFunction(declaration)
+
     open fun visitConstructor(declaration: IrConstructor) = visitFunction(declaration)
     override final fun visitConstructor(declaration: IrConstructor, data: Nothing?) = visitConstructor(declaration)
 
