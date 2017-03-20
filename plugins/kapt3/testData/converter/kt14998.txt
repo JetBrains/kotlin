@@ -11,7 +11,7 @@ public final class Outer {
         super();
     }
 
-    private final class Inner {
+    final class Inner {
         @org.jetbrains.annotations.NotNull()
         private final java.lang.String foo = null;
         @org.jetbrains.annotations.NotNull()
@@ -34,7 +34,7 @@ public final class Outer {
         }
     }
 
-    private static final class Nested {
+    static final class Nested {
         @org.jetbrains.annotations.NotNull()
         private final java.lang.String foo = null;
         @org.jetbrains.annotations.NotNull()

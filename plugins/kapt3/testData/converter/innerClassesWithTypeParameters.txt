@@ -5,7 +5,7 @@ public final class Test {
         super();
     }
 
-    private final class FilterValueDelegate<T extends java.lang.Object> {
+    final class FilterValueDelegate<T extends java.lang.Object> {
 
         public FilterValueDelegate() {
             super();
@@ -48,7 +48,7 @@ public final class Test3 {
         super();
     }
 
-    private static final class FilterValueDelegate<T extends java.lang.Object> {
+    static final class FilterValueDelegate<T extends java.lang.Object> {
 
         public FilterValueDelegate() {
             super();

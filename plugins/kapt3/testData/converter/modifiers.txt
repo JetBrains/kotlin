@@ -113,10 +113,10 @@ public class PublicClassProtectedConstructor {
         super();
     }
 
-    protected static abstract interface ProtectedInterface {
+    public static abstract interface ProtectedInterface {
     }
 
-    private static abstract interface PrivateInterface {
+    static abstract interface PrivateInterface {
     }
 }
 
