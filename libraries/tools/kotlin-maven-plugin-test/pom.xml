@@ -99,6 +99,10 @@
             <id>noTest</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>skipTests</name>
+                    <value>true</value>
+                </property>
             </activation>
         </profile>
     </profiles>
