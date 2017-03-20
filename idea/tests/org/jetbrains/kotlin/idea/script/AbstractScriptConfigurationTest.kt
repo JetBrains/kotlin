@@ -71,7 +71,7 @@ abstract class AbstractScriptConfigurationTest : AbstractPsiCheckerTest() {
     protected fun configureScriptEnvironment(path: String) {
         val templateOutDir = compileLibToDir(
                 File("${path}template"),
-                classpath = listOf(PathUtil.getKotlinPathsForDistDirectory().compilerPath.path)
+                classpath = listOf(PathUtil.getKotlinPathsForDistDirectory().scriptRuntimePath.path)
         )
 
         val libSrcDir = File("${path}lib")

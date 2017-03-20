@@ -22,6 +22,7 @@ import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import java.io.File
 import java.net.URLClassLoader
+import kotlin.script.dependencies.ScriptDependenciesResolver
 
 interface ScriptTemplatesProvider {
 

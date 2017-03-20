@@ -16,5 +16,6 @@
     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
     <orderEntry type="module" module-name="resolution" exported="" />
     <orderEntry type="library" exported="" name="kotlin-script-runtime" level="project" />
+    <orderEntry type="module" module-name="script.runtime" />
   </component>
 </module>

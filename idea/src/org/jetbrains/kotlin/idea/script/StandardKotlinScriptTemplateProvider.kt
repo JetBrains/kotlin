@@ -21,10 +21,14 @@ import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.ex.PathUtilEx
 import org.jetbrains.kotlin.idea.core.script.dependencies.KotlinScriptResolveScopeProvider
-import org.jetbrains.kotlin.script.*
+import org.jetbrains.kotlin.script.ScriptTemplatesProvider
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.concurrent.Future
+import kotlin.script.dependencies.KotlinScriptExternalDependencies
+import kotlin.script.dependencies.PseudoFuture
+import kotlin.script.dependencies.ScriptContents
+import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class StandardKotlinScriptTemplateProvider(val project: Project) : ScriptTemplatesProvider {

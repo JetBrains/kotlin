@@ -16,13 +16,18 @@
 
 package org.jetbrains.kotlin.script.util
 
-import org.jetbrains.kotlin.script.*
+import org.jetbrains.kotlin.script.InvalidScriptResolverAnnotation
 import org.jetbrains.kotlin.script.util.resolvers.DirectResolver
 import org.jetbrains.kotlin.script.util.resolvers.FlatLibDirectoryResolver
 import org.jetbrains.kotlin.script.util.resolvers.MavenResolver
 import org.jetbrains.kotlin.script.util.resolvers.Resolver
 import java.io.File
 import java.util.concurrent.Future
+import kotlin.script.dependencies.KotlinScriptExternalDependencies
+import kotlin.script.dependencies.ScriptContents
+import kotlin.script.dependencies.ScriptDependenciesResolver
+import kotlin.script.dependencies.asFuture
+import kotlin.script.templates.AcceptedAnnotations
 
 open class KotlinAnnotatedScriptDependenciesResolver(val baseClassPath: List<File>, resolvers: Iterable<Resolver>)
     : ScriptDependenciesResolver

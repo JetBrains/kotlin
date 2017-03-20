@@ -22,5 +22,6 @@
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="annotation-collector" />
     <orderEntry type="module" module-name="builtins-serializer" />
+    <orderEntry type="module" module-name="script.runtime" />
   </component>
 </module>

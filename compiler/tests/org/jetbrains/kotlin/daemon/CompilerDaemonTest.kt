@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.daemon.client.*
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -34,6 +33,11 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
+import kotlin.script.dependencies.KotlinScriptExternalDependencies
+import kotlin.script.dependencies.ScriptContents
+import kotlin.script.dependencies.ScriptDependenciesResolver
+import kotlin.script.dependencies.asFuture
+import kotlin.script.templates.ScriptTemplateDefinition
 import kotlin.test.fail
 
 
