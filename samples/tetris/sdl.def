@@ -1,12 +1,13 @@
 headers = SDL.h stdio.h string.h unistd.h stdlib.h time.h
 excludedFunctions = _IO_flockfile _IO_funlockfile _IO_ftrylockfile \
     _IO_cleanup_region_start _IO_cleanup_region_end \
-    mkstemp_dprotected_np add_profil profil unwhiteout zopen \
-    SDL_PointInRect SDL_RectEmpty SDL_RectEquals \
-    __darwin_fd_isset __sputc matherr _mm_stream_si32 _mm_stream_si64
+    _mm_stream_si32 _mm_stream_si64 \
+    SDL_PointInRect SDL_RectEmpty SDL_RectEquals 
 entryPoint = SDL_main
 
-compilerOpts.osx = -D_POSIX_SOURCE -mxsave -mavx -mf16c
+compilerOpts = -D_POSIX_SOURCE 
+compilerOpts.osx =
 compilerOpts.linux = -D_REENTRANT
+compilerOpts.ios =
 
 linkerOpts.linux = -lm

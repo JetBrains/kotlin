@@ -513,6 +513,10 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
     private fun stretch(value: Int) = (value.toFloat() * ratio + 0.5).toInt()
 
     inner class GamePadButtons(width: Int, height: Int, gamePadHeight: Int) {
+        val MOVE_BUTTON_SIZE = 50
+        val ROTATE_BUTTON_SIZE = 80
+        val BUTTONS_MARGIN = 25
+
         val arena = Arena()
         val leftRect: SDL_Rect
         val rightRect: SDL_Rect
@@ -521,40 +525,38 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
         val rotateRect: SDL_Rect
 
         init {
-            val s1 = 50
-            val s2 = 80
-            val m = 25
-            val x = (width - 3 * s1 - 2 * m - m - s2) / 2 - s1
-            val y2 = (gamePadHeight - 2 * s1 - m) / 2
+            val moveButtonsWidth = 3 * MOVE_BUTTON_SIZE + 2 * BUTTONS_MARGIN + BUTTONS_MARGIN
+            val x = (width - moveButtonsWidth - ROTATE_BUTTON_SIZE) / 2 - MOVE_BUTTON_SIZE
+            val y2 = (gamePadHeight - 2 * MOVE_BUTTON_SIZE - BUTTONS_MARGIN) / 2
             leftRect = arena.alloc<SDL_Rect>()
-            leftRect.w.value = s1
-            leftRect.h.value = s1
+            leftRect.w.value = MOVE_BUTTON_SIZE
+            leftRect.h.value = MOVE_BUTTON_SIZE
             leftRect.x.value = x
-            leftRect.y.value = height - gamePadHeight + y2 + s1 + m
+            leftRect.y.value = height - gamePadHeight + y2 + MOVE_BUTTON_SIZE + BUTTONS_MARGIN
 
             downRect = arena.alloc<SDL_Rect>()
-            downRect.w.value = s1
-            downRect.h.value = s1
-            downRect.x.value = x + s1 + m
+            downRect.w.value = MOVE_BUTTON_SIZE
+            downRect.h.value = MOVE_BUTTON_SIZE
+            downRect.x.value = x + MOVE_BUTTON_SIZE + BUTTONS_MARGIN
             downRect.y.value = leftRect.y.value
 
             dropRect = arena.alloc<SDL_Rect>()
-            dropRect.w.value = s1
-            dropRect.h.value = s1
+            dropRect.w.value = MOVE_BUTTON_SIZE
+            dropRect.h.value = MOVE_BUTTON_SIZE
             dropRect.x.value = downRect.x.value
             dropRect.y.value = height - gamePadHeight + y2
 
             rightRect = arena.alloc<SDL_Rect>()
-            rightRect.w.value = s1
-            rightRect.h.value = s1
-            rightRect.x.value = x + 2 * s1 + 2 * m
-            rightRect.y.value = height - gamePadHeight + y2 + s1 + m
+            rightRect.w.value = MOVE_BUTTON_SIZE
+            rightRect.h.value = MOVE_BUTTON_SIZE
+            rightRect.x.value = x + 2 * MOVE_BUTTON_SIZE + 2 * BUTTONS_MARGIN
+            rightRect.y.value = height - gamePadHeight + y2 + MOVE_BUTTON_SIZE + BUTTONS_MARGIN
 
             rotateRect = arena.alloc<SDL_Rect>()
-            rotateRect.w.value = s2
-            rotateRect.h.value = s2
-            rotateRect.x.value = x + 3 * s1 + 2 * m + m
-            rotateRect.y.value = height - gamePadHeight + y2 - m
+            rotateRect.w.value = ROTATE_BUTTON_SIZE
+            rotateRect.h.value = ROTATE_BUTTON_SIZE
+            rotateRect.x.value = x + moveButtonsWidth
+            rotateRect.y.value = height - gamePadHeight + y2 - BUTTONS_MARGIN
         }
 
         fun getCommandAt(x: Int, y: Int): UserCommand? {

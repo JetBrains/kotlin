@@ -91,7 +91,7 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
             }
         }
 
-        if (underlying !is ConstArrayType) return underlying
+        assert (underlying is ConstArrayType)
         // So the result must feel like array:
         return ConstArrayType(RecordType(structDeclaration), 1)
     }
@@ -102,7 +102,7 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
 
         val underlying = convertType(clang_getTypedefDeclUnderlyingType(declCursor))
 
-        if (name == "__builtin_va_list") {
+        if (name == "__builtin_va_list" && underlying is ConstArrayType) {
             // On some platforms (e.g. macOS) libclang reports `__builtin_va_list` to be defined as array using
             //   typedef struct __va_list_tag __builtin_va_list[1]
             // while `struct __va_list_tag` is incomplete.
