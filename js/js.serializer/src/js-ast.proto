@@ -47,10 +47,10 @@ message Expression {
         NullLiteral null_literal = 24;
         TrueLiteral true_literal = 25;
         FalseLiteral false_literal = 26;
-        StringLiteral string_literal = 27;
+        int32 string_literal = 27;
         RegExpLiteral reg_exp_literal = 28;
-        IntLiteral int_literal = 29;
-        DoubleLiteral double_literal = 30;
+        int32 int_literal = 29;
+        double double_literal = 30;
         ArrayLiteral array_literal = 31;
         ObjectLiteral object_literal = 32;
         Function function = 33;
@@ -78,21 +78,9 @@ message TrueLiteral {
 message FalseLiteral {
 }
 
-message StringLiteral {
-    required int32 string_id = 1;
-}
-
 message RegExpLiteral {
     required int32 pattern_string_id = 1;
     optional int32 flags_string_id = 2;
-}
-
-message IntLiteral {
-    required int32 value = 1;
-}
-
-message DoubleLiteral {
-    required double value = 1;
 }
 
 message ArrayLiteral {

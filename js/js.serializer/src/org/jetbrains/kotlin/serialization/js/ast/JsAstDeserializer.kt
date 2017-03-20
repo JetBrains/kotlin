@@ -263,9 +263,9 @@ class JsAstDeserializer(private val program: JsProgram) {
         ExpressionCase.NULL_LITERAL -> JsLiteral.NULL
         ExpressionCase.TRUE_LITERAL -> JsLiteral.TRUE
         ExpressionCase.FALSE_LITERAL -> JsLiteral.FALSE
-        ExpressionCase.STRING_LITERAL -> program.getStringLiteral(deserializeString(proto.stringLiteral.stringId))
-        ExpressionCase.INT_LITERAL -> program.getNumberLiteral(proto.intLiteral.value)
-        ExpressionCase.DOUBLE_LITERAL -> program.getNumberLiteral(proto.doubleLiteral.value)
+        ExpressionCase.STRING_LITERAL -> program.getStringLiteral(deserializeString(proto.stringLiteral))
+        ExpressionCase.INT_LITERAL -> program.getNumberLiteral(proto.intLiteral)
+        ExpressionCase.DOUBLE_LITERAL -> program.getNumberLiteral(proto.doubleLiteral)
         ExpressionCase.SIMPLE_NAME_REFERENCE -> JsNameRef(deserializeName(proto.simpleNameReference))
 
         ExpressionCase.REG_EXP_LITERAL -> {

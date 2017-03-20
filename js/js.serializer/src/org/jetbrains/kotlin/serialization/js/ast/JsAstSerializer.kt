@@ -284,9 +284,7 @@ class JsAstSerializer {
             }
 
             override fun visitString(x: JsStringLiteral) {
-                val stringBuilder = StringLiteral.newBuilder()
-                stringBuilder.stringId = serialize(x.value)
-                builder.stringLiteral = stringBuilder.build()
+                builder.stringLiteral = serialize(x.value)
             }
 
             override fun visitRegExp(x: JsRegExp) {
@@ -297,15 +295,11 @@ class JsAstSerializer {
             }
 
             override fun visitInt(x: JsNumberLiteral.JsIntLiteral) {
-                val intBuilder = IntLiteral.newBuilder()
-                intBuilder.value = x.value
-                builder.intLiteral = intBuilder.build()
+                builder.intLiteral = x.value
             }
 
             override fun visitDouble(x: JsNumberLiteral.JsDoubleLiteral) {
-                val doubleBuilder = DoubleLiteral.newBuilder()
-                doubleBuilder.value = x.value
-                builder.doubleLiteral = doubleBuilder.build()
+                builder.doubleLiteral = x.value
             }
 
             override fun visitArray(x: JsArrayLiteral) {
