@@ -48,17 +48,8 @@ artifacts {
     archives javadocJar
 }
 
-[compileJava, compileBuiltinsJava].each { task ->
-    task.sourceCompatibility = 1.6
-    task.targetCompatibility = 1.6
-    task.options.fork = true
-    task.options.forkOptions.executable = "${JDK_16}/bin/javac"
-}
-
 compileBuiltinsKotlin {
-    compilerJarFile = bootstrapCompilerFile
     kotlinOptions {
-        jdkHome = JDK_16
         freeCompilerArgs = [
                 "-version",
                 "-Xallow-kotlin-package",
@@ -70,7 +61,6 @@ compileBuiltinsKotlin {
 }
 compileKotlin {
     kotlinOptions {
-        jdkHome = JDK_16
         freeCompilerArgs = [
                 "-version",
                 "-Xallow-kotlin-package",

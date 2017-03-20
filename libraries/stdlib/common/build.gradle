@@ -33,10 +33,6 @@ compileKotlinCommon {
 }
 */
 
-compileKotlinCommon.compilerJarFile = bootstrapCompilerFile
-
-
-
 jar {
     baseName = project.name
     manifest {

@@ -18,9 +18,6 @@ sourceSets {
 
 // common block
 
-compileKotlinCommon.compilerJarFile = bootstrapCompilerFile
-
-
 
 jar {
     baseName = project.name

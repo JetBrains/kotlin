@@ -35,16 +35,8 @@ artifacts {
     archives javadocJar
 }
 
-compileJava {
-    sourceCompatibility = 1.6
-    targetCompatibility = 1.6
-    options.fork = true
-    options.forkOptions.executable = "${JDK_16}/bin/javac"
-}
-
 compileKotlin {
     kotlinOptions {
-        jdkHome = JDK_16
         freeCompilerArgs = [
                 "-Xallow-kotlin-package",
                 "-Xdump-declarations-to", "${buildDir}/runtime-declarations.json",

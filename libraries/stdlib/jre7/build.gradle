@@ -31,8 +31,12 @@ artifacts {
     archives javadocJar
 }
 
-compileKotlin {
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
     kotlinOptions.jdkHome = JDK_17
+}
+
+compileKotlin {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
             "-Xmultifile-parts-inherit",
@@ -42,7 +46,6 @@ compileKotlin {
 }
 
 compileTestKotlin {
-    kotlinOptions.jdkHome = JDK_17
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
 }
 

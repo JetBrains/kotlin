@@ -18,17 +18,20 @@ ext.bootstrapCompilerFile = project.file("${rootDir}/../dist/kotlinc/lib/kotlin-
 ext.compilerPreloaderFile = project.file("${rootDir}/../dist/kotlinc/lib/kotlin-preloader.jar")
 
 allprojects  {
-    apply plugin: 'maven'
-
     group = 'org.jetbrains.kotlin'
     version = "$kotlin_version"
 }
 
 subprojects {
+    apply plugin: 'maven'
     apply plugin: 'signing'
 
     repositories {
         mavenCentral()
+    }
+
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile) {
+        compilerJarFile = bootstrapCompilerFile
     }
 
     signing {
@@ -93,11 +96,16 @@ static def commonJvmProjectConfiguration(Project project) {
             from javadoc.destinationDir
         }
 
-        compileKotlin.compilerJarFile = bootstrapCompilerFile
-        compileTestKotlin.compilerJarFile = bootstrapCompilerFile
+        tasks.withType(JavaCompile) {
+            sourceCompatibility = 1.6
+            targetCompatibility = 1.6
+            options.fork = true
+            options.forkOptions.executable = "${JDK_16}/bin/javac"
+        }
 
-        compileKotlin.kotlinOptions.jdkHome = JDK_16
-        compileTestKotlin.kotlinOptions.jdkHome = JDK_16
+        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+            kotlinOptions.jdkHome = JDK_16
+        }
 
         test {
             executable = "$JDK_16/bin/java"
