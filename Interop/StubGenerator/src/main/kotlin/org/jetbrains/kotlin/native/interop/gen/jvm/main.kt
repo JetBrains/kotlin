@@ -148,7 +148,7 @@ private fun Properties.defaultCompilerOpts(target: String, dependencies: String)
                 "-miphoneos-version-min=5.0.0")
         "osx-ios-sim" -> 
             return listOf(
-                "-arch", "amd64",
+                "-arch", "x86_64",
                 "-isystem", isystem,
                 "-B$sysRoot/usr/bin",
                 "--sysroot=$targetSysRoot",

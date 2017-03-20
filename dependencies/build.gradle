@@ -87,7 +87,7 @@ if (isLinux()) {
         baseName = "target-sysroot-1-$host"
     }
     task iphoneSysroot(type: TgzNativeDep) {
-        baseName = "target-sysroot-1-darwin-ios"
+        baseName = "target-sysroot-2-darwin-ios"
     }
 // TODO: re-enable when we known how to bring the simulator
 // sysroot to dependencies.

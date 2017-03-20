@@ -2,25 +2,31 @@
 
 DIR=.
 DIST=../../dist
-OSX_CFLAGS=-I/Library/Frameworks/SDL2.framework/Headers
-OSX_LINKER_ARGS="-F /Library/Frameworks -framework SDL2"
-#OSX_CFLAGS=-I/opt/local/include/SDL2
-#OSX_LINKER_ARGS="-L/opt/local/lib -lSDL2"
-LINUX_CFLAGS=-I/usr/include/SDL2
-LINUX_LINKER_ARGS="-L/usr/lib/x86_64-linux-gnu -lSDL2"
+DEPS=../../dependencies/all
+CFLAGS_macbook=-I/Library/Frameworks/SDL2.framework/Headers
+LINKER_ARGS_macbook="-F /Library/Frameworks -framework SDL2"
+#CFLAGS_macbook=-I/opt/local/include/SDL2
+#LINKER_ARGS_macbook="-L/opt/local/lib -lSDL2"
+CFLAGS_linux=-I/usr/include/SDL2
+LINKER_ARGS_linux="-L/usr/lib/x86_64-linux-gnu -lSDL2"
+CFLAGS_iphone=-I$DEPS/target-sysroot-2-darwin-ios/System/Library/Frameworks/SDL2.framework/Headers
+LINKER_ARGS_iphone="-framework SDL2 \
+-framework AVFoundation -framework CoreGraphics -framework CoreMotion -framework Foundation -framework GameController \
+-framework AudioToolbox -framework OpenGLES -framework QuartzCore -framework UIKit"
 
+if [ x$TARGET == x ]; then
 case "$OSTYPE" in
-  darwin*)  OS=OSX ;;
-  linux*)   OS=LINUX ;;
+  darwin*)  TARGET=macbook ;;
+  linux*)   TARGET=linux ;;
   *)        echo "unknown: $OSTYPE" && exit 1;;
 esac
+fi
 
-var=${OS}_CFLAGS
+var=CFLAGS_${TARGET}
 CFLAGS=${!var}
-var=${OS}_LINKER_ARGS
+var=LINKER_ARGS_${TARGET}
 LINKER_ARGS=${!var}
 
-$DIST/bin/interop -def:$DIR/sdl.def -copt:$CFLAGS || exit 1
-$DIST/bin/konanc -opt $DIR/tetris.kt sdl -nativelibrary sdlstubs.bc -linkerArgs "$LINKER_ARGS" -o tetris.kexe || exit 1
-strip tetris.kexe
-
+$DIST/bin/interop -def:$DIR/sdl.def -copt:"$CFLAGS" -target:$TARGET || exit 1
+$DIST/bin/konanc -target $TARGET sdl $DIR/tetris.kt -nativelibrary sdlstubs.bc -linkerArgs "$LINKER_ARGS" -o tetris.kexe || exit 1
+#strip tetris.kexe

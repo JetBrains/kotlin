@@ -91,7 +91,7 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
             }
         }
 
-        assert (underlying is ConstArrayType)
+        if (underlying !is ConstArrayType) return underlying
         // So the result must feel like array:
         return ConstArrayType(RecordType(structDeclaration), 1)
     }
