@@ -2462,3 +2462,263 @@ public fun CharArray.joinToString(separator: CharSequence = ", ", prefix: CharSe
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
 }
 
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun <T> Array<out T>.asIterable(): Iterable<T> {
+    if (isEmpty()) return emptyList()
+    return Iterable { this.iterator() }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun ByteArray.asIterable(): Iterable<Byte> {
+    if (isEmpty()) return emptyList()
+    return Iterable { this.iterator() }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun ShortArray.asIterable(): Iterable<Short> {
+    if (isEmpty()) return emptyList()
+    return Iterable { this.iterator() }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun IntArray.asIterable(): Iterable<Int> {
+    if (isEmpty()) return emptyList()
+    return Iterable { this.iterator() }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun LongArray.asIterable(): Iterable<Long> {
+    if (isEmpty()) return emptyList()
+    return Iterable { this.iterator() }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun FloatArray.asIterable(): Iterable<Float> {
+    if (isEmpty()) return emptyList()
+    return Iterable { this.iterator() }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun DoubleArray.asIterable(): Iterable<Double> {
+    if (isEmpty()) return emptyList()
+    return Iterable { this.iterator() }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun BooleanArray.asIterable(): Iterable<Boolean> {
+    if (isEmpty()) return emptyList()
+    return Iterable { this.iterator() }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun CharArray.asIterable(): Iterable<Char> {
+    if (isEmpty()) return emptyList()
+    return Iterable { this.iterator() }
+}
+
+/**
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
+ *
+ * @sample samples.collections.Sequences.Building.sequenceFromArray
+ */
+public fun <T> Array<out T>.asSequence(): Sequence<T> {
+    if (isEmpty()) return emptySequence()
+    return Sequence { this.iterator() }
+}
+
+/**
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
+ *
+ * @sample samples.collections.Sequences.Building.sequenceFromArray
+ */
+public fun ByteArray.asSequence(): Sequence<Byte> {
+    if (isEmpty()) return emptySequence()
+    return Sequence { this.iterator() }
+}
+
+/**
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
+ *
+ * @sample samples.collections.Sequences.Building.sequenceFromArray
+ */
+public fun ShortArray.asSequence(): Sequence<Short> {
+    if (isEmpty()) return emptySequence()
+    return Sequence { this.iterator() }
+}
+
+/**
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
+ *
+ * @sample samples.collections.Sequences.Building.sequenceFromArray
+ */
+public fun IntArray.asSequence(): Sequence<Int> {
+    if (isEmpty()) return emptySequence()
+    return Sequence { this.iterator() }
+}
+
+/**
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
+ *
+ * @sample samples.collections.Sequences.Building.sequenceFromArray
+ */
+public fun LongArray.asSequence(): Sequence<Long> {
+    if (isEmpty()) return emptySequence()
+    return Sequence { this.iterator() }
+}
+
+/**
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
+ *
+ * @sample samples.collections.Sequences.Building.sequenceFromArray
+ */
+public fun FloatArray.asSequence(): Sequence<Float> {
+    if (isEmpty()) return emptySequence()
+    return Sequence { this.iterator() }
+}
+
+/**
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
+ *
+ * @sample samples.collections.Sequences.Building.sequenceFromArray
+ */
+public fun DoubleArray.asSequence(): Sequence<Double> {
+    if (isEmpty()) return emptySequence()
+    return Sequence { this.iterator() }
+}
+
+/**
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
+ *
+ * @sample samples.collections.Sequences.Building.sequenceFromArray
+ */
+public fun BooleanArray.asSequence(): Sequence<Boolean> {
+    if (isEmpty()) return emptySequence()
+    return Sequence { this.iterator() }
+}
+
+/**
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
+ *
+ * @sample samples.collections.Sequences.Building.sequenceFromArray
+ */
+public fun CharArray.asSequence(): Sequence<Char> {
+    if (isEmpty()) return emptySequence()
+    return Sequence { this.iterator() }
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+public inline fun <T> Array<out T>.sumBy(selector: (T) -> Int): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+public inline fun ByteArray.sumBy(selector: (Byte) -> Int): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+public inline fun ShortArray.sumBy(selector: (Short) -> Int): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+public inline fun IntArray.sumBy(selector: (Int) -> Int): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+public inline fun LongArray.sumBy(selector: (Long) -> Int): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+public inline fun FloatArray.sumBy(selector: (Float) -> Int): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+public inline fun DoubleArray.sumBy(selector: (Double) -> Int): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+public inline fun BooleanArray.sumBy(selector: (Boolean) -> Int): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
+ */
+public inline fun CharArray.sumBy(selector: (Char) -> Int): Int {
+    var sum: Int = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}

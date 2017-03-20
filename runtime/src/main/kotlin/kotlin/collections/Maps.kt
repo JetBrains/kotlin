@@ -117,6 +117,14 @@ public inline fun <K, V> Map<K, V>?.orEmpty() : Map<K, V> = this ?: emptyMap()
 public inline operator fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.contains(key: K) : Boolean = containsKey(key)
 
 /**
+ * Allows to use the index operator for storing values in a mutable map.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun <K, V> MutableMap<K, V>.set(key: K, value: V): Unit {
+    put(key, value)
+}
+
+/**
  * Returns the value corresponding to the given [key], or `null` if such a key is not present in the map.
  */
 @kotlin.internal.InlineOnly
