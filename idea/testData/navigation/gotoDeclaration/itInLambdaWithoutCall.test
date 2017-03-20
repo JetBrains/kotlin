@@ -1,0 +1,5 @@
+// FILE: before.kt
+val a: (Int) -> Unit = { <caret>it }
+
+// FILE: after.kt
+val a: (Int) -> Unit = {<caret> it }

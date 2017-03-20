@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.allopen.AbstractBytecodeListingTestForAllOpen
 import org.jetbrains.kotlin.android.*
 import org.jetbrains.kotlin.android.configure.AbstractConfigureProjectTest
 import org.jetbrains.kotlin.android.folding.AbstractAndroidResourceFoldingTest
-import org.jetbrains.kotlin.android.quickfix.AbstractAndroidLintQuickfixTest
 import org.jetbrains.kotlin.android.intention.AbstractAndroidResourceIntentionTest
 import org.jetbrains.kotlin.android.lint.AbstractKotlinLintTest
+import org.jetbrains.kotlin.android.quickfix.AbstractAndroidLintQuickfixTest
 import org.jetbrains.kotlin.android.quickfix.AbstractAndroidQuickFixMultiFileTest
 import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessorBoxTest
 import org.jetbrains.kotlin.annotation.processing.test.sourceRetention.AbstractBytecodeListingTestForSourceRetention
@@ -104,10 +104,7 @@ import org.jetbrains.kotlin.idea.kdoc.AbstractKDocHighlightingTest
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocTypingTest
 import org.jetbrains.kotlin.idea.maven.AbstractKotlinMavenInspectionTest
 import org.jetbrains.kotlin.idea.maven.configuration.AbstractMavenConfigureProjectByChangingFileTest
-import org.jetbrains.kotlin.idea.navigation.AbstractGotoSuperTest
-import org.jetbrains.kotlin.idea.navigation.AbstractGotoTypeDeclarationTest
-import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoImplementationTest
-import org.jetbrains.kotlin.idea.navigation.AbstractKotlinGotoTest
+import org.jetbrains.kotlin.idea.navigation.*
 import org.jetbrains.kotlin.idea.parameterInfo.AbstractParameterInfoTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixTest
@@ -504,6 +501,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractGotoTypeDeclarationTest> {
             model("navigation/gotoTypeDeclaration", extension = "test")
+        }
+
+        testClass<AbstractGotoDeclarationTest> {
+            model("navigation/gotoDeclaration", extension = "test")
         }
 
         testClass<AbstractParameterInfoTest> {
