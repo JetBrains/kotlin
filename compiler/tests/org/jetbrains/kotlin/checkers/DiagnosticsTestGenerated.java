@@ -3375,6 +3375,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/collectionLiterals/defaultValuesWithConstantsInAnnotation.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("noArrayLiteralsInAnnotationsFeature.kt")
+            public void testNoArrayLiteralsInAnnotationsFeature() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/collectionLiterals/noArrayLiteralsInAnnotationsFeature.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/constructorConsistency")

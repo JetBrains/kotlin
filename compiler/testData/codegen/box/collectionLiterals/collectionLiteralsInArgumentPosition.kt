@@ -15,14 +15,18 @@ fun check(b: Boolean, message: String) {
     if (!b) throw RuntimeException(message)
 }
 
+@Suppress("UNSUPPORTED_FEATURE")
 annotation class Foo(val a: FloatArray = [], val b: Array<String> = [], val c: Array<KClass<*>> = [])
 
+@Suppress("UNSUPPORTED_FEATURE")
 @Foo(a = [1f, 2f, 1 / 0f])
 fun test1() {}
 
+@Suppress("UNSUPPORTED_FEATURE")
 @Foo(b = ["Hello", ", ", "Kot" + "lin"])
 fun test2() {}
 
+@Suppress("UNSUPPORTED_FEATURE")
 @Foo(c = [Int::class, Array<Short>::class, Foo::class])
 fun test3() {}
 

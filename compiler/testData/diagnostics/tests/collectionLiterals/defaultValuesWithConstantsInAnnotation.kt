@@ -1,3 +1,5 @@
+// !LANGUAGE: +ArrayLiteralsInAnnotations
+
 const val ONE = 1
 
 annotation class Foo(

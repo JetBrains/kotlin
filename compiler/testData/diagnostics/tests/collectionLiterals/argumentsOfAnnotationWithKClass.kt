@@ -1,3 +1,5 @@
+// !LANGUAGE: +ArrayLiteralsInAnnotations
+
 import kotlin.reflect.KClass
 
 annotation class Foo(val a: Array<KClass<*>> = [])

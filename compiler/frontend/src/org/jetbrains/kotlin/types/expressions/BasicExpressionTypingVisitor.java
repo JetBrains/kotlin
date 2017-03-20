@@ -1517,6 +1517,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public KotlinTypeInfo visitCollectionLiteralExpression(
             @NotNull KtCollectionLiteralExpression expression, ExpressionTypingContext context
     ) {
+        checkSupportsArrayLiterals(expression, context);
         return resolveCollectionLiteralSpecialMethod(expression, context);
     }
 
@@ -1779,6 +1780,20 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         traceForResolveResult.record(isGet ? INDEXED_LVALUE_GET : INDEXED_LVALUE_SET, arrayAccessExpression,
                                      functionResults.getResultingCall());
         return resultTypeInfo.replaceType(functionResults.getResultingDescriptor().getReturnType());
+    }
+
+    private void checkSupportsArrayLiterals(KtCollectionLiteralExpression expression, ExpressionTypingContext context) {
+        if (isInsideAnnotationEntryOrClass(expression) &&
+            !components.languageVersionSettings.supportsFeature(LanguageFeature.ArrayLiteralsInAnnotations)) {
+            context.trace.report(UNSUPPORTED_FEATURE.on(
+                    expression, TuplesKt.to(LanguageFeature.ArrayLiteralsInAnnotations, components.languageVersionSettings)));
+        }
+    }
+
+    private static boolean isInsideAnnotationEntryOrClass(KtCollectionLiteralExpression expression) {
+        //noinspection unchecked
+        PsiElement parent = PsiTreeUtil.getParentOfType(expression, KtAnnotationEntry.class, KtClass.class);
+        return parent instanceof KtAnnotationEntry || (parent instanceof KtClass && ((KtClass) parent).isAnnotation());
     }
 
     private KotlinTypeInfo resolveCollectionLiteralSpecialMethod(

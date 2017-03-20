@@ -54,6 +54,8 @@ enum class LanguageFeature(
 
     MultiPlatformProjects(sinceVersion = null, defaultState = State.DISABLED),
 
+    ArrayLiteralsInAnnotations(sinceVersion = null),
+
     ;
 
     val presentableName: String

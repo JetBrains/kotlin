@@ -8,6 +8,7 @@ public final class DefaultAnnotationParameterValuesKt {
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
+@kotlin.Suppress
 public annotation class Foo {
     public abstract method a(): int[]
     public abstract method b(): int[]

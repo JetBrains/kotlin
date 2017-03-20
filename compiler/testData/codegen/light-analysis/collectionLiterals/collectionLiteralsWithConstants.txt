@@ -7,11 +7,12 @@ public final class CollectionLiteralsWithConstantsKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method check(p0: boolean, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
     private final static method test(p0: kotlin.reflect.KFunction, p1: kotlin.jvm.functions.Function1): void
-    public final static @Foo method test1(): void
+    public final static @Foo @kotlin.Suppress method test1(): void
 }
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
+@kotlin.Suppress
 public annotation class Foo {
     public abstract method a(): int[]
     public abstract method b(): java.lang.String[]

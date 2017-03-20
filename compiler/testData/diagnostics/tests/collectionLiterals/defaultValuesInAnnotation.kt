@@ -1,3 +1,5 @@
+// !LANGUAGE: +ArrayLiteralsInAnnotations
+
 annotation class Foo(
         val a: Array<String> = ["/"],
         val b: Array<String> = [],
