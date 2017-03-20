@@ -55,6 +55,13 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
+    fun testSrcDirTaskDependency() {
+        Project("srcDirTaskDependency", "3.3").build("clean", "build") {
+            assertSuccessful()
+        }
+    }
+
+    @Test
     fun testLanguageVersion() {
         Project("languageVersion", GRADLE_VERSION).build("build") {
             assertFailed()

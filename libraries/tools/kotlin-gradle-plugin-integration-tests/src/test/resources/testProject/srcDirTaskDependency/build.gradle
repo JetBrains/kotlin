@@ -1,0 +1,41 @@
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}
+
+task generateSources {
+    outputs.dir('generated')
+
+    doLast {
+        def file = new File('generated/test/TestClass.java')
+        file.parentFile.mkdirs()
+        file.text = """
+            package test;
+
+            public class TestClass {
+
+            }
+        """
+    }
+}
+
+clean {
+    delete(tasks.generateSources)
+}
+
+sourceSets.main.java.srcDir(tasks.generateSources)

@@ -129,6 +129,7 @@ internal class Kotlin2JvmSourceSetProcessor(
 
     override fun doTargetSpecificProcessing() {
         val aptConfiguration = project.createAptConfiguration(sourceSet.name, kotlinPluginVersion)
+        kotlinSourceSet.kotlin.source(sourceSet.java)
 
         project.afterEvaluate { project ->
             if (project != null) {
@@ -153,8 +154,6 @@ internal class Kotlin2JvmSourceSetProcessor(
                 } else {
                     removeAnnotationProcessingPluginClasspathEntry(kotlinTask)
                 }
-
-                sourceSet.java.srcDirs.forEach { kotlinSourceSet.kotlin.srcDir(it) }
 
                 // KotlinCompile.source(kotlinDirSet) should be called only after all java roots are added to kotlinDirSet
                 // otherwise some java roots can be ignored
