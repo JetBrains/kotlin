@@ -19331,6 +19331,15 @@ public final class JsAstProtoBuf {
      * <code>required .org.jetbrains.kotlin.serialization.js.ast.Expression expression = 1;</code>
      */
     org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Expression getExpression();
+
+    /**
+     * <code>optional int32 exported_tag_id = 2;</code>
+     */
+    boolean hasExportedTagId();
+    /**
+     * <code>optional int32 exported_tag_id = 2;</code>
+     */
+    int getExportedTagId();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.ExpressionStatement}
@@ -19395,6 +19404,11 @@ public final class JsAstProtoBuf {
               bitField0_ |= 0x00000001;
               break;
             }
+            case 16: {
+              bitField0_ |= 0x00000002;
+              exportedTagId_ = input.readInt32();
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -19444,8 +19458,24 @@ public final class JsAstProtoBuf {
       return expression_;
     }
 
+    public static final int EXPORTED_TAG_ID_FIELD_NUMBER = 2;
+    private int exportedTagId_;
+    /**
+     * <code>optional int32 exported_tag_id = 2;</code>
+     */
+    public boolean hasExportedTagId() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional int32 exported_tag_id = 2;</code>
+     */
+    public int getExportedTagId() {
+      return exportedTagId_;
+    }
+
     private void initFields() {
       expression_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Expression.getDefaultInstance();
+      exportedTagId_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -19471,6 +19501,9 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         output.writeMessage(1, expression_);
       }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeInt32(2, exportedTagId_);
+      }
       output.writeRawBytes(unknownFields);
     }
 
@@ -19483,6 +19516,10 @@ public final class JsAstProtoBuf {
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(1, expression_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32Size(2, exportedTagId_);
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -19580,6 +19617,8 @@ public final class JsAstProtoBuf {
         super.clear();
         expression_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Expression.getDefaultInstance();
         bitField0_ = (bitField0_ & ~0x00000001);
+        exportedTagId_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000002);
         return this;
       }
 
@@ -19607,6 +19646,10 @@ public final class JsAstProtoBuf {
           to_bitField0_ |= 0x00000001;
         }
         result.expression_ = expression_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.exportedTagId_ = exportedTagId_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -19615,6 +19658,9 @@ public final class JsAstProtoBuf {
         if (other == org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.ExpressionStatement.getDefaultInstance()) return this;
         if (other.hasExpression()) {
           mergeExpression(other.getExpression());
+        }
+        if (other.hasExportedTagId()) {
+          setExportedTagId(other.getExportedTagId());
         }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
@@ -19709,6 +19755,38 @@ public final class JsAstProtoBuf {
         expression_ = org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.Expression.getDefaultInstance();
 
         bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      private int exportedTagId_ ;
+      /**
+       * <code>optional int32 exported_tag_id = 2;</code>
+       */
+      public boolean hasExportedTagId() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>optional int32 exported_tag_id = 2;</code>
+       */
+      public int getExportedTagId() {
+        return exportedTagId_;
+      }
+      /**
+       * <code>optional int32 exported_tag_id = 2;</code>
+       */
+      public Builder setExportedTagId(int value) {
+        bitField0_ |= 0x00000002;
+        exportedTagId_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional int32 exported_tag_id = 2;</code>
+       */
+      public Builder clearExportedTagId() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        exportedTagId_ = 0;
+        
         return this;
       }
 

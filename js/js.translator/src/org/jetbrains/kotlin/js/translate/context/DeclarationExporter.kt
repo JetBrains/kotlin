@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.isInlineOnlyOrReifiable
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.exportedPackage
+import org.jetbrains.kotlin.js.backend.ast.metadata.exportedTag
 import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isLibraryObject
@@ -70,25 +71,26 @@ internal class DeclarationExporter(val context: StaticContext) {
                 exportProperty(descriptor, qualifier)
             }
             else -> {
-                assign(descriptor, qualifier, context.getInnerNameForDescriptor(descriptor).makeRef())
+                assign(descriptor, qualifier)
             }
         }
     }
 
-    private fun assign(descriptor: DeclarationDescriptor, qualifier: JsExpression, expression: JsExpression) {
+    private fun assign(descriptor: DeclarationDescriptor, qualifier: JsExpression) {
+        val exportedName = context.getInnerNameForDescriptor(descriptor)
+        val expression = exportedName.makeRef()
         val propertyName = context.getNameForDescriptor(descriptor)
-        if (propertyName.staticRef == null) {
-            if (expression !is JsNameRef || expression.name !== propertyName) {
-                propertyName.staticRef = expression
-            }
+        if (propertyName.staticRef == null && exportedName != propertyName) {
+            propertyName.staticRef = expression
         }
-        statements += assignment(JsNameRef(propertyName, qualifier), expression).makeStmt()
+        statements += assignment(JsNameRef(propertyName, qualifier), expression).exportStatement(descriptor)
     }
 
     private fun exportObject(declaration: ClassDescriptor, qualifier: JsExpression) {
         val name = context.getNameForDescriptor(declaration)
-        statements += JsAstUtils.defineGetter(context.program, qualifier, name.ident,
-                                              context.getNameForObjectInstance(declaration).makeRef())
+        val expression = JsAstUtils.defineGetter(context.program, qualifier, name.ident,
+                                                 context.getNameForObjectInstance(declaration).makeRef())
+        statements += expression.exportStatement(declaration)
     }
 
     private fun exportProperty(declaration: PropertyDescriptor, qualifier: JsExpression) {
@@ -98,12 +100,15 @@ internal class DeclarationExporter(val context: StaticContext) {
         val simpleProperty = JsDescriptorUtils.isSimpleFinalProperty(declaration) &&
                              !TranslationUtils.shouldAccessViaFunctions(declaration)
 
+        val exportedName: JsName
         val getterBody: JsExpression = if (simpleProperty) {
-            val accessToField = JsReturn(context.getInnerNameForDescriptor(declaration).makeRef())
+            exportedName = context.getInnerNameForDescriptor(declaration)
+            val accessToField = JsReturn(exportedName.makeRef())
             JsFunction(context.fragment.scope, JsBlock(accessToField), "$declaration getter")
         }
         else {
-            context.getInnerNameForDescriptor(declaration.getter!!).makeRef()
+            exportedName = context.getInnerNameForDescriptor(declaration.getter!!)
+            exportedName.makeRef()
         }
         propertyLiteral.propertyInitializers += JsPropertyInitializer(JsNameRef("get"), getterBody)
 
@@ -122,7 +127,7 @@ internal class DeclarationExporter(val context: StaticContext) {
             propertyLiteral.propertyInitializers += JsPropertyInitializer(JsNameRef("set"), setterBody)
         }
 
-        statements += JsAstUtils.defineProperty(qualifier, name, propertyLiteral, context.program).makeStmt()
+        statements += JsAstUtils.defineProperty(qualifier, name, propertyLiteral, context.program).exportStatement(declaration)
     }
 
     private fun getLocalPackageReference(packageName: FqName): JsExpression {
@@ -141,6 +146,10 @@ internal class DeclarationExporter(val context: StaticContext) {
             statements.add(JsAstUtils.newVar(name, rhs).apply { exportedPackage = packageName.asString() })
         }
         return name.makeRef()
+    }
+
+    private fun JsExpression.exportStatement(declaration: DeclarationDescriptor) = JsExpressionStatement(this).also {
+        it.exportedTag = context.getTag(declaration)
     }
 }
 

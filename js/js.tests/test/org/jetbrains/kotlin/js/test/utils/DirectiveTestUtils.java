@@ -76,6 +76,13 @@ public class DirectiveTestUtils {
         }
     };
 
+    private static final DirectiveHandler PROPERTY_WRITE_COUNT = new DirectiveHandler("PROPERTY_WRITE_COUNT") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            checkPropertyWriteCount(ast, arguments.getNamedArgument("name"), Integer.parseInt(arguments.getNamedArgument("count")));
+        }
+    };
+
     private static final DirectiveHandler FUNCTION_CALLED_IN_SCOPE = new DirectiveHandler("CHECK_CALLED_IN_SCOPE") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
@@ -292,6 +299,7 @@ public class DirectiveTestUtils {
             PROPERTY_NOT_USED,
             PROPERTY_NOT_READ_FROM,
             PROPERTY_NOT_WRITTEN_TO,
+            PROPERTY_WRITE_COUNT,
             FUNCTION_CALLED_IN_SCOPE,
             FUNCTION_NOT_CALLED_IN_SCOPE,
             FUNCTIONS_HAVE_SAME_LINES,
@@ -330,6 +338,11 @@ public class DirectiveTestUtils {
         if (!isSetAllowed) {
             assertFalse("inline property setter for `" + propertyName + "` is called", counter.hasUnqualifiedWrites(propertyName));
         }
+    }
+
+    private static void checkPropertyWriteCount(JsNode node, String propertyName, int expectedCount) throws Exception {
+        PropertyReferenceCollector counter = PropertyReferenceCollector.Companion.collect(node);
+        assertEquals("Property write count: " + propertyName, expectedCount, counter.unqualifiedWriteCount(propertyName));
     }
 
 

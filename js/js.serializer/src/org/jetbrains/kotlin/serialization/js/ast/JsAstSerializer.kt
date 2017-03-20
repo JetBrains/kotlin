@@ -144,6 +144,11 @@ class JsAstSerializer {
             override fun visitExpressionStatement(x: JsExpressionStatement) {
                 val statementBuilder = ExpressionStatement.newBuilder()
                 statementBuilder.expression = serialize(x.expression)
+                val tag = x.exportedTag
+                if (tag != null) {
+                    statementBuilder.exportedTagId = serialize(tag)
+                }
+
                 builder.expression = statementBuilder.build()
             }
 

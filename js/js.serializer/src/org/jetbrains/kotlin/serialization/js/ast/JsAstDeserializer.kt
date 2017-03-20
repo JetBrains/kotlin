@@ -142,7 +142,11 @@ class JsAstDeserializer(private val program: JsProgram) {
 
         StatementCase.EXPRESSION -> {
             val expressionProto = proto.expression
-            JsExpressionStatement(deserialize(expressionProto.expression))
+            JsExpressionStatement(deserialize(expressionProto.expression)).also {
+                if (expressionProto.hasExportedTagId()) {
+                    it.exportedTag = deserializeString(expressionProto.exportedTagId)
+                }
+            }
         }
 
         StatementCase.VARS -> {

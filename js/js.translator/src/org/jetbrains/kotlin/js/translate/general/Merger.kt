@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
 import org.jetbrains.kotlin.js.backend.ast.metadata.exportedPackage
+import org.jetbrains.kotlin.js.backend.ast.metadata.exportedTag
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
@@ -35,6 +36,7 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
     private val classes = mutableMapOf<JsName, JsClassModel>()
     private val importedModulesImpl = mutableListOf<JsImportedModule>()
     private val exportedPackages = mutableMapOf<String, JsName>()
+    private val exportedTags = mutableSetOf<String>()
 
     // Add declaration and initialization statements from program fragment to resulting single program
     fun addFragment(fragment: JsProgramFragment) {
@@ -99,6 +101,10 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
                 else {
                     exportedPackages[exportedPackage] = localName
                 }
+            }
+            else if (statement is JsExpressionStatement) {
+                val exportedTag = statement.exportedTag
+                if (exportedTag != null && !exportedTags.add(exportedTag)) continue
             }
             exportBlock.statements += nameMap.rename(statement)
         }

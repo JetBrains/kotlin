@@ -270,6 +270,7 @@ message Debugger {
 
 message ExpressionStatement {
     required Expression expression = 1;
+    optional int32 exported_tag_id = 2;
 }
 
 message Vars {

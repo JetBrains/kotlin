@@ -553,7 +553,7 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsStatement defineGetter(
+    public static JsExpression defineGetter(
             @NotNull JsProgram program,
             @NotNull JsExpression receiver,
             @NotNull String name,
@@ -561,7 +561,7 @@ public final class JsAstUtils {
     ) {
         JsObjectLiteral propertyLiteral = new JsObjectLiteral(true);
         propertyLiteral.getPropertyInitializers().add(new JsPropertyInitializer(new JsNameRef("get"), body));
-        return defineProperty(receiver, name, propertyLiteral, program).makeStmt();
+        return defineProperty(receiver, name, propertyLiteral, program);
     }
 
     @NotNull
