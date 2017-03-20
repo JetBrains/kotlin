@@ -79,6 +79,7 @@ class VarargInjectionLowering internal constructor(val context: Context): Declar
             }
 
             override fun visitVararg(expression: IrVararg): IrExpression {
+                expression.transformChildrenVoid(transformer)
                 val hasSpreadElement = hasSpreadElement(expression)
                 if (!hasSpreadElement && expression.elements.all { it is IrConst<*> && KotlinBuiltIns.isString(it.type) }) {
                     log("skipped vararg expression because it's string array literal")
@@ -98,7 +99,7 @@ class VarargInjectionLowering internal constructor(val context: Context): Declar
 
                     val vars = expression.elements.map {
                         val initVar = scope.createTemporaryVariable(
-                                ((it as? IrSpreadElement)?.expression ?: it as IrExpression).apply {  it.transformChildrenVoid(transformer) },
+                                (it as? IrSpreadElement)?.expression ?: it as IrExpression,
                                 "elem".synthesizedString, true)
                         block.statements.add(initVar)
                         it to initVar
