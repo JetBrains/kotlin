@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.coroutine.CoroutineTransformer;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
 import org.jetbrains.kotlin.js.inline.JsInliner;
+import org.jetbrains.kotlin.js.inline.clean.LabeledBlockToDoWhileTransformation;
 import org.jetbrains.kotlin.js.inline.clean.RemoveUnusedImportsKt;
 import org.jetbrains.kotlin.js.inline.clean.ResolveTemporaryNamesKt;
 import org.jetbrains.kotlin.js.translate.general.AstGenerationResult;
@@ -124,6 +125,8 @@ public final class K2JSTranslator {
 
         JsInliner.process(config, analysisResult.getBindingTrace(), translationResult.getInnerModuleName(), allFragments, newFragments);
 
+        LabeledBlockToDoWhileTransformation.INSTANCE.apply(newFragments);
+
         CoroutineTransformer coroutineTransformer = new CoroutineTransformer(translationResult.getProgram());
         for (JsProgramFragment fragment : newFragments) {
             coroutineTransformer.accept(fragment.getDeclarationBlock());
@@ -174,6 +177,7 @@ public final class K2JSTranslator {
         for (JsImportedModule module : translationResult.getImportedModuleList()) {
             importedModules.add(module.getExternalName());
         }
+
         return new TranslationResult.Success(config, files, translationResult.getProgram(), diagnostics, importedModules,
                                              moduleDescriptor, bindingTrace.getBindingContext(), metadataHeader, fileMap);
     }

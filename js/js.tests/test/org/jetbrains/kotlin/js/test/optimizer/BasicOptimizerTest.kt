@@ -17,18 +17,18 @@
 package org.jetbrains.kotlin.js.test.optimizer
 
 
-import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
-import org.jetbrains.kotlin.js.util.TextOutputImpl
 import com.google.gwt.dev.js.rhino.CodePosition
 import com.google.gwt.dev.js.rhino.ErrorReporter
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
 import org.jetbrains.kotlin.js.parser.parse
 import org.jetbrains.kotlin.js.sourceMap.JsSourceGenerationVisitor
 import org.jetbrains.kotlin.js.test.BasicBoxTest
 import org.jetbrains.kotlin.js.test.createScriptEngine
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.junit.Assert
 import org.junit.Rule
 import org.junit.rules.TestName
@@ -60,16 +60,20 @@ abstract class BasicOptimizerTest(private var basePath: String) {
         updateMetadata(unoptimizedCode, unoptimizedAst)
 
         for (statement in unoptimizedAst) {
-            object : RecursiveJsVisitor() {
-                override fun visitFunction(x: JsFunction) {
-                    FunctionPostProcessor(x).apply()
-                    super.visitFunction(x)
-                }
-            }.accept(statement)
+            process(statement)
         }
 
         val optimizedAst = parse(optimizedCode, errorReporter, parserScope)
         Assert.assertEquals(astToString(optimizedAst), astToString(unoptimizedAst))
+    }
+
+    protected open fun process(statement: JsStatement) {
+        object : RecursiveJsVisitor() {
+            override fun visitFunction(x: JsFunction) {
+                FunctionPostProcessor(x).apply()
+                super.visitFunction(x)
+            }
+        }.accept(statement)
     }
 
     private fun updateMetadata(code: String, ast: List<JsStatement>) {
