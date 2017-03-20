@@ -2672,6 +2672,15 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return invokeFunction(resolvedCall, receiver);
     }
 
+    @Override
+    public StackValue visitCollectionLiteralExpression(
+            @NotNull KtCollectionLiteralExpression expression, StackValue data
+    ) {
+        ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(COLLECTION_LITERAL_CALL, expression);
+        assert resolvedCall != null : "No resolved call for " + PsiUtilsKt.getTextWithLocation(expression);
+        return invokeFunction(resolvedCall, data);
+    }
+
     @Nullable
     private StackValue genSamInterfaceValue(
             @NotNull KtExpression probablyParenthesizedExpression,

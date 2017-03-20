@@ -3876,6 +3876,33 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/collectionLiterals")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CollectionLiterals extends AbstractLightAnalysisModeTest {
+        public void testAllFilesPresentInCollectionLiterals() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/collectionLiterals"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("collectionLiteralsInArgumentPosition.kt")
+        public void testCollectionLiteralsInArgumentPosition() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/collectionLiterals/collectionLiteralsInArgumentPosition.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("collectionLiteralsWithConstants.kt")
+        public void testCollectionLiteralsWithConstants() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/collectionLiterals/collectionLiteralsWithConstants.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultAnnotationParameterValues.kt")
+        public void testDefaultAnnotationParameterValues() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/collectionLiterals/defaultAnnotationParameterValues.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/collections")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

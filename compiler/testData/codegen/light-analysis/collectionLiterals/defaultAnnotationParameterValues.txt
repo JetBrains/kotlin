@@ -1,0 +1,17 @@
+@kotlin.Metadata
+public final class DefaultAnnotationParameterValuesKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method check(p0: boolean, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    private final static method test(p0: kotlin.reflect.KFunction, p1: kotlin.jvm.functions.Function1): java.lang.String
+    public final static @Foo method withAnn(): void
+}
+
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class Foo {
+    public abstract method a(): int[]
+    public abstract method b(): int[]
+    public abstract method c(): java.lang.String[]
+    public abstract method d(): java.lang.Class[]
+    public abstract method e(): double[]
+}

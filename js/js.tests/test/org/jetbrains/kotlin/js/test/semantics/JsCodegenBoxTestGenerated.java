@@ -4561,6 +4561,51 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/collectionLiterals")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CollectionLiterals extends AbstractJsCodegenBoxTest {
+        public void testAllFilesPresentInCollectionLiterals() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/collectionLiterals"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+        }
+
+        @TestMetadata("collectionLiteralsInArgumentPosition.kt")
+        public void testCollectionLiteralsInArgumentPosition() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/collectionLiterals/collectionLiteralsInArgumentPosition.kt");
+            try {
+                doTest(fileName);
+            }
+            catch (Throwable ignore) {
+                return;
+            }
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        }
+
+        @TestMetadata("collectionLiteralsWithConstants.kt")
+        public void testCollectionLiteralsWithConstants() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/collectionLiterals/collectionLiteralsWithConstants.kt");
+            try {
+                doTest(fileName);
+            }
+            catch (Throwable ignore) {
+                return;
+            }
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        }
+
+        @TestMetadata("defaultAnnotationParameterValues.kt")
+        public void testDefaultAnnotationParameterValues() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/collectionLiterals/defaultAnnotationParameterValues.kt");
+            try {
+                doTest(fileName);
+            }
+            catch (Throwable ignore) {
+                return;
+            }
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/collections")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
