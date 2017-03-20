@@ -22,10 +22,8 @@ import org.gradle.BuildResult
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.com.intellij.openapi.util.io.ZipFileCache
 import org.jetbrains.kotlin.com.intellij.openapi.vfs.impl.ZipHandler
 import org.jetbrains.kotlin.com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
-import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.incremental.BuildCacheStorage
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
@@ -138,29 +136,6 @@ internal class CompilerServicesCleanup() {
         }
 
         (KotlinCoreEnvironment.applicationEnvironment?.jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
-
-        // making cleanup of static objects only on recognized versions of gradle and if version < 2.4
-        // otherwise it may cause problems e.g. with JobScheduler on subsequent runs
-        // this strategy may lead to memory leaks, but prevent crashes due to destroyed JobScheduler
-        // the reason for the strategy is the following:
-        // gradle < 2.4 has problems with plugin reuse in the daemon: new calls to the plugin are made with a new classloader
-        // for every new build. With statically initialized daemons like JobScheduler that leads to big leaks of classloaders and classes,
-        // therefore to reduce leaks JobScheduler (and deprecated ZipFileCache for now) should be stopped)
-        // It should be noted that because of this behavior there are no benefits of using daemon in these versions.
-        // Starting from 2.4 gradle using cached classloaders, that leads to effective class reusing in the daemon, but
-        // in that case premature stopping of the static daemons may lead to crashes.
-        ParsedGradleVersion.parse(gradleVersion)?.let {
-            log.kotlinDebug("detected gradle version $it")
-            if (it < ParsedGradleVersion.parse("2.4")!!) {
-                // TODO: remove ZipFileCache cleanup after switching to recent idea libs
-                stopZipFileCache()
-            }
-        }
-    }
-
-    private fun stopZipFileCache() {
-        ZipFileCache.stopBackgroundThread()
-        log.kotlinDebug("ZipFileCache finished successfully")
     }
 
     private fun cleanJarCache() {

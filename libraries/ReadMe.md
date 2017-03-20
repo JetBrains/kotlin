@@ -9,8 +9,9 @@ setup environment variables as following:
     JDK_17="path to JDK 1.7"
     JDK_18="path to JDK 1.8"
 
-The main part of kotlin runtime and all tools are compiled against JDK 1.6 and also there are two extensions
-for the standard library which are compiled against JDK 1.7 and 1.8 respectively, so you need to have all these JDKs installed.
+The main part of the Kotlin standard library, `kotlin-stdlib`, is compiled against JDK 1.6 and also there are two extensions
+for the standard library, `kotlin-stdlib-jre7` and `kotlin-stdlib-jre8`, which are compiled against JDK 1.7 and 1.8 respectively,
+so you need to have all these JDKs installed.
 
 Then you'll be able to build tools and libraries with:
 
@@ -22,7 +23,7 @@ Be sure to build Kotlin compiler distribution before launching Maven: see ReadMe
 
 If your maven build is failing with Out-Of-Memory errors, set JVM options for maven in MAVEN_OPTS environment variable like this:
 
-    MAVEN_OPTS="-Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=512m"
+    MAVEN_OPTS="-Xmx2G"
 
 ## Gradle Plugin
 

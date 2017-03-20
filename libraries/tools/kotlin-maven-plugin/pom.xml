@@ -67,6 +67,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -90,6 +94,14 @@
                         <phase>process-classes</phase>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire-version}</version>
+                <configuration>
+                    <jvm>${env.JDK_18}/bin/java</jvm>
+                </configuration>
             </plugin>
         </plugins>
     </build>

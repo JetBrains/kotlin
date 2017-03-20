@@ -13,6 +13,10 @@
 
     <artifactId>kotlin-stdlib</artifactId>
 
+    <properties>
+        <kotlin.compiler.jdkHome>${env.JDK_16}</kotlin.compiler.jdkHome>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>

@@ -50,7 +50,7 @@
 
         <kotlin-dist>${project-root}/dist</kotlin-dist>
         <kotlin-sdk>${kotlin-dist}/kotlinc</kotlin-sdk>
-        <kotlin.compiler.jdkHome>${env.JDK_16}</kotlin.compiler.jdkHome>
+        <kotlin.compiler.jdkHome>${env.JDK_18}</kotlin.compiler.jdkHome>
 
         <kotlin.language.version>1.1</kotlin.language.version>
 
