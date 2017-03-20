@@ -38,7 +38,7 @@ class KonanConfigKeys {
         val OPTIMIZATION: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("optimized compilation")
         val DEBUG: CompilerConfigurationKey<Boolean>
-                = CompilerConfigurationKey.create("compilation with debug information")
+                = CompilerConfigurationKey.create("add debug information")
         val NOSTDLIB: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("don't link with stdlib")
         val NOLINK: CompilerConfigurationKey<Boolean> 

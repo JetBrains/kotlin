@@ -126,4 +126,20 @@ internal class VariableManager(val codegen: CodeGenerator) {
     fun store(value: LLVMValueRef, index: Int) {
         variables[index].store(value)
     }
+
+    fun debugInfoLocalVariableLocation(functionScope: DIScopeOpaqueRef, diType: DITypeOpaqueRef, name:Name, variable: LLVMValueRef, file: DIFileRef, line: Int, location: DILocationRef?) {
+        val variableDeclaration = DICreateAutoVariable(
+                builder = codegen.context.debugInfo.builder,
+                scope = functionScope,
+                name = name.asString(),
+                file = file,
+                line = line,
+                type = diType)
+        DIInsertDeclarationWithEmptyExpression(
+                builder = codegen.context.debugInfo.builder,
+                value = variable,
+                localVariable = variableDeclaration,
+                location = location,
+                bb = LLVMGetInsertBlock(codegen.builder))
+    }
 }

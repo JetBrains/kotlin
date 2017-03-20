@@ -256,3 +256,6 @@ fun parseBitcodeFile(path: String): LLVMModuleRef = memScoped {
         LLVMDisposeMemoryBuffer(memoryBuffer)
     }
 }
+
+internal fun String.mdString() = LLVMMDString(this, this.length)!!
+internal fun node(vararg it:LLVMValueRef) = LLVMMDNode(it.toList().toCValues(), it.size)

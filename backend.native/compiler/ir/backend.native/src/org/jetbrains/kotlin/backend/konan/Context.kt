@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import llvm.LLVMDumpModule
-import llvm.LLVMModuleRef
+import llvm.*
 import org.jetbrains.kotlin.backend.common.validateIrModule
 import org.jetbrains.kotlin.backend.jvm.descriptors.initialize
 import org.jetbrains.kotlin.backend.konan.descriptors.*
@@ -407,10 +406,24 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         return config.configuration.getBoolean(KonanConfigKeys.TIME_PHASES) 
     }
 
+    fun shouldContainDebugInfo(): Boolean {
+        return config.configuration.getBoolean(KonanConfigKeys.DEBUG)
+    }
+
     fun log(message: String) {
         if (phase?.verbose ?: false) {
             println(message)
         }
+    }
+
+    val  debugInfo = DebugInfo()
+    class DebugInfo {
+        val files = mutableMapOf<IrFile, DIFileRef>()
+        val subprograms = mutableMapOf<FunctionDescriptor, DISubprogramRef>()
+        var builder: DIBuilderRef? = null
+        var module: DIModuleRef? = null
+        var compilationModule: DICompileUnitRef? = null
+        var types = mutableMapOf<KotlinType, DITypeOpaqueRef>()
     }
 }
 
