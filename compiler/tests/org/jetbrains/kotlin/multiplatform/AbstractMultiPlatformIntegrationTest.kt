@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.multiplatform
 
 import org.jetbrains.kotlin.cli.AbstractCliTest
+import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import java.io.File
 
 abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
@@ -38,39 +40,45 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
         val jsDest = File(File(tmpdir, "js"), "output.js")
 
         val result = buildString {
-            val (commonOutput, commonExitCode) = AbstractCliTest.executeCompilerGrabOutput(K2MetadataCompiler(), listOf(
-                    commonSrc.absolutePath, "-d", commonDest.absolutePath, "-Xskip-java-check"
-            ))
             appendln("-- Common --")
-            appendln("Exit code: $commonExitCode")
-            appendln("Output:")
-            appendln(commonOutput)
+            appendln(K2MetadataCompiler().compile(listOf(commonSrc), "-d", commonDest.absolutePath))
 
             if (jvmSrc.exists()) {
-                val (jvmOutput, jvmExitCode) = AbstractCliTest.executeCompilerGrabOutput(K2JVMCompiler(), listOf(
-                        jvmSrc.absolutePath, commonSrc.absolutePath,
-                        "-d", jvmDest.absolutePath,
-                        "-Xmulti-platform", "-Xskip-java-check"
-                ))
+                appendln()
                 appendln("-- JVM --")
-                appendln("Exit code: $jvmExitCode")
-                appendln("Output:")
-                appendln(jvmOutput)
+                append(K2JVMCompiler().compileBothWays(commonSrc, jvmSrc, "-d", jvmDest.absolutePath))
             }
 
             if (jsSrc.exists()) {
-                val (jsOutput, jsExitCode) = AbstractCliTest.executeCompilerGrabOutput(K2JSCompiler(), listOf(
-                        jsSrc.absolutePath, commonSrc.absolutePath,
-                        "-output", jsDest.absolutePath,
-                        "-Xmulti-platform", "-Xskip-java-check"
-                ))
+                appendln()
                 appendln("-- JS --")
-                appendln("Exit code: $jsExitCode")
-                appendln("Output:")
-                append(jsOutput)
+                append(K2JSCompiler().compileBothWays(commonSrc, jsSrc, "-output", jsDest.absolutePath))
             }
         }
 
         KotlinTestUtils.assertEqualsToFile(File(root, "output.txt"), result.replace('\\', '/'))
     }
+
+    private fun CLICompiler<*>.compileBothWays(commonSource: File, platformSource: File, vararg additionalArguments: String): String {
+        val platformFirst = compile(listOf(platformSource, commonSource), *additionalArguments).trimTrailingWhitespacesAndAddNewlineAtEOF()
+        val commonFirst = compile(listOf(commonSource, platformSource), *additionalArguments).trimTrailingWhitespacesAndAddNewlineAtEOF()
+        if (platformFirst != commonFirst) {
+            assertEquals(
+                    "Compilation results are different when compiling [platform-specific, common] compared to when compiling [common, platform-specific]",
+                    "// Compiling [platform-specific, common]\n\n$platformFirst",
+                    "// Compiling [common, platform-specific]\n\n$commonFirst"
+            )
+        }
+        return platformFirst
+    }
+
+    private fun CLICompiler<*>.compile(sources: List<File>, vararg additionalArguments: String): String = buildString {
+        val (output, exitCode) = AbstractCliTest.executeCompilerGrabOutput(
+                this@compile,
+                sources.map(File::getAbsolutePath) + listOf("-Xmulti-platform", "-Xskip-java-check") + additionalArguments
+        )
+        appendln("Exit code: $exitCode")
+        appendln("Output:")
+        appendln(output)
+    }.trim()
 }
