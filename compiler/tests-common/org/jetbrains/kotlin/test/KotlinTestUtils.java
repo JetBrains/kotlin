@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
+import org.jetbrains.kotlin.cli.jvm.javac.JavaAgainstKotlinCompiler;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
@@ -552,27 +553,72 @@ public class KotlinTestUtils {
     }
 
     public static void compileKotlinWithJava(
-            @NotNull List<File> javaFiles,
-            @NotNull List<File> ktFiles,
-            @NotNull File outDir,
-            @NotNull Disposable disposable,
+            @NotNull final List<File> javaFiles,
+            @NotNull final List<File> ktFiles,
+            @NotNull final File outDir,
+            @NotNull final Disposable disposable,
             @Nullable File javaErrorFile
     ) throws IOException {
-        if (!ktFiles.isEmpty()) {
-            KotlinCoreEnvironment environment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable);
-            LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment);
+
+        final KotlinCoreEnvironment env = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable);
+        final KotlinCoreEnvironment env1 = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable);
+
+        if (!outDir.exists()) outDir.mkdirs();
+
+
+        Thread kotlinc = new Thread() {
+            @Override
+            public void run() {
+                if (!ktFiles.isEmpty()) {
+                    LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, env);
+                }
+            }
+
+        };
+
+        Thread javac = new Thread() {
+            @Override
+            public void run() {
+                if (!javaFiles.isEmpty()) {
+                    JavaAgainstKotlinCompiler.compileJavaFiles(javaFiles, ktFiles, env1, outDir);
+                }
+            }
+        };
+
+        javac.start();
+        kotlinc.start();
+
+        try {
+            javac.join();
+            kotlinc.join();
         }
-        else {
-            boolean mkdirs = outDir.mkdirs();
-            assert mkdirs : "Not created: " + outDir;
-        }
-        if (!javaFiles.isEmpty()) {
-            compileJavaFiles(javaFiles, Arrays.asList(
-                    "-classpath", outDir.getPath() + File.pathSeparator + ForTestCompileRuntime.runtimeJarForTests(),
-                    "-d", outDir.getPath()
-            ), javaErrorFile);
+        catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
+
+    //public static void compileKotlinWithJava(
+    //        @NotNull List<File> javaFiles,
+    //        @NotNull List<File> ktFiles,
+    //        @NotNull File outDir,
+    //        @NotNull Disposable disposable,
+    //        @Nullable File javaErrorFile
+    //) throws IOException {
+    //    if (!ktFiles.isEmpty()) {
+    //        KotlinCoreEnvironment environment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable);
+    //        LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment);
+    //    }
+    //    else {
+    //        boolean mkdirs = outDir.mkdirs();
+    //        assert mkdirs : "Not created: " + outDir;
+    //    }
+    //    if (!javaFiles.isEmpty()) {
+    //        compileJavaFiles(javaFiles, Arrays.asList(
+    //                "-classpath", outDir.getPath() + File.pathSeparator + ForTestCompileRuntime.runtimeJarForTests(),
+    //                "-d", outDir.getPath()
+    //        ), javaErrorFile);
+    //    }
+    //}
 
     public interface TestFileFactory<M, F> {
         F createFile(@Nullable M module, @NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives);

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.javac.JavaAgainstKotlinCompiler
 import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
@@ -50,6 +51,7 @@ import java.lang.management.ManagementFactory
 import java.net.URLClassLoader
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.concurrent.thread
 
 class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     override fun doExecute(arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration, rootDisposable: Disposable): ExitCode {
@@ -186,6 +188,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
                 val environment = createEnvironmentWithScriptingSupport(rootDisposable, configuration, arguments, messageCollector)
                                   ?: return COMPILATION_ERROR
+                val environmentForJavac = createEnvironmentWithScriptingSupport(rootDisposable, configuration, arguments, messageCollector)
+                                          ?: return COMPILATION_ERROR
 
                 if (environment.getSourceFiles().isEmpty()) {
                     if (arguments.version) {
@@ -195,7 +199,15 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     return COMPILATION_ERROR
                 }
 
+                val javac = thread {
+                    JavaAgainstKotlinCompiler.compileJavaFiles(environmentForJavac,
+                                                               messageCollector,
+                                                               destination)
+                }
+
                 KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment)
+
+                javac.join()
             }
 
             if (arguments.reportPerf) {
