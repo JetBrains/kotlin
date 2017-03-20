@@ -95,8 +95,7 @@ class KotlinScriptConfigurationManager(
     }
 
     private fun notifyRootsChanged() {
-        // TODO: it seems invokeLater leads to inconsistent behaviour (at least in tests)
-        ApplicationManager.getApplication().invokeLater {
+        val rootsChangesRunnable = {
             runWriteAction {
                 if (project.isDisposed) return@runWriteAction
 
@@ -105,6 +104,14 @@ class KotlinScriptConfigurationManager(
                     ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
                 }
             }
+        }
+
+        val application = ApplicationManager.getApplication()
+        if (application.isUnitTestMode) {
+            rootsChangesRunnable.invoke()
+        }
+        else {
+            application.invokeLater(rootsChangesRunnable)
         }
     }
 
