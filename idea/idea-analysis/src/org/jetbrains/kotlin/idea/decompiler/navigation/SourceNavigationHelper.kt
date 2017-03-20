@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.decompiler.navigation
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.DumbService
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderEntry
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VirtualFile
@@ -31,14 +30,11 @@ import com.intellij.util.containers.ContainerUtil
 import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.context.ContextForNewModule
-import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.frontend.di.createLazyResolveSession
 import org.jetbrains.kotlin.idea.caches.resolve.BinaryModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.SourceForBinaryModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfoByVirtualFile
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.decompiler.navigation.MemberMatching.*
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
@@ -50,7 +46,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.debugText.getDebugText
-import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 
 object SourceNavigationHelper {
     private val LOG = Logger.getInstance(SourceNavigationHelper::class.java)
@@ -162,10 +157,8 @@ object SourceNavigationHelper {
             }
         }
 
-        val analyzer = createAnalyzer(candidates, declaration.project)
-
         for (candidate in candidates) {
-            val candidateDescriptor = analyzer.resolveToDescriptor(candidate) as CallableDescriptor
+            val candidateDescriptor = candidate.resolveToDescriptor() as CallableDescriptor
             if (receiversMatch(declaration, candidateDescriptor)
                 && valueParametersTypesMatch(declaration, candidateDescriptor)
                 && typeParametersMatch(declaration as KtTypeParameterListOwner, candidateDescriptor.typeParameters)) {
@@ -174,19 +167,6 @@ object SourceNavigationHelper {
         }
 
         return null
-    }
-
-    private fun createAnalyzer(
-            candidates: Collection<KtNamedDeclaration>,
-            project: Project
-    ): KotlinCodeAnalyzer {
-        val context = ContextForNewModule(
-                ProjectContext(project), Name.special("<library module>"), DefaultBuiltIns.Instance, null
-        )
-        context.setDependencies(context.module, context.module.builtIns.builtInsModule)
-        val resolveSession = createLazyResolveSession(context, candidates.getContainingFiles())
-        context.initializeModuleContents(resolveSession.packageFragmentProvider)
-        return resolveSession
     }
 
     private fun <T : KtNamedDeclaration> findFirstMatchingInIndex(
