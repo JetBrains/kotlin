@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -370,6 +370,10 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
         super.visitWhenEntry(jetWhenEntry, data);
     }
 
+    public void visitCollectionLiteralExpressionVoid(@NotNull KtCollectionLiteralExpression expression, P data) {
+        super.visitCollectionLiteralExpression(expression, data);
+    }
+
     public void visitIsExpressionVoid(@NotNull KtIsExpression expression, P data) {
         super.visitIsExpression(expression, data);
     }
@@ -703,6 +707,12 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
     public final Void visitWhenExpression(@NotNull KtWhenExpression expression, P data) {
         visitWhenExpressionVoid(expression, data);
     	return null;
+    }
+
+    @Override
+    public Void visitCollectionLiteralExpression(@NotNull KtCollectionLiteralExpression expression, P data) {
+        visitCollectionLiteralExpressionVoid(expression, data);
+        return null;
     }
 
     @Override

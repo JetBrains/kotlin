@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -239,6 +239,10 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
     }
 
     public R visitWhenExpression(@NotNull KtWhenExpression expression, D data) {
+        return visitExpression(expression, data);
+    }
+
+    public R visitCollectionLiteralExpression(@NotNull KtCollectionLiteralExpression expression, D data) {
         return visitExpression(expression, data);
     }
 

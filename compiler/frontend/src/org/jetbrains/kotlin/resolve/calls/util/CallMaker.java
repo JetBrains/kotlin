@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -248,6 +248,16 @@ public class CallMaker {
     public static Call makeArrayGetCall(@NotNull ReceiverValue arrayAsReceiver, @NotNull KtArrayAccessExpression arrayAccessExpression,
             @NotNull CallType callType) {
         return makeCallWithExpressions(arrayAccessExpression, arrayAsReceiver, null, arrayAccessExpression, arrayAccessExpression.getIndexExpressions(), callType);
+    }
+
+    public static Call makeCallForCollectionLiteral(@NotNull KtCollectionLiteralExpression collectionLiteralExpression) {
+        return makeCallWithExpressions(
+                collectionLiteralExpression,
+                null,
+                null,
+                collectionLiteralExpression,
+                collectionLiteralExpression.getInnerExpressions(),
+                CallType.DEFAULT);
     }
 
     @NotNull
