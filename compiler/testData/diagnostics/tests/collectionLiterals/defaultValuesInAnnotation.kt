@@ -5,9 +5,9 @@ annotation class Foo(
 )
 
 annotation class Bar(
-        val a: Array<String> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[' ']<!>,
-        val b: Array<String> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>["", <!EMPTY_CHARACTER_LITERAL!>''<!>]<!>,
-        val c: Array<String> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[1]<!>
+        val a: Array<String> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>[' ']<!>,
+        val b: Array<String> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>["", <!EMPTY_CHARACTER_LITERAL!>''<!>]<!>,
+        val c: Array<String> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>[1]<!>
 )
 
 annotation class Base(
@@ -18,6 +18,6 @@ annotation class Base(
 )
 
 annotation class Err(
-        val a: IntArray = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1L<!>]<!>,
-        val b: Array<String> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>[1]<!>
+        val a: IntArray = [<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1L<!>],
+        val b: Array<String> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>[1]<!>
 )

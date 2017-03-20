@@ -4,7 +4,7 @@ public const val ONE: kotlin.Int = 1
 public val two: kotlin.Int = 2
 @Foo(a = {1}, b = {"/"}, c = {1.0.toFloat()}) public fun test1(): kotlin.Unit
 @Foo(a = {}, b = {}, c = {}) public fun test2(): kotlin.Unit
-@Foo public fun test3(): kotlin.Unit
+@Foo(a = {1.0.toFloat()}, b = {\u0020 (' ')}, c = {1}) public fun test3(): kotlin.Unit
 @Foo(a = {1}, b = {""}, c = {1.0.toFloat()}) public fun test4(): kotlin.Unit
 @Foo(a = {3}, b = {"Hello, Kotlin"}, c = {Infinity.toFloat()}) public fun test5(): kotlin.Unit
 @Foo(a = {1}, b = {}, c = {}) public fun test6(): kotlin.Unit
