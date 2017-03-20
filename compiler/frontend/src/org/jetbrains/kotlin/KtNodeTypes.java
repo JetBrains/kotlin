@@ -25,7 +25,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IErrorCounterReparseableElementType;
 import com.intellij.psi.tree.IFileElementType;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.lexer.KotlinLexer;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -135,7 +134,6 @@ public interface KtNodeTypes {
             return KotlinParser.parseLambdaExpression(builder).getFirstChildNode();
         }
 
-        @Nullable
         @Override
         public ASTNode createNode(CharSequence text) {
             return new KtLambdaExpression(text);
