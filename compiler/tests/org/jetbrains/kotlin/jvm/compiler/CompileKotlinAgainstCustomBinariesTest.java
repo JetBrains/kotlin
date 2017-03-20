@@ -109,9 +109,8 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
     @NotNull
     private String normalizeOutput(@NotNull Pair<String, ExitCode> output) {
-        return AbstractCliTest.getNormalizedCompilerOutput(
-                output.getFirst(), output.getSecond(), getTestDataDirectory().getPath(), JvmMetadataVersion.INSTANCE
-        ).replace(FileUtil.toSystemIndependentName(tmpdir.getAbsolutePath()), "$TMP_DIR$");
+        return AbstractCliTest.getNormalizedCompilerOutput(output.getFirst(), output.getSecond(), getTestDataDirectory().getPath())
+                .replace(FileUtil.toSystemIndependentName(tmpdir.getAbsolutePath()), "$TMP_DIR$");
     }
 
     private void doTestWithTxt(@NotNull File... extraClassPath) throws Exception {

@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.config.KotlinCompilerVersion;
 import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
@@ -67,18 +66,14 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
-    public static String getNormalizedCompilerOutput(
-            @NotNull String pureOutput,
-            @NotNull ExitCode exitCode,
-            @NotNull String testDataDir,
-            @NotNull BinaryVersion version
-    ) {
+    public static String getNormalizedCompilerOutput(@NotNull String pureOutput, @NotNull ExitCode exitCode, @NotNull String testDataDir) {
         String testDataAbsoluteDir = new File(testDataDir).getAbsolutePath();
         String normalizedOutputWithoutExitCode = StringUtil.convertLineSeparators(pureOutput)
                 .replace(testDataAbsoluteDir, "$TESTDATA_DIR$")
                 .replace(FileUtil.toSystemIndependentName(testDataAbsoluteDir), "$TESTDATA_DIR$")
                 .replace(PathUtil.getKotlinPathsForDistDirectory().getHomePath().getAbsolutePath(), "$PROJECT_DIR$")
-                .replace("expected version is " + version, "expected version is $ABI_VERSION$")
+                .replace("expected version is " + JvmMetadataVersion.INSTANCE, "expected version is $ABI_VERSION$")
+                .replace("expected version is " + JsMetadataVersion.INSTANCE, "expected version is $ABI_VERSION$")
                 .replace("\\", "/")
                 .replaceAll("^.+running the Kotlin compiler under Java 6 or 7 is unsupported and will no longer be possible in a future update\\.\n", "")
                 .replace(KotlinCompilerVersion.VERSION, "$VERSION$");
@@ -86,11 +81,11 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         return normalizedOutputWithoutExitCode + exitCode;
     }
 
-    private void doTest(@NotNull String fileName, @NotNull CLICompiler<?> compiler, BinaryVersion version) throws Exception {
+    private void doTest(@NotNull String fileName, @NotNull CLICompiler<?> compiler) throws Exception {
         System.setProperty("java.awt.headless", "true");
         Pair<String, ExitCode> outputAndExitCode = executeCompilerGrabOutput(compiler, readArgs(fileName, tmpdir.getPath()));
         String actual = getNormalizedCompilerOutput(
-                outputAndExitCode.getFirst(), outputAndExitCode.getSecond(), new File(fileName).getParent(), version
+                outputAndExitCode.getFirst(), outputAndExitCode.getSecond(), new File(fileName).getParent()
         );
 
         File outFile = new File(fileName.replaceFirst("\\.args$", ".out"));
@@ -156,11 +151,11 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
     }
 
     protected void doJvmTest(@NotNull String fileName) throws Exception {
-        doTest(fileName, new K2JVMCompiler(), JvmMetadataVersion.INSTANCE);
+        doTest(fileName, new K2JVMCompiler());
     }
 
     protected void doJsTest(@NotNull String fileName) throws Exception {
-        doTest(fileName, new K2JSCompiler(), JsMetadataVersion.INSTANCE);
+        doTest(fileName, new K2JSCompiler());
     }
 
     public static String removePerfOutput(String output) {

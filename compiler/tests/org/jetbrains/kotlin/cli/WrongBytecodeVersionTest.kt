@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
+import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.org.objectweb.asm.*
@@ -54,7 +55,8 @@ class WrongBytecodeVersionTest : KtUsefulTestCase() {
 
         assertEquals("Compilation error expected", ExitCode.COMPILATION_ERROR, exitCode)
 
-        val normalized = AbstractCliTest.getNormalizedCompilerOutput(output, exitCode, tmpdir.path, JvmBytecodeBinaryVersion.INSTANCE)
+        val normalized = AbstractCliTest.getNormalizedCompilerOutput(output, exitCode, tmpdir.path)
+                .replace("expected version is ${JvmBytecodeBinaryVersion.INSTANCE}", "expected version is \$ABI_VERSION\$")
 
         KotlinTestUtils.assertEqualsToFile(File(directory, "output.txt"), normalized)
     }
