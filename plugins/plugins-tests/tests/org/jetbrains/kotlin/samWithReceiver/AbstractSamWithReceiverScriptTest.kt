@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
-import org.jetbrains.kotlin.script.SamWithReceiverAnnotations
-import org.jetbrains.kotlin.script.ScriptTemplateDefinition
+import kotlin.script.extensions.SamWithReceiverAnnotations
+import kotlin.script.templates.ScriptTemplateDefinition
 
 abstract class AbstractSamWithReceiverScriptTest : AbstractDiagnosticsTest() {
     private companion object {

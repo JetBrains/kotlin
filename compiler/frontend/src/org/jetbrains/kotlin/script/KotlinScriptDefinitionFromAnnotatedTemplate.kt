@@ -34,6 +34,12 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.primaryConstructor
+import kotlin.script.dependencies.BasicScriptDependenciesResolver
+import kotlin.script.dependencies.KotlinScriptExternalDependencies
+import kotlin.script.dependencies.ScriptContents
+import kotlin.script.dependencies.ScriptDependenciesResolver
+import kotlin.script.extensions.SamWithReceiverAnnotations
+import kotlin.script.templates.*
 
 open class KotlinScriptDefinitionFromAnnotatedTemplate(
         template: KClass<out Any>,
@@ -178,3 +184,10 @@ internal fun logScriptDefMessage(reportSeverity: ScriptDependenciesResolver.Repo
         ScriptDependenciesResolver.ReportSeverity.DEBUG -> KotlinScriptDefinitionFromAnnotatedTemplate.log.debug(msg)
     }
 }
+
+internal fun sameSignature(left: KFunction<*>, right: KFunction<*>): Boolean =
+        left.parameters.size == right.parameters.size &&
+        left.parameters.zip(right.parameters).all {
+            it.first.kind == KParameter.Kind.INSTANCE ||
+            it.first.type == it.second.type
+        }

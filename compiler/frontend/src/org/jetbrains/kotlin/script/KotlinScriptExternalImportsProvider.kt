@@ -24,6 +24,7 @@ import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
+import kotlin.script.dependencies.KotlinScriptExternalDependencies
 
 class KotlinScriptExternalImportsProvider(val project: Project, private val scriptDefinitionProvider: KotlinScriptDefinitionProvider) {
 
@@ -39,22 +40,22 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
 
     private fun <TF: Any> calculateExternalDependencies(file: TF): KotlinScriptExternalDependencies? {
         val path = getFilePath(file)
-        return cache[path]
-               ?: if (cacheOfNulls.contains(path)) null
-               else scriptDefinitionProvider.findScriptDefinition(file)?.getDependenciesFor(file, project, null)
-                    .apply {
-                        if (this != null) {
-                            log.info("[kts] new cached deps for $path: ${this.classpath.joinToString(File.pathSeparator)}")
-                        }
-                        cacheLock.write {
-                            if (this == null) {
-                                cacheOfNulls.add(path)
-                            }
-                            else {
-                                cache.put(path, this)
-                            }
-                        }
+        val cached = cache[path]
+        return when {
+            cached != null -> cached
+            cacheOfNulls.contains(path) -> null
+            else -> scriptDefinitionProvider.findScriptDefinition(file)?.getDependenciesFor(file, project, null).apply {
+                cacheLock.write {
+                    if (this != null) {
+                        cache.put(path, this)
+                        log.info("[kts] new cached deps for $path: ${this.classpath.joinToString(File.pathSeparator)}")
                     }
+                    else {
+                        cacheOfNulls.add(path)
+                    }
+                }
+            }
+        }
     }
 
     // optimized for initial caching, additional handling of possible duplicates to save a call to distinct

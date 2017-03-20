@@ -18,9 +18,9 @@
 
 package org.jetbrains.kotlin.script.util.templates
 
-import org.jetbrains.kotlin.script.ScriptTemplateDefinition
 import org.jetbrains.kotlin.script.util.FilesAndMavenResolver
 import org.jetbrains.kotlin.script.util.LocalFilesResolver
+import kotlin.script.templates.ScriptTemplateDefinition
 
 @ScriptTemplateDefinition(resolver = LocalFilesResolver::class, scriptFilePattern = ".*\\.kts")
 abstract class StandardArgsScriptTemplateWithLocalResolving(val args: Array<String>)
