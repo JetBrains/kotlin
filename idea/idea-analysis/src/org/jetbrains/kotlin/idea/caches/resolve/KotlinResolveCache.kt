@@ -156,12 +156,6 @@ private object KotlinResolveDataProvider {
                 return AnalysisResult.success(analyzeExpressionCodeFragment(componentProvider, analyzableElement), module)
             }
 
-            val file = analyzableElement.containingKtFile
-            if (file.getModuleInfo() is LibrarySourceInfo) {
-                // Library sources: mark file to skip
-                file.putUserData(LibrarySourceHacks.SKIP_TOP_LEVEL_MEMBERS, true)
-            }
-
             val resolveSession = componentProvider.get<ResolveSession>()
             val trace = DelegatingBindingTrace(resolveSession.bindingContext, "Trace for resolution of " + analyzableElement)
 
