@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.kapt3
 
 import com.sun.tools.javac.file.JavacFileManager
+import com.sun.tools.javac.jvm.ClassReader
 import com.sun.tools.javac.main.JavaCompiler
 import com.sun.tools.javac.util.Context
 import com.sun.tools.javac.util.Options
@@ -50,6 +51,8 @@ class KaptContext(
 
         fileManager = context.get(JavaFileManager::class.java) as JavacFileManager
         compiler = JavaCompiler.instance(context) as KaptJavaCompiler
+
+        ClassReader.instance(context).saveParameterNames = true
 
         javaLog = compiler.log as KaptJavaLog
 
