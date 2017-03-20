@@ -26,12 +26,10 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
+import com.intellij.refactoring.MoveDestination
 import com.intellij.refactoring.PackageWrapper
 import com.intellij.refactoring.move.MoveHandler
-import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassToInnerProcessor
-import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesProcessor
-import com.intellij.refactoring.move.moveClassesOrPackages.MoveDirectoryWithClassesProcessor
-import com.intellij.refactoring.move.moveClassesOrPackages.MultipleRootsMoveDestination
+import com.intellij.refactoring.move.moveClassesOrPackages.*
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor
 import com.intellij.refactoring.move.moveInner.MoveInnerProcessor
 import com.intellij.refactoring.move.moveMembers.MockMoveMembersOptions
@@ -98,8 +96,15 @@ abstract class AbstractMoveTest : KotlinMultiFileTestCase() {
             }
             catch(e: ConflictsInTestsException) {
                 KotlinTestUtils.assertEqualsToFile(conflictFile, e.messages.sorted().joinToString("\n"))
+
+                ConflictsInTestsException.setTestIgnore(true)
+
+                // Run refactoring again with ConflictsInTestsException suppressed
+                action.runRefactoring(rootDir, mainPsiFile, elementAtCaret, config)
             }
             finally {
+                ConflictsInTestsException.setTestIgnore(false)
+
                 PsiDocumentManager.getInstance(project!!).commitAllDocuments()
                 FileDocumentManager.getInstance().saveAllDocuments()
 
@@ -270,15 +275,18 @@ enum class MoveAction {
 
             val moveTarget = config.getNullableString("targetPackage")?.let { packageName ->
                 val targetSourceRootPath = config["targetSourceRoot"]?.asString
-                val moveDestination = MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), packageName))
+                val packageWrapper = PackageWrapper(mainFile.getManager(), packageName)
+                val moveDestination: MoveDestination = targetSourceRootPath?.let {
+                    AutocreatingSingleSourceRootMoveDestination(packageWrapper, rootDir.findFileByRelativePath(it)!!)
+                } ?: MultipleRootsMoveDestination(packageWrapper)
                 val targetDir = moveDestination.getTargetIfExists(mainFile)
-                val targetSourceRoot = if (targetSourceRootPath != null) {
+                val targetVirtualFile = if (targetSourceRootPath != null) {
                     rootDir.findFileByRelativePath(targetSourceRootPath)!!
                 } else {
                     targetDir?.virtualFile
                 }
 
-                KotlinMoveTargetForDeferredFile(FqName(packageName), targetDir, targetSourceRoot) {
+                KotlinMoveTargetForDeferredFile(FqName(packageName), targetDir, targetVirtualFile) {
                     createKotlinFile(guessNewFileName(listOf(elementToMove))!!, moveDestination.getTargetDirectory(mainFile))
                 }
             } ?: config.getString("targetFile").let { filePath ->

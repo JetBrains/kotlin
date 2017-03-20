@@ -1,3 +1,3 @@
-package a1
+package b
 
 internal val internalTargetVal = 0

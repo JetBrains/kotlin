@@ -1,7 +1,9 @@
 package a;
 
+import b.TestKt;
+
 class J {
     void bar() {
-        MainKt.test();
+        TestKt.test();
     }
 }
