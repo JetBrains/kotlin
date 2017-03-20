@@ -82,7 +82,7 @@ public class BuiltInsReferenceResolverTest extends KotlinLightCodeInsightFixture
 
     public void testAllReferencesResolved() {
         for (DeclarationDescriptor descriptor : getAllStandardDescriptors()) {
-            assertNotNull("Can't resolve " + descriptor, DescriptorToSourceUtilsIde.INSTANCE.getAnyDeclaration(getProject(), descriptor));
+            assertNotNull("Can't resolve " + descriptor, DescriptorToSourceUtilsIde.INSTANCE.getAnyDeclaration(getProject(), descriptor, null));
         }
     }
 

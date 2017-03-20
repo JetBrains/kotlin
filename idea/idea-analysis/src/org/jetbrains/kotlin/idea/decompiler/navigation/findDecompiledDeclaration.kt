@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.decompiler.navigation
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.EverythingGlobalScope
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
@@ -44,13 +45,14 @@ import java.util.*
 
 fun findDecompiledDeclaration(
         project: Project,
-        referencedDescriptor: DeclarationDescriptor
+        referencedDescriptor: DeclarationDescriptor,
+        scope: GlobalSearchScope?
 ): KtDeclaration? {
     if (ErrorUtils.isError(referencedDescriptor)) return null
     if (isLocal(referencedDescriptor)) return null
     if (referencedDescriptor is PackageFragmentDescriptor || referencedDescriptor is PackageViewDescriptor) return null
 
-    val decompiledFiles = findDecompiledFilesForDescriptor(project, referencedDescriptor)
+    val decompiledFiles = findDecompiledFilesForDescriptor(project, referencedDescriptor, scope)
 
     val referencedModule = referencedDescriptor.module
     return decompiledFiles.asSequence().mapNotNull { file ->
@@ -80,18 +82,20 @@ private fun isLocal(descriptor: DeclarationDescriptor): Boolean {
 
 private fun findDecompiledFilesForDescriptor(
         project: Project,
-        referencedDescriptor: DeclarationDescriptor
+        referencedDescriptor: DeclarationDescriptor,
+        scope: GlobalSearchScope?
 ): Collection<KtDecompiledFile> {
-    return findCandidateDeclarationsInIndex(project, referencedDescriptor).mapNotNullTo(LinkedHashSet()) {
+    return findCandidateDeclarationsInIndex(project, referencedDescriptor, scope).mapNotNullTo(LinkedHashSet()) {
         it?.containingFile as? KtDecompiledFile
     }
 }
 
 private fun findCandidateDeclarationsInIndex(
         project: Project,
-        referencedDescriptor: DeclarationDescriptor
+        referencedDescriptor: DeclarationDescriptor,
+        resolveScope: GlobalSearchScope?
 ): Collection<KtDeclaration?> {
-    val scope = KotlinSourceFilterScope.libraryClassFiles(EverythingGlobalScope(project), project)
+    val scope = KotlinSourceFilterScope.libraryClassFiles(resolveScope ?: EverythingGlobalScope(project), project)
 
     val containingClass = DescriptorUtils.getParentOfType(referencedDescriptor, ClassDescriptor::class.java, false)
     if (containingClass != null) {
