@@ -144,6 +144,7 @@ internal class LinkStage(val context: Context) {
     val optimize = config.get(KonanConfigKeys.OPTIMIZATION) ?: false
     val emitted = config.get(KonanConfigKeys.BITCODE_FILE)!!
     val nostdlib = config.get(KonanConfigKeys.NOSTDLIB) ?: false
+    val nomain = config.get(KonanConfigKeys.NOMAIN) ?: false
     val libraries = context.config.librariesToLink
 
     fun llvmLto(files: List<BitcodeFile>): ObjectFile {
@@ -188,11 +189,22 @@ internal class LinkStage(val context: Context) {
         return result
     }
 
+    // Ideally we'd want to have 
+    //      #pragma weak main = Konan_main
+    // in the launcher.cpp.
+    // Unfortunately, anything related to weak linking on MacOS
+    // only seems to be working with dynamic libraries.
+    // So we stick to "-alias _main _konan_main" on Mac.
+    // And just do the same on Linux.
+    val entryPointSelector: List<String> 
+        get() = if (nomain) listOf() 
+                else properties.propertyList("entrySelector.$suffix")
+
     fun link(objectFiles: List<ObjectFile>): ExecutableFile {
         val executable = config.get(KonanConfigKeys.EXECUTABLE_FILE)!!
-
         val linkCommand = platform.linkCommand(objectFiles, executable, optimize) +
-                asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS))
+                asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
+                entryPointSelector
 
         runTool(*linkCommand.toTypedArray())
 

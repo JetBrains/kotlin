@@ -28,6 +28,9 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "nolink", description = "Don't link, just produce a bitcode file")
     public boolean nolink;
 
+    @Argument(value = "nomain", description = "Assume 'main' entry point to be provided by external libraries")
+    public boolean nomain;
+
     @Argument(value = "linkerArgs", description = "Pass arguments to linker", delimiter = " ")
     @ValueDescription("<arg>")
     public String[] linkerArguments;
