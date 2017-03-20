@@ -216,6 +216,14 @@ public class ArgumentTypeResolver {
             return getCallableReferenceTypeInfo(expression, callableReferenceExpression, context, resolveArgumentsMode);
         }
 
+        if (isCollectionLiteralInsideAnnotation(expression, context)) {
+            // We assume that there is only one candidate resolver for annotation call
+            // And to resolve collection literal correctly, we need mapping of argument to parameter to get expected type and
+            // to choose corresponding call (i.e arrayOf/intArrayOf...)
+            ResolutionContext newContext = context.replaceContextDependency(INDEPENDENT);
+            return expressionTypingServices.getTypeInfo(expression, newContext);
+        }
+
         KotlinTypeInfo recordedTypeInfo = getRecordedTypeInfo(expression, context.trace.getBindingContext());
         if (recordedTypeInfo != null) {
             return recordedTypeInfo;
@@ -356,6 +364,10 @@ public class ArgumentTypeResolver {
             KtExpression expression = argument.getArgumentExpression();
             if (expression == null) continue;
 
+            if (isCollectionLiteralInsideAnnotation(expression, context)) {
+                continue;
+            }
+
             CallResolutionContext<?> newContext = context.replaceDataFlowInfo(infoForArguments.getInfo(argument));
             // Here we go inside arguments and determine additional data flow information for them
             KotlinTypeInfo typeInfoForCall = getArgumentTypeInfo(expression, newContext, resolveArgumentsMode);
@@ -378,5 +390,9 @@ public class ArgumentTypeResolver {
             }
         }
         return null;
+    }
+
+    private static boolean isCollectionLiteralInsideAnnotation(KtExpression expression, CallResolutionContext<?> context) {
+        return expression instanceof KtCollectionLiteralExpression && context.call.getCallElement() instanceof KtAnnotationEntry;
     }
 }

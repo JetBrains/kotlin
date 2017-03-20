@@ -1,0 +1,35 @@
+package
+
+public const val ONE: kotlin.Int = 1
+public val TWO: kotlin.Int = 2
+public fun getOne(): kotlin.Int
+public fun getTwo(): kotlin.Int
+
+public final annotation class Bar : kotlin.Annotation {
+    public constructor Bar(/*0*/ a: kotlin.IntArray = ..., /*1*/ b: kotlin.IntArray = ..., /*2*/ c: kotlin.IntArray = ...)
+    public final val a: kotlin.IntArray
+    public final val b: kotlin.IntArray
+    public final val c: kotlin.IntArray
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Baz : kotlin.Annotation {
+    public constructor Baz(/*0*/ a: kotlin.IntArray = ..., /*1*/ b: kotlin.IntArray = ..., /*2*/ c: kotlin.IntArray = ...)
+    public final val a: kotlin.IntArray
+    public final val b: kotlin.IntArray
+    public final val c: kotlin.IntArray
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Foo : kotlin.Annotation {
+    public constructor Foo(/*0*/ a: kotlin.IntArray = ..., /*1*/ b: kotlin.IntArray = ...)
+    public final val a: kotlin.IntArray
+    public final val b: kotlin.IntArray
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

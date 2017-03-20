@@ -3340,6 +3340,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/collectionLiterals"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("argumentsOfAnnotation.kt")
+            public void testArgumentsOfAnnotation() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/collectionLiterals/argumentsOfAnnotation.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("argumentsOfAnnotationWithKClass.kt")
+            public void testArgumentsOfAnnotationWithKClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/collectionLiterals/argumentsOfAnnotationWithKClass.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("basicCollectionLiterals.kt")
             public void testBasicCollectionLiterals() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/collectionLiterals/basicCollectionLiterals.kt");
@@ -3349,6 +3361,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("collectionLiteralsAsPrimitiveArrays.kt")
             public void testCollectionLiteralsAsPrimitiveArrays() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/collectionLiterals/collectionLiteralsAsPrimitiveArrays.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("defaultValuesInAnnotation.kt")
+            public void testDefaultValuesInAnnotation() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/collectionLiterals/defaultValuesInAnnotation.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("defaultValuesWithConstantsInAnnotation.kt")
+            public void testDefaultValuesWithConstantsInAnnotation() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/collectionLiterals/defaultValuesWithConstantsInAnnotation.kt");
                 doTest(fileName);
             }
         }
