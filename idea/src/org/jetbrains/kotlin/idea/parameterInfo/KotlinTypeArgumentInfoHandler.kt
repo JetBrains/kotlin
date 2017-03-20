@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.resolveCandidates
-import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
@@ -45,8 +45,7 @@ class KotlinClassTypeArgumentInfoHandler : KotlinTypeArgumentInfoHandlerBase<Cla
 
     override fun findParameterOwners(argumentList: KtTypeArgumentList): Collection<ClassDescriptor>? {
         val userType = argumentList.parent as? KtUserType ?: return null
-        val bindingContext = argumentList.analyze(BodyResolveMode.PARTIAL)
-        return userType.referenceExpression?.mainReference?.resolveToDescriptors(bindingContext)?.mapNotNull { it as? ClassDescriptor }
+        return userType.referenceExpression?.resolveMainReferenceToDescriptors()?.mapNotNull { it as? ClassDescriptor }
     }
 
     override fun getArgumentListAllowedParentClasses() = setOf(KtUserType::class.java)

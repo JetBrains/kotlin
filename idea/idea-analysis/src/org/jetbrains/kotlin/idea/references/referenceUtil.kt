@@ -156,6 +156,11 @@ val KtElement.mainReference: KtReference?
         }
     }
 
+fun KtElement.resolveMainReferenceToDescriptors(): Collection<DeclarationDescriptor> {
+    val bindingContext = analyze(BodyResolveMode.PARTIAL)
+    return mainReference?.resolveToDescriptors(bindingContext) ?: emptyList()
+}
+
 // ----------- Read/write access -----------------------------------------------------------------------------------------------------------------------
 
 enum class ReferenceAccess(val isRead: Boolean, val isWrite: Boolean) {

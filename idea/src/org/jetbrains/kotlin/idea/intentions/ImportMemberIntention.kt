@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.idea.util.ImportDescriptorResult
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.name.FqName
@@ -58,8 +59,9 @@ class ImportMemberIntention : SelfTargetingOffsetIndependentIntention<KtNameRefe
         // If expression is fqn reference, take full qualified selector, otherwise (Type reference) take element
         val targetElement = qualifiedElement?.selectorExpression?.getQualifiedElementSelector() ?: element
 
-        val bindingContext = targetElement.analyze(BodyResolveMode.PARTIAL)
-        val targets = targetElement.mainReference?.resolveToDescriptors(bindingContext) ?: return
+        val targets = targetElement.resolveMainReferenceToDescriptors()
+        if (targets.isEmpty()) return
+
         val fqName = targets.map { it.importableFqName!! }.single()
 
         val file = targetElement.containingKtFile

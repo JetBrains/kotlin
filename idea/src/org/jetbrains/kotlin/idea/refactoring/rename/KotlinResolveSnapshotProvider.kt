@@ -23,19 +23,17 @@ import com.intellij.refactoring.rename.ResolveSnapshotProvider
 import com.intellij.util.containers.HashMap
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.refactoring.explicateAsTextForReceiver
-import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.util.*
 
 class KotlinResolveSnapshotProvider : ResolveSnapshotProvider() {
@@ -49,8 +47,7 @@ class KotlinResolveSnapshotProvider : ResolveSnapshotProvider() {
                     object: KtTreeVisitorVoid() {
                         override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                             if (expression.getQualifiedExpressionForSelector() != null) return super.visitSimpleNameExpression(expression)
-                            val context = expression.analyze(BodyResolveMode.PARTIAL)
-                            val targetDescriptor = expression.mainReference.resolveToDescriptors(context).singleOrNull() ?: return
+                            val targetDescriptor = expression.resolveMainReferenceToDescriptors().singleOrNull() ?: return
                             if (targetDescriptor !is PropertyDescriptor) return
                             refExpressionToDescriptor[expression.createSmartPointer()] = targetDescriptor
                         }

@@ -20,16 +20,14 @@ import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.progress.ProgressManager
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.highlighter.KotlinPsiChecker
-import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.util.*
 
 class FromUnresolvedNamesCompletion(
@@ -64,7 +62,7 @@ class FromUnresolvedNamesCompletion(
 
                 if (afterOffset != null && refExpr.startOffset < afterOffset) return@forEachDescendantOfType
 
-                if (refExpr.mainReference.resolveToDescriptors(refExpr.analyze(BodyResolveMode.PARTIAL)).isEmpty()) {
+                if (refExpr.resolveMainReferenceToDescriptors().isEmpty()) {
                     names.add(name)
                 }
             }
