@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.generators.tests
 
-import org.jetbrains.kotlin.js.backend.ast.JsFunctionScope
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
+import org.jetbrains.kotlin.js.backend.ast.JsDeclarationScope
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.renderer.KeywordStringsGenerated
 import java.io.File
@@ -366,8 +366,8 @@ val testNotRenamedByRef = testNotRenamed("$KEYWORD_MARKER()")
 
 // KEYWORDS
 
-val SHOULD_BE_ESCAPED = JsFunctionScope.RESERVED_WORDS.filter { it in KeywordStringsGenerated.KEYWORDS }.sorted()
-val SHOULD_NOT_BE_ESCAPED = JsFunctionScope.RESERVED_WORDS.filter { it !in SHOULD_BE_ESCAPED }.sorted()
+val SHOULD_BE_ESCAPED = JsDeclarationScope.RESERVED_WORDS.filter { it in KeywordStringsGenerated.KEYWORDS }.sorted()
+val SHOULD_NOT_BE_ESCAPED = JsDeclarationScope.RESERVED_WORDS.filter { it !in SHOULD_BE_ESCAPED }.sorted()
 
 // all keywords by portions
 

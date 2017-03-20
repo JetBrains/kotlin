@@ -155,9 +155,21 @@ public class NonLocalReturnsTestGenerated extends AbstractNonLocalReturnsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nonLocalReturnFromCatchBlock.kt")
+        public void testNonLocalReturnFromCatchBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/nonLocalReturnFromCatchBlock.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nonLocalReturnFromOuterLambda.kt")
         public void testNonLocalReturnFromOuterLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/nonLocalReturnFromOuterLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonLocalReturnToCatchBlock.kt")
+        public void testNonLocalReturnToCatchBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/nonLocalReturnToCatchBlock.kt");
             doTest(fileName);
         }
 

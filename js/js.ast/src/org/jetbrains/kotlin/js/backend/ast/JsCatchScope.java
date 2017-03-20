@@ -10,11 +10,11 @@ import org.jetbrains.annotations.NotNull;
  * A special scope used only for catch blocks. It only holds a single symbol:
  * the catch argument's name.
  */
-public class JsCatchScope extends JsScope {
+public class JsCatchScope extends JsDeclarationScope {
     private final JsName name;
 
     public JsCatchScope(JsScope parent, @NotNull String ident) {
-        super(parent, "Catch scope");
+        super(parent, "Catch scope", true);
         name = new JsName(this, ident, false);
     }
 

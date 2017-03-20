@@ -17,8 +17,7 @@
 package com.google.gwt.dev.js
 
 import org.jetbrains.kotlin.js.backend.ast.*
-
-import java.util.Stack
+import java.util.*
 
 class ScopeContext(scope: JsScope) {
     private val rootScope = generateSequence(scope) { it.parent }.first { it is JsRootScope }
@@ -35,7 +34,7 @@ class ScopeContext(scope: JsScope) {
     }
 
     fun exitFunction() {
-        assert(currentScope is JsFunctionScope)
+        assert(currentScope is JsDeclarationScope)
         exitScope()
     }
 
@@ -51,13 +50,13 @@ class ScopeContext(scope: JsScope) {
     }
 
     fun enterLabel(ident: String): JsName =
-            (currentScope as JsFunctionScope).enterLabel(ident)
+            (currentScope as JsDeclarationScope).enterLabel(ident)
 
     fun exitLabel() =
-            (currentScope as JsFunctionScope).exitLabel()
+            (currentScope as JsDeclarationScope).exitLabel()
 
     fun labelFor(ident: String): JsName? =
-            (currentScope as JsFunctionScope).findLabel(ident)
+            (currentScope as JsDeclarationScope).findLabel(ident)
 
     fun globalNameFor(ident: String): JsName =
             currentScope.findName(ident) ?: rootScope.declareName(ident)
