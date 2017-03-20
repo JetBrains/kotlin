@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.builtins.extractParameterNameFromFunctionTypeArgumen
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.completion.handlers.isCharAt
 import org.jetbrains.kotlin.idea.core.ExpectedInfos
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.fuzzyType
@@ -62,8 +63,17 @@ object LambdaSignatureTemplates {
             context.project.executeWriteCommand(commandName, groupId = commandGroupId) {
                 try {
                     if (rangeMarker.isValid) {
-                        context.document.deleteString(rangeMarker.startOffset, rangeMarker.endOffset)
-                        context.editor.caretModel.moveToOffset(rangeMarker.startOffset)
+                        val startOffset = rangeMarker.startOffset
+                        context.document.deleteString(startOffset, rangeMarker.endOffset)
+
+                        if (signatureOnly) {
+                            val spaceAhead = context.document.charsSequence.isCharAt(startOffset, ' ')
+                            if (!spaceAhead) {
+                                context.document.insertString(startOffset, " ")
+                            }
+                        }
+
+                        context.editor.caretModel.moveToOffset(startOffset)
                         val template = buildTemplate(lambdaType, signatureOnly, explicitParameterTypes, context.project)
                         TemplateManager.getInstance(context.project).startTemplate(context.editor, template)
                     }
@@ -180,9 +190,6 @@ object LambdaSignatureTemplates {
 
         if (!signatureOnly) {
             template.addTextSegment(" }")
-        }
-        else {
-            template.addTextSegment(" ") //TODO: no additional space if space ahead
         }
 
         return template
