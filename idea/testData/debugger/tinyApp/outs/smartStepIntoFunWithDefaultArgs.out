@@ -2,8 +2,8 @@ LineBreakpoint created at smartStepIntoFunWithDefaultArgs.kt:17
 LineBreakpoint created at smartStepIntoFunWithDefaultArgs.kt:22
 LineBreakpoint created at smartStepIntoFunWithDefaultArgs.kt:27
 LineBreakpoint created at smartStepIntoFunWithDefaultArgs.kt:32
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! smartStepIntoFunWithDefaultArgs.SmartStepIntoFunWithDefaultArgsKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 smartStepIntoFunWithDefaultArgs.kt:17
 smartStepIntoFunWithDefaultArgs.kt:4
 smartStepIntoFunWithDefaultArgs.kt:22
@@ -12,6 +12,6 @@ smartStepIntoFunWithDefaultArgs.kt:27
 smartStepIntoFunWithDefaultArgs.kt:8
 smartStepIntoFunWithDefaultArgs.kt:32
 smartStepIntoFunWithDefaultArgs.kt:8
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

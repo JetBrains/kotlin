@@ -1,6 +1,6 @@
 LineBreakpoint created at evSkipLambda.kt:12
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! evSkipLambda.EvSkipLambdaKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 evSkipLambda.kt:12
 package evSkipLambda
 
@@ -30,6 +30,6 @@ Compile bytecode for a1.prop
      field    = prop: int = 1 (sp = evSkipLambda.kt, 4)
    local    = a2: evSkipLambda.A = {evSkipLambda.A@uniqueID} (sp = evSkipLambda.kt, 9)
      field    = prop: int = 1 (sp = evSkipLambda.kt, 4)
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

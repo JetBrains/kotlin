@@ -1,6 +1,6 @@
 LineBreakpoint created at frameExtFunExtFun.kt:24
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameExtFunExtFun.FrameExtFunExtFunKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 frameExtFunExtFun.kt:24
 Compile bytecode for valFoo
 Compile bytecode for valTest
@@ -96,6 +96,6 @@ fun lambda(f: () -> Unit) {
        field    = bProp: int = 1 (sp = frameExtFunExtFun.kt, 41)
      field    = $valTest: int = 1 (sp = null)
      field    = arity: int = 0 (sp = Lambda.!EXT!)
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

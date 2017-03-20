@@ -1,6 +1,6 @@
 LineBreakpoint created at syntheticMethodsSkip.kt:6
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! syntheticMethodsSkip.SyntheticMethodsSkipKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 syntheticMethodsSkip.kt:6
 syntheticMethodsSkip.kt:19
 syntheticMethodsSkip.kt:20
@@ -21,6 +21,6 @@ syntheticMethodsSkip.kt:42
 syntheticMethodsSkip.kt:36
 syntheticMethodsSkip.kt:39
 syntheticMethodsSkip.kt:9
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

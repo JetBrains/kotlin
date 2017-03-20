@@ -8,8 +8,8 @@ LineBreakpoint created at isInsideInlineLambda.kt:17 lambdaOrdinal = 1
 LineBreakpoint created at isInsideInlineLambda.kt:25 lambdaOrdinal = 1
 LineBreakpoint created at isInsideInlineLambda.kt:33 lambdaOrdinal = 1
 LineBreakpoint created at isInsideInlineLambda.kt:43 lambdaOrdinal = 1
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! isInsideInlineLambda.IsInsideInlineLambdaKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 isInsideInlineLambda.kt:9
 Compile bytecode for it + 1
 isInsideInlineLambda.kt:17
@@ -30,6 +30,6 @@ isInsideInlineLambdaInLibrary.kt:23
 Compile bytecode for it + 14
 isInsideInlineLambdaInLibrary.kt:31
 Compile bytecode for it + 15
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

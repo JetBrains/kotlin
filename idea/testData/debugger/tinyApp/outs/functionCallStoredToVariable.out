@@ -2,8 +2,8 @@ LineBreakpoint created at functionCallStoredToVariable.kt:7
 LineBreakpoint created at functionCallStoredToVariable.kt:14
 LineBreakpoint created at functionCallStoredToVariable.kt:21
 LineBreakpoint created at functionCallStoredToVariable.kt:28
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! functionCallStoredToVariable.FunctionCallStoredToVariableKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 functionCallStoredToVariable.kt:7
 functionCallStoredToVariable.kt:4
 functionCallStoredToVariable.kt:14
@@ -16,6 +16,6 @@ functionCallStoredToVariable.kt:28
 functionCallStoredToVariable.kt:29
 functionCallStoredToVariable.kt:47
 functionCallStoredToVariable.kt:25
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

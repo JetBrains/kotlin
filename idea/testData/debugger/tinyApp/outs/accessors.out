@@ -1,6 +1,6 @@
 LineBreakpoint created at accessors.kt:10
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! accessors.AccessorsKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 accessors.kt:10
 accessors.kt:15
 accessors.kt:17
@@ -19,6 +19,6 @@ accessors.kt:26
 accessors.kt:15
 accessors.kt:13
 accessors.kt:5
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

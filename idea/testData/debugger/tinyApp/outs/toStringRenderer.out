@@ -1,6 +1,6 @@
 LineBreakpoint created at toStringRenderer.kt:6
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! toStringRenderer.ToStringRendererKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 toStringRenderer.kt:6
 package toStringRenderer
 
@@ -20,6 +20,6 @@ Compile bytecode for args.size
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = toStringRenderer.kt, 3)
    local    = a: toStringRenderer.A = {toStringRenderer.A@uniqueID}myA (sp = toStringRenderer.kt, 4)
               - Class has no fields
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

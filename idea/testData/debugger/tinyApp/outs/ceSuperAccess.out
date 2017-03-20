@@ -1,6 +1,6 @@
 LineBreakpoint created at ceSuperAccess.kt:20
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! ceSuperAccess.CeSuperAccessKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 ceSuperAccess.kt:20
 Compile bytecode for foo { publicFun() }
 Compile bytecode for foo { publicVal }
@@ -8,6 +8,6 @@ Compile bytecode for foo { protectedFun() }
 Compile bytecode for foo { protectedVal }
 Compile bytecode for foo { privateFun() }
 Compile bytecode for foo { privateVal }
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

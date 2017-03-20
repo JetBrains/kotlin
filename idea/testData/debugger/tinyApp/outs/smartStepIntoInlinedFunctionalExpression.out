@@ -1,6 +1,6 @@
 LineBreakpoint created at smartStepIntoInlinedFunctionalExpression.kt:6
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! smartStepIntoInlinedFunctionalExpression.SmartStepIntoInlinedFunctionalExpressionKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 smartStepIntoInlinedFunctionalExpression.kt:6
 smartStepIntoInlinedFunctionalExpression.kt:11
 smartStepIntoInlinedFunctionalExpression.kt:12
@@ -10,6 +10,6 @@ smartStepIntoInlinedFunctionalExpression.kt:24
 smartStepIntoInlinedFunctionalExpression.kt:26
 smartStepIntoInlinedFunctionalExpression.kt:31
 smartStepIntoInlinedFunctionalExpression.kt:31
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

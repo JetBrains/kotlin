@@ -6,8 +6,8 @@ KotlinFieldBreakpoint created at fwBackingField.kt:31
 KotlinFieldBreakpoint created at fwBackingField.kt:33
 KotlinFieldBreakpoint created at fwBackingField.kt:45
 KotlinFieldBreakpoint created at fwBackingField.kt:48
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! fwBackingField.FwBackingFieldKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 fwBackingField.kt:18
 fwBackingField.kt:21
 fwBackingField.kt:59
@@ -42,6 +42,6 @@ fwBackingField.kt:42
 fwBackingField.kt:48
 fwBackingField.kt:54
 fwBackingField.kt:63
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

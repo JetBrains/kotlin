@@ -1,6 +1,6 @@
 LineBreakpoint created at stdlib.kt:5
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! stdlib.StdlibKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 stdlib.kt:5
 Compile bytecode for arrayOf(100, 101)
 Compile bytecode for arrayOf("a", "b", "c")
@@ -10,6 +10,6 @@ Compile bytecode for Int::class.java
 Compile bytecode for 100.toInt()
 Compile bytecode for 100.toLong()
 Compile bytecode for args.sortedBy { it }.size
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

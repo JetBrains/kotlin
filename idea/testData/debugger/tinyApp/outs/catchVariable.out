@@ -1,6 +1,6 @@
 LineBreakpoint created at catchVariable.kt:9
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! catchVariable.CatchVariableKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 catchVariable.kt:9
 package catchVariable
 
@@ -18,6 +18,6 @@ fun main(args: Array<String>) {
 // PRINT_FRAME
  frame    = main:9, CatchVariableKt {catchVariable}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = catchVariable.kt, 3)
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

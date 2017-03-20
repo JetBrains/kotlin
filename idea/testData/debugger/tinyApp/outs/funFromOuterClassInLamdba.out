@@ -1,14 +1,14 @@
 LineBreakpoint created at funFromOuterClassInLamdba.kt:20
 LineBreakpoint created at funFromOuterClassInLamdba.kt:28
 LineBreakpoint created at funFromOuterClassInLamdba.kt:36
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! funFromOuterClassInLamdba.FunFromOuterClassInLamdbaKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 funFromOuterClassInLamdba.kt:20
 Compile bytecode for foo() + 1
 funFromOuterClassInLamdba.kt:28
 Compile bytecode for foo() + 2
 funFromOuterClassInLamdba.kt:36
 Compile bytecode for foo() + 3
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

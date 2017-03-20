@@ -1,6 +1,6 @@
 LineBreakpoint created at evPropertyRefExpr.kt:8
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! evPropertyRefExpr.EvPropertyRefExprKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 evPropertyRefExpr.kt:8
 package evPropertyRefExpr
 
@@ -24,6 +24,6 @@ Compile bytecode for prop
  frame    = test:8, A {evPropertyRefExpr}
    this     = this = {evPropertyRefExpr.A@uniqueID}
      field    = prop: int = 1 (sp = evPropertyRefExpr.kt, 4)
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

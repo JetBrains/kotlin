@@ -1,12 +1,12 @@
 LineBreakpoint created at jcBlock.kt:6
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! jcBlock.JcBlockKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 jcBlock.kt:6
 JavaClass.java:16
 JavaClass.java:18
 JavaClass.java:19
 Compile bytecode for bodyVal
 Compile bytecode for thenVal
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

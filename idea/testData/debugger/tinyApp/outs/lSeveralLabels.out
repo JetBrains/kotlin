@@ -1,10 +1,10 @@
 LineBreakpoint created at lSeveralLabels.kt:8
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! lSeveralLabels.LSeveralLabelsKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 lSeveralLabels.kt:8
 Compile bytecode for a_DebugLabel
 Compile bytecode for b_DebugLabel
 Compile bytecode for c_DebugLabel
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

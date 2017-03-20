@@ -1,6 +1,6 @@
 LineBreakpoint created at createExpressionWithArray.kt:11
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! createExpressionWithArray.CreateExpressionWithArrayKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 createExpressionWithArray.kt:11
 package createExpressionWithArray
 
@@ -35,6 +35,6 @@ Compile bytecode for (innerArray[0] as InnerClass).i2
      element  = 0 (expression = innerArray[0])
        field    = i (expression = (innerArray[0] as InnerClass).i)
        field    = i2 (expression = (innerArray[0] as InnerClass).i2)
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

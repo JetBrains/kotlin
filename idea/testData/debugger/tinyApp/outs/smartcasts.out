@@ -1,13 +1,13 @@
 LineBreakpoint created at smartcasts.kt:19
 LineBreakpoint created at smartcasts.kt:29
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! smartcasts.SmartcastsKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 smartcasts.kt:19
 Compile bytecode for derived.prop
 smartcasts.kt:19
 smartcasts.kt:29
 Compile bytecode for nullable.prop
 smartcasts.kt:29
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

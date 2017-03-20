@@ -1,6 +1,6 @@
 LineBreakpoint created at propertyReference.kt:11
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! propertyReference.PropertyReferenceKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 propertyReference.kt:11
 propertyReference.kt:4
 propertyReference.kt:7
@@ -8,6 +8,6 @@ propertyReference.kt:11
 propertyReference.kt:4
 propertyReference.kt:5
 propertyReference.kt:12
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

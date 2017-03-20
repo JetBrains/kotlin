@@ -20,8 +20,8 @@ LineBreakpoint created at crossinlineLiteral.kt:128
 LineBreakpoint created at crossinlineLiteral.kt:138
 LineBreakpoint created at crossinlineLiteral.kt:154
 LineBreakpoint created at crossinlineLiteral.kt:157
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! crossinlineLiteral.CrossinlineLiteralKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 crossinlineLiteral.kt:75
 crossinlineLiteral.kt:13
 crossinlineLiteral.kt:75
@@ -58,6 +58,6 @@ crossinlineLiteral.kt:109
 crossinlineLiteral.kt:67
 crossinlineLiteral.kt:154
 crossinlineLiteral.kt:157
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

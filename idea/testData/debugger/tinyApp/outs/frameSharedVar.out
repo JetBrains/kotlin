@@ -1,6 +1,6 @@
 LineBreakpoint created at frameSharedVar.kt:7
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameSharedVar.FrameSharedVarKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 frameSharedVar.kt:7
 Compile bytecode for var1
 package frameSharedVar
@@ -26,6 +26,6 @@ fun foo(f: () -> Unit) {
      field    = $var1: kotlin.jvm.internal.Ref$IntRef = {kotlin.jvm.internal.Ref$IntRef@uniqueID}1 (sp = null)
        field    = element: int = 1 (sp = Ref.!EXT!)
      field    = arity: int = 0 (sp = Lambda.!EXT!)
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

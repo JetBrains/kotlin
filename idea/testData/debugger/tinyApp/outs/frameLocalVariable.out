@@ -1,6 +1,6 @@
 LineBreakpoint created at frameLocalVariable.kt:6
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameLocalVariable.FrameLocalVariableKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 frameLocalVariable.kt:6
 package frameLocalVariable
 
@@ -14,6 +14,6 @@ fun main(args: Array<String>) {
  frame    = main:6, FrameLocalVariableKt {frameLocalVariable}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = frameLocalVariable.kt, 3)
    local    = val1: int = 1 (sp = frameLocalVariable.kt, 4)
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

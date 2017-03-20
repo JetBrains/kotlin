@@ -1,12 +1,12 @@
 LineBreakpoint created at parametersOfInlineFun.kt:15
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! parametersOfInlineFun.ParametersOfInlineFunKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 parametersOfInlineFun.kt:15
 Compile bytecode for primitive
 Compile bytecode for array
 Compile bytecode for str
 Compile bytecode for list
 Compile bytecode for this.prop
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

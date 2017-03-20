@@ -1,6 +1,6 @@
 LineBreakpoint created at frameLambdaNotUsed.kt:7
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameLambdaNotUsed.FrameLambdaNotUsedKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 frameLambdaNotUsed.kt:7
 Compile bytecode for val1
 package frameLambdaNotUsed
@@ -24,6 +24,6 @@ fun foo(f: () -> Unit) {
  frame    = invoke:7, FrameLambdaNotUsedKt$main$1 {frameLambdaNotUsed}
    this     = this = {frameLambdaNotUsed.FrameLambdaNotUsedKt$main$1@uniqueID}Function0<kotlin.Unit>
      field    = arity: int = 0 (sp = Lambda.!EXT!)
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

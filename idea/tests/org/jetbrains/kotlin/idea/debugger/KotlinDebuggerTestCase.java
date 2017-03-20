@@ -277,27 +277,6 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         return result;
     }
 
-    private static class KotlinOutputChecker extends OutputChecker {
-
-        public KotlinOutputChecker(@NotNull String appPath, @NotNull String outputPath) {
-            super(appPath, outputPath);
-        }
-
-        @Override
-        protected String replaceAdditionalInOutput(String str) {
-            //noinspection ConstantConditions
-            try {
-                return super.replaceAdditionalInOutput(
-                        str.replace(ForTestCompileRuntime.runtimeJarForTests().getCanonicalPath(), "!KOTLIN_RUNTIME!")
-                           .replace(CUSTOM_LIBRARY_JAR.getCanonicalPath(), "!CUSTOM_LIBRARY!")
-                );
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
     @Override
     protected JavaParameters createJavaParameters(String mainClass) {
         JavaParameters parameters = super.createJavaParameters(mainClass);

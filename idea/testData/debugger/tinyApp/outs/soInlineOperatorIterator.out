@@ -1,6 +1,6 @@
 LineBreakpoint created at soInlineOperatorIterator.kt:7
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! soInlineOperatorIterator.SoInlineOperatorIteratorKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 soInlineOperatorIterator.kt:7
 soInlineOperatorIterator.kt:8
 soInlineOperatorIterator.kt:23
@@ -17,6 +17,6 @@ soInlineOperatorIterator.kt:9
 soInlineOperatorIterator.kt:8
 soInlineOperatorIterator.kt:23
 soInlineOperatorIterator.kt:11
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

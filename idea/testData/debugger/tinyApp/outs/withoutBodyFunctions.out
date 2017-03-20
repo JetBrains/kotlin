@@ -5,8 +5,8 @@ LineBreakpoint created at withoutBodyFunctions.kt:27
 LineBreakpoint created at withoutBodyFunctions.kt:32
 LineBreakpoint created at withoutBodyFunctions.kt:37
 LineBreakpoint created at withoutBodyFunctions.kt:43
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! withoutBodyFunctions.WithoutBodyFunctionsKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 withoutBodyFunctions.kt:9
 Compile bytecode for 1 + 1
 withoutBodyFunctions.kt:15
@@ -21,6 +21,6 @@ withoutBodyFunctions.kt:37
 Compile bytecode for i
 withoutBodyFunctions.kt:43
 Compile bytecode for test2()
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

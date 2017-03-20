@@ -3,8 +3,8 @@ LineBreakpoint created at smartStepIntoWithOverrides.kt:30
 LineBreakpoint created at smartStepIntoWithOverrides.kt:38
 LineBreakpoint created at smartStepIntoWithOverrides.kt:47
 LineBreakpoint created at smartStepIntoWithOverrides.kt:56
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! smartStepIntoWithOverrides.SmartStepIntoWithOverridesKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 smartStepIntoWithOverrides.kt:22
 smartStepIntoWithOverrides.kt:12
 smartStepIntoWithOverrides.kt:30
@@ -15,6 +15,6 @@ smartStepIntoWithOverrides.kt:47
 smartStepIntoWithOverrides.kt:8
 smartStepIntoWithOverrides.kt:56
 smartStepIntoWithOverrides.kt:12
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

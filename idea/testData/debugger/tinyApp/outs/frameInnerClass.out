@@ -1,6 +1,6 @@
 LineBreakpoint created at frameInnerClass.kt:17
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameInnerClass.FrameInnerClassKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 frameInnerClass.kt:17
 Compile bytecode for prop1
 Compile bytecode for prop2
@@ -45,6 +45,6 @@ class A {
      field    = prop2: int = 1 (sp = frameInnerClass.kt, 12)
      field    = this$0: frameInnerClass.A = {frameInnerClass.A@uniqueID} (sp = null)
        field    = prop1: int = 1 (sp = frameInnerClass.kt, 8)
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

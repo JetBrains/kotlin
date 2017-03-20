@@ -1,6 +1,6 @@
 LineBreakpoint created at evBreakpointOnPropertyDeclaration.kt:14
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! evBreakpointOnPropertyDeclaration.EvBreakpointOnPropertyDeclarationKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 evBreakpointOnPropertyDeclaration.kt:14
 package evBreakpointOnPropertyDeclaration
 
@@ -30,6 +30,6 @@ Compile bytecode for a2.prop
    local    = a3: evBreakpointOnPropertyDeclaration.A = {evBreakpointOnPropertyDeclaration.A@uniqueID} (sp = evBreakpointOnPropertyDeclaration.kt, 10)
      field    = prop: int = 1 (sp = evBreakpointOnPropertyDeclaration.kt, 4)
    local    = p1: int = 1 (sp = evBreakpointOnPropertyDeclaration.kt, 12)
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

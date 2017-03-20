@@ -1,10 +1,10 @@
 LineBreakpoint created at twoLambdasOnOneLineFirst.kt:9 lambdaOrdinal = -1
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! twoLambdasOnOneLineFirst.TwoLambdasOnOneLineFirstKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 twoLambdasOnOneLineFirst.kt:9
 twoLambdasOnOneLineFirst.kt:14
 twoLambdasOnOneLineFirst.kt:9
 Compile bytecode for it
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

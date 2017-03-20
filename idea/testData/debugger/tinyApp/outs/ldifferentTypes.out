@@ -1,6 +1,6 @@
 LineBreakpoint created at ldifferentTypes.kt:88
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! ldifferentTypes.LdifferentTypesKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 ldifferentTypes.kt:88
 Compile bytecode for str_DebugLabel
 Compile bytecode for strArray_DebugLabel
@@ -21,6 +21,6 @@ Compile bytecode for nestedClass_DebugLabel
 Compile bytecode for nestedClass_DebugLabel.test()
 Compile bytecode for nestedClassArray_DebugLabel
 Compile bytecode for nestedClassArray_DebugLabel[0].test()
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

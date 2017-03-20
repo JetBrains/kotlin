@@ -1,6 +1,6 @@
 LineBreakpoint created at frameThis0.kt:16
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameThis0.FrameThis0Kt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 frameThis0.kt:16
 Compile bytecode for val1
 Compile bytecode for val2
@@ -54,6 +54,6 @@ fun foo(f: () -> Unit) {
      field    = $val1: int = 1 (sp = null)
      field    = arity: int = 0 (sp = Lambda.!EXT!)
    local    = val2: int = 1 (sp = frameThis0.kt, 14)
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

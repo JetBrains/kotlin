@@ -1,6 +1,6 @@
 LineBreakpoint created at frameInlineArgumentInsideInlineFun.kt:16
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameInlineArgumentInsideInlineFun.FrameInlineArgumentInsideInlineFunKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 frameInlineArgumentInsideInlineFun.kt:16
 Compile bytecode for element
 // KT-10674: Debugger: Evaluate Expression / Watches fail for variable/parameter captured from one inline function to another
@@ -52,6 +52,6 @@ fun main(args: Array<String>) {
               - Class has no fields
    local    = element$iv$iv: double = 1.0 (sp = frameInlineArgumentInsideInlineFun.kt, 13)
    local    = it$iv: int = 1 (sp = null)
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

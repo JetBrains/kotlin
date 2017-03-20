@@ -1,6 +1,6 @@
 LineBreakpoint created at privateMember.kt:9
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! privateMember.PrivateMemberKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 privateMember.kt:9
 Compile bytecode for MyClass().privateFun()
 Compile bytecode for MyClass().privateVal
@@ -8,6 +8,6 @@ Compile bytecode for MyClass.PrivateClass().a
 Compile bytecode for base.privateFun()
 Compile bytecode for derived.privateFun()
 Compile bytecode for derivedAsBase.privateFun()
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

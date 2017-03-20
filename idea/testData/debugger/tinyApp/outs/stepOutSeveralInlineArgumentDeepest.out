@@ -1,10 +1,10 @@
 LineBreakpoint created at stepOutSeveralInlineArgumentDeepest.kt:6
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! stepOutSeveralInlineArgumentDeepest.StepOutSeveralInlineArgumentDeepestKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 stepOutSeveralInlineArgumentDeepest.kt:6
 stepOutSeveralInlineArgumentDeepest.kt:22
 stepOutSeveralInlineArgumentDeepest.kt:16
 stepOutSeveralInlineArgumentDeepest.kt:8
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

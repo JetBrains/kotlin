@@ -1,6 +1,6 @@
 LineBreakpoint created at underscoreNames.kt:18 lambdaOrdinal = 1
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! underscoreNames.UnderscoreNamesKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 underscoreNames.kt:18
 Compile bytecode for x
 Compile bytecode for y
@@ -62,7 +62,7 @@ Compile bytecode for arrayOfA
    local    = q: java.lang.String =  (sp = underscoreNames.kt, 16)
      field    = value: char[] = {char[0]@uniqueID} (sp = String.!EXT!)
      field    = hash: int = 0 (sp = String.!EXT!)
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0
 

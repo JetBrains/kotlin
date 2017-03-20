@@ -1,6 +1,6 @@
 LineBreakpoint created at stepOverWhileWithInline.kt:5
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! stepOverWhileWithInline.StepOverWhileWithInlineKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 stepOverWhileWithInline.kt:5
 stepOverWhileWithInline.kt:7
 stepOverWhileWithInline.kt:8
@@ -17,6 +17,6 @@ stepOverWhileWithInline.kt:24
 stepOverWhileWithInline.kt:25
 stepOverWhileWithInline.kt:26
 stepOverWhileWithInline.kt:27
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

@@ -1,6 +1,6 @@
 LineBreakpoint created at frameSimple.kt:9
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! frameSimple.FrameSimpleKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 frameSimple.kt:9
 Compile bytecode for val1
 Compile bytecode for val2
@@ -39,6 +39,6 @@ class MyClass
    local    = val1: int = 1 (sp = frameSimple.kt, 6)
    local    = val2: frameSimple.MyClass = {frameSimple.MyClass@uniqueID} (sp = frameSimple.kt, 7)
               - Class has no fields
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

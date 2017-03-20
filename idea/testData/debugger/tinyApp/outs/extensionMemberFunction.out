@@ -14,8 +14,8 @@ LineBreakpoint created at extensionMemberFunction.kt:98
 LineBreakpoint created at extensionMemberFunction.kt:103
 LineBreakpoint created at extensionMemberFunction.kt:108
 LineBreakpoint created at extensionMemberFunction.kt:113
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! extensionMemberFunction.ExtensionMemberFunctionKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 extensionMemberFunction.kt:13
 Compile bytecode for extClass.testPublic()
 extensionMemberFunction.kt:19
@@ -48,6 +48,6 @@ extensionMemberFunction.kt:108
 Compile bytecode for testCompPrivate()
 extensionMemberFunction.kt:113
 Compile bytecode for this.testCompPrivate()
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

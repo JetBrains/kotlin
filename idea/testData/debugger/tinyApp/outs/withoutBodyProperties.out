@@ -2,8 +2,8 @@ KotlinFieldBreakpoint created at withoutBodyProperties.kt:8
 KotlinFieldBreakpoint created at withoutBodyProperties.kt:13
 LineBreakpoint created at withoutBodyProperties.kt:21
 KotlinFieldBreakpoint created at withoutBodyProperties.kt:28
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! withoutBodyProperties.WithoutBodyPropertiesKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 withoutBodyProperties.kt:8
 Compile bytecode for 1 + 1
 withoutBodyProperties.kt:13
@@ -12,6 +12,6 @@ withoutBodyProperties.kt:21
 Compile bytecode for i
 withoutBodyProperties.kt:28
 Compile bytecode for 1 + 6
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

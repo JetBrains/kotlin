@@ -2,8 +2,8 @@ KotlinFieldBreakpoint created at fwAbstractProperty.kt:6
 KotlinFieldBreakpoint created at fwAbstractProperty.kt:9
 KotlinFieldBreakpoint created at fwAbstractProperty.kt:43
 KotlinFieldBreakpoint created at fwAbstractProperty.kt:46
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! fwAbstractProperty.FwAbstractPropertyKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 fwAbstractProperty.kt:57
 fwAbstractProperty.kt:59
 fwAbstractProperty.kt:61
@@ -21,6 +21,6 @@ fwAbstractProperty.kt:46
 fwAbstractProperty.kt:43
 fwAbstractProperty.kt:46
 fwAbstractProperty.kt:46
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

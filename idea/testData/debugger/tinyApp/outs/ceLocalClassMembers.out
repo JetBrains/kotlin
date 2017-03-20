@@ -1,6 +1,6 @@
 LineBreakpoint created at ceLocalClassMembers.kt:19
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! ceLocalClassMembers.CeLocalClassMembersKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 ceLocalClassMembers.kt:19
 Compile bytecode for class MyClass {
     fun test() = publicFun() + publicVal + protectedFun() + protectedVal + privateFun() + privateFun()
@@ -11,6 +11,6 @@ a.test()
 
 // RESULT: 6: I
 
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

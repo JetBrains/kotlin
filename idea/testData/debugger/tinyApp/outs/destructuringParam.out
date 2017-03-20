@@ -1,6 +1,6 @@
 LineBreakpoint created at destructuringParam.kt:12 lambdaOrdinal = 1
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! destructuringParam.DestructuringParamKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 destructuringParam.kt:12
 Compile bytecode for x
 Compile bytecode for y
@@ -46,6 +46,6 @@ fun main(args: Array<String>) {
      field    = value: char[] = {char[1]@uniqueID} (sp = String.!EXT!)
        element  = 0 = 'K' 75
      field    = hash: int = 0 (sp = String.!EXT!)
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

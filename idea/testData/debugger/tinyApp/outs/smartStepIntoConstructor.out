@@ -11,8 +11,8 @@ LineBreakpoint created at smartStepIntoConstructor.kt:43
 LineBreakpoint created at smartStepIntoConstructor.kt:47
 LineBreakpoint created at smartStepIntoConstructor.kt:51
 LineBreakpoint created at smartStepIntoConstructor.kt:55
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! smartStepIntoConstructor.SmartStepIntoConstructorKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 smartStepIntoConstructor.kt:7
 smartStepIntoConstructor.kt:59
 smartStepIntoConstructor.kt:11
@@ -39,6 +39,6 @@ smartStepIntoConstructor.kt:51
 smartStepIntoConstructor.kt:112
 smartStepIntoConstructor.kt:55
 smartStepIntoConstructor.kt:113
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0

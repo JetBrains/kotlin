@@ -1,6 +1,6 @@
 LineBreakpoint created at continueLabel.kt:5
-!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! continueLabel.ContinueLabelKt
-Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Run Java
+Connected to the target VM
 continueLabel.kt:5
 continueLabel.kt:6
 continueLabel.kt:7
@@ -11,6 +11,6 @@ continueLabel.kt:7
 continueLabel.kt:10
 continueLabel.kt:5
 continueLabel.kt:12
-Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+Disconnected from the target VM
 
 Process finished with exit code 0
