@@ -179,8 +179,7 @@ class CoroutineFunctionTransformer(private val program: JsProgram, private val f
 
         val invokeResume = JsReturn(JsInvocation(JsNameRef(context.metadata.doResumeName, instanceName.makeRef()), JsLiteral.NULL))
 
-        functionWithBody.body.statements += JsIf(
-                suspendedName.makeRef(), JsReturn(instanceName.makeRef()), invokeResume)
+        functionWithBody.body.statements += JsIf(suspendedName.makeRef(), JsReturn(instanceName.makeRef()), invokeResume)
     }
 
     private fun generateCoroutineBody(

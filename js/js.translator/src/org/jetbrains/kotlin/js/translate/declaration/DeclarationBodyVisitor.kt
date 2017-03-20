@@ -118,7 +118,7 @@ class DeclarationBodyVisitor(
                 val callbackName = caller.scope.declareTemporaryName("callback" + Namer.DEFAULT_PARAMETER_IMPLEMENTOR_SUFFIX)
                 val callee = JsNameRef(bodyName, JsLiteral.THIS)
 
-                val defaultInvocation = JsInvocation(callee, java.util.ArrayList<JsExpression>())
+                val defaultInvocation = JsInvocation(callee, listOf<JsExpression>())
                 val callbackInvocation = JsInvocation(callbackName.makeRef())
                 val chosenInvocation = JsConditional(callbackName.makeRef(), callbackInvocation, defaultInvocation)
                 defaultInvocation.arguments += caller.parameters.map { it.name.makeRef() }
@@ -128,7 +128,12 @@ class DeclarationBodyVisitor(
                 caller.body.statements += FunctionBodyTranslator.setDefaultValueForArguments(descriptor, callerContext)
 
                 val returnType = descriptor.returnType!!
-                val statement = if (KotlinBuiltIns.isUnit(returnType)) chosenInvocation.makeStmt() else JsReturn(chosenInvocation)
+                val statement = if (KotlinBuiltIns.isUnit(returnType) && !descriptor.isSuspend) {
+                    chosenInvocation.makeStmt()
+                }
+                else {
+                    JsReturn(chosenInvocation)
+                }
                 caller.body.statements += statement
 
                 context.addFunctionToPrototype(containingClass, descriptor, caller)
