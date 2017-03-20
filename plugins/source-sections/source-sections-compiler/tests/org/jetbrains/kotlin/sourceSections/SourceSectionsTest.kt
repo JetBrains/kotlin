@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.sourceSections
 
 import com.intellij.openapi.vfs.StandardFileSystems
 import junit.framework.TestCase
-import org.jetbrains.kotlin.cli.AbstractCliTest
+import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
@@ -154,10 +154,12 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
 
         sourceToOutput.forEach { (source, expectedOutput) ->
 
-            val args = listOf(source.canonicalPath, "-d", tmpdir.canonicalPath,
-                              "-Xplugin", sourceSectionsPluginJar.canonicalPath,
-                              "-P", TEST_ALLOWED_SECTIONS.joinToString(",") { "plugin:${SourceSectionsCommandLineProcessor.PLUGIN_ID}:${SourceSectionsCommandLineProcessor.SECTIONS_OPTION.name}=$it" })
-            val (output, code) = AbstractCliTest.executeCompilerGrabOutput(K2JVMCompiler(), args)
+            val args = arrayOf(source.canonicalPath, "-d", tmpdir.canonicalPath,
+                               "-Xplugin", sourceSectionsPluginJar.canonicalPath,
+                               "-P", TEST_ALLOWED_SECTIONS.joinToString(",") { "plugin:${SourceSectionsCommandLineProcessor.PLUGIN_ID}:${SourceSectionsCommandLineProcessor.SECTIONS_OPTION.name}=$it" })
+            val (output, code) = captureOut {
+                CLICompiler.doMainNoExit(K2JVMCompiler(), args)
+            }
 
             TestCase.assertEquals("Compilation failed:\n$output", 0, code.code)
 
@@ -221,7 +223,7 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
     private fun verifyScriptOutput(scriptClass: Class<*>?, expectedOutput: File) {
         val scriptOut = captureOut {
             tryConstructClassFromStringArgs(scriptClass!!, emptyList())
-        }
+        }.first
         val expected = expectedOutput.readText()
 
         TestCase.assertEquals(expected, scriptOut)
@@ -238,18 +240,22 @@ internal inline fun withFlagFile(prefix: String, suffix: String? = null, body: (
     }
 }
 
-internal fun captureOut(body: () -> Unit): String {
+internal fun<T> captureOut(body: () -> T): Pair<String, T> {
     val outStream = ByteArrayOutputStream()
     val prevOut = System.out
+    val prevErr = System.err
     System.setOut(PrintStream(outStream))
-    try {
+    System.setErr(PrintStream(outStream))
+    val res =try {
         body()
     }
     finally {
         System.out.flush()
         System.setOut(prevOut)
+        System.err.flush()
+        System.setErr(prevErr)
     }
-    return outStream.toString()
+    return outStream.toString() to res
 }
 
 class TestMessageCollector : MessageCollector {
