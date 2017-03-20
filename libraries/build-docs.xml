@@ -38,7 +38,12 @@
             <sourceRoot path="stdlib/jre8/src" platforms="JVM,JRE8"/>
             <sourceRoot path="../core/builtins" platforms="JVM"/>
             <sourceRoot path="../core/reflection.jvm" platforms="JVM"/>
-            <sourceRoot path="../core/runtime.jvm/src/kotlin" platforms="JVM"/>
+            <sourceRoot path="../core/runtime.jvm/src/kotlin/jvm/annotations" platforms="JVM"/>
+            <sourceRoot path="../core/runtime.jvm/src/kotlin/jvm/JvmClassMapping.kt" platforms="JVM"/>
+            <sourceRoot path="../core/runtime.jvm/src/kotlin/jvm/PurelyImplements.kt" platforms="JVM"/>
+            <sourceRoot path="../core/runtime.jvm/src/kotlin/TypeAliases.kt" platforms="JVM"/>
+            <sourceRoot path="../core/runtime.jvm/src/kotlin/text/TypeAliases.kt" platforms="JVM"/>
+            
 
             <sourceRoot path="../core/builtins" platforms="JS"/>
             <sourceRoot path="${js.stdlib.src.path}" platforms="JS"/>
