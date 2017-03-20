@@ -153,22 +153,10 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                          "Choose Output Directory",
                          false);
 
-        outputDirectory.addBrowseFolderListener(
-                "Choose Output Directory",
-                null,
-                project,
-                new FileChooserDescriptor(false, true, false, false, false, false),
-                TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT,
-                false
-        );
-
         copyRuntimeFilesCheckBox.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(@NotNull ChangeEvent e) {
-                if (isEnabled) {
-                    outputDirectory.setEnabled(copyRuntimeFilesCheckBox.isSelected());
-                    labelForOutputDirectory.setEnabled(copyRuntimeFilesCheckBox.isSelected());
-                }
+                updateOutputDirEnabled();
             }
         });
 
@@ -207,6 +195,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                 warningLabel.setText(buildOverridingModulesWarning(modulesOverridingProjectSettings));
             }
         }
+
+        updateOutputDirEnabled();
     }
 
     @SuppressWarnings("unused")
@@ -300,6 +290,13 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
     private static boolean isModified(@NotNull TextFieldWithBrowseButton chooser, @Nullable String currentValue) {
         return !StringUtil.equals(StringUtil.nullize(chooser.getText(), true), currentValue);
+    }
+
+    private void updateOutputDirEnabled() {
+        if (isEnabled) {
+            outputDirectory.setEnabled(copyRuntimeFilesCheckBox.isSelected());
+            labelForOutputDirectory.setEnabled(copyRuntimeFilesCheckBox.isSelected());
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -607,6 +604,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     public void setEnabled(boolean value) {
         isEnabled = value;
         UIUtil.setEnabled(getContentPane(), value, true);
+        updateOutputDirEnabled();
     }
 
     public CommonCompilerArguments getCommonCompilerArguments() {
