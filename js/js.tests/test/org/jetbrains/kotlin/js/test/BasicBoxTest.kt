@@ -62,7 +62,8 @@ import java.util.regex.Pattern
 abstract class BasicBoxTest(
         private val pathToTestDir: String,
         private val pathToOutputDir: String,
-        private val typedArraysEnabled: Boolean = false
+        private val typedArraysEnabled: Boolean = false,
+        private val generateSourceMap: Boolean = false
 ) : KotlinTestWithEnvironment() {
     private val COMMON_FILES_NAME = "_common"
     private val COMMON_FILES_DIR = "_commonFiles/"
@@ -283,7 +284,7 @@ abstract class BasicBoxTest(
         configuration.put(JSConfigurationKeys.MODULE_KIND, module.moduleKind)
         configuration.put(JSConfigurationKeys.TARGET, EcmaVersion.v5)
 
-        //configuration.put(JSConfigurationKeys.SOURCE_MAP, shouldGenerateSourceMap())
+        configuration.put(JSConfigurationKeys.SOURCE_MAP, generateSourceMap)
         configuration.put(JSConfigurationKeys.META_INFO, multiModule)
 
         if (typedArraysEnabled) {

@@ -37,7 +37,7 @@ abstract class AbstractCallableReferenceInlineTests : BorrowedInlineTest("callab
 
 abstract class AbstractEnumValuesInlineTests : BorrowedInlineTest("enum/")
 
-abstract class AbstractBoxJsTest() : BasicBoxTest(
+abstract class AbstractBoxJsTest : BasicBoxTest(
         BasicBoxTest.TEST_DATA_DIR_PATH + "box/",
         BasicBoxTest.TEST_DATA_DIR_PATH + "out/box/"
 )
@@ -51,4 +51,10 @@ abstract class AbstractJsTypedArraysBoxTest : BasicBoxTest(
         "compiler/testData/codegen/box/arrays/",
         BasicBoxTest.TEST_DATA_DIR_PATH + "out/codegen/box/arrays-typedarrays/",
         typedArraysEnabled = true
+)
+
+abstract class AbstractSourceMapGenerationSmokeTest : BasicBoxTest(
+        BasicBoxTest.TEST_DATA_DIR_PATH + "sourcemap/",
+        "${BasicBoxTest.TEST_DATA_DIR_PATH}/out/sourcemap/",
+        generateSourceMap = true
 )

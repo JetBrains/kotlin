@@ -1275,6 +1275,10 @@ fun main(args: Array<String>) {
         testClass<AbstractBoxJsTest> {
             model("box/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
         }
+
+        testClass<AbstractSourceMapGenerationSmokeTest> {
+            model("sourcemap/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
+        }
     }
 
     testGroup("js/js.tests/test", "compiler/testData") {
