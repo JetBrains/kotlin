@@ -17,6 +17,19 @@ open class KProperty0Impl<out R>(override val name: String, val getter: () -> R)
         return getter()
     }
 
+    override fun equals(other: Any?): Boolean {
+        val otherKProperty = other as? KProperty0Impl<R>
+        if (otherKProperty == null) return false
+        return name == otherKProperty.name && getter == otherKProperty.getter
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode() * 31 + getter.hashCode()
+    }
+
+    override fun toString(): String {
+        return "property $name (Kotlin reflection is not available)"
+    }
 }
 
 @FixmeReflection
@@ -26,6 +39,20 @@ open class KProperty1Impl<T, out R>(override val name: String, val getter: (T) -
     }
     override fun invoke(receiver: T): R {
         return getter(receiver)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        val otherKProperty = other as? KProperty1Impl<T, R>
+        if (otherKProperty == null) return false
+        return name == otherKProperty.name && getter == otherKProperty.getter
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode() * 31 + getter.hashCode()
+    }
+
+    override fun toString(): String {
+        return "property $name (Kotlin reflection is not available)"
     }
 }
 
@@ -37,6 +64,20 @@ open class KProperty2Impl<T1, T2, out R>(override val name: String, val getter: 
     override fun invoke(receiver1: T1, receiver2: T2): R {
         return getter(receiver1, receiver2)
     }
+
+    override fun equals(other: Any?): Boolean {
+        val otherKProperty = other as? KProperty2Impl<T1, T2, R>
+        if (otherKProperty == null) return false
+        return name == otherKProperty.name && getter == otherKProperty.getter
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode() * 31 + getter.hashCode()
+    }
+
+    override fun toString(): String {
+        return "property $name (Kotlin reflection is not available)"
+    }
 }
 
 @FixmeReflection
@@ -44,6 +85,20 @@ class KMutableProperty0Impl<R>(name: String, getter: () -> R, val setter: (R) ->
     : KProperty0Impl<R>(name, getter), KMutableProperty0<R> {
     override fun set(value: R): Unit {
         setter(value)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        val otherKProperty = other as? KMutableProperty0Impl<R>
+        if (otherKProperty == null) return false
+        return name == otherKProperty.name && getter == otherKProperty.getter && setter == otherKProperty.setter
+    }
+
+    override fun hashCode(): Int {
+        return (name.hashCode() * 31 + getter.hashCode()) * 31 + setter.hashCode()
+    }
+
+    override fun toString(): String {
+        return "property $name (Kotlin reflection is not available)"
     }
 }
 
@@ -53,6 +108,20 @@ class KMutableProperty1Impl<T, R>(name: String, getter: (T) -> R, val setter: (T
     override fun set(receiver: T, value: R): Unit {
         setter(receiver, value)
     }
+
+    override fun equals(other: Any?): Boolean {
+        val otherKProperty = other as? KMutableProperty1Impl<T, R>
+        if (otherKProperty == null) return false
+        return name == otherKProperty.name && getter == otherKProperty.getter && setter == otherKProperty.setter
+    }
+
+    override fun hashCode(): Int {
+        return (name.hashCode() * 31 + getter.hashCode()) * 31 + setter.hashCode()
+    }
+
+    override fun toString(): String {
+        return "property $name (Kotlin reflection is not available)"
+    }
 }
 
 @FixmeReflection
@@ -60,6 +129,20 @@ class KMutableProperty2Impl<T1, T2, R>(name: String, getter: (T1, T2) -> R, val 
     : KProperty2Impl<T1, T2, R>(name, getter), KMutableProperty2<T1, T2, R> {
     override fun set(receiver1: T1, receiver2: T2, value: R): Unit {
         setter(receiver1, receiver2, value)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        val otherKProperty = other as? KMutableProperty2Impl<T1, T2, R>
+        if (otherKProperty == null) return false
+        return name == otherKProperty.name && getter == otherKProperty.getter && setter == otherKProperty.setter
+    }
+
+    override fun hashCode(): Int {
+        return (name.hashCode() * 31 + getter.hashCode()) * 31 + setter.hashCode()
+    }
+
+    override fun toString(): String {
+        return "property $name (Kotlin reflection is not available)"
     }
 }
 
@@ -70,10 +153,18 @@ open class KLocalDelegatedPropertyImpl<out R>(override val name: String): KPrope
     override fun invoke(): R {
         throw UnsupportedOperationException("Not supported for local property reference.")
     }
+
+    override fun toString(): String {
+        return "property $name (Kotlin reflection is not available)"
+    }
 }
 
 class KLocalDelegatedMutablePropertyImpl<R>(name: String): KLocalDelegatedPropertyImpl<R>(name), KMutableProperty0<R> {
     override fun set(value: R): Unit {
         throw UnsupportedOperationException("Not supported for local property reference.")
+    }
+
+    override fun toString(): String {
+        return "property $name (Kotlin reflection is not available)"
     }
 }
