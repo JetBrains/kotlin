@@ -43,9 +43,13 @@ class ReturnReplacingVisitor(
 
         ctx.removeMe()
 
+        val returnExpression = x.expression
         val returnReplacement = getReturnReplacement(x.expression)
         if (returnReplacement != null) {
-            ctx.addNext(JsExpressionStatement(returnReplacement).apply { synthetic = true })
+            if (returnExpression != null && returnExpression.isTailCallSuspend) {
+                returnReplacement.isSuspend = true
+            }
+            ctx.addNext(JsExpressionStatement(returnReplacement))
         }
 
         if (breakLabel != null) {
@@ -68,6 +72,7 @@ class ReturnReplacingVisitor(
 
     fun processCoroutineResult(expression: JsExpression?): JsExpression? {
         if (!isSuspend) return expression
+        if (expression != null && expression.isTailCallSuspend) return expression
         val lhs = JsNameRef("\$\$coroutineResult\$\$", JsAstUtils.stateMachineReceiver()).apply { coroutineResult = true }
         return JsAstUtils.assignment(lhs, expression ?: Namer.getUndefinedExpression())
     }

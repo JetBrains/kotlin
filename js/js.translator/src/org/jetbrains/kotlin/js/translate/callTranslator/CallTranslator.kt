@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsNameRef
-import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
-import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineResult
-import org.jetbrains.kotlin.js.backend.ast.metadata.isSuspend
-import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
+import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.reference.CallArgumentTranslator
@@ -137,13 +134,18 @@ private fun translateFunctionCall(
                               inlineResolvedCall.resultingDescriptor, context)
     }
 
-    if (resolvedCall.resultingDescriptor.isSuspend && context.isInStateMachine) {
-        context.currentBlock.statements += JsAstUtils.asSyntheticStatement(callExpression.apply { isSuspend = true })
-        val coroutineRef = TranslationUtils.translateContinuationArgument(context, resolvedCall)
-        return context.defineTemporary(JsNameRef("\$\$coroutineResult\$\$", coroutineRef).apply {
-            sideEffects = SideEffectKind.DEPENDS_ON_STATE
-            coroutineResult = true
-        })
+    if (resolvedCall.resultingDescriptor.isSuspend) {
+        if (context.isInStateMachine) {
+            context.currentBlock.statements += JsAstUtils.asSyntheticStatement(callExpression.apply { isSuspend = true })
+            val coroutineRef = TranslationUtils.translateContinuationArgument(context, resolvedCall)
+            return context.defineTemporary(JsNameRef("\$\$coroutineResult\$\$", coroutineRef).apply {
+                sideEffects = SideEffectKind.DEPENDS_ON_STATE
+                coroutineResult = true
+            })
+        }
+        else {
+            callExpression.isTailCallSuspend = true
+        }
     }
     return callExpression
 }
