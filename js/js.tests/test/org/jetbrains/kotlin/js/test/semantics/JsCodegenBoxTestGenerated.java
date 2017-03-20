@@ -6520,6 +6520,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/dataClasses/copy/withGenericParameter.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("withSecondaryConstructor.kt")
+            public void testWithSecondaryConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/dataClasses/copy/withSecondaryConstructor.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/dataClasses/equals")

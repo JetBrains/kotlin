@@ -91,7 +91,8 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
         }
 
         ClassDescriptor classDescriptor = (ClassDescriptor) function.getContainingDeclaration();
-        ClassConstructorDescriptor constructor = classDescriptor.getConstructors().iterator().next();
+        ClassConstructorDescriptor constructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
+        assert constructor != null : "Data class should have primary constructor: " + classDescriptor;
 
         JsExpression constructorRef = context.getInnerReference(constructor);
 
