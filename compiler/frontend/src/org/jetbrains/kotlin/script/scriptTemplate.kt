@@ -20,8 +20,6 @@ import java.io.File
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
-import kotlin.reflect.KParameter
 
 const val DEFAULT_SCRIPT_FILE_PATTERN = ".*\\.kts"
 
@@ -79,11 +77,4 @@ class BasicScriptDependenciesResolver : ScriptDependenciesResolver
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class AcceptedAnnotations(vararg val supportedAnnotationClasses: KClass<out Annotation>)
-
-internal fun sameSignature(left: KFunction<*>, right: KFunction<*>): Boolean =
-        left.parameters.size == right.parameters.size &&
-        left.parameters.zip(right.parameters).all {
-            it.first.kind == KParameter.Kind.INSTANCE ||
-            it.first.type == it.second.type
-        }
 
