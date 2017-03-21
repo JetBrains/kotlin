@@ -1,6 +1,7 @@
 package templates
 
 import templates.Family.*
+import templates.SequenceClass.*
 
 fun generators(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
@@ -18,6 +19,7 @@ fun generators(): List<GenericFunction> {
             """
         }
         doc(Sequences) { "Returns a sequence containing all elements of the original sequence and then the given [element]." }
+        sequenceClassification(intermediate, stateless)
 
         returns("List<T>")
         returns("SELF", Sets, Sequences)
@@ -29,6 +31,7 @@ fun generators(): List<GenericFunction> {
 
         only(Iterables, Collections, Sets, Sequences)
         doc { "Returns a list containing all elements of the original collection and then the given [element]." }
+        sequenceClassification(intermediate, stateless)
         returns("List<T>")
         body {
             """
@@ -130,6 +133,7 @@ fun generators(): List<GenericFunction> {
             the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
             """
         }
+        sequenceClassification(intermediate, stateless)
         body(Sequences) {
             """
             return sequenceOf(this, elements.asSequence()).flatten()
@@ -185,6 +189,7 @@ fun generators(): List<GenericFunction> {
             the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
             """
         }
+        sequenceClassification(intermediate, stateless)
         body(Sequences) {
             """
             return this.plus(elements.asList())
@@ -243,6 +248,7 @@ fun generators(): List<GenericFunction> {
             the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
             """
         }
+        sequenceClassification(intermediate, stateless)
         body(Sequences) {
             """
             return sequenceOf(this, elements).flatten()
@@ -263,6 +269,7 @@ fun generators(): List<GenericFunction> {
             """
         }
         doc(Sequences) { "Returns a sequence containing all elements of the original sequence without the first occurrence of the given [element]." }
+        sequenceClassification(intermediate, nearly_stateless)
 
         returns("List<T>")
         returns("SELF", Sets, Sequences)
@@ -301,6 +308,7 @@ fun generators(): List<GenericFunction> {
 
 
         doc(Sequences) { "Returns a sequence containing all elements of the original sequence without the first occurrence of the given [element]." }
+        sequenceClassification(intermediate, nearly_stateless)
         body(Sequences) {
             """
             return object: Sequence<T> {
@@ -360,6 +368,7 @@ fun generators(): List<GenericFunction> {
             the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
             """
         }
+        sequenceClassification(intermediate, stateful)
         body(Sequences) {
             """
             return object: Sequence<T> {
@@ -412,6 +421,7 @@ fun generators(): List<GenericFunction> {
             the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
             """
         }
+        sequenceClassification(intermediate, stateful)
         body(Sequences) {
             """
             if (elements.isEmpty()) return this
@@ -462,6 +472,8 @@ fun generators(): List<GenericFunction> {
 
             Note that the source sequence and the sequence being subtracted are iterated only when an `iterator` is requested from
             the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+
+            The operation is _intermediate_ for this sequence and _terminal_ and _stateful_ for the [elements] sequence.
             """
         }
         body(Sequences) {
@@ -489,6 +501,7 @@ fun generators(): List<GenericFunction> {
             while *second* list contains elements for which [predicate] yielded `false`.
             """
         }
+        sequenceClassification(terminal)
         returns("Pair<List<T>, List<T>>")
         body {
             """
@@ -631,6 +644,7 @@ fun generators(): List<GenericFunction> {
             Returns a sequence of values built from elements of both collections with same indexes using provided [transform]. Resulting sequence has length of shortest input sequences.
             """
         }
+        sequenceClassification(intermediate, stateless)
         typeParam("R")
         typeParam("V")
         returns("Sequence<V>")
@@ -740,6 +754,7 @@ fun generators(): List<GenericFunction> {
             Resulting sequence has length of shortest input sequence.
             """
         }
+        sequenceClassification(intermediate, stateless)
         typeParam("R")
         returns("Sequence<Pair<T, R>>")
         body {

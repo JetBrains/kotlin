@@ -1,6 +1,7 @@
 package templates
 
 import templates.Family.*
+import templates.SequenceClass.*
 
 fun guards(): List<GenericFunction> {
     val THIS = "\$this"
@@ -10,6 +11,7 @@ fun guards(): List<GenericFunction> {
     templates add f("requireNoNulls()") {
         only(Iterables, Sequences, InvariantArraysOfObjects, Lists)
         doc { "Returns an original collection containing all the non-`null` elements, throwing an [IllegalArgumentException] if there are any `null` elements." }
+        sequenceClassification(intermediate, stateless)
         typeParam("T : Any")
         toNullableT = true
         returns("SELF")

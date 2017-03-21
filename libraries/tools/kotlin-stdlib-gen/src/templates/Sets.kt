@@ -1,6 +1,7 @@
 package templates
 
 import templates.Family.*
+import templates.SequenceClass.*
 
 fun sets(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
@@ -14,6 +15,7 @@ fun sets(): List<GenericFunction> {
             The returned set preserves the element iteration order of the original ${f.collection}.
             """
         }
+        sequenceClassification(terminal)
         returns("MutableSet<T>")
         body {
             """
@@ -51,6 +53,7 @@ fun sets(): List<GenericFunction> {
 
         returns("List<T>")
         body { "return this.toMutableSet().toList()" }
+        sequenceClassification(intermediate, stateful)
         returns(Sequences) { "Sequence<T>" }
         body(Sequences) { "return this.distinctBy { it }" }
     }
@@ -84,6 +87,7 @@ fun sets(): List<GenericFunction> {
 
         inline(false, Sequences)
         returns(Sequences) { "Sequence<T>" }
+        sequenceClassification(intermediate, stateful)
         body(Sequences) {
             """
             return DistinctSequence(this, selector)

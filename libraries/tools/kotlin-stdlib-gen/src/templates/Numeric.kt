@@ -41,5 +41,7 @@ fun numeric(): List<GenericFunction> {
         }
     }
 
+    templates.forEach { it.sequenceClassification(SequenceClass.terminal) }
+
     return templates
 }
