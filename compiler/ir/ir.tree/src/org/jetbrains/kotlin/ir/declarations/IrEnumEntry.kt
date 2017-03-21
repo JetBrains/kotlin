@@ -18,8 +18,9 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 
-interface IrEnumEntry : IrDeclaration {
+interface IrEnumEntry : IrSymbolDeclaration<IrEnumEntrySymbol> {
     override val declarationKind: IrDeclarationKind get() = IrDeclarationKind.ENUM_ENTRY
 
     override val descriptor: ClassDescriptor

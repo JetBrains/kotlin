@@ -17,8 +17,9 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 
-interface IrClass : IrDeclaration, IrDeclarationContainer, IrTypeParametersContainer {
+interface IrClass : IrSymbolDeclaration<IrClassSymbol>, IrDeclarationContainer, IrTypeParametersContainer {
     override val declarationKind: IrDeclarationKind
         get() = IrDeclarationKind.CLASS
 

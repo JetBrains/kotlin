@@ -21,10 +21,13 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.checkAnnotationName
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
+import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.FqName
 
-interface IrFile : IrElement, IrDeclarationContainer {
+interface IrFile : IrElement, IrDeclarationContainer, IrSymbolOwner {
+    override val symbol: IrFileSymbol
+
     val fileEntry: SourceManager.FileEntry
     val fileAnnotations: MutableList<AnnotationDescriptor>
     val packageFragmentDescriptor: PackageFragmentDescriptor

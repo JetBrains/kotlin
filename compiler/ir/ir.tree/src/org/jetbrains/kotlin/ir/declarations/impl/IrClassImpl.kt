@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -28,8 +30,13 @@ class IrClassImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        override val descriptor: ClassDescriptor
+        override val descriptor: ClassDescriptor,
+        override val symbol: IrClassSymbol
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrClass {
+    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor) :
+            this(startOffset, endOffset, origin, descriptor,
+                 IrClassSymbolImpl(descriptor))
+
     constructor(
             startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
             members: List<IrDeclaration>

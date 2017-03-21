@@ -20,12 +20,19 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrConstructorImpl(
         startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin,
-        override val descriptor: ClassConstructorDescriptor
+        override val descriptor: ClassConstructorDescriptor,
+        override val symbol: IrConstructorSymbol
 ) : IrFunctionBase(startOffset, endOffset, origin), IrConstructor {
+    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassConstructorDescriptor) :
+            this(startOffset, endOffset, origin, descriptor,
+                 IrConstructorSymbolImpl(descriptor))
+
     constructor(
             startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassConstructorDescriptor,
             body: IrBody

@@ -18,8 +18,9 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 
-interface IrVariable : IrDeclaration {
+interface IrVariable : IrSymbolDeclaration<IrVariableSymbol> {
     override val descriptor: VariableDescriptor
 
     override val declarationKind: IrDeclarationKind

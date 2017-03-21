@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -26,8 +28,13 @@ class IrTypeParameterImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        override val descriptor: TypeParameterDescriptor
+        override val descriptor: TypeParameterDescriptor,
+        override val symbol: IrTypeParameterSymbol
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrTypeParameter {
+    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: TypeParameterDescriptor) :
+            this(startOffset, endOffset, origin, descriptor,
+                 IrTypeParameterSymbolImpl(descriptor))
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitTypeParameter(this, data)
 

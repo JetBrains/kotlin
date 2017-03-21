@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -27,8 +29,13 @@ class IrVariableImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        override val descriptor: VariableDescriptor
+        override val descriptor: VariableDescriptor,
+        override val symbol: IrVariableSymbol
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrVariable {
+    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: VariableDescriptor) :
+            this(startOffset, endOffset, origin, descriptor,
+                 IrVariableSymbolImpl(descriptor))
+
     constructor(
             startOffset: Int,
             endOffset: Int,

@@ -19,8 +19,9 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -29,8 +30,13 @@ class IrFieldImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        override val descriptor: PropertyDescriptor
+        override val descriptor: PropertyDescriptor,
+        override val symbol: IrFieldSymbol
 ): IrDeclarationBase(startOffset, endOffset, origin), IrField {
+    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: PropertyDescriptor) :
+            this(startOffset, endOffset, origin, descriptor,
+                 IrFieldSymbolImpl(descriptor))
+
     constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: PropertyDescriptor,
                 initializer: IrExpressionBody?
     ) : this(startOffset, endOffset, origin, descriptor) {

@@ -18,9 +18,10 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
-interface IrValueParameter : IrDeclaration {
+interface IrValueParameter : IrSymbolDeclaration<IrValueParameterSymbol> {
     override val declarationKind: IrDeclarationKind
         get() = IrDeclarationKind.VALUE_PARAMETER
 

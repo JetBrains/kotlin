@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -29,8 +31,13 @@ class IrValueParameterImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        override val descriptor: ParameterDescriptor
+        override val descriptor: ParameterDescriptor,
+        override val symbol: IrValueParameterSymbol
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrValueParameter {
+    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ParameterDescriptor) :
+            this(startOffset, endOffset, origin, descriptor,
+                 IrValueParameterSymbolImpl(descriptor))
+
     constructor(
             startOffset: Int,
             endOffset: Int,
@@ -48,6 +55,7 @@ class IrValueParameterImpl(
             descriptor: ParameterDescriptor,
             defaultValue: IrExpression
     ) : this(startOffset, endOffset, origin, descriptor, IrExpressionBodyImpl(defaultValue))
+
 
     override var defaultValue: IrExpressionBody? = null
 

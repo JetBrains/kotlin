@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
 interface IrFunction : IrDeclaration, IrTypeParametersContainer {
     override val descriptor: FunctionDescriptor
@@ -32,7 +33,7 @@ interface IrFunction : IrDeclaration, IrTypeParametersContainer {
 }
 
 
-interface IrSimpleFunction : IrFunction {
+interface IrSimpleFunction : IrFunction, IrSymbolDeclaration<IrSimpleFunctionSymbol> {
     override val declarationKind: IrDeclarationKind
         get() = IrDeclarationKind.FUNCTION
 }

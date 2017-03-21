@@ -16,10 +16,34 @@
 
 package org.jetbrains.kotlin.ir.symbols
 
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.declarations.*
 
 interface IrSymbol {
-    val annotations: MutableList<AnnotationDescriptor>
+    val owner : IrSymbolOwner
+    val descriptor: DeclarationDescriptor
 }
 
+interface IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolOwner> : IrSymbol{
+    override val owner: B
+    override val descriptor: D
 
+    fun bind(owner: B)
+}
+
+interface IrAnonymousInitializerSymbol : IrBindableSymbol<ClassDescriptor, IrAnonymousInitializer>
+interface IrClassSymbol : IrBindableSymbol<ClassDescriptor, IrClass>
+interface IrEnumEntrySymbol : IrBindableSymbol<ClassDescriptor, IrEnumEntry>
+interface IrFileSymbol : IrBindableSymbol<PackageFragmentDescriptor, IrFile>
+interface IrFieldSymbol : IrBindableSymbol<PropertyDescriptor, IrField>
+
+interface IrTypeParameterSymbol : IrBindableSymbol<TypeParameterDescriptor, IrTypeParameter>
+interface IrValueParameterSymbol : IrBindableSymbol<ParameterDescriptor, IrValueParameter>
+interface IrVariableSymbol : IrBindableSymbol<VariableDescriptor, IrVariable>
+
+interface IrFunctionSymbol : IrSymbol {
+    override val descriptor: FunctionDescriptor
+}
+
+interface IrConstructorSymbol : IrFunctionSymbol, IrBindableSymbol<ClassConstructorDescriptor, IrConstructor>
+interface IrSimpleFunctionSymbol : IrFunctionSymbol, IrBindableSymbol<FunctionDescriptor, IrSimpleFunction>
