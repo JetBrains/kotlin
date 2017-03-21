@@ -176,6 +176,15 @@ public open class NoWhenBranchMatchedException : RuntimeException {
     }
 }
 
+public open class UninitializedPropertyAccessException : RuntimeException {
+
+    constructor() : super() {
+    }
+
+    constructor(s: String) : super(s) {
+    }
+}
+
 public open class OutOfMemoryError : Error {
 
     constructor() : super() {

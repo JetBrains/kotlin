@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.konan.util.*
 
 enum class KonanPhase(val description: String,
-                      val prerequisite: Set<KonanPhase> = setOf<KonanPhase>(),
+                      vararg prerequisite: KonanPhase,
                       var enabled: Boolean = true, var verbose: Boolean = false) {
 
     /* */ FRONTEND("Frontend builds AST"),
@@ -14,27 +14,29 @@ enum class KonanPhase(val description: String,
     /* ... ... */ LOWER_INTEROP("Interop lowering"),
     /* ... ... */ LOWER_ENUMS("Enum classes lowering"),
     /* ... ... */ LOWER_DELEGATION("Delegation lowering"),
-    /* ... ... */ LOWER_INITIALIZERS("Initializers lowering", setOf(LOWER_ENUMS)),
-    /* ... ... */ LOWER_SHARED_VARIABLES("Shared Variable Lowering", setOf(LOWER_INITIALIZERS)),
-    /* ... ... */ LOWER_CALLABLES("Callable references Lowering", setOf(
-                        LOWER_INTEROP, LOWER_INITIALIZERS, LOWER_DELEGATION)),
-    /* ... ... */ LOWER_VARARG("Vararg lowering", setOf(LOWER_CALLABLES)),
-    /* ... ... */ LOWER_LOCAL_FUNCTIONS("Local Function Lowering", setOf(LOWER_SHARED_VARIABLES)),
-    /* ... ... */ LOWER_TAILREC("tailrec lowering", setOf(LOWER_LOCAL_FUNCTIONS)),
-    /* ... ... */ LOWER_DEFAULT_PARAMETER_EXTENT("Default Parameter Extent Lowering", setOf(
-                        LOWER_TAILREC, LOWER_ENUMS)),
-    /* ... ... */ LOWER_INNER_CLASSES("Inner classes lowering", setOf(LOWER_DEFAULT_PARAMETER_EXTENT)),
-    /* ... ... */ LOWER_BUILTIN_OPERATORS("BuiltIn Operators Lowering", setOf(
-                        LOWER_DEFAULT_PARAMETER_EXTENT)),
+    /* ... ... */ LOWER_INITIALIZERS("Initializers lowering", LOWER_ENUMS),
+    /* ... ... */ LOWER_SHARED_VARIABLES("Shared Variable Lowering", LOWER_INITIALIZERS),
+    /* ... ... */ LOWER_CALLABLES("Callable references Lowering",
+                        LOWER_INTEROP, LOWER_INITIALIZERS, LOWER_DELEGATION),
+    /* ... ... */ LOWER_VARARG("Vararg lowering", LOWER_CALLABLES),
+    /* ... ... */ LOWER_LOCAL_FUNCTIONS("Local Function Lowering", LOWER_SHARED_VARIABLES),
+    /* ... ... */ LOWER_TAILREC("tailrec lowering", LOWER_LOCAL_FUNCTIONS),
+    /* ... ... */ LOWER_DEFAULT_PARAMETER_EXTENT("Default Parameter Extent Lowering",
+                        LOWER_TAILREC, LOWER_ENUMS),
+    /* ... ... */ LOWER_INNER_CLASSES("Inner classes lowering", LOWER_DEFAULT_PARAMETER_EXTENT),
+    /* ... ... */ LOWER_LATEINIT("Lateinit properties lowering"),
+    /* ... ... */ LOWER_BUILTIN_OPERATORS("BuiltIn Operators Lowering", LOWER_DEFAULT_PARAMETER_EXTENT, LOWER_LATEINIT),
     /* ... ... */ LOWER_TYPE_OPERATORS("Type operators lowering"),
     /* ... ... */ BRIDGES_BUILDING("Bridges building"),
     /* ... ... */ LOWER_STRING_CONCAT("String concatenation lowering"),
-    /* ... ... */ AUTOBOX("Autoboxing of primitive types", setOf(BRIDGES_BUILDING)),
+    /* ... ... */ AUTOBOX("Autoboxing of primitive types", BRIDGES_BUILDING),
     /* ... */ BITCODE("LLVM BitCode Generation"),
     /* ... ... */ RTTI("RTTI Generation"),
     /* ... ... */ CODEGEN("Code Generation"),
     /* ... ... */ METADATOR("Metadata Generation"),
-    /* */ LINKER("Link Stage")
+    /* */ LINKER("Link Stage");
+
+    val prerequisite = prerequisite.toSet()
 }
 
 object KonanPhases {

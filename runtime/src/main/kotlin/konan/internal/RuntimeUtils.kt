@@ -24,6 +24,10 @@ fun ThrowNoWhenBranchMatchedException(): Nothing {
     throw NoWhenBranchMatchedException()
 }
 
+fun ThrowUninitializedPropertyAccessException(): Nothing {
+    throw UninitializedPropertyAccessException()
+}
+
 @ExportForCppRuntime
 internal fun TheEmptyString() = ""
 

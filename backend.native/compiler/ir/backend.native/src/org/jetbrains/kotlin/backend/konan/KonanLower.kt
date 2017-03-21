@@ -48,6 +48,9 @@ internal class KonanLower(val context: Context) {
             DefaultArgumentStubGenerator(context).runOnFilePostfix(irFile)
             DefaultParameterInjector(context).runOnFilePostfix(irFile)
         }
+        phaser.phase(KonanPhase.LOWER_LATEINIT) {
+            LateinitLowering(context).lower(irFile)
+        }
         phaser.phase(KonanPhase.LOWER_BUILTIN_OPERATORS) {
             BuiltinOperatorLowering(context).runOnFilePostfix(irFile)
         }
