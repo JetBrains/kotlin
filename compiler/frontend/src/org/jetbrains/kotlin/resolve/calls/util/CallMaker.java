@@ -201,9 +201,15 @@ public class CallMaker {
     public static Call makeCallWithExpressions(@NotNull KtElement callElement, @Nullable Receiver explicitReceiver,
                                                @Nullable ASTNode callOperationNode, @NotNull KtExpression calleeExpression,
                                                @NotNull List<KtExpression> argumentExpressions, @NotNull CallType callType) {
-        List<ValueArgument> arguments = new ArrayList<ValueArgument>(argumentExpressions.size());
-        for (KtExpression argumentExpression : argumentExpressions) {
-            arguments.add(makeValueArgument(argumentExpression, calleeExpression));
+        List<ValueArgument> arguments;
+        if (argumentExpressions.isEmpty()) {
+            arguments = Collections.emptyList();
+        }
+        else {
+            arguments = new ArrayList<ValueArgument>(argumentExpressions.size());
+            for (KtExpression argumentExpression : argumentExpressions) {
+                arguments.add(makeValueArgument(argumentExpression, calleeExpression));
+            }
         }
         return makeCall(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments, callType);
     }
