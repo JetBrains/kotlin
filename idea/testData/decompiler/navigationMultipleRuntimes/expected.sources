@@ -1,0 +1,6 @@
+ Collections.kt
+public interface <3>Map<K, out V> {
+ Primitives.kt
+public class <2><4><5>Int private constructor() : Number(), Comparable<Int> {
+ Sequence.kt
+public interface <1>Sequence<out T> {

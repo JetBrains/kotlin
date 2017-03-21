@@ -97,7 +97,7 @@ abstract class AbstractKtReference<T : KtElement>(element: T)
             return listOfNotNull(psiFacade.findPackage(fqName))
         }
         else {
-            return DescriptorToSourceUtilsIde.getAllDeclarations(expression.project, targetDescriptor)
+            return DescriptorToSourceUtilsIde.getAllDeclarations(expression.project, targetDescriptor, expression.resolveScope)
         }
     }
 
