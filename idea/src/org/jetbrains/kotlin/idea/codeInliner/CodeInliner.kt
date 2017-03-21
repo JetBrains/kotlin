@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.codeInliner
 
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
+import com.intellij.refactoring.rename.RenameProcessor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -26,11 +27,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
-import org.jetbrains.kotlin.idea.util.CommentSaver
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -40,6 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -95,6 +95,9 @@ class CodeInliner<TCallElement : KtElement>(
 
         processTypeParameterUsages()
 
+
+        val lexicalScope = callElement.parent.getResolutionScope(bindingContext)
+
         if (elementToBeReplaced is KtSafeQualifiedExpression) {
             wrapCodeForSafeCall(receiver!!, receiverType, elementToBeReplaced)
         }
@@ -127,12 +130,30 @@ class CodeInliner<TCallElement : KtElement>(
         }
 
         return replacementPerformer.doIt(postProcessing = { range ->
-            val newRange = postProcessInsertedCode(range)
+            val newRange = postProcessInsertedCode(range, lexicalScope)
             if (!newRange.isEmpty) {
                 commentSaver.restore(newRange)
             }
             newRange
         })
+    }
+
+    private fun renameDuplicates(declarations: List<KtNamedDeclaration>,
+                                 lexicalScope: LexicalScope) {
+
+        fun String.hasConflicts() = lexicalScope.getAllAccessibleVariables(Name.identifier(this)).any {
+            !it.isExtension && it.isVisible(lexicalScope.ownerDescriptor)
+        }
+
+        val validator = CollectingNameValidator { !it.hasConflicts() }
+        for (declaration in declarations) {
+            val oldName = declaration.name
+            if (oldName != null && oldName.hasConflicts()) {
+                val newName = KotlinNameSuggester.suggestNameByName(oldName, validator)
+                val renameProcessor = RenameProcessor(project, declaration, newName, false, false)
+                renameProcessor.run()
+            }
+        }
     }
 
     private fun processValueParameterUsages(): Collection<IntroduceValueForParameter> {
@@ -356,9 +377,13 @@ class CodeInliner<TCallElement : KtElement>(
         }
     }
 
-    private fun postProcessInsertedCode(range: PsiChildRange): PsiChildRange {
+    private fun postProcessInsertedCode(range: PsiChildRange, lexicalScope: LexicalScope?): PsiChildRange {
         val elements = range.filterIsInstance<KtElement>().toList()
         if (elements.isEmpty()) return PsiChildRange.EMPTY
+
+        lexicalScope?.let {
+            renameDuplicates(elements.dropLast(1).filterIsInstance<KtNamedDeclaration>(), it)
+        }
 
         elements.forEach {
             introduceNamedArguments(it)

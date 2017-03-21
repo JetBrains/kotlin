@@ -1,8 +1,7 @@
 class My {
     fun run() {
-        // foo1 should be here
-        val foo = 1 + 2
-        val foo = foo
+        val foo1 = 1 + 2
+        val foo = foo1
         System.out.println(foo)
     }
 
