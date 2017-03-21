@@ -909,7 +909,8 @@ class StubGenerator(
             return true
         }
 
-        return this.returnsRecord() ||
+        return this.isDefined ||
+                this.returnsRecord() ||
                 this.parameters.map { it.type }.any { it.unwrapTypedefs() is RecordType }
     }
 
