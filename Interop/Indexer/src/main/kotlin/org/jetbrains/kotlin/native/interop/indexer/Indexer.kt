@@ -53,11 +53,40 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
     private fun getStructDeclAt(cursor: CValue<CXCursor>): StructDeclImpl {
         val declId = getDeclarationId(cursor)
 
-        return structById.getOrPut(declId) {
+        val structDecl = structById.getOrPut(declId) {
             val cursorType = clang_getCursorType(cursor)
             val typeSpelling = clang_getTypeSpelling(cursorType).convertAndDispose()
 
             StructDeclImpl(typeSpelling)
+        }
+
+        if (structDecl.def == null) {
+            val definitionCursor = clang_getCursorDefinition(cursor)
+            if (clang_Cursor_isNull(definitionCursor) == 0) {
+                assert (clang_isCursorDefinition(definitionCursor) != 0)
+                createStructDef(structDecl, cursor)
+            }
+        }
+
+        return structDecl
+    }
+
+    private fun createStructDef(structDecl: StructDeclImpl, cursor: CValue<CXCursor>) {
+        val type = clang_getCursorType(cursor)
+        val size = clang_Type_getSizeOf(type)
+        val align = clang_Type_getAlignOf(type).toInt()
+        val hasNaturalLayout = structHasNaturalLayout(cursor)
+        val structDef = StructDefImpl(size, align, structDecl, hasNaturalLayout)
+        structDecl.def = structDef
+
+        visitChildren(cursor) { childCursor: CValue<CXCursor>, _: CValue<CXCursor> ->
+            if (clang_getCursorKind(childCursor) == CXCursorKind.CXCursor_FieldDecl) {
+                val name = clang_getCursorSpelling(childCursor).convertAndDispose()
+                val fieldType = convertCursorType(childCursor)
+                val offset = clang_Cursor_getOffsetOfField(childCursor)
+                structDef.fields.add(Field(name, fieldType, offset))
+            }
+            CXChildVisitResult.CXChildVisit_Continue
         }
     }
 
@@ -74,7 +103,21 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
 
             val baseType = convertType(clang_getEnumDeclIntegerType(cursor)) as PrimitiveType
 
-            EnumDefImpl(typeSpelling, baseType)
+            val enumDef = EnumDefImpl(typeSpelling, baseType)
+
+            visitChildren(cursor) { childCursor, _ ->
+                if (clang_getCursorKind(childCursor) == CXCursorKind.CXCursor_EnumConstantDecl) {
+                    val name = clang_getCursorSpelling(childCursor).convertAndDispose()
+                    val value = clang_getEnumConstantDeclValue(childCursor)
+
+                    val constant = EnumConstant(name, value, isExplicitlyDefined = !childCursor.isLeaf())
+                    enumDef.constants.add(constant)
+                }
+
+                CXChildVisitResult.CXChildVisit_Continue
+            }
+
+            enumDef
         }
     }
 
@@ -233,25 +276,8 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
         val entityName = entityInfo.name.value?.toKString()
         val kind = entityInfo.kind.value
         when (kind) {
-            CXIdxEntity_Field -> {
-                val name = entityName!!
-                val type = convertCursorType(cursor)
-                val offset = clang_Cursor_getOffsetOfField(cursor)
-
-                val container = info.semanticContainer.pointed!!
-                val structDef = getStructDeclAt(container.cursor.readValue()).def!!
-                structDef.fields.add(Field(name, type, offset))
-            }
-
             CXIdxEntity_Struct, CXIdxEntity_Union -> {
-                val structDecl = getStructDeclAt(cursor)
-                if (clang_isCursorDefinition(cursor) != 0) {
-                    val type = clang_getCursorType(cursor)
-                    val size = clang_Type_getSizeOf(type)
-                    val align = clang_Type_getAlignOf(type).toInt()
-                    val hasNaturalLayout = structHasNaturalLayout(cursor)
-                    structDecl.def = StructDefImpl(size, align, structDecl, hasNaturalLayout)
-                }
+                getStructDeclAt(cursor)
             }
 
             CXIdxEntity_Function -> {
@@ -279,23 +305,6 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
 
             CXIdxEntity_Enum -> {
                 getEnumDefAt(cursor)
-            }
-
-            CXIdxEntity_EnumConstant -> {
-                val container = info.semanticContainer.pointed!!
-                val name = entityName!!
-                val value = clang_getEnumConstantDeclValue(info.cursor.readValue())
-
-                val constants = getEnumDefAt(container.cursor.readValue()).constants
-                val existingConstant = constants.find { it.name == name }
-                if (existingConstant == null) {
-                    val constant = EnumConstant(name, value, isExplicitlyDefined = !cursor.isLeaf())
-                    constants.add(constant)
-                } else {
-                    // in some cases Clang may index the same definition multiple times; ignore redeclaration
-                    // TODO: implement the same fix for structs
-                    assert (existingConstant.value == value)
-                }
             }
         }
     }

@@ -581,7 +581,9 @@ class StubGenerator(
             out("")
             out("companion object : Type(${def.size}, ${def.align})") // FIXME: align
             out("")
-            def.fields.forEach { field ->
+            for (field in def.fields) {
+                if (field.name.isEmpty()) continue
+
                 try {
                     if (field.offset < 0) throw NotImplementedError();
                     assert(field.offset % 8 == 0L)
