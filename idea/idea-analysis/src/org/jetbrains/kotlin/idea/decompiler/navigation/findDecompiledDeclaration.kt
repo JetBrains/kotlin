@@ -21,6 +21,7 @@ import com.intellij.psi.search.EverythingGlobalScope
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.BinaryModuleInfo
@@ -46,7 +47,9 @@ import java.util.*
 
 fun findDecompiledDeclaration(
         project: Project,
-        referencedDescriptor: DeclarationDescriptor
+        referencedDescriptor: DeclarationDescriptor,
+        // TODO: should not require explicitly specified scope to search for builtIns, use SourceElement to provide such information
+        builtInsSearchScope: GlobalSearchScope?
 ): KtDeclaration? {
     if (ErrorUtils.isError(referencedDescriptor)) return null
     if (isLocal(referencedDescriptor)) return null
@@ -54,11 +57,26 @@ fun findDecompiledDeclaration(
 
     val binaryInfo = referencedDescriptor.module.getCapability(ModuleInfo.Capability) as? BinaryModuleInfo
 
-    val scope = binaryInfo?.binariesScope() ?:
-                // TODO: can't return null right now, have to deal with builtins
-                KotlinSourceFilterScope.libraryClassFiles(EverythingGlobalScope(project), project)
+    binaryInfo?.binariesScope()?.let {
+        return findInScope(referencedDescriptor, it)
+    }
+    if (KotlinBuiltIns.isBuiltIn(referencedDescriptor)) {
+        // builtin module does not contain information about it's origin
+        return builtInsSearchScope?.let { findInScope(referencedDescriptor, it) }
+               // fallback on searching everywhere since builtIns are accessible from any context
+               ?: findInScope(referencedDescriptor, GlobalSearchScope.allScope(project))
+               ?: findInScope(referencedDescriptor, EverythingGlobalScope(project))
+    }
+    return null
+}
 
-    val decompiledFiles = findDecompiledFilesForDescriptor(project, referencedDescriptor, scope)
+private fun findInScope(referencedDescriptor: DeclarationDescriptor, scope: GlobalSearchScope): KtDeclaration? {
+    val project = scope.project ?: return null
+    val decompiledFiles = findCandidateDeclarationsInIndex(
+            referencedDescriptor, KotlinSourceFilterScope.libraryClassFiles(scope, project), project
+    ).mapNotNullTo(LinkedHashSet()) {
+        it?.containingFile as? KtDecompiledFile
+    }
 
     return decompiledFiles.asSequence().mapNotNull {
         file ->
@@ -75,20 +93,11 @@ private fun isLocal(descriptor: DeclarationDescriptor): Boolean {
     }
 }
 
-private fun findDecompiledFilesForDescriptor(
-        project: Project,
-        referencedDescriptor: DeclarationDescriptor,
-        scope: GlobalSearchScope
-): Collection<KtDecompiledFile> {
-    return findCandidateDeclarationsInIndex(project, referencedDescriptor, scope).mapNotNullTo(LinkedHashSet()) {
-        it?.containingFile as? KtDecompiledFile
-    }
-}
 
 private fun findCandidateDeclarationsInIndex(
-        project: Project,
         referencedDescriptor: DeclarationDescriptor,
-        scope: GlobalSearchScope
+        scope: GlobalSearchScope,
+        project: Project
 ): Collection<KtDeclaration?> {
     val containingClass = DescriptorUtils.getParentOfType(referencedDescriptor, ClassDescriptor::class.java, false)
     if (containingClass != null) {
