@@ -16,8 +16,10 @@ kotlinx.android.synthetic.main
 kotlinx.android.synthetic.main.test
 
     public val android.app.Activity.textView1: android.view.View!
+    public val android.app.Dialog.textView1: android.view.View!
     public val android.app.Fragment.textView1: android.view.View!
     public val android.app.Activity.textView2: android.widget.TextView!
+    public val android.app.Dialog.textView2: android.widget.TextView!
     public val android.app.Fragment.textView2: android.widget.TextView!
 
 

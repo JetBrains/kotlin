@@ -63,7 +63,7 @@ class AndroidSyntheticPackageFragmentDescriptor(
                         val resolvedWidget = resource.resolve(module)
                         if (resolvedWidget != null) {
                             for (receiver in widgetReceivers) {
-                                properties += genPropertyForWidget(packageFragmentDescriptor, receiver, resolvedWidget, context)
+                                properties += genPropertyForWidget(packageFragmentDescriptor, receiver.type, resolvedWidget, context)
                             }
                         }
                     }

@@ -60,6 +60,12 @@ public class AndroidBytecodeShapeTestGenerated extends AbstractAndroidBytecodeSh
         doTest(fileName);
     }
 
+    @TestMetadata("dialog")
+    public void testDialog() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/bytecodeShape/dialog/");
+        doTest(fileName);
+    }
+
     @TestMetadata("extensionFunctions")
     public void testExtensionFunctions() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("plugins/android-extensions/android-extensions-compiler/testData/codegen/bytecodeShape/extensionFunctions/");

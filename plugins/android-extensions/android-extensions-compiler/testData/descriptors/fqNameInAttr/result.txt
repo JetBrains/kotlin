@@ -16,6 +16,7 @@ kotlinx.android.synthetic.main
 kotlinx.android.synthetic.main.test
 
     public val android.app.Activity.MyKeyboardView: android.inputmethodservice.KeyboardView!
+    public val android.app.Dialog.MyKeyboardView: android.inputmethodservice.KeyboardView!
     public val android.app.Fragment.MyKeyboardView: android.inputmethodservice.KeyboardView!
 
 

@@ -16,12 +16,16 @@ kotlinx.android.synthetic.main
 kotlinx.android.synthetic.main.get
 
     public val android.app.Activity.item_detail_container: android.widget.FrameLayout!
+    public val android.app.Dialog.item_detail_container: android.widget.FrameLayout!
     public val android.app.Fragment.item_detail_container: android.widget.FrameLayout!
     public val android.app.Activity.login: android.widget.Button!
+    public val android.app.Dialog.login: android.widget.Button!
     public val android.app.Fragment.login: android.widget.Button!
     public val android.app.Activity.password: android.widget.EditText!
+    public val android.app.Dialog.password: android.widget.EditText!
     public val android.app.Fragment.password: android.widget.EditText!
     public val android.app.Activity.textView1: android.widget.TextView!
+    public val android.app.Dialog.textView1: android.widget.TextView!
     public val android.app.Fragment.textView1: android.widget.TextView!
 
 

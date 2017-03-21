@@ -45,6 +45,7 @@ object AndroidConst {
 
     val ACTIVITY_FQNAME = "android.app.Activity"
     val FRAGMENT_FQNAME = "android.app.Fragment"
+    val DIALOG_FQNAME = "android.app.Dialog"
     val SUPPORT_V4_PACKAGE = "android.support.v4"
     val SUPPORT_FRAGMENT_FQNAME = "$SUPPORT_V4_PACKAGE.app.Fragment"
     val SUPPORT_FRAGMENT_ACTIVITY_FQNAME = "$SUPPORT_V4_PACKAGE.app.FragmentActivity"

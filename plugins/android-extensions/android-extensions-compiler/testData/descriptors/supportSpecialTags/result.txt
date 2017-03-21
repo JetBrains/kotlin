@@ -18,10 +18,13 @@ kotlinx.android.synthetic.main.test
     public val android.app.Activity.fragmentTag: android.app.Fragment!
     public val android.app.Fragment.fragmentTag: android.app.Fragment!
     public val android.app.Activity.`fun`: android.widget.TextView!
+    public val android.app.Dialog.`fun`: android.widget.TextView!
     public val android.app.Fragment.`fun`: android.widget.TextView!
     public val android.app.Activity.includeTag: android.view.View!
+    public val android.app.Dialog.includeTag: android.view.View!
     public val android.app.Fragment.includeTag: android.view.View!
     public val android.app.Activity.set: android.widget.Button!
+    public val android.app.Dialog.set: android.widget.Button!
     public val android.app.Fragment.set: android.widget.Button!
 
 

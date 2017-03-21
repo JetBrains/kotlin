@@ -16,6 +16,7 @@ kotlinx.android.synthetic.main
 kotlinx.android.synthetic.main.test
 
     public val android.app.Activity.stub: android.view.ViewStub!
+    public val android.app.Dialog.stub: android.view.ViewStub!
     public val android.app.Fragment.stub: android.view.ViewStub!
 
 

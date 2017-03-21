@@ -48,6 +48,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 enum class AndroidClassType(className: String, val supportsCache: Boolean = false, val fragment: Boolean = false) {
     ACTIVITY(AndroidConst.ACTIVITY_FQNAME, supportsCache = true),
     FRAGMENT(AndroidConst.FRAGMENT_FQNAME, supportsCache = true, fragment = true),
+    DIALOG(AndroidConst.DIALOG_FQNAME, supportsCache = false),
     SUPPORT_FRAGMENT_ACTIVITY(AndroidConst.SUPPORT_FRAGMENT_ACTIVITY_FQNAME, supportsCache = true),
     SUPPORT_FRAGMENT(AndroidConst.SUPPORT_FRAGMENT_FQNAME, supportsCache = true, fragment = true),
     VIEW(AndroidConst.VIEW_FQNAME),
@@ -60,6 +61,7 @@ enum class AndroidClassType(className: String, val supportsCache: Boolean = fals
             fun getClassTypeInternal(name: String): AndroidClassType? = when (name) {
                 AndroidConst.ACTIVITY_FQNAME -> AndroidClassType.ACTIVITY
                 AndroidConst.FRAGMENT_FQNAME -> AndroidClassType.FRAGMENT
+                AndroidConst.DIALOG_FQNAME -> AndroidClassType.DIALOG
                 AndroidConst.SUPPORT_FRAGMENT_ACTIVITY_FQNAME -> AndroidClassType.SUPPORT_FRAGMENT_ACTIVITY
                 AndroidConst.SUPPORT_FRAGMENT_FQNAME -> AndroidClassType.SUPPORT_FRAGMENT
                 AndroidConst.VIEW_FQNAME -> AndroidClassType.VIEW
@@ -194,7 +196,7 @@ class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
             }
             else {
                 when (androidClassType) {
-                    AndroidClassType.ACTIVITY, AndroidClassType.SUPPORT_FRAGMENT_ACTIVITY, AndroidClassType.VIEW -> {
+                    AndroidClassType.ACTIVITY, AndroidClassType.SUPPORT_FRAGMENT_ACTIVITY, AndroidClassType.VIEW, AndroidClassType.DIALOG -> {
                         receiver.put(Type.getType("L${androidClassType.internalClassName};"), v)
                         getResourceId(v)
                         v.invokevirtual(androidClassType.internalClassName, "findViewById", "(I)Landroid/view/View;", false)
@@ -370,7 +372,7 @@ class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
         // Resolve View via findViewById if not in cache
         iv.load(0, classType)
         when (androidClassType) {
-            AndroidClassType.ACTIVITY, AndroidClassType.SUPPORT_FRAGMENT_ACTIVITY, AndroidClassType.VIEW -> {
+            AndroidClassType.ACTIVITY, AndroidClassType.SUPPORT_FRAGMENT_ACTIVITY, AndroidClassType.VIEW, AndroidClassType.DIALOG -> {
                 loadId()
                 iv.invokevirtual(className, "findViewById", "(I)Landroid/view/View;", false)
             }

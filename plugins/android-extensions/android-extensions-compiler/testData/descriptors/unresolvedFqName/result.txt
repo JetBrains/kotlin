@@ -16,6 +16,7 @@ kotlinx.android.synthetic.main
 kotlinx.android.synthetic.main.test
 
     public val android.app.Activity.MyView: android.view.View!
+    public val android.app.Dialog.MyView: android.view.View!
     public val android.app.Fragment.MyView: android.view.View!
 
 

@@ -41,6 +41,7 @@ class LazySyntheticElementResolveContext(private val module: ModuleDescriptor, s
         val viewDescriptor = find(AndroidConst.VIEW_FQNAME) ?: return SyntheticElementResolveContext.ERROR_CONTEXT
         val activityDescriptor = find(AndroidConst.ACTIVITY_FQNAME) ?: return SyntheticElementResolveContext.ERROR_CONTEXT
         val fragmentDescriptor = find(AndroidConst.FRAGMENT_FQNAME)
+        val dialogDescriptor = find(AndroidConst.DIALOG_FQNAME) ?: return SyntheticElementResolveContext.ERROR_CONTEXT
         val supportActivityDescriptor = find(AndroidConst.SUPPORT_FRAGMENT_ACTIVITY_FQNAME)
         val supportFragmentDescriptor = find(AndroidConst.SUPPORT_FRAGMENT_FQNAME)
 
@@ -48,6 +49,7 @@ class LazySyntheticElementResolveContext(private val module: ModuleDescriptor, s
                 viewDescriptor.defaultType,
                 activityDescriptor.defaultType,
                 fragmentDescriptor?.defaultType,
+                dialogDescriptor.defaultType,
                 supportActivityDescriptor?.defaultType,
                 supportFragmentDescriptor?.defaultType)
     }
@@ -57,18 +59,20 @@ internal class SyntheticElementResolveContext(
         val viewType: SimpleType,
         val activityType: SimpleType,
         val fragmentType: SimpleType?,
+        val dialogType: SimpleType,
         val supportActivityType: SimpleType?,
         val supportFragmentType: SimpleType?) {
     companion object {
         private fun errorType() = ErrorUtils.createErrorType("")
-        val ERROR_CONTEXT = SyntheticElementResolveContext(errorType(), errorType(), null, null, null)
+        val ERROR_CONTEXT = SyntheticElementResolveContext(errorType(), errorType(), null, errorType(), null, null)
     }
 
     private val widgetReceivers by lazy {
-        val receivers = ArrayList<KotlinType>(3)
-        receivers += activityType
-        fragmentType?.let { receivers += it }
-        supportFragmentType?.let { receivers += it }
+        val receivers = ArrayList<WidgetReceiver>(4)
+        receivers += WidgetReceiver(activityType, mayHaveCache = true)
+        receivers += WidgetReceiver(dialogType, mayHaveCache = false)
+        fragmentType?.let { receivers += WidgetReceiver(it, mayHaveCache = true) }
+        supportFragmentType?.let { receivers += WidgetReceiver(it, mayHaveCache = true) }
         receivers
     }
 
@@ -88,8 +92,11 @@ internal class SyntheticElementResolveContext(
         }
     }
 
-    fun getWidgetReceivers(forView: Boolean): List<KotlinType> {
-        if (forView) return listOf(viewType)
+    fun getWidgetReceivers(forView: Boolean): List<WidgetReceiver> {
+        if (forView) return listOf(WidgetReceiver(viewType, mayHaveCache = false))
         return widgetReceivers
     }
+
 }
+
+class WidgetReceiver(val type: SimpleType, val mayHaveCache: Boolean)
