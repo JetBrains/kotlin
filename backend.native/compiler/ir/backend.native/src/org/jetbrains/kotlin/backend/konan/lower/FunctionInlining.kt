@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 //-----------------------------------------------------------------------------//
@@ -262,6 +262,46 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
             return IrSetVariableImpl(startOffset, endOffset, descriptor, value, origin)     // Create SetVariable expression for the new descriptor.
         }
+
+        //---------------------------------------------------------------------//
+
+        override fun visitCall(expression: IrCall): IrExpression {
+
+            val irCall = super.visitCall(expression) as IrCall
+            if (irCall !is IrCallImpl) return irCall
+
+            val oldTypeArguments = (irCall as IrMemberAccessExpressionBase).typeArguments
+
+            val substitutionContext = typeArgsMap!!.entries.associate {
+                    (typeParameter, typeArgument) ->
+                    typeParameter.typeConstructor to TypeProjectionImpl(typeArgument)
+                }
+            val typeSubstitutor = TypeSubstitutor.create(substitutionContext)
+
+            val newTypeArguments = oldTypeArguments!!.map {
+                val typeParameterDescriptor = it.key
+                val oldTypeArgument         = it.value
+                val newTypeArgument         = typeSubstitutor.substitute(oldTypeArgument, Variance.INVARIANT) ?: oldTypeArgument
+                typeParameterDescriptor to newTypeArgument
+            }.toMap()
+
+            val descriptor      = irCall.descriptor
+            val type            = typeSubstitutor.substitute(irCall.type, Variance.INVARIANT) ?: irCall.type
+            val startOffset     = irCall.startOffset
+            val endOffset       = irCall.endOffset
+            val origin          = irCall.origin
+            val superQualifier  = irCall.superQualifier
+
+            return IrCallImpl(startOffset, endOffset, type, descriptor, newTypeArguments, origin, superQualifier)
+                .apply {
+                    descriptor.valueParameters.forEach {
+                        val valueArgument = irCall.getValueArgument(it)
+                        putValueArgument(it.index, valueArgument)
+                    }
+                    extensionReceiver = irCall.extensionReceiver
+                    dispatchReceiver  = irCall.dispatchReceiver
+                }
+        }
     }
 
     //-------------------------------------------------------------------------//
@@ -369,21 +409,22 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 class InlineCopyIr() : DeepCopyIrTree() {
 
     override fun visitBlock(expression: IrBlock): IrBlock {
+        return when(expression) {
+            is IrInlineFunctionBody ->
+                IrInlineFunctionBody(
+                    expression.startOffset, expression.endOffset,
+                    expression.type,
+                    mapStatementOrigin(expression.origin),
+                    expression.statements.map { it.transform(this, null) }
+                )
 
-        if (expression is IrInlineFunctionBody)
-            return IrInlineFunctionBody(
-                expression.startOffset, expression.endOffset,
-                expression.type,
-                mapStatementOrigin(expression.origin),
-                expression.statements.map { it.transform(this, null) }
-            )
-
-        return IrBlockImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type,
-            mapStatementOrigin(expression.origin),
-            expression.statements.map { it.transform(this, null) }
-        )
+            else -> IrBlockImpl(
+                    expression.startOffset, expression.endOffset,
+                    expression.type,
+                    mapStatementOrigin(expression.origin),
+                    expression.statements.map { it.transform(this, null) }
+                )
+        }
     }
 }
 
