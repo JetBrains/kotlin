@@ -70,7 +70,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             with(configuration) {
 
                 put(NOSTDLIB, arguments.nostdlib)
-                put(COMPILE_AS_STDLIB, arguments.compileAsStdlib)
                 put(NOLINK, arguments.nolink)
                 put(NOMAIN, arguments.nomain)
                 put(LIBRARY_FILES,

@@ -38,9 +38,6 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "nostdlib", description = "Don't link with stdlib")
     public boolean nostdlib;
 
-    @Argument(value = "compile_as_stdlib", description = "Compile the module as stdlib")
-    public boolean compileAsStdlib;
-
     @Argument(value = "opt", description = "Enable optimizations during compilation")
     public boolean optimization;
 
@@ -48,46 +45,49 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("<target>")
     public String target;
 
-    @Argument(value = "list_targets", description = "List available hardware targets")
+    @Argument(value = "enable_assertions", alias = "ea", description = "Enable runtime assertions in generated code")
+    public boolean enableAssertions;
+
+    // The rest of the options are only interesting for developers.
+    // Make sure to prepend them with double dash.
+
+    @Argument(value = "list_targets", prefix = "--", description = "List available hardware targets")
     public boolean listTargets;
 
-    @Argument(value = "print_ir", description = "Print IR")
+    @Argument(value = "print_ir", prefix = "--", description = "Print IR")
     public boolean printIr;
 
-    @Argument(value = "print_descriptors", description = "Print descriptor tree")
+    @Argument(value = "print_descriptors", prefix = "--", description = "Print descriptor tree")
     public boolean printDescriptors;
 
-    @Argument(value = "print_bitcode", description = "Print llvm bitcode")
+    @Argument(value = "print_bitcode", prefix = "--", description = "Print llvm bitcode")
     public boolean printBitCode;
 
-    @Argument(value = "verify_ir", description = "Verify IR")
+    @Argument(value = "verify_ir", prefix = "--", description = "Verify IR")
     public boolean verifyIr;
 
-    @Argument(value = "verify_descriptors", description = "Verify descriptor tree")
+    @Argument(value = "verify_descriptors", prefix = "--", description = "Verify descriptor tree")
     public boolean verifyDescriptors;
 
-    @Argument(value = "verify_bitcode", description = "Verify llvm bitcode after each method")
+    @Argument(value = "verify_bitcode", prefix = "--", description = "Verify llvm bitcode after each method")
     public boolean verifyBitCode;
 
-    @Argument(value = "enable", description = "Enable backend phase")
+    @Argument(value = "enable", prefix = "--", description = "Enable backend phase")
     @ValueDescription("<Phase>")
     public String[] enablePhases;
 
-    @Argument(value = "disable", description = "Disable backend phase")
+    @Argument(value = "disable", prefix = "--", description = "Disable backend phase")
     @ValueDescription("<Phase>")
     public String[] disablePhases;
 
-    @Argument(value = "verbose", description = "Trace phase execution")
+    @Argument(value = "verbose", prefix = "--", description = "Trace phase execution")
     @ValueDescription("<Phase>")
     public String[] verbosePhases;
 
-    @Argument(value = "list", description = "List all backend phases")
+    @Argument(value = "list", prefix = "--", description = "List all backend phases")
     public boolean listPhases;
 
-    @Argument(value = "time", description = "Report execution time for compiler phases")
+    @Argument(value = "time", prefix = "--", description = "Report execution time for compiler phases")
     public boolean timePhases;
-
-    @Argument(value = "enable_assertions", alias = "ea", description = "Enable runtime assertions in generated code")
-    public boolean enableAssertions;
 }
 

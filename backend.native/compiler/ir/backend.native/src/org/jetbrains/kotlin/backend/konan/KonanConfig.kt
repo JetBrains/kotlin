@@ -12,8 +12,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val distribution = Distribution(configuration)
 
-    internal val compileAsStdlib = configuration.get(KonanConfigKeys.COMPILE_AS_STDLIB) ?: false
-
     internal val libraries: List<String>
         get() {
             val fromCommandLine = configuration.getList(KonanConfigKeys.LIBRARY_FILES)

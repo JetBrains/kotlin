@@ -29,11 +29,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProvid
 
 object TopDownAnalyzerFacadeForKonan {
     fun analyzeFiles(files: Collection<KtFile>, config: KonanConfig): AnalysisResult {
-        val moduleName = if (config.compileAsStdlib) {
-            STDLIB_MODULE_NAME
-        } else {
-            Name.special("<${config.moduleId}>")
-        }
+        val moduleName = Name.special("<${config.moduleId}>") 
 
         val projectContext = ProjectContext(config.project)
         val builtIns = KonanBuiltIns(projectContext.storageManager)
@@ -41,7 +37,6 @@ object TopDownAnalyzerFacadeForKonan {
 
         val module = context.module
         builtIns.builtInsModule = module
-        assert (module.isStdlib() == config.compileAsStdlib)
 
         if (!module.isStdlib()) {
             context.setDependencies(listOf(module) + config.moduleDescriptors)
