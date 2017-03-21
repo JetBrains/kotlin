@@ -7,6 +7,5 @@ fun foo() {
         bar(t)
     }
 
-    // TODO: should be available
     <caret>local()
 }
