@@ -22,10 +22,7 @@ import org.junit.Assert
 import org.junit.Test
 import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
-import javax.script.Invocable
-import javax.script.ScriptEngine
-import javax.script.ScriptEngineManager
-import javax.script.SimpleBindings
+import javax.script.*
 
 class KotlinJsr223LocalScriptEngineIT {
 
@@ -94,6 +91,41 @@ obj
 //        }
         val res3 = invocator!!.invokeMethod(res1, "fn1", 3)
         Assert.assertEquals(6, res3)
+    }
+
+    @Test
+    fun testSimpleCompilable() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts") as KotlinJsr223JvmLocalScriptEngine
+        val comp1 = engine.compile("val x = 3")
+        val comp2 = engine.compile("x + 2")
+        val res1 = comp1.eval()
+        Assert.assertNull(res1)
+        val res2 = comp2.eval()
+        Assert.assertEquals(5, res2)
+    }
+
+    @Test
+    fun testMultipleCompilable() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts") as KotlinJsr223JvmLocalScriptEngine
+        val compiled1 = engine.compile("""listOf(1,2,3).joinToString(",")""")
+        val compiled2 = engine.compile("""val x = bindings["boundValue"] as Int + bindings["z"] as Int""")
+        val compiled3 = engine.compile("""x""")
+
+        Assert.assertEquals("1,2,3", compiled1.eval())
+        Assert.assertEquals("1,2,3", compiled1.eval())
+        Assert.assertEquals("1,2,3", compiled1.eval())
+        Assert.assertEquals("1,2,3", compiled1.eval())
+
+        engine.getBindings(ScriptContext.ENGINE_SCOPE).apply {
+            put("boundValue", 100)
+            put("z", 33)
+        }
+
+        compiled2.eval()
+
+        Assert.assertEquals(133, compiled3.eval())
+        Assert.assertEquals(133, compiled3.eval())
+        Assert.assertEquals(133, compiled3.eval())
     }
 
     @Test
