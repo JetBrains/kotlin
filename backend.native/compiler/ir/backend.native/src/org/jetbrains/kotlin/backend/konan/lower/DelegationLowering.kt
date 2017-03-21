@@ -28,15 +28,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.*
 
 internal class PropertyDelegationLowering(val context: Context) : FileLoweringPass {
-    private val genericKProperty0ImplType = context.reflectionTypes.kProperty0Impl
-    private val genericKLocalDelegatedPropertyImplType = context.reflectionTypes.kLocalDelegatedPropertyImpl
-    private val genericKProperty1ImplType = context.reflectionTypes.kProperty1Impl
-    private val genericKProperty2ImplType = context.reflectionTypes.kProperty2Impl
-    private val genericKMutableProperty0ImplType = context.reflectionTypes.kMutableProperty0Impl
-    private val genericKMutableProperty1ImplType = context.reflectionTypes.kMutableProperty1Impl
-    private val genericKMutableProperty2ImplType = context.reflectionTypes.kMutableProperty2Impl
-    private val genericKLocalDelegatedMutablePropertyImplType = context.reflectionTypes.kLocalDelegatedMutablePropertyImpl
-
+    val reflectionTypes = context.reflectionTypes
     private val kotlinPackage = context.irModule!!.descriptor.getPackage(FqName("kotlin"))
     private val genericArrayType = kotlinPackage.memberScope.getContributedClassifier(Name.identifier("Array"), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
 
@@ -48,22 +40,22 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
                 if (isLocal) {
                     assert(receiverTypes.isEmpty(), { "Local delegated property cannot have explicit receiver" })
                     when {
-                        isMutable -> genericKLocalDelegatedMutablePropertyImplType
-                        else -> genericKLocalDelegatedPropertyImplType
+                        isMutable -> reflectionTypes.kLocalDelegatedMutablePropertyImpl
+                        else -> reflectionTypes.kLocalDelegatedPropertyImpl
                     }
                 } else {
                     when (receiverTypes.size) {
                         0 -> when {
-                            isMutable -> genericKMutableProperty0ImplType
-                            else -> genericKProperty0ImplType
+                            isMutable -> reflectionTypes.kMutableProperty0Impl
+                            else -> reflectionTypes.kProperty0Impl
                         }
                         1 -> when {
-                            isMutable -> genericKMutableProperty1ImplType
-                            else -> genericKProperty1ImplType
+                            isMutable -> reflectionTypes.kMutableProperty1Impl
+                            else -> reflectionTypes.kProperty1Impl
                         }
                         2 -> when {
-                            isMutable -> genericKMutableProperty2ImplType
-                            else -> genericKProperty2ImplType
+                            isMutable -> reflectionTypes.kMutableProperty2Impl
+                            else -> reflectionTypes.kProperty2Impl
                         }
                         else -> throw AssertionError("More than 2 receivers is not allowed")
                     }
@@ -85,7 +77,7 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
         val arrayItemGetter = genericArrayType.unsubstitutedMemberScope.getContributedFunctions(Name.identifier("get"),
                 NoLookupLocation.FROM_BACKEND).single()
         val typeParameterT = genericArrayType.declaredTypeParameters[0]
-        val kPropertyImplType = genericKProperty1ImplType.replace(context.builtIns.anyType, context.builtIns.anyType)
+        val kPropertyImplType = reflectionTypes.kProperty1Impl.replace(context.builtIns.anyType, context.builtIns.anyType)
         val typeSubstitutor = TypeSubstitutor.create(mapOf(typeParameterT.typeConstructor to TypeProjectionImpl(kPropertyImplType)))
         val substitutedArrayItemGetter = arrayItemGetter.substitute(typeSubstitutor)!!
 
@@ -178,7 +170,7 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
         }
 
         val setterCallableReference = propertyDescriptor.setter.let {
-            if (it == null || isLocal) null
+            if (it == null || isLocal || !isKMutablePropertyType(expression.type)) null
             else {
                 val setterKFunctionType = context.reflectionTypes.getKFunctionType(
                         annotations = Annotations.EMPTY,
@@ -206,6 +198,18 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
                 putValueArgument(2, setterCallableReference)
         }
         return initializer
+    }
+
+    private fun isKMutablePropertyType(type: KotlinType): Boolean {
+        val arguments = type.arguments
+        val expectedClassDescriptor = when (arguments.size) {
+            0 -> return false
+            1 -> reflectionTypes.kMutableProperty0
+            2 -> reflectionTypes.kMutableProperty1
+            3 -> reflectionTypes.kMutableProperty2
+            else -> throw AssertionError("More than 2 receivers is not allowed")
+        }
+        return type == expectedClassDescriptor.defaultType.replace(arguments)
     }
 
     private object DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION :
