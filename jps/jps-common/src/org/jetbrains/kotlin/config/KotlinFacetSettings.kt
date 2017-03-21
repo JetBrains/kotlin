@@ -143,7 +143,8 @@ fun TargetPlatformKind<*>.createCompilerArguments(): CommonCompilerArguments {
 }
 
 interface KotlinFacetSettingsProvider {
-    fun getSettings(module: Module): KotlinFacetSettings
+    fun getSettings(module: Module): KotlinFacetSettings?
+    fun getInitializedSettings(module: Module): KotlinFacetSettings
 
     companion object {
         fun getInstance(project: Project) = ServiceManager.getService(project, KotlinFacetSettingsProvider::class.java)!!
