@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.native.interop.indexer.buildNativeIndex
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.util.*
+import kotlin.reflect.KFunction
 
 fun main(args: Array<String>) {
     val konanHome = System.getProperty("konan.home")!!
@@ -116,7 +117,20 @@ private fun runCmd(command: Array<String>, workDir: File, verbose: Boolean = fal
                 .runExpectingSuccess()
 }
 
-private fun Properties.defaultCompilerOpts(target: String, dependencies: String): List<String> {
+private fun maybeExecuteHelper(dependenciesRoot: String, propertiesFile: String, dependencies: List<String>) {
+    try {
+        val kClass = Class.forName("org.jetbrains.kotlin.konan.InteropHelper0").kotlin
+        val ctor = kClass.constructors.single() as KFunction<Runnable>
+        val result = ctor.call(dependenciesRoot, propertiesFile, dependencies)
+        result.run()
+    } catch (notFound: ClassNotFoundException) {
+        // Just ignore, no helper.
+    } catch (e: Throwable) {
+        throw IllegalStateException("Cannot download dependencies.", e)
+    }
+}
+
+private fun Properties.defaultCompilerOpts(target: String, dependencies: String, konanFileName: String): List<String> {
 
     val hostSysRootDir = this.getOsSpecific("sysRoot", target)!!
     val hostSysRoot = "$dependencies/$hostSysRootDir"
@@ -126,6 +140,12 @@ private fun Properties.defaultCompilerOpts(target: String, dependencies: String)
     val llvmHomeDir = this.getOsSpecific("llvmHome", target)!!
     val llvmHome = "$dependencies/$llvmHomeDir"
     val llvmVersion = this.getProperty("llvmVersion")!!
+
+    val dependencyList = mutableListOf<String>(sysRoot, targetSysRoot, llvmHome)
+    if (target == "linux") {
+        dependencyList.add("$dependencies/${getOsSpecific("gccToolChain", target)!!}")
+    }
+    maybeExecuteHelper(dependencies, konanFileName, dependencyList)
 
     // StubGenerator passes the arguments to libclang which 
     // works not exactly the same way as the clang binary and 
@@ -242,7 +262,7 @@ private fun processLib(konanHome: String,
     val generateShims = args["-shims"].isTrue()
     val verbose = args["-verbose"].isTrue()
 
-    val defaultOpts = konanProperties.defaultCompilerOpts(target, dependencies)
+    val defaultOpts = konanProperties.defaultCompilerOpts(target, dependencies, konanFileName)
     val headerFiles = config.getSpaceSeparated("headers") + additionalHeaders
     val compilerOpts = 
         config.getSpaceSeparated("compilerOpts") +

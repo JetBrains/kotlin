@@ -35,7 +35,13 @@ class Distribution(val config: CompilerConfiguration) {
 
     val llvmHome = "$dependencies/${properties.propertyString("llvmHome.$suffix")}" 
     val sysRoot = "$dependencies/${properties.propertyString("sysRoot.$suffix")}"
-    val libGcc = "$dependencies/${properties.propertyString("libGcc.$suffix")}" 
+    val libGcc = "$dependencies/${properties.propertyString("libGcc.$suffix")}"
+
+    val targetSysRoot = if (properties.hasProperty("targetSysRoot.$suffix")) {
+            "$dependencies/${properties.propertyString("targetSysRoot.$suffix")}"
+        } else {
+            sysRoot
+        }
 
     val llvmBin = "$llvmHome/bin"
     val llvmLib = "$llvmHome/lib"

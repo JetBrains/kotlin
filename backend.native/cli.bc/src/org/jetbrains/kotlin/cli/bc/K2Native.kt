@@ -16,17 +16,15 @@ import kotlin.reflect.KFunction
 
 private fun maybeExecuteHelper(configuration: CompilerConfiguration) {
     try {
-        val kClass = Class.forName("org.jetbrains.kotlin.konan.Helper0").kotlin
+        val kClass = Class.forName("org.jetbrains.kotlin.konan.CompilerHelper0").kotlin
         val ctor = kClass.constructors.single() as KFunction<Runnable>
         val distribution = Distribution(configuration)
-        val target = TargetManager(configuration)
-        val result = ctor.call(
-                distribution.konanHome, TargetManager.host, target.current)
+        val result = ctor.call(distribution)
         result.run()
     } catch (notFound: ClassNotFoundException) {
         // Just ignore, no helper.
     } catch (e: Throwable) {
-        println(e.toString())
+        throw IllegalStateException("Cannot download dependencies.", e)
     }
 }
 

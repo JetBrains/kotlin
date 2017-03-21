@@ -43,3 +43,9 @@ proto/compiler/google/src/google/protobuf/compiler/kotlin/protoc
 
 # translator auto generated artifacts
 kotstd/ll
+
+# directory for manual debug runs
+run-debug/**
+!run-debug/interop
+!run-debug/konanc
+

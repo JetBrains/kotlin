@@ -25,8 +25,8 @@ dependencies {
     }
 }
 
-def testOutputRoot = rootProject.file("test.output").absolutePath
-def externalTestsDir = project.file("external")
+ext.testOutputRoot = rootProject.file("test.output").absolutePath
+ext.externalTestsDir = project.file("external")
 externalTestsDir.mkdirs()
 
 allprojects {

@@ -48,6 +48,8 @@ between threads are allowed.
 
 	./dist/bin/kotlinc <some_file>.kt <dir_with_kt_files> -o <executable>.kexe
 
+  During the first run it will download all external dependencies such as LLVM.
+
   One may use `'-h'` flag to `kotlinc` to see available flags.
 
   For documentation on C interoperability stubs see INTEROP.md.

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash 
+#!/usr/bin/env bash
 
 if [ -z "$JAVACMD" -a -n "$JAVA_HOME" -a -x "$JAVA_HOME/bin/java" ]; then
     JAVACMD="$JAVA_HOME/bin/java"
@@ -52,8 +52,9 @@ KONAN_HOME="$(findHome)"
 KONAN_JAR="${KONAN_HOME}/konan/lib/backend.native.jar"
 KOTLIN_JAR="${KONAN_HOME}/konan/lib/kotlin-compiler.jar"
 INTEROP_JAR="${KONAN_HOME}/konan/lib/Runtime.jar"
+HELPERS_JAR="${KONAN_HOME}/konan/lib/helpers.jar"
 NATIVE_LIB="${KONAN_HOME}/konan/nativelib"
-KONAN_CLASSPATH="$KOTLIN_JAR:$INTEROP_JAR:$KONAN_JAR"
+KONAN_CLASSPATH="$KOTLIN_JAR:$INTEROP_JAR:$KONAN_JAR:$HELPERS_JAR"
 KONAN_COMPILER=org.jetbrains.kotlin.cli.bc.K2NativeKt
 JAVA_OPTS=-ea
 

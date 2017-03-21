@@ -1,0 +1,128 @@
+import org.jetbrains.kotlin.NativeInteropPlugin
+import org.jetbrains.kotlin.RunInteropKonanTest
+import org.jetbrains.kotlin.RunKonanTest
+import org.jetbrains.kotlin.TestFailedException
+
+import java.util.concurrent.atomic.AtomicInteger
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+repositories {
+    maven {
+        url 'http://oss.sonatype.org/content/repositories/snapshots'
+    }
+}
+
+apply plugin: 'kotlin'
+apply plugin: NativeInteropPlugin
+
+configurations {
+    cli_bc.extendsFrom compile
+}
+
+dependencies {
+    compile project(path: ':backend.native', configuration: 'cli_bc')
+    cli_bc jar.outputs.files
+}
+
+sourceSets {
+    testOutputLocal {
+        output.dir(rootProject.file("${findProject(":backend.native:tests").testOutputRoot}/tools/helpers"))
+    }
+}
+
+def testDependencies = project.file("${sourceSets.testOutputLocal.output.dirs.singleFile.absolutePath}/dependencies")
+
+void prepareDependenciesDir(File testDependencies) {
+    project.delete testDependencies
+    testDependencies.mkdirs()
+    // We don't download big clang dependency in this test - only sysroots.
+    project.copy {
+        from project.findProject(":dependencies").file("all")
+        into testDependencies
+        include "clang*.tar.gz/**"
+    }
+}
+
+kotlinNativeInterop {
+    sysstat {
+        pkg 'sysstat'
+        headers 'sys/stat.h'
+        flavor 'native'
+    }
+}
+
+task testInteropHelper(type: RunInteropKonanTest) {
+    dependsOn jar
+    dependsOn ':dist'
+
+    dependenciesDir = testDependencies
+    goldValue = "0\n0\n"
+    source = "testData/interop.kt"
+    interop = 'sysstat'
+
+    doFirst {
+        prepareDependenciesDir(testDependencies)
+    }
+}
+
+task testCompilerHelper(type: RunKonanTest) {
+    dependenciesDir = testDependencies
+    source = "testData/main.kt"
+
+    doFirst {
+        prepareDependenciesDir(testDependencies)
+    }
+}
+
+// Simple test for parallel compiler execution
+task testParallel(type: DefaultTask) {
+    for (int i=0; i<4; i++) {
+        task("runParallel$i", type: RunKonanTest) {
+            dependenciesDir = testDependencies
+            source = "testData/main.kt"
+        }
+    }
+
+    doFirst {
+        prepareDependenciesDir(testDependencies)
+    }
+
+    doLast {
+        List<Thread> threads = new ArrayList<>()
+        def downloadCnt = new AtomicInteger(0)
+        tasks.withType(RunKonanTest).matching { it.name.startsWith("runParallel") }.each { task ->
+            threads.add(Thread.start {
+                task.executeTest()
+                // The helper prints messages when it is downloading.
+                // We check that there is only one downloading using compilation logs.
+                if (file("${task.buildExePath()}.compilation.log").text.contains("Download dependency")) {
+                    downloadCnt.incrementAndGet()
+                }
+            })
+        }
+        threads.each { it.join() }
+        if (downloadCnt.intValue() != 1) {
+            throw new TestFailedException("Actual downloads: ${downloadCnt.intValue()}, expected: 1")
+        }
+    }
+}
+
+task testHelpers {
+    dependsOn testInteropHelper
+    dependsOn testCompilerHelper
+    dependsOn testParallel
+
+    doLast {
+        delete testDependencies
+    }
+}
+

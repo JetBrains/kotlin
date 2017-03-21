@@ -125,6 +125,7 @@ class PlatformInfo {
 
 task dist_compiler(type: Copy) {
     dependsOn ':backend.native:jars'
+    dependsOn ':tools:helpers:jar'
 
     destinationDir file('dist')
 
@@ -172,6 +173,11 @@ task dist_compiler(type: Copy) {
         into('konan/nativelib')
         include '**/libclang.*'
         includeEmptyDirs = false
+    }
+
+    // TODO: check if we use native libraries copied to dist (see above) or not.
+    from(project(':tools:helpers').file('build/libs')) {
+        into('konan/lib')
     }
 
     doLast {

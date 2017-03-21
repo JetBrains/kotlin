@@ -15,10 +15,13 @@ public class KonanProperties(val propertyFile: String) {
     }
 
     fun propertyString(key: String): String? = properties.getProperty(key)
+    fun propertyString(key: String, default: String) : String = properties.getProperty(key, default)
 
     fun propertyList(key: String): List<String> {
         val value =  properties.getProperty(key)
         return value?.split(' ') ?: listOf<String>()
     }
+
+    fun hasProperty(key: String): Boolean = properties.getProperty(key) != null
 }
 
