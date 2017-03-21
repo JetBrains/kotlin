@@ -6,7 +6,7 @@ val EXPECTED = """Hello, World
 ^^
 ^^
 ***
-####
+##null23##
 """
 
 val EXPECTED_NEWLINE_FOR_EACH = """Hello
@@ -18,6 +18,8 @@ val EXPECTED_NEWLINE_FOR_EACH = """Hello
 
 ***
 ##
+null
+23
 ##
 
 """
@@ -35,6 +37,8 @@ fun test(expected: String, initCode: String, getResult: () -> String) {
     println()
     println("***")
     print("##")
+    print(null)
+    print(23)
     print("##")
     println()
 
