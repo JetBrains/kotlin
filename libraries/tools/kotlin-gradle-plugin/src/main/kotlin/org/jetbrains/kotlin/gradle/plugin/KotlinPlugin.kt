@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.gradle.internal.initKapt
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.plugin.android.KotlinJillTask
 import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
 import org.jetbrains.kotlin.gradle.utils.getDeclaredFieldInHierarchy
 import org.jetbrains.kotlin.incremental.configureMultiProjectIncrementalCompilation
 import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProviderAndroidWrapper
@@ -551,18 +552,22 @@ internal open class KotlinAndroidPlugin(
 }
 
 private fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractCompile, logger: Logger) {
-    // Since we cannot update classpath statically, java not able to detect changes in the classpath after kotlin compiler.
-    // Therefore this (probably inefficient since java cannot decide "uptodateness" by the list of changed class files, but told
-    // explicitly being out of date whenever any kotlin files are compiled
+    // Gradle Java IC in older Gradle versions (before 2.14) cannot check .class directories updates.
+    // To make it work, reset the up-to-date status of compileJava with this flag.
     kotlinTask.anyClassesCompiled = false
-
     javaTask.outputs.upToDateWhen { task ->
+        val gradleSupportsJavaIcWithClassesDirs = ParsedGradleVersion.parse(javaTask.project.gradle.gradleVersion)
+                                                          ?.let { it >= ParsedGradleVersion(2, 14) } ?: false
         val kotlinClassesCompiled = kotlinTask.anyClassesCompiled
-        if (kotlinClassesCompiled) {
+        if (!gradleSupportsJavaIcWithClassesDirs && kotlinClassesCompiled) {
             logger.info("Marking $task out of date, because kotlin classes are changed")
+            return@upToDateWhen false
         }
-        !kotlinClassesCompiled
+        true
     }
+
+    // Make Gradle check if the javaTask up-to-date based on the Kotlin classes
+    javaTask.inputs.dir(kotlinTask.destinationDir)
 
     javaTask.dependsOn(kotlinTask.name)
     /*
