@@ -14,5 +14,5 @@ fun test2() {}
 fun test3() {}
 
 fun test4() {
-    [1, 2]
+    <!UNSUPPORTED!>[1, 2]<!>
 }

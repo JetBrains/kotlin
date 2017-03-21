@@ -1517,6 +1517,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public KotlinTypeInfo visitCollectionLiteralExpression(
             @NotNull KtCollectionLiteralExpression expression, ExpressionTypingContext context
     ) {
+        if (!isInsideAnnotationEntryOrClass(expression)) {
+            context.trace.report(UNSUPPORTED.on(expression, "Collection literals outside of annotations"));
+        }
+
         checkSupportsArrayLiterals(expression, context);
         return resolveCollectionLiteralSpecialMethod(expression, context);
     }
