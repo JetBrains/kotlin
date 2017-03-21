@@ -604,6 +604,6 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     ) {
         JsScope scope = context.getScopeForDescriptor(descriptor);
         TranslationContext classContext = context.innerWithUsageTracker(scope, descriptor);
-        ClassTranslator.translate(declaration, classContext);
+        ClassTranslator.translate(declaration, classContext, null);
     }
 }

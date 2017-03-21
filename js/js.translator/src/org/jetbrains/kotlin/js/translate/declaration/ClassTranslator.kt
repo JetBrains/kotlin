@@ -92,6 +92,12 @@ class ClassTranslator private constructor(
         constructorFunction.body.statements += bodyVisitor.initializerStatements
         delegationTranslator.generateDelegated()
 
+        val companionDescriptor = descriptor.companionObjectDescriptor
+        if (enumInitFunction != null && companionDescriptor != null) {
+            val initInvocation = JsInvocation(JsAstUtils.pureFqn(context().getNameForObjectInstance(companionDescriptor), null))
+            enumInitFunction.body.statements += JsAstUtils.asSyntheticStatement(initInvocation)
+        }
+
         translatePrimaryConstructor(constructorFunction, context, delegationTranslator)
         addMetadataObject()
         addMetadataType()
@@ -446,7 +452,10 @@ class ClassTranslator private constructor(
         val instanceFun = context().createRootScopedFunction("Instance function: " + descriptor)
         instanceFun.name = context().getNameForObjectInstance(descriptor)
 
-        if (enumInitializerName == null) {
+        if (enumInitializerName != null) {
+            instanceFun.body.statements += JsInvocation(pureFqn(enumInitializerName, null)).makeStmt()
+        }
+        if (descriptor.kind != ClassKind.ENUM_ENTRY) {
             val instanceCreatedCondition = JsAstUtils.equality(cachedInstanceName.makeRef(), JsLiteral.NULL)
             val instanceCreationBlock = JsBlock()
             val instanceCreatedGuard = JsIf(instanceCreatedCondition, instanceCreationBlock)
@@ -454,9 +463,6 @@ class ClassTranslator private constructor(
 
             val objectRef = context().getInnerReference(descriptor)
             instanceCreationBlock.statements += JsNew(objectRef).makeStmt()
-        }
-        else {
-            instanceFun.body.statements += JsInvocation(pureFqn(enumInitializerName, null)).makeStmt()
         }
 
         instanceFun.body.statements += JsReturn(cachedInstanceName.makeRef())
@@ -534,8 +540,8 @@ class ClassTranslator private constructor(
     }
 
     companion object {
-        @JvmStatic fun translate(classDeclaration: KtClassOrObject, context: TranslationContext) {
-            return ClassTranslator(classDeclaration, context, null, null).translate()
+        @JvmStatic fun translate(classDeclaration: KtClassOrObject, context: TranslationContext, enumInitializerName: JsName?) {
+            return ClassTranslator(classDeclaration, context, enumInitializerName, null).translate()
         }
 
         @JvmStatic fun translate(classDeclaration: KtEnumEntry, context: TranslationContext, enumInitializerName: JsName, ordinal: Int) {

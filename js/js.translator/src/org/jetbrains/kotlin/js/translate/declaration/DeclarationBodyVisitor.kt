@@ -40,11 +40,14 @@ class DeclarationBodyVisitor(
     val initializerStatements = mutableListOf<JsStatement>()
     val enumEntries = mutableListOf<ClassDescriptor>()
 
+    override val enumInitializerName: JsName?
+        get() = enumInitializer?.name
+
     override fun visitClassOrObject(classOrObject: KtClassOrObject, context: TranslationContext) {
         super.visitClassOrObject(classOrObject, context)
 
         if (classOrObject is KtObjectDeclaration) {
-            if (classOrObject.isCompanion()) {
+            if (classOrObject.isCompanion() && containingClass.kind != ClassKind.ENUM_CLASS) {
                 val descriptor = BindingUtils.getDescriptorForElement(context.bindingContext(), classOrObject) as ClassDescriptor
                 addInitializerStatement(JsInvocation(context.getNameForObjectInstance(descriptor).makeRef()).makeStmt())
             }

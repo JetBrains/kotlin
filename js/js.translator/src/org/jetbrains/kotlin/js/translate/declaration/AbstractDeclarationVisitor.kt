@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.isOverridable
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
+import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.expression.translateAndAliasParameters
 import org.jetbrains.kotlin.js.translate.expression.translateFunction
@@ -34,8 +35,11 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
     override fun emptyResult(context: TranslationContext) { }
 
+    open val enumInitializerName: JsName?
+        get() = null
+
     override fun visitClassOrObject(classOrObject: KtClassOrObject, context: TranslationContext) {
-        ClassTranslator.translate(classOrObject, context)
+        ClassTranslator.translate(classOrObject, context, enumInitializerName)
         val descriptor = BindingUtils.getClassDescriptor(context.bindingContext(), classOrObject)
         context.export(descriptor)
     }

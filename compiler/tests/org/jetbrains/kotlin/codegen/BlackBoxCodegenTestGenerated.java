@@ -7319,6 +7319,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("enumCompanionInit.kt")
+        public void testEnumCompanionInit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/enumCompanionInit.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("enumInheritedFromTrait.kt")
         public void testEnumInheritedFromTrait() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/enumInheritedFromTrait.kt");
