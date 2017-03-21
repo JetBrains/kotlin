@@ -316,6 +316,367 @@ private class BooleanIteratorImpl(val collection: BooleanArray) : BooleanIterato
 
 // This part is from generated _Arrays.kt.
 
+
+/**
+ * Returns 1st *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun <T> Array<out T>.component1(): T {
+    return get(0)
+}
+
+/**
+ * Returns 1st *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun ByteArray.component1(): Byte {
+    return get(0)
+}
+
+/**
+ * Returns 1st *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun ShortArray.component1(): Short {
+    return get(0)
+}
+
+/**
+ * Returns 1st *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun IntArray.component1(): Int {
+    return get(0)
+}
+
+/**
+ * Returns 1st *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun LongArray.component1(): Long {
+    return get(0)
+}
+
+/**
+ * Returns 1st *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun FloatArray.component1(): Float {
+    return get(0)
+}
+
+/**
+ * Returns 1st *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun DoubleArray.component1(): Double {
+    return get(0)
+}
+
+/**
+ * Returns 1st *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun BooleanArray.component1(): Boolean {
+    return get(0)
+}
+
+/**
+ * Returns 1st *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun CharArray.component1(): Char {
+    return get(0)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun <T> Array<out T>.component2(): T {
+    return get(1)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun ByteArray.component2(): Byte {
+    return get(1)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun ShortArray.component2(): Short {
+    return get(1)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun IntArray.component2(): Int {
+    return get(1)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun LongArray.component2(): Long {
+    return get(1)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun FloatArray.component2(): Float {
+    return get(1)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun DoubleArray.component2(): Double {
+    return get(1)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun BooleanArray.component2(): Boolean {
+    return get(1)
+}
+
+/**
+ * Returns 2nd *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun CharArray.component2(): Char {
+    return get(1)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun <T> Array<out T>.component3(): T {
+    return get(2)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun ByteArray.component3(): Byte {
+    return get(2)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun ShortArray.component3(): Short {
+    return get(2)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun IntArray.component3(): Int {
+    return get(2)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun LongArray.component3(): Long {
+    return get(2)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun FloatArray.component3(): Float {
+    return get(2)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun DoubleArray.component3(): Double {
+    return get(2)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun BooleanArray.component3(): Boolean {
+    return get(2)
+}
+
+/**
+ * Returns 3rd *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun CharArray.component3(): Char {
+    return get(2)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun <T> Array<out T>.component4(): T {
+    return get(3)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun ByteArray.component4(): Byte {
+    return get(3)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun ShortArray.component4(): Short {
+    return get(3)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun IntArray.component4(): Int {
+    return get(3)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun LongArray.component4(): Long {
+    return get(3)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun FloatArray.component4(): Float {
+    return get(3)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun DoubleArray.component4(): Double {
+    return get(3)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun BooleanArray.component4(): Boolean {
+    return get(3)
+}
+
+/**
+ * Returns 4th *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun CharArray.component4(): Char {
+    return get(3)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun <T> Array<out T>.component5(): T {
+    return get(4)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun ByteArray.component5(): Byte {
+    return get(4)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun ShortArray.component5(): Short {
+    return get(4)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun IntArray.component5(): Int {
+    return get(4)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun LongArray.component5(): Long {
+    return get(4)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun FloatArray.component5(): Float {
+    return get(4)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun DoubleArray.component5(): Double {
+    return get(4)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun BooleanArray.component5(): Boolean {
+    return get(4)
+}
+
+/**
+ * Returns 5th *element* from the collection.
+ */
+@kotlin.internal.InlineOnly
+public inline operator fun CharArray.component5(): Char {
+    return get(4)
+}
+
 /**
  * Returns `true` if all elements match the given [predicate].
  */
@@ -1760,6 +2121,102 @@ public fun <@kotlin.internal.OnlyInputTypes T> Array<out T>.lastIndexOf(element:
             if (element == this[index]) {
                 return index
             }
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns last index of [element], or -1 if the array does not contain element.
+ */
+public fun ByteArray.lastIndexOf(element: Byte): Int {
+    for (index in indices.reversed()) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns last index of [element], or -1 if the array does not contain element.
+ */
+public fun ShortArray.lastIndexOf(element: Short): Int {
+    for (index in indices.reversed()) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns last index of [element], or -1 if the array does not contain element.
+ */
+public fun IntArray.lastIndexOf(element: Int): Int {
+    for (index in indices.reversed()) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns last index of [element], or -1 if the array does not contain element.
+ */
+public fun LongArray.lastIndexOf(element: Long): Int {
+    for (index in indices.reversed()) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns last index of [element], or -1 if the array does not contain element.
+ */
+public fun FloatArray.lastIndexOf(element: Float): Int {
+    for (index in indices.reversed()) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns last index of [element], or -1 if the array does not contain element.
+ */
+public fun DoubleArray.lastIndexOf(element: Double): Int {
+    for (index in indices.reversed()) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns last index of [element], or -1 if the array does not contain element.
+ */
+public fun BooleanArray.lastIndexOf(element: Boolean): Int {
+    for (index in indices.reversed()) {
+        if (element == this[index]) {
+            return index
+        }
+    }
+    return -1
+}
+
+/**
+ * Returns last index of [element], or -1 if the array does not contain element.
+ */
+public fun CharArray.lastIndexOf(element: Char): Int {
+    for (index in indices.reversed()) {
+        if (element == this[index]) {
+            return index
         }
     }
     return -1

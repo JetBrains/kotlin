@@ -160,6 +160,119 @@ public fun <T> Array<out T>.asList(): List<T> {
     }
 }
 
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public fun ByteArray.asList(): List<Byte> {
+    return object : AbstractList<Byte>(), RandomAccess {
+        override val size: Int get() = this@asList.size
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(element: Byte): Boolean = this@asList.contains(element)
+        override fun get(index: Int): Byte = this@asList[index]
+        override fun indexOf(element: Byte): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Byte): Int = this@asList.lastIndexOf(element)
+    }
+}
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public fun ShortArray.asList(): List<Short> {
+    return object : AbstractList<Short>(), RandomAccess {
+        override val size: Int get() = this@asList.size
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(element: Short): Boolean = this@asList.contains(element)
+        override fun get(index: Int): Short = this@asList[index]
+        override fun indexOf(element: Short): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Short): Int = this@asList.lastIndexOf(element)
+    }
+}
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public fun IntArray.asList(): List<Int> {
+    return object : AbstractList<Int>(), RandomAccess {
+        override val size: Int get() = this@asList.size
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(element: Int): Boolean = this@asList.contains(element)
+        override fun get(index: Int): Int = this@asList[index]
+        override fun indexOf(element: Int): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Int): Int = this@asList.lastIndexOf(element)
+    }
+}
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public fun LongArray.asList(): List<Long> {
+    return object : AbstractList<Long>(), RandomAccess {
+        override val size: Int get() = this@asList.size
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(element: Long): Boolean = this@asList.contains(element)
+        override fun get(index: Int): Long = this@asList[index]
+        override fun indexOf(element: Long): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Long): Int = this@asList.lastIndexOf(element)
+    }
+}
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public fun FloatArray.asList(): List<Float> {
+    return object : AbstractList<Float>(), RandomAccess {
+        override val size: Int get() = this@asList.size
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(element: Float): Boolean = this@asList.contains(element)
+        override fun get(index: Int): Float = this@asList[index]
+        override fun indexOf(element: Float): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Float): Int = this@asList.lastIndexOf(element)
+    }
+}
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public fun DoubleArray.asList(): List<Double> {
+    return object : AbstractList<Double>(), RandomAccess {
+        override val size: Int get() = this@asList.size
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(element: Double): Boolean = this@asList.contains(element)
+        override fun get(index: Int): Double = this@asList[index]
+        override fun indexOf(element: Double): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Double): Int = this@asList.lastIndexOf(element)
+    }
+}
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public fun BooleanArray.asList(): List<Boolean> {
+    return object : AbstractList<Boolean>(), RandomAccess {
+        override val size: Int get() = this@asList.size
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(element: Boolean): Boolean = this@asList.contains(element)
+        override fun get(index: Int): Boolean = this@asList[index]
+        override fun indexOf(element: Boolean): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Boolean): Int = this@asList.lastIndexOf(element)
+    }
+}
+
+/**
+ * Returns a [List] that wraps the original array.
+ */
+public fun CharArray.asList(): List<Char> {
+    return object : AbstractList<Char>(), RandomAccess {
+        override val size: Int get() = this@asList.size
+        override fun isEmpty(): Boolean = this@asList.isEmpty()
+        override fun contains(element: Char): Boolean = this@asList.contains(element)
+        override fun get(index: Int): Char = this@asList[index]
+        override fun indexOf(element: Char): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Char): Int = this@asList.lastIndexOf(element)
+    }
+}
+
+
 fun <E> Array<E>.toSet(): Set<E> {
     val result = HashSet<E>(this.size)
     for (e in this) {
