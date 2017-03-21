@@ -21,7 +21,6 @@ import com.intellij.lang.refactoring.InlineActionHandler
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
@@ -45,11 +44,7 @@ class KotlinInlineFunctionHandler: InlineActionHandler() {
     override fun isEnabledForLanguage(language: Language) = language == KotlinLanguage.INSTANCE
 
     //TODO: overrides etc
-    override fun canInlineElement(element: PsiElement): Boolean {
-        return element is KtNamedFunction
-               && element.hasBody()
-               && element.getUseScope() is GlobalSearchScope  // TODO support local functions
-    }
+    override fun canInlineElement(element: PsiElement) = element is KtNamedFunction && element.hasBody()
 
     override fun inlineElement(project: Project, editor: Editor?, element: PsiElement) {
         element as KtNamedFunction
