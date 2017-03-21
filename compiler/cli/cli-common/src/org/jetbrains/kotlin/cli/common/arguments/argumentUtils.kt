@@ -41,7 +41,7 @@ fun <T : Any> copyBean(bean: T) = copyFields(bean, bean::class.java.newInstance(
 
 fun <From : Any, To : From> mergeBeans(from: From, to: To): To {
     // TODO: rewrite when updated version of com.intellij.util.xmlb is available on TeamCity
-    return copyFields(from, XmlSerializerUtil.createCopy(to), false, collectFieldsToCopy(from::class.java, false))
+    return copyFields(from, to, false, collectFieldsToCopy(from::class.java, false))
 }
 
 fun <From : Any, To : Any> copyInheritedFields(from: From, to: To) = copyFields(from, to, true, collectFieldsToCopy(from::class.java, true))

@@ -78,4 +78,12 @@ class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
         Assert.assertEquals("1.0", settings.languageLevel!!.description)
         Assert.assertEquals("1.0", settings.apiLevel!!.description)
     }
+
+    fun testFacetWithProjectSettings() {
+        val settings = KotlinFacetSettingsProvider.getInstance(myProject).getInitializedSettings(module)
+        Assert.assertEquals(true, settings.useProjectSettings)
+        Assert.assertEquals("1.1", settings.languageLevel!!.description)
+        Assert.assertEquals("1.1", settings.apiLevel!!.description)
+        Assert.assertEquals("-version -Xallow-kotlin-package -Xskip-metadata-version-check", settings.compilerSettings!!.additionalArguments)
+    }
 }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
+import com.intellij.util.xmlb.XmlSerializerUtil
 import org.jetbrains.jps.api.GlobalOptions
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
@@ -57,7 +58,7 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
             environment: JpsCompilerEnvironment,
             moduleFile: File
     ) {
-        val arguments = mergeBeans(commonArguments, k2jvmArguments)
+        val arguments = mergeBeans(commonArguments, XmlSerializerUtil.createCopy(k2jvmArguments))
         setupK2JvmArguments(moduleFile, arguments)
         withCompilerSettings(compilerSettings) {
             runCompiler(K2JVM_COMPILER, arguments, environment)
@@ -76,7 +77,7 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
         log.debug("K2JS: common arguments: " + ArgumentUtils.convertArgumentsToStringList(commonArguments))
         log.debug("K2JS: JS arguments: " + ArgumentUtils.convertArgumentsToStringList(k2jsArguments))
 
-        val arguments = mergeBeans(commonArguments, k2jsArguments)
+        val arguments = mergeBeans(commonArguments, XmlSerializerUtil.createCopy(k2jsArguments))
         log.debug("K2JS: merged arguments: " + ArgumentUtils.convertArgumentsToStringList(arguments))
 
         setupK2JsArguments(outputFile, sourceFiles, libraries, arguments)
