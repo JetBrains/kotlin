@@ -118,6 +118,13 @@ messages/**)
     public protected *;
 }
 
+# This is needed so that the platform code which parses XML wouldn't fail, see KT-16968
+# Note that these directives probably keep too much in the compiler JAR, we might not need all classes in these packages
+-keep class org.apache.xerces.impl.** { public *; }
+-keep class org.apache.xerces.jaxp.** { public *; }
+-keep class org.apache.xerces.parsers.** { public *; }
+-keep class org.apache.xml.** { public *; }
+
 # for kdoc & dokka
 -keep class com.intellij.openapi.util.TextRange { *; }
 -keep class com.intellij.lang.impl.PsiBuilderImpl* {
