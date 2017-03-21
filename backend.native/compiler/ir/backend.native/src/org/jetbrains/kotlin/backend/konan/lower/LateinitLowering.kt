@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalFunctions
+import org.jetbrains.kotlin.backend.konan.isValueType
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -29,6 +30,7 @@ internal class LateinitLowering(val context: Context): FileLoweringPass {
             }
 
             private fun transformGetter(propertyDescriptor: PropertyDescriptor, getter: IrFunction) {
+                assert (!propertyDescriptor.type.isValueType(), { "'lateinit' modifier is not allowed on value types" })
                 val startOffset = getter.startOffset
                 val endOffset = getter.endOffset
                 val irBuilder = context.createIrBuilder(getter.descriptor, startOffset, endOffset)
