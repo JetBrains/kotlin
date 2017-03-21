@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationsKt;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorFactory;
 import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.utils.CollectionsKt;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.kotlin.utils.SmartSet;
 
 import java.util.*;
@@ -85,8 +85,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             @Nullable Modality modality,
             @NotNull Visibility visibility
     ) {
-        this.typeParameters = CollectionsKt.toReadOnlyList(typeParameters);
-        this.unsubstitutedValueParameters = unsubstitutedValueParameters;
+        this.typeParameters = CollectionsKt.toList(typeParameters);
+        this.unsubstitutedValueParameters = CollectionsKt.toList(unsubstitutedValueParameters);
         this.unsubstitutedReturnType = unsubstitutedReturnType;
         this.modality = modality;
         this.visibility = visibility;
