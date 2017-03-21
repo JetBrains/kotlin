@@ -570,8 +570,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     @Override
     public String toString() {
-        // not using descriptor render to preserve laziness
-        return "lazy class " + getName().toString();
+        // not using DescriptorRenderer to preserve laziness
+        return (isHeader ? "header " : isImpl ? "impl " : "") + "class " + getName().toString();
     }
 
     @Override
