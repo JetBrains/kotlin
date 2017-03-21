@@ -28,5 +28,5 @@ var=LINKER_ARGS_${TARGET}
 LINKER_ARGS=${!var}
 
 $DIST/bin/interop -def:$DIR/sdl.def -copt:"$CFLAGS" -target:$TARGET || exit 1
-$DIST/bin/konanc -target $TARGET sdl $DIR/tetris.kt -nativelibrary sdlstubs.bc -linkerArgs "$LINKER_ARGS" -o tetris.kexe || exit 1
+$DIST/bin/konanc -nomain -target $TARGET sdl $DIR/tetris.kt -nativelibrary sdlstubs.bc -linkerArgs "$LINKER_ARGS" -o tetris.kexe || exit 1
 #strip tetris.kexe
