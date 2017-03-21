@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.caches.resolve.LibraryModuleInfo
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.GlobalSearchScopeWithModuleSources
@@ -221,7 +222,7 @@ data class LibrarySourceInfo(val project: Project, val library: Library) : IdeaM
 
     override val name: Name = Name.special("<sources for library ${library.name}>")
 
-    override fun sourceScope(): GlobalSearchScope = LibrarySourceScope(project, library)
+    override fun sourceScope(): GlobalSearchScope = KotlinSourceFilterScope.librarySources(LibrarySourceScope(project, library), project)
 
     override val isLibrary: Boolean
         get() = true
@@ -307,7 +308,10 @@ enum class ModuleOrigin {
 
 interface BinaryModuleInfo : IdeaModuleInfo {
     val sourcesModuleInfo: SourceForBinaryModuleInfo?
-    fun binariesScope(): GlobalSearchScope = contentScope()
+    fun binariesScope(): GlobalSearchScope {
+        val contentScope = contentScope()
+        return KotlinSourceFilterScope.libraryClassFiles(contentScope, contentScope.project!!)
+    }
 }
 
 interface SourceForBinaryModuleInfo : IdeaModuleInfo {
