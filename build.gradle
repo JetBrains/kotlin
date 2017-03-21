@@ -218,6 +218,16 @@ task cross_dist {
     dependsOn 'cross_dist_runtime', 'dist_compiler'
 }
 
+task bundle(type: Tar) {
+    dependsOn('cross_dist')
+    from(project.rootDir)
+    include 'dist/**'
+    baseName = 'kotlin-native-compiler'
+    destinationDir = file('.')
+    extension = 'tgz'
+    compression = Compression.GZIP
+}
+
 task demo(type: Exec) {
     dependsOn 'dist'
 
