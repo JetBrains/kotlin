@@ -76,7 +76,7 @@ sealed class ChangeCoroutineSupportFix(
                 return
             }
 
-            val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getSettings(module)
+            val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(module)
             ModuleRootModificationUtil.updateModel(module) {
                 facetSettings.coroutineSupport = coroutineSupport
                 facetSettings.apiLevel = LanguageVersion.KOTLIN_1_1

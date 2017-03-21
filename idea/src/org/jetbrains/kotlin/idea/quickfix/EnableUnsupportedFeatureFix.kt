@@ -65,7 +65,7 @@ sealed class EnableUnsupportedFeatureFix(
                runtimeVersion < feature.sinceApiVersion
             } ?: false
 
-            val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getSettings(module)
+            val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(module)
             val targetApiLevel = facetSettings.apiLevel?.let { apiLevel ->
                 if (ApiVersion.createByLanguageVersion(apiLevel) < feature.sinceApiVersion)
                     feature.sinceApiVersion.versionString

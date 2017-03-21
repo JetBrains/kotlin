@@ -16,14 +16,41 @@
 
 package org.jetbrains.kotlin.idea.facet
 
+import com.intellij.ProjectTopics
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ModuleRootEvent
+import com.intellij.openapi.roots.ModuleRootListener
+import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
+import org.jetbrains.kotlin.psi.UserDataProperty
 
-class KotlinFacetSettingsProviderImpl : KotlinFacetSettingsProvider {
-    override fun getSettings(module: Module): KotlinFacetSettings {
-        val settings = KotlinFacet.get(module)?.configuration?.settings ?: KotlinFacetSettings()
-        settings.initializeIfNeeded(module, null)
-        return settings
+class KotlinFacetSettingsProviderImpl(private val project: Project) : KotlinFacetSettingsProvider {
+    companion object {
+        private var Module.facetSettingsCache : KotlinFacetSettings? by UserDataProperty(Key.create("FACET_SETTINGS_CACHE"))
+    }
+
+    init {
+        project.messageBus.connect(project).subscribe(
+                ProjectTopics.PROJECT_ROOTS,
+                object : ModuleRootListener {
+                    override fun rootsChanged(event: ModuleRootEvent?) {
+                        ModuleManager.getInstance(project).modules.forEach { it.facetSettingsCache = null }
+                    }
+                }
+        )
+    }
+
+    override fun getSettings(module: Module) = KotlinFacet.get(module)?.configuration?.settings
+
+    override fun getInitializedSettings(module: Module): KotlinFacetSettings {
+        getSettings(module)?.let { return it }
+
+        return KotlinFacetSettings().apply {
+            initializeIfNeeded(module, null)
+            module.facetSettingsCache = this
+        }
     }
 }

@@ -44,14 +44,10 @@ private val multiPlatformProjectsArg: String by lazy {
 }
 
 fun Module.getAndCacheLanguageLevelByDependencies(): LanguageVersion {
-    val languageLevel = getLibraryLanguageLevel(
-            this,
-            null,
-            KotlinFacetSettingsProvider.getInstance(project).getSettings(this).targetPlatformKind
-    )
+    val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(this)
+    val languageLevel = getLibraryLanguageLevel(this, null, facetSettings.targetPlatformKind)
 
     // Preserve inferred version in facet/project settings
-    val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getSettings(this)
     if (facetSettings.useProjectSettings) {
         KotlinCommonCompilerArgumentsHolder.getInstance(project).update {
             if (languageVersion == null) {
@@ -97,7 +93,9 @@ fun Project.getLanguageVersionSettings(contextModule: Module? = null): LanguageV
 
 val Module.languageVersionSettings: LanguageVersionSettings
     get() {
-        val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getSettings(this)
+        val facetSettingsProvider = KotlinFacetSettingsProvider.getInstance(project)
+        if (facetSettingsProvider.getSettings(this) == null) return project.getLanguageVersionSettings(this)
+        val facetSettings = facetSettingsProvider.getInitializedSettings(this)
         if (facetSettings.useProjectSettings) return project.getLanguageVersionSettings(this)
         val languageVersion = facetSettings.languageLevel ?: getAndCacheLanguageLevelByDependencies()
         val apiVersion = facetSettings.apiLevel ?: languageVersion
@@ -115,7 +113,7 @@ val Module.languageVersionSettings: LanguageVersionSettings
     }
 
 val Module.targetPlatform: TargetPlatformKind<*>?
-    get() = KotlinFacetSettingsProvider.getInstance(project).getSettings(this).targetPlatformKind
+    get() = KotlinFacetSettingsProvider.getInstance(project).getSettings(this)?.targetPlatformKind
 
 private val Module.implementsCommonModule: Boolean
     get() = targetPlatform != TargetPlatformKind.Common

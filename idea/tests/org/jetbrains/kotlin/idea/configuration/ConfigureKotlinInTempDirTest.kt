@@ -66,14 +66,14 @@ class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
     }
 
     fun testProject106InconsistentVersionInConfig() {
-        val settings = KotlinFacetSettingsProvider.getInstance(myProject).getSettings(module)
+        val settings = KotlinFacetSettingsProvider.getInstance(myProject).getInitializedSettings(module)
         Assert.assertEquals(false, settings.useProjectSettings)
         Assert.assertEquals("1.0", settings.languageLevel!!.description)
         Assert.assertEquals("1.0", settings.apiLevel!!.description)
     }
 
     fun testProject107InconsistentVersionInConfig() {
-        val settings = KotlinFacetSettingsProvider.getInstance(myProject).getSettings(module)
+        val settings = KotlinFacetSettingsProvider.getInstance(myProject).getInitializedSettings(module)
         Assert.assertEquals(false, settings.useProjectSettings)
         Assert.assertEquals("1.0", settings.languageLevel!!.description)
         Assert.assertEquals("1.0", settings.apiLevel!!.description)
