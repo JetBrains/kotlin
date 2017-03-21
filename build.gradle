@@ -147,12 +147,8 @@ task dist_compiler(type: Copy) {
 
     from(file('cmd')) {
         fileMode(0755)
-        include('konanc')
-        include('kotlinc-native')
-        include('interop')
         into('bin')
     }
-
     from(project(':backend.native').file('konan.properties')) {
         into('konan')
     }
