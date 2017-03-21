@@ -1,10 +1,7 @@
 package org.jetbrains.kotlin.cli.bc
 
 import com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.backend.konan.KonanCompilationException
-import org.jetbrains.kotlin.backend.konan.KonanConfig
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jetbrains.kotlin.backend.konan.runTopLevelPhases
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.util.profile
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -14,6 +11,24 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import java.util.*
+import kotlin.reflect.KFunction
+
+
+private fun maybeExecuteHelper(configuration: CompilerConfiguration) {
+    try {
+        val kClass = Class.forName("org.jetbrains.kotlin.konan.Helper0").kotlin
+        val ctor = kClass.constructors.single() as KFunction<Runnable>
+        val distribution = Distribution(configuration)
+        val target = TargetManager(configuration)
+        val result = ctor.call(
+                distribution.konanHome, TargetManager.host, target.current)
+        result.run()
+    } catch (notFound: ClassNotFoundException) {
+        // Just ignore, no helper.
+    } catch (e: Throwable) {
+        println(e.toString())
+    }
+}
 
 class K2Native : CLICompiler<K2NativeCompilerArguments>() { 
 
@@ -49,65 +64,68 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             arguments    : K2NativeCompilerArguments,
             services     : Services) {
 
-
         configuration.addKotlinSourceRoots(arguments.freeArgs)
 
-        with (KonanConfigKeys) { with (configuration) {
+        with(KonanConfigKeys) {
+            with(configuration) {
 
-            put(NOSTDLIB, arguments.nostdlib)
-            put(COMPILE_AS_STDLIB, arguments.compileAsStdlib)
-            put(NOLINK, arguments.nolink)
-            put(LIBRARY_FILES, 
-                arguments.libraries.toNonNullList())
+                put(NOSTDLIB, arguments.nostdlib)
+                put(COMPILE_AS_STDLIB, arguments.compileAsStdlib)
+                put(NOLINK, arguments.nolink)
+                put(LIBRARY_FILES,
+                        arguments.libraries.toNonNullList())
 
-            put(LINKER_ARGS, arguments.linkerArguments.toNonNullList())
+                put(LINKER_ARGS, arguments.linkerArguments.toNonNullList())
 
-            put(NATIVE_LIBRARY_FILES,
-                    arguments.nativeLibraries.toNonNullList())
+                put(NATIVE_LIBRARY_FILES,
+                        arguments.nativeLibraries.toNonNullList())
 
-            // TODO: Collect all the explicit file names into an object 
-            // and teach the compiler to work with temporaries and -save-temps.
-            val bitcodeFile = if (arguments.nolink) {
-                arguments.outputFile ?: "program.kt.bc"
-            } else {
-                "${arguments.outputFile ?: "program"}.kt.bc"
+                // TODO: Collect all the explicit file names into an object
+                // and teach the compiler to work with temporaries and -save-temps.
+                val bitcodeFile = if (arguments.nolink) {
+                    arguments.outputFile ?: "program.kt.bc"
+                } else {
+                    "${arguments.outputFile ?: "program"}.kt.bc"
+                }
+                put(BITCODE_FILE, bitcodeFile)
+
+                // This is a decision we could change
+                put(CommonConfigurationKeys.MODULE_NAME, bitcodeFile)
+                put(ABI_VERSION, 1)
+
+                put(EXECUTABLE_FILE,
+                        arguments.outputFile ?: "program.kexe")
+                if (arguments.runtimeFile != null)
+                    put(RUNTIME_FILE, arguments.runtimeFile)
+                if (arguments.propertyFile != null)
+                    put(PROPERTY_FILE, arguments.propertyFile)
+                if (arguments.target != null)
+                    put(TARGET, arguments.target)
+                put(LIST_TARGETS, arguments.listTargets)
+                put(OPTIMIZATION, arguments.optimization)
+
+                put(PRINT_IR, arguments.printIr)
+                put(PRINT_DESCRIPTORS, arguments.printDescriptors)
+                put(PRINT_BITCODE, arguments.printBitCode)
+
+                put(VERIFY_IR, arguments.verifyIr)
+                put(VERIFY_DESCRIPTORS, arguments.verifyDescriptors)
+                put(VERIFY_BITCODE, arguments.verifyBitCode)
+
+                put(ENABLED_PHASES,
+                        arguments.enablePhases.toNonNullList())
+                put(DISABLED_PHASES,
+                        arguments.disablePhases.toNonNullList())
+                put(VERBOSE_PHASES,
+                        arguments.verbosePhases.toNonNullList())
+                put(LIST_PHASES, arguments.listPhases)
+                put(TIME_PHASES, arguments.timePhases)
+
+                put(ENABLE_ASSERTIONS, arguments.enableAssertions)
             }
-            put(BITCODE_FILE, bitcodeFile)
+        }
 
-            // This is a decision we could change
-            put(CommonConfigurationKeys.MODULE_NAME, bitcodeFile)
-            put(ABI_VERSION, 1)
-
-            put(EXECUTABLE_FILE, 
-                arguments.outputFile ?: "program.kexe")
-            if (arguments.runtimeFile != null) 
-                put(RUNTIME_FILE, arguments.runtimeFile)
-            if (arguments.propertyFile != null) 
-                put(PROPERTY_FILE, arguments.propertyFile)
-            if (arguments.target != null) 
-                put(TARGET, arguments.target)
-            put(LIST_TARGETS, arguments.listTargets)
-            put(OPTIMIZATION, arguments.optimization)
-
-            put(PRINT_IR, arguments.printIr)
-            put(PRINT_DESCRIPTORS, arguments.printDescriptors)
-            put(PRINT_BITCODE, arguments.printBitCode)
-
-            put(VERIFY_IR, arguments.verifyIr)
-            put(VERIFY_DESCRIPTORS, arguments.verifyDescriptors)
-            put(VERIFY_BITCODE, arguments.verifyBitCode)
-
-            put(ENABLED_PHASES, 
-                arguments.enablePhases.toNonNullList())
-            put(DISABLED_PHASES, 
-                arguments.disablePhases.toNonNullList())
-            put(VERBOSE_PHASES, 
-                arguments.verbosePhases.toNonNullList())
-            put(LIST_PHASES, arguments.listPhases)
-            put(TIME_PHASES, arguments.timePhases)
-
-            put(ENABLE_ASSERTIONS, arguments.enableAssertions)
-        }}
+        maybeExecuteHelper(configuration)
     }
 
     override fun createArguments(): K2NativeCompilerArguments {
