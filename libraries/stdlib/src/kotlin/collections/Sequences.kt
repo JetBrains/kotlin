@@ -49,11 +49,15 @@ private object EmptySequence : Sequence<Nothing>, DropTakeSequence<Nothing> {
 
 /**
  * Returns a sequence of all elements from all sequences in this sequence.
+ *
+ * The operation is _intermediate_ and _stateless_.
  */
 public fun <T> Sequence<Sequence<T>>.flatten(): Sequence<T> = flatten { it.iterator() }
 
 /**
  * Returns a sequence of all elements from all iterables in this sequence.
+ *
+ * The operation is _intermediate_ and _stateless_.
  */
 @kotlin.jvm.JvmName("flattenSequenceOfIterable")
 public fun <T> Sequence<Iterable<T>>.flatten(): Sequence<T> = flatten { it.iterator() }
@@ -69,6 +73,8 @@ private fun <T, R> Sequence<T>.flatten(iterator: (T) -> Iterator<R>): Sequence<R
  * Returns a pair of lists, where
  * *first* list is built from the first values of each pair from this sequence,
  * *second* list is built from the second values of each pair from this sequence.
+ *
+ * The operation is _terminal_.
  */
 public fun <T, R> Sequence<Pair<T, R>>.unzip(): Pair<List<T>, List<R>> {
     val listT = ArrayList<T>()
@@ -532,7 +538,10 @@ private class GeneratorSequence<T: Any>(private val getInitialValue: () -> T?, p
 /**
  * Returns a wrapper sequence that provides values of this sequence, but ensures it can be iterated only one time.
  *
+ * The operation is _intermediate_ and _stateless_.
+ *
  * [IllegalStateException] is thrown on iterating the returned sequence from the second time.
+ *
  */
 public fun <T> Sequence<T>.constrainOnce(): Sequence<T> {
     // as? does not work in js

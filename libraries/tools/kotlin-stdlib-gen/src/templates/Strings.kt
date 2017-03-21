@@ -1,6 +1,7 @@
 package templates
 
 import templates.Family.*
+import templates.SequenceClass.*
 
 fun strings(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
@@ -14,6 +15,7 @@ fun strings(): List<GenericFunction> {
             elements will be appended, followed by the [truncated] string (which defaults to "...").
             """
         }
+        sequenceClassification(terminal)
         typeParam("A : Appendable")
         returns { "A" }
         body {
@@ -61,6 +63,7 @@ fun strings(): List<GenericFunction> {
             elements will be appended, followed by the [truncated] string (which defaults to "...").
             """
         }
+        sequenceClassification(terminal)
 
         exclude(Strings)
         returns("String")

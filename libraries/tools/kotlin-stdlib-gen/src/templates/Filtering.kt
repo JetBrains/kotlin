@@ -17,6 +17,7 @@
 package templates
 
 import templates.Family.*
+import templates.SequenceClass.*
 
 fun filtering(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
@@ -36,6 +37,7 @@ fun filtering(): List<GenericFunction> {
     templates add f("drop(n: Int)") {
         val n = "\$n"
         doc { "Returns a list containing all elements except first [n] elements." }
+        sequenceClassification(nearly_stateless)
         returns("List<T>")
         body {
             """
@@ -106,6 +108,7 @@ fun filtering(): List<GenericFunction> {
     templates add f("take(n: Int)") {
         val n = "\$n"
         doc { "Returns a list containing first [n] elements." }
+        sequenceClassification(nearly_stateless)
         returns("List<T>")
         body {
             """
@@ -762,6 +765,16 @@ fun filtering(): List<GenericFunction> {
             """
         }
     }
+
+
+    val terminalOperationPattern = Regex("^\\w+To")
+    templates.forEach { with (it) {
+        if (sequenceClassification.isEmpty()) {
+            sequenceClassification(if (signature.contains("index", ignoreCase = true)) nearly_stateless else stateless)
+        }
+        sequenceClassification.add(0, if (terminalOperationPattern in signature) terminal else intermediate)
+    } }
+
 
     return templates
 }

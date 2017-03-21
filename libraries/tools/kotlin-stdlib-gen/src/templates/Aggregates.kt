@@ -1,6 +1,7 @@
 package templates
 
 import templates.Family.*
+import templates.SequenceClass.*
 
 fun aggregates(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
@@ -749,6 +750,7 @@ fun aggregates(): List<GenericFunction> {
             Returns a sequence which performs the given [action] on each ${f.element} of the original sequence as they pass though it.
             """
         }
+        sequenceClassification(intermediate, stateless)
         body(Sequences) {
             """
             return map {
@@ -788,6 +790,12 @@ fun aggregates(): List<GenericFunction> {
             var index = 0
             for (item in this) action(index++, item)
             """
+        }
+    }
+
+    templates.forEach {
+        if (it.sequenceClassification.isEmpty()) {
+            it.sequenceClassification(terminal)
         }
     }
 

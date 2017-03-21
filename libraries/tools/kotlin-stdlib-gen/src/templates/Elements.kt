@@ -1,6 +1,7 @@
 package templates
 
 import templates.Family.*
+import templates.SequenceClass.*
 
 fun elements(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
@@ -753,5 +754,6 @@ fun elements(): List<GenericFunction> {
         }
     }
 
+    templates.forEach { it.sequenceClassification(terminal) }
     return templates
 }

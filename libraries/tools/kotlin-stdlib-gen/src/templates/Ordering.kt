@@ -1,6 +1,8 @@
 package templates
 
 import templates.Family.*
+import templates.SequenceClass.intermediate
+import templates.SequenceClass.stateful
 
 fun ordering(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
@@ -123,6 +125,7 @@ fun ordering(): List<GenericFunction> {
         doc(Sequences) {
             "Returns a sequence that yields elements of this sequence sorted according to their natural sort order."
         }
+        sequenceClassification(intermediate, stateful)
         body(Sequences) {
             """
             return object : Sequence<T> {
@@ -196,6 +199,7 @@ fun ordering(): List<GenericFunction> {
         doc(Sequences) {
             "Returns a sequence that yields elements of this sequence sorted descending according to their natural sort order."
         }
+        sequenceClassification(intermediate, stateful)
     }
 
     templates add f("sortedArrayDescending()") {
@@ -253,6 +257,7 @@ fun ordering(): List<GenericFunction> {
         doc(Sequences) {
             "Returns a sequence that yields elements of this sequence sorted according to the specified [comparator]."
         }
+        sequenceClassification(intermediate, stateful)
         body(Sequences) {
             """
             return object : Sequence<T> {
@@ -306,6 +311,7 @@ fun ordering(): List<GenericFunction> {
         doc(Sequences) {
             "Returns a sequence that yields elements of this sequence sorted according to natural sort order of the value returned by specified [selector] function."
         }
+        sequenceClassification(intermediate, stateful)
 
         body {
             "return sortedWith(compareBy(selector))"
@@ -339,6 +345,7 @@ fun ordering(): List<GenericFunction> {
         doc(Sequences) {
             "Returns a sequence that yields elements of this sequence sorted descending according to natural sort order of the value returned by specified [selector] function."
         }
+        sequenceClassification(intermediate, stateful)
 
         body {
             "return sortedWith(compareByDescending(selector))"

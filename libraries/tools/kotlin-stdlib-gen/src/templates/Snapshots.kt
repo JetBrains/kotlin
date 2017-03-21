@@ -373,5 +373,7 @@ fun snapshots(): List<GenericFunction> {
         }
     }
 
+    templates.forEach { it.sequenceClassification(SequenceClass.terminal) }
+
     return templates
 }
