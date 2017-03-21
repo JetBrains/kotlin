@@ -8,7 +8,7 @@ annotation class Foo(
 
 annotation class Bar(
         val a: Array<String> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>[' ']<!>,
-        val b: Array<String> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>["", <!EMPTY_CHARACTER_LITERAL!>''<!>]<!>,
+        val b: Array<String> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>["", <!EMPTY_CHARACTER_LITERAL!>''<!>]<!>,
         val c: Array<String> = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>[1]<!>
 )
 

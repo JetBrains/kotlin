@@ -328,6 +328,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 doTest(fileName);
             }
 
+            @TestMetadata("nonConstValAsArgument.kt")
+            public void testNonConstValAsArgument() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameters/nonConstValAsArgument.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("orderWithValue.kt")
             public void testOrderWithValue() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameters/orderWithValue.kt");

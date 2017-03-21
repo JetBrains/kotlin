@@ -722,10 +722,13 @@ private class ConstantExpressionEvaluatorVisitor(
 
         val arguments = call.valueArguments.values.flatMap { resolveArguments(it.arguments, componentType) }
 
-        return factory.createArrayValue(arguments.map { it.toConstantValue(componentType) }, returnType)
+        // not evaluated arguments are not constants: function-calls, properties with custom getter...
+        val evaluatedArguments = arguments.filterNotNull()
+
+        return factory.createArrayValue(evaluatedArguments.map { it.toConstantValue(componentType) }, returnType)
                 .wrap(
-                        usesVariableAsConstant = arguments.any { it.usesVariableAsConstant },
-                        usesNonConstValAsConstant = arguments.any { it.usesNonConstValAsConstant }
+                        usesVariableAsConstant = evaluatedArguments.any { it.usesVariableAsConstant },
+                        usesNonConstValAsConstant = arguments.any { it == null || it.usesNonConstValAsConstant }
                 )
     }
 
@@ -735,15 +738,12 @@ private class ConstantExpressionEvaluatorVisitor(
         return KClassValue(jetType).wrap()
     }
 
-    private fun resolveArguments(valueArguments: List<ValueArgument>, expectedType: KotlinType): List<CompileTimeConstant<*>> {
-        val constants = arrayListOf<CompileTimeConstant<*>>()
+    private fun resolveArguments(valueArguments: List<ValueArgument>, expectedType: KotlinType): List<CompileTimeConstant<*>?> {
+        val constants = arrayListOf<CompileTimeConstant<*>?>()
         for (argument in valueArguments) {
             val argumentExpression = argument.getArgumentExpression()
             if (argumentExpression != null) {
-                val compileTimeConstant = evaluate(argumentExpression, expectedType)
-                if (compileTimeConstant != null) {
-                    constants.add(compileTimeConstant)
-                }
+                constants.add(evaluate(argumentExpression, expectedType))
             }
         }
         return constants
