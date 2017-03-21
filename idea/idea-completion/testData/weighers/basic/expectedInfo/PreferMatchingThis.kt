@@ -8,6 +8,6 @@ open class Y : X {
     }
 }
 
-// ORDER: this@Inner
 // ORDER: this@Y
+// ORDER: this@Inner
 // ORDER: this@foo
