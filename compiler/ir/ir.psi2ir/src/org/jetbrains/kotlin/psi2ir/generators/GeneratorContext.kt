@@ -33,6 +33,8 @@ class GeneratorContext(
 ) : IrGeneratorContext(IrBuiltIns(moduleDescriptor.builtIns)) {
     val sourceManager = PsiSourceManager()
 
+    val symbolTable = SymbolTable()
+
     // TODO: inject a correct StorageManager instance, or store NotFoundClasses inside ModuleDescriptor
     val reflectionTypes = ReflectionTypes(moduleDescriptor, NotFoundClasses(LockBasedStorageManager.NO_LOCKS, moduleDescriptor))
 }
