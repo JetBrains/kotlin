@@ -22,10 +22,9 @@ import java.lang.invoke.*
 import java.lang.reflect.Method
 
 class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, type: MethodType, private val callableName: String, private val callableType: MethodType) {
-
-    private var cache: Class<*>? = null
-    private var handle: MethodHandle? = null
-    private var reflectMethod: Method? = null
+    private var classCache: Class<*>? = null
+    private var indyCache: MethodHandle? = null
+    private var reflectCache: Method? = null
 
     companion object {
         @JvmStatic
@@ -37,30 +36,81 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
 
     fun getMethod(receiver: Any): MethodHandle? {
         val receiverClass = receiver.javaClass
-        if (cache == null || cache != receiverClass) {
-            cache = receiverClass
-            val method = setupAccessible(receiverClass)
-            handle = lookup.unreflect(method)
+        if (classCache != null && classCache == receiverClass) {
+            return indyCache
         }
-        return handle
+
+        classCache = receiverClass
+        val method = resolveMethod(receiverClass)
+        setupAccessible(method)
+        indyCache = lookup.unreflect(method)
+        return indyCache
     }
 
     fun getReflectMethod(receiver: Any): Method? {
         val receiverClass = receiver.javaClass
-        if (cache == null || cache != receiverClass) {
-            cache = receiverClass
-            reflectMethod = setupAccessible(receiverClass)
+        if (classCache == null || classCache != receiverClass) {
+            classCache = receiverClass
+            reflectCache = resolveMethod(receiverClass)
+            setupAccessible(reflectCache!!)
         }
 
-        return reflectMethod
+        return reflectCache
     }
 
-    private fun setupAccessible(cls: Class<*>): Method {
-        val method = cls.getDeclaredMethod(callableName, *callableType.parameterArray())
+    private fun setupAccessible(method: Method) {
         if (!method.isAccessible) {
             method.isAccessible = true
         }
+    }
 
-        return method
+    private fun resolveMethod(cls: Class<*>): Method {
+        try {
+            return cls.getDeclaredMethod(callableName, *callableType.parameterArray())
+        } catch (e: NoSuchMethodException) {
+            return findOverload(cls, callableName, callableType)
+        }
+    }
+
+    private fun findOverload(target: Class<*>, callableName: String, callableType: MethodType): Method {
+        val args = callableType.parameterArray()
+        val methods = target.declaredMethods
+
+        var candidate: Method? = null
+        var bestDistance = Int.MAX_VALUE
+
+        for (method in methods) {
+            if (method.name != callableName || method.parameterCount != args.size) {
+                continue
+            }
+
+            val parameters = method.parameters
+
+            var i = 0
+            var distance = 0
+            while (i < args.size) {
+                if (args[i] == parameters[i].type) {
+                    continue
+                } else if (args[i].isAssignableFrom(parameters[i].type)) {
+                    distance++
+                } else {
+                    distance = -1
+                    break
+                }
+
+                ++i
+            }
+
+            if (distance < bestDistance) {
+                bestDistance = distance
+                candidate = method
+            }
+
+            if (bestDistance == 0) {
+                break
+            }
+        }
+
+        return candidate!!
     }
 }

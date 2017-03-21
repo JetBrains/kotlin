@@ -16,21 +16,18 @@
 
 package org.jetbrains.kotlin.types.checker
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructor
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.TypeCheckerContext.SupertypesPolicy
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addToStdlib.check
-import org.jetbrains.kotlin.utils.keysToMap
 
 object StrictEqualityTypeChecker {
     /**
@@ -184,14 +181,14 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
             return true
         }
 
-        val protocolFields = protocolDescriptor
-                .unsubstitutedMemberScope
+        val protocolFields = protocol
+                .memberScope
                 .getDescriptorsFiltered()
                 .map { it as? CallableDescriptor }
                 .filterNotNull()
 
-        val candidateFields = candidateDescriptor
-                .unsubstitutedMemberScope
+        val candidateFields = candidate
+                .memberScope
                 .getDescriptorsFiltered()
                 .map { it as? CallableDescriptor }
                 .filterNotNull()
