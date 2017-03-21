@@ -1387,19 +1387,19 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         var bbExit : LLVMBasicBlockRef? = null
         var resultPhi : LLVMValueRef? = null
 
-        fun getExit(): LLVMBasicBlockRef? {
+        fun getExit(): LLVMBasicBlockRef {
             if (bbExit == null) bbExit = codegen.basicBlock("inline_body_exit")
-            return bbExit
+            return bbExit!!
         }
 
-        fun getResult(): LLVMValueRef? {
+        fun getResult(): LLVMValueRef {
             if (resultPhi == null) {
                 val bbCurrent = codegen.currentBlock
-                codegen.positionAtEnd(getExit()!!)
+                codegen.positionAtEnd(getExit())
                 resultPhi = codegen.phi(codegen.getLLVMType(inlineBody.type))
                 codegen.positionAtEnd(bbCurrent)
             }
-            return resultPhi
+            return resultPhi!!
         }
 
         override fun genReturn(target: CallableDescriptor, value: LLVMValueRef?) {
@@ -1411,7 +1411,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             codegen.br(getExit()!!)                                             // Generate branch on exit block.
 
             if (KotlinBuiltIns.isUnit(inlineBody.type) == false) {              // If function returns more then "unit"
-                codegen.assignPhis(getResult()!! to value!!)                    // Assign return value to result PHI node.
+                codegen.assignPhis(getResult() to value!!)                      // Assign return value to result PHI node.
             }
         }
     }
