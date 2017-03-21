@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils.TestFileFactory
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.utils.DFS
 import java.io.ByteArrayOutputStream
 import java.io.Closeable
@@ -137,7 +138,8 @@ abstract class BasicBoxTest(
 
             if (!SKIP_NODE_JS.matcher(expectedText).find()) {
                 val nodeRunnerName = mainModule.outputFileName(outputDir) + ".node.js"
-                val nodeRunnerText = generateNodeRunner(allJsFiles, outputDir, mainModuleName, testFactory.testPackage)
+                val ignored = InTextDirectivesUtils.isIgnoredTarget(TargetBackend.JS, file)
+                val nodeRunnerText = generateNodeRunner(allJsFiles, outputDir, mainModuleName, ignored, testFactory.testPackage)
                 FileUtil.writeToFile(File(nodeRunnerName), nodeRunnerText)
             }
 
@@ -146,25 +148,33 @@ abstract class BasicBoxTest(
         }
     }
 
-    private fun generateNodeRunner(files: Collection<String>, dir: File, moduleName: String, testPackage: String?): String {
-        val sb = StringBuilder("var text = \"\";\n")
-        sb.append("var fs = require('fs');\n")
-
-        sb.append("module.exports = function(kotlin, requireFromString) {\n")
-        sb.append("text += 'module.exports = function(kotlin) {\\n';\n")
-
-        for (file in files) {
-            val fileName = FileUtil.getRelativePath(dir, File(file))!!
-            sb.append("text += fs.readFileSync(__dirname + \"/$fileName\") + \"\\n\";\n")
-        }
-        sb.append("text += 'return $moduleName;';\n")
-        sb.append("text += \"};\";\n")
-
+    private fun generateNodeRunner(
+            files: Collection<String>,
+            dir: File,
+            moduleName: String,
+            ignored: Boolean,
+            testPackage: String?
+    ): String {
+        val filesToLoad = files.map { FileUtil.getRelativePath(dir, File(it))!! }.map { "\"$it\"" }
         val fqn = testPackage?.let { ".$it" } ?: ""
+        val loadAndRun = "load([${filesToLoad.joinToString(",")}], '$moduleName')$fqn.box()"
 
-        sb.append("var testModule = requireFromString(text)(kotlin);\n")
-        sb.append("return testModule$fqn.box();\n")
-        sb.append("};")
+        val sb = StringBuilder()
+        sb.append("module.exports = function(load) {\n")
+        if (ignored) {
+            sb.append("  try {\n")
+            sb.append("    var result = $loadAndRun;\n")
+            sb.append("    if (result != 'OK') return 'OK';")
+            sb.append("    return 'fail: expected test failure';\n")
+            sb.append("  }\n")
+            sb.append("  catch (e) {\n")
+            sb.append("    return 'OK';\n")
+            sb.append("}\n")
+        }
+        else {
+            sb.append("  return $loadAndRun;\n")
+        }
+        sb.append("};\n")
 
         return sb.toString()
     }
