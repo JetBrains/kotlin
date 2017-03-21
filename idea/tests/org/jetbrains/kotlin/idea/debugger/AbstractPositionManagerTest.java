@@ -33,6 +33,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.sun.jdi.Location;
 import com.sun.jdi.ReferenceType;
 import kotlin.Unit;
+import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
 import kotlin.jvm.functions.Function1;
 import kotlin.sequences.SequencesKt;
@@ -54,7 +55,6 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
-import org.jetbrains.kotlin.utils.CollectionsKt;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
@@ -280,7 +280,7 @@ public abstract class AbstractPositionManagerTest extends KotlinLightCodeInsight
 
         @Override
         public List<ReferenceType> classesByName(String name) {
-            return CollectionsKt.emptyOrSingletonList(referencesByName.get(name));
+            return CollectionsKt.listOfNotNull(referencesByName.get(name));
         }
     }
 }

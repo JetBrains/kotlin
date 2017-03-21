@@ -57,14 +57,11 @@ inline fun <T, C: Collection<T>> C.ifEmpty(body: () -> C): C = if (isEmpty()) bo
 
 inline fun <T> Array<out T>.ifEmpty(body: () -> Array<out T>): Array<out T> = if (isEmpty()) body() else this
 
-@Deprecated("Use listOfNotNull instead", ReplaceWith("listOfNotNull(item)"))
-fun <T: Any> emptyOrSingletonList(item: T?): List<T> = listOfNotNull(item)
-
 fun <T: Any> MutableCollection<T>.addIfNotNull(t: T?) {
     if (t != null) add(t)
 }
 
-suspend fun <T: Any> SequenceBuilder<in T>.yieldIfNotNull(t: T?) = if (t != null) yield(t) else Unit
+suspend fun <T: Any> SequenceBuilder<T>.yieldIfNotNull(t: T?) = if (t != null) yield(t) else Unit
 
 fun <K, V> newHashMapWithExpectedSize(expectedSize: Int): HashMap<K, V> =
         HashMap(capacity(expectedSize))
@@ -81,24 +78,12 @@ fun <E> newLinkedHashSetWithExpectedSize(expectedSize: Int): LinkedHashSet<E> =
 private fun capacity(expectedSize: Int): Int =
         if (expectedSize < 3) 3 else expectedSize + expectedSize / 3 + 1
 
-@Deprecated("Use toList(), it provides the same behavior for Collection", ReplaceWith("this.toList()"))
-fun <T> Collection<T>.toReadOnlyList(): List<T> =
-        when (size) {
-            0 -> emptyList()
-            1 -> listOf(first())
-            else -> ArrayList(this)
-        }
-
 fun <T> ArrayList<T>.compactIfPossible(): List<T> =
         when (size) {
             0 -> emptyList()
             1 -> listOf(first())
             else -> apply { trimToSize() }
         }
-
-@Deprecated("Use listOfNotNull(this) or this.let(::listOfNotNull) instead", ReplaceWith("listOfNotNull(this)"))
-fun <T: Any> T?.singletonOrEmptyList(): List<T> =
-        if (this != null) listOf(this) else emptyList()
 
 fun <T> List<T>.indexOfFirst(startFrom: Int, predicate: (T) -> Boolean): Int {
     for (index in startFrom..lastIndex) {

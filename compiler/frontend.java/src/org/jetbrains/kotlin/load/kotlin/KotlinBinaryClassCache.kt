@@ -63,7 +63,7 @@ class KotlinBinaryClassCache : Disposable {
             }
 
             val aClass = ApplicationManager.getApplication().runReadAction(Computable {
-                //noinspection deprecation
+                @Suppress("DEPRECATION")
                 VirtualFileKotlinClass.create(file, fileContent)
             })
 

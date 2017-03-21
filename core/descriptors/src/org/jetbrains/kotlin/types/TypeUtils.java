@@ -216,7 +216,7 @@ public class TypeUtils {
         for (TypeParameterDescriptor parameterDescriptor : parameters) {
             result.add(new TypeProjectionImpl(parameterDescriptor.getDefaultType()));
         }
-        return org.jetbrains.kotlin.utils.CollectionsKt.toReadOnlyList(result);
+        return CollectionsKt.toList(result);
     }
 
     @NotNull

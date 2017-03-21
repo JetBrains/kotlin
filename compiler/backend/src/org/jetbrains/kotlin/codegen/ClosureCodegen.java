@@ -323,7 +323,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         Type[] myParameterTypes = bridge.getArgumentTypes();
 
         List<ParameterDescriptor> calleeParameters = CollectionsKt.plus(
-                org.jetbrains.kotlin.utils.CollectionsKt.<ParameterDescriptor>singletonOrEmptyList(funDescriptor.getExtensionReceiverParameter()),
+                CollectionsKt.listOfNotNull(funDescriptor.getExtensionReceiverParameter()),
                 funDescriptor.getValueParameters()
         );
 

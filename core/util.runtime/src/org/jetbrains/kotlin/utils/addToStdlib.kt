@@ -20,15 +20,6 @@ import java.lang.reflect.Modifier
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-@Deprecated("Use listOfNotNull(this) or this.let(::listOfNotNull) instead", ReplaceWith("listOfNotNull(this)"))
-fun <T: Any> T?.singletonOrEmptyList(): List<T> = if (this != null) Collections.singletonList(this) else Collections.emptyList()
-
-@Deprecated("Use listOf(this) or this.let(::listOf) instead", ReplaceWith("listOf(this)"))
-fun <T> T.singletonList(): List<T> = Collections.singletonList(this)
-
-@Deprecated("Use this?.let(::setOf).orEmpty() instead", ReplaceWith("this?.let(::setOf).orEmpty()"))
-fun <T: Any> T?.singletonOrEmptySet(): Set<T> = if (this != null) Collections.singleton(this) else Collections.emptySet()
-
 inline fun <reified T : Any> Sequence<*>.firstIsInstanceOrNull(): T? {
     for (element in this) if (element is T) return element
     return null
@@ -78,9 +69,6 @@ inline fun <reified T : Any> Iterable<*>.lastIsInstanceOrNull(): T? {
 fun <T> sequenceOfLazyValues(vararg elements: () -> T): Sequence<T> = elements.asSequence().map { it() }
 
 fun <T1, T2> Pair<T1, T2>.swap(): Pair<T2, T1> = Pair(second, first)
-
-@Deprecated("Use takeIf() instead.", ReplaceWith("this.takeIf(predicate)"))
-fun <T: Any> T.check(predicate: (T) -> Boolean): T? = if (predicate(this)) this else null
 
 inline fun <reified T : Any> Any?.safeAs(): T? = this as? T
 inline fun <reified T : Any> Any?.cast(): T = this as T

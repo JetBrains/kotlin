@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isBooleanOrNullableBoolean
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptySet
 import java.util.*
 
 interface InheritanceItemsSearcher {
@@ -118,7 +117,7 @@ class SmartCompletion(
                     if (operationToken == KtTokens.EQ || operationToken in COMPARISON_TOKENS) {
                         val left = parent.left
                         if (left is KtReferenceExpression) {
-                            return@lazy bindingContext[BindingContext.REFERENCE_TARGET, left].singletonOrEmptySet()
+                            return@lazy bindingContext[BindingContext.REFERENCE_TARGET, left]?.let(::setOf).orEmpty()
                         }
                     }
                 }

@@ -21,13 +21,13 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.FileASTNode;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.FileContentUtilCore;
 import com.intellij.util.IncorrectOperationException;
 import kotlin.collections.ArraysKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition;
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
-import org.jetbrains.kotlin.utils.CollectionsKt;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -279,7 +278,7 @@ public class KtFile extends PsiFileBase implements KtDeclarationContainer, KtAnn
         PsiElement result = super.setName(name);
         boolean willBeScript = name.endsWith(KotlinParserDefinition.STD_SCRIPT_EXT);
         if (isScript() != willBeScript) {
-            FileContentUtilCore.reparseFiles(CollectionsKt.<VirtualFile>singletonOrEmptyList(getVirtualFile()));
+            FileContentUtilCore.reparseFiles(CollectionsKt.listOfNotNull(getVirtualFile()));
         }
         return result;
     }

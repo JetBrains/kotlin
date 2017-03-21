@@ -95,7 +95,7 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
         }
 
         fun makeScriptContents() = BasicScriptContents(file, getAnnotations = {
-            val classLoader = (template as Any)::class.java.classLoader
+            val classLoader = template::class.java.classLoader
             try {
                 getAnnotationEntries(file, project)
                         .mapNotNull { psiAnn ->

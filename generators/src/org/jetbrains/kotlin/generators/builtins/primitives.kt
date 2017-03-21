@@ -127,7 +127,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
                 generateBitwiseOperators(className, since = if (kind == PrimitiveType.BYTE || kind == PrimitiveType.SHORT) "1.1" else null)
             }
 
-            generateConversions(kind)
+            generateConversions()
 
             out.println("}\n")
         }
@@ -220,7 +220,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         out.println()
     }
 
-    private fun generateConversions(kind: PrimitiveType) {
+    private fun generateConversions() {
         for (otherKind in PrimitiveType.exceptBoolean) {
             val name = otherKind.capitalized
             out.println("    public override fun to$name(): $name")

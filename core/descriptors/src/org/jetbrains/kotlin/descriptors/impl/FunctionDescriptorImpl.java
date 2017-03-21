@@ -144,7 +144,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         this.isImpl = isImpl;
     }
 
-    public void setHiddenToOvercomeSignatureClash(boolean hiddenToOvercomeSignatureClash) {
+    private void setHiddenToOvercomeSignatureClash(boolean hiddenToOvercomeSignatureClash) {
         isHiddenToOvercomeSignatureClash = hiddenToOvercomeSignatureClash;
     }
 
@@ -339,7 +339,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     @Nullable
-    protected KotlinType getExtensionReceiverParameterType() {
+    private KotlinType getExtensionReceiverParameterType() {
         if (extensionReceiverParameter == null) return null;
         return extensionReceiverParameter.getType();
     }

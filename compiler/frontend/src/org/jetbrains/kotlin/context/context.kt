@@ -95,7 +95,6 @@ fun ModuleContext(module: ModuleDescriptor, project: Project): ModuleContext =
 fun GlobalContext.withProject(project: Project): ProjectContext = ProjectContextImpl(project, this)
 fun ProjectContext.withModule(module: ModuleDescriptor): ModuleContext = ModuleContextImpl(module, this)
 
-@JvmOverloads
 fun ContextForNewModule(
         projectContext: ProjectContext,
         moduleName: Name,
