@@ -29,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
@@ -37,7 +36,6 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
@@ -77,7 +75,10 @@ import org.jetbrains.kotlin.types.expressions.unqualifiedSuper.UnqualifiedSuperK
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -97,20 +98,6 @@ import static org.jetbrains.kotlin.types.expressions.TypeReconstructionUtil.reco
 
 @SuppressWarnings("SuspiciousMethodCalls")
 public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
-    private static final Map<PrimitiveType, Name> PRIMITIVE_TYPE_TO_ARRAY = new HashMap<PrimitiveType, Name>();
-    static {
-        PRIMITIVE_TYPE_TO_ARRAY.put(PrimitiveType.BOOLEAN, Name.identifier("booleanArrayOf"));
-        PRIMITIVE_TYPE_TO_ARRAY.put(PrimitiveType.CHAR, Name.identifier("charArrayOf"));
-        PRIMITIVE_TYPE_TO_ARRAY.put(PrimitiveType.INT, Name.identifier("intArrayOf"));
-        PRIMITIVE_TYPE_TO_ARRAY.put(PrimitiveType.BYTE, Name.identifier("byteArrayOf"));
-        PRIMITIVE_TYPE_TO_ARRAY.put(PrimitiveType.SHORT, Name.identifier("shortArrayOf"));
-        PRIMITIVE_TYPE_TO_ARRAY.put(PrimitiveType.FLOAT, Name.identifier("floatArrayOf"));
-        PRIMITIVE_TYPE_TO_ARRAY.put(PrimitiveType.LONG, Name.identifier("longArrayOf"));
-        PRIMITIVE_TYPE_TO_ARRAY.put(PrimitiveType.DOUBLE, Name.identifier("doubleArrayOf"));
-    }
-
-    private static final Name ARRAY_OF_FUNCTION = Name.identifier("arrayOf");
-
     private static final TokenSet BARE_TYPES_ALLOWED = TokenSet.create(AS_KEYWORD, AS_SAFE);
 
     protected BasicExpressionTypingVisitor(@NotNull ExpressionTypingInternals facade) {
@@ -1517,12 +1504,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public KotlinTypeInfo visitCollectionLiteralExpression(
             @NotNull KtCollectionLiteralExpression expression, ExpressionTypingContext context
     ) {
-        if (!isInsideAnnotationEntryOrClass(expression)) {
-            context.trace.report(UNSUPPORTED.on(expression, "Collection literals outside of annotations"));
-        }
-
-        checkSupportsArrayLiterals(expression, context);
-        return resolveCollectionLiteralSpecialMethod(expression, context);
+        return CollectionLiteralResolver.INSTANCE.resolveCollectionLiteral(
+                expression, context, components.callResolver, components.languageVersionSettings);
     }
 
     @Override
@@ -1784,54 +1767,5 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         traceForResolveResult.record(isGet ? INDEXED_LVALUE_GET : INDEXED_LVALUE_SET, arrayAccessExpression,
                                      functionResults.getResultingCall());
         return resultTypeInfo.replaceType(functionResults.getResultingDescriptor().getReturnType());
-    }
-
-    private void checkSupportsArrayLiterals(KtCollectionLiteralExpression expression, ExpressionTypingContext context) {
-        if (isInsideAnnotationEntryOrClass(expression) &&
-            !components.languageVersionSettings.supportsFeature(LanguageFeature.ArrayLiteralsInAnnotations)) {
-            context.trace.report(UNSUPPORTED_FEATURE.on(
-                    expression, TuplesKt.to(LanguageFeature.ArrayLiteralsInAnnotations, components.languageVersionSettings)));
-        }
-    }
-
-    private static boolean isInsideAnnotationEntryOrClass(KtCollectionLiteralExpression expression) {
-        //noinspection unchecked
-        PsiElement parent = PsiTreeUtil.getParentOfType(expression, KtAnnotationEntry.class, KtClass.class);
-        return parent instanceof KtAnnotationEntry || (parent instanceof KtClass && ((KtClass) parent).isAnnotation());
-    }
-
-    private KotlinTypeInfo resolveCollectionLiteralSpecialMethod(
-            @NotNull KtCollectionLiteralExpression collectionLiteralExpression,
-            @NotNull ExpressionTypingContext context
-    ) {
-        Name collectionLiteralCallName;
-        KotlinType expectedType = context.expectedType;
-        if (NO_EXPECTED_TYPE == expectedType || !KotlinBuiltIns.isPrimitiveArray(expectedType)) {
-            collectionLiteralCallName = ARRAY_OF_FUNCTION;
-        }
-        else {
-            ClassifierDescriptor descriptor = expectedType.getConstructor().getDeclarationDescriptor();
-            if (descriptor != null) {
-                FqNameUnsafe arrayFqName = DescriptorUtils.getFqName(descriptor);
-                PrimitiveType primitiveType = KotlinBuiltIns.getPrimitiveTypeByArrayClassFqName(arrayFqName);
-
-                collectionLiteralCallName = PRIMITIVE_TYPE_TO_ARRAY.get(primitiveType);
-            }
-            else {
-                collectionLiteralCallName = ARRAY_OF_FUNCTION;
-            }
-        }
-
-        Call call = CallMaker.makeCallForCollectionLiteral(collectionLiteralExpression);
-        OverloadResolutionResults<FunctionDescriptor> resolutionResults = components.callResolver.resolveCallWithGivenName(
-                context, call, collectionLiteralExpression, collectionLiteralCallName);
-
-        // TODO: check that resolved function is from package `kotlin`, otherwise report an error
-        if (!resolutionResults.isSingleResult()) {
-            return TypeInfoFactoryKt.noTypeInfo(context);
-        }
-
-        context.trace.record(COLLECTION_LITERAL_CALL, collectionLiteralExpression, resolutionResults.getResultingCall());
-        return TypeInfoFactoryKt.createTypeInfo(resolutionResults.getResultingDescriptor().getReturnType(), context);
     }
 }
