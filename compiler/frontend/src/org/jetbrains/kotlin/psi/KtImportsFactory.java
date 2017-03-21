@@ -43,7 +43,7 @@ public class KtImportsFactory {
             return directive;
         }
 
-        KtImportDirective createdDirective = KtPsiFactoryKt.KtPsiFactory(project).createImportDirective(importPath);
+        KtImportDirective createdDirective = KtPsiFactoryKt.KtPsiFactory(project, false).createImportDirective(importPath);
         importsCache.put(importPath, createdDirective);
 
         return createdDirective;

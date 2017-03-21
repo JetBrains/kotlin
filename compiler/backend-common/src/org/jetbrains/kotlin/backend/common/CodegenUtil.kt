@@ -161,6 +161,6 @@ object CodegenUtil {
         val fakeFunctionCall = StringBuilder("callableReferenceFakeCall(")
         fakeFunctionCall.append(referencedFunction.valueParameters.map { "p${it.index}" }.joinToString(", "))
         fakeFunctionCall.append(")")
-        return KtPsiFactory(project).createExpression(fakeFunctionCall.toString()) as KtCallExpression
+        return KtPsiFactory(project, markGenerated = false).createExpression(fakeFunctionCall.toString()) as KtCallExpression
     }
 }

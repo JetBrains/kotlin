@@ -137,7 +137,7 @@ fun ResolvedCall<*>.replaceSuspensionFunctionWithRealDescriptor(
         newCall.recordValueArgument(newCandidateDescriptor.valueParameters[it.key.index], it.value)
     }
 
-    val psiFactory = KtPsiFactory(project)
+    val psiFactory = KtPsiFactory(project, markGenerated = false)
     val arguments = psiFactory.createCallArguments("(this)").arguments.single()
     val thisExpression = arguments.getArgumentExpression()!!
     newCall.recordValueArgument(

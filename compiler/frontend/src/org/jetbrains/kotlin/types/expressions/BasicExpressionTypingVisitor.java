@@ -1193,7 +1193,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 expression,
                 receiver,
                 // semantically, a call to `==` is a safe call
-                new KtPsiFactory(expression.getProject()).createSafeCallNode(),
+                new KtPsiFactory(expression.getProject(), false).createSafeCallNode(),
                 operationSign,
                 Collections.singletonList(right)
         );

@@ -119,7 +119,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             return getTypeInfoWhenOnlyOneBranchIsPresent(
                     elseBranch, elseScope, elseInfo, thenInfo, contextWithExpectedType, ifExpression);
         }
-        KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(ifExpression);
+        KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(ifExpression, false);
         KtBlockExpression thenBlock = psiFactory.wrapInABlockWrapper(thenBranch);
         KtBlockExpression elseBlock = psiFactory.wrapInABlockWrapper(elseBranch);
         Call callForIf = createCallForSpecialConstruction(ifExpression, ifExpression, Lists.newArrayList(thenBlock, elseBlock));

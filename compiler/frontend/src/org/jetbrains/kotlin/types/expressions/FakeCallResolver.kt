@@ -108,7 +108,7 @@ class FakeCallResolver(
             callElement: KtExpression,
             onComplete: (KtSimpleNameExpression, Boolean) -> Unit = { _, _ -> }
     ): Pair<Call, OverloadResolutionResults<FunctionDescriptor>> {
-        val fakeCalleeExpression = KtPsiFactory(project).createSimpleName(name.asString())
+        val fakeCalleeExpression = KtPsiFactory(project, markGenerated = false).createSimpleName(name.asString())
         val call = CallMaker.makeCallWithExpressions(
                 callElement, receiver, /* callOperationNode = */ null, fakeCalleeExpression, valueArguments
         )

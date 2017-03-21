@@ -173,7 +173,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
     ) {
         if (receiver == null) return null;
 
-        KtExpression receiverExpression = KtPsiFactoryKt.KtPsiFactory(state.getProject()).createExpression("callableReferenceFakeReceiver");
+        KtExpression receiverExpression = KtPsiFactoryKt.KtPsiFactory(state.getProject(), false).createExpression("callableReferenceFakeReceiver");
         codegen.tempVariables.put(receiverExpression, receiverParameterStackValue(signature, codegen));
         return ExpressionReceiver.Companion.create(receiverExpression, receiver.getType(), BindingContext.EMPTY);
     }

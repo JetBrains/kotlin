@@ -422,7 +422,7 @@ public class BodyResolver {
             return;
         }
 
-        KtInitializerList ktInitializerList = new KtPsiFactory(project).createEnumEntryInitializerList();
+        KtInitializerList ktInitializerList = new KtPsiFactory(project, false).createEnumEntryInitializerList();
         KtSuperTypeCallEntry ktCallEntry = (KtSuperTypeCallEntry) ktInitializerList.getInitializers().get(0);
         Call call = CallMaker.makeConstructorCallWithoutTypeArguments(ktCallEntry);
         trace.record(BindingContext.TYPE, ktCallEntry.getTypeReference(), enumClassDescriptor.getDefaultType());
