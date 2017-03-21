@@ -119,9 +119,18 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
                     else -> return // do not report anything for incorrect code, e.g. 'impl' local function
                 }
                 candidates.any { declaration ->
+                    // TODO: optimize by caching this per impl-header class pair, do not create a new substitutor for each impl member
+                    val substitutor =
+                            if (container is ClassDescriptor) {
+                                val headerClass = declaration.containingDeclaration as ClassDescriptor
+                                // TODO: this might not work for members of inner generic classes
+                                Substitutor(headerClass.declaredTypeParameters, container.declaredTypeParameters)
+                            }
+                            else null
+
                     descriptor != declaration &&
                     declaration.isHeader &&
-                    areCompatibleCallables(declaration, descriptor, checkImpl = false) == Compatible
+                    areCompatibleCallables(declaration, descriptor, checkImpl = false, parentSubstitutor = substitutor) == Compatible
                 }
             }
             is ClassifierDescriptorWithTypeParameters -> descriptor.findDeclarationForClass() != null
@@ -342,12 +351,11 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
         val bTypeParams = b.declaredTypeParameters
         if (aTypeParams.size != bTypeParams.size) return Incompatible.TypeParameterCount
 
-        val substitutor = Substitutor(aTypeParams, bTypeParams, parentSubstitutor)
-
         if (a.modality != b.modality && !(a.modality == Modality.FINAL && b.modality == Modality.OPEN)) return Incompatible.Modality
 
         if (a.visibility != b.visibility) return Incompatible.Visibility
 
+        val substitutor = Substitutor(aTypeParams, bTypeParams, parentSubstitutor)
         areCompatibleTypeParameters(aTypeParams, bTypeParams, substitutor).let { if (it != Compatible) return it }
 
         // Subtract kotlin.Any from supertypes because it's implicitly added if no explicit supertype is specified,

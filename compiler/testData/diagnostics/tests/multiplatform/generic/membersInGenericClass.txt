@@ -1,0 +1,24 @@
+// -- Module: <m1-common> --
+package
+
+public header interface A</*0*/ T> {
+    public header abstract val x: T
+    public header abstract var y: kotlin.collections.List<T>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract header fun f(/*0*/ p: kotlin.collections.Collection<T>): kotlin.collections.Map<T, A<T?>>
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+
+// -- Module: <m2-jvm> --
+package
+
+public impl interface A</*0*/ T> {
+    public impl abstract val x: T
+    public impl abstract var y: kotlin.collections.List<T>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract impl fun f(/*0*/ p: kotlin.collections.Collection<T>): kotlin.collections.Map<T, A<T?>>
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
