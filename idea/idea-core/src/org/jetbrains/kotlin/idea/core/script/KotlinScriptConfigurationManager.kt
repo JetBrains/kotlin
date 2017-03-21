@@ -100,9 +100,7 @@ class KotlinScriptConfigurationManager(
                 if (project.isDisposed) return@runWriteAction
 
                 ProjectRootManagerEx.getInstanceEx(project)?.makeRootsChange(EmptyRunnable.getInstance(), false, true)
-                dumbService.runWhenSmart {
-                    ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
-                }
+                ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
             }
         }
 
