@@ -85,12 +85,8 @@ class KotlinInlineFunctionHandler: InlineActionHandler() {
                 return
             }
 
-            if (lastReturn != null) {
-                replacementBuilder.prepareCodeToInline(lastReturn.returnedExpression, statements.dropLast(1), ::analyzeBodyCopy)
-            }
-            else {
-                replacementBuilder.prepareCodeToInline(null, statements, ::analyzeBodyCopy)
-            }
+            replacementBuilder.prepareCodeToInline(lastReturn?.returnedExpression,
+                                                   statements.dropLast(returnStatements.size), ::analyzeBodyCopy)
         }
         else {
             replacementBuilder.prepareCodeToInline(bodyCopy, emptyList(), ::analyzeBodyCopy)
