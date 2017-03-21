@@ -194,6 +194,7 @@ targetList.each { target ->
         classpath = project.configurations.cli_bc
         jvmArgs "-ea", 
             "-Dkonan.home=${project.parent.file('dist')}",
+            "-Dkonan.dependencies=${project.parent.file('dependencies/all')}",
             "-Djava.library.path=${project.buildDir}/nativelibs"
         args('-output', project(':runtime').file("build/${target}/stdlib.kt.bc"), 
             '-nolink', '-nostdlib', '-ea',
@@ -220,6 +221,7 @@ targetList.each { target ->
         classpath = project.configurations.cli_bc
         jvmArgs "-ea", 
             "-Dkonan.home=${project.parent.file('dist')}",
+            "-Dkonan.dependencies=${project.parent.file('dependencies/all')}",
             "-Djava.library.path=${project.buildDir}/nativelibs"
         args('-output', project(':runtime').file("build/${target}/start.kt.bc"), 
             '-nolink', '-nostdlib', '-ea',

@@ -2,9 +2,8 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import java.io.File
-import java.util.Properties
 
-public class Distribution(val config: CompilerConfiguration) {
+class Distribution(val config: CompilerConfiguration) {
 
     val targetManager = TargetManager(config)
     val target = 
@@ -25,8 +24,8 @@ public class Distribution(val config: CompilerConfiguration) {
 
     val lib = "$konanHome/lib/$target"
 
-    // TODO: Pack all needed things to dist.
-    val dependencies = "$konanHome/../dependencies/all" 
+    // We can override dependency directory using konan.dependencies system property.
+    val dependencies = System.getProperty("konan.dependencies", "$konanHome/dependencies")
 
     val stdlib = "$lib/stdlib.kt.bc"
     val start = "$lib/start.kt.bc"

@@ -12,6 +12,7 @@ abstract class KonanTest extends JavaExec {
     def backendNative = project.project(":backend.native")
     def runtimeProject = project.project(":runtime")
     def dist = project.rootProject.file("dist")
+    def dependencies = project.findProject(":dependencies").file("all")
     def runtimeBc = new File("${dist.canonicalPath}/lib/runtime.bc").absolutePath
     def launcherBc = new File("${dist.canonicalPath}/lib/launcher.bc").absolutePath
     def startKtBc = new File("${dist.canonicalPath}/lib/start.kt.bc").absolutePath
@@ -56,7 +57,9 @@ abstract class KonanTest extends JavaExec {
 
     @Override
     void setJvmArgs(Iterable<?> arguments) {
-        super.setJvmArgs(arguments + "-Dkonan.home=${dist.canonicalPath}" +
+        super.setJvmArgs(arguments +
+                "-Dkonan.home=${dist.canonicalPath}" +
+                "-Dkonan.dependencies=${dependencies.canonicalPat}",
                 "-Djava.library.path=${dist.canonicalPath}/konan/nativelib")
     }
 

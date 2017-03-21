@@ -231,12 +231,10 @@ private fun processLib(konanHome: String,
     val konanFile = File(konanFileName)
     val konanProperties = loadProperties(konanFile, mapOf())
 
-    // TODO: We use -Dkonan.home in the absence of fully built 'dist'
-    // to locate the 'dependencies' directory.
-    // Eventually we need to pull the necessary content into 'dist'.
-    // And provide a set of flags to find the components in the absence of 'dist'.
+    // TODO: We can provide a set of flags to find the components in the absence of 'dist' or 'dist/dependencies'.
     val llvmHome = konanProperties.getOsSpecific("llvmHome")!!
-    val dependencies = File("$konanHome/../dependencies/all").canonicalPath
+    // We can override dependency directory using konan.dependencies system property.
+    val dependencies =  System.getProperty("konan.dependencies", "$konanHome/dependencies")
     val llvmInstallPath = "$dependencies/$llvmHome"
     val additionalHeaders = args["-h"].orEmpty()
     val additionalCompilerOpts = args["-copt"].orEmpty()
