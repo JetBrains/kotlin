@@ -82,6 +82,7 @@ class KotlinInlineFunctionHandler: InlineActionHandler() {
                             "Inline Function is not supported for functions with return statements not at the end of the body."
                 )
                 CommonRefactoringUtil.showErrorHint(project, editor, message, "Inline Function", null)
+                return
             }
 
             if (lastReturn != null) {
