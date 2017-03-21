@@ -69,9 +69,13 @@ public class ControlStructureTypingUtils {
         IF("if"), ELVIS("elvis"), EXCL_EXCL("ExclExcl"), WHEN("when");
 
         private final String name;
+        private final Name specialFunctionName;
+        private final Name specialTypeParameterName;
 
         ResolveConstruct(String name) {
             this.name = name;
+            this.specialFunctionName = Name.identifier("<SPECIAL-FUNCTION-FOR-" + name.toUpperCase() + "-RESOLVE>");
+            this.specialTypeParameterName = Name.identifier("<TYPE-PARAMETER-FOR-" + name.toUpperCase() + "-RESOLVE>");
         }
 
         public String getName() {
@@ -79,11 +83,11 @@ public class ControlStructureTypingUtils {
         }
 
         public Name getSpecialFunctionName() {
-            return Name.identifier("<SPECIAL-FUNCTION-FOR-" + name.toUpperCase() + "-RESOLVE>");
+            return specialFunctionName;
         }
 
         public Name getSpecialTypeParameterName() {
-            return Name.identifier("<TYPE-PARAMETER-FOR-" + name.toUpperCase() + "-RESOLVE>");
+            return specialTypeParameterName;
         }
     }
 
