@@ -46,5 +46,5 @@ class IrFunctionImpl(
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitFunction(this, data)
+            visitor.visitSimpleFunction(this, data)
 }
