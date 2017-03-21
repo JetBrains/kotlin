@@ -31,23 +31,14 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-reflect</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
+            <artifactId>native-platform</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test-junit</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>native-platform</artifactId>
-            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -120,13 +111,10 @@
                             <createSourcesJar>true</createSourcesJar>
                             <filters>
                                 <filter>
-                                    <artifact>*:kotlin-reflect</artifact>
+                                    <artifact>*:kotlin-compiler</artifact>
                                     <excludes>
-                                        <exclude>META-INF/**</exclude>
-                                    </excludes>
-                                    <artifact>*:kotlin-stdlib</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/**</exclude>
+                                        <exclude>com/sun/jna/**</exclude>
+                                        <exclude>net/rubygrapefruit/**</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
