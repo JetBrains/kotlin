@@ -25,15 +25,15 @@ import org.junit.Assert
 import org.junit.Test
 import java.io.File
 
-internal fun GradleImportingTestCase.facetSettings(moduleName: String) = KotlinFacet.get(getModule(moduleName))!!.configuration.settings
-
-internal val GradleImportingTestCase.facetSettings: KotlinFacetSettings
-    get() = facetSettings("project_main")
-
-internal val GradleImportingTestCase.testFacetSettings: KotlinFacetSettings
-    get() = facetSettings("project_test")
-
 class GradleFacetImportTest : GradleImportingTestCase() {
+    private fun facetSettings(moduleName: String) = KotlinFacet.get(getModule(moduleName))!!.configuration.settings
+
+    private val facetSettings: KotlinFacetSettings
+        get() = facetSettings("project_main")
+
+    private val testFacetSettings: KotlinFacetSettings
+        get() = facetSettings("project_test")
+
     @Test
     fun testJvmImport() {
         createProjectSubFile("build.gradle", """
