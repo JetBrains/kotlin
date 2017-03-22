@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.addMember
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.expressions.impl.IrSyntheticBodyImpl
 import org.jetbrains.kotlin.psi2ir.findFirstFunction
@@ -39,10 +38,13 @@ class EnumClassMembersGenerator(override val context: GeneratorContext) : Genera
         }
 
         irClass.addMember(
-                IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
-                               valuesFunction,
-                               IrSyntheticBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrSyntheticBodyKind.ENUM_VALUES)
-                )
+                context.symbolTable.declareSimpleFunction(
+                        irClass.startOffset, irClass.endOffset,
+                        IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
+                        valuesFunction
+                ).apply {
+                    body = IrSyntheticBodyImpl(irClass.startOffset, irClass.endOffset, IrSyntheticBodyKind.ENUM_VALUES)
+                }
         )
     }
 
@@ -54,10 +56,13 @@ class EnumClassMembersGenerator(override val context: GeneratorContext) : Genera
         }
 
         irClass.addMember(
-                IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
-                               valueOfFunction,
-                               IrSyntheticBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrSyntheticBodyKind.ENUM_VALUEOF)
-                )
+                context.symbolTable.declareSimpleFunction(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
+                        valueOfFunction
+                ).apply {
+                    body = IrSyntheticBodyImpl(irClass.startOffset, irClass.endOffset, IrSyntheticBodyKind.ENUM_VALUEOF)
+                }
         )
     }
 }

@@ -17,8 +17,9 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrLoop
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -167,14 +168,14 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
         nextCall.setExplicitReceiverValue(iteratorValue)
         val irNextCall = callGenerator.generateCall(ktLoopRange, nextCall, IrStatementOrigin.FOR_LOOP_NEXT)
         val irLoopParameter =
-                if (ktLoopParameter != null && ktLoopDestructuringDeclaration == null) {
-                    val loopParameterDescriptor = getOrFail(BindingContext.VALUE_PARAMETER, ktLoopParameter)
-                    IrVariableImpl(ktLoopParameter.startOffset, ktLoopParameter.endOffset, IrDeclarationOrigin.DEFINED,
-                                   loopParameterDescriptor, irNextCall)
-                }
-                else {
+                if (ktLoopParameter != null && ktLoopDestructuringDeclaration == null)
+                    context.symbolTable.declareVariable(
+                            ktLoopParameter.startOffset, ktLoopParameter.endOffset, IrDeclarationOrigin.DEFINED,
+                            getOrFail(BindingContext.VALUE_PARAMETER, ktLoopParameter),
+                            irNextCall
+                    )
+                else
                     scope.createTemporaryVariable(irNextCall, "loop_parameter")
-                }
         irInnerBody.statements.add(irLoopParameter)
 
         if (ktLoopDestructuringDeclaration != null) {

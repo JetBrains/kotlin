@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
@@ -42,29 +42,32 @@ import java.util.*
 class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
     fun generateClass(ktClassOrObject: KtClassOrObject): IrClass {
         val descriptor = getOrFail(BindingContext.CLASS, ktClassOrObject)
-        val irClass = IrClassImpl(ktClassOrObject.startOffset, ktClassOrObject.endOffset, IrDeclarationOrigin.DEFINED, descriptor)
 
-        declarationGenerator.generateTypeParameterDeclarations(irClass, descriptor.declaredTypeParameters)
+        return context.symbolTable.declareClass(
+                ktClassOrObject.startOffset, ktClassOrObject.endOffset,
+                IrDeclarationOrigin.DEFINED,
+                descriptor
+        ).buildWithScope { irClass ->
+            declarationGenerator.generateTypeParameterDeclarations(irClass, descriptor.declaredTypeParameters)
 
-        generatePrimaryConstructor(irClass, ktClassOrObject)
+            generatePrimaryConstructor(irClass, ktClassOrObject)
 
-        generatePropertiesDeclaredInPrimaryConstructor(irClass, ktClassOrObject)
+            generatePropertiesDeclaredInPrimaryConstructor(irClass, ktClassOrObject)
 
-        generateMembersDeclaredInSupertypeList(irClass, ktClassOrObject)
+            generateMembersDeclaredInSupertypeList(irClass, ktClassOrObject)
 
-        generateMembersDeclaredInClassBody(irClass, ktClassOrObject)
+            generateMembersDeclaredInClassBody(irClass, ktClassOrObject)
 
-        generateFakeOverrideMemberDeclarations(irClass)
+            generateFakeOverrideMemberDeclarations(irClass)
 
-        if (descriptor.isData) {
-            generateAdditionalMembersForDataClass(irClass, ktClassOrObject)
+            if (descriptor.isData) {
+                generateAdditionalMembersForDataClass(irClass, ktClassOrObject)
+            }
+
+            if (descriptor.kind == ClassKind.ENUM_CLASS) {
+                generateAdditionalMembersForEnumClass(irClass)
+            }
         }
-
-        if (descriptor.kind == ClassKind.ENUM_CLASS) {
-            generateAdditionalMembersForEnumClass(irClass)
-        }
-
-        return irClass
     }
 
     private fun generateFakeOverrideMemberDeclarations(irClass: IrClass) {
@@ -130,16 +133,18 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
         val superClass = superTypeConstructorDescriptor as? ClassDescriptor ?:
                          throw AssertionError("Unexpected supertype constructor for delegation: $superTypeConstructorDescriptor")
         val delegateDescriptor = IrImplementingDelegateDescriptorImpl(irClass.descriptor, delegateType, superType)
-        val irDelegate = IrFieldImpl(ktDelegateExpression.startOffset, ktDelegateExpression.endOffset, IrDeclarationOrigin.DELEGATE,
-                                     delegateDescriptor)
-        val bodyGenerator = BodyGenerator(irClass.descriptor, context)
-        irDelegate.initializer = bodyGenerator.generateExpressionBody(ktDelegateExpression)
-        irClass.addMember(irDelegate)
+        val irDelegateField = context.symbolTable.declareField(
+                ktDelegateExpression.startOffset, ktDelegateExpression.endOffset,
+                IrDeclarationOrigin.DELEGATE,
+                delegateDescriptor,
+                createBodyGenerator(irClass.descriptor).generateExpressionBody(ktDelegateExpression)
+        )
+        irClass.addMember(irDelegateField)
 
         for (delegatedMember in delegatedMembers) {
             val overriddenMember = delegatedMember.overriddenDescriptors.find { it.containingDeclaration.original == superClass.original }
             if (overriddenMember != null) {
-                generateDelegatedMember(irClass, irDelegate, delegatedMember, overriddenMember)
+                generateDelegatedMember(irClass, irDelegateField, delegatedMember, overriddenMember)
             }
         }
     }
@@ -177,12 +182,15 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
         irClass.addMember(generateDelegatedFunction(irDelegate, delegated, overridden))
     }
 
-    private fun generateDelegatedFunction(irDelegate: IrField, delegated: FunctionDescriptor, overridden: FunctionDescriptor): IrFunction {
-        val irFunction = IrFunctionImpl(irDelegate.startOffset, irDelegate.endOffset, IrDeclarationOrigin.DELEGATED_MEMBER, delegated)
-        FunctionGenerator(declarationGenerator).generateSyntheticFunctionParameterDeclarations(irFunction)
-        irFunction.body = generateDelegateFunctionBody(irDelegate, delegated, overridden)
-        return irFunction
-    }
+    private fun generateDelegatedFunction(irDelegate: IrField, delegated: FunctionDescriptor, overridden: FunctionDescriptor): IrFunction =
+            context.symbolTable.declareSimpleFunction(
+                    irDelegate.startOffset, irDelegate.endOffset,
+                    IrDeclarationOrigin.DELEGATED_MEMBER,
+                    delegated
+            ).buildWithScope { irFunction ->
+                FunctionGenerator(declarationGenerator).generateSyntheticFunctionParameterDeclarations(irFunction)
+                irFunction.body = generateDelegateFunctionBody(irDelegate, delegated, overridden)
+            }
 
     private fun generateDelegateFunctionBody(irDelegate: IrField, delegated: FunctionDescriptor, overridden: FunctionDescriptor): IrBlockBodyImpl {
         val startOffset = irDelegate.startOffset
@@ -252,16 +260,20 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
 
     fun generateEnumEntry(ktEnumEntry: KtEnumEntry): IrEnumEntry {
         val enumEntryDescriptor = getOrFail(BindingContext.CLASS, ktEnumEntry)
-        val irEnumEntry = IrEnumEntryImpl(ktEnumEntry.startOffset, ktEnumEntry.endOffset, IrDeclarationOrigin.DEFINED, enumEntryDescriptor)
+        return context.symbolTable.declareEnumEntry(
+                ktEnumEntry.startOffset,
+                ktEnumEntry.endOffset,
+                IrDeclarationOrigin.DEFINED,
+                enumEntryDescriptor
+        ).buildWithScope { irEnumEntry ->
+            irEnumEntry.initializerExpression =
+                    BodyGenerator(enumEntryDescriptor.containingDeclaration, context)
+                            .generateEnumEntryInitializer(ktEnumEntry, enumEntryDescriptor)
 
-        irEnumEntry.initializerExpression =
-                BodyGenerator(enumEntryDescriptor.containingDeclaration, context)
-                        .generateEnumEntryInitializer(ktEnumEntry, enumEntryDescriptor)
-
-        if (ktEnumEntry.declarations.isNotEmpty()) {
-            irEnumEntry.correspondingClass = generateClass(ktEnumEntry)
+            if (ktEnumEntry.declarations.isNotEmpty()) {
+                irEnumEntry.correspondingClass = generateClass(ktEnumEntry)
+            }
         }
 
-        return irEnumEntry
     }
 }

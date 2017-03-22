@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
-import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.declarations.impl.IrErrorDeclarationImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrTypeAliasImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -70,12 +70,13 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
             IrTypeAliasImpl(ktDeclaration.startOffset, ktDeclaration.endOffset, IrDeclarationOrigin.DEFINED,
                             getOrFail(BindingContext.TYPE_ALIAS, ktDeclaration))
 
-    fun generateAnonymousInitializerDeclaration(ktAnonymousInitializer: KtAnonymousInitializer, classDescriptor: ClassDescriptor): IrDeclaration {
-        val irAnonymousInitializer = IrAnonymousInitializerImpl(ktAnonymousInitializer.startOffset, ktAnonymousInitializer.endOffset,
-                                                                IrDeclarationOrigin.DEFINED, classDescriptor)
-        irAnonymousInitializer.body = BodyGenerator(classDescriptor, context).generateAnonymousInitializerBody(ktAnonymousInitializer)
-        return irAnonymousInitializer
-    }
+    fun generateAnonymousInitializerDeclaration(ktAnonymousInitializer: KtAnonymousInitializer, classDescriptor: ClassDescriptor): IrDeclaration =
+            context.symbolTable.declareAnonymousInitializer(
+                ktAnonymousInitializer.startOffset, ktAnonymousInitializer.endOffset, IrDeclarationOrigin.DEFINED, classDescriptor
+            ).apply {
+                body = createBodyGenerator(classDescriptor).generateAnonymousInitializerBody(ktAnonymousInitializer)
+            }
+
 
     fun generateTypeParameterDeclarations(
             irTypeParametersOwner: IrTypeParametersContainer,
@@ -85,12 +86,9 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
             val ktTypeParameterDeclaration = DescriptorToSourceUtils.getSourceFromDescriptor(typeParameterDescriptor)
             val startOffset = ktTypeParameterDeclaration.startOffsetOrUndefined
             val endOffset = ktTypeParameterDeclaration.endOffsetOrUndefined
-            IrTypeParameterImpl(startOffset, endOffset, IrDeclarationOrigin.DEFINED, typeParameterDescriptor)
+            context.symbolTable.declareTypeParameter(startOffset, endOffset, IrDeclarationOrigin.DEFINED, typeParameterDescriptor)
         }
     }
-
-    fun generateFunctionBody(scopeOwner: CallableDescriptor, ktBody: KtExpression): IrBody =
-            createBodyGenerator(scopeOwner).generateFunctionBody(ktBody)
 
     fun generateInitializerBody(scopeOwner: CallableDescriptor, ktBody: KtExpression): IrExpressionBody =
             createBodyGenerator(scopeOwner).generateExpressionBody(ktBody)
@@ -121,7 +119,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
             )
 
     private fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtElement?): IrFunction =
-            IrFunctionImpl(
+            context.symbolTable.declareSimpleFunction(
                     ktElement.startOffsetOrUndefined, ktElement.endOffsetOrUndefined,
                     IrDeclarationOrigin.FAKE_OVERRIDE,
                     functionDescriptor
@@ -130,7 +128,14 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
 
 abstract class DeclarationGeneratorExtension(val declarationGenerator: DeclarationGenerator) : Generator {
     override val context: GeneratorContext get() = declarationGenerator.context
+
+    inline fun <T : IrDeclaration> T.buildWithScope(builder: (T) -> Unit): T =
+            also { irDeclaration ->
+                context.symbolTable.withScope(irDeclaration.descriptor) {
+                    builder(irDeclaration)
+                }
+            }
 }
 
-fun Generator.createBodyGenerator(scopeOwnerDescriptor: CallableDescriptor) =
+fun Generator.createBodyGenerator(scopeOwnerDescriptor: DeclarationDescriptor) =
         BodyGenerator(scopeOwnerDescriptor, context)

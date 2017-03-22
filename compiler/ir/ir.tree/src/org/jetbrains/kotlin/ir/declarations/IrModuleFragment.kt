@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import java.lang.UnsupportedOperationException
 
 interface IrModuleFragment : IrElement {
     val descriptor: ModuleDescriptor

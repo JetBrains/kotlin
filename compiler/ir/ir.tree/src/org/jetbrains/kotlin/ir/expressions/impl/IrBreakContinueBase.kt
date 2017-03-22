@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.expressions.IrBreakContinue
 import org.jetbrains.kotlin.ir.expressions.IrLoop
-import org.jetbrains.kotlin.ir.expressions.impl.IrTerminalExpressionBase
 import org.jetbrains.kotlin.types.KotlinType
 
 abstract class IrBreakContinueBase(

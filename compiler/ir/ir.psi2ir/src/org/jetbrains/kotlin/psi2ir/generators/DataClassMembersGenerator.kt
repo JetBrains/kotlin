@@ -19,10 +19,12 @@ package org.jetbrains.kotlin.psi2ir.generators
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.putDefault
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -44,6 +46,30 @@ class DataClassMembersGenerator(
         MyDataClassMethodGenerator(ktClassOrObject, irClass).generate()
     }
 
+    private inner class MemberFunctionBuilder(
+            val irClass: IrClass,
+            val function: FunctionDescriptor,
+            val origin: IrDeclarationOrigin,
+            startOffset: Int = UNDEFINED_OFFSET,
+            endOffset: Int = UNDEFINED_OFFSET
+    ) : IrBlockBodyBuilder(context, Scope(function), startOffset, endOffset)  {
+        lateinit var irFunction: IrFunction
+
+        inline fun addToClass(body: MemberFunctionBuilder.(IrFunction) -> Unit): IrFunction {
+            irFunction = this@DataClassMembersGenerator.context.symbolTable
+                    .declareSimpleFunction(startOffset, endOffset, origin, function)
+
+            body(irFunction)
+            irFunction.body = doBuild()
+            irClass.declarations.add(irFunction)
+            return irFunction
+        }
+
+        fun putDefault(parameter: ValueParameterDescriptor, value: IrExpression) {
+            irFunction.putDefault(parameter, irExprBody(value))
+        }
+    }
+
     private inner class MyDataClassMethodGenerator(
             ktClassOrObject: KtClassOrObject,
             val irClass: IrClass
@@ -51,14 +77,16 @@ class DataClassMembersGenerator(
         private inline fun buildMember(
                 function: FunctionDescriptor,
                 psiElement: PsiElement? = null,
-                body: IrMemberFunctionBuilder.(IrFunction) -> Unit
+                body: MemberFunctionBuilder.(IrFunction) -> Unit
         ) {
-            IrMemberFunctionBuilder(
-                    context, irClass, function, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER,
+            MemberFunctionBuilder(
+                    irClass, function, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER,
                     psiElement.startOffsetOrUndefined, psiElement.endOffsetOrUndefined
             ).addToClass { irFunction ->
-                FunctionGenerator(declarationGenerator).generateSyntheticFunctionParameterDeclarations(irFunction)
-                body(irFunction)
+                irFunction.buildWithScope {
+                    FunctionGenerator(declarationGenerator).generateSyntheticFunctionParameterDeclarations(irFunction)
+                    body(irFunction)
+                }
             }
         }
 
@@ -134,7 +162,7 @@ class DataClassMembersGenerator(
             }
         }
 
-        private fun IrMemberFunctionBuilder.getHashCodeOfProperty(receiver: IrExpression, property: PropertyDescriptor): IrExpression =
+        private fun MemberFunctionBuilder.getHashCodeOfProperty(receiver: IrExpression, property: PropertyDescriptor): IrExpression =
                 when {
                     property.type.containsNull() ->
                         irLet(irGet(receiver, property)) { variable ->
@@ -144,7 +172,7 @@ class DataClassMembersGenerator(
                         getHashCodeOf(irGet(receiver, property))
                 }
 
-        private fun IrMemberFunctionBuilder.getHashCodeOf(irValue: IrExpression): IrExpression =
+        private fun MemberFunctionBuilder.getHashCodeOf(irValue: IrExpression): IrExpression =
                 irCall(getHashCodeFunction(irValue.type)).apply { dispatchReceiver = irValue }
 
         override fun generateToStringMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {

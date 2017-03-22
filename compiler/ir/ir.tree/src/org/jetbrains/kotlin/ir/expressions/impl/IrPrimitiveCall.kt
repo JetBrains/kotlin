@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrCallWithShallowCopy
 import org.jetbrains.kotlin.ir.expressions.IrExpression

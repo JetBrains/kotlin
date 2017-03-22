@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.psi2ir.generators.CallGenerator
 import org.jetbrains.kotlin.types.KotlinType
 
 abstract class ExpressionValue(override val type: KotlinType) : IntermediateValue
@@ -26,6 +25,12 @@ abstract class ExpressionValue(override val type: KotlinType) : IntermediateValu
 inline fun generateExpressionValue(type: KotlinType, crossinline generate: () -> IrExpression) =
         object : ExpressionValue(type) {
             override fun load(): IrExpression = generate()
+        }
+
+inline fun generateDelegatedValue(type: KotlinType, crossinline generateValue: () -> IntermediateValue) =
+        object : ExpressionValue(type) {
+            val lazyDelegate by lazy { generateValue() }
+            override fun load(): IrExpression = lazyDelegate.load()
         }
 
 class OnceExpressionValue(val irExpression: IrExpression) : LValue, AssignmentReceiver {

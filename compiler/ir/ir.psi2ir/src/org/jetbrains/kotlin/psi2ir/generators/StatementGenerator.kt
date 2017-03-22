@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.assertCast
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeAliasImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.psi.*
@@ -78,9 +77,10 @@ class StatementGenerator(
             return generateLocalDelegatedProperty(property, ktDelegate, variableDescriptor as VariableDescriptorWithAccessors)
         }
 
-        val irLocalVariable = IrVariableImpl(property.startOffset, property.endOffset, IrDeclarationOrigin.DEFINED, variableDescriptor)
-        irLocalVariable.initializer = property.initializer?.genExpr()
-        return irLocalVariable
+        return context.symbolTable.declareVariable(
+                property.startOffset, property.endOffset, IrDeclarationOrigin.DEFINED,
+                variableDescriptor, property.initializer?.genExpr()
+        )
     }
 
     private fun generateLocalDelegatedProperty(
@@ -119,8 +119,10 @@ class StatementGenerator(
 
             val irComponentCall = callGenerator.generateCall(ktEntry.startOffset, ktEntry.endOffset, componentSubstitutedCall,
                                                              IrStatementOrigin.COMPONENT_N.withIndex(index + 1))
-            val irComponentVar = IrVariableImpl(ktEntry.startOffset, ktEntry.endOffset, IrDeclarationOrigin.DEFINED,
-                                                componentVariable, irComponentCall)
+            val irComponentVar = context.symbolTable.declareVariable(
+                    ktEntry.startOffset, ktEntry.endOffset, IrDeclarationOrigin.DEFINED,
+                    componentVariable, irComponentCall
+            )
             irBlock.statements.add(irComponentVar)
         }
     }

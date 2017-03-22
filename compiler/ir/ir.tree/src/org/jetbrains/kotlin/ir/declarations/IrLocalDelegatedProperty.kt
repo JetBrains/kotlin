@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.VariableAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 
 interface IrLocalDelegatedProperty : IrDeclaration {

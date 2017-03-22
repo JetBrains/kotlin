@@ -78,7 +78,7 @@ FILE /safeCallWithIncrementDecrement.kt
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
-          VAR IR_TEMPORARY_VARIABLE val tmp3_array: kotlin.Int?
+          VAR IR_TEMPORARY_VARIABLE val tmp1_array: kotlin.Int?
             BLOCK type=kotlin.Int? origin=SAFE_CALL
               VAR IR_TEMPORARY_VARIABLE val tmp0_safe_receiver: test.C?
                 GET_VAR 'value-parameter nc: C?' type=test.C? origin=null
@@ -92,15 +92,15 @@ FILE /safeCallWithIncrementDecrement.kt
                   if: CONST Boolean type=kotlin.Boolean value='true'
                   then: CALL '<get-p>() on C?: Int' type=kotlin.Int origin=GET_PROPERTY
                     $receiver: GET_VAR 'tmp0_safe_receiver: C?' type=test.C? origin=null
-          VAR IR_TEMPORARY_VARIABLE val tmp4_index0: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE val tmp2_index0: kotlin.Int
             CONST Int type=kotlin.Int value='0'
-          VAR IR_TEMPORARY_VARIABLE val tmp5: kotlin.Int
+          VAR IR_TEMPORARY_VARIABLE val tmp3: kotlin.Int
             CALL 'get(Int) on Int?: Int' type=kotlin.Int origin=POSTFIX_INCR
-              $receiver: GET_VAR 'tmp3_array: Int?' type=kotlin.Int? origin=null
-              index: GET_VAR 'tmp4_index0: Int' type=kotlin.Int origin=null
+              $receiver: GET_VAR 'tmp1_array: Int?' type=kotlin.Int? origin=null
+              index: GET_VAR 'tmp2_index0: Int' type=kotlin.Int origin=null
           CALL 'set(Int, Int) on Int?: Unit' type=kotlin.Unit origin=POSTFIX_INCR
-            $receiver: GET_VAR 'tmp3_array: Int?' type=kotlin.Int? origin=null
-            index: GET_VAR 'tmp4_index0: Int' type=kotlin.Int origin=null
+            $receiver: GET_VAR 'tmp1_array: Int?' type=kotlin.Int? origin=null
+            index: GET_VAR 'tmp2_index0: Int' type=kotlin.Int origin=null
             value: CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
-              $this: GET_VAR 'tmp5: Int' type=kotlin.Int origin=null
-          GET_VAR 'tmp5: Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'tmp3: Int' type=kotlin.Int origin=null
+          GET_VAR 'tmp3: Int' type=kotlin.Int origin=null

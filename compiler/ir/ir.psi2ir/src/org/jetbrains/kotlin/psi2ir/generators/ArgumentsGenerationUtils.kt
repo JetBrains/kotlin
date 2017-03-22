@@ -46,39 +46,38 @@ fun StatementGenerator.generateReceiverOrNull(ktDefaultElement: KtElement, recei
 fun StatementGenerator.generateReceiver(ktDefaultElement: KtElement, receiver: ReceiverValue): IntermediateValue =
         generateReceiver(ktDefaultElement.startOffset, ktDefaultElement.endOffset, receiver)
 
-fun StatementGenerator.generateReceiver(startOffset: Int, endOffset: Int, receiver: ReceiverValue): IntermediateValue {
-    if (receiver is TransientReceiver) {
-        return TransientReceiverValue(receiver.type)
-    }
+fun StatementGenerator.generateReceiver(startOffset: Int, endOffset: Int, receiver: ReceiverValue): IntermediateValue =
+        if (receiver is TransientReceiver)
+            TransientReceiverValue(receiver.type)
+        else generateDelegatedValue(receiver.type) {
+            val receiverExpression = when (receiver) {
+                is ImplicitClassReceiver -> {
+                    val receiverClassDescriptor = receiver.classDescriptor
+                    if (shouldGenerateReceiverAsSingletonReference(receiverClassDescriptor))
+                        generateSingletonReference(receiverClassDescriptor, startOffset, endOffset, receiver.type)
+                    else
+                        IrGetValueImpl(startOffset, endOffset, receiverClassDescriptor.thisAsReceiverParameter)
+                }
+                is ThisClassReceiver ->
+                    generateThisOrSuperReceiver(receiver, receiver.classDescriptor)
+                is SuperCallReceiverValue ->
+                    generateThisOrSuperReceiver(receiver, receiver.thisType.constructor.declarationDescriptor as ClassDescriptor)
+                is ExpressionReceiver ->
+                    generateExpression(receiver.expression)
+                is ClassValueReceiver ->
+                    IrGetObjectValueImpl(receiver.expression.startOffset, receiver.expression.endOffset, receiver.type,
+                                         receiver.classQualifier.descriptor as ClassDescriptor)
+                is ExtensionReceiver ->
+                    IrGetValueImpl(startOffset, startOffset, receiver.declarationDescriptor.extensionReceiverParameter!!)
+                else ->
+                    TODO("Receiver: ${receiver::class.java.simpleName}")
+            }
 
-    val receiverExpression = when (receiver) {
-        is ImplicitClassReceiver -> {
-            val receiverClassDescriptor = receiver.classDescriptor
-            if (shouldGenerateReceiverAsSingletonReference(receiverClassDescriptor))
-                generateSingletonReference(receiverClassDescriptor, startOffset, endOffset, receiver.type)
+            if (receiverExpression is IrExpressionWithCopy)
+                RematerializableValue(receiverExpression)
             else
-                IrGetValueImpl(startOffset, endOffset, receiverClassDescriptor.thisAsReceiverParameter)
+                OnceExpressionValue(receiverExpression)
         }
-        is ThisClassReceiver ->
-            generateThisOrSuperReceiver(receiver, receiver.classDescriptor)
-        is SuperCallReceiverValue ->
-            generateThisOrSuperReceiver(receiver, receiver.thisType.constructor.declarationDescriptor as ClassDescriptor)
-        is ExpressionReceiver ->
-            generateExpression(receiver.expression)
-        is ClassValueReceiver ->
-            IrGetObjectValueImpl(receiver.expression.startOffset, receiver.expression.endOffset, receiver.type,
-                                 receiver.classQualifier.descriptor as ClassDescriptor)
-        is ExtensionReceiver ->
-            IrGetValueImpl(startOffset, startOffset, receiver.declarationDescriptor.extensionReceiverParameter!!)
-        else ->
-            TODO("Receiver: ${receiver::class.java.simpleName}")
-    }
-
-    return if (receiverExpression is IrExpressionWithCopy)
-        RematerializableValue(receiverExpression)
-    else
-        OnceExpressionValue(receiverExpression)
-}
 
 fun generateSingletonReference(descriptor: ClassDescriptor, startOffset: Int, endOffset: Int, type: KotlinType): IrDeclarationReference =
         when {

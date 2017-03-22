@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -47,15 +45,6 @@ class IrValueParameterImpl(
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.defaultValue = defaultValue
     }
-
-    constructor(
-            startOffset: Int,
-            endOffset: Int,
-            origin: IrDeclarationOrigin,
-            descriptor: ParameterDescriptor,
-            defaultValue: IrExpression
-    ) : this(startOffset, endOffset, origin, descriptor, IrExpressionBodyImpl(defaultValue))
-
 
     override var defaultValue: IrExpressionBody? = null
 
