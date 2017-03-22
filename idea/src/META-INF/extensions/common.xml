@@ -41,7 +41,5 @@
                         interface="org.jetbrains.kotlin.idea.facet.KotlinFacetConfigurationExtension"/>
         <extensionPoint name="versionInfoProvider"
                         interface="org.jetbrains.kotlin.idea.facet.KotlinVersionInfoProvider"/>
-        <extensionPoint name="platformGradleDetector"
-                        interface="org.jetbrains.kotlin.idea.inspections.gradle.KotlinPlatformGradleDetector"/>
     </extensionPoints>
 </idea-plugin>
