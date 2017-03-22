@@ -42,7 +42,7 @@ import gnu.trove.THashMap
 import gnu.trove.TObjectHashingStrategy
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.toLightElements
-import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
+import org.jetbrains.kotlin.idea.codeInsight.shorten.addToBeShortenedDescendantsToWaitingSet
 import org.jetbrains.kotlin.idea.core.deleteSingle
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.refactoring.move.*
@@ -221,7 +221,7 @@ class MoveKotlinDeclarationsProcessor(
             descriptor.delegate.preprocessDeclaration(descriptor, declaration)
             val newElement = mover(declaration, targetContainer)
 
-            newElement.addToShorteningWaitSet()
+            newElement.addToBeShortenedDescendantsToWaitingSet()
 
             return newElement
         }
@@ -236,7 +236,7 @@ class MoveKotlinDeclarationsProcessor(
             descriptor.delegate.preprocessUsages(project, descriptor, usagesToProcessBeforeMove)
             descriptor.delegate.preprocessUsages(project, descriptor, usagesToProcessAfterMove)
 
-            postProcessMoveUsages(usagesToProcessBeforeMove, shorteningMode = ShorteningMode.NO_SHORTENING)
+            postProcessMoveUsages(usagesToProcessBeforeMove, shorteningMode = ShorteningMode.DELAYED_SHORTENING_VIA_USER_DATA)
 
             val oldToNewElementsMapping = THashMap<PsiElement, PsiElement>(
                     object: TObjectHashingStrategy<PsiElement> {
