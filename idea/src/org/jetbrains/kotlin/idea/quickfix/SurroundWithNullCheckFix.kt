@@ -57,6 +57,11 @@ class SurroundWithNullCheckFix(
 
     companion object : KotlinSingleIntentionActionFactory() {
 
+        private fun KtExpression.hasAcceptableParent() = with (parent) {
+            this is KtBlockExpression || this.parent is KtIfExpression ||
+            this is KtWhenEntry || this.parent is KtLoopExpression
+        }
+
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val element = diagnostic.psiElement
             val expressionParent = element.getParentOfType<KtExpression>(strict = element is KtOperationReferenceExpression) ?: return null
@@ -74,7 +79,7 @@ class SurroundWithNullCheckFix(
             if (!nullableExpression.isStable(context)) return null
 
             val expressionTarget = expressionParent.getParentOfTypesAndPredicate(strict = false, parentClasses = KtExpression::class.java) {
-                !it.isUsedAsExpression(context)
+                !it.isUsedAsExpression(context) && it.hasAcceptableParent()
             } ?: return null
             // Surround declaration (even of local variable) with null check is generally a bad idea
             if (expressionTarget is KtDeclaration) return null
