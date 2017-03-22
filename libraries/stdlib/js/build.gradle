@@ -1,0 +1,97 @@
+description = 'Kotlin Standard Library for JS'
+
+apply plugin: 'kotlin2js'
+
+ext.commonSrcDir = "${buildDir}/common-sources"
+
+
+sourceSets {
+    builtinsFiles {
+        kotlin {
+            srcDir "${rootDir}/../core/builtins/native/kotlin/"
+            include "Comparable.kt"
+        }
+    }
+    builtins {
+        kotlin {
+            source builtinsFiles.kotlin
+            srcDir "${rootDir}/../js/js.libraries/src/builtins"
+        }
+    }
+
+
+    mainNativeFiles {
+        kotlin {
+            srcDir "${rootDir}/../core/builtins/native/kotlin"
+            include "Iterator.kt"
+            include "Collections.kt"
+            include "CharSequence.kt"
+            include "Annotation.kt"
+        }
+    }
+    mainCoreFiles {
+        kotlin {
+            srcDir "${rootDir}/../core/builtins/src/kotlin/"
+            include "annotation/Annotations.kt"
+            include "Function.kt"
+            include "Iterators.kt"
+            include "Range.kt"
+            include "Progressions.kt"
+            include "ProgressionIterators.kt"
+            include "Ranges.kt"
+            include "internal/InternalAnnotations.kt"
+            include "internal/progressionUtil.kt"
+            include "coroutines/**/*.kt"
+            include "reflect/**/*.kt"
+            include "Unit.kt"
+        }
+    }
+    main {
+        kotlin {
+            source mainNativeFiles.kotlin
+            source mainCoreFiles.kotlin
+            srcDir "${rootDir}/../js/js.libraries/src"
+            exclude "builtins"
+            srcDir commonSrcDir
+        }
+    }
+}
+
+ant.properties.baseDir = projectDir
+ant.properties.commonSrcDir = commonSrcDir
+ant.properties.kotlinCompiler = bootstrapCompilerFile.path
+ant.properties.compilerPreloader = compilerPreloaderFile.path
+
+println(projectDir)
+
+ant.importBuild('../common/tasks.xml')
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile) {
+    compilerJarFile = bootstrapCompilerFile
+    kotlinOptions {
+        main = "noCall"
+        moduleKind = "commonjs"
+        freeCompilerArgs = [
+                "-version",
+                "-Xallow-kotlin-package",
+        ]
+    }
+}
+
+compileBuiltinsKotlin2Js {
+    kotlinOptions {
+        metaInfo = false
+        outputFile = "${buildDir}/classes/builtins/kotlin.js"
+    }
+}
+
+compileKotlin2Js {
+    dependsOn commonSources
+    kotlinOptions {
+        outputFile = "${buildDir}/classes/main/kotlin.js"
+    }
+}
+
+classes.dependsOn compileBuiltinsKotlin2Js
+
+kotlin.experimental.coroutines "enable"

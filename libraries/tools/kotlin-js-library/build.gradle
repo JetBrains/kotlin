@@ -1,7 +1,0 @@
-
-description = 'Kotlin JavaScript Library'
-
-artifacts {
-    archives file: file("${rootDir}/../dist/kotlinc/lib/kotlin-jslib.jar"), name: project.name, type: 'jar'
-    archives file: file("${rootDir}/../dist/kotlinc/lib/kotlin-jslib-sources.jar"), name: project.name, classifier: 'sources', type: 'jar'
-}
