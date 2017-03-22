@@ -3,6 +3,7 @@
 DIR=.
 DIST=../../dist
 DEPS=../../dependencies/all
+
 CFLAGS_macbook=-I/Library/Frameworks/SDL2.framework/Headers
 LINKER_ARGS_macbook="-F /Library/Frameworks -framework SDL2"
 COMPILER_ARGS_macbook=
@@ -16,6 +17,8 @@ LINKER_ARGS_iphone="-framework SDL2 \
 -framework AVFoundation -framework CoreGraphics -framework CoreMotion -framework Foundation -framework GameController \
 -framework AudioToolbox -framework OpenGLES -framework QuartzCore -framework UIKit"
 COMPILER_ARGS_iphone=-nomain
+CFLAGS_raspberrypi=-I$DEPS/target-sysroot-1-raspberrypi/usr/include/SDL2
+LINKER_ARGS_raspberrypi="-lSDL2"
 
 if [ x$TARGET == x ]; then
 case "$OSTYPE" in
@@ -30,8 +33,8 @@ CFLAGS=${!var}
 var=LINKER_ARGS_${TARGET}
 LINKER_ARGS=${!var}
 var=COMPILER_ARGS_${TARGET}
-COMPILER_ARGS=${!var}
+COMPILER_ARGS=${!var} # add -opt for an optimized build.
 
 $DIST/bin/interop -def:$DIR/sdl.def -copt:"$CFLAGS" -target:$TARGET || exit 1
-$DIST/bin/konanc $COMPILER_ARGS -target $TARGET sdl $DIR/tetris.kt -nativelibrary sdlstubs.bc -linkerArgs "$LINKER_ARGS" -o tetris.kexe -verbose linker || exit 1
+$DIST/bin/konanc $COMPILER_ARGS -target $TARGET sdl $DIR/tetris.kt -nativelibrary sdlstubs.bc -linkerArgs "$LINKER_ARGS" -o tetris.kexe || exit 1
 #strip tetris.kexe

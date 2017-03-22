@@ -26,7 +26,16 @@ allprojects {
 
     if (isLinux()) {
         ext.targetArgs <<
-            ["host": ["--sysroot=${gccToolchainDir}/${gnuTriplet}/sysroot"]]
+            ["host": 
+               ["--sysroot=${gccToolchainDir}/${gnuTriplet}/sysroot"],
+             "raspberrypi":
+               ["-target", "armv7-unknown-linux-gnueabihf",
+                "-mfpu=vfp", "-mfloat-abi=hard",
+                "--sysroot=$raspberryPiSysrootDir",
+                // TODO: those two are hacks.
+                "-I$raspberryPiSysrootDir/usr/include/c++/4.8.3",
+                "-I$raspberryPiSysrootDir/usr/include/c++/4.8.3/arm-linux-gnueabihf"]
+            ]
      } else {
          ext.targetArgs <<
             ["host":

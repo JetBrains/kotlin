@@ -82,6 +82,9 @@ if (isLinux()) {
     task gccToolchain(type: TgzNativeDep) {
         baseName = "target-gcc-toolchain-3-$host"
     }
+    task raspberryPiSysroot(type: TgzNativeDep) {
+        baseName = "target-sysroot-1-raspberrypi"
+    }
 } else {
     task hostSysroot(type: TgzNativeDep) {
         baseName = "target-sysroot-1-$host"

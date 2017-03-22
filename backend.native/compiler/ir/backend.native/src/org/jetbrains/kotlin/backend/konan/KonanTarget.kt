@@ -4,10 +4,11 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 
 enum class KonanTarget(var enabled: Boolean = false) {
-    IPHONE(),
-    IPHONE_SIM(),
-    LINUX(),
-    MACBOOK()
+    IPHONE,
+    IPHONE_SIM,
+    LINUX,
+    MACBOOK,
+    RASPBERRYPI
 }
 
 class TargetManager(val config: CompilerConfiguration) {
@@ -16,7 +17,10 @@ class TargetManager(val config: CompilerConfiguration) {
 
     init {
         when (host) {
-            KonanTarget.LINUX   -> KonanTarget.LINUX.enabled = true
+            KonanTarget.LINUX   -> {
+                KonanTarget.LINUX.enabled = true
+                KonanTarget.RASPBERRYPI.enabled = true
+            }
             KonanTarget.MACBOOK -> {
                 KonanTarget.MACBOOK.enabled = true
                 KonanTarget.IPHONE.enabled = true
@@ -66,6 +70,7 @@ class TargetManager(val config: CompilerConfiguration) {
         if (host == KonanTarget.LINUX) {
             when (current) {
                 KonanTarget.LINUX -> return("linux")
+                KonanTarget.RASPBERRYPI -> return("linux-raspberrypi")
                 KonanTarget.IPHONE -> return("linux-ios")
                 KonanTarget.IPHONE_SIM -> return("linux-ios-sim")
                 else -> error("Impossible combination of $host and $current")

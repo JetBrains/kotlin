@@ -41,7 +41,6 @@ internal open class MacOSPlatform(distribution: Distribution)
 
     open val sysRoot = distribution.sysRoot
     open val targetSysRoot = sysRoot
-    open val llvmLib = distribution.llvmLib
 
     override fun linkCommand(objectFiles: List<String>, executable: String, optimize: Boolean): List<String> {
 
@@ -75,8 +74,14 @@ internal class IPhoneSimulatorFromMacOSPlatform(distribution: Distribution)
     override val llvmLlcFlags = properties.propertyList("llvmLlcFlags.osx-ios-sim")
     override val targetSysRoot = "${distribution.dependencies}/${properties.propertyString("targetSysRoot.osx-ios-sim")!!}"
 }
-internal class LinuxPlatform(distribution: Distribution)
+
+internal open class LinuxPlatform(distribution: Distribution)
     : PlatformFlags(distribution) {
+
+    open val sysRoot = distribution.sysRoot
+
+    val llvmLib = distribution.llvmLib
+    val libGcc = distribution.libGcc
 
     override val llvmLtoFlags = properties.propertyList("llvmLtoFlags.linux")
     override val llvmLlcFlags = properties.propertyList("llvmLlcFlags.linux")
@@ -90,11 +95,6 @@ internal class LinuxPlatform(distribution: Distribution)
         properties.propertyList("pluginOptimizationFlags.linux")
 
     override fun linkCommand(objectFiles: List<String>, executable: String, optimize: Boolean): List<String> {
-
-        val sysRoot = distribution.sysRoot
-        val llvmLib = distribution.llvmLib
-        val libGcc = distribution.libGcc
-
         // TODO: Can we extract more to the konan.properties?
         return mutableListOf<String>("$linker",
             "--sysroot=${sysRoot}",
@@ -116,6 +116,29 @@ internal class LinuxPlatform(distribution: Distribution)
     }
 }
 
+internal class RaspberryPiPlatform(distribution: Distribution)
+    : LinuxPlatform(distribution) {
+
+    override val sysRoot = "${distribution.dependencies}/${properties.propertyString("targetSysRoot.linux-raspberrypi")!!}"
+
+    override fun linkCommand(objectFiles: List<String>, executable: String, optimize: Boolean): List<String> {
+        // TODO: Can we extract more to the konan.properties?
+        return mutableListOf<String>("$linker",
+            "--sysroot=${sysRoot}",
+            "-export-dynamic", "-z", "relro", "--hash-style=gnu",
+            "--build-id", "--eh-frame-hdr",
+            "-dynamic-linker", "/lib/ld-linux-armhf.so.3",
+            "-o", executable,
+            "${sysRoot}/usr/lib/crt1.o", "${sysRoot}/usr/lib/crti.o", "${libGcc}/crtbegin.o",
+            "-L${llvmLib}", "-L${libGcc}", "-L${sysRoot}/../lib/arm-linux-gnueabihf", "-L${sysRoot}/lib/arm-linux-gnueabihf",
+            "-L${sysRoot}/usr/lib/arm-linux-gnueabihf", "-L${sysRoot}/../lib", "-L${sysRoot}/lib", "-L${sysRoot}/usr/lib") +
+            if (optimize) listOf("-plugin", "$llvmLib/LLVMgold.so") + pluginOptimizationFlags else {listOf<String>()} +
+            objectFiles +
+            if (optimize) linkerOptimizationFlags else {listOf<String>()} +
+            linkerKonanFlags +
+            listOf("-lgcc", "-lgcc_s", "-lc", "${libGcc}/crtend.o", "${sysRoot}/usr/lib/crtn.o")
+    }
+}
 
 internal class LinkStage(val context: Context) {
 
@@ -126,24 +149,28 @@ internal class LinkStage(val context: Context) {
         Distribution(context.config.configuration)
     private val properties = distribution.properties
 
-    val platform: PlatformFlags = when (TargetManager.host) {
-        KonanTarget.LINUX -> LinuxPlatform(distribution)
+    val platform = when (TargetManager.host) {
+        KonanTarget.LINUX -> when (targetManager.current) {
+            KonanTarget.LINUX -> LinuxPlatform(distribution)
+            KonanTarget.RASPBERRYPI -> RaspberryPiPlatform(distribution)
+            else -> TODO("Target not implemented yet.")
+        }
         KonanTarget.MACBOOK -> when (targetManager.current) {
             KonanTarget.IPHONE_SIM
-                -> IPhoneSimulatorFromMacOSPlatform(distribution)
+            -> IPhoneSimulatorFromMacOSPlatform(distribution)
             KonanTarget.IPHONE
-                -> IPhoneOSfromMacOSPlatform(distribution)
+            -> IPhoneOSfromMacOSPlatform(distribution)
             KonanTarget.MACBOOK
-                -> MacOSPlatform(distribution)
+            -> MacOSPlatform(distribution)
             else -> TODO("Target not implemented yet.")
         }
         else -> TODO("Target not implemented yet")
     }
+
     val suffix = targetManager.currentSuffix()
 
     val optimize = config.get(KonanConfigKeys.OPTIMIZATION) ?: false
     val emitted = config.get(KonanConfigKeys.BITCODE_FILE)!!
-    val nostdlib = config.get(KonanConfigKeys.NOSTDLIB) ?: false
     val nomain = config.get(KonanConfigKeys.NOMAIN) ?: false
     val libraries = context.config.librariesToLink
 
@@ -168,7 +195,6 @@ internal class LinkStage(val context: Context) {
         tmpObjectFile.deleteOnExit()
         val objectFile = tmpObjectFile.absolutePath
 
-        val tool = distribution.llvmLlc
         val command = listOf(distribution.llvmLlc, "-o", objectFile, "-filetype=obj") +
                 properties.propertyList("llvmLlcFlags.$suffix") + listOf(file)
         runTool(*command.toTypedArray())

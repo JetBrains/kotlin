@@ -39,7 +39,8 @@ private val knownTargets = mapOf(
     "linux" to "linux",
     "macbook" to "osx",
     "iphone" to "osx-ios",
-    "iphone_sim" to "osx-ios-sim")
+    "iphone_sim" to "osx-ios-sim",
+    "raspberrypi" to "linux-raspberrypi")
 
 
 private fun String.targetSuffix(): String =
@@ -117,10 +118,11 @@ private fun runCmd(command: Array<String>, workDir: File, verbose: Boolean = fal
 
 private fun Properties.defaultCompilerOpts(target: String, dependencies: String): List<String> {
 
-    val sysRootDir = this.getOsSpecific("sysRoot", target)!!
-    val sysRoot = "$dependencies/$sysRootDir"
-    val targetSysRootDir = this.getOsSpecific("targetSysRoot", target)
+    val hostSysRootDir = this.getOsSpecific("sysRoot", target)!!
+    val hostSysRoot = "$dependencies/$hostSysRootDir"
+    val targetSysRootDir = this.getOsSpecific("targetSysRoot", target) ?: hostSysRootDir
     val targetSysRoot = "$dependencies/$targetSysRootDir"
+    val sysRoot = targetSysRoot
     val llvmHomeDir = this.getOsSpecific("llvmHome", target)!!
     val llvmHome = "$dependencies/$llvmHomeDir"
     val llvmVersion = this.getProperty("llvmVersion")!!
@@ -136,22 +138,22 @@ private fun Properties.defaultCompilerOpts(target: String, dependencies: String)
         "osx" -> 
             return listOf(
                 "-isystem", isystem,
-                "-B$sysRoot/usr/bin",
+                "-B$hostSysRoot/usr/bin",
                 "--sysroot=$sysRoot",
                 "-mmacosx-version-min=10.10")
         "osx-ios" -> 
             return listOf(
                 "-arch", "arm64",
                 "-isystem", isystem,
-                "-B$sysRoot/usr/bin",
-                "--sysroot=$targetSysRoot",
+                "-B$hostSysRoot/usr/bin",
+                "--sysroot=$sysRoot",
                 "-miphoneos-version-min=5.0.0")
         "osx-ios-sim" -> 
             return listOf(
                 "-arch", "x86_64",
                 "-isystem", isystem,
-                "-B$sysRoot/usr/bin",
-                "--sysroot=$targetSysRoot",
+                "-B$hostSysRoot/usr/bin",
+                "--sysroot=$sysRoot",
                 "-mios-simulator-version-min=5.0.0")
         "linux" -> {
             val gccToolChainDir = this.getOsSpecific("gccToolChain", target)!!
@@ -161,7 +163,19 @@ private fun Properties.defaultCompilerOpts(target: String, dependencies: String)
                 "-isystem", isystem,
                 "--gcc-toolchain=$gccToolChain",
                 "-L$llvmHome/lib",
-                "-B$sysRoot/../bin",
+                "-B$hostSysRoot/../bin",
+                "--sysroot=$sysRoot")
+        }
+        "linux-raspberrypi" -> {
+            val gccToolChainDir = this.getOsSpecific("gccToolChain", target)!!
+            val gccToolChain= "$dependencies/$gccToolChainDir"
+
+            return listOf(
+                "-target", "armv7-unknown-linux-gnueabihf",
+                "-isystem", isystem,
+                "--gcc-toolchain=$gccToolChain",
+                "-L$llvmHome/lib",
+                "-B$hostSysRoot/../bin",
                 "--sysroot=$sysRoot")
         }
         else -> error("Unexpected target: ${target}")
@@ -203,7 +217,6 @@ private fun processLib(konanHome: String,
     val flavorName = args["-flavor"]?.single() ?: "jvm"
     val flavor = KotlinPlatform.values().single { it.name.equals(flavorName, ignoreCase = true) }
     val target = args["-target"]?.single()?.targetSuffix() ?: defaultTarget()
-
     val defFile = args["-def"]?.single()?.let { File(it) }
 
     if (defFile == null && args["-pkg"] == null) {

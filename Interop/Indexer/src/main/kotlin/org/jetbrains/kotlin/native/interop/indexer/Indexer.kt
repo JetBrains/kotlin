@@ -90,7 +90,6 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
                 this.def = def
             }
         }
-
         assert (underlying is ConstArrayType)
         // So the result must feel like array:
         return ConstArrayType(RecordType(structDeclaration), 1)
@@ -108,6 +107,12 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
             // while `struct __va_list_tag` is incomplete.
             // So `__builtin_va_list` gets declared as incorrect type, and requires some dirty hacks:
             return builtinVaListType(type, name, underlying)
+        }
+
+
+        if (name == "__gnuc_va_list"  || name == "va_list") {
+            // TODO: fix GNUC varargs support.
+            return UnsupportedType
         }
 
         if ((underlying is RecordType && underlying.decl.spelling.split(' ').last() == name) ||
