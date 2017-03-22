@@ -171,21 +171,10 @@ class StubGenerator(
      */
     fun Type.getStringRepresentation(): String {
         return when (this) {
-
             is VoidType -> "void"
             is CharType -> "char"
-            is Int8Type -> "signed char"
-            is UInt8Type -> "unsigned char"
-            is Int16Type -> "short"
-            is UInt16Type -> "unsigned short"
-            is Int32Type -> "int"
-            is UInt32Type -> "unsigned int"
-            is IntPtrType -> "intptr_t"
-            is UIntPtrType -> "uintptr_t"
-            is Int64Type -> "int64_t"
-            is UInt64Type -> "uint64_t"
-            is Float32Type -> "float"
-            is Float64Type -> "double"
+            is IntegerType -> this.spelling
+            is FloatingType -> this.spelling
 
             is PointerType -> {
                 val pointeeType = this.pointeeType
@@ -214,14 +203,22 @@ class StubGenerator(
 
     val PrimitiveType.kotlinType: String
         get() = when (this) {
+            is CharType -> "Byte"
 
-            is CharType, is Int8Type, is UInt8Type -> "Byte"
-            is Int16Type, is UInt16Type -> "Short"
-            is Int32Type, is UInt32Type -> "Int"
-            is IntPtrType, is UIntPtrType, // TODO: 64-bit specific
-            is Int64Type, is UInt64Type -> "Long"
-            is Float32Type -> "Float"
-            is Float64Type -> "Double"
+            // TODO: C primitive types should probably be generated as type aliases for Kotlin types.
+            is IntegerType -> when (this.size) {
+                1 -> "Byte"
+                2 -> "Short"
+                4 -> "Int"
+                8 -> "Long"
+                else -> TODO(this.toString())
+            }
+
+            is FloatingType -> when (this.size) {
+                4 -> "Float"
+                8 -> "Double"
+                else -> TODO(this.toString())
+            }
 
             else -> throw NotImplementedError()
         }
@@ -327,13 +324,19 @@ class StubGenerator(
 
     private fun mirror(type: PrimitiveType): TypeMirror.ByValue {
         val varTypeName = when (type) {
-            is CharType, is Int8Type, is UInt8Type -> "CInt8Var"
-            is Int16Type, is UInt16Type -> "CInt16Var"
-            is Int32Type, is UInt32Type -> "CInt32Var"
-            is IntPtrType, is UIntPtrType, // TODO: 64-bit specific
-            is Int64Type, is UInt64Type -> "CInt64Var"
-            is Float32Type -> "CFloat32Var"
-            is Float64Type -> "CFloat64Var"
+            is CharType -> "CInt8Var"
+            is IntegerType -> when (type.size) {
+                1 -> "CInt8Var"
+                2 -> "CInt16Var"
+                4 -> "CInt32Var"
+                8 -> "CInt64Var"
+                else -> TODO(type.toString())
+            }
+            is FloatingType -> when (type.size) {
+                4 -> "CFloat32Var"
+                8 -> "CFloat64Var"
+                else -> TODO(type.toString())
+            }
             else -> TODO(type.toString())
         }
 
@@ -845,17 +848,15 @@ class StubGenerator(
     private fun getFfiType(type: Type): String {
         return when(type) {
             is VoidType -> "Void"
-            is CharType, is Int8Type -> "SInt8"
-            // TODO: libffi has separate representation for char type.
-            is UInt8Type -> "UInt8"
-            is Int16Type -> "SInt16"
-            is UInt16Type -> "UInt16"
-            is Int32Type -> "SInt32"
-            is UInt32Type -> "UInt32"
-            is IntPtrType, is UIntPtrType, // TODO
+            is CharType -> "SInt8" // TODO: libffi has separate representation for char type.
+            is IntegerType -> when (type.size) {
+                1 -> if (type.isSigned) "SInt8" else "UInt8"
+                2 -> if (type.isSigned) "SInt16" else "UInt16"
+                4 -> if (type.isSigned) "SInt32" else "UInt32"
+                8 -> if (type.isSigned) "SInt64" else "UInt64"
+                else -> TODO(type.toString())
+            }
             is PointerType -> "Pointer"
-            is Int64Type -> "SInt64"
-            is UInt64Type -> "UInt64"
             is ConstArrayType -> getFfiStructType(
                     Array(type.length.toInt(), { type.elemType }).toList()
             )
@@ -992,13 +993,15 @@ class StubGenerator(
     }
 
     private fun floatingLiteral(type: Type, value: Double): String? {
-        return when (type.unwrapTypedefs()) {
-            Float32Type -> {
+        val unwrappedType = type.unwrapTypedefs()
+        if (unwrappedType !is FloatingType) return null
+        return when (unwrappedType.size) {
+            4 -> {
                 val floatValue = value.toFloat()
                 val bits = java.lang.Float.floatToRawIntBits(floatValue)
                 "bitsToFloat($bits) /* == $floatValue */"
             }
-            Float64Type -> {
+            8 -> {
                 val bits = java.lang.Double.doubleToRawLongBits(value)
                 "bitsToDouble($bits) /* == $value */"
             }

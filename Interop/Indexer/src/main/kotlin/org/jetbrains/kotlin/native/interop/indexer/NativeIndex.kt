@@ -93,27 +93,14 @@ interface Type
 
 interface PrimitiveType : Type
 
-object VoidType : Type
-
 object CharType : PrimitiveType
 
-object Int8Type : PrimitiveType
-object UInt8Type : PrimitiveType
+data class IntegerType(val size: Int, val isSigned: Boolean, val spelling: String) : PrimitiveType
 
-object Int16Type : PrimitiveType
-object UInt16Type : PrimitiveType
+// TODO: floating type is not actually defined entirely by its size.
+data class FloatingType(val size: Int, val spelling: String) : PrimitiveType
 
-object Int32Type : PrimitiveType
-object UInt32Type : PrimitiveType
-
-object IntPtrType : PrimitiveType
-object UIntPtrType : PrimitiveType
-
-object Int64Type : PrimitiveType
-object UInt64Type : PrimitiveType
-
-object Float32Type : PrimitiveType
-object Float64Type : PrimitiveType
+object VoidType : Type
 
 data class RecordType(val decl: StructDecl) : Type
 

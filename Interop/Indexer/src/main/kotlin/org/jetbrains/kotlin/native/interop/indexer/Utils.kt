@@ -19,28 +19,38 @@ internal fun CValue<CXString>.convertAndDispose(): String {
 internal fun getCursorSpelling(cursor: CValue<CXCursor>) =
         clang_getCursorSpelling(cursor).convertAndDispose()
 
+internal fun CValue<CXType>.getSize(): Long {
+    val size = clang_Type_getSizeOf(this)
+    if (size < 0) {
+        throw Error(size.toString())
+    }
+    return size
+}
+
 internal fun convertUnqualifiedPrimitiveType(type: CValue<CXType>): Type = when (type.kind) {
-    // TODO: is e.g. CXType_Int guaranteed to be int32_t?
+    CXTypeKind.CXType_Char_U, CXTypeKind.CXType_Char_S -> {
+        assert(type.getSize() == 1L)
+        CharType
+    }
 
-    CXTypeKind.CXType_Char_U, CXTypeKind.CXType_Char_S -> CharType
+    CXTypeKind.CXType_UChar, CXTypeKind.CXType_UShort,
+    CXTypeKind.CXType_UInt, CXTypeKind.CXType_ULong, CXTypeKind.CXType_ULongLong -> IntegerType(
+            size = type.getSize().toInt(),
+            isSigned = false,
+            spelling = clang_getTypeSpelling(type).convertAndDispose()
+    )
 
-    CXTypeKind.CXType_UChar -> UInt8Type
-    CXTypeKind.CXType_SChar -> Int8Type
+    CXTypeKind.CXType_SChar, CXTypeKind.CXType_Short,
+    CXTypeKind.CXType_Int, CXTypeKind.CXType_Long, CXTypeKind.CXType_LongLong -> IntegerType(
+            size = type.getSize().toInt(),
+            isSigned = true,
+            spelling = clang_getTypeSpelling(type).convertAndDispose()
+    )
 
-    CXTypeKind.CXType_UShort -> UInt16Type
-    CXTypeKind.CXType_Short -> Int16Type
-
-    CXTypeKind.CXType_UInt -> UInt32Type
-    CXTypeKind.CXType_Int -> Int32Type
-
-    CXTypeKind.CXType_ULong -> UIntPtrType
-    CXTypeKind.CXType_Long -> IntPtrType
-
-    CXTypeKind.CXType_ULongLong -> UInt64Type
-    CXTypeKind.CXType_LongLong -> Int64Type
-
-    CXTypeKind.CXType_Float -> Float32Type
-    CXTypeKind.CXType_Double -> Float64Type
+    CXTypeKind.CXType_Float, CXTypeKind.CXType_Double -> FloatingType(
+            size = type.getSize().toInt(),
+            spelling = clang_getTypeSpelling(type).convertAndDispose()
+    )
 
     else -> UnsupportedType
 }
