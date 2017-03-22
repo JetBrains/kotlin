@@ -54,9 +54,9 @@ class SpecifyExplicitLambdaSignatureIntention : SelfTargetingIntention<KtLambdaE
                 .map { "${it.name}: ${IdeDescriptorRenderers.SOURCE_CODE.renderType(it.type)}" }
                 .joinToString(", ")
 
-        val newParameterList = psiFactory.createLambdaParameterList(parameterString)
+        val newParameterList = psiFactory.createLambdaParameterListIfAny(parameterString)
         val oldParameterList = functionLiteral.valueParameterList
-        if (oldParameterList != null) {
+        if (oldParameterList != null && newParameterList != null) {
             oldParameterList.replace(newParameterList)
         }
         else {
@@ -65,7 +65,7 @@ class SpecifyExplicitLambdaSignatureIntention : SelfTargetingIntention<KtLambdaE
             val addNewline = nextSibling is PsiWhiteSpace && nextSibling.text?.contains("\n") ?: false
             val (whitespace, arrow) = psiFactory.createWhitespaceAndArrow()
             functionLiteral.addRangeAfter(whitespace, arrow, openBraceElement)
-            functionLiteral.addAfter(newParameterList, openBraceElement)
+            newParameterList?.let { functionLiteral.addAfter(it, openBraceElement) }
             if (addNewline) {
                 functionLiteral.addAfter(psiFactory.createNewLine(), openBraceElement)
             }

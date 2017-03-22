@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+
+fun bar() {}
+
+fun foo() {
+    run {
+        ->
+        bar()
+    }
+}

@@ -14218,6 +14218,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("delegate.kt")
+        public void testDelegate() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/delegate.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("emptyParamListWithBrackets.kt")
         public void testEmptyParamListWithBrackets() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/emptyParamListWithBrackets.kt");
@@ -14263,6 +14269,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("multipleParam.kt")
         public void testMultipleParam() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/multipleParam.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noParameters.kt")
+        public void testNoParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/noParameters.kt");
             doTest(fileName);
         }
 
