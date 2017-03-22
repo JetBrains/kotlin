@@ -18,22 +18,31 @@ package org.jetbrains.kotlin.idea.codeInsight.shorten
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.SmartPsiElementPointer
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.UserDataProperty
 import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.SmartPointerManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMember
+import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.ShortenReferences.Options
 import org.jetbrains.kotlin.idea.core.ShortenReferences
-import org.jetbrains.kotlin.psi.CopyableUserDataProperty
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.util.*
 
 interface DelayedRefactoringRequest
 
 class ShorteningRequest(val pointer: SmartPsiElementPointer<KtElement>, val options: Options) : DelayedRefactoringRequest
+class ImportRequest(
+        val elementToImportPointer: SmartPsiElementPointer<PsiElement>,
+        val filePointer: SmartPsiElementPointer<KtFile>
+) : DelayedRefactoringRequest
 
 private var Project.delayedRefactoringRequests: MutableSet<DelayedRefactoringRequest>?
         by UserDataProperty(Key.create("DELAYED_REFACTORING_REQUESTS"))
@@ -73,15 +82,44 @@ fun KtElement.addToShorteningWaitSet(options: Options = Options.DEFAULT) {
     project.getOrCreateRefactoringRequests().add(ShorteningRequest(elementPointer, options))
 }
 
+fun addDelayedImportRequest(elementToImport: PsiElement, file: KtFile) {
+    assert(ApplicationManager.getApplication()!!.isWriteAccessAllowed) { "Write access needed" }
+    file.project.getOrCreateRefactoringRequests() += ImportRequest(elementToImport.createSmartPointer(), file.createSmartPointer())
+}
+
 fun performDelayedRefactoringRequests(project: Project) {
     project.delayedRefactoringRequests?.let { requests ->
         project.delayedRefactoringRequests = null
 
-        val shorteningRequests = requests.filterIsInstance<ShorteningRequest>()
+        val shorteningRequests = ArrayList<ShorteningRequest>()
+        val importRequests = ArrayList<ImportRequest>()
+        requests.forEach {
+            when (it) {
+                is ShorteningRequest -> shorteningRequests += it
+                is ImportRequest -> importRequests += it
+            }
+        }
+
         val elementToOptions = shorteningRequests.mapNotNull { req -> req.pointer.element?.let { it to req.options } }.toMap()
         val elements = elementToOptions.keys
         //TODO: this is not correct because it should not shorten deep into the elements!
         ShortenReferences({ elementToOptions[it] ?: Options.DEFAULT }).process(elements)
+
+        val importInsertHelper = ImportInsertHelper.getInstance(project)
+
+        for ((file, requestsForFile) in importRequests.groupBy { it.filePointer.element }) {
+            if (file == null) continue
+
+            for (requestForFile in requestsForFile) {
+                val elementToImport = requestForFile.elementToImportPointer.element?.unwrapped ?: continue
+                val descriptorToImport = when (elementToImport) {
+                    is KtDeclaration -> elementToImport.resolveToDescriptor(BodyResolveMode.PARTIAL)
+                    is PsiMember -> elementToImport.getJavaMemberDescriptor()
+                    else -> null
+                } ?: continue
+                importInsertHelper.importDescriptor(file, descriptorToImport)
+            }
+        }
     }
 }
 
