@@ -2,12 +2,6 @@
 
 defaultTasks 'clean', 'demo'
 
-if (new File("$project.rootDir/local.properties").exists()) {
-  Properties props = new Properties()
-  props.load(new FileInputStream("$project.rootDir/local.properties"))
-  props.each {prop -> project.ext.set(prop.key, prop.value)}
-}
-
 convention.plugins.platformInfo = new PlatformInfo()
 
 allprojects {
@@ -19,6 +13,37 @@ allprojects {
         mavenCentral()
     }
 
+    loadCommandLineProperties()
+    loadLocalProperties()
+    setupCompilationFlags()
+    setupClang()
+}
+
+void setupClang() {
+
+    convention.plugins.execClang = new org.jetbrains.kotlin.ExecClang(project)
+
+    plugins.withType(NativeComponentPlugin) {
+        model {
+            toolChains {
+                clang(Clang) {
+                    clangPath.each {
+                        path it
+                    }
+
+                    eachPlatform { // TODO: will not work when cross-compiling
+                        [cCompiler, cppCompiler, linker].each {
+                            it.withArguments { it.addAll(hostClangArgs) }
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+}
+
+void setupCompilationFlags() {
     ext.clangPath = ["$llvmDir/bin"]
     ext.clangArgs = []
     ext.targetArgs = [:]
@@ -64,28 +89,26 @@ allprojects {
 
     ext.clangPath << binDir
     ext.jvmArgs = ["-ea"]
-    ext.globalArgs = project.hasProperty("konanc_flags") ? ext.konanc_flags.split(' ') : []
+}
 
-    convention.plugins.execClang = new org.jetbrains.kotlin.ExecClang(project)
-
-    plugins.withType(NativeComponentPlugin) {
-        model {
-            toolChains {
-                clang(Clang) {
-                    clangPath.each {
-                        path it
-                    }
-
-                    eachPlatform { // TODO: will not work when cross-compiling
-                        [cCompiler, cppCompiler, linker].each {
-                            it.withArguments { it.addAll(hostClangArgs) }
-                        }
-
-                    }
-                }
-            }
-        }
+void loadLocalProperties() {
+    if (new File("$project.rootDir/local.properties").exists()) {
+        Properties props = new Properties()
+        props.load(new FileInputStream("$project.rootDir/local.properties"))
+        props.each {prop -> project.ext.set(prop.key, prop.value)}
     }
+}
+
+void loadCommandLineProperties() {
+    if (project.hasProperty("konanc_flags")) {
+        throw new Error("Specify either -Ptest_flags or -Pbuild_flags.")
+    }
+    ext.globalBuildArgs = project.hasProperty("build_flags")
+        ? ext.build_flags.split(' ') : []
+    ext.globalTestArgs = project.hasProperty("test_flags")
+        ? ext.test_flags.split(' ') : []
+    ext.testTarget = project.hasProperty("test_target")
+        ? ext.test_target : null
 }
 
 class PlatformInfo {

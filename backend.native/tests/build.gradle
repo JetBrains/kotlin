@@ -29,6 +29,8 @@ ext.testOutputRoot = rootProject.file("test.output").absolutePath
 ext.externalTestsDir = project.file("external")
 externalTestsDir.mkdirs()
 
+project.convention.plugins.remoteExec = new org.jetbrains.kotlin.ExecRemote(project)
+
 allprojects {
     // Root directories for test output (logs, compiled files, statistics etc). Only single path must be in each set.
     sourceSets {
@@ -1604,6 +1606,12 @@ task interop2(type: RunInteropKonanTest) {
 }
 
 task interop3(type: RunInteropKonanTest) {
+    // We disable this test on Raspberry Pi because
+    // qsort accepts size_t args. So the .kt file
+    // should be different depending on the bitness of the target.
+    // There are plans to provide a solution and turn this
+    // test back on.
+    disabled = (project.testTarget == 'raspberrypi')
     goldValue = "8 9 12 13 14 \n"
     source = "interop/basics/3.kt"
     interop = 'cstdlib'

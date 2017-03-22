@@ -27,7 +27,8 @@ class NamedNativeInteropConfig implements Named {
 
     private String defFile
 
-    private String pkg;
+    private String pkg
+    private String target
 
     private List<String> compilerOpts = []
     private List<String> headers;
@@ -45,6 +46,10 @@ class NamedNativeInteropConfig implements Named {
     void defFile(String value) {
         defFile = value
         genTask.inputs.file(project.file(defFile))
+    }
+
+    void target(String value) {
+        target = value
     }
 
     void pkg(String value) {
@@ -191,7 +196,7 @@ class NamedNativeInteropConfig implements Named {
                 args "-natives:" + nativeLibsDir
                 args "-flavor:" + this.flavor
                 // Uncomment to debug.
-                //args "-verbose:true"
+                // args "-verbose:true"
 
                 if (defFile != null) {
                     args "-def:" + project.file(defFile)
@@ -203,6 +208,10 @@ class NamedNativeInteropConfig implements Named {
 
                 if (linker != null) {
                     args "-linker:" + linker
+                }
+
+                if (target != null) {
+                    args "-target:" + target
                 }
 
                 // TODO: the interop plugin should probably be reworked to execute clang from build scripts directly

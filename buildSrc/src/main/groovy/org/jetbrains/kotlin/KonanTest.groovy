@@ -82,7 +82,10 @@ abstract class KonanTest extends JavaExec {
                     "-ea",
                     *filesToCompile,
                     *moreArgs,
-                    *project.globalArgs]
+                    *project.globalTestArgs]
+            if (project.testTarget) {
+                args "-target", project.testTarget
+            }
             standardOutput = log
             errorOutput = log
             super.exec()
@@ -162,7 +165,7 @@ abstract class KonanTest extends JavaExec {
 
         def out = null
         //TODO Add test timeout
-        ExecResult execResult = project.exec {
+        ExecResult execResult = project.execRemote {
             commandLine exe
             if (arguments != null) {
                 args arguments
@@ -210,6 +213,7 @@ class RunInteropKonanTest extends KonanTest {
     void setInterop(String value) {
         this.interop = value
         this.interopConf = project.kotlinNativeInterop[value]
+        this.interopConf.target = project.testTarget
         this.dependsOn(this.interopConf.genTask)
     }
 

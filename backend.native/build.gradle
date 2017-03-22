@@ -204,7 +204,7 @@ targetList.each { target ->
         project(':runtime').file('src/main/kotlin'), 
         project(':Interop:Runtime').file('src/main/kotlin'),
         project(':Interop:Runtime').file('src/native/kotlin'),
-        *project.globalArgs)
+        *project.globalBuildArgs)
 
         inputs.dir(project(':runtime').file('src/main/kotlin'))
         inputs.dir(project(':Interop:Runtime').file('src/main/kotlin'))
@@ -230,7 +230,7 @@ targetList.each { target ->
             '-runtime', project(':runtime').file("build/${target}/runtime.bc"),
             '-properties', project(':backend.native').file('konan.properties'),
         project(':runtime').file('src/launcher/kotlin'), 
-        *project.globalArgs)
+        *project.globalBuildArgs)
 
         inputs.dir(project(':runtime').file('src/launcher/kotlin'))
         outputs.file(project(':runtime').file("build/${target}/start.kt.bc"))

@@ -2,9 +2,9 @@
 
 There are several gradle flags one can use for Konan build.
 
-* **-Pkonanc_flags** passes flags to the compiler used to build stdlib
+* **-Pbuild_flags** passes flags to the compiler used to build stdlib
 
-        ./gradlew -Pkonanc_flags="--disable lower_inline --print_ir" stdlib
+        ./gradlew -Pbuild_flags="--disable lower_inline --print_ir" stdlib
 
 * **-Pshims** compiles LLVM interface with tracing "shims". Allowing one 
     to trace the LLVM calls from the compiler.
@@ -32,3 +32,16 @@ To update the blackbox compiler tests set TeamCity build number in `gradle.prope
     testDataVersion=<build number>:id
 
 and run `./gradlew update_external_tests`
+
+* **-Ptest_flags** passes flags to the compiler used to compile tests
+
+        ./gradlew -Ptest_flags="--time" backend.native:tests:array0
+
+* **-Ptest_target** specifies cross target for a test run. 
+
+        ./gradlew -Ptest_target=raspberrypi backend.native:tests:array0
+
+* **-Premote=user@host** sets remote test execution login/hostname. Good for cross compiled tests.
+
+        ./gradles -Premote=kotlin@111.22.33.444 backend.native:tests:run
+
