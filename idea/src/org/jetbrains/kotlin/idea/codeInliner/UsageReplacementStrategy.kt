@@ -26,16 +26,21 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.ui.GuiUtils
-import com.intellij.util.ui.UIUtil
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtImportDirective
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 interface UsageReplacementStrategy {
     fun createReplacer(usage: KtSimpleNameExpression): (() -> KtElement?)?
@@ -59,13 +64,14 @@ fun UsageReplacementStrategy.replaceUsagesInWholeProject(
                                 .filterIsInstance<KtSimpleNameReference>()
                                 .map { ref -> ref.expression }
                     }
-                    this@replaceUsagesInWholeProject.replaceUsages(usages, project, commandName, postAction)
+                    this@replaceUsagesInWholeProject.replaceUsages(usages, targetPsiElement, project, commandName, postAction)
                 }
             })
 }
 
 private fun UsageReplacementStrategy.replaceUsages(
         usages: Collection<KtSimpleNameExpression>,
+        targetPsiElement: PsiElement,
         project: Project,
         commandName: String,
         postAction: () -> Unit
@@ -74,10 +80,16 @@ private fun UsageReplacementStrategy.replaceUsages(
         project.executeWriteCommand(commandName) {
             // we should delete imports later to not affect other usages
             val importsToDelete = arrayListOf<KtImportDirective>()
+            val replacements = mutableListOf<KtElement>()
 
-            for (usage in usages) {
+            var invalidUsagesFound = false
+            // NB: reversed order is better in case of composition like sqr(sqr(x))
+            for (usage in usages.reversed()) {
                 try {
-                    if (!usage.isValid) continue // TODO: nested calls
+                    if (!usage.isValid) {
+                        invalidUsagesFound = true
+                        continue
+                    }
 
                     //TODO: keep the import if we don't know how to replace some of the usages
                     val importDirective = usage.getStrictParentOfType<KtImportDirective>()
@@ -88,10 +100,30 @@ private fun UsageReplacementStrategy.replaceUsages(
                         continue
                     }
 
-                    createReplacer(usage)?.invoke()
+                    val replacement = createReplacer(usage)?.invoke()
+                    if (replacement != null) {
+                        replacements += replacement
+                    }
                 }
                 catch (e: Throwable) {
                     LOG.error(e)
+                }
+            }
+
+            if (invalidUsagesFound && targetPsiElement is KtNamedDeclaration) {
+                val name = targetPsiElement.name
+                val targetDescriptor = targetPsiElement.descriptor
+                if (name != null && targetDescriptor != null) {
+                    for (replacement in replacements) {
+                        replacement.forEachDescendantOfType<KtSimpleNameExpression> { usage ->
+                            if (usage.isValid && usage.getReferencedName() == name) {
+                                val context = usage.analyze(BodyResolveMode.PARTIAL)
+                                if (targetDescriptor == context[BindingContext.REFERENCE_TARGET, usage]) {
+                                    createReplacer(usage)?.invoke()
+                                }
+                            }
+                        }
+                    }
                 }
             }
 

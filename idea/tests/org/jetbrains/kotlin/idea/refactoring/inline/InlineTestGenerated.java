@@ -130,6 +130,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("MultipleInComposition.kt")
+            public void testMultipleInComposition() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/MultipleInComposition.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("MultipleInExpression.kt")
             public void testMultipleInExpression() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/MultipleInExpression.kt");

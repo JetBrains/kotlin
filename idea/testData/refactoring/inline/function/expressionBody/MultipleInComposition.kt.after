@@ -1,0 +1,4 @@
+fun bisqr(x: Double): Double {
+    val x1 = x * x
+    return x1 * x1
+}
