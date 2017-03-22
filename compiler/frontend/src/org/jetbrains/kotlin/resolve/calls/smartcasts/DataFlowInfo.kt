@@ -46,6 +46,7 @@ interface DataFlowInfo {
      *
      * IMPORTANT: by default, the original (native) type for this value
      * are NOT included. So it's quite possible to get an empty set here.
+     * Also, type order in the result set MAKES SENSE so keep it stable and do not change without reason
      */
     fun getCollectedTypes(key: DataFlowValue): Set<KotlinType>
 
@@ -55,6 +56,7 @@ interface DataFlowInfo {
      *
      * IMPORTANT: by default, the original (native) type for this value
      * are NOT included. So it's quite possible to get an empty set here.
+     * Also, type order in the result set MAKES SENSE so keep it stable and do not change without reason
      */
     fun getStableTypes(key: DataFlowValue): Set<KotlinType>
 

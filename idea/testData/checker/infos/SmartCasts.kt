@@ -15,7 +15,7 @@ fun f9(a : A?) {
   a<info>?.</info><error descr="[UNRESOLVED_REFERENCE] Unresolved reference: bar">bar</error>()
   if (a is B) {
     <info descr="Smart cast to B">a</info>.bar()
-    <info descr="Smart cast to A">a</info>.foo()
+    <info descr="Smart cast to B">a</info>.foo()
   }
   a<info>?.</info>foo()
   a<info>?.</info><error descr="[UNRESOLVED_REFERENCE] Unresolved reference: bar">bar</error>()
@@ -30,7 +30,7 @@ fun f9(a : A?) {
     return;
   }
   <info descr="Smart cast to B">a</info>.bar()
-  <info descr="Smart cast to A">a</info>.foo()
+  <info descr="Smart cast to B">a</info>.foo()
 }
 
 fun fAny(a : Any?) {
@@ -96,7 +96,7 @@ fun f12(a : A?) {
 
 fun f13(a : A?) {
   if (a is B) {
-    <info descr="Smart cast to A">a</info>.foo()
+    <info descr="Smart cast to B">a</info>.foo()
     <info descr="Smart cast to B">a</info>.bar()
   }
   else {
@@ -109,12 +109,12 @@ fun f13(a : A?) {
     a<info>?.</info>foo()
   }
   else {
-    <info descr="Smart cast to A">a</info>.foo()
+    <info descr="Smart cast to B">a</info>.foo()
   }
 
   a<info>?.</info>foo()
-  if (a is B && <info descr="Smart cast to A">a</info>.foo() == Unit) {
-    <info descr="Smart cast to A">a</info>.foo()
+  if (a is B && <info descr="Smart cast to B">a</info>.foo() == Unit) {
+    <info descr="Smart cast to B">a</info>.foo()
     <info descr="Smart cast to B">a</info>.bar()
   }
   else {
