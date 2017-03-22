@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.script.jsr223
 
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.daemon.common.threadCpuTime
+import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.junit.Assert
 import org.junit.Test
 import java.lang.management.ManagementFactory
@@ -25,6 +26,10 @@ import java.util.concurrent.TimeUnit
 import javax.script.*
 
 class KotlinJsr223LocalScriptEngineIT {
+
+    init {
+        setIdeaIoUseFallback()
+    }
 
     @Test
     fun testEngineFactory() {

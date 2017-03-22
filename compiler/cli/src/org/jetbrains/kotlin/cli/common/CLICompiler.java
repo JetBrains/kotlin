@@ -41,22 +41,11 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import static org.jetbrains.kotlin.cli.common.ExitCode.*;
+import static org.jetbrains.kotlin.cli.common.environment.UtilKt.setIdeaIoUseFallback;
 
 public abstract class CLICompiler<A extends CommonCompilerArguments> {
-    static private void setIdeaIoUseFallback() {
-        if (SystemInfo.isWindows) {
-            Properties properties = System.getProperties();
-
-            properties.setProperty("idea.io.use.nio2", Boolean.TRUE.toString());
-
-            if (!(SystemInfo.isJavaVersionAtLeast("1.7") && !"1.7.0-ea".equals(SystemInfo.JAVA_VERSION))) {
-                properties.setProperty("idea.io.use.fallback", Boolean.TRUE.toString());
-            }
-        }
-    }
 
     @NotNull
     public ExitCode exec(@NotNull PrintStream errStream, @NotNull String... args) {

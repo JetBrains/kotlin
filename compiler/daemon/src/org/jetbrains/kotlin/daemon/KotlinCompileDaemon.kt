@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.daemon
 
 import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
@@ -93,6 +94,8 @@ object KotlinCompileDaemon {
         log.info("daemon JVM args: " + ManagementFactory.getRuntimeMXBean().inputArguments.joinToString(" "))
         log.info("daemon args: " + args.joinToString(" "))
         log.info("daemon process name: " + ManagementFactory.getRuntimeMXBean().name)
+
+        setIdeaIoUseFallback()
 
         val compilerId = CompilerId()
         val daemonOptions = DaemonOptions()
