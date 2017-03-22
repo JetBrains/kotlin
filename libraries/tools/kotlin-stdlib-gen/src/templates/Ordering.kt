@@ -1,8 +1,7 @@
 package templates
 
 import templates.Family.*
-import templates.SequenceClass.intermediate
-import templates.SequenceClass.stateful
+import templates.SequenceClass.*
 
 fun ordering(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()

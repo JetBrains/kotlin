@@ -80,7 +80,6 @@ enum class SequenceClass {
     terminal,
     intermediate,
     stateless,
-    nearly_stateless,
     stateful
 }
 
@@ -457,7 +456,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
             }
             if (f == Sequences && sequenceClassification.isNotEmpty()) {
                 builder.append(" *\n")
-                builder.append(" * The operation is ${sequenceClassification.joinToString(" and ") { "_${it.toString().replace('_', ' ')}_" }}.\n")
+                builder.append(" * The operation is ${sequenceClassification.joinToString(" and ") { "_${it}_" }}.\n")
             }
             builder.append(" */\n")
         }

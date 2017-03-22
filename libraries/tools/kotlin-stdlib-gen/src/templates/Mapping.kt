@@ -301,7 +301,7 @@ fun mapping(): List<GenericFunction> {
             @sample samples.collections.Collections.Transformations.groupBy
             """
         }
-        sequenceClassification(terminal, stateful)
+        sequenceClassification(terminal)
         typeParam("K")
         returns("Map<K, List<T>>")
         body { "return groupByTo(LinkedHashMap<K, MutableList<T>>(), keySelector)" }
@@ -323,7 +323,7 @@ fun mapping(): List<GenericFunction> {
             @sample samples.collections.Collections.Transformations.groupBy
             """
         }
-        sequenceClassification(terminal, stateful)
+        sequenceClassification(terminal)
         returns("M")
         body {
             """
@@ -352,7 +352,7 @@ fun mapping(): List<GenericFunction> {
             @sample samples.collections.Collections.Transformations.groupByKeysAndValues
             """
         }
-        sequenceClassification(terminal, stateful)
+        sequenceClassification(terminal)
         typeParam("K")
         typeParam("V")
         returns("Map<K, List<V>>")
@@ -379,7 +379,7 @@ fun mapping(): List<GenericFunction> {
             @sample samples.collections.Collections.Transformations.groupByKeysAndValues
             """
         }
-        sequenceClassification(terminal, stateful)
+        sequenceClassification(terminal)
         returns("M")
         body {
             """
@@ -425,8 +425,10 @@ fun mapping(): List<GenericFunction> {
     val terminalOperationPattern = Regex("^\\w+To")
     templates.forEach { with (it) {
         if (sequenceClassification.isEmpty()) {
-            sequenceClassification(if (terminalOperationPattern in signature) terminal else intermediate)
-            sequenceClassification(if (signature.contains("index", ignoreCase = true)) nearly_stateless else stateless)
+            if (terminalOperationPattern in signature)
+                sequenceClassification(terminal)
+            else
+                sequenceClassification(intermediate, stateless)
         }
     } }
     return templates
