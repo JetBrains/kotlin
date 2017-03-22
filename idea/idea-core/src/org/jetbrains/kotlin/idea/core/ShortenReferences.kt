@@ -603,6 +603,10 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         }
 
         override fun analyzeQualifiedElement(element: KtDotQualifiedExpression, bindingContext: BindingContext): AnalyzeQualifiedElementResult {
+            val parent = element.parent
+            // TODO: Delete this code when KT-13934 is fixed
+            if (parent is KtCallableReferenceExpression && parent.receiverExpression == element) return AnalyzeQualifiedElementResult.Skip
+
             val receiver = element.receiverExpression
 
             if (PsiTreeUtil.getParentOfType(
@@ -616,7 +620,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
             if (receiverTarget.companionObjectDescriptor != selectorTarget) return AnalyzeQualifiedElementResult.Skip
 
-            val selectorsSelector = (element.parent as? KtDotQualifiedExpression)?.selectorExpression
+            val selectorsSelector = (parent as? KtDotQualifiedExpression)?.selectorExpression
                                     ?: return AnalyzeQualifiedElementResult.ShortenNow
 
             val selectorsSelectorTarget = selectorsSelector.singleTarget(bindingContext) ?: return AnalyzeQualifiedElementResult.Skip
