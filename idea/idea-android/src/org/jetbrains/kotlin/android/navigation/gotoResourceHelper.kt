@@ -81,7 +81,7 @@ private fun getReferredInfo(
     val qName = resolvedClass.qualifiedName
 
     if (SdkConstants.CLASS_R == qName || AndroidPsiElementFinder.INTERNAL_R_CLASS_QNAME == qName) {
-        return AndroidResourceUtil.MyReferredResourceFieldInfo(resClassName, resFieldName, true, false)
+        return AndroidResourceUtil.MyReferredResourceFieldInfo(resClassName, resFieldName, facet.module, true, false)
     }
     val containingFile = resolvedClass.containingFile ?: return null
 
@@ -93,7 +93,7 @@ private fun getReferredInfo(
         return null
     }
 
-    return AndroidResourceUtil.MyReferredResourceFieldInfo(resClassName, resFieldName, false, fromManifest)
+    return AndroidResourceUtil.MyReferredResourceFieldInfo(resClassName, resFieldName, facet.module, false, fromManifest)
 }
 
 private fun getReceiverAsSimpleNameExpression(exp: KtSimpleNameExpression): KtSimpleNameExpression? {
