@@ -1,0 +1,4 @@
+abstract class A
+
+class C() : A() {
+}

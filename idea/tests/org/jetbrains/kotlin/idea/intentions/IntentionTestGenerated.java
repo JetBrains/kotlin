@@ -5636,9 +5636,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("withBaseAliasImplicit.kt")
+        public void testWithBaseAliasImplicit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/withBaseAliasImplicit.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("withBaseClass.kt")
         public void testWithBaseClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/withBaseClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withBaseClassImplicit.kt")
+        public void testWithBaseClassImplicit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/withBaseClassImplicit.kt");
             doTest(fileName);
         }
 
@@ -5669,6 +5681,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("withDifferentTypeProperty.kt")
         public void testWithDifferentTypeProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/withDifferentTypeProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withInterfaceAlias.kt")
+        public void testWithInterfaceAlias() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertSecondaryConstructorToPrimary/withInterfaceAlias.kt");
             doTest(fileName);
         }
 
