@@ -25,6 +25,7 @@ import com.intellij.util.Function;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
+import kotlin.collections.ArraysKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
@@ -283,7 +284,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
 
         if (arguments.libraries != null) {
-            ContainerUtil.addAllNotNull(libraries, arguments.libraries.split(File.pathSeparator));
+            ContainerUtil.addAll(libraries, ArraysKt.filterNot(arguments.libraries.split(File.pathSeparator), String::isEmpty));
         }
 
         if (arguments.typedArrays) {
