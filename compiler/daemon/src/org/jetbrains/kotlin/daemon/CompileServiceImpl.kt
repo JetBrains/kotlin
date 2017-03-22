@@ -708,6 +708,7 @@ class CompileServiceImpl(
         UnicastRemoteObject.unexportObject(this, true)
         log.info("Shutdown complete")
         onShutdown()
+        log.handlers.forEach { it.flush() }
     }
 
     private fun shutdownWithDelay() {

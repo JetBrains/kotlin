@@ -92,22 +92,17 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                                        "-include-runtime", File(getTestBaseDir(), "hello.kt").absolutePath, "-d", jar)
 
                 KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
+                Thread.sleep(100)
                 daemonShotDown = true
                 var compileTime1 = 0L
                 var compileTime2 = 0L
-                logFile.reader().useLines {
-                    it.ifNotContainsSequence(LinePattern("Kotlin compiler daemon version"),
-                                             LinePattern("Starting compilation with args: "),
-                                             LinePattern("Compile on daemon: (\\d+) ms", { it.groups[1]?.value?.toLong()?.let { compileTime1 = it }; true }),
-                                             LinePattern("Starting compilation with args: "),
-                                             LinePattern("Compile on daemon: (\\d+) ms", { it.groups[1]?.value?.toLong()?.let { compileTime2 = it }; true }),
-                                             LinePattern("Shutdown complete"))
-                    { unmatchedPattern, lineNo ->
-                        fail("pattern not found in the input: " + unmatchedPattern.regex +
-                                      "\nunmatched part of the log file (" + logFile.absolutePath +
-                                      ") from line " + lineNo + ":\n\n" + logFile.reader().useLines { it.drop(lineNo).joinToString("\n") })
-                    }
-                }
+                logFile.assertLogContainsSequence(
+                        LinePattern("Kotlin compiler daemon version"),
+                        LinePattern("Starting compilation with args: "),
+                        LinePattern("Compile on daemon: (\\d+) ms", { it.groups[1]?.value?.toLong()?.let { compileTime1 = it }; true }),
+                        LinePattern("Starting compilation with args: "),
+                        LinePattern("Compile on daemon: (\\d+) ms", { it.groups[1]?.value?.toLong()?.let { compileTime2 = it }; true }),
+                        LinePattern("Shutdown started"))
                 assertTrue("Expecting that compilation 1 ($compileTime1 ms) is at least two times longer than compilation 2 ($compileTime2 ms)",
                            compileTime1 > compileTime2 * 2)
                 logFile.delete()
@@ -183,14 +178,12 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             logFile2.assertLogContainsSequence("Starting compilation with args: ")
 
             KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
-            Thread.sleep(100)
-            logFile1.assertLogContainsSequence("Shutdown complete")
-            logFile1.delete()
-
             KotlinCompilerClient.shutdownCompileService(compilerId2, daemonOptions)
+
             Thread.sleep(100)
-            logFile2.assertLogContainsSequence("Shutdown complete")
-            logFile2.delete()
+
+            logFile1.assertLogContainsSequence("Shutdown started")
+            logFile2.assertLogContainsSequence("Shutdown started")
         }
     }
 
@@ -216,7 +209,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             Thread.sleep(200)
 
             logFile.assertLogContainsSequence("Unused timeout exceeded 1s",
-                                              "Shutdown complete")
+                                              "Shutdown started")
             logFile.delete()
         }
     }
@@ -248,7 +241,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             }
             Thread.sleep(200)
             logFile.assertLogContainsSequence("Idle timeout exceeded 1s",
-                                              "Shutdown complete")
+                                              "Shutdown started")
             logFile.delete()
         }
     }
@@ -285,7 +278,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             Thread.sleep(100) // allow after session timed action to run
 
             logFile.assertLogContainsSequence("All sessions finished, shutting down",
-                                              "Shutdown complete")
+                                              "Shutdown started")
             logFile.delete()
         }
     }
@@ -401,7 +394,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     fun testParallelDaemonStart() {
 
-        val PARALLEL_THREADS_TO_START = 16
+        val PARALLEL_THREADS_TO_START = 8
 
         val doneLatch = CountDownLatch(PARALLEL_THREADS_TO_START)
 
@@ -647,7 +640,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             Thread.sleep(200)
             logFile.assertLogContainsSequence("Idle timeout exceeded 1s",
-                                              "Shutdown complete")
+                                              "Shutdown started")
             logFile.delete()
         }
     }
@@ -691,14 +684,19 @@ internal fun generateLargeKotlinFile(size: Int): String {
 
 internal fun File.ifLogNotContainsSequence(vararg patterns: String, body: (LinePattern, Int) -> Unit) {
     reader().useLines {
-        it.ifNotContainsSequence( patterns.map { LinePattern(it) }, body)
+        it.asSequence().ifNotContainsSequence(patterns.map { LinePattern(it) }, body)
     }
 }
 
-internal fun File.assertLogContainsSequence(vararg patterns: String) {
-    ifLogNotContainsSequence(*patterns)
-    {
-        pattern, _ -> fail("Pattern '${pattern.regex}' is not found in the log file '$absolutePath'")
+internal fun File.assertLogContainsSequence(vararg patterns: String) = assertLogContainsSequence(patterns.map { LinePattern(it) })
+
+internal fun File.assertLogContainsSequence(vararg patterns: LinePattern) = assertLogContainsSequence(patterns.asIterable())
+
+internal fun File.assertLogContainsSequence(patterns: Iterable<LinePattern>) {
+    val lines = reader().readLines()
+    lines.asSequence().ifNotContainsSequence(patterns.iterator())
+    { unmatchedPattern, lineNo ->
+        fail("pattern not found in the input: ${unmatchedPattern.regex}\nunmatched part of the log file ($absolutePath) from line $lineNo:\n\n${lines.asSequence().drop(lineNo).joinToString("\n")}\n-------")
     }
 }
 
