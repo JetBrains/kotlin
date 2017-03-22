@@ -19,23 +19,18 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.testFramework.PlatformTestUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.intentions.copyConcatenatedStringToClipboard.ConcatenatedStringGenerator
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
 
 /**
  * Compare xxx.kt.result file with the result of ConcatenatedStringGenerator().create(KtBinaryExpression) where KtBinaryExpression is the last KtBinaryExpression of xxx.kt file
  */
-abstract class AbstractConcatenatedStringGeneratorTest : KotlinCodeInsightTestCase() {
-
+abstract class AbstractConcatenatedStringGeneratorTest : KotlinLightCodeInsightFixtureTestCase() {
     @Throws(Exception::class)
     protected fun doTest(path: String) {
         val mainFile = File(path)
@@ -47,21 +42,10 @@ abstract class AbstractConcatenatedStringGeneratorTest : KotlinCodeInsightTestCa
         val document = FileDocumentManager.getInstance().getDocument(vFile) ?: return
         val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document) ?: return
 
-        val isWithRuntime = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// WITH_RUNTIME") != null
-
-        try {
-            if (isWithRuntime) ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, PluginTestCaseBase.mockJdk())
-            ConfigLibraryUtil.configureLibrariesByDirective(module, PlatformTestUtil.getCommunityPath(), fileText)
-
-            val ktFile = KtPsiFactory(project).createAnalyzableFile("dummy.kt", fileText, psiFile)
-            val expression = ktFile.collectDescendantsOfType<KtBinaryExpression>().lastOrNull()
-            TestCase.assertNotNull("No binary expression found: $path", expression)
-            val generatedString = ConcatenatedStringGenerator().create(expression!!)
-            TestCase.assertEquals("mismatch '$expectedText' - '$generatedString'", expectedText, generatedString)
-        }
-        finally {
-            ConfigLibraryUtil.unconfigureLibrariesByDirective(myModule, fileText)
-            if (isWithRuntime) ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(module, testProjectJdk)
-        }
+        val ktFile = KtPsiFactory(project).createAnalyzableFile("dummy.kt", fileText, psiFile)
+        val expression = ktFile.collectDescendantsOfType<KtBinaryExpression>().lastOrNull()
+        TestCase.assertNotNull("No binary expression found: $path", expression)
+        val generatedString = ConcatenatedStringGenerator().create(expression!!)
+        TestCase.assertEquals("mismatch '$expectedText' - '$generatedString'", expectedText, generatedString)
     }
 }
