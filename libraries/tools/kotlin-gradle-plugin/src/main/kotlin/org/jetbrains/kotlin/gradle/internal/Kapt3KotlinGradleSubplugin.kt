@@ -262,7 +262,15 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     private fun Kapt3SubpluginContext.disableAnnotationProcessingInJavaTask() {
         (javaCompile as? JavaCompile)?.let { javaCompile ->
             val options = javaCompile.options
-            options.compilerArgs = options.compilerArgs.filter { !it.startsWith("-proc:") } + "-proc:none"
+            // 'android-apt' (com.neenbedankt) adds a File instance to compilerArgs (List<String>).
+            // Although it's not our problem, we need to handle this case properly.
+            val oldCompilerArgs: List<Any> = options.compilerArgs
+            val newCompilerArgs = oldCompilerArgs.filterTo(mutableListOf()) {
+                it !is CharSequence || !it.toString().startsWith("-proc:")
+            }
+            newCompilerArgs.add("-proc:none")
+            @Suppress("UNCHECKED_CAST")
+            options.compilerArgs = newCompilerArgs as List<String>
         }
     }
 
