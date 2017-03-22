@@ -235,6 +235,21 @@ public class CallResolver {
     }
 
     @NotNull
+    public OverloadResolutionResults<FunctionDescriptor> resolveCollectionLiteralCallWithGivenDescriptor(
+            @NotNull ExpressionTypingContext context,
+            @NotNull KtCollectionLiteralExpression expression,
+            @NotNull Call call,
+            @NotNull FunctionDescriptor functionDescriptor
+    ) {
+        BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS);
+        ResolutionCandidate<FunctionDescriptor> candidate = ResolutionCandidate.create(
+                call, functionDescriptor, null, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, null);
+
+        return computeTasksFromCandidatesAndResolvedCall(
+                callResolutionContext, Collections.singleton(candidate), TracingStrategyImpl.create(expression, call));
+    }
+
+    @NotNull
     public OverloadResolutionResults<FunctionDescriptor> resolveFunctionCall(
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,

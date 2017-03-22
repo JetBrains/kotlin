@@ -1505,7 +1505,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull KtCollectionLiteralExpression expression, ExpressionTypingContext context
     ) {
         return CollectionLiteralResolver.INSTANCE.resolveCollectionLiteral(
-                expression, context, components.callResolver, components.languageVersionSettings);
+                expression, context, components.callResolver, components.builtIns, components.languageVersionSettings);
     }
 
     @Override

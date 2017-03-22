@@ -3387,6 +3387,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/collectionLiterals/noCollectionLiterals.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("resolveToFunctionFromBuiltIns.kt")
+            public void testResolveToFunctionFromBuiltIns() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/collectionLiterals/resolveToFunctionFromBuiltIns.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/constructorConsistency")
