@@ -34,7 +34,9 @@ enum class KonanPhase(val description: String,
     /* ... ... */ RTTI("RTTI Generation"),
     /* ... ... */ CODEGEN("Code Generation"),
     /* ... ... */ METADATOR("Metadata Generation"),
-    /* */ LINKER("Link Stage");
+    /* */ LINK_STAGE("Link stage"),
+    /* ... */ OBJECT_FILES("Bitcode to object file"),
+    /* ... */ LINKER("Linker");
 
     val prerequisite = prerequisite.toSet()
 }
@@ -61,7 +63,7 @@ object KonanPhases {
             verbose?.forEach { phases[known(it)]!!.verbose = true }
 
             if (get(NOLINK) ?: false ) {
-                KonanPhase.LINKER.enabled = false
+                KonanPhase.LINK_STAGE.enabled = false
             }
         }}
     }

@@ -262,16 +262,22 @@ internal class LinkStage(val context: Context) {
     fun linkStage() {
         context.log("# Compiler root: ${distribution.konanHome}")
 
-        val bitcodeFiles = listOf<BitcodeFile>(emitted, distribution.start, distribution.runtime,
-            distribution.launcher) + libraries
+        val bitcodeFiles = listOf<BitcodeFile>(emitted, distribution.start, 
+            distribution.runtime, distribution.launcher) + libraries
 
-        val objectFiles = if (optimize) {
-            listOf( llvmLto(bitcodeFiles ) )
-        } else {
-            bitcodeFiles.map{ it -> llvmLlc(it) }
+        var objectFiles: List<String> = listOf()
+
+        val phaser = PhaseManager(context)
+        phaser.phase(KonanPhase.OBJECT_FILES) {
+            objectFiles = if (optimize) {
+                listOf( llvmLto(bitcodeFiles ) )
+            } else {
+                bitcodeFiles.map{ it -> llvmLlc(it) }
+            }
         }
-
-        val executable = link(objectFiles)
+        phaser.phase(KonanPhase.LINKER) {
+            val executable = link(objectFiles)
+        }
     }
 }
 

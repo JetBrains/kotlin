@@ -87,7 +87,7 @@ public fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEn
         }
     }
 
-    phaser.phase(KonanPhase.LINKER) {
+    phaser.phase(KonanPhase.LINK_STAGE) {
         LinkStage(context).linkStage()
     }
 }
