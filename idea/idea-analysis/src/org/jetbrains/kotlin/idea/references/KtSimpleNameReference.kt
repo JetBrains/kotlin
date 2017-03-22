@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.codeInsight.shorten.isToBeShortened
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
@@ -37,10 +38,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -152,7 +150,7 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         if (expression.parent is KtThisExpression || expression.parent is KtSuperExpression) return expression // TODO: it's a bad design of PSI tree, we should change it
 
         val newExpression = expression.changeQualifiedName(fqName.quoteIfNeeded())
-        val newQualifiedElement = newExpression.getQualifiedElement()
+        val newQualifiedElement = newExpression.getQualifiedElementOrCallableRef()
 
         if (shorteningMode == ShorteningMode.NO_SHORTENING) return newExpression
 
@@ -179,14 +177,24 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
 
         val shortName = fqName.shortName().asString()
         val psiFactory = KtPsiFactory(this)
-        val fqNameBase = (parent as? KtCallExpression)?.let { parent ->
-            val callCopy = parent.copy() as KtCallExpression
-            callCopy.calleeExpression!!.replace(psiFactory.createSimpleName(shortName)).parent!!.text
-        } ?: shortName
+        val parent = parent
+        var parentDelimiter = "."
+        val fqNameBase = when {
+            parent is KtCallElement -> {
+                val callCopy = parent.copied()
+                callCopy.calleeExpression!!.replace(psiFactory.createSimpleName(shortName)).parent!!.text
+            }
+            parent is KtCallableReferenceExpression && parent.callableReference == this -> {
+                parentDelimiter = ""
+                val callableRefCopy = parent.copied()
+                callableRefCopy.callableReference.replace(psiFactory.createSimpleName(shortName)).parent!!.text
+            }
+            else -> shortName
+        }
 
-        val text = if (!fqName.isOneSegmentFQN()) "${fqName.parent().asString()}.$fqNameBase" else fqNameBase
+        val text = if (!fqName.isOneSegmentFQN()) "${fqName.parent().asString()}$parentDelimiter$fqNameBase" else fqNameBase
 
-        val elementToReplace = getQualifiedElement()
+        val elementToReplace = getQualifiedElementOrCallableRef()
 
         val newElement = when (elementToReplace) {
             is KtUserType -> {
@@ -196,7 +204,9 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
             else -> elementToReplace.replace(psiFactory.createExpression(text))
         } as KtElement
 
-        val selector = newElement.getQualifiedElementSelector() ?: error("No selector for $newElement")
+        val selector = (newElement as? KtCallableReferenceExpression)?.callableReference
+                       ?: newElement.getQualifiedElementSelector()
+                       ?: error("No selector for $newElement")
         return selector as KtNameReferenceExpression
     }
 
