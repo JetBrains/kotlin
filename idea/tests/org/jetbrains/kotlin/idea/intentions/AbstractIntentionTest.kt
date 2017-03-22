@@ -14,246 +14,222 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.intentions;
+package org.jetbrains.kotlin.idea.intentions
 
-import com.google.common.collect.Lists;
-import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.ide.startup.impl.StartupManagerImpl;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiFile;
-import com.intellij.refactoring.BaseRefactoringProcessor;
-import com.intellij.refactoring.util.CommonRefactoringUtil;
-import com.intellij.testFramework.PlatformTestUtil;
-import com.intellij.util.PathUtil;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.Convertor;
-import junit.framework.ComparisonFailure;
-import kotlin.jvm.functions.Function0;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
-import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
-import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
-import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.junit.Assert;
+import com.google.common.collect.Lists
+import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.ide.startup.impl.StartupManagerImpl
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.startup.StartupManager
+import com.intellij.openapi.util.Computable
+import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiFile
+import com.intellij.refactoring.BaseRefactoringProcessor
+import com.intellij.refactoring.util.CommonRefactoringUtil
+import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.util.PathUtil
+import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.containers.Convertor
+import junit.framework.ComparisonFailure
+import junit.framework.TestCase
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
+import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
+import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.Assert
+import java.io.File
+import java.util.*
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
-    @NotNull
-    protected String intentionFileName() {
-        return ".intention";
+abstract class AbstractIntentionTest : KotlinCodeInsightTestCase() {
+    protected open fun intentionFileName(): String {
+        return ".intention"
     }
 
-    @NotNull
-    protected String afterFileNameSuffix() {
-        return ".after";
+    protected open fun afterFileNameSuffix(): String {
+        return ".after"
     }
 
-    @NotNull
-    protected String isApplicableDirectiveName() {
-        return "IS_APPLICABLE";
+    protected open fun isApplicableDirectiveName(): String = "IS_APPLICABLE"
+
+    protected open fun intentionTextDirectiveName(): String {
+        return "INTENTION_TEXT"
     }
 
-    @NotNull
-    protected String intentionTextDirectiveName() {
-        return "INTENTION_TEXT";
-    }
+    @Throws(Exception::class)
+    private fun createIntention(testDataFile: File): IntentionAction {
+        val candidateFiles = Lists.newArrayList<File>()
 
-    private IntentionAction createIntention(File testDataFile) throws Exception {
-        List<File> candidateFiles = Lists.newArrayList();
-
-        File current = testDataFile.getParentFile();
+        var current: File? = testDataFile.parentFile
         while (current != null) {
-            File candidate = new File(current, intentionFileName());
+            val candidate = File(current, intentionFileName())
             if (candidate.exists()) {
-                candidateFiles.add(candidate);
+                candidateFiles.add(candidate)
             }
-            current = current.getParentFile();
+            current = current.parentFile
         }
 
         if (candidateFiles.isEmpty()) {
-            throw new AssertionError(".intention file is not found for " + testDataFile +
-                                     "\nAdd it to base directory of test data. It should contain fully-qualified name of intention class.");
+            throw AssertionError(".intention file is not found for " + testDataFile +
+                                 "\nAdd it to base directory of test data. It should contain fully-qualified name of intention class.")
         }
-        if (candidateFiles.size() > 1) {
-            throw new AssertionError("Several .intention files are available for " + testDataFile +
-                                     "\nPlease remove some of them\n" + candidateFiles);
+        if (candidateFiles.size > 1) {
+            throw AssertionError("Several .intention files are available for " + testDataFile +
+                                 "\nPlease remove some of them\n" + candidateFiles)
         }
 
-        String className = FileUtil.loadFile(candidateFiles.get(0)).trim();
-        return (IntentionAction) Class.forName(className).newInstance();
+        val className = FileUtil.loadFile(candidateFiles[0]).trim { it <= ' ' }
+        return Class.forName(className).newInstance() as IntentionAction
     }
 
-    private static final String[] EXTENSIONS = { ".kt", ".java", ".groovy" };
-
-    protected void doTest(@NotNull String path) throws Exception {
-        File mainFile = new File(path);
-        String mainFileName = FileUtil.getNameWithoutExtension(mainFile);
-        IntentionAction intentionAction = createIntention(mainFile);
-        List<String> sourceFilePaths = new ArrayList<String>();
-        File parentDir = mainFile.getParentFile();
-        extraFileLoop:
-        //noinspection ForLoopThatDoesntUseLoopVariable
-        for (int i = 1; true; i++) {
-            for (String extension : EXTENSIONS) {
-                File extraFile = new File(parentDir, mainFileName + "." + i + extension);
+    @Throws(Exception::class)
+    protected fun doTest(path: String) {
+        val mainFile = File(path)
+        val mainFileName = FileUtil.getNameWithoutExtension(mainFile)
+        val intentionAction = createIntention(mainFile)
+        val sourceFilePaths = ArrayList<String>()
+        val parentDir = mainFile.parentFile
+        var i = 1
+        extraFileLoop@ while (true) {
+            for (extension in EXTENSIONS) {
+                val extraFile = File(parentDir, mainFileName + "." + i + extension)
                 if (extraFile.exists()) {
-                    sourceFilePaths.add(extraFile.getPath());
-                    continue extraFileLoop;
+                    sourceFilePaths.add(extraFile.path)
+                    i++
+                    continue@extraFileLoop
                 }
             }
-            break;
+            break
         }
-        sourceFilePaths.add(path);
+        sourceFilePaths.add(path)
 
-        Map<String, PsiFile> pathToFiles = ContainerUtil.newMapFromKeys(
+        val pathToFiles = ContainerUtil.newMapFromKeys(
                 sourceFilePaths.iterator(),
-                new Convertor<String, PsiFile>() {
-                    @Override
-                    public PsiFile convert(String path) {
-                        try {
-                            configureByFile(path);
-                        }
-                        catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                        return myFile;
+                Convertor<String, PsiFile> { path ->
+                    try {
+                        configureByFile(path)
                     }
+                    catch (e: Exception) {
+                        throw RuntimeException(e)
+                    }
+
+                    myFile
                 }
-        );
+        )
 
-        String fileText = FileUtil.loadFile(mainFile, true);
+        val fileText = FileUtil.loadFile(mainFile, true)
 
-        assertTrue("\"<caret>\" is missing in file \"" + mainFile + "\"", fileText.contains("<caret>"));
+        TestCase.assertTrue("\"<caret>\" is missing in file \"$mainFile\"", fileText.contains("<caret>"))
 
-        String minJavaVersion = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MIN_JAVA_VERSION: ");
-        if (minJavaVersion != null && !SystemInfo.isJavaVersionAtLeast(minJavaVersion)) return;
+        val minJavaVersion = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MIN_JAVA_VERSION: ")
+        if (minJavaVersion != null && !SystemInfo.isJavaVersionAtLeast(minJavaVersion)) return
 
-        boolean isWithRuntime = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// WITH_RUNTIME") != null;
+        val isWithRuntime = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// WITH_RUNTIME") != null
 
         try {
             if (isWithRuntime) {
-                ConfigLibraryUtil.configureKotlinRuntimeAndSdk(getModule(), PluginTestCaseBase.mockJdk());
+                ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, PluginTestCaseBase.mockJdk())
             }
 
-            ConfigLibraryUtil.configureLibrariesByDirective(getModule(), PlatformTestUtil.getCommunityPath(), fileText);
+            ConfigLibraryUtil.configureLibrariesByDirective(module, PlatformTestUtil.getCommunityPath(), fileText)
 
-            if (getFile() instanceof KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_BEFORE")) {
-                DirectiveBasedActionUtils.INSTANCE.checkForUnexpectedErrors((KtFile) getFile());
+            if (file is KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_BEFORE")) {
+                DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
             }
 
-            doTestFor(path, pathToFiles, intentionAction, fileText);
+            doTestFor(path, pathToFiles, intentionAction, fileText)
 
-            if (getFile() instanceof KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_AFTER")) {
-                DirectiveBasedActionUtils.INSTANCE.checkForUnexpectedErrors((KtFile) getFile());
+            if (file is KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_AFTER")) {
+                DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
             }
         }
         finally {
-            ConfigLibraryUtil.unconfigureLibrariesByDirective(myModule, fileText);
+            ConfigLibraryUtil.unconfigureLibrariesByDirective(myModule, fileText)
             if (isWithRuntime) {
-                ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(getModule(), getTestProjectJdk());
+                ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(module, testProjectJdk)
             }
         }
     }
 
-    private void doTestFor(String mainFilePath, Map<String, PsiFile> pathToFiles, final IntentionAction intentionAction, String fileText) throws Exception {
-        String isApplicableString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// " + isApplicableDirectiveName() + ": ");
-        boolean isApplicableExpected = isApplicableString == null || isApplicableString.equals("true");
+    @Throws(Exception::class)
+    private fun doTestFor(mainFilePath: String, pathToFiles: Map<String, PsiFile>, intentionAction: IntentionAction, fileText: String) {
+        val isApplicableString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// ${isApplicableDirectiveName()}: ")
+        val isApplicableExpected = isApplicableString == null || isApplicableString == "true"
 
-        boolean isApplicableOnPooled = ApplicationManager.getApplication().executeOnPooledThread(new java.util.concurrent.Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                return ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
-                    @Override
-                    public Boolean compute() {
-                        return intentionAction.isAvailable(getProject(), getEditor(), getFile());
-                    }
-                });
-            }
-        }).get();
+        val isApplicableOnPooled = ApplicationManager.getApplication().executeOnPooledThread(java.util.concurrent.Callable { ApplicationManager.getApplication().runReadAction(Computable { intentionAction.isAvailable(project, editor, file) }) }).get()
 
-        boolean isApplicableOnEdt = intentionAction.isAvailable(getProject(), getEditor(), getFile());
+        val isApplicableOnEdt = intentionAction.isAvailable(project, editor, file)
 
-        Assert.assertEquals("There should not be any difference what thread isApplicable is called from", isApplicableOnPooled, isApplicableOnEdt);
+        Assert.assertEquals("There should not be any difference what thread isApplicable is called from", isApplicableOnPooled, isApplicableOnEdt)
 
         Assert.assertTrue(
-                "isAvailable() for " + intentionAction.getClass() + " should return " + isApplicableExpected,
-                isApplicableExpected == isApplicableOnEdt);
+                "isAvailable() for " + intentionAction.javaClass + " should return " + isApplicableExpected,
+                isApplicableExpected == isApplicableOnEdt)
 
-        String intentionTextString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// " + intentionTextDirectiveName() + ": ");
+        val intentionTextString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// " + intentionTextDirectiveName() + ": ")
 
         if (intentionTextString != null) {
-            assertEquals("Intention text mismatch.", intentionTextString, intentionAction.getText());
+            TestCase.assertEquals("Intention text mismatch.", intentionTextString, intentionAction.text)
         }
 
-        String shouldFailString = StringUtil.join(InTextDirectivesUtils.findListWithPrefixes(fileText, "// SHOULD_FAIL_WITH: "), ", ");
+        val shouldFailString = StringUtil.join(InTextDirectivesUtils.findListWithPrefixes(fileText, "// SHOULD_FAIL_WITH: "), ", ")
 
         try {
             if (isApplicableExpected) {
-                ApplicationUtilsKt.executeWriteCommand(
-                        getProject(),
-                        intentionAction.getText(),
-                        null,
-                        new Function0<Object>() {
-                            @Override
-                            public Object invoke() {
-                                intentionAction.invoke(getProject(), getEditor(), getFile());
-                                return null;
-                            }
-                        }
-                );
+                project.executeWriteCommand(
+                        intentionAction.text, null
+                ) {
+                    intentionAction.invoke(project, editor, file)
+                    null
+                }
                 // Don't bother checking if it should have failed.
                 if (shouldFailString.isEmpty()) {
-                    for (Map.Entry<String, PsiFile> entry: pathToFiles.entrySet()) {
-                        String filePath = entry.getKey();
-                        String canonicalPathToExpectedFile = PathUtil.getCanonicalPath(filePath + afterFileNameSuffix());
-                        if (filePath.equals(mainFilePath)) {
+                    for ((filePath, value) in pathToFiles) {
+                        val canonicalPathToExpectedFile = PathUtil.getCanonicalPath(filePath + afterFileNameSuffix())
+                        if (filePath == mainFilePath) {
                             try {
-                                checkResultByFile(canonicalPathToExpectedFile);
+                                checkResultByFile(canonicalPathToExpectedFile)
                             }
-                            catch (ComparisonFailure e) {
+                            catch (e: ComparisonFailure) {
                                 KotlinTestUtils
-                                        .assertEqualsToFile(new File(canonicalPathToExpectedFile), getEditor().getDocument().getText());
+                                        .assertEqualsToFile(File(canonicalPathToExpectedFile), editor.document.text)
                             }
+
                         }
                         else {
-                            KotlinTestUtils.assertEqualsToFile(new File(canonicalPathToExpectedFile), entry.getValue().getText());
+                            KotlinTestUtils.assertEqualsToFile(File(canonicalPathToExpectedFile), value.text)
                         }
                     }
                 }
             }
-            assertEquals("Expected test to fail.", "", shouldFailString);
+            TestCase.assertEquals("Expected test to fail.", "", shouldFailString)
         }
-        catch (BaseRefactoringProcessor.ConflictsInTestsException e) {
-            assertEquals("Failure message mismatch.", shouldFailString, StringUtil.join(e.getMessages(), ", "));
+        catch (e: BaseRefactoringProcessor.ConflictsInTestsException) {
+            TestCase.assertEquals("Failure message mismatch.", shouldFailString, StringUtil.join(e.messages, ", "))
         }
-        catch (CommonRefactoringUtil.RefactoringErrorHintException e) {
-            assertEquals("Failure message mismatch.", shouldFailString, e.getMessage().replace('\n', ' '));
+        catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
+            TestCase.assertEquals("Failure message mismatch.", shouldFailString, e.message?.replace('\n', ' '))
         }
+
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
+    @Throws(Exception::class)
+    override fun setUp() {
+        super.setUp()
+        (StartupManager.getInstance(project) as StartupManagerImpl).runPostStartupActivities()
     }
 
-    @NotNull
-    @Override
-    protected String getTestDataPath() {
-        return "";
+    override fun getTestDataPath(): String {
+        return ""
+    }
+
+    companion object {
+        private val EXTENSIONS = arrayOf(".kt", ".java", ".groovy")
     }
 }
 
