@@ -93,8 +93,8 @@ and extension functions for sequences.
 
 The sequence operations can be classified into the following groups regarding their state requirements:
 
- - _stateless_ – operations like [kotlin.sequences.Sequence.map], [kotlin.sequences.Sequence.filter], which process each element independently;
- - _nearly stateless_ – operations which require a small constant amount of state to process an element, for example [kotlin.sequences.Sequence.take] or [kotlin.sequences.Sequence.drop];
+ - _stateless_ – operations which require no state and process each element independently like [kotlin.sequences.Sequence.map], [kotlin.sequences.Sequence.filter],
+   or require a small constant amount of state to process an element, for example [kotlin.sequences.Sequence.take] or [kotlin.sequences.Sequence.drop];
  - _stateful_ – operations which require a significant amount of state, usually proportional to the number of elements in a sequence.
  
 If the sequence operation returns another sequence, which is produced lazily, it's called _intermediate_, and otherwise the operation is _terminal_.

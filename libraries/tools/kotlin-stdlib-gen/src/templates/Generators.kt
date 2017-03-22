@@ -269,7 +269,7 @@ fun generators(): List<GenericFunction> {
             """
         }
         doc(Sequences) { "Returns a sequence containing all elements of the original sequence without the first occurrence of the given [element]." }
-        sequenceClassification(intermediate, nearly_stateless)
+        sequenceClassification(intermediate, stateless)
 
         returns("List<T>")
         returns("SELF", Sets, Sequences)
@@ -308,7 +308,7 @@ fun generators(): List<GenericFunction> {
 
 
         doc(Sequences) { "Returns a sequence containing all elements of the original sequence without the first occurrence of the given [element]." }
-        sequenceClassification(intermediate, nearly_stateless)
+        sequenceClassification(intermediate, stateless)
         body(Sequences) {
             """
             return object: Sequence<T> {

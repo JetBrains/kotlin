@@ -173,7 +173,7 @@ public header inline fun <T> Sequence<T>.singleOrNull(predicate: (T) -> Boolean)
 /**
  * Returns a sequence containing all elements except first [n] elements.
  *
- * The operation is _intermediate_ and _nearly stateless_.
+ * The operation is _intermediate_ and _stateless_.
  */
 public header fun <T> Sequence<T>.drop(n: Int): Sequence<T>
 
@@ -196,7 +196,7 @@ public header fun <T> Sequence<T>.filter(predicate: (T) -> Boolean): Sequence<T>
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  *
- * The operation is _intermediate_ and _nearly stateless_.
+ * The operation is _intermediate_ and _stateless_.
  */
 public header fun <T> Sequence<T>.filterIndexed(predicate: (index: Int, T) -> Boolean): Sequence<T>
 
@@ -205,7 +205,7 @@ public header fun <T> Sequence<T>.filterIndexed(predicate: (index: Int, T) -> Bo
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
  *
- * The operation is _terminal_ and _nearly stateless_.
+ * The operation is _terminal_.
  */
 public header inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterIndexedTo(destination: C, predicate: (index: Int, T) -> Boolean): C
 
@@ -219,7 +219,7 @@ public header inline fun <reified R> Sequence<*>.filterIsInstance(): Sequence<@k
 /**
  * Appends all elements that are instances of specified type parameter R to the given [destination].
  *
- * The operation is _terminal_ and _stateless_.
+ * The operation is _terminal_.
  */
 public header inline fun <reified R, C : MutableCollection<in R>> Sequence<*>.filterIsInstanceTo(destination: C): C
 
@@ -240,28 +240,28 @@ public header fun <T : Any> Sequence<T?>.filterNotNull(): Sequence<T>
 /**
  * Appends all elements that are not `null` to the given [destination].
  *
- * The operation is _terminal_ and _stateless_.
+ * The operation is _terminal_.
  */
 public header fun <C : MutableCollection<in T>, T : Any> Sequence<T?>.filterNotNullTo(destination: C): C
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
  *
- * The operation is _terminal_ and _stateless_.
+ * The operation is _terminal_.
  */
 public header inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterNotTo(destination: C, predicate: (T) -> Boolean): C
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
  *
- * The operation is _terminal_ and _stateless_.
+ * The operation is _terminal_.
  */
 public header inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterTo(destination: C, predicate: (T) -> Boolean): C
 
 /**
  * Returns a sequence containing first [n] elements.
  *
- * The operation is _intermediate_ and _nearly stateless_.
+ * The operation is _intermediate_ and _stateless_.
  */
 public header fun <T> Sequence<T>.take(n: Int): Sequence<T>
 
@@ -421,7 +421,7 @@ public header fun <T, R> Sequence<T>.flatMap(transform: (T) -> Sequence<R>): Seq
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original sequence, to the given [destination].
  *
- * The operation is _terminal_ and _stateless_.
+ * The operation is _terminal_.
  */
 public header inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C
 
@@ -433,7 +433,7 @@ public header inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.flatMap
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  *
- * The operation is _terminal_ and _stateful_.
+ * The operation is _terminal_.
  */
 public header inline fun <T, K> Sequence<T>.groupBy(keySelector: (T) -> K): Map<K, List<T>>
 
@@ -446,7 +446,7 @@ public header inline fun <T, K> Sequence<T>.groupBy(keySelector: (T) -> K): Map<
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  *
- * The operation is _terminal_ and _stateful_.
+ * The operation is _terminal_.
  */
 public header inline fun <T, K, V> Sequence<T>.groupBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, List<V>>
 
@@ -458,7 +458,7 @@ public header inline fun <T, K, V> Sequence<T>.groupBy(keySelector: (T) -> K, va
  * 
  * @sample samples.collections.Collections.Transformations.groupBy
  *
- * The operation is _terminal_ and _stateful_.
+ * The operation is _terminal_.
  */
 public header inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Sequence<T>.groupByTo(destination: M, keySelector: (T) -> K): M
 
@@ -471,7 +471,7 @@ public header inline fun <T, K, M : MutableMap<in K, MutableList<T>>> Sequence<T
  * 
  * @sample samples.collections.Collections.Transformations.groupByKeysAndValues
  *
- * The operation is _terminal_ and _stateful_.
+ * The operation is _terminal_.
  */
 public header inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Sequence<T>.groupByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M
 
@@ -500,7 +500,7 @@ public header fun <T, R> Sequence<T>.map(transform: (T) -> R): Sequence<R>
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  *
- * The operation is _intermediate_ and _nearly stateless_.
+ * The operation is _intermediate_ and _stateless_.
  */
 public header fun <T, R> Sequence<T>.mapIndexed(transform: (index: Int, T) -> R): Sequence<R>
 
@@ -510,7 +510,7 @@ public header fun <T, R> Sequence<T>.mapIndexed(transform: (index: Int, T) -> R)
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  *
- * The operation is _intermediate_ and _nearly stateless_.
+ * The operation is _intermediate_ and _stateless_.
  */
 public header fun <T, R : Any> Sequence<T>.mapIndexedNotNull(transform: (index: Int, T) -> R?): Sequence<R>
 
@@ -520,7 +520,7 @@ public header fun <T, R : Any> Sequence<T>.mapIndexedNotNull(transform: (index: 
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  *
- * The operation is _terminal_ and _nearly stateless_.
+ * The operation is _terminal_.
  */
 public header inline fun <T, R : Any, C : MutableCollection<in R>> Sequence<T>.mapIndexedNotNullTo(destination: C, transform: (index: Int, T) -> R?): C
 
@@ -530,7 +530,7 @@ public header inline fun <T, R : Any, C : MutableCollection<in R>> Sequence<T>.m
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  *
- * The operation is _terminal_ and _nearly stateless_.
+ * The operation is _terminal_.
  */
 public header inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.mapIndexedTo(destination: C, transform: (index: Int, T) -> R): C
 
@@ -546,7 +546,7 @@ public header fun <T, R : Any> Sequence<T>.mapNotNull(transform: (T) -> R?): Seq
  * Applies the given [transform] function to each element in the original sequence
  * and appends only the non-null results to the given [destination].
  *
- * The operation is _terminal_ and _stateless_.
+ * The operation is _terminal_.
  */
 public header inline fun <T, R : Any, C : MutableCollection<in R>> Sequence<T>.mapNotNullTo(destination: C, transform: (T) -> R?): C
 
@@ -554,14 +554,14 @@ public header inline fun <T, R : Any, C : MutableCollection<in R>> Sequence<T>.m
  * Applies the given [transform] function to each element of the original sequence
  * and appends the results to the given [destination].
  *
- * The operation is _terminal_ and _stateless_.
+ * The operation is _terminal_.
  */
 public header inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.mapTo(destination: C, transform: (T) -> R): C
 
 /**
  * Returns a sequence of [IndexedValue] for each element of the original sequence.
  *
- * The operation is _intermediate_ and _nearly stateless_.
+ * The operation is _intermediate_ and _stateless_.
  */
 public header fun <T> Sequence<T>.withIndex(): Sequence<IndexedValue<T>>
 
@@ -806,7 +806,7 @@ public header fun <T : Any> Sequence<T?>.requireNoNulls(): Sequence<T>
 /**
  * Returns a sequence containing all elements of the original sequence without the first occurrence of the given [element].
  *
- * The operation is _intermediate_ and _nearly stateless_.
+ * The operation is _intermediate_ and _stateless_.
  */
 public header operator fun <T> Sequence<T>.minus(element: T): Sequence<T>
 
@@ -843,7 +843,7 @@ public header operator fun <T> Sequence<T>.minus(elements: Sequence<T>): Sequenc
 /**
  * Returns a sequence containing all elements of the original sequence without the first occurrence of the given [element].
  *
- * The operation is _intermediate_ and _nearly stateless_.
+ * The operation is _intermediate_ and _stateless_.
  */
 @kotlin.internal.InlineOnly
 public header inline fun <T> Sequence<T>.minusElement(element: T): Sequence<T>
