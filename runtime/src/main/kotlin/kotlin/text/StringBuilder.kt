@@ -1,4 +1,5 @@
 package kotlin.text
+import kotlin.collections.*
 
 @SymbolName("Kotlin_String_fromUtf8Array")
 external fun fromUtf8Array(array: ByteArray, start: Int, size: Int) : String
@@ -102,6 +103,12 @@ class StringBuilder private constructor (
     fun append(it: Float) = append(it.toString())
     fun append(it: Double) = append(it.toString())
     fun append(it: Any?) = append(it.toString())
+
+    fun deleteCharAt(index: Int) {
+        checkIndex(index)
+        array.copyRangeTo(array, index + 1, length, index)
+        --length
+    }
 
     // ---------------------------- private ----------------------------
 
