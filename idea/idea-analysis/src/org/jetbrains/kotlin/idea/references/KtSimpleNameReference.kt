@@ -24,6 +24,7 @@ import com.intellij.util.IncorrectOperationException
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
+import org.jetbrains.kotlin.idea.codeInsight.shorten.isToBeShortened
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
@@ -131,6 +132,7 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
     enum class ShorteningMode {
         NO_SHORTENING,
         DELAYED_SHORTENING,
+        DELAYED_SHORTENING_VIA_USER_DATA,
         FORCED_SHORTENING
     }
 
@@ -157,11 +159,10 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         val needToShorten =
                 PsiTreeUtil.getParentOfType(expression, KtImportDirective::class.java, KtPackageDirective::class.java) == null
         if (needToShorten) {
-            if (shorteningMode == ShorteningMode.FORCED_SHORTENING) {
-                ShortenReferences.DEFAULT.process(newQualifiedElement)
-            }
-            else {
-                newQualifiedElement.addToShorteningWaitSet()
+            when (shorteningMode) {
+                ShorteningMode.FORCED_SHORTENING -> ShortenReferences.DEFAULT.process(newQualifiedElement)
+                ShorteningMode.DELAYED_SHORTENING_VIA_USER_DATA -> newQualifiedElement.isToBeShortened = true
+                else -> newQualifiedElement.addToShorteningWaitSet()
             }
         }
 

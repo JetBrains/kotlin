@@ -27,6 +27,8 @@ import com.intellij.psi.SmartPointerManager
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.idea.core.ShortenReferences.Options
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.psi.CopyableUserDataProperty
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import java.util.*
 
 class ShorteningRequest(val pointer: SmartPsiElementPointer<KtElement>, val options: Options)
@@ -86,5 +88,16 @@ fun prepareElementsToShorten(project: Project) {
     if (project.ensureElementsToShortenIsEmptyBeforeRefactoring && elementsToShorten != null && !elementsToShorten.isEmpty()) {
         LOG.warn("Waiting set for reference shortening is not empty")
         project.elementsToShorten = null
+    }
+}
+
+var KtElement.isToBeShortened: Boolean? by CopyableUserDataProperty(Key.create("IS_TO_BE_SHORTENED"))
+
+fun KtElement.addToBeShortenedDescendantsToWaitingSet() {
+    forEachDescendantOfType<KtElement> {
+        if (it.isToBeShortened ?: false) {
+            it.isToBeShortened = null
+            it.addToShorteningWaitSet()
+        }
     }
 }

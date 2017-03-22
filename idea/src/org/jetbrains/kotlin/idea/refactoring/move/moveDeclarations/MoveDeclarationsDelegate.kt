@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.codeInsight.shorten.isToBeShortened
 import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -130,7 +131,7 @@ sealed class MoveDeclarationsDelegate {
                         val type = (containingClassOrObject!!.resolveToDescriptor() as ClassDescriptor).defaultType
                         val parameter = KtPsiFactory(project)
                                 .createParameter("private val $outerInstanceParameterName: ${IdeDescriptorRenderers.SOURCE_CODE.renderType(type)}")
-                        createPrimaryConstructorParameterListIfAbsent().addParameter(parameter)
+                        createPrimaryConstructorParameterListIfAbsent().addParameter(parameter).isToBeShortened = true
                     }
                 }
             }
