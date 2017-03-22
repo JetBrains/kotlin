@@ -271,14 +271,16 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
             if (irCall !is IrCallImpl) return irCall
 
             val oldTypeArguments = (irCall as IrMemberAccessExpressionBase).typeArguments
+            if (typeArgsMap      == null) return irCall
+            if (oldTypeArguments == null) return irCall
 
-            val substitutionContext = typeArgsMap!!.entries.associate {
+            val substitutionContext = typeArgsMap.entries.associate {
                     (typeParameter, typeArgument) ->
                     typeParameter.typeConstructor to TypeProjectionImpl(typeArgument)
                 }
             val typeSubstitutor = TypeSubstitutor.create(substitutionContext)
 
-            val newTypeArguments = oldTypeArguments!!.map {
+            val newTypeArguments = oldTypeArguments.map {
                 val typeParameterDescriptor = it.key
                 val oldTypeArgument         = it.value
                 val newTypeArgument         = typeSubstitutor.substitute(oldTypeArgument, Variance.INVARIANT) ?: oldTypeArgument
@@ -376,6 +378,10 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
             val dispatchReceiver = irCall.dispatchReceiver as IrGetValue                    //
             val lambdaArgument = substituteMap[dispatchReceiver.descriptor]                 // Find expression to replace this parameter.
             if (lambdaArgument == null) return super.visitCall(irCall)                      // It is not function parameter - nothing to substitute.
+
+            val dispatchDescriptor = dispatchReceiver.descriptor
+            if (dispatchDescriptor is ValueParameterDescriptor &&
+                dispatchDescriptor.isNoinline) return super.visitCall(irCall)
 
             val lambdaFunction = getLambdaFunction(lambdaArgument)
             if (lambdaFunction == null) return super.visitCall(irCall)                      // TODO
