@@ -110,7 +110,7 @@ class LightClassFromTextTest : KotlinLightCodeInsightFixtureTestCase() {
         return classes
     }
 
-    override fun getTestDataPath(): String? {
+    override fun getTestDataPath(): String {
         return PluginTestCaseBase.getTestDataPathBase() + "/asJava/fileLightClass/"
     }
 }

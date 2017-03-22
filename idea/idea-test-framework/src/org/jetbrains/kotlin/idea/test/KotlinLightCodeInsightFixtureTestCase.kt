@@ -104,9 +104,7 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
     protected fun getProjectDescriptorFromFileDirective(): LightProjectDescriptor {
         if (!isAllFilesPresentInTest()) {
             try {
-                val metadata = this::class.findAnnotation<TestMetadata>()
-                val basePath = metadata?.value ?: testDataPath
-                val fileText = FileUtil.loadFile(File(basePath, fileName()), true)
+                val fileText = FileUtil.loadFile(File(testDataPath, fileName()), true)
 
                 val withLibraryDirective = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "WITH_LIBRARY:")
                 if (!withLibraryDirective.isEmpty()) {
@@ -156,5 +154,9 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
         managerEx.fireAfterActionPerformed(action, dataContext, event)
         return true
+    }
+
+    override fun getTestDataPath(): String {
+        return this::class.findAnnotation<TestMetadata>()?.value ?: super.getTestDataPath()
     }
 }

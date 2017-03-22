@@ -69,7 +69,7 @@ class KtFileLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
         assertEquals(0, facadeFiles.size)
     }
 
-    override fun getTestDataPath(): String? {
+    override fun getTestDataPath(): String {
         return PluginTestCaseBase.getTestDataPathBase() + "/asJava/fileLightClass/"
     }
 }

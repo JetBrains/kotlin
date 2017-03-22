@@ -16,19 +16,19 @@
 
 package org.jetbrains.kotlin.idea.coverage
 
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 
 abstract class AbstractKotlinCoverageOutputFilesTest(): KotlinLightCodeInsightFixtureTestCase() {
     private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/coverage/outputFiles"
 
-    override fun getTestDataPath(): String? = TEST_DATA_PATH
+    override fun getTestDataPath(): String = TEST_DATA_PATH
 
     fun doTest(path: String) {
         val kotlinFile = myFixture.configureByFile(path) as KtFile
