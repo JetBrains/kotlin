@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.KotlinFileReferencesResolver
+import org.jetbrains.kotlin.idea.codeInsight.shorten.addDelayedImportRequest
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 import org.jetbrains.kotlin.idea.refactoring.isInJavaSourceRoot
@@ -358,7 +359,7 @@ fun postProcessMoveUsages(usages: Collection<UsageInfo>,
             is UnqualifiableMoveRenameUsageInfo -> {
                 val file = with(usage) { if (addImportToOriginalFile) originalFile else counterpart(originalFile) } as KtFile
                 val declaration = counterpart(usage.referencedElement!!).unwrapped as KtDeclaration
-                ImportInsertHelper.getInstance(usage.project).importDescriptor(file, declaration.resolveToDescriptor())
+                addDelayedImportRequest(declaration, file)
             }
 
             is MoveRenameUsageInfo -> {
