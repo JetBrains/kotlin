@@ -42,7 +42,10 @@ abstract class AbstractBuiltInsWithJDKMembersTest : KotlinTestWithEnvironment() 
             })
 
     override fun createEnvironment(): KotlinCoreEnvironment =
-            createEnvironmentWithJdk(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK)
+            createEnvironmentWithJdk(ConfigurationKind.JDK_ONLY, testJdkKind)
+
+    protected open val testJdkKind: TestJdkKind
+        get() = TestJdkKind.FULL_JDK
 
     protected fun doTest(builtinVersionName: String) {
         val module = JvmResolveUtil.analyze(environment).moduleDescriptor as ModuleDescriptorImpl

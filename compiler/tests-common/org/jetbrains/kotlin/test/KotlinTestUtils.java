@@ -468,6 +468,9 @@ public class KotlinTestUtils {
         else if (jdkKind == TestJdkKind.ANDROID_API) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, findAndroidApiJar());
         }
+        else if (jdkKind == TestJdkKind.FULL_JDK_6) {
+            JvmContentRootsKt.addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRoots(System.getenv("JDK_16")));
+        }
         else {
             JvmContentRootsKt.addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRoots());
         }

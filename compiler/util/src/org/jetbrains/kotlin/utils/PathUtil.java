@@ -153,7 +153,12 @@ public class PathUtil {
 
     @NotNull
     public static List<File> getJdkClassesRoots() {
-        return JavaSdkUtil.getJdkClassesRoots(new File(System.getProperty("java.home")), true);
+        return getJdkClassesRoots(System.getProperty("java.home"));
+    }
+
+    @NotNull
+    public static List<File> getJdkClassesRoots(@NotNull String javaHome) {
+        return JavaSdkUtil.getJdkClassesRoots(new File(javaHome), true);
     }
 
     @NotNull
