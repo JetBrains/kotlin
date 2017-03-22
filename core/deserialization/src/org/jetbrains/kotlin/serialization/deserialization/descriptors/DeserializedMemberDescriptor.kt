@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.serialization.deserialization.descriptors
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.*
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.Flags
@@ -108,16 +107,16 @@ class DeserializedPropertyDescriptor(
         isConst: Boolean,
         isExternal: Boolean,
         isDelegated: Boolean,
+        isHeader: Boolean,
         override val proto: ProtoBuf.Property,
         override val nameResolver: NameResolver,
         override val typeTable: TypeTable,
         override val sinceKotlinInfoTable: SinceKotlinInfoTable,
         override val containerSource: DeserializedContainerSource?
-) : DeserializedCallableMemberDescriptor,
-        PropertyDescriptorImpl(containingDeclaration, original, annotations,
-                               modality, visibility, isVar, name, kind, SourceElement.NO_SOURCE, isLateInit, isConst, false, false,
-                               isExternal, isDelegated) {
-
+) : DeserializedCallableMemberDescriptor, PropertyDescriptorImpl(
+        containingDeclaration, original, annotations, modality, visibility, isVar, name, kind, SourceElement.NO_SOURCE,
+        isLateInit, isConst, isHeader, false, isExternal, isDelegated
+) {
     override fun createSubstitutedCopy(
             newOwner: DeclarationDescriptor,
             newModality: Modality,
@@ -127,8 +126,7 @@ class DeserializedPropertyDescriptor(
     ): PropertyDescriptorImpl {
         return DeserializedPropertyDescriptor(
                 newOwner, original, annotations, newModality, newVisibility, isVar, name, kind, isLateInit, isConst, isExternal,
-                @Suppress("DEPRECATION") isDelegated,
-                proto, nameResolver, typeTable, sinceKotlinInfoTable, containerSource
+                @Suppress("DEPRECATION") isDelegated, isHeader, proto, nameResolver, typeTable, sinceKotlinInfoTable, containerSource
         )
     }
 

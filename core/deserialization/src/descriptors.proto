@@ -185,6 +185,7 @@ message Class {
     ClassKind
     isInner
     isData
+    isHeader
   */
   optional int32 flags = 1 [default = 6 /* public final class, no annotations */];
 
@@ -265,6 +266,8 @@ message Function {
     isInline
     isTailrec
     isExternal
+    isSuspend
+    isHeader
   */
   optional int32 flags = 9 [default = 6 /* public final function, no annotations */];
   optional int32 old_flags = 1 [default = 6];
@@ -303,6 +306,7 @@ message Property {
     hasConstant
     isExternal
     isDelegated
+    isHeader
   */
   optional int32 flags = 11 [default = 518 /* public (6) final property with getter (512) */];
   optional int32 old_flags = 1 [default = 2054];

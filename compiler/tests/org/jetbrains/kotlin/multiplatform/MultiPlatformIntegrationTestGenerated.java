@@ -170,4 +170,20 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
 
     }
 
+    @TestMetadata("compiler/testData/multiplatform/regressions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Regressions extends AbstractMultiPlatformIntegrationTest {
+        public void testAllFilesPresentInRegressions() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/multiplatform/regressions"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("kt17001")
+        public void testKt17001() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/multiplatform/regressions/kt17001/");
+            doTest(fileName);
+        }
+
+    }
+
 }

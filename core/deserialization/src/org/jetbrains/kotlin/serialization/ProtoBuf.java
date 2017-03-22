@@ -7936,6 +7936,7 @@ public final class ProtoBuf {
      *ClassKind
      *isInner
      *isData
+     *isHeader
      * </pre>
      */
     boolean hasFlags();
@@ -7949,6 +7950,7 @@ public final class ProtoBuf {
      *ClassKind
      *isInner
      *isData
+     *isHeader
      * </pre>
      */
     int getFlags();
@@ -8544,6 +8546,7 @@ public final class ProtoBuf {
      *ClassKind
      *isInner
      *isData
+     *isHeader
      * </pre>
      */
     public boolean hasFlags() {
@@ -8559,6 +8562,7 @@ public final class ProtoBuf {
      *ClassKind
      *isInner
      *isData
+     *isHeader
      * </pre>
      */
     public int getFlags() {
@@ -9659,6 +9663,7 @@ public final class ProtoBuf {
        *ClassKind
        *isInner
        *isData
+       *isHeader
        * </pre>
        */
       public boolean hasFlags() {
@@ -9674,6 +9679,7 @@ public final class ProtoBuf {
        *ClassKind
        *isInner
        *isData
+       *isHeader
        * </pre>
        */
       public int getFlags() {
@@ -9689,6 +9695,7 @@ public final class ProtoBuf {
        *ClassKind
        *isInner
        *isData
+       *isHeader
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -9707,6 +9714,7 @@ public final class ProtoBuf {
        *ClassKind
        *isInner
        *isData
+       *isHeader
        * </pre>
        */
       public Builder clearFlags() {
@@ -13606,6 +13614,8 @@ public final class ProtoBuf {
      *isInline
      *isTailrec
      *isExternal
+     *isSuspend
+     *isHeader
      * </pre>
      */
     boolean hasFlags();
@@ -13622,6 +13632,8 @@ public final class ProtoBuf {
      *isInline
      *isTailrec
      *isExternal
+     *isSuspend
+     *isHeader
      * </pre>
      */
     int getFlags();
@@ -13925,6 +13937,8 @@ public final class ProtoBuf {
      *isInline
      *isTailrec
      *isExternal
+     *isSuspend
+     *isHeader
      * </pre>
      */
     public boolean hasFlags() {
@@ -13943,6 +13957,8 @@ public final class ProtoBuf {
      *isInline
      *isTailrec
      *isExternal
+     *isSuspend
+     *isHeader
      * </pre>
      */
     public int getFlags() {
@@ -14620,6 +14636,8 @@ public final class ProtoBuf {
        *isInline
        *isTailrec
        *isExternal
+       *isSuspend
+       *isHeader
        * </pre>
        */
       public boolean hasFlags() {
@@ -14638,6 +14656,8 @@ public final class ProtoBuf {
        *isInline
        *isTailrec
        *isExternal
+       *isSuspend
+       *isHeader
        * </pre>
        */
       public int getFlags() {
@@ -14656,6 +14676,8 @@ public final class ProtoBuf {
        *isInline
        *isTailrec
        *isExternal
+       *isSuspend
+       *isHeader
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -14677,6 +14699,8 @@ public final class ProtoBuf {
        *isInline
        *isTailrec
        *isExternal
+       *isSuspend
+       *isHeader
        * </pre>
        */
       public Builder clearFlags() {
@@ -15324,6 +15348,7 @@ public final class ProtoBuf {
      *hasConstant
      *isExternal
      *isDelegated
+     *isHeader
      * </pre>
      */
     boolean hasFlags();
@@ -15343,6 +15368,7 @@ public final class ProtoBuf {
      *hasConstant
      *isExternal
      *isDelegated
+     *isHeader
      * </pre>
      */
     int getFlags();
@@ -15670,6 +15696,7 @@ public final class ProtoBuf {
      *hasConstant
      *isExternal
      *isDelegated
+     *isHeader
      * </pre>
      */
     public boolean hasFlags() {
@@ -15691,6 +15718,7 @@ public final class ProtoBuf {
      *hasConstant
      *isExternal
      *isDelegated
+     *isHeader
      * </pre>
      */
     public int getFlags() {
@@ -16381,6 +16409,7 @@ public final class ProtoBuf {
        *hasConstant
        *isExternal
        *isDelegated
+       *isHeader
        * </pre>
        */
       public boolean hasFlags() {
@@ -16402,6 +16431,7 @@ public final class ProtoBuf {
        *hasConstant
        *isExternal
        *isDelegated
+       *isHeader
        * </pre>
        */
       public int getFlags() {
@@ -16423,6 +16453,7 @@ public final class ProtoBuf {
        *hasConstant
        *isExternal
        *isDelegated
+       *isHeader
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -16447,6 +16478,7 @@ public final class ProtoBuf {
        *hasConstant
        *isExternal
        *isDelegated
+       *isHeader
        * </pre>
        */
       public Builder clearFlags() {

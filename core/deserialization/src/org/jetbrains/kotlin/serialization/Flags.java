@@ -39,6 +39,7 @@ public class Flags {
     public static final BooleanFlagField IS_INNER = FlagField.booleanAfter(CLASS_KIND);
     public static final BooleanFlagField IS_DATA = FlagField.booleanAfter(IS_INNER);
     public static final BooleanFlagField IS_EXTERNAL_CLASS = FlagField.booleanAfter(IS_DATA);
+    public static final BooleanFlagField IS_HEADER_CLASS = FlagField.booleanAfter(IS_EXTERNAL_CLASS);
 
     // Constructors
 
@@ -56,6 +57,7 @@ public class Flags {
     public static final BooleanFlagField IS_TAILREC = FlagField.booleanAfter(IS_INLINE);
     public static final BooleanFlagField IS_EXTERNAL_FUNCTION = FlagField.booleanAfter(IS_TAILREC);
     public static final BooleanFlagField IS_SUSPEND = FlagField.booleanAfter(IS_EXTERNAL_FUNCTION);
+    public static final BooleanFlagField IS_HEADER_FUNCTION = FlagField.booleanAfter(IS_SUSPEND);
 
     // Properties
 
@@ -67,6 +69,7 @@ public class Flags {
     public static final BooleanFlagField HAS_CONSTANT = FlagField.booleanAfter(IS_LATEINIT);
     public static final BooleanFlagField IS_EXTERNAL_PROPERTY = FlagField.booleanAfter(HAS_CONSTANT);
     public static final BooleanFlagField IS_DELEGATED = FlagField.booleanAfter(IS_EXTERNAL_PROPERTY);
+    public static final BooleanFlagField IS_HEADER_PROPERTY = FlagField.booleanAfter(IS_DELEGATED);
 
     // Parameters
 
@@ -94,7 +97,8 @@ public class Flags {
             boolean inner,
             boolean isCompanionObject,
             boolean isData,
-            boolean isExternal
+            boolean isExternal,
+            boolean isHeader
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | MODALITY.toFlags(modality(modality))
@@ -103,6 +107,7 @@ public class Flags {
                | IS_INNER.toFlags(inner)
                | IS_DATA.toFlags(isData)
                | IS_EXTERNAL_CLASS.toFlags(isExternal)
+               | IS_HEADER_CLASS.toFlags(isHeader)
                ;
     }
 
@@ -147,7 +152,8 @@ public class Flags {
             boolean isInline,
             boolean isTailrec,
             boolean isExternal,
-            boolean isSuspend
+            boolean isSuspend,
+            boolean isHeader
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | VISIBILITY.toFlags(visibility(visibility))
@@ -159,6 +165,7 @@ public class Flags {
                | IS_TAILREC.toFlags(isTailrec)
                | IS_EXTERNAL_FUNCTION.toFlags(isExternal)
                | IS_SUSPEND.toFlags(isSuspend)
+               | IS_HEADER_FUNCTION.toFlags(isHeader)
                 ;
     }
 
@@ -174,7 +181,8 @@ public class Flags {
             boolean isConst,
             boolean lateInit,
             boolean isExternal,
-            boolean isDelegated
+            boolean isDelegated,
+            boolean isHeader
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | VISIBILITY.toFlags(visibility(visibility))
@@ -188,6 +196,7 @@ public class Flags {
                | HAS_CONSTANT.toFlags(hasConstant)
                | IS_EXTERNAL_PROPERTY.toFlags(isExternal)
                | IS_DELEGATED.toFlags(isDelegated)
+               | IS_HEADER_PROPERTY.toFlags(isHeader)
                 ;
     }
 
