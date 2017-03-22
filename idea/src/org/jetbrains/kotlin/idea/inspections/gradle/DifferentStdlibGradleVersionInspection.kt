@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.inspections.gradle
 
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID
@@ -116,7 +117,13 @@ class DifferentStdlibGradleVersionInspection : GradleBaseInspection() {
 }
 
 internal fun DataNode<*>.getResolvedKotlinStdlibVersionByModuleData(libraryIds: List<String>): String? {
-    return KotlinPlatformGradleDetector.EP_NAME.extensions.asSequence()
-            .mapNotNull { it.getResolvedKotlinStdlibVersionByModuleData(this, libraryIds) }
-            .firstOrNull()
+    for (libraryDependencyData in ExternalSystemApiUtil.findAllRecursively(this, ProjectKeys.LIBRARY_DEPENDENCY)) {
+        for (libraryId in libraryIds) {
+            val libraryNameMarker = "org.jetbrains.kotlin:$libraryId:"
+            if (libraryDependencyData.data.externalName.startsWith(libraryNameMarker)) {
+                return libraryDependencyData.data.externalName.substringAfter(libraryNameMarker)
+            }
+        }
+    }
+    return null
 }
