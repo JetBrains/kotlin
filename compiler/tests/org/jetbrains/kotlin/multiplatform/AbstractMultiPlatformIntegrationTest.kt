@@ -32,27 +32,36 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
         val commonSrc = File(root, "common.kt")
         val jsSrc = File(root, "js.kt")
         val jvmSrc = File(root, "jvm.kt")
+        // TODO: consider inventing a more clever scheme
+        val jvm2Src = File(root, "jvm2.kt")
 
         val tmpdir = KotlinTestUtils.tmpDir(getTestName(true))
 
-        val commonDest = File(tmpdir, "common")
-        val jvmDest = File(tmpdir, "jvm")
-        val jsDest = File(File(tmpdir, "js"), "output.js")
+        val commonDest = File(tmpdir, "common").absolutePath
+        val jvmDest = File(tmpdir, "jvm").absolutePath
+        val jsDest = File(File(tmpdir, "js"), "output.js").absolutePath
+        val jvm2Dest = File(tmpdir, "jvm2").absolutePath
 
         val result = buildString {
             appendln("-- Common --")
-            appendln(K2MetadataCompiler().compile(listOf(commonSrc), "-d", commonDest.absolutePath))
+            appendln(K2MetadataCompiler().compile(listOf(commonSrc), "-d", commonDest))
 
             if (jvmSrc.exists()) {
                 appendln()
                 appendln("-- JVM --")
-                append(K2JVMCompiler().compileBothWays(commonSrc, jvmSrc, "-d", jvmDest.absolutePath))
+                appendln(K2JVMCompiler().compileBothWays(commonSrc, jvmSrc, "-d", jvmDest))
             }
 
             if (jsSrc.exists()) {
                 appendln()
                 appendln("-- JS --")
-                append(K2JSCompiler().compileBothWays(commonSrc, jsSrc, "-output", jsDest.absolutePath))
+                appendln(K2JSCompiler().compileBothWays(commonSrc, jsSrc, "-output", jsDest))
+            }
+
+            if (jvm2Src.exists()) {
+                appendln()
+                appendln("-- JVM (2) --")
+                appendln(K2JVMCompiler().compile(listOf(jvm2Src), "-d", jvm2Dest, "-cp", listOf(commonDest, jvmDest).joinToString(File.pathSeparator)))
             }
         }
 
@@ -60,8 +69,8 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
     }
 
     private fun CLICompiler<*>.compileBothWays(commonSource: File, platformSource: File, vararg additionalArguments: String): String {
-        val platformFirst = compile(listOf(platformSource, commonSource), *additionalArguments).trimTrailingWhitespacesAndAddNewlineAtEOF()
-        val commonFirst = compile(listOf(commonSource, platformSource), *additionalArguments).trimTrailingWhitespacesAndAddNewlineAtEOF()
+        val platformFirst = compile(listOf(platformSource, commonSource), *additionalArguments)
+        val commonFirst = compile(listOf(commonSource, platformSource), *additionalArguments)
         if (platformFirst != commonFirst) {
             assertEquals(
                     "Compilation results are different when compiling [platform-specific, common] compared to when compiling [common, platform-specific]",
@@ -80,5 +89,5 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
         appendln("Exit code: $exitCode")
         appendln("Output:")
         appendln(output)
-    }.trim()
+    }.trimTrailingWhitespacesAndAddNewlineAtEOF().trimEnd('\r', '\n')
 }

@@ -98,7 +98,7 @@ class DeserializedClassDescriptor(
 
     override fun isData() = Flags.IS_DATA.get(classProto.flags)
 
-    override fun isHeader() = false
+    override fun isHeader() = Flags.IS_HEADER_CLASS.get(classProto.flags)
 
     override fun isImpl() = false
 
