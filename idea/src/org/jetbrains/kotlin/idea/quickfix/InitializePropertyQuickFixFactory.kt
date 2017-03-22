@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.codeInsight.shorten.runWithElementsToShortenIsEmptyIgnored
+import org.jetbrains.kotlin.idea.codeInsight.shorten.runRefactoringAndKeepDelayedRequests
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.appendElement
@@ -201,7 +201,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
                 }
             }
 
-            project.runWithElementsToShortenIsEmptyIgnored {
+            project.runRefactoringAndKeepDelayedRequests {
                 processConstructors(project, propertyDescriptor, constructorDescriptors.iterator())
             }
         }

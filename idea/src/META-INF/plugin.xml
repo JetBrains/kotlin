@@ -357,7 +357,7 @@
                              implementationClass="org.jetbrains.kotlin.idea.codeInsight.surroundWith.statement.KotlinStatementSurroundDescriptor"/>
     <lang.unwrapDescriptor language="kotlin" implementationClass="org.jetbrains.kotlin.idea.codeInsight.unwrap.KotlinUnwrapDescriptor"/>
     <quoteHandler fileType="Kotlin" className="org.jetbrains.kotlin.idea.editor.KotlinQuoteHandler"/>
-    <refactoring.helper implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinShortenReferencesRefactoringHelper"/>
+    <refactoring.helper implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinRefactoringHelperForDelayedRequests"/>
     <refactoring.helper implementation="org.jetbrains.kotlin.idea.codeInsight.KotlinOptimizeImportsRefactoringHelper"/>
     <refactoring.moveHandler
         id="kotlin.moveFilesOrDirectories"
