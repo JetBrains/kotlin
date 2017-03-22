@@ -11418,6 +11418,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ExplicitThis.kt")
+        public void testExplicitThis() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/ExplicitThis.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ExpressionBody.kt")
         public void testExpressionBody() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/ExpressionBody.kt");
@@ -11427,6 +11433,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("HasData.kt")
         public void testHasData() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/HasData.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImplicitThis.kt")
+        public void testImplicitThis() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/ImplicitThis.kt");
             doTest(fileName);
         }
 
