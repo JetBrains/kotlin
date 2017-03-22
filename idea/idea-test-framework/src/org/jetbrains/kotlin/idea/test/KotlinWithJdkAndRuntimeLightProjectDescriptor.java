@@ -17,14 +17,28 @@
 package org.jetbrains.kotlin.idea.test;
 
 import com.intellij.openapi.projectRoots.Sdk;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.utils.PathUtil;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 public class KotlinWithJdkAndRuntimeLightProjectDescriptor extends KotlinJdkAndLibraryProjectDescriptor {
     protected KotlinWithJdkAndRuntimeLightProjectDescriptor() {
         super(ForTestCompileRuntime.runtimeJarForTests());
     }
 
+    protected KotlinWithJdkAndRuntimeLightProjectDescriptor(@NotNull List<? extends File> libraryFiles) {
+        super(libraryFiles);
+    }
+
     public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE = new KotlinWithJdkAndRuntimeLightProjectDescriptor();
+    public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE_WITH_KOTLIN_TEST = new KotlinWithJdkAndRuntimeLightProjectDescriptor(
+            Arrays.asList(ForTestCompileRuntime.runtimeJarForTests(),
+                          PathUtil.getKotlinPathsForDistDirectory().getKotlinTestPath())
+    );
     public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE_FULL_JDK = new KotlinWithJdkAndRuntimeLightProjectDescriptor() {
         @Override
         public Sdk getSdk() {

@@ -27,24 +27,26 @@ import com.intellij.openapi.vfs.VfsUtil
 
 import java.io.File
 
-open class KotlinJdkAndLibraryProjectDescriptor(private val libraryFile: File) : KotlinLightProjectDescriptor() {
+open class KotlinJdkAndLibraryProjectDescriptor(private val libraryFiles: List<File>) : KotlinLightProjectDescriptor() {
+
+    constructor(libraryFile: File) : this(listOf(libraryFile))
 
     init {
-        assert(libraryFile.exists()) { "Library file doesn't exist: " + libraryFile.absolutePath }
+        for (libraryFile in libraryFiles) {
+            assert(libraryFile.exists()) { "Library file doesn't exist: " + libraryFile.absolutePath }
+        }
     }
 
-    override fun getModuleType(): ModuleType<*> {
-        return StdModuleTypes.JAVA
-    }
+    override fun getModuleType(): ModuleType<*> = StdModuleTypes.JAVA
 
-    override fun getSdk(): Sdk? {
-        return PluginTestCaseBase.mockJdk()
-    }
+    override fun getSdk(): Sdk? = PluginTestCaseBase.mockJdk()
 
     override fun configureModule(module: Module, model: ModifiableRootModel) {
         val editor = NewLibraryEditor()
         editor.name = LIBRARY_NAME
-        editor.addRoot(VfsUtil.getUrlForLibraryRoot(libraryFile), OrderRootType.CLASSES)
+        for (libraryFile in libraryFiles) {
+            editor.addRoot(VfsUtil.getUrlForLibraryRoot(libraryFile), OrderRootType.CLASSES)
+        }
 
         ConfigLibraryUtil.addLibrary(editor, model)
     }
