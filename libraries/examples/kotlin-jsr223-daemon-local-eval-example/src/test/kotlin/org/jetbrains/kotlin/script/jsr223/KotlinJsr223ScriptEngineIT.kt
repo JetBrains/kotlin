@@ -127,7 +127,9 @@ obj
     }
 
 
-    @Test
+    // Note: the test is flaky, because it is statistical and the thresholds are not big enough.
+    // Therefore it was decided to disable it, but leave in the code in order to be able to quickly check overheads when needed.
+//    @Test
     fun testEvalInEvalBench() {
         val engine = ScriptEngineManager().getEngineByExtension("kts")!!
 

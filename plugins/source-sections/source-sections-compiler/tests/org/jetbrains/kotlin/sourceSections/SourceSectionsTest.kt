@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
+import org.junit.Ignore
 import java.io.*
 import java.lang.management.ManagementFactory
 import java.net.URLClassLoader
@@ -126,7 +127,10 @@ class SourceSectionsTest : TestCaseWithTmpdir() {
         }
     }
 
-    fun testSourceSectionsRunBench() {
+    // Note: the test is flaky, because it is statistical and the thresholds are not big enough.
+    // Therefore it was decided to ignore it, but leave in the code in order to be able to quickly check overheads when needed.
+    @Suppress("unused")
+    fun ignored_testSourceSectionsRunBench() {
         val mxBeans = ManagementFactory.getThreadMXBean()
         val (source, _) = getTestFiles(".out").first()
 
