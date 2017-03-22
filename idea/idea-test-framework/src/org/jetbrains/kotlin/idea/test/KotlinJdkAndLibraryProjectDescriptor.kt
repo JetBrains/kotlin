@@ -14,46 +14,42 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.test;
+package org.jetbrains.kotlin.idea.test
 
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.StdModuleTypes;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor;
-import com.intellij.openapi.vfs.VfsUtil;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleType
+import com.intellij.openapi.module.StdModuleTypes
+import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
+import com.intellij.openapi.vfs.VfsUtil
 
-import java.io.File;
+import java.io.File
 
-public class KotlinJdkAndLibraryProjectDescriptor extends KotlinLightProjectDescriptor {
-    public static final String LIBRARY_NAME = "myLibrary";
+open class KotlinJdkAndLibraryProjectDescriptor(private val libraryFile: File) : KotlinLightProjectDescriptor() {
 
-    private final File libraryFile;
-
-    public KotlinJdkAndLibraryProjectDescriptor(File libraryFile) {
-        assert libraryFile.exists() : "Library file doesn't exist: " + libraryFile.getAbsolutePath();
-        this.libraryFile = libraryFile;
+    init {
+        assert(libraryFile.exists()) { "Library file doesn't exist: " + libraryFile.absolutePath }
     }
 
-    @Override
-    public ModuleType getModuleType() {
-        return StdModuleTypes.JAVA;
+    override fun getModuleType(): ModuleType<*> {
+        return StdModuleTypes.JAVA
     }
 
-    @Override
-    public Sdk getSdk() {
-        return PluginTestCaseBase.mockJdk();
+    override fun getSdk(): Sdk? {
+        return PluginTestCaseBase.mockJdk()
     }
 
-    @Override
-    public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model) {
-        NewLibraryEditor editor = new NewLibraryEditor();
-        editor.setName(LIBRARY_NAME);
-        editor.addRoot(VfsUtil.getUrlForLibraryRoot(libraryFile), OrderRootType.CLASSES);
+    override fun configureModule(module: Module, model: ModifiableRootModel) {
+        val editor = NewLibraryEditor()
+        editor.name = LIBRARY_NAME
+        editor.addRoot(VfsUtil.getUrlForLibraryRoot(libraryFile), OrderRootType.CLASSES)
 
-        ConfigLibraryUtil.addLibrary(editor, model);
+        ConfigLibraryUtil.addLibrary(editor, model)
+    }
+
+    companion object {
+        val LIBRARY_NAME = "myLibrary"
     }
 }

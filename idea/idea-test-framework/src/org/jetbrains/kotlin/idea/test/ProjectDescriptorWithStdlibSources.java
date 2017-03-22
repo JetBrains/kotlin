@@ -32,7 +32,7 @@ public class ProjectDescriptorWithStdlibSources extends KotlinWithJdkAndRuntimeL
     public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model) {
         super.configureModule(module, model);
 
-        Library library = model.getModuleLibraryTable().getLibraryByName(LIBRARY_NAME);
+        Library library = model.getModuleLibraryTable().getLibraryByName(Companion.getLIBRARY_NAME());
         assert library != null;
         Library.ModifiableModel modifiableModel = library.getModifiableModel();
         modifiableModel.addRoot(VfsUtil.getUrlForLibraryRoot(new File("libraries/stdlib/src")), OrderRootType.SOURCES);
