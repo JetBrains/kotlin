@@ -119,14 +119,8 @@ data class RecordType(val decl: StructDecl) : Type
 
 data class EnumType(val def: EnumDef) : Type
 
-open class PointerType(val pointeeType : Type) : Type
-
-/**
- * The type of pointer that can't be used to modify pointed data.
- *
- * TODO: refactor type representation and support type modifiers more generally.
- */
-class PointerToConstType(pointeeType: Type) : PointerType(pointeeType)
+data class PointerType(val pointeeType: Type, val pointeeIsConst: Boolean = false) : Type
+// TODO: refactor type representation and support type modifiers more generally.
 
 data class FunctionType(val parameterTypes: List<Type>, val returnType: Type) : Type
 

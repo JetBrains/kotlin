@@ -193,12 +193,10 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
 
             CXType_Pointer -> {
                 val pointeeType = clang_getPointeeType(type)
-                val canonicalPointeeType = clang_getCanonicalType(pointeeType)
-                if (clang_isConstQualifiedType(canonicalPointeeType) != 0) {
-                    PointerToConstType(convertType(pointeeType))
-                } else {
-                    PointerType(convertType(pointeeType))
-                }
+                val pointeeIsConst =
+                        (clang_isConstQualifiedType(clang_getCanonicalType(pointeeType)) != 0)
+
+                PointerType(convertType(pointeeType), pointeeIsConst = pointeeIsConst)
             }
 
             CXType_ConstantArray -> {

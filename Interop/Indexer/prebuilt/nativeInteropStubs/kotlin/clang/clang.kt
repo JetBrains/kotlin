@@ -2857,7 +2857,7 @@ class __darwin_pthread_handler_rec(override val rawPtr: NativePtr) : CStructVar(
     
     companion object : Type(24, 8)
     
-    val __routine: CPointerVar<CFunction<CFunctionType5>>
+    val __routine: CPointerVar<CFunction<CFunctionType2>>
         get() = memberAt(0)
     
     val __arg: COpaquePointerVar
@@ -3261,7 +3261,7 @@ class CXCursorAndRangeVisitor(override val rawPtr: NativePtr) : CStructVar() {
     val context: COpaquePointerVar
         get() = memberAt(0)
     
-    val visit: CPointerVar<CFunction<CFunctionType6>>
+    val visit: CPointerVar<CFunction<CFunctionType5>>
         get() = memberAt(8)
     
 }
@@ -3585,28 +3585,28 @@ class IndexerCallbacks(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(64, 8)
     
-    val abortQuery: CPointerVar<CFunction<CFunctionType7>>
+    val abortQuery: CPointerVar<CFunction<CFunctionType6>>
         get() = memberAt(0)
     
-    val diagnostic: CPointerVar<CFunction<CFunctionType8>>
+    val diagnostic: CPointerVar<CFunction<CFunctionType7>>
         get() = memberAt(8)
     
-    val enteredMainFile: CPointerVar<CFunction<CFunctionType9>>
+    val enteredMainFile: CPointerVar<CFunction<CFunctionType8>>
         get() = memberAt(16)
     
-    val ppIncludedFile: CPointerVar<CFunction<CFunctionType10>>
+    val ppIncludedFile: CPointerVar<CFunction<CFunctionType9>>
         get() = memberAt(24)
     
-    val importedASTFile: CPointerVar<CFunction<CFunctionType11>>
+    val importedASTFile: CPointerVar<CFunction<CFunctionType10>>
         get() = memberAt(32)
     
-    val startedTranslationUnit: CPointerVar<CFunction<CFunctionType12>>
+    val startedTranslationUnit: CPointerVar<CFunction<CFunctionType11>>
         get() = memberAt(40)
     
-    val indexDeclaration: CPointerVar<CFunction<CFunctionType13>>
+    val indexDeclaration: CPointerVar<CFunction<CFunctionType12>>
         get() = memberAt(48)
     
-    val indexEntityReference: CPointerVar<CFunction<CFunctionType14>>
+    val indexEntityReference: CPointerVar<CFunction<CFunctionType13>>
         get() = memberAt(56)
     
 }
@@ -4678,67 +4678,61 @@ object CFunctionType4 : CAdaptedFunctionTypeImpl<(CXCursor, COpaquePointer?) -> 
     }
 }
 
-object CFunctionType5 : CAdaptedFunctionTypeImpl<(COpaquePointer?) -> Unit>(Void, Pointer) {
-    override fun invoke(function: (COpaquePointer?) -> Unit,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
-        val res = function(args[0].value!!.reinterpret<COpaquePointerVar>().pointed.value)
-    }
-}
-
-object CFunctionType6 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CXCursor, CXSourceRange) -> CXVisitorResult>(UInt32, Pointer, Struct(UInt32, SInt32, Struct(Pointer, Pointer, Pointer)), Struct(Struct(Pointer, Pointer), UInt32, UInt32)) {
+object CFunctionType5 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CXCursor, CXSourceRange) -> CXVisitorResult>(UInt32, Pointer, Struct(UInt32, SInt32, Struct(Pointer, Pointer, Pointer)), Struct(Struct(Pointer, Pointer), UInt32, UInt32)) {
     override fun invoke(function: (COpaquePointer?, CXCursor, CXSourceRange) -> CXVisitorResult,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
         val res = function(args[0].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[1].value!!.reinterpret<CXCursor>().pointed, args[2].value!!.reinterpret<CXSourceRange>().pointed)
         ret.reinterpret<CXVisitorResult.Var>().pointed.value = res
     }
 }
 
-object CFunctionType7 : CAdaptedFunctionTypeImpl<(COpaquePointer?, COpaquePointer?) -> Int>(SInt32, Pointer, Pointer) {
+object CFunctionType6 : CAdaptedFunctionTypeImpl<(COpaquePointer?, COpaquePointer?) -> Int>(SInt32, Pointer, Pointer) {
     override fun invoke(function: (COpaquePointer?, COpaquePointer?) -> Int,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
         val res = function(args[0].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[1].value!!.reinterpret<COpaquePointerVar>().pointed.value)
         ret.reinterpret<CInt32Var>().pointed.value = res
     }
 }
 
-object CFunctionType8 : CAdaptedFunctionTypeImpl<(COpaquePointer?, COpaquePointer?, COpaquePointer?) -> Unit>(Void, Pointer, Pointer, Pointer) {
+object CFunctionType7 : CAdaptedFunctionTypeImpl<(COpaquePointer?, COpaquePointer?, COpaquePointer?) -> Unit>(Void, Pointer, Pointer, Pointer) {
     override fun invoke(function: (COpaquePointer?, COpaquePointer?, COpaquePointer?) -> Unit,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
         val res = function(args[0].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[1].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[2].value!!.reinterpret<COpaquePointerVar>().pointed.value)
     }
 }
 
-object CFunctionType9 : CAdaptedFunctionTypeImpl<(COpaquePointer?, COpaquePointer?, COpaquePointer?) -> COpaquePointer?>(Pointer, Pointer, Pointer, Pointer) {
+object CFunctionType8 : CAdaptedFunctionTypeImpl<(COpaquePointer?, COpaquePointer?, COpaquePointer?) -> COpaquePointer?>(Pointer, Pointer, Pointer, Pointer) {
     override fun invoke(function: (COpaquePointer?, COpaquePointer?, COpaquePointer?) -> COpaquePointer?,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
         val res = function(args[0].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[1].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[2].value!!.reinterpret<COpaquePointerVar>().pointed.value)
         ret.reinterpret<COpaquePointerVar>().pointed.value = res
     }
 }
 
-object CFunctionType10 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CPointer<CXIdxIncludedFileInfo>?) -> COpaquePointer?>(Pointer, Pointer, Pointer) {
+object CFunctionType9 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CPointer<CXIdxIncludedFileInfo>?) -> COpaquePointer?>(Pointer, Pointer, Pointer) {
     override fun invoke(function: (COpaquePointer?, CPointer<CXIdxIncludedFileInfo>?) -> COpaquePointer?,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
         val res = function(args[0].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[1].value!!.reinterpret<CPointerVar<CXIdxIncludedFileInfo>>().pointed.value)
         ret.reinterpret<COpaquePointerVar>().pointed.value = res
     }
 }
 
-object CFunctionType11 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CPointer<CXIdxImportedASTFileInfo>?) -> COpaquePointer?>(Pointer, Pointer, Pointer) {
+object CFunctionType10 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CPointer<CXIdxImportedASTFileInfo>?) -> COpaquePointer?>(Pointer, Pointer, Pointer) {
     override fun invoke(function: (COpaquePointer?, CPointer<CXIdxImportedASTFileInfo>?) -> COpaquePointer?,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
         val res = function(args[0].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[1].value!!.reinterpret<CPointerVar<CXIdxImportedASTFileInfo>>().pointed.value)
         ret.reinterpret<COpaquePointerVar>().pointed.value = res
     }
 }
 
-object CFunctionType12 : CAdaptedFunctionTypeImpl<(COpaquePointer?, COpaquePointer?) -> COpaquePointer?>(Pointer, Pointer, Pointer) {
+object CFunctionType11 : CAdaptedFunctionTypeImpl<(COpaquePointer?, COpaquePointer?) -> COpaquePointer?>(Pointer, Pointer, Pointer) {
     override fun invoke(function: (COpaquePointer?, COpaquePointer?) -> COpaquePointer?,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
         val res = function(args[0].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[1].value!!.reinterpret<COpaquePointerVar>().pointed.value)
         ret.reinterpret<COpaquePointerVar>().pointed.value = res
     }
 }
 
-object CFunctionType13 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CPointer<CXIdxDeclInfo>?) -> Unit>(Void, Pointer, Pointer) {
+object CFunctionType12 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CPointer<CXIdxDeclInfo>?) -> Unit>(Void, Pointer, Pointer) {
     override fun invoke(function: (COpaquePointer?, CPointer<CXIdxDeclInfo>?) -> Unit,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
         val res = function(args[0].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[1].value!!.reinterpret<CPointerVar<CXIdxDeclInfo>>().pointed.value)
     }
 }
 
-object CFunctionType14 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CPointer<CXIdxEntityRefInfo>?) -> Unit>(Void, Pointer, Pointer) {
+object CFunctionType13 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CPointer<CXIdxEntityRefInfo>?) -> Unit>(Void, Pointer, Pointer) {
     override fun invoke(function: (COpaquePointer?, CPointer<CXIdxEntityRefInfo>?) -> Unit,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
         val res = function(args[0].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[1].value!!.reinterpret<CPointerVar<CXIdxEntityRefInfo>>().pointed.value)
     }

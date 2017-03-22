@@ -458,7 +458,8 @@ class StubGenerator(
 
     fun representCFunctionParameterAsString(type: Type): Boolean {
         val unwrappedType = type.unwrapTypedefs()
-        return unwrappedType is PointerToConstType && unwrappedType.pointeeType.unwrapTypedefs() == CharType
+        return unwrappedType is PointerType && unwrappedType.pointeeIsConst &&
+                unwrappedType.pointeeType.unwrapTypedefs() == CharType
     }
 
     fun getCFunctionParamBinding(type: Type): OutValueBinding {
