@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -141,14 +140,10 @@ class CodeInliner<TCallElement : KtElement>(
     private fun renameDuplicates(declarations: List<KtNamedDeclaration>,
                                  lexicalScope: LexicalScope) {
 
-        fun String.hasConflicts() = lexicalScope.getAllAccessibleVariables(Name.identifier(this)).any {
-            !it.isExtension && it.isVisible(lexicalScope.ownerDescriptor)
-        }
-
-        val validator = CollectingNameValidator { !it.hasConflicts() }
+        val validator = CollectingNameValidator { !it.nameHasConflictsInScope(lexicalScope) }
         for (declaration in declarations) {
             val oldName = declaration.name
-            if (oldName != null && oldName.hasConflicts()) {
+            if (oldName != null && oldName.nameHasConflictsInScope(lexicalScope)) {
                 val newName = KotlinNameSuggester.suggestNameByName(oldName, validator)
                 val renameProcessor = RenameProcessor(project, declaration, newName, false, false)
                 renameProcessor.run()
