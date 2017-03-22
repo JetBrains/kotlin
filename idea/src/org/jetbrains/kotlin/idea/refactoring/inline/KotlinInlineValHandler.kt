@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedShortening
+import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.addTypeArgumentsIfNeeded
@@ -212,7 +212,7 @@ class KotlinInlineValHandler : InlineActionHandler() {
                         highlightElements(project, editor, inlinedExpressions)
                     }
                 }
-                performDelayedShortening(project)
+                performDelayedRefactoringRequests(project)
             }
         }
 

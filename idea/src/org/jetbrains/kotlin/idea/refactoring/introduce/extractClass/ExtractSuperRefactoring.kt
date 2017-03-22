@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedShortening
+import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.insertDeclaration
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
@@ -320,7 +320,7 @@ class ExtractSuperRefactoring(
                     extractInfo.docPolicy
             ).moveMembersToBase()
 
-            performDelayedShortening(project)
+            performDelayedRefactoringRequests(project)
         }
     }
 }

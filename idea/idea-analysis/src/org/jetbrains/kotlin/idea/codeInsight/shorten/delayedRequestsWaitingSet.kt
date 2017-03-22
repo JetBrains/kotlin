@@ -31,50 +31,54 @@ import org.jetbrains.kotlin.psi.CopyableUserDataProperty
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import java.util.*
 
-class ShorteningRequest(val pointer: SmartPsiElementPointer<KtElement>, val options: Options)
+interface DelayedRefactoringRequest
 
-private var Project.elementsToShorten: MutableSet<ShorteningRequest>?
-        by UserDataProperty(Key.create("ELEMENTS_TO_SHORTEN_KEY"))
+class ShorteningRequest(val pointer: SmartPsiElementPointer<KtElement>, val options: Options) : DelayedRefactoringRequest
+
+private var Project.delayedRefactoringRequests: MutableSet<DelayedRefactoringRequest>?
+        by UserDataProperty(Key.create("DELAYED_REFACTORING_REQUESTS"))
 
 /*
  * When one refactoring invokes another this value must be set to false so that shortening wait-set is not cleared
  * and previously collected references are processed correctly. Afterwards it must be reset to original value
  */
-var Project.ensureElementsToShortenIsEmptyBeforeRefactoring: Boolean
-        by NotNullableUserDataProperty(Key.create("ENSURE_ELEMENTS_TO_SHORTEN_IS_EMPTY"), true)
+var Project.ensureNoRefactoringRequestsBeforeRefactoring: Boolean
+        by NotNullableUserDataProperty(Key.create("ENSURE_NO_REFACTORING_REQUESTS_BEFORE_REFACTORING"), true)
 
-fun Project.runWithElementsToShortenIsEmptyIgnored(action: () -> Unit) {
-    val ensureElementsToShortenIsEmpty = ensureElementsToShortenIsEmptyBeforeRefactoring
+fun Project.runRefactoringAndKeepDelayedRequests(action: () -> Unit) {
+    val ensureNoRefactoringRequests = ensureNoRefactoringRequestsBeforeRefactoring
 
     try {
-        ensureElementsToShortenIsEmptyBeforeRefactoring = false
+        ensureNoRefactoringRequestsBeforeRefactoring = false
         action()
     } finally {
-        ensureElementsToShortenIsEmptyBeforeRefactoring = ensureElementsToShortenIsEmpty
+        ensureNoRefactoringRequestsBeforeRefactoring = ensureNoRefactoringRequests
     }
 }
 
-private fun Project.getOrCreateElementsToShorten(): MutableSet<ShorteningRequest> {
-    var elements = elementsToShorten
-    if (elements == null) {
-        elements = LinkedHashSet()
-        elementsToShorten = elements
+private fun Project.getOrCreateRefactoringRequests(): MutableSet<DelayedRefactoringRequest> {
+    var requests = delayedRefactoringRequests
+    if (requests == null) {
+        requests = LinkedHashSet()
+        delayedRefactoringRequests = requests
     }
 
-    return elements
+    return requests
 }
 
 fun KtElement.addToShorteningWaitSet(options: Options = Options.DEFAULT) {
     assert(ApplicationManager.getApplication()!!.isWriteAccessAllowed) { "Write access needed" }
     val project = project
     val elementPointer = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(this)
-    project.getOrCreateElementsToShorten().add(ShorteningRequest(elementPointer, options))
+    project.getOrCreateRefactoringRequests().add(ShorteningRequest(elementPointer, options))
 }
 
-fun performDelayedShortening(project: Project) {
-    project.elementsToShorten?.let { requests ->
-        project.elementsToShorten = null
-        val elementToOptions = requests.mapNotNull { req -> req.pointer.element?.let { it to req.options } }.toMap()
+fun performDelayedRefactoringRequests(project: Project) {
+    project.delayedRefactoringRequests?.let { requests ->
+        project.delayedRefactoringRequests = null
+
+        val shorteningRequests = requests.filterIsInstance<ShorteningRequest>()
+        val elementToOptions = shorteningRequests.mapNotNull { req -> req.pointer.element?.let { it to req.options } }.toMap()
         val elements = elementToOptions.keys
         //TODO: this is not correct because it should not shorten deep into the elements!
         ShortenReferences({ elementToOptions[it] ?: Options.DEFAULT }).process(elements)
@@ -83,11 +87,11 @@ fun performDelayedShortening(project: Project) {
 
 private val LOG = Logger.getInstance(Project::class.java.canonicalName)
 
-fun prepareElementsToShorten(project: Project) {
-    val elementsToShorten = project.elementsToShorten
-    if (project.ensureElementsToShortenIsEmptyBeforeRefactoring && elementsToShorten != null && !elementsToShorten.isEmpty()) {
+fun prepareDelayedRequests(project: Project) {
+    val requests = project.delayedRefactoringRequests
+    if (project.ensureNoRefactoringRequestsBeforeRefactoring && requests != null && !requests.isEmpty()) {
         LOG.warn("Waiting set for reference shortening is not empty")
-        project.elementsToShorten = null
+        project.delayedRefactoringRequests = null
     }
 }
 

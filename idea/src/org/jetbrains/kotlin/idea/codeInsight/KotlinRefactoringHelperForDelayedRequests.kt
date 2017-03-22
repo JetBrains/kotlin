@@ -24,16 +24,16 @@ import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.codeInsight.shorten.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 
-class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Any> {
+class KotlinRefactoringHelperForDelayedRequests : RefactoringHelper<Any> {
     override fun prepareOperation(usages: Array<out UsageInfo>?): Any? {
         if (usages != null && usages.isNotEmpty()) {
             val project = usages[0].project
-            prepareElementsToShorten(project)
+            prepareDelayedRequests(project)
         }
         return null
     }
 
     override fun performOperation(project: Project, operationData: Any?) {
-        runWriteAction { performDelayedShortening(project) }
+        runWriteAction { performDelayedRefactoringRequests(project) }
     }
 }

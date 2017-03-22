@@ -20,7 +20,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.idea.codeInsight.shorten.runWithElementsToShortenIsEmptyIgnored
+import org.jetbrains.kotlin.idea.codeInsight.shorten.runRefactoringAndKeepDelayedRequests
 import org.jetbrains.kotlin.idea.refactoring.move.ContainerChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.move.ContainerInfo
 import org.jetbrains.kotlin.idea.refactoring.move.getInternalReferencesToUpdateOnPackageNameChange
@@ -69,7 +69,7 @@ class KotlinChangePackageRefactoring(val file: KtFile) {
         project.executeWriteCommand("Change file's package to '${newFqName.asString()}'") {
             packageDirective.fqName = newFqName.quoteIfNeeded()
             postProcessMoveUsages(internalUsages)
-            project.runWithElementsToShortenIsEmptyIgnored { declarationProcessor.execute(declarationUsages) }
+            project.runRefactoringAndKeepDelayedRequests { declarationProcessor.execute(declarationUsages) }
         }
     }
 }

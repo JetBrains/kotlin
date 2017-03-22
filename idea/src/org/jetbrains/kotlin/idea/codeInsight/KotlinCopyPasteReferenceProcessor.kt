@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
-import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedShortening
+import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
 import org.jetbrains.kotlin.idea.conversion.copy.end
 import org.jetbrains.kotlin.idea.conversion.copy.range
 import org.jetbrains.kotlin.idea.conversion.copy.start
@@ -334,7 +334,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
             val reference = pointer.element!!.mainReference
             reference.bindToFqName(fqName, KtSimpleNameReference.ShorteningMode.DELAYED_SHORTENING)
         }
-        performDelayedShortening(file.project)
+        performDelayedRefactoringRequests(file.project)
     }
 
     private fun KotlinReferenceData.Kind.isExtension()
