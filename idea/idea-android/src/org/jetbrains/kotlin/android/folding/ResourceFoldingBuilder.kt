@@ -47,7 +47,6 @@ class ResourceFoldingBuilder : FoldingBuilderEx() {
         // See lint's StringFormatDetector
         private val FORMAT = Pattern.compile("%(\\d+\\$)?([-+#, 0(<]*)?(\\d+)?(\\.\\d+)?([tT])?([a-zA-Z%])")
         private val FOLD_MAX_LENGTH = 60
-        private val FORCE_PROJECT_RESOURCE_LOADING = true
         private val UNIT_TEST_MODE: Boolean = ApplicationManager.getApplication().isUnitTestMode
         private val RESOURCE_TYPES = listOf(ResourceType.STRING,
                                             ResourceType.DIMEN,
@@ -242,6 +241,6 @@ class ResourceFoldingBuilder : FoldingBuilderEx() {
     }
 
     private fun getAppResources(element: PsiElement): LocalResourceRepository? = ModuleUtilCore.findModuleForPsiElement(element)?.let {
-        AppResourceRepository.getAppResources(it, FORCE_PROJECT_RESOURCE_LOADING)
+        AppResourceRepository.findExistingInstance(it)
     }
 }
