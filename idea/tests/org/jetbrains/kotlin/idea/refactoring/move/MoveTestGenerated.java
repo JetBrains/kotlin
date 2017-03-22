@@ -420,6 +420,42 @@ public class MoveTestGenerated extends AbstractMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveTopLevelDeclarations/callsAndCallableRefs/internalUsages/differentSourceAndTargetWithFqNames/differentSourceAndTargetWithFqNames.test")
+    public void testKotlin_moveTopLevelDeclarations_callsAndCallableRefs_internalUsages_differentSourceAndTargetWithFqNames_DifferentSourceAndTargetWithFqNames() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/callsAndCallableRefs/internalUsages/differentSourceAndTargetWithFqNames/differentSourceAndTargetWithFqNames.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveTopLevelDeclarations/callsAndCallableRefs/internalUsages/differentSourceAndTargetWithImports/differentSourceAndTargetWithImports.test")
+    public void testKotlin_moveTopLevelDeclarations_callsAndCallableRefs_internalUsages_differentSourceAndTargetWithImports_DifferentSourceAndTargetWithImports() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/callsAndCallableRefs/internalUsages/differentSourceAndTargetWithImports/differentSourceAndTargetWithImports.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveTopLevelDeclarations/callsAndCallableRefs/internalUsages/differentSourceWithFqNames/differentSourceWithFqNames.test")
+    public void testKotlin_moveTopLevelDeclarations_callsAndCallableRefs_internalUsages_differentSourceWithFqNames_DifferentSourceWithFqNames() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/callsAndCallableRefs/internalUsages/differentSourceWithFqNames/differentSourceWithFqNames.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveTopLevelDeclarations/callsAndCallableRefs/internalUsages/differentSourceWithImports/differentSourceWithImports.test")
+    public void testKotlin_moveTopLevelDeclarations_callsAndCallableRefs_internalUsages_differentSourceWithImports_DifferentSourceWithImports() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/callsAndCallableRefs/internalUsages/differentSourceWithImports/differentSourceWithImports.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveTopLevelDeclarations/callsAndCallableRefs/internalUsages/differentTarget/differentTarget.test")
+    public void testKotlin_moveTopLevelDeclarations_callsAndCallableRefs_internalUsages_differentTarget_DifferentTarget() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/callsAndCallableRefs/internalUsages/differentTarget/differentTarget.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveTopLevelDeclarations/callsAndCallableRefs/internalUsages/differentTargetWithFqNames/differentTargetWithFqNames.test")
+    public void testKotlin_moveTopLevelDeclarations_callsAndCallableRefs_internalUsages_differentTargetWithFqNames_DifferentTargetWithFqNames() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/callsAndCallableRefs/internalUsages/differentTargetWithFqNames/differentTargetWithFqNames.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveTopLevelDeclarations/misc/companionExtensionMemberRef/companionExtensionMemberRef.test")
     public void testKotlin_moveTopLevelDeclarations_misc_companionExtensionMemberRef_CompanionExtensionMemberRef() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/companionExtensionMemberRef/companionExtensionMemberRef.test");

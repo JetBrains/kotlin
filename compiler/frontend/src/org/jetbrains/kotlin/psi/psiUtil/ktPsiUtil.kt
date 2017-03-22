@@ -66,6 +66,13 @@ fun KtSimpleNameExpression.getQualifiedElement(): KtElement {
     }
 }
 
+fun KtSimpleNameExpression.getQualifiedElementOrCallableRef(): KtElement {
+    val parent = parent
+    if (parent is KtCallableReferenceExpression && parent.callableReference == this) return parent
+
+    return getQualifiedElement()
+}
+
 fun KtSimpleNameExpression.getTopmostParentQualifiedExpressionForSelector(): KtQualifiedExpression? {
     return generateSequence<KtExpression>(this) {
         val parentQualified = it.parent as? KtQualifiedExpression
