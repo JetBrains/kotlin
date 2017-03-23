@@ -71,7 +71,7 @@ abstract class KotlinGenerateTestSupportActionBase(
 
             if (ApplicationManager.getApplication().isUnitTestMode) return consumer(frameworks.first())
 
-            val list = JBList<TestFramework>(*frameworks.toTypedArray())
+            val list = JBList(*frameworks.toTypedArray())
             list.cellRenderer = TestFrameworkListCellRenderer()
 
             PopupChooserBuilder(list)
