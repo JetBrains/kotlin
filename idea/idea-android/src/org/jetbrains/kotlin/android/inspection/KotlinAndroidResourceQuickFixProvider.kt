@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.android.inspection
 
-import com.android.resources.ResourceFolderType
 import com.android.resources.ResourceType
 import com.intellij.codeInsight.daemon.QuickFixActionRegistrar
 import com.intellij.codeInsight.quickfix.UnresolvedReferenceQuickFixProvider
@@ -49,10 +48,8 @@ class KotlinAndroidResourceQuickFixProvider : UnresolvedReferenceQuickFixProvide
         if (AndroidResourceUtil.ALL_VALUE_RESOURCE_TYPES.contains(resourceType)) {
             registrar.register(CreateValueResourceQuickFix(facet, resourceType, info.fieldName, contextFile, true))
         }
-
-        val folderType = AndroidResourceUtil.XML_FILE_RESOURCE_TYPES[resourceType] as? ResourceFolderType
-        if (folderType != null) {
-            registrar.register(CreateFileResourceQuickFix(facet, folderType, info.fieldName, contextFile, true))
+        if (AndroidResourceUtil.XML_FILE_RESOURCE_TYPES.contains(resourceType)) {
+            registrar.register(CreateFileResourceQuickFix(facet, resourceType, info.fieldName, contextFile, true))
         }
     }
 
