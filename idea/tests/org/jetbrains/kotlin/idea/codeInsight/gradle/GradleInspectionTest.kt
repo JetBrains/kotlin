@@ -25,9 +25,7 @@ import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.InspectionTestUtil
-import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
-import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection
 import org.jetbrains.kotlin.idea.inspections.gradle.DifferentStdlibGradleVersionInspection
 import org.junit.Assert
