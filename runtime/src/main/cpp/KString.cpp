@@ -371,7 +371,7 @@ KInt Kotlin_Char_digitOf(KChar ch, KInt radix) {
 
 KInt Kotlin_String_indexOfChar(KString thiz, KChar ch, KInt fromIndex) {
   if (fromIndex < 0 || fromIndex > thiz->count_) {
-    return false;
+    return -1;
   }
   KInt count = thiz->count_;
   const KChar* thizRaw = CharArrayAddressOfElementAt(thiz, fromIndex);
@@ -384,12 +384,12 @@ KInt Kotlin_String_indexOfChar(KString thiz, KChar ch, KInt fromIndex) {
 
 KInt Kotlin_String_lastIndexOfChar(KString thiz, KChar ch, KInt fromIndex) {
   if (fromIndex < 0 || fromIndex > thiz->count_ || thiz->count_ == 0) {
-    return false;
+    return -1;
   }
   KInt count = thiz->count_;
-  KInt index = count - 1;
+  KInt index = fromIndex;
   const KChar* thizRaw = CharArrayAddressOfElementAt(thiz, index);
-  while (index >= fromIndex) {
+  while (index >= 0) {
     if (*thizRaw-- == ch) return index;
     index--;
   }
@@ -416,7 +416,7 @@ KInt Kotlin_String_indexOfString(KString thiz, KString other, KInt fromIndex) {
 KInt Kotlin_String_lastIndexOfString(KString thiz, KString other, KInt fromIndex) {
   if (fromIndex < 0 || fromIndex > thiz->count_ || thiz->count_ == 0 ||
       other->count_ > thiz->count_ - fromIndex) {
-    return false;
+    return -1;
   }
   KInt count = thiz->count_;
   KInt otherCount = other->count_;
