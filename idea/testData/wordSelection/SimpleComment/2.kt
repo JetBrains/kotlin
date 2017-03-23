@@ -1,6 +1,6 @@
 package p
 
-/*<selection> This is a <caret>comment </selection>*/
+<selection>/* This is a <caret>comment */</selection>
 fun foo() {
 }
 
