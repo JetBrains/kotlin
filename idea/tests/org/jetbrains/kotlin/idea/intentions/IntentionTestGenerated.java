@@ -13368,6 +13368,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("multipleUsages.kt")
+        public void testMultipleUsages() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/multipleUsages.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("plusNullable.kt")
         public void testPlusNullable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSingleLineLetIntention/plusNullable.kt");

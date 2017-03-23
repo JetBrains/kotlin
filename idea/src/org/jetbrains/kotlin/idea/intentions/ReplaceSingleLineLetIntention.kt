@@ -78,7 +78,7 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
     }
 
     override fun isApplicableTo(element: KtCallExpression): Boolean {
-        if (!isLetMethod(element)) return false
+        if (!element.isLetMethodCall()) return false
         val lambdaExpression = element.lambdaArguments.firstOrNull()?.getLambdaExpression() ?: return false
         val parameterName = lambdaExpression.getParameterName() ?: return false
         val bodyExpression = lambdaExpression.bodyExpression?.children?.singleOrNull() ?: return false
@@ -99,32 +99,26 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
         }
 
         val right = right ?: return false
-        when (right) {
-            is KtNameReferenceExpression -> return right.text != parameterName
-            is KtDotQualifiedExpression -> {
-                if (right.isParameterLeftMostReceiver(parameterName)) return false
-                if (right.hasLambdaExpression()) return false
-                return !right.receiverUsedAsArgument(parameterName)
-            }
-            is KtConstantExpression -> return true
-            else -> return false
+        return when (right) {
+            is KtNameReferenceExpression -> right.text != parameterName
+            is KtDotQualifiedExpression -> !right.hasLambdaExpression() && !right.nameUsed(parameterName)
+            is KtConstantExpression -> true
+            else -> false
         }
     }
 
-    private fun KtDotQualifiedExpression.isApplicable(parameterName: String): Boolean {
-        if (!isParameterLeftMostReceiver(parameterName)) return false
-        if (hasLambdaExpression()) return false
-        return !receiverUsedAsArgument(parameterName)
-    }
+    private fun KtDotQualifiedExpression.isApplicable(parameterName: String) =
+            !hasLambdaExpression() && getLeftMostReceiverExpression().let { receiver ->
+                receiver is KtNameReferenceExpression &&
+                receiver.getReferencedName() == parameterName &&
+                !nameUsed(parameterName, except = receiver)
+            }
 
     private fun KtDotQualifiedExpression.hasLambdaExpression()
             = selectorExpression?.anyDescendantOfType<KtLambdaExpression>() ?: false
 
-    private fun KtDotQualifiedExpression.isParameterLeftMostReceiver(parameterName: String)
-            = getLeftMostReceiverExpression().text == parameterName
-
-    private fun isLetMethod(element: KtCallExpression) =
-            element.calleeExpression?.text == "let" && element.isMethodCall("kotlin.let")
+    private fun KtCallExpression.isLetMethodCall() =
+            calleeExpression?.text == "let" && isMethodCall("kotlin.let")
 
     private fun KtLambdaExpression.getParameterName(): String? {
         val parameters = valueParameters
@@ -132,16 +126,6 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
         return if (parameters.size == 1) parameters[0].text else "it"
     }
 
-    private fun KtDotQualifiedExpression.receiverUsedAsArgument(receiverName: String): Boolean {
-        (selectorExpression as? KtCallExpression)?.valueArguments?.let {
-            if (it.any { it.receiverUsedAsArgument(receiverName) }) return true
-        }
-        return (receiverExpression as? KtDotQualifiedExpression)?.receiverUsedAsArgument(receiverName) ?: false
-    }
-
-    private fun KtValueArgument.receiverUsedAsArgument(receiverName: String) =
-            text == receiverName || anyDescendantOfType<KtDotQualifiedExpression> {
-                it.getLeftMostReceiverExpression().text == receiverName ||
-                it.receiverUsedAsArgument(receiverName)
-            }
+    private fun KtExpression.nameUsed(name: String, except: KtNameReferenceExpression? = null): Boolean =
+            anyDescendantOfType<KtNameReferenceExpression> { it != except && it.getReferencedName() == name }
 }
