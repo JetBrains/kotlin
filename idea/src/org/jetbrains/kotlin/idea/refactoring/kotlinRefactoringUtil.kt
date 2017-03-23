@@ -937,7 +937,7 @@ fun checkSuperMethodsWithPopup(
         append(" of ")
         append(SymbolPresentationUtil.getSymbolPresentableText(superClass))
     }
-    val list = JBList<String>(renameBase, renameCurrent)
+    val list = JBList(renameBase, renameCurrent)
     JBPopupFactory.getInstance()
             .createListPopupBuilder(list)
             .setTitle(title)
