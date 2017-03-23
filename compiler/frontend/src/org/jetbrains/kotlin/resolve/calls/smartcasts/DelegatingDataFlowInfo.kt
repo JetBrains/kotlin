@@ -20,13 +20,14 @@ import com.google.common.collect.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.isFlexible
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import org.jetbrains.kotlin.utils.newLinkedHashSetWithExpectedSize
+import org.jetbrains.kotlin.types.typeUtil.*
+
 import java.util.*
+
+import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
 
 internal class DelegatingDataFlowInfo private constructor(
         private val parent: DataFlowInfo?,
@@ -120,7 +121,7 @@ internal class DelegatingDataFlowInfo private constructor(
             return types
         }
 
-        val enrichedTypes = newLinkedHashSetWithExpectedSize<KotlinType>(types.size + 1)
+        val enrichedTypes = Sets.newHashSetWithExpectedSize<KotlinType>(types.size + 1)
         val originalType = key.type
         for (type in types) {
             enrichedTypes.add(TypeUtils.makeNotNullable(type))
