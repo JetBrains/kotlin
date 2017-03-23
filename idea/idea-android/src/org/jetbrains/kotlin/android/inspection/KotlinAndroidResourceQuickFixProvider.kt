@@ -49,11 +49,10 @@ class KotlinAndroidResourceQuickFixProvider : UnresolvedReferenceQuickFixProvide
         if (AndroidResourceUtil.ALL_VALUE_RESOURCE_TYPES.contains(resourceType)) {
             registrar.register(CreateValueResourceQuickFix(facet, resourceType, info.fieldName, contextFile, true))
         }
-        if (AndroidResourceUtil.XML_FILE_RESOURCE_TYPES.contains(resourceType)) {
-            val resourceFolderType = ResourceFolderType.getTypeByName(resourceType.getName());
-            if (resourceFolderType != null) {
-                registrar.register(CreateFileResourceQuickFix(facet, resourceFolderType, info.fieldName, contextFile, true))
-            }
+
+        val folderType = AndroidResourceUtil.XML_FILE_RESOURCE_TYPES[resourceType] as? ResourceFolderType
+        if (folderType != null) {
+            registrar.register(CreateFileResourceQuickFix(facet, folderType, info.fieldName, contextFile, true))
         }
     }
 
