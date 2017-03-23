@@ -844,8 +844,8 @@ public class KotlinTestUtils {
         return comments;
     }
 
-    public static boolean compileJavaFiles(@NotNull Collection<File> files, List<String> options) throws IOException {
-        return compileJavaFiles(files, options, null);
+    public static void compileJavaFiles(@NotNull Collection<File> files, List<String> options) throws IOException {
+        compileJavaFiles(files, options, null);
     }
 
     private static boolean compileJavaFiles(@NotNull Collection<File> files, List<String> options, @Nullable File javaErrorFile) throws IOException {
