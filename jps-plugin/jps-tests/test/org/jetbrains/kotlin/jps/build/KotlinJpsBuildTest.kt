@@ -363,7 +363,7 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
     fun testKotlinJavaScriptProjectWithSourceMap() {
         initProject(JS_STDLIB)
-        buildAllModules().assertSuccessful()
+        makeAll().assertSuccessful()
 
         val sourceMapContent = File(getOutputDir(PROJECT_NAME), "$PROJECT_NAME.js.map").readText()
         val expectedPath = "prefix-dir/src/pkg/test1.kt"
