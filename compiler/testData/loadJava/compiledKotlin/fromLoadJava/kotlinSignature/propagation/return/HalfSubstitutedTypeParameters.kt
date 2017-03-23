@@ -1,5 +1,3 @@
-// FULL_JDK
-
 package test
 
 public interface HalfSubstitutedTypeParameters {
