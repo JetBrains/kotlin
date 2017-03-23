@@ -133,7 +133,7 @@ abstract class AbstractIncrementalJpsTest(
     protected open val mockConstantSearch: Callbacks.ConstantAffectionResolver?
         get() = null
 
-    private fun build(scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().allModules()): MakeResult {
+    private fun build(scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().all()): MakeResult {
         val workDirPath = FileUtil.toSystemIndependentName(workDir.absolutePath)
         val logger = MyLogger(workDirPath)
         projectDescriptor = createProjectDescriptor(BuildLoggingManager(logger))
