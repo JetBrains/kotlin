@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.quickfix;
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
-import com.intellij.codeInsight.daemon.quickFix.ActionHint;
 import com.intellij.codeInsight.daemon.quickFix.QuickFixTestCase;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.InspectionProfileEntry;
@@ -30,6 +29,7 @@ import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
@@ -187,14 +187,18 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
 
     private static void applyAction(String contents, QuickFixTestCase quickFixTestCase, String testName, String testFullPath)
             throws Exception {
+        Pair<String, Boolean> pair = quickFixTestCase.parseActionHintImpl(quickFixTestCase.getFile(), contents);
+
         String fileName = StringsKt.substringAfterLast(testFullPath, "/", "");
-        ActionHint actionHint = ActionHint.parse(quickFixTestCase.getFile(), contents.replace("${file}", fileName));
+        String text = pair.getFirst().replace("${file}", fileName);
+
+        boolean actionShouldBeAvailable = pair.getSecond().booleanValue();
 
         quickFixTestCase.beforeActionStarted(testName, contents);
 
         try {
             myWrapper = quickFixTestCase;
-            quickFixTestCase.doAction(actionHint, testFullPath, testName);
+            quickFixTestCase.doAction(text, actionShouldBeAvailable, testFullPath, testName);
         }
         finally {
             myWrapper = null;
@@ -203,8 +207,9 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
     }
 
     @Override
-    protected void doAction(ActionHint actionHint, String testFullPath, String testName) throws Exception {
-        doAction(actionHint, testFullPath, testName, myWrapper);
+    protected void doAction(String text, boolean actionShouldBeAvailable, String testFullPath, String testName)
+            throws Exception {
+        doAction(text, actionShouldBeAvailable, testFullPath, testName, myWrapper);
     }
 
     @Override
@@ -262,13 +267,13 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
 
     private void checkForUnexpectedActions() throws ClassNotFoundException {
         String text = getEditor().getDocument().getText();
-        ActionHint actionHint = ActionHint.parse(getFile(), text);
-        if (!actionHint.shouldPresent()) {
+        Pair<String, Boolean> pair = parseActionHintImpl(getFile(), text);
+        if (!pair.second) {
             List<IntentionAction> actions = getAvailableActions();
 
             String prefix = "class ";
-            if (actionHint.getExpectedText().startsWith(prefix)) {
-                String className = actionHint.getExpectedText().substring(prefix.length());
+            if (pair.first.startsWith(prefix)) {
+                String className = pair.first.substring(prefix.length());
                 final Class<?> aClass = Class.forName(className);
                 assert IntentionAction.class.isAssignableFrom(aClass) : className + " should be inheritor of IntentionAction";
 
