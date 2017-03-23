@@ -27,7 +27,6 @@ import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.ide.plugins.PluginManagerCore
-import com.intellij.lang.MetaLanguage
 import com.intellij.lang.java.JavaParserDefinition
 import com.intellij.mock.MockApplication
 import com.intellij.openapi.Disposable
@@ -507,7 +506,6 @@ class KotlinCoreEnvironment private constructor(
             CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClassFileDecompilers.EP_NAME, ClassFileDecompilers.Decompiler::class.java)
             //
             CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), TypeAnnotationModifier.EP_NAME, TypeAnnotationModifier::class.java)
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), MetaLanguage.EP_NAME, MetaLanguage::class.java)
         }
 
         private fun registerApplicationExtensionPointsAndExtensionsFrom(configuration: CompilerConfiguration, configFilePath: String) {
