@@ -69,6 +69,7 @@ messages/**)
 #-libraryjars '<bootstrap.script.runtime>'
 #-libraryjars '<tools.jar>'
 
+-target 1.6
 -dontoptimize
 -dontobfuscate
 
