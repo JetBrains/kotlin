@@ -136,7 +136,7 @@ abstract class AbstractIncrementalJpsTest(
     protected open fun checkLookups(@Suppress("UNUSED_PARAMETER") lookupTracker: LookupTracker, compiledFiles: Set<File>) {
     }
 
-    private fun build(scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().allModules(), checkLookups: Boolean = true): MakeResult {
+    private fun build(scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().all(), checkLookups: Boolean = true): MakeResult {
         val workDirPath = FileUtil.toSystemIndependentName(workDir.absolutePath)
         val logger = MyLogger(workDirPath)
         projectDescriptor = createProjectDescriptor(BuildLoggingManager(logger))
