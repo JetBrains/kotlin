@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+../dist/bin/konanc -Dkonan.dependencies=../dependencies/all "$@"

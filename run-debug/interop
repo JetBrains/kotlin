@@ -1,0 +1,5 @@
+#!/usr/bin/env bash 
+
+../dist/bin/interop -Dkonan.dependencies=../dependencies/all "$@"
+
+
