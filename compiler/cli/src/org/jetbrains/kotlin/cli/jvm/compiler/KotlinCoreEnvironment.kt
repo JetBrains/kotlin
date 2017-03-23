@@ -120,28 +120,6 @@ class KotlinCoreEnvironment private constructor(
         override fun preregisterServices() {
             registerProjectExtensionPoints(Extensions.getArea(project))
         }
-
-        override fun registerJavaPsiFacade() {
-            with (project) {
-                registerService(CoreJavaFileManager::class.java, ServiceManager.getService(this, JavaFileManager::class.java) as CoreJavaFileManager)
-
-                val cliLightClassGenerationSupport = CliLightClassGenerationSupport(this)
-                registerService(LightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
-                registerService(CliLightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
-                registerService(CodeAnalyzerInitializer::class.java, cliLightClassGenerationSupport)
-
-                registerService(ExternalAnnotationsManager::class.java, MockExternalAnnotationsManager())
-                registerService(InferredAnnotationsManager::class.java, MockInferredAnnotationsManager())
-
-                val area = Extensions.getArea(this)
-
-                area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(JavaElementFinder(this, cliLightClassGenerationSupport))
-                area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(
-                        PsiElementFinderImpl(this, ServiceManager.getService(this, JavaFileManager::class.java)))
-            }
-
-            super.registerJavaPsiFacade()
-        }
     }
 
     private val sourceFiles = mutableListOf<KtFile>()
@@ -207,12 +185,12 @@ class KotlinCoreEnvironment private constructor(
         this.initialRoots = initialRoots
 
         if (!configuration.getBoolean(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK) && messageCollector != null) {
-            JvmRuntimeVersionsConsistencyChecker.checkCompilerClasspathConsistency(
-                    messageCollector,
-                    configuration,
-                    initialRoots.mapNotNull { (file, type) -> if (type == JavaRoot.RootType.BINARY) file else null }
-            )
-        }
+                JvmRuntimeVersionsConsistencyChecker.checkCompilerClasspathConsistency(
+                        messageCollector,
+                        configuration,
+                        initialRoots.mapNotNull { (file, type) -> if (type == JavaRoot.RootType.BINARY) file else null }
+                )
+            }
 
         val (roots, singleJavaFileRoots) =
                 initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
@@ -299,7 +277,7 @@ class KotlinCoreEnvironment private constructor(
 
         for (packagePartProvider in packagePartProviders) {
             packagePartProvider.addRoots(newRoots)
-        }
+    }
 
         return rootsIndex.addNewIndexForRoots(newRoots)?.let { newIndex ->
             updateClasspathFromRootsIndex(newIndex)
@@ -324,8 +302,8 @@ class KotlinCoreEnvironment private constructor(
         return findLocalFile(root.file.absolutePath).also {
             if (it == null) {
                 report(STRONG_WARNING, "Classpath entry points to a non-existent location: ${root.file}")
-            }
         }
+    }
     }
 
     private fun findJarRoot(file: File): VirtualFile? =
@@ -531,11 +509,23 @@ class KotlinCoreEnvironment private constructor(
         }
 
         private fun registerProjectServicesForCLI(@Suppress("UNUSED_PARAMETER") projectEnvironment: JavaCoreProjectEnvironment) {
-            /**
-             * Note that Kapt may restart code analysis process, and CLI services should be aware of that.
-             * Use PsiManager.getModificationTracker() to ensure that all the data you cached is still valid.
-             */
+            with (projectEnvironment.project) {
+                registerService(CoreJavaFileManager::class.java, ServiceManager.getService(this, JavaFileManager::class.java) as CoreJavaFileManager)
 
+                val cliLightClassGenerationSupport = CliLightClassGenerationSupport(this)
+                registerService(LightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
+                registerService(CliLightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
+                registerService(CodeAnalyzerInitializer::class.java, cliLightClassGenerationSupport)
+
+                registerService(ExternalAnnotationsManager::class.java, MockExternalAnnotationsManager())
+                registerService(InferredAnnotationsManager::class.java, MockInferredAnnotationsManager())
+
+                val area = Extensions.getArea(this)
+
+                area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(JavaElementFinder(this, cliLightClassGenerationSupport))
+                area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(
+                        PsiElementFinderImpl(this, ServiceManager.getService(this, JavaFileManager::class.java)))
+            }
         }
     }
 }
