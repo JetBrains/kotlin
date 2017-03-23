@@ -1,4 +1,5 @@
 // "Replace with 'newFun(*elements)'" "true"
+// WITH_RUNTIME
 
 @Deprecated("", ReplaceWith("newFun(*elements)"))
 fun <T> oldFun(vararg elements: T) {

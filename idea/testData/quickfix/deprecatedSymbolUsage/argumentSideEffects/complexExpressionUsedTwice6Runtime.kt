@@ -1,4 +1,5 @@
 // "Replace with 'newFun(p, p)'" "true"
+// WITH_RUNTIME
 
 @Deprecated("", ReplaceWith("newFun(p, p)"))
 fun oldFun(p: Int?): Int {

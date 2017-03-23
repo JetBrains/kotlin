@@ -1,4 +1,5 @@
 // "Replace with 'newFun(*p, *list.toIntArray())'" "true"
+// WITH_RUNTIME
 
 @Deprecated("", ReplaceWith("newFun(*p, *list.toIntArray())"))
 fun oldFun(list: List<Int>, vararg p: Int){

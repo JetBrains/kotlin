@@ -1,4 +1,5 @@
 // "Replace with 'newFun(p)'" "true"
+// WITH_RUNTIME
 
 fun foo(vararg s: String) = s.joinToString()
 

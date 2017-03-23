@@ -1,4 +1,5 @@
 // "Replace with 'newFun()'" "true"
+// WITH_RUNTIME
 
 class C {
     @Deprecated("", ReplaceWith("newFun()"))

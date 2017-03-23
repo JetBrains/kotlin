@@ -4,7 +4,6 @@
 // ACTION: Create parameter 'A'
 // ACTION: Create property 'A'
 // ACTION: Rename reference
-// ACTION: Import
 // ERROR: Unresolved reference: A
 package p
 

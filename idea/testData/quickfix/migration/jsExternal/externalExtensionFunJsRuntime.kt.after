@@ -1,4 +1,5 @@
 // "Fix with 'asDynamic'" "true"
+// JS
 
 class A
 
