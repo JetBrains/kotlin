@@ -4,11 +4,11 @@
       <root url="file://$PROJECT_DIR$/annotations" />
     </ANNOTATIONS>
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/guava-19.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/lib/guava-17.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/dependencies/guava-19.0-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/guava-17.0-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
