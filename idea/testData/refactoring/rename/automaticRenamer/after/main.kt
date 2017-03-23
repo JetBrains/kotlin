@@ -3,7 +3,7 @@ open class Bar : Throwable()
 val BAR: Bar = Bar()
 val BAR_1: Bar = Bar()
 
-val BARS: List<Bar> = listOf()
+val BARs: List<Bar> = listOf()
 val FOOS_1: Array<Bar> = array()
 
 fun main(args: Array<String>) {
