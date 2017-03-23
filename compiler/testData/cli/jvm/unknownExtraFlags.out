@@ -1,4 +1,5 @@
 warning: flag is not supported by this version of the compiler: -Xabcdefghijklm
 warning: flag is not supported by this version of the compiler: -Xnopqrstuvwxyz
 warning: flag is not supported by this version of the compiler: -XXxxxxxxxxxxxx
+warning: running the Kotlin compiler under Java 6 or 7 is unsupported and will no longer be possible in a future update.
 OK
