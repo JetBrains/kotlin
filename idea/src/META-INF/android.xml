@@ -23,6 +23,8 @@
             <category>Kotlin Android</category>
         </intentionAction>
 
+        <externalProjectDataService implementation="org.jetbrains.kotlin.android.configure.KotlinGradleAndroidModuleModelProjectDataService"/>
+
         <intentionAction>
             <className>org.jetbrains.kotlin.android.intention.AddActivityToManifest</className>
             <category>Kotlin Android</category>
