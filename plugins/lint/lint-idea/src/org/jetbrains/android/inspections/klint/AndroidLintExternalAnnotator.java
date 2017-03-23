@@ -19,7 +19,6 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.ExternalAnnotator;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypes;
@@ -59,7 +58,6 @@ import static com.android.tools.klint.detector.api.TextFormat.RAW;
 
 public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State> {
   static final boolean INCLUDE_IDEA_SUPPRESS_ACTIONS = false;
-  static final boolean IS_UNIT_TEST_MODE = ApplicationManager.getApplication().isUnitTestMode();
 
   @Nullable
   @Override
@@ -141,17 +139,12 @@ public class AndroidLintExternalAnnotator extends ExternalAnnotator<State, State
               client, project, files, Collections.singletonList(state.getModule()), true /* incremental */);
       request.setScope(scope);
 
-      if (!IS_UNIT_TEST_MODE) {
-        ProgressIndicatorUtils.runInReadActionWithWriteActionPriority(new Runnable() {
-          @Override
-          public void run() {
-            lint.analyze(request);
-          }
-        });
-      }
-      else {
-        lint.analyze(request);
-      }
+      ProgressIndicatorUtils.runInReadActionWithWriteActionPriority(new Runnable() {
+        @Override
+        public void run() {
+          lint.analyze(request);
+        }
+      });
     }
     finally {
       Disposer.dispose(client);
