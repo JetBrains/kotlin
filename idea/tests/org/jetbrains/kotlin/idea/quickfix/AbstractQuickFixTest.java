@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.quickfix;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.quickFix.QuickFixTestCase;
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.SuppressIntentionAction;
 import com.intellij.codeInspection.SuppressableProblemGroup;
@@ -36,7 +35,6 @@ import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubUpdatingIndex;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
-import com.intellij.testFramework.InspectionTestUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import kotlin.collections.CollectionsKt;
@@ -258,10 +256,8 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
         File inspectionFile = QuickfixTestUtilsKt.findInspectionFile(new File(beforeFileName).getParentFile());
         if (inspectionFile != null) {
             String className = FileUtil.loadFile(inspectionFile).trim();
-            Class<InspectionProfileEntry> inspectionClass = (Class<InspectionProfileEntry>) Class.forName(className);
-            List<InspectionProfileEntry> tools = InspectionTestUtil.instantiateTools(
-                    Collections.<Class<? extends InspectionProfileEntry>>singletonList(inspectionClass));
-            enableInspectionTools(tools.get(0));
+            Class<?> inspectionClass = Class.forName(className);
+            enableInspectionTools(inspectionClass);
         }
     }
 
