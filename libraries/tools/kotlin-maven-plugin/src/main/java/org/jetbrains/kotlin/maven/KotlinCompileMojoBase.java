@@ -156,12 +156,14 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
      * Kotlin compilation module, as alternative to source files or folders.
      */
     @Parameter
+    @Deprecated
     public String module;
 
     /**
      * Kotlin compilation module, as alternative to source files or folders (for tests).
      */
     @Parameter
+    @Deprecated
     public String testModule;
 
 

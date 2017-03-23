@@ -131,9 +131,8 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         // don't include runtime, it should be in maven dependencies
         arguments.noStdlib = true;
 
-        if (module != null) {
-            getLog().info("Compiling Kotlin module " + module);
-            arguments.module = module;
+        if (module != null || testModule != null) {
+            getLog().warn("Parameters module and testModule are deprecated and ignored, they will be removed in further release.");
         }
 
         List<String> classpathList = filterClassPath(project.getBasedir(), classpath);
