@@ -16,10 +16,10 @@ open class TypeLiteral<T> {
 inline fun <reified T> typeLiteral(): TypeLiteral<T> = object : TypeLiteral<T>() {}
 
 fun box(): String {
-    assertEquals("java.lang.String", (typeLiteral<String>().type as Class<*>).canonicalName)
+    assertEquals("class java.lang.String", typeLiteral<String>().type.toString())
     assertEquals("java.util.List<?>", typeLiteral<List<*>>().type.toString())
-    assertEquals("java.lang.String[]", (typeLiteral<Array<String>>().type as Class<*>).canonicalName)
-    assertEquals("java.lang.Integer[]", (typeLiteral<Array<Int>>().type as Class<*>).canonicalName)
-    assertEquals("java.lang.String[][]", (typeLiteral<Array<Array<String>>>().type as Class<*>).canonicalName)
+    assertEquals("java.lang.String[]", typeLiteral<Array<String>>().type.toString())
+    assertEquals("java.lang.Integer[]", typeLiteral<Array<Int>>().type.toString())
+    assertEquals("java.lang.String[][]", typeLiteral<Array<Array<String>>>().type.toString())
     return "OK"
 }
