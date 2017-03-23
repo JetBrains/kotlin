@@ -47,11 +47,6 @@ messages/**)
 -dontwarn org.iq80.snappy.HadoopSnappyCodec$SnappyCompressionInputStream
 -dontwarn org.iq80.snappy.HadoopSnappyCodec$SnappyCompressionOutputStream
 -dontwarn com.google.common.util.concurrent.*
--dontwarn org.apache.xerces.dom.**
--dontwarn org.apache.xerces.util.**
--dontwarn org.w3c.dom.ElementTraversal
--dontwarn javaslang.match.annotation.Unapply
--dontwarn javaslang.match.annotation.Patterns
 -dontwarn org.jline.builtins.Nano$Buffer
 
 -libraryjars '<rtjar>'
