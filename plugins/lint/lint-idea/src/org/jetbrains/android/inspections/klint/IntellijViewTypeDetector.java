@@ -19,7 +19,7 @@ import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
 import com.android.ide.common.res2.AbstractResourceRepository;
 import com.android.ide.common.res2.ResourceItem;
-import com.android.tools.idea.res.LocalResourceRepository;
+import com.android.tools.idea.rendering.LocalResourceRepository;
 import com.android.tools.klint.checks.ViewTypeDetector;
 import com.android.tools.klint.detector.api.Context;
 import com.android.tools.klint.detector.api.Implementation;
