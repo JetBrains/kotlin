@@ -72,18 +72,24 @@ abstract class AbstractMoveTest : KotlinMultiFileTestCase() {
         isMultiModule = config["isMultiModule"]?.asBoolean ?: false
 
         doTest({ rootDir, _ ->
-            val modulesWithRuntime: List<Module>
+            val modulesWithJvmRuntime: List<Module>
+            val modulesWithJsRuntime: List<Module>
 
             val withRuntime = config["withRuntime"]?.asBoolean ?: false
             if (withRuntime) {
                 val moduleManager = ModuleManager.getInstance(project)
-                modulesWithRuntime =
+                modulesWithJvmRuntime =
                         (config["modulesWithRuntime"]?.asJsonArray?.map { moduleManager.findModuleByName(it.asString!!)!! }
                          ?: moduleManager.modules.toList())
-                modulesWithRuntime.forEach { ConfigLibraryUtil.configureKotlinRuntimeAndSdk(it, PluginTestCaseBase.mockJdk()) }
+                modulesWithJvmRuntime.forEach { ConfigLibraryUtil.configureKotlinRuntimeAndSdk(it, PluginTestCaseBase.mockJdk()) }
+                modulesWithJsRuntime =
+                        (config["modulesWithJsRuntime"]?.asJsonArray?.map { moduleManager.findModuleByName(it.asString!!)!! }
+                         ?: emptyList())
+                modulesWithJsRuntime.forEach { ConfigLibraryUtil.configureKotlinJsRuntimeAndSdk(it, PluginTestCaseBase.mockJdk()) }
             }
             else {
-                modulesWithRuntime = emptyList()
+                modulesWithJvmRuntime = emptyList()
+                modulesWithJsRuntime = emptyList()
             }
 
             val mainFile = rootDir.findFileByRelativePath(mainFilePath)!!
@@ -122,8 +128,11 @@ abstract class AbstractMoveTest : KotlinMultiFileTestCase() {
 
                 EditorFactory.getInstance()!!.releaseEditor(editor)
 
-                modulesWithRuntime.forEach {
+                modulesWithJvmRuntime.forEach {
                     ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(it, PluginTestCaseBase.mockJdk())
+                }
+                modulesWithJsRuntime.forEach {
+                    ConfigLibraryUtil.unConfigureKotlinJsRuntimeAndSdk(it, PluginTestCaseBase.mockJdk())
                 }
             }
         },
