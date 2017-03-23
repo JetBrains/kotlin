@@ -75,6 +75,9 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
     @Parameter(property = "kotlin.compiler.incremental.cache.root", defaultValue = "${project.build.directory}/kotlin-ic", required = false, readonly = false)
     public String incrementalCachesRoot;
 
+    @Parameter(property = "kotlin.compiler.javaParameters", required = false, readonly = false)
+    protected boolean javaParameters;
+
     @NotNull
     private File getCachesDir() {
         return new File(incrementalCachesRoot, getSourceSetName());
@@ -130,7 +133,9 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
         // don't include runtime, it should be in maven dependencies
         arguments.noStdlib = true;
+        arguments.javaParameters = this.javaParameters;
 
+        //noinspection deprecation
         if (module != null || testModule != null) {
             getLog().warn("Parameters module and testModule are deprecated and ignored, they will be removed in further release.");
         }
