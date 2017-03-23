@@ -81,7 +81,8 @@ fun KtFile.dumpTextWithErrors(): String {
     return header + text
 }
 
-fun closeAndDeleteProject() = LightPlatformTestCase.closeAndDeleteProject()
+fun closeAndDeleteProject(): Unit =
+        ApplicationManager.getApplication().runWriteAction { LightPlatformTestCase.closeAndDeleteProject() }
 
 fun doKotlinTearDown(project: Project, runnable: RunnableWithException) {
     doKotlinTearDown(project) { runnable.run() }
