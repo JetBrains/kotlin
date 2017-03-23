@@ -5,7 +5,7 @@ build:
     [mkdir] Created dir: [Temp]/classes
     [javac] Compiling 1 source file to [Temp]/classes
     [javac] Running javac...
-    [javac] [TestData]/J.java:3: error: package kotlin does not exist
+    [javac] [TestData]/J.java:3: package kotlin does not exist
     [javac] import kotlin.Unit;
     [javac]              ^
     [javac] 1 error
