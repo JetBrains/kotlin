@@ -1034,6 +1034,19 @@ task string0(type: RunKonanTest) {
     source = "runtime/text/string0.kt"
 }
 
+task parse0(type: RunKonanTest) {
+    goldValue = "false\n" +
+            "true\n" +
+            "-1\n" +
+            "-86\n" +
+            "30\n" +
+            "4294967295\n" +
+            "bad format\n" +
+            "0.5\n" +
+            "2.39\n"
+    source = "runtime/text/parse0.kt"
+}
+
 task catch1(type: RunKonanTest) {
     goldValue = "Before\nCaught Throwable\nDone\n"
     source = "runtime/exceptions/catch1.kt"

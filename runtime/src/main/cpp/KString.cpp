@@ -47,6 +47,58 @@ OBJ_GETTER(utf8ToUtf16, Raw<const char> rawString) {
   RETURN_OBJ(result->obj());
 }
 
+template <typename T> T parseInt(KString value, KInt radix) {
+  Raw<const KChar> utf16(
+    CharArrayAddressOfElementAt(value, 0), value->count_);
+  std::string utf8;
+  utf8::utf16to8(utf16.begin(), utf16.end(), back_inserter(utf8));
+  char* end = nullptr;
+  long result = strtol(utf8.c_str(), &end, radix);
+  if (end != utf8.c_str() + utf8.size()) {
+    ThrowNumberFormatException();
+  }
+  return result;
+}
+
+KLong parseLong(KString value, KInt radix) {
+  Raw<const KChar> utf16(
+    CharArrayAddressOfElementAt(value, 0), value->count_);
+  std::string utf8;
+  utf8::utf16to8(utf16.begin(), utf16.end(), back_inserter(utf8));
+  char* end = nullptr;
+  KLong result = strtoll(utf8.c_str(), &end, radix);
+  if (end != utf8.c_str() + utf8.size()) {
+    ThrowNumberFormatException();
+  }
+  return result;
+}
+
+KFloat parseFloat(KString value) {
+  Raw<const KChar> utf16(
+    CharArrayAddressOfElementAt(value, 0), value->count_);
+  std::string utf8;
+  utf8::utf16to8(utf16.begin(), utf16.end(), back_inserter(utf8));
+  char* end = nullptr;
+  KFloat result = strtof(utf8.c_str(), &end);
+  if (end != utf8.c_str() + utf8.size()) {
+    ThrowNumberFormatException();
+  }
+  return result;
+}
+
+KDouble parseDouble(KString value) {
+  Raw<const KChar> utf16(
+    CharArrayAddressOfElementAt(value, 0), value->count_);
+  std::string utf8;
+  utf8::utf16to8(utf16.begin(), utf16.end(), back_inserter(utf8));
+  char* end = nullptr;
+  KDouble result = strtod(utf8.c_str(), &end);
+  if (end != utf8.c_str() + utf8.size()) {
+    ThrowNumberFormatException();
+  }
+  return result;
+}
+
 } // namespace
 
 extern "C" {
@@ -301,6 +353,22 @@ KChar Kotlin_Char_toUpperCase(KChar ch) {
   return towupper(ch);
 }
 
+KInt Kotlin_Char_digitOf(KChar ch, KInt radix) {
+  // TODO: make smarter and support full unicode.
+  const static KInt digits[] = {
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+    -1, -1, -1, -1, -1, -1, -1,
+    10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+    30, 31, 32, 33, 34, 35,
+    -1, -1, -1, -1, -1, -1,
+    10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+    30, 31, 32, 33, 34, 35 };
+  if (ch < 0x30 /* 0 */ || ch > 0x7a /* z */) return -1;
+  return digits[ch - 0x30];
+}
+
 KInt Kotlin_String_indexOfChar(KString thiz, KChar ch, KInt fromIndex) {
   if (fromIndex < 0 || fromIndex > thiz->count_) {
     return false;
@@ -428,6 +496,30 @@ OBJ_GETTER0(Kotlin_io_Console_readLine) {
     return nullptr;
   }
   RETURN_RESULT_OF(CreateStringFromCString, data);
+}
+
+KByte Kotlin_String_parseByte(KString value, KInt radix) {
+  return parseInt<KByte>(value, radix);
+}
+
+KShort Kotlin_String_parseShort(KString value, KInt radix) {
+  return parseInt<KShort>(value, radix);
+}
+
+KInt Kotlin_String_parseInt(KString value, KInt radix) {
+  return parseInt<KInt>(value, radix);
+}
+
+KLong Kotlin_String_parseLong(KString value, KInt radix) {
+  return parseLong(value, radix);
+}
+
+KFloat Kotlin_String_parseFloat(KString value) {
+  return parseFloat(value);
+}
+
+KDouble Kotlin_String_parseDouble(KString value) {
+  return parseDouble(value);
 }
 
 } // extern "C"

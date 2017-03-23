@@ -89,6 +89,16 @@ public final class Char : Comparable<Char> {
          * The maximum value of a Unicode surrogate code unit.
          */
         public const val MAX_SURROGATE: Char = MAX_LOW_SURROGATE
+
+        /**
+         * The minimum radix available for conversion to and from strings.
+         */
+        public const val MIN_RADIX: Int = 2
+
+        /**
+         * The minimum radix available for conversion to and from strings.
+         */
+        public const val MAX_RADIX: Int = 36
     }
 
     // Konan-specific.

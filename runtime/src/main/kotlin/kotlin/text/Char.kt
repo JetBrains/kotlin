@@ -79,3 +79,17 @@ external public fun Char.isHighSurrogate(): Boolean
  */
 @SymbolName("Kotlin_Char_isLowSurrogate")
 external public fun Char.isLowSurrogate(): Boolean
+
+@SymbolName("Kotlin_Char_digitOf")
+external internal fun digitOf(char: Char, radix: Int): Int
+
+/**
+ * Checks whether the given [radix] is valid radix for string to number and number to string conversion.
+ */
+@PublishedApi
+internal fun checkRadix(radix: Int): Int {
+    if(radix !in Char.MIN_RADIX..Char.MAX_RADIX) {
+        throw IllegalArgumentException("radix $radix was not in valid range ${Char.MIN_RADIX..Char.MAX_RADIX}")
+    }
+    return radix
+}

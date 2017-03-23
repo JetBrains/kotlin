@@ -43,9 +43,47 @@ OBJ_GETTER(Kotlin_Int_toString, KInt value) {
   RETURN_RESULT_OF(CreateStringFromCString, cstring);
 }
 
+OBJ_GETTER(Kotlin_Int_toStringRadix, KInt value, KInt radix) {
+  // TODO: maye not fit for smaller radices.
+  char cstring[32];
+  switch (radix) {
+    case 8:
+      snprintf(cstring, sizeof(cstring), "%o", value);
+      break;
+    case 10:
+      snprintf(cstring, sizeof(cstring), "%d", value);
+      break;
+    case 16:
+      snprintf(cstring, sizeof(cstring), "%x", value);
+      break;
+    default:
+      RuntimeAssert(false, "Unsupported radix");
+  }
+  RETURN_RESULT_OF(CreateStringFromCString, cstring);
+}
+
 OBJ_GETTER(Kotlin_Long_toString, KLong value) {
   char cstring[32];
   snprintf(cstring, sizeof(cstring), "%lld", static_cast<long long>(value));
+  RETURN_RESULT_OF(CreateStringFromCString, cstring);
+}
+
+OBJ_GETTER(Kotlin_Long_toStringRadix, KLong value, KInt radix) {
+  // TODO: may not fit for smaller radices.
+  char cstring[64];
+  switch (radix) {
+    case 8:
+      snprintf(cstring, sizeof(cstring), "%llo", value);
+      break;
+    case 10:
+      snprintf(cstring, sizeof(cstring), "%lld", value);
+      break;
+    case 16:
+      snprintf(cstring, sizeof(cstring), "%llx", value);
+      break;
+    default:
+      RuntimeAssert(false, "Unsupported radix");
+  }
   RETURN_RESULT_OF(CreateStringFromCString, cstring);
 }
 

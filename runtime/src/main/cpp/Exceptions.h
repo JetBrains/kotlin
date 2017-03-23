@@ -22,8 +22,10 @@ void ThrowNullPointerException();
 void ThrowArrayIndexOutOfBoundsException();
 // Throws class cast exception.
 void ThrowClassCastException();
-// Throws arithmetic exception
+// Throws arithmetic exception.
 void ThrowArithmeticException();
+// Throws number format exception.
+void ThrowNumberFormatException();
 
 #ifdef __cplusplus
 } // extern "C"

@@ -20,6 +20,11 @@ internal fun ThrowArithmeticException() : Nothing {
     throw ArithmeticException()
 }
 
+@ExportForCppRuntime
+internal fun ThrowNumberFormatException() : Nothing {
+    throw NumberFormatException()
+}
+
 fun ThrowNoWhenBranchMatchedException(): Nothing {
     throw NoWhenBranchMatchedException()
 }

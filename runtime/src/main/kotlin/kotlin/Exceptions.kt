@@ -193,3 +193,11 @@ public open class OutOfMemoryError : Error {
     constructor(s: String) : super(s) {
     }
 }
+
+public open class NumberFormatException : IllegalArgumentException {
+
+    constructor() : super()  {
+    }
+
+    constructor(s: String) : super(s) {}
+}
