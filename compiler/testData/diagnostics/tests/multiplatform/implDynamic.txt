@@ -1,0 +1,26 @@
+// -- Module: <m1-common> --
+package
+
+public final header class Foo {
+    public constructor Foo(/*0*/ p: kotlin.Any)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final header fun f1(/*0*/ s: kotlin.String): kotlin.Int
+    public final header fun f2(/*0*/ s: kotlin.collections.List<kotlin.String>?): kotlin.collections.MutableMap<kotlin.Boolean?, Foo>
+    public final header fun </*0*/ T : kotlin.collections.Set<kotlin.Number>> f3(/*0*/ t: T): T?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+
+// -- Module: <m2-js> --
+package
+
+public final impl class Foo {
+    public constructor Foo(/*0*/ p: dynamic)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final impl fun f1(/*0*/ s: dynamic): dynamic
+    public final impl fun f2(/*0*/ s: dynamic): kotlin.collections.MutableMap<kotlin.Boolean?, Foo>
+    public final impl fun </*0*/ T : kotlin.collections.Set<kotlin.Number>> f3(/*0*/ t: T): dynamic
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

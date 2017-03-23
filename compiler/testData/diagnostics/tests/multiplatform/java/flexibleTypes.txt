@@ -1,0 +1,27 @@
+// -- Module: <m1-common> --
+package
+
+public final header class Foo {
+    public constructor Foo(/*0*/ p: kotlin.Any)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final header fun f1(/*0*/ s: kotlin.String): kotlin.Int
+    public final header fun f2(/*0*/ s: kotlin.collections.List<kotlin.String>?): kotlin.collections.MutableMap<kotlin.Boolean?, Foo>
+    public final header fun </*0*/ T : kotlin.collections.Set<kotlin.Number>> f3(/*0*/ t: T): T?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+
+// -- Module: <m2-jvm> --
+package
+
+public open class FooImpl {
+    public constructor FooImpl(/*0*/ p: kotlin.Any!)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun f1(/*0*/ s: kotlin.String!): kotlin.Int
+    public final fun f2(/*0*/ s: kotlin.collections.(Mutable)List<kotlin.String!>!): kotlin.collections.(Mutable)Map<kotlin.Boolean!, FooImpl!>!
+    public final fun </*0*/ T : kotlin.collections.(Mutable)Set<kotlin.Number!>!> f3(/*0*/ t: T!): T!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias Foo = FooImpl

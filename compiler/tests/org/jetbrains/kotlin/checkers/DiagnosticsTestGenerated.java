@@ -13102,6 +13102,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("implDynamic.kt")
+            public void testImplDynamic() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/implDynamic.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("implFakeOverride.kt")
             public void testImplFakeOverride() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/implFakeOverride.kt");
@@ -13243,6 +13249,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             public static class Java extends AbstractDiagnosticsTest {
                 public void testAllFilesPresentInJava() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/java"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("flexibleTypes.kt")
+                public void testFlexibleTypes() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/multiplatform/java/flexibleTypes.kt");
+                    doTest(fileName);
                 }
 
                 @TestMetadata("parameterNames.kt")
