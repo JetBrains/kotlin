@@ -3,6 +3,14 @@
 Cleaning output files:
   out/production/module/foo/A.class
 End of files
+Compiling files:
+End of files
+Marked as dirty by Kotlin:
+  src/B.kt
+  src/createA.kt
+  src/useAfoo.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
 Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
   out/production/module/foo/B.class
