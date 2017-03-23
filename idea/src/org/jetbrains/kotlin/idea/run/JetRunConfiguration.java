@@ -40,7 +40,6 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiPackage;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.refactoring.listeners.RefactoringElementAdapter;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import kotlin.collections.ArraysKt;
@@ -83,12 +82,6 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
     @Override
     public Collection<Module> getValidModules() {
         return Arrays.asList(ModuleManager.getInstance(getProject()).getModules());
-    }
-
-    @Nullable
-    @Override
-    public GlobalSearchScope getSearchScope() {
-        return SearchScopeProvider.createSearchScope(getModules());
     }
 
     @NotNull
