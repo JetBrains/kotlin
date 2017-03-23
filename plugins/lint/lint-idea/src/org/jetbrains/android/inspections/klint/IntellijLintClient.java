@@ -8,12 +8,13 @@ import com.android.ide.common.res2.AbstractResourceRepository;
 import com.android.ide.common.res2.ResourceFile;
 import com.android.ide.common.res2.ResourceItem;
 import com.android.sdklib.repository.AndroidSdkHandler;
-import com.android.tools.idea.gradle.util.Projects;
+import com.android.tools.idea.project.AndroidProjectInfo;
 import com.android.tools.idea.project.AndroidProjectInfo;
 import com.android.tools.idea.res.AppResourceRepository;
 import com.android.tools.idea.res.LocalResourceRepository;
+import com.android.tools.idea.res.ModuleResourceRepository;
+import com.android.tools.idea.res.ProjectResourceRepository;
 import com.android.tools.idea.sdk.IdeSdks;
-import com.android.tools.idea.welcome.install.AndroidSdk;
 import com.android.tools.klint.checks.ApiLookup;
 import com.android.tools.klint.client.api.*;
 import com.android.tools.klint.detector.api.*;
@@ -364,7 +365,7 @@ public class IntellijLintClient extends LintClient implements Disposable {
     if (module != null) {
       AndroidFacet facet = AndroidFacet.getInstance(module);
       if (facet != null) {
-        AndroidSdkData sdkData = facet.getSdkData();
+        AndroidSdkData sdkData = AndroidSdkData.getSdkData(facet);   // AS24 AndroidSdkData.getSdkData()
         if (sdkData != null) {
           return sdkData.getSdkHandler();
         }
