@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -231,8 +231,8 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         LanguageVersion apiVersion = parseVersion(configuration, arguments.apiVersion, "API");
 
         if (languageVersion == null) {
-            // If only "-api-version" is specified, language version is assumed to be the latest
-            languageVersion = LanguageVersion.LATEST;
+            // If only "-api-version" is specified, language version is assumed to be the latest stable
+            languageVersion = LanguageVersion.LATEST_STABLE;
         }
 
         if (apiVersion == null) {

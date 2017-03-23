@@ -61,8 +61,8 @@ data class JvmBuildMetaInfo(
 fun JvmBuildMetaInfo(args: CommonCompilerArguments): JvmBuildMetaInfo =
         JvmBuildMetaInfo(isEAP = KotlinCompilerVersion.isPreRelease(),
                          compilerBuildVersion = KotlinCompilerVersion.VERSION,
-                         languageVersionString = args.languageVersion ?: LanguageVersion.LATEST.versionString,
-                         apiVersionString = args.apiVersion ?: ApiVersion.LATEST.versionString,
+                         languageVersionString = args.languageVersion ?: LanguageVersion.LATEST_STABLE.versionString,
+                         apiVersionString = args.apiVersion ?: ApiVersion.LATEST_STABLE.versionString,
                          coroutinesEnable = args.coroutinesEnable,
                          coroutinesWarn = args.coroutinesWarn,
                          coroutinesError = args.coroutinesError,

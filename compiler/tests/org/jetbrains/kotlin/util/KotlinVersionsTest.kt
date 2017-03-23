@@ -85,7 +85,7 @@ class KotlinVersionsTest : KtUsefulTestCase() {
         )
 
         versions.add(
-                LanguageVersion.LATEST.versionString.toVersion("LanguageVersion.LATEST")
+                LanguageVersion.LATEST_STABLE.versionString.toVersion("LanguageVersion.LATEST_STABLE")
         )
 
         if (versions.any { v1 -> versions.any { v2 -> !v1.isConsistentWith(v2) } }) {

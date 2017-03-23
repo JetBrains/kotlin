@@ -122,7 +122,7 @@ fun KotlinFacet.configureFacet(
         compilerArguments = null
         compilerSettings = null
         initializeIfNeeded(module, modelsProvider.getModifiableRootModel(module), platformKind)
-        languageLevel = LanguageVersion.fromFullVersionString(compilerVersion) ?: LanguageVersion.LATEST
+        languageLevel = LanguageVersion.fromFullVersionString(compilerVersion) ?: LanguageVersion.LATEST_STABLE
         // Both apiLevel and languageLevel should be initialized in the lines above
         if (apiLevel!! > languageLevel!!) {
             apiLevel = languageLevel

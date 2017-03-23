@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -272,7 +272,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     }
 
     private static String getLanguageVersionOrDefault(@Nullable String languageVersion) {
-        return languageVersion != null ? languageVersion : LanguageVersion.LATEST.getVersionString();
+        return languageVersion != null ? languageVersion : LanguageVersion.LATEST_STABLE.getVersionString();
     }
 
     private static void setupFileChooser(

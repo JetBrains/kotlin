@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ fun writeKotlinMetadata(
     av.visit(JvmAnnotationNames.BYTECODE_VERSION_FIELD_NAME, JvmBytecodeBinaryVersion.INSTANCE.toArray())
     av.visit(JvmAnnotationNames.KIND_FIELD_NAME, kind.id)
     var flags = extraFlags
-    if (KotlinCompilerVersion.isPreRelease() && state.languageVersionSettings.languageVersion == LanguageVersion.LATEST) {
+    if (KotlinCompilerVersion.isPreRelease() && state.languageVersionSettings.languageVersion == LanguageVersion.LATEST_STABLE) {
         flags = flags or JvmAnnotationNames.METADATA_PRE_RELEASE_FLAG
     }
     if (flags != 0) {

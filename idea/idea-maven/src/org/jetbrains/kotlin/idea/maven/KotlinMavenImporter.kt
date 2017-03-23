@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -146,7 +146,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
 
     private fun configureFacet(mavenProject: MavenProject, modifiableModelsProvider: IdeModifiableModelsProvider, module: Module) {
         val mavenPlugin = mavenProject.findPlugin(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID) ?: return
-        val compilerVersion = mavenPlugin.version ?: LanguageVersion.LATEST.versionString
+        val compilerVersion = mavenPlugin.version ?: LanguageVersion.LATEST_STABLE.versionString
         val kotlinFacet = module.getOrCreateFacet(modifiableModelsProvider, false)
         val platform = detectPlatformByExecutions(mavenProject) ?: detectPlatformByLibraries(mavenProject)
 

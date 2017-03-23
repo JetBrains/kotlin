@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -314,12 +314,12 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             val languageVersionDirective = directiveMap[LANGUAGE_VERSION]
             if (apiVersionString == null && directives == null && languageVersionDirective == null) return null
 
-            val apiVersion = (if (apiVersionString != null) ApiVersion.parse(apiVersionString) else ApiVersion.LATEST)
+            val apiVersion = (if (apiVersionString != null) ApiVersion.parse(apiVersionString) else ApiVersion.LATEST_STABLE)
                              ?: error("Unknown API version: $apiVersionString")
 
             val languageFeatures = directives?.let(this::collectLanguageFeatureMap).orEmpty()
 
-            val languageVersion: LanguageVersion = languageVersionDirective?.let { LanguageVersion.fromVersionString(it) } ?: LanguageVersion.LATEST
+            val languageVersion: LanguageVersion = languageVersionDirective?.let { LanguageVersion.fromVersionString(it) } ?: LanguageVersion.LATEST_STABLE
 
             return DiagnosticTestLanguageVersionSettings(languageFeatures, apiVersion, languageVersion)
         }

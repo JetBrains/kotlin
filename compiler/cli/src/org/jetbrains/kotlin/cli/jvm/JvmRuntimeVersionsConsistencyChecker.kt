@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -199,10 +199,10 @@ object JvmRuntimeVersionsConsistencyChecker {
     }
 
     private fun checkNotNewerThanCompiler(messageCollector: MessageCollector, jar: KotlinLibraryFile): Boolean {
-        if (jar.version > ApiVersion.LATEST.version) {
+        if (jar.version > ApiVersion.LATEST_STABLE.version) {
             messageCollector.issue(
                     jar.file,
-                    "Runtime JAR file has version ${jar.version} which is newer than compiler version ${ApiVersion.LATEST.version}",
+                    "Runtime JAR file has version ${jar.version} which is newer than compiler version ${ApiVersion.LATEST_STABLE.version}",
                     CompilerMessageSeverity.ERROR
             )
             return true

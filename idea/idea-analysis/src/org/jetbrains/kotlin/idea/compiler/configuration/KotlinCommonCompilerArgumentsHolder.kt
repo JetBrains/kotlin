@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ class KotlinCommonCompilerArgumentsHolder : BaseKotlinCompilerSettings<CommonCom
     override fun createSettings() = CommonCompilerArguments.createDefaultInstance()
 
     companion object {
-        private val DEFAULT_LANGUAGE_VERSION = LanguageVersion.LATEST.versionString
+        private val DEFAULT_LANGUAGE_VERSION = LanguageVersion.LATEST_STABLE.versionString
 
         fun getInstance(project: Project) =
                 ServiceManager.getService<KotlinCommonCompilerArgumentsHolder>(project, KotlinCommonCompilerArgumentsHolder::class.java)!!

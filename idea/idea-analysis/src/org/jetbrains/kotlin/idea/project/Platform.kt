@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ fun Project.getLanguageVersionSettings(contextModule: Module? = null): LanguageV
     val languageVersion =
             LanguageVersion.fromVersionString(arguments.languageVersion)
             ?: contextModule?.getAndCacheLanguageLevelByDependencies()
-            ?: LanguageVersion.LATEST
+            ?: LanguageVersion.LATEST_STABLE
     val apiVersion = ApiVersion.createByLanguageVersion(LanguageVersion.fromVersionString(arguments.apiVersion) ?: languageVersion)
     val compilerSettings = KotlinCompilerSettings.getInstance(this).settings
     val extraLanguageFeatures = getExtraLanguageFeatures(
