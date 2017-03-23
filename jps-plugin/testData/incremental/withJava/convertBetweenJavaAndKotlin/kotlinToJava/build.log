@@ -3,6 +3,13 @@
 Cleaning output files:
   out/production/module/TheClass.class
 End of files
+Compiling files:
+End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Compiling files:
+  src/TheClass.java
+End of files
 Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
   out/production/module/Usage.class
@@ -14,15 +21,5 @@ End of files
 Exit code: OK
 ------------------------------------------
 Compiling files:
-  src/TheClass.java
   src/Usage.java
 End of files
-Cleaning output files:
-  out/production/module/META-INF/module.kotlin_module
-  out/production/module/UsageInKotlinKt.class
-End of files
-Compiling files:
-  src/usageInKotlin.kt
-End of files
-Exit code: OK
-------------------------------------------
