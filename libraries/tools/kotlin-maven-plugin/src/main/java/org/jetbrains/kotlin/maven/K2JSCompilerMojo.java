@@ -70,6 +70,12 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
     private boolean sourceMap;
 
     /**
+     * Main invocation behaviour. Possible values are <b>CALL</b> and <b>NO_CALL</b>.
+     */
+    @Parameter
+    private String main;
+
+    /**
      * <p>Specifies which JS module system to generate compatible sources for. Options are:</p>
      * <ul>
      *     <li><b>amd</b> &mdash;
@@ -90,6 +96,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
         arguments.noStdlib = true;
         arguments.metaInfo = metaInfo;
         arguments.moduleKind = moduleKind;
+        arguments.main = main;
 
         List<String> libraries = null;
         try {

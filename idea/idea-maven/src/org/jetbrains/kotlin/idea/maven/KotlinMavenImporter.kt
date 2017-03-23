@@ -129,6 +129,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
                 arguments.outputFile = configuration.getChild("outputFile")?.text
                 arguments.metaInfo = configuration.getChild("metaInfo")?.text?.trim()?.toBoolean() ?: false
                 arguments.moduleKind = configuration.getChild("moduleKind")?.text
+                arguments.main = configuration.getChild("main")?.text
             }
         }
 
