@@ -25,7 +25,7 @@
     <property environment="env"/>
     <property name="tools.jar" value="${env.JDK_18}/lib/tools.jar"/>
 
-    <property name="java.target" value="1.8"/>
+    <property name="java.target" value="1.6"/>
 
     <condition property="bootstrap.or.local.build" value="true" else="false">
         <or>
