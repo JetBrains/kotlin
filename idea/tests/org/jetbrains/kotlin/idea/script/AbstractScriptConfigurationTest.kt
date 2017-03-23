@@ -184,7 +184,7 @@ abstract class AbstractScriptConfigurationTest : KotlinDaemonAnalyzerTestCase() 
                 Extensions.getArea(project),
                 ScriptTemplatesProvider.EP_NAME,
                 provider,
-                testRootDisposable
+                myTestRootDisposable
         )
         ScriptDependenciesManager.reloadScriptDefinitions(project)
     }
