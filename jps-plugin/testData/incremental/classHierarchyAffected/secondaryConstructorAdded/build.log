@@ -17,28 +17,27 @@ Cleaning output files:
   out/production/module/AConstructorFunctionKt.class
   out/production/module/META-INF/module.kotlin_module
 End of files
-Cleaning output files:
-  out/production/module/CreateAFromStringKt.class
-End of files
 Compiling files:
   src/A.kt
-  src/createAFromString.kt
 End of files
 Marked as dirty by Kotlin:
   src/AChild.kt
   src/createAFromInt.kt
+  src/createAFromString.kt
   src/useA.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Cleaning output files:
   out/production/module/AChild.class
   out/production/module/CreateAFromIntKt.class
+  out/production/module/CreateAFromStringKt.class
   out/production/module/META-INF/module.kotlin_module
   out/production/module/UseAKt.class
 End of files
 Compiling files:
   src/AChild.kt
   src/createAFromInt.kt
+  src/createAFromString.kt
   src/useA.kt
 End of files
 Exit code: OK
