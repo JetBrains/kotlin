@@ -35,9 +35,69 @@ class KotlinStepOverInlinedLinesHint(
 
     private val LOG = Logger.getInstance(KotlinStepOverInlinedLinesHint::class.java)
 
+    private var mySteppedOut = false
+
+    private var myFrameCount: Int
+    private var myPosition: SourcePosition?
+
+    // TODO: Copied from RequestHint constructor. But can't reused code because of private fields.
+    init {
+        var frameCount = 0
+        var position: SourcePosition? = null
+        try {
+            frameCount = stepThread.frameCount()
+
+            position = ApplicationManager.getApplication().runReadAction(Computable<com.intellij.debugger.SourcePosition> {
+                ContextUtil.getSourcePosition(object : StackFrameContext {
+                    override fun getFrameProxy(): StackFrameProxy? {
+                        try {
+                            return stepThread.frame(0)
+                        }
+                        catch (e: EvaluateException) {
+                            LOG.debug(e)
+                            return null
+                        }
+
+                    }
+
+                    override fun getDebugProcess(): DebugProcess {
+                        return suspendContext.debugProcess
+                    }
+                })
+            })
+        }
+        catch (e: Exception) {
+            LOG.info(e)
+        }
+        finally {
+            myFrameCount = frameCount
+            myPosition = position
+        }
+    }
+
     private val filter = methodFilter
 
     override fun getDepth(): Int = StepRequest.STEP_OVER
+
+    // TODO: Copy of RequestHint.isTheSameFrame()
+    private fun isTheSameFrame(context: SuspendContextImpl): Boolean {
+        if (mySteppedOut) return false
+
+        val contextThread = context.thread
+        if (contextThread != null) {
+            try {
+                val currentDepth = contextThread.frameCount()
+                if (currentDepth < myFrameCount) {
+                    mySteppedOut = true
+                }
+                return currentDepth == myFrameCount
+            }
+            catch (ignored: EvaluateException) {
+            }
+
+        }
+        return false
+    }
 
     override fun getNextStepDepth(context: SuspendContextImpl): Int {
         try {
@@ -52,7 +112,7 @@ class KotlinStepOverInlinedLinesHint(
                     }
                 }
 
-                if (isSteppedOut) {
+                if (mySteppedOut) {
                     return STOP
                 }
 
