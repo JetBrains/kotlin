@@ -270,7 +270,7 @@ class HeaderImplDeclarationChecker(val moduleToCheck: ModuleDescriptor? = null) 
             aExtensionReceiver?.type?.let(substitutor) != bExtensionReceiver?.type) return Incompatible.ParameterTypes
         if (substitutor(a.returnType) != b.returnType) return Incompatible.ReturnType
 
-        if (!equalsBy(aParams, bParams, ValueParameterDescriptor::getName)) return Incompatible.ParameterNames
+        if (b.hasStableParameterNames() && !equalsBy(aParams, bParams, ValueParameterDescriptor::getName)) return Incompatible.ParameterNames
         if (!equalsBy(aTypeParams, bTypeParams, TypeParameterDescriptor::getName)) return Incompatible.TypeParameterNames
 
         if (a.modality != b.modality) return Incompatible.Modality
