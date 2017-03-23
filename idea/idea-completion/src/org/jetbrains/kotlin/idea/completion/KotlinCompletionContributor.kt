@@ -50,6 +50,8 @@ class KotlinCompletionContributor : CompletionContributor() {
 
     companion object {
         val DEFAULT_DUMMY_IDENTIFIER: String = CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "$" // add '$' to ignore context after the caret
+
+        private val STRING_TEMPLATE_AFTER_DOT_REAL_START_OFFSET = OffsetKey.create("STRING_TEMPLATE_AFTER_DOT_REAL_START_OFFSET")
     }
 
     init {
@@ -80,6 +82,7 @@ class KotlinCompletionContributor : CompletionContributor() {
                     val prefix = tokenBefore.text.substring(0, offset - tokenBefore.startOffset)
                     context.dummyIdentifier = "{" + expression.text + prefix + CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + "}"
                     context.offsetMap.addOffset(CompletionInitializationContext.START_OFFSET, expression.startOffset)
+                    context.offsetMap.addOffset(STRING_TEMPLATE_AFTER_DOT_REAL_START_OFFSET, offset + 1)
                     return
                 }
             }
@@ -238,13 +241,8 @@ class KotlinCompletionContributor : CompletionContributor() {
             val expression = (position.parent as KtBlockStringTemplateEntry).expression
             if (expression is KtDotQualifiedExpression) {
                 val correctedPosition = (expression.selectorExpression as KtNameReferenceExpression).firstChild
-                // Workaround for KT-16848
-                // ex:
-                // expression: some.IntellijIdeaRulezzz
-                // correctedOffset: ^
-                // expression: some.funcIntellijIdeaRulezzz
-                // correctedOffset      ^
-                val correctedOffset = correctedPosition.endOffset - CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED.length
+                val context = position.getUserData(CompletionContext.COMPLETION_CONTEXT_KEY)!!
+                val correctedOffset = context.offsetMap.getOffset(STRING_TEMPLATE_AFTER_DOT_REAL_START_OFFSET)
                 val correctedParameters = parameters.withPosition(correctedPosition, correctedOffset)
                 doComplete(correctedParameters, toFromOriginalFileMapper, result,
                            lookupElementPostProcessor = { wrapLookupElementForStringTemplateAfterDotCompletion(it) })
