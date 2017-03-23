@@ -2256,10 +2256,8 @@ public inline fun <T> Iterable<T>.asIterable(): Iterable<T> {
 /**
  * Creates a [Sequence] instance that wraps the original collection returning its elements when being iterated.
  */
-@FixmeSequences
 public fun <T> Iterable<T>.asSequence(): Sequence<T> {
-    //return Sequence { this.iterator() }
-    TODO()
+    return Sequence { this.iterator() }
 }
 
 /**

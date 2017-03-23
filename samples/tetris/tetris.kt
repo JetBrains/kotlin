@@ -1,5 +1,4 @@
 import kotlinx.cinterop.*
-import konan.internal.*
 import sdl.*
 
 typealias Field = Array<ByteArray>

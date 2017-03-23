@@ -1,0 +1,4 @@
+headers = stdio.h stdlib.h string.h
+compilerOpts = -D_POSIX_SOURCE
+linkerOpts =
+excludedFunctions =
