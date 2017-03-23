@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -25,7 +26,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
     var currentFile     : IrFile?     = null
     var currentFunction : IrFunction? = null
-    var functionScope   : Scope?      = null
+    var currentScope    : Scope?      = null
 
     //-------------------------------------------------------------------------//
 
@@ -44,9 +45,16 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
     //-------------------------------------------------------------------------//
 
+    override fun visitProperty(declaration: IrProperty): IrStatement {
+        currentScope = Scope(declaration.descriptor)
+        return super.visitProperty(declaration)
+    }
+
+    //-------------------------------------------------------------------------//
+
     override fun visitFunction(declaration: IrFunction): IrStatement {
         currentFunction = declaration
-        functionScope   = Scope(declaration.descriptor)
+        currentScope    = Scope(declaration.descriptor)
         return super.visitFunction(declaration)
     }
 
@@ -78,9 +86,10 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     //---------------------------------------------------------------------//
 
     fun needsEvaluation(expression: IrExpression): Boolean {
-        if (expression is IrGetValue)       return false                                // Parameter is already GetValue - nothing to evaluate.
-        if (expression is IrConst<*>)       return false                                // Parameter is constant - nothing to evaluate.
-        if (isLambdaExpression(expression)) return false                                // Parameter is lambda - will be inlined.
+        if (expression is IrGetValue)          return false                                 // Parameter is already GetValue - nothing to evaluate.
+        if (expression is IrConst<*>)          return false                                 // Parameter is constant - nothing to evaluate.
+        if (expression is IrCallableReference) return false                                 // Parameter is nothing to evaluate.
+        if (isLambdaExpression(expression))    return false                                 // Parameter is lambda - will be inlined.
         return true
     }
 
@@ -123,7 +132,8 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
                 return@forEach
             }
 
-            val newVar = functionScope!!.createTemporaryVariable(argument, "inline", false) // Create new variable and init it with the parameter expression.
+            val varName = currentScope!!.scopeOwner.name.toString() + "_inline"
+            val newVar = currentScope!!.createTemporaryVariable(argument, varName, false)  // Create new variable and init it with the parameter expression.
             statements.add(0, newVar)                                                       // Add initialization of the new variable in statement list.
 
             val getVal = IrGetValueImpl(0, 0, newVar.descriptor)                            // Create new IR element representing access the new variable.
@@ -231,7 +241,8 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         fun newVariable(oldVariable: IrVariable): IrVariable {
             val initializer = oldVariable.initializer!!
             val isMutable   = oldVariable.descriptor.isVar
-            return functionScope!!.createTemporaryVariable(initializer, "inline", isMutable)    // Create new variable and init it with the parameter expression.
+            val varName = currentScope!!.scopeOwner.name.toString() + "_inline"
+            return currentScope!!.createTemporaryVariable(initializer, varName, isMutable) // Create new variable and init it with the parameter expression.
         }
 
         //---------------------------------------------------------------------//

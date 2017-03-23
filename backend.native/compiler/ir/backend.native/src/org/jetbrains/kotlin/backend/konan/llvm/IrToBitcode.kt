@@ -386,7 +386,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     /**
      * The scope of variable visibility.
      */
-    private inner class VariableScope : InnerScopeImpl() {
+    open private inner class VariableScope : InnerScopeImpl() {
 
         override fun genDeclareVariable(descriptor: VariableDescriptor, value: LLVMValueRef?): Int {
             return codegen.vars.createVariable(descriptor to this, value)
@@ -1423,8 +1423,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
 
         val inlinedFunctionScope = InlinedFunctionScope(value)
         using(inlinedFunctionScope) {
-            value.statements.forEach {
-                generateStatement(it)
+            using(VariableScope()) {
+                value.statements.forEach {
+                    generateStatement(it)
+                }
             }
         }
 
