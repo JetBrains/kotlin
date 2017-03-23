@@ -43,6 +43,7 @@ import com.intellij.psi.search.FilenameIndex
 import com.intellij.xdebugger.XDebuggerManager
 import com.intellij.xdebugger.XDebuggerUtil
 import com.intellij.xdebugger.breakpoints.*
+import com.sun.jdi.request.StepRequest
 import org.jetbrains.java.debugger.breakpoints.properties.JavaBreakpointProperties
 import org.jetbrains.java.debugger.breakpoints.properties.JavaLineBreakpointProperties
 import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpoint
@@ -70,6 +71,9 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     protected var _debuggerContext: DebuggerContextImpl? = null
     protected val debuggerContext get() = _debuggerContext!!
 
+    protected var _commandProvider: KotlinSteppingCommandProvider? = KotlinSteppingCommandProvider()
+    protected val commandProvider get() = _commandProvider!!
+
     override fun initApplication() {
         super.initApplication()
         saveDefaultSettings()
@@ -82,6 +86,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
         _evaluationContext = null
         _debuggerContext = null
+        _commandProvider = null
     }
 
     protected fun configureSettings(fileText: String) {
@@ -148,17 +153,20 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     }
 
     protected fun SuspendContextImpl.doStepInto(ignoreFilters: Boolean, smartStepFilter: MethodFilter?) {
-        dp.managerThread!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, smartStepFilter))
+        val stepIntoCommand = runReadAction {
+            commandProvider.getStepIntoCommand(this, ignoreFilters, smartStepFilter, StepRequest.STEP_LINE)
+        } ?: dp.createStepIntoCommand(this, ignoreFilters, smartStepFilter)
+        dp.managerThread.schedule(stepIntoCommand)
     }
 
     protected fun SuspendContextImpl.doStepOut() {
-        val stepOutCommand = runReadAction { KotlinSteppingCommandProvider().getStepOutCommand(this, debuggerContext) }
+        val stepOutCommand = runReadAction { commandProvider.getStepOutCommand(this, debuggerContext) }
                              ?: dp.createStepOutCommand(this)
         dp.managerThread.schedule(stepOutCommand)
     }
 
     protected fun SuspendContextImpl.doStepOver() {
-        val stepOverCommand = runReadAction { KotlinSteppingCommandProvider().getStepOverCommand(this, false, debuggerContext) }
+        val stepOverCommand = runReadAction { commandProvider.getStepOverCommand(this, false, debuggerContext) }
                              ?: dp.createStepOverCommand(this, false)
         dp.managerThread.schedule(stepOverCommand)
     }
@@ -180,7 +188,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
         when {
             !line.startsWith("//") -> return
-            line.startsWith("// STEP_INTO: ") -> repeat("// STEP_INTO: ") { stepInto(this) }
+            line.startsWith("// STEP_INTO: ") -> repeat("// STEP_INTO: ") { doStepInto(false, null) }
             line.startsWith("// STEP_OUT: ") -> repeat("// STEP_OUT: ") { doStepOut() }
             line.startsWith("// STEP_OVER: ") -> repeat("// STEP_OVER: ") { doStepOver() }
             line.startsWith("// SMART_STEP_INTO_BY_INDEX: ") -> doOnBreakpoint { doSmartStepInto(InTextDirectivesUtils.getPrefixedInt(line, "// SMART_STEP_INTO_BY_INDEX: ")!!) }
