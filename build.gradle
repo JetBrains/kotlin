@@ -112,6 +112,12 @@ class PlatformInfo {
         }
     }
 
+    String simpleOsName() {
+        if (isMac()) return 'macos'
+        if (isLinux()) return 'linux'
+        throw unsupportedPlatformException()
+    }
+
     Throwable unsupportedPlatformException() {
         return new Error("unsupported platform: $osName/$osArch")
     }
@@ -233,7 +239,8 @@ task bundle(type: Tar) {
         include 'samples/**'
         into 'kotlin-native'
     }
-    baseName = 'kotlin-native-compiler'
+    baseName = 'kotlin-native'
+    appendix = simpleOsName()
     destinationDir = file('.')
     extension = 'tgz'
     compression = Compression.GZIP
