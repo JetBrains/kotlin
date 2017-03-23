@@ -24,11 +24,10 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.junit.Assert
-import org.xml.sax.Attributes
-import org.xml.sax.helpers.DefaultHandler
+import org.w3c.dom.Element
 import java.io.File
 import java.util.*
-import javax.xml.parsers.SAXParserFactory
+import javax.xml.parsers.DocumentBuilderFactory
 
 class KotlinVersionsTest : KtUsefulTestCase() {
     fun testVersionsAreConsistent() {
@@ -67,7 +66,7 @@ class KotlinVersionsTest : KtUsefulTestCase() {
         )
 
         versions.add(
-                loadValueFromPomXml("libraries/pom.xml", listOf("project", "version"))
+                loadValueFromPomXml("libraries/pom.xml", listOf("version"))
                         ?.toVersion("version in pom.xml")
                 ?: error("No version in libraries/pom.xml")
         )
@@ -91,8 +90,8 @@ class KotlinVersionsTest : KtUsefulTestCase() {
 
         FileUtil.processFilesRecursively(File("libraries"), Processor { file ->
             if (file.name == "pom.xml") {
-                if (loadValueFromPomXml(file.path, listOf("project", "parent", "artifactId")) == "kotlin-project") {
-                    val version = loadValueFromPomXml(file.path, listOf("project", "parent", "version"))
+                if (loadValueFromPomXml(file.path, listOf("parent", "artifactId")) == "kotlin-project") {
+                    val version = loadValueFromPomXml(file.path, listOf("version"))
                                   ?: error("No version found in pom.xml at $file")
                     poms.add(Pom(file.path, version))
                 }
@@ -116,29 +115,12 @@ class KotlinVersionsTest : KtUsefulTestCase() {
     private fun loadValueFromPomXml(filePath: String, query: List<String>): String? {
         assert(filePath.endsWith("pom.xml")) { filePath }
 
-        var result: String? = null
+        val docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+        val input = docBuilder.parse(File(filePath).inputStream())
 
-        SAXParserFactory.newInstance().newSAXParser().parse(File(filePath), object : DefaultHandler() {
-            val currentPath = mutableListOf<String>()
-
-            override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
-                currentPath.add(qName)
-            }
-
-            override fun endElement(uri: String, localName: String, qName: String) {
-                assert(currentPath.lastOrNull() == qName) { "Invalid XML at $filePath: mismatched tag '$qName'" }
-                currentPath.removeAt(currentPath.lastIndex)
-            }
-
-            override fun characters(ch: CharArray, start: Int, length: Int) {
-                if (currentPath == query) {
-                    assert(result == null) { "More than one value found for $query in $filePath" }
-                    result = String(ch, start, length).trim()
-                }
-            }
-        })
-
-        return result
+        return query.fold(input.documentElement) { element, tagName ->
+            element?.getElementsByTagName(tagName)?.item(0) as? Element
+        }?.textContent
     }
 
     private fun Collection<Any>.areEqual(): Boolean = all(first()::equals)
