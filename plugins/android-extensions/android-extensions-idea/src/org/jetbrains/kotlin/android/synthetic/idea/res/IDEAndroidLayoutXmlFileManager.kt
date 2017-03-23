@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.android.synthetic.idea.res
 
 import com.android.builder.model.SourceProvider
-import com.android.tools.idea.gradle.AndroidGradleModel
+import com.android.tools.idea.gradle.project.model.AndroidModuleModel
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.PsiElement
@@ -112,20 +112,8 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
     private fun getAndroidModuleInfo(androidFacet: AndroidFacet): AndroidModule? {
         val applicationPackage = androidFacet.manifest?.`package`?.toString() ?: return null
 
-        val allResDirectories = androidFacet.getAppResources(true)?.resourceDirs.orEmpty().mapNotNull { it.canonicalPath }
-
-        val resDirectoriesForMainVariant = androidFacet.run {
-            val resDirsFromSourceProviders = AndroidGradleModel.get(this.module)?.allSourceProviders.orEmpty()
-                    .filter { it.name != "main" }
-                    .flatMap { it.resDirectories }
-                    .map { it.canonicalPath }
-
-            allResDirectories - resDirsFromSourceProviders
-        }
-
-        val variants = mutableListOf(AndroidVariant("main", resDirectoriesForMainVariant))
-
-        AndroidGradleModel.get(androidFacet.module)?.let { androidGradleModel ->
+        val variants = mutableListOf(androidFacet.mainSourceProvider.toVariant())
+        AndroidModuleModel.get(androidFacet.module)?.let { androidGradleModel ->
             androidGradleModel.activeSourceProviders.filter { it.name != "main" }.forEach { sourceProvider ->
                 variants += sourceProvider.toVariant()
             }
