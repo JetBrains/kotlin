@@ -1,0 +1,22 @@
+package test
+
+public interface ReturnInnerSubclassOfSupersInner {
+
+    public open class Sub</*0*/ B : kotlin.Any!> : test.ReturnInnerSubclassOfSupersInner.Super<B!> {
+        public constructor Sub</*0*/ B : kotlin.Any!>()
+
+        public/*package*/ open inner class Inner /*captured type parameters: /*0*/ B : kotlin.Any!*/ : test.ReturnInnerSubclassOfSupersInner.Super<kotlin.Any!>.Inner {
+            public/*package*/ constructor Inner()
+            public/*package*/ open override /*1*/ fun get(): test.ReturnInnerSubclassOfSupersInner.Sub<B!>!
+        }
+    }
+
+    public open class Super</*0*/ A : kotlin.Any!> {
+        public constructor Super</*0*/ A : kotlin.Any!>()
+
+        public/*package*/ open inner class Inner /*captured type parameters: /*0*/ A : kotlin.Any!*/ {
+            public/*package*/ constructor Inner()
+            public/*package*/ open fun get(): test.ReturnInnerSubclassOfSupersInner.Super<A!>!
+        }
+    }
+}
