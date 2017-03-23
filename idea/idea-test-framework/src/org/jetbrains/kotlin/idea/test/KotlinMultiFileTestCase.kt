@@ -42,9 +42,7 @@ abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
                     object : VirtualFileVisitor<Any>() {
                         override fun visitFile(file: VirtualFile): Boolean {
                             if (!file.isDirectory && file.name.endsWith(ModuleFileType.DOT_DEFAULT_EXTENSION)) {
-                                val module = createModule(File(file.path), StdModuleTypes.JAVA)
-                                val contentRoot = file.parent.findChild("src")!!
-                                PsiTestUtil.addSourceContentToRoots(module, contentRoot)
+                                createModule(File(file.path), StdModuleTypes.JAVA)
                                 return false
                             }
 
