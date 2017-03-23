@@ -3365,7 +3365,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         KotlinType receiverExpressionType = expressionJetType(expression.getReceiverExpression());
         Type receiverAsmType = receiverExpressionType != null ? asmType(receiverExpressionType) : null;
-        StackValue receiverValue = receiverExpressionType != null ? gen(expression.getReceiverExpression()) : null;
+        StackValue receiverValue =
+                receiverExpressionType != null ? StackValue.coercion(gen(expression.getReceiverExpression()), receiverAsmType) : null;
 
         FunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
         if (functionDescriptor != null) {

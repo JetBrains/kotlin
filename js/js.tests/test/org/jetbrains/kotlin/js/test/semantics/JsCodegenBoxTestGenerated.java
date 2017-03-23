@@ -1892,6 +1892,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
             }
 
+            @TestMetadata("genericValOnLHS.kt")
+            public void testGenericValOnLHS() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/genericValOnLHS.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kCallableNameIntrinsic.kt")
             public void testKCallableNameIntrinsic() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/kCallableNameIntrinsic.kt");
@@ -1943,6 +1949,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("simpleProperty.kt")
             public void testSimpleProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/simpleProperty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("smartCastForExtensionReceiver.kt")
+            public void testSmartCastForExtensionReceiver() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/bound/smartCastForExtensionReceiver.kt");
                 doTest(fileName);
             }
 
