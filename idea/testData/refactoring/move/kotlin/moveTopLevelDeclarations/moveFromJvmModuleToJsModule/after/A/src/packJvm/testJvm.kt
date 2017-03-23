@@ -1,0 +1,3 @@
+package packJvm
+
+class Foo

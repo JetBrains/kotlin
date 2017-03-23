@@ -636,6 +636,18 @@ public class MoveTestGenerated extends AbstractMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveTopLevelDeclarations/moveFromJsModuleToJvmModule/moveFromJsModuleToJvmModule.test")
+    public void testKotlin_moveTopLevelDeclarations_moveFromJsModuleToJvmModule_MoveFromJsModuleToJvmModule() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveFromJsModuleToJvmModule/moveFromJsModuleToJvmModule.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveTopLevelDeclarations/moveFromJvmModuleToJsModule/moveFromJvmModuleToJsModule.test")
+    public void testKotlin_moveTopLevelDeclarations_moveFromJvmModuleToJsModule_MoveFromJvmModuleToJsModule() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveFromJvmModuleToJsModule/moveFromJvmModuleToJsModule.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveTopLevelDeclarations/moveFunctionToFile/moveFunctionToFile.test")
     public void testKotlin_moveTopLevelDeclarations_moveFunctionToFile_MoveFunctionToFile() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveFunctionToFile/moveFunctionToFile.test");

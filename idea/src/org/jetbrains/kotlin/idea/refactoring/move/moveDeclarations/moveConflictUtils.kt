@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations
 
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
@@ -35,13 +35,19 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.refactoring.getUsageContext
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
@@ -67,6 +73,9 @@ class MoveConflictChecker(
         }
     }
 
+    private fun getModuleDescriptor(sourceFile: VirtualFile) =
+            resolutionFacade.findModuleDescriptor(getModuleInfoByVirtualFile(project, sourceFile))
+
     private fun KotlinMoveTarget.getContainerDescriptor(): DeclarationDescriptor? {
         return when (this) {
             is KotlinMoveTargetForExistingElement -> {
@@ -87,14 +96,7 @@ class MoveConflictChecker(
                 val packageFqName = targetContainerFqName ?: return null
                 val targetDir = directory?.virtualFile ?: targetFile
                 val targetModuleDescriptor = if (targetDir != null) {
-                    val targetModule = ModuleUtilCore.findModuleForFile(targetDir, project) ?: return null
-                    val moduleFileIndex = ModuleRootManager.getInstance(targetModule).fileIndex
-                    val targetModuleInfo = when {
-                        moduleFileIndex.isInSourceContent(targetDir) -> targetModule.productionSourceInfo()
-                        moduleFileIndex.isInTestSourceContent(targetDir) -> targetModule.testSourceInfo()
-                        else -> return null
-                    }
-                    resolutionFacade.findModuleDescriptor(targetModuleInfo) ?: return null
+                    getModuleDescriptor(targetDir) ?: return null
                 }
                 else {
                     resolutionFacade.moduleDescriptor
@@ -156,6 +158,19 @@ class MoveConflictChecker(
         }
     }
 
+    companion object {
+        private val DESCRIPTOR_RENDERER_FOR_COMPARISON = DescriptorRenderer.withOptions {
+            withDefinedIn = true
+            classifierNamePolicy = ClassifierNamePolicy.FULLY_QUALIFIED
+            modifiers = emptySet()
+            withoutTypeParameters = true
+            parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
+            includeAdditionalModifiers = false
+            renderUnabbreviatedType = false
+            withoutSuperTypes = true
+        }
+    }
+
     private fun checkModuleConflictsInDeclarations(
             internalUsages: MutableSet<UsageInfo>,
             conflicts: MultiMap<PsiElement, String>
@@ -163,6 +178,47 @@ class MoveConflictChecker(
         val sourceRoot = moveTarget.targetFile ?: return
         val targetModule = ModuleUtilCore.findModuleForFile(sourceRoot, project) ?: return
         val resolveScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(targetModule)
+
+        fun isInScope(targetElement: PsiElement, targetDescriptor: DeclarationDescriptor): Boolean {
+            if (targetElement in resolveScope) return true
+            if (targetElement.manager.isInProject(targetElement)) return false
+
+            val fqName = targetDescriptor.importableFqName ?: return true
+            val importableDescriptor = targetDescriptor.getImportableDescriptor()
+            val renderedImportableTarget = DESCRIPTOR_RENDERER_FOR_COMPARISON.render(importableDescriptor)
+            val renderedTarget by lazy { DESCRIPTOR_RENDERER_FOR_COMPARISON.render(targetDescriptor) }
+
+            val targetModuleInfo = getModuleInfoByVirtualFile(project, sourceRoot)
+            val dummyFile = KtPsiFactory(targetElement.project).createFile("dummy.kt", "").apply {
+                moduleInfo = targetModuleInfo
+                targetPlatform = TargetPlatformDetector.getPlatform(targetModule)
+            }
+
+            val newTargetDescriptors = dummyFile.resolveImportReference(fqName)
+
+            return newTargetDescriptors.any {
+                if (DESCRIPTOR_RENDERER_FOR_COMPARISON.render(it) != renderedImportableTarget) return@any false
+                if (importableDescriptor == targetDescriptor) return@any true
+
+                val candidateDescriptors: Collection<DeclarationDescriptor> = when (targetDescriptor) {
+                    is ConstructorDescriptor -> {
+                        (it as? ClassDescriptor)?.constructors ?: emptyList<DeclarationDescriptor>()
+                    }
+
+                    is PropertyAccessorDescriptor -> {
+                        (it as? PropertyDescriptor)
+                                ?.let { if (targetDescriptor is PropertyGetterDescriptor) it.getter else it.setter }
+                                ?.let { listOf(it) }
+                        ?: emptyList<DeclarationDescriptor>()
+                    }
+
+                    else -> emptyList()
+                }
+
+                candidateDescriptors.any { DESCRIPTOR_RENDERER_FOR_COMPARISON.render(it) == renderedTarget }
+            }
+        }
+
         val referencesToSkip = HashSet<KtReferenceExpression>()
         for (declaration in elementsToMove - doNotGoIn) {
             declaration.forEachDescendantOfType<KtReferenceExpression> { refExpr ->
@@ -173,12 +229,13 @@ class MoveConflictChecker(
                 val target = DescriptorToSourceUtilsIde.getAnyDeclaration(project, targetDescriptor) ?: return@forEachDescendantOfType
 
                 if (target.isInsideOf(elementsToMove)) return@forEachDescendantOfType
-                if (target in resolveScope) return@forEachDescendantOfType
+
+                if (isInScope(target, targetDescriptor)) return@forEachDescendantOfType
                 if (target is KtTypeParameter) return@forEachDescendantOfType
 
                 val superMethods = SmartSet.create<PsiMethod>()
                 target.toLightMethods().forEach { superMethods += it.findDeepestSuperMethods() }
-                if (superMethods.any { it in resolveScope }) return@forEachDescendantOfType
+                if (superMethods.any { isInScope(it, targetDescriptor) }) return@forEachDescendantOfType
 
                 val refContainer = refExpr.getStrictParentOfType<KtNamedDeclaration>() ?: return@forEachDescendantOfType
                 val scopeDescription = RefactoringUIUtil.getDescription(refContainer, true)
