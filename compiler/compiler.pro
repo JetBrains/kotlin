@@ -46,7 +46,6 @@ messages/**)
 -dontwarn com.google.j2objc.annotations.Weak
 -dontwarn org.iq80.snappy.HadoopSnappyCodec$SnappyCompressionInputStream
 -dontwarn org.iq80.snappy.HadoopSnappyCodec$SnappyCompressionOutputStream
--dontwarn com.google.common.util.concurrent.*
 -dontwarn org.jline.builtins.Nano$Buffer
 
 -libraryjars '<rtjar>'
