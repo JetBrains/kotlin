@@ -1,3 +1,4 @@
+// LANGUAGE_VERSION: 1.2
 // WITH_REFLECT
 
 // IGNORE_BACKEND: JS
@@ -15,7 +16,6 @@ fun check(b: Boolean, message: String) {
     if (!b) throw RuntimeException(message)
 }
 
-@Suppress("UNSUPPORTED_FEATURE")
 annotation class Foo(
         val a: IntArray = [],
         val b: IntArray = [1, 2, 3],

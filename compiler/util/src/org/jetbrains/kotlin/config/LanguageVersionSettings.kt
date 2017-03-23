@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.config
 
 import org.jetbrains.kotlin.config.LanguageVersion.KOTLIN_1_1
+import org.jetbrains.kotlin.config.LanguageVersion.KOTLIN_1_2
 import org.jetbrains.kotlin.utils.DescriptionAware
 
 enum class LanguageFeature(
@@ -48,13 +49,13 @@ enum class LanguageFeature(
     NoDelegationToJavaDefaultInterfaceMembers(KOTLIN_1_1),
     DefaultImportOfPackageKotlinComparisons(KOTLIN_1_1),
 
+    ArrayLiteralsInAnnotations(KOTLIN_1_2),
+
     // Experimental features
 
     Coroutines(KOTLIN_1_1, ApiVersion.KOTLIN_1_1, "https://kotlinlang.org/docs/diagnostics/experimental-coroutines", State.ENABLED_WITH_WARNING),
 
     MultiPlatformProjects(sinceVersion = null, defaultState = State.DISABLED),
-
-    ArrayLiteralsInAnnotations(sinceVersion = null),
 
     ;
 

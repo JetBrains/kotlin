@@ -1,3 +1,4 @@
+// LANGUAGE_VERSION: 1.2
 // WITH_REFLECT
 
 // IGNORE_BACKEND: JS
@@ -15,17 +16,13 @@ fun check(b: Boolean, message: String) {
     if (!b) throw RuntimeException(message)
 }
 
-@Suppress("UNSUPPORTED_FEATURE")
 annotation class Foo(vararg val a: String = ["a", "b"])
 
-@Suppress("UNSUPPORTED_FEATURE")
 annotation class Bar(vararg val a: KClass<*> = [Int::class])
 
-@Suppress("UNSUPPORTED_FEATURE")
 @Foo(*["/"])
 fun test1() {}
 
-@Suppress("UNSUPPORTED_FEATURE")
 @Bar(*[Long::class, String::class])
 fun test2() {}
 

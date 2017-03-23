@@ -1,3 +1,4 @@
+// LANGUAGE_VERSION: 1.2
 // WITH_REFLECT
 
 // IGNORE_BACKEND: JS
@@ -14,7 +15,6 @@ fun check(b: Boolean, message: String) {
     if (!b) throw RuntimeException(message)
 }
 
-@Suppress("UNSUPPORTED_FEATURE")
 annotation class Foo(val a: IntArray = [], val b: Array<String> = [])
 
 const val ONE_INT = 1
@@ -22,7 +22,6 @@ const val ONE_FLOAT = 1f
 const val HELLO = "hello"
 const val C_CHAR = 'c'
 
-@Suppress("UNSUPPORTED_FEATURE")
 @Foo(
         a = [ONE_INT, ONE_INT + ONE_FLOAT.toInt(), ONE_INT + 10, (ONE_INT % 1.0).toInt()],
         b = [HELLO, HELLO + C_CHAR, HELLO + ", Kotlin", C_CHAR.toString() + C_CHAR])
