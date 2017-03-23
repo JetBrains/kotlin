@@ -1,0 +1,13 @@
+package test
+
+public sealed class Season {
+    private constructor Season()
+
+    public final class Cold : test.Season {
+        public constructor Cold()
+    }
+
+    public final class Warm : test.Season {
+        public constructor Warm()
+    }
+}
