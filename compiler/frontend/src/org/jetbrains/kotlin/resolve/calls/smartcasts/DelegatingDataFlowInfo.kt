@@ -121,7 +121,7 @@ internal class DelegatingDataFlowInfo private constructor(
             return types
         }
 
-        val enrichedTypes = newLinkedHashSetWithExpectedSize<KotlinType>(types.size + 1)
+        val enrichedTypes = Sets.newHashSetWithExpectedSize<KotlinType>(types.size + 1)
         val originalType = key.type
         for (type in types) {
             enrichedTypes.add(TypeUtils.makeNotNullable(type))
