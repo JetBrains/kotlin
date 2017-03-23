@@ -1,0 +1,14 @@
+package test
+
+public open class InnerClassesInGeneric</*0*/ P : kotlin.Any!, /*1*/ Q : kotlin.Any!> {
+    public constructor InnerClassesInGeneric</*0*/ P : kotlin.Any!, /*1*/ Q : kotlin.Any!>()
+
+    public open inner class Inner /*captured type parameters: /*0*/ P : kotlin.Any!, /*1*/ Q : kotlin.Any!*/ {
+        public constructor Inner()
+    }
+
+    public open inner class Inner2 /*captured type parameters: /*0*/ P : kotlin.Any!, /*1*/ Q : kotlin.Any!*/ : test.InnerClassesInGeneric<kotlin.Any!, kotlin.Any!>.Inner {
+        public constructor Inner2()
+        public open operator fun iterator(): kotlin.collections.(Mutable)Iterator<P!>!
+    }
+}
