@@ -39,7 +39,7 @@ import org.jetbrains.plugins.groovy.lang.psi.GroovyFileBase
 val KOTLIN_PLUGIN_CLASSPATH_MARKER = "${KotlinWithGradleConfigurator.GROUP_ID}:${KotlinWithGradleConfigurator.GRADLE_PLUGIN_ID}:"
 
 abstract class KotlinGradleInspectionVisitor : BaseInspectionVisitor() {
-    override fun visitFile(file: GroovyFileBase) {
+    override fun visitFile(file: GroovyFileBase?) {
         if (file == null || !FileUtilRt.extensionEquals(file.name, GradleConstants.EXTENSION)) return
 
         val fileIndex = ProjectRootManager.getInstance(file.project).fileIndex
