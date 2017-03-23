@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.framework
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.libraries.DummyLibraryProperties
+import com.intellij.openapi.roots.libraries.LibraryProperties
 import com.intellij.openapi.roots.libraries.LibraryType
 import com.intellij.openapi.roots.libraries.NewLibraryConfiguration
 import com.intellij.openapi.roots.libraries.ui.LibraryEditorComponent
@@ -34,5 +35,5 @@ object CommonLibraryType : LibraryType<DummyLibraryProperties>(CommonLibraryKind
                                   contextDirectory: VirtualFile?,
                                   project: Project): NewLibraryConfiguration? = null
 
-    override fun getIcon(properties: DummyLibraryProperties?) = KotlinIcons.SMALL_LOGO
+    override fun getIcon(properties: LibraryProperties<*>?) = KotlinIcons.SMALL_LOGO
 }
