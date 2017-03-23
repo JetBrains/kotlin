@@ -26,7 +26,6 @@ public class TestMetadataMojo extends MetadataMojo {
     protected void configureSpecificCompilerArguments(@NotNull K2MetadataCompilerArguments arguments) throws MojoExecutionException {
         String productionOutput = output;
 
-        module = testModule;
         classpath = testClasspath;
 //        arguments.friendPaths = new String[] { productionOutput };
         output = testOutput;

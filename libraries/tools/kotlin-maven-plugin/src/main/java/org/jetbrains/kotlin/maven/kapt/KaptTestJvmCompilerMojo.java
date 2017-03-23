@@ -65,7 +65,6 @@ public class KaptTestJvmCompilerMojo extends KaptJVMCompilerMojo {
 
     @Override
     protected void configureSpecificCompilerArguments(@NotNull K2JVMCompilerArguments arguments) throws MojoExecutionException {
-        module = testModule;
         classpath = testClasspath;
         arguments.friendPaths = new String[] { output };
         output = testOutput;

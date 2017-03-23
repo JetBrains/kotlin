@@ -90,7 +90,6 @@ public class KotlinTestCompileMojo extends K2JVMCompileMojo {
 
     @Override
     protected void configureSpecificCompilerArguments(@NotNull K2JVMCompilerArguments arguments) throws MojoExecutionException {
-        module = testModule;
         classpath = testClasspath;
         arguments.friendPaths = new String[] { output };
         output = testOutput;

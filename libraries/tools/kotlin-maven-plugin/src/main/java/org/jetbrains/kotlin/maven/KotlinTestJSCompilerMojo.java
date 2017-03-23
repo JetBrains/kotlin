@@ -78,7 +78,6 @@ public class KotlinTestJSCompilerMojo extends K2JSCompilerMojo {
 
     @Override
     protected void configureSpecificCompilerArguments(@NotNull K2JSCompilerArguments arguments) throws MojoExecutionException {
-        module = testModule;
         output = testOutput;
 
         super.configureSpecificCompilerArguments(arguments);
