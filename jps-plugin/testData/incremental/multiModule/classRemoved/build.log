@@ -42,7 +42,10 @@ Building module2
 Compiling files:
   module2/src/B.kt
   module2/src/createA.kt
+  module2/src/createB.kt
+  module2/src/other.kt
   module2/src/useAfoo.kt
+  module2/src/useBbar.kt
 End of files
 Exit code: OK
 ------------------------------------------

@@ -2,22 +2,24 @@
 
 Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
-  out/production/module/inline/InlineKt.class
+  out/production/module/foo/Foo2Kt.class
 End of files
 Compiling files:
-  src/inline.kt
+  src/foo3.kt
 End of files
 Marked as dirty by Kotlin:
-  src/usage.kt
+  src/foo1.kt
+  src/useF.kt
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
 Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
-  out/production/module/usage/UsageKt$usage$use$1.class
-  out/production/module/usage/UsageKt.class
+  out/production/module/foo/Foo1Kt.class
+  out/production/module/use/UseFKt.class
 End of files
 Compiling files:
-  src/usage.kt
+  src/foo1.kt
+  src/useF.kt
 End of files
 Exit code: OK
 ------------------------------------------

@@ -1,35 +1,27 @@
 ================ Step #1 =================
 
 Cleaning output files:
-  out/production/module/META-INF/module.kotlin_module
-  out/production/module/test/AKt.class
+  out/production/module/TheClass.class
 End of files
 Compiling files:
-  src/a.kt
 End of files
-Exit code: OK
+Marked as dirty by Kotlin:
+  src/usageInKotlin.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
-
-================ Step #2 =================
-
+Compiling files:
+  src/TheClass.java
+End of files
 Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
-  out/production/module/test/BKt.class
+  out/production/module/Usage.class
+  out/production/module/UsageInKotlinKt.class
 End of files
 Compiling files:
-  src/b.kt
+  src/usageInKotlin.kt
 End of files
 Exit code: OK
 ------------------------------------------
-
-================ Step #3 =================
-
-Cleaning output files:
-  out/production/module/META-INF/module.kotlin_module
-  out/production/module/test/AKt.class
-End of files
 Compiling files:
-  src/a.kt
+  src/Usage.java
 End of files
-Exit code: OK
-------------------------------------------
