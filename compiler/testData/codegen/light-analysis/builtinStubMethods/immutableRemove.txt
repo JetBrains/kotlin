@@ -1,0 +1,33 @@
+@kotlin.Metadata
+public interface ImmutableCollection {
+    public abstract @org.jetbrains.annotations.NotNull method add(p0: java.lang.Object): ImmutableCollection
+    public abstract @org.jetbrains.annotations.NotNull method addAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): ImmutableCollection
+    public abstract @org.jetbrains.annotations.NotNull method remove(p0: java.lang.Object): ImmutableCollection
+}
+
+@kotlin.Metadata
+public final class ImmutableCollectionmpl {
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method add(p0: java.lang.Object): ImmutableCollection
+    public method add(p0: java.lang.Object): boolean
+    public @org.jetbrains.annotations.NotNull method addAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): ImmutableCollection
+    public method addAll(p0: java.util.Collection): boolean
+    public method clear(): void
+    public method contains(p0: java.lang.Object): boolean
+    public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public method getSize(): int
+    public method isEmpty(): boolean
+    public @org.jetbrains.annotations.NotNull method iterator(): java.util.Iterator
+    public @org.jetbrains.annotations.NotNull method remove(p0: java.lang.Object): ImmutableCollection
+    public method remove(p0: java.lang.Object): boolean
+    public method removeAll(p0: java.util.Collection): boolean
+    public method retainAll(p0: java.util.Collection): boolean
+    public final method size(): int
+    public method toArray(): java.lang.Object[]
+    public method toArray(p0: java.lang.Object[]): java.lang.Object[]
+}
+
+@kotlin.Metadata
+public final class ImmutableRemoveKt {
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
