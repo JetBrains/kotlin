@@ -120,8 +120,8 @@ class KotlinCoreEnvironment private constructor(
         override fun preregisterServices() {
             registerProjectExtensionPoints(Extensions.getArea(project))
         }
-    }
 
+        }
     private val sourceFiles = mutableListOf<KtFile>()
     private val rootsIndex: JvmDependenciesDynamicCompoundIndex
     private val packagePartProviders = mutableListOf<JvmPackagePartProvider>()
