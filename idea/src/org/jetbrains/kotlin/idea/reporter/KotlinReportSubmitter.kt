@@ -36,7 +36,7 @@ class KotlinReportSubmitter : ITNReporter() {
 
     override fun showErrorInRelease(event: IdeaLoggingEvent) = !hasUpdate || KotlinInternalMode.enabled
 
-    override fun submit(events: Array<IdeaLoggingEvent>, additionalInfo: String?, parentComponent: Component, consumer: Consumer<SubmittedReportInfo>): Boolean {
+    override fun submit(events: Array<IdeaLoggingEvent>, additionalInfo: String?, parentComponent: Component?, consumer: Consumer<SubmittedReportInfo>): Boolean {
         if (hasUpdate) {
             if (KotlinInternalMode.enabled) {
                 return super.submit(events, additionalInfo, parentComponent, consumer)
@@ -51,19 +51,21 @@ class KotlinReportSubmitter : ITNReporter() {
         KotlinPluginUpdater.getInstance().runUpdateCheck { status ->
             if (status is PluginUpdateStatus.Update) {
                 hasUpdate = true
+                if (parentComponent != null) {
 
-                if (KotlinInternalMode.enabled) {
-                    super.submit(events, additionalInfo, parentComponent, consumer)
-                }
+                    if (KotlinInternalMode.enabled) {
+                        super.submit(events, additionalInfo, parentComponent, consumer)
+                    }
 
-                val rc = Messages.showDialog(parentComponent,
-                                             "You're running Kotlin plugin version ${KotlinPluginUtil.getPluginVersion()}, " +
-                                             "while the latest version is ${status.pluginDescriptor.version}",
-                                             "Update Kotlin Plugin",
-                                             arrayOf("Update", "Ignore"),
-                                             0, Messages.getInformationIcon())
-                if (rc == 0) {
-                    KotlinPluginUpdater.getInstance().installPluginUpdate(status)
+                    val rc = Messages.showDialog(parentComponent,
+                                                 "You're running Kotlin plugin version ${KotlinPluginUtil.getPluginVersion()}, " +
+                                                 "while the latest version is ${status.pluginDescriptor.version}",
+                                                 "Update Kotlin Plugin",
+                                                 arrayOf("Update", "Ignore"),
+                                                 0, Messages.getInformationIcon())
+                    if (rc == 0) {
+                        KotlinPluginUpdater.getInstance().installPluginUpdate(status)
+                    }
                 }
             }
             else {
