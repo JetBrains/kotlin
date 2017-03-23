@@ -48,10 +48,14 @@ object PlatformIncompatibilityDiagnosticRenderer :
             append("The following declaration")
             if (descriptors.size == 1) append(" is") else append("s are")
             append(" incompatible")
-            incompatibility.reason?.let { append(" because $it") }
+            incompatibility.reason?.let { appendln(" because $it:") }
+
+            for (descriptor in descriptors) {
+                append(indent + "    ")
+                appendln(renderDescriptor(descriptor))
+            }
 
             incompatibility.unimplemented?.let { unimplemented ->
-                appendln(".")
                 append(indent)
                 appendln("No implementations are found for members listed below:")
                 for ((descriptor, mapping) in unimplemented) {
@@ -62,12 +66,6 @@ object PlatformIncompatibilityDiagnosticRenderer :
                         appendln()
                     }
                     render(mapping, indent + INDENTATION_UNIT, renderDescriptor)
-                }
-            } ?: run {
-                appendln(":")
-                for (descriptor in descriptors) {
-                    append(indent + "    ")
-                    appendln(renderDescriptor(descriptor))
                 }
             }
         }
