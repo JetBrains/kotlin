@@ -57,11 +57,8 @@ import java.util.List;
 
 public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
     private static final String RECENTS_KEY = MoveKotlinNestedClassesDialog.class.getName() + ".RECENTS_KEY";
-
-    private static class MemberInfoModelImpl extends AbstractMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo> {
-
-    }
-
+    private final KtClassOrObject originalClass;
+    private final MoveCallback moveCallback;
     private JPanel mainPanel;
     private JTextField originalClassField;
     private JPanel membersInfoPanel;
@@ -69,11 +66,7 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
     private JCheckBox openInEditorCheckBox;
     private JPanel targetClassChooserPanel;
     private KotlinMemberSelectionTable memberTable;
-
-    private final KtClassOrObject originalClass;
     private KtClassOrObject targetClass;
-    private final MoveCallback moveCallback;
-
     public MoveKotlinNestedClassesDialog(
             @NotNull Project project,
             @NotNull List<KtClassOrObject> elementsToMove,
@@ -242,7 +235,7 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
         KotlinMoveTarget target = new KotlinMoveTargetForExistingElement(targetClass);
         MoveDeclarationsDelegate.NestedClass delegate = new MoveDeclarationsDelegate.NestedClass();
         MoveDeclarationsDescriptor descriptor = new MoveDeclarationsDescriptor(
-                elementsToMove, target, delegate, false, false, true, false, moveCallback, openInEditorCheckBox.isSelected()
+                elementsToMove, target, delegate, false, false, false, false, moveCallback, openInEditorCheckBox.isSelected()
         );
         invokeRefactoring(new MoveKotlinDeclarationsProcessor(myProject, descriptor, Mover.Default.INSTANCE));
     }
@@ -250,5 +243,9 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
     @Override
     public JComponent getPreferredFocusedComponent() {
         return targetClassChooser.getChildComponent();
+    }
+
+    private static class MemberInfoModelImpl extends AbstractMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo> {
+
     }
 }

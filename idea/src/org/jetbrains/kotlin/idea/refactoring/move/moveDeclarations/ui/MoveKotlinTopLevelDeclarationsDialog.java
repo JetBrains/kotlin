@@ -82,11 +82,8 @@ import java.util.List;
 
 public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     private static final String RECENTS_KEY = "MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY";
-
-    private static class MemberInfoModelImpl extends AbstractMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo> {
-
-    }
-
+    private final MoveCallback moveCallback;
+    private final PsiDirectory initialTargetDirectory;
     private JCheckBox cbSearchInComments;
     private JCheckBox cbSearchTextOccurrences;
     private JPanel mainPanel;
@@ -101,10 +98,6 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     private JCheckBox cbSpecifyFileNameInPackage;
     private JCheckBox cbUpdatePackageDirective;
     private KotlinMemberSelectionTable memberTable;
-
-    private final MoveCallback moveCallback;
-    private final PsiDirectory initialTargetDirectory;
-
     public MoveKotlinTopLevelDeclarationsDialog(
             @NotNull Project project,
             @NotNull Set<KtNamedDeclaration> elementsToMove,
@@ -191,6 +184,40 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             if (!PackageUtilsKt.packageMatchesDirectory(sourceFile)) return false;
         }
         return true;
+    }
+
+    @NotNull
+    private static List<PsiFile> getFilesExistingInTargetDir(
+            @NotNull List<KtFile> sourceFiles,
+            @Nullable String targetFileName,
+            @Nullable final PsiDirectory targetDirectory
+    ) {
+        if (targetDirectory == null) return Collections.emptyList();
+
+        List<String> fileNames =
+                targetFileName != null
+                ? Collections.singletonList(targetFileName)
+                : CollectionsKt.map(
+                        sourceFiles,
+                        new Function1<KtFile, String>() {
+                            @Override
+                            public String invoke(KtFile jetFile) {
+                                return jetFile.getName();
+                            }
+                        }
+                );
+
+        return CollectionsKt.filterNotNull(
+                CollectionsKt.map(
+                        fileNames,
+                        new Function1<String, PsiFile>() {
+                            @Override
+                            public PsiFile invoke(String s) {
+                                return targetDirectory.findFile(s);
+                            }
+                        }
+                )
+        );
     }
 
     private void initMemberInfo(
@@ -474,40 +501,6 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         return false;
     }
 
-    @NotNull
-    private static List<PsiFile> getFilesExistingInTargetDir(
-            @NotNull List<KtFile> sourceFiles,
-            @Nullable String targetFileName,
-            @Nullable final PsiDirectory targetDirectory
-    ) {
-        if (targetDirectory == null) return Collections.emptyList();
-
-        List<String> fileNames =
-                targetFileName != null
-                ? Collections.singletonList(targetFileName)
-                : CollectionsKt.map(
-                        sourceFiles,
-                        new Function1<KtFile, String>() {
-                            @Override
-                            public String invoke(KtFile jetFile) {
-                                return jetFile.getName();
-                            }
-                        }
-                );
-
-        return CollectionsKt.filterNotNull(
-                CollectionsKt.map(
-                        fileNames,
-                        new Function1<String, PsiFile>() {
-                            @Override
-                            public PsiFile invoke(String s) {
-                                return targetDirectory.findFile(s);
-                            }
-                        }
-                )
-        );
-    }
-
     @Nullable
     private KotlinMoveTarget selectMoveTarget() {
         String message = verifyBeforeRun();
@@ -775,7 +768,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                     MoveDeclarationsDelegate.TopLevel.INSTANCE,
                     isSearchInComments(),
                     isSearchInNonJavaFiles(),
-                    true,
+                    false,
                     deleteSourceFile,
                     moveCallback,
                     false
@@ -802,5 +795,9 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     @Override
     public JComponent getPreferredFocusedComponent() {
         return classPackageChooser.getChildComponent();
+    }
+
+    private static class MemberInfoModelImpl extends AbstractMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo> {
+
     }
 }

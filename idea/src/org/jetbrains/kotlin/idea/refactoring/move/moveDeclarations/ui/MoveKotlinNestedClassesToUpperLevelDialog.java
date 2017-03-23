@@ -411,7 +411,7 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
                 delegate,
                 isSearchInComments(),
                 isSearchInNonJavaFiles(),
-                true,
+                false,
                 false,
                 null,
                 isOpenInEditor()
