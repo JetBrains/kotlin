@@ -2,10 +2,8 @@
 
 package test
 
-import java.io.Serializable
-
 annotation class A
 
-interface Foo<T : @A Number> : @A Serializable {
+interface Foo<T : @A Number> : @A CharSequence {
     fun <E, F : @A E> bar()
 }
