@@ -1,4 +1,4 @@
 source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
 
 assertBuildLogHasLine("[INFO] BUILD FAILURE");
-assertBuildLogHasLineThatContains("script threw an exception: exception from script");
+assertBuildLogHasLineThatContains("exception from script");

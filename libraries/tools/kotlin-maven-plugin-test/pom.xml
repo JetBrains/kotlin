@@ -61,7 +61,7 @@
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-plugin:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-allopen:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-noarg:${project.version}</artifact>
-                                <artifact>org.jetbrains.kotlin:kotlin-runtime:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-script-runtime:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-common:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-js:${project.version}</artifact>

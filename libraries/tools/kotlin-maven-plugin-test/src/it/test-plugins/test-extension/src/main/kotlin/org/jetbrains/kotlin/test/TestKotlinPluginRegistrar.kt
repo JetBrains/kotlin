@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.*
 
 object TestPluginKeys {
-    val TestOption = CompilerConfigurationKey.create<String>("test option")!!
+    val TestOption = CompilerConfigurationKey.create<String>("test option")
 }
 
 class TestCommandLineProcessor : CommandLineProcessor {
