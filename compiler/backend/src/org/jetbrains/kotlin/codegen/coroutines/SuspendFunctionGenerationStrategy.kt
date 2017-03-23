@@ -33,20 +33,18 @@ class SuspendFunctionGenerationStrategy(
 
     override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
         if (!originalSuspendDescriptor.containsNonTailSuspensionCalls(state.bindingContext)) {
-            return codegen.returnExpression(declaration.bodyExpression)
+            codegen.returnExpression(declaration.bodyExpression)
+            return
         }
 
         val coroutineCodegen = CoroutineCodegen.create(codegen, originalSuspendDescriptor, declaration, state)
         coroutineCodegen.generate()
 
+        codegen.markLineNumber(declaration, false)
         codegen.putClosureInstanceOnStack(coroutineCodegen, null).put(Type.getObjectType(coroutineCodegen.className), codegen.v)
+        codegen.v.invokeDoResumeWithUnit(coroutineCodegen.v.thisName)
 
-        with(codegen.v) {
-            invokeDoResumeWithUnit(coroutineCodegen.v.thisName)
-
-            codegen.markLineNumber(declaration, true)
-
-            areturn(AsmTypes.OBJECT_TYPE)
-        }
+        codegen.markLineNumber(declaration, true)
+        codegen.v.areturn(AsmTypes.OBJECT_TYPE)
     }
 }
