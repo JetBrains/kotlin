@@ -40,8 +40,10 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
-import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiPackage;
 import com.intellij.refactoring.listeners.RefactoringElementAdapter;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.util.PathsList;
@@ -85,12 +87,6 @@ public class KotlinRunConfiguration extends ModuleBasedConfiguration<JavaRunConf
     @Override
     public Collection<Module> getValidModules() {
         return Arrays.asList(ModuleManager.getInstance(getProject()).getModules());
-    }
-
-    @Nullable
-    @Override
-    public GlobalSearchScope getSearchScope() {
-        return SearchScopeProvider.createSearchScope(getModules());
     }
 
     @NotNull
