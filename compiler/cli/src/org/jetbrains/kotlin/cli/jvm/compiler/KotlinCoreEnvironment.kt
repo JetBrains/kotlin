@@ -26,8 +26,6 @@ import com.intellij.core.CoreJavaFileManager
 import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.ide.plugins.PluginManagerCore
-import com.intellij.lang.MetaLanguage
 import com.intellij.lang.java.JavaParserDefinition
 import com.intellij.mock.MockApplication
 import com.intellij.openapi.Disposable
@@ -73,8 +71,6 @@ import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.JvmRuntimeVersionsConsistencyChecker
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.*
-import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
-import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
@@ -96,8 +92,6 @@ import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
-import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleGraph
-import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.CliDeclarationProviderFactoryService
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
@@ -143,9 +137,6 @@ class KotlinCoreEnvironment private constructor(
     private val sourceFiles = mutableListOf<KtFile>()
     private val rootsIndex: JvmDependenciesDynamicCompoundIndex
 
-    private val javaModuleFinder: CliJavaModuleFinder
-    private val javaModuleGraph: JavaModuleGraph
-
     val configuration: CompilerConfiguration = configuration.copy()
 
     init {
@@ -190,9 +181,6 @@ class KotlinCoreEnvironment private constructor(
                                 .distinctBy { it.absolutePath })
             }
         }
-
-        javaModuleFinder = CliJavaModuleFinder(VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JRT_PROTOCOL))
-        javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
         val initialRoots = convertClasspathRoots(configuration.getList(JVMConfigurationKeys.CONTENT_ROOTS))
 
@@ -266,22 +254,28 @@ class KotlinCoreEnvironment private constructor(
             result.add(JavaRoot(virtualFile, rootType, prefixPackageFqName))
         }
 
-        addModularRoots(result)
+        val jrtFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JRT_PROTOCOL)
+        if (jrtFileSystem != null) {
+            addModularJdkRoots(jrtFileSystem, result)
+        }
 
         return result
     }
 
-    private fun addModularRoots(result: MutableList<JavaRoot>) {
-        val jrtFileSystem = javaModuleFinder.jrtFileSystem ?: return
-
-        val rootModules = computeRootModules(javaModuleFinder)
-        val allDependencies = javaModuleGraph.getAllDependencies(rootModules).also { modules ->
-            report(LOGGING, "Loading modules: $modules")
+    private fun addModularJdkRoots(fileSystem: VirtualFileSystem, result: MutableList<JavaRoot>) {
+        val graph = ModuleGraph { moduleName ->
+            fileSystem.findFileByPath("/modules/$moduleName/module-info.class")?.let((JavaModuleInfo)::read) ?: run {
+                report(ERROR, "Module $moduleName cannot be found in the Java runtime image")
+                JavaModuleInfo(moduleName, emptyList(), emptyList())
+            }
         }
 
-        for (moduleName in allDependencies) {
-            // TODO: support modules not only from Java runtime image, but from a separate module path
-            val root = jrtFileSystem.findFileByPath("/modules/$moduleName")
+        val allReachableModules = graph.getAllReachable(listOf("java.base", "java.se")).also { modules ->
+            report(LOGGING, "Loading modules exported by java.se: $modules")
+        }
+
+        for (moduleName in allReachableModules) {
+            val root = fileSystem.findFileByPath("/modules/$moduleName")
             if (root == null) {
                 report(ERROR, "Module $moduleName cannot be found in the module graph")
             }
@@ -289,40 +283,6 @@ class KotlinCoreEnvironment private constructor(
                 result.add(JavaRoot(root, JavaRoot.RootType.BINARY))
             }
         }
-    }
-
-    // See http://openjdk.java.net/jeps/261
-    private fun computeRootModules(finder: CliJavaModuleFinder): List<String> {
-        val result = arrayListOf<String>()
-
-        val systemModules = finder.computeAllSystemModules()
-        val javaSeExists = "java.se" in systemModules
-        if (javaSeExists) {
-            // The java.se module is a root, if it exists.
-            result.add("java.se")
-        }
-
-        fun JavaModuleInfo.exportsAtLeastOnePackageUnqualified(): Boolean = exports.any { it.toModules.isEmpty() }
-
-        if (!javaSeExists) {
-            // If it does not exist then every java.* module on the upgrade module path or among the system modules
-            // that exports at least one package, without qualification, is a root.
-            for ((name, module) in systemModules) {
-                if (name.startsWith("java.") && module.exportsAtLeastOnePackageUnqualified()) {
-                    result.add(name)
-                }
-            }
-        }
-
-        for ((name, module) in systemModules) {
-            // Every non-java.* module on the upgrade module path or among the system modules that exports at least one package,
-            // without qualification, is also a root.
-            if (!name.startsWith("java.") && module.exportsAtLeastOnePackageUnqualified()) {
-                result.add(name)
-            }
-        }
-
-        return result
     }
 
     private fun updateClasspathFromRootsIndex(index: JvmDependenciesIndex) {
@@ -392,8 +352,6 @@ class KotlinCoreEnvironment private constructor(
     }
 
     companion object {
-        private val ideaCompatibleBuildNumber = "171.9999"
-
         init {
             setCompatibleBuild()
         }
@@ -430,8 +388,7 @@ class KotlinCoreEnvironment private constructor(
 
         @JvmStatic
         private fun setCompatibleBuild() {
-            PluginManagerCore.BUILD_NUMBER = ideaCompatibleBuildNumber
-            System.getProperties().setProperty("idea.plugins.compatible.build", ideaCompatibleBuildNumber)
+            System.getProperties().setProperty("idea.plugins.compatible.build", "171.9999")
         }
 
         @TestOnly
@@ -507,7 +464,6 @@ class KotlinCoreEnvironment private constructor(
             CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClassFileDecompilers.EP_NAME, ClassFileDecompilers.Decompiler::class.java)
             //
             CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), TypeAnnotationModifier.EP_NAME, TypeAnnotationModifier::class.java)
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), MetaLanguage.EP_NAME, MetaLanguage::class.java)
         }
 
         private fun registerApplicationExtensionPointsAndExtensionsFrom(configuration: CompilerConfiguration, configFilePath: String) {
