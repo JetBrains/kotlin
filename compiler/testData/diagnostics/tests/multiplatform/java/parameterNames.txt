@@ -1,0 +1,23 @@
+// -- Module: <m1-common> --
+package
+
+public final header class Foo {
+    public constructor Foo()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final header fun foo(/*0*/ i: kotlin.Int, /*1*/ d: kotlin.Double, /*2*/ f: kotlin.Float): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+
+// -- Module: <m2-jvm> --
+package
+
+public open class FooImpl {
+    public constructor FooImpl()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(/*0*/ d: kotlin.Int, /*1*/ i: kotlin.Double, /*2*/ f: kotlin.Float): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias Foo = FooImpl
