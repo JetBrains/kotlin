@@ -158,7 +158,7 @@ public abstract class KotlinAndroidTestCaseBase extends UsefulTestCase {
         AndroidSdkAdditionalData data = new AndroidSdkAdditionalData(sdk);
         AndroidSdkData sdkData = AndroidSdkData.getSdkData(sdkPath);
         assertNotNull(sdkData);
-        IAndroidTarget target = sdkData.findTargetByName("Android 5.0"); // TODO: Get rid of this hardcoded version number
+        IAndroidTarget target = sdkData.findTargetByApiLevel("21");   // AS24 findTargetByApiLevel()
         if (target == null) {
             IAndroidTarget[] targets = sdkData.getTargets();
             for (IAndroidTarget t : targets) {

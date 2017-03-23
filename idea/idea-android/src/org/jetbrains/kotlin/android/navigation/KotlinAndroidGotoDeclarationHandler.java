@@ -29,6 +29,7 @@ import org.jetbrains.android.dom.resources.Attr;
 import org.jetbrains.android.dom.resources.DeclareStyleable;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.resourceManagers.LocalResourceManager;
+import org.jetbrains.android.resourceManagers.ModuleResourceManagers;
 import org.jetbrains.android.resourceManagers.ResourceManager;
 import org.jetbrains.android.util.AndroidResourceUtil;
 import org.jetbrains.android.util.AndroidUtils;
@@ -68,9 +69,10 @@ public class KotlinAndroidGotoDeclarationHandler implements GotoDeclarationHandl
             collectManifestElements(nestedClassName, fieldName, facet, resourceList);
         }
         else {
+            ModuleResourceManagers managers = ModuleResourceManagers.getInstance(facet);
             ResourceManager manager = info.isSystem()
-                                      ? facet.getSystemResourceManager(false)
-                                      : facet.getLocalResourceManager();
+                                      ? managers.getSystemResourceManager(false)
+                                      : managers.getLocalResourceManager();
             if (manager == null) {
                 return null;
             }

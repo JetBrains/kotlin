@@ -202,6 +202,7 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
         }
     }
 
+
     @Override
     protected void doAction(ActionHint actionHint, String testFullPath, String testName) throws Exception {
         doAction(actionHint, testFullPath, testName, myWrapper);
