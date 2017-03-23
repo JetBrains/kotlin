@@ -210,7 +210,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
     }
 
     private fun SuspendContextImpl.printFrame(variablesView: XVariablesView, watchesView: XWatchesViewImpl, config: PrinterConfig) {
-        val tree = variablesView.tree
+        val tree = variablesView.tree!!
         expandAll(
                 tree,
                 {
@@ -316,9 +316,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
                 append(getPrefix(descriptor))
                 append(label)
                 if (config.shouldRenderSourcesPosition() && hasSourcePosition(descriptor)) {
-                    val sp = debugProcess.invokeInManagerThread {
-                        SourcePositionProvider.getSourcePosition(descriptor, myProject, debuggerContext)
-                    }
+                    val sp = SourcePositionProvider.getSourcePosition(descriptor, myProject, debuggerContext)
                     append(" (sp = ${render(sp)})")
                 }
 
