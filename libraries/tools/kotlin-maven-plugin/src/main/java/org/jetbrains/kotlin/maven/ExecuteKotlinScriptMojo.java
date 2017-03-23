@@ -76,7 +76,7 @@ import java.util.List;
  *     mojo.getLog().info("kotlin build script accessing build info of ${mojo.project.artifactId} project")
  * </code></pre>
  */
-@Mojo(name = "script", requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(name = "script", requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = false)
 public class ExecuteKotlinScriptMojo extends AbstractMojo {
     /**
      * The Kotlin script file to be executed.

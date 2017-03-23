@@ -45,7 +45,7 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  * @noinspection UnusedDeclaration
  */
-@Mojo(name = "js", defaultPhase = LifecyclePhase.COMPILE, requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
+@Mojo(name = "js", defaultPhase = LifecyclePhase.COMPILE, requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = false)
 public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArguments> {
 
     private static final String OUTPUT_DIRECTORIES_COLLECTOR_PROPERTY_NAME = "outputDirectoriesCollector";

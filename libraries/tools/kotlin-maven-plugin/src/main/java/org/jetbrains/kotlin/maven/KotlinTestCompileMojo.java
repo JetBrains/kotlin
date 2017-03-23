@@ -41,7 +41,8 @@ import java.util.List;
 
 @Mojo(name = "test-compile",
         defaultPhase = LifecyclePhase.TEST_COMPILE,
-        requiresDependencyResolution = ResolutionScope.TEST
+        requiresDependencyResolution = ResolutionScope.TEST,
+        threadSafe = false
 )
 public class KotlinTestCompileMojo extends K2JVMCompileMojo {
     /**

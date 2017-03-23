@@ -18,7 +18,7 @@ import java.util.List;
 import static com.intellij.openapi.util.text.StringUtil.join;
 import static org.jetbrains.kotlin.maven.Util.filterClassPath;
 
-@Mojo(name = "metadata", defaultPhase = LifecyclePhase.PROCESS_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(name = "metadata", defaultPhase = LifecyclePhase.PROCESS_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = false)
 public class MetadataMojo extends KotlinCompileMojoBase<K2MetadataCompilerArguments> {
     @Parameter(defaultValue = "${project.compileClasspathElements}", required = true, readonly = true)
     public List<String> classpath;

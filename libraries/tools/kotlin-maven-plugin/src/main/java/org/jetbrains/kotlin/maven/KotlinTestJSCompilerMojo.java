@@ -36,7 +36,8 @@ import java.util.List;
  */
 @Mojo(name = "test-js",
         defaultPhase = LifecyclePhase.TEST_COMPILE,
-        requiresDependencyResolution = ResolutionScope.TEST
+        requiresDependencyResolution = ResolutionScope.TEST,
+        threadSafe = true
 )
 public class KotlinTestJSCompilerMojo extends K2JSCompilerMojo {
 

@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments;
 import java.io.File;
 import java.util.List;
 
-@Mojo(name = "test-metadata", defaultPhase = LifecyclePhase.PROCESS_TEST_SOURCES, requiresDependencyResolution = ResolutionScope.TEST)
+@Mojo(name = "test-metadata", defaultPhase = LifecyclePhase.PROCESS_TEST_SOURCES, requiresDependencyResolution = ResolutionScope.TEST,
+        threadSafe = false
+)
 public class TestMetadataMojo extends MetadataMojo {
     @Parameter(property = "maven.test.skip", defaultValue = "false")
     private boolean skip;

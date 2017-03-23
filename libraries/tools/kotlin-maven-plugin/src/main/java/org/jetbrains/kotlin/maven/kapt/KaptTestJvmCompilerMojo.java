@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @noinspection UnusedDeclaration
  */
-@Mojo(name = "test-kapt", defaultPhase = LifecyclePhase.PROCESS_TEST_SOURCES, requiresDependencyResolution = ResolutionScope.TEST)
+@Mojo(name = "test-kapt", defaultPhase = LifecyclePhase.PROCESS_TEST_SOURCES, requiresDependencyResolution = ResolutionScope.TEST, threadSafe = false)
 public class KaptTestJvmCompilerMojo extends KaptJVMCompilerMojo {
     /**
      * Flag to allow test compilation to be skipped.
