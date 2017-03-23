@@ -9,6 +9,7 @@ fun g(p: String?) {
     p?.let {
         println(3)
         nonUnit(4)
+        Unit
     }
 }
 
@@ -20,5 +21,5 @@ fun h() {
 fun x() = doIt {
     println(7)
     nonUnit(8)
-    // Unit should be here
+    Unit
 }

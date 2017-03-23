@@ -9,6 +9,7 @@ class C {
         p?.let {
             println(3)
             println(4)
+            Unit
         }
 
         if (other != null) {
@@ -25,5 +26,6 @@ class C {
     fun x() = doIt {
         println(9)
         println(10)
+        Unit
     }
 }
