@@ -1,2 +1,3 @@
 info: Kotlin Compiler version $VERSION$
+warning: running the Kotlin compiler under Java 6 or 7 is unsupported and will no longer be possible in a future update.
 OK
