@@ -6,7 +6,8 @@ Output:
 Exit code: COMPILATION_ERROR
 Output:
 compiler/testData/multiplatform/classScopes/functionIncorrectSignature/common.kt:1:14: error: header declaration 'Foo' has no implementation in module
-The following declaration is incompatible because some members are not implemented.
+The following declaration is incompatible because some members are not implemented:
+    public final impl class Foo
 No implementations are found for members listed below:
 
     public final header fun function(b: ByteArray): Int
@@ -22,4 +23,3 @@ impl class Foo {
 compiler/testData/multiplatform/classScopes/functionIncorrectSignature/jvm.kt:2:5: error: modifier 'impl' is only applicable to members that are initially declared in platform-independent code
     impl fun function(b: ByteArray): Long = b.size.toLong()
     ^
-
