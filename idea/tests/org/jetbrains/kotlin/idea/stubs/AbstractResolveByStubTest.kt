@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.idea.stubs
 
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.test.AstAccessControl
-import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.configureAs
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden
@@ -29,16 +29,17 @@ import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.junit.Assert
 import java.io.File
 
-abstract class AbstractResolveByStubTest : KotlinCodeInsightTestCase() {
+abstract class AbstractResolveByStubTest : KotlinLightCodeInsightFixtureTestCase() {
     @Throws(Exception::class)
     protected fun doTest(testFileName: String) {
         doTest(testFileName, true, true)
     }
 
+    override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+
     @Throws(Exception::class)
     private fun doTest(path: String, checkPrimaryConstructors: Boolean, checkPropertyAccessors: Boolean) {
-        configureByFile(path)
-        module.configureAs(KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE)
+        myFixture.configureByFile(path)
         val shouldFail = getTestName(false) == "ClassWithConstVal"
         AstAccessControl.testWithControlledAccessToAst(shouldFail, project, testRootDisposable) {
             performTest(path, checkPrimaryConstructors, checkPropertyAccessors)
@@ -62,9 +63,5 @@ abstract class AbstractResolveByStubTest : KotlinCodeInsightTestCase() {
                         .withValidationStrategy(errorTypesForbidden()),
                 fileToCompareTo
         )
-    }
-
-    override fun getTestDataPath(): String {
-        return ""
     }
 }
