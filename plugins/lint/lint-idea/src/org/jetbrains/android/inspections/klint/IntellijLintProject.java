@@ -31,7 +31,10 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.LibraryOrderEntry;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.OrderEntry;
+import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
@@ -688,7 +691,7 @@ class IntellijLintProject extends Project {
     @Override
     public AndroidVersion getMinSdkVersion() {
       if (mMinSdkVersion == null) {
-        mMinSdkVersion = AndroidModuleInfo.get(myFacet).getMinSdkVersion();
+        mMinSdkVersion = AndroidModuleInfo.getInstance(myFacet).getMinSdkVersion();   // AS24 getInstance()
       }
       return mMinSdkVersion;
     }
@@ -697,7 +700,7 @@ class IntellijLintProject extends Project {
     @Override
     public AndroidVersion getTargetSdkVersion() {
       if (mTargetSdkVersion == null) {
-        mTargetSdkVersion = AndroidModuleInfo.get(myFacet).getTargetSdkVersion();
+        mTargetSdkVersion = AndroidModuleInfo.getInstance(myFacet).getTargetSdkVersion();  // AS24 getInstance()
       }
 
       return mTargetSdkVersion;
