@@ -138,21 +138,6 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
         doTest(fileName);
     }
 
-    @TestMetadata("compiler/testData/codegen/java8/box/builtinStubMethods")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class BuiltinStubMethods extends AbstractBlackBoxCodegenTest {
-        public void testAllFilesPresentInBuiltinStubMethods() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/box/builtinStubMethods"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("immutableRemove.kt")
-        public void testImmutableRemove() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/builtinStubMethods/immutableRemove.kt");
-            doTest(fileName);
-        }
-    }
-
     @TestMetadata("compiler/testData/codegen/java8/box/delegationBy")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -606,21 +591,6 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
         public void testSynthesizedParameterNames() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/reflection/synthesizedParameterNames.kt");
             doTest(fileName);
-        }
-
-        @TestMetadata("compiler/testData/codegen/java8/box/reflection/parameters")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Parameters extends AbstractBlackBoxCodegenTest {
-            public void testAllFilesPresentInParameters() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/box/reflection/parameters"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
-            }
-
-            @TestMetadata("javaParametersHaveDefaultNames.kt")
-            public void testJavaParametersHaveDefaultNames() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/java8/box/reflection/parameters/javaParametersHaveDefaultNames.kt");
-                doTest(fileName);
-            }
         }
     }
 }
