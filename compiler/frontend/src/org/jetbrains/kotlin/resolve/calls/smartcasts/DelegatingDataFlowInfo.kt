@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import org.jetbrains.kotlin.utils.newLinkedHashSetWithExpectedSize
 import java.util.*
 
 internal class DelegatingDataFlowInfo private constructor(
@@ -121,7 +120,7 @@ internal class DelegatingDataFlowInfo private constructor(
             return types
         }
 
-        val enrichedTypes = newLinkedHashSetWithExpectedSize<KotlinType>(types.size + 1)
+        val enrichedTypes = Sets.newHashSetWithExpectedSize<KotlinType>(types.size + 1)
         val originalType = key.type
         for (type in types) {
             enrichedTypes.add(TypeUtils.makeNotNullable(type))
