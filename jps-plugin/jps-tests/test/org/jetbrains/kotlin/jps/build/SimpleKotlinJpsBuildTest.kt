@@ -61,7 +61,7 @@ class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         ).isExported = false
 
         addKotlinStdlibDependency()
-        rebuildAllModules()
+        rebuildAll()
     }
 
     // TODO: add JS tests
