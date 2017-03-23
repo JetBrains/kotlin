@@ -186,7 +186,7 @@ private fun smartSelectElement(
 
     val highlighter = ScopeHighlighter(editor)
 
-    val list = JBList<PsiElement>(model)
+    val list = JBList(model)
 
     list.cellRenderer = object : DefaultListCellRenderer() {
         override fun getListCellRendererComponent(list: JList<*>, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
