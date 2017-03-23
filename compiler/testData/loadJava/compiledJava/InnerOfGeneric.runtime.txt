@@ -1,0 +1,28 @@
+package test
+
+public open class InnerOfGeneric {
+    public constructor InnerOfGeneric()
+
+    public abstract inner class A</*0*/ K : kotlin.Any!> {
+        public constructor A</*0*/ K : kotlin.Any!>()
+
+        public abstract inner class Inner /*captured type parameters: /*0*/ K : kotlin.Any!*/ : test.InnerOfGeneric.S<K!> {
+            public constructor Inner()
+            public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.collections.(Mutable)Iterator<K!>!
+        }
+    }
+
+    public open inner class B</*0*/ L : kotlin.Any!> : test.InnerOfGeneric.A<L!> {
+        public constructor B</*0*/ L : kotlin.Any!>()
+
+        public open inner class SubInner /*captured type parameters: /*0*/ L : kotlin.Any!*/ : test.InnerOfGeneric.A<kotlin.Any!>.Inner {
+            public constructor SubInner()
+            public open override /*1*/ fun iterator(): kotlin.collections.(Mutable)Iterator<L!>!
+        }
+    }
+
+    public open inner class S</*0*/ E : kotlin.Any!> {
+        public constructor S</*0*/ E : kotlin.Any!>()
+        public open operator fun iterator(): kotlin.collections.(Mutable)Iterator<E!>!
+    }
+}
