@@ -172,7 +172,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
         val globalContext = CodeInsightTestFixtureImpl.createGlobalContextForTool(scope, myProject, inspectionManager, toolWrapper)
 
         val resultRef = Ref<List<String>>()
-        invokeTestRunnable {
+        UsefulTestCase.edt {
             InspectionTestUtil.runTool(toolWrapper, scope, globalContext)
             val presentation = globalContext.getPresentation(toolWrapper)
 
