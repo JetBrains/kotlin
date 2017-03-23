@@ -555,7 +555,7 @@ public class KotlinTestUtils {
         }
     }
 
-    public static boolean compileKotlinWithJava(
+    public static void compileKotlinWithJava(
             @NotNull List<File> javaFiles,
             @NotNull List<File> ktFiles,
             @NotNull File outDir,
@@ -570,12 +570,12 @@ public class KotlinTestUtils {
             boolean mkdirs = outDir.mkdirs();
             assert mkdirs : "Not created: " + outDir;
         }
-        if (javaFiles.isEmpty()) return true;
-
-        return compileJavaFiles(javaFiles, Arrays.asList(
-                "-classpath", outDir.getPath() + File.pathSeparator + ForTestCompileRuntime.runtimeJarForTests(),
-                "-d", outDir.getPath()
-        ), javaErrorFile);
+        if (!javaFiles.isEmpty()) {
+            compileJavaFiles(javaFiles, Arrays.asList(
+                    "-classpath", outDir.getPath() + File.pathSeparator + ForTestCompileRuntime.runtimeJarForTests(),
+                    "-d", outDir.getPath()
+            ), javaErrorFile);
+        }
     }
 
     public interface TestFileFactory<M, F> {
@@ -805,11 +805,11 @@ public class KotlinTestUtils {
         return comments;
     }
 
-    public static boolean compileJavaFiles(@NotNull Collection<File> files, List<String> options) throws IOException {
-        return compileJavaFiles(files, options, null);
+    public static void compileJavaFiles(@NotNull Collection<File> files, List<String> options) throws IOException {
+        compileJavaFiles(files, options, null);
     }
 
-    private static boolean compileJavaFiles(@NotNull Collection<File> files, List<String> options, @Nullable File javaErrorFile) throws IOException {
+    public static void compileJavaFiles(@NotNull Collection<File> files, List<String> options, @Nullable File javaErrorFile) throws IOException {
         JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
         DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<JavaFileObject>();
         StandardJavaFileManager fileManager = javaCompiler.getStandardFileManager(diagnosticCollector, Locale.ENGLISH, Charset.forName("utf-8"));
@@ -831,14 +831,13 @@ public class KotlinTestUtils {
             else {
                 assertEqualsToFile(javaErrorFile, errorsToString(diagnosticCollector, false));
             }
-            return success;
         } finally {
             fileManager.close();
         }
     }
 
     @NotNull
-    private static String errorsToString(@NotNull DiagnosticCollector<JavaFileObject> diagnosticCollector, boolean humanReadable) {
+    private static String errorsToString(@NotNull  DiagnosticCollector<JavaFileObject> diagnosticCollector, boolean humanReadable) {
         StringBuilder builder = new StringBuilder();
         for (javax.tools.Diagnostic<? extends JavaFileObject> diagnostic : diagnosticCollector.getDiagnostics()) {
             if (diagnostic.getKind() != javax.tools.Diagnostic.Kind.ERROR) continue;
@@ -847,7 +846,7 @@ public class KotlinTestUtils {
                 builder.append(diagnostic).append("\n");
             }
             else {
-                builder.append(new File(diagnostic.getSource().toUri()).getName()).append(":")
+                builder.append(diagnostic.getSource().getName()).append(":")
                         .append(diagnostic.getLineNumber()).append(":")
                         .append(diagnostic.getColumnNumber()).append(":")
                         .append(diagnostic.getCode()).append("\n");
