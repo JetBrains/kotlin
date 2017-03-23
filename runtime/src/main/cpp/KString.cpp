@@ -404,7 +404,7 @@ KInt Kotlin_String_indexOfString(KString thiz, KString other, KInt fromIndex) {
   }
   KInt count = thiz->count_;
   const KChar* thizRaw = CharArrayAddressOfElementAt(thiz, fromIndex);
-  const KChar* otherRaw = CharArrayAddressOfElementAt(thiz, 0);
+  const KChar* otherRaw = CharArrayAddressOfElementAt(other, 0);
   void* result = memmem(thizRaw, (thiz->count_ - fromIndex) * sizeof(KChar),
                         otherRaw, other->count_ * sizeof(KChar));
   if (result == nullptr) return -1;
