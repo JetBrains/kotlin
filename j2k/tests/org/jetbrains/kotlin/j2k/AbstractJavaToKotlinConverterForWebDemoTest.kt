@@ -78,7 +78,6 @@ abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
             override fun isNullable(owner: PsiModifierListOwner, checkBases: Boolean) = !isNotNull(owner, checkBases)
             override fun isNotNull(owner: PsiModifierListOwner, checkBases: Boolean) = true
             override fun hasHardcodedContracts(element: PsiElement): Boolean = false
-            override fun getPredefinedNotNulls() = emptyList<String>()
         })
 
         applicationEnvironment.application.registerService(JavaClassSupers::class.java, JavaClassSupersImpl::class.java)
