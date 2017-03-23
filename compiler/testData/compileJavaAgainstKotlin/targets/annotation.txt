@@ -1,0 +1,9 @@
+package test
+
+@test.meta public/*package*/ final annotation class MyAnn : kotlin.Annotation {
+    public/*package*/ constructor MyAnn()
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.ANNOTATION_CLASS}) public final annotation class meta : kotlin.Annotation {
+    public constructor meta()
+}
