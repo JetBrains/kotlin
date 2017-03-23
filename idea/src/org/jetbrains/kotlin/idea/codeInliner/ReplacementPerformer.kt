@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.util.*
 
 internal abstract class ReplacementPerformer<TElement : KtElement>(
@@ -85,14 +84,16 @@ internal class ExpressionReplacementPerformer(
             elementToBeReplaced.replace(codeToInline.mainExpression!!)
         }
         else {
-            val bindingContext = elementToBeReplaced.analyze(BodyResolveMode.FULL)
-            val canDropElementToBeReplaced = !elementToBeReplaced.isUsedAsExpression(bindingContext)
+            // NB: Unit is never used as expression
+            val stub = elementToBeReplaced.replace(psiFactory.createExpression("0")) as KtExpression
+            val bindingContext = stub.analyze()
+            val canDropElementToBeReplaced = !stub.isUsedAsExpression(bindingContext)
             if (canDropElementToBeReplaced) {
-                elementToBeReplaced.delete()
+                stub.delete()
                 null
             }
             else {
-                elementToBeReplaced.replace(psiFactory.createExpression("Unit"))
+                stub.replace(psiFactory.createExpression("Unit"))
             }
         }
 
