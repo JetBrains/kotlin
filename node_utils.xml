@@ -44,7 +44,6 @@
 
         <move file="${dependencies}/${node.full.name}" tofile="${dependencies}/node"/>
         <delete dir="${dependencies}/${node.full.name}"/>
-        <delete file="${node.tar.gz}"/>
 
         <sequential if:set="isWindows">
             <get src="${url.node.exe}" dest="${node.exe}" usetimestamp="true"/>
@@ -119,5 +118,13 @@
     <!-- Used on TeamCity-->
     <target name="unzip-jslib.jar">
         <unzip src="${output}/kotlinc/lib/kotlin-stdlib-js.jar" dest="${js.stdlib.output.dir}"/>
+    </target>
+
+    <target name="run-nodejs-tests" description="Run JS backend tests in node.js" depends="download-nodejs-and-npm">
+        <npm command="install" dir="js/js.translator/testData" />
+        <exec executable="node_modules/mocha/bin/mocha" dir="js/js.translator/testData" failonerror="true">
+            <arg value="--reporter"/>
+            <arg value="mocha-teamcity-reporter"/>
+        </exec>
     </target>
 </project>

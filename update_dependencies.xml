@@ -1,5 +1,6 @@
 <project xmlns:if="ant:if" xmlns:unless="ant:unless" name="Update Dependencies" default="update">
     <import file="common.xml" optional="false"/>
+    <import file="node_utils.xml" optional="false"/>
 
     <property name="automerge_dummy" value="This property is used to trick git merge. Do not delete empty lines around."/>
     <property name="ideaVersion" value="171-SNAPSHOT"/>
@@ -318,6 +319,9 @@
             usetimestamp="true"
             build.number.pattern="\d+\s-\sKotlin\s[\w-+\.]+"
         />
+
+        <!-- node.js -->
+        <antcall target="download-nodejs-and-npm"/>
     </target>
 
     <macrodef name="get-protobuf-and-rename-packages">
