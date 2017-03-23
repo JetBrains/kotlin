@@ -37,7 +37,6 @@ import junit.framework.TestCase;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.junit.Assert;
 
@@ -95,10 +94,10 @@ public abstract class KtUsefulTestCase extends TestCase {
         testName = new File(testName).getName(); // in case the test name contains file separators
         myTempDir = new File(ORIGINAL_TEMP_DIR, TEMP_DIR_MARKER + testName).getPath();
         FileUtil.resetCanonicalTempPathCache(myTempDir);
-        boolean isStressTest = isStressTest();
-        ApplicationInfoImpl.setInStressTest(isStressTest);
+        boolean isPerformanceTest = isPerformanceTest();
+        ApplicationInfoImpl.setInPerformanceTest(isPerformanceTest);
         // turn off Disposer debugging for performance tests
-        oldDisposerDebug = Disposer.setDebugMode(Disposer.isDebugMode() && !isStressTest);
+        oldDisposerDebug = Disposer.setDebugMode(Disposer.isDebugMode() && !isPerformanceTest);
     }
 
     @Override
@@ -450,29 +449,8 @@ public abstract class KtUsefulTestCase extends TestCase {
         }
     }
 
-    private static boolean isPerformanceTest(@Nullable String testName, @Nullable String className) {
-        return testName != null && testName.contains("Performance") ||
-               className != null && className.contains("Performance");
-    }
-
-    /**
-     * @return true for a test which performs A LOT of computations.
-     * Such test should typically avoid performing expensive checks, e.g. data structure consistency complex validations.
-     * If you want your test to be treated as "Stress", please mention one of these words in its name: "Stress", "Slow".
-     * For example: {@code public void testStressPSIFromDifferentThreads()}
-     */
-
-    private boolean isStressTest() {
-        return isStressTest(getName(), getClass().getName());
-    }
-
-    private static boolean isStressTest(String testName, String className) {
-        return isPerformanceTest(testName, className) ||
-               containsStressWords(testName) ||
-               containsStressWords(className);
-    }
-
-    private static boolean containsStressWords(@Nullable String name) {
-        return name != null && (name.contains("Stress") || name.contains("Slow"));
+    private boolean isPerformanceTest() {
+        String name = getName();
+        return name != null && name.contains("Performance") || getClass().getName().contains("Performance");
     }
 }
