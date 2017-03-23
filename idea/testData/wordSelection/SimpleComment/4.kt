@@ -1,7 +1,7 @@
 package p
 
 <selection>/* This is a <caret>comment */
-</selection>fun foo() {
+fun foo() {
 }
-
+</selection>
 fun bar(){}
