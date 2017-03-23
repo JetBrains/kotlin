@@ -3,26 +3,29 @@ description = 'Kotlin Standard Library for JS'
 apply plugin: 'kotlin2js'
 
 ext.commonSrcDir = "${buildDir}/common-sources"
-
+ext.builtinsDir = "${rootDir}/../core/builtins"
+ext.jsSrcDir = "${rootDir}/../js/js.libraries/src"
+ext.jsSrcJsDir = "${jsSrcDir}/js"
+ext.jsOutputFile = "${buildDir}/classes/kotlin.js"
 
 sourceSets {
     builtinsFiles {
         kotlin {
-            srcDir "${rootDir}/../core/builtins/native/kotlin/"
+            srcDir "${builtinsDir}/native/kotlin/"
             include "Comparable.kt"
         }
     }
     builtins {
         kotlin {
             source builtinsFiles.kotlin
-            srcDir "${rootDir}/../js/js.libraries/src/builtins"
+            srcDir "${jsSrcDir}/builtins"
         }
     }
 
 
     mainNativeFiles {
         kotlin {
-            srcDir "${rootDir}/../core/builtins/native/kotlin"
+            srcDir "${builtinsDir}/native/kotlin"
             include "Iterator.kt"
             include "Collections.kt"
             include "CharSequence.kt"
@@ -31,7 +34,7 @@ sourceSets {
     }
     mainCoreFiles {
         kotlin {
-            srcDir "${rootDir}/../core/builtins/src/kotlin/"
+            srcDir "${builtinsDir}/src/kotlin/"
             include "annotation/Annotations.kt"
             include "Function.kt"
             include "Iterators.kt"
@@ -50,7 +53,7 @@ sourceSets {
         kotlin {
             source mainNativeFiles.kotlin
             source mainCoreFiles.kotlin
-            srcDir "${rootDir}/../js/js.libraries/src"
+            srcDir jsSrcDir
             exclude "builtins"
             srcDir commonSrcDir
         }
@@ -62,12 +65,11 @@ ant.properties.commonSrcDir = commonSrcDir
 ant.properties.kotlinCompiler = bootstrapCompilerFile.path
 ant.properties.compilerPreloader = compilerPreloaderFile.path
 
-println(projectDir)
-
 ant.importBuild('../common/tasks.xml')
 
+kotlin.experimental.coroutines "enable"
+
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile) {
-    compilerJarFile = bootstrapCompilerFile
     kotlinOptions {
         main = "noCall"
         moduleKind = "commonjs"
@@ -92,6 +94,111 @@ compileKotlin2Js {
     }
 }
 
-classes.dependsOn compileBuiltinsKotlin2Js
+configurations {
+    closureCompiler
+}
+dependencies {
+    closureCompiler "com.google.javascript:closure-compiler:v20160315"
+}
 
-kotlin.experimental.coroutines "enable"
+task compileJs {
+    dependsOn compileBuiltinsKotlin2Js, compileKotlin2Js
+    inputs.files(compileBuiltinsKotlin2Js.outputs.files)
+    inputs.files(compileKotlin2Js.outputs.files)
+    inputs.dir(jsSrcDir)
+    outputs.file(jsOutputFile)
+
+
+    doLast {
+        ant.taskdef(
+                name: 'closureCompiler',
+                classname: 'com.google.javascript.jscomp.ant.CompileTask',
+                classpath: configurations.closureCompiler.asPath)
+
+        ant.closureCompiler(
+                compilationLevel: 'whitespace',
+                prettyprint: 'true',
+                languagein: 'ECMASCRIPT5_STRICT',
+                warning: 'default',
+                output: jsOutputFile,
+                outputWrapperFile: "${jsSrcJsDir}/closure-wrapper.txt"
+        ) {
+            ant.path {
+                fileset(dir: "${jsSrcJsDir}") {
+                    include(name: '**/*.js')
+                    exclude(name: 'externs.js')
+                }
+                fileset(dir: "${buildDir}/classes") {
+                    include(name: 'builtins/kotlin.js')
+                    include(name: 'main/kotlin.js')
+                }
+            }
+
+            externs(dir: "${jsSrcJsDir}") {
+                ant.file(name: 'externs.js')
+            }
+        }
+
+        ant.replaceregexp(
+                file: jsOutputFile,
+                match: "module.exports,\\s*require\\([^)]+\\)",
+                replace: "",
+                byline: "true", encoding: "UTF-8")
+        ant.replaceregexp(
+                file: jsOutputFile,
+                match: "function\\s*\\(_,\\s*Kotlin\\)",
+                replace: "function()",
+                byline: "true", encoding: "UTF-8")
+        ant.replaceregexp(
+                file: jsOutputFile,
+                match: "return\\s+_;",
+                replace: "",
+                byline: "true", encoding: "UTF-8")
+    }
+}
+
+classes.dependsOn compileJs
+
+
+jar {
+    enabled false
+}
+
+task mergedJar(type: Jar, dependsOn: classes) {
+    classifier = null
+    includeEmptyDirs false
+    duplicatesStrategy DuplicatesStrategy.EXCLUDE
+    from jsOutputFile
+    from sourceSets.main.output
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    includeEmptyDirs false
+    from (sourceSets.builtins.allSource) {
+        into 'kotlin'
+    }
+    from (sourceSets.main.allSource) {
+        into 'kotlin'
+        exclude '**/*.java'
+        exclude 'js/**'
+    }
+}
+
+
+task emptyJavadoc(type: Javadoc) {
+    source = sourceSets.main.java
+    failOnError = false
+}
+
+task javadocJar(type: Jar, dependsOn: emptyJavadoc) {
+    classifier = 'javadoc'
+    from emptyJavadoc.destinationDir
+}
+
+artifacts {
+    runtime mergedJar
+    archives mergedJar
+    archives sourcesJar
+    archives javadocJar
+}
