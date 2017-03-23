@@ -5,12 +5,21 @@ Cleaning output files:
   out/production/module/foo/AKt.class
   out/production/module/foo/Foo.class
 End of files
-Cleaning output files:
-  out/production/module/baz/UseClassKt.class
-  out/production/module/baz/UseFunKt.class
-End of files
 Compiling files:
   src/bar/a.kt
+End of files
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/bar/DummyKt.class
+  out/production/module/baz/UseClassKt.class
+  out/production/module/baz/UseFunKt.class
+  out/production/module/foo/DummyKt.class
+End of files
+Compiling files:
+  src/bar/dummy.kt
+  src/foo/dummy.kt
   src/useClass.kt
   src/useFun.kt
 End of files
