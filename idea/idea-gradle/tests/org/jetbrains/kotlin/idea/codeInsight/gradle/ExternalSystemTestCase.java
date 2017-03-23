@@ -75,7 +75,7 @@ public abstract class ExternalSystemTestCase extends UsefulTestCase {
     setUpFixtures();
     myProject = myTestFixture.getProject();
 
-    invokeTestRunnable(new Runnable() {
+    edt(new Runnable() {
       @Override
       public void run() {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
