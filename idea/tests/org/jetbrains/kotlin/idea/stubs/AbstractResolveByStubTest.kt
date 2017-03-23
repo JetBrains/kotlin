@@ -14,54 +14,44 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.stubs;
+package org.jetbrains.kotlin.idea.stubs
 
-import com.intellij.openapi.util.io.FileUtil;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.test.*;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
-import org.junit.Assert;
+import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
+import org.jetbrains.kotlin.idea.test.AstAccessControl
+import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.configureAs
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
+import org.junit.Assert
+import java.io.File
 
-import java.io.File;
-
-import static org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden;
-
-public abstract class AbstractResolveByStubTest extends KotlinCodeInsightTestCase {
-    protected void doTest(String testFileName) throws Exception {
-        doTest(testFileName, true, true);
+abstract class AbstractResolveByStubTest : KotlinCodeInsightTestCase() {
+    @Throws(Exception::class)
+    protected fun doTest(testFileName: String) {
+        doTest(testFileName, true, true)
     }
 
-    private void doTest(@NotNull final String path, final boolean checkPrimaryConstructors, final boolean checkPropertyAccessors)
-            throws Exception {
-        configureByFile(path);
-        TestUtilsKt.configureAs(getModule(), KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE);
-        boolean shouldFail = getTestName(false).equals("ClassWithConstVal");
-        AstAccessControl.INSTANCE.testWithControlledAccessToAst(
-                shouldFail, getProject(), getTestRootDisposable(),
-                new Function0<Unit>() {
-                    @Override
-                    public Unit invoke() {
-                        performTest(path, checkPrimaryConstructors, checkPropertyAccessors);
-                        return Unit.INSTANCE;
-                    }
-                }
-        );
+    @Throws(Exception::class)
+    private fun doTest(path: String, checkPrimaryConstructors: Boolean, checkPropertyAccessors: Boolean) {
+        configureByFile(path)
+        module.configureAs(KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE)
+        val shouldFail = getTestName(false) == "ClassWithConstVal"
+        AstAccessControl.testWithControlledAccessToAst(shouldFail, project, testRootDisposable) {
+            performTest(path, checkPrimaryConstructors, checkPropertyAccessors)
+        }
     }
 
-    private void performTest(@NotNull String path, boolean checkPrimaryConstructors, boolean checkPropertyAccessors) {
-        KtFile file = (KtFile) getFile();
-        ModuleDescriptor module = ResolutionUtils.findModuleDescriptor(file);
-        PackageViewDescriptor packageViewDescriptor = module.getPackage(new FqName("test"));
-        Assert.assertFalse(packageViewDescriptor.isEmpty());
+    private fun performTest(path: String, checkPrimaryConstructors: Boolean, checkPropertyAccessors: Boolean) {
+        val file = file as KtFile
+        val module = file.findModuleDescriptor()
+        val packageViewDescriptor = module.getPackage(FqName("test"))
+        Assert.assertFalse(packageViewDescriptor.isEmpty())
 
-        File fileToCompareTo = new File(FileUtil.getNameWithoutExtension(path) + ".txt");
+        val fileToCompareTo = File(FileUtil.getNameWithoutExtension(path) + ".txt")
 
         RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(
                 packageViewDescriptor,
@@ -71,11 +61,10 @@ public abstract class AbstractResolveByStubTest extends KotlinCodeInsightTestCas
                         .checkPropertyAccessors(checkPropertyAccessors)
                         .withValidationStrategy(errorTypesForbidden()),
                 fileToCompareTo
-        );
+        )
     }
 
-    @Override
-    protected String getTestDataPath() {
-        return "";
+    override fun getTestDataPath(): String {
+        return ""
     }
 }
