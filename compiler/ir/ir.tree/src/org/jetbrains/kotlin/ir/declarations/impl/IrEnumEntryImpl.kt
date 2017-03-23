@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
@@ -30,12 +31,10 @@ class IrEnumEntryImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        override val descriptor: ClassDescriptor,
         override val symbol: IrEnumEntrySymbol
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrEnumEntry {
     constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor) :
-            this(startOffset, endOffset, origin, descriptor,
-                 IrEnumEntrySymbolImpl(descriptor))
+            this(startOffset, endOffset, origin, IrEnumEntrySymbolImpl(descriptor))
 
     constructor(
             startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
@@ -45,6 +44,7 @@ class IrEnumEntryImpl(
         this.initializerExpression = initializerExpression
     }
 
+    override val descriptor: ClassDescriptor get() = symbol.descriptor
     override var correspondingClass: IrClass? = null
     override lateinit var initializerExpression: IrExpression
 

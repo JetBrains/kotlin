@@ -1,5 +1,6 @@
 FILE /enumEntryAsReceiver.kt
   CLASS ENUM_CLASS X
+    $new: VALUE_PARAMETER <receiver: X>
     CONSTRUCTOR private constructor X()
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'constructor Enum(String, Int)'
@@ -7,6 +8,7 @@ FILE /enumEntryAsReceiver.kt
     ENUM_ENTRY enum entry B
       init: ENUM_CONSTRUCTOR_CALL 'constructor B()'
       class: CLASS ENUM_ENTRY B
+        $new: VALUE_PARAMETER <receiver: B>
         CONSTRUCTOR private constructor B()
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor X()'
@@ -16,6 +18,7 @@ FILE /enumEntryAsReceiver.kt
             EXPRESSION_BODY
               CONST String type=kotlin.String value='OK'
           FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-value2>(): kotlin.String
+            $this: VALUE_PARAMETER <receiver: B>
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<get-value2>(): String'
                 GET_FIELD 'value2: String' type=kotlin.String origin=null
@@ -29,18 +32,42 @@ FILE /enumEntryAsReceiver.kt
                     RETURN type=kotlin.Nothing from='<anonymous>(): String'
                       CALL '<get-value2>(): String' type=kotlin.String origin=GET_PROPERTY
                         $this: GET_ENUM 'B' type=X.B
-                CALLABLE_REFERENCE '<anonymous>(): String' type=() -> kotlin.String origin=LAMBDA
+                FUNCTION_REFERENCE '<anonymous>(): String' type=() -> kotlin.String origin=LAMBDA
           FUN DEFAULT_PROPERTY_ACCESSOR public open override fun <get-value>(): () -> kotlin.String
+            $this: VALUE_PARAMETER <receiver: B>
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<get-value>(): () -> String'
                 GET_FIELD 'value: () -> String' type=() -> kotlin.String origin=null
                   receiver: GET_VAR '<receiver: B>' type=X.B origin=null
+        FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
+        FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
+        FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<X!>!
+        FUN FAKE_OVERRIDE public final override fun compareTo(other: X): kotlin.Int
+        FUN FAKE_OVERRIDE public final override fun equals(other: kotlin.Any?): kotlin.Boolean
+        FUN FAKE_OVERRIDE public final override fun hashCode(): kotlin.Int
+        PROPERTY FAKE_OVERRIDE public final override val name: kotlin.String
+          FUN FAKE_OVERRIDE public final override fun <get-name>(): kotlin.String
+        PROPERTY FAKE_OVERRIDE public final override val ordinal: kotlin.Int
+          FUN FAKE_OVERRIDE public final override fun <get-ordinal>(): kotlin.Int
+        FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     PROPERTY public abstract val value: () -> kotlin.String
       FUN DEFAULT_PROPERTY_ACCESSOR public abstract fun <get-value>(): () -> kotlin.String
+        $this: VALUE_PARAMETER <receiver: X>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-value>(): () -> String'
             GET_FIELD 'value: () -> String' type=() -> kotlin.String origin=null
               receiver: GET_VAR '<receiver: X>' type=X origin=null
+    FUN FAKE_OVERRIDE protected final override fun clone(): kotlin.Any
+    FUN FAKE_OVERRIDE protected/*protected and package*/ final override fun finalize(): kotlin.Unit
+    FUN FAKE_OVERRIDE public final override fun getDeclaringClass(): java.lang.Class<X!>!
+    FUN FAKE_OVERRIDE public final override fun compareTo(other: X): kotlin.Int
+    FUN FAKE_OVERRIDE public final override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public final override fun hashCode(): kotlin.Int
+    PROPERTY FAKE_OVERRIDE public final override val name: kotlin.String
+      FUN FAKE_OVERRIDE public final override fun <get-name>(): kotlin.String
+    PROPERTY FAKE_OVERRIDE public final override val ordinal: kotlin.Int
+      FUN FAKE_OVERRIDE public final override fun <get-ordinal>(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun values(): kotlin.Array<X>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): X

@@ -16,25 +16,25 @@
 
 package org.jetbrains.kotlin.psi2ir.intermediate
 
-import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.types.KotlinType
 
 class DelegatedLocalPropertyLValue(
         val startOffset: Int,
         val endOffset: Int,
-        val descriptor: VariableDescriptorWithAccessors,
+        override val type: KotlinType,
+        val getterSymbol: IrSimpleFunctionSymbol?,
+        val setterSymbol: IrSimpleFunctionSymbol?,
         val origin: IrStatementOrigin? = null
 ) : LValue, AssignmentReceiver {
-    override val type: KotlinType get() = descriptor.type
-
     override fun load(): IrExpression =
-            IrCallImpl(startOffset, endOffset, descriptor.type, descriptor.getter!!, null, origin)
+            IrCallImpl(startOffset, endOffset, type, getterSymbol!!, null, origin)
 
     override fun store(irExpression: IrExpression): IrExpression =
-            IrCallImpl(startOffset, endOffset, descriptor.type, descriptor.setter!!, null, origin).apply {
+            IrCallImpl(startOffset, endOffset, type, setterSymbol!!, null, origin).apply {
                 putValueArgument(0, irExpression)
             }
 

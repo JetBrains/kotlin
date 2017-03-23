@@ -1,5 +1,6 @@
 FILE /object.kt
   CLASS OBJECT Z
+    $new: VALUE_PARAMETER <receiver: Z>
     CONSTRUCTOR private constructor Z()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -8,6 +9,7 @@ FILE /object.kt
       $this: VALUE_PARAMETER <receiver: Z>
       BLOCK_BODY
     CLASS CLASS A
+      $new: VALUE_PARAMETER <receiver: A>
       CONSTRUCTOR public constructor A()
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

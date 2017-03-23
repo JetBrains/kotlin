@@ -21,7 +21,7 @@ FILE /badBreakContinue.kt
                 BLOCK_BODY
                   ERROR_EXPR 'Loop not found for break expression: break@L1' type=kotlin.Nothing
                   ERROR_EXPR 'Loop not found for continue expression: continue@L1' type=kotlin.Nothing
-              CALLABLE_REFERENCE '<anonymous>(): Nothing' type=() -> kotlin.Nothing origin=LAMBDA
+              FUNCTION_REFERENCE '<anonymous>(): Nothing' type=() -> kotlin.Nothing origin=LAMBDA
   FUN public fun test4(): kotlin.Unit
     BLOCK_BODY
       WHILE label=null origin=WHILE_LOOP

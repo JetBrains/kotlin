@@ -98,6 +98,18 @@ class SymbolTable {
             operator fun set(d: D, s: S) {
                 descriptorToSymbol[d] = s
             }
+
+            fun dumpTo(stringBuilder: StringBuilder): StringBuilder =
+                    stringBuilder.also {
+                        it.append("owner=")
+                        it.append(owner)
+                        it.append("; ")
+                        descriptorToSymbol.keys.joinTo(prefix = "[", postfix = "]", buffer = it)
+                        it.append('\n')
+                        parent?.dumpTo(it)
+                    }
+
+            fun dump(): String = dumpTo(StringBuilder()).toString()
         }
 
         private var currentScope: Scope? = null
@@ -131,9 +143,12 @@ class SymbolTable {
             currentScope = currentScope?.parent
 
             if (currentScope != null && unboundSymbols.isNotEmpty()) {
-                throw AssertionError("")
+                throw AssertionError("Local scope contains unbound symbols: ${unboundSymbols.joinToString { it.descriptor.toString() }}")
             }
         }
+
+        fun dump(): String =
+                currentScope?.dump() ?: "<none>"
     }
 
     private val classSymbolTable = FlatSymbolTable<ClassDescriptor, IrClass, IrClassSymbol>()
@@ -148,14 +163,11 @@ class SymbolTable {
     private val scopedSymbolTables = listOf(typeParameterSymbolTable, valueParameterSymbolTable, variableSymbolTable)
 
     fun declareFile(fileEntry: SourceManager.FileEntry, packageFragmentDescriptor: PackageFragmentDescriptor): IrFile =
-            IrFileImpl(
-                    fileEntry, packageFragmentDescriptor,
-                    IrFileSymbolImpl(packageFragmentDescriptor)
-            )
+            IrFileImpl(fileEntry, IrFileSymbolImpl(packageFragmentDescriptor))
 
     fun declareAnonymousInitializer(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor): IrAnonymousInitializer =
             IrAnonymousInitializerImpl(
-                    startOffset, endOffset, origin, descriptor,
+                    startOffset, endOffset, origin,
                     IrAnonymousInitializerSymbolImpl(descriptor)
             )
 
@@ -163,7 +175,7 @@ class SymbolTable {
             classSymbolTable.declare(
                     descriptor,
                     { IrClassSymbolImpl(descriptor) },
-                    { IrClassImpl(startOffset, endOffset, origin, descriptor, it) }
+                    { IrClassImpl(startOffset, endOffset, origin, it) }
             )
 
 
@@ -176,7 +188,7 @@ class SymbolTable {
             constructorSymbolTable.declare(
                     descriptor,
                     { IrConstructorSymbolImpl(descriptor) },
-                    { IrConstructorImpl(startOffset, endOffset, origin, descriptor, it) }
+                    { IrConstructorImpl(startOffset, endOffset, origin, it) }
             )
 
     fun referenceConstructor(descriptor: ClassConstructorDescriptor) =
@@ -188,7 +200,7 @@ class SymbolTable {
             enumEntrySymbolTable.declare(
                     descriptor,
                     { IrEnumEntrySymbolImpl(descriptor) },
-                    { IrEnumEntryImpl(startOffset, endOffset, origin, descriptor, it) }
+                    { IrEnumEntryImpl(startOffset, endOffset, origin, it) }
             )
 
     fun referenceEnumEntry(descriptor: ClassDescriptor) =
@@ -200,7 +212,7 @@ class SymbolTable {
             fieldSymbolTable.declare(
                     descriptor,
                     { IrFieldSymbolImpl(descriptor) },
-                    { IrFieldImpl(startOffset, endOffset, origin, descriptor, it) }
+                    { IrFieldImpl(startOffset, endOffset, origin, it) }
             )
 
     fun declareField(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: PropertyDescriptor,
@@ -216,11 +228,14 @@ class SymbolTable {
             simpleFunctionSymbolTable.declare(
                     descriptor,
                     { IrSimpleFunctionSymbolImpl(descriptor) },
-                    { IrFunctionImpl(startOffset, endOffset, origin, descriptor, it) }
+                    { IrFunctionImpl(startOffset, endOffset, origin, it) }
             )
 
     fun referenceSimpleFunction(descriptor: FunctionDescriptor) =
             simpleFunctionSymbolTable.referenced(descriptor) { IrSimpleFunctionSymbolImpl(descriptor) }
+
+    fun referenceDeclaredFunction(descriptor: FunctionDescriptor) =
+            simpleFunctionSymbolTable.referenced(descriptor) { throw AssertionError("Function is not declared: $descriptor") }
 
     val unboundSimpleFunctions: Set<IrSimpleFunctionSymbol> get() = simpleFunctionSymbolTable.unboundSymbols
 
@@ -228,11 +243,11 @@ class SymbolTable {
             typeParameterSymbolTable.declareLocal(
                     descriptor,
                     { IrTypeParameterSymbolImpl(descriptor) },
-                    { IrTypeParameterImpl(startOffset, endOffset, origin, descriptor, it) }
+                    { IrTypeParameterImpl(startOffset, endOffset, origin, it) }
             )
 
     fun referenceTypeParameter(descriptor: TypeParameterDescriptor) =
-            typeParameterSymbolTable.referenced(descriptor) { IrTypeParameterSymbolImpl(descriptor) }
+            typeParameterSymbolTable.referenced(descriptor) { throw AssertionError("Undefined type parameter referenced: $descriptor") }
 
     val unboundTypeParameters: Set<IrTypeParameterSymbol> get() = typeParameterSymbolTable.unboundSymbols
 
@@ -240,11 +255,13 @@ class SymbolTable {
             valueParameterSymbolTable.declareLocal(
                     descriptor,
                     { IrValueParameterSymbolImpl(descriptor) },
-                    { IrValueParameterImpl(startOffset, endOffset, origin, descriptor, it) }
+                    { IrValueParameterImpl(startOffset, endOffset, origin, it) }
             )
 
     fun referenceValueParameter(descriptor: ParameterDescriptor) =
-            valueParameterSymbolTable.referenced(descriptor) { IrValueParameterSymbolImpl(descriptor) }
+            valueParameterSymbolTable.referenced(descriptor) {
+                throw AssertionError("Undefined parameter referenced: $descriptor\n${valueParameterSymbolTable.dump()}")
+            }
 
     val unboundValueParameters: Set<IrValueParameterSymbol> get() = valueParameterSymbolTable.unboundSymbols
 
@@ -252,18 +269,20 @@ class SymbolTable {
             variableSymbolTable.declareLocal(
                     descriptor,
                     { IrVariableSymbolImpl(descriptor) },
-                    { IrVariableImpl(startOffset, endOffset, origin, descriptor, it) }
+                    { IrVariableImpl(startOffset, endOffset, origin, it) }
             )
 
-    fun declareVariable(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: VariableDescriptor,
-                        irInitializerExpression: IrExpression?
+    fun declareVariable(
+            startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin,
+            descriptor: VariableDescriptor,
+            irInitializerExpression: IrExpression?
     ): IrVariable =
             declareVariable(startOffset, endOffset, origin, descriptor).apply {
                 initializer = irInitializerExpression
             }
 
     fun referenceVariable(descriptor: VariableDescriptor) =
-            variableSymbolTable.referenced(descriptor) { IrVariableSymbolImpl(descriptor) }
+            variableSymbolTable.referenced(descriptor) { throw AssertionError("Undefined variable referenced: $descriptor") }
 
     val unboundVariables: Set<IrVariableSymbol> get() = variableSymbolTable.unboundSymbols
 
@@ -274,6 +293,36 @@ class SymbolTable {
     fun leaveScope(owner: DeclarationDescriptor) {
         scopedSymbolTables.forEach { it.leaveScope(owner) }
     }
+
+    fun referenceFunction(callable: CallableDescriptor): IrFunctionSymbol =
+            when (callable) {
+                is ClassConstructorDescriptor ->
+                    constructorSymbolTable.referenced(callable) { IrConstructorSymbolImpl(callable) }
+                is FunctionDescriptor ->
+                    simpleFunctionSymbolTable.referenced(callable) { IrSimpleFunctionSymbolImpl(callable) }
+                else ->
+                    throw IllegalArgumentException("Unexpected callable descriptor: $callable")
+            }
+
+    fun referenceValue(value: ValueDescriptor): IrValueSymbol =
+            when (value) {
+                is ParameterDescriptor ->
+                    valueParameterSymbolTable.referenced(value) { throw AssertionError("Undefined parameter referenced: $value") }
+                is VariableDescriptor ->
+                    variableSymbolTable.referenced(value) { throw AssertionError("Undefined variable referenced: $value") }
+                else ->
+                    throw IllegalArgumentException("Unexpected value descriptor: $value")
+            }
+
+    fun referenceClassifier(classifier: ClassifierDescriptor): IrClassifierSymbol =
+            when (classifier) {
+                is TypeParameterDescriptor ->
+                    typeParameterSymbolTable.referenced(classifier) { throw AssertionError("Undefined type parameter referenced: $classifier") }
+                is ClassDescriptor ->
+                    classSymbolTable.referenced(classifier) { IrClassSymbolImpl(classifier) }
+                else ->
+                    throw IllegalArgumentException("Unexpected classifier descriptor: $classifier")
+            }
 }
 
 inline fun <T> SymbolTable.withScope(owner: DeclarationDescriptor, block: () -> T): T {

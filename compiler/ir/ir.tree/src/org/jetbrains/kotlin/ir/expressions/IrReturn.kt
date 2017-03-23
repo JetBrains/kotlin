@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 
 
 interface IrReturn : IrExpression {
     var value: IrExpression
     val returnTarget: CallableDescriptor
+    val returnTargetSymbol: IrFunctionSymbol
 }
 

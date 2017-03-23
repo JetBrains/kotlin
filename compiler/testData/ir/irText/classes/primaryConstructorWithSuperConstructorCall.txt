@@ -1,5 +1,6 @@
 FILE /primaryConstructorWithSuperConstructorCall.kt
   CLASS CLASS Base
+    $new: VALUE_PARAMETER <receiver: Base>
     CONSTRUCTOR public constructor Base()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -8,6 +9,7 @@ FILE /primaryConstructorWithSuperConstructorCall.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestImplicitPrimaryConstructor
+    $new: VALUE_PARAMETER <receiver: TestImplicitPrimaryConstructor>
     CONSTRUCTOR public constructor TestImplicitPrimaryConstructor()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
@@ -16,6 +18,7 @@ FILE /primaryConstructorWithSuperConstructorCall.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestExplicitPrimaryConstructor
+    $new: VALUE_PARAMETER <receiver: TestExplicitPrimaryConstructor>
     CONSTRUCTOR public constructor TestExplicitPrimaryConstructor()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'
@@ -24,6 +27,7 @@ FILE /primaryConstructorWithSuperConstructorCall.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestWithDelegatingConstructor
+    $new: VALUE_PARAMETER <receiver: TestWithDelegatingConstructor>
     CONSTRUCTOR public constructor TestWithDelegatingConstructor(x: kotlin.Int, y: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       VALUE_PARAMETER value-parameter y: kotlin.Int

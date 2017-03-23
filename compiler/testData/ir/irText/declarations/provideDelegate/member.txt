@@ -1,5 +1,6 @@
 FILE /member.kt
   CLASS CLASS Delegate
+    $new: VALUE_PARAMETER <receiver: Delegate>
     CONSTRUCTOR public constructor Delegate(value: kotlin.String)
       VALUE_PARAMETER value-parameter value: kotlin.String
       BLOCK_BODY
@@ -27,6 +28,7 @@ FILE /member.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS DelegateProvider
+    $new: VALUE_PARAMETER <receiver: DelegateProvider>
     CONSTRUCTOR public constructor DelegateProvider(value: kotlin.String)
       VALUE_PARAMETER value-parameter value: kotlin.String
       BLOCK_BODY
@@ -55,6 +57,7 @@ FILE /member.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Host
+    $new: VALUE_PARAMETER <receiver: Host>
     CONSTRUCTOR public constructor Host()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -66,7 +69,7 @@ FILE /member.kt
             $this: CALL 'constructor DelegateProvider(String)' type=DelegateProvider origin=null
               value: CONST String type=kotlin.String value='OK'
             thisRef: GET_VAR '<receiver: Host>' type=Host origin=null
-            property: CALLABLE_REFERENCE 'testMember: String' type=kotlin.reflect.KProperty1<Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            property: PROPERTY_REFERENCE 'testMember: String' field=null getter='<get-testMember>(): String' setter=null type=kotlin.reflect.KProperty1<Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
       FUN DELEGATED_PROPERTY_ACCESSOR public final fun <get-testMember>(): kotlin.String
         $this: VALUE_PARAMETER <receiver: Host>
         BLOCK_BODY
@@ -75,7 +78,7 @@ FILE /member.kt
               $this: GET_FIELD '`testMember$delegate`: Delegate' type=Delegate origin=null
                 receiver: GET_VAR '<receiver: Host>' type=Host origin=null
               thisRef: GET_VAR '<receiver: Host>' type=Host origin=null
-              property: CALLABLE_REFERENCE 'testMember: String' type=kotlin.reflect.KProperty1<Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              property: PROPERTY_REFERENCE 'testMember: String' field=null getter='<get-testMember>(): String' setter=null type=kotlin.reflect.KProperty1<Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

@@ -140,7 +140,7 @@ class SyntheticAccessorLowering(val state: GenerationState) : FileLoweringPass, 
                     accessorDescriptor, body
             )
             val calleeDescriptor = accessor.calleeDescriptor
-            val returnExpr = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, calleeDescriptor.returnType!!, calleeDescriptor, emptyMap())
+            val returnExpr = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, calleeDescriptor)
             copyAllArgsToValueParams(returnExpr, accessorDescriptor)
             body.statements.add(IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, accessor, returnExpr))
             data.irClass.declarations.add(syntheticFunction)
@@ -158,8 +158,7 @@ class SyntheticAccessorLowering(val state: GenerationState) : FileLoweringPass, 
             if (accessor is AccessorForCallableDescriptor<*> && descriptor !is AccessorForCallableDescriptor<*>) {
                 val accessorOwner = accessor.containingDeclaration as ClassOrPackageFragmentDescriptor
                 val staticAccessor = descriptor.toStatic(accessorOwner, Name.identifier(state.typeMapper.mapAsmMethod(accessor as FunctionDescriptor).name)) //TODO change call
-                val call = IrCallImpl(expression.startOffset, expression.endOffset, expression.descriptor.returnType!!, staticAccessor, emptyMap(),
-                                      expression.origin/*TODO super*/)
+                val call = IrCallImpl(expression.startOffset, expression.endOffset, staticAccessor, emptyMap(), expression.origin/*TODO super*/)
                 //copyAllArgsToValueParams(call, expression)
                 expression.receiverAndArgs().forEachIndexed { i, irExpression ->
                     call.putValueArgument(i, irExpression)

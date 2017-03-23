@@ -16,14 +16,20 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 
-interface IrCall : IrMemberAccessExpression {
+interface IrCall : IrFunctionAccessExpression {
     val superQualifier: ClassDescriptor?
+    val superQualifierSymbol: IrClassSymbol?
 }
 
 interface IrCallWithShallowCopy : IrCall {
-    fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: CallableDescriptor, newSuperQualifier: ClassDescriptor?): IrCall
+    fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: IrFunctionSymbol, newSuperQualifier: IrClassSymbol?): IrCall
+
+    @Deprecated("Creates unbound symbols")
+    fun shallowCopy(newOrigin: IrStatementOrigin?, newCallee: FunctionDescriptor, newSuperQualifier: ClassDescriptor?): IrCall
 }
 

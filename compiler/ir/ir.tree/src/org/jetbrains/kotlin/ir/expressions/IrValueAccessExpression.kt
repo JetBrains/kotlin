@@ -18,9 +18,12 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 
 interface IrValueAccessExpression : IrDeclarationReference {
     override val descriptor: ValueDescriptor
+    override val symbol: IrValueSymbol
     val origin: IrStatementOrigin?
 }
 
@@ -30,6 +33,7 @@ interface IrGetValue : IrValueAccessExpression, IrExpressionWithCopy {
 
 interface IrSetVariable : IrValueAccessExpression {
     override val descriptor: VariableDescriptor
+    override val symbol: IrVariableSymbol
     var value: IrExpression
 }
 

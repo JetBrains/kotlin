@@ -16,5 +16,24 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-interface IrCallableReference : IrMemberAccessExpression
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 
+interface IrCallableReference : IrMemberAccessExpression {
+    override val descriptor: CallableMemberDescriptor
+}
+
+interface IrFunctionReference : IrCallableReference {
+    override val descriptor: FunctionDescriptor
+    val symbol: IrFunctionSymbol
+}
+
+interface IrPropertyReference : IrCallableReference {
+    override val descriptor: PropertyDescriptor
+    val field: IrFieldSymbol?
+    val getter: IrFunctionSymbol?
+    val setter: IrFunctionSymbol?
+}

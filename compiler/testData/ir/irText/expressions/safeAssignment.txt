@@ -1,5 +1,6 @@
 FILE /safeAssignment.kt
   CLASS CLASS C
+    $new: VALUE_PARAMETER <receiver: C>
     CONSTRUCTOR public constructor C(x: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY

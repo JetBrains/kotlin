@@ -1,5 +1,6 @@
 FILE /initVal.kt
   CLASS CLASS TestInitValFromParameter
+    $new: VALUE_PARAMETER <receiver: TestInitValFromParameter>
     CONSTRUCTOR public constructor TestInitValFromParameter(x: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
@@ -19,6 +20,7 @@ FILE /initVal.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestInitValInClass
+    $new: VALUE_PARAMETER <receiver: TestInitValInClass>
     CONSTRUCTOR public constructor TestInitValInClass()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -37,6 +39,7 @@ FILE /initVal.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestInitValInInitBlock
+    $new: VALUE_PARAMETER <receiver: TestInitValInInitBlock>
     CONSTRUCTOR public constructor TestInitValInInitBlock()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

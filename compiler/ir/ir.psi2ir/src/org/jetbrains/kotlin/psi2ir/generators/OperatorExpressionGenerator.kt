@@ -119,8 +119,8 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         val irArgument1 = statementGenerator.generateExpression(expression.right!!)
 
         return irBlock(expression, IrStatementOrigin.ELVIS, resultType) {
-            val temporary = defineTemporary(irArgument0, "elvis_lhs")
-            +irIfNull(resultType, irGet(temporary), irArgument1, irGet(temporary))
+            val temporary = irTemporary(irArgument0, "elvis_lhs")
+            +irIfNull(resultType, irGet(temporary.symbol), irArgument1, irGet(temporary.symbol))
         }
     }
 
@@ -146,7 +146,8 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             IrStatementOrigin.IN ->
                 irContainsCall
             IrStatementOrigin.NOT_IN ->
-                IrUnaryPrimitiveImpl(expression.startOffset, expression.endOffset, IrStatementOrigin.NOT_IN, context.irBuiltIns.booleanNot,
+                IrUnaryPrimitiveImpl(expression.startOffset, expression.endOffset, IrStatementOrigin.NOT_IN,
+                                     context.irBuiltIns.booleanNotSymbol,
                                      irContainsCall)
             else ->
                 throw AssertionError("Unexpected in-operator $irOperator")
@@ -159,14 +160,16 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         val irArgument1 = statementGenerator.generateExpression(expression.right!!)
 
 
-        val irIdentityEquals = IrBinaryPrimitiveImpl(expression.startOffset, expression.endOffset, irOperator, context.irBuiltIns.eqeqeq,
+        val irIdentityEquals = IrBinaryPrimitiveImpl(expression.startOffset, expression.endOffset, irOperator,
+                                                     context.irBuiltIns.eqeqeqSymbol,
                                                      irArgument0, irArgument1)
 
         return when (irOperator) {
             IrStatementOrigin.EQEQEQ ->
                 irIdentityEquals
             IrStatementOrigin.EXCLEQEQ ->
-                IrUnaryPrimitiveImpl(expression.startOffset, expression.endOffset, IrStatementOrigin.EXCLEQEQ, context.irBuiltIns.booleanNot,
+                IrUnaryPrimitiveImpl(expression.startOffset, expression.endOffset, IrStatementOrigin.EXCLEQEQ,
+                                     context.irBuiltIns.booleanNotSymbol,
                                      irIdentityEquals)
             else ->
                 throw AssertionError("Unexpected identity operator $irOperator")
@@ -179,14 +182,17 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         val irArgument1 = statementGenerator.generateExpression(expression.right!!)
 
         val irEquals = IrBinaryPrimitiveImpl(expression.startOffset, expression.endOffset,
-                                             irOperator, context.irBuiltIns.eqeq, irArgument0, irArgument1)
+                                             irOperator,
+                                             context.irBuiltIns.eqeqSymbol,
+                                             irArgument0, irArgument1)
 
         return when (irOperator) {
             IrStatementOrigin.EQEQ ->
                 irEquals
             IrStatementOrigin.EXCLEQ ->
                 IrUnaryPrimitiveImpl(expression.startOffset, expression.endOffset, IrStatementOrigin.EXCLEQ,
-                                     context.irBuiltIns.booleanNot, irEquals)
+                                     context.irBuiltIns.booleanNotSymbol,
+                                     irEquals)
             else ->
                 throw AssertionError("Unexpected equality operator $irOperator")
         }
@@ -198,15 +204,15 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
         val irCompareToCall = CallGenerator(statementGenerator).generateCall(expression, statementGenerator.pregenerateCall(compareToCall), origin)
 
-        val compareToZeroDescriptor = when (origin) {
-            IrStatementOrigin.LT -> context.irBuiltIns.lt0
-            IrStatementOrigin.LTEQ -> context.irBuiltIns.lteq0
-            IrStatementOrigin.GT -> context.irBuiltIns.gt0
-            IrStatementOrigin.GTEQ -> context.irBuiltIns.gteq0
+        val compareToZeroSymbol = when (origin) {
+            IrStatementOrigin.LT -> context.irBuiltIns.lt0Symbol
+            IrStatementOrigin.LTEQ -> context.irBuiltIns.lteq0Symbol
+            IrStatementOrigin.GT -> context.irBuiltIns.gt0Symbol
+            IrStatementOrigin.GTEQ -> context.irBuiltIns.gteq0Symbol
             else -> throw AssertionError("Unexpected comparison operator: $origin")
         }
 
-        return IrUnaryPrimitiveImpl(expression.startOffset, expression.endOffset, origin, compareToZeroDescriptor, irCompareToCall)
+        return IrUnaryPrimitiveImpl(expression.startOffset, expression.endOffset, origin, compareToZeroSymbol, irCompareToCall)
     }
 
     private fun generateExclExclOperator(expression: KtPostfixExpression, origin: IrStatementOrigin): IrExpression {
@@ -217,8 +223,8 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         val resultType = irArgument.type.makeNotNullable()
 
         return irBlock(ktOperator, origin, resultType) {
-            val temporary = defineTemporary(irArgument, "notnull")
-            +irIfNull(resultType, irGet(temporary), irThrowNpe(origin), irGet(temporary))
+            val temporary = irTemporary(irArgument, "notnull")
+            +irIfNull(resultType, irGet(temporary.symbol), irThrowNpe(origin), irGet(temporary.symbol))
         }
     }
 

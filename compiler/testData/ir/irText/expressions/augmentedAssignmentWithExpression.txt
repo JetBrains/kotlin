@@ -1,5 +1,6 @@
 FILE /augmentedAssignmentWithExpression.kt
   CLASS CLASS Host
+    $new: VALUE_PARAMETER <receiver: Host>
     CONSTRUCTOR public constructor Host()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -12,7 +13,7 @@ FILE /augmentedAssignmentWithExpression.kt
       $this: VALUE_PARAMETER <receiver: Host>
       BLOCK_BODY
         CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
-          $this: GET_VAR '<receiver: Host>' type=Host origin=null
+          $this: GET_VAR '<receiver: Host>' type=Host origin=PLUSEQ
           x: CONST Int type=kotlin.Int value='1'
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
@@ -25,7 +26,7 @@ FILE /augmentedAssignmentWithExpression.kt
     $receiver: VALUE_PARAMETER <receiver: test2() on Host: Unit>
     BLOCK_BODY
       CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
-        $this: GET_VAR '<receiver: test2() on Host: Unit>' type=Host origin=null
+        $this: GET_VAR '<receiver: test2() on Host: Unit>' type=Host origin=PLUSEQ
         x: CONST Int type=kotlin.Int value='1'
   FUN public fun test3(): kotlin.Unit
     BLOCK_BODY

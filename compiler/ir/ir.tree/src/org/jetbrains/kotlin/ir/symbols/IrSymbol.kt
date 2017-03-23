@@ -24,26 +24,38 @@ interface IrSymbol {
     val descriptor: DeclarationDescriptor
 }
 
-interface IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolOwner> : IrSymbol{
+interface IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolOwner> : IrSymbol {
     override val owner: B
     override val descriptor: D
 
     fun bind(owner: B)
 }
 
+interface IrPackageFragmentSymbol : IrSymbol {
+    override val descriptor: PackageFragmentDescriptor
+}
+interface IrFileSymbol : IrPackageFragmentSymbol, IrBindableSymbol<PackageFragmentDescriptor, IrFile>
+interface IrExternalPackageFragmentSymbol : IrPackageFragmentSymbol, IrBindableSymbol<PackageFragmentDescriptor, IrExternalPackageFragment>
+
 interface IrAnonymousInitializerSymbol : IrBindableSymbol<ClassDescriptor, IrAnonymousInitializer>
-interface IrClassSymbol : IrBindableSymbol<ClassDescriptor, IrClass>
 interface IrEnumEntrySymbol : IrBindableSymbol<ClassDescriptor, IrEnumEntry>
-interface IrFileSymbol : IrBindableSymbol<PackageFragmentDescriptor, IrFile>
+
 interface IrFieldSymbol : IrBindableSymbol<PropertyDescriptor, IrField>
 
-interface IrTypeParameterSymbol : IrBindableSymbol<TypeParameterDescriptor, IrTypeParameter>
-interface IrValueParameterSymbol : IrBindableSymbol<ParameterDescriptor, IrValueParameter>
-interface IrVariableSymbol : IrBindableSymbol<VariableDescriptor, IrVariable>
+interface IrClassifierSymbol : IrSymbol {
+    override val descriptor: ClassifierDescriptor
+}
+interface IrClassSymbol : IrClassifierSymbol, IrBindableSymbol<ClassDescriptor, IrClass>
+interface IrTypeParameterSymbol : IrClassifierSymbol, IrBindableSymbol<TypeParameterDescriptor, IrTypeParameter>
+
+interface IrValueSymbol : IrSymbol {
+    override val descriptor: ValueDescriptor
+}
+interface IrValueParameterSymbol : IrValueSymbol, IrBindableSymbol<ParameterDescriptor, IrValueParameter>
+interface IrVariableSymbol : IrValueSymbol, IrBindableSymbol<VariableDescriptor, IrVariable>
 
 interface IrFunctionSymbol : IrSymbol {
     override val descriptor: FunctionDescriptor
 }
-
 interface IrConstructorSymbol : IrFunctionSymbol, IrBindableSymbol<ClassConstructorDescriptor, IrConstructor>
 interface IrSimpleFunctionSymbol : IrFunctionSymbol, IrBindableSymbol<FunctionDescriptor, IrSimpleFunction>

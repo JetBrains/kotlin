@@ -1,5 +1,6 @@
 FILE /safeCalls.kt
   CLASS CLASS Ref
+    $new: VALUE_PARAMETER <receiver: Ref>
     CONSTRUCTOR public constructor Ref(value: kotlin.Int)
       VALUE_PARAMETER value-parameter value: kotlin.Int
       BLOCK_BODY

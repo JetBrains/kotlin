@@ -1,5 +1,6 @@
 FILE /reflectionLiterals.kt
   CLASS CLASS A
+    $new: VALUE_PARAMETER <receiver: A>
     CONSTRUCTOR public constructor A()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -40,7 +41,7 @@ FILE /reflectionLiterals.kt
   PROPERTY public val test3: kotlin.reflect.KFunction1<A, kotlin.Unit>
     FIELD PROPERTY_BACKING_FIELD public val test3: kotlin.reflect.KFunction1<A, kotlin.Unit>
       EXPRESSION_BODY
-        CALLABLE_REFERENCE 'foo(): Unit' type=kotlin.reflect.KFunction1<A, kotlin.Unit> origin=null
+        FUNCTION_REFERENCE 'foo(): Unit' type=kotlin.reflect.KFunction1<A, kotlin.Unit> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test3>(): kotlin.reflect.KFunction1<A, kotlin.Unit>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test3>(): KFunction1<A, Unit>'
@@ -48,7 +49,7 @@ FILE /reflectionLiterals.kt
   PROPERTY public val test4: kotlin.reflect.KFunction0<A>
     FIELD PROPERTY_BACKING_FIELD public val test4: kotlin.reflect.KFunction0<A>
       EXPRESSION_BODY
-        CALLABLE_REFERENCE 'constructor A()' type=kotlin.reflect.KFunction0<A> origin=null
+        FUNCTION_REFERENCE 'constructor A()' type=kotlin.reflect.KFunction0<A> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test4>(): kotlin.reflect.KFunction0<A>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test4>(): KFunction0<A>'
@@ -56,7 +57,7 @@ FILE /reflectionLiterals.kt
   PROPERTY public val test5: kotlin.reflect.KFunction0<kotlin.Unit>
     FIELD PROPERTY_BACKING_FIELD public val test5: kotlin.reflect.KFunction0<kotlin.Unit>
       EXPRESSION_BODY
-        CALLABLE_REFERENCE 'foo(): Unit' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
+        FUNCTION_REFERENCE 'foo(): Unit' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
           $this: CALL 'constructor A()' type=A origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test5>(): kotlin.reflect.KFunction0<kotlin.Unit>
       BLOCK_BODY
@@ -65,7 +66,7 @@ FILE /reflectionLiterals.kt
   PROPERTY public val test6: kotlin.reflect.KFunction0<kotlin.Unit>
     FIELD PROPERTY_BACKING_FIELD public val test6: kotlin.reflect.KFunction0<kotlin.Unit>
       EXPRESSION_BODY
-        CALLABLE_REFERENCE 'bar(): Unit' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
+        FUNCTION_REFERENCE 'bar(): Unit' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test6>(): kotlin.reflect.KFunction0<kotlin.Unit>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test6>(): KFunction0<Unit>'
@@ -73,7 +74,7 @@ FILE /reflectionLiterals.kt
   PROPERTY public val test7: kotlin.reflect.KProperty0<kotlin.Int>
     FIELD PROPERTY_BACKING_FIELD public val test7: kotlin.reflect.KProperty0<kotlin.Int>
       EXPRESSION_BODY
-        CALLABLE_REFERENCE 'qux: Int' type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
+        PROPERTY_REFERENCE 'qux: Int' field=null getter='<get-qux>(): Int' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test7>(): kotlin.reflect.KProperty0<kotlin.Int>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test7>(): KProperty0<Int>'

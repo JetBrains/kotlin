@@ -1,5 +1,6 @@
 FILE /outerClassAccess.kt
   CLASS CLASS Outer
+    $new: VALUE_PARAMETER <receiver: Outer>
     CONSTRUCTOR public constructor Outer()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -8,8 +9,9 @@ FILE /outerClassAccess.kt
       $this: VALUE_PARAMETER <receiver: Outer>
       BLOCK_BODY
     CLASS CLASS Inner
+      $new: VALUE_PARAMETER <receiver: Inner>
       CONSTRUCTOR public constructor Inner()
-        $this: VALUE_PARAMETER <receiver: Outer>
+        $outer: VALUE_PARAMETER <receiver: Outer>
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='Inner'
@@ -19,8 +21,9 @@ FILE /outerClassAccess.kt
           CALL 'foo(): Unit' type=kotlin.Unit origin=null
             $this: GET_VAR '<receiver: Outer>' type=Outer origin=null
       CLASS CLASS Inner2
+        $new: VALUE_PARAMETER <receiver: Inner2>
         CONSTRUCTOR public constructor Inner2()
-          $this: VALUE_PARAMETER <receiver: Inner>
+          $outer: VALUE_PARAMETER <receiver: Inner>
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
             INSTANCE_INITIALIZER_CALL classDescriptor='Inner2'

@@ -6,7 +6,7 @@ FILE /anonymousFunction.kt
           FUN local final fun <no name provided>(): kotlin.Unit
             BLOCK_BODY
               CALL 'println(): Unit' type=kotlin.Unit origin=null
-          CALLABLE_REFERENCE '<no name provided>(): Unit' type=() -> kotlin.Unit origin=ANONYMOUS_FUNCTION
+          FUNCTION_REFERENCE '<no name provided>(): Unit' type=() -> kotlin.Unit origin=ANONYMOUS_FUNCTION
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-anonymous>(): () -> kotlin.Unit
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-anonymous>(): () -> Unit'

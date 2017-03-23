@@ -1,5 +1,6 @@
 FILE /enumWithSecondaryCtor.kt
   CLASS ENUM_CLASS Test0
+    $new: VALUE_PARAMETER <receiver: Test0>
     CONSTRUCTOR private constructor Test0(x: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
@@ -37,6 +38,7 @@ FILE /enumWithSecondaryCtor.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): Test0
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS Test1
+    $new: VALUE_PARAMETER <receiver: Test1>
     CONSTRUCTOR private constructor Test1(x: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
@@ -77,6 +79,7 @@ FILE /enumWithSecondaryCtor.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER public final fun valueOf(value: kotlin.String): Test1
       SYNTHETIC_BODY kind=ENUM_VALUEOF
   CLASS ENUM_CLASS Test2
+    $new: VALUE_PARAMETER <receiver: Test2>
     CONSTRUCTOR private constructor Test2(x: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
@@ -95,6 +98,7 @@ FILE /enumWithSecondaryCtor.kt
     ENUM_ENTRY enum entry ZERO
       init: ENUM_CONSTRUCTOR_CALL 'constructor ZERO()'
       class: CLASS ENUM_ENTRY ZERO
+        $new: VALUE_PARAMETER <receiver: ZERO>
         CONSTRUCTOR private constructor ZERO()
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor Test2()'
@@ -120,6 +124,7 @@ FILE /enumWithSecondaryCtor.kt
     ENUM_ENTRY enum entry ONE
       init: ENUM_CONSTRUCTOR_CALL 'constructor ONE()'
       class: CLASS ENUM_ENTRY ONE
+        $new: VALUE_PARAMETER <receiver: ONE>
         CONSTRUCTOR private constructor ONE()
           BLOCK_BODY
             ENUM_CONSTRUCTOR_CALL 'constructor Test2(Int)'

@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
@@ -154,14 +153,14 @@ class LocalFunctionsLowering(val context: BackendContext): DeclarationContainerL
                 return this
             }
 
-            override fun visitCallableReference(expression: IrCallableReference): IrExpression {
+            override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
                 expression.transformChildrenVoid(this)
 
                 val oldCallee = expression.descriptor.original
                 val localFunctionData = localFunctions[oldCallee] ?: return expression
                 val newCallee = localFunctionData.transformedDescriptor
 
-                val newCallableReference = IrCallableReferenceImpl(
+                val newCallableReference = IrFunctionReferenceImpl(
                         expression.startOffset, expression.endOffset,
                         expression.type, // TODO functional type for transformed descriptor
                         newCallee,
@@ -179,7 +178,9 @@ class LocalFunctionsLowering(val context: BackendContext): DeclarationContainerL
                 val localFunctionData = localFunctions[oldReturnTarget] ?: return expression
                 val newReturnTarget = localFunctionData.transformedDescriptor
 
-                return IrReturnImpl(expression.startOffset, expression.endOffset, newReturnTarget, expression.value)
+                return IrReturnImpl(expression.startOffset, expression.endOffset,
+                                    newReturnTarget,
+                                    expression.value)
             }
         }
 
@@ -196,15 +197,17 @@ class LocalFunctionsLowering(val context: BackendContext): DeclarationContainerL
         }
 
         private fun createNewCall(oldCall: IrCall, newCallee: FunctionDescriptor) =
-                if (oldCall is IrCallWithShallowCopy)
-                    oldCall.shallowCopy(oldCall.origin, newCallee, oldCall.superQualifier)
-                else
-                    IrCallImpl(
-                            oldCall.startOffset, oldCall.endOffset,
-                            newCallee,
-                            remapTypeArguments(oldCall, newCallee),
-                            oldCall.origin, oldCall.superQualifier
-                    )
+                when (oldCall) {
+                    is IrCallWithShallowCopy ->
+                        oldCall.shallowCopy(oldCall.origin, newCallee, oldCall.superQualifier)
+                    else ->
+                        IrCallImpl(
+                                oldCall.startOffset, oldCall.endOffset,
+                                newCallee,
+                                remapTypeArguments(oldCall, newCallee),
+                                oldCall.origin, oldCall.superQualifier
+                        )
+                }
 
         private fun remapTypeArguments(oldExpression: IrMemberAccessExpression, newCallee: FunctionDescriptor): Map<TypeParameterDescriptor, KotlinType>? {
             val oldCallee = oldExpression.descriptor

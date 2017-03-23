@@ -1,5 +1,6 @@
 FILE /kt16904.kt
   CLASS CLASS A
+    $new: VALUE_PARAMETER <receiver: A>
     CONSTRUCTOR public constructor A()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -9,6 +10,7 @@ FILE /kt16904.kt
         EXPRESSION_BODY
           CALL 'constructor B()' type=B origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): B
+        $this: VALUE_PARAMETER <receiver: A>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-x>(): B'
             GET_FIELD 'x: B' type=B origin=null
@@ -18,23 +20,36 @@ FILE /kt16904.kt
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value='0'
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-y>(): kotlin.Int
+        $this: VALUE_PARAMETER <receiver: A>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-y>(): Int'
             GET_FIELD 'y: Int' type=kotlin.Int origin=null
               receiver: GET_VAR '<receiver: A>' type=A origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <set-y>(<set-?>: kotlin.Int): kotlin.Unit
+        $this: VALUE_PARAMETER <receiver: A>
+        VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
         BLOCK_BODY
           SET_FIELD 'y: Int' type=kotlin.Unit origin=null
             receiver: GET_VAR '<receiver: A>' type=A origin=null
             value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS B
+    $new: VALUE_PARAMETER <receiver: B>
     CONSTRUCTOR public constructor B()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='B'
     FUN public final operator fun plusAssign(x: kotlin.Int): kotlin.Unit
+      $this: VALUE_PARAMETER <receiver: B>
+      VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test1
+    $new: VALUE_PARAMETER <receiver: Test1>
     CONSTRUCTOR public constructor Test1()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor A()'
@@ -55,7 +70,16 @@ FILE /kt16904.kt
               $this: CALL '<get-y>(): Int' type=kotlin.Int origin=PLUSEQ
                 $this: GET_VAR 'tmp1_this: Test1' type=Test1 origin=null
               other: CONST Int type=kotlin.Int value='42'
+    PROPERTY FAKE_OVERRIDE public final override val x: B
+      FUN FAKE_OVERRIDE public final override fun <get-x>(): B
+    PROPERTY FAKE_OVERRIDE public final override var y: kotlin.Int
+      FUN FAKE_OVERRIDE public final override fun <get-y>(): kotlin.Int
+      FUN FAKE_OVERRIDE public final override fun <set-y>(<set-?>: kotlin.Int): kotlin.Unit
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test2
+    $new: VALUE_PARAMETER <receiver: Test2>
     CONSTRUCTOR public constructor Test2()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor J()'
@@ -65,3 +89,7 @@ FILE /kt16904.kt
         SET_FIELD 'field: Int' type=kotlin.Unit origin=EQ
           receiver: GET_VAR '<receiver: Test2>' type=Test2 origin=null
           value: CONST Int type=kotlin.Int value='42'
+    PROPERTY FAKE_OVERRIDE public final override var field: kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String

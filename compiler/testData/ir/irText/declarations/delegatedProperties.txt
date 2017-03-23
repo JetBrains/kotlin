@@ -9,7 +9,7 @@ FILE /delegatedProperties.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='<anonymous>(): Int'
                   CONST Int type=kotlin.Int value='42'
-            CALLABLE_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int origin=LAMBDA
+            FUNCTION_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int origin=LAMBDA
     FUN DELEGATED_PROPERTY_ACCESSOR public fun <get-test1>(): kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test1>(): Int'
@@ -17,8 +17,9 @@ FILE /delegatedProperties.kt
             <T>: Int
             $receiver: GET_FIELD '`test1$delegate`: Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
             thisRef: CONST Null type=kotlin.Nothing? value='null'
-            property: CALLABLE_REFERENCE 'test1: Int' type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            property: PROPERTY_REFERENCE 'test1: Int' field=null getter='<get-test1>(): Int' setter=null type=kotlin.reflect.KProperty0<kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   CLASS CLASS C
+    $new: VALUE_PARAMETER <receiver: C>
     CONSTRUCTOR public constructor C(map: kotlin.collections.MutableMap<kotlin.String, kotlin.Any>)
       VALUE_PARAMETER value-parameter map: kotlin.collections.MutableMap<kotlin.String, kotlin.Any>
       BLOCK_BODY
@@ -44,7 +45,7 @@ FILE /delegatedProperties.kt
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='<anonymous>(): Int'
                     CONST Int type=kotlin.Int value='42'
-              CALLABLE_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int origin=LAMBDA
+              FUNCTION_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int origin=LAMBDA
       FUN DELEGATED_PROPERTY_ACCESSOR public final fun <get-test2>(): kotlin.Int
         $this: VALUE_PARAMETER <receiver: C>
         BLOCK_BODY
@@ -54,7 +55,7 @@ FILE /delegatedProperties.kt
               $receiver: GET_FIELD '`test2$delegate`: Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
                 receiver: GET_VAR '<receiver: C>' type=C origin=null
               thisRef: GET_VAR '<receiver: C>' type=C origin=null
-              property: CALLABLE_REFERENCE 'test2: Int' type=kotlin.reflect.KProperty1<C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              property: PROPERTY_REFERENCE 'test2: Int' field=null getter='<get-test2>(): Int' setter=null type=kotlin.reflect.KProperty1<C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     PROPERTY public final var test3: kotlin.Any
       FIELD DELEGATE val `test3$delegate`: kotlin.collections.MutableMap<kotlin.String, kotlin.Any>
         EXPRESSION_BODY
@@ -69,7 +70,7 @@ FILE /delegatedProperties.kt
               $receiver: GET_FIELD '`test3$delegate`: MutableMap<String, Any>' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> origin=null
                 receiver: GET_VAR '<receiver: C>' type=C origin=null
               thisRef: GET_VAR '<receiver: C>' type=C origin=null
-              property: CALLABLE_REFERENCE 'test3: Any' type=kotlin.reflect.KMutableProperty1<C, kotlin.Any> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              property: PROPERTY_REFERENCE 'test3: Any' field=null getter='<get-test3>(): Any' setter='<set-test3>(Any): Unit' type=kotlin.reflect.KMutableProperty1<C, kotlin.Any> origin=PROPERTY_REFERENCE_FOR_DELEGATE
       FUN DELEGATED_PROPERTY_ACCESSOR public final fun <set-test3>(<set-?>: kotlin.Any): kotlin.Unit
         $this: VALUE_PARAMETER <receiver: C>
         VALUE_PARAMETER value-parameter <set-?>: kotlin.Any
@@ -80,7 +81,7 @@ FILE /delegatedProperties.kt
               $receiver: GET_FIELD '`test3$delegate`: MutableMap<String, Any>' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> origin=null
                 receiver: GET_VAR '<receiver: C>' type=C origin=null
               thisRef: GET_VAR '<receiver: C>' type=C origin=null
-              property: CALLABLE_REFERENCE 'test3: Any' type=kotlin.reflect.KMutableProperty1<C, kotlin.Any> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              property: PROPERTY_REFERENCE 'test3: Any' field=null getter='<get-test3>(): Any' setter='<set-test3>(Any): Unit' type=kotlin.reflect.KMutableProperty1<C, kotlin.Any> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               value: GET_VAR 'value-parameter <set-?>: Any' type=kotlin.Any origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
@@ -98,7 +99,7 @@ FILE /delegatedProperties.kt
             <V>: Any
             $receiver: GET_FIELD '`test4$delegate`: HashMap<String, Any> /* = HashMap<String, Any> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Any> /* = java.util.HashMap<kotlin.String, kotlin.Any> */ origin=null
             thisRef: CONST Null type=kotlin.Nothing? value='null'
-            property: CALLABLE_REFERENCE 'test4: Any' type=kotlin.reflect.KMutableProperty0<kotlin.Any> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            property: PROPERTY_REFERENCE 'test4: Any' field=null getter='<get-test4>(): Any' setter='<set-test4>(Any): Unit' type=kotlin.reflect.KMutableProperty0<kotlin.Any> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     FUN DELEGATED_PROPERTY_ACCESSOR public fun <set-test4>(<set-?>: kotlin.Any): kotlin.Unit
       VALUE_PARAMETER value-parameter <set-?>: kotlin.Any
       BLOCK_BODY
@@ -107,5 +108,5 @@ FILE /delegatedProperties.kt
             <V>: Any
             $receiver: GET_FIELD '`test4$delegate`: HashMap<String, Any> /* = HashMap<String, Any> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Any> /* = java.util.HashMap<kotlin.String, kotlin.Any> */ origin=null
             thisRef: CONST Null type=kotlin.Nothing? value='null'
-            property: CALLABLE_REFERENCE 'test4: Any' type=kotlin.reflect.KMutableProperty0<kotlin.Any> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            property: PROPERTY_REFERENCE 'test4: Any' field=null getter='<get-test4>(): Any' setter='<set-test4>(Any): Unit' type=kotlin.reflect.KMutableProperty0<kotlin.Any> origin=PROPERTY_REFERENCE_FOR_DELEGATE
             value: GET_VAR 'value-parameter <set-?>: Any' type=kotlin.Any origin=null

@@ -8,7 +8,7 @@ FILE /variableAsFunctionCall.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<anonymous>(): String'
                 GET_VAR '<receiver: k() on String: () -> String>' type=kotlin.String origin=null
-          CALLABLE_REFERENCE '<anonymous>(): String' type=() -> kotlin.String origin=LAMBDA
+          FUNCTION_REFERENCE '<anonymous>(): String' type=() -> kotlin.String origin=LAMBDA
   FUN public fun test1(f: () -> kotlin.Unit): kotlin.Unit
     VALUE_PARAMETER value-parameter f: () -> kotlin.Unit
     BLOCK_BODY

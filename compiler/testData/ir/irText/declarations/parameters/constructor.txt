@@ -1,5 +1,6 @@
 FILE /constructor.kt
   CLASS CLASS Test1
+    $new: VALUE_PARAMETER <receiver: Test1>
     TYPE_PARAMETER <T1>
     TYPE_PARAMETER <T2>
     CONSTRUCTOR public constructor Test1<T1, T2>(x: T1, y: T2)
@@ -34,6 +35,7 @@ FILE /constructor.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test2
+    $new: VALUE_PARAMETER <receiver: Test2>
     CONSTRUCTOR public constructor Test2(x: kotlin.Int, y: kotlin.String)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       VALUE_PARAMETER value-parameter y: kotlin.String
@@ -51,10 +53,11 @@ FILE /constructor.kt
             GET_FIELD 'y: String' type=kotlin.String origin=null
               receiver: GET_VAR '<receiver: Test2>' type=Test2 origin=null
     CLASS CLASS TestInner
+      $new: VALUE_PARAMETER <receiver: TestInner>
       TYPE_PARAMETER <Z>
       CONSTRUCTOR public constructor TestInner<Z>(z: Z)
         TYPE_PARAMETER <Z>
-        $this: VALUE_PARAMETER <receiver: Test2>
+        $outer: VALUE_PARAMETER <receiver: Test2>
         VALUE_PARAMETER value-parameter z: Z
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -71,7 +74,7 @@ FILE /constructor.kt
                 receiver: GET_VAR '<receiver: TestInner>' type=Test2.TestInner<Z> origin=null
       CONSTRUCTOR public constructor TestInner<Z>(z: Z, i: kotlin.Int)
         TYPE_PARAMETER <Z>
-        $this: VALUE_PARAMETER <receiver: Test2>
+        $outer: VALUE_PARAMETER <receiver: Test2>
         VALUE_PARAMETER value-parameter z: Z
         VALUE_PARAMETER value-parameter i: kotlin.Int
         BLOCK_BODY
@@ -86,6 +89,7 @@ FILE /constructor.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test3
+    $new: VALUE_PARAMETER <receiver: Test3>
     CONSTRUCTOR public constructor Test3(x: kotlin.Int, y: kotlin.String = ...)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       VALUE_PARAMETER value-parameter y: kotlin.String = ...
@@ -118,6 +122,7 @@ FILE /constructor.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test4
+    $new: VALUE_PARAMETER <receiver: Test4>
     TYPE_PARAMETER <T>
     CONSTRUCTOR public constructor Test4<T>(x: kotlin.Int)
       TYPE_PARAMETER <T>

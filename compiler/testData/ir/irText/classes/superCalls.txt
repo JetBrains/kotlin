@@ -1,5 +1,6 @@
 FILE /superCalls.kt
   CLASS CLASS Base
+    $new: VALUE_PARAMETER <receiver: Base>
     CONSTRUCTOR public constructor Base()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -21,6 +22,7 @@ FILE /superCalls.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Derived
+    $new: VALUE_PARAMETER <receiver: Derived>
     CONSTRUCTOR public constructor Derived()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Base()'

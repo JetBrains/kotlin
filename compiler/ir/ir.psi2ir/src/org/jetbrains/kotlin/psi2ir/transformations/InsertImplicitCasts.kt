@@ -50,10 +50,19 @@ class InsertImplicitCasts(val builtIns: KotlinBuiltIns): IrElementTransformerVoi
         return element
     }
 
+    override fun visitCallableReference(expression: IrCallableReference): IrExpression =
+        expression.transformPostfix {
+            transformReceiverArguments()
+        }
+
+    private fun IrMemberAccessExpression.transformReceiverArguments() {
+        dispatchReceiver = dispatchReceiver?.cast(descriptor.dispatchReceiverParameter?.type)
+        extensionReceiver = extensionReceiver?.cast(descriptor.extensionReceiverParameter?.type)
+    }
+
     override fun visitMemberAccess(expression: IrMemberAccessExpression): IrExpression =
             expression.transformPostfix {
-                dispatchReceiver = dispatchReceiver?.cast(descriptor.dispatchReceiverParameter?.type)
-                extensionReceiver = extensionReceiver?.cast(descriptor.extensionReceiverParameter?.type)
+                transformReceiverArguments()
                 for (index in descriptor.valueParameters.indices) {
                     val argument = getValueArgument(index) ?: continue
                     val parameterType = descriptor.valueParameters[index].type

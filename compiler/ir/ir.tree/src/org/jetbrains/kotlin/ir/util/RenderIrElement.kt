@@ -40,6 +40,9 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?): String =
             "MODULE_FRAGMENT ${declaration.descriptor.ref()}"
 
+    override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: Nothing?): String =
+            "EXTERNAL_PACKAGE_FRAGMENT ${declaration.packageFragmentDescriptor.fqName}"
+
     override fun visitFile(declaration: IrFile, data: Nothing?): String =
             "FILE ${declaration.name}"
 
@@ -170,8 +173,30 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitThrow(expression: IrThrow, data: Nothing?): String =
             "THROW type=${expression.type.render()}"
 
-    override fun visitCallableReference(expression: IrCallableReference, data: Nothing?): String =
-            "CALLABLE_REFERENCE '${expression.descriptor.ref()}' type=${expression.type.render()} origin=${expression.origin}"
+    override fun visitFunctionReference(expression: IrFunctionReference, data: Nothing?): String  =
+            "FUNCTION_REFERENCE '${expression.descriptor.ref()}' type=${expression.type.render()} origin=${expression.origin}"
+
+    override fun visitPropertyReference(expression: IrPropertyReference, data: Nothing?): String =
+            buildString {
+                append("PROPERTY_REFERENCE ")
+                append("'${expression.descriptor.ref()}' ")
+                appendNullableAttribute("field=", expression.field) { "'${it.descriptor.ref()}'" }
+                appendNullableAttribute("getter=", expression.getter) { "'${it.descriptor.ref()}'" }
+                appendNullableAttribute("setter=", expression.setter) { "'${it.descriptor.ref()}'" }
+                append("type=${expression.type.render()} ")
+                append("origin=${expression.origin}")
+            }
+
+    private inline fun <T : Any> StringBuilder.appendNullableAttribute(prefix: String, value: T?, toString: (T) -> String) {
+        append(prefix)
+        if (value != null) {
+            append(toString(value))
+        }
+        else {
+            append("null")
+        }
+        append(" ")
+    }
 
     override fun visitClassReference(expression: IrClassReference, data: Nothing?): String =
             "CLASS_REFERENCE '${expression.descriptor.ref()}' type=${expression.type.render()}"

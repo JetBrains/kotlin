@@ -16,17 +16,16 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.types.KotlinType
 
-interface IrMemberAccessExpression : IrDeclarationReference {
+interface IrMemberAccessExpression : IrExpression {
     var dispatchReceiver: IrExpression?
     var extensionReceiver: IrExpression?
 
+    val descriptor: CallableMemberDescriptor
     val origin: IrStatementOrigin?
-    override val descriptor: CallableDescriptor
 
     // NB `typeParameterDescriptor` should be taken from `descriptor.original`
     fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): KotlinType?
@@ -34,6 +33,11 @@ interface IrMemberAccessExpression : IrDeclarationReference {
     fun getValueArgument(index: Int): IrExpression?
     fun putValueArgument(index: Int, valueArgument: IrExpression?)
     fun removeValueArgument(index: Int)
+}
+
+interface IrFunctionAccessExpression : IrMemberAccessExpression, IrDeclarationReference {
+    override val descriptor: FunctionDescriptor
+    override val symbol: IrFunctionSymbol
 }
 
 fun IrMemberAccessExpression.getValueArgument(valueParameterDescriptor: ValueParameterDescriptor) =

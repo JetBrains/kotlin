@@ -5,6 +5,7 @@ FILE /tryCatch.kt
         try: BLOCK type=kotlin.Unit origin=null
           CALL 'println(): Unit' type=kotlin.Unit origin=null
         CATCH parameter=e: Throwable
+          VAR CATCH_PARAMETER val e: kotlin.Throwable
           BLOCK type=kotlin.Unit origin=null
             CALL 'println(): Unit' type=kotlin.Unit origin=null
         finally: BLOCK type=kotlin.Unit origin=null
@@ -17,6 +18,7 @@ FILE /tryCatch.kt
             CALL 'println(): Unit' type=kotlin.Unit origin=null
             CONST Int type=kotlin.Int value='42'
           CATCH parameter=e: Throwable
+            VAR CATCH_PARAMETER val e: kotlin.Throwable
             BLOCK type=kotlin.Int origin=null
               CALL 'println(): Unit' type=kotlin.Unit origin=null
               CONST Int type=kotlin.Int value='24'

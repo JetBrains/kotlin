@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrErrorDeclarationImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeAliasImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -74,7 +75,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
             context.symbolTable.declareAnonymousInitializer(
                 ktAnonymousInitializer.startOffset, ktAnonymousInitializer.endOffset, IrDeclarationOrigin.DEFINED, classDescriptor
             ).apply {
-                body = createBodyGenerator(classDescriptor).generateAnonymousInitializerBody(ktAnonymousInitializer)
+                body = createBodyGenerator(symbol).generateAnonymousInitializerBody(ktAnonymousInitializer)
             }
 
 
@@ -90,8 +91,8 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         }
     }
 
-    fun generateInitializerBody(scopeOwner: CallableDescriptor, ktBody: KtExpression): IrExpressionBody =
-            createBodyGenerator(scopeOwner).generateExpressionBody(ktBody)
+    fun generateInitializerBody(scopeOwnerSymbol: IrSymbol, ktBody: KtExpression): IrExpressionBody =
+            createBodyGenerator(scopeOwnerSymbol).generateExpressionBody(ktBody)
 
     fun generateFakeOverrideDeclaration(memberDescriptor: CallableMemberDescriptor, ktElement: KtElement? = null): IrDeclaration {
         assert(memberDescriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
@@ -137,5 +138,5 @@ abstract class DeclarationGeneratorExtension(val declarationGenerator: Declarati
             }
 }
 
-fun Generator.createBodyGenerator(scopeOwnerDescriptor: DeclarationDescriptor) =
-        BodyGenerator(scopeOwnerDescriptor, context)
+fun Generator.createBodyGenerator(scopeOwnerSymbol: IrSymbol) =
+        BodyGenerator(scopeOwnerSymbol, context)

@@ -28,12 +28,12 @@ class IrFunctionImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        override val descriptor: FunctionDescriptor,
         override val symbol: IrSimpleFunctionSymbol
 ) : IrFunctionBase(startOffset, endOffset, origin), IrSimpleFunction {
+    override val descriptor: FunctionDescriptor = symbol.descriptor
+
     constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: FunctionDescriptor) :
-            this(startOffset, endOffset, origin, descriptor,
-                 IrSimpleFunctionSymbolImpl(descriptor))
+            this(startOffset, endOffset, origin, IrSimpleFunctionSymbolImpl(descriptor))
 
     constructor(
             startOffset: Int,

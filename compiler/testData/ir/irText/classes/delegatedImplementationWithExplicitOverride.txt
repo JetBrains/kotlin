@@ -8,6 +8,7 @@ FILE /delegatedImplementationWithExplicitOverride.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS OBJECT FooBarImpl
+    $new: VALUE_PARAMETER <receiver: FooBarImpl>
     CONSTRUCTOR private constructor FooBarImpl()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -22,6 +23,7 @@ FILE /delegatedImplementationWithExplicitOverride.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS C
+    $new: VALUE_PARAMETER <receiver: C>
     CONSTRUCTOR public constructor C()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

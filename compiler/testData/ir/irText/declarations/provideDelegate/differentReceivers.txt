@@ -1,5 +1,6 @@
 FILE /differentReceivers.kt
   CLASS CLASS MyClass
+    $new: VALUE_PARAMETER <receiver: MyClass>
     CONSTRUCTOR public constructor MyClass(value: kotlin.String)
       VALUE_PARAMETER value-parameter value: kotlin.String
       BLOCK_BODY
@@ -40,14 +41,14 @@ FILE /differentReceivers.kt
           $receiver: CALL 'constructor MyClass(String)' type=MyClass origin=null
             value: CONST String type=kotlin.String value='O'
           host: CONST Null type=kotlin.Nothing? value='null'
-          p: CALLABLE_REFERENCE 'testO: String' type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+          p: PROPERTY_REFERENCE 'testO: String' field=null getter='<get-testO>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     FUN DELEGATED_PROPERTY_ACCESSOR public fun <get-testO>(): kotlin.String
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-testO>(): String'
           CALL 'getValue(Any?, Any) on String: String' type=kotlin.String origin=null
             $receiver: GET_FIELD '`testO$delegate`: String' type=kotlin.String origin=null
             receiver: CONST Null type=kotlin.Nothing? value='null'
-            p: CALLABLE_REFERENCE 'testO: String' type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            p: PROPERTY_REFERENCE 'testO: String' field=null getter='<get-testO>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   PROPERTY public val testK: kotlin.String
     FIELD DELEGATE val `testK$delegate`: kotlin.String
       EXPRESSION_BODY
@@ -58,7 +59,7 @@ FILE /differentReceivers.kt
           CALL 'getValue(Any?, Any) on String: String' type=kotlin.String origin=null
             $receiver: GET_FIELD '`testK$delegate`: String' type=kotlin.String origin=null
             receiver: CONST Null type=kotlin.Nothing? value='null'
-            p: CALLABLE_REFERENCE 'testK: String' type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            p: PROPERTY_REFERENCE 'testK: String' field=null getter='<get-testK>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   PROPERTY public val testOK: kotlin.String
     FIELD PROPERTY_BACKING_FIELD public val testOK: kotlin.String
       EXPRESSION_BODY

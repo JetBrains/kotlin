@@ -1,12 +1,14 @@
 FILE /innerClassWithDelegatingConstructor.kt
   CLASS CLASS Outer
+    $new: VALUE_PARAMETER <receiver: Outer>
     CONSTRUCTOR public constructor Outer()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
     CLASS CLASS Inner
+      $new: VALUE_PARAMETER <receiver: Inner>
       CONSTRUCTOR public constructor Inner(x: kotlin.Int)
-        $this: VALUE_PARAMETER <receiver: Outer>
+        $outer: VALUE_PARAMETER <receiver: Outer>
         VALUE_PARAMETER value-parameter x: kotlin.Int
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -22,7 +24,7 @@ FILE /innerClassWithDelegatingConstructor.kt
               GET_FIELD 'x: Int' type=kotlin.Int origin=null
                 receiver: GET_VAR '<receiver: Inner>' type=Outer.Inner origin=null
       CONSTRUCTOR public constructor Inner()
-        $this: VALUE_PARAMETER <receiver: Outer>
+        $outer: VALUE_PARAMETER <receiver: Outer>
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Inner(Int)'
             $this: GET_VAR '<receiver: Outer>' type=Outer origin=null

@@ -7,7 +7,7 @@ FILE /justLambda.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<anonymous>(): Int'
                 CONST Int type=kotlin.Int value='42'
-          CALLABLE_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int origin=LAMBDA
+          FUNCTION_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int origin=LAMBDA
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test1>(): () -> kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test1>(): () -> Int'
@@ -20,7 +20,7 @@ FILE /justLambda.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
                 GET_OBJECT 'Unit' type=kotlin.Unit
-          CALLABLE_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
+          FUNCTION_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test2>(): () -> kotlin.Unit
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test2>(): () -> Unit'

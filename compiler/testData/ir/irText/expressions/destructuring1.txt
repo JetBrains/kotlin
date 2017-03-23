@@ -1,5 +1,6 @@
 FILE /destructuring1.kt
   CLASS OBJECT A
+    $new: VALUE_PARAMETER <receiver: A>
     CONSTRUCTOR private constructor A()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -8,6 +9,7 @@ FILE /destructuring1.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS OBJECT B
+    $new: VALUE_PARAMETER <receiver: B>
     CONSTRUCTOR private constructor B()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

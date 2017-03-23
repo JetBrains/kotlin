@@ -128,7 +128,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
                                java.lang.Boolean.TRUE == bindingContext.get(BindingContext.EXHAUSTIVE_WHEN, whenExpression)
 
             if (isExhaustive) {
-                val call = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.noWhenBranchMatchedException)
+                val call = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.noWhenBranchMatchedExceptionSymbol)
                 irWhen.branches.add(IrBranchImpl.elseBranch(call))
             }
         }
@@ -186,9 +186,14 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
         val inOperator = getInfixOperator(ktCondition.operationReference.getReferencedNameElementType())
         val irInCall = CallGenerator(statementGenerator).generateCall(ktCondition, inCall, inOperator)
         return when (inOperator) {
-            IrStatementOrigin.IN -> irInCall
+            IrStatementOrigin.IN ->
+                irInCall
             IrStatementOrigin.NOT_IN ->
-                IrUnaryPrimitiveImpl(ktCondition.startOffset, ktCondition.endOffset, IrStatementOrigin.EXCL, context.irBuiltIns.booleanNot, irInCall)
+                IrUnaryPrimitiveImpl(
+                        ktCondition.startOffset, ktCondition.endOffset,
+                        IrStatementOrigin.EXCL, context.irBuiltIns.booleanNotSymbol,
+                        irInCall
+                )
             else -> throw AssertionError("Expected 'in' or '!in', got $inOperator")
         }
     }
@@ -196,7 +201,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
     private fun generateEqualsCondition(irSubject: IrVariable, ktCondition: KtWhenConditionWithExpression): IrBinaryPrimitiveImpl =
             IrBinaryPrimitiveImpl(
                     ktCondition.startOffset, ktCondition.endOffset,
-                    IrStatementOrigin.EQEQ, context.irBuiltIns.eqeq,
+                    IrStatementOrigin.EQEQ, context.irBuiltIns.eqeqSymbol,
                     irSubject.defaultLoad(), statementGenerator.generateExpression(ktCondition.expression!!)
             )
 }

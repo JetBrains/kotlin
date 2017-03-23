@@ -1,26 +1,45 @@
 FILE /kt16905.kt
   CLASS CLASS Outer
+    $new: VALUE_PARAMETER <receiver: Outer>
     CONSTRUCTOR public constructor Outer()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
     CLASS CLASS Inner
+      $new: VALUE_PARAMETER <receiver: Inner>
       CONSTRUCTOR public constructor Inner()
+        $outer: VALUE_PARAMETER <receiver: Outer>
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='Inner'
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     CLASS CLASS InnerDerived0
+      $new: VALUE_PARAMETER <receiver: InnerDerived0>
       CONSTRUCTOR public constructor InnerDerived0()
+        $outer: VALUE_PARAMETER <receiver: Outer>
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Inner()'
             $this: GET_VAR '<receiver: Outer>' type=Outer origin=null
           INSTANCE_INITIALIZER_CALL classDescriptor='InnerDerived0'
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     CLASS CLASS InnerDerived1
+      $new: VALUE_PARAMETER <receiver: InnerDerived1>
       CONSTRUCTOR public constructor InnerDerived1()
+        $outer: VALUE_PARAMETER <receiver: Outer>
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Inner()'
             $this: GET_VAR '<receiver: Outer>' type=Outer origin=null
           INSTANCE_INITIALIZER_CALL classDescriptor='InnerDerived1'
+      FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+      FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+      FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
+    FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
+    FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
+    FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   TYPEALIAS typealias OI = Outer.Inner type=Outer.Inner
   FUN public fun test(): Outer.Inner
     BLOCK_BODY

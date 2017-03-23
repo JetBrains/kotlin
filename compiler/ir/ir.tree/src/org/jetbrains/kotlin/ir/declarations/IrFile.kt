@@ -21,16 +21,27 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.checkAnnotationName
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
+import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPackageFragmentSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.FqName
 
-interface IrFile : IrElement, IrDeclarationContainer, IrSymbolOwner {
+interface IrPackageFragment : IrElement, IrDeclarationContainer, IrSymbolOwner {
+    val packageFragmentDescriptor: PackageFragmentDescriptor
+    override val symbol: IrPackageFragmentSymbol
+}
+
+interface IrExternalPackageFragment : IrPackageFragment {
+    override val symbol: IrExternalPackageFragmentSymbol
+}
+
+interface IrFile : IrPackageFragment {
     override val symbol: IrFileSymbol
 
     val fileEntry: SourceManager.FileEntry
     val fileAnnotations: MutableList<AnnotationDescriptor>
-    val packageFragmentDescriptor: PackageFragmentDescriptor
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrFile =
             accept(transformer, data) as IrFile

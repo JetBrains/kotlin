@@ -1,5 +1,6 @@
 FILE /argumentReorderingInDelegatingConstructorCall.kt
   CLASS CLASS Base
+    $new: VALUE_PARAMETER <receiver: Base>
     CONSTRUCTOR public constructor Base(x: kotlin.Int, y: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       VALUE_PARAMETER value-parameter y: kotlin.Int
@@ -30,6 +31,7 @@ FILE /argumentReorderingInDelegatingConstructorCall.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test1
+    $new: VALUE_PARAMETER <receiver: Test1>
     CONSTRUCTOR public constructor Test1(xx: kotlin.Int, yy: kotlin.Int)
       VALUE_PARAMETER value-parameter xx: kotlin.Int
       VALUE_PARAMETER value-parameter yy: kotlin.Int
@@ -51,6 +53,7 @@ FILE /argumentReorderingInDelegatingConstructorCall.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test2
+    $new: VALUE_PARAMETER <receiver: Test2>
     CONSTRUCTOR public constructor Test2(xx: kotlin.Int, yy: kotlin.Int)
       VALUE_PARAMETER value-parameter xx: kotlin.Int
       VALUE_PARAMETER value-parameter yy: kotlin.Int

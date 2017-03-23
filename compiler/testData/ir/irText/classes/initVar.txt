@@ -1,5 +1,6 @@
 FILE /initVar.kt
   CLASS CLASS TestInitVarFromParameter
+    $new: VALUE_PARAMETER <receiver: TestInitVarFromParameter>
     CONSTRUCTOR public constructor TestInitVarFromParameter(x: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY
@@ -26,6 +27,7 @@ FILE /initVar.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestInitVarInClass
+    $new: VALUE_PARAMETER <receiver: TestInitVarInClass>
     CONSTRUCTOR public constructor TestInitVarInClass()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -51,6 +53,7 @@ FILE /initVar.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestInitVarInInitBlock
+    $new: VALUE_PARAMETER <receiver: TestInitVarInInitBlock>
     CONSTRUCTOR public constructor TestInitVarInInitBlock()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -79,6 +82,7 @@ FILE /initVar.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestInitVarWithCustomSetter
+    $new: VALUE_PARAMETER <receiver: TestInitVarWithCustomSetter>
     CONSTRUCTOR public constructor TestInitVarWithCustomSetter()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -104,6 +108,7 @@ FILE /initVar.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestInitVarWithCustomSetterWithExplicitCtor
+    $new: VALUE_PARAMETER <receiver: TestInitVarWithCustomSetterWithExplicitCtor>
     PROPERTY public final var x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final var x: kotlin.Int
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int
@@ -132,6 +137,7 @@ FILE /initVar.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS TestInitVarWithCustomSetterInCtor
+    $new: VALUE_PARAMETER <receiver: TestInitVarWithCustomSetterInCtor>
     PROPERTY public final var x: kotlin.Int
       FIELD PROPERTY_BACKING_FIELD public final var x: kotlin.Int
       FUN DEFAULT_PROPERTY_ACCESSOR public final fun <get-x>(): kotlin.Int

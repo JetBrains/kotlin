@@ -1,5 +1,6 @@
 FILE /dataClasses.kt
   CLASS CLASS Test1
+    $new: VALUE_PARAMETER <receiver: Test1>
     CONSTRUCTOR public constructor Test1(x: kotlin.Int, y: kotlin.String, z: kotlin.Any)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       VALUE_PARAMETER value-parameter y: kotlin.String
@@ -173,6 +174,7 @@ FILE /dataClasses.kt
         RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
           CONST Boolean type=kotlin.Boolean value='true'
   CLASS CLASS Test2
+    $new: VALUE_PARAMETER <receiver: Test2>
     CONSTRUCTOR public constructor Test2(x: kotlin.Any?)
       VALUE_PARAMETER value-parameter x: kotlin.Any?
       BLOCK_BODY

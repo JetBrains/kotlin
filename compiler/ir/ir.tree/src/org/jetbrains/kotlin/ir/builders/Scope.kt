@@ -16,21 +16,35 @@
 
 package org.jetbrains.kotlin.ir.builders
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
-class Scope(val scopeOwner: DeclarationDescriptor) {
+class Scope(val scopeOwnerSymbol: IrSymbol) {
+    val scopeOwner: DeclarationDescriptor get() = scopeOwnerSymbol.descriptor
+
+    @Deprecated("Creates unbound symbol")
+    constructor(scopeOwner: ClassDescriptor) : this(IrClassSymbolImpl(scopeOwner))
+
+    @Deprecated("C")
+
     private var lastTemporaryIndex: Int = 0
     private fun nextTemporaryIndex(): Int = lastTemporaryIndex++
 
-    private fun createDescriptorForTemporaryVariable(type: KotlinType, nameHint: String? = null, isMutable: Boolean = false): IrTemporaryVariableDescriptor =
+    fun createDescriptorForTemporaryVariable(type: KotlinType, nameHint: String? = null, isMutable: Boolean = false): IrTemporaryVariableDescriptor =
             IrTemporaryVariableDescriptorImpl(scopeOwner, Name.identifier(getNameForTemporary(nameHint)), type, isMutable)
 
     private fun getNameForTemporary(nameHint: String?): String {
@@ -45,3 +59,12 @@ class Scope(val scopeOwner: DeclarationDescriptor) {
                     irExpression
             )
 }
+
+@Deprecated("Creates unbound symbol")
+fun Scope(descriptor: DeclarationDescriptor) =
+        when (descriptor) {
+            is ClassDescriptor -> Scope(IrClassSymbolImpl(descriptor))
+            is FunctionDescriptor -> Scope(createFunctionSymbol(descriptor))
+            is PropertyDescriptor -> Scope(IrFieldSymbolImpl(descriptor))
+            else -> throw AssertionError("Unexpected scopeOwner descriptor: $descriptor")
+        }

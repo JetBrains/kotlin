@@ -12,6 +12,7 @@ FILE /arrayAugmentedAssignment1.kt
       RETURN type=kotlin.Nothing from='bar(): Int'
         CONST Int type=kotlin.Int value='42'
   CLASS CLASS C
+    $new: VALUE_PARAMETER <receiver: C>
     CONSTRUCTOR public constructor C(x: kotlin.IntArray)
       VALUE_PARAMETER value-parameter x: kotlin.IntArray
       BLOCK_BODY

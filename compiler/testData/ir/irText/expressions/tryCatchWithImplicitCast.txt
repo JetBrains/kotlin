@@ -14,5 +14,6 @@ FILE /tryCatchWithImplicitCast.kt
             TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
               GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
           CATCH parameter=e: Throwable
+            VAR CATCH_PARAMETER val e: kotlin.Throwable
             BLOCK type=kotlin.String origin=null
               CONST String type=kotlin.String value=''

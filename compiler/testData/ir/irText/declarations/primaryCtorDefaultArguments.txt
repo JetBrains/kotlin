@@ -1,5 +1,6 @@
 FILE /primaryCtorDefaultArguments.kt
   CLASS CLASS Test
+    $new: VALUE_PARAMETER <receiver: Test>
     CONSTRUCTOR public constructor Test(x: kotlin.Int = ...)
       VALUE_PARAMETER value-parameter x: kotlin.Int = ...
         EXPRESSION_BODY

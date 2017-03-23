@@ -8,7 +8,7 @@ FILE /lambdas.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<anonymous>(String): String'
                 GET_VAR 'value-parameter it: String' type=kotlin.String origin=null
-          CALLABLE_REFERENCE '<anonymous>(String): String' type=(kotlin.String) -> kotlin.String origin=LAMBDA
+          FUNCTION_REFERENCE '<anonymous>(String): String' type=(kotlin.String) -> kotlin.String origin=LAMBDA
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test1>(): (kotlin.String) -> kotlin.String
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test1>(): (String) -> String'
@@ -24,7 +24,7 @@ FILE /lambdas.kt
               RETURN type=kotlin.Nothing from='<anonymous>(Any) on Any: Int'
                 CALL 'hashCode(): Int' type=kotlin.Int origin=null
                   $this: GET_VAR 'value-parameter it: Any' type=kotlin.Any origin=null
-          CALLABLE_REFERENCE '<anonymous>(Any) on Any: Int' type=kotlin.Any.(kotlin.Any) -> kotlin.Int origin=LAMBDA
+          FUNCTION_REFERENCE '<anonymous>(Any) on Any: Int' type=kotlin.Any.(kotlin.Any) -> kotlin.Int origin=LAMBDA
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test2>(): kotlin.Any.(kotlin.Any) -> kotlin.Any
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test2>(): Any.(Any) -> Any'
@@ -39,7 +39,7 @@ FILE /lambdas.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<anonymous>(Int, Int): Unit'
                 GET_OBJECT 'Unit' type=kotlin.Unit
-          CALLABLE_REFERENCE '<anonymous>(Int, Int): Unit' type=(kotlin.Int, kotlin.Int) -> kotlin.Unit origin=LAMBDA
+          FUNCTION_REFERENCE '<anonymous>(Int, Int): Unit' type=(kotlin.Int, kotlin.Int) -> kotlin.Unit origin=LAMBDA
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test3>(): (kotlin.Int, kotlin.Int) -> kotlin.Unit
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test3>(): (Int, Int) -> Unit'
@@ -52,7 +52,7 @@ FILE /lambdas.kt
             VALUE_PARAMETER value-parameter i: kotlin.Int
             VALUE_PARAMETER value-parameter j: kotlin.Int
             BLOCK_BODY
-          CALLABLE_REFERENCE '<no name provided>(Int, Int): Unit' type=(kotlin.Int, kotlin.Int) -> kotlin.Unit origin=ANONYMOUS_FUNCTION
+          FUNCTION_REFERENCE '<no name provided>(Int, Int): Unit' type=(kotlin.Int, kotlin.Int) -> kotlin.Unit origin=ANONYMOUS_FUNCTION
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-test4>(): (kotlin.Int, kotlin.Int) -> kotlin.Unit
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test4>(): (Int, Int) -> Unit'

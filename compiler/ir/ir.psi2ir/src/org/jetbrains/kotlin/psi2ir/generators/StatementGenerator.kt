@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeAliasImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -74,7 +75,8 @@ class StatementGenerator(
         val variableDescriptor = getOrFail(BindingContext.VARIABLE, property)
 
         property.delegate?.let { ktDelegate ->
-            return generateLocalDelegatedProperty(property, ktDelegate, variableDescriptor as VariableDescriptorWithAccessors)
+            return generateLocalDelegatedProperty(property, ktDelegate, variableDescriptor as VariableDescriptorWithAccessors,
+                                                  bodyGenerator.scopeOwnerSymbol)
         }
 
         return context.symbolTable.declareVariable(
@@ -86,12 +88,11 @@ class StatementGenerator(
     private fun generateLocalDelegatedProperty(
             ktProperty: KtProperty,
             ktDelegate: KtPropertyDelegate,
-            variableDescriptor: VariableDescriptorWithAccessors
+            variableDescriptor: VariableDescriptorWithAccessors,
+            scopeOwnerSymbol: IrSymbol
     ): IrStatement =
-            DelegatedPropertyGenerator(context).generateLocalDelegatedProperty(
-                    ktProperty, ktDelegate, variableDescriptor,
-                    ktDelegate.expression!!.genExpr()
-            )
+            DelegatedPropertyGenerator(context)
+                    .generateLocalDelegatedProperty(ktProperty, ktDelegate, variableDescriptor, scopeOwnerSymbol)
 
     override fun visitDestructuringDeclaration(multiDeclaration: KtDestructuringDeclaration, data: Nothing?): IrStatement {
         val irBlock = IrCompositeImpl(multiDeclaration.startOffset, multiDeclaration.endOffset,
@@ -144,8 +145,10 @@ class StatementGenerator(
     override fun visitReturnExpression(expression: KtReturnExpression, data: Nothing?): IrStatement {
         val returnTarget = getReturnExpressionTarget(expression)
         val irReturnedExpression = expression.returnedExpression?.genExpr() ?:
-                                   IrGetObjectValueImpl(expression.startOffset, expression.endOffset, context.builtIns.unitType, context.builtIns.unit)
-        return IrReturnImpl(expression.startOffset, expression.endOffset, context.builtIns.nothingType, returnTarget, irReturnedExpression)
+                                   IrGetObjectValueImpl(expression.startOffset, expression.endOffset, context.builtIns.unitType,
+                                                        context.symbolTable.referenceClass(context.builtIns.unit))
+        return IrReturnImpl(expression.startOffset, expression.endOffset, context.builtIns.nothingType,
+                            context.symbolTable.referenceFunction(returnTarget), irReturnedExpression)
     }
 
     private fun scopeOwnerAsCallable() =
@@ -297,10 +300,12 @@ class StatementGenerator(
         val referenceTarget = getOrFail(BindingContext.REFERENCE_TARGET, expression.instanceReference) { "No reference target for this" }
         return when (referenceTarget) {
             is ClassDescriptor ->
-                IrGetValueImpl(expression.startOffset, expression.endOffset, referenceTarget.thisAsReceiverParameter)
+                IrGetValueImpl(expression.startOffset, expression.endOffset,
+                               context.symbolTable.referenceValueParameter(referenceTarget.thisAsReceiverParameter))
             is CallableDescriptor -> {
                 val extensionReceiver = referenceTarget.extensionReceiverParameter ?: TODO("No extension receiver: $referenceTarget")
-                IrGetValueImpl(expression.startOffset, expression.endOffset, extensionReceiver)
+                IrGetValueImpl(expression.startOffset, expression.endOffset,
+                               context.symbolTable.referenceValueParameter(extensionReceiver))
             }
             else ->
                 error("Expected this or receiver: $referenceTarget")

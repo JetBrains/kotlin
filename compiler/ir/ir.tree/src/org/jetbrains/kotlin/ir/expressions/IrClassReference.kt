@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 
 
 interface IrClassReference : IrDeclarationReference {
     override val descriptor: ClassifierDescriptor
+    override val symbol: IrClassifierSymbol
 }
 

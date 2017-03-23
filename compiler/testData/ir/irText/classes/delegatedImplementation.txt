@@ -13,6 +13,7 @@ FILE /delegatedImplementation.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS OBJECT BaseImpl
+    $new: VALUE_PARAMETER <receiver: BaseImpl>
     CONSTRUCTOR private constructor BaseImpl()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -90,6 +91,7 @@ FILE /delegatedImplementation.kt
       RETURN type=kotlin.Nothing from='otherImpl(String, Int): IOther'
         BLOCK type=otherImpl.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS <no name provided>
+            $new: VALUE_PARAMETER <receiver: <no name provided>>
             CONSTRUCTOR public constructor <no name provided>()
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -145,6 +147,7 @@ FILE /delegatedImplementation.kt
             FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
           CALL 'constructor <no name provided>()' type=otherImpl.<no name provided> origin=OBJECT_LITERAL
   CLASS CLASS Test1
+    $new: VALUE_PARAMETER <receiver: Test1>
     CONSTRUCTOR public constructor Test1()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -181,6 +184,7 @@ FILE /delegatedImplementation.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test2
+    $new: VALUE_PARAMETER <receiver: Test2>
     CONSTRUCTOR public constructor Test2()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

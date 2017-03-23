@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.types.KotlinType
 
-abstract class IrDeclarationReferenceBase<out D : DeclarationDescriptor>(
+abstract class IrDeclarationReferenceBase<out S: IrSymbol, out D : DeclarationDescriptor>(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType,
+        override val symbol: S,
         override val descriptor: D
 ) : IrExpressionBase(startOffset, endOffset, type), IrDeclarationReference

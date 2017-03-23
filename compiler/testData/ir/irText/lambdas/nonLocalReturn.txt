@@ -8,7 +8,7 @@ FILE /nonLocalReturn.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='test0(): Unit'
                 GET_OBJECT 'Unit' type=kotlin.Unit
-          CALLABLE_REFERENCE '<anonymous>(): Nothing' type=() -> kotlin.Nothing origin=LAMBDA
+          FUNCTION_REFERENCE '<anonymous>(): Nothing' type=() -> kotlin.Nothing origin=LAMBDA
   FUN public fun test1(): kotlin.Unit
     BLOCK_BODY
       CALL 'run(() -> Unit): Unit' type=kotlin.Unit origin=null
@@ -18,7 +18,7 @@ FILE /nonLocalReturn.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
                 GET_OBJECT 'Unit' type=kotlin.Unit
-          CALLABLE_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
+          FUNCTION_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
   FUN public fun test2(): kotlin.Unit
     BLOCK_BODY
       CALL 'run(() -> Unit): Unit' type=kotlin.Unit origin=null
@@ -28,7 +28,7 @@ FILE /nonLocalReturn.kt
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
                 GET_OBJECT 'Unit' type=kotlin.Unit
-          CALLABLE_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
+          FUNCTION_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
   FUN public fun testLrmFoo1(ints: kotlin.collections.List<kotlin.Int>): kotlin.Unit
     VALUE_PARAMETER value-parameter ints: kotlin.collections.List<kotlin.Int>
     BLOCK_BODY
@@ -49,7 +49,7 @@ FILE /nonLocalReturn.kt
               RETURN type=kotlin.Nothing from='<anonymous>(Int): Unit'
                 CALL 'print(Int): Unit' type=kotlin.Unit origin=null
                   message: GET_VAR 'value-parameter it: Int' type=kotlin.Int origin=null
-          CALLABLE_REFERENCE '<anonymous>(Int): Unit' type=(kotlin.Int) -> kotlin.Unit origin=LAMBDA
+          FUNCTION_REFERENCE '<anonymous>(Int): Unit' type=(kotlin.Int) -> kotlin.Unit origin=LAMBDA
   FUN public fun testLrmFoo2(ints: kotlin.collections.List<kotlin.Int>): kotlin.Unit
     VALUE_PARAMETER value-parameter ints: kotlin.collections.List<kotlin.Int>
     BLOCK_BODY
@@ -70,4 +70,4 @@ FILE /nonLocalReturn.kt
               RETURN type=kotlin.Nothing from='<anonymous>(Int): Unit'
                 CALL 'print(Int): Unit' type=kotlin.Unit origin=null
                   message: GET_VAR 'value-parameter it: Int' type=kotlin.Int origin=null
-          CALLABLE_REFERENCE '<anonymous>(Int): Unit' type=(kotlin.Int) -> kotlin.Unit origin=LAMBDA
+          FUNCTION_REFERENCE '<anonymous>(Int): Unit' type=(kotlin.Int) -> kotlin.Unit origin=LAMBDA

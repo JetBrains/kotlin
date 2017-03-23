@@ -17,8 +17,11 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -28,11 +31,19 @@ class IrReturnImpl(
         startOffset: Int,
         endOffset: Int,
         type: KotlinType,
-        override val returnTarget: CallableDescriptor,
+        override val returnTargetSymbol: IrFunctionSymbol,
         override var value: IrExpression
 ) : IrExpressionBase(startOffset, endOffset, type), IrReturn {
-    constructor(startOffset: Int, endOffset: Int, returnTarget: CallableDescriptor, value: IrExpression) :
-            this(startOffset, endOffset, returnTarget.builtIns.nothingType, returnTarget, value)
+    constructor(startOffset: Int, endOffset: Int, returnTargetSymbol: IrFunctionSymbol, value: IrExpression) :
+            this(startOffset, endOffset, returnTargetSymbol.descriptor.builtIns.nothingType, returnTargetSymbol, value)
+
+    @Deprecated("Creates unbound symbol")
+    constructor(startOffset: Int, endOffset: Int, returnTargetDescriptor: FunctionDescriptor, value: IrExpression) :
+            this(startOffset, endOffset, returnTargetDescriptor.builtIns.nothingType,
+                 createFunctionSymbol(returnTargetDescriptor),
+                 value)
+
+    override val returnTarget: CallableDescriptor get() = returnTargetSymbol.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitReturn(this, data)

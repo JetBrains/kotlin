@@ -28,8 +28,10 @@ fun Scope.functionOwner(): FunctionDescriptor =
         assertCastOwner()
 
 fun Scope.classOwner(): ClassDescriptor =
-        when (scopeOwner) {
-            is ClassDescriptor -> scopeOwner
-            is MemberDescriptor -> scopeOwner.containingDeclaration as ClassDescriptor
-            else -> throw AssertionError("Unexpected scopeOwner: $scopeOwner")
+        scopeOwner.let {
+            when (it) {
+                is ClassDescriptor -> it
+                is MemberDescriptor -> it.containingDeclaration as ClassDescriptor
+                else -> throw AssertionError("Unexpected scopeOwner: $scopeOwner")
+            }
         }

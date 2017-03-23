@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
-import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -71,11 +68,28 @@ class DumpIrTreeVisitor(out: Appendable): IrElementVisitor<Unit, String> {
         }
     }
 
+    override fun visitClass(declaration: IrClass, data: String) {
+        declaration.dumpLabeledElementWith(data) {
+            declaration.newInstanceReceiver?.accept(this, "\$new")
+            declaration.typeParameters.dumpElements()
+            declaration.declarations.dumpElements()
+        }
+    }
+
     override fun visitFunction(declaration: IrFunction, data: String) {
         declaration.dumpLabeledElementWith(data) {
             declaration.typeParameters.dumpElements()
             declaration.dispatchReceiverParameter?.accept(this, "\$this")
             declaration.extensionReceiverParameter?.accept(this, "\$receiver")
+            declaration.valueParameters.dumpElements()
+            declaration.body?.accept(this, "")
+        }
+    }
+
+    override fun visitConstructor(declaration: IrConstructor, data: String) {
+        declaration.dumpLabeledElementWith(data) {
+            declaration.typeParameters.dumpElements()
+            declaration.dispatchReceiverParameter?.accept(this, "\$outer")
             declaration.valueParameters.dumpElements()
             declaration.body?.accept(this, "")
         }

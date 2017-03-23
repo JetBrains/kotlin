@@ -21,23 +21,64 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.createClassSymbolOrNull
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 class IrSetFieldImpl(
         startOffset: Int, endOffset: Int,
-        descriptor: PropertyDescriptor,
+        symbol: IrFieldSymbol,
         origin: IrStatementOrigin? = null,
-        superQualifier: ClassDescriptor? = null
-) : IrFieldExpressionBase(startOffset, endOffset, descriptor, descriptor.type.builtIns.unitType, origin, superQualifier), IrSetField {
+        superQualifierSymbol: IrClassSymbol? = null
+) : IrSetField,
+        IrFieldExpressionBase(
+                startOffset, endOffset,
+                symbol,
+                symbol.descriptor.type.builtIns.unitType,
+                origin,
+                superQualifierSymbol
+        )
+{
+    @Deprecated("Creates unbound symbol")
     constructor(
-            startOffset: Int, endOffset: Int, descriptor: PropertyDescriptor,
+            startOffset: Int, endOffset: Int,
+            propertyDescriptor: PropertyDescriptor,
+            origin: IrStatementOrigin? = null,
+            superQualifier: ClassDescriptor? = null
+    ) : this(
+            startOffset, endOffset,
+            IrFieldSymbolImpl(propertyDescriptor),
+            origin,
+            createClassSymbolOrNull(superQualifier)
+    )
+
+    @Deprecated("Creates unbound symbol")
+    constructor(
+            startOffset: Int, endOffset: Int,
+            propertyDescriptor: PropertyDescriptor,
             receiver: IrExpression?,
             value: IrExpression,
             origin: IrStatementOrigin? = null,
             superQualifier: ClassDescriptor? = null
-    ) : this(startOffset, endOffset, descriptor, origin, superQualifier) {
+    ) : this(
+            startOffset, endOffset,
+            IrFieldSymbolImpl(propertyDescriptor),
+            receiver, value, origin,
+            createClassSymbolOrNull(superQualifier)
+    )
+
+    constructor(
+            startOffset: Int, endOffset: Int,
+            symbol: IrFieldSymbol,
+            receiver: IrExpression?,
+            value: IrExpression,
+            origin: IrStatementOrigin? = null,
+            superQualifierSymbol: IrClassSymbol? = null
+    ) : this(startOffset, endOffset, symbol, origin, superQualifierSymbol) {
         this.receiver = receiver
         this.value = value
     }

@@ -9,6 +9,6 @@ FILE /samAdapter.kt
                 RETURN type=kotlin.Nothing from='<anonymous>(): Unit'
                   CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
                     message: CONST String type=kotlin.String value='Hello, world!'
-            CALLABLE_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
+            FUNCTION_REFERENCE '<anonymous>(): Unit' type=() -> kotlin.Unit origin=LAMBDA
       CALL 'run(): Unit' type=kotlin.Unit origin=null
         $this: GET_VAR 'hello: Runnable' type=java.lang.Runnable origin=null

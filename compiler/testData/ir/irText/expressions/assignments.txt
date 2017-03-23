@@ -1,5 +1,6 @@
 FILE /assignments.kt
   CLASS CLASS Ref
+    $new: VALUE_PARAMETER <receiver: Ref>
     CONSTRUCTOR public constructor Ref(x: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       BLOCK_BODY

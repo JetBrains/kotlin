@@ -1,5 +1,6 @@
 FILE /dataClassesGeneric.kt
   CLASS CLASS Test1
+    $new: VALUE_PARAMETER <receiver: Test1>
     TYPE_PARAMETER <T>
     CONSTRUCTOR public constructor Test1<T>(x: T)
       TYPE_PARAMETER <T>

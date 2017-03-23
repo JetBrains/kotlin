@@ -1,5 +1,6 @@
 FILE /topLevel.kt
   CLASS CLASS Delegate
+    $new: VALUE_PARAMETER <receiver: Delegate>
     CONSTRUCTOR public constructor Delegate(value: kotlin.String)
       VALUE_PARAMETER value-parameter value: kotlin.String
       BLOCK_BODY
@@ -27,6 +28,7 @@ FILE /topLevel.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS DelegateProvider
+    $new: VALUE_PARAMETER <receiver: DelegateProvider>
     CONSTRUCTOR public constructor DelegateProvider(value: kotlin.String)
       VALUE_PARAMETER value-parameter value: kotlin.String
       BLOCK_BODY
@@ -61,11 +63,11 @@ FILE /topLevel.kt
           $this: CALL 'constructor DelegateProvider(String)' type=DelegateProvider origin=null
             value: CONST String type=kotlin.String value='OK'
           thisRef: CONST Null type=kotlin.Nothing? value='null'
-          property: CALLABLE_REFERENCE 'testTopLevel: String' type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+          property: PROPERTY_REFERENCE 'testTopLevel: String' field=null getter='<get-testTopLevel>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     FUN DELEGATED_PROPERTY_ACCESSOR public fun <get-testTopLevel>(): kotlin.String
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-testTopLevel>(): String'
           CALL 'getValue(Any?, Any?): String' type=kotlin.String origin=null
             $this: GET_FIELD '`testTopLevel$delegate`: Delegate' type=Delegate origin=null
             thisRef: CONST Null type=kotlin.Nothing? value='null'
-            property: CALLABLE_REFERENCE 'testTopLevel: String' type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            property: PROPERTY_REFERENCE 'testTopLevel: String' field=null getter='<get-testTopLevel>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE

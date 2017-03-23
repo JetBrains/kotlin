@@ -30,12 +30,10 @@ class IrClassImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        override val descriptor: ClassDescriptor,
         override val symbol: IrClassSymbol
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrClass {
     constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor) :
-            this(startOffset, endOffset, origin, descriptor,
-                 IrClassSymbolImpl(descriptor))
+            this(startOffset, endOffset, origin, IrClassSymbolImpl(descriptor))
 
     constructor(
             startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
@@ -43,6 +41,10 @@ class IrClassImpl(
     ) : this(startOffset, endOffset, origin, descriptor) {
         addAll(members)
     }
+
+    override val descriptor: ClassDescriptor get() = symbol.descriptor
+
+    override var newInstanceReceiver: IrValueParameter? = null
 
     override val declarations: MutableList<IrDeclaration> = ArrayList()
 
@@ -52,11 +54,13 @@ class IrClassImpl(
             visitor.visitClass(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        newInstanceReceiver?.accept(visitor, data)
         typeParameters.forEach { it.accept(visitor, data) }
         declarations.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        newInstanceReceiver = newInstanceReceiver?.transform(transformer, data)
         typeParameters.transform { it.transform(transformer, data) }
         declarations.transform { it.transform(transformer, data) as IrDeclaration }
     }

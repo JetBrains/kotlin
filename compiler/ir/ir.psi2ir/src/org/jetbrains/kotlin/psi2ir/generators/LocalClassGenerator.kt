@@ -45,8 +45,13 @@ class LocalClassGenerator(statementGenerator: StatementGenerator): StatementGene
             "Object literal constructor should have no value parameters: $objectConstructor"
         }
 
-        irBlock.statements.add(IrCallImpl(ktObjectLiteral.startOffset, ktObjectLiteral.endOffset, objectLiteralType,
-                                        objectConstructor, null, IrStatementOrigin.OBJECT_LITERAL))
+        irBlock.statements.add(
+                IrCallImpl(
+                        ktObjectLiteral.startOffset, ktObjectLiteral.endOffset, objectLiteralType,
+                        context.symbolTable.referenceConstructor(objectConstructor),
+                        null, IrStatementOrigin.OBJECT_LITERAL
+                )
+        )
 
         return irBlock
     }

@@ -29,12 +29,10 @@ class IrAnonymousInitializerImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        override val descriptor: ClassDescriptor,
         override val symbol: IrAnonymousInitializerSymbol
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrAnonymousInitializer {
     constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor) :
-            this(startOffset, endOffset, origin, descriptor,
-                 IrAnonymousInitializerSymbolImpl(descriptor))
+            this(startOffset, endOffset, origin, IrAnonymousInitializerSymbolImpl(descriptor))
 
     constructor(
             startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
@@ -42,6 +40,8 @@ class IrAnonymousInitializerImpl(
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.body = body
     }
+
+    override val descriptor: ClassDescriptor get() = symbol.descriptor
 
     override lateinit var body: IrBlockBody
 

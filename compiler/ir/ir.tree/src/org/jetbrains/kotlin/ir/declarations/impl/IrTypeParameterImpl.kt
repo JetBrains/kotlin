@@ -28,12 +28,12 @@ class IrTypeParameterImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        override val descriptor: TypeParameterDescriptor,
         override val symbol: IrTypeParameterSymbol
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrTypeParameter {
+    override val descriptor: TypeParameterDescriptor get() = symbol.descriptor
+
     constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: TypeParameterDescriptor) :
-            this(startOffset, endOffset, origin, descriptor,
-                 IrTypeParameterSymbolImpl(descriptor))
+            this(startOffset, endOffset, origin, IrTypeParameterSymbolImpl(descriptor))
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitTypeParameter(this, data)

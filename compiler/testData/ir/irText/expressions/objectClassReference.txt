@@ -1,5 +1,6 @@
 FILE /objectClassReference.kt
   CLASS OBJECT A
+    $new: VALUE_PARAMETER <receiver: A>
     CONSTRUCTOR private constructor A()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

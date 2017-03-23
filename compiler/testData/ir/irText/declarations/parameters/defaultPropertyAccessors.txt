@@ -21,6 +21,7 @@ FILE /defaultPropertyAccessors.kt
         SET_FIELD 'test2: Int' type=kotlin.Unit origin=null
           value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
   CLASS CLASS Host
+    $new: VALUE_PARAMETER <receiver: Host>
     CONSTRUCTOR public constructor Host()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -56,6 +57,7 @@ FILE /defaultPropertyAccessors.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS InPrimaryCtor
+    $new: VALUE_PARAMETER <receiver: InPrimaryCtor>
     TYPE_PARAMETER <T>
     CONSTRUCTOR public constructor InPrimaryCtor<T>(testInPrimaryCtor1: T, testInPrimaryCtor2: kotlin.Int = ...)
       TYPE_PARAMETER <T>

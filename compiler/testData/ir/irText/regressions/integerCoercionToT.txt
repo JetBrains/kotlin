@@ -10,6 +10,7 @@ FILE /integerCoercionToT.kt
       RETURN type=kotlin.Nothing from='reinterpret() on CPointed: T'
         CALL 'TODO(): Nothing' type=kotlin.Nothing origin=null
   CLASS CLASS CInt32VarX
+    $new: VALUE_PARAMETER <receiver: CInt32VarX>
     TYPE_PARAMETER <T>
     CONSTRUCTOR public constructor CInt32VarX<T>()
       TYPE_PARAMETER <T>
@@ -31,6 +32,7 @@ FILE /integerCoercionToT.kt
       VALUE_PARAMETER value-parameter value: T_INT
       BLOCK_BODY
   CLASS CLASS IdType
+    $new: VALUE_PARAMETER <receiver: IdType>
     CONSTRUCTOR public constructor IdType(value: kotlin.Int)
       VALUE_PARAMETER value-parameter value: kotlin.Int
       BLOCK_BODY

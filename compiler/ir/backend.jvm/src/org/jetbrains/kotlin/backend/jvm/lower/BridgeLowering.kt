@@ -193,12 +193,14 @@ class BridgeLowering(val state: GenerationState) : ClassLoweringPass {
         //TODO: rewrite
         //here some 'isSpecialBridge' magic (see type special descriptor processing in KotlinTypeMapper)
         val implementation = if (isSpecialBridge) delegateTo.descriptor.copyAsDeclaration() else delegateTo.descriptor
-        val call = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, implementation.returnType!!, implementation, null, JvmLoweredStatementOrigin.BRIDGE_DELEGATION, null)
+        val call = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                              implementation,
+                              null, JvmLoweredStatementOrigin.BRIDGE_DELEGATION, null)
         call.dispatchReceiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, containingClass.thisAsReceiverParameter, JvmLoweredStatementOrigin.BRIDGE_DELEGATION)
         newDescriptor.valueParameters.mapIndexed { i, valueParameterDescriptor ->
             call.putValueArgument(i, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, valueParameterDescriptor, JvmLoweredStatementOrigin.BRIDGE_DELEGATION))
         }
-        irBody.statements.add(IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, newDescriptor.returnType!!, newDescriptor, call))
+        irBody.statements.add(IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, newDescriptor, call))
 
         return irFunction
     }

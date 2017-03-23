@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
-import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
+import org.jetbrains.kotlin.ir.util.deepCopy
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -127,9 +127,7 @@ class InitializersLowering(val context: JvmBackendContext) : ClassLoweringPass {
     companion object {
         val clinitName = Name.special("<clinit>")
 
-        val deepCopyVisitor = DeepCopyIrTree()
-
-        fun IrStatement.copy() = transform(deepCopyVisitor, null)
-        fun IrExpression.copy() = transform(deepCopyVisitor, null)
+        fun IrStatement.copy() = deepCopy()
+        fun IrExpression.copy() = deepCopy()
     }
 }

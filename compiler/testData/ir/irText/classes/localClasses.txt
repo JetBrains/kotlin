@@ -2,6 +2,7 @@ FILE /localClasses.kt
   FUN public fun outer(): kotlin.Unit
     BLOCK_BODY
       CLASS CLASS LocalClass
+        $new: VALUE_PARAMETER <receiver: LocalClass>
         CONSTRUCTOR public constructor LocalClass()
           BLOCK_BODY
             DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

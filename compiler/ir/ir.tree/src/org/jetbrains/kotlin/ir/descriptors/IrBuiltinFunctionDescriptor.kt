@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import java.util.*
 
-interface IrBuiltinOperatorDescriptor : FunctionDescriptor
+interface IrBuiltinOperatorDescriptor : SimpleFunctionDescriptor
 
 interface IrBuiltinValueParameterDescriptor : ValueParameterDescriptor
 
@@ -36,7 +36,7 @@ abstract class IrBuiltinOperatorDescriptorBase(containingDeclaration: Declaratio
 {
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = null
     override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? = null
-    override fun getOriginal(): FunctionDescriptor = this
+    override fun getOriginal(): SimpleFunctionDescriptor = this
     override fun substitute(substitutor: TypeSubstitutor): FunctionDescriptor = throw UnsupportedOperationException()
     override fun getOverriddenDescriptors(): Collection<FunctionDescriptor> = emptyList()
     override fun setOverriddenDescriptors(overriddenDescriptors: Collection<CallableMemberDescriptor>) = throw UnsupportedOperationException()
@@ -59,10 +59,10 @@ abstract class IrBuiltinOperatorDescriptorBase(containingDeclaration: Declaratio
     override fun hasStableParameterNames(): Boolean = true
     override fun hasSynthesizedParameterNames(): Boolean = false
 
-    override fun copy(newOwner: DeclarationDescriptor?, modality: Modality?, visibility: Visibility?, kind: CallableMemberDescriptor.Kind?, copyOverrides: Boolean): FunctionDescriptor =
+    override fun copy(newOwner: DeclarationDescriptor?, modality: Modality?, visibility: Visibility?,
+                      kind: CallableMemberDescriptor.Kind?, copyOverrides: Boolean) =
             throw UnsupportedOperationException()
-
-    override fun newCopyBuilder(): FunctionDescriptor.CopyBuilder<out FunctionDescriptor> =
+    override fun newCopyBuilder() =
             throw UnsupportedOperationException()
 
     override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {

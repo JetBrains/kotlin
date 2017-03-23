@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 
 interface IrInstanceInitializerCall : IrExpression {
     val classDescriptor: ClassDescriptor
+    val classSymbol: IrClassSymbol
 }
 

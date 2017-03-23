@@ -83,6 +83,7 @@ FILE /primitivesImplicitConversions.kt
             $this: CONST Int type=kotlin.Int value='1'
     BLOCK_BODY
   CLASS CLASS TestImplicitArguments
+    $new: VALUE_PARAMETER <receiver: TestImplicitArguments>
     CONSTRUCTOR public constructor TestImplicitArguments(x: kotlin.Long = ...)
       VALUE_PARAMETER value-parameter x: kotlin.Long = ...
         EXPRESSION_BODY

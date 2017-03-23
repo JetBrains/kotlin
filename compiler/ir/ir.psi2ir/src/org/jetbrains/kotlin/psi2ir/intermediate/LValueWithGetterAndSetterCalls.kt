@@ -32,7 +32,8 @@ class LValueWithGetterAndSetterCalls(
         val origin: IrStatementOrigin? = null
 ) : LValue {
     private val descriptor: CallableDescriptor =
-            getterCall?.descriptor ?: setterCall?.descriptor ?:
+            getterCall?.descriptor ?:
+            setterCall?.descriptor ?:
             throw AssertionError("Call-based LValue should have either a getter or a setter call")
 
     override fun load(): IrExpression {

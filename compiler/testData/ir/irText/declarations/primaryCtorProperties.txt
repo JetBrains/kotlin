@@ -1,5 +1,6 @@
 FILE /primaryCtorProperties.kt
   CLASS CLASS C
+    $new: VALUE_PARAMETER <receiver: C>
     CONSTRUCTOR public constructor C(test1: kotlin.Int, test2: kotlin.Int)
       VALUE_PARAMETER value-parameter test1: kotlin.Int
       VALUE_PARAMETER value-parameter test2: kotlin.Int

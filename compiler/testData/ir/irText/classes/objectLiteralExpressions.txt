@@ -10,6 +10,7 @@ FILE /objectLiteralExpressions.kt
       EXPRESSION_BODY
         BLOCK type=test1.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS <no name provided>
+            $new: VALUE_PARAMETER <receiver: <no name provided>>
             CONSTRUCTOR public constructor <no name provided>()
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -27,6 +28,7 @@ FILE /objectLiteralExpressions.kt
       EXPRESSION_BODY
         BLOCK type=test2.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS <no name provided>
+            $new: VALUE_PARAMETER <receiver: <no name provided>>
             CONSTRUCTOR public constructor <no name provided>()
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -45,13 +47,15 @@ FILE /objectLiteralExpressions.kt
         RETURN type=kotlin.Nothing from='<get-test2>(): IFoo'
           GET_FIELD 'test2: IFoo' type=IFoo origin=null
   CLASS CLASS Outer
+    $new: VALUE_PARAMETER <receiver: Outer>
     CONSTRUCTOR public constructor Outer()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Outer'
     CLASS CLASS Inner
+      $new: VALUE_PARAMETER <receiver: Inner>
       CONSTRUCTOR public constructor Inner()
-        $this: VALUE_PARAMETER <receiver: Outer>
+        $outer: VALUE_PARAMETER <receiver: Outer>
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
           INSTANCE_INITIALIZER_CALL classDescriptor='Inner'
@@ -65,6 +69,7 @@ FILE /objectLiteralExpressions.kt
         RETURN type=kotlin.Nothing from='test3(): Outer.Inner'
           BLOCK type=Outer.test3.<no name provided> origin=OBJECT_LITERAL
             CLASS CLASS <no name provided>
+              $new: VALUE_PARAMETER <receiver: <no name provided>>
               CONSTRUCTOR public constructor <no name provided>()
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'constructor Inner()'
@@ -88,6 +93,7 @@ FILE /objectLiteralExpressions.kt
       RETURN type=kotlin.Nothing from='test4() on Outer: Outer.Inner'
         BLOCK type=test4.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS <no name provided>
+            $new: VALUE_PARAMETER <receiver: <no name provided>>
             CONSTRUCTOR public constructor <no name provided>()
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'constructor Inner()'

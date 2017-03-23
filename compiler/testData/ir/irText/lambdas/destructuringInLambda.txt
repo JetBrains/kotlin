@@ -1,5 +1,6 @@
 FILE /destructuringInLambda.kt
   CLASS CLASS A
+    $new: VALUE_PARAMETER <receiver: A>
     CONSTRUCTOR public constructor A(x: kotlin.Int, y: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       VALUE_PARAMETER value-parameter y: kotlin.Int
@@ -142,7 +143,7 @@ FILE /destructuringInLambda.kt
                 CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
                   $this: CONST Int type=kotlin.Int value='42'
                   other: GET_VAR 'y: Int' type=kotlin.Int origin=null
-          CALLABLE_REFERENCE '<anonymous>(A): Int' type=(A) -> kotlin.Int origin=LAMBDA
+          FUNCTION_REFERENCE '<anonymous>(A): Int' type=(A) -> kotlin.Int origin=LAMBDA
     FUN DEFAULT_PROPERTY_ACCESSOR public fun <get-fn>(): (A) -> kotlin.Int
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-fn>(): (A) -> Int'

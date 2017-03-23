@@ -1,5 +1,6 @@
 FILE /companion.kt
   CLASS CLASS Z
+    $new: VALUE_PARAMETER <receiver: Z>
     CONSTRUCTOR public constructor Z()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -10,6 +11,7 @@ FILE /companion.kt
         CALL 'test(): Unit' type=kotlin.Unit origin=null
           $this: GET_OBJECT 'companion object of Z' type=Z.Companion
     CLASS OBJECT companion object of Z
+      $new: VALUE_PARAMETER <receiver: companion object of Z>
       CONSTRUCTOR private constructor Companion()
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

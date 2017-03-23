@@ -26,6 +26,7 @@ FILE /qualifiedSuperCalls.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS CBoth
+    $new: VALUE_PARAMETER <receiver: CBoth>
     CONSTRUCTOR public constructor CBoth()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

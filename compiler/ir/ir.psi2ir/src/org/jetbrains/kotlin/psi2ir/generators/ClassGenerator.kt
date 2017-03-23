@@ -48,11 +48,20 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
                 IrDeclarationOrigin.DEFINED,
                 descriptor
         ).buildWithScope { irClass ->
+            if (irClass.descriptor.canHaveInitializersWithInstanceReference()) {
+                irClass.newInstanceReceiver = context.symbolTable.declareValueParameter(
+                        ktClassOrObject.startOffset, ktClassOrObject.endOffset,
+                        IrDeclarationOrigin.NEW_INSTANCE_RECEIVER,
+                        irClass.descriptor.thisAsReceiverParameter
+                )
+            }
+
             declarationGenerator.generateTypeParameterDeclarations(irClass, descriptor.declaredTypeParameters)
 
-            generatePrimaryConstructor(irClass, ktClassOrObject)
-
-            generatePropertiesDeclaredInPrimaryConstructor(irClass, ktClassOrObject)
+            val irPrimaryConstructor = generatePrimaryConstructor(irClass, ktClassOrObject)
+            if (irPrimaryConstructor != null) {
+                generatePropertiesDeclaredInPrimaryConstructor(irClass, irPrimaryConstructor, ktClassOrObject)
+            }
 
             generateMembersDeclaredInSupertypeList(irClass, ktClassOrObject)
 
@@ -69,6 +78,9 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
             }
         }
     }
+
+    private fun ClassDescriptor.canHaveInitializersWithInstanceReference(): Boolean =
+            kind != ClassKind.INTERFACE
 
     private fun generateFakeOverrideMemberDeclarations(irClass: IrClass) {
         irClass.descriptor.unsubstitutedMemberScope.getContributedDescriptors()
@@ -137,7 +149,7 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
                 ktDelegateExpression.startOffset, ktDelegateExpression.endOffset,
                 IrDeclarationOrigin.DELEGATE,
                 delegateDescriptor,
-                createBodyGenerator(irClass.descriptor).generateExpressionBody(ktDelegateExpression)
+                createBodyGenerator(irClass.symbol).generateExpressionBody(ktDelegateExpression)
         )
         irClass.addMember(irDelegateField)
 
@@ -189,33 +201,35 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
                     delegated
             ).buildWithScope { irFunction ->
                 FunctionGenerator(declarationGenerator).generateSyntheticFunctionParameterDeclarations(irFunction)
-                irFunction.body = generateDelegateFunctionBody(irDelegate, delegated, overridden)
+                irFunction.body = generateDelegateFunctionBody(irDelegate, delegated, overridden, irFunction)
             }
 
-    private fun generateDelegateFunctionBody(irDelegate: IrField, delegated: FunctionDescriptor, overridden: FunctionDescriptor): IrBlockBodyImpl {
+    private fun generateDelegateFunctionBody(irDelegate: IrField, delegated: FunctionDescriptor, overridden: FunctionDescriptor,
+                                             irDelegatedFunction: IrSimpleFunction): IrBlockBodyImpl {
         val startOffset = irDelegate.startOffset
         val endOffset = irDelegate.endOffset
-        val dispatchReceiver = delegated.dispatchReceiverParameter ?:
-                               throw AssertionError("Delegated member should have a dispatch receiver: $delegated")
-
         val irBlockBody = IrBlockBodyImpl(startOffset, endOffset)
         val returnType = overridden.returnType!!
-        val irCall = IrCallImpl(startOffset, endOffset, returnType, overridden, null)
-        irCall.dispatchReceiver = IrGetFieldImpl(startOffset, endOffset, irDelegate.descriptor,
-                                                 IrGetValueImpl(startOffset, endOffset, dispatchReceiver)
-                                                 )
-        irCall.extensionReceiver = delegated.extensionReceiverParameter?.let { extensionReceiver ->
-            IrGetValueImpl(startOffset, endOffset, extensionReceiver)
-        }
+        val irCall = IrCallImpl(startOffset, endOffset, returnType, context.symbolTable.referenceFunction(overridden), null)
+        irCall.dispatchReceiver =
+                IrGetFieldImpl(
+                        startOffset, endOffset, irDelegate.symbol,
+                        IrGetValueImpl(startOffset, endOffset, irDelegatedFunction.dispatchReceiverParameter!!.symbol)
+                )
+        irCall.extensionReceiver =
+                irDelegatedFunction.extensionReceiverParameter?.let { extensionReceiver ->
+                    IrGetValueImpl(startOffset, endOffset, extensionReceiver.symbol)
+                }
         irCall.mapValueParameters { overriddenValueParameter ->
             val delegatedValueParameter = delegated.valueParameters[overriddenValueParameter.index]
-            IrGetValueImpl(startOffset, endOffset, delegatedValueParameter)
+            val irDelegatedValueParameter = irDelegatedFunction.getIrValueParameter(delegatedValueParameter)
+            IrGetValueImpl(startOffset, endOffset, irDelegatedValueParameter.symbol)
         }
         if (KotlinBuiltIns.isUnit(returnType) || KotlinBuiltIns.isNothing(returnType)) {
             irBlockBody.statements.add(irCall)
         }
         else {
-            val irReturn = IrReturnImpl(startOffset, endOffset, context.builtIns.nothingType, delegated, irCall)
+            val irReturn = IrReturnImpl(startOffset, endOffset, context.builtIns.nothingType, irDelegatedFunction.symbol, irCall)
             irBlockBody.statements.add(irReturn)
         }
         return irBlockBody
@@ -229,22 +243,31 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
         EnumClassMembersGenerator(context).generateSpecialMembers(irClass)
     }
 
-    private fun generatePrimaryConstructor(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
+    private fun generatePrimaryConstructor(irClass: IrClass, ktClassOrObject: KtClassOrObject): IrConstructor? {
         val classDescriptor = irClass.descriptor
-        if (DescriptorUtils.isAnnotationClass(classDescriptor)) return
+        if (DescriptorUtils.isAnnotationClass(classDescriptor)) return null
 
-        val primaryConstructorDescriptor = classDescriptor.unsubstitutedPrimaryConstructor ?: return
+        val primaryConstructorDescriptor = classDescriptor.unsubstitutedPrimaryConstructor ?: return null
 
         val irPrimaryConstructor = FunctionGenerator(declarationGenerator).generatePrimaryConstructor(primaryConstructorDescriptor, ktClassOrObject)
 
         irClass.addMember(irPrimaryConstructor)
+
+        return irPrimaryConstructor
     }
 
-    private fun generatePropertiesDeclaredInPrimaryConstructor(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
+    private fun generatePropertiesDeclaredInPrimaryConstructor(
+            irClass: IrClass,
+            irPrimaryConstructor: IrConstructor,
+            ktClassOrObject: KtClassOrObject
+    ) {
         ktClassOrObject.primaryConstructor?.let { ktPrimaryConstructor ->
-            for (ktParameter in ktPrimaryConstructor.valueParameters) {
+            ktPrimaryConstructor.valueParameters.forEachIndexed { i, ktParameter ->
+                val irValueParameter = irPrimaryConstructor.valueParameters[i]
                 if (ktParameter.hasValOrVar()) {
-                    irClass.addMember(PropertyGenerator(declarationGenerator).generatePropertyForPrimaryConstructorParameter(ktParameter))
+                    val irProperty = PropertyGenerator(declarationGenerator)
+                            .generatePropertyForPrimaryConstructorParameter(ktParameter, irValueParameter)
+                    irClass.addMember(irProperty)
                 }
             }
         }
@@ -267,7 +290,7 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
                 enumEntryDescriptor
         ).buildWithScope { irEnumEntry ->
             irEnumEntry.initializerExpression =
-                    BodyGenerator(enumEntryDescriptor.containingDeclaration, context)
+                    createBodyGenerator(irEnumEntry.symbol)
                             .generateEnumEntryInitializer(ktEnumEntry, enumEntryDescriptor)
 
             if (ktEnumEntry.declarations.isNotEmpty()) {

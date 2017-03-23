@@ -21,6 +21,7 @@ FILE /fun.kt
     VALUE_PARAMETER value-parameter j: kotlin.String
     BLOCK_BODY
   CLASS CLASS Host
+    $new: VALUE_PARAMETER <receiver: Host>
     CONSTRUCTOR public constructor Host()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

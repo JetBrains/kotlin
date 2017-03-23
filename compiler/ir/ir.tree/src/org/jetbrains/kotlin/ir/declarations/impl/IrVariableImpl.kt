@@ -29,12 +29,10 @@ class IrVariableImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        override val descriptor: VariableDescriptor,
         override val symbol: IrVariableSymbol
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrVariable {
     constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: VariableDescriptor) :
-            this(startOffset, endOffset, origin, descriptor,
-                 IrVariableSymbolImpl(descriptor))
+            this(startOffset, endOffset, origin, IrVariableSymbolImpl(descriptor))
 
     constructor(
             startOffset: Int,
@@ -45,6 +43,8 @@ class IrVariableImpl(
     ) : this(startOffset, endOffset, origin, descriptor) {
         this.initializer = initializer
     }
+
+    override val descriptor: VariableDescriptor get() = symbol.descriptor
 
     override var initializer: IrExpression? = null
 

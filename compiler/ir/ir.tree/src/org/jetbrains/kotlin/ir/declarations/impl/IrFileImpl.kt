@@ -31,12 +31,10 @@ import java.util.*
 
 class IrFileImpl(
         override val fileEntry: SourceManager.FileEntry,
-        override val packageFragmentDescriptor: PackageFragmentDescriptor,
         override val symbol: IrFileSymbol
 ) : IrElementBase(0, fileEntry.maxOffset), IrFile {
     constructor(fileEntry: SourceManager.FileEntry, packageFragmentDescriptor: PackageFragmentDescriptor)
-            : this(fileEntry, packageFragmentDescriptor,
-                   IrFileSymbolImpl(packageFragmentDescriptor))
+            : this(fileEntry, IrFileSymbolImpl(packageFragmentDescriptor))
 
     constructor(
             fileEntry: SourceManager.FileEntry,
@@ -47,6 +45,8 @@ class IrFileImpl(
         this.fileAnnotations.addAll(fileAnnotations)
         this.declarations.addAll(declarations)
     }
+
+    override val packageFragmentDescriptor: PackageFragmentDescriptor get() = symbol.descriptor
 
     override val fileAnnotations: MutableList<AnnotationDescriptor> = SmartList()
 

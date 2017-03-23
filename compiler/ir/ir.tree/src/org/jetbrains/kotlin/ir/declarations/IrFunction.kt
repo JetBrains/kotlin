@@ -20,10 +20,12 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
-interface IrFunction : IrDeclaration, IrTypeParametersContainer {
+interface IrFunction : IrDeclaration, IrTypeParametersContainer, IrSymbolOwner {
     override val descriptor: FunctionDescriptor
+    override val symbol : IrFunctionSymbol
 
     var dispatchReceiverParameter: IrValueParameter?
     var extensionReceiverParameter: IrValueParameter?
@@ -37,7 +39,6 @@ interface IrSimpleFunction : IrFunction, IrSymbolDeclaration<IrSimpleFunctionSym
     override val declarationKind: IrDeclarationKind
         get() = IrDeclarationKind.FUNCTION
 }
-
 
 fun IrFunction.getIrValueParameter(parameter: ValueParameterDescriptor): IrValueParameter =
         valueParameters.getOrElse(parameter.index) {

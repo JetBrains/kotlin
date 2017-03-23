@@ -22,13 +22,44 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.Variance
 
-class BuiltinsOperatorsBuilder(val packageFragment: PackageFragmentDescriptor, val builtIns: KotlinBuiltIns) {
+class IrBuiltIns(val builtIns: KotlinBuiltIns) {
+    private val packageFragment = IrBuiltinsPackageFragmentDescriptorImpl(builtIns.builtInsModule, KOTLIN_INTERNAL_IR_FQN)
+    val irBuiltInsExternalPackageFragment = IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(packageFragment))
+
+    object IR_BUILTINS_STUB : IrDeclarationOriginImpl("IR_BUILTINS_STUB")
+
+    private val stubBuilder = IrDeclarationStubBuilder(IR_BUILTINS_STUB)
+
+    private fun defineOperator(name: String, returnType: KotlinType, valueParameterTypes: List<KotlinType>): IrSimpleFunction {
+        val operatorDescriptor = IrSimpleBuiltinOperatorDescriptorImpl(packageFragment, Name.identifier(name), returnType)
+        for ((i, valueParameterType) in valueParameterTypes.withIndex()) {
+            operatorDescriptor.addValueParameter(
+                    IrBuiltinValueParameterDescriptorImpl(operatorDescriptor, Name.identifier("arg$i"), i, valueParameterType)
+            )
+        }
+        return addStubToPackageFragment(operatorDescriptor)
+    }
+
+    private fun addStubToPackageFragment(descriptor: SimpleFunctionDescriptor): IrSimpleFunction {
+        val irSimpleFunction = stubBuilder.buildSimpleFunctionStub(IrSimpleFunctionSymbolImpl(descriptor))
+        irBuiltInsExternalPackageFragment.declarations.add(irSimpleFunction)
+        return irSimpleFunction
+    }
+
+    private fun <T : SimpleFunctionDescriptor> T.addStub(): IrSimpleFunction =
+            addStubToPackageFragment(this)
+
     val bool = builtIns.booleanType
     val any = builtIns.anyType
     val anyN = builtIns.nullableAnyType
@@ -36,32 +67,37 @@ class BuiltinsOperatorsBuilder(val packageFragment: PackageFragmentDescriptor, v
     val nothing = builtIns.nothingType
     val unit = builtIns.unitType
 
-    fun defineOperator(name: String, returnType: KotlinType, valueParameterTypes: List<KotlinType>): IrBuiltinOperatorDescriptor {
-        val operatorDescriptor = IrSimpleBuiltinOperatorDescriptorImpl(packageFragment, Name.identifier(name), returnType)
-        for ((i, valueParameterType) in valueParameterTypes.withIndex()) {
-            operatorDescriptor.addValueParameter(
-                    IrBuiltinValueParameterDescriptorImpl(operatorDescriptor, Name.identifier("arg$i"), i, valueParameterType))
-        }
-        return operatorDescriptor
-    }
-}
+    val eqeqeqFun = defineOperator("EQEQEQ", bool, listOf(anyN, anyN))
+    val eqeqFun = defineOperator("EQEQ", bool, listOf(anyN, anyN))
+    val lt0Fun = defineOperator("LT0", bool, listOf(int))
+    val lteq0Fun = defineOperator("LTEQ0", bool, listOf(int))
+    val gt0Fun = defineOperator("GT0", bool, listOf(int))
+    val gteq0Fun = defineOperator("GTEQ0", bool, listOf(int))
+    val throwNpeFun = defineOperator("THROW_NPE", nothing, listOf())
+    val booleanNotFun = defineOperator("NOT", bool, listOf(bool))
+    val noWhenBranchMatchedExceptionFun = defineOperator("noWhenBranchMatchedException", unit, listOf())
 
-class IrBuiltIns(val builtIns: KotlinBuiltIns) {
-    private val packageFragment = IrBuiltinsPackageFragmentDescriptorImpl(builtIns.builtInsModule, KOTLIN_INTERNAL_IR_FQN)
-    private val builder = BuiltinsOperatorsBuilder(packageFragment, builtIns)
+    val eqeqeq = eqeqeqFun.descriptor
+    val eqeq = eqeqFun.descriptor
+    val lt0 = lt0Fun.descriptor
+    val lteq0 = lteq0Fun.descriptor
+    val gt0 = gt0Fun.descriptor
+    val gteq0 = gteq0Fun.descriptor
+    val throwNpe = throwNpeFun.descriptor
+    val booleanNot = booleanNotFun.descriptor
+    val noWhenBranchMatchedException = noWhenBranchMatchedExceptionFun.descriptor
 
-    val eqeqeq: FunctionDescriptor = builder.run { defineOperator("EQEQEQ", bool, listOf(anyN, anyN)) }
-    val eqeq: FunctionDescriptor = builder.run { defineOperator("EQEQ", bool, listOf(anyN, anyN)) }
-    val lt0: FunctionDescriptor = builder.run { defineOperator("LT0", bool, listOf(int)) }
-    val lteq0: FunctionDescriptor = builder.run { defineOperator("LTEQ0", bool, listOf(int)) }
-    val gt0: FunctionDescriptor = builder.run { defineOperator("GT0", bool, listOf(int)) }
-    val gteq0: FunctionDescriptor = builder.run { defineOperator("GTEQ0", bool, listOf(int)) }
-    val throwNpe: FunctionDescriptor = builder.run { defineOperator("THROW_NPE", nothing, listOf()) }
-    val booleanNot: FunctionDescriptor = builder.run { defineOperator("NOT", bool, listOf(bool)) }
+    val eqeqeqSymbol = eqeqeqFun.symbol
+    val eqeqSymbol = eqeqFun.symbol
+    val lt0Symbol = lt0Fun.symbol
+    val lteq0Symbol = lteq0Fun.symbol
+    val gt0Symbol = gt0Fun.symbol
+    val gteq0Symbol = gteq0Fun.symbol
+    val throwNpeSymbol = throwNpeFun.symbol
+    val booleanNotSymbol = booleanNotFun.symbol
+    val noWhenBranchMatchedExceptionSymbol = noWhenBranchMatchedExceptionFun.symbol
 
-    val noWhenBranchMatchedException: FunctionDescriptor = builder.run { defineOperator("noWhenBranchMatchedException", unit, listOf()) }
-
-    val enumValueOf: FunctionDescriptor =
+    val enumValueOfFun =
             SimpleFunctionDescriptorImpl.create(
                     packageFragment,
                     Annotations.EMPTY,
@@ -81,7 +117,9 @@ class IrBuiltIns(val builtIns: KotlinBuiltIns) {
                 val returnType = KotlinTypeFactory.simpleType(Annotations.EMPTY, typeParameterT.typeConstructor, listOf(), false)
 
                 initialize(null, null, listOf(typeParameterT), listOf(valueParameterName), returnType, Modality.FINAL, Visibilities.PUBLIC)
-            }
+            }.addStub()
+    val enumValueOf = enumValueOfFun.descriptor
+    val enumValueOfSymbol = enumValueOfFun.symbol
 
     companion object {
         val KOTLIN_INTERNAL_IR_FQN = FqName("kotlin.internal.ir")

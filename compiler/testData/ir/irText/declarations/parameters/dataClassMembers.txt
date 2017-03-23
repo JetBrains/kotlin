@@ -1,5 +1,6 @@
 FILE /dataClassMembers.kt
   CLASS CLASS Test
+    $new: VALUE_PARAMETER <receiver: Test>
     TYPE_PARAMETER <T>
     CONSTRUCTOR public constructor Test<T>(x: T, y: kotlin.String = ...)
       TYPE_PARAMETER <T>

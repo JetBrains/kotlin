@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallableReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -35,9 +35,10 @@ class LocalFunctionGenerator(statementGenerator: StatementGenerator) : Statement
         val irBlock = IrBlockImpl(ktLambda.startOffset, ktLambda.endOffset, lambdaExpressionType, IrStatementOrigin.LAMBDA)
         irBlock.statements.add(irLambdaFunction)
         irBlock.statements.add(
-                IrCallableReferenceImpl(
+                IrFunctionReferenceImpl(
                         ktLambda.startOffset, ktLambda.endOffset, lambdaExpressionType,
-                        irLambdaFunction.descriptor, null, IrStatementOrigin.LAMBDA
+                        irLambdaFunction.symbol,
+                        null, IrStatementOrigin.LAMBDA
                 )
         )
         return irBlock
@@ -56,9 +57,10 @@ class LocalFunctionGenerator(statementGenerator: StatementGenerator) : Statement
                 irBlock.statements.add(irFun)
 
                 irBlock.statements.add(
-                        IrCallableReferenceImpl(
+                        IrFunctionReferenceImpl(
                                 ktFun.startOffset, ktFun.endOffset, funExpressionType,
-                                irFun.descriptor, null, IrStatementOrigin.ANONYMOUS_FUNCTION
+                                irFun.symbol,
+                                null, IrStatementOrigin.ANONYMOUS_FUNCTION
                         )
                 )
 

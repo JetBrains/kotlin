@@ -1,5 +1,6 @@
 FILE /classMembers.kt
   CLASS CLASS C
+    $new: VALUE_PARAMETER <receiver: C>
     CONSTRUCTOR public constructor C(x: kotlin.Int, y: kotlin.Int, z: kotlin.Int = ...)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       VALUE_PARAMETER value-parameter y: kotlin.Int
@@ -84,6 +85,7 @@ FILE /classMembers.kt
         CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
           message: CONST String type=kotlin.String value='2'
     CLASS CLASS NestedClass
+      $new: VALUE_PARAMETER <receiver: NestedClass>
       CONSTRUCTOR public constructor NestedClass()
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -115,6 +117,7 @@ FILE /classMembers.kt
       FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
       FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
     CLASS OBJECT companion object of C
+      $new: VALUE_PARAMETER <receiver: companion object of C>
       CONSTRUCTOR private constructor Companion()
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'

@@ -13,4 +13,4 @@ FILE /extensionLambda.kt
                 RETURN type=kotlin.Nothing from='<anonymous>() on String: Int'
                   CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
                     $this: GET_VAR '<receiver: <anonymous>() on String: Int>' type=kotlin.String origin=null
-            CALLABLE_REFERENCE '<anonymous>() on String: Int' type=kotlin.String.() -> kotlin.Int origin=LAMBDA
+            FUNCTION_REFERENCE '<anonymous>() on String: Int' type=kotlin.String.() -> kotlin.Int origin=LAMBDA

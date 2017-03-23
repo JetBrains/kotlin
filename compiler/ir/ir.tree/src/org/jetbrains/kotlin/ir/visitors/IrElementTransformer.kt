@@ -23,16 +23,19 @@ import org.jetbrains.kotlin.ir.expressions.*
 
 interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitElement(element: IrElement, data: D): IrElement =
-            element.apply { transformChildren(this@IrElementTransformer, data) }
+            element.also { it.transformChildren(this, data) }
 
     override fun visitModuleFragment(declaration: IrModuleFragment, data: D): IrModuleFragment =
-            declaration.apply { transformChildren(this@IrElementTransformer, data) }
+            declaration.also { it.transformChildren(this, data) }
 
     override fun visitFile(declaration: IrFile, data: D): IrFile =
-            declaration.apply { transformChildren(this@IrElementTransformer, data) }
+            declaration.also { it.transformChildren(this, data) }
+
+    override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: D): IrExternalPackageFragment =
+            declaration.also { it.transformChildren(this, data) }
 
     override fun visitDeclaration(declaration: IrDeclaration, data: D): IrStatement =
-            declaration.apply { transformChildren(this@IrElementTransformer, data) }
+            declaration.also { it.transformChildren(this, data) }
 
     override fun visitClass(declaration: IrClass, data: D) = visitDeclaration(declaration, data)
     override fun visitTypeAlias(declaration: IrTypeAlias, data: D) = visitDeclaration(declaration, data)
@@ -49,20 +52,20 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitValueParameter(declaration: IrValueParameter, data: D) = visitDeclaration(declaration, data)
 
     override fun visitBody(body: IrBody, data: D): IrBody =
-            body.apply { transformChildren(this@IrElementTransformer, data) }
+            body.also { it.transformChildren(this, data) }
 
     override fun visitExpressionBody(body: IrExpressionBody, data: D) = visitBody(body, data)
     override fun visitBlockBody(body: IrBlockBody, data: D) = visitBody(body, data)
     override fun visitSyntheticBody(body: IrSyntheticBody, data: D) = visitBody(body, data)
 
     override fun visitExpression(expression: IrExpression, data: D): IrExpression =
-            expression.apply { transformChildren(this@IrElementTransformer, data) }
+            expression.also { it.transformChildren(this, data) }
 
     override fun <T> visitConst(expression: IrConst<T>, data: D) = visitExpression(expression, data)
     override fun visitVararg(expression: IrVararg, data: D) = visitExpression(expression, data)
 
     override fun visitSpreadElement(spread: IrSpreadElement, data: D): IrSpreadElement =
-            spread.apply { transformChildren(this@IrElementTransformer, data) }
+            spread.also { it.transformChildren(this, data) }
 
     override fun visitContainerExpression(expression: IrContainerExpression, data: D) = visitExpression(expression, data)
     override fun visitBlock(expression: IrBlock, data: D) = visitContainerExpression(expression, data)
@@ -79,13 +82,17 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitFieldAccess(expression: IrFieldAccessExpression, data: D) = visitDeclarationReference(expression, data)
     override fun visitGetField(expression: IrGetField, data: D) = visitFieldAccess(expression, data)
     override fun visitSetField(expression: IrSetField, data: D) = visitFieldAccess(expression, data)
-    override fun visitMemberAccess(expression: IrMemberAccessExpression, data: D): IrElement = visitDeclarationReference(expression, data)
-    override fun visitCall(expression: IrCall, data: D) = visitMemberAccess(expression, data)
-    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: D) = visitMemberAccess(expression, data)
-    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: D) = visitMemberAccess(expression, data)
+    override fun visitMemberAccess(expression: IrMemberAccessExpression, data: D): IrElement = visitExpression(expression, data)
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: D): IrElement = visitMemberAccess(expression, data)
+    override fun visitCall(expression: IrCall, data: D) = visitFunctionAccess(expression, data)
+    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: D) = visitFunctionAccess(expression, data)
+    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: D) = visitFunctionAccess(expression, data)
     override fun visitGetClass(expression: IrGetClass, data: D) = visitExpression(expression, data)
 
     override fun visitCallableReference(expression: IrCallableReference, data: D) = visitMemberAccess(expression, data)
+    override fun visitFunctionReference(expression: IrFunctionReference, data: D) = visitCallableReference(expression, data)
+    override fun visitPropertyReference(expression: IrPropertyReference, data: D) = visitCallableReference(expression, data)
+
     override fun visitClassReference(expression: IrClassReference, data: D) = visitDeclarationReference(expression, data)
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: D) = visitExpression(expression, data)
@@ -95,15 +102,15 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitWhen(expression: IrWhen, data: D) = visitExpression(expression, data)
 
     override fun visitBranch(branch: IrBranch, data: D): IrBranch =
-            branch.apply {
-                condition = condition.transform(this@IrElementTransformer, data)
-                result = result.transform(this@IrElementTransformer, data)
+            branch.also {
+                it.condition = it.condition.transform(this, data)
+                it.result = it.result.transform(this, data)
             }
 
     override fun visitElseBranch(branch: IrElseBranch, data: D): IrElseBranch =
-            branch.apply {
-                condition = condition.transform(this@IrElementTransformer, data)
-                result = result.transform(this@IrElementTransformer, data)
+            branch.also {
+                it.condition = it.condition.transform(this, data)
+                it.result = it.result.transform(this, data)
             }
 
     override fun visitLoop(loop: IrLoop, data: D) = visitExpression(loop, data)
@@ -112,7 +119,7 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitTry(aTry: IrTry, data: D) = visitExpression(aTry, data)
 
     override fun visitCatch(aCatch: IrCatch, data: D): IrCatch =
-            aCatch.apply { transformChildren(this@IrElementTransformer, data) }
+            aCatch.also { it.transformChildren(this, data) }
 
     override fun visitBreakContinue(jump: IrBreakContinue, data: D) = visitExpression(jump, data)
     override fun visitBreak(jump: IrBreak, data: D) = visitBreakContinue(jump, data)

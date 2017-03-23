@@ -29,12 +29,12 @@ class IrValueParameterImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        override val descriptor: ParameterDescriptor,
         override val symbol: IrValueParameterSymbol
 ) : IrDeclarationBase(startOffset, endOffset, origin), IrValueParameter {
+    override val descriptor: ParameterDescriptor = symbol.descriptor
+
     constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ParameterDescriptor) :
-            this(startOffset, endOffset, origin, descriptor,
-                 IrValueParameterSymbolImpl(descriptor))
+            this(startOffset, endOffset, origin, IrValueParameterSymbolImpl(descriptor))
 
     constructor(
             startOffset: Int,

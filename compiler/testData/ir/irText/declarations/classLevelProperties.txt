@@ -1,5 +1,6 @@
 FILE /classLevelProperties.kt
   CLASS CLASS C
+    $new: VALUE_PARAMETER <receiver: C>
     CONSTRUCTOR public constructor C()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -91,7 +92,7 @@ FILE /classLevelProperties.kt
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='<anonymous>(): Int'
                     CONST Int type=kotlin.Int value='42'
-              CALLABLE_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int origin=LAMBDA
+              FUNCTION_REFERENCE '<anonymous>(): Int' type=() -> kotlin.Int origin=LAMBDA
       FUN DELEGATED_PROPERTY_ACCESSOR public final fun <get-test7>(): kotlin.Int
         $this: VALUE_PARAMETER <receiver: C>
         BLOCK_BODY
@@ -101,7 +102,7 @@ FILE /classLevelProperties.kt
               $receiver: GET_FIELD '`test7$delegate`: Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
                 receiver: GET_VAR '<receiver: C>' type=C origin=null
               thisRef: GET_VAR '<receiver: C>' type=C origin=null
-              property: CALLABLE_REFERENCE 'test7: Int' type=kotlin.reflect.KProperty1<C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              property: PROPERTY_REFERENCE 'test7: Int' field=null getter='<get-test7>(): Int' setter=null type=kotlin.reflect.KProperty1<C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     PROPERTY public final var test8: kotlin.Int
       FIELD DELEGATE val `test8$delegate`: kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */
         EXPRESSION_BODY
@@ -117,7 +118,7 @@ FILE /classLevelProperties.kt
               $receiver: GET_FIELD '`test8$delegate`: HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
                 receiver: GET_VAR '<receiver: C>' type=C origin=null
               thisRef: GET_VAR '<receiver: C>' type=C origin=null
-              property: CALLABLE_REFERENCE 'test8: Int' type=kotlin.reflect.KMutableProperty1<C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              property: PROPERTY_REFERENCE 'test8: Int' field=null getter='<get-test8>(): Int' setter='<set-test8>(Int): Unit' type=kotlin.reflect.KMutableProperty1<C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
       FUN DELEGATED_PROPERTY_ACCESSOR public final fun <set-test8>(<set-?>: kotlin.Int): kotlin.Unit
         $this: VALUE_PARAMETER <receiver: C>
         VALUE_PARAMETER value-parameter <set-?>: kotlin.Int
@@ -128,7 +129,7 @@ FILE /classLevelProperties.kt
               $receiver: GET_FIELD '`test8$delegate`: HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
                 receiver: GET_VAR '<receiver: C>' type=C origin=null
               thisRef: GET_VAR '<receiver: C>' type=C origin=null
-              property: CALLABLE_REFERENCE 'test8: Int' type=kotlin.reflect.KMutableProperty1<C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+              property: PROPERTY_REFERENCE 'test8: Int' field=null getter='<get-test8>(): Int' setter='<set-test8>(Int): Unit' type=kotlin.reflect.KMutableProperty1<C, kotlin.Int> origin=PROPERTY_REFERENCE_FOR_DELEGATE
               value: GET_VAR 'value-parameter <set-?>: Int' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE public open override fun equals(other: kotlin.Any?): kotlin.Boolean
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int

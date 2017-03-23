@@ -1,5 +1,6 @@
 FILE /multipleImplicitReceivers.kt
   CLASS OBJECT A
+    $new: VALUE_PARAMETER <receiver: A>
     CONSTRUCTOR private constructor A()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -8,6 +9,7 @@ FILE /multipleImplicitReceivers.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS OBJECT B
+    $new: VALUE_PARAMETER <receiver: B>
     CONSTRUCTOR private constructor B()
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -73,6 +75,6 @@ FILE /multipleImplicitReceivers.kt
                                         $receiver: CALL '<get-foo>() on A: B' type=B origin=GET_PROPERTY
                                           $this: GET_VAR '<receiver: <anonymous>() on IFoo: Int>' type=IFoo origin=null
                                           $receiver: GET_VAR '<receiver: <anonymous>() on A: Int>' type=A origin=null
-                                CALLABLE_REFERENCE '<anonymous>() on IInvoke: Int' type=IInvoke.() -> kotlin.Int origin=LAMBDA
-                      CALLABLE_REFERENCE '<anonymous>() on IFoo: Int' type=IFoo.() -> kotlin.Int origin=LAMBDA
-            CALLABLE_REFERENCE '<anonymous>() on A: Int' type=A.() -> kotlin.Int origin=LAMBDA
+                                FUNCTION_REFERENCE '<anonymous>() on IInvoke: Int' type=IInvoke.() -> kotlin.Int origin=LAMBDA
+                      FUNCTION_REFERENCE '<anonymous>() on IFoo: Int' type=IFoo.() -> kotlin.Int origin=LAMBDA
+            FUNCTION_REFERENCE '<anonymous>() on A: Int' type=A.() -> kotlin.Int origin=LAMBDA

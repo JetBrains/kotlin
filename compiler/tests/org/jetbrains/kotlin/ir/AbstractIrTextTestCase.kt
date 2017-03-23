@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
-import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
+import org.jetbrains.kotlin.ir.util.deepCopy
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -61,7 +61,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             verify(irFile, irFileDump)
 
             // Check that deep copy produces an equivalent result
-            val irFileCopy = irFile.transform(DeepCopyIrTree(), null)
+            val irFileCopy = irFile.deepCopy()
             val copiedTrees = irFileCopy.dumpTreesFromLineNumber(irTreeFileLabel.lineNumber)
             TestCase.assertEquals("IR dump mismatch after deep copy", actualTrees, copiedTrees)
             verify(irFileCopy, irFileCopy.dump())
