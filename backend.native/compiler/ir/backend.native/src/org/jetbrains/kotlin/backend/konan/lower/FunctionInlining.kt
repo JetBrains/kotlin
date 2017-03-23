@@ -415,8 +415,11 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         //---------------------------------------------------------------------//
 
         override fun visitCall(expression: IrCall): IrExpression {
-            if (!isLambdaCall(expression)) return super.visitCall(expression)               // If call it is not lambda call - do nothing.
-            return inlineLambda(expression)
+            val newExpression = super.visitCall(expression)
+            if (newExpression !is IrCall) return newExpression
+
+            if (!isLambdaCall(newExpression)) return newExpression                          // If call it is not lambda call - do nothing.
+            return inlineLambda(newExpression)
         }
     }
 }
