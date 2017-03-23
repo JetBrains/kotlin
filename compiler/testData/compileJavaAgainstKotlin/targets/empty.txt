@@ -1,0 +1,5 @@
+package test
+
+@kotlin.annotation.Target(allowedTargets = {}) public final annotation class empty : kotlin.Annotation {
+    public constructor empty()
+}
