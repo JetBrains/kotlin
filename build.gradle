@@ -225,8 +225,14 @@ task cross_dist {
 
 task bundle(type: Tar) {
     dependsOn('cross_dist')
-    from(project.rootDir)
-    include 'dist/**'
+    from("$project.rootDir/dist") {
+        include '**'
+        into 'kotlin-native'
+    }
+    from(project.rootDir) {
+        include 'samples/**'
+        into 'kotlin-native'
+    }
     baseName = 'kotlin-native-compiler'
     destinationDir = file('.')
     extension = 'tgz'
