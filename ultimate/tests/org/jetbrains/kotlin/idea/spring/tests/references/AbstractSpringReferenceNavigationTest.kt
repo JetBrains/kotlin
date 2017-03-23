@@ -31,7 +31,7 @@ abstract class AbstractSpringReferenceNavigationTest : AbstractNavigationTest() 
     override fun getSourceAndTargetElements(editor: Editor, file: PsiFile): GotoTargetHandler.GotoData? {
         val stringTemplate = file.findElementAt(editor.caretModel.offset)!!.getNonStrictParentOfType<KtStringTemplateExpression>()!!
         return GotoTargetHandler.GotoData(stringTemplate,
-                                          stringTemplate.references.mapNotNull { it.resolve() }.distinct().toTypedArray(),
+                                          stringTemplate.references.mapNotNull { it.resolve() }.toTypedArray(),
                                           emptyList())
     }
 
