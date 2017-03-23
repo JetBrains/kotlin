@@ -2,16 +2,21 @@
 // IGNORE_BACKEND: JS, NATIVE
 
 // FULL_JDK
-// WITH_RUNTIME
 
-//This front-end problem test added to box ones only cause of FULL_JDK support
 import org.w3c.dom.Element
+import org.xml.sax.InputSource
+import javax.xml.parsers.DocumentBuilderFactory
+import java.io.StringReader
 
 class MyElement(e: Element): Element by e {
     fun bar() = "OK"
 }
 
 fun box() : String {
-    val touch = MyElement::class.java
-    return "OK"
+    val factory = DocumentBuilderFactory.newInstance()!!;
+    val builder = factory.newDocumentBuilder()!!;
+    val source = InputSource(StringReader("<OK></OK>"));
+    val doc = builder.parse(source)!!;
+    val myElement = MyElement(doc.getDocumentElement()!!)
+    return myElement.getTagName()!!
 }
