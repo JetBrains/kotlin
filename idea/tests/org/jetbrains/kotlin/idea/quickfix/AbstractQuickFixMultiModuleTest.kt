@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.codeInsight.daemon.quickFix.ActionHint
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.impl.ShowIntentionActionsHandler
@@ -60,10 +59,10 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest() {
             try {
                 val psiFile = actionFile
 
-                val actionHint = ActionHint.parse(psiFile, actionFileText)
-                val text = actionHint.expectedText
+                val pair = LightQuickFixTestCase.parseActionHint(psiFile, actionFileText)
+                val text = pair.getFirst()
 
-                val actionShouldBeAvailable = actionHint.shouldPresent()
+                val actionShouldBeAvailable = pair.getSecond()
 
                 if (psiFile is KtFile) {
                     DirectiveBasedActionUtils.checkForUnexpectedErrors(psiFile)
