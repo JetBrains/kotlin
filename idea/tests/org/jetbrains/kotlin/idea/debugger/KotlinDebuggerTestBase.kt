@@ -64,8 +64,11 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     private var oldDisableKotlinInternalClasses = false
     private var oldRenderDelegatedProperties = false
 
-    protected lateinit var evaluationContext: EvaluationContextImpl
-    protected lateinit var debuggerContext: DebuggerContextImpl
+    protected var _evaluationContext: EvaluationContextImpl? = null
+    protected val evaluationContext get() = _evaluationContext!!
+
+    protected var _debuggerContext: DebuggerContextImpl? = null
+    protected val debuggerContext get() = _debuggerContext!!
 
     override fun initApplication() {
         super.initApplication()
@@ -74,7 +77,11 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
     override fun tearDown() {
         super.tearDown()
+
         restoreDefaultSettings()
+
+        _evaluationContext = null
+        _debuggerContext = null
     }
 
     protected fun configureSettings(fileText: String) {
@@ -136,8 +143,8 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     }
 
     protected fun initContexts(suspendContext: SuspendContextImpl) {
-        evaluationContext = createEvaluationContext(suspendContext)
-        debuggerContext = createDebuggerContext(suspendContext)
+        _evaluationContext = createEvaluationContext(suspendContext)
+        _debuggerContext = createDebuggerContext(suspendContext)
     }
 
     protected fun SuspendContextImpl.doStepInto(ignoreFilters: Boolean, smartStepFilter: MethodFilter?) {
