@@ -21,16 +21,14 @@ package org.jetbrains.kotlin.script.util.resolvers
 import com.jcabi.aether.Aether
 import org.jetbrains.kotlin.script.util.DependsOn
 import org.jetbrains.kotlin.script.util.Repository
-import org.jetbrains.kotlin.utils.addToStdlib.check
-import org.jetbrains.kotlin.utils.rethrow
-import java.io.File
-import java.util.*
 import org.sonatype.aether.repository.RemoteRepository
 import org.sonatype.aether.resolution.DependencyResolutionException
 import org.sonatype.aether.util.artifact.DefaultArtifact
 import org.sonatype.aether.util.artifact.JavaScopes
+import java.io.File
 import java.net.MalformedURLException
 import java.net.URL
+import java.util.*
 
 val mavenCentral = RemoteRepository("maven-central", "default", "http://repo1.maven.org/maven2/")
 
@@ -51,7 +49,7 @@ class MavenResolver(val reportError: ((String) -> Unit)? = null): Resolver {
             reportError?.invoke(msg) ?: throw RuntimeException(msg)
         }
 
-        fun String?.orNullIfBlank(): String? = this?.check(String::isNotBlank)
+        fun String?.orNullIfBlank(): String? = this?.takeUnless(String::isBlank)
 
         val artifactId: DefaultArtifact = when {
             dependsOn.groupId.isValidParam() || dependsOn.artifactId.isValidParam() -> {
@@ -75,13 +73,13 @@ class MavenResolver(val reportError: ((String) -> Unit)? = null): Resolver {
             }
         }
         catch (e: DependencyResolutionException) {
-            reportError?.invoke("resolving ${artifactId.artifactId} failed: $e") ?: rethrow(e)
+            reportError?.invoke("resolving ${artifactId.artifactId} failed: $e") ?: throw e
         }
         return null
     }
 
     fun tryAddRepo(annotation: Repository): Boolean {
-        val urlStr = annotation.url.check { it.isValidParam() } ?: annotation.value.check { it.isValidParam() } ?: return false
+        val urlStr = annotation.url.takeIf { it.isValidParam() } ?: annotation.value.takeIf { it.isValidParam() } ?: return false
         try {
             URL(urlStr)
         } catch (_: MalformedURLException) {

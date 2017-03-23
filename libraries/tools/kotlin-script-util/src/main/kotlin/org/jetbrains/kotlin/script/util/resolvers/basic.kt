@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.script.util.resolvers
 
 import org.jetbrains.kotlin.script.util.DependsOn
 import org.jetbrains.kotlin.script.util.Repository
-import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.io.File
-import java.lang.IllegalArgumentException
 
 interface Resolver {
     fun tryResolve(dependsOn: DependsOn): Iterable<File>?
@@ -28,7 +26,7 @@ interface Resolver {
 
 class DirectResolver : Resolver {
     override fun tryResolve(dependsOn: DependsOn): Iterable<File>? =
-            dependsOn.value.check(String::isNotBlank)?.let(::File)?.check { it.exists() && (it.isFile || it.isDirectory) }?.let { listOf(it) }
+            dependsOn.value.takeUnless(String::isBlank)?.let(::File)?.takeIf { it.exists() && (it.isFile || it.isDirectory) }?.let { listOf(it) }
 }
 
 class FlatLibDirectoryResolver(val path: File) : Resolver {
@@ -39,10 +37,10 @@ class FlatLibDirectoryResolver(val path: File) : Resolver {
 
     override fun tryResolve(dependsOn: DependsOn): Iterable<File>? =
             // TODO: add coordinates and wildcard matching
-            dependsOn.value.check(String::isNotBlank)?.let{ File(path, it) }?.check { it.exists() && (it.isFile || it.isDirectory) }?.let { listOf(it) }
+            dependsOn.value.takeUnless(String::isBlank)?.let { File(path, it) }?.takeIf { it.exists() && (it.isFile || it.isDirectory) }?.let { listOf(it) }
 
     companion object {
         fun tryCreate(annotation: Repository): FlatLibDirectoryResolver? =
-                annotation.value.check(String::isNotBlank)?.let(::File)?.check { it.exists() && it.isDirectory }?.let(::FlatLibDirectoryResolver)
+                annotation.value.takeUnless(String::isBlank)?.let(::File)?.takeIf { it.exists() && it.isDirectory }?.let(::FlatLibDirectoryResolver)
     }
 }
