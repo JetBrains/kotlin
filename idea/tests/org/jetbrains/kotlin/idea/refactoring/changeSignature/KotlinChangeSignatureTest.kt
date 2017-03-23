@@ -19,18 +19,15 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature
 import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.codeInsight.TargetElementUtil.ELEMENT_NAME_ACCEPTED
 import com.intellij.codeInsight.TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED
-import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.PsiElementFactory
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiType
+import com.intellij.psi.*
 import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.changeSignature.ChangeSignatureProcessor
 import com.intellij.refactoring.changeSignature.ParameterInfoImpl
 import com.intellij.refactoring.util.CanonicalTypes
 import com.intellij.refactoring.util.CommonRefactoringUtil
+import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.VisibilityUtil
 import junit.framework.ComparisonFailure
@@ -44,9 +41,9 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinMethodNode
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
-import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -61,30 +58,24 @@ import org.jetbrains.kotlin.utils.sure
 import java.io.File
 import java.util.*
 
-class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
+class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
     companion object {
         private val BUILT_INS = DefaultBuiltIns.Instance
         private val EXTENSIONS = arrayOf(".kt", ".java")
     }
 
-    private var editors: MutableList<Editor>? = null
-
-    override fun getTestProjectJdk() = PluginTestCaseBase.mockJdk()
-
     override fun getTestDataPath() = File(PluginTestCaseBase.getTestDataPathBase(), "/refactoring/changeSignature").path + File.separator
 
-    override fun setUp() {
-        super.setUp()
-        editors = ArrayList<Editor>()
-        ConfigLibraryUtil.configureKotlinRuntime(module)
-    }
+    override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     override fun tearDown() {
-        ConfigLibraryUtil.unConfigureKotlinRuntime(module)
-        editors!!.clear()
-        editors = null
+        files = emptyList()
+        psiFiles = PsiFile.EMPTY_ARRAY
         super.tearDown()
     }
+
+    lateinit var files: List<String>
+    lateinit var psiFiles: Array<PsiFile>
 
     private fun findCallers(method: PsiMethod): LinkedHashSet<PsiMethod> {
         val root = KotlinMethodNode(method, HashSet(), project, Runnable { })
@@ -94,16 +85,14 @@ class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
     }
 
     private fun configureFiles() {
-        editors!!.clear()
-
+        val fileList = mutableListOf<String>()
         var i = 0
         indexLoop@ while (true) {
             for (extension in EXTENSIONS) {
                 val extraFileName = getTestName(false) + "Before" + (if (i > 0) "." + i else "") + extension
                 val extraFile = File(testDataPath + extraFileName)
                 if (extraFile.exists()) {
-                    configureByFile(extraFileName)
-                    editors!!.add(editor)
+                    fileList.add(extraFileName)
                     i++
                     continue@indexLoop
                 }
@@ -111,7 +100,8 @@ class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
             break
         }
 
-        setActiveEditor(editors!![0])
+        psiFiles = myFixture.configureByFiles(*fileList.toTypedArray())
+        files = fileList
     }
 
     private fun createChangeInfo(): KotlinChangeInfo {
@@ -229,21 +219,18 @@ class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
 
     private fun compareEditorsWithExpectedData() {
         //noinspection ConstantConditions
-        val checkErrorsAfter = InTextDirectivesUtils.isDirectiveDefined(getPsiFile(editors!![0].document)!!.text,
-                                                                        "// CHECK_ERRORS_AFTER")
-        for (editor in editors!!) {
-            setActiveEditor(editor)
-            val currentFile = file
-            val afterFilePath = currentFile.name.replace("Before.", "After.")
+        val checkErrorsAfter = InTextDirectivesUtils.isDirectiveDefined(file!!.text, "// CHECK_ERRORS_AFTER")
+        for ((file, psiFile) in files zip psiFiles) {
+            val afterFilePath = file.replace("Before.", "After.")
             try {
-                checkResultByFile(afterFilePath)
+                myFixture.checkResultByFile(file, afterFilePath, true)
             }
             catch (e: ComparisonFailure) {
-                KotlinTestUtils.assertEqualsToFile(File(testDataPath + afterFilePath), getEditor())
+                KotlinTestUtils.assertEqualsToFile(File(testDataPath + afterFilePath), psiFile.text)
             }
 
-            if (checkErrorsAfter && currentFile is KtFile) {
-                DirectiveBasedActionUtils.checkForUnexpectedErrors(currentFile)
+            if (checkErrorsAfter && psiFile is KtFile) {
+                DirectiveBasedActionUtils.checkForUnexpectedErrors(psiFile)
             }
         }
     }
@@ -258,7 +245,7 @@ class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
     // --------------------------------- Tests ---------------------------------
 
     fun testBadSelection() {
-        configureByFile(getTestName(false) + "Before.kt")
+        myFixture.configureByFile(getTestName(false) + "Before.kt")
         TestCase.assertNull(KotlinChangeSignatureHandler().findTargetMember(file, editor))
     }
 

@@ -1,4 +1,4 @@
-<caret>import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.Override;
 
