@@ -35,7 +35,7 @@ class KotlinReportSubmitter : ITNReporter() {
 
     override fun showErrorInRelease(event: IdeaLoggingEvent) = !hasUpdate
 
-    override fun submit(events: Array<IdeaLoggingEvent>, additionalInfo: String?, parentComponent: Component, consumer: Consumer<SubmittedReportInfo>): Boolean {
+    override fun submit(events: Array<IdeaLoggingEvent>, additionalInfo: String?, parentComponent: Component?, consumer: Consumer<SubmittedReportInfo>): Boolean {
         if (hasUpdate) {
             return true
         }
@@ -47,14 +47,16 @@ class KotlinReportSubmitter : ITNReporter() {
         KotlinPluginUpdater.getInstance().runUpdateCheck { status ->
             if (status is PluginUpdateStatus.Update) {
                 hasUpdate = true
-                val rc = Messages.showDialog(parentComponent,
-                                             "You're running Kotlin plugin version ${KotlinPluginUtil.getPluginVersion()}, " +
+                if (parentComponent != null) {
+                    val rc = Messages.showDialog(parentComponent,
+                                                 "You're running Kotlin plugin version ${KotlinPluginUtil.getPluginVersion()}, " +
                                                  "while the latest version is ${status.pluginDescriptor.version}",
-                                             "Update Kotlin Plugin",
-                                             arrayOf("Update", "Ignore"),
-                                             0, Messages.getInformationIcon())
-                if (rc == 0) {
-                    KotlinPluginUpdater.getInstance().installPluginUpdate(status)
+                                                 "Update Kotlin Plugin",
+                                                 arrayOf("Update", "Ignore"),
+                                                 0, Messages.getInformationIcon())
+                    if (rc == 0) {
+                        KotlinPluginUpdater.getInstance().installPluginUpdate(status)
+                    }
                 }
             }
             else {
