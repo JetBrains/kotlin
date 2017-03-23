@@ -591,7 +591,6 @@
                         <file file="@{download.dir.jps-standalone}/jgoodies-forms.jar"/>
                         <file file="@{download.dir.jps-standalone}/jna.jar"/>
                         <file file="@{download.dir.jps-standalone}/jps-builders.jar"/>
-                        <file file="@{download.dir.jps-standalone}/jps-builders-6.jar"/>
                         <file file="@{download.dir.jps-standalone}/jps-model.jar"/>
                         <file file="@{download.dir.jps-standalone}/log4j.jar"/>
                         <file file="@{download.dir.jps-standalone}/nanoxml-2.2.3.jar"/>
