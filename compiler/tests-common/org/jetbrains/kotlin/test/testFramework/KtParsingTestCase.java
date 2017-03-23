@@ -122,7 +122,6 @@ public abstract class KtParsingTestCase extends KtPlatformLiteFixture {
         myProject.registerService(PsiManager.class, myPsiManager);
 
         this.registerExtensionPoint(FileTypeFactory.FILE_TYPE_FACTORY_EP, FileTypeFactory.class);
-        registerExtensionPoint(MetaLanguage.EP_NAME, MetaLanguage.class);
 
         for (ParserDefinition definition : myDefinitions) {
             addExplicitExtension(LanguageParserDefinitions.INSTANCE, definition.getFileNodeType().getLanguage(), definition);
