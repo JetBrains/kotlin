@@ -50,6 +50,15 @@
     </problem>
 
     <problem>
+        <file>parameterlessFunction.kt</file>
+        <line>15</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/parameterlessFunction.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Autowiring for Bean Class (Kotlin)</problem_class>
+        <description>Autowired method without parameters</description>
+    </problem>
+
+    <problem>
         <file>invalidAutowiredResource.kt</file>
         <line>24</line>
         <module>light_idea_test_case</module>
