@@ -69,12 +69,12 @@ fun UsageReplacementStrategy.replaceUsagesInWholeProject(
             })
 }
 
-private fun UsageReplacementStrategy.replaceUsages(
+fun UsageReplacementStrategy.replaceUsages(
         usages: Collection<KtSimpleNameExpression>,
         targetPsiElement: PsiElement,
         project: Project,
         commandName: String,
-        postAction: () -> Unit
+        postAction: () -> Unit = {}
 ) {
     GuiUtils.invokeLaterIfNeeded({
         project.executeWriteCommand(commandName) {
