@@ -10,6 +10,17 @@ fun parseSourceLinkDefinition(srcLink: String): SourceLinkDefinition {
             urlAndLine.substringAfter("#", "").let { if (it.isEmpty()) null else "#" + it })
 }
 
+fun parsePerPackageOptions(arg: String): List<PackageOptions> = arg.split(";").map { it.split(",") }.map {
+    val prefix = it.first()
+    if (prefix == "")
+        throw IllegalArgumentException("Please do not register packageOptions with all match pattern, use global settings instead")
+    val args = it.subList(1, it.size)
+    val deprecated = args.find { it.endsWith("deprecated") }?.startsWith("+") ?: true
+    val reportUndocumented = args.find { it.endsWith("warnUndocumented") }?.startsWith("+") ?: true
+    val privateApi = args.find { it.endsWith("privateApi") }?.startsWith("+") ?: false
+    PackageOptions(prefix, includeNonPublic = privateApi, reportUndocumented = reportUndocumented, skipDeprecated = !deprecated)
+}
+
 fun parseSourceRoot(sourceRoot: String): SourceRoot {
     val components = sourceRoot.split("::", limit = 2)
     return SourceRoot(components.last(), if (components.size == 1) listOf() else components[0].split(','))
