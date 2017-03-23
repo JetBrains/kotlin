@@ -123,7 +123,7 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
                     val offset = newSpecifier.valueArgumentList!!.leftParenthesis!!.endOffset
                     editor.moveCaret(offset)
                     if (!ApplicationManager.getApplication().isUnitTestMode) {
-                        ShowParameterInfoHandler.invoke(project, editor, file, offset - 1, null, true)
+                        ShowParameterInfoHandler.invoke(project, editor, file, offset - 1, null)
                     }
                 }
             }
