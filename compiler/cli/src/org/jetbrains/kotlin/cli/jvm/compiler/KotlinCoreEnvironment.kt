@@ -388,7 +388,7 @@ class KotlinCoreEnvironment private constructor(
 
         @JvmStatic
         private fun setCompatibleBuild() {
-            System.getProperties().setProperty("idea.plugins.compatible.build", "171.9999")
+            System.getProperties().setProperty("idea.plugins.compatible.build", "162.9999")
         }
 
         @TestOnly
