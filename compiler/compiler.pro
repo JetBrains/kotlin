@@ -15,11 +15,10 @@
 !org/apache/log4j/net/SMTP*,
 !org/apache/log4j/or/jms/MessageRenderer*,
 !org/jdom/xpath/Jaxen*,
-!org/jline/builtins/ssh/**,
 !org/mozilla/javascript/xml/impl/xmlbeans/**,
 !net/sf/cglib/**,
 !META-INF/maven**,
-**.class,**.properties,**.kt,**.kotlin_*,**.jnilib,**.so,**.dll,**.txt,**.caps,
+**.class,**.properties,**.kt,**.kotlin_*,**.jnilib,**.so,**.dll,
 META-INF/services/**,META-INF/native/**,META-INF/extensions/**,META-INF/MANIFEST.MF,
 messages/**)
 
@@ -46,7 +45,7 @@ messages/**)
 -dontwarn com.google.j2objc.annotations.Weak
 -dontwarn org.iq80.snappy.HadoopSnappyCodec$SnappyCompressionInputStream
 -dontwarn org.iq80.snappy.HadoopSnappyCodec$SnappyCompressionOutputStream
--dontwarn org.jline.builtins.Nano$Buffer
+-dontwarn com.google.common.util.concurrent.*
 
 -libraryjars '<rtjar>'
 -libraryjars '<jssejar>'
@@ -181,8 +180,9 @@ messages/**)
 -keep class org.jetbrains.org.objectweb.asm.signature.SignatureReader { *; }
 -keep class org.jetbrains.org.objectweb.asm.signature.SignatureVisitor { *; }
 
--keep class org.jetbrains.org.objectweb.asm.Type {
-    public protected *;
+-keepclassmembers class org.jetbrains.org.objectweb.asm.Type {
+    *** ARRAY;
+    *** OBJECT;
 }
 
 -keepclassmembers class org.jetbrains.org.objectweb.asm.ClassReader {
