@@ -2,9 +2,6 @@
     <extensions defaultExtensionNs="com.intellij">
         <externalAnnotator language="kotlin" implementationClass="org.jetbrains.android.inspections.klint.AndroidLintExternalAnnotator"/>
 
-        <projectService serviceInterface="org.jetbrains.uast.UastContext"
-                        serviceImplementation="org.jetbrains.uast.UastContext"/>
-
         <globalInspection language="kotlin" hasStaticDescription="true" shortName="AndroidKLintAddJavascriptInterface" displayName="addJavascriptInterface Called" groupKey="android.klint.inspections.group.name" bundle="org.jetbrains.kotlin.idea.KotlinBundle" enabledByDefault="true" level="WARNING" implementationClass="org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintAddJavascriptInterfaceInspection"/>
         <globalInspection language="kotlin" hasStaticDescription="true" shortName="AndroidKLintAllowAllHostnameVerifier" displayName="Insecure HostnameVerifier" groupKey="android.klint.inspections.group.name" bundle="org.jetbrains.kotlin.idea.KotlinBundle" enabledByDefault="true" level="WARNING" implementationClass="org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintAllowAllHostnameVerifierInspection"/>
         <globalInspection language="kotlin" hasStaticDescription="true" shortName="AndroidKLintAlwaysShowAction" displayName="Usage of showAsAction=always" groupKey="android.klint.inspections.group.name" bundle="org.jetbrains.kotlin.idea.KotlinBundle" enabledByDefault="true" level="WARNING" implementationClass="org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintAlwaysShowActionInspection"/>
@@ -119,13 +116,7 @@
         <codeInspection.InspectionExtension implementation="org.jetbrains.android.inspections.klint.AndroidInspectionExtensionsFactory"/>
     </extensions>
 
-    <extensionPoints>
-        <extensionPoint qualifiedName="org.jetbrains.uast.uastLanguagePlugin"
-                        interface="org.jetbrains.uast.UastLanguagePlugin"/>
-    </extensionPoints>
-
     <extensions defaultExtensionNs="org.jetbrains.uast">
         <uastLanguagePlugin implementation="org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin"/>
-        <uastLanguagePlugin implementation="org.jetbrains.uast.java.JavaUastLanguagePlugin"/>
     </extensions>
 </idea-plugin>
