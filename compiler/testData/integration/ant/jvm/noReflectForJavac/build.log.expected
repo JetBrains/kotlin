@@ -5,11 +5,11 @@ build:
     [mkdir] Created dir: [Temp]/classes
     [javac] Compiling 1 source file to [Temp]/classes
     [javac] Running javac...
-    [javac] [TestData]/J.java:3: error: cannot find symbol
+    [javac] [TestData]/J.java:3: cannot find symbol
+    [javac] symbol  : class KClassesKt
+    [javac] location: package kotlin.reflect
     [javac] import kotlin.reflect.KClassesKt;
     [javac]                      ^
-    [javac]   symbol:   class KClassesKt
-    [javac]   location: package kotlin.reflect
     [javac] 1 error
 
 ERR:
