@@ -30,10 +30,7 @@ import com.intellij.spring.model.xml.beans.SpringPropertyDefinition
 import com.intellij.testFramework.UsefulTestCase.assertSameElements
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.xml.DomUtil
-import org.jetbrains.kotlin.asJava.elements.KtLightAnnotationForSourceEntry
 import org.jetbrains.kotlin.idea.completion.test.assertInstanceOf
-import org.jetbrains.kotlin.psi.KtModifierListOwner
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 private fun nameBean(element: PsiElement): String {
     return when (element) {
@@ -46,10 +43,7 @@ private fun nameBean(element: PsiElement): String {
 
 private fun nameProperty(element: PsiElement) = DomUtil.getDomElement(element).assertInstanceOf<SpringPropertyDefinition>().propertyName!!
 
-private fun namePsi(element: PsiElement): String {
-    if (element is KtLightAnnotationForSourceEntry) return namePsi(element.kotlinOrigin.getStrictParentOfType<KtModifierListOwner>()!!)
-    return SymbolPresentationUtil.getSymbolPresentableText(element)
-}
+private fun namePsi(element: PsiElement) = SymbolPresentationUtil.getSymbolPresentableText(element)
 
 fun checkBeanGutterTargets(gutterMark: GutterMark, expectedBeanNames: Collection<String>) {
     checkGutterTargets(gutterMark, expectedBeanNames, ::nameBean)
