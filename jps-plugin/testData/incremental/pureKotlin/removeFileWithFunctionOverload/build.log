@@ -4,11 +4,7 @@ Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
   out/production/module/foo/Foo2Kt.class
 End of files
-Cleaning output files:
-  out/production/module/use/UseKt.class
-End of files
 Compiling files:
-  src/use.kt
 End of files
 Exit code: ADDITIONAL_PASS_REQUIRED
 ------------------------------------------
@@ -16,10 +12,12 @@ Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
   out/production/module/foo/Foo1Kt.class
   out/production/module/other/OtherKt.class
+  out/production/module/use/UseKt.class
 End of files
 Compiling files:
   src/foo1.kt
   src/other.kt
+  src/use.kt
 End of files
 Exit code: OK
 ------------------------------------------
