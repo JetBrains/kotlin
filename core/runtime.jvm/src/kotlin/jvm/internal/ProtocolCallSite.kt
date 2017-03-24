@@ -64,53 +64,60 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
         }
     }
 
-    private fun resolveMethod(cls: Class<*>): Method {
-        try {
-            return cls.getDeclaredMethod(callableName, *callableType.parameterArray())
-        } catch (e: NoSuchMethodException) {
-            return findOverload(cls, callableName, callableType)
-        }
-    }
-
-    private fun findOverload(target: Class<*>, callableName: String, callableType: MethodType): Method {
-        val args = callableType.parameterArray()
+    private fun resolveMethod(target: Class<*>): Method {
+        val protocolArgs = callableType.parameterArray()
         val methods = target.declaredMethods
 
         var candidate: Method? = null
-        var bestDistance = Int.MAX_VALUE
+        var bestDistance = IntArray(protocolArgs.size)
 
         for (method in methods) {
-            if (method.name != callableName || method.parameterCount != args.size) {
+            if (method.name != callableName || method.parameterCount != protocolArgs.size) {
                 continue
             }
 
-            val parameters = method.parameters
+            val methodArgs = method.parameterTypes
 
-            var i = 0
-            var distance = 0
-            while (i < args.size) {
-                if (args[i] == parameters[i].type) {
-                    continue
-                } else if (args[i].isAssignableFrom(parameters[i].type)) {
-                    distance++
-                } else {
-                    distance = -1
+            val distance = IntArray(protocolArgs.size)
+            for (i in 0..protocolArgs.size) {
+                val argDistance = argumentDistance(protocolArgs[i], methodArgs[i])
+                if (argDistance < 0) {
                     break
                 }
 
-                ++i
+                distance[i] = argDistance
             }
 
-            if (distance < bestDistance) {
+            if (distance.paretoGeq(bestDistance)) {
                 bestDistance = distance
                 candidate = method
-            }
-
-            if (bestDistance == 0) {
-                break
             }
         }
 
         return candidate!!
     }
+
+    fun argumentDistance(lhs: Class<*>, rhs: Class<*>): Int {
+        if (lhs == rhs) {
+            return 0
+        }
+
+        if (lhs.isAssignableFrom(rhs)) {
+            return 1
+        }
+
+        return -1
+    }
+
+    private fun IntArray.paretoGeq(other: IntArray): Boolean {
+        for (i in 0..other.size) {
+            if (get(i) < other[i]) {
+                return false
+            }
+        }
+
+        return true
+    }
 }
+
+

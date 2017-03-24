@@ -2,11 +2,11 @@
 
 open class A
 class B : A()
-protocol interface ProtoInterace {
+protocol interface ProtoInterface {
     fun foo(a: A, b: String): String
 }
 
-fun callFoo(arg: ProtoInterace) {
+fun callFoo(arg: ProtoInterface) {
     val result: String = arg.foo(A(), "42")
 }
 

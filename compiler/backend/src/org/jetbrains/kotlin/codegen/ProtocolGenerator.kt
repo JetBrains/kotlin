@@ -38,7 +38,7 @@ abstract class ProtocolGenerator {
 
     fun putInvokerAndGenerateIfNeeded(method: CallableMethod, call: ResolvedCall<*>) {
         val candidate = call.candidateDescriptor
-        val name = "proto$${candidate.containingDeclaration.name}$${candidate.name}"
+        val name = "proto$${candidate.containingDeclaration.name}$${candidate.name}$${candidate.valueParameters.joinToString { it.type.toString() }}"
 
         if (!generated.contains(name)) {
             genProtocolCaller(method, call, name)
