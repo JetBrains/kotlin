@@ -145,7 +145,7 @@ private class ClassClsStubBuilder(
                         fqName.ref(),
                         shortName,
                         superTypeRefs,
-                        isTrait = classKind == ProtoBuf.Class.Kind.INTERFACE,
+                        isInterface = classKind == ProtoBuf.Class.Kind.INTERFACE,
                         isEnumEntry = classKind == ProtoBuf.Class.Kind.ENUM_ENTRY,
                         isLocal = false,
                         isTopLevel = !classId.isNestedClass
@@ -206,7 +206,7 @@ private class ClassClsStubBuilder(
                     qualifiedName = c.containerFqName.child(name).ref(),
                     name = name.ref(),
                     superNames = arrayOf(),
-                    isTrait = false,
+                    isInterface = false,
                     isEnumEntry = true,
                     isLocal = false,
                     isTopLevel = false
