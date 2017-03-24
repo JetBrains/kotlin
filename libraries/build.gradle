@@ -15,7 +15,6 @@ ext.JDK_16 = System.getenv("JDK_16")
 ext.JDK_17 = System.getenv("JDK_17")
 ext.JDK_18 = System.getenv("JDK_18")
 ext.bootstrapCompilerFile = project.file("${rootDir}/../dist/kotlinc/lib/kotlin-compiler.jar")
-ext.compilerPreloaderFile = project.file("${rootDir}/../dist/kotlinc/lib/kotlin-preloader.jar")
 
 allprojects  {
     group = 'org.jetbrains.kotlin'
@@ -122,3 +121,12 @@ static def manifestAttributes(Manifest manifest, Project project, String compone
     }
 }
 
+def createPreprocessorTask(Project project, def name, def sourceDir, def targetDir, def profile = "JS") {
+    return project.tasks.create("preprocessSources$name", JavaExec) {
+        inputs.dir(sourceDir)
+        outputs.dir(targetDir)
+        classpath = project.files(bootstrapCompilerFile)
+        main = "org.jetbrains.kotlin.preprocessor.PreprocessorCLI"
+        args = [sourceDir, targetDir, profile]
+    }
+}

@@ -13,14 +13,9 @@ sourceSets {
     }
 }
 
-ant.properties.baseDir = projectDir
-ant.properties.commonSrcDir = commonSrcDir
-ant.properties.kotlinCompiler = bootstrapCompilerFile.path
-ant.properties.compilerPreloader = compilerPreloaderFile.path
+createPreprocessorTask(project, "Main", "${projectDir}/../src/kotlin", commonSrcDir)
 
-ant.importBuild('tasks.xml')
-
-compileKotlinCommon.dependsOn commonSources
+compileKotlinCommon.dependsOn preprocessSourcesMain
 
 /*
 // TODO: currently unsupported

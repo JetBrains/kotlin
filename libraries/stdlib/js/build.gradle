@@ -60,12 +60,7 @@ sourceSets {
     }
 }
 
-ant.properties.baseDir = projectDir
-ant.properties.commonSrcDir = commonSrcDir
-ant.properties.kotlinCompiler = bootstrapCompilerFile.path
-ant.properties.compilerPreloader = compilerPreloaderFile.path
-
-ant.importBuild('../common/tasks.xml')
+createPreprocessorTask(project, "Main", "${projectDir}/../src/kotlin", commonSrcDir)
 
 kotlin.experimental.coroutines "enable"
 
@@ -88,7 +83,7 @@ compileBuiltinsKotlin2Js {
 }
 
 compileKotlin2Js {
-    dependsOn commonSources
+    dependsOn preprocessSourcesMain
     kotlinOptions {
         outputFile = "${buildDir}/classes/main/kotlin.js"
     }
