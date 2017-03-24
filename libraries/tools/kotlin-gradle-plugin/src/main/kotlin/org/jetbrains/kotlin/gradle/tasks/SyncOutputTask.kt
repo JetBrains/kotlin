@@ -17,12 +17,13 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.api.tasks.incremental.InputFileDetails
-import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil.*
+import org.jetbrains.kotlin.com.intellij.openapi.util.io.FileUtil.isAncestor
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import java.io.File
 import java.io.ObjectInputStream
@@ -59,6 +60,8 @@ internal open class SyncOutputTask : DefaultTask() {
     @get:InputFiles
     var kaptClassesDir: File by Delegates.notNull()
 
+    // Marked as input to make Gradle fall back to non-incremental build when it changes.
+    @get:Input
     private val classesDirs: List<File>
             get() = listOf(kotlinOutputDir, kaptClassesDir).filter(File::exists)
 
