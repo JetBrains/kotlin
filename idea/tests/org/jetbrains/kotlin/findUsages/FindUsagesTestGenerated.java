@@ -1656,6 +1656,12 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaMethodUsages/SyntheticProperties.0.java");
                 doTest(fileName);
             }
+
+            @TestMetadata("UnaryNot.0.java")
+            public void testUnaryNot() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/findUsages/java/findJavaMethodUsages/UnaryNot.0.java");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/findUsages/java/findJavaPropertyUsages")
