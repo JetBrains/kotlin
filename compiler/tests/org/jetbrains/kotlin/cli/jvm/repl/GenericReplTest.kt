@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.util.KotlinFrontEndException
 import org.junit.Test
 import java.io.Closeable
 import java.io.File
@@ -98,7 +97,7 @@ class GenericReplTest : TestCase() {
             val state = repl.createState()
 
             val codeLine0 = ReplCodeLine(0, 0, "val l1 = 1\r\nl1\r\n")
-            val res0 = repl.replCompiler?.check(state, codeLine0)
+            val res0 = repl.replCompiler.check(state, codeLine0)
             val res0c = res0 as? ReplCheckResult.Ok
             TestCase.assertNotNull("Unexpected compile result: $res0", res0c)
         }
