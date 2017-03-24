@@ -91,6 +91,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         if (expression is IrGetValue)          return false                                 // Parameter is already GetValue - nothing to evaluate.
         if (expression is IrConst<*>)          return false                                 // Parameter is constant - nothing to evaluate.
         if (expression is IrCallableReference) return false                                 // Parameter is nothing to evaluate.
+        if (expression is IrBlock)             return false                                 // Parameter is nothing to evaluate.
         if (isLambdaExpression(expression))    return false                                 // Parameter is lambda - will be inlined.
         return true
     }
@@ -153,7 +154,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
             context.ir.originalModuleIndex.functions[originalDescriptor] ?:                 // Function is declared in the current module.
             deserializer.deserializeInlineBody(originalDescriptor)                          // Function is declared in another module.
         if (functionDeclaration == null) return super.visitCall(irCall)   
-        val copyFuncDeclaration = functionDeclaration.accept(InlineCopyIr(),              // Create copy of the function.
+        val copyFuncDeclaration = functionDeclaration.accept(InlineCopyIr(),                // Create copy of the function.
             null) as IrFunction
 
         val startOffset = copyFuncDeclaration.startOffset
@@ -338,7 +339,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
             if (lambdaArgument !is IrBlock) return null
 
             if (lambdaArgument.origin != IrStatementOrigin.ANONYMOUS_FUNCTION &&
-                    lambdaArgument.origin != IrStatementOrigin.LAMBDA) {
+                lambdaArgument.origin != IrStatementOrigin.LAMBDA) {
 
                 return null
             }
