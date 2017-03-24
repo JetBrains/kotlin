@@ -48,17 +48,30 @@ import kotlin.test.assertEquals
 
 abstract class AbstractIdeLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
     fun doTest(testDataPath: String) {
-        myFixture.configureByFile(testDataPath)
+        val extraFilePath = testDataPath.replace(".kt", ".extra.kt")
+        val testFiles = if (File(extraFilePath).isFile) listOf(testDataPath, extraFilePath) else listOf(testDataPath)
+
+
+        val lazinessMode = lazinessModeByFileText(testDataPath)
+        myFixture.configureByFiles(*testFiles.toTypedArray())
+
         val ktFile = myFixture.file as KtFile
         testLightClass(testDataPath, { LightClassTestCommon.removeEmptyDefaultImpls(it) }) { fqName ->
             val tracker = LightClassLazinessChecker.Tracker(fqName)
             project.withServiceRegistered<StubComputationTracker, PsiClass?>(tracker) {
                 findClass(fqName, ktFile, project)?.apply {
-                    LightClassLazinessChecker.check(this as KtLightClass, tracker)
+                    LightClassLazinessChecker.check(this as KtLightClass, tracker, lazinessMode)
                     tracker.allowLevel(EXACT)
                     PsiElementChecker.checkPsiElementStructure(this)
                 }
             }
+        }
+    }
+
+    private fun lazinessModeByFileText(testDataPath: String): LightClassLazinessChecker.Mode {
+        return File(testDataPath).readText().run {
+            val argument = substringAfter("LAZINESS:", "").substringBefore(" ")
+            LightClassLazinessChecker.Mode.values().firstOrNull { it.name == argument } ?: LightClassLazinessChecker.Mode.AllChecks
         }
     }
 
@@ -118,6 +131,12 @@ private fun findClass(fqName: String, ktFile: KtFile?, project: Project): PsiCla
 
 object LightClassLazinessChecker {
 
+    enum class Mode {
+        AllChecks,
+        NoLaziness,
+        NoConsistency
+    }
+
     class Tracker(private val fqName: String) : StubComputationTracker {
 
         private var level = NONE
@@ -157,11 +176,15 @@ object LightClassLazinessChecker {
         }
     }
 
-    fun check(lightClass: KtLightClass, tracker: Tracker) {
+    fun check(lightClass: KtLightClass, tracker: Tracker, lazinessMode: Mode) {
         // lighter classes not implemented for locals
         if (lightClass.kotlinOrigin?.isLocal ?: false) return
 
         tracker.allowLevel(LIGHT)
+
+        if (lazinessMode != Mode.AllChecks) {
+            tracker.allowLevel(EXACT)
+        }
 
         // collect method class results on light members that should not trigger exact context evaluation
         val fieldsToInfo = lightClass.fields.asList().keysToMap { fieldInfo(it) }
@@ -172,6 +195,9 @@ object LightClassLazinessChecker {
         lightClass.clsDelegate // trigger exact context
 
         tracker.checkLevel(EXACT)
+
+        // still running code above to catch possible exceptions
+        if (lazinessMode == Mode.NoConsistency) return
 
         // check collected data against delegates which should contain correct data
         for ((field, lightFieldInfo) in fieldsToInfo) {
