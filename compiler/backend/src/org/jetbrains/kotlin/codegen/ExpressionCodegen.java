@@ -164,7 +164,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         this.protocolGenerator = state.getProtocolsBackend().equals(ProtocolsBackend.REFLECTION)
                                  ? new ReflectionProtocolGenerator(this)
-                                 : new IndyProtocolGenerator(this, context);
+                                 : new IndyProtocolGenerator(this);
     }
 
     @Nullable
