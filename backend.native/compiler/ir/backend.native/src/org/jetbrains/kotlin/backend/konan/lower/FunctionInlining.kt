@@ -98,7 +98,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
     //-------------------------------------------------------------------------//
 
-    fun getArguments(irCall: IrCall): MutableMap<ValueDescriptor, IrExpression> {
+    fun getArguments(irCall: IrCall, declaration: IrFunction): MutableMap<ValueDescriptor, IrExpression> {
         val result = mutableMapOf<ValueDescriptor, IrExpression>()
         val descriptor = irCall.descriptor.original
 
@@ -110,10 +110,13 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
             result += (descriptor.extensionReceiverParameter!! to it)
         }
 
-        descriptor.valueParameters.forEach {
-            val arg = irCall.getValueArgument(it.index)
-            if (arg != null) {
-                result += (it to arg)
+        descriptor.valueParameters.forEach { parameter ->
+            val argument = irCall.getValueArgument(parameter.index)
+            if (argument != null) {
+                result += (parameter to argument)
+            } else {
+                val defaultArgument = declaration.getDefault(parameter)!!.expression
+                result += (parameter to defaultArgument)
             }
         }
 
@@ -167,7 +170,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         val inlineBody  = IrInlineFunctionBody(startOffset, endOffset, returnType, null, statements)
 
         val evaluationStatements = mutableListOf<IrStatement>()
-        val parametersOld = getArguments(irCall)                                          // Create map call_site_argument -> inline_function_parameter.
+        val parametersOld = getArguments(irCall, copyFuncDeclaration)                                          // Create map call_site_argument -> inline_function_parameter.
         val parameterToArgument = evaluateParameters(parametersOld, evaluationStatements)
         val lambdaInliner = LambdaInliner(parameterToArgument)
         inlineBody.transformChildrenVoid(lambdaInliner)
@@ -433,21 +436,15 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 class InlineCopyIr() : DeepCopyIrTree() {
 
     override fun visitBlock(expression: IrBlock): IrBlock {
-        return when(expression) {
-            is IrInlineFunctionBody ->
-                IrInlineFunctionBody(
-                    expression.startOffset, expression.endOffset,
-                    expression.type,
-                    mapStatementOrigin(expression.origin),
-                    expression.statements.map { it.transform(this, null) }
-                )
-
-            else -> IrBlockImpl(
-                    expression.startOffset, expression.endOffset,
-                    expression.type,
-                    mapStatementOrigin(expression.origin),
-                    expression.statements.map { it.transform(this, null) }
-                )
+        return if(expression is IrInlineFunctionBody) {
+            IrInlineFunctionBody(
+                expression.startOffset, expression.endOffset,
+                expression.type,
+                mapStatementOrigin(expression.origin),
+                expression.statements.map { it.transform(this, null) }
+            )
+        } else {
+            super.visitBlock(expression)
         }
     }
 }
