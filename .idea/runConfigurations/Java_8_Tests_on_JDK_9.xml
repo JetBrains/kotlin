@@ -13,7 +13,7 @@
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="package" />
-    <option name="VM_PARAMETERS" value="-ea -XX:+HeapDumpOnOutOfMemoryError -XX:+UseCodeCacheFlushing -XX:ReservedCodeCacheSize=64m -Djna.nosys=true --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.desktop/javax.swing=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens java.base/jdk.internal.misc=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED" />
+    <option name="VM_PARAMETERS" value="-ea -XX:+HeapDumpOnOutOfMemoryError -XX:+UseCodeCacheFlushing -XX:ReservedCodeCacheSize=128m -Djna.nosys=true --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.desktop/javax.swing=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens java.base/jdk.internal.misc=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED" />
     <option name="PARAMETERS" value="" />
     <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
     <option name="ENV_VARIABLES" />
