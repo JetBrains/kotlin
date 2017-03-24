@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.android.synthetic.idea.res
 
-import com.android.tools.idea.gradle.facet.AndroidGradleFacet
 import com.android.tools.idea.gradle.parser.GradleBuildFile
+import com.android.tools.idea.gradle.project.facet.gradle.GradleFacet
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleServiceManager
@@ -45,17 +45,9 @@ class IDEAndroidPackageFragmentProviderExtension(val project: Project) : Android
     }
 
     private fun isAndroidExtensionsEnabled(module: Module): Boolean {
-        // Android Extensions should be always enabled for Android/JPS
-        if (isLegacyIdeaAndroidModule(module)) return true
-
-        val androidGradleFacet = AndroidGradleFacet.getInstance(module) ?: return false
-        val buildFile = androidGradleFacet.gradleModel?.buildFile ?: return false
+        val androidGradleFacet = GradleFacet.getInstance(module) ?: return false
+        val buildFile = androidGradleFacet.gradleModuleModel?.buildFile ?: return false
         val buildGroovyFile = psiManager.findFile(buildFile) as? GroovyFile ?: return false
         return GradleBuildFile.getPlugins(buildGroovyFile).contains("kotlin-android-extensions")
-    }
-
-    private fun isLegacyIdeaAndroidModule(module: Module): Boolean {
-        val facet = AndroidFacet.getInstance(module)
-        return facet != null && !facet.requiresAndroidModel()
     }
 }
