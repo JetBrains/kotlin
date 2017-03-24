@@ -84,6 +84,12 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         doTest(fileName);
     }
 
+    @TestMetadata("VarArgs.kt")
+    public void testVarArgs() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/VarArgs.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("compiler/testData/asJava/lightClasses/compilationErrors")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

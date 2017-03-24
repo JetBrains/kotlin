@@ -225,13 +225,14 @@ object LightClassLazinessChecker {
             val name: String,
             val modifiers: List<String>,
             val isConstructor: Boolean,
-            val parameterCount: Int
+            val parameterCount: Int,
+            val isVarargs: Boolean
     )
 
     private fun methodInfo(method: PsiMethod) = with(method) {
         MethodInfo(
                 name, PsiModifier.MODIFIERS.asList().filter { modifierList.hasModifierProperty(it) },
-                isConstructor, method.parameterList.parametersCount
+                isConstructor, method.parameterList.parametersCount, isVarArgs
         )
     }
 }

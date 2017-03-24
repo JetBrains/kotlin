@@ -214,7 +214,7 @@ class KtLightMethodImpl private constructor(
 
     override fun hasTypeParameters() = clsDelegate.hasTypeParameters()
 
-    override fun isVarArgs() = clsDelegate.isVarArgs
+    override fun isVarArgs() = (dummyDelegate ?: clsDelegate).isVarArgs
 
     override fun isConstructor() = dummyDelegate?.isConstructor ?: clsDelegate.isConstructor
 
