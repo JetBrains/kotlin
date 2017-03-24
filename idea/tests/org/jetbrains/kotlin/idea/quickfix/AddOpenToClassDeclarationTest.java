@@ -16,13 +16,10 @@
 
 package org.jetbrains.kotlin.idea.quickfix;
 
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.testFramework.PsiTestUtil;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
-import org.jetbrains.kotlin.test.LocalFileSystemUtils;
 
 public class AddOpenToClassDeclarationTest extends AbstractQuickFixMultiFileTest {
+        /*
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -33,6 +30,7 @@ public class AddOpenToClassDeclarationTest extends AbstractQuickFixMultiFileTest
         addSourceContentToRoots(myModule, rootDir);
         PsiDocumentManager.getInstance(myProject).commitAllDocuments();
     }
+        */
 
     public void testFinalJavaSupertype() throws Exception {
         doTestWithoutExtraFile("FinalJavaSupertype.before.kt");

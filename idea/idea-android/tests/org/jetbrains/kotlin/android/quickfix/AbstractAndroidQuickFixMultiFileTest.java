@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest;
 public abstract class AbstractAndroidQuickFixMultiFileTest extends AbstractQuickFixMultiFileTest {
 
     @Override
-    protected void setUp() throws Exception {
+    protected void setUp() {
         super.setUp();
         addAndroidFacet();
     }
@@ -34,12 +34,6 @@ public abstract class AbstractAndroidQuickFixMultiFileTest extends AbstractQuick
     protected void doTestWithExtraFile(String beforeFileName) throws Exception {
         addManifest();
         super.doTestWithExtraFile(beforeFileName);
-    }
-
-    @Override
-    protected void doTestWithoutExtraFile(String beforeFileName) throws Exception {
-        addManifest();
-        super.doTestWithoutExtraFile(beforeFileName);
     }
 
     private void addAndroidFacet() {
@@ -57,6 +51,6 @@ public abstract class AbstractAndroidQuickFixMultiFileTest extends AbstractQuick
     }
 
     private void addManifest() throws Exception {
-        configureByFile("idea/testData/android/AndroidManifest.xml");
+        myFixture.configureByFile("idea/testData/android/AndroidManifest.xml");
     }
 }
