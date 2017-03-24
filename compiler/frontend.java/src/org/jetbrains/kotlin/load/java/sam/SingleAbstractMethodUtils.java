@@ -128,10 +128,8 @@ public class SingleAbstractMethodUtils {
     }
 
     @Nullable
-    public static FunctionDescriptor getSingleAbstractMethodOrNull(@NotNull ClassDescriptor klass) {
-        if (klass.getKind() != ClassKind.INTERFACE) {
-            return null;
-        }
+    public static FunctionDescriptor getSingleAbstractMethodOrNull(@NotNull JavaClassDescriptor klass) {
+        if (klass.isDefinitelyNotSamInterface()) return null;
 
         if (DescriptorUtilsKt.getFqNameSafe(klass).asString().equals("android.databinding.DataBindingComponent")) {
             return null;

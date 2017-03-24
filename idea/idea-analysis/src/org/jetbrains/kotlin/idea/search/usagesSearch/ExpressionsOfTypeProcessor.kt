@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -508,7 +509,7 @@ class ExpressionsOfTypeProcessor(
                                 testLog?.add("Resolved java class to descriptor: ${psiClass.qualifiedName}")
 
                                 val resolutionFacade = KotlinCacheService.getInstance(project).getResolutionFacadeByFile(psiClass.containingFile, JvmPlatform)
-                                val classDescriptor = psiClass.resolveToDescriptor(resolutionFacade)
+                                val classDescriptor = psiClass.resolveToDescriptor(resolutionFacade) as? JavaClassDescriptor
                                 if (classDescriptor != null && SingleAbstractMethodUtils.getSingleAbstractMethodOrNull(classDescriptor) != null) {
                                     addSamInterfaceToProcess(psiClass)
                                 }

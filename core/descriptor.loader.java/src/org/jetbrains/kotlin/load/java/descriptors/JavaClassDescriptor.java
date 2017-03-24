@@ -23,4 +23,10 @@ import org.jetbrains.kotlin.types.SimpleType;
 public interface JavaClassDescriptor extends ClassDescriptor {
     @Nullable
     SimpleType getFunctionTypeForSamInterface();
+
+    /**
+     * May return false even in case when the class is not SAM interface, but returns true only if it's definitely not a SAM.
+     * But it should work much faster than the exact check.
+     */
+    boolean isDefinitelyNotSamInterface();
 }
