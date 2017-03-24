@@ -16,18 +16,27 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve.lightClasses
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiClassType
+import com.intellij.psi.PsiMember
+import com.intellij.psi.PsiMethod
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
+import com.intellij.psi.search.EverythingGlobalScope
+import com.intellij.psi.stubs.StubIndex
 import org.jetbrains.kotlin.asJava.LightClassBuilder
 import org.jetbrains.kotlin.asJava.builder.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightFieldImpl
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
-import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.idea.stubindex.KotlinOverridableInternalMembersShortNameIndex
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 typealias LightClassContextProvider = () -> LightClassConstructionContext
 
@@ -82,12 +91,16 @@ sealed class LazyLightClassDataHolder(
             if (dummyDelegate == null) return KtLightFieldImpl.fromClsFields(clsDelegate, containingClass)
 
             return dummyDelegate!!.fields.map { dummyField ->
-                val memberOrigin = ClsWrapperStubPsiFactory.getMemberOrigin(dummyField)!!
+                val fieldOrigin = KtLightFieldImpl.getOrigin(dummyField)!!
+
+                if (shouldRollbackOptimization(fieldOrigin)) {
+                    return@getOwnFields KtLightFieldImpl.fromClsFields(clsDelegate, containingClass)
+                }
+
                 val fieldName = dummyField.name!!
-                KtLightFieldImpl.lazy(dummyField, memberOrigin, containingClass) {
-                    clsDelegate.findFieldByName(fieldName, false)!!.apply {
-                        assert(this.memberIndex!! == dummyField.memberIndex!!)
-                    }
+                KtLightFieldImpl.lazy(dummyField, fieldOrigin, containingClass) {
+                    clsDelegate.findFieldByName(fieldName, false)?.apply { assert(this.memberIndex!! == dummyField.memberIndex!!) }
+                    ?: throw LazyLightClassMemberMatchingError(dummyField, containingClass)
                 }
             }
         }
@@ -96,14 +109,26 @@ sealed class LazyLightClassDataHolder(
             if (dummyDelegate == null) return KtLightMethodImpl.fromClsMethods(clsDelegate, containingClass)
 
             return dummyDelegate!!.methods.map { dummyMethod ->
-                val methodName = dummyMethod.name
-                KtLightMethodImpl.lazy(dummyMethod, containingClass, ClsWrapperStubPsiFactory.getMemberOrigin(dummyMethod)) {
+                val methodOrigin = KtLightMethodImpl.getOrigin(dummyMethod)
+
+                if (shouldRollbackOptimization(methodOrigin)) {
+                    return@getOwnMethods KtLightMethodImpl.fromClsMethods(clsDelegate, containingClass)
+                }
+
+                KtLightMethodImpl.lazy(dummyMethod, containingClass, methodOrigin) {
                     val dummyIndex = dummyMethod.memberIndex!!
-                    clsDelegate.findMethodsByName(methodName, false).filter {
-                        delegateCandidate -> delegateCandidate.memberIndex == dummyIndex
-                    }.single().apply {
-                        assert(this.parameterList.parametersCount == dummyMethod.parameterList.parametersCount)
-                    }
+
+                    val byMemberIndex: (PsiMethod) -> Boolean = { it.memberIndex == dummyIndex }
+
+                    /* Searching all methods may be necessary in some cases where we failed to rollback optimization:
+                            Overriding internal member that was final
+
+                       Resulting light member is not consistent in this case, so this should happen only for erroneous code
+                    */
+                    val exactDelegateMethod = clsDelegate.findMethodsByName(dummyMethod.name, false).firstOrNull(byMemberIndex)
+                                              ?: clsDelegate.methods.firstOrNull(byMemberIndex)
+                    exactDelegateMethod?.apply { assert(this.parameterList.parametersCount == dummyMethod.parameterList.parametersCount) }
+                    ?: throw LazyLightClassMemberMatchingError(dummyMethod, containingClass)
                 }
             }
         }
@@ -113,3 +138,29 @@ sealed class LazyLightClassDataHolder(
 
     }
 }
+
+private fun shouldRollbackOptimization(origin: LightMemberOriginForDeclaration?): Boolean {
+    val kotlinDeclaration = origin?.originalElement as? KtNamedDeclaration ?: return false
+
+    if (!kotlinDeclaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return false
+
+
+    val possiblyOverridesInternalMember = kotlinDeclaration.name?.let { anyInternalMembersWithThisName(it, kotlinDeclaration.project) } ?: false
+    return possiblyOverridesInternalMember
+}
+
+
+private fun anyInternalMembersWithThisName(name: String, project: Project): Boolean {
+    var result = false
+    StubIndex.getInstance().processElements(
+            KotlinOverridableInternalMembersShortNameIndex.Instance.key, name, project,
+            EverythingGlobalScope(project), KtCallableDeclaration::class.java
+    ) {
+        result = true
+        false // stop processing at first matching result
+    }
+    return result
+}
+
+private class LazyLightClassMemberMatchingError(dummyMember: PsiMember, containingClass: KtLightClass)
+    : AssertionError("Error matching ${dummyMember::class.simpleName}:${dummyMember.name} created for $containingClass")
