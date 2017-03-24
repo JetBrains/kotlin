@@ -3,8 +3,11 @@ description = 'Kotlin Standard Library for JS'
 apply plugin: 'kotlin2js'
 
 ext.commonSrcDir = "${buildDir}/common-sources"
+ext.commonTestSrcDir = "${buildDir}/common-test-sources"
 ext.builtinsDir = "${rootDir}/../core/builtins"
-ext.jsSrcDir = "${rootDir}/../js/js.libraries/src"
+ext.jsLibrariesDir = "${rootDir}/../js/js.libraries"
+ext.jsSrcDir = "${jsLibrariesDir}/src"
+ext.jsTestSrcDir = "${jsLibrariesDir}/test"
 ext.jsSrcJsDir = "${jsSrcDir}/js"
 ext.jsOutputFile = "${buildDir}/classes/kotlin.js"
 
@@ -58,9 +61,21 @@ sourceSets {
             srcDir commonSrcDir
         }
     }
+
+    test {
+        kotlin {
+            srcDir commonTestSrcDir
+            srcDir jsTestSrcDir
+        }
+    }
+}
+
+dependencies {
+    testCompile project(':kotlin-test:kotlin-test-js')
 }
 
 createPreprocessorTask(project, "Main", "${projectDir}/../src/kotlin", commonSrcDir)
+createPreprocessorTask(project, "Test", "${projectDir}/../test", commonTestSrcDir)
 
 kotlin.experimental.coroutines "enable"
 
@@ -86,6 +101,13 @@ compileKotlin2Js {
     dependsOn preprocessSourcesMain
     kotlinOptions {
         outputFile = "${buildDir}/classes/main/kotlin.js"
+    }
+}
+
+compileTestKotlin2Js {
+    dependsOn preprocessSourcesTest
+    kotlinOptions {
+        moduleKind = "plain"
     }
 }
 
