@@ -19132,6 +19132,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("equals.kt")
+            public void testEquals() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/equals.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("exclUnderAnd.kt")
             public void testExclUnderAnd() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/exclUnderAnd.kt");

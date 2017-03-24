@@ -73,9 +73,8 @@ interface DataFlowInfo {
 
     /**
      * Call this function when it's known than a == b.
-     * sameTypes should be true iff we have guarantee that a and b have the same type
      */
-    fun equate(a: DataFlowValue, b: DataFlowValue, sameTypes: Boolean, languageVersionSettings: LanguageVersionSettings): DataFlowInfo
+    fun equate(a: DataFlowValue, b: DataFlowValue, identityEquals: Boolean, languageVersionSettings: LanguageVersionSettings): DataFlowInfo
 
     /**
      * Call this function when it's known than a != b

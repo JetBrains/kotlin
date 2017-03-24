@@ -178,10 +178,11 @@ public class DataFlowAnalyzer {
                     }
                     if (equals != null) {
                         if (equals == conditionValue) { // this means: equals && conditionValue || !equals && !conditionValue
-                            boolean byIdentity = operationToken == KtTokens.EQEQEQ || operationToken == KtTokens.EXCLEQEQEQ ||
-                                                 typeHasEqualsFromAny(lhsType, condition);
+                            boolean identityEquals = operationToken == KtTokens.EQEQEQ ||
+                                                     operationToken == KtTokens.EXCLEQEQEQ ||
+                                                     typeHasEqualsFromAny(lhsType, condition);
                             result.set(context.dataFlowInfo
-                                               .equate(leftValue, rightValue, byIdentity, languageVersionSettings)
+                                               .equate(leftValue, rightValue, identityEquals, languageVersionSettings)
                                                .and(expressionFlowInfo));
                         }
                         else {

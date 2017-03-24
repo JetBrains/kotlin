@@ -169,7 +169,7 @@ internal class DelegatingDataFlowInfo private constructor(
     }
 
     override fun equate(
-            a: DataFlowValue, b: DataFlowValue, sameTypes: Boolean, languageVersionSettings: LanguageVersionSettings
+            a: DataFlowValue, b: DataFlowValue, identityEquals: Boolean, languageVersionSettings: LanguageVersionSettings
     ): DataFlowInfo {
         val builder = Maps.newHashMap<DataFlowValue, Nullability>()
         val nullabilityOfA = getStableNullability(a)
@@ -180,7 +180,7 @@ internal class DelegatingDataFlowInfo private constructor(
 
         // NB: == has no guarantees of type equality, see KT-11280 for the example
         val newTypeInfo = newTypeInfo()
-        if (sameTypes) {
+        if (identityEquals || !nullabilityOfA.canBeNonNull() || !nullabilityOfB.canBeNonNull()) {
             newTypeInfo.putAll(a, getStableTypes(b, false))
             newTypeInfo.putAll(b, getStableTypes(a, false))
             if (a.type != b.type) {
