@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassTest {
     public void testAllFilesPresentInLightClasses() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true, "local");
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true, "local", "ideRegression");
     }
 
     @TestMetadata("AnnotationClass.kt")
@@ -98,6 +98,12 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
             doTest(fileName);
         }
 
+        @TestMetadata("PrivateInTrait.kt")
+        public void testPrivateInTrait() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/PrivateInTrait.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SameName.kt")
         public void testSameName() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/SameName.kt");
@@ -107,6 +113,12 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         @TestMetadata("TopLevelDestructuring.kt")
         public void testTopLevelDestructuring() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/TopLevelDestructuring.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("TraitClassObjectField.kt")
+        public void testTraitClassObjectField() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/compilationErrors/TraitClassObjectField.kt");
             doTest(fileName);
         }
 
@@ -263,12 +275,6 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
             doTest(fileName);
         }
 
-        @TestMetadata("PrivateInTrait.NoCompile.kt")
-        public void testPrivateInTrait_NoCompile() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/nullabilityAnnotations/PrivateInTrait.NoCompile.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("Synthetic.kt")
         public void testSynthetic() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/nullabilityAnnotations/Synthetic.kt");
@@ -278,12 +284,6 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         @TestMetadata("Trait.kt")
         public void testTrait() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/nullabilityAnnotations/Trait.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("TraitClassObjectField.NoCompile.kt")
-        public void testTraitClassObjectField_NoCompile() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/nullabilityAnnotations/TraitClassObjectField.NoCompile.kt");
             doTest(fileName);
         }
 

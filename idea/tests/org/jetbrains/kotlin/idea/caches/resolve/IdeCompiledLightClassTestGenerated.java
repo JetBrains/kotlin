@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLightClassTest {
     public void testAllFilesPresentInLightClasses() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true, "local", "compilationErrors");
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/asJava/lightClasses"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true, "local", "compilationErrors", "ideRegression");
     }
 
     @TestMetadata("AnnotationClass.kt")
