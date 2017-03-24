@@ -21,6 +21,5 @@
     <orderEntry type="module" module-name="idea-test-framework" scope="TEST" />
     <orderEntry type="module" module-name="frontend.java" scope="TEST" />
     <orderEntry type="module" module-name="idea-live-templates" scope="TEST" />
-    <orderEntry type="library" name="gradle-and-groovy-plugin" level="project" />
   </component>
 </module>
