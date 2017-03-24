@@ -90,8 +90,8 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     fun needsEvaluation(expression: IrExpression): Boolean {
         if (expression is IrGetValue)          return false                                 // Parameter is already GetValue - nothing to evaluate.
         if (expression is IrConst<*>)          return false                                 // Parameter is constant - nothing to evaluate.
-        if (expression is IrCallableReference) return false                                 // Parameter is nothing to evaluate.
-        if (expression is IrBlock)             return false                                 // Parameter is nothing to evaluate.
+        if (expression is IrCallableReference) return false                                 // Parameter is CallableReference - nothing to evaluate.
+        if (expression is IrBlock)             return false                                 // Parameter is Block - nothing to evaluate.
         if (isLambdaExpression(expression))    return false                                 // Parameter is lambda - will be inlined.
         return true
     }
@@ -103,20 +103,20 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         val descriptor = irCall.descriptor.original
 
         irCall.dispatchReceiver?.let {
-            result += (descriptor.dispatchReceiverParameter!! to it)
+            result[descriptor.dispatchReceiverParameter!!] = it
         }
 
         irCall.extensionReceiver?.let {
-            result += (descriptor.extensionReceiverParameter!! to it)
+            result[descriptor.extensionReceiverParameter!!] = it
         }
 
         descriptor.valueParameters.forEach { parameter ->
             val argument = irCall.getValueArgument(parameter.index)
             if (argument != null) {
-                result += (parameter to argument)
+                result[parameter] = argument
             } else {
                 val defaultArgument = declaration.getDefault(parameter)!!.expression
-                result += (parameter to defaultArgument)
+                result[parameter] = defaultArgument
             }
         }
 
@@ -436,7 +436,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 class InlineCopyIr() : DeepCopyIrTree() {
 
     override fun visitBlock(expression: IrBlock): IrBlock {
-        return if(expression is IrInlineFunctionBody) {
+        return if (expression is IrInlineFunctionBody) {
             IrInlineFunctionBody(
                 expression.startOffset, expression.endOffset,
                 expression.type,
