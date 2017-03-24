@@ -57,7 +57,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
                                             ideProject: DataNode<ProjectData>) {
         val gradleModel = resolverCtx.getExtraProject(gradleModule, KotlinGradleModel::class.java) ?: return
 
-        gradleModel.implements?.let { implementsModuleId ->
+        gradleModel.transitiveCommonDependencies.forEach { implementsModuleId ->
             val targetModule = findModule(ideProject, implementsModuleId) ?: return
             if (resolverCtx.isResolveModulePerSourceSet) {
                 populateSourceSetDependencies(gradleModule, ideModule, targetModule)
