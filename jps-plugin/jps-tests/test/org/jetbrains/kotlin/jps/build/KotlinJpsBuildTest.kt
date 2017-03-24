@@ -277,12 +277,9 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         assertEquals("Invalid package prefix name is ignored: invalid-prefix.test", warnings.first().messageText)
     }
 
-    fun testSourcePackagePrefixKnownIssueWithInnerClasses() {
+    fun testSourcePackagePrefixWithInnerClasses() {
         initProject()
-        val buildResult = buildAllModules()
-        buildResult.assertFailed()
-        val errors = buildResult.getMessages(BuildMessage.Kind.ERROR).map { it.messageText }
-        assertTrue("Message wasn't found. $errors", errors.first().contains("class xxx.JavaWithInner.TextRenderer, unresolved supertypes: TableRow"))
+        buildAllModules().assertSuccessful()
     }
 
     fun testKotlinJavaScriptProject() {
