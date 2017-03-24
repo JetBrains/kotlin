@@ -16,13 +16,8 @@
 
 package org.jetbrains.kotlin.asJava.elements
 
-import com.intellij.core.JavaCoreBundle
-import com.intellij.navigation.ItemPresentation
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
-import com.intellij.psi.impl.light.LightElement
-import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.*
 import com.intellij.util.IncorrectOperationException
@@ -32,37 +27,23 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.propertyNameByAccessor
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
-
-interface KtLightMethod : PsiAnnotationMethod, KtLightDeclaration<KtDeclaration, PsiMethod> {
-    val lightMethodOrigin: LightMemberOrigin?
-    val isDelegated: Boolean
-}
 
 class KtLightMethodImpl private constructor(
         computeRealDelegate: () -> PsiMethod,
-        override val lightMethodOrigin: LightMemberOrigin?,
-        private val containingClass: KtLightClass,
+        lightMemberOrigin: LightMemberOrigin?,
+        containingClass: KtLightClass,
         private val dummyDelegate: PsiMethod? = null
-) : LightElement(containingClass.manager, containingClass.language), KtLightMethod {
-    override val kotlinOrigin: KtDeclaration? get() = lightMethodOrigin?.originalElement as? KtDeclaration
-
-    override val clsDelegate by lazyPub(computeRealDelegate)
-
-    private val lightIdentifier by lazyPub { KtLightIdentifier(this, kotlinOrigin as? KtNamedDeclaration) }
+) : KtLightMemberImpl<PsiMethod>(computeRealDelegate, lightMemberOrigin, containingClass, dummyDelegate), KtLightMethod {
     private val returnTypeElem by lazyPub {
         val delegateTypeElement = clsDelegate.returnTypeElement as? ClsTypeElementImpl
         delegateTypeElement?.let { ClsTypeElementImpl(this, it.canonicalText, /*ClsTypeElementImpl.VARIANCE_NONE */ 0.toChar()) }
     }
 
     private val calculatingReturnType = ThreadLocal<Boolean>()
-
-    override fun getContainingClass(): KtLightClass = containingClass
 
     private val paramsList: PsiParameterList by lazyPub {
         KtLightParameterList(this, dummyDelegate?.parameterList?.parametersCount ?: clsDelegate.parameterList.parametersCount) {
@@ -74,7 +55,7 @@ class KtLightMethodImpl private constructor(
         val cacheManager = CachedValuesManager.getManager(clsDelegate.project)
         cacheManager.createCachedValue<PsiTypeParameterList>(
                 {
-                    val origin = (lightMethodOrigin as? LightMemberOriginForDeclaration)?.originalElement
+                    val origin = (lightMemberOrigin as? LightMemberOriginForDeclaration)?.originalElement
                     val list = if (origin != null) {
                         if (origin is KtClassOrObject) {
                             KotlinLightTypeParameterListBuilder(manager)
@@ -90,16 +71,6 @@ class KtLightMethodImpl private constructor(
                 }, false
         )
     }
-
-    override fun getNavigationElement(): PsiElement = kotlinOrigin?.navigationElement ?: super.getNavigationElement()
-    override fun getPresentation(): ItemPresentation? = kotlinOrigin?.presentation ?: super.getPresentation()
-    override fun getParent(): PsiElement = containingClass
-    override fun getText() = kotlinOrigin?.text ?: ""
-    override fun getTextRange() = kotlinOrigin?.textRange ?: TextRange.EMPTY_RANGE
-
-    override val isDelegated: Boolean
-        get() = lightMethodOrigin?.originKind == JvmDeclarationOriginKind.DELEGATION
-                || lightMethodOrigin?.originKind == JvmDeclarationOriginKind.DELEGATION_TO_DEFAULT_IMPLS
 
     override fun accept(visitor: PsiElementVisitor) {
         if (visitor is JavaElementVisitor) {
@@ -136,31 +107,22 @@ class KtLightMethodImpl private constructor(
         } ?: throwCanNotModify()
     }
 
-    private fun throwCanNotModify(): Nothing {
-        throw IncorrectOperationException(JavaCoreBundle.message("psi.error.attempt.to.edit.class.file"))
-    }
-
-    private val _modifierList by lazyPub {
-        if (lightMethodOrigin is LightMemberOriginForDeclaration)
-            KtLightModifierList(clsDelegate.modifierList, this)
-        else clsDelegate.modifierList
-    }
+    // TODO: add message
+    private fun throwCanNotModify(): Nothing = throw IncorrectOperationException()
 
     override fun getModifierList(): PsiModifierList {
         if (calculatingReturnType.get() == true) {
             return KotlinJavaPsiFacade.getInstance(project).emptyModifierList
         }
-        return _modifierList
+        return super.getModifierList()!!
     }
-
-    override fun getNameIdentifier() = lightIdentifier
 
     override fun getParameterList() = paramsList
 
     override fun getTypeParameterList() = typeParamsList.value
 
     override fun getTypeParameters(): Array<PsiTypeParameter> =
-            typeParameterList?.let { it.typeParameters } ?: PsiTypeParameter.EMPTY_ARRAY
+            typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
 
     override fun getSignature(substitutor: PsiSubstitutor): MethodSignature {
         if (substitutor == PsiSubstitutor.EMPTY) {
@@ -170,12 +132,8 @@ class KtLightMethodImpl private constructor(
     }
 
     override fun copy(): PsiElement {
-        return Factory.create(clsDelegate, lightMethodOrigin?.copy(), containingClass)
+        return Factory.create(clsDelegate, lightMemberOrigin?.copy(), containingClass)
     }
-
-    override fun getUseScope() = kotlinOrigin?.useScope ?: super.getUseScope()
-
-    override fun getLanguage() = KotlinLanguage.INSTANCE
 
     override fun processDeclarations(processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement): Boolean {
         return typeParameters.all { processor.execute(it, state) }
@@ -200,12 +158,10 @@ class KtLightMethodImpl private constructor(
             other is KtLightMethodImpl &&
             this.name == other.name &&
             this.containingClass == other.containingClass &&
-            this.lightMethodOrigin == other.lightMethodOrigin &&
+            this.lightMemberOrigin == other.lightMemberOrigin &&
             this._memberIndex == other._memberIndex
 
-    override fun hashCode(): Int = ((getName().hashCode() * 31 + (lightMethodOrigin?.hashCode() ?: 0)) * 31 + containingClass.hashCode()) * 31 + (_memberIndex?.hashCode() ?: 0)
-
-    override fun toString(): String = "${this::class.java.simpleName}:$name"
+    override fun hashCode(): Int = ((getName().hashCode() * 31 + (lightMemberOrigin?.hashCode() ?: 0)) * 31 + containingClass.hashCode()) * 31 + (_memberIndex?.hashCode() ?: 0)
 
     override fun getDefaultValue() = (clsDelegate as? PsiAnnotationMethod)?.defaultValue
 
@@ -253,10 +209,6 @@ class KtLightMethodImpl private constructor(
         }
     }
 
-    override fun getName() = dummyDelegate?.name ?: clsDelegate.name
-
-    override fun hasModifierProperty(name: String) = (dummyDelegate ?: clsDelegate).hasModifierProperty(name)
-
     override fun getThrowsList() = clsDelegate.throwsList
 
     override fun hasTypeParameters() = clsDelegate.hasTypeParameters()
@@ -267,13 +219,9 @@ class KtLightMethodImpl private constructor(
 
     override fun getHierarchicalMethodSignature() = clsDelegate.hierarchicalMethodSignature
 
-    override fun getDocComment() = clsDelegate.docComment
-
     override fun findSuperMethodSignaturesIncludingStatic(checkAccess: Boolean) = clsDelegate.findSuperMethodSignaturesIncludingStatic(checkAccess)
 
     override fun getBody() = null
-
-    override fun isDeprecated() = clsDelegate.isDeprecated
 
     override fun findDeepestSuperMethod() = clsDelegate.findDeepestSuperMethod()
 
@@ -284,10 +232,6 @@ class KtLightMethodImpl private constructor(
     override fun findSuperMethods(checkAccess: Boolean) = clsDelegate.findSuperMethods(checkAccess)
 
     override fun findSuperMethods(parentClass: PsiClass?) = clsDelegate.findSuperMethods(parentClass)
-
-    override fun getContainingFile() = parent.containingFile
-
-    override fun isValid() = containingClass.isValid
 }
 
 fun KtLightMethod.isTraitFakeOverride(): Boolean {
