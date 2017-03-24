@@ -25,12 +25,12 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 internal class FunctionInlining(val context: Context): IrElementTransformerVoid() {
 
-    var currentFile     : IrFile?     = null
-    var currentFunction : IrFunction? = null
-    var currentScope    : Scope?      = null
+    private var currentFile     : IrFile?     = null
+    private var currentFunction : IrFunction? = null
+    private var currentScope    : Scope?      = null
 
     //-------------------------------------------------------------------------//
-    val deserializer = DeserializerDriver(context)
+    private val deserializer = DeserializerDriver(context)
 
     fun inline(irFile: IrFile) = irFile.accept(this, null)
 
@@ -79,7 +79,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
     //---------------------------------------------------------------------//
 
-    fun isLambdaExpression(expression: IrExpression) : Boolean {
+    private fun isLambdaExpression(expression: IrExpression) : Boolean {
         if (expression !is IrContainerExpressionBase)      return false
         if (expression.origin != IrStatementOrigin.LAMBDA) return false
         return true
@@ -87,7 +87,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
     //---------------------------------------------------------------------//
 
-    fun needsEvaluation(expression: IrExpression): Boolean {
+    private fun needsEvaluation(expression: IrExpression): Boolean {
         if (expression is IrGetValue)          return false                                 // Parameter is already GetValue - nothing to evaluate.
         if (expression is IrConst<*>)          return false                                 // Parameter is constant - nothing to evaluate.
         if (expression is IrCallableReference) return false                                 // Parameter is CallableReference - nothing to evaluate.
@@ -98,25 +98,27 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
     //-------------------------------------------------------------------------//
 
-    fun getArguments(irCall: IrCall, declaration: IrFunction): MutableMap<ValueDescriptor, IrExpression> {
-        val result = mutableMapOf<ValueDescriptor, IrExpression>()
+    private class ArgumentWithValue(val descriptor: ValueDescriptor, val value: IrExpression)
+
+    private fun getArguments(irCall: IrCall, declaration: IrFunction): MutableList<ArgumentWithValue> {
+        val result = mutableListOf<ArgumentWithValue>()
         val descriptor = irCall.descriptor.original
 
         irCall.dispatchReceiver?.let {
-            result[descriptor.dispatchReceiverParameter!!] = it
+            result += ArgumentWithValue(descriptor.dispatchReceiverParameter!!, it)
         }
 
         irCall.extensionReceiver?.let {
-            result[descriptor.extensionReceiverParameter!!] = it
+            result += ArgumentWithValue(descriptor.extensionReceiverParameter!!, it)
         }
 
         descriptor.valueParameters.forEach { parameter ->
             val argument = irCall.getValueArgument(parameter.index)
             if (argument != null) {
-                result[parameter] = argument
+                result += ArgumentWithValue(parameter, argument)
             } else {
                 val defaultArgument = declaration.getDefault(parameter)!!.expression
-                result[parameter] = defaultArgument
+                result += ArgumentWithValue(parameter, defaultArgument)
             }
         }
 
@@ -125,12 +127,14 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
     //-------------------------------------------------------------------------//
 
-    fun evaluateParameters(parametersOld: MutableMap<ValueDescriptor, IrExpression>,
-                           statements: MutableList<IrStatement>): MutableMap<ValueDescriptor, IrExpression> {
+    private class EvaluatedParameters(val parameters: MutableMap<ValueDescriptor, IrExpression>, val statements: MutableList<IrStatement>)
+
+    private fun evaluateParameters(parametersOld: MutableList<ArgumentWithValue>): EvaluatedParameters {
 
         val parametersNew = mutableMapOf<ValueDescriptor, IrExpression> ()
+        val statements = mutableListOf<IrStatement>()
         parametersOld.forEach {
-            val parameter = it.key.original as ValueDescriptor
+            val parameter = it.descriptor.original as ValueDescriptor
             val argument  = it.value
 
             if (!needsEvaluation(argument)) {
@@ -140,17 +144,16 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
             val varName = currentScope!!.scopeOwner.name.toString() + "_inline"
             val newVar = currentScope!!.createTemporaryVariable(argument, varName, false)  // Create new variable and init it with the parameter expression.
-            statements.add(0, newVar)                                                       // Add initialization of the new variable in statement list.
+            statements.add(newVar)                                                       // Add initialization of the new variable in statement list.
 
             val getVal = IrGetValueImpl(0, 0, newVar.descriptor)                            // Create new IR element representing access the new variable.
             parametersNew[parameter] = getVal                                               // Parameter will be replaced with the new variable.
         }
-        return parametersNew
+        return EvaluatedParameters(parametersNew, statements)
     }
 
     //-------------------------------------------------------------------------//
-
-    fun inlineFunction(irCall: IrCall): IrExpression {
+    private fun inlineFunction(irCall: IrCall): IrExpression {
         val functionDescriptor = irCall.descriptor as FunctionDescriptor
         val originalDescriptor = functionDescriptor.original
         val functionDeclaration = 
@@ -169,9 +172,10 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         val statements  = blockBody.statements
         val inlineBody  = IrInlineFunctionBody(startOffset, endOffset, returnType, null, statements)
 
-        val evaluationStatements = mutableListOf<IrStatement>()
         val parametersOld = getArguments(irCall, copyFuncDeclaration)                                          // Create map call_site_argument -> inline_function_parameter.
-        val parameterToArgument = evaluateParameters(parametersOld, evaluationStatements)
+        val evaluatedParameters = evaluateParameters(parametersOld)
+        val parameterToArgument = evaluatedParameters.parameters
+        val evaluationStatements = evaluatedParameters.statements
         val lambdaInliner = LambdaInliner(parameterToArgument)
         inlineBody.transformChildrenVoid(lambdaInliner)
 
@@ -185,7 +189,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
     //-------------------------------------------------------------------------//
 
-    inner class ParametersTransformer(val substituteMap: MutableMap <ValueDescriptor, IrExpression>,
+    private inner class ParametersTransformer(val substituteMap: MutableMap <ValueDescriptor, IrExpression>,
                                       val typeArgsMap: Map <TypeParameterDescriptor, KotlinType>?,
                                       val statements: MutableList<IrStatement>): IrElementTransformerVoid() {
 
@@ -243,7 +247,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
         //---------------------------------------------------------------------//
 
-        fun newVariable(oldVariable: IrVariable): IrVariable {
+        private fun newVariable(oldVariable: IrVariable): IrVariable {
             val initializer = oldVariable.initializer!!
             val isMutable   = oldVariable.descriptor.isVar
             val varName = currentScope!!.scopeOwner.name.toString() + "_inline"
@@ -324,13 +328,13 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
     //-------------------------------------------------------------------------//
 
-    inner class LambdaInliner(val substituteMap: MutableMap <ValueDescriptor, IrExpression>): IrElementTransformerVoid() {
+    private inner class LambdaInliner(val substituteMap: MutableMap <ValueDescriptor, IrExpression>): IrElementTransformerVoid() {
 
         override fun visitElement(element: IrElement) = element.accept(this, null)
 
         //---------------------------------------------------------------------//
 
-        fun isLambdaCall(irCall: IrCall) : Boolean {
+        private fun isLambdaCall(irCall: IrCall) : Boolean {
             if (!(irCall.descriptor as FunctionDescriptor).isFunctionInvoke) return false   // If it is lambda call.
             if (irCall.dispatchReceiver !is IrGetValue)                      return false   // Do not process such dispatch receiver.
             return true
@@ -338,7 +342,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
         //---------------------------------------------------------------------//
 
-        fun getLambdaFunction(lambdaArgument: IrExpression): IrFunction? {
+        private fun getLambdaFunction(lambdaArgument: IrExpression): IrFunction? {
             if (lambdaArgument !is IrBlock) return null
 
             if (lambdaArgument.origin != IrStatementOrigin.ANONYMOUS_FUNCTION &&
@@ -368,28 +372,25 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
         //---------------------------------------------------------------------//
 
-        fun buildParameterToArgument(lambdaFunction: IrFunction, irCall: IrCall): MutableMap<ValueDescriptor, IrExpression> {
+        private fun buildParameterToArgument(lambdaFunction: IrFunction, irCall: IrCall): MutableList<ArgumentWithValue> {
             val descriptor = lambdaFunction.descriptor
-            val parameterToArgument = mutableMapOf<ValueDescriptor, IrExpression>()
+            val parameterToArgument = mutableListOf<ArgumentWithValue>()
 
             irCall.extensionReceiver?.let {
-                val parameter = descriptor.extensionReceiverParameter!!
-                val argument  = it
-                parameterToArgument[parameter] = argument
+                parameterToArgument += ArgumentWithValue(descriptor.extensionReceiverParameter!!, it)
             }
 
             val parameters = descriptor.valueParameters                                     // Get lambda function parameters.
             parameters.forEach {                                                            // Iterate parameters.
-                val parameter = it
                 val argument  = irCall.getValueArgument(it.index)                           // Get corresponding argument.
-                parameterToArgument[parameter] = argument!!                                 // Create (parameter -> argument) pair.
+                parameterToArgument += ArgumentWithValue(it, argument!!)                    // Create (parameter -> argument) pair.
             }
             return parameterToArgument
         }
 
         //---------------------------------------------------------------------//
 
-        fun inlineLambda(irCall: IrCall): IrExpression {
+        private fun inlineLambda(irCall: IrCall): IrExpression {
 
             val dispatchReceiver = irCall.dispatchReceiver as IrGetValue                    //
             val lambdaArgument = substituteMap[dispatchReceiver.descriptor]                 // Find expression to replace this parameter.
@@ -403,8 +404,9 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
             if (lambdaFunction == null) return super.visitCall(irCall)                      // TODO
 
             val parametersOld = buildParameterToArgument(lambdaFunction, irCall)
-            val evaluationStatements = mutableListOf<IrStatement>()
-            val parameterToArgument = evaluateParameters(parametersOld, evaluationStatements)
+            val evaluatedParameters = evaluateParameters(parametersOld)
+            val parameterToArgument = evaluatedParameters.parameters
+            val evaluationStatements = evaluatedParameters.statements
 
             val copyLambdaFunction = lambdaFunction.accept(InlineCopyIr(),                  // Create copy of the function.
                 null) as IrFunction
