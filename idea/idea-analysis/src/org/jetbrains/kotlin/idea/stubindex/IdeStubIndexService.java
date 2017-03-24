@@ -168,6 +168,8 @@ public class IdeStubIndexService extends StubIndexService {
                 IndexUtilsKt.indexTopLevelExtension(stub, sink);
             }
         }
+
+        IndexUtilsKt.indexInternals(stub, sink);
     }
 
     @Override
@@ -208,6 +210,8 @@ public class IdeStubIndexService extends StubIndexService {
                 IndexUtilsKt.indexTopLevelExtension(stub, sink);
             }
         }
+
+        IndexUtilsKt.indexInternals(stub, sink);
     }
 
     @Override
