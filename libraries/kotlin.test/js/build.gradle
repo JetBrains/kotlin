@@ -18,6 +18,9 @@ compileKotlin2Js {
 
 compileTestKotlin2Js {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+    kotlinOptions {
+        metaInfo = false
+    }
 }
 
 

@@ -6,14 +6,6 @@ dependencies {
     compile project(':kotlin-stdlib-common')
 }
 
-sourceSets {
-    test {
-        kotlin {
-            srcDir 'src/test'
-            exclude '**'
-        }
-    }
-}
 
 
 // common block

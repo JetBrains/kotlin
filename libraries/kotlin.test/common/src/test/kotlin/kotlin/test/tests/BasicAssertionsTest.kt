@@ -14,49 +14,55 @@ class BasicAssertionsTest {
         assertEquals("a", "a")
     }
 
-    @Test(expected = AssertionError::class)
+    @Test
+    fun testAssertFailsWith() {
+        assertFailsWith<IllegalStateException> { throw IllegalStateException() }
+        assertFailsWith<AssertionError> { throw AssertionError() }
+
+        run {
+            try {
+                assertFailsWith<IllegalStateException> { throw IllegalArgumentException() }
+            }
+            catch (e: AssertionError) {
+                return@run
+            }
+            throw AssertionError("Expected to fail")
+        }
+
+        run {
+            try {
+                assertFailsWith<IllegalStateException> {  }
+            }
+            catch (e: AssertionError) {
+                return@run
+            }
+            throw AssertionError("Expected to fail")
+        }
+    }
+
+    @Test
     fun testAssertEqualsFails() {
-        assertEquals(1, 2)
+        assertFailsWith<AssertionError> { assertEquals(1, 2) }
     }
 
     @Test
     fun testAssertTrue() {
         assertTrue(true)
-    }
-
-    @Test
-    fun testAssertTrueWithLambda() {
         assertTrue { true }
     }
 
-    @Test(expected = AssertionError::class)
+    @Test()
     fun testAssertTrueFails() {
-        assertTrue(false)
-    }
-
-    @Test(expected = AssertionError::class)
-    fun testAssertTrueWithLambdaFails() {
-        assertTrue { false }
+        assertFailsWith<AssertionError> { assertTrue(false) }
+        assertFailsWith<AssertionError> { assertTrue { false } }
     }
 
     @Test
     fun testAssertFalse() {
         assertFalse(false)
-    }
-
-    @Test
-    fun testAssertFalseLambda() {
         assertFalse { false }
-    }
-
-    @Test(expected = AssertionError::class)
-    fun testAssertFalseFails() {
-        assertFalse(true)
-    }
-
-    @Test(expected = AssertionError::class)
-    fun testAssertFalseWithLambdaFails() {
-        assertFalse { true }
+        assertFailsWith<AssertionError> { assertFalse(true) }
+        assertFailsWith<AssertionError> { assertFalse { true } }
     }
 
     @Test
@@ -64,10 +70,9 @@ class BasicAssertionsTest {
         assertFails { throw IllegalStateException() }
     }
 
-    @Test(expected = AssertionError::class)
+    @Test()
     fun testAssertFailsFails() {
-        assertFails {  }
-        Assert.fail("Shouldn't pass here")
+        assertFailsWith<AssertionError> { assertFails {  } }
     }
 
 
@@ -76,9 +81,9 @@ class BasicAssertionsTest {
         assertNotEquals(1, 2)
     }
 
-    @Test(expected = AssertionError::class)
+    @Test()
     fun testAssertNotEqualsFails() {
-        assertNotEquals(1, 1)
+        assertFailsWith<AssertionError> { assertNotEquals(1, 1) }
     }
 
     @Test
@@ -86,9 +91,9 @@ class BasicAssertionsTest {
         assertNotNull(true)
     }
 
-    @Test(expected = AssertionError::class)
+    @Test()
     fun testAssertNotNullFails() {
-        assertNotNull(null)
+        assertFailsWith<AssertionError> { assertNotNull(null) }
     }
 
     @Test
@@ -96,11 +101,13 @@ class BasicAssertionsTest {
         assertNotNull("") { assertEquals("", it) }
     }
 
-    @Test(expected = AssertionError::class)
+    @Test
     fun testAssertNotNullLambdaFails() {
-        assertNotNull(null) {
-            @Suppress("UNREACHABLE_CODE")
-            assertNotNull(it)
+        assertFailsWith<AssertionError> {
+            val value: String? = null
+            assertNotNull(value) {
+                it.substring(0, 0)
+            }
         }
     }
 
@@ -109,23 +116,20 @@ class BasicAssertionsTest {
         assertNull(null)
     }
 
-    @Test(expected = AssertionError::class)
+    @Test
     fun testAssertNullFails() {
-        assertNull(true)
+        assertFailsWith<AssertionError> { assertNull("") }
     }
 
-    @Test(expected = AssertionError::class)
+    @Test()
     fun testFail() {
-        fail("should fail")
+        assertFailsWith<AssertionError> { fail("should fail") }
     }
 
     @Test
     fun testExpect() {
         expect(1) { 1 }
+        assertFailsWith<AssertionError> { expect(1) { 2 } }
     }
 
-    @Test(expected = AssertionError::class)
-    fun testExpectFails() {
-        expect(1) { 2 }
-    }
 }
