@@ -25,6 +25,7 @@ fun todo(block: () -> Any) {
     println("TODO at " + block)
 }
 
+/*
 /** Asserts that a [block] fails with a specific exception of type [T] being thrown.
  *  Since inline method doesn't allow to trace where it was invoked, it is required to pass a [message] to distinguish this method call from others.
  */
@@ -35,6 +36,7 @@ inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noin
     assertTrue(exception is T, "${messagePrefix}An exception thrown is not of the expected type: $exception")
     return exception as T
 }
+*/
 
 var _asserter: Asserter = QUnitAsserter()
 

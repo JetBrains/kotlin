@@ -102,6 +102,18 @@ fun assertFails(message: String?, block: () -> Unit): Throwable {
     asserter.fail(messagePrefix(message) + "Expected an exception to be thrown, but was completed successfully.")
 }
 
+/** Asserts that a [block] fails with a specific exception of type [T] being thrown.
+ *  Since inline method doesn't allow to trace where it was invoked, it is required to pass a [message] to distinguish this method call from others.
+ */
+@InlineOnly
+inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noinline block: () -> Unit): T {
+    val exception = assertFails(message, block)
+    val messagePrefix = if (message == null) "" else "$message. "
+
+    assertTrue(exception is T, "${messagePrefix}An exception thrown is not of the expected type: $exception")
+    return exception as T
+}
+
 /**
  * Abstracts the logic for performing assertions. Specific implementations of [Asserter] can use JUnit
  * or TestNG assertion facilities.
