@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.idea.stubindex
 import com.intellij.psi.stubs.IndexSink
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase
-import org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub
+import org.jetbrains.kotlin.psi.stubs.*
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.util.aliasImportMap
 
 fun <TDeclaration : KtCallableDeclaration> indexTopLevelExtension(stub: KotlinCallableStubBase<TDeclaration>, sink: IndexSink) {
@@ -87,3 +87,21 @@ private fun KtTypeElement.index(
         else -> error("Unsupported type: $this")
     }
 }
+
+fun indexInternals(stub: KotlinCallableStubBase<*>, sink: IndexSink) {
+    val name = stub.name ?: return
+
+    val modifierListStub = stub.modifierList ?: return
+
+    if (!modifierListStub.hasModifier(KtTokens.INTERNAL_KEYWORD)) return
+
+    if (stub.isTopLevel()) return
+
+    if (modifierListStub.hasModifier(KtTokens.OPEN_KEYWORD)
+        || modifierListStub.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
+        sink.occurrence(KotlinOverridableInternalMembersShortNameIndex.Instance.key, name)
+    }
+}
+
+private val KotlinStubWithFqName<*>.modifierList: KotlinModifierListStub?
+    get() = findChildStubByType(KtStubElementTypes.MODIFIER_LIST) as? KotlinModifierListStub
