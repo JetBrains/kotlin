@@ -80,6 +80,9 @@ fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
         is KtDestructuringDeclarationReference -> {
             if (candidateTarget !is KtNamedFunction && candidateTarget !is KtParameter && candidateTarget !is PsiMethod) return false
         }
+        is KtSimpleNameReference -> {
+            if (unwrappedCandidate is PsiMethod && !canBePsiMethodReference()) return false
+        }
     }
 
     val targets = unwrappedTargets
@@ -121,6 +124,24 @@ fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
             } ?: false
         }
     }
+    return false
+}
+
+fun KtSimpleNameReference.canBePsiMethodReference(): Boolean {
+    // NOTE: Accessor references are handled separately, see SyntheticPropertyAccessorReference
+    if (element == (element.parent as? KtCallExpression)?.calleeExpression) return true
+
+    val callableReference = element.getParentOfTypeAndBranch<KtCallableReferenceExpression> { callableReference }
+    if (callableReference != null) return true
+
+    val binaryOperator = element.getParentOfTypeAndBranch<KtBinaryExpression> { operationReference }
+    if (binaryOperator != null) return true
+
+    val unaryOperator = element.getParentOfTypeAndBranch<KtUnaryExpression> { operationReference }
+    if (unaryOperator != null) return true
+
+    if (element.getNonStrictParentOfType<KtImportDirective>() != null) return true
+
     return false
 }
 

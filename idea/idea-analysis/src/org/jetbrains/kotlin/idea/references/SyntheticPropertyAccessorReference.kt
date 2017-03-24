@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.references
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -45,6 +46,18 @@ sealed class SyntheticPropertyAccessorReference(expression: KtNameReferenceExpre
             }
         }
         return result
+    }
+
+    override fun isReferenceTo(element: PsiElement?): Boolean {
+        if (element !is PsiMethod || !isAccessorName(element.name)) return false
+        return super.isReferenceTo(element)
+    }
+
+    private fun isAccessorName(name: String): Boolean {
+        if (getter) {
+            return name.startsWith("get") || name.startsWith("is")
+        }
+        return name.startsWith("set")
     }
 
     override fun getRangeInElement() = TextRange(0, expression.textLength)
