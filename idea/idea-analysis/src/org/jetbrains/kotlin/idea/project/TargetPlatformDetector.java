@@ -38,6 +38,9 @@ public class TargetPlatformDetector {
 
     @NotNull
     public static TargetPlatform getPlatform(@NotNull KtFile file) {
+        TargetPlatform explicitPlatform = KtPsiFactoryKt.getTargetPlatform(file);
+        if (explicitPlatform != null) return explicitPlatform;
+
         if (file instanceof KtCodeFragment) {
             KtFile contextFile = ((KtCodeFragment) file).getContextContainingFile();
             if (contextFile != null) {
