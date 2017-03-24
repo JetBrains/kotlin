@@ -138,8 +138,9 @@ sealed class KtLightFieldImpl<D : PsiField>(
         }
 
         fun fromClsFields(delegateClass: PsiClass, containingClass: KtLightClass) = delegateClass.fields.map {
-            val origin = ClsWrapperStubPsiFactory.getMemberOrigin(it)
-            KtLightFieldImpl.create(origin, it, containingClass)
+            KtLightFieldImpl.create(getOrigin(it), it, containingClass)
         }
+
+        fun getOrigin(field: PsiField) = getMemberOrigin(field)
     }
 }

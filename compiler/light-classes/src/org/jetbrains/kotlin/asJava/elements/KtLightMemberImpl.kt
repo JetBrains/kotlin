@@ -19,8 +19,12 @@ package org.jetbrains.kotlin.asJava.elements
 import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.UserDataHolder
 import com.intellij.psi.*
+import com.intellij.psi.impl.compiled.ClsRepositoryPsiElement
 import com.intellij.psi.impl.light.LightElement
+import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory.ORIGIN
+import org.jetbrains.kotlin.asJava.builder.LightElementOrigin
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -93,3 +97,11 @@ abstract class KtLightMemberImpl<out D : PsiMember>(
 }
 
 private val visibilityModifiers = arrayOf(PsiModifier.PRIVATE, PsiModifier.PACKAGE_LOCAL, PsiModifier.PROTECTED, PsiModifier.PUBLIC)
+
+internal fun getMemberOrigin(member: PsiMember): LightMemberOriginForDeclaration? {
+    if (member !is ClsRepositoryPsiElement<*>) return null
+
+    val stubElement = member.stub as? UserDataHolder ?: return null
+
+    return stubElement.getUserData<LightElementOrigin>(ORIGIN) as? LightMemberOriginForDeclaration ?: return null
+}
