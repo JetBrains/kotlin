@@ -145,6 +145,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     }
 
     //-------------------------------------------------------------------------//
+
     fun inlineFunction(irCall: IrCall): IrExpression {
         val functionDescriptor = irCall.descriptor as FunctionDescriptor
         val originalDescriptor = functionDescriptor.original
@@ -401,8 +402,10 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
             val evaluationStatements = mutableListOf<IrStatement>()
             val parameterToArgument = evaluateParameters(parametersOld, evaluationStatements)
 
-            val lambdaStatements = (lambdaFunction.body as IrBlockBody).statements
-            val lambdaReturnType = lambdaFunction.descriptor.returnType!!
+            val copyLambdaFunction = lambdaFunction.accept(InlineCopyIr(),                  // Create copy of the function.
+                null) as IrFunction
+            val lambdaStatements = (copyLambdaFunction.body as IrBlockBody).statements
+            val lambdaReturnType = copyLambdaFunction.descriptor.returnType!!
             val inlineBody       = IrInlineFunctionBody(0, 0, lambdaReturnType, null, lambdaStatements)
 
             val transformer = ParametersTransformer(parameterToArgument, null, lambdaStatements)
