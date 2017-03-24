@@ -200,13 +200,14 @@ class KtLightMethodImpl private constructor(
                 origin: LightMemberOriginForDeclaration?,
                 computeRealDelegate: () -> PsiMethod
         ): KtLightMethodImpl {
-            return KtLightMethodImpl(computeRealDelegate, adjustMethodOrigin(origin), containingClass, dummyDelegate)
+            return KtLightMethodImpl(computeRealDelegate, origin, containingClass, dummyDelegate)
         }
 
         fun fromClsMethods(delegateClass: PsiClass, containingClass: KtLightClass) = delegateClass.methods.map {
-            val origin = ClsWrapperStubPsiFactory.getMemberOrigin(it)
-            KtLightMethodImpl.create(it, adjustMethodOrigin(origin), containingClass)
+            KtLightMethodImpl.create(it, getOrigin(it), containingClass)
         }
+
+        fun getOrigin(method: PsiMethod) = adjustMethodOrigin(getMemberOrigin(method))
     }
 
     override fun getThrowsList() = clsDelegate.throwsList
