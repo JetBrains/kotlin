@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.asJava.elements
 
-import com.intellij.openapi.util.TextRange
-import com.intellij.psi.*
+import com.intellij.psi.PsiAnnotation
+import com.intellij.psi.PsiAnnotationOwner
+import com.intellij.psi.PsiModifierList
 import com.intellij.psi.impl.light.LightModifierList
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.util.ArrayUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -52,43 +52,6 @@ abstract class KtLightModifierListWithExplicitModifiers(
     override fun findAnnotation(@NonNls qualifiedName: String) = annotations.firstOrNull { it.qualifiedName == qualifiedName }
 
     override fun addAnnotation(@NonNls qualifiedName: String) = delegate.addAnnotation(qualifiedName)
-}
-
-class KtLightModifierList(
-        private val delegate: PsiModifierList,
-        private val owner: PsiModifierListOwner
-) : PsiModifierList by delegate {
-    private val _annotations by lazyPub { computeAnnotations(this, delegate) }
-
-    override fun getAnnotations(): Array<out PsiAnnotation> = _annotations.value
-
-    override fun findAnnotation(@NonNls qualifiedName: String) = annotations.firstOrNull { it.qualifiedName == qualifiedName }
-
-    override fun addAnnotation(@NonNls qualifiedName: String) = delegate.addAnnotation(qualifiedName)
-
-    override fun getParent() = owner
-
-    override fun getText(): String? = ""
-
-    override fun getLanguage() = KotlinLanguage.INSTANCE
-    override fun getTextRange() = TextRange.EMPTY_RANGE
-    override fun getStartOffsetInParent() = -1
-    override fun getTextLength() = 0
-    override fun getPrevSibling(): PsiElement? = null
-    override fun getNextSibling(): PsiElement? = null
-    override fun findElementAt(offset: Int): PsiElement? = null
-    override fun findReferenceAt(offset: Int): PsiReference? = null
-    override fun getTextOffset() = -1
-    override fun isWritable() = false
-    override fun isPhysical() = false
-    override fun textToCharArray(): CharArray = ArrayUtil.EMPTY_CHAR_ARRAY;
-    override fun textMatches(text: CharSequence): Boolean = getText() == text.toString()
-    override fun textMatches(element: PsiElement): Boolean = text == element.text
-    override fun textContains(c: Char): Boolean = text?.contains(c) ?: false
-    override fun copy(): PsiElement = KtLightModifierList(delegate, owner)
-    override fun getReferences() = PsiReference.EMPTY_ARRAY
-    override fun isEquivalentTo(another: PsiElement?) =
-            another is KtLightModifierList && delegate == another.delegate && owner == another.owner
 }
 
 internal fun computeAnnotations(lightElement: PsiModifierList,
