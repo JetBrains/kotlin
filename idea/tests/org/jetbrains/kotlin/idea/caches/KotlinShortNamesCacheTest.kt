@@ -33,10 +33,11 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import kotlin.reflect.KMutableProperty0
 
 class KotlinShortNamesCacheTest : KotlinCodeInsightTestCase() {
 
-    lateinit var cacheInstance: PsiShortNamesCache
+    private lateinit var cacheInstance: PsiShortNamesCache
 
     override fun setUp() {
         super.setUp()
@@ -45,6 +46,7 @@ class KotlinShortNamesCacheTest : KotlinCodeInsightTestCase() {
     }
 
     override fun tearDown() {
+        (this::cacheInstance as KMutableProperty0<GlobalSearchScope?>).set(null)
         ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(myModule, testProjectJdk)
         super.tearDown()
 

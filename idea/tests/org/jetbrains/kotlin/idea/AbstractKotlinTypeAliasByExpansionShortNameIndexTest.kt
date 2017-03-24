@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
+import kotlin.reflect.KMutableProperty0
 
 abstract class AbstractKotlinTypeAliasByExpansionShortNameIndexTest : KotlinLightCodeInsightFixtureTestCase() {
 
@@ -30,11 +31,16 @@ abstract class AbstractKotlinTypeAliasByExpansionShortNameIndexTest : KotlinLigh
         return KotlinTestUtils.getHomeDirectory() + "/"
     }
 
-    lateinit var scope: GlobalSearchScope
+    private lateinit var scope: GlobalSearchScope
 
     override fun setUp() {
         super.setUp()
         scope = GlobalSearchScope.allScope(project)
+    }
+
+    override fun tearDown() {
+        (this::scope as KMutableProperty0<GlobalSearchScope?>).set(null)
+        super.tearDown()
     }
 
     override fun getProjectDescriptor() = super.getProjectDescriptorFromTestName()

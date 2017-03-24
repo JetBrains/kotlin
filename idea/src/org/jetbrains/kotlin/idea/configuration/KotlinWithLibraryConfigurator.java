@@ -110,6 +110,9 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
                 dialog.show();
                 if (!dialog.isOK()) return;
             }
+            else {
+                dialog.close(0);
+            }
 
             modulesToConfigure = dialog.getModulesToConfigure();
             copyLibraryIntoPath = dialog.getCopyIntoPath();
