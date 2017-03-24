@@ -21,6 +21,7 @@ import com.google.gson.JsonParser
 import com.intellij.codeInsight.TargetElementUtilBase
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
@@ -71,13 +72,18 @@ abstract class AbstractMoveTest : KotlinMultiFileTestCase() {
         isMultiModule = config["isMultiModule"]?.asBoolean ?: false
 
         doTest({ rootDir, _ ->
+            val modulesWithRuntime: List<Module>
+
             val withRuntime = config["withRuntime"]?.asBoolean ?: false
             if (withRuntime) {
                 val moduleManager = ModuleManager.getInstance(project)
-                val modulesToConfigure =
+                modulesWithRuntime =
                         (config["modulesWithRuntime"]?.asJsonArray?.map { moduleManager.findModuleByName(it.asString!!)!! }
                          ?: moduleManager.modules.toList())
-                modulesToConfigure.forEach { ConfigLibraryUtil.configureKotlinRuntimeAndSdk(it, PluginTestCaseBase.mockJdk()) }
+                modulesWithRuntime.forEach { ConfigLibraryUtil.configureKotlinRuntimeAndSdk(it, PluginTestCaseBase.mockJdk()) }
+            }
+            else {
+                modulesWithRuntime = emptyList()
             }
 
             val mainFile = rootDir.findFileByRelativePath(mainFilePath)!!
@@ -116,8 +122,8 @@ abstract class AbstractMoveTest : KotlinMultiFileTestCase() {
 
                 EditorFactory.getInstance()!!.releaseEditor(editor)
 
-                if (withRuntime) {
-                    ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
+                modulesWithRuntime.forEach {
+                    ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(it, PluginTestCaseBase.mockJdk())
                 }
             }
         },
