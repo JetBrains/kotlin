@@ -31,7 +31,7 @@ class KotlinClassStubImpl(
         private val qualifiedName: StringRef?,
         private val name: StringRef?,
         private val superNames: Array<StringRef>,
-        private val isTrait: Boolean,
+        private val isInterface: Boolean,
         private val isEnumEntry: Boolean,
         private val isLocal: Boolean,
         private val isTopLevel: Boolean
@@ -42,7 +42,7 @@ class KotlinClassStubImpl(
         return FqName(stringRef)
     }
 
-    override fun isInterface() = isTrait
+    override fun isInterface() = isInterface
     override fun isEnumEntry() = isEnumEntry
     override fun isLocal() = isLocal
     override fun getName() = StringRef.toString(name)

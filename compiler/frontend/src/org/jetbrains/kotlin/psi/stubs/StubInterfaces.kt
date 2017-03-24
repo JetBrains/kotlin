@@ -78,7 +78,7 @@ interface KotlinImportDirectiveStub : StubElement<KtImportDirective> {
     fun isValid(): Boolean
 }
 
-interface KotlinModifierListStub : StubElement<KtModifierList> {
+interface KotlinModifierListStub : StubElement<KtDeclarationModifierList> {
     fun hasModifier(modifierToken: KtModifierKeywordToken): Boolean
 }
 
