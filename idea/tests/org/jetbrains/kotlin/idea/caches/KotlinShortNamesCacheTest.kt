@@ -103,7 +103,7 @@ class KotlinShortNamesCacheTest : KotlinCodeInsightTestCase() {
             = a.map { "${(it as KtLightMethod).clsDelegate.getKotlinFqName()} static=${it.hasModifierProperty(PsiModifier.STATIC)}" }.joinToString("\n")
 
     fun accessorArrayDebugToString(a: Array<PsiMethod>)
-            = a.map { "${(it as KtLightMethod).clsDelegate.getKotlinFqName()} property=${(it.lightMethodOrigin?.originalElement as KtProperty).fqName} static=${it.hasModifierProperty(PsiModifier.STATIC)}" }.joinToString("\n")
+            = a.map { "${(it as KtLightMethod).clsDelegate.getKotlinFqName()} property=${(it.lightMemberOrigin?.originalElement as KtProperty).fqName} static=${it.hasModifierProperty(PsiModifier.STATIC)}" }.joinToString("\n")
 
     fun checkMethodFound(methods: Array<PsiMethod>, stringFqName: String, static: Boolean) {
         assertNotNull("Method $stringFqName with static=$static not found\n" + methodArrayDebugToString(methods),
@@ -189,7 +189,7 @@ class KotlinShortNamesCacheTest : KotlinCodeInsightTestCase() {
                       methods.find {
                           stringFqName == (it as KtLightMethod).clsDelegate.getKotlinFqName().toString()
                           &&
-                          (it.lightMethodOrigin?.originalElement as KtProperty).fqName?.asString() == propertyFqName
+                          (it.lightMemberOrigin?.originalElement as KtProperty).fqName?.asString() == propertyFqName
                           &&
                           it.hasModifierProperty(PsiModifier.STATIC) == static
                       })

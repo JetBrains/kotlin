@@ -16,12 +16,8 @@
 
 package org.jetbrains.kotlin.asJava.elements
 
-import com.intellij.navigation.ItemPresentation
-import com.intellij.navigation.ItemPresentationProviders
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiVariableEx
-import com.intellij.psi.impl.light.LightElement
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
@@ -30,41 +26,23 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForEnumEntry
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.lang.UnsupportedOperationException
 
-// Copied from com.intellij.psi.impl.light.LightField
-sealed class KtLightFieldImpl<T: PsiField>(
+sealed class KtLightFieldImpl<D : PsiField>(
         override val lightMemberOrigin: LightMemberOrigin?,
-        computeRealDelegate: () -> T,
-        private val containingClass: KtLightClass,
-        private val dummyDelegate: PsiField?
-) : LightElement(containingClass.manager, KotlinLanguage.INSTANCE), KtLightField {
-    private val lightIdentifier by lazyPub { KtLightIdentifier(this, kotlinOrigin as? KtNamedDeclaration) }
+        computeRealDelegate: () -> D,
+        containingClass: KtLightClass,
+        dummyDelegate: PsiField?
+) : KtLightMemberImpl<PsiField>(computeRealDelegate, lightMemberOrigin, containingClass, dummyDelegate), KtLightField {
 
-    override val clsDelegate: T by lazyPub(computeRealDelegate)
+    override val clsDelegate: D
+        @Suppress("UNCHECKED_CAST")
+        get() = super.clsDelegate as D
 
     @Throws(IncorrectOperationException::class)
     override fun setInitializer(initializer: PsiExpression?) = throw IncorrectOperationException("Not supported")
-
-    override fun getUseScope() = kotlinOrigin?.useScope ?: super.getUseScope()
-
-    override fun getPresentation(): ItemPresentation? = (kotlinOrigin ?: this).let { ItemPresentationProviders.getItemPresentation(it) }
-
-    override fun getName() = dummyDelegate?.name ?: clsDelegate.name
-
-    override fun getNameIdentifier() = lightIdentifier
-
-    override fun getDocComment() = clsDelegate.docComment
-
-    override fun isDeprecated() = clsDelegate.isDeprecated
-
-    override fun getContainingClass() = containingClass
-
-    override fun getContainingFile() = containingClass.containingFile
 
     override fun getType() = clsDelegate.type
 
@@ -84,34 +62,12 @@ sealed class KtLightFieldImpl<T: PsiField>(
         return this
     }
 
-    private val _modifierList by lazyPub {
-        if (lightMemberOrigin is LightMemberOriginForDeclaration)
-            clsDelegate.modifierList?.let { KtLightModifierList(it, this) }
-        else clsDelegate.modifierList
-    }
-
-    override fun getModifierList() = _modifierList
-
-    override fun hasModifierProperty(@NonNls name: String) = (dummyDelegate ?: clsDelegate).hasModifierProperty(name)
-
-    override fun getText() = kotlinOrigin?.text ?: ""
-
-    override fun getTextRange() = kotlinOrigin?.textRange ?: TextRange.EMPTY_RANGE
-
-    override fun isValid() = containingClass.isValid
-
-    override fun toString(): String = "${this::class.java.simpleName}:$name"
-
     override fun equals(other: Any?): Boolean =
             other is KtLightFieldImpl<*> &&
             this.name == other.name &&
             this.containingClass == other.containingClass
 
-    override fun hashCode() = 31 * containingClass.hashCode() + (name?.hashCode() ?: 0)
-
-    override val kotlinOrigin: KtDeclaration? get() = lightMemberOrigin?.originalElement
-
-    override fun getNavigationElement() = kotlinOrigin ?: super.getNavigationElement()
+    override fun hashCode() = 31 * containingClass.hashCode() + name.hashCode()
 
     override fun computeConstantValue(visitedVars: MutableSet<PsiVariable>?): Any? {
         return (clsDelegate as PsiVariableEx).computeConstantValue(visitedVars)
@@ -124,8 +80,6 @@ sealed class KtLightFieldImpl<T: PsiField>(
         return super.isEquivalentTo(another)
     }
 
-    override fun isWritable() = kotlinOrigin?.isWritable ?: false
-
     override fun copy() = Factory.create(lightMemberOrigin?.copy(), clsDelegate, containingClass)
 
 
@@ -134,7 +88,7 @@ sealed class KtLightFieldImpl<T: PsiField>(
             computeDelegate: () -> PsiEnumConstant,
             containingClass: KtLightClass,
             dummyDelegate: PsiField?
-    ) : KtLightFieldImpl<PsiEnumConstant>(origin, computeDelegate , containingClass, dummyDelegate), PsiEnumConstant {
+    ) : KtLightFieldImpl<PsiEnumConstant>(origin, computeDelegate, containingClass, dummyDelegate), PsiEnumConstant {
         private val initializingClass by lazyPub {
             val kotlinEnumEntry = (lightMemberOrigin as? LightMemberOriginForDeclaration)?.originalElement as? KtEnumEntry
             if (kotlinEnumEntry != null && kotlinEnumEntry.declarations.isNotEmpty()) {

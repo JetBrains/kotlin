@@ -53,7 +53,7 @@ public class KtLightParameter extends LightParameter implements KtLightDeclarati
         this.index = index;
         this.method = method;
 
-        if (method.getLightMethodOrigin() instanceof LightMemberOriginForDeclaration) {
+        if (method.getLightMemberOrigin() instanceof LightMemberOriginForDeclaration) {
             this.modifierList = new KtLightModifierListWithExplicitModifiers(this, ArrayUtil.EMPTY_STRING_ARRAY) {
                 @Override
                 public PsiAnnotationOwner getDelegate() {
