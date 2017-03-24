@@ -105,7 +105,7 @@ object KotlinCompilerClient {
                         leaseSession: Boolean,
                         sessionAliveFlagFile: File? = null
     ): CompileServiceSession? = connectLoop(reportingTargets) {
-        setupServerHostName()
+        ensureServerHostnameIsSetUp()
         val (service, newJVMOptions) = tryFindSuitableDaemonOrNewOpts(File(daemonOptions.runFilesPath), compilerId, daemonJVMOptions, { cat, msg -> reportingTargets.report(cat, msg) })
         if (service != null) {
             // the newJVMOptions could be checked here for additional parameters, if needed
@@ -380,9 +380,11 @@ object KotlinCompilerClient {
 
     private fun startDaemon(compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, daemonOptions: DaemonOptions, reportingTargets: DaemonReportingTargets) {
         val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
+        val serverHostname = System.getProperty(JAVA_RMI_SERVER_HOSTNAME) ?: error("$JAVA_RMI_SERVER_HOSTNAME is not set!")
         val platformSpecificOptions = listOf(
                 // hide daemon window
-                "-Djava.awt.headless=true")
+                "-Djava.awt.headless=true",
+                "-D$JAVA_RMI_SERVER_HOSTNAME=$serverHostname")
         val args = listOf(
                    javaExecutable.absolutePath, "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)) +
                    platformSpecificOptions +
