@@ -58,6 +58,12 @@ open header class UnsupportedOperationException : RuntimeException {
     constructor(message: String)
 }
 
+// TODO: Provide typealias impl in stdlib-jvm
+open header class AssertionError : Error {
+    constructor()
+    constructor(message: String)
+}
+
 
 header interface Comparator<T> {
     fun compare(a: T, b: T): Int
