@@ -89,7 +89,7 @@ object KotlinCompileDaemon {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        setupServerHostName()
+        ensureServerHostnameIsSetUp()
 
         log.info("Kotlin compiler daemon version " + (loadVersionFromResource() ?: "<unknown>"))
         log.info("daemon JVM args: " + ManagementFactory.getRuntimeMXBean().inputArguments.joinToString(" "))
