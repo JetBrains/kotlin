@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.LATEINIT_KEYWORD
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -55,6 +56,7 @@ class MovePropertyToConstructorIntention :
             && element.getter == null
             && element.setter == null
             && !element.hasModifier(LATEINIT_KEYWORD)
+            && element.getStrictParentOfType<KtClassOrObject>() is KtClass
 
     override fun applyTo(element: KtProperty, editor: Editor?) {
         val parentClass = PsiTreeUtil.getParentOfType(element, KtClass::class.java) ?: return

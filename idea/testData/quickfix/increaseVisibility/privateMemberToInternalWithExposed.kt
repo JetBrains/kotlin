@@ -1,6 +1,7 @@
 // "Make bar internal" "false"
 // ACTION: Convert property initializer to getter
 // ACTION: Add names to call arguments
+// ACTION: Move to constructor
 // ERROR: Cannot access 'bar': it is private in 'First'
 
 private data class Data(val x: Int)
