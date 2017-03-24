@@ -10,3 +10,4 @@ class C: Tr {
     override val v = 1
 }
 
+// LAZINESS:NoLaziness

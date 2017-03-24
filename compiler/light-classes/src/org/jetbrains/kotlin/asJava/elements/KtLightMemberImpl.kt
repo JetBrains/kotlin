@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
@@ -44,7 +45,17 @@ abstract class KtLightMemberImpl<out D : PsiMember>(
         else clsDelegate.modifierList
     }
 
-    override fun hasModifierProperty(name: String) = (dummyDelegate ?: clsDelegate).hasModifierProperty(name)
+    override fun hasModifierProperty(name: String): Boolean {
+        if (dummyDelegate != null) {
+            if (name in visibilityModifiers)  {
+                if (kotlinOrigin?.hasModifier(KtTokens.OVERRIDE_KEYWORD) ?: false) {
+                    return clsDelegate.hasModifierProperty(name)
+                }
+            }
+            return dummyDelegate.hasModifierProperty(name)
+        }
+        return clsDelegate.hasModifierProperty(name)
+    }
 
     override fun getModifierList(): PsiModifierList? = _modifierList
 
@@ -80,3 +91,5 @@ abstract class KtLightMemberImpl<out D : PsiMember>(
 
     override fun isDeprecated() = (clsDelegate as PsiDocCommentOwner).isDeprecated
 }
+
+private val visibilityModifiers = arrayOf(PsiModifier.PRIVATE, PsiModifier.PACKAGE_LOCAL, PsiModifier.PROTECTED, PsiModifier.PUBLIC)
