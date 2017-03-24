@@ -53,12 +53,31 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         }
     }
 
+    // this method is called from IDEA to resolve dependencies in Java code
+    // which supposedly shouldn't have errors so the dependencies exist in general
     override fun findClass(qName: String, scope: GlobalSearchScope): PsiClass? {
-        // this method is called from IDEA to resolve dependencies in Java code
-        // which supposedly shouldn't have errors so the dependencies exist in general
-        // Most classes are top level classes so we will try to find them fast
-        // but we must sometimes fallback to support finding inner/nested classes
-        return qName.toSafeTopLevelClassId()?.let { classId -> findClass(classId, scope) } ?: super.findClass(qName, scope)
+        // String cannot be reliably converted to ClassId because we don't know where the package name ends and class names begin.
+        // For example, if qName is "a.b.c.d.e", we should either look for a top level class "e" in the package "a.b.c.d",
+        // or, for example, for a nested class with the relative qualified name "c.d.e" in the package "a.b".
+        // Below, we start by looking for the top level class "e" in the package "a.b.c.d" first, then for the class "d.e" in the package
+        // "a.b.c", and so on, until we find something. Most classes are top level, so most of the times the search ends quickly
+
+        var classId = qName.toSafeTopLevelClassId() ?: return super.findClass(qName, scope)
+
+        while (true) {
+            findClass(classId, scope)?.let { return it }
+
+            val packageFqName = classId.packageFqName
+            if (packageFqName.isRoot) break
+
+            classId = ClassId(
+                    packageFqName.parent(),
+                    FqName(packageFqName.shortName().asString() + "." + classId.relativeClassName.asString()),
+                    false
+            )
+        }
+
+        return super.findClass(qName, scope)
     }
 
     override fun findClasses(qName: String, scope: GlobalSearchScope): Array<PsiClass> {
