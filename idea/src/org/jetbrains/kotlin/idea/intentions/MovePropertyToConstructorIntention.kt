@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
@@ -38,7 +41,14 @@ import org.jetbrains.kotlin.types.KotlinType
 
 
 class MovePropertyToConstructorIntention :
-        SelfTargetingIntention<KtProperty>(KtProperty::class.java, "Move to constructor") {
+        SelfTargetingIntention<KtProperty>(KtProperty::class.java, "Move to constructor"),
+        LocalQuickFix {
+
+    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+        val property = descriptor.psiElement as? KtProperty ?: return
+        applyTo(property, null)
+    }
+
     override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean =
             !element.isLocal
             && !element.hasDelegate()
