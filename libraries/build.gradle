@@ -58,7 +58,8 @@ subprojects {
 configure(subprojects.findAll {it.name in [
         'kotlin-runtime', 'kotlin-script-runtime',
         'kotlin-stdlib', 'kotlin-stdlib-jre7', 'kotlin-stdlib-jre8',
-        'kotlin-test-junit']}) {
+        'kotlin-test-junit',
+        'kotlin-reflect']}) {
 
     apply plugin: 'kotlin'
 

@@ -1,9 +1,48 @@
+description = 'Kotlin Full Reflection Library'
 
-description = 'Kotlin reflect'
+def core = "${rootDir}/../core"
+def depDir = "${rootDir}/../dependencies"
 
-artifacts {
-  archives file: file("${rootDir}/../dist/kotlinc/lib/kotlin-reflect.jar"), name: project.name, type: 'jar'
-  archives file: file("${rootDir}/../dist/kotlin-reflect-sources-for-maven.jar"), name: project.name, classifier: 'sources', type: 'jar'
+sourceSets {
+    annotations {
+        java {
+            srcDir "${core}/runtime.jvm/src"
+            include "**/Mutable.java"
+            include "**/ReadOnly.java"
+        }
+    }
+    reflectMain {
+        java {
+            source annotations.java
+
+            srcDir "${core}/descriptor.loader.java/src"
+            srcDir "${core}/descriptors/src"
+            srcDir "${core}/descriptors.runtime/src"
+            srcDir "${core}/deserialization/src"
+            srcDir "${core}/util.runtime/src"
+
+            srcDir "${core}/reflection.jvm/src"
+        }
+    }
+}
+
+dependencies {
+    reflectMainCompile project(':kotlin-stdlib')
+    reflectMainCompile 'javax.inject:javax.inject:1'
+    reflectMainCompile files("${depDir}/protobuf-2.6.1-lite.jar")
 }
 
 
+compileReflectMainJava {
+    // options.compilerArgs.addAll(["-Xlint:unchecked"])
+}
+
+compileReflectMainKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ["-version",
+                            "-Xallow-kotlin-package",
+                            "-Xdump-declarations-to", "${buildDir}/reflect-declarations.json"]
+    }
+}
+
+kotlin.experimental.coroutines "enable"
