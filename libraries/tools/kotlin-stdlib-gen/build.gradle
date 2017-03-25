@@ -1,0 +1,21 @@
+apply plugin: 'kotlin'
+
+sourceSets {
+    main.kotlin.srcDir 'src'
+}
+
+dependencies {
+    compile 'org.jetbrains.kotlin:kotlin-stdlib:1.1.1'
+}
+
+compileKotlin {
+    compilerJarFile = null
+    kotlinOptions.freeCompilerArgs = ["-version"]
+}
+
+task run(type: JavaExec) {
+    group 'application'
+    main 'generators.GenerateStandardLibKt'
+    classpath sourceSets.main.runtimeClasspath
+    args = ["${rootDir}/.."]
+}
