@@ -49,6 +49,14 @@ open class BasicReplStageHistory<T>(override val lock: ReentrantReadWriteLock = 
 
     override fun pop(): ReplHistoryRecord<T>? = lock.write { if (isEmpty()) null else removeAt(lastIndex) }
 
+    override fun reset(): Iterable<ILineId> {
+        lock.write {
+            val removed = map { it.id }
+            clear()
+            return removed
+        }
+    }
+
     override fun resetTo(id: ILineId): Iterable<ILineId> {
         lock.write {
             val idx = indexOfFirst { it.id == id }

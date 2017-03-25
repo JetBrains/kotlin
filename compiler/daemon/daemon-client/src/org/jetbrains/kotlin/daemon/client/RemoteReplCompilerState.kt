@@ -37,10 +37,12 @@ class RemoteReplCompilerStateHistory(private val state: RemoteReplCompilerState)
         throw NotImplementedError("pop from remote history is not supported")
     }
 
+    override fun reset(): Iterable<ILineId> = state.replStateFacade.historyReset().apply {
+        currentGeneration.incrementAndGet()
+    }
+
     override fun resetTo(id: ILineId): Iterable<ILineId> = state.replStateFacade.historyResetTo(id).apply {
-        if (isNotEmpty()) {
-            currentGeneration.incrementAndGet()
-        }
+        currentGeneration.incrementAndGet()
     }
 
     val currentGeneration = AtomicInteger(REPL_CODE_LINE_FIRST_GEN)

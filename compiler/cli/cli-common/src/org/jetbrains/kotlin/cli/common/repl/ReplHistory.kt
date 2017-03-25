@@ -52,6 +52,13 @@ class ReplHistory<T>(startingHistory: CompiledHistoryList<T> = emptyList()) : Se
         }
     }
 
+    /* resets back complete history and returns the lines removed */
+    fun reset(): SourceHistoryList<T> {
+        val removed = history.map { Pair(it.first.source, it.second) }
+        history.clear()
+        return removed
+    }
+
     /* resets back to a previous line number and returns the lines removed */
     fun resetToLine(lineNumber: Int): SourceHistoryList<T> {
         val removed = arrayListOf<SourceHistoryItem<T>>()
