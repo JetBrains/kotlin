@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.types.KotlinType
 class MovePropertyToConstructorIntention :
         SelfTargetingIntention<KtProperty>(KtProperty::class.java, "Move to constructor"),
         LocalQuickFix {
+    override fun getName(): String = text
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val property = descriptor.psiElement as? KtProperty ?: return
