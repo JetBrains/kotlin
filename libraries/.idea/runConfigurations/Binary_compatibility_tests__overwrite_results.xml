@@ -1,26 +1,21 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Binary compatibility tests, overwrite results" type="JUnit" factoryName="JUnit">
-    <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-    <module name="binary-compatibility-validator" />
-    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-    <option name="ALTERNATIVE_JRE_PATH" />
-    <option name="PACKAGE_NAME" value="" />
-    <option name="MAIN_CLASS_NAME" value="" />
-    <option name="METHOD_NAME" value="" />
-    <option name="TEST_OBJECT" value="package" />
-    <option name="VM_PARAMETERS" value="-ea -Doverwrite.output=true" />
-    <option name="PARAMETERS" value="" />
-    <option name="WORKING_DIRECTORY" value="file://$MODULE_DIR$" />
-    <option name="ENV_VARIABLES" />
-    <option name="PASS_PARENT_ENVS" value="true" />
-    <option name="TEST_SEARCH_SCOPE">
-      <value defaultName="singleModule" />
-    </option>
-    <envs />
-    <patterns />
-    <method>
-      <option name="Make" enabled="false" />
-      <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="clean package -pl :kotlin-runtime,:kotlin-stdlib,:binary-compatibility-validator -DskipTests" />
-    </method>
+  <configuration default="false" name="Binary compatibility tests, overwrite results" type="GradleRunConfiguration" factoryName="Gradle">
+    <ExternalSystemSettings>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/tools/binary-compatibility-validator" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value=" --tests * " />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list>
+          <option value=":tools:binary-compatibility-validator:cleanTest" />
+          <option value=":tools:binary-compatibility-validator:test" />
+        </list>
+      </option>
+      <option name="vmOptions" value="-Doverwrite.output=true" />
+    </ExternalSystemSettings>
+    <method />
   </configuration>
 </component>

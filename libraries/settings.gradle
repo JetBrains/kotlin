@@ -11,6 +11,7 @@ include ':kotlin-stdlib'
 include ':kotlin-stdlib-js'
 include ':kotlin-stdlib-jre7'
 include ':kotlin-stdlib-jre8'
+include ':tools:binary-compatibility-validator'
 //include ':kotlin-reflect'
 
 //include ':kotlin-compiler'

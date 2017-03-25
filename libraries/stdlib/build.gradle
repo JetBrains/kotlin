@@ -32,6 +32,11 @@ dependencies {
     testCompile project(':kotlin-test:kotlin-test-junit')
 }
 
+task originalStdlibJar(type: Jar) {
+    baseName = 'original-kotlin-stdlib'
+    from sourceSets.main.output
+}
+
 jar {
     manifestAttributes(manifest, project, 'Core')
     from("${rootDir}/../dist/builtins")

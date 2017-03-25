@@ -1,0 +1,30 @@
+apply plugin: 'kotlin'
+
+dependencies {
+    compile project(':kotlin-stdlib')
+    compile 'org.ow2.asm:asm-debug-all:5.0.4'
+    compile 'com.google.code.gson:gson:2.6.2'
+    testCompile project(':kotlin-test:kotlin-test-junit')
+}
+
+sourceSets {
+    test {
+        java {
+            srcDir "src/test/kotlin"
+        }
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xdump-declarations-to', "${buildDir}/cases-declarations.json"]
+    }
+}
+
+test {
+    dependsOn cleanCompileTestKotlin
+    dependsOn(':kotlin-stdlib:originalStdlibJar')
+
+    systemProperties['overwrite.output'] = System.getProperty("overwrite.output", "false")
+    jvmArgs '-ea'
+}
