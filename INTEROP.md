@@ -19,20 +19,25 @@ imported into an IDE for purposes of code completion and navigation.
 
 ## Simple example ##
 
-Build the dependencies and the compiler (see README.md).
+Build the dependencies and the compiler (see `README.md`).
 
 Prepare stubs for the system sockets library:
 
-    ./dist/bin/interop -def:backend.native/tests/interop/basics/sockets.def
+    cd samples/socket
+    ../../dist/bin/interop -def:sockets.def
 
 Compile the echo server:
 
-    ./dist/bin/kotlinc backend.native/tests/interop/basics/echo_server.kt \
-        sockets -nativelibrary socketsstubs.bc 
+    ../../dist/bin/kotlinc EchoServer.kt sockets -nativelibrary socketsstubs.bc \
+     -o EchoServer.kexe
+
+This whole process is automated in `build.sh` script, which also support cross-compilation
+to supported cross-targets with `TARGET=raspberrypi ./build.sh` (`cross_dist` target must
+be executed first).
 
 Run the server:
 
-    ./program.kexe 3000 &
+    ./EchoServer.kexe 3000 &
 
 Test the server by conecting to it, for example with telnet:
 
@@ -51,12 +56,11 @@ Structurally it's a simple property file, looking like this:
 
     header = zlib.h
     compilerOpts = -std=c99
-    linkerOpts = -lz
 
 Then run interop tool with something like (note that for host libraries not included
 in sysroot search paths for headers may be needed):
 
-    ./dist/bin/interop -def:zlib.def -copt:-I/opt/local/include
+    interop -def:zlib.def -copt:-I/opt/local/include
 
 This command will produce directory named `zlib` containing file `zlib.kt`
 and file `zlibstubs.bc` containing implementation specific glue bitcode.
@@ -72,8 +76,7 @@ After generation of bindings they could be used by IDE as proxy view of the
 native library.
 
 For typical Unix library with config script `compilerOpts` will likely contain
-output of config script with `--cflags` flag (maybe without exact paths) and
-`linkerOpts` - output of config script with `--libs`.
+output of config script with `--cflags` flag (maybe without exact paths).
 
-Also all those values could be passed directly as values for `-copt` and
-`linkedArgs` respectively.
+Output of config script with `--libs` shall be passed as `-linkedArgs`  `kotlinc`
+flag value (quoted) when compiling.

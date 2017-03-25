@@ -1,0 +1,2 @@
+headers = GLUT/glut.h
+compilerOpts = -framework OpenGL -framework GLUT

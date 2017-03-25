@@ -276,7 +276,7 @@ internal class LinkStage(val context: Context) {
             }
         }
         phaser.phase(KonanPhase.LINKER) {
-            val executable = link(objectFiles)
+            link(objectFiles)
         }
     }
 }

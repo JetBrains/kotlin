@@ -59,6 +59,6 @@ LD_LIBRARY_PATH=${NATIVE_LIB} \
 $JAVACMD $JAVA_OPTS ${java_args[@]} \
     -cp $INTEROP_CLASSPATH \
     $INTEROP_TOOL \
-    $FLAVOR_ARG ${interop_args[@]} \
+    $FLAVOR_ARG "${interop_args[@]}" \
 
 

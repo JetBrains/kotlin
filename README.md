@@ -1,31 +1,45 @@
-# Kotlin-native backend #
+# Kotlin N  #
 
-Download dependencies:
+Kotlin Native backend, codenamed _Kotlin N_, is a LLVM backend for the Kotlin
+compiler, runtime implementation and native code generation facility
+using LLVM toolchain.
+
+ _Kotlin N_ is primarily designed to allow compilation for platforms where
+virtual machines are not desirable or possible (such as iOS, embedded targets),
+or where developer is willing to produce reasonably-sized self-contained program
+without need to ship an additional execution runtime.
+
+To compile from sources use following steps.
+
+First download dependencies:
 
 	./gradlew dependencies:update
 
-Then build the compiler:
+Then build the compiler and standard library:
 
 	./gradlew dist
 
+To build standard library for cross-targets (currently, iOS on Mac OSX and Raspberry Pi on
+Linux hosts) use:
+
+    ./gradlew cross_dist
+
 After that you should be able to compile your programs like that:
 
-	./dist/bin/kotlinc hello.kt -o hello
+    export PATH=./dist/bin:$PATH
+	kotlinc hello.kt -o hello
 
 For an optimized compilation use -opt:
 
-	./dist/bin/kotlinc hello.kt -o hello -opt
+	kotlinc hello.kt -o hello -opt
 
 For some tests, use:
 
 	./gradlew backend.native:tests:run
 
-To run blackbox compiler tests from JVM Kotlin use (takes time):
+To generate interoperability stubs create library definition file
+(take a look on `samples/tetris/tetris.sdl`) and run `interop` tool like this:
 
-    ./gradlew run_external
+    interop -def:lib.def
 
-To update the blackbox compiler tests set TeamCity build number in `gradle.properties`:
-
-    testDataVersion=<build number>:id
-
-and run `./gradlew update_external_tests`
+See provided samples and `INTEROP.md` for more details.

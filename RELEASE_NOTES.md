@@ -23,8 +23,8 @@ the following platforms:
 
  * Mac OS X 10.10 and later (x86-64)
  * x86-64 Ubuntu Linux (14.04, 16.04 and later), other Linux flavours may work as well
- * Apple iOS (arm64 and simulator on x86-64), cross-compiled on MacOS X host
- * Raspberry Pi, cross-compiled on Linux host
+ * Apple iOS (arm64), cross-compiled on MacOS X host (`-target iphone`)
+ * Raspberry Pi, cross-compiled on Linux host (`-target raspberrypi`)
 
 
  Adding support for other target platforms shalln't be too hard, if LLVM support
