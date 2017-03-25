@@ -103,7 +103,7 @@ class LoggingStorageManager(
     }
 
     private fun enclosingEntity(klass: Class<out Any>): GenericDeclaration? =
-            klass.enclosingConstructor ?: klass.enclosingMethod ?: klass.enclosingClass
+            klass.enclosingConstructor as? GenericDeclaration ?: klass.enclosingMethod ?: klass.enclosingClass
 
     private fun Class<*>.getAllDeclaredFields(): List<Field> {
         val result = arrayListOf<Field>()
