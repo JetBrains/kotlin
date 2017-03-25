@@ -46,8 +46,13 @@ class GenericReplCompilingEvaluator(val compiler: ReplCompiler,
                             aggregatedState.apply {
                                 lock.write {
                                     if (state1.history.size > state2.history.size) {
-                                        state2.history.peek()?.let {
-                                            state1.history.resetTo(it.id)
+                                        if (state2.history.size == 0) {
+                                            state1.history.reset()
+                                        }
+                                        else {
+                                            state2.history.peek()?.let {
+                                                state1.history.resetTo(it.id)
+                                            }
                                         }
                                         assert(state1.history.size == state2.history.size)
                                     }

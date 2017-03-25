@@ -52,11 +52,19 @@ open class AggregatedReplStateHistory<T1, T2>(val history1: IReplStageHistory<T1
         ReplHistoryRecord(r1.id, r1.item to r2.item)
     }
 
+    override fun reset(): Iterable<ILineId> = lock.write {
+        assertSameSize()
+        val i1 = history1.reset().toList()
+        val i2 = history2.reset().toList()
+        if (i1 != i2) throw IllegalStateException("Aggregated history reset lines mismatch: $i1 != $i2")
+        i1
+    }
+
     override fun resetTo(id: ILineId): Iterable<ILineId> = lock.write {
         assertSameSize()
         val i1 = history1.resetTo(id).toList()
         val i2 = history2.resetTo(id).toList()
-        if (i1 != i2) throw IllegalStateException("Aggregated history resetted lines mismatch: $i1 != $i2")
+        if (i1 != i2) throw IllegalStateException("Aggregated history reset lines mismatch: $i1 != $i2")
         i1
     }
 

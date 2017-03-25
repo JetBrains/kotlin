@@ -41,6 +41,8 @@ interface IReplStageHistory<T> : List<ReplHistoryRecord<T>> {
         else null
     }
 
+    fun reset(): Iterable<ILineId>
+
     fun resetTo(id: ILineId): Iterable<ILineId>
 
     val lock: ReentrantReadWriteLock

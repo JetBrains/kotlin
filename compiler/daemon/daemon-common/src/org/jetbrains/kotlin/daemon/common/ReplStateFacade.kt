@@ -32,5 +32,8 @@ interface ReplStateFacade : Remote {
     fun historyGet(index: Int): ILineId
 
     @Throws(RemoteException::class)
+    fun historyReset(): List<ILineId>
+
+    @Throws(RemoteException::class)
     fun historyResetTo(id: ILineId): List<ILineId>
 }

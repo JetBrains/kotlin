@@ -19,6 +19,7 @@
 package org.jetbrains.kotlin.cli.jvm.repl
 
 import org.jetbrains.kotlin.cli.common.repl.CompiledReplCodeLine
+import org.jetbrains.kotlin.cli.common.repl.ILineId
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplHistory
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
@@ -88,7 +89,9 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
         }
     }
 
-    fun resetToLine(lineNumber: Int): List<ReplCodeLine> = replState.resetToLine(lineNumber)
+    fun resetToLine(lineId: ILineId): List<ReplCodeLine> = replState.resetToLine(lineId)
+
+    fun reset(): List<ReplCodeLine> = replState.reset()
 
     fun analyzeReplLine(psiFile: KtFile, codeLine: ReplCodeLine): ReplLineAnalysisResult {
         topDownAnalysisContext.scripts.clear()
@@ -172,10 +175,15 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
         private val successfulLines = ReplHistory<LineInfo.SuccessfulLine>()
         private val submittedLines = hashMapOf<KtFile, LineInfo>()
 
-        fun resetToLine(lineNumber: Int): List<ReplCodeLine> {
-            val removed = successfulLines.resetToLine(lineNumber)
+        fun resetToLine(lineId: ILineId): List<ReplCodeLine> {
+            val removed = successfulLines.resetToLine(lineId.no)
             removed.forEach { submittedLines.remove(it.second.linePsi) }
             return removed.map { it.first }
+        }
+
+        fun reset(): List<ReplCodeLine> {
+            submittedLines.clear()
+            return successfulLines.reset().map { it.first }
         }
 
         fun submitLine(ktFile: KtFile, codeLine: ReplCodeLine) {
