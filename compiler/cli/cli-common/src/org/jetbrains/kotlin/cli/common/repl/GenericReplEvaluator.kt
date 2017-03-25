@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.cli.common.repl
 
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
+import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
 
@@ -88,14 +89,18 @@ open class GenericReplEvaluator(val baseClasspath: Iterable<File>,
                         if (invokeWrapper != null) invokeWrapper.invoke { scriptInstanceConstructor.newInstance(*constructorArgs) }
                         else scriptInstanceConstructor.newInstance(*constructorArgs)
                     }
+                    catch (e: InvocationTargetException) {
+                        // ignore everything in the stack trace until this constructor call
+                        return@eval ReplEvalResult.Error.Runtime(renderReplStackTrace(e.cause!!, startFromMethodName = "${scriptClass.name}.<init>"), e.targetException as? Exception)
+                    }
                     catch (e: Throwable) {
-                        historyActor.removePlaceholder(compileResult.lineId)
-
                         // ignore everything in the stack trace until this constructor call
                         return@eval ReplEvalResult.Error.Runtime(renderReplStackTrace(e.cause!!, startFromMethodName = "${scriptClass.name}.<init>"), e as? Exception)
                     }
+                    finally {
+                        historyActor.removePlaceholder(compileResult.lineId)
+                    }
 
-            historyActor.removePlaceholder(compileResult.lineId)
             historyActor.addFinal(compileResult.lineId, EvalClassWithInstanceAndLoader(scriptClass.kotlin, scriptInstance, classLoader, invokeWrapper))
 
             val resultField = scriptClass.getDeclaredField(SCRIPT_RESULT_FIELD_NAME).apply { isAccessible = true }
