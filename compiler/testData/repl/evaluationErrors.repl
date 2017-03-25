@@ -6,4 +6,4 @@ java.lang.Exception: hi there
 >>> fun bar(): Nothing = throw AssertionError()
 >>> bar()
 java.lang.AssertionError
-	at Line4.bar(Unknown Source)
+	at Line_3.bar(Unknown Source)

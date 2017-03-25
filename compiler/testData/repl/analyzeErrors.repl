@@ -1,6 +1,6 @@
 >>> fun foo() = 765
 >>> foo(1)
-error: too many arguments for public final fun foo(): Int defined in Line1
+error: too many arguments for public final fun foo(): Int defined in Line_0
 foo(1)
     ^
 >>> foo()

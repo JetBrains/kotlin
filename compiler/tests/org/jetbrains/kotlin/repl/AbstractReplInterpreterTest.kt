@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.repl
 
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
 import org.jetbrains.kotlin.cli.jvm.repl.ConsoleReplConfiguration
-import org.jetbrains.kotlin.cli.jvm.repl.LineResult
 import org.jetbrains.kotlin.cli.jvm.repl.ReplInterpreter
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -38,6 +38,7 @@ private val INCOMPLETE_PATTERN = Pattern.compile("\\.\\.\\.( *)(.*)$")
 private val TRAILING_NEWLINE_REGEX = Regex("\n$")
 
 private val INCOMPLETE_LINE_MESSAGE = "incomplete line"
+private val HISTORY_MISMATCH_LINE_MESSAGE = "history mismatch"
 
 abstract class AbstractReplInterpreterTest : KtUsefulTestCase() {
     init {
@@ -93,10 +94,11 @@ abstract class AbstractReplInterpreterTest : KtUsefulTestCase() {
             }
 
             val actual = when (lineResult) {
-                is LineResult.ValueResult -> lineResult.valueAsString
-                is LineResult.Error -> lineResult.errorText
-                LineResult.Incomplete -> INCOMPLETE_LINE_MESSAGE
-                LineResult.UnitResult -> ""
+                is ReplEvalResult.ValueResult -> lineResult.value.toString()
+                is ReplEvalResult.Error -> lineResult.message
+                is ReplEvalResult.Incomplete -> INCOMPLETE_LINE_MESSAGE
+                is ReplEvalResult.UnitResult -> ""
+                is ReplEvalResult.HistoryMismatch -> HISTORY_MISMATCH_LINE_MESSAGE
             }
 
             Assert.assertEquals(
