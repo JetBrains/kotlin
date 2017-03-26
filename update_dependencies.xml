@@ -927,10 +927,12 @@
             usetimestamp="true"/>
         <unzip src="${android.download.dir}/intellij-core-${android.studio.intellij-core.build.number}.zip" dest="${android.download.dir}/intellij-core" />
 
-        <download_and_unzip
-            dir="${android.download.dir}/jps-standalone"
-            url="${base.repository.url}/jps-standalone/${android.studio.intellij-core.build.number}/jps-standalone-${android.studio.intellij-core.build.number}.zip"
+        <get
+            src="${base.repository.url}/jps-standalone/${android.studio.intellij-core.build.number}/jps-standalone-${android.studio.intellij-core.build.number}.zip"
+            dest="${android.download.dir}/jps-standalone-${android.studio.intellij-core.build.number}.zip"
             usetimestamp="true"/>
+
+        <unzip src="${android.download.dir}/jps-standalone-${android.studio.intellij-core.build.number}.zip" dest="${android.download.dir}/jps-standalone" />
 
         <copy_intellij_core_files idea.dir="${android.destination.dir}"
                                   download.dir.intellij-core="${android.download.dir}/intellij-core"
