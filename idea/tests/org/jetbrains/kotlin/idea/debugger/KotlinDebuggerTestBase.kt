@@ -20,10 +20,7 @@ import com.intellij.debugger.DebuggerInvocationUtil
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.actions.MethodSmartStepTarget
 import com.intellij.debugger.actions.SmartStepTarget
-import com.intellij.debugger.engine.BasicStepMethodFilter
-import com.intellij.debugger.engine.DebugProcessImpl
-import com.intellij.debugger.engine.MethodFilter
-import com.intellij.debugger.engine.SuspendContextImpl
+import com.intellij.debugger.engine.*
 import com.intellij.debugger.engine.evaluation.CodeFragmentKind
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
@@ -46,10 +43,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.xdebugger.XDebuggerManager
 import com.intellij.xdebugger.XDebuggerUtil
-import com.intellij.xdebugger.breakpoints.XBreakpointManager
-import com.intellij.xdebugger.breakpoints.XBreakpointProperties
-import com.intellij.xdebugger.breakpoints.XBreakpointType
-import com.intellij.xdebugger.breakpoints.XLineBreakpointType
+import com.intellij.xdebugger.breakpoints.*
 import com.sun.jdi.request.StepRequest
 import org.jetbrains.java.debugger.breakpoints.properties.JavaBreakpointProperties
 import org.jetbrains.java.debugger.breakpoints.properties.JavaLineBreakpointProperties
@@ -142,7 +136,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         get() = debugProcess ?: throw AssertionError("createLocalProcess() should be called before getDebugProcess()")
 
     fun doOnBreakpoint(action: SuspendContextImpl.() -> Unit) {
-        super.onBreakpoint({
+        super.onBreakpoint(SuspendContextRunnable {
             try {
                 initContexts(it)
                 it.printContext()
@@ -309,7 +303,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
                 if (comment.startsWith("//FieldWatchpoint!")) {
                     val javaBreakpoint = createBreakpointOfType(
                             breakpointManager,
-                            kotlinFieldBreakpointType,
+                            kotlinFieldBreakpointType as XLineBreakpointType<XBreakpointProperties<*>>,
                             lineIndex,
                             virtualFile)
                     if (javaBreakpoint is KotlinFieldBreakpoint) {
@@ -364,7 +358,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         val kotlinLineBreakpointType = findBreakpointType(KotlinLineBreakpointType::class.java)
         val javaBreakpoint = createBreakpointOfType(
                 breakpointManager,
-                kotlinLineBreakpointType,
+                kotlinLineBreakpointType  as XLineBreakpointType<XBreakpointProperties<*>>,
                 lineIndex,
                 file.virtualFile)
         if (javaBreakpoint is LineBreakpoint<*>) {
@@ -407,9 +401,9 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         return BreakpointManager.getJavaBreakpoint(xBreakpoint)
     }
 
-    @Suppress("UNCHECKED_CAST")
-    private inline fun <reified T : XBreakpointType<*, *>> findBreakpointType(javaClass: Class<T>): XLineBreakpointType<XBreakpointProperties<*>> {
-        return XDebuggerUtil.getInstance().findBreakpointType(javaClass) as XLineBreakpointType<XBreakpointProperties<*>>
+    private inline fun <reified T> findBreakpointType(javaClass: Class<T>): T {
+        val kotlinFieldBreakpointTypeClass = javaClass as Class<out XBreakpointType<XBreakpoint<XBreakpointProperties<*>>, XBreakpointProperties<*>>>
+        return XDebuggerUtil.getInstance().findBreakpointType(kotlinFieldBreakpointTypeClass) as T
     }
 
     protected fun createAdditionalBreakpoints(fileText: String) {
@@ -439,7 +433,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
         assert(sourceFiles.size == 1) { "One source file should be found: name = $fileName, sourceFiles = $sourceFiles" }
 
-        val runnable = Runnable {
+        val runnable = Runnable() {
             val psiSourceFile = PsiManager.getInstance(project).findFile(sourceFiles.first())!!
 
             val breakpointManager = XDebuggerManager.getInstance(myProject).breakpointManager
