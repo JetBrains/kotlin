@@ -35,10 +35,6 @@ interface JvmDependenciesIndex {
             acceptedRootTypes: Set<JavaRoot.RootType> = JavaRoot.SourceAndBinary,
             continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
     )
-
-    fun collectKnownClassNamesInPackage(
-            packageFqName: FqName
-    ): Set<String>
 }
 
 data class JavaRoot(val file: VirtualFile, val type: RootType, val prefixFqName: FqName? = null) {

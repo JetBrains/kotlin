@@ -121,7 +121,22 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         return findClassInPsiFile(classNameWithInnerClasses, file)
     }
 
-    override fun knownClassNamesInPackage(packageFqName: FqName) = index.collectKnownClassNamesInPackage(packageFqName)
+    override fun knownClassNamesInPackage(packageFqName: FqName): Set<String> {
+        val result = hashSetOf<String>()
+        index.traverseDirectoriesInPackage(packageFqName, continueSearch = {
+            dir, _ ->
+
+            for (child in dir.children) {
+                if (child.extension == "class" || child.extension == "java") {
+                    result.add(child.nameWithoutExtension)
+                }
+            }
+
+            true
+        })
+
+        return result
+    }
 
     companion object {
         private val LOG = Logger.getInstance(KotlinCliJavaFileManagerImpl::class.java)

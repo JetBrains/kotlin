@@ -23,7 +23,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
-class JvmDependenciesDynamicCompoundIndex() : JvmDependenciesIndex {
+class JvmDependenciesDynamicCompoundIndex : JvmDependenciesIndex {
     private val indices = arrayListOf<JvmDependenciesIndex>()
     private val lock = ReentrantReadWriteLock()
 
@@ -36,13 +36,9 @@ class JvmDependenciesDynamicCompoundIndex() : JvmDependenciesIndex {
     fun addNewIndexForRoots(roots: Iterable<JavaRoot>): JvmDependenciesIndex? =
             lock.read {
                 val alreadyIndexed = indexedRoots.toHashSet()
-                val newRoots = roots.filter { !alreadyIndexed.contains(it) }
+                val newRoots = roots.filter { root -> root !in alreadyIndexed }
                 if (newRoots.isEmpty()) null
-                else {
-                    val index = JvmDependenciesIndexImpl(newRoots)
-                    addIndex(index)
-                    index
-                }
+                else JvmDependenciesIndexImpl(newRoots).also(this::addIndex)
             }
 
     override val indexedRoots: Sequence<JavaRoot> get() = indices.asSequence().flatMap { it.indexedRoots }
@@ -51,22 +47,15 @@ class JvmDependenciesDynamicCompoundIndex() : JvmDependenciesIndex {
             classId: ClassId,
             acceptedRootTypes: Set<JavaRoot.RootType>,
             findClassGivenDirectory: (VirtualFile, JavaRoot.RootType) -> T?
-    ): T? =
-            lock.read {
-                indices.asSequence().mapNotNull { it.findClass(classId, acceptedRootTypes, findClassGivenDirectory) }.firstOrNull()
-            }
+    ): T? = lock.read {
+        indices.asSequence().mapNotNull { it.findClass(classId, acceptedRootTypes, findClassGivenDirectory) }.firstOrNull()
+    }
 
     override fun traverseDirectoriesInPackage(
             packageFqName: FqName,
             acceptedRootTypes: Set<JavaRoot.RootType>,
             continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
-    ) {
-        lock.read {
-            indices.forEach { it.traverseDirectoriesInPackage(packageFqName, acceptedRootTypes, continueSearch) }
-        }
-    }
-
-    override fun collectKnownClassNamesInPackage(packageFqName: FqName): Set<String> = lock.read {
-        indices.flatMapTo(hashSetOf()) { it.collectKnownClassNamesInPackage(packageFqName) }
+    ) = lock.read {
+        indices.forEach { it.traverseDirectoriesInPackage(packageFqName, acceptedRootTypes, continueSearch) }
     }
 }
