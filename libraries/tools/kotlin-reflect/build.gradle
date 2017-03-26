@@ -20,7 +20,7 @@ def annotationsSrc = "${buildDir}/annotations"
 def relocatedCoreSrc = "${buildDir}/core-relocated"
 
 sourceSets {
-    reflectMain {
+    main {
         java {
             srcDir annotationsSrc
             srcDir "${core}/descriptor.loader.java/src"
@@ -38,13 +38,14 @@ sourceSets {
 
 configurations {
     proguardDeps
+    shadowes
+    compileOnly.extendsFrom(shadowes)
 }
 
 dependencies {
     proguardDeps project(':kotlin-stdlib')
-    reflectMainCompileOnly project(':kotlin-stdlib')
-    reflectMainCompile 'javax.inject:javax.inject:1'
-    reflectMainCompile files("${depDir}/protobuf-2.6.1-lite.jar")
+    shadowes 'javax.inject:javax.inject:1'
+    shadowes files("${depDir}/protobuf-2.6.1-lite.jar")
 
     compile project(':kotlin-stdlib')
 
@@ -63,12 +64,12 @@ task copyAnnotations(type: Sync) {
 }
 
 
-compileReflectMainJava {
+compileJava {
     dependsOn copyAnnotations
     // options.compilerArgs.addAll(["-Xlint:unchecked"])
 }
 
-compileReflectMainKotlin {
+compileKotlin {
     dependsOn copyAnnotations
     kotlinOptions {
         freeCompilerArgs = ["-version",
@@ -84,12 +85,12 @@ kotlin.experimental.coroutines "enable"
 task reflectShadowJar(type: ShadowJar) {
     classifier = 'shadow'
     version = null
-    from (sourceSets.reflectMain.output)
+    from (sourceSets.main.output)
     from ("${core}/descriptor.loader.java/src") {
         include 'META-INF/services/**'
     }
 
-    configurations = [project.configurations.reflectMainRuntime]
+    configurations = [project.configurations.shadowes]
     relocate 'org.jetbrains.kotlin', 'kotlin.reflect.jvm.internal.impl'
     relocate 'javax.inject', 'kotlin.reflect.jvm.internal.impl.javax.inject'
 }
@@ -162,6 +163,10 @@ task relocatedSourcesJar(type: Jar) {
 }
 
 artifacts {
+    it.default(file("${buildDir}/libs/${mainArchiveName}")) {
+        builtBy proguard
+    }
+
     archives(file("${buildDir}/libs/${mainArchiveName}")) {
         name archivesBaseName
         builtBy proguard
