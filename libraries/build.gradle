@@ -33,6 +33,10 @@ subprojects {
         compilerJarFile = bootstrapCompilerFile
     }
 
+    task javadocJar(type: Jar) {
+        classifier = 'javadoc'
+    }
+
     signing {
         required { project.ext.has('signing.keyId') }
         sign configurations.archives
@@ -81,19 +85,9 @@ static def commonJvmProjectConfiguration(Project project) {
         }
 
 
-        // TODO: use dokka instead?
-        javadoc {
-            failOnError = false
-        }
-
         task sourcesJar(type: Jar, dependsOn:classes) {
             classifier = 'sources'
             from sourceSets.main.kotlin
-        }
-
-        task javadocJar(type: Jar, dependsOn:javadoc) {
-            classifier = 'javadoc'
-            from javadoc.destinationDir
         }
 
         tasks.withType(JavaCompile) {

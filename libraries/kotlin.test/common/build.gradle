@@ -23,22 +23,8 @@ jar {
     from("${rootDir}/../dist/kotlinc/build.txt") { into("META-INF/") }
 }
 
-
-// TODO: use dokka instead?
-javadoc {
-    failOnError = false
-}
-
 task sourcesJar(type: Jar, dependsOn:classes) {
     classifier = 'sources'
     from sourceSets.main.kotlin
 
 }
-
-task javadocJar(type: Jar, dependsOn:javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-
-

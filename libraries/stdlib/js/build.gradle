@@ -203,16 +203,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 }
 
 
-task emptyJavadoc(type: Javadoc) {
-    source = sourceSets.main.java
-    failOnError = false
-}
-
-task javadocJar(type: Jar, dependsOn: emptyJavadoc) {
-    classifier = 'javadoc'
-    from emptyJavadoc.destinationDir
-}
-
 artifacts {
     runtime mergedJar
     archives mergedJar

@@ -40,16 +40,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from (sourceSets.main.allSource)
 }
 
-task emptyJavadoc(type: Javadoc) {
-    source = sourceSets.main.java
-    failOnError = false
-}
-
-task javadocJar(type: Jar, dependsOn: emptyJavadoc) {
-    classifier = 'javadoc'
-    from emptyJavadoc.destinationDir
-}
-
 artifacts {
     archives sourcesJar
     archives javadocJar
