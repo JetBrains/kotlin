@@ -1,20 +1,28 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 description = 'Kotlin Full Reflection Library'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'net.sf.proguard:proguard-gradle:5.2.1'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
+    }
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
 
 def core = "${rootDir}/../core"
 def depDir = "${rootDir}/../dependencies"
+def annotationsSrc = "${buildDir}/annotations"
+def relocatedCoreSrc = "${buildDir}/core-relocated"
 
 sourceSets {
-    annotations {
-        java {
-            srcDir "${core}/runtime.jvm/src"
-            include "**/Mutable.java"
-            include "**/ReadOnly.java"
-        }
-    }
     reflectMain {
         java {
-            source annotations.java
-
+            srcDir annotationsSrc
             srcDir "${core}/descriptor.loader.java/src"
             srcDir "${core}/descriptors/src"
             srcDir "${core}/descriptors.runtime/src"
@@ -24,25 +32,140 @@ sourceSets {
             srcDir "${core}/reflection.jvm/src"
         }
     }
+
+    stripAnnotations
+}
+
+configurations {
+    proguardDeps
 }
 
 dependencies {
-    reflectMainCompile project(':kotlin-stdlib')
+    proguardDeps project(':kotlin-stdlib')
+    reflectMainCompileOnly project(':kotlin-stdlib')
     reflectMainCompile 'javax.inject:javax.inject:1'
     reflectMainCompile files("${depDir}/protobuf-2.6.1-lite.jar")
+
+    compile project(':kotlin-stdlib')
+
+    stripAnnotationsCompile 'org.ow2.asm:asm-debug-all:5.0.4'
+    stripAnnotationsCompile project(':kotlin-stdlib')
+}
+
+task copyAnnotations(type: Sync) {
+    // copy just two missing annotations
+    from("${core}/runtime.jvm/src") {
+        include "**/Mutable.java"
+        include "**/ReadOnly.java"
+    }
+    into(annotationsSrc)
+    includeEmptyDirs false
 }
 
 
 compileReflectMainJava {
+    dependsOn copyAnnotations
     // options.compilerArgs.addAll(["-Xlint:unchecked"])
 }
 
 compileReflectMainKotlin {
+    dependsOn copyAnnotations
     kotlinOptions {
         freeCompilerArgs = ["-version",
                             "-Xallow-kotlin-package",
+                            "-module-name", "kotlin-reflection",
                             "-Xdump-declarations-to", "${buildDir}/reflect-declarations.json"]
     }
 }
 
 kotlin.experimental.coroutines "enable"
+
+
+task reflectShadowJar(type: ShadowJar) {
+    classifier = 'shadow'
+    version = null
+    from (sourceSets.reflectMain.output)
+    from ("${core}/descriptor.loader.java/src") {
+        include 'META-INF/services/**'
+    }
+
+    configurations = [project.configurations.reflectMainRuntime]
+    relocate 'org.jetbrains.kotlin', 'kotlin.reflect.jvm.internal.impl'
+    relocate 'javax.inject', 'kotlin.reflect.jvm.internal.impl.javax.inject'
+}
+
+// TODO
+compileStripAnnotationsKotlin {
+    dependsOn reflectShadowJar
+    source "${rootDir}/../generators/infrastructure/strip-kotlin-annotations.kts"
+    kotlinOptions {
+        freeCompilerArgs = [
+                "-version",
+                "-script",
+                "${rootDir}/../generators/infrastructure/strip-kotlin-annotations.kts",
+                "kotlin/Metadata",
+                "kotlin/reflect/jvm/internal/impl/.*",
+                "${buildDir}/libs/kotlin-reflect-shadow.jar",
+                "${buildDir}/libs/kotlin-reflect-stripped.jar"
+        ]
+    }
+}
+
+def mainArchiveName = "${archivesBaseName}-${project.version}.jar"
+def rtJar = ['jre/lib/rt.jar', '../Classes/classes.jar'].collect { new File(JDK_16, it) }.find { it.isFile() }
+
+task proguard(type: proguard.gradle.ProGuardTask) {
+    dependsOn reflectShadowJar
+    injars "${buildDir}/libs/kotlin-reflect-shadow.jar"
+    outjars "${buildDir}/libs/${mainArchiveName}"
+
+    libraryjars configurations.proguardDeps.files
+    libraryjars rtJar
+
+    configuration "${core}/reflection.jvm/reflection.gradle.pro"
+}
+
+
+task relocateCoreSources(type: Copy) {
+    def commonPackage = "org/jetbrains/kotlin"
+
+    doFirst {
+        delete(relocatedCoreSrc)
+    }
+
+    from "${core}/descriptor.loader.java/src/${commonPackage}"
+    from "${core}/descriptors/src/${commonPackage}"
+    from "${core}/descriptors.runtime/src/${commonPackage}"
+    from "${core}/deserialization/src/${commonPackage}"
+    from "${core}/util.runtime/src/${commonPackage}"
+
+    into "${relocatedCoreSrc}/kotlin/reflect/jvm/internal/impl"
+
+    doLast {
+        ant.replaceregexp(
+                match: 'org\\.jetbrains\\.kotlin',
+                replace: 'kotlin.reflect.jvm.internal.impl',
+                flags: 'g'
+        ) {
+            fileset(dir: relocatedCoreSrc)
+        }
+    }
+}
+
+jar.enabled false
+
+task relocatedSourcesJar(type: Jar) {
+    dependsOn relocateCoreSources
+    classifier 'sources'
+    from relocatedCoreSrc
+    from "${core}/reflection.jvm/src"
+}
+
+artifacts {
+    archives(file("${buildDir}/libs/${mainArchiveName}")) {
+        name archivesBaseName
+        builtBy proguard
+    }
+    archives relocatedSourcesJar
+    archives javadocJar
+}
