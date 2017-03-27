@@ -8,7 +8,7 @@
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/dependencies/asm-src.zip!/" />
+      <root url="jar://$PROJECT_DIR$/dependencies/asm5-src.zip!/" />
     </SOURCES>
   </library>
 </component>
