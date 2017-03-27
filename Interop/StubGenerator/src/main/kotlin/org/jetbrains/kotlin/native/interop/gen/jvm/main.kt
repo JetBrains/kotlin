@@ -141,10 +141,7 @@ private fun Properties.defaultCompilerOpts(target: String, dependencies: String,
     val llvmHome = "$dependencies/$llvmHomeDir"
     val llvmVersion = this.getProperty("llvmVersion")!!
 
-    val dependencyList = mutableListOf<String>(sysRoot, targetSysRoot, llvmHome)
-    if (target == "linux") {
-        dependencyList.add("$dependencies/${getOsSpecific("gccToolChain", target)!!}")
-    }
+    val dependencyList = getOsSpecific("dependencies", target)?.split(' ') ?: listOf<String>()
     maybeExecuteHelper(dependencies, konanFileName, dependencyList)
 
     // StubGenerator passes the arguments to libclang which 

@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.konan
 
-import org.jetbrains.kotlin.backend.konan.KonanProperties
 import java.io.File
 import java.util.*
 

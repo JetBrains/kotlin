@@ -25,7 +25,8 @@ class Distribution(val config: CompilerConfiguration) {
     val lib = "$konanHome/lib/$target"
 
     // We can override dependency directory using konan.dependencies system property.
-    val dependencies = System.getProperty("konan.dependencies", "$konanHome/dependencies")
+    val dependenciesDir = System.getProperty("konan.dependencies", "$konanHome/dependencies")
+    val dependencies = properties.propertyList("dependencies.$suffix")
 
     val stdlib = "$lib/stdlib.kt.bc"
     val start = "$lib/start.kt.bc"
@@ -33,12 +34,12 @@ class Distribution(val config: CompilerConfiguration) {
     val runtime = config.get(KonanConfigKeys.RUNTIME_FILE) 
         ?: "$lib/runtime.bc"
 
-    val llvmHome = "$dependencies/${properties.propertyString("llvmHome.$suffix")}" 
-    val sysRoot = "$dependencies/${properties.propertyString("sysRoot.$suffix")}"
-    val libGcc = "$dependencies/${properties.propertyString("libGcc.$suffix")}"
+    val llvmHome = "$dependenciesDir/${properties.propertyString("llvmHome.$suffix")}"
+    val sysRoot = "$dependenciesDir/${properties.propertyString("sysRoot.$suffix")}"
+    val libGcc = "$dependenciesDir/${properties.propertyString("libGcc.$suffix")}"
 
     val targetSysRoot = if (properties.hasProperty("targetSysRoot.$suffix")) {
-            "$dependencies/${properties.propertyString("targetSysRoot.$suffix")}"
+            "$dependenciesDir/${properties.propertyString("targetSysRoot.$suffix")}"
         } else {
             sysRoot
         }
