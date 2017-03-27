@@ -60,6 +60,37 @@ abstract class CValues<T : CVariable> : CValuesRef<T>() {
      * Copies the values to [placement] and returns the pointer to the copy.
      */
     override abstract fun getPointer(placement: NativePlacement): CPointer<T>
+
+    // TODO: optimize
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is CValues<*>) return false
+
+        val thisBytes = this.getBytes()
+        val otherBytes = other.getBytes()
+
+        if (thisBytes.size != otherBytes.size) {
+            return false
+        }
+
+        for (index in 0 .. thisBytes.size - 1) {
+            if (thisBytes[index] != otherBytes[index]) {
+                return false
+            }
+        }
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = 0
+        for (byte in this.getBytes()) {
+            result = result * 31 + byte
+        }
+        return result
+    }
+
+    abstract val size: Int
 }
 
 fun <T : CVariable> CValues<T>.placeTo(placement: NativePlacement) = this.getPointer(placement)

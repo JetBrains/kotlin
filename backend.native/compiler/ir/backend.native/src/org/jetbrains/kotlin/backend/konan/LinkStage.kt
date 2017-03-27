@@ -63,7 +63,7 @@ internal class IPhoneOSfromMacOSPlatform(distribution: Distribution)
     override val arch = properties.propertyString("arch.osx-ios")!!
     override val osVersionMin = properties.propertyList("osVersionMin.osx-ios")
     override val llvmLlcFlags = properties.propertyList("llvmLlcFlags.osx-ios")
-    override val targetSysRoot = "${distribution.dependencies}/${properties.propertyString("targetSysRoot.osx-ios")!!}"
+    override val targetSysRoot = "${distribution.dependenciesDir}/${properties.propertyString("targetSysRoot.osx-ios")!!}"
 }
 
 internal class IPhoneSimulatorFromMacOSPlatform(distribution: Distribution)
@@ -72,7 +72,7 @@ internal class IPhoneSimulatorFromMacOSPlatform(distribution: Distribution)
     override val arch = properties.propertyString("arch.osx-ios-sim")!!
     override val osVersionMin = properties.propertyList("osVersionMin.osx-ios-sim")
     override val llvmLlcFlags = properties.propertyList("llvmLlcFlags.osx-ios-sim")
-    override val targetSysRoot = "${distribution.dependencies}/${properties.propertyString("targetSysRoot.osx-ios-sim")!!}"
+    override val targetSysRoot = "${distribution.dependenciesDir}/${properties.propertyString("targetSysRoot.osx-ios-sim")!!}"
 }
 
 internal open class LinuxPlatform(distribution: Distribution)
@@ -119,7 +119,7 @@ internal open class LinuxPlatform(distribution: Distribution)
 internal class RaspberryPiPlatform(distribution: Distribution)
     : LinuxPlatform(distribution) {
 
-    override val sysRoot = "${distribution.dependencies}/${properties.propertyString("targetSysRoot.linux-raspberrypi")!!}"
+    override val sysRoot = "${distribution.dependenciesDir}/${properties.propertyString("targetSysRoot.linux-raspberrypi")!!}"
 
     override fun linkCommand(objectFiles: List<String>, executable: String, optimize: Boolean): List<String> {
         // TODO: Can we extract more to the konan.properties?
@@ -229,6 +229,7 @@ internal class LinkStage(val context: Context) {
     fun link(objectFiles: List<ObjectFile>): ExecutableFile {
         val executable = config.get(KonanConfigKeys.EXECUTABLE_FILE)!!
         val linkCommand = platform.linkCommand(objectFiles, executable, optimize) +
+                distribution.libffi +
                 asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
                 entryPointSelector
 

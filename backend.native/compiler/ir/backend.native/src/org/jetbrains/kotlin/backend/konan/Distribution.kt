@@ -44,6 +44,8 @@ class Distribution(val config: CompilerConfiguration) {
             sysRoot
         }
 
+    val libffi = "$dependenciesDir/${properties.propertyString("libffiDir.$suffix")}/lib/libffi.a"
+
     val llvmBin = "$llvmHome/bin"
     val llvmLib = "$llvmHome/lib"
 

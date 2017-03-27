@@ -158,6 +158,8 @@ fun <T : CVariable> zeroValue(size: Int, align: Int): CValue<T> = object : CValu
         nativeMemUtils.zeroMemory(result, size)
         return interpretCPointer(result.rawPtr)!!
     }
+
+    override val size get() = size
 }
 
 inline fun <reified T : CVariable> zeroValue(): CValue<T> =
@@ -175,6 +177,7 @@ fun <T : CVariable> CPointed.readValues(size: Int, align: Int): CValues<T> {
 
     return object : CValues<T>() {
         override fun getPointer(placement: NativePlacement): CPointer<T> = placement.placeBytes(bytes, align)
+        override val size get() = bytes.size
     }
 }
 
@@ -186,12 +189,26 @@ fun <T : CVariable> CPointed.readValue(size: Int, align: Int): CValue<T> {
     nativeMemUtils.getByteArray(this, bytes, size)
     return object : CValue<T>() {
         override fun getPointer(placement: NativePlacement): CPointer<T> = placement.placeBytes(bytes, align)
+        override val size get() = bytes.size
     }
 }
 
 // Note: can't be declared as property due to possible clash with a struct field.
 // TODO: find better name.
 inline fun <reified T : CStructVar> T.readValue(): CValue<T> = this.readValue(sizeOf<T>().toInt(), alignOf<T>())
+
+// TODO: optimize
+fun <T : CVariable> CValues<T>.getBytes(): ByteArray = memScoped {
+    val result = ByteArray(size)
+
+    nativeMemUtils.getByteArray(
+            source = this@getBytes.placeTo(memScope).reinterpret<CInt8Var>().pointed,
+            dest = result,
+            length = result.size
+    )
+
+    result
+}
 
 /**
  * Calls the [block] with temporary copy if this value as receiver.
@@ -215,6 +232,7 @@ inline fun <reified T : CVariable> createValues(count: Int, initializer: T.(inde
 
 fun cValuesOf(vararg elements: Byte): CValues<CInt8Var> = object : CValues<CInt8Var>() {
     override fun getPointer(placement: NativePlacement) = placement.allocArrayOf(elements)[0].ptr
+    override val size get() = 1 * elements.size
 }
 
 // TODO: optimize other [cValuesOf] methods:
@@ -230,6 +248,7 @@ fun cValuesOf(vararg elements: Long): CValues<CInt64Var> =
 
 fun cValuesOf(vararg elements: Float): CValues<CFloat32Var> = object : CValues<CFloat32Var>() {
     override fun getPointer(placement: NativePlacement) = placement.allocArrayOf(*elements)[0].ptr
+    override val size get() = 4 * elements.size
 }
 
 fun cValuesOf(vararg elements: Double): CValues<CFloat64Var> =
@@ -258,6 +277,8 @@ val String.cstr: CValues<CInt8Var>
         val bytes = encodeToUtf8(this)
 
         return object : CValues<CInt8Var>() {
+            override val size get() = bytes.size + 1
+
             override fun getPointer(placement: NativePlacement): CPointer<CInt8Var> {
                 val result = placement.allocArray<CInt8Var>(bytes.size + 1)
                 nativeMemUtils.putByteArray(bytes, result, bytes.size)

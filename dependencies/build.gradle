@@ -70,7 +70,7 @@ class TgzNativeDep extends NativeDep {
 }
 
 
-task libffi(type: TgzNativeDep) {
+task hostLibffi(type: TgzNativeDep) {
     baseName = "libffi-3.2.1-2-$host"
 }
 
@@ -85,12 +85,18 @@ if (isLinux()) {
     task raspberryPiSysroot(type: TgzNativeDep) {
         baseName = "target-sysroot-1-raspberrypi"
     }
+    task raspberrypiLibffi(type: TgzNativeDep) {
+        baseName = "libffi-3.2.1-2-raspberrypi"
+    }
 } else {
     task hostSysroot(type: TgzNativeDep) {
         baseName = "target-sysroot-1-$host"
     }
     task iphoneSysroot(type: TgzNativeDep) {
         baseName = "target-sysroot-2-darwin-ios"
+    }
+    task iphoneLibffi(type: TgzNativeDep) {
+        baseName = "libffi-3.2.1-2-darwin-ios"
     }
 // TODO: re-enable when we known how to bring the simulator
 // sysroot to dependencies.

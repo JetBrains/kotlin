@@ -11,6 +11,7 @@ targetList.each { targetName ->
         target targetName
         compilerArgs targetArgs[targetName]
         compilerArgs '-I' + project.file('../common/src/hash/headers')
+        compilerArgs '-I' + project.file(rootProject.ext.get("${targetName}LibffiDir") + "/include")
         linkerArgs project.file("../common/build/$targetName/hash.bc").path
     }
 }

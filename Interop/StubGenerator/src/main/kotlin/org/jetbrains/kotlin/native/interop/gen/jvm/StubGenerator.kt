@@ -694,6 +694,13 @@ class StubGenerator(
         }
     }
 
+    private fun FunctionDecl.generateAsFfiVarargs(): Boolean = (platform == KotlinPlatform.NATIVE && this.isVararg &&
+            // Neither takes nor returns structs by value or enum-typed values:
+            (this.parameters.map { it.type } + this.returnType).all {
+                val type = it.unwrapTypedefs()
+                type !is RecordType && type !is EnumType
+            })
+
     /**
      * Constructs [InValueBinding] for return value of Kotlin binding for given C function.
      */
@@ -760,6 +767,30 @@ class StubGenerator(
             "${name.asSimpleName()}: " + paramBindings[i].kotlinType
         }.joinToString(", ")
 
+        if (func.generateAsFfiVarargs()) {
+            val returnTypeKind = getFfiTypeKind(func.returnType)
+
+            val variadicParameter = "vararg variadicArguments: Any?"
+            val allParameters = if (args.isEmpty()) variadicParameter else "$args, $variadicParameter"
+            val header = "fun ${func.name.asSimpleName()}($allParameters): ${retValBinding.kotlinType} = memScoped"
+            val returnValueMirror = mirror(func.returnType)
+            block(header) {
+                val resultPtr = if (!func.returnsVoid()) {
+                    out("val resultVar = alloc<${returnValueMirror.pointedTypeName}>()")
+                    "resultVar.rawPtr"
+                } else {
+                    "nativeNullPtr"
+                }
+                out("callWithVarargs(${func.kotlinExternalName}(), $resultPtr, $returnTypeKind, " +
+                        "arrayOf(${paramNames.joinToString()}), variadicArguments, memScope)")
+
+                if (!func.returnsVoid()) {
+                    out("resultVar.value")
+                }
+            }
+            return
+        }
+
         val header = "fun ${func.name.asSimpleName()}($args): ${retValBinding.kotlinType}"
 
         if (!func.requiresKotlinAdapter()) {
@@ -822,6 +853,27 @@ class StubGenerator(
             } else {
                 generateBody(false)
             }
+        }
+    }
+
+    private fun getFfiTypeKind(type: Type): String {
+        val unwrappedType = type.unwrapTypedefs()
+        return when (unwrappedType) {
+            is VoidType -> "FFI_TYPE_KIND_VOID"
+            is PointerType -> "FFI_TYPE_KIND_POINTER"
+            is IntegerType -> when (unwrappedType.size) {
+                1 -> "FFI_TYPE_KIND_SINT8"
+                2 -> "FFI_TYPE_KIND_SINT16"
+                4 -> "FFI_TYPE_KIND_SINT32"
+                8 -> "FFI_TYPE_KIND_SINT64"
+                else -> TODO(unwrappedType.toString())
+            }
+            is FloatingType -> when (unwrappedType.size) {
+                4 -> "FFI_TYPE_KIND_FLOAT"
+                8 -> "FFI_TYPE_KIND_DOUBLE"
+                else -> TODO(unwrappedType.toString())
+            }
+            else -> TODO(unwrappedType.toString())
         }
     }
 
@@ -901,7 +953,7 @@ class StubGenerator(
             return true
         }
 
-        return this.returnsRecord() ||
+        return this.returnsRecord() || this.generateAsFfiVarargs() ||
                 this.parameters.map { it.type }.any {
                     it.unwrapTypedefs() is RecordType ||
                             representCFunctionParameterAsString(it) ||
@@ -919,6 +971,7 @@ class StubGenerator(
         }
 
         return this.isDefined ||
+                this.generateAsFfiVarargs() ||
                 this.returnsRecord() ||
                 this.parameters.map { it.type }.any { it.unwrapTypedefs() is RecordType }
     }
@@ -1077,6 +1130,14 @@ class StubGenerator(
      * Produces to [out] the definition of Kotlin JNI function used in binding for given C function.
      */
     private fun generateKotlinExternalMethod(func: FunctionDecl) {
+        if (func.generateAsFfiVarargs()) {
+            assert (platform == KotlinPlatform.NATIVE)
+            // The C stub simply returns pointer to the function:
+            out(func.symbolNameAnnotation)
+            out("private external fun ${func.kotlinExternalName}(): NativePtr")
+            return
+        }
+
         val paramNames = paramNames(func)
         val paramBindings = paramBindings(func)
         val retValBinding = retValBinding(func)
@@ -1266,6 +1327,13 @@ class StubGenerator(
      * Produces to [out] the implementation of JNI function used in Kotlin binding for given C function.
      */
     private fun generateCJniFunction(func: FunctionDecl) {
+        if (func.generateAsFfiVarargs()) {
+            assert (platform == KotlinPlatform.NATIVE)
+            // The C stub simply returns pointer to the function:
+            out("void* ${func.cStubName}() { return ${func.name}; }")
+            return
+        }
+
         val paramNames = paramNames(func)
         val paramBindings = paramBindings(func)
         val retValBinding = retValBinding(func)

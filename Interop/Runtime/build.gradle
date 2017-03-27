@@ -23,9 +23,9 @@ model {
             }
             binaries.all {
                 cCompiler.args compilerArgsForJniIncludes
-                cCompiler.args "-I$libffiDir/include"
+                cCompiler.args "-I$hostLibffiDir/include"
 
-                linker.args "$libffiDir/lib/libffi.a"
+                linker.args "$hostLibffiDir/lib/libffi.a"
             }
         }
    }

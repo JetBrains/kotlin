@@ -272,7 +272,9 @@ internal class NativeIndexImpl(val language: Language) : NativeIndex() {
                 val definitionCursor = clang_getCursorDefinition(cursor)
                 val isDefined = (clang_Cursor_isNull(definitionCursor) == 0)
 
-                functionByName[name] = FunctionDecl(name, args, returnType, binaryName, isDefined)
+                val isVararg = clang_Cursor_isVariadic(cursor) != 0
+
+                functionByName[name] = FunctionDecl(name, args, returnType, binaryName, isDefined, isVararg)
             }
 
             CXIdxEntity_Enum -> {
