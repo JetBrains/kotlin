@@ -4,7 +4,13 @@ This example shows implementation of simple Tetris game using SDL
 (Simple DirectMedia Layer) library for rendering. SDL allows easy development
 of cross-platform game and multimedia applications.
 
-Start with building compiler by using `dist` and `cross_dist` for cross-targets.
+Start with building compiler by using `dist` and `cross_dist` for cross-targets (unless
+using binary distribution).
+
+Install SDL2 development files (see https://www.libsdl.org/download-2.0.php). For Mac -
+copy `SDL2.framework` to `$HOME/Library/Frameworks`. For Debian-like Linux -
+use `apt-get install libsdl2-dev`.
+
 To build Tetris application for your host platform use
 	./build.sh
 note that SDL2 must be installed on the host.
