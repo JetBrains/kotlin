@@ -132,6 +132,10 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     fun isTriviallyAdaptedFunctionType(type: KotlinType): Boolean =
             type.isSubtypeOf(trivallyAdaptedFunctionTypeType)
+
+    val signExtend = packageScope.getContributedFunctions("signExtend").single()
+
+    val narrow = packageScope.getContributedFunctions("narrow").single()
 }
 
 private fun MemberScope.getContributedVariables(name: String) =

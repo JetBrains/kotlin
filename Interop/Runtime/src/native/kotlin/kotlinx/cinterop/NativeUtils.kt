@@ -22,3 +22,9 @@ external fun bitsToFloat(bits: Int): Float
 
 @Intrinsic
 external fun bitsToDouble(bits: Long): Double
+
+@Intrinsic
+external fun <R : Number> Number.signExtend(): R
+
+@Intrinsic
+external fun <R : Number> Number.narrow(): R

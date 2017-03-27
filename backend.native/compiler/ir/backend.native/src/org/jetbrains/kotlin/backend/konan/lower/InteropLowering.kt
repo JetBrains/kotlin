@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.ValueType
 import org.jetbrains.kotlin.backend.konan.isRepresentedAs
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.builders.IrBuilder
@@ -236,6 +237,50 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
                             typeArguments = null)
                 } else {
                     TODO("$cFunctionType requiring non-trivial C adapter")
+                }
+            }
+
+            interop.signExtend, interop.narrow -> {
+
+                val integerTypePredicates = arrayOf(
+                        KotlinBuiltIns::isByte, KotlinBuiltIns::isShort, KotlinBuiltIns::isInt, KotlinBuiltIns::isLong
+                )
+
+                val receiver = expression.extensionReceiver!!
+                val typeOperand = expression.getSingleTypeArgument()
+
+                val receiverTypeIndex = integerTypePredicates.indexOfFirst { it(receiver.type) }
+                val typeOperandIndex = integerTypePredicates.indexOfFirst { it(typeOperand) }
+
+                if (receiverTypeIndex == -1) {
+                    context.reportCompilationError("Receiver's type ${receiver.type} is not an integer type",
+                            irFile, receiver)
+                }
+
+                if (typeOperandIndex == -1) {
+                    context.reportCompilationError("Type argument $typeOperand is not an integer type",
+                            irFile, expression)
+                }
+
+                when (descriptor) {
+                    interop.signExtend -> if (receiverTypeIndex > typeOperandIndex) {
+                        context.reportCompilationError("unable to sign extend ${receiver.type} to $typeOperand",
+                                irFile, expression)
+                    }
+
+                    interop.narrow -> if (receiverTypeIndex < typeOperandIndex) {
+                        context.reportCompilationError("unable to narrow ${receiver.type} to $typeOperand",
+                                irFile, expression)
+                    }
+
+                    else -> throw Error()
+                }
+
+                val conversionDescriptor = receiver.type.memberScope.getContributedFunctions(
+                        Name.identifier("to$typeOperand"), NoLookupLocation.FROM_BACKEND).single()
+
+                builder.irCall(conversionDescriptor).apply {
+                    dispatchReceiver = receiver
                 }
             }
 
