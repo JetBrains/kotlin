@@ -30,6 +30,10 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
+import java.util.zip.GZIPInputStream
+import java.util.zip.GZIPOutputStream
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 
 /* ------------ Deserializer part ------------------------------------------*/
 
@@ -81,7 +85,8 @@ internal fun deserializeModule(configuration: CompilerConfiguration,
     builtIns.builtInsModule = moduleDescriptor
     val deserializationConfiguration = CompilerDeserializationConfiguration(configuration)
 
-    val libraryAsByteArray = base64Decode(base64)
+    val gzipped = base64Decode(base64)
+    val libraryAsByteArray = GZIPInputStream(ByteArrayInputStream(gzipped))
     val libraryProto = KonanLinkData.Library.parseFrom(
         libraryAsByteArray, KonanSerializerProtocol.extensionRegistry)
 
@@ -205,7 +210,12 @@ internal class KonanSerializationUtil(val context: Context) {
         }
 
         val libraryAsByteArray = library.build().toByteArray()
-        val base64 = base64Encode(libraryAsByteArray)
+
+        val gzipped = ByteArrayOutputStream()
+        val gzipStream = GZIPOutputStream(gzipped)
+        gzipStream.write(libraryAsByteArray)
+        gzipStream.close()
+        val base64 = base64Encode(gzipped.toByteArray())
         return base64
     }
 
