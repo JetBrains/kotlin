@@ -2,12 +2,13 @@
 buildscript {
     ext.kotlin_version = "1.1-SNAPSHOT"
     ext.kotlin_language_version = "1.1"
+    ext.kotlin_gradle_plugin_version = "1.1.1"
 
     repositories {
         mavenCentral()
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.1"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin_gradle_plugin_version}"
     }
 }
 
@@ -27,6 +28,15 @@ subprojects {
 
     repositories {
         mavenCentral()
+    }
+
+    configurations {
+        scriptCompile
+        scriptRuntime.extendsFrom(scriptCompile)
+    }
+
+    dependencies {
+        scriptCompile "org.jetbrains.kotlin:kotlin-compiler-embeddable:${kotlin_gradle_plugin_version}"
     }
 
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile) {
@@ -123,5 +133,23 @@ def createPreprocessorTask(Project project, def name, def sourceDir, def targetD
         classpath = project.files(bootstrapCompilerFile)
         main = "org.jetbrains.kotlin.preprocessor.PreprocessorCLI"
         args = [sourceDir, targetDir, profile]
+    }
+}
+
+static def createScriptTask(Project project, def name, Closure<JavaExec> configureClosure = null) {
+    JavaExec task = project.tasks.create(name, JavaExec)
+    return project.configure(task) {
+        classpath = project.configurations.scriptCompile
+        main = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
+        args = [
+                "-script",
+                "-version",
+                "-no-stdlib",
+                "-cp", project.configurations.scriptRuntime.asPath]
+
+        if (configureClosure != null) {
+            configureClosure.delegate = it
+            configureClosure.call()
+        }
     }
 }

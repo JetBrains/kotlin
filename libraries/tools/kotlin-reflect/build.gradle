@@ -32,8 +32,6 @@ sourceSets {
             srcDir "${core}/reflection.jvm/src"
         }
     }
-
-    stripAnnotations
 }
 
 configurations {
@@ -48,9 +46,6 @@ dependencies {
     shadowes files("${depDir}/protobuf-2.6.1-lite.jar")
 
     compile project(':kotlin-stdlib')
-
-    stripAnnotationsCompile 'org.ow2.asm:asm-debug-all:5.0.4'
-    stripAnnotationsCompile project(':kotlin-stdlib')
 }
 
 task copyAnnotations(type: Sync) {
@@ -95,30 +90,33 @@ task reflectShadowJar(type: ShadowJar) {
     relocate 'javax.inject', 'kotlin.reflect.jvm.internal.impl.javax.inject'
 }
 
-// TODO
-compileStripAnnotationsKotlin {
+createScriptTask(project, "stripMetadata") {
     dependsOn reflectShadowJar
-    source "${rootDir}/../generators/infrastructure/strip-kotlin-annotations.kts"
-    kotlinOptions {
-        freeCompilerArgs = [
-                "-version",
-                "-script",
-                "${rootDir}/../generators/infrastructure/strip-kotlin-annotations.kts",
-                "kotlin/Metadata",
-                "kotlin/reflect/jvm/internal/impl/.*",
-                "${buildDir}/libs/kotlin-reflect-shadow.jar",
-                "${buildDir}/libs/kotlin-reflect-stripped.jar"
-        ]
-    }
+    def inputJar = reflectShadowJar.archivePath
+    def outputJar = "${buildDir}/libs/kotlin-reflect-stripped.jar"
+    inputs.file(inputJar)
+    outputs.file(outputJar)
+    args += [
+            "${rootDir}/../generators/infrastructure/strip-kotlin-annotations.kts",
+            "kotlin/Metadata",
+            "kotlin/reflect/jvm/internal/impl/.*",
+            inputJar,
+            outputJar
+    ]
 }
 
+
 def mainArchiveName = "${archivesBaseName}-${project.version}.jar"
+def outputJarPath = "${buildDir}/libs/${mainArchiveName}"
 def rtJar = ['jre/lib/rt.jar', '../Classes/classes.jar'].collect { new File(JDK_16, it) }.find { it.isFile() }
 
 task proguard(type: proguard.gradle.ProGuardTask) {
-    dependsOn reflectShadowJar
-    injars "${buildDir}/libs/kotlin-reflect-shadow.jar"
-    outjars "${buildDir}/libs/${mainArchiveName}"
+    dependsOn stripMetadata
+    inputs.files(stripMetadata.outputs.files)
+    outputs.file(outputJarPath)
+
+    injars stripMetadata.outputs.files
+    outjars outputJarPath
 
     libraryjars configurations.proguardDeps.files
     libraryjars rtJar
@@ -163,11 +161,11 @@ task relocatedSourcesJar(type: Jar) {
 }
 
 artifacts {
-    it.default(file("${buildDir}/libs/${mainArchiveName}")) {
+    it.default(file(outputJarPath)) {
         builtBy proguard
     }
 
-    archives(file("${buildDir}/libs/${mainArchiveName}")) {
+    archives(file(outputJarPath)) {
         name archivesBaseName
         builtBy proguard
     }
