@@ -3,8 +3,10 @@
 PATH=../../dist/bin:../../bin:$PATH
 DIR=.
 
-LINKER_ARGS_macbook="-framework OpenGL -framework GLUT"
-LINKER_ARGS_linux="-L/usr/lib/x86_64-linux-gnu -lglut -lGL -lGLU"
+CFLAGS_macbook=-I/opt/local/include
+CFLAGS_linux=-I/usr/include
+LINKER_ARGS_macbook="-L/opt/local/lib -lgit2"
+LINKER_ARGS_linux="-L/usr/lib/x86_64-linux-gnu -lgit2"
 
 if [ x$TARGET == x ]; then
 case "$OSTYPE" in
@@ -21,6 +23,5 @@ LINKER_ARGS=${!var}
 var=COMPILER_ARGS_${TARGET}
 COMPILER_ARGS=${!var} # add -opt for an optimized build.
 
-interop -def:$DIR/opengl.def -target:$TARGET || exit 1
-# OpenGL stubs are rather big, so we need more heap space.
-konanc -J-Xmx2G -target $TARGET opengl $DIR/OpenGlTeapot.kt -nativelibrary openglstubs.bc -linkerArgs "$LINKER_ARGS" -o OpenGlTeapot.kexe || exit 1
+interop -copt:$CFLAGS -def:$DIR/libgit2.def -target:$TARGET || exit 1
+konanc -target $TARGET src libgit2 -nativelibrary libgit2stubs.bc -linkerArgs "$LINKER_ARGS" -o GitChurn.kexe || exit 1

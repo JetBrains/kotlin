@@ -95,7 +95,7 @@ private fun ProcessBuilder.runExpectingSuccess() {
 }
 
 private fun Properties.getSpaceSeparated(name: String): List<String> {
-    return this.getProperty(name)?.split(' ') ?: emptyList()
+    return this.getProperty(name)?.split(' ')?.filter { it.isNotEmpty() } ?: emptyList()
 }
 
 private fun Properties.getOsSpecific(name: String, 

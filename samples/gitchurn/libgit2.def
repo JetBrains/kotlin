@@ -1,0 +1,3 @@
+headers = git2.h
+linkerOpts = -lgit2
+excludedFunctions =

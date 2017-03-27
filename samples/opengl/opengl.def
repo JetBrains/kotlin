@@ -1,2 +1,6 @@
-headers = GLUT/glut.h
-compilerOpts = -framework OpenGL -framework GLUT
+headers =
+headers.osx = GLUT/glut.h
+headers.linux = GL/glut.h
+compilerOpts =
+compilerOpts.osx = -framework OpenGL -framework GLUT
+compilerOpts.linux = -I/usr/include
