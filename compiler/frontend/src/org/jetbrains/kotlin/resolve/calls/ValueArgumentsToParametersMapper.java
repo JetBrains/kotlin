@@ -23,9 +23,7 @@ import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -42,8 +40,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE;
-import static org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.NON_KOTLIN_FUNCTION;
+import static org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET;
 import static org.jetbrains.kotlin.resolve.calls.ValueArgumentsToParametersMapper.Status.*;
 
@@ -189,11 +186,19 @@ public class ValueArgumentsToParametersMapper {
                 KtSimpleNameExpression nameReference = argumentName.getReferenceExpression();
 
                 KtPsiUtilKt.checkReservedYield(nameReference, candidateCall.getTrace());
-                if (!candidate.hasStableParameterNames() && nameReference != null) {
-                    report(NAMED_ARGUMENTS_NOT_ALLOWED.on(
-                            nameReference,
-                            candidate instanceof FunctionInvokeDescriptor ? INVOKE_ON_FUNCTION_TYPE : NON_KOTLIN_FUNCTION
-                    ));
+                if (nameReference != null) {
+                    if (candidate instanceof MemberDescriptor && ((MemberDescriptor) candidate).isHeader() &&
+                        candidate.getContainingDeclaration() instanceof ClassDescriptor) {
+                        // We do not allow named arguments for members of header classes until we're able to use both
+                        // headers and platform definitions when compiling platform code
+                        report(NAMED_ARGUMENTS_NOT_ALLOWED.on(nameReference, HEADER_CLASS_MEMBER));
+                    }
+                    else if (!candidate.hasStableParameterNames()) {
+                        report(NAMED_ARGUMENTS_NOT_ALLOWED.on(
+                                nameReference,
+                                candidate instanceof FunctionInvokeDescriptor ? INVOKE_ON_FUNCTION_TYPE : NON_KOTLIN_FUNCTION
+                        ));
+                    }
                 }
 
                 if (candidate.hasStableParameterNames() && nameReference != null  &&
