@@ -233,6 +233,13 @@ abstract class BasicBoxTest(
                                  "$KOTLIN_TEST_INTERNAL.endModule(\"${StringUtil.escapeStringCharacters(config.moduleId)}\");"
             FileUtil.writeToFile(outputFile, wrappedContent)
         }
+        else if (config.moduleKind == ModuleKind.AMD || config.moduleKind == ModuleKind.UMD) {
+            val content = FileUtil.loadFile(outputFile, true)
+            val wrappedContent = "if (typeof $KOTLIN_TEST_INTERNAL !== \"undefined\") { " +
+                                 "$KOTLIN_TEST_INTERNAL.setModuleId(\"${StringUtil.escapeStringCharacters(config.moduleId)}\"); }\n" +
+                                 "$content\n"
+            FileUtil.writeToFile(outputFile, wrappedContent)
+        }
 
         processJsProgram(translationResult.program, psiFiles)
     }

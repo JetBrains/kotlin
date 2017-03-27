@@ -62,7 +62,7 @@ object JpsJsModuleUtils {
             fun addTarget(module: JpsModule, targetType: JavaModuleBuildTargetType) {
                 val moduleBuildTarget = ModuleBuildTarget(module, targetType)
                 val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(moduleBuildTarget)
-                val metaInfoFile = getOutputMetaFile(outputDir, module.name)
+                val metaInfoFile = getOutputMetaFile(outputDir, module.name, targetType.isTests)
                 if (metaInfoFile.exists()) {
                     result.add(metaInfoFile.absolutePath)
                 }
@@ -71,8 +71,12 @@ object JpsJsModuleUtils {
     }
 
     @JvmStatic
-    fun getOutputFile(outputDir: File, moduleName: String) = File(outputDir, moduleName + KotlinJavascriptMetadataUtils.JS_EXT)
+    fun getOutputFile(outputDir: File, moduleName: String, isTests: Boolean)
+            = File(outputDir, moduleName + suffix(isTests) + KotlinJavascriptMetadataUtils.JS_EXT)
 
     @JvmStatic
-    fun getOutputMetaFile(outputDir: File, moduleName: String) = File(outputDir, moduleName + KotlinJavascriptMetadataUtils.META_JS_SUFFIX)
+    fun getOutputMetaFile(outputDir: File, moduleName: String, isTests: Boolean)
+            = File(outputDir, moduleName + suffix(isTests) + KotlinJavascriptMetadataUtils.META_JS_SUFFIX)
+
+    private fun suffix(isTests: Boolean) = if (isTests) "_test" else ""
 }

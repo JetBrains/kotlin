@@ -294,7 +294,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         }
 
         if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
-            copyJsLibraryFilesIfNeeded(chunk, project)
+            copyJsLibraryFilesIfNeeded(chunk)
             return OK
         }
 
@@ -666,7 +666,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         val representativeModule = representativeTarget.module
         val moduleName = representativeModule.name
-        val outputFile = JpsJsModuleUtils.getOutputFile(outputDir, moduleName)
+        val outputFile = JpsJsModuleUtils.getOutputFile(outputDir, moduleName, representativeTarget.isTests)
         val libraries = JpsJsModuleUtils.getLibraryFilesAndDependencies(representativeTarget)
         val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(representativeModule)
         val k2JsArguments = JpsKotlinCompilerSettings.getK2JsCompilerArguments(representativeModule)
@@ -676,7 +676,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         return environment.outputItemsCollector
     }
 
-    private fun copyJsLibraryFilesIfNeeded(chunk: ModuleChunk, project: JpsProject) {
+    private fun copyJsLibraryFilesIfNeeded(chunk: ModuleChunk) {
         val representativeTarget = chunk.representativeTarget()
         val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(representativeTarget)
         val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(representativeTarget.module)

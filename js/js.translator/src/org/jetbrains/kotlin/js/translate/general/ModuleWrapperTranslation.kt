@@ -28,7 +28,7 @@ object ModuleWrapperTranslation {
             program: JsProgram, kind: ModuleKind
     ): List<JsStatement> {
         return when (kind) {
-            ModuleKind.AMD -> wrapAmd(moduleId, function, importedModules, program)
+            ModuleKind.AMD -> wrapAmd(function, importedModules, program)
             ModuleKind.COMMON_JS -> wrapCommonJs(function, importedModules, program)
             ModuleKind.UMD -> wrapUmd(moduleId, function, importedModules, program)
             ModuleKind.PLAIN -> wrapPlain(moduleId, function, importedModules, program)
@@ -54,7 +54,7 @@ object ModuleWrapperTranslation {
                                      JsNameRef("amd", defineName.makeRef()))
         val commonJsTest = JsAstUtils.typeOfIs(exportsName.makeRef(), program.getStringLiteral("object"))
 
-        val amdBody = JsBlock(wrapAmd(moduleId, factoryName.makeRef(), importedModules, program))
+        val amdBody = JsBlock(wrapAmd(factoryName.makeRef(), importedModules, program))
         val commonJsBody = JsBlock(wrapCommonJs(factoryName.makeRef(), importedModules, program))
         val plainInvocation = makePlainInvocation(moduleId, factoryName.makeRef(), importedModules, program)
 
@@ -78,13 +78,12 @@ object ModuleWrapperTranslation {
     }
 
     private fun wrapAmd(
-            moduleId: String, function: JsExpression,
+            function: JsExpression,
             importedModules: List<StaticContext.ImportedModule>, program: JsProgram
     ): List<JsStatement> {
         val scope = program.scope
         val defineName = scope.declareName("define")
         val invocationArgs = listOf(
-                program.getStringLiteral(moduleId),
                 JsArrayLiteral(listOf(program.getStringLiteral("exports")) + importedModules.map { program.getStringLiteral(it.externalName) }),
                 function
         )
