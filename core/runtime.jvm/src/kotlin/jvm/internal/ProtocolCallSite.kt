@@ -42,20 +42,6 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
 
         classCache = receiverClass
         val method = resolveMethod(receiverClass)
-        setupAccessible(method)
-        indyCache = lookup.unreflect(method)
-        return indyCache
-    }
-
-    fun getMethod(receiver: Any, primitives: BooleanArray): MethodHandle? {
-        val receiverClass = receiver.javaClass
-        if (classCache != null && classCache == receiverClass) {
-            return indyCache
-        }
-
-        classCache = receiverClass
-        val method = resolveMethod(receiverClass, primitives)
-        setupAccessible(method)
         indyCache = lookup.unreflect(method)
         return indyCache
     }
@@ -65,19 +51,12 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
         if (classCache == null || classCache != receiverClass) {
             classCache = receiverClass
             reflectCache = resolveMethod(receiverClass)
-            setupAccessible(reflectCache!!)
         }
 
         return reflectCache
     }
 
-    private fun setupAccessible(method: Method) {
-        if (!method.isAccessible) {
-            method.isAccessible = true
-        }
-    }
-
-    private fun resolveMethod(target: Class<*>, primitives: BooleanArray? = null): Method {
+    private fun resolveMethod(target: Class<*>): Method {
         val protocolArgs = callableType.parameterArray()
         val methods = target.declaredMethods
 
@@ -92,16 +71,18 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
             val methodArgs = method.parameterTypes
 
             val distance = IntArray(protocolArgs.size)
+            var fail = false
             for (i in 0..protocolArgs.size - 1) {
-                val argDistance = argumentDistance(protocolArgs[i], methodArgs[i], primitives?.get(i))
+                val argDistance = argumentDistance(protocolArgs[i], methodArgs[i])
                 if (argDistance < 0) {
+                    fail = true
                     break
                 }
 
                 distance[i] = argDistance
             }
 
-            if (distance.paretoGeq(bestDistance)) {
+            if (fail.not() && (candidate == null || distance.greater(bestDistance))) {
                 bestDistance = distance
                 candidate = method
             }
@@ -110,24 +91,19 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
         return candidate!!
     }
 
-    fun argumentDistance(lhs: Class<*>, rhs: Class<*>, primitiveTarget: Boolean?): Int {
+    private fun argumentDistance(lhs: Class<*>, rhs: Class<*>): Int {
         if (lhs == rhs) {
             return 0
         }
 
-        var distance = 0
-        if (rhs.isPrimitive != primitiveTarget) {
-            distance++
-        }
-
         if (lhs.isAssignableFrom(rhs)) {
-            return distance + 1
+            return 1
         }
 
         return -1
     }
 
-    private fun IntArray.paretoGeq(other: IntArray): Boolean {
+    private fun IntArray.greater(other: IntArray): Boolean {
         for (i in 0..other.size - 1) {
             if (get(i) < other[i]) {
                 return false

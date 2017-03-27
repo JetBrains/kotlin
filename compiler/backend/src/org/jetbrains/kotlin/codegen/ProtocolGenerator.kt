@@ -16,13 +16,12 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes.*
@@ -34,57 +33,29 @@ import java.lang.invoke.MethodType
 import java.lang.reflect.Method
 
 abstract class ProtocolGenerator(protected val codegen: ExpressionCodegen) {
-    private val generated = mutableMapOf<String, Boolean>()
+    private var last = 0
 
     fun putInvokerAndGenerateIfNeeded(method: CallableMethod, call: ResolvedCall<*>) {
         val candidate = call.candidateDescriptor
-        val name = "proto$${candidate.containingDeclaration.name}$${candidate.name}$${candidate.valueParameters.joinToString { it.type.toString() }}"
+        val name = "proto$$last$${candidate.containingDeclaration.name}$${candidate.name}$${candidate.valueParameters.joinToString { it.type.toString() }}"
+        ++last
 
-        if (!generated.contains(name)) {
-            generated[name] = genProtocolCaller(method, call, name)
-        }
-
-        invokeCaller(name, generated[name]!!)
+        genProtocolCaller(method, call, name)
+        invokeCaller(name)
     }
 
     abstract fun invokeMethod(method: Callable)
 
-    abstract fun invokeCaller(name: String, hasPrimitive: Boolean)
+    abstract fun invokeCaller(name: String)
 
     abstract fun putArguments(codegen: ExpressionCodegen, generator: CallGenerator, resolvedCall: ResolvedCall<*>, callableMethod: Callable)
 
-    protected abstract fun genProtocolCaller(method: CallableMethod, call: ResolvedCall<*>, name: String): Boolean
-
-    protected fun putPrimitiveFlags(arguments: List<ValueParameterDescriptor>) {
-        codegen.v.iconst(arguments.size)
-        codegen.v.newarray(Type.BOOLEAN_TYPE)
-        var index = 0
-        arguments.forEach {
-            val primitive = it.type.isPrimitiveNumberType()
-            codegen.v.dup()
-            codegen.v.iconst(index)
-            index++
-
-            if (primitive)
-                codegen.v.iconst(0)
-            else
-                codegen.v.iconst(1)
-
-            codegen.v.visitInsn(BASTORE)
-        }
-    }
-
-    protected fun hasPrimitiveArguments(arguments: List<ValueParameterDescriptor>): Boolean {
-        if (arguments.any { it.type.isPrimitiveNumberType() }) {
-            return true
-        }
-        return false
-    }
+    protected abstract fun genProtocolCaller(method: CallableMethod, call: ResolvedCall<*>, name: String)
 }
 
 class IndyProtocolGenerator(codegen: ExpressionCodegen) : ProtocolGenerator(codegen) {
 
-    override fun invokeCaller(name: String, hasPrimitive: Boolean) {
+    override fun invokeCaller(name: String) {
         val signature = Type.getMethodDescriptor(Type.getType(MethodHandle::class.java), OBJECT_TYPE)
         codegen.v.invokestatic(codegen.parentCodegen.className, name, signature, false)
     }
@@ -97,7 +68,7 @@ class IndyProtocolGenerator(codegen: ExpressionCodegen) : ProtocolGenerator(code
         codegen.v.invokevirtual("java/lang/invoke/MethodHandle", "invoke", descriptor, false)
     }
 
-    override fun genProtocolCaller(method: CallableMethod, call: ResolvedCall<*>, name: String): Boolean {
+    override fun genProtocolCaller(method: CallableMethod, call: ResolvedCall<*>, name: String) {
         val methodName = call.candidateDescriptor.name
 
         val descriptor = Type.getMethodDescriptor(Type.getType(MethodHandle::class.java), OBJECT_TYPE)
@@ -120,20 +91,13 @@ class IndyProtocolGenerator(codegen: ExpressionCodegen) : ProtocolGenerator(code
                 Type.getType(MethodType::class.java))
         val bootstrap = Handle(H_INVOKESTATIC, callSite, "getBootstrap", bootstrapDescriptor, true)
 
-        mv.visitInvokeDynamicInsn("apply", "()L$callSite;", bootstrap, methodName.asString(), Type.getType(method.getAsmMethod().descriptor))
+        // Review type mapper
+        val signature = codegen.typeMapper.mapAsmMethod(call.resultingDescriptor as FunctionDescriptor)
+        mv.visitInvokeDynamicInsn("apply", "()L$callSite;", bootstrap, methodName.asString(), Type.getType(signature.descriptor))
 
         mv.visitVarInsn(ALOAD, 0)
 
-        val arguments = call.candidateDescriptor.valueParameters
-        val hasPrimitive = hasPrimitiveArguments(arguments)
-        var targetDescriptor = descriptor
-
-        if (hasPrimitive) {
-            putPrimitiveFlags(arguments)
-            targetDescriptor = Type.getMethodDescriptor(Type.getType(MethodHandle::class.java), OBJECT_TYPE, Type.getType("[Z"))
-        }
-
-        mv.visitMethodInsn(INVOKEVIRTUAL, callSite, "getMethod", targetDescriptor, false)
+        mv.visitMethodInsn(INVOKEVIRTUAL, callSite, "getMethod", descriptor, false)
         mv.visitInsn(ARETURN)
 
         val l1 = Label()
@@ -142,8 +106,6 @@ class IndyProtocolGenerator(codegen: ExpressionCodegen) : ProtocolGenerator(code
         mv.visitMaxs(0, 0)
 
         mv.visitEnd()
-
-        return hasPrimitive
     }
 
     override fun putArguments(codegen: ExpressionCodegen, generator: CallGenerator, resolvedCall: ResolvedCall<*>, callableMethod: Callable) {
@@ -161,11 +123,11 @@ class ReflectionProtocolGenerator(codegen: ExpressionCodegen) : ProtocolGenerato
         codegen.v.invokevirtual("java/lang/reflect/Method", "invoke", Type.getMethodDescriptor(OBJECT_TYPE, OBJECT_TYPE, Type.getType("[Ljava/lang/Object;")), false)
     }
 
-    override fun invokeCaller(name: String, hasPrimitive: Boolean) {
+    override fun invokeCaller(name: String) {
         codegen.v.invokestatic(codegen.parentCodegen.className, name, Type.getMethodDescriptor(Type.getType(Method::class.java), OBJECT_TYPE), false)
     }
 
-    override fun genProtocolCaller(method: CallableMethod, call: ResolvedCall<*>, name: String): Boolean {
+    override fun genProtocolCaller(method: CallableMethod, call: ResolvedCall<*>, name: String) {
         val methodName = call.candidateDescriptor.name
         val descriptor = Type.getMethodDescriptor(Type.getType(Method::class.java), OBJECT_TYPE)
 
@@ -200,8 +162,6 @@ class ReflectionProtocolGenerator(codegen: ExpressionCodegen) : ProtocolGenerato
         mv.visitMaxs(0, 0)
 
         mv.visitEnd()
-
-        return TODO()
     }
 
     override fun putArguments(codegen: ExpressionCodegen, generator: CallGenerator, resolvedCall: ResolvedCall<*>, callableMethod: Callable) {
