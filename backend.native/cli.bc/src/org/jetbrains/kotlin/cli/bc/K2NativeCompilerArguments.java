@@ -60,6 +60,9 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "print_descriptors", prefix = "--", description = "Print descriptor tree")
     public boolean printDescriptors;
 
+    @Argument(value = "print_locations", prefix = "--", description = "Print locations")
+    public boolean printLocations;
+
     @Argument(value = "print_bitcode", prefix = "--", description = "Print llvm bitcode")
     public boolean printBitCode;
 

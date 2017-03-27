@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.Llvm
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmDeclarations
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
-import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -18,11 +17,19 @@ import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.SourceManager
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.types.KotlinType
@@ -272,6 +279,46 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         irModule!!.accept(DumpIrTreeVisitor(out), "")
     }
 
+    fun printLocations() {
+        if (irModule == null) return
+        separator("Locations after: ${phase?.description}")
+        irModule!!.acceptVoid(object: IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitFile(declaration: IrFile) {
+                val fileEntry = declaration.fileEntry
+                declaration.acceptChildrenVoid(object:IrElementVisitorVoid {
+                    override fun visitElement(element: IrElement) {
+                        element.acceptChildrenVoid(this)
+                    }
+
+                    override fun visitFunction(declaration: IrFunction) {
+                        super.visitFunction(declaration)
+                        println("${declaration.descriptor.fqNameOrNull()}: ${fileEntry.range(declaration)}")
+                    }
+                })
+            }
+
+            fun SourceManager.FileEntry.range(element:IrElement):String {
+                try {
+                    /* wasn't use multi line string to prevent appearing odd line
+                     * breaks in the dump. */
+                    return "${this.name}: ${this.line(element.startOffset)}" +
+                          ":${this.column(element.startOffset)} - " +
+                          "${this.line(element.endOffset)}" +
+                          ":${this.column(element.endOffset)}"
+
+                } catch (e:Exception) {
+                    return "${this.name}: ERROR(${e.javaClass.name}): ${e.message}"
+                }
+            }
+            fun SourceManager.FileEntry.line(offset:Int) = this.getLineNumber(offset)
+            fun SourceManager.FileEntry.column(offset:Int) = this.getColumnNumber(offset)
+        })
+    }
+
     fun verifyBitCode() {
         if (llvmModule == null) return
         verifyModule(llvmModule!!)
@@ -317,6 +364,10 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     fun shouldPrintBitCode(): Boolean {
         return config.configuration.getBoolean(KonanConfigKeys.PRINT_BITCODE) 
+    }
+
+    fun shouldPrintLocations(): Boolean {
+        return config.configuration.getBoolean(KonanConfigKeys.PRINT_LOCATIONS)
     }
 
     fun shouldProfilePhases(): Boolean {

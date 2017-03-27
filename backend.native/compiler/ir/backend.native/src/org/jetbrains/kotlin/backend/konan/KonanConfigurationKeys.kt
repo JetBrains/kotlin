@@ -54,6 +54,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("print descriptors")
         val PRINT_BITCODE: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("print bitcode")
+        val PRINT_LOCATIONS: CompilerConfigurationKey<Boolean>
+                = CompilerConfigurationKey.create("print locations")
 
         val ENABLED_PHASES: CompilerConfigurationKey<List<String>> 
                 = CompilerConfigurationKey.create("enable backend phases")
