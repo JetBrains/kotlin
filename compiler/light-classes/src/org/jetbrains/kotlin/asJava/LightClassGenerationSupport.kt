@@ -65,6 +65,8 @@ abstract class LightClassGenerationSupport {
 
     abstract fun analyze(element: KtElement): BindingContext
 
+    abstract fun analyzeFully(element: KtElement): BindingContext
+
     abstract fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass>
 
     abstract fun getMultifilePartClasses(partFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass>

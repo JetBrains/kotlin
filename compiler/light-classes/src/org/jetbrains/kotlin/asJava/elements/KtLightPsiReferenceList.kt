@@ -44,7 +44,7 @@ class KtLightPsiReferenceList (
         override val kotlinOrigin by lazyPub {
             val superTypeList = this@KtLightPsiReferenceList.kotlinOrigin ?: return@lazyPub null
             val fqNameToFind = clsDelegate.qualifiedName ?: return@lazyPub null
-            val context = LightClassGenerationSupport.getInstance(project).analyze(superTypeList)
+            val context = LightClassGenerationSupport.getInstance(project).analyzeFully(superTypeList)
             superTypeList.entries.firstOrNull {
                 val referencedType = context[BindingContext.TYPE, it.typeReference]
                 referencedType?.constructor?.declarationDescriptor?.fqNameUnsafe?.asString() == fqNameToFind

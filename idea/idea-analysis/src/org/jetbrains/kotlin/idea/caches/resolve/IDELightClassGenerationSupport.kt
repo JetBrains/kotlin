@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -208,6 +209,8 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     }
 
     override fun analyze(element: KtElement) = element.analyze(BodyResolveMode.PARTIAL)
+
+    override fun analyzeFully(element: KtElement) = element.analyzeFully()
 
     override fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String> {
         val facadeFilesInPackage = KotlinFileFacadeClassByPackageIndex.getInstance().get(packageFqName.asString(), project, scope)
