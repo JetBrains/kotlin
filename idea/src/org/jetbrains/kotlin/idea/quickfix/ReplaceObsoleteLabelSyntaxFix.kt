@@ -21,13 +21,8 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionFactory
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.resolve.BindingContext
 
 class ReplaceObsoleteLabelSyntaxFix(element: KtAnnotationEntry) : KotlinQuickFixAction<KtAnnotationEntry>(element), CleanupFix {
     override fun getFamilyName(): String = "Update obsolete label syntax"
@@ -44,37 +39,6 @@ class ReplaceObsoleteLabelSyntaxFix(element: KtAnnotationEntry) : KotlinQuickFix
             if (!looksLikeObsoleteLabel(annotationEntry)) return null
 
             return ReplaceObsoleteLabelSyntaxFix(annotationEntry)
-        }
-
-        fun createWholeProjectFixFactory(): KotlinSingleIntentionActionFactory = createIntentionFactory factory@ {
-            diagnostic ->
-
-            if (!(diagnostic.psiElement.getNonStrictParentOfType<KtAnnotationEntry>()?.looksLikeObsoleteLabelWithReferencesInCode()
-                ?: false)) return@factory null
-
-            WholeProjectForEachElementOfTypeFix.createForMultiTaskOnElement<KtAnnotatedExpression, KtAnnotationEntry>(
-                    tasksFactory = { collectTasks(it) },
-                    tasksProcessor ={ it.forEach { ann -> replaceWithLabel(ann) } },
-                    name = "Update obsolete label syntax in whole project"
-            )
-        }
-
-        private fun collectTasks(expression: KtAnnotatedExpression) =
-                expression.annotationEntries.filter { it.looksLikeObsoleteLabelWithReferencesInCode() }
-
-        private fun KtAnnotationEntry.looksLikeObsoleteLabelWithReferencesInCode(): Boolean {
-            if (!looksLikeObsoleteLabel(this)) return false
-
-            val baseExpression = (parent as? KtAnnotatedExpression)?.baseExpression ?: return false
-
-            val nameExpression = calleeExpression?.constructorReferenceExpression ?: return false
-            val labelName = nameExpression.getReferencedName()
-
-            return baseExpression.anyDescendantOfType<KtExpressionWithLabel> {
-                (it is KtBreakExpression || it is KtContinueExpression || it is KtReturnExpression) &&
-                it.getLabelName() == labelName &&
-                it.getTargetLabel()?.analyze()?.get(BindingContext.LABEL_TARGET, it.getTargetLabel()) == null
-            } && analyze().diagnostics.forElement(nameExpression).any { it.factory == Errors.UNRESOLVED_REFERENCE }
         }
 
         fun looksLikeObsoleteLabel(entry: KtAnnotationEntry): Boolean =
