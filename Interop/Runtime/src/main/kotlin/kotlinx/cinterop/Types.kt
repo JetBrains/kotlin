@@ -214,6 +214,9 @@ sealed class CPrimitiveVar : CVariable {
     open class Type(size: Int) : CVariable.Type(size.toLong(), align = size)
 }
 
+interface CEnum {
+    val value: Number
+}
 abstract class CEnumVar : CPrimitiveVar()
 
 // generics below are used for typedef support

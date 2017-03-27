@@ -612,7 +612,7 @@ class StubGenerator(
 
         val baseTypeMirror = mirror(e.baseType)
 
-        block("enum class ${e.kotlinName.asSimpleName()}(val value: ${e.baseType.kotlinType})") {
+        block("enum class ${e.kotlinName.asSimpleName()}(override val value: ${e.baseType.kotlinType}) : CEnum") {
             e.constants.forEach {
                 out("${it.name.asSimpleName()}(${it.value}),")
             }
