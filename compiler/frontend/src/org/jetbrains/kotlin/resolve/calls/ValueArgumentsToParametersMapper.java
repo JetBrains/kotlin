@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,13 +70,11 @@ public class ValueArgumentsToParametersMapper {
     public static <D extends CallableDescriptor> Status mapValueArgumentsToParameters(
             @NotNull Call call,
             @NotNull TracingStrategy tracing,
-            @NotNull MutableResolvedCall<D> candidateCall,
-            @NotNull Set<ValueArgument> unmappedArguments
+            @NotNull MutableResolvedCall<D> candidateCall
     ) {
         //return new ValueArgumentsToParametersMapper().process(call, tracing, candidateCall, unmappedArguments);
         Processor<D> processor = new Processor<D>(call, candidateCall, tracing);
         processor.process();
-        unmappedArguments.addAll(processor.unmappedArguments);
         return processor.status;
     }
 

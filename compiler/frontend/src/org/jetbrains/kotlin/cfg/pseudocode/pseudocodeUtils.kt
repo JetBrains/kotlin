@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.cfg.Label
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind.*
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.AbstractJumpInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ConditionalJumpInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ReturnValueInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ThrowExceptionInstruction
@@ -116,10 +115,7 @@ fun getExpectedTypePredicate(
                     TracingStrategy.EMPTY,
                     DataFlowInfoForArgumentsImpl(DataFlowInfo.EMPTY, call)
             )
-            val status = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(call,
-                                                                                        TracingStrategy.EMPTY,
-                                                                                        candidateCall,
-                                                                                        LinkedHashSet())
+            val status = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(call, TracingStrategy.EMPTY, candidateCall)
             if (!status.isSuccess) continue
 
             val candidateArgumentMap = candidateCall.valueArguments
