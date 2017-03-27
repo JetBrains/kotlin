@@ -2,14 +2,15 @@ description = 'Kotlin Standard Library for JS'
 
 apply plugin: 'kotlin2js'
 
-ext.commonSrcDir = "${buildDir}/common-sources"
-ext.commonTestSrcDir = "${buildDir}/common-test-sources"
-ext.builtinsDir = "${rootDir}/../core/builtins"
-ext.jsLibrariesDir = "${rootDir}/../js/js.libraries"
-ext.jsSrcDir = "${jsLibrariesDir}/src"
-ext.jsTestSrcDir = "${jsLibrariesDir}/test"
-ext.jsSrcJsDir = "${jsSrcDir}/js"
-ext.jsOutputFile = "${buildDir}/classes/kotlin.js"
+def builtinsSrcDir = "${buildDir}/builtin-sources"
+def commonSrcDir = "${buildDir}/common-sources"
+def commonTestSrcDir = "${buildDir}/common-test-sources"
+def builtinsDir = "${rootDir}/../core/builtins"
+def jsLibrariesDir = "${rootDir}/../js/js.libraries"
+def jsSrcDir = "${jsLibrariesDir}/src"
+def jsTestSrcDir = "${jsLibrariesDir}/test"
+def jsSrcJsDir = "${jsSrcDir}/js"
+def jsOutputFile = "${buildDir}/classes/kotlin.js"
 
 sourceSets {
     builtinsFiles {
@@ -25,37 +26,9 @@ sourceSets {
         }
     }
 
-
-    mainNativeFiles {
-        kotlin {
-            srcDir "${builtinsDir}/native/kotlin"
-            include "Iterator.kt"
-            include "Collections.kt"
-            include "CharSequence.kt"
-            include "Annotation.kt"
-        }
-    }
-    mainCoreFiles {
-        kotlin {
-            srcDir "${builtinsDir}/src/kotlin/"
-            include "annotation/Annotations.kt"
-            include "Function.kt"
-            include "Iterators.kt"
-            include "Range.kt"
-            include "Progressions.kt"
-            include "ProgressionIterators.kt"
-            include "Ranges.kt"
-            include "internal/InternalAnnotations.kt"
-            include "internal/progressionUtil.kt"
-            include "coroutines/**/*.kt"
-            include "reflect/**/*.kt"
-            include "Unit.kt"
-        }
-    }
     main {
         kotlin {
-            source mainNativeFiles.kotlin
-            source mainCoreFiles.kotlin
+            srcDir builtinsSrcDir
             srcDir jsSrcDir
             exclude "builtins"
             srcDir commonSrcDir
@@ -76,6 +49,32 @@ dependencies {
 
 createPreprocessorTask(project, "Main", "${projectDir}/../src/kotlin", commonSrcDir)
 createPreprocessorTask(project, "Test", "${projectDir}/../test", commonTestSrcDir)
+
+task prepareBuiltinsSources(type: Copy) {
+    doFirst {
+        delete builtinsSrcDir
+    }
+    from("${builtinsDir}/native/kotlin") {
+        include "Iterator.kt"
+        include "Collections.kt"
+        include "CharSequence.kt"
+        include "Annotation.kt"
+    }
+    from("${builtinsDir}/src/kotlin/") {
+        include "annotation/Annotations.kt"
+        include "Function.kt"
+        include "Iterators.kt"
+        include "Range.kt"
+        include "Progressions.kt"
+        include "ProgressionIterators.kt"
+        include "Ranges.kt"
+        include "internal/InternalAnnotations.kt"
+        include "internal/progressionUtil.kt"
+        include "reflect/**/*.kt"
+        include "Unit.kt"
+    }
+    into builtinsSrcDir
+}
 
 kotlin.experimental.coroutines "enable"
 
@@ -98,7 +97,7 @@ compileBuiltinsKotlin2Js {
 }
 
 compileKotlin2Js {
-    dependsOn preprocessSourcesMain
+    dependsOn preprocessSourcesMain, prepareBuiltinsSources
     kotlinOptions {
         outputFile = "${buildDir}/classes/main/kotlin.js"
     }
