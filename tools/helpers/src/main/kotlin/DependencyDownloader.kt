@@ -31,8 +31,8 @@ class DependencyDownloader(dependenciesRoot: File, val properties: Properties, v
         return result
     }
 
-    private fun processDependency(path: String) {
-        val depDir = File(path)
+    private fun processDependency(dependency: String) {
+        val depDir = File(dependenciesRoot, dependency)
         val depName = depDir.name
         val inListFile = listFile.containsLine(depName)
         if (inListFile && depDir.exists()) {
@@ -43,7 +43,6 @@ class DependencyDownloader(dependenciesRoot: File, val properties: Properties, v
             isInfoShown = true
         }
         val downloaded = download(depName)
-        println("Extract dependency: $downloaded -> $depDir")
         extract(downloaded)
         if (!inListFile) {
             listFile.appendText("$depName\n")
@@ -51,6 +50,7 @@ class DependencyDownloader(dependenciesRoot: File, val properties: Properties, v
     }
 
     private fun extract(tarGz: File) {
+        println("Extract dependency: ${tarGz.canonicalPath}")
         val tarProcess = ProcessBuilder().apply {
             command("tar", "-xzf", "${tarGz.canonicalPath}")
             directory(tarGz.parentFile)
@@ -109,7 +109,6 @@ class DependencyDownloader(dependenciesRoot: File, val properties: Properties, v
             }
 
             // TODO: Improve console logging
-            var msgLen = 0
             while (!done) {
                 Thread.sleep(1000) // We can use condition variable here.
                 updateProgressMsg(url.toString(), currentBytes, totalBytes)
