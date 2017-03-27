@@ -64,6 +64,8 @@ private tailrec fun convertArgument(
         FFI_TYPE_KIND_FLOAT
     }
 
+    is CEnum -> convertArgument(argument.value, isVariadic, location, additionalPlacement)
+
     else -> throw Error("unsupported argument: $argument")
 }
 

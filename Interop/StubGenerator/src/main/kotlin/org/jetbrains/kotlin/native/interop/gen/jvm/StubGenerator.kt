@@ -695,11 +695,8 @@ class StubGenerator(
     }
 
     private fun FunctionDecl.generateAsFfiVarargs(): Boolean = (platform == KotlinPlatform.NATIVE && this.isVararg &&
-            // Neither takes nor returns structs by value or enum-typed values:
-            (this.parameters.map { it.type } + this.returnType).all {
-                val type = it.unwrapTypedefs()
-                type !is RecordType && type !is EnumType
-            })
+            // Neither takes nor returns structs by value:
+            !this.returnsRecord() && this.parameters.all { it.type.unwrapTypedefs() !is RecordType })
 
     /**
      * Constructs [InValueBinding] for return value of Kotlin binding for given C function.
@@ -873,6 +870,7 @@ class StubGenerator(
                 8 -> "FFI_TYPE_KIND_DOUBLE"
                 else -> TODO(unwrappedType.toString())
             }
+            is EnumType -> getFfiTypeKind(unwrappedType.def.baseType)
             else -> TODO(unwrappedType.toString())
         }
     }
