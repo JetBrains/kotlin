@@ -48,7 +48,7 @@ object KonanPhases {
 
     fun known(name: String): String {
         if (phases[name] == null) {
-            error("Unknown phase: $name. Use -list to see the list of phases.")
+            error("Unknown phase: $name. Use --list_phases to see the list of phases.")
         }
         return name
     }

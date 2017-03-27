@@ -51,7 +51,7 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     // The rest of the options are only interesting for developers.
     // Make sure to prepend them with double dash.
 
-    @Argument(value = "list_targets", prefix = "--", description = "List available hardware targets")
+    @Argument(value = "list_targets", description = "List available hardware targets")
     public boolean listTargets;
 
     @Argument(value = "print_ir", prefix = "--", description = "Print IR")
@@ -87,7 +87,7 @@ public class K2NativeCompilerArguments extends CommonCompilerArguments {
     @ValueDescription("<Phase>")
     public String[] verbosePhases;
 
-    @Argument(value = "list", prefix = "--", description = "List all backend phases")
+    @Argument(value = "list_phases", prefix = "--", description = "List all backend phases")
     public boolean listPhases;
 
     @Argument(value = "time", prefix = "--", description = "Report execution time for compiler phases")
