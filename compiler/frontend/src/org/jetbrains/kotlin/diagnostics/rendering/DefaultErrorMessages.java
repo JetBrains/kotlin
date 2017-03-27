@@ -207,6 +207,8 @@ public class DefaultErrorMessages {
                         return "non-Kotlin functions";
                     case INVOKE_ON_FUNCTION_TYPE:
                         return "function types";
+                    case HEADER_CLASS_MEMBER:
+                        return "members of header classes";
                     default:
                         throw new AssertionError(target);
                 }

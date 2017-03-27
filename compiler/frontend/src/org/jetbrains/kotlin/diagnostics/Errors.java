@@ -570,7 +570,8 @@ public interface Errors {
 
     enum BadNamedArgumentsTarget {
         NON_KOTLIN_FUNCTION,
-        INVOKE_ON_FUNCTION_TYPE
+        INVOKE_ON_FUNCTION_TYPE,
+        HEADER_CLASS_MEMBER,
     }
 
     DiagnosticFactory0<KtExpression> VARARG_OUTSIDE_PARENTHESES = DiagnosticFactory0.create(ERROR);
