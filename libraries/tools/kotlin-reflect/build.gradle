@@ -15,7 +15,6 @@ buildscript {
 apply plugin: 'com.github.johnrengelman.shadow'
 
 def core = "${rootDir}/../core"
-def depDir = "${rootDir}/../dependencies"
 def annotationsSrc = "${buildDir}/annotations"
 def relocatedCoreSrc = "${buildDir}/core-relocated"
 
@@ -36,14 +35,14 @@ sourceSets {
 
 configurations {
     proguardDeps
-    shadowes
-    compileOnly.extendsFrom(shadowes)
+    shadows
+    compileOnly.extendsFrom(shadows)
 }
 
 dependencies {
     proguardDeps project(':kotlin-stdlib')
-    shadowes 'javax.inject:javax.inject:1'
-    shadowes files("${depDir}/protobuf-2.6.1-lite.jar")
+    shadows 'javax.inject:javax.inject:1'
+    shadows project(path: ':tools:protobuf-lite')
 
     compile project(':kotlin-stdlib')
 }
@@ -85,7 +84,7 @@ task reflectShadowJar(type: ShadowJar) {
         include 'META-INF/services/**'
     }
 
-    configurations = [project.configurations.shadowes]
+    configurations = [project.configurations.shadows]
     relocate 'org.jetbrains.kotlin', 'kotlin.reflect.jvm.internal.impl'
     relocate 'javax.inject', 'kotlin.reflect.jvm.internal.impl.javax.inject'
 }
@@ -161,14 +160,10 @@ task relocatedSourcesJar(type: Jar) {
 }
 
 artifacts {
-    it.default(file(outputJarPath)) {
-        builtBy proguard
-    }
+    def artifactJar = [file: file(outputJarPath), builtBy: proguard, name: archivesBaseName]
 
-    archives(file(outputJarPath)) {
-        name archivesBaseName
-        builtBy proguard
-    }
+    runtime artifactJar
+    archives artifactJar
     archives relocatedSourcesJar
     archives javadocJar
 }

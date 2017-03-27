@@ -13,6 +13,7 @@ include ':kotlin-stdlib-jre7'
 include ':kotlin-stdlib-jre8'
 include ':tools:binary-compatibility-validator'
 include ':tools:kotlin-stdlib-gen'
+include ':tools:protobuf-lite'
 include ':kotlin-reflect'
 
 //include ':kotlin-compiler'
