@@ -199,6 +199,9 @@ object LightClassLazinessChecker {
         // still running code above to catch possible exceptions
         if (lazinessMode == Mode.NoConsistency) return
 
+        assertEquals(lightClass.clsDelegate.methods.names(), lightClass.methods.names())
+        assertEquals(lightClass.clsDelegate.fields.names(), lightClass.fields.names())
+
         // check collected data against delegates which should contain correct data
         for ((field, lightFieldInfo) in fieldsToInfo) {
             val delegate = (field as KtLightField).clsDelegate
@@ -209,6 +212,8 @@ object LightClassLazinessChecker {
             assertEquals(methodInfo(delegate), lightMethodInfo)
         }
     }
+
+    private fun Array<out PsiMember>.names() = mapTo(LinkedHashSet()) { it.name }
 
     private data class FieldInfo(
             val name: String,

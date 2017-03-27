@@ -42,6 +42,12 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         doTest(fileName);
     }
 
+    @TestMetadata("Delegation.kt")
+    public void testDelegation() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/Delegation.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("DeprecatedEnumEntry.kt")
     public void testDeprecatedEnumEntry() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/DeprecatedEnumEntry.kt");
