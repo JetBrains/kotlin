@@ -58,7 +58,7 @@ class DefaultArgumentStubGenerator internal constructor(val context: Context): D
     private fun lower(irFunction: IrFunction): List<IrFunction> {
         val functionDescriptor = irFunction.descriptor
 
-        if (hasNotDefaultParameters(functionDescriptor))
+        if (!functionDescriptor.needsDefaultArgumentsLowering)
             return irFunction.singletonList()
 
         val bodies = functionDescriptor.valueParameters
@@ -222,7 +222,7 @@ class DefaultParameterInjector internal constructor(val context: Context): BodyL
             override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
                 super.visitDelegatingConstructorCall(expression)
                 val descriptor = expression.descriptor
-                if (hasNotDefaultParameters(descriptor))
+                if (!descriptor.needsDefaultArgumentsLowering)
                     return expression
                 val argumentsCount = argumentCount(expression)
                 if (argumentsCount == descriptor.valueParameters.size)
@@ -246,7 +246,7 @@ class DefaultParameterInjector internal constructor(val context: Context): BodyL
                 super.visitCall(expression)
                 val functionDescriptor = expression.descriptor as FunctionDescriptor
 
-                if (hasNotDefaultParameters(functionDescriptor))
+                if (!functionDescriptor.needsDefaultArgumentsLowering)
                     return expression
 
                 val argumentsCount = argumentCount(expression)
@@ -326,8 +326,8 @@ class DefaultParameterInjector internal constructor(val context: Context): BodyL
     private fun log(msg: String) = context.log("DEFAULT-INJECTOR: $msg")
 }
 
-private fun hasNotDefaultParameters(descriptor: CallableDescriptor) = descriptor.valueParameters.none { it.hasDefaultValue() }
-
+private val CallableMemberDescriptor.needsDefaultArgumentsLowering
+    get() = valueParameters.any { it.hasDefaultValue() } && !(this is FunctionDescriptor && isInline)
 
 private fun FunctionDescriptor.generateDefaultsDescription(context: Context): FunctionDescriptor {
     return context.ir.defaultParameterDescriptorsCache.getOrPut(this) {
