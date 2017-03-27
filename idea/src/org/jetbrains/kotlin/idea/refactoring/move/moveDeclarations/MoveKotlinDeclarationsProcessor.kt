@@ -122,10 +122,11 @@ class MoveKotlinDeclarationsProcessor(
 
     fun getConflictsAsUsages(): List<UsageInfo> = conflicts.entrySet().map { ConflictUsageInfo(it.key, it.value) }
 
-    class UsagesToProcessBeforeMoveWrapper(
-            sourceFile: KtFile,
-            val usages: Collection<UsageInfo>
-    ): UsageInfo(sourceFile)
+    class UsageToProcessBeforeMoveWrapper private constructor (element: PsiElement, val originalUsage: UsageInfo): UsageInfo(element) {
+        companion object {
+            fun create(originalUsage: UsageInfo) = originalUsage.element?.let { UsageToProcessBeforeMoveWrapper(it, originalUsage) }
+        }
+    }
 
     public override fun findUsages(): Array<UsageInfo> {
         if (elementsToMove.isEmpty()) return UsageInfo.EMPTY_ARRAY
@@ -198,7 +199,7 @@ class MoveKotlinDeclarationsProcessor(
             val (usagesToProcessLater, usagesToProcessEarly) = internalUsages.partition { it is UnqualifiableMoveRenameUsageInfo }
             usages += usagesToProcessLater
             usagesToProcessBeforeMove += usagesToProcessEarly
-            usages += UsagesToProcessBeforeMoveWrapper(sourceFile, usagesToProcessBeforeMove)
+            usages += usagesToProcessBeforeMove.mapNotNull { UsageToProcessBeforeMoveWrapper.create(it) }
         }
 
         descriptor.delegate.collectConflicts(descriptor, usagesToProcessBeforeMove, conflicts)
@@ -230,8 +231,8 @@ class MoveKotlinDeclarationsProcessor(
             val usageList = usages.toList()
 
             val (usagesToProcessBeforeMoveWrappers, usagesToProcessAfterMove) =
-                    usageList.partition { it is UsagesToProcessBeforeMoveWrapper }
-            val usagesToProcessBeforeMove = usagesToProcessBeforeMoveWrappers.flatMap { (it as UsagesToProcessBeforeMoveWrapper).usages }
+                    usageList.partition { it is UsageToProcessBeforeMoveWrapper }
+            val usagesToProcessBeforeMove = usagesToProcessBeforeMoveWrappers.map { (it as UsageToProcessBeforeMoveWrapper).originalUsage }
 
             descriptor.delegate.preprocessUsages(project, descriptor, usagesToProcessBeforeMove)
             descriptor.delegate.preprocessUsages(project, descriptor, usagesToProcessAfterMove)
