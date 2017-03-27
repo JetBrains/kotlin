@@ -1166,6 +1166,9 @@ class StubGenerator(
             out("package $pkgName")
             out("")
         }
+        if (platform == KotlinPlatform.NATIVE) {
+            out("import konan.SymbolName")
+        }
         out("import kotlinx.cinterop.*")
         out("")
 
