@@ -2,6 +2,7 @@
 .idea/shelf
 /dependencies/all
 dist
+kotlin-native-*.tgz
 translator/src/test/kotlin/tests/*/linked
 out
 tmp
