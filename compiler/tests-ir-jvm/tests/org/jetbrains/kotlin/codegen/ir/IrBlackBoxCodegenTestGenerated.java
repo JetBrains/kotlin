@@ -3914,6 +3914,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             doTest(fileName);
         }
 
+        @TestMetadata("collectionLiteralsWithVarargs.kt")
+        public void testCollectionLiteralsWithVarargs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/collectionLiterals/collectionLiteralsWithVarargs.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("defaultAnnotationParameterValues.kt")
         public void testDefaultAnnotationParameterValues() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/collectionLiterals/defaultAnnotationParameterValues.kt");

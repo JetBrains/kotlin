@@ -3364,6 +3364,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("collectionLiteralsWithVarargs.kt")
+            public void testCollectionLiteralsWithVarargs() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/collectionLiterals/collectionLiteralsWithVarargs.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("defaultValuesInAnnotation.kt")
             public void testDefaultValuesInAnnotation() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/collectionLiterals/defaultValuesInAnnotation.kt");
