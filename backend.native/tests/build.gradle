@@ -1541,6 +1541,15 @@ task deserialized_listof0(type: RunKonanTest) {
     flags = ["--enable", "deserializer"]
 }
 
+// Enable when deserialization for default arguments is fixed.
+task inline_defaultArgs_linkTest(type: LinkKonanTest) {
+    disabled = true
+    goldValue = "122\n47\n"
+    source = "codegen/inline/defaultArgs_linkTest_main.kt"
+    lib = "codegen/inline/defaultArgs_linkTest_lib.kt"
+    flags = ["--enable", "deserializer", "--print_ir", "--verbose", "deserializer", "--verbose", "lower_inline"]
+}
+
 kotlinNativeInterop {
     sysstat {
         pkg 'sysstat'
