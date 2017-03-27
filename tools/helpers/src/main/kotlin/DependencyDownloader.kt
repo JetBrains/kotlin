@@ -52,7 +52,7 @@ class DependencyDownloader(dependenciesRoot: File, val properties: Properties, v
 
     private fun extract(tarGz: File) {
         val tarProcess = ProcessBuilder().apply {
-            command("tar", "-x", "-f", "${tarGz.canonicalPath}")
+            command("tar", "-xzf", "${tarGz.canonicalPath}")
             directory(tarGz.parentFile)
         }.start()
         tarProcess.waitFor()
