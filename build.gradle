@@ -261,6 +261,7 @@ task demo(type: Exec) {
 task clean {
     doLast {
         delete 'dist'
+        delete bundle.outputs.files
     }
 }
 
