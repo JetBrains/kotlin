@@ -32,7 +32,8 @@ class LookupElementsCollector(
         private val prefixMatcher: PrefixMatcher,
         private val completionParameters: CompletionParameters,
         resultSet: CompletionResultSet,
-        sorter: CompletionSorter
+        sorter: CompletionSorter,
+        private val filter: ((LookupElement) -> Boolean)?
 ) {
 
     var bestMatchingDegree = Int.MIN_VALUE
@@ -132,7 +133,9 @@ class LookupElementsCollector(
             }
         }
 
-        elements.add(result)
+        if (filter?.invoke(result) ?: true) {
+            elements.add(result)
+        }
 
         val matchingDegree = RealPrefixMatchingWeigher.getBestMatchingDegree(result, prefixMatcher)
         bestMatchingDegree = Math.max(bestMatchingDegree, matchingDegree)

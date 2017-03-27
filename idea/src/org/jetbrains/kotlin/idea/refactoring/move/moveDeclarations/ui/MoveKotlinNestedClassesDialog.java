@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui;
 
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.ide.util.ClassFilter;
 import com.intellij.ide.util.TreeClassChooser;
 import com.intellij.ide.util.TreeJavaClassChooserDialog;
@@ -23,9 +24,9 @@ import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.JavaCodeFragment;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.RefactoringBundle;
@@ -34,18 +35,21 @@ import com.intellij.refactoring.classMembers.MemberInfoChange;
 import com.intellij.refactoring.move.MoveCallback;
 import com.intellij.refactoring.move.MoveHandler;
 import com.intellij.refactoring.ui.RefactoringDialog;
-import com.intellij.ui.ReferenceEditorComboWithBrowseButton;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration;
+import org.jetbrains.kotlin.idea.completion.CompletionUtilsKt;
+import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject;
 import org.jetbrains.kotlin.idea.projectView.KtClassOrObjectTreeNode;
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionTable;
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*;
+import org.jetbrains.kotlin.idea.refactoring.ui.KotlinTypeReferenceEditorComboWithBrowseButton;
 import org.jetbrains.kotlin.psi.*;
 
 import javax.swing.*;
@@ -62,7 +66,7 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
     private JPanel mainPanel;
     private JTextField originalClassField;
     private JPanel membersInfoPanel;
-    private ReferenceEditorComboWithBrowseButton targetClassChooser;
+    private KotlinTypeReferenceEditorComboWithBrowseButton targetClassChooser;
     private JCheckBox openInEditorCheckBox;
     private JPanel targetClassChooserPanel;
     private KotlinMemberSelectionTable memberTable;
@@ -96,7 +100,7 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
         originalClassField.setText(originalClass.getFqName().asString());
 
         //noinspection ConstantConditions
-        targetClassChooser = new ReferenceEditorComboWithBrowseButton(
+        targetClassChooser = new KotlinTypeReferenceEditorComboWithBrowseButton(
                 new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -148,10 +152,24 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
                     }
                 },
                 initialTargetClass.getFqName().asString(),
-                myProject,
-                true,
-                JavaCodeFragment.VisibilityChecker.PROJECT_SCOPE_VISIBLE,
+                originalClass,
                 RECENTS_KEY);
+        KtTypeCodeFragment codeFragment = targetClassChooser.getCodeFragment();
+        if (codeFragment != null) {
+            CompletionUtilsKt.setExtraCompletionFilter(
+                    codeFragment,
+                    new Function1<LookupElement, Boolean>() {
+                        @Override
+                        public Boolean invoke(LookupElement lookupElement) {
+                            Object lookupObject = lookupElement.getObject();
+                            if (!(lookupObject instanceof DeclarationLookupObject)) return false;
+                            PsiElement psiElement = ((DeclarationLookupObject) lookupObject).getPsiElement();
+                            if (!(psiElement instanceof KtClassOrObject)) return false;
+                            return KotlinRefactoringUtilKt.canRefactor(psiElement);
+                        }
+                    }
+            );
+        }
         targetClassChooser.getChildComponent().getDocument().addDocumentListener(
                 new DocumentAdapter() {
                     @Override

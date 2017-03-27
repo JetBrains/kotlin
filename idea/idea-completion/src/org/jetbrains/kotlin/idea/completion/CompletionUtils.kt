@@ -419,3 +419,5 @@ fun OffsetMap.tryGetOffset(key: OffsetKey): Int? {
         return null
     }
 }
+
+var KtCodeFragment.extraCompletionFilter: ((LookupElement) -> Boolean)? by CopyableUserDataProperty(Key.create("EXTRA_COMPLETION_FILTER"))

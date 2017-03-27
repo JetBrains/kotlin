@@ -159,6 +159,7 @@ object KeywordCompletion {
             CommentFilter(),
             ParentFilter(ClassFilter(KtLiteralStringTemplateEntry::class.java)),
             ParentFilter(ClassFilter(KtConstantExpression::class.java)),
+            FileFilter(ClassFilter(KtTypeCodeFragment::class.java)),
             LeftNeighbour(TextFilter(".")),
             LeftNeighbour(TextFilter("?."))
     ))
@@ -179,6 +180,17 @@ object KeywordCompletion {
         override fun isAcceptable(element : Any?, context : PsiElement?) : Boolean {
             val parent = (element as? PsiElement)?.parent
             return parent != null && (filter?.isAcceptable(parent, context) ?: true)
+        }
+    }
+
+    private class FileFilter(filter : ElementFilter) : PositionElementFilter() {
+        init {
+            setFilter(filter)
+        }
+
+        override fun isAcceptable(element : Any?, context : PsiElement?) : Boolean {
+            val file = (element as? PsiElement)?.containingFile
+            return file != null && (filter?.isAcceptable(file, context) ?: true)
         }
     }
 
