@@ -23,12 +23,12 @@ import com.android.tools.klint.client.api.JavaParser;
 import com.android.tools.klint.client.api.JavaParser.ResolvedClass;
 import com.android.tools.klint.client.api.LintDriver;
 import com.android.tools.klint.detector.api.Detector.JavaPsiScanner;
-import com.google.common.collect.Iterators;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.containers.ContainerUtil;
 import lombok.ast.*;
 import lombok.ast.Position;
 import org.jetbrains.uast.*;
@@ -628,7 +628,7 @@ public class JavaContext extends Context {
         } else if (call instanceof EnumConstant) {
             return ((EnumConstant) call).astArguments().iterator();
         } else {
-            return Iterators.emptyIterator();
+            return ContainerUtil.emptyIterator();
         }
     }
 
