@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor
 import com.intellij.usageView.UsageInfo
+import com.intellij.usageView.UsageViewDescriptor
 import com.intellij.usageView.UsageViewUtil
 import com.intellij.util.containers.MultiMap
 import com.intellij.util.text.UniqueNameGenerator
@@ -47,6 +48,10 @@ class MoveFilesWithDeclarationsProcessor(
                                     EmptyRunnable.INSTANCE) {
     override fun getCommandName(): String {
         return if (targetFileName != null) "Move " + sourceFiles.single().name else "Move"
+    }
+
+    override fun createUsageViewDescriptor(usages: Array<out UsageInfo>): UsageViewDescriptor {
+        return MoveFilesWithDeclarationsViewDescriptor(sourceFiles.toTypedArray<PsiElement>(), targetDirectory)
     }
 
     override fun preprocessUsages(refUsages: Ref<Array<UsageInfo>>): Boolean {
