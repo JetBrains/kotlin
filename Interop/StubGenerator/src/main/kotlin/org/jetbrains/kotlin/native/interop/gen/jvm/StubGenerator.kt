@@ -971,7 +971,7 @@ class StubGenerator(
         }
 
         return this.isDefined ||
-                this.generateAsFfiVarargs() ||
+                this.isVararg ||
                 this.returnsRecord() ||
                 this.parameters.map { it.type }.any { it.unwrapTypedefs() is RecordType }
     }
