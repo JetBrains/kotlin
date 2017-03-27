@@ -170,7 +170,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         if (copyFuncDeclaration.body == null) return irCall                                 // TODO workaround
         val blockBody   = copyFuncDeclaration.body!! as IrBlockBody
         val statements  = blockBody.statements
-        val inlineBody  = IrInlineFunctionBody(startOffset, endOffset, returnType, null, statements)
+        val inlineBody  = IrInlineFunctionBody(startOffset, endOffset, returnType, originalDescriptor, null, statements)
 
         val parametersOld = getArguments(irCall, copyFuncDeclaration)                                          // Create map call_site_argument -> inline_function_parameter.
         val evaluatedParameters = evaluateParameters(parametersOld)
@@ -412,7 +412,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
                 null) as IrFunction
             val lambdaStatements = (copyLambdaFunction.body as IrBlockBody).statements
             val lambdaReturnType = copyLambdaFunction.descriptor.returnType!!
-            val inlineBody       = IrInlineFunctionBody(0, 0, lambdaReturnType, null, lambdaStatements)
+            val inlineBody       = IrInlineFunctionBody(0, 0, lambdaReturnType, lambdaFunction.descriptor, null, lambdaStatements)
 
             val transformer = ParametersTransformer(parameterToArgument, null, lambdaStatements)
             inlineBody.accept(transformer, null)                                            // Replace parameters with expression.
@@ -442,6 +442,7 @@ class InlineCopyIr() : DeepCopyIrTree() {
             IrInlineFunctionBody(
                 expression.startOffset, expression.endOffset,
                 expression.type,
+                expression.descriptor,
                 mapStatementOrigin(expression.origin),
                 expression.statements.map { it.transform(this, null) }
             )

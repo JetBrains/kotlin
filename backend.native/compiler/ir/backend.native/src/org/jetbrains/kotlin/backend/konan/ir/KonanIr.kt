@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.backend.konan.ir
 
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -10,10 +11,10 @@ import org.jetbrains.kotlin.types.KotlinType
 
 //-----------------------------------------------------------------------------//
 
-class IrInlineFunctionBody(startOffset: Int, endOffset: Int, type: KotlinType, origin: IrStatementOrigin? = null):
+class IrInlineFunctionBody(startOffset: Int, endOffset: Int, type: KotlinType, val descriptor: FunctionDescriptor, origin: IrStatementOrigin? = null):
     IrContainerExpressionBase(startOffset, endOffset, type, origin), IrBlock {
-    constructor(startOffset: Int, endOffset: Int, type: KotlinType, origin: IrStatementOrigin?, statements: List<IrStatement>) :
-        this(startOffset, endOffset, type, origin) {
+    constructor(startOffset: Int, endOffset: Int, type: KotlinType, descriptor: FunctionDescriptor, origin: IrStatementOrigin?, statements: List<IrStatement>) :
+        this(startOffset, endOffset, type, descriptor, origin) {
         this.statements.addAll(statements)
     }
 

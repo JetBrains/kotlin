@@ -153,6 +153,16 @@ internal interface CodeContext {
     fun genGetValue(descriptor: ValueDescriptor): LLVMValueRef
 
     /**
+     * Gets the exit block for the context owned by specified descriptor.
+     */
+    fun getExit(descriptor: CallableDescriptor): LLVMBasicBlockRef
+
+    /**
+     * Gets the result value for the context owned by specified descriptor.
+     */
+    fun getResult(descriptor: CallableDescriptor): LLVMValueRef
+
+    /**
      * Returns owning function scope.
      *
      * @return the requested value
@@ -197,6 +207,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         override fun getDeclaredVariable(descriptor: VariableDescriptor) = -1
 
         override fun genGetValue(descriptor: ValueDescriptor) = unsupported(descriptor)
+
+        override fun getExit(descriptor: CallableDescriptor): LLVMBasicBlockRef = unsupported(descriptor)
+
+        override fun getResult(descriptor: CallableDescriptor): LLVMValueRef = unsupported(descriptor)
 
         override fun functionScope(): CodeContext = unsupported()
     }
@@ -1381,15 +1395,19 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         var bbExit : LLVMBasicBlockRef? = null
         var resultPhi : LLVMValueRef? = null
 
-        fun getExit(): LLVMBasicBlockRef {
+        override fun getExit(descriptor: CallableDescriptor): LLVMBasicBlockRef {
+            if (descriptor != inlineBody.descriptor)
+                return super.getExit(descriptor)
             if (bbExit == null) bbExit = codegen.basicBlock("inline_body_exit")
             return bbExit!!
         }
 
-        fun getResult(): LLVMValueRef {
+        override fun getResult(descriptor: CallableDescriptor): LLVMValueRef {
+            if (descriptor != inlineBody.descriptor)
+                return super.getResult(descriptor)
             if (resultPhi == null) {
                 val bbCurrent = codegen.currentBlock
-                codegen.positionAtEnd(getExit())
+                codegen.positionAtEnd(getExit(descriptor))
                 resultPhi = codegen.phi(codegen.getLLVMType(inlineBody.type))
                 codegen.positionAtEnd(bbCurrent)
             }
@@ -1402,10 +1420,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
                 return
             }
                                                                                 // It is local return.
-            codegen.br(getExit()!!)                                             // Generate branch on exit block.
+            codegen.br(getExit(target)!!)                                       // Generate branch on exit block.
 
-            if (KotlinBuiltIns.isUnit(inlineBody.type) == false) {              // If function returns more then "unit"
-                codegen.assignPhis(getResult() to value!!)                      // Assign return value to result PHI node.
+            if (!KotlinBuiltIns.isUnit(inlineBody.type)) {                      // If function returns more then "unit"
+                codegen.assignPhis(getResult(target) to value!!)                // Assign return value to result PHI node.
             }
         }
     }
