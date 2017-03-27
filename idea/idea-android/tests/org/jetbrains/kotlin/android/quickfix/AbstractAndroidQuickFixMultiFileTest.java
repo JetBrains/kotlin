@@ -16,12 +16,15 @@
 
 package org.jetbrains.kotlin.android.quickfix;
 
+import com.intellij.codeInsight.ImportFilter;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.facet.impl.FacetUtil;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.extensions.Extensions;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.kotlin.idea.quickfix.AbstractQuickFixMultiFileTest;
+import org.jetbrains.kotlin.idea.test.KotlinTestImportFilter;
 
 public abstract class AbstractAndroidQuickFixMultiFileTest extends AbstractQuickFixMultiFileTest {
 
@@ -29,10 +32,12 @@ public abstract class AbstractAndroidQuickFixMultiFileTest extends AbstractQuick
     protected void setUp() {
         super.setUp();
         addAndroidFacet();
+        Extensions.getRootArea().getExtensionPoint(ImportFilter.EP_NAME).registerExtension(KotlinTestImportFilter.INSTANCE);
     }
 
     @Override
     protected void tearDown() {
+        Extensions.getRootArea().getExtensionPoint(ImportFilter.EP_NAME).unregisterExtension(KotlinTestImportFilter.INSTANCE);
         AndroidFacet facet = FacetManager.getInstance(myModule).getFacetByType(AndroidFacet.getFacetType().getId());
         FacetUtil.deleteFacet(facet);
         super.tearDown();
