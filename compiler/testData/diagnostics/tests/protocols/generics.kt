@@ -25,7 +25,3 @@ fun test() {
     val e: GProto<Int> = <!TYPE_MISMATCH!>X<Any>()<!>
     val f: GProto<Any> = <!TYPE_MISMATCH!>Y()<!>
 }
-
-class X<out T> {
-    fun foo(): T? = null
-}

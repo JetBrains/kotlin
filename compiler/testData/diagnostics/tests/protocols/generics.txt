@@ -1,6 +1,6 @@
 package
 
-public fun tests(): kotlin.Unit
+public fun test(): kotlin.Unit
 
 public interface GProto</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
