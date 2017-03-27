@@ -52,12 +52,6 @@ import java.util.*
 import java.util.regex.Pattern
 
 abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTestCase() {
-
-    @Throws(Exception::class)
-    protected open fun doTestWithoutExtraFile(beforeFileName: String) {
-        doTest(beforeFileName, false)
-    }
-
     @Throws(Exception::class)
     protected open fun doTestWithExtraFile(beforeFileName: String) {
         enableInspections(beforeFileName)
@@ -66,7 +60,7 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
             doMultiFileTest(beforeFileName)
         }
         else {
-            doTest(beforeFileName, true)
+            doTest(beforeFileName)
         }
     }
 
@@ -212,25 +206,20 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
     }
 
     @Throws(Exception::class)
-    private fun doTest(beforeFileName: String, withExtraFile: Boolean) {
+    private fun doTest(beforeFileName: String) {
         val mainFile = File(beforeFileName)
         val originalFileText = FileUtil.loadFile(mainFile, true)
 
-        if (withExtraFile) {
-            val mainFileDir = mainFile.parentFile!!
+        val mainFileDir = mainFile.parentFile!!
 
-            val mainFileName = mainFile.name
-            val extraFiles = mainFileDir.listFiles { dir, name -> name.startsWith(extraFileNamePrefix(mainFileName)) && name != mainFileName }!!
+        val mainFileName = mainFile.name
+        val extraFiles = mainFileDir.listFiles { dir, name -> name.startsWith(extraFileNamePrefix(mainFileName)) && name != mainFileName }!!
 
-            val testFiles = ArrayList<String>()
-            testFiles.add(mainFile.name)
-            extraFiles.mapTo(testFiles) { file -> file.name }
+        val testFiles = ArrayList<String>()
+        testFiles.add(mainFile.name)
+        extraFiles.mapTo(testFiles) { file -> file.name }
 
-            myFixture.configureByFiles(*testFiles.toTypedArray())
-        }
-        else {
-            myFixture.configureByFile(beforeFileName)
-        }
+        myFixture.configureByFiles(*testFiles.toTypedArray())
 
         CommandProcessor.getInstance().executeCommand(project, {
             try {
