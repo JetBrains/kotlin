@@ -69,10 +69,12 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             )
         }
         else {
+            val hasDelegatedMembers = classOrObject.superTypeListEntries.any { it is KtDelegatedSuperTypeEntry }
+            val dummyContextProvider = { IDELightClassContexts.lightContextForClassOrObject(classOrObject) }
             LazyLightClassDataHolder.ForClass(
                     builder,
                     exactContextProvider = { IDELightClassContexts.contextForNonLocalClassOrObject(classOrObject) },
-                    dummyContextProvider = { IDELightClassContexts.lightContextForClassOrObject(classOrObject) }
+                    dummyContextProvider = if (!hasDelegatedMembers) dummyContextProvider else null
             )
         }
     }
