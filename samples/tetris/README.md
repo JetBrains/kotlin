@@ -1,4 +1,4 @@
-   #Tetris game
+# Tetris game
 
 This example shows implementation of simple Tetris game using SDL
 (Simple DirectMedia Layer) library for rendering. SDL allows easy development

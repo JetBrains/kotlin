@@ -46,9 +46,9 @@ between threads are allowed.
 
  Download Kotlin N redistributable and unpack it. You can run command line compiler with
 
-	./dist/bin/kotlinc <some_file>.kt <dir_with_kt_files> -o <executable>.kexe
+	bin/kotlinc <some_file>.kt <dir_with_kt_files> -o <executable>.kexe
 
-  During the first run it will download all external dependencies such as LLVM.
+  During the first run it will download all the external dependencies, such as LLVM.
 
   One may use `'-h'` flag to `kotlinc` to see available flags.
 
