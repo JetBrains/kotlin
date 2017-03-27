@@ -1,5 +1,5 @@
 package testing.rename
 
 public open class C {
-    @JvmStatic var <caret> second = 1
+    @JvmStatic var second = 1
 }

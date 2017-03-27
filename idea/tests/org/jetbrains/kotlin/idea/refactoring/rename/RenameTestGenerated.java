@@ -198,12 +198,6 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
-    @TestMetadata("fileNotUnderSourceRootWithNamesakeUnderSourceRoot/fileNotUnderSourceRootWithNamesakeUnderSourceRoot.test")
-    public void testFileNotUnderSourceRootWithNamesakeUnderSourceRoot_FileNotUnderSourceRootWithNamesakeUnderSourceRoot() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/fileNotUnderSourceRootWithNamesakeUnderSourceRoot/fileNotUnderSourceRootWithNamesakeUnderSourceRoot.test");
-        doTest(fileName);
-    }
-
     @TestMetadata("funWithLabeledReturns/funWithLabeledReturns.test")
     public void testFunWithLabeledReturns_FunWithLabeledReturns() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/rename/funWithLabeledReturns/funWithLabeledReturns.test");

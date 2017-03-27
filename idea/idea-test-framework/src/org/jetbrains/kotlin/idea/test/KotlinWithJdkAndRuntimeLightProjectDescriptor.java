@@ -30,7 +30,7 @@ public class KotlinWithJdkAndRuntimeLightProjectDescriptor extends KotlinJdkAndL
         super(ForTestCompileRuntime.runtimeJarForTests());
     }
 
-    protected KotlinWithJdkAndRuntimeLightProjectDescriptor(@NotNull List<? extends File> libraryFiles) {
+    public KotlinWithJdkAndRuntimeLightProjectDescriptor(@NotNull List<? extends File> libraryFiles) {
         super(libraryFiles);
     }
 

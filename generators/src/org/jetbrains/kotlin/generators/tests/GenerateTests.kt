@@ -114,6 +114,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractExtractionTest
 import org.jetbrains.kotlin.idea.refactoring.move.AbstractMoveTest
 import org.jetbrains.kotlin.idea.refactoring.pullUp.AbstractPullUpTest
 import org.jetbrains.kotlin.idea.refactoring.pushDown.AbstractPushDownTest
+import org.jetbrains.kotlin.idea.refactoring.rename.AbstractMultiModuleRenameTest
 import org.jetbrains.kotlin.idea.refactoring.rename.AbstractRenameTest
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.AbstractSafeDeleteTest
 import org.jetbrains.kotlin.idea.repl.AbstractIdeReplCompletionTest
@@ -740,6 +741,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractRenameTest> {
             model("refactoring/rename", extension = "test", singleClass = true)
+        }
+
+        testClass<AbstractMultiModuleRenameTest> {
+            model("refactoring/renameMultiModule", extension = "test", singleClass = true)
         }
 
         testClass<AbstractOutOfBlockModificationTest> {

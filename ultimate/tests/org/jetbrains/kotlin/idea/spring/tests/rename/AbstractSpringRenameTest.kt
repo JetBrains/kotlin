@@ -22,7 +22,7 @@ import com.intellij.spring.facet.SpringFacet
 import org.jetbrains.kotlin.idea.rename.AbstractUltimateRenameTest
 
 abstract class AbstractSpringRenameTest : AbstractUltimateRenameTest() {
-    override fun getTestRoot() = "/spring/core/rename/"
+    override fun getTestDataPath() = super.getTestDataPath() + "/spring/core/rename/"
 
     override fun configExtra(rootDir: VirtualFile, renameParamsObject: JsonObject) {
         val fileSet = SpringFacet.getInstance(module)!!.addFileSet("default", "default")!!
