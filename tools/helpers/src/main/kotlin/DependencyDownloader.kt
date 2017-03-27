@@ -1,8 +1,5 @@
 package org.jetbrains.kotlin.konan
 
-import org.codehaus.plexus.archiver.tar.TarGZipUnArchiver
-import org.codehaus.plexus.logging.Logger
-import org.codehaus.plexus.logging.console.ConsoleLogger
 import java.io.*
 import java.net.URL
 import java.util.Properties
@@ -54,12 +51,14 @@ class DependencyDownloader(dependenciesRoot: File, val properties: Properties, v
     }
 
     private fun extract(tarGz: File) {
-        val ua = TarGZipUnArchiver()
-        ua.sourceFile = tarGz
-        ua.destDirectory = dependenciesRoot
-        // Workaround. This archive library crashes if the logger is not set.
-        ua.enableLogging(ConsoleLogger(Logger.LEVEL_DISABLED, "Logger"))
-        ua.extract()
+        val tarProcess = ProcessBuilder().apply {
+            command("tar", "-x", "-f", "${tarGz.canonicalPath}")
+            directory(tarGz.parentFile)
+        }.start()
+        tarProcess.waitFor()
+        if (tarProcess.exitValue() != 0) {
+            throw RuntimeException("Cannot extract archive with dependency: ${tarGz.canonicalPath}")
+        }
     }
 
     private val Long.humanReadable: String
@@ -115,6 +114,7 @@ class DependencyDownloader(dependenciesRoot: File, val properties: Properties, v
                 Thread.sleep(1000) // We can use condition variable here.
                 updateProgressMsg(url.toString(), currentBytes, totalBytes)
             }
+            println("Done.")
             if (downloadError != null) {
                 throw RuntimeException("Cannot download dependency: $url", downloadError)
             }
