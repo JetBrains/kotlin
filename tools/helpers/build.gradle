@@ -60,6 +60,8 @@ kotlinNativeInterop {
     }
 }
 
+project.convention.plugins.remoteExec = new org.jetbrains.kotlin.ExecRemote(project)
+
 task testInteropHelper(type: RunInteropKonanTest) {
     dependsOn jar
     dependsOn ':dist'
