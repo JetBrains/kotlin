@@ -324,7 +324,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
                     override fun visitFunction(declaration: IrFunction) {
                         super.visitFunction(declaration)
-                        println("${declaration.descriptor.fqNameOrNull()}: ${fileEntry.range(declaration)}")
+                        val descriptor = declaration.descriptor
+                        println("${descriptor.fqNameOrNull()?: descriptor.name}: ${fileEntry.range(declaration)}")
                     }
                 })
             }
