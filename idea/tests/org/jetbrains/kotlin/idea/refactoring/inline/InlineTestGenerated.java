@@ -142,6 +142,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("Recursive.kt")
+            public void testRecursive() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/Recursive.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("SafeCall.kt")
             public void testSafeCall() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/SafeCall.kt");
@@ -202,6 +208,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
             @TestMetadata("PublicMember.kt")
             public void testPublicMember() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/PublicMember.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Recursive.kt")
+            public void testRecursive() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/returnAtEnd/Recursive.kt");
                 doTest(fileName);
             }
 
