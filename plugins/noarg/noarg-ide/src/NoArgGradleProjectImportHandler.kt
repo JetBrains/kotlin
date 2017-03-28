@@ -26,4 +26,14 @@ class NoArgGradleProjectImportHandler : AbstractGradleImportHandler() {
     override val annotationOptionName = NoArgCommandLineProcessor.ANNOTATION_OPTION.name
     override val dataStorageTaskName = "noArgDataStorageTask"
     override val pluginJarFileFromIdea = PathUtil.getKotlinPathsForIdeaPlugin().noArgPluginJarPath
+
+    override fun getAnnotationsForPreset(presetName: String): List<String> {
+        for ((name, annotations) in NoArgCommandLineProcessor.SUPPORTED_PRESETS.entries) {
+            if (presetName == name) {
+                return annotations
+            }
+        }
+
+        return super.getAnnotationsForPreset(presetName)
+    }
 }

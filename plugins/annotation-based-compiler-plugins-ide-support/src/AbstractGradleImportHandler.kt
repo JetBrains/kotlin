@@ -28,7 +28,7 @@ import java.io.File
 
 abstract class AbstractGradleImportHandler : GradleProjectImportHandler {
     private companion object {
-        private val TASK_DESCRIPTION_REGEX = "Supported annotations: (.*?); Compiler plugin classpath: (.*)".toRegex()
+        private val TASK_DESCRIPTION_REGEX = "Supported annotations: ([^; ]*); (?:Presets: (.*?); )?Compiler plugin classpath: (.*?)".toRegex()
     }
 
     abstract val compilerPluginId: String
@@ -51,6 +51,8 @@ abstract class AbstractGradleImportHandler : GradleProjectImportHandler {
                                          annotationOptionName = annotationOptionName)
     }
 
+    protected open fun getAnnotationsForPreset(presetName: String): List<String> = emptyList()
+
     private fun getPluginSetupByModule(
             moduleNode: DataNode<ModuleData>
     ): AnnotationBasedCompilerPluginSetup? {
@@ -60,10 +62,10 @@ abstract class AbstractGradleImportHandler : GradleProjectImportHandler {
         }?.data as? TaskData ?: return null
 
         val dataStorageTaskDescription = dataStorageTaskData.description ?: return null
-        val (annotationFqNamesList, _) = TASK_DESCRIPTION_REGEX.matchEntire(
-                dataStorageTaskDescription)?.groupValues?.drop(1) ?: return null
+        val matchResult = TASK_DESCRIPTION_REGEX.matchEntire(dataStorageTaskDescription)?.groupValues?.drop(1) ?: return null
+        val (annotationFqNamesList, presets) = matchResult
 
-        val annotationFqNames = annotationFqNamesList.split(',')
+        val annotationFqNames = annotationFqNamesList.split(',') + presets.split(',').flatMap { getAnnotationsForPreset(it) }
 
         // For now we can't use plugins from Gradle cause they're shaded and may have an incompatible version.
         // So we use ones from the IDEA plugin.
