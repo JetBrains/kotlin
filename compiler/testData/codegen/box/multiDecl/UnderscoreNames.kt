@@ -10,5 +10,5 @@ fun box() : String {
 
     val (`_`, c) = A()
 
-    return if (a == 1 && b == 2 && _ == 1 && c == 2) "OK" else "fail"
+    return if (a == 1 && b == 2 && `_` == 1 && c == 2) "OK" else "fail"
 }

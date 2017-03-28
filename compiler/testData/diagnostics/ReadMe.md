@@ -58,6 +58,8 @@ With that, an exact type of an expression can be checked in the following way:
        expr checkType { _<A>() }
     }
 
+`CHECK_TYPE` directive also disables `UNDERSCORE_USAGE_WITHOUT_BACKTICKS` diagnostics output.
+
 #### Usage:
 
     // !CHECK_TYPE

@@ -130,10 +130,10 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         val dynamicCallDescriptors: List<DeclarationDescriptor> = ArrayList()
 
         init {
-            this.whatDiagnosticsToConsider = parseDiagnosticFilterDirective(directives)
+            this.declareCheckType = CHECK_TYPE_DIRECTIVE in directives
+            this.whatDiagnosticsToConsider = parseDiagnosticFilterDirective(directives, declareCheckType)
             this.customLanguageVersionSettings = parseLanguageVersionSettings(directives)
             this.checkLazyLog = CHECK_LAZY_LOG_DIRECTIVE in directives || CHECK_LAZY_LOG_DEFAULT
-            this.declareCheckType = CHECK_TYPE_DIRECTIVE in directives
             this.declareFlexibleType = EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE in directives
             this.markDynamicCalls = MARK_DYNAMIC_CALLS_DIRECTIVE in directives
             if (fileName.endsWith(".java")) {
@@ -358,18 +358,26 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             return values
         }
 
-        private fun parseDiagnosticFilterDirective(directiveMap: Map<String, String>): Condition<Diagnostic> {
+        private fun parseDiagnosticFilterDirective(directiveMap: Map<String, String>, allowUnderscoreUsage: Boolean): Condition<Diagnostic> {
             val directives = directiveMap[DIAGNOSTICS_DIRECTIVE]
+            val initialCondition =
+                    if (allowUnderscoreUsage)
+                        Condition<Diagnostic> { it.factory.name != "UNDERSCORE_USAGE_WITHOUT_BACKTICKS" }
+                    else
+                        Conditions.alwaysTrue()
+
             if (directives == null) {
                 // If "!API_VERSION" is present, disable the NEWER_VERSION_IN_SINCE_KOTLIN diagnostic.
                 // Otherwise it would be reported in any non-trivial test on the @SinceKotlin value.
                 if (API_VERSION_DIRECTIVE in directiveMap) {
-                    return Condition { diagnostic -> diagnostic.factory !== Errors.NEWER_VERSION_IN_SINCE_KOTLIN }
+                    return Conditions.and(initialCondition, Condition {
+                        diagnostic -> diagnostic.factory !== Errors.NEWER_VERSION_IN_SINCE_KOTLIN
+                    })
                 }
-                return Conditions.alwaysTrue()
+                return initialCondition
             }
 
-            var condition = Conditions.alwaysTrue<Diagnostic>()
+            var condition = initialCondition
             val matcher = DIAGNOSTICS_PATTERN.matcher(directives)
             if (!matcher.find()) {
                 Assert.fail("Wrong syntax in the '// !$DIAGNOSTICS_DIRECTIVE: ...' directive:\n" +
