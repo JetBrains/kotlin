@@ -28,8 +28,7 @@ import kotlin.concurrent.write
 class KotlinScriptExternalImportsProvider(val project: Project, private val scriptDefinitionProvider: KotlinScriptDefinitionProvider) {
 
     private val cacheLock = ReentrantReadWriteLock()
-    private val cache = hashMapOf<String, KotlinScriptExternalDependencies>()
-    private val cacheOfNulls = hashSetOf<String>()
+    private val cache = hashMapOf<String, KotlinScriptExternalDependencies?>()
 
     fun <TF: Any> getExternalImports(file: TF): KotlinScriptExternalDependencies? = cacheLock.read { calculateExternalDependencies(file) }
 
@@ -39,58 +38,62 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
 
     private fun <TF: Any> calculateExternalDependencies(file: TF): KotlinScriptExternalDependencies? {
         val path = getFilePath(file)
-        return cache[path]
-               ?: if (cacheOfNulls.contains(path)) null
-               else scriptDefinitionProvider.findScriptDefinition(file)?.getDependenciesFor(file, project, null)
-                    .apply {
-                        if (this != null) {
-                            log.info("[kts] new cached deps for $path: ${this.classpath.joinToString(File.pathSeparator)}")
-                        }
-                        cacheLock.write {
-                            if (this == null) {
-                                cacheOfNulls.add(path)
-                            }
-                            else {
-                                cache.put(path, this)
-                            }
-                        }
-                    }
+        val cached = cache[path]
+        return if (cached != null) cached else {
+            val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
+            if (scriptDef != null) {
+                val deps = scriptDef.getDependenciesFor(file, project, null)
+                if (deps != null) {
+                    log.info("[kts] new cached deps for $path: ${deps.classpath.joinToString(File.pathSeparator)}")
+                }
+                cacheLock.write {
+                    cache.put(path, deps)
+                }
+                deps
+            }
+            else null
+        }
     }
 
     // optimized for initial caching, additional handling of possible duplicates to save a call to distinct
-    fun <TF: Any> cacheExternalImports(files: Iterable<TF>): Unit = cacheLock.write {
+    // returns list of cached files
+    fun <TF: Any> cacheExternalImports(files: Iterable<TF>): Iterable<TF> = cacheLock.write {
         val uncached = hashSetOf<String>()
-        files.forEach { file ->
+        files.mapNotNull { file ->
             val path = getFilePath(file)
-            if (isValidFile(file) && !cache.containsKey(path) && !cacheOfNulls.contains(path) && !uncached.contains(path)) {
+            if (isValidFile(file) && !cache.containsKey(path) && !uncached.contains(path)) {
                 val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
                 if (scriptDef != null) {
                     val deps = scriptDef.getDependenciesFor(file, project, null)
-                    log.info("[kts] cached deps for $path: ${deps?.classpath?.joinToString(File.pathSeparator)}")
                     if (deps != null) {
-                        cache.put(path, deps)
+                        log.info("[kts] cached deps for $path: ${deps.classpath.joinToString(File.pathSeparator)}")
                     }
-                    else {
-                        cacheOfNulls.add(path)
-                    }
+                    cache.put(path, deps)
+                    file
                 }
                 else {
                     uncached.add(path)
+                    null
                 }
             }
+            else null
         }
     }
 
     // optimized for update, no special duplicates handling
+    // returns files with valid script definition (or deleted from cache - which in fact should have script def too)
+    // TODO: this is the badly designed contract, since it mixes the entities, but these files are needed on the calling site now. Find out other solution
     fun <TF: Any> updateExternalImportsCache(files: Iterable<TF>): Iterable<TF> = cacheLock.write {
         files.mapNotNull { file ->
             val path = getFilePath(file)
             if (!isValidFile(file)) {
-                if (cache.remove(path) != null || cacheOfNulls.remove(path)) {
-                    log.info("[kts] removed deps for invalid file $path")
+                if (cache.remove(path) != null) {
+                    log.debug("[kts] removed deps for file $path")
                     file
                 } // cleared
-                else null // unknown
+                else {
+                    null // unknown
+                }
             }
             else {
                 val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
@@ -103,22 +106,17 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
                             // changed or new
                             log.info("[kts] updated/new cached deps for $path: ${deps.classpath.joinToString(File.pathSeparator)}")
                             cache.put(path, deps)
-                            cacheOfNulls.remove(path)
-                            file
                         }
                         deps != null -> {
                             // same as before
-                            log.info("[kts] unchanged deps for $path")
-                            null
                         }
                         else -> {
-                            if (cache.remove(path) != null || cacheOfNulls.remove(path)) {
-                                log.info("[kts] removed deps for $path")
-                                file
+                            if (cache.remove(path) != null) {
+                                log.debug("[kts] removed deps for $path")
                             } // cleared
-                            else null // same as before
                         }
                     }
+                    file
                 }
                 else null // not a script
             }
@@ -126,30 +124,15 @@ class KotlinScriptExternalImportsProvider(val project: Project, private val scri
     }
 
     fun invalidateCaches() {
-        cacheLock.write {
-            cache.clear()
-            cacheOfNulls.clear()
-        }
-    }
-
-    fun <TF: Any> invalidateCachesFor(vararg files: TF) { invalidateCachesFor(files.asIterable()) }
-
-    fun <TF: Any> invalidateCachesFor(files: Iterable<TF>) {
-        cacheLock.write {
-            files.forEach { file ->
-                val path = getFilePath(file)
-                cache.remove(path)
-                cacheOfNulls.remove(path)
-            }
-        }
+        cacheLock.write(cache::clear)
     }
 
     fun getKnownCombinedClasspath(): List<File> = cacheLock.read {
-        cache.values.flatMap { it.classpath }
+        cache.values.flatMap { it?.classpath ?: emptyList() }
     }.distinct()
 
     fun getKnownSourceRoots(): List<File> = cacheLock.read {
-        cache.values.flatMap { it.sources }
+        cache.values.flatMap { it?.sources ?: emptyList() }
     }.distinct()
 
     fun <TF: Any> getCombinedClasspathFor(files: Iterable<TF>): List<File> =

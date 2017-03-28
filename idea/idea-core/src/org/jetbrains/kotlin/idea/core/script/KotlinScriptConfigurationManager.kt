@@ -50,7 +50,6 @@ import kotlin.concurrent.write
 @Suppress("SimplifyAssertNotNull")
 class KotlinScriptConfigurationManager(
         private val project: Project,
-        private val dumbService: DumbService,
         private val scriptDefinitionProvider: KotlinScriptDefinitionProvider,
         private val scriptExternalImportsProvider: KotlinScriptExternalImportsProvider
 ) {
@@ -60,15 +59,16 @@ class KotlinScriptConfigurationManager(
 
         StartupManager.getInstance(project).runWhenProjectIsInitialized {
             DumbService.getInstance(project).smartInvokeLater {
-                cacheAllScriptsExtraImports()
-                invalidateLocalCaches()
-                notifyRootsChanged()
+                if (cacheAllScriptsExtraImports()) {
+                    invalidateLocalCaches()
+                    notifyRootsChanged()
+                }
             }
         }
 
         project.messageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener.Adapter() {
             override fun after(events: List<VFileEvent>) {
-                updateExternalImportsCache(events.mapNotNull { it.file }) {
+                if (updateExternalImportsCache(events.mapNotNull { it.file })) {
                     invalidateLocalCaches()
                     notifyRootsChanged()
                 }
@@ -100,9 +100,7 @@ class KotlinScriptConfigurationManager(
                 if (project.isDisposed) return@runWriteAction
 
                 ProjectRootManagerEx.getInstanceEx(project)?.makeRootsChange(EmptyRunnable.getInstance(), false, true)
-                dumbService.runWhenSmart {
-                    ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
-                }
+                ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
             }
         }
 
@@ -128,28 +126,21 @@ class KotlinScriptConfigurationManager(
     fun getAllLibrarySourcesScope() = allLibrarySourcesScope.get()
 
     private fun reloadScriptDefinitions() {
-        makeScriptDefsFromTemplatesProviderExtensions(project, { ep, ex -> log.warn("[kts] Error loading definition from ${ep.id}", ex) }).let {
-            scriptDefinitionProvider.setScriptDefinitions(it)
+        val def = makeScriptDefsFromTemplatesProviderExtensions(project, { ep, ex -> log.warn("[kts] Error loading definition from ${ep.id}", ex) })
+        scriptDefinitionProvider.setScriptDefinitions(def)
+    }
+
+    private fun cacheAllScriptsExtraImports(): Boolean = runReadAction {
+        scriptExternalImportsProvider.run {
+            invalidateCaches()
+            cacheExternalImports(
+                    scriptDefinitionProvider.getAllKnownFileTypes()
+                            .flatMap { FileTypeIndex.getFiles(it, GlobalSearchScope.allScope(project)) }
+            ).any()
         }
     }
 
-    private fun cacheAllScriptsExtraImports() {
-        runReadAction {
-            scriptExternalImportsProvider.apply {
-                invalidateCaches()
-                cacheExternalImports(
-                        scriptDefinitionProvider.getAllKnownFileTypes()
-                                .flatMap { FileTypeIndex.getFiles(it, GlobalSearchScope.allScope(project)) })
-            }
-        }
-    }
-
-    private fun updateExternalImportsCache(files: Iterable<VirtualFile>, onChange: () -> Unit) {
-        val isChanged = scriptExternalImportsProvider.updateExternalImportsCache(files).any()
-        if (isChanged) {
-            onChange()
-        }
-    }
+    private fun updateExternalImportsCache(files: Iterable<VirtualFile>) = scriptExternalImportsProvider.updateExternalImportsCache(files).any()
 
     private fun invalidateLocalCaches() {
         allScriptsClasspathCache.clear()
