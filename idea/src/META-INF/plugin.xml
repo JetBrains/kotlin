@@ -352,7 +352,6 @@
     <fileTypeFactory implementation="org.jetbrains.kotlin.idea.KotlinBuiltInFileTypeFactory"/>
     <fileTypeFactory implementation="org.jetbrains.kotlin.idea.KotlinModuleFileFactory"/>
 
-    <compileServer.plugin classpath="jps/kotlin-jps-plugin.jar;kotlin-runtime.jar;kotlin-reflect.jar;kotlin-plugin.jar;android-extensions-ide.jar;android-extensions-compiler.jar"/>
     <compiler.task execute="BEFORE" implementation="org.jetbrains.kotlin.idea.internal.makeBackup.MakeBackupCompileTask"/>
     <buildProcess.parametersProvider implementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinBuildProcessParametersProvider"/>
     <jps.plugin />
