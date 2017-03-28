@@ -2,6 +2,5 @@
   "mainFile": "A/src/x/test.kt",
   "type": "MOVE_DIRECTORY_WITH_CLASSES",
   "sourceDir": "A/src/x",
-  "targetDir": "A/src/z",
-  "isMultiModule": "true"
+  "targetDir": "A/src/z"
 }

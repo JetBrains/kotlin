@@ -112,6 +112,7 @@ import org.jetbrains.kotlin.idea.refactoring.AbstractNameSuggestionProviderTest
 import org.jetbrains.kotlin.idea.refactoring.inline.AbstractInlineTest
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractExtractionTest
 import org.jetbrains.kotlin.idea.refactoring.move.AbstractMoveTest
+import org.jetbrains.kotlin.idea.refactoring.move.AbstractMultiModuleMoveTest
 import org.jetbrains.kotlin.idea.refactoring.pullUp.AbstractPullUpTest
 import org.jetbrains.kotlin.idea.refactoring.pushDown.AbstractPushDownTest
 import org.jetbrains.kotlin.idea.refactoring.rename.AbstractMultiModuleRenameTest
@@ -709,6 +710,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractMoveTest> {
             model("refactoring/move", extension = "test", singleClass = true)
+        }
+
+        testClass<AbstractMultiModuleMoveTest> {
+            model("refactoring/moveMultiModule", extension = "test", singleClass = true)
         }
 
         testClass<AbstractMultiFileIntentionTest> {

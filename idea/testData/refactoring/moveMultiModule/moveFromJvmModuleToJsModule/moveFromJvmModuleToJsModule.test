@@ -1,9 +1,8 @@
 {
-  "mainFile": "B/src/packJs/testJs.kt",
+  "mainFile": "A/src/packJvm/testJvm.kt",
   "type": "MOVE_KOTLIN_TOP_LEVEL_DECLARATIONS",
-  "targetPackage": "packJvm",
-  "targetSourceRoot": "A/src",
-  "isMultiModule": "true",
+  "targetPackage": "packJs",
+  "targetSourceRoot": "B/src",
   "withRuntime": "true",
   "modulesWithRuntime": ["A"],
   "modulesWithJsRuntime": ["B"]

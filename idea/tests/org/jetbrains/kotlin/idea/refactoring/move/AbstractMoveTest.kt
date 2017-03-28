@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.idea.refactoring.move
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import com.intellij.codeInsight.TargetElementUtilBase
+import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
@@ -36,20 +36,21 @@ import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectori
 import com.intellij.refactoring.move.moveInner.MoveInnerProcessor
 import com.intellij.refactoring.move.moveMembers.MockMoveMembersOptions
 import com.intellij.refactoring.move.moveMembers.MoveMembersProcessor
+import com.intellij.testFramework.LightProjectDescriptor
+import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ActionRunner
 import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.changePackage.KotlinChangePackageRefactoring
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
+import org.jetbrains.kotlin.idea.refactoring.rename.loadTestConfiguration
 import org.jetbrains.kotlin.idea.refactoring.toPsiDirectory
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.extractMarkerOffset
+import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
@@ -58,98 +59,94 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-abstract class AbstractMoveTest : KotlinMultiFileTestCase() {
+abstract class AbstractMoveTest : KotlinLightCodeInsightFixtureTestCase() {
+    override fun getProjectDescriptor(): LightProjectDescriptor {
+        if (KotlinTestUtils.isAllFilesPresentTest(getTestName(false))) return super.getProjectDescriptor()
+
+        val testConfigurationFile = File(super.getTestDataPath(), fileName())
+        val config = loadTestConfiguration(testConfigurationFile)
+        val withRuntime = config["withRuntime"]?.asBoolean ?: false
+        if (withRuntime) {
+            return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+        }
+        return KotlinLightProjectDescriptor.INSTANCE
+    }
+
     protected fun doTest(path: String) {
-        val config = JsonParser().parse(FileUtil.loadFile(File(path), true)) as JsonObject
+        val testFile = File(path)
+        val config = JsonParser().parse(FileUtil.loadFile(testFile, true)) as JsonObject
 
-        val action = MoveAction.valueOf(config.getString("type"))
-
-        val testDir = path.substring(0, path.lastIndexOf("/"))
-        val mainFilePath = config.getNullableString("mainFile")!!
-
-        val conflictFile = File(testDir + "/conflicts.txt")
-
-        isMultiModule = config["isMultiModule"]?.asBoolean ?: false
-
-        doTest({ rootDir, _ ->
-            val modulesWithJvmRuntime: List<Module>
-            val modulesWithJsRuntime: List<Module>
-
-            val withRuntime = config["withRuntime"]?.asBoolean ?: false
-            if (withRuntime) {
-                val moduleManager = ModuleManager.getInstance(project)
-                modulesWithJvmRuntime =
-                        (config["modulesWithRuntime"]?.asJsonArray?.map { moduleManager.findModuleByName(it.asString!!)!! }
-                         ?: moduleManager.modules.toList())
-                modulesWithJvmRuntime.forEach { ConfigLibraryUtil.configureKotlinRuntimeAndSdk(it, PluginTestCaseBase.mockJdk()) }
-                modulesWithJsRuntime =
-                        (config["modulesWithJsRuntime"]?.asJsonArray?.map { moduleManager.findModuleByName(it.asString!!)!! }
-                         ?: emptyList())
-                modulesWithJsRuntime.forEach { ConfigLibraryUtil.configureKotlinJsRuntimeAndSdk(it, PluginTestCaseBase.mockJdk()) }
-            }
-            else {
-                modulesWithJvmRuntime = emptyList()
-                modulesWithJsRuntime = emptyList()
-            }
-
-            val mainFile = rootDir.findFileByRelativePath(mainFilePath)!!
-            val mainPsiFile = PsiManager.getInstance(project!!).findFile(mainFile)!!
-            val document = FileDocumentManager.getInstance().getDocument(mainFile)!!
-            val editor = EditorFactory.getInstance()!!.createEditor(document, project!!)!!
-
-            val caretOffset = document.extractMarkerOffset(project)
-            val elementAtCaret = if (caretOffset >= 0) {
-                TargetElementUtilBase.getInstance()!!.findTargetElement(
-                        editor,
-                        TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED or TargetElementUtilBase.ELEMENT_NAME_ACCEPTED,
-                        caretOffset
-                )
-            }
-            else null
-
-            try {
-                action.runRefactoring(rootDir, mainPsiFile, elementAtCaret, config)
-
-                assert(!conflictFile.exists())
-            }
-            catch(e: ConflictsInTestsException) {
-                KotlinTestUtils.assertEqualsToFile(conflictFile, e.messages.sorted().joinToString("\n"))
-
-                ConflictsInTestsException.setTestIgnore(true)
-
-                // Run refactoring again with ConflictsInTestsException suppressed
-                action.runRefactoring(rootDir, mainPsiFile, elementAtCaret, config)
-            }
-            finally {
-                ConflictsInTestsException.setTestIgnore(false)
-
-                PsiDocumentManager.getInstance(project!!).commitAllDocuments()
-                FileDocumentManager.getInstance().saveAllDocuments()
-
-                EditorFactory.getInstance()!!.releaseEditor(editor)
-
-                modulesWithJvmRuntime.forEach {
-                    ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(it, PluginTestCaseBase.mockJdk())
-                }
-                modulesWithJsRuntime.forEach {
-                    ConfigLibraryUtil.unConfigureKotlinJsRuntimeAndSdk(it, PluginTestCaseBase.mockJdk())
-                }
-            }
-        },
-        getTestDirName(true))
+        doTestCommittingDocuments(testFile) { rootDir ->
+            runMoveRefactoring(path, config, rootDir, project)
+        }
     }
 
     protected fun getTestDirName(lowercaseFirstLetter : Boolean) : String {
         val testName = getTestName(lowercaseFirstLetter)
-        return testName.substring(0, testName.lastIndexOf('_')).replace('_', '/')
+        val endIndex = testName.lastIndexOf('_')
+        if (endIndex < 0) return testName
+        return testName.substring(0, endIndex).replace('_', '/')
     }
 
-    override fun getTestRoot() : String {
-        return "/refactoring/move/"
-    }
+    override fun getTestDataPath() = super.getTestDataPath() + "/" + getTestDirName(true)
 
-    override fun getTestDataPath() : String {
-        return PluginTestCaseBase.getTestDataPathBase()
+    protected fun doTestCommittingDocuments(testFile: File, action: (VirtualFile) -> Unit) {
+        val beforeVFile = myFixture.copyDirectoryToProject("before", "")
+        PsiDocumentManager.getInstance(myFixture.project).commitAllDocuments()
+
+        val afterDir = File(testFile.parentFile, "after")
+        val afterVFile = LocalFileSystem.getInstance().findFileByIoFile(afterDir)?.apply {
+            UsefulTestCase.refreshRecursively(this)
+        }
+
+        action(beforeVFile)
+
+        PsiDocumentManager.getInstance(project).commitAllDocuments()
+        FileDocumentManager.getInstance().saveAllDocuments()
+        PlatformTestUtil.assertDirectoriesEqual(afterVFile, beforeVFile)
+    }
+}
+
+fun runMoveRefactoring(path: String, config: JsonObject, rootDir: VirtualFile, project: Project) {
+    val action = MoveAction.valueOf(config.getString("type"))
+
+    val testDir = path.substring(0, path.lastIndexOf("/"))
+    val mainFilePath = config.getNullableString("mainFile")!!
+
+    val conflictFile = File(testDir + "/conflicts.txt")
+
+    val mainFile = rootDir.findFileByRelativePath(mainFilePath)!!
+    val mainPsiFile = PsiManager.getInstance(project).findFile(mainFile)!!
+    val document = FileDocumentManager.getInstance().getDocument(mainFile)!!
+    val editor = EditorFactory.getInstance()!!.createEditor(document, project)!!
+
+    val caretOffset = document.extractMarkerOffset(project)
+    val elementAtCaret = if (caretOffset >= 0) {
+        TargetElementUtil.getInstance().findTargetElement(
+                editor,
+                TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED or TargetElementUtil.ELEMENT_NAME_ACCEPTED,
+                caretOffset
+        )
+    }
+    else null
+
+    try {
+        action.runRefactoring(rootDir, mainPsiFile, elementAtCaret, config)
+
+        assert(!conflictFile.exists())
+    }
+    catch(e: ConflictsInTestsException) {
+        KotlinTestUtils.assertEqualsToFile(conflictFile, e.messages.sorted().joinToString("\n"))
+
+        ConflictsInTestsException.setTestIgnore(true)
+
+        // Run refactoring again with ConflictsInTestsException suppressed
+        action.runRefactoring(rootDir, mainPsiFile, elementAtCaret, config)
+    }
+    finally {
+        ConflictsInTestsException.setTestIgnore(false)
+
+        EditorFactory.getInstance()!!.releaseEditor(editor)
     }
 }
 
