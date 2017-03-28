@@ -152,6 +152,18 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             doTest(fileName);
         }
 
+        @TestMetadata("wrongAnnotationArgumentInCtor.kt")
+        public void testWrongAnnotationArgumentInCtor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/annotations/wrongAnnotationArgumentInCtor.kt");
+            try {
+                doTest(fileName);
+            }
+            catch (Throwable ignore) {
+                return;
+            }
+            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive for that.");
+        }
+
         @TestMetadata("compiler/testData/codegen/box/annotations/annotatedLambda")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -618,6 +618,17 @@ public class BodyResolver {
                 valueParameterResolver.resolveValueParameters(klass.getPrimaryConstructorParameters(),
                                                               unsubstitutedPrimaryConstructor.getValueParameters(),
                                                               parameterScope, c.getOuterDataFlowInfo(), trace);
+                // Annotations on value parameter and constructor parameter could be splitted
+                resolveConstructorPropertyDescriptors(klass);
+            }
+        }
+    }
+
+    private void resolveConstructorPropertyDescriptors(KtClassOrObject ktClassOrObject) {
+        for (KtParameter parameter : ktClassOrObject.getPrimaryConstructorParameters()) {
+            PropertyDescriptor descriptor = trace.getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
+            if (descriptor != null) {
+                ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations());
             }
         }
     }
