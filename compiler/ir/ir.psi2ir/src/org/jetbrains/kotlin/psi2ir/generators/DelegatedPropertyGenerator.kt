@@ -97,9 +97,9 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
                     ktDelegate.startOffset, ktDelegate.endOffset,
                     IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR,
                     accessorDescriptor
-            ).buildWithScope { irGetter ->
-                FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarations(irGetter, ktProperty, null)
-                irGetter.body = generateBody(irGetter)
+            ).buildWithScope { irAccessor ->
+                FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarations(irAccessor, ktProperty, null)
+                irAccessor.body = generateBody(irAccessor)
             }
 
 
@@ -189,6 +189,19 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
                     createBodyGenerator(scopeOwner).createStatementGenerator()
             )
 
+    private fun createLocalDelegatedPropertyReference(
+            ktElement: KtElement,
+            type: KotlinType,
+            variableDescriptor: VariableDescriptorWithAccessors,
+            irDelegateSymbol: IrVariableSymbol,
+            scopeOwner: IrSymbol
+    ): IrLocalDelegatedPropertyReference =
+            ReflectionReferencesGenerator(createBodyGenerator(scopeOwner).createStatementGenerator()).generateLocalDelegatedPropertyReference(
+                    ktElement.startOffset, ktElement.endOffset,
+                    type, variableDescriptor, irDelegateSymbol,
+                    IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE
+            )
+
     fun generateLocalDelegatedProperty(
             ktProperty: KtProperty,
             ktDelegate: KtPropertyDelegate,
@@ -197,36 +210,24 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
     ): IrLocalDelegatedProperty {
         val kPropertyType = getKPropertyTypeForLocalDelegatedProperty(variableDescriptor)
 
-        val irActualDelegateInitializer =
-                generateInitializerBodyForPropertyDelegate(
-                        variableDescriptor, kPropertyType,
-                        ktDelegate,
-                        scopeOwnerSymbol
-                ).expression
-        val delegateType = irActualDelegateInitializer.type
-
-        val delegateDescriptor = createLocalPropertyDelegatedDescriptor(variableDescriptor, delegateType, kPropertyType)
-
-        val irDelegate = context.symbolTable.declareVariable(
-                ktDelegate.startOffset, ktDelegate.endOffset, IrDeclarationOrigin.DELEGATE,
-                delegateDescriptor, irActualDelegateInitializer
-        )
-
         val irLocalDelegatedProperty = IrLocalDelegatedPropertyImpl(
                 ktProperty.startOffset, ktProperty.endOffset, IrDeclarationOrigin.DEFINED,
-                variableDescriptor, irDelegate)
+                variableDescriptor
+        ).apply {
+            delegate = generateDelegateVariableForLocalDelegatedProperty(ktDelegate, variableDescriptor, kPropertyType, scopeOwnerSymbol)
+        }
 
+        val irDelegate = irLocalDelegatedProperty.delegate
 
         val getterDescriptor = variableDescriptor.getter!!
         val delegateReceiverValue = createVariableValueForDelegate(irDelegate.symbol, ktDelegate)
         irLocalDelegatedProperty.getter =
                 createLocalPropertyAccessor(getterDescriptor, ktDelegate) { irGetter ->
                     generateDelegatedPropertyGetterBody(
-                            irGetter,
-                            ktDelegate, getterDescriptor, delegateReceiverValue,
-                            createCallableReference(
-                                    ktDelegate, delegateDescriptor.kPropertyType,
-                                    delegateDescriptor.correspondingLocalProperty,
+                            irGetter,ktDelegate, getterDescriptor, delegateReceiverValue,
+                            createLocalDelegatedPropertyReference(
+                                    ktDelegate, kPropertyType,
+                                    variableDescriptor, irDelegate.symbol,
                                     irGetter.symbol
                             )
                     )
@@ -238,9 +239,9 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
                     createLocalPropertyAccessor(setterDescriptor, ktDelegate) { irSetter ->
                         generateDelegatedPropertySetterBody(
                                 irSetter, ktDelegate, setterDescriptor, delegateReceiverValue,
-                                createCallableReference(
-                                        ktDelegate, delegateDescriptor.kPropertyType,
-                                        delegateDescriptor.correspondingLocalProperty,
+                                createLocalDelegatedPropertyReference(
+                                        ktDelegate, kPropertyType,
+                                        variableDescriptor, irDelegate.symbol,
                                         irSetter.symbol
                                 )
                         )
@@ -250,19 +251,77 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         return irLocalDelegatedProperty
     }
 
+    private fun generateDelegateVariableForLocalDelegatedProperty(
+            ktDelegate: KtPropertyDelegate,
+            variableDescriptor: VariableDescriptorWithAccessors,
+            kPropertyType: KotlinType,
+            scopeOwner: IrSymbol
+    ): IrVariable {
+        val delegateType = getLocalDelegatedPropertyDelegateType(variableDescriptor, ktDelegate)
+        val delegateDescriptor = createLocalPropertyDelegatedDescriptor(variableDescriptor, delegateType, kPropertyType)
+
+        return context.symbolTable.declareVariable(
+                ktDelegate.startOffset, ktDelegate.endOffset, IrDeclarationOrigin.DELEGATE,
+                delegateDescriptor
+        ).also { irVariable ->
+            irVariable.initializer = generateInitializerForLocalDelegatedPropertyDelegate(
+                    variableDescriptor, kPropertyType, ktDelegate,
+                    irVariable.symbol,
+                    scopeOwner
+            )
+        }
+    }
+
+    private fun getLocalDelegatedPropertyDelegateType(
+            variableDescriptor: VariableDescriptorWithAccessors,
+            ktDelegate: KtPropertyDelegate
+    ): KotlinType {
+        val provideDelegateResolvedCall = get(BindingContext.PROVIDE_DELEGATE_RESOLVED_CALL, variableDescriptor)
+        return if (provideDelegateResolvedCall != null)
+            provideDelegateResolvedCall.resultingDescriptor.returnType!!
+        else
+            getInferredTypeWithImplicitCastsOrFail(ktDelegate.expression!!)
+    }
+
+    private fun generateInitializerForLocalDelegatedPropertyDelegate(
+            variableDescriptor: VariableDescriptorWithAccessors,
+            kPropertyType: KotlinType,
+            ktDelegate: KtPropertyDelegate,
+            delegateSymbol: IrVariableSymbol,
+            scopeOwner: IrSymbol
+    ): IrExpression {
+        val ktDelegateExpression = ktDelegate.expression!!
+        val irDelegateInitializer = createBodyGenerator(scopeOwner).createStatementGenerator().generateExpression(ktDelegateExpression)
+
+        val provideDelegateResolvedCall = get(BindingContext.PROVIDE_DELEGATE_RESOLVED_CALL, variableDescriptor) ?:
+                                          return irDelegateInitializer
+
+        val statementGenerator = createBodyGenerator(scopeOwner).createStatementGenerator()
+
+        val provideDelegateCall = statementGenerator.pregenerateCall(provideDelegateResolvedCall).apply {
+            setExplicitReceiverValue(OnceExpressionValue(irDelegateInitializer))
+            irValueArgumentsByIndex[1] =
+                    createLocalDelegatedPropertyReference(ktDelegate, kPropertyType, variableDescriptor, delegateSymbol, scopeOwner)
+        }
+
+        return CallGenerator(statementGenerator).generateCall(ktDelegate.startOffset, ktDelegate.endOffset, provideDelegateCall)
+    }
+
     private fun createVariableValueForDelegate(irDelegate: IrVariableSymbol, ktDelegate: KtPropertyDelegate) =
             VariableLValue(ktDelegate.startOffset, ktDelegate.endOffset, irDelegate)
 
-    private fun createLocalPropertyAccessor(
-            getterDescriptor: VariableAccessorDescriptor, ktDelegate: KtPropertyDelegate,
+    private inline fun createLocalPropertyAccessor(
+            getterDescriptor: VariableAccessorDescriptor,
+            ktDelegate: KtPropertyDelegate,
             generateBody: (IrFunction) -> IrBody
     ) =
             context.symbolTable.declareSimpleFunction(
                     ktDelegate.startOffset, ktDelegate.endOffset,
                     IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR,
                     getterDescriptor
-            ).buildWithScope {
-                it.body = generateBody(it)
+            ).buildWithScope { irAccessor ->
+                FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarations(irAccessor, ktDelegate, null)
+                irAccessor.body = generateBody(irAccessor)
             }
 
     private fun createLocalPropertyDelegatedDescriptor(

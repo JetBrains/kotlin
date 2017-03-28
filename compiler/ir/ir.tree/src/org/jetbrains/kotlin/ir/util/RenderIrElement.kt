@@ -198,6 +198,17 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         append(" ")
     }
 
+    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: Nothing?): String =
+            buildString {
+                append("LOCAL_DELEGATED_PROPERTY_REFERENCE ")
+                append("'${expression.descriptor.ref()}' ")
+                append("delegate='${expression.delegate.descriptor.ref()}' ")
+                append("getter='${expression.getter.descriptor.ref()}' ")
+                appendNullableAttribute("setter=", expression.setter) { "'${it.descriptor.ref()}'"}
+                append("type=${expression.type.render()} ")
+                append("origin=${expression.origin}")
+            }
+
     override fun visitClassReference(expression: IrClassReference, data: Nothing?): String =
             "CLASS_REFERENCE '${expression.descriptor.ref()}' type=${expression.type.render()}"
 

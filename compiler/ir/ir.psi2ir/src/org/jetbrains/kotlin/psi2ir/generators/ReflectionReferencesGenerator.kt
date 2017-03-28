@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -91,6 +92,29 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                 else ->
                     throw AssertionError("Unexpected callable reference: $callableDescriptor")
             }
+
+    fun generateLocalDelegatedPropertyReference(
+            startOffset: Int,
+            endOffset: Int,
+            type: KotlinType,
+            variableDescriptor: VariableDescriptorWithAccessors,
+            irDelegateSymbol: IrVariableSymbol,
+            origin: IrStatementOrigin?
+    ): IrLocalDelegatedPropertyReference {
+        val getterDescriptor = variableDescriptor.getter ?:
+                               throw AssertionError("Local delegated property should have a getter: $variableDescriptor")
+        val setterDescriptor = variableDescriptor.setter
+
+        val getterSymbol = context.symbolTable.referenceFunction(getterDescriptor)
+        val setterSymbol = setterDescriptor?.let { context.symbolTable.referenceFunction(it) }
+
+        return IrLocalDelegatedPropertyReferenceImpl(
+                startOffset, endOffset, type,
+                variableDescriptor,
+                irDelegateSymbol, getterSymbol, setterSymbol,
+                origin
+        )
+    }
 
     private fun generatePropertyReference(
             startOffset: Int,

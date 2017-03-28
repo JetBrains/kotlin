@@ -376,7 +376,7 @@ class DeepCopyIrTree(private val symbolsRemapper: DeepCopySymbolsRemapper) : IrE
                     mapStatementOrigin(expression.origin)
             ).transformValueArguments(expression)
 
-    override fun visitPropertyReference(expression: IrPropertyReference): IrExpression =
+    override fun visitPropertyReference(expression: IrPropertyReference): IrPropertyReference =
             IrPropertyReferenceImpl(
                     expression.startOffset, expression.endOffset,
                     expression.type,
@@ -386,7 +386,18 @@ class DeepCopyIrTree(private val symbolsRemapper: DeepCopySymbolsRemapper) : IrE
                     expression.setter?.let { symbolsRemapper.getReferencedFunction(it) },
                     expression.getTypeArgumentsMap(),
                     mapStatementOrigin(expression.origin)
-            ).transformValueArguments(expression)
+            ).transformReceiverArguments(expression)
+
+    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrLocalDelegatedPropertyReference =
+            IrLocalDelegatedPropertyReferenceImpl(
+                    expression.startOffset, expression.endOffset,
+                    expression.type,
+                    expression.descriptor,
+                    symbolsRemapper.getReferencedVariable(expression.delegate),
+                    symbolsRemapper.getReferencedFunction(expression.getter),
+                    expression.setter?.let { symbolsRemapper.getReferencedFunction(it) },
+                    mapStatementOrigin(expression.origin)
+            )
 
     override fun visitClassReference(expression: IrClassReference): IrClassReference =
             IrClassReferenceImpl(

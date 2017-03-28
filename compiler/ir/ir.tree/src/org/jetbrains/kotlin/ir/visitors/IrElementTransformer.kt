@@ -92,6 +92,7 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitCallableReference(expression: IrCallableReference, data: D) = visitMemberAccess(expression, data)
     override fun visitFunctionReference(expression: IrFunctionReference, data: D) = visitCallableReference(expression, data)
     override fun visitPropertyReference(expression: IrPropertyReference, data: D) = visitCallableReference(expression, data)
+    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: D) = visitCallableReference(expression, data)
 
     override fun visitClassReference(expression: IrClassReference, data: D) = visitDeclarationReference(expression, data)
 

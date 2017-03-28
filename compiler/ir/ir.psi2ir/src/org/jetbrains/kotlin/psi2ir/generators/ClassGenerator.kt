@@ -60,7 +60,7 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
 
             val irPrimaryConstructor = generatePrimaryConstructor(irClass, ktClassOrObject)
             if (irPrimaryConstructor != null) {
-                generatePropertiesDeclaredInPrimaryConstructor(irClass, irPrimaryConstructor, ktClassOrObject)
+                generateDeclarationsForPrimaryConstructorParameters(irClass, irPrimaryConstructor, ktClassOrObject)
             }
 
             generateMembersDeclaredInSupertypeList(irClass, ktClassOrObject)
@@ -256,12 +256,16 @@ class ClassGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGe
         return irPrimaryConstructor
     }
 
-    private fun generatePropertiesDeclaredInPrimaryConstructor(
+    private fun generateDeclarationsForPrimaryConstructorParameters(
             irClass: IrClass,
             irPrimaryConstructor: IrConstructor,
             ktClassOrObject: KtClassOrObject
     ) {
         ktClassOrObject.primaryConstructor?.let { ktPrimaryConstructor ->
+            irPrimaryConstructor.valueParameters.forEach {
+                context.symbolTable.introduceValueParameter(it)
+            }
+
             ktPrimaryConstructor.valueParameters.forEachIndexed { i, ktParameter ->
                 val irValueParameter = irPrimaryConstructor.valueParameters[i]
                 if (ktParameter.hasValOrVar()) {

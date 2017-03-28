@@ -17,30 +17,13 @@
 package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
-
-abstract class IrCallableReferenceBase(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
-        numValueArguments: Int,
-        override val origin: IrStatementOrigin? = null
-) : IrCallableReference,
-        IrCallWithIndexedArgumentsBase(
-                startOffset, endOffset,
-                type,
-                numValueArguments,
-                typeArguments,
-                origin
-        )
 
 class IrFunctionReferenceImpl(
         startOffset: Int,
@@ -50,9 +33,10 @@ class IrFunctionReferenceImpl(
         typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
         origin: IrStatementOrigin? = null
 ) : IrFunctionReference,
-        IrCallableReferenceBase(
-                startOffset, endOffset, type, typeArguments,
+        IrCallWithIndexedArgumentsBase(
+                startOffset, endOffset, type,
                 symbol.descriptor.valueParameters.size,
+                typeArguments,
                 origin
         )
 {
@@ -70,31 +54,4 @@ class IrFunctionReferenceImpl(
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
             visitor.visitFunctionReference(this, data)
-}
-
-class IrPropertyReferenceImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        override val descriptor: PropertyDescriptor,
-        override val field: IrFieldSymbol?,
-        override val getter: IrFunctionSymbol?,
-        override val setter: IrFunctionSymbol?,
-        typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
-        override val origin: IrStatementOrigin? = null
-) : IrPropertyReference,
-        IrMemberAccessExpressionBase(startOffset, endOffset, type, typeArguments)
-{
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitPropertyReference(this, data)
-
-    private fun throwNoValueArguments(): Nothing {
-        throw UnsupportedOperationException("Property reference $descriptor has no value arguments")
-    }
-
-    override fun getValueArgument(index: Int): IrExpression? = throwNoValueArguments()
-
-    override fun putValueArgument(index: Int, valueArgument: IrExpression?) = throwNoValueArguments()
-
-    override fun removeValueArgument(index: Int) = throwNoValueArguments()
 }

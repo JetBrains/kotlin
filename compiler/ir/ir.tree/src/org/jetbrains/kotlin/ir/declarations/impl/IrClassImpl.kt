@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
+import kotlin.collections.ArrayList
 
 class IrClassImpl(
         startOffset: Int,
@@ -62,6 +63,6 @@ class IrClassImpl(
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         newInstanceReceiver = newInstanceReceiver?.transform(transformer, data)
         typeParameters.transform { it.transform(transformer, data) }
-        declarations.transform { it.transform(transformer, data) as IrDeclaration }
+        declarations.transform { it.transform(transformer, data) }
     }
 }

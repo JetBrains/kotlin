@@ -20,6 +20,7 @@ FILE /delegatedMembers.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test
+    $new: VALUE_PARAMETER <receiver: Test>
     TYPE_PARAMETER <TT>
     CONSTRUCTOR public constructor Test<TT>(impl: IBase<TT>)
       TYPE_PARAMETER <TT>

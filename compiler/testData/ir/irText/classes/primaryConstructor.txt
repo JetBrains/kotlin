@@ -1,5 +1,6 @@
 FILE /primaryConstructor.kt
   CLASS CLASS Test1
+    $new: VALUE_PARAMETER <receiver: Test1>
     CONSTRUCTOR public constructor Test1(x: kotlin.Int, y: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       VALUE_PARAMETER value-parameter y: kotlin.Int
@@ -30,6 +31,7 @@ FILE /primaryConstructor.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test2
+    $new: VALUE_PARAMETER <receiver: Test2>
     CONSTRUCTOR public constructor Test2(x: kotlin.Int, y: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       VALUE_PARAMETER value-parameter y: kotlin.Int
@@ -60,6 +62,7 @@ FILE /primaryConstructor.kt
     FUN FAKE_OVERRIDE public open override fun hashCode(): kotlin.Int
     FUN FAKE_OVERRIDE public open override fun toString(): kotlin.String
   CLASS CLASS Test3
+    $new: VALUE_PARAMETER <receiver: Test3>
     CONSTRUCTOR public constructor Test3(x: kotlin.Int, y: kotlin.Int)
       VALUE_PARAMETER value-parameter x: kotlin.Int
       VALUE_PARAMETER value-parameter y: kotlin.Int

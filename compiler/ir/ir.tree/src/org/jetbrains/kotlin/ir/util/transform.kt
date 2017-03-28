@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.ir.util
 
-inline fun <T> MutableList<T>.transform(transformation: (T) -> T) {
+import org.jetbrains.kotlin.ir.IrElement
+
+inline fun <reified T : IrElement> MutableList<T>.transform(transformation: (T) -> IrElement) {
     forEachIndexed { i, item ->
-        set(i, transformation(item))
+        set(i, transformation(item) as T)
     }
 }
 

@@ -24,7 +24,7 @@ interface IrMemberAccessExpression : IrExpression {
     var dispatchReceiver: IrExpression?
     var extensionReceiver: IrExpression?
 
-    val descriptor: CallableMemberDescriptor
+    val descriptor: CallableDescriptor
     val origin: IrStatementOrigin?
 
     // NB `typeParameterDescriptor` should be taken from `descriptor.original`

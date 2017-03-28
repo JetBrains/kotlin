@@ -1,5 +1,6 @@
 FILE /localDifferentReceivers.kt
   CLASS CLASS MyClass
+    $new: VALUE_PARAMETER <receiver: MyClass>
     CONSTRUCTOR public constructor MyClass(value: kotlin.String)
       VALUE_PARAMETER value-parameter value: kotlin.String
       BLOCK_BODY
@@ -41,14 +42,14 @@ FILE /localDifferentReceivers.kt
             $receiver: CALL 'constructor MyClass(String)' type=MyClass origin=null
               value: CONST String type=kotlin.String value='O'
             host: CONST Null type=kotlin.Nothing? value='null'
-            p: CALLABLE_REFERENCE 'testO: String' type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+            p: LOCAL_DELEGATED_PROPERTY_REFERENCE 'testO: String' delegate='`testO$delegate`: String' getter='<get-testO>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
         FUN DELEGATED_PROPERTY_ACCESSOR local final fun <get-testO>(): kotlin.String
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-testO>(): String'
               CALL 'getValue(Any?, Any) on String: String' type=kotlin.String origin=null
                 $receiver: GET_VAR '`testO$delegate`: String' type=kotlin.String origin=null
                 receiver: CONST Null type=kotlin.Nothing? value='null'
-                p: CALLABLE_REFERENCE 'testO: String' type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+                p: LOCAL_DELEGATED_PROPERTY_REFERENCE 'testO: String' delegate='`testO$delegate`: String' getter='<get-testO>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
       LOCAL_DELEGATED_PROPERTY val testK: kotlin.String
         VAR DELEGATE val `testK$delegate`: kotlin.String
           CONST String type=kotlin.String value='K'
@@ -58,7 +59,7 @@ FILE /localDifferentReceivers.kt
               CALL 'getValue(Any?, Any) on String: String' type=kotlin.String origin=null
                 $receiver: GET_VAR '`testK$delegate`: String' type=kotlin.String origin=null
                 receiver: CONST Null type=kotlin.Nothing? value='null'
-                p: CALLABLE_REFERENCE 'testK: String' type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
+                p: LOCAL_DELEGATED_PROPERTY_REFERENCE 'testK: String' delegate='`testK$delegate`: String' getter='<get-testK>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
       VAR val testOK: kotlin.String
         CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
           $this: CALL '<get-testO>(): String' type=kotlin.String origin=GET_LOCAL_PROPERTY

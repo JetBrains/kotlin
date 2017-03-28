@@ -131,6 +131,14 @@ class SymbolTable {
             return owner
         }
 
+        fun introduceLocal(descriptor: D, symbol: S) {
+            val scope = currentScope ?: throw AssertionError("No active scope")
+            scope[descriptor]?.let {
+                throw AssertionError("$descriptor is already bound to $it")
+            }
+            scope[descriptor] = symbol
+        }
+
         fun enterScope(owner: DeclarationDescriptor) {
             currentScope = Scope(owner, currentScope)
         }
@@ -257,6 +265,10 @@ class SymbolTable {
                     { IrValueParameterSymbolImpl(descriptor) },
                     { IrValueParameterImpl(startOffset, endOffset, origin, it) }
             )
+
+    fun introduceValueParameter(irValueParameter: IrValueParameter) {
+        valueParameterSymbolTable.introduceLocal(irValueParameter.descriptor, irValueParameter.symbol)
+    }
 
     fun referenceValueParameter(descriptor: ParameterDescriptor) =
             valueParameterSymbolTable.referenced(descriptor) {
