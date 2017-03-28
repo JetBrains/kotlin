@@ -13,6 +13,10 @@ buildscript {
 }
 
 apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'kotlin'
+
+configureJvmProject(project)
+
 
 def core = "${rootDir}/../core"
 def annotationsSrc = "${buildDir}/annotations"
@@ -79,6 +83,9 @@ kotlin.experimental.coroutines "enable"
 task reflectShadowJar(type: ShadowJar) {
     classifier = 'shadow'
     version = null
+    manifestAttributes(manifest, project, 'Main')
+    manifest.attributes 'Class-Path': 'kotlin-runtime.jar' // TODO replace soon with 'kotlin-stdlib.jar'
+
     from (sourceSets.main.output)
     from ("${core}/descriptor.loader.java/src") {
         include 'META-INF/services/**'

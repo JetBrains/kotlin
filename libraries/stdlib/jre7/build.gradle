@@ -1,5 +1,8 @@
 description = 'Kotlin Standard Library JRE 7 extension'
 
+apply plugin: 'kotlin'
+
+configureJvmProject(project)
 
 dependencies {
     compile project(':kotlin-stdlib')
@@ -23,7 +26,7 @@ sourceSets {
 }
 
 jar {
-    manifestAttributes(manifest, project, 'Core')
+    manifestAttributes(manifest, project, 'Main')
 }
 
 artifacts {

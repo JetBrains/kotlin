@@ -27,12 +27,7 @@ compileTestKotlin2Js {
 archivesBaseName = 'kotlin-test-js'
 
 jar {
-    manifest {
-        attributes 'addDefaultImplementationEntries': true,
-                'Implementation-Title': "${project.description ?: project.name}"
-    }
-    dependsOn classes
-    from sourceSets.main.output
+    manifestAttributes(manifest, project, 'Test')
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {

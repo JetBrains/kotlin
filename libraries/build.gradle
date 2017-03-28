@@ -68,34 +68,9 @@ subprojects {
     }
 }
 
-// plain kotlin jvm projects
-configure(subprojects.findAll {it.name in [
-        'kotlin-runtime', 'kotlin-script-runtime',
-        'kotlin-stdlib', 'kotlin-stdlib-jre7', 'kotlin-stdlib-jre8',
-        'kotlin-test-junit',
-        'kotlin-reflect']}) {
-
-    apply plugin: 'kotlin'
-
-    commonJvmProjectConfiguration(project)
-
-}
-
-static def commonJvmProjectConfiguration(Project project) {
+static def configureJvmProject(Project project) {
     project.configure(project) {
-        jar {
-            manifest {
-                attributes 'Implementation-Vendor': 'JetBrains',
-                        'Implementation-Title': "${project.description ?: project.name}", // TODO: project.description is resolved after evaluating this, therefore this attribute is repeated in the projects; seek for a solution
-                        'Implementation-Version': version,
-                        'Build-Jdk': System.getProperty('java.version'),
-                        'Built-By': 'JetBrains'
-            }
-            from("${rootDir}/../dist/kotlinc/build.txt") { into("META-INF/") }
-        }
-
-
-        task sourcesJar(type: Jar, dependsOn:classes) {
+        task sourcesJar(type: Jar, dependsOn: classes) {
             classifier = 'sources'
             from sourceSets.main.kotlin
         }
@@ -117,12 +92,19 @@ static def commonJvmProjectConfiguration(Project project) {
     }
 }
 
-static def manifestAttributes(Manifest manifest, Project project, String component) {
+static def manifestAttributes(Manifest manifest, Project project, String component = null) {
     project.configure(manifest) {
         attributes \
+                'Implementation-Vendor': 'JetBrains',
+                'Implementation-Title': project.archivesBaseName,
+                'Implementation-Version': project.version,
+                'Build-Jdk': System.getProperty('java.version')
+
+        if (component != null) {
+            attributes \
                 'Kotlin-Runtime-Component': component,
-                'Kotlin-Version': "${project.kotlin_language_version}",
-                'Implementation-Title': "${project.description ?: project.name}"
+                'Kotlin-Version': project.kotlin_language_version
+        }
     }
 }
 

@@ -1,5 +1,8 @@
-
 description 'Kotlin Script Runtime'
+
+apply plugin: 'kotlin'
+
+configureJvmProject(project)
 
 dependencies {
     compileOnly project(':kotlin-stdlib')
@@ -14,7 +17,7 @@ sourceSets {
 }
 
 jar {
-    manifestAttributes(manifest, project, 'Core')
+    manifestAttributes(manifest, project, 'Main')
 }
 
 artifacts {

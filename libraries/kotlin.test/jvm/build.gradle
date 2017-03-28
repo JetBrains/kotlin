@@ -3,23 +3,19 @@ description = 'Kotlin Test'
 
 apply plugin: 'kotlin-platform-jvm'
 
+configureJvmProject(project)
+
 dependencies {
     implement project(':kotlin-test:kotlin-test-common')
     compile project(':kotlin-stdlib')
     testCompile('junit:junit:4.12')
 }
 
-commonJvmProjectConfiguration(project)
 
 archivesBaseName = 'kotlin-test'
 
 jar {
-    manifest {
-        attributes 'addDefaultImplementationEntries': true,
-                'Implementation-Title': "${project.description ?: project.name}"
-    }
-    dependsOn classes
-    from sourceSets.main.output
+    manifestAttributes(manifest, project, 'Test')
 }
 
 artifacts {

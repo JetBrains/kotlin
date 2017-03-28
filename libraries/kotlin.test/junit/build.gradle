@@ -1,27 +1,28 @@
-
 description = 'Kotlin Test JUnit'
 
+apply plugin: 'kotlin'
+
+configureJvmProject(project)
+
 dependencies {
-  compile project(':kotlin-test:kotlin-test-jvm')
-  compile('junit:junit:4.12')
+    compile project(':kotlin-test:kotlin-test-jvm')
+    compile('junit:junit:4.12')
 }
 
 
 jar {
-  manifest {
-    attributes 'Implementation-Title': "${project.description ?: project.name}"
-  }
+    manifestAttributes(manifest, project, 'Test')
 }
 
 artifacts {
-  archives sourcesJar
-  archives javadocJar
+    archives sourcesJar
+    archives javadocJar
 }
 
 compileKotlin {
-  kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", project.name]
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", project.name]
 }
 
 compileTestKotlin {
-  kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
 }

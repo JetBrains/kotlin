@@ -1,5 +1,8 @@
+description 'Kotlin Runtime (deprecated, use koltin-stdlib artifact instead)'
 
-description 'Kotlin Runtime'
+apply plugin: 'kotlin'
+
+configureJvmProject(project)
 
 dependencies {
     compile group: 'org.jetbrains', name: 'annotations', version:'13.0'
@@ -20,7 +23,7 @@ sourceSets {
 }
 
 jar {
-    manifestAttributes(manifest, project, 'Core')
+    manifestAttributes(manifest, project, 'Main')
     from("${rootDir}/../dist/builtins")
 }
 

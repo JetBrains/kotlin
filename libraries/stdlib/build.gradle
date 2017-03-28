@@ -1,5 +1,9 @@
 description = 'Kotlin Standard Library'
 
+apply plugin: 'kotlin'
+
+configureJvmProject(project)
+
 sourceSets {
     builtins {
         java {
@@ -39,7 +43,7 @@ task originalStdlibJar(type: Jar) {
 }
 
 jar {
-    manifestAttributes(manifest, project, 'Core')
+    manifestAttributes(manifest, project, 'Main')
     from("${rootDir}/../dist/builtins")
     from sourceSets.builtins.output
 }

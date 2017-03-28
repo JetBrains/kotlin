@@ -188,6 +188,15 @@ jar {
 
 task mergedJar(type: Jar, dependsOn: classes) {
     classifier = null
+    manifestAttributes(manifest, project, 'Main')
+
+    // TODO: Use standard implementation title after js stdlib detector becomes more flexible
+    Properties properties = new Properties()
+    new File("${rootDir}/../resources/kotlinManifest.properties").withInputStream {
+        properties.load(it)
+    }
+    manifest.attributes 'Implementation-Title' : properties."manifest.impl.title.kotlin.javascript.stdlib"
+
     includeEmptyDirs false
     duplicatesStrategy DuplicatesStrategy.EXCLUDE
     from jsOutputFile

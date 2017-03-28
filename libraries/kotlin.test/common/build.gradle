@@ -6,25 +6,16 @@ dependencies {
     compile project(':kotlin-stdlib-common')
 }
 
-
-
-// common block
-
-
 jar {
-    baseName = project.name
-    manifest {
-        attributes 'Implementation-Vendor': 'JetBrains',
-                'Implementation-Title': "${project.description ?: project.name}", // TODO: project.description is resolved after evaluating this, therefore this attribute is repeated in the projects; seek for a solution
-                'Implementation-Version': version,
-                'Build-Jdk': System.getProperty('java.version'),
-                'Built-By': 'JetBrains'
-    }
-    from("${rootDir}/../dist/kotlinc/build.txt") { into("META-INF/") }
+    manifestAttributes(manifest, project, 'Test')
 }
 
-task sourcesJar(type: Jar, dependsOn:classes) {
+task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.kotlin
+}
 
+artifacts {
+    archives sourcesJar
+    archives javadocJar
 }
