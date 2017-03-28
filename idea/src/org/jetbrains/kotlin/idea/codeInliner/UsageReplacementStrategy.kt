@@ -26,17 +26,16 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.ui.GuiUtils
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.targetDescriptors
+import org.jetbrains.kotlin.idea.intentions.ConvertReferenceToLambdaIntention
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtImportDirective
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -69,6 +68,19 @@ fun UsageReplacementStrategy.replaceUsagesInWholeProject(
             })
 }
 
+private fun UsageReplacementStrategy.doRefactoringInside(
+        element: KtElement, targetName: String?, targetDescriptor: DeclarationDescriptor?
+) {
+    element.forEachDescendantOfType<KtSimpleNameExpression> { usage ->
+        if (usage.isValid && usage.getReferencedName() == targetName) {
+            val context = usage.analyze(BodyResolveMode.PARTIAL)
+            if (targetDescriptor == context[BindingContext.REFERENCE_TARGET, usage]) {
+                createReplacer(usage)?.invoke()
+            }
+        }
+    }
+}
+
 fun UsageReplacementStrategy.replaceUsages(
         usages: Collection<KtSimpleNameExpression>,
         targetPsiElement: PsiElement,
@@ -83,11 +95,22 @@ fun UsageReplacementStrategy.replaceUsages(
             val replacements = mutableListOf<KtElement>()
 
             var invalidUsagesFound = false
+
+            val targetDeclaration = targetPsiElement as? KtNamedDeclaration
+
             // NB: reversed order is better in case of composition like sqr(sqr(x))
             for (usage in usages.reversed()) {
                 try {
                     if (!usage.isValid) {
                         invalidUsagesFound = true
+                        continue
+                    }
+
+                    val usageParent = usage.parent
+                    if (usageParent is KtCallableReferenceExpression) {
+                        val grandParent = usageParent.parent
+                        ConvertReferenceToLambdaIntention().applyTo(usageParent, null)
+                        (grandParent as? KtElement)?.let { doRefactoringInside(it, targetDeclaration?.name, targetDeclaration?.descriptor) }
                         continue
                     }
 
@@ -110,20 +133,11 @@ fun UsageReplacementStrategy.replaceUsages(
                 }
             }
 
-            if (invalidUsagesFound && targetPsiElement is KtNamedDeclaration) {
-                val name = targetPsiElement.name
-                val targetDescriptor = targetPsiElement.descriptor
-                if (name != null && targetDescriptor != null) {
-                    for (replacement in replacements) {
-                        replacement.forEachDescendantOfType<KtSimpleNameExpression> { usage ->
-                            if (usage.isValid && usage.getReferencedName() == name) {
-                                val context = usage.analyze(BodyResolveMode.PARTIAL)
-                                if (targetDescriptor == context[BindingContext.REFERENCE_TARGET, usage]) {
-                                    createReplacer(usage)?.invoke()
-                                }
-                            }
-                        }
-                    }
+            if (invalidUsagesFound && targetDeclaration != null) {
+                val name = targetDeclaration.name
+                val descriptor = targetDeclaration.descriptor
+                for (replacement in replacements) {
+                    doRefactoringInside(replacement, name, descriptor)
                 }
             }
 

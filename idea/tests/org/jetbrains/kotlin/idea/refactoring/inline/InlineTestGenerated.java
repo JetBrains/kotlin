@@ -68,6 +68,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
             doTest(fileName);
         }
 
+        @TestMetadata("Reference.kt")
+        public void testReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/Reference.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ReturnNotInTheEnd.kt")
         public void testReturnNotInTheEnd() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/ReturnNotInTheEnd.kt");
@@ -157,6 +163,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
             @TestMetadata("Simple.kt")
             public void testSimple() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/Simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("WithReference.kt")
+            public void testWithReference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/WithReference.kt");
                 doTest(fileName);
             }
         }
