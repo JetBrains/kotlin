@@ -8,6 +8,7 @@ protocol interface Super {
 
 class Z {
     fun <X> foo(b : X) = b
+    fun foo(a: String) = a
 }
 
 fun box(): String {

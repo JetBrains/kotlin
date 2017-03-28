@@ -73,7 +73,7 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
             val distance = IntArray(protocolArgs.size)
             var fail = false
             for (i in 0..protocolArgs.size - 1) {
-                val argDistance = argumentDistance(protocolArgs[i], methodArgs[i])
+                val argDistance = argumentDistance(methodArgs[i], protocolArgs[i])
                 if (argDistance < 0) {
                     fail = true
                     break
@@ -82,7 +82,7 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
                 distance[i] = argDistance
             }
 
-            if (fail.not() && (candidate == null || distance.greater(bestDistance))) {
+            if (fail.not() && (candidate == null || bestDistance.greater(distance))) {
                 bestDistance = distance
                 candidate = method
             }
@@ -96,8 +96,17 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
             return 0
         }
 
-        if (lhs.isAssignableFrom(rhs)) {
-            return 1
+        var convertedLhs = lhs
+        var convertedRhs = rhs
+        var distance = 1
+        if (lhs.isPrimitive xor rhs.isPrimitive) {
+            ++distance
+            convertedLhs = convertedLhs.boxed()
+            convertedRhs = convertedRhs.boxed()
+        }
+
+        if (convertedLhs.isAssignableFrom(convertedRhs)) {
+            return distance
         }
 
         return -1
@@ -112,6 +121,19 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
 
         return true
     }
+
+    private fun Class<*>.boxed(): Class<*> = when(this) {
+        Boolean::class.javaPrimitiveType -> Boolean::class.javaObjectType
+        Byte::class.javaPrimitiveType -> Byte::class.javaObjectType
+        Char::class.javaPrimitiveType -> Char::class.javaObjectType
+        Double::class.javaPrimitiveType -> Double::class.javaObjectType
+        Float::class.javaPrimitiveType -> Float::class.javaObjectType
+        Int::class.javaPrimitiveType -> Int::class.javaObjectType
+        Long::class.javaPrimitiveType -> Long::class.javaObjectType
+        Short::class.javaPrimitiveType -> Short::class.javaObjectType
+        else -> this
+    }
+
 }
 
 
