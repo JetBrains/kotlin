@@ -58,7 +58,7 @@ fun HierarchicalScope.collectDescriptorsFiltered(
 }
 
 
-@Deprecated("Use getOwnProperties instead") fun LexicalScope.findLocalVariable(name: Name): VariableDescriptor? {
+@Deprecated("Use getContributedProperties instead") fun LexicalScope.findLocalVariable(name: Name): VariableDescriptor? {
     return findFirstFromMeAndParent {
         when {
             it is LexicalScopeWrapper -> it.delegate.findLocalVariable(name)
