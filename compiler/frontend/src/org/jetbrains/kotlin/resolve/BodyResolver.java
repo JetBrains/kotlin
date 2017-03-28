@@ -268,6 +268,9 @@ public class BodyResolver {
                 primaryConstructor == null
                 ? null
                 : FunctionDescriptorUtil.getFunctionInnerScope(scopeForConstructorResolution, primaryConstructor, trace, overloadChecker);
+        if (primaryConstructor == null) {
+            checkRedeclarationsInClassHeaderWithoutPrimaryConstructor(descriptor, scopeForConstructorResolution);
+        }
         ExpressionTypingServices typeInferrer = expressionTypingServices; // TODO : flow
 
         Map<KtTypeReference, KotlinType> supertypes = Maps.newLinkedHashMap();
@@ -394,6 +397,25 @@ public class BodyResolver {
         }
 
         checkSupertypeList(descriptor, supertypes, ktClass);
+    }
+
+    private void checkRedeclarationsInClassHeaderWithoutPrimaryConstructor(
+            @NotNull final ClassDescriptor descriptor, @NotNull LexicalScope scopeForConstructorResolution
+    ) {
+        // Initializing a scope will report errors if any.
+        new LexicalScopeImpl(
+                scopeForConstructorResolution, descriptor, true, null, LexicalScopeKind.CLASS_HEADER,
+                new TraceBasedLocalRedeclarationChecker(trace, overloadChecker),
+                new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
+                    @Override
+                    public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
+                        // If a class has no primary constructor, it still can have type parameters declared in header.
+                        for (TypeParameterDescriptor typeParameter : descriptor.getDeclaredTypeParameters()) {
+                            handler.addClassifierDescriptor(typeParameter);
+                        }
+                        return Unit.INSTANCE;
+                    }
+                });
     }
 
     private void resolveConstructorCallForEnumEntryWithoutInitializer(

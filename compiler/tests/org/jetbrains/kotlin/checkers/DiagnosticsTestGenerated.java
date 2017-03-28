@@ -15949,6 +15949,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("interfaceTypeParameters.kt")
+            public void testInterfaceTypeParameters() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/interfaceTypeParameters.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt2418.kt")
             public void testKt2418() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/redeclarations/kt2418.kt");

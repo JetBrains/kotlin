@@ -1,5 +1,5 @@
 // "Remove type arguments" "true"
-interface Foo<T, T> {
+interface Foo<T1, T2> {
     fun f() {}
 }
 
