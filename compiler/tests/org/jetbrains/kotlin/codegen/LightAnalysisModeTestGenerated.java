@@ -5078,6 +5078,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             doTest(fileName);
         }
 
+        @TestMetadata("overrideDefaultArgument.kt")
+        public void testOverrideDefaultArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/overrideDefaultArgument.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("returnByLabel.kt")
         public void testReturnByLabel() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/returnByLabel.kt");
@@ -5589,6 +5595,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/tailOperations/suspendWithWhen.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("tailInlining.kt")
+            public void testTailInlining() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/coroutines/tailOperations/tailInlining.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/coroutines/unitTypeReturn")
@@ -5785,6 +5797,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("withGenericParameter.kt")
             public void testWithGenericParameter() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/dataClasses/copy/withGenericParameter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("withSecondaryConstructor.kt")
+            public void testWithSecondaryConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/dataClasses/copy/withSecondaryConstructor.kt");
                 doTest(fileName);
             }
         }
@@ -7298,6 +7316,12 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("emptyEnumValuesValueOf.kt")
         public void testEmptyEnumValuesValueOf() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/emptyEnumValuesValueOf.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("enumCompanionInit.kt")
+        public void testEnumCompanionInit() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/enumCompanionInit.kt");
             doTest(fileName);
         }
 
