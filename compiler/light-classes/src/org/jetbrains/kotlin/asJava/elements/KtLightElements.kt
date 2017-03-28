@@ -31,7 +31,7 @@ interface KtLightElement<out T : KtElement, out D : PsiElement> : PsiNamedElemen
 
 interface KtLightDeclaration<out T : KtDeclaration, out D : PsiElement> : KtLightElement<T, D>
 
-interface KtLightMember<out D : PsiMember> : PsiMember, KtLightElement<KtDeclaration, D>, PsiNameIdentifierOwner, PsiDocCommentOwner {
+interface KtLightMember<out D : PsiMember> : PsiMember, KtLightDeclaration<KtDeclaration, D>, PsiNameIdentifierOwner, PsiDocCommentOwner {
     val lightMemberOrigin: LightMemberOrigin?
 }
 
