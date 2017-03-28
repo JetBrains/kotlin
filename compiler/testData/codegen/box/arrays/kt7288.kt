@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_WITHOUT_CHECK: JS
-
 fun test(b: Boolean): String {
     val a = if (b) IntArray(5) else LongArray(5)
     if (a is IntArray) {
@@ -23,6 +21,9 @@ fun test(b: Boolean): String {
 }
 
 fun box(): String {
+    // Only run this test if primitive array `is` checks work (KT-17137)
+    if ((intArrayOf() as Any) is Array<*>) return "OK"
+
     if (test(true) != "OK") return "fail 1: ${test(true)}"
 
     if (test(false) != "OK") return "fail 1: ${test(false)}"

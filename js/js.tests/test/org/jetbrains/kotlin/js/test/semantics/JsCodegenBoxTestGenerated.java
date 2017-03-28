@@ -391,24 +391,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Arrays extends AbstractJsCodegenBoxTest {
-        @TestMetadata("arrayInstanceOf.kt")
-        public void ignoreArrayInstanceOf() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/arrayInstanceOf.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("kt2997.kt")
-        public void ignoreKt2997() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/kt2997.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("kt7288.kt")
-        public void ignoreKt7288() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/kt7288.kt");
-            doTest(fileName);
-        }
-
         public void testAllFilesPresentInArrays() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/arrays"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
         }
@@ -428,6 +410,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("arrayGetMultiIndex.kt")
         public void testArrayGetMultiIndex() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/arrayGetMultiIndex.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("arrayInstanceOf.kt")
+        public void testArrayInstanceOf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/arrayInstanceOf.kt");
             doTest(fileName);
         }
 
@@ -653,6 +641,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt2997.kt")
+        public void testKt2997() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/kt2997.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt33.kt")
         public void testKt33() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/kt33.kt");
@@ -716,6 +710,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("kt7009.kt")
         public void testKt7009() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/kt7009.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt7288.kt")
+        public void testKt7288() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/arrays/kt7288.kt");
             doTest(fileName);
         }
 
@@ -14876,12 +14876,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ForInIndices extends AbstractJsCodegenBoxTest {
-            @TestMetadata("kt13241_Array.kt")
-            public void ignoreKt13241_Array() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInIndices/kt13241_Array.kt");
-                doTest(fileName);
-            }
-
             public void testAllFilesPresentInForInIndices() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInIndices"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
             }
@@ -14955,6 +14949,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("kt12983_forInSpecificCollectionIndices.kt")
             public void testKt12983_forInSpecificCollectionIndices() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInIndices/kt12983_forInSpecificCollectionIndices.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt13241_Array.kt")
+            public void testKt13241_Array() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/ranges/forInIndices/kt13241_Array.kt");
                 doTest(fileName);
             }
 
