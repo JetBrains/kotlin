@@ -45,11 +45,11 @@ void prepareDependenciesDir(File testDependencies) {
     project.delete testDependencies
     testDependencies.mkdirs()
     // We don't download big clang dependency in this test - only sysroots.
-    project.copy {
+    /*project.copy {
         from project.findProject(":dependencies").file("all")
         into testDependencies
         include "clang*.tar.gz/**"
-    }
+    }*/
 }
 
 kotlinNativeInterop {
@@ -104,7 +104,7 @@ task testParallel(type: DefaultTask) {
                 task.executeTest()
                 // The helper prints messages when it is downloading.
                 // We check that there is only one downloading using compilation logs.
-                if (file("${task.buildExePath()}.compilation.log").text.contains("Download dependency")) {
+                if (file("${task.buildExePath()}.compilation.log").text.contains("Extract dependency")) {
                     downloadCnt.incrementAndGet()
                 }
             })

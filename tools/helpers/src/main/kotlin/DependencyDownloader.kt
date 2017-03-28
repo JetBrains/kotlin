@@ -8,52 +8,70 @@ import kotlin.concurrent.thread
 // TODO: Try to use some dependency management system (Ivy?)
 class DependencyDownloader(dependenciesRoot: File, val properties: Properties, val dependencies: List<String>) {
 
-    val dependenciesRoot = dependenciesRoot.apply { mkdirs() }
+    val dependenciesDirectory = dependenciesRoot.apply { mkdirs() }
+    val cacheDirectory = System.getProperty("user.home")?.let {
+        File("$it/.konan/cache").apply { mkdirs() }
+    } ?: dependenciesRoot
 
-    val lockFile = File(dependenciesRoot, ".lock").apply { createNewFile() }
-    val listFile = File(dependenciesRoot, ".downloaded")
+    val lockFile = File(cacheDirectory, ".lock").apply { if (!exists()) createNewFile() }
 
     val dependenciesUrl: String =
             properties.getProperty("dependenciesUrl", "https://jetbrains.bintray.com/kotlin-native-dependencies")
 
     var isInfoShown = false
 
-    private fun File.containsLine(line: String): Boolean {
-        if (!exists()) {
-            return false
+    class DependencyFile(directory: File, fileName: String) {
+        val file = File(directory, fileName).apply { createNewFile() }
+        private val dependencies_ = file.readLines().toMutableSet()
+        val dependencies = dependencies_.toSet()
+
+        fun contains(dependency: String) = dependencies_.contains(dependency)
+        fun add(dependency: String) = dependencies_.add(dependency)
+        fun addWithSave(dependency: String) {
+            add(dependency)
+            save()
         }
-        var result = false
-        listFile.forEachLine {
-            if (!result && it == line) {
-                result = true
+
+        fun save() {
+            val writer = file.writer()
+            writer.use {
+                dependencies_.forEach {
+                    writer.write(it)
+                    writer.write("\n")
+                }
             }
         }
-        return result
     }
 
     private fun processDependency(dependency: String) {
-        val depDir = File(dependenciesRoot, dependency)
+        val depDir = File(dependenciesDirectory, dependency)
         val depName = depDir.name
-        val inListFile = listFile.containsLine(depName)
-        if (inListFile && depDir.exists()) {
+
+        val cachedDependencies = DependencyFile(cacheDirectory, ".cached")
+        val extractedDependencies = DependencyFile(dependenciesDirectory, ".extracted")
+        if (extractedDependencies.contains(depName) && depDir.exists()) {
             return
         }
+
         if (!isInfoShown) {
             println("Downloading native dependencies (LLVM, sysroot etc). This is one-time action performing only for the first run of the compiler.")
             isInfoShown = true
         }
-        val downloaded = download(depName)
-        extract(downloaded)
-        if (!inListFile) {
-            listFile.appendText("$depName\n")
+
+        val archive = File(cacheDirectory.canonicalPath, "$depName.tar.gz")
+        if (!cachedDependencies.contains(depName) || !archive.exists()) {
+            download(depName, archive)
+            cachedDependencies.addWithSave(depName)
         }
+        extract(archive, dependenciesDirectory)
+        extractedDependencies.addWithSave(depName)
     }
 
-    private fun extract(tarGz: File) {
-        println("Extract dependency: ${tarGz.canonicalPath}")
+    private fun extract(tarGz: File, target: File) {
+        println("Extract dependency: ${tarGz.canonicalPath} in ${target.canonicalPath}")
         val tarProcess = ProcessBuilder().apply {
             command("tar", "-xzf", "${tarGz.canonicalPath}")
-            directory(tarGz.parentFile)
+            directory(target)
         }.start()
         tarProcess.waitFor()
         if (tarProcess.exitValue() != 0) {
@@ -78,8 +96,7 @@ class DependencyDownloader(dependenciesRoot: File, val properties: Properties, v
         print("\rDownload dependency: $url (${currentBytes.humanReadable}/${totalBytes.humanReadable}). ")
     }
 
-    private fun download(dependencyName: String): File {
-        val outputFile = File(dependenciesRoot.canonicalPath, "$dependencyName.tar.gz")
+    private fun download(dependencyName: String, outputFile: File) {
         if (!outputFile.exists()) {
             val url = URL("$dependenciesUrl/$dependencyName.tar.gz")
             val connection = url.openConnection()
@@ -118,7 +135,6 @@ class DependencyDownloader(dependenciesRoot: File, val properties: Properties, v
                 throw RuntimeException("Cannot download dependency: $url", downloadError)
             }
         }
-        return outputFile
     }
 
     fun run() {
