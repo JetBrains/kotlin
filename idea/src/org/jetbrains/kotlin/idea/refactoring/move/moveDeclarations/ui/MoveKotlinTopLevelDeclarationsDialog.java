@@ -24,6 +24,7 @@ import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.JavaProjectRootsUtil;
+import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Pair;
@@ -528,11 +529,6 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
             List<PsiFile> filesExistingInTargetDir = getFilesExistingInTargetDir(sourceFiles, targetFileName, targetDirectory);
             if (!filesExistingInTargetDir.isEmpty()) {
-                if (!CollectionsKt.intersect(sourceFiles, filesExistingInTargetDir).isEmpty()) {
-                    setErrorText("Can't move to the original file(s)");
-                    return null;
-                }
-
                 if (filesExistingInTargetDir.size() > 1) {
                     String filePathsToReport = StringUtil.join(
                             filesExistingInTargetDir,
@@ -552,13 +548,17 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                     return null;
                 }
 
-                String question = String.format(
-                        "File '%s' already exists. Do you want to move selected declarations to this file?",
-                        filesExistingInTargetDir.get(0).getVirtualFile().getPath()
-                );
-                int ret =
-                        Messages.showYesNoDialog(myProject, question, RefactoringBundle.message("move.title"), Messages.getQuestionIcon());
-                if (ret != Messages.YES) return null;
+                PsiFile targetFile = filesExistingInTargetDir.get(0);
+
+                if (!sourceFiles.contains(targetFile)) {
+                    String question = String.format(
+                            "File '%s' already exists. Do you want to move selected declarations to this file?",
+                            targetFile.getVirtualFile().getPath()
+                    );
+                    int ret =
+                            Messages.showYesNoDialog(myProject, question, RefactoringBundle.message("move.title"), Messages.getQuestionIcon());
+                    if (ret != Messages.YES) return null;
+                }
             }
 
             // All source files must be in the same directory
@@ -724,7 +724,8 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                     PsiDirectory targetDir = moveDestination.getTargetIfExists(sourceDirectory);
                     String targetFileName = sourceFiles.size() > 1 ? null : tfFileNameInPackage.getText();
                     List<PsiFile> filesExistingInTargetDir = getFilesExistingInTargetDir(sourceFiles, targetFileName, targetDir);
-                    if (filesExistingInTargetDir.isEmpty()) {
+                    if (filesExistingInTargetDir.isEmpty()
+                        || (filesExistingInTargetDir.size() == 1 && sourceFiles.contains(filesExistingInTargetDir.get(0)))) {
                         PsiDirectory targetDirectory = ApplicationUtilsKt.runWriteAction(
                                 new Function0<PsiDirectory>() {
                                     @Override
