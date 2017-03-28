@@ -83,11 +83,14 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware {
     KOTLIN_1_1(1, 1),
     KOTLIN_1_2(1, 2);
 
+    val isStable: Boolean
+        get() = this <= LATEST_STABLE
+
     val versionString: String
         get() = "$major.$minor"
 
     override val description: String
-        get() = if (this > LATEST_STABLE) "$versionString (EXPERIMENTAL)" else versionString
+        get() = if (isStable) versionString else "$versionString (EXPERIMENTAL)"
 
     override fun toString() = versionString
 

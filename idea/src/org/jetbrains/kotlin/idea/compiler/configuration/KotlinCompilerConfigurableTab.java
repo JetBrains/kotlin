@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.PluginStartupComponent;
+import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode;
 import org.jetbrains.kotlin.idea.facet.DescriptionListCellRenderer;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
 import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
@@ -334,6 +335,10 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     @SuppressWarnings("unchecked")
     private void fillLanguageAndAPIVersionList() {
         for (LanguageVersion version : LanguageVersion.values()) {
+            if (!version.isStable() && !KotlinInternalMode.Instance.getEnabled()) {
+                continue;
+            }
+
             languageVersionComboBox.addItem(version.getDescription());
             apiVersionComboBox.addItem(version.getDescription());
         }

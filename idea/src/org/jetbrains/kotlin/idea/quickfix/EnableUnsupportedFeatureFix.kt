@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
+import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
@@ -145,6 +146,10 @@ sealed class EnableUnsupportedFeatureFix(
             val sinceVersion = feature.sinceVersion ?: return null
             val apiVersionOnly = sinceVersion <= languageFeatureSettings.languageVersion &&
                                  feature.sinceApiVersion > languageFeatureSettings.apiVersion
+
+            if (!sinceVersion.isStable && !KotlinInternalMode.enabled) {
+                return null
+            }
 
             val module = ModuleUtilCore.findModuleForPsiElement(diagnostic.psiElement) ?: return null
             if (KotlinPluginUtil.isMavenModule(module)) return null

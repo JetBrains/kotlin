@@ -253,7 +253,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             );
         }
 
-        if (languageVersion.compareTo(LanguageVersion.LATEST_STABLE) > 0) {
+        if (!languageVersion.isStable()) {
             configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
                     CompilerMessageSeverity.STRONG_WARNING,
                     "Language version " + languageVersion.getVersionString() + " is experimental, there are " +
