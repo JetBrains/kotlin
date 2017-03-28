@@ -42,6 +42,7 @@ class AllOpenGradleSubplugin : Plugin<Project> {
 
         project.afterEvaluate {
             val fqNamesAsString = allOpenExtension.myAnnotations.joinToString(",")
+            val presetsAsString = allOpenExtension.myPresets.joinToString(",")
             project.extensions.extraProperties.set("kotlinAllOpenAnnotations", fqNamesAsString)
 
             val allBuildscriptArtifacts = project.getBuildscriptArtifacts() + project.rootProject.getBuildscriptArtifacts()
@@ -54,7 +55,8 @@ class AllOpenGradleSubplugin : Plugin<Project> {
             open class TaskForAllOpen : AbstractTask()
             project.tasks.add(project.tasks.create("allOpenDataStorageTask", TaskForAllOpen::class.java).apply {
                 isEnabled = false
-                description = "Supported annotations: " + fqNamesAsString +
+                description = "Supported annotations: $fqNamesAsString" +
+                        "; Presets: $presetsAsString" +
                         "; Compiler plugin classpath: $allOpenCompilerPluginFile"
             })
         }

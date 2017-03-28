@@ -43,6 +43,7 @@ class NoArgGradleSubplugin : Plugin<Project> {
 
         project.afterEvaluate {
             val fqNamesAsString = noArgExtension.myAnnotations.joinToString(",")
+            val presetsAsString = noArgExtension.myPresets.joinToString(",")
             project.extensions.extraProperties.set("kotlinNoArgAnnotations", fqNamesAsString)
 
             val allBuildscriptArtifacts = project.getBuildscriptArtifacts() + project.rootProject.getBuildscriptArtifacts()
@@ -56,6 +57,7 @@ class NoArgGradleSubplugin : Plugin<Project> {
             project.tasks.add(project.tasks.create("noArgDataStorageTask", TaskForNoArg::class.java).apply {
                 isEnabled = false
                 description = "Supported annotations: " + fqNamesAsString +
+                              "; Presets: $presetsAsString" +
                               "; Compiler plugin classpath: $noArgCompilerPluginFile"
             })
         }
