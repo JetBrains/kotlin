@@ -1,3 +1,13 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
 abstract class NativeDep extends DefaultTask {
 
     private String getCurrentHostTarget() {
@@ -63,39 +73,55 @@ class TgzNativeDep extends NativeDep {
             project.delete(outputDir)
             throw e
         }
+    }
+}
 
-        // TODO: improve downloaded files caching
-        // TODO: do not extract if already extracted
+class HelperNativeDep extends TgzNativeDep {
+
+    public HelperNativeDep() {
+        dependsOn(':tools:helpers:jar')
+    }
+
+    @TaskAction
+    public void downloadAndExtract() {
+        project.javaexec {
+            main = "org.jetbrains.kotlin.konan.MainKt"
+            classpath += project.findProject(':tools:helpers').getConfigurations().getByName("runtime")
+            classpath += project.findProject(':tools:helpers').getConfigurations().getByName("runtime").artifacts.files
+                    args baseOutDir.canonicalPath,
+                    project.findProject(":backend.native").file("konan.properties").canonicalPath,
+                    baseName
+        }
     }
 }
 
 
-task hostLibffi(type: TgzNativeDep) {
+task hostLibffi(type: HelperNativeDep) {
     baseName = "libffi-3.2.1-2-$host"
 }
 
-task llvm(type: TgzNativeDep) {
+task llvm(type: HelperNativeDep) {
     baseName = "clang+llvm-$llvmVersion-$host"
 }
 
 if (isLinux()) {
-    task gccToolchain(type: TgzNativeDep) {
+    task gccToolchain(type: HelperNativeDep) {
         baseName = "target-gcc-toolchain-3-$host"
     }
-    task raspberryPiSysroot(type: TgzNativeDep) {
+    task raspberryPiSysroot(type: HelperNativeDep) {
         baseName = "target-sysroot-1-raspberrypi"
     }
-    task raspberrypiLibffi(type: TgzNativeDep) {
+    task raspberrypiLibffi(type: HelperNativeDep) {
         baseName = "libffi-3.2.1-2-raspberrypi"
     }
 } else {
-    task hostSysroot(type: TgzNativeDep) {
+    task hostSysroot(type: HelperNativeDep) {
         baseName = "target-sysroot-1-$host"
     }
-    task iphoneSysroot(type: TgzNativeDep) {
+    task iphoneSysroot(type: HelperNativeDep) {
         baseName = "target-sysroot-2-darwin-ios"
     }
-    task iphoneLibffi(type: TgzNativeDep) {
+    task iphoneLibffi(type: HelperNativeDep) {
         baseName = "libffi-3.2.1-2-darwin-ios"
     }
 // TODO: re-enable when we known how to bring the simulator
