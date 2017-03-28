@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -334,6 +335,10 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
                 "kfun:" + qualifyInternalName(descriptor)
             }
             LLVMAddFunction(context.llvmModule, symbolName, llvmFunctionType)!!
+        }
+
+        if (!context.config.configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)) {
+            LLVMAddTargetDependentFunctionAttr(llvmFunction, "no-frame-pointer-elim", "true")
         }
 
         this.functions[descriptor] = FunctionLlvmDeclarations(llvmFunction)

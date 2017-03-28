@@ -13,6 +13,8 @@ typealias ExecutableFile = String
 internal abstract class PlatformFlags(val distribution: Distribution) {
     val properties = distribution.properties
 
+    abstract val llvmLtoNooptFlags: List<String>
+    abstract val llvmLtoOptFlags: List<String>
     abstract val llvmLtoFlags: List<String>
     abstract val llvmLlcFlags: List<String>
 
@@ -28,6 +30,8 @@ internal abstract class PlatformFlags(val distribution: Distribution) {
 internal open class MacOSPlatform(distribution: Distribution)
     : PlatformFlags(distribution) {
 
+    override val llvmLtoNooptFlags = properties.propertyList("llvmLtoNooptFlags.osx")
+    override val llvmLtoOptFlags = properties.propertyList("llvmLtoOptFlags.osx")
     override val llvmLtoFlags = properties.propertyList("llvmLtoFlags.osx")
     override val llvmLlcFlags = properties.propertyList("llvmLlcFlags.osx")
 
@@ -45,7 +49,7 @@ internal open class MacOSPlatform(distribution: Distribution)
     override fun linkCommand(objectFiles: List<String>, executable: String, optimize: Boolean): List<String> {
 
         return mutableListOf<String>(linker, "-demangle") +
-            if (optimize) listOf("-object_path_lto", "temporary.o", "-lto_library", distribution.libLTO) else {listOf<String>()} +
+            listOf("-object_path_lto", "temporary.o", "-lto_library", distribution.libLTO) +
             listOf( "-dynamic", "-arch", arch) +
             osVersionMin +
             listOf("-syslibroot", "$targetSysRoot",
@@ -83,6 +87,8 @@ internal open class LinuxPlatform(distribution: Distribution)
     val llvmLib = distribution.llvmLib
     val libGcc = distribution.libGcc
 
+    override val llvmLtoNooptFlags = properties.propertyList("llvmLtoNooptFlags.linux")
+    override val llvmLtoOptFlags = properties.propertyList("llvmLtoOptFlags.linux")
     override val llvmLtoFlags = properties.propertyList("llvmLtoFlags.linux")
     override val llvmLlcFlags = properties.propertyList("llvmLlcFlags.linux")
 
@@ -181,8 +187,11 @@ internal class LinkStage(val context: Context) {
 
         val tool = distribution.llvmLto
         val command = mutableListOf(tool, "-o", combined)
+        command.addAll(platform.llvmLtoFlags)
         if (optimize) {
-            command.addAll(platform.llvmLtoFlags)
+            command.addAll(platform.llvmLtoOptFlags)
+        } else {
+            command.addAll(platform.llvmLtoNooptFlags)
         }
         command.addAll(files)
         runTool(*command.toTypedArray())
@@ -273,7 +282,9 @@ internal class LinkStage(val context: Context) {
             objectFiles = if (optimize) {
                 listOf( llvmLto(bitcodeFiles ) )
             } else {
-                bitcodeFiles.map{ it -> llvmLlc(it) }
+                listOf( llvmLto(bitcodeFiles ) )
+                // Or, alternatively, go through llc bitcode compiler.
+                //bitcodeFiles.map{ it -> llvmLlc(it) }
             }
         }
         phaser.phase(KonanPhase.LINKER) {
