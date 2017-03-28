@@ -20,6 +20,7 @@ import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.ide.highlighter.XmlFileType
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.search.FileTypeIndex
@@ -80,6 +81,8 @@ class ExpressionsOfTypeProcessor(
         var mode = if (ApplicationManager.getApplication().isUnitTestMode) Mode.ALWAYS_SMART else Mode.PLAIN_WHEN_NEEDED
         @TestOnly
         var testLog: MutableList<String>? = null
+
+        val LOG = Logger.getInstance(ExpressionsOfTypeProcessor::class.java)
 
         fun logPresentation(element: PsiElement): String? {
             return runReadAction {
@@ -184,15 +187,15 @@ class ExpressionsOfTypeProcessor(
                 searchReferences(classToSearch, scope) { reference ->
                     if (processClassUsage(reference)) return@searchReferences true
 
+                    val diagnosticsMessage = getFallbackDiagnosticsMessage(reference)
+
                     if (mode != Mode.ALWAYS_SMART) {
+                        LOG.info(diagnosticsMessage)
                         downShiftToPlainSearch()
                         return@searchReferences false
                     }
 
-                    val element = reference.element
-                    val document = PsiDocumentManager.getInstance(project).getDocument(element.containingFile)
-                    val lineAndCol = DiagnosticUtils.offsetToLineAndColumn(document, element.startOffset)
-                    error("Unsupported reference: '${element.text}' in ${element.containingFile.name} line ${lineAndCol.line} column ${lineAndCol.column}")
+                    error(diagnosticsMessage)
                 }
 
                 // we must use plain search inside our class (and inheritors) because implicit 'this' can happen anywhere
@@ -200,6 +203,13 @@ class ExpressionsOfTypeProcessor(
             }
         }
         addTask(ProcessClassUsagesTask(classToSearch))
+    }
+
+    private fun getFallbackDiagnosticsMessage(reference: PsiReference): String {
+        val element = reference.element
+        val document = PsiDocumentManager.getInstance(project).getDocument(element.containingFile)
+        val lineAndCol = DiagnosticUtils.offsetToLineAndColumn(document, element.startOffset)
+        return "ExpressionsOfTypeProcessor: Unsupported reference: '${element.text}' in ${element.containingFile.name} line ${lineAndCol.line} column ${lineAndCol.column}"
     }
 
     private enum class ReferenceProcessor(val handler: (ExpressionsOfTypeProcessor, PsiReference) -> Boolean) {
@@ -220,6 +230,7 @@ class ExpressionsOfTypeProcessor(
                 searchReferences(searchParameters) { reference ->
                     val processed = processor.handler(this@ExpressionsOfTypeProcessor, reference)
                     if (!processed) { // we don't know how to handle this reference and down-shift to plain search
+                        LOG.info(getFallbackDiagnosticsMessage(reference))
                         downShiftToPlainSearch()
                     }
                     processed
@@ -269,6 +280,7 @@ class ExpressionsOfTypeProcessor(
                 testLog?.add("Searched references to ${logPresentation(psiClass)} in non-Kotlin files")
                 searchReferences(psiClass, scope) { reference ->
                     if (reference.element.language != JavaFileType.INSTANCE) { // reference in some JVM language can be method parameter (but we don't know)
+                        LOG.info(getFallbackDiagnosticsMessage(reference))
                         downShiftToPlainSearch()
                         return@searchReferences false
                     }
