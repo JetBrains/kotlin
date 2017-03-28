@@ -44,12 +44,10 @@ def testDependencies = project.file("${sourceSets.testOutputLocal.output.dirs.si
 void prepareDependenciesDir(File testDependencies) {
     project.delete testDependencies
     testDependencies.mkdirs()
-    // We don't download big clang dependency in this test - only sysroots.
-    /*project.copy {
-        from project.findProject(":dependencies").file("all")
-        into testDependencies
-        include "clang*.tar.gz/**"
-    }*/
+    // Delete all sysroots from the dependencies cache to tests their downloading.
+    project.delete(project.fileTree("${System.getProperty("user.home")}/.konan/cache/") {
+        include "*sysroot*.tar.gz"
+    })
 }
 
 kotlinNativeInterop {
@@ -73,7 +71,9 @@ task testInteropHelper(type: RunInteropKonanTest) {
 
     doFirst {
         prepareDependenciesDir(testDependencies)
+        project.delete(project.file(buildExePath()).parent)
     }
+    //Interop gradle plugin doesn't save its work log so we cannot use it to check if dependencies were downloaded or not.
 }
 
 task testCompilerHelper(type: RunKonanTest) {
@@ -82,6 +82,14 @@ task testCompilerHelper(type: RunKonanTest) {
 
     doFirst {
         prepareDependenciesDir(testDependencies)
+        project.delete(project.file(buildExePath()).parent)
+    }
+
+    doLast {
+        if (!file("${buildExePath()}.compilation.log").text.contains("Extract dependency") ||
+            !file("${buildExePath()}.compilation.log").text.contains("Download dependency")) {
+            throw new TestFailedException("Compilation log contains no Extract/Download messages")
+        }
     }
 }
 
@@ -101,19 +109,24 @@ task testParallel(type: DefaultTask) {
     doLast {
         List<Thread> threads = new ArrayList<>()
         def downloadCnt = new AtomicInteger(0)
+        def extractCnt = new AtomicInteger(0)
         tasks.withType(RunKonanTest).matching { it.name.startsWith("runParallel") }.each { task ->
             threads.add(Thread.start {
                 task.executeTest()
                 // The helper prints messages when it is downloading.
                 // We check that there is only one downloading using compilation logs.
                 if (file("${task.buildExePath()}.compilation.log").text.contains("Extract dependency")) {
+                    extractCnt.incrementAndGet()
+                }
+                if (file("${task.buildExePath()}.compilation.log").text.contains("Download dependency")) {
                     downloadCnt.incrementAndGet()
                 }
             })
         }
         threads.each { it.join() }
-        if (downloadCnt.intValue() != 1) {
-            throw new TestFailedException("Actual downloads: ${downloadCnt.intValue()}, expected: 1")
+        if (downloadCnt.intValue() != 1 || extractCnt.intValue() != 1) {
+            throw new TestFailedException("Actual downloads: ${downloadCnt.intValue()}, expected: 1\n" +
+                                          "Actial extractions: ${extractCnt.intValue()}, expected: 1")
         }
     }
 }
