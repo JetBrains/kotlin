@@ -1442,13 +1442,14 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             }
         }
 
-        if (!codegen.isAfterTerminator()) {                     // TODO should we solve this problem once and for all
-            if (inlinedFunctionScope.resultPhi != null) {
-                codegen.unreachable()
-            }
-        }
-
         if (inlinedFunctionScope.bbExit != null) {
+            if (!codegen.isAfterTerminator()) {                 // TODO should we solve this problem once and for all
+                if (inlinedFunctionScope.resultPhi != null) {
+                    codegen.unreachable()
+                } else {
+                    codegen.br(inlinedFunctionScope.bbExit!!)
+                }
+            }
             codegen.positionAtEnd(inlinedFunctionScope.bbExit!!)
         }
 
