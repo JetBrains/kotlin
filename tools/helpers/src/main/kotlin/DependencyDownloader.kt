@@ -49,7 +49,10 @@ class DependencyDownloader(dependenciesRoot: File, val properties: Properties, v
 
         val cachedDependencies = DependencyFile(cacheDirectory, ".cached")
         val extractedDependencies = DependencyFile(dependenciesDirectory, ".extracted")
-        if (extractedDependencies.contains(depName) && depDir.exists()) {
+        if (extractedDependencies.contains(depName) &&
+                depDir.exists() &&
+                depDir.isDirectory &&
+                depDir.list().isNotEmpty()) {
             return
         }
 
