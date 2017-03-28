@@ -8,42 +8,62 @@ fun bitsToDouble(bits: Long): Double = java.lang.Double.longBitsToDouble(bits)
 
 // TODO: the functions below should eventually be intrinsified
 
-inline fun <reified R : Number> Number.signExtend(): R {
-    val returnValueClass = R::class.java
-    when (returnValueClass) {
-        java.lang.Byte::class.java -> if (this is Byte) {
-            return this.toByte() as R
-        }
-        java.lang.Short::class.java -> if (this is Byte || this is Short) {
-            return this.toShort() as R
-        }
-        java.lang.Integer::class.java -> if (this is Byte || this is Short || this is Int) {
-            return this.toInt() as R
-        }
-        java.lang.Long::class.java -> if (this is Byte || this is Short || this is Int || this is Long) {
-            return this.toLong() as R
-        }
-    }
-
-    throw Error("unable to sign extend ${this.javaClass.simpleName} \"$this\" to ${returnValueClass.simpleName}")
+inline fun <reified R : Number> Byte.signExtend(): R = when (R::class.java) {
+    java.lang.Byte::class.java -> this.toByte() as R
+    java.lang.Short::class.java -> this.toShort() as R
+    java.lang.Integer::class.java -> this.toInt() as R
+    java.lang.Long::class.java -> this.toLong() as R
+    else -> this.invalidSignExtension()
 }
 
-inline fun <reified R : Number> Number.narrow(): R {
-    val returnValueClass = R::class.java
-    when (returnValueClass) {
-        java.lang.Byte::class.java -> if (this is Byte || this is Short || this is Int || this is Long) {
-            return this.toByte() as R
-        }
-        java.lang.Short::class.java -> if (this is Short || this is Int || this is Long) {
-            return this.toShort() as R
-        }
-        java.lang.Integer::class.java -> if (this is Int || this is Long) {
-            return this.toInt() as R
-        }
-        java.lang.Long::class.java -> if (this is Long) {
-            return this.toLong() as R
-        }
-    }
+inline fun <reified R : Number> Short.signExtend(): R = when (R::class.java) {
+    java.lang.Short::class.java -> this.toShort() as R
+    java.lang.Integer::class.java -> this.toInt() as R
+    java.lang.Long::class.java -> this.toLong() as R
+    else -> this.invalidSignExtension()
+}
 
-    throw Error("unable to narrow ${this.javaClass.simpleName} \"$this\" to ${returnValueClass.simpleName}")
+inline fun <reified R : Number> Int.signExtend(): R = when (R::class.java) {
+    java.lang.Integer::class.java -> this.toInt() as R
+    java.lang.Long::class.java -> this.toLong() as R
+    else -> this.invalidSignExtension()
+}
+
+inline fun <reified R : Number> Long.signExtend(): R = when (R::class.java) {
+    java.lang.Long::class.java -> this.toLong() as R
+    else -> this.invalidSignExtension()
+}
+
+inline fun <reified R : Number> Number.invalidSignExtension(): R {
+    throw Error("unable to sign extend ${this.javaClass.simpleName} \"${this}\" to ${R::class.java.simpleName}")
+}
+
+inline fun <reified R : Number> Byte.narrow(): R = when (R::class.java) {
+    java.lang.Byte::class.java -> this.toByte() as R
+    else -> this.invalidNarrowing()
+}
+
+inline fun <reified R : Number> Short.narrow(): R = when (R::class.java) {
+    java.lang.Byte::class.java -> this.toByte() as R
+    java.lang.Short::class.java -> this.toShort() as R
+    else -> this.invalidNarrowing()
+}
+
+inline fun <reified R : Number> Int.narrow(): R = when (R::class.java) {
+    java.lang.Byte::class.java -> this.toByte() as R
+    java.lang.Short::class.java -> this.toShort() as R
+    java.lang.Integer::class.java -> this.toInt() as R
+    else -> this.invalidNarrowing()
+}
+
+inline fun <reified R : Number> Long.narrow(): R = when (R::class.java) {
+    java.lang.Byte::class.java -> this.toByte() as R
+    java.lang.Short::class.java -> this.toShort() as R
+    java.lang.Integer::class.java -> this.toInt() as R
+    java.lang.Long::class.java -> this.toLong() as R
+    else -> this.invalidNarrowing()
+}
+
+inline fun <reified R : Number> Number.invalidNarrowing(): R {
+    throw Error("unable to narrow ${this.javaClass.simpleName} \"${this}\" to ${R::class.java.simpleName}")
 }
