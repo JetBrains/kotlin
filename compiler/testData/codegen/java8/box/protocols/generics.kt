@@ -35,12 +35,12 @@ class X {
 fun box(): String {
     val obj: PT<Int> = X()
     if (obj.x(42) != 42) {
-        return "FAIL 1"
+        return "FAIL PRIMITIVE"
     }
 
     val obj2: PT<Int?> = X()
     if (obj2.x(42) != 84) {
-        return "FAIL 2"
+        return "FAIL OBJECT"
     }
 
     return "OK"
