@@ -1,6 +1,7 @@
 # OpenGL application
 
- This example shows interaction with OpenGL library, to render classical 3D test model.
+ This example shows interaction with OpenGL library, to render classical 3D test model. Linux build requires `apt-get install freeglut3-dev` or similar,
+MacOS shall work as is.
 
 To build use `./build.sh` script without arguments (or specify `TARGET` variable if cross-compiling).
 
