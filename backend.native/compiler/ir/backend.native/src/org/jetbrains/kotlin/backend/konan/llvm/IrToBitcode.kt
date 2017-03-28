@@ -153,16 +153,6 @@ internal interface CodeContext {
     fun genGetValue(descriptor: ValueDescriptor): LLVMValueRef
 
     /**
-     * Gets the exit block for the context owned by specified descriptor.
-     */
-    fun getExit(descriptor: CallableDescriptor): LLVMBasicBlockRef
-
-    /**
-     * Gets the result value for the context owned by specified descriptor.
-     */
-    fun getResult(descriptor: CallableDescriptor): LLVMValueRef
-
-    /**
      * Returns owning function scope.
      *
      * @return the requested value
@@ -207,10 +197,6 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         override fun getDeclaredVariable(descriptor: VariableDescriptor) = -1
 
         override fun genGetValue(descriptor: ValueDescriptor) = unsupported(descriptor)
-
-        override fun getExit(descriptor: CallableDescriptor): LLVMBasicBlockRef = unsupported(descriptor)
-
-        override fun getResult(descriptor: CallableDescriptor): LLVMValueRef = unsupported(descriptor)
 
         override fun functionScope(): CodeContext = unsupported()
     }
@@ -1395,19 +1381,15 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         var bbExit : LLVMBasicBlockRef? = null
         var resultPhi : LLVMValueRef? = null
 
-        override fun getExit(descriptor: CallableDescriptor): LLVMBasicBlockRef {
-            if (descriptor != inlineBody.descriptor)
-                return super.getExit(descriptor)
+        private fun getExit(): LLVMBasicBlockRef {
             if (bbExit == null) bbExit = codegen.basicBlock("inline_body_exit")
             return bbExit!!
         }
 
-        override fun getResult(descriptor: CallableDescriptor): LLVMValueRef {
-            if (descriptor != inlineBody.descriptor)
-                return super.getResult(descriptor)
+        private fun getResult(): LLVMValueRef {
             if (resultPhi == null) {
                 val bbCurrent = codegen.currentBlock
-                codegen.positionAtEnd(getExit(descriptor))
+                codegen.positionAtEnd(getExit())
                 resultPhi = codegen.phi(codegen.getLLVMType(inlineBody.type))
                 codegen.positionAtEnd(bbCurrent)
             }
@@ -1415,15 +1397,15 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         }
 
         override fun genReturn(target: CallableDescriptor, value: LLVMValueRef?) {
-            if (target == codegen.functionDescriptor) {                         // It is "non local return".
-                super.genReturn(target, value)                                  // Generate real "return".
+            if (target != inlineBody.descriptor) {                              // It is not our "local return".
+                super.genReturn(target, value)
                 return
             }
-                                                                                // It is local return.
-            codegen.br(getExit(target)!!)                                       // Generate branch on exit block.
+                                                                                // It is local return from current function.
+            codegen.br(getExit())                                               // Generate branch on exit block.
 
             if (!KotlinBuiltIns.isUnit(inlineBody.type)) {                      // If function returns more then "unit"
-                codegen.assignPhis(getResult(target) to value!!)                // Assign return value to result PHI node.
+                codegen.assignPhis(getResult() to value!!)                      // Assign return value to result PHI node.
             }
         }
     }
@@ -1442,22 +1424,19 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
             }
         }
 
-        if (inlinedFunctionScope.bbExit != null) {
+        val bbExit = inlinedFunctionScope.bbExit
+        if (bbExit != null) {
             if (!codegen.isAfterTerminator()) {                 // TODO should we solve this problem once and for all
                 if (inlinedFunctionScope.resultPhi != null) {
                     codegen.unreachable()
                 } else {
-                    codegen.br(inlinedFunctionScope.bbExit!!)
+                    codegen.br(bbExit)
                 }
             }
-            codegen.positionAtEnd(inlinedFunctionScope.bbExit!!)
+            codegen.positionAtEnd(bbExit)
         }
 
-        if (inlinedFunctionScope.resultPhi != null) {
-            return inlinedFunctionScope.resultPhi!!
-        } else {
-            return codegen.theUnitInstanceRef.llvm
-        }
+        return inlinedFunctionScope.resultPhi ?: codegen.theUnitInstanceRef.llvm
     }
 
     //-------------------------------------------------------------------------//
