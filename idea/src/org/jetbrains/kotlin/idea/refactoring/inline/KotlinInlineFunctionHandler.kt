@@ -26,9 +26,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
@@ -37,10 +39,13 @@ import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtReturnExpression
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -102,11 +107,17 @@ class KotlinInlineFunctionHandler: InlineActionHandler() {
             is PsiMultiReference -> reference.references.firstIsInstanceOrNull<KtSimpleNameReference>()
             else -> null
         }
+        val recursive = element.isRecursive()
+        if (recursive && nameReference == null) {
+            val message = RefactoringBundle.getCannotRefactorMessage("Inline recursive function is supported only on references")
+            CommonRefactoringUtil.showErrorHint(project, editor, message, "Inline Function", null)
+            return
+        }
 
         val replacementStrategy = CallableUsageReplacementStrategy(replacement)
 
-        // TODO: allowInlineThisOnly
-        val dialog = KotlinInlineFunctionDialog(project, element, nameReference, replacementStrategy, allowInlineThisOnly = false)
+        val dialog = KotlinInlineFunctionDialog(project, element, nameReference, replacementStrategy,
+                                                allowInlineThisOnly = recursive)
         if (!ApplicationManager.getApplication().isUnitTestMode) {
             dialog.show()
         }
@@ -114,4 +125,16 @@ class KotlinInlineFunctionHandler: InlineActionHandler() {
             dialog.doAction()
         }
     }
+
+    private fun KtNamedFunction.isRecursive(): Boolean {
+        val context = analyzeFullyAndGetResult().bindingContext
+        return bodyExpression?.includesCallOf(context[BindingContext.FUNCTION, this] ?: return false, context) ?: false
+    }
+
+    private fun KtExpression.includesCallOf(descriptor: FunctionDescriptor, context: BindingContext): Boolean {
+        val refDescriptor = getResolvedCall(context)?.resultingDescriptor
+        return descriptor == refDescriptor ||
+               anyDescendantOfType<KtExpression> { it !== this && it.includesCallOf(descriptor, context) }
+    }
+
 }

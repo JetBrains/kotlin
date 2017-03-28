@@ -72,8 +72,9 @@ class KotlinInlineFunctionDialog(
 
     public override fun doAction() {
         invokeRefactoring(
-                KotlinInlineFunctionProcessor(project, replacementStrategy, function,
-                                              reference, isInlineThisOnly, !isInlineThisOnly && !isKeepTheDeclaration)
+                KotlinInlineFunctionProcessor(project, replacementStrategy, function, reference,
+                                              inlineThisOnly = isInlineThisOnly || allowInlineThisOnly,
+                                              deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration && !allowInlineThisOnly)
         )
 
         val settings = JavaRefactoringSettings.getInstance()
