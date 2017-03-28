@@ -52,6 +52,15 @@ object KotlinCompilerClient {
 
     val verboseReporting = System.getProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY) != null
 
+    val java9RestrictionsWorkaroundOptions =
+            if (System.getProperty("java.specification.version") == "9") listOf(
+                    "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+                    "--add-opens", "java.base/java.util=ALL-UNNAMED",
+                    "--add-opens", "java.base/java.util.concurrent.atomic=ALL-UNNAMED",
+                    "--add-opens", "java.base/jdk.internal.misc=ALL-UNNAMED"
+            )
+            else emptyList()
+
     fun getOrCreateClientFlagFile(daemonOptions: DaemonOptions): File =
             // for jps property is passed from IDEA to JPS in KotlinBuildProcessParametersProvider
             System.getProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY)
@@ -380,6 +389,7 @@ object KotlinCompilerClient {
                    javaExecutable.absolutePath, "-cp", compilerId.compilerClasspath.joinToString(File.pathSeparator)) +
                    platformSpecificOptions +
                    daemonJVMOptions.mappers.flatMap { it.toArgs("-") } +
+                   java9RestrictionsWorkaroundOptions +
                    COMPILER_DAEMON_CLASS_FQN +
                    daemonOptions.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
                    compilerId.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) }
