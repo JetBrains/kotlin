@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
 import org.jetbrains.kotlin.resolve.calls.CallExpressionElement
+import org.jetbrains.kotlin.resolve.calls.checkers.UnderscoreUsageChecker
 import org.jetbrains.kotlin.resolve.calls.unrollToLeftMostQualifiedExpression
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
@@ -143,7 +144,6 @@ class QualifiedExpressionResolver {
             val (name, simpleName) = qualifierPartList.single()
             val descriptor = scope.findClassifier(name, KotlinLookupLocation(simpleName))
             storeResult(trace, simpleName, descriptor, ownerDescriptor, position = QualifierPosition.TYPE, isQualifier = true)
-
             return TypeQualifierResolutionResult(qualifierPartList, descriptor)
         }
 
@@ -596,6 +596,8 @@ class QualifiedExpressionResolver {
         }
 
         trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, descriptor)
+
+        UnderscoreUsageChecker.checkSimpleNameUsage(descriptor, referenceExpression, trace)
 
         if (descriptor is DeclarationDescriptorWithVisibility) {
             val fromToCheck =

@@ -1,0 +1,15 @@
+package
+
+public val testConstructor: _<kotlin.Any>
+public val testConstructor2: _<kotlin.Any>
+public fun _<kotlin.Any>.testTypeConstructor(): kotlin.Unit
+public fun _<kotlin.Any>.testTypeConstructor2(): kotlin.Unit
+
+public final class _</*0*/ __> {
+    public constructor _</*0*/ __>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun testTypeArgument(/*0*/ x: kotlin.collections.List<__>): kotlin.collections.List<__>
+    public final fun testTypeArgument2(/*0*/ x: kotlin.collections.List<__>): kotlin.collections.List<__>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

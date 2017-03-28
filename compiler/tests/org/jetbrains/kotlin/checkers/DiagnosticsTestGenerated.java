@@ -764,6 +764,36 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("UnderscoreUsageInAnnotation.kt")
+        public void testUnderscoreUsageInAnnotation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/UnderscoreUsageInAnnotation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("UnderscoreUsageInCall.kt")
+        public void testUnderscoreUsageInCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/UnderscoreUsageInCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("UnderscoreUsageInCallableRefTypeLHS.kt")
+        public void testUnderscoreUsageInCallableRefTypeLHS() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/UnderscoreUsageInCallableRefTypeLHS.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("UnderscoreUsageInType.kt")
+        public void testUnderscoreUsageInType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/UnderscoreUsageInType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("UnderscoreUsageInVariableAsFunctionCall.kt")
+        public void testUnderscoreUsageInVariableAsFunctionCall() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/UnderscoreUsageInVariableAsFunctionCall.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("UnitByDefaultForFunctionTypes.kt")
         public void testUnitByDefaultForFunctionTypes() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/UnitByDefaultForFunctionTypes.kt");

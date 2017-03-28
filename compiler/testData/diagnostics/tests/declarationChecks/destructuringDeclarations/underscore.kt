@@ -38,11 +38,11 @@ fun test() {
 
     val (<!REDECLARATION!>`_`<!>, z) = A()
 
-    foo(_, z)
+    foo(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>, z)
 
     val (_, <!NAME_SHADOWING, REDECLARATION!>`_`<!>) = A()
 
-    foo(<!TYPE_MISMATCH!>_<!>, y)
+    foo(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, TYPE_MISMATCH!>_<!>, y)
 
     val (<!UNUSED_VARIABLE!>unused<!>, _) = A()
 }

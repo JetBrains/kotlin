@@ -31,7 +31,7 @@ fun doTest(): String {
     }
 
     for ((_, `_`) in C(2)..C(4)) {
-        s += "$_;"
+        s += "$`_`;"
     }
 
     return s
