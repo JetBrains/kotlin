@@ -253,6 +253,15 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             );
         }
 
+        if (languageVersion.compareTo(LanguageVersion.LATEST_STABLE) > 0) {
+            configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
+                    CompilerMessageSeverity.STRONG_WARNING,
+                    "Language version " + languageVersion.getVersionString() + " is experimental, there are " +
+                    "no backwards compatibility guarantees for new language and library features",
+                    CompilerMessageLocation.NO_LOCATION
+            );
+        }
+
         Map<LanguageFeature, LanguageFeature.State> extraLanguageFeatures = new HashMap<LanguageFeature, LanguageFeature.State>(0);
         if (arguments.multiPlatform) {
             extraLanguageFeatures.put(LanguageFeature.MultiPlatformProjects, LanguageFeature.State.ENABLED);
