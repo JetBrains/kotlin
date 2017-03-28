@@ -262,6 +262,7 @@ task bundle(type: Tar) {
     dependsOn('cross_dist')
     from("$project.rootDir/dist") {
         include '**'
+        exclude 'dependencies'
         into 'kotlin-native'
     }
     from(project.rootDir) {
