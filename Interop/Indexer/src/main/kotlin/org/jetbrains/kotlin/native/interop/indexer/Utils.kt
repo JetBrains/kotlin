@@ -173,9 +173,16 @@ internal fun NativeLibrary.precompileHeaders(): NativeLibrary {
         clang_disposeIndex(index)
     }
 
-    return NativeLibrary(
+    return this.copy(
             includes = emptyList(),
-            compilerArgs = this.compilerArgs + listOf("-include-pch", precompiledHeader.absolutePath),
-            language = this.language
+            compilerArgs = this.compilerArgs + listOf("-include-pch", precompiledHeader.absolutePath)
     )
+}
+
+internal fun NativeLibrary.includesDeclaration(cursor: CValue<CXCursor>): Boolean {
+    return if (this.excludeSystemLibs) {
+        clang_Location_isInSystemHeader(clang_getCursorLocation(cursor)) == 0
+    } else {
+        true
+    }
 }

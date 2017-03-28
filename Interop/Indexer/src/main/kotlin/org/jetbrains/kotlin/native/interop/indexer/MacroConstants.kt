@@ -201,7 +201,10 @@ private fun collectMacroConstantsNames(library: NativeLibrary): List<String> {
         val translationUnit = library.parse(index, options).ensureNoCompileErrors()
         try {
             visitChildren(translationUnit) { cursor, parent ->
-                if (cursor.kind == CXCursorKind.CXCursor_MacroDefinition && canMacroBeConstant(cursor)) {
+                if (cursor.kind == CXCursorKind.CXCursor_MacroDefinition &&
+                        library.includesDeclaration(cursor) &&
+                        canMacroBeConstant(cursor))
+                {
                     val spelling = getCursorSpelling(cursor)
                     result.add(spelling)
                 }

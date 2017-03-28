@@ -266,6 +266,8 @@ private fun processLib(konanHome: String,
         defaultOpts + additionalCompilerOpts 
     val compiler = "clang"
     val language = Language.C
+    val excludeSystemLibs = config.getProperty("excludeSystemLibs")?.toBoolean() ?: false
+
     val entryPoint = config.getSpaceSeparated("entryPoint").singleOrNull()
     val linkerOpts = 
         config.getSpaceSeparated("linkerOpts").toTypedArray() +
@@ -285,7 +287,7 @@ private fun processLib(konanHome: String,
 
     val libName = fqParts.joinToString("") + "stubs"
 
-    val library = NativeLibrary(headerFiles, compilerOpts, language)
+    val library = NativeLibrary(headerFiles, compilerOpts, language, excludeSystemLibs)
     val configuration = InteropConfiguration(
             library = library,
             pkgName = outKtPkg,
