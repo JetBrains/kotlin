@@ -22,7 +22,7 @@ class GitRepository(val location: String) {
         val size = remoteList.count.value.toInt()
         val list = ArrayList<GitRemote>(size)
         for (index in 0..size - 1) {
-            val array = remoteList.strings.value!!.reinterpret<CArray<CPointerVar<CInt8Var>>>().pointed
+            val array = remoteList.strings.value!!
             val name = array[index].value!!.toKString()
             val remotePtr = allocPointerTo<git_remote>()
             git_remote_lookup(remotePtr.ptr, handle, name).errorCheck()

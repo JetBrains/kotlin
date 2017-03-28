@@ -100,7 +100,7 @@ abstract class CAdaptedFunctionTypeImpl<F : Function<*>>
      * @param args array of pointers to arguments to be passed to [function]
      * @param ret pointer to memory to be filled with return value of [function]
      */
-    protected abstract fun invoke(function: F, args: CArray<COpaquePointerVar>, ret: COpaquePointer)
+    protected abstract fun invoke(function: F, args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer)
 
     companion object {
         init {
@@ -118,7 +118,7 @@ abstract class CAdaptedFunctionTypeImpl<F : Function<*>>
             throw IllegalArgumentException()
         }
 
-        val impl: UserData = { ret: COpaquePointer, args: CArray<COpaquePointerVar> ->
+        val impl: UserData = { ret: COpaquePointer, args: CArrayPointer<COpaquePointerVar> ->
             invoke(function, args, ret)
         }
 
@@ -148,7 +148,7 @@ abstract class CAdaptedFunctionTypeImpl<F : Function<*>>
     private val cache = mutableMapOf<F, NativePtr>()
 }
 
-private typealias UserData = (ret: COpaquePointer, args: CArray<COpaquePointerVar>)->Unit
+private typealias UserData = (ret: COpaquePointer, args: CArrayPointer<COpaquePointerVar>)->Unit
 
 private fun loadCallbacksLibrary() {
     System.loadLibrary("callbacks")
@@ -185,7 +185,7 @@ private external fun ffiTypeStruct0(elements: Long): Long
  */
 private fun ffiTypeStruct(elementTypes: List<ffi_type>): ffi_type {
     val elements = nativeHeap.allocArrayOfPointersTo(*elementTypes.toTypedArray(), null)
-    val res = ffiTypeStruct0(elements.rawPtr)
+    val res = ffiTypeStruct0(elements.rawValue)
     if (res == 0L) {
         throw OutOfMemoryError()
     }
@@ -205,7 +205,7 @@ private external fun ffiCreateCif0(nArgs: Int, rType: Long, argTypes: Long): Lon
 private fun ffiCreateCif(returnType: ffi_type, paramTypes: List<ffi_type>): ffi_cif {
     val nArgs = paramTypes.size
     val argTypes = nativeHeap.allocArrayOfPointersTo(*paramTypes.toTypedArray(), null)
-    val res = ffiCreateCif0(nArgs, returnType.rawPtr, argTypes.rawPtr)
+    val res = ffiCreateCif0(nArgs, returnType.rawPtr, argTypes.rawValue)
 
     when (res) {
         0L -> throw OutOfMemoryError()
@@ -220,7 +220,7 @@ private fun ffiCreateCif(returnType: ffi_type, paramTypes: List<ffi_type>): ffi_
 private fun ffiFunImpl0(ffiCif: Long, ret: Long, args: Long, userData: Any) {
     ffiFunImpl(interpretPointed(ffiCif),
             interpretCPointer(ret)!!,
-            interpretPointed(args),
+            interpretCPointer(args)!!,
             userData as UserData)
 }
 
@@ -230,7 +230,7 @@ private fun ffiFunImpl0(ffiCif: Long, ret: Long, args: Long, userData: Any) {
  * @param ret pointer to memory to be filled with return value of the invoked native function
  * @param args pointer to array of pointers to arguments passed to the invoked native function
  */
-private fun ffiFunImpl(ffiCif: ffi_cif, ret: COpaquePointer, args: CArray<COpaquePointerVar>,
+private fun ffiFunImpl(ffiCif: ffi_cif, ret: COpaquePointer, args: CArrayPointer<COpaquePointerVar>,
                        userData: UserData) {
 
     userData.invoke(ret, args)

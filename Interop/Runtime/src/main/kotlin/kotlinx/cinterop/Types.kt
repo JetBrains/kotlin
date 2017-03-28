@@ -188,21 +188,20 @@ inline fun <reified T : CVariable> sizeOf() = typeOf<T>().size
 inline fun <reified T : CVariable> alignOf() = typeOf<T>().align
 
 /**
- * The C data which is composed from several members.
+ * Returns the member of this [CStructVar] which is located by given offset in bytes.
  */
-interface CAggregate : CPointed
-
-/**
- * Returns the member of this [CAggregate] which is located by given offset in bytes.
- */
-inline fun <reified T : CPointed> CAggregate.memberAt(offset: Long): T {
+inline fun <reified T : CPointed> CStructVar.memberAt(offset: Long): T {
     return interpretPointed<T>(this.rawPtr + offset)
+}
+
+inline fun <reified T : CVariable> CStructVar.arrayMemberAt(offset: Long): CArrayPointer<T> {
+    return interpretCPointer<T>(this.rawPtr + offset)!!
 }
 
 /**
  * The C struct-typed variable located in memory.
  */
-abstract class CStructVar : CVariable, CAggregate {
+abstract class CStructVar : CVariable {
     open class Type(size: Long, align: Int) : CVariable.Type(size, align)
 }
 
@@ -307,16 +306,19 @@ inline var <reified T : CPointed, reified P : CPointer<T>> CPointerVarWithValueM
         this.value = value?.ptr as P?
     }
 
-class CArray<T : CVariable>(override val rawPtr: NativePtr) : CAggregate
-
-inline fun <reified T : CVariable> CArray<T>.elementOffset(index: Long) = if (index == 0L) {
-    0L // optimization for JVM impl which uses reflection for now.
-} else {
-    index * sizeOf<T>()
+inline operator fun <reified T : CVariable> CPointer<T>.get(index: Long): T {
+    val offset = if (index == 0L) {
+        0L // optimization for JVM impl which uses reflection for now.
+    } else {
+        index * sizeOf<T>()
+    }
+    return interpretPointed(this.rawValue + offset)
 }
 
-inline operator fun <reified T : CVariable> CArray<T>.get(index: Long): T = memberAt(elementOffset(index))
-inline operator fun <reified T : CVariable> CArray<T>.get(index: Int) = this.get(index.toLong())
+inline operator fun <reified T : CVariable> CPointer<T>.get(index: Int): T = this.get(index.toLong())
+
+typealias CArrayPointer<T> = CPointer<T>
+typealias CArrayPointerVar<T> = CPointerVar<T>
 
 /**
  * The type of C function.

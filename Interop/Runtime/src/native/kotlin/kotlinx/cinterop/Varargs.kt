@@ -103,7 +103,7 @@ fun callWithVarargs(codePtr: NativePtr, returnValuePtr: NativePtr, returnTypeKin
 
     assert (index == totalArgumentsNumber)
 
-    callWithVarargs(codePtr, returnValuePtr, returnTypeKind, arguments.rawPtr, types.rawPtr,
+    callWithVarargs(codePtr, returnValuePtr, returnTypeKind, arguments.rawValue, types.rawValue,
             fixedArguments.size, totalArgumentsNumber)
 }
 

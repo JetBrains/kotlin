@@ -90,7 +90,7 @@ class MetadataReader(file: File) : Closeable {
             val nodeCount = LLVMGetNamedMetadataNumOperands(llvmModule, name)
             val nodeArray = allocArray<LLVMValueRefVar>(nodeCount)
 
-            LLVMGetNamedMetadataOperands(llvmModule, name, nodeArray[0].ptr)
+            LLVMGetNamedMetadataOperands(llvmModule, name, nodeArray)
 
             //return Pair(nodeCount, nodeArray[0].value!!)
             for (index in 0..nodeCount-1) {
@@ -105,7 +105,7 @@ class MetadataReader(file: File) : Closeable {
             val nodeCount = LLVMGetNamedMetadataNumOperands(llvmModule, name)
             val nodeArray = allocArray<LLVMValueRefVar>(nodeCount)
 
-            LLVMGetNamedMetadataOperands(llvmModule, name, nodeArray[0].ptr)
+            LLVMGetNamedMetadataOperands(llvmModule, name, nodeArray)
 
             return Pair(nodeCount, nodeArray[0].value!!)
         }
@@ -116,7 +116,7 @@ class MetadataReader(file: File) : Closeable {
             val operandCount = LLVMGetMDNodeNumOperands(metadataNode)
             val operandArray = allocArray<LLVMValueRefVar>(operandCount)
 
-            LLVMGetMDNodeOperands(metadataNode, operandArray[0].ptr)
+            LLVMGetMDNodeOperands(metadataNode, operandArray)
 
             return Array(operandCount, {index -> operandArray[index].value!!})
         }

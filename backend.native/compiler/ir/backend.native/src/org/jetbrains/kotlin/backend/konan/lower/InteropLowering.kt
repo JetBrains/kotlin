@@ -90,15 +90,23 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
         return alignOf(typeObject)
     }
 
+    private fun IrBuilderWithScope.interpretPointed(expression: IrCall, type: KotlinType): IrExpression =
+            irCall(interop.interpretNullablePointed).apply {
+                putValueArgument(0, expression)
+            }
+    // TODO: make the result type more correct.
+
     private fun IrBuilderWithScope.arrayGet(array: IrExpression, index: IrExpression): IrExpression? {
-        val elementSize = sizeOf(array.type.arguments.single().type) ?: return null
+        val elementType = array.type.arguments.single().type
+        val elementSize = sizeOf(elementType) ?: return null
 
-        val offset = times(elementSize, index)
-
-        return irCall(interop.memberAt).apply {
-            extensionReceiver = array
-            putValueArgument(0, offset)
+        val resultRawPtr = irCall(interop.nativePtrPlusLong).apply {
+            dispatchReceiver = irCall(interop.cPointerGetRawValue).apply {
+                extensionReceiver = array
+            }
+            putValueArgument(0, times(elementSize, index))
         }
+        return interpretPointed(resultRawPtr, elementType)
     }
 
     private fun IrBuilderWithScope.times(left: IrExpression, right: IrExpression): IrCall {
@@ -125,6 +133,15 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
         }
     }
 
+    private fun IrBuilderWithScope.nativePointedToCPointer(
+            expression: IrExpression, pointeeType: KotlinType
+    ): IrExpression = irCall(interop.interpretCPointer).apply {
+        putValueArgument(0, irCall(interop.nativePointedGetRawPointer).apply {
+            extensionReceiver = expression
+        })
+    }
+    // TODO: make the result type more correct.
+
     private fun IrBuilderWithScope.allocArray(placement: IrExpression,
                                               elementType: KotlinType,
                                               length: IrExpression
@@ -134,7 +151,7 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
         val size = times(elementSize, length)
         val align = alignOf(elementType) ?: return null
 
-        return alloc(placement, size, align)
+        return nativePointedToCPointer(alloc(placement, size, align), elementType)
     }
 
     private fun IrBuilderWithScope.alloc(placement: IrExpression, type: KotlinType): IrExpression? {

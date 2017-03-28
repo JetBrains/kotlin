@@ -11,7 +11,7 @@ fun main(args: Array<String>) {
         values[3].value = 13
         values[4].value = 8
 
-        cstdlib.qsort(values[0].ptr, count.toLong(), CInt32Var.size, staticCFunction(::comparator))
+        cstdlib.qsort(values, count.toLong(), CInt32Var.size, staticCFunction(::comparator))
 
         for (i in 0 .. count - 1) {
             print(values[i].value)

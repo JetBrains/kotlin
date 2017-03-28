@@ -35,14 +35,14 @@ fun main(args: Array<String>) {
                 .ensureUnixCallResult { it >= 0 }
 
         while (true) {
-            val length = read(commFd, buffer.ptr, bufferLength)
+            val length = read(commFd, buffer, bufferLength)
                     .ensureUnixCallResult { it >= 0 }
 
             if (length == 0L) {
                 break
             }
 
-            write(commFd, buffer.ptr, length)
+            write(commFd, buffer, length)
                     .ensureUnixCallResult { it >= 0 }
         }
     }

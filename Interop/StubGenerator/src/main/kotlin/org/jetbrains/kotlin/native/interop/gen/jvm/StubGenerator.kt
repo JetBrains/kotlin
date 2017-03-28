@@ -390,8 +390,11 @@ class StubGenerator(
         }
 
         is ArrayType -> {
-            val elemMirror = mirror(type.elemType)
-            byRefTypeMirror("CArray<${elemMirror.pointedTypeName}>")
+            // TODO: array type doesn't exactly correspond neither to pointer nor to value.
+            val elemTypeMirror = mirror(type.elemType)
+            val info = TypeInfo.Pointer(elemTypeMirror.pointedTypeName)
+            TypeMirror.ByValue("CArrayPointerVar<${elemTypeMirror.pointedTypeName}>", info,
+                    "CArrayPointer<${elemTypeMirror.pointedTypeName}>")
         }
 
         is FunctionType -> byRefTypeMirror("CFunction<${type.kotlinName}>")
@@ -584,8 +587,18 @@ class StubGenerator(
                     assert(field.offset % 8 == 0L)
                     val offset = field.offset / 8
                     val fieldRefType = mirror(field.type)
-                    out("val ${field.name.asSimpleName()}: ${fieldRefType.pointedTypeName}")
-                    out("    get() = memberAt($offset)")
+                    if (field.type.unwrapTypedefs() is ArrayType) {
+                        // FIXME:
+                        val nullableType = fieldRefType.argType
+                        assert (nullableType.endsWith('?'))
+                        val type = nullableType.substring(0, nullableType.length - 1)
+
+                        out("val ${field.name.asSimpleName()}: $type")
+                        out("    get() = arrayMemberAt($offset)")
+                    } else {
+                        out("val ${field.name.asSimpleName()}: ${fieldRefType.pointedTypeName}")
+                        out("    get() = memberAt($offset)")
+                    }
                     out("")
                 } catch (e: Throwable) {
                     println("Warning: cannot generate definition for field ${decl.kotlinName}.${field.name}")
@@ -1004,7 +1017,7 @@ class StubGenerator(
         val constructorArgsStr = constructorArgs.joinToString(", ")
 
         block("object $name : CAdaptedFunctionTypeImpl<$kotlinFunctionType>($constructorArgsStr)") {
-            block("override fun invoke(function: $kotlinFunctionType,  args: CArray<COpaquePointerVar>, ret: COpaquePointer)") {
+            block("override fun invoke(function: $kotlinFunctionType,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer)") {
                 val args = type.parameterTypes.mapIndexed { i, paramType ->
                     val pointedTypeName = mirror(paramType).pointedTypeName
                     val ref = "args[$i].value!!.reinterpret<$pointedTypeName>().pointed"

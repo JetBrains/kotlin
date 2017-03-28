@@ -7,7 +7,7 @@ internal fun localHash(data: ByteArray): Long {
     memScoped {
         val res = alloc<LocalHashVar>()
         val bytes = allocArrayOf(data)
-        MakeLocalHash(bytes[0].ptr, data.size, res.ptr)
+        MakeLocalHash(bytes, data.size, res.ptr)
         return res.value
     }
 }
@@ -16,7 +16,7 @@ internal fun globalHash(data: ByteArray, retValPlacement: NativePlacement): Glob
     val res = retValPlacement.alloc<GlobalHash>()
     memScoped {
         val bytes = allocArrayOf(data)
-        MakeGlobalHash(bytes[0].ptr, data.size, res.ptr)
+        MakeGlobalHash(bytes, data.size, res.ptr)
     }
     return res
 }
@@ -26,9 +26,9 @@ public fun base64Encode(data: ByteArray): String {
         val resultSize = 4 * data.size / 3 + 3 + 1
         val result = allocArray<CInt8Var>(resultSize)
         val bytes = allocArrayOf(data)
-        EncodeBase64(bytes.ptr, data.size, result.ptr, resultSize)
+        EncodeBase64(bytes, data.size, result, resultSize)
         // TODO: any better way to do that without two copies?
-        return result[0].ptr.toKString()
+        return result.toKString()
     }
 }
 
@@ -38,7 +38,7 @@ public fun base64Decode(encoded: String): ByteArray {
         val result = allocArray<CInt8Var>(bufferSize)
         val resultSize = allocArray<uint32_tVar>(1)
         resultSize[0].value = bufferSize
-        val errorCode = DecodeBase64(encoded, encoded.length, result[0].ptr, resultSize[0].ptr)
+        val errorCode = DecodeBase64(encoded, encoded.length, result, resultSize)
         if (errorCode != 0) throw Error("Non-zero exit code of DecodeBase64: ${errorCode}")
         val realSize = resultSize[0].value!!
         val bytes = ByteArray(realSize)

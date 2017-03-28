@@ -43,7 +43,7 @@ fun main(args: Array<String>) {
             val buffer = allocArray<CInt8Var>(bufferLength)
 
             for (i in 1..count) {
-                val nextLine = fgets(buffer[0].ptr, bufferLength, file)?.toKString()
+                val nextLine = fgets(buffer, bufferLength, file)?.toKString()
                 if (nextLine == null || nextLine.isEmpty()) break
 
                 val records = parseLine(nextLine, ',')

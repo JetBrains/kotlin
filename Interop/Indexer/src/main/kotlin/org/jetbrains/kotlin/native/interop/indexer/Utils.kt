@@ -65,7 +65,7 @@ internal fun parseTranslationUnit(
         val result = clang_parseTranslationUnit(
                 index,
                 sourceFile.absolutePath,
-                compilerArgs.toNativeStringArray(memScope)[0].ptr, compilerArgs.size,
+                compilerArgs.toNativeStringArray(memScope), compilerArgs.size,
                 null, 0,
                 options
         )!!
@@ -120,7 +120,7 @@ internal fun CValue<CXCursor>.isLeaf(): Boolean {
     return !hasChildren
 }
 
-internal fun List<String>.toNativeStringArray(placement: NativePlacement): CArray<CPointerVar<CInt8Var>> {
+internal fun List<String>.toNativeStringArray(placement: NativePlacement): CArrayPointer<CPointerVar<CInt8Var>> {
     return placement.allocArray(this.size) { index ->
         this.value = this@toNativeStringArray[index].cstr.getPointer(placement)
     }

@@ -1,3 +1,4 @@
+@file:Suppress("UNUSED_EXPRESSION")
 package clang
 
 import kotlinx.cinterop.*
@@ -2845,8 +2846,8 @@ class __mbstate_t(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(128, 8)
     
-    val __mbstate8: CArray<CInt8Var>
-        get() = memberAt(0)
+    val __mbstate8: CArrayPointer<CInt8Var>
+        get() = arrayMemberAt(0)
     
     val _mbstateL: CInt64Var
         get() = memberAt(0)
@@ -2875,8 +2876,8 @@ class _opaque_pthread_attr_t(override val rawPtr: NativePtr) : CStructVar() {
     val __sig: CInt64Var
         get() = memberAt(0)
     
-    val __opaque: CArray<CInt8Var>
-        get() = memberAt(8)
+    val __opaque: CArrayPointer<CInt8Var>
+        get() = arrayMemberAt(8)
     
 }
 
@@ -2887,8 +2888,8 @@ class _opaque_pthread_cond_t(override val rawPtr: NativePtr) : CStructVar() {
     val __sig: CInt64Var
         get() = memberAt(0)
     
-    val __opaque: CArray<CInt8Var>
-        get() = memberAt(8)
+    val __opaque: CArrayPointer<CInt8Var>
+        get() = arrayMemberAt(8)
     
 }
 
@@ -2899,8 +2900,8 @@ class _opaque_pthread_condattr_t(override val rawPtr: NativePtr) : CStructVar() 
     val __sig: CInt64Var
         get() = memberAt(0)
     
-    val __opaque: CArray<CInt8Var>
-        get() = memberAt(8)
+    val __opaque: CArrayPointer<CInt8Var>
+        get() = arrayMemberAt(8)
     
 }
 
@@ -2911,8 +2912,8 @@ class _opaque_pthread_mutex_t(override val rawPtr: NativePtr) : CStructVar() {
     val __sig: CInt64Var
         get() = memberAt(0)
     
-    val __opaque: CArray<CInt8Var>
-        get() = memberAt(8)
+    val __opaque: CArrayPointer<CInt8Var>
+        get() = arrayMemberAt(8)
     
 }
 
@@ -2923,8 +2924,8 @@ class _opaque_pthread_mutexattr_t(override val rawPtr: NativePtr) : CStructVar()
     val __sig: CInt64Var
         get() = memberAt(0)
     
-    val __opaque: CArray<CInt8Var>
-        get() = memberAt(8)
+    val __opaque: CArrayPointer<CInt8Var>
+        get() = arrayMemberAt(8)
     
 }
 
@@ -2935,8 +2936,8 @@ class _opaque_pthread_once_t(override val rawPtr: NativePtr) : CStructVar() {
     val __sig: CInt64Var
         get() = memberAt(0)
     
-    val __opaque: CArray<CInt8Var>
-        get() = memberAt(8)
+    val __opaque: CArrayPointer<CInt8Var>
+        get() = arrayMemberAt(8)
     
 }
 
@@ -2947,8 +2948,8 @@ class _opaque_pthread_rwlock_t(override val rawPtr: NativePtr) : CStructVar() {
     val __sig: CInt64Var
         get() = memberAt(0)
     
-    val __opaque: CArray<CInt8Var>
-        get() = memberAt(8)
+    val __opaque: CArrayPointer<CInt8Var>
+        get() = arrayMemberAt(8)
     
 }
 
@@ -2959,8 +2960,8 @@ class _opaque_pthread_rwlockattr_t(override val rawPtr: NativePtr) : CStructVar(
     val __sig: CInt64Var
         get() = memberAt(0)
     
-    val __opaque: CArray<CInt8Var>
-        get() = memberAt(8)
+    val __opaque: CArrayPointer<CInt8Var>
+        get() = arrayMemberAt(8)
     
 }
 
@@ -2974,8 +2975,8 @@ class _opaque_pthread_t(override val rawPtr: NativePtr) : CStructVar() {
     val __cleanup_stack: CPointerVar<__darwin_pthread_handler_rec>
         get() = memberAt(8)
     
-    val __opaque: CArray<CInt8Var>
-        get() = memberAt(16)
+    val __opaque: CArrayPointer<CInt8Var>
+        get() = arrayMemberAt(16)
     
 }
 
@@ -3092,8 +3093,8 @@ class CXFileUniqueID(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(24, 8)
     
-    val data: CArray<CInt64Var>
-        get() = memberAt(0)
+    val data: CArrayPointer<CInt64Var>
+        get() = arrayMemberAt(0)
     
 }
 
@@ -3103,8 +3104,8 @@ class CXSourceLocation(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(24, 8)
     
-    val ptr_data: CArray<COpaquePointerVar>
-        get() = memberAt(0)
+    val ptr_data: CArrayPointer<COpaquePointerVar>
+        get() = arrayMemberAt(0)
     
     val int_data: CInt32Var
         get() = memberAt(16)
@@ -3115,8 +3116,8 @@ class CXSourceRange(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(24, 8)
     
-    val ptr_data: CArray<COpaquePointerVar>
-        get() = memberAt(0)
+    val ptr_data: CArrayPointer<COpaquePointerVar>
+        get() = arrayMemberAt(0)
     
     val begin_int_data: CInt32Var
         get() = memberAt(16)
@@ -3175,8 +3176,8 @@ class CXCursor(override val rawPtr: NativePtr) : CStructVar() {
     val xdata: CInt32Var
         get() = memberAt(4)
     
-    val data: CArray<COpaquePointerVar>
-        get() = memberAt(8)
+    val data: CArrayPointer<COpaquePointerVar>
+        get() = arrayMemberAt(8)
     
 }
 
@@ -3213,8 +3214,8 @@ class CXType(override val rawPtr: NativePtr) : CStructVar() {
     val kind: CXTypeKind.Var
         get() = memberAt(0)
     
-    val data: CArray<COpaquePointerVar>
-        get() = memberAt(8)
+    val data: CArrayPointer<COpaquePointerVar>
+        get() = arrayMemberAt(8)
     
 }
 
@@ -3222,8 +3223,8 @@ class CXToken(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(24, 8)
     
-    val int_data: CArray<CInt32Var>
-        get() = memberAt(0)
+    val int_data: CArrayPointer<CInt32Var>
+        get() = arrayMemberAt(0)
     
     val ptr_data: COpaquePointerVar
         get() = memberAt(16)
@@ -3270,8 +3271,8 @@ class CXIdxLoc(override val rawPtr: NativePtr) : CStructVar() {
     
     companion object : Type(24, 8)
     
-    val ptr_data: CArray<COpaquePointerVar>
-        get() = memberAt(0)
+    val ptr_data: CArrayPointer<COpaquePointerVar>
+        get() = arrayMemberAt(0)
     
     val int_data: CInt32Var
         get() = memberAt(16)
@@ -3623,7 +3624,7 @@ val _CLOCK_UPTIME_RAW_APPROX: clockid_t = 9
 val _CLOCK_PROCESS_CPUTIME_ID: clockid_t = 12
 val _CLOCK_THREAD_CPUTIME_ID: clockid_t = 16
 
-enum class CXErrorCode(val value: Int) {
+enum class CXErrorCode(override val value: Int) : CEnum {
     CXError_Success(0),
     CXError_Failure(1),
     CXError_Crashed(2),
@@ -3643,7 +3644,7 @@ enum class CXErrorCode(val value: Int) {
     }
 }
 
-enum class CXAvailabilityKind(val value: Int) {
+enum class CXAvailabilityKind(override val value: Int) : CEnum {
     CXAvailability_Available(0),
     CXAvailability_Deprecated(1),
     CXAvailability_NotAvailable(2),
@@ -3670,7 +3671,7 @@ val CXGlobalOpt_ThreadBackgroundPriorityForIndexing: CXGlobalOptFlags = 1
 val CXGlobalOpt_ThreadBackgroundPriorityForEditing: CXGlobalOptFlags = 2
 val CXGlobalOpt_ThreadBackgroundPriorityForAll: CXGlobalOptFlags = 3
 
-enum class CXDiagnosticSeverity(val value: Int) {
+enum class CXDiagnosticSeverity(override val value: Int) : CEnum {
     CXDiagnostic_Ignored(0),
     CXDiagnostic_Note(1),
     CXDiagnostic_Warning(2),
@@ -3690,7 +3691,7 @@ enum class CXDiagnosticSeverity(val value: Int) {
     }
 }
 
-enum class CXLoadDiag_Error(val value: Int) {
+enum class CXLoadDiag_Error(override val value: Int) : CEnum {
     CXLoadDiag_None(0),
     CXLoadDiag_Unknown(1),
     CXLoadDiag_CannotLoad(2),
@@ -3739,7 +3740,7 @@ typealias CXSaveTranslationUnit_Flags = Int
 
 val CXSaveTranslationUnit_None: CXSaveTranslationUnit_Flags = 0
 
-enum class CXSaveError(val value: Int) {
+enum class CXSaveError(override val value: Int) : CEnum {
     CXSaveError_None(0),
     CXSaveError_Unknown(1),
     CXSaveError_TranslationErrors(2),
@@ -3763,7 +3764,7 @@ typealias CXReparse_Flags = Int
 
 val CXReparse_None: CXReparse_Flags = 0
 
-enum class CXTUResourceUsageKind(val value: Int) {
+enum class CXTUResourceUsageKind(override val value: Int) : CEnum {
     CXTUResourceUsage_AST(1),
     CXTUResourceUsage_Identifiers(2),
     CXTUResourceUsage_Selectors(3),
@@ -3796,7 +3797,7 @@ enum class CXTUResourceUsageKind(val value: Int) {
     }
 }
 
-enum class CXCursorKind(val value: Int) {
+enum class CXCursorKind(override val value: Int) : CEnum {
     CXCursor_UnexposedDecl(1),
     CXCursor_StructDecl(2),
     CXCursor_UnionDecl(3),
@@ -4031,7 +4032,7 @@ enum class CXCursorKind(val value: Int) {
     }
 }
 
-enum class CXLinkageKind(val value: Int) {
+enum class CXLinkageKind(override val value: Int) : CEnum {
     CXLinkage_Invalid(0),
     CXLinkage_NoLinkage(1),
     CXLinkage_Internal(2),
@@ -4051,7 +4052,7 @@ enum class CXLinkageKind(val value: Int) {
     }
 }
 
-enum class CXVisibilityKind(val value: Int) {
+enum class CXVisibilityKind(override val value: Int) : CEnum {
     CXVisibility_Invalid(0),
     CXVisibility_Hidden(1),
     CXVisibility_Protected(2),
@@ -4070,7 +4071,7 @@ enum class CXVisibilityKind(val value: Int) {
     }
 }
 
-enum class CXLanguageKind(val value: Int) {
+enum class CXLanguageKind(override val value: Int) : CEnum {
     CXLanguage_Invalid(0),
     CXLanguage_C(1),
     CXLanguage_ObjC(2),
@@ -4089,7 +4090,7 @@ enum class CXLanguageKind(val value: Int) {
     }
 }
 
-enum class CXTypeKind(val value: Int) {
+enum class CXTypeKind(override val value: Int) : CEnum {
     CXType_Invalid(0),
     CXType_Unexposed(1),
     CXType_Void(2),
@@ -4157,7 +4158,7 @@ enum class CXTypeKind(val value: Int) {
     }
 }
 
-enum class CXCallingConv(val value: Int) {
+enum class CXCallingConv(override val value: Int) : CEnum {
     CXCallingConv_Default(0),
     CXCallingConv_C(1),
     CXCallingConv_X86StdCall(2),
@@ -4189,7 +4190,7 @@ enum class CXCallingConv(val value: Int) {
     }
 }
 
-enum class CXTemplateArgumentKind(val value: Int) {
+enum class CXTemplateArgumentKind(override val value: Int) : CEnum {
     CXTemplateArgumentKind_Null(0),
     CXTemplateArgumentKind_Type(1),
     CXTemplateArgumentKind_Declaration(2),
@@ -4230,7 +4231,7 @@ val CXRefQualifier_None: CXRefQualifierKind = 0
 val CXRefQualifier_LValue: CXRefQualifierKind = 1
 val CXRefQualifier_RValue: CXRefQualifierKind = 2
 
-enum class CX_CXXAccessSpecifier(val value: Int) {
+enum class CX_CXXAccessSpecifier(override val value: Int) : CEnum {
     CX_CXXInvalidAccessSpecifier(0),
     CX_CXXPublic(1),
     CX_CXXProtected(2),
@@ -4249,7 +4250,7 @@ enum class CX_CXXAccessSpecifier(val value: Int) {
     }
 }
 
-enum class CX_StorageClass(val value: Int) {
+enum class CX_StorageClass(override val value: Int) : CEnum {
     CX_SC_Invalid(0),
     CX_SC_None(1),
     CX_SC_Extern(2),
@@ -4272,7 +4273,7 @@ enum class CX_StorageClass(val value: Int) {
     }
 }
 
-enum class CXChildVisitResult(val value: Int) {
+enum class CXChildVisitResult(override val value: Int) : CEnum {
     CXChildVisit_Break(0),
     CXChildVisit_Continue(1),
     CXChildVisit_Recurse(2),
@@ -4326,7 +4327,7 @@ val CXNameRange_WantQualifier: CXNameRefFlags = 1
 val CXNameRange_WantTemplateArgs: CXNameRefFlags = 2
 val CXNameRange_WantSinglePiece: CXNameRefFlags = 4
 
-enum class CXTokenKind(val value: Int) {
+enum class CXTokenKind(override val value: Int) : CEnum {
     CXToken_Punctuation(0),
     CXToken_Keyword(1),
     CXToken_Identifier(2),
@@ -4346,7 +4347,7 @@ enum class CXTokenKind(val value: Int) {
     }
 }
 
-enum class CXCompletionChunkKind(val value: Int) {
+enum class CXCompletionChunkKind(override val value: Int) : CEnum {
     CXCompletionChunk_Optional(0),
     CXCompletionChunk_TypedText(1),
     CXCompletionChunk_Text(2),
@@ -4417,7 +4418,7 @@ val CXCompletionContext_MacroName: CXCompletionContext = 1048576
 val CXCompletionContext_NaturalLanguage: CXCompletionContext = 2097152
 val CXCompletionContext_Unknown: CXCompletionContext = 4194303
 
-enum class CXEvalResultKind(val value: Int) {
+enum class CXEvalResultKind(override val value: Int) : CEnum {
     CXEval_Int(1),
     CXEval_Float(2),
     CXEval_ObjCStrLiteral(3),
@@ -4439,7 +4440,7 @@ enum class CXEvalResultKind(val value: Int) {
     }
 }
 
-enum class CXVisitorResult(val value: Int) {
+enum class CXVisitorResult(override val value: Int) : CEnum {
     CXVisit_Break(0),
     CXVisit_Continue(1),
     ;
@@ -4456,7 +4457,7 @@ enum class CXVisitorResult(val value: Int) {
     }
 }
 
-enum class CXResult(val value: Int) {
+enum class CXResult(override val value: Int) : CEnum {
     CXResult_Success(0),
     CXResult_Invalid(1),
     CXResult_VisitBreak(2),
@@ -4474,7 +4475,7 @@ enum class CXResult(val value: Int) {
     }
 }
 
-enum class CXIdxEntityKind(val value: Int) {
+enum class CXIdxEntityKind(override val value: Int) : CEnum {
     CXIdxEntity_Unexposed(0),
     CXIdxEntity_Typedef(1),
     CXIdxEntity_Function(2),
@@ -4653,87 +4654,87 @@ typealias __darwin_wint_tVar = CInt32VarWithValueMappedTo<__darwin_wint_t>
 typealias __darwin_wint_t = Int
 
 object CFunctionType1 : CAdaptedFunctionTypeImpl<(CXCursor, CXCursor, COpaquePointer?) -> CXChildVisitResult>(UInt32, Struct(UInt32, SInt32, Struct(Pointer, Pointer, Pointer)), Struct(UInt32, SInt32, Struct(Pointer, Pointer, Pointer)), Pointer) {
-    override fun invoke(function: (CXCursor, CXCursor, COpaquePointer?) -> CXChildVisitResult,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
+    override fun invoke(function: (CXCursor, CXCursor, COpaquePointer?) -> CXChildVisitResult,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
         val res = function(args[0].value!!.reinterpret<CXCursor>().pointed, args[1].value!!.reinterpret<CXCursor>().pointed, args[2].value!!.reinterpret<COpaquePointerVar>().pointed.value)
         ret.reinterpret<CXChildVisitResult.Var>().pointed.value = res
     }
 }
 
 object CFunctionType2 : CAdaptedFunctionTypeImpl<(COpaquePointer?) -> Unit>(Void, Pointer) {
-    override fun invoke(function: (COpaquePointer?) -> Unit,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
+    override fun invoke(function: (COpaquePointer?) -> Unit,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
         val res = function(args[0].value!!.reinterpret<COpaquePointerVar>().pointed.value)
     }
 }
 
 object CFunctionType3 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CPointer<CXSourceLocation>?, Int, COpaquePointer?) -> Unit>(Void, Pointer, Pointer, UInt32, Pointer) {
-    override fun invoke(function: (COpaquePointer?, CPointer<CXSourceLocation>?, Int, COpaquePointer?) -> Unit,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
+    override fun invoke(function: (COpaquePointer?, CPointer<CXSourceLocation>?, Int, COpaquePointer?) -> Unit,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
         val res = function(args[0].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[1].value!!.reinterpret<CPointerVar<CXSourceLocation>>().pointed.value, args[2].value!!.reinterpret<CInt32Var>().pointed.value, args[3].value!!.reinterpret<COpaquePointerVar>().pointed.value)
     }
 }
 
 object CFunctionType4 : CAdaptedFunctionTypeImpl<(CXCursor, COpaquePointer?) -> CXVisitorResult>(UInt32, Struct(UInt32, SInt32, Struct(Pointer, Pointer, Pointer)), Pointer) {
-    override fun invoke(function: (CXCursor, COpaquePointer?) -> CXVisitorResult,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
+    override fun invoke(function: (CXCursor, COpaquePointer?) -> CXVisitorResult,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
         val res = function(args[0].value!!.reinterpret<CXCursor>().pointed, args[1].value!!.reinterpret<COpaquePointerVar>().pointed.value)
         ret.reinterpret<CXVisitorResult.Var>().pointed.value = res
     }
 }
 
 object CFunctionType5 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CXCursor, CXSourceRange) -> CXVisitorResult>(UInt32, Pointer, Struct(UInt32, SInt32, Struct(Pointer, Pointer, Pointer)), Struct(Struct(Pointer, Pointer), UInt32, UInt32)) {
-    override fun invoke(function: (COpaquePointer?, CXCursor, CXSourceRange) -> CXVisitorResult,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
+    override fun invoke(function: (COpaquePointer?, CXCursor, CXSourceRange) -> CXVisitorResult,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
         val res = function(args[0].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[1].value!!.reinterpret<CXCursor>().pointed, args[2].value!!.reinterpret<CXSourceRange>().pointed)
         ret.reinterpret<CXVisitorResult.Var>().pointed.value = res
     }
 }
 
 object CFunctionType6 : CAdaptedFunctionTypeImpl<(COpaquePointer?, COpaquePointer?) -> Int>(SInt32, Pointer, Pointer) {
-    override fun invoke(function: (COpaquePointer?, COpaquePointer?) -> Int,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
+    override fun invoke(function: (COpaquePointer?, COpaquePointer?) -> Int,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
         val res = function(args[0].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[1].value!!.reinterpret<COpaquePointerVar>().pointed.value)
         ret.reinterpret<CInt32Var>().pointed.value = res
     }
 }
 
 object CFunctionType7 : CAdaptedFunctionTypeImpl<(COpaquePointer?, COpaquePointer?, COpaquePointer?) -> Unit>(Void, Pointer, Pointer, Pointer) {
-    override fun invoke(function: (COpaquePointer?, COpaquePointer?, COpaquePointer?) -> Unit,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
+    override fun invoke(function: (COpaquePointer?, COpaquePointer?, COpaquePointer?) -> Unit,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
         val res = function(args[0].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[1].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[2].value!!.reinterpret<COpaquePointerVar>().pointed.value)
     }
 }
 
 object CFunctionType8 : CAdaptedFunctionTypeImpl<(COpaquePointer?, COpaquePointer?, COpaquePointer?) -> COpaquePointer?>(Pointer, Pointer, Pointer, Pointer) {
-    override fun invoke(function: (COpaquePointer?, COpaquePointer?, COpaquePointer?) -> COpaquePointer?,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
+    override fun invoke(function: (COpaquePointer?, COpaquePointer?, COpaquePointer?) -> COpaquePointer?,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
         val res = function(args[0].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[1].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[2].value!!.reinterpret<COpaquePointerVar>().pointed.value)
         ret.reinterpret<COpaquePointerVar>().pointed.value = res
     }
 }
 
 object CFunctionType9 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CPointer<CXIdxIncludedFileInfo>?) -> COpaquePointer?>(Pointer, Pointer, Pointer) {
-    override fun invoke(function: (COpaquePointer?, CPointer<CXIdxIncludedFileInfo>?) -> COpaquePointer?,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
+    override fun invoke(function: (COpaquePointer?, CPointer<CXIdxIncludedFileInfo>?) -> COpaquePointer?,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
         val res = function(args[0].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[1].value!!.reinterpret<CPointerVar<CXIdxIncludedFileInfo>>().pointed.value)
         ret.reinterpret<COpaquePointerVar>().pointed.value = res
     }
 }
 
 object CFunctionType10 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CPointer<CXIdxImportedASTFileInfo>?) -> COpaquePointer?>(Pointer, Pointer, Pointer) {
-    override fun invoke(function: (COpaquePointer?, CPointer<CXIdxImportedASTFileInfo>?) -> COpaquePointer?,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
+    override fun invoke(function: (COpaquePointer?, CPointer<CXIdxImportedASTFileInfo>?) -> COpaquePointer?,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
         val res = function(args[0].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[1].value!!.reinterpret<CPointerVar<CXIdxImportedASTFileInfo>>().pointed.value)
         ret.reinterpret<COpaquePointerVar>().pointed.value = res
     }
 }
 
 object CFunctionType11 : CAdaptedFunctionTypeImpl<(COpaquePointer?, COpaquePointer?) -> COpaquePointer?>(Pointer, Pointer, Pointer) {
-    override fun invoke(function: (COpaquePointer?, COpaquePointer?) -> COpaquePointer?,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
+    override fun invoke(function: (COpaquePointer?, COpaquePointer?) -> COpaquePointer?,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
         val res = function(args[0].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[1].value!!.reinterpret<COpaquePointerVar>().pointed.value)
         ret.reinterpret<COpaquePointerVar>().pointed.value = res
     }
 }
 
 object CFunctionType12 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CPointer<CXIdxDeclInfo>?) -> Unit>(Void, Pointer, Pointer) {
-    override fun invoke(function: (COpaquePointer?, CPointer<CXIdxDeclInfo>?) -> Unit,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
+    override fun invoke(function: (COpaquePointer?, CPointer<CXIdxDeclInfo>?) -> Unit,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
         val res = function(args[0].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[1].value!!.reinterpret<CPointerVar<CXIdxDeclInfo>>().pointed.value)
     }
 }
 
 object CFunctionType13 : CAdaptedFunctionTypeImpl<(COpaquePointer?, CPointer<CXIdxEntityRefInfo>?) -> Unit>(Void, Pointer, Pointer) {
-    override fun invoke(function: (COpaquePointer?, CPointer<CXIdxEntityRefInfo>?) -> Unit,  args: CArray<COpaquePointerVar>, ret: COpaquePointer) {
+    override fun invoke(function: (COpaquePointer?, CPointer<CXIdxEntityRefInfo>?) -> Unit,  args: CArrayPointer<COpaquePointerVar>, ret: COpaquePointer) {
         val res = function(args[0].value!!.reinterpret<COpaquePointerVar>().pointed.value, args[1].value!!.reinterpret<CPointerVar<CXIdxEntityRefInfo>>().pointed.value)
     }
 }
