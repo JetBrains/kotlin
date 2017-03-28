@@ -83,7 +83,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
     protected fun generateIrModule(ignoreErrors: Boolean = false): IrModuleFragment {
         assert(myFiles != null) { "myFiles not initialized" }
         assert(myEnvironment != null) { "myEnvironment not initialized" }
-        return generateIrModule(myFiles.psiFiles, myEnvironment, ignoreErrors)
+        return generateIrModule(myFiles.psiFiles, myEnvironment, Psi2IrTranslator(Psi2IrConfiguration(ignoreErrors)))
     }
 
     protected fun generateIrFilesAsSingleModule(testFiles: List<TestFile>, ignoreErrors: Boolean = false): Map<TestFile, IrFile> {
@@ -109,17 +109,20 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
             return textFile
         }
 
-        fun generateIrModule(ktFiles: List<KtFile>, environment: KotlinCoreEnvironment, ignoreErrors: Boolean = false): IrModuleFragment {
+        fun generateIrModule(ktFiles: List<KtFile>, environment: KotlinCoreEnvironment, psi2ir: Psi2IrTranslator): IrModuleFragment {
             val analysisResult = JvmResolveUtil.analyze(ktFiles, environment)
-            if (!ignoreErrors) {
+            if (!psi2ir.configuration.ignoreErrors) {
                 analysisResult.throwIfError()
                 AnalyzingUtils.throwExceptionOnErrors(analysisResult.bindingContext)
             }
-            return generateIrModule(ktFiles, analysisResult.moduleDescriptor, analysisResult.bindingContext, ignoreErrors)
+            return generateIrModule(ktFiles, analysisResult.moduleDescriptor, analysisResult.bindingContext, psi2ir)
         }
 
         fun generateIrModule(ktFiles: List<KtFile>, moduleDescriptor: ModuleDescriptor, bindingContext: BindingContext, ignoreErrors: Boolean = false) =
-                Psi2IrTranslator(Psi2IrConfiguration(ignoreErrors)).generateModule(moduleDescriptor, ktFiles, bindingContext)
+                generateIrModule(ktFiles, moduleDescriptor, bindingContext, Psi2IrTranslator(Psi2IrConfiguration(ignoreErrors)))
+
+        fun generateIrModule(ktFiles: List<KtFile>, moduleDescriptor: ModuleDescriptor, bindingContext: BindingContext, psi2ir: Psi2IrTranslator) =
+                psi2ir.generateModule(moduleDescriptor, ktFiles, bindingContext)
     }
 }
 

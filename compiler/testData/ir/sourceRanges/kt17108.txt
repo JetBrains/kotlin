@@ -1,0 +1,7 @@
+@0:0..26:1 FILE /kt17108.kt
+  @0:0..26:1 CLASS INTERFACE Boolean
+    @5:4..8:38 FUN public abstract operator fun not(): Boolean
+    @10:4..13:42 FUN public abstract infix fun and(other: Boolean): Boolean
+    @15:4..18:41 FUN public abstract infix fun or(other: Boolean): Boolean
+    @20:4..23:42 FUN public abstract infix fun xor(other: Boolean): Boolean
+    @25:4..38 FUN public abstract fun compareTo(other: Boolean): kotlin.Int

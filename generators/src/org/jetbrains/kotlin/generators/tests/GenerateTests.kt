@@ -127,6 +127,7 @@ import org.jetbrains.kotlin.idea.stubs.AbstractResolveByStubTest
 import org.jetbrains.kotlin.idea.stubs.AbstractStubBuilderTest
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.ir.AbstractIrCfgTestCase
+import org.jetbrains.kotlin.ir.AbstractIrSourceRangesTestCase
 import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
@@ -274,6 +275,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIrCfgTestCase> {
             model("ir/irCfg")
+        }
+
+        testClass<AbstractIrSourceRangesTestCase> {
+            model("ir/sourceRanges")
         }
 
         testClass<AbstractBytecodeListingTest> {
