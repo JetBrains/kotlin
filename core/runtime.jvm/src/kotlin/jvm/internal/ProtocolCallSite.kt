@@ -20,11 +20,13 @@ package kotlin.jvm.internal
 
 import java.lang.invoke.*
 import java.lang.reflect.Method
+import kotlin.jvm.internal.cache.SmallArrayCache
 
 class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, type: MethodType, private val callableName: String, private val callableType: MethodType) {
-    private var classCache: Class<*>? = null
-    private var indyCache: MethodHandle? = null
-    private var reflectCache: Method? = null
+    private val CACHE_SIZE = 5
+
+    private val indyCache = SmallArrayCache<Class<*>, MethodHandle>(CACHE_SIZE)
+    private var reflectCache = SmallArrayCache<Class<*>, Method>(CACHE_SIZE)
 
     companion object {
         @JvmStatic
@@ -36,27 +38,32 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
 
     fun getMethod(receiver: Any): MethodHandle? {
         val receiverClass = receiver.javaClass
-        if (classCache != null && classCache == receiverClass) {
-            return indyCache
+        val cached = indyCache[receiverClass]
+
+        if (cached != null) {
+            return cached
         }
 
-        classCache = receiverClass
-        val method = resolveMethod(receiverClass)
-        indyCache = lookup.unreflect(method)
-        return indyCache
+        val method = lookup.unreflect(resolveMethod(receiverClass))
+        indyCache[receiverClass] = method
+
+        return method
     }
 
     fun getReflectMethod(receiver: Any): Method? {
         val receiverClass = receiver.javaClass
-        if (classCache == null || classCache != receiverClass) {
-            classCache = receiverClass
-            reflectCache = resolveMethod(receiverClass)
+        val cached = reflectCache[receiverClass]
+
+        if (cached != null) {
+            return cached
         }
 
-        return reflectCache
+        val method = resolveMethod(receiverClass)!!
+        reflectCache[receiverClass] = method
+        return method
     }
 
-    private fun resolveMethod(target: Class<*>): Method {
+    private fun resolveMethod(target: Class<*>): Method? {
         val protocolArgs = callableType.parameterArray()
         val methods = target.declaredMethods
 
@@ -88,7 +95,7 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
             }
         }
 
-        return candidate!!
+        return candidate
     }
 
     private fun argumentDistance(lhs: Class<*>, rhs: Class<*>): Int {
@@ -122,7 +129,7 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
         return true
     }
 
-    private fun Class<*>.boxed(): Class<*> = when(this) {
+    private fun Class<*>.boxed(): Class<*> = when (this) {
         Boolean::class.javaPrimitiveType -> Boolean::class.javaObjectType
         Byte::class.javaPrimitiveType -> Byte::class.javaObjectType
         Char::class.javaPrimitiveType -> Char::class.javaObjectType
@@ -135,5 +142,4 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
     }
 
 }
-
 
