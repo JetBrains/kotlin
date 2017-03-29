@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceGetOrSetI
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.idea.quickfix.RemoveUselessCastFix
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
@@ -69,8 +70,8 @@ object J2KPostProcessingRegistrar {
         _processings.add(RemoveRedundantCastToNullableProcessing())
 
         registerIntentionBasedProcessing(ConvertToExpressionBodyIntention(convertEmptyToUnit = false)) { it is KtPropertyAccessor }
-        registerIntentionBasedProcessing(IfThenToSafeAccessIntention(fromJ2K = true))
-        registerIntentionBasedProcessing(IfThenToElvisIntention(fromJ2K = true))
+        registerIntentionBasedProcessing(IfThenToSafeAccessIntention())
+        registerIntentionBasedProcessing(IfThenToElvisIntention())
         registerIntentionBasedProcessing(FoldInitializerAndIfToElvisIntention())
         registerIntentionBasedProcessing(SimplifyNegatedBinaryExpressionIntention())
         registerIntentionBasedProcessing(ReplaceGetOrSetIntention(), additionalChecker = ReplaceGetOrSetInspection.additionalChecker)
@@ -136,7 +137,12 @@ object J2KPostProcessingRegistrar {
                 if (!additionalChecker(tElement)) return null
                 return {
                     if (intention.applicabilityRange(tElement) != null) { // check availability of the intention again because something could change
-                        intention.applyTo(element, null)
+                        val apply = { intention.applyTo(element, null) }
+
+                        if (intention.startInWriteAction())
+                            runWriteAction(apply)
+                        else
+                            apply()
                     }
                 }
             }

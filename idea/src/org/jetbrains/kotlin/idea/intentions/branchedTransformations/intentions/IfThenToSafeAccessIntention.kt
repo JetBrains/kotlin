@@ -21,16 +21,15 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
 class IfThenToSafeAccessInspection : IntentionBasedInspection<KtIfExpression>(IfThenToSafeAccessIntention::class)
 
-class IfThenToSafeAccessIntention(private val fromJ2K: Boolean) : SelfTargetingOffsetIndependentIntention<KtIfExpression>(
+class IfThenToSafeAccessIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(
         KtIfExpression::class.java, "Replace 'if' expression with safe access expression"
 ) {
-    @Suppress("unused")
-    constructor(): this(fromJ2K = false)
 
     override fun isApplicableTo(element: KtIfExpression): Boolean {
         val condition = element.condition as? KtBinaryExpression ?: return false
@@ -70,9 +69,7 @@ class IfThenToSafeAccessIntention(private val fromJ2K: Boolean) : SelfTargetingO
                 }
 
         val newExpr = KtPsiFactory(element).createExpressionByPattern("$0?.$1", receiverExpression, selectorExpression) as KtSafeQualifiedExpression
-        val safeAccessExpr = runInWriteActionOrHere(inWriteAction = !fromJ2K) {
-            element.replaced(newExpr)
-        }
+        val safeAccessExpr = runWriteAction { element.replaced(newExpr) }
 
         if (editor != null) {
             safeAccessExpr.inlineReceiverIfApplicableWithPrompt(editor)

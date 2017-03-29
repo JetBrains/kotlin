@@ -21,12 +21,15 @@ import com.intellij.codeInsight.editorActions.TextBlockTransferableData
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.RangeMarker
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.psi.*
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.actions.JavaToKotlinAction
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.KotlinCopyPasteReferenceProcessor
 import org.jetbrains.kotlin.idea.codeInsight.KotlinReferenceData
@@ -34,6 +37,7 @@ import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.j2k.AfterConversionPass
 import org.jetbrains.kotlin.j2k.ConverterSettings
@@ -212,7 +216,17 @@ internal fun ElementAndTextList.convertCodeToKotlin(project: Project): Conversio
     )
 
     val inputElements = this.toList().filterIsInstance<PsiElement>()
-    val results = converter.elementsToKotlin(inputElements).results
+    val results =
+            ProgressManager.getInstance().runProcessWithProgressSynchronously(
+                    ThrowableComputable<JavaToKotlinConverter.Result, Exception> {
+                        runReadAction { converter.elementsToKotlin(inputElements) }
+                    },
+                    JavaToKotlinAction.title,
+                    false,
+                    project
+            ).results
+
+
     val importsToAdd = LinkedHashSet<FqName>()
 
     var resultIndex = 0
