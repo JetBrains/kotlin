@@ -57,7 +57,8 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     override val allDependencyModules: List<ModuleDescriptor>
         get() = this.dependencies.sure { "Dependencies of module $id were not set" }.allDependencies.filter { it != this }
 
-    override val allImplementingModules: MutableSet<ModuleDescriptor> = mutableSetOf()
+    override val allImplementingModules: Set<ModuleDescriptor>
+        get() = this.dependencies.sure { "Dependencies of module $id were not set" }.allImplementingModules
 
     override fun getPackage(fqName: FqName): PackageViewDescriptor = packages(fqName)
 
@@ -86,12 +87,6 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     fun setDependencies(dependencies: ModuleDependencies) {
         assert(this.dependencies == null) { "Dependencies of $id were already set" }
         this.dependencies = dependencies
-        if (getMultiTargetPlatform() == MultiTargetPlatform.Common) return
-        for (dependencyModule in allDependencyModules) {
-            if (dependencyModule.getMultiTargetPlatform() != MultiTargetPlatform.Common) continue
-            if (dependencyModule.sourceKind != sourceKind) continue
-            (dependencyModule as? ModuleDescriptorImpl)?.allImplementingModules?.add(this)
-        }
     }
 
     fun setDependencies(vararg descriptors: ModuleDescriptorImpl) {
@@ -127,21 +122,27 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
 interface ModuleDependencies {
     val allDependencies: List<ModuleDescriptorImpl>
     val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>
+    val allImplementingModules: Set<ModuleDescriptorImpl>
 }
 
 class ModuleDependenciesImpl(
         override val allDependencies: List<ModuleDescriptorImpl>,
         override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>
-) : ModuleDependencies
+) : ModuleDependencies {
+    override val allImplementingModules: Set<ModuleDescriptorImpl> = emptySet()
+}
 
 class LazyModuleDependencies(
         storageManager: StorageManager,
         computeDependencies: () -> List<ModuleDescriptorImpl>,
-        computeModulesWhoseInternalsAreVisible: () -> Set<ModuleDescriptorImpl>
+        computeModulesWhoseInternalsAreVisible: () -> Set<ModuleDescriptorImpl>,
+        computeImplementingModules: () -> Set<ModuleDescriptorImpl>
 ) : ModuleDependencies {
     private val dependencies = storageManager.createLazyValue(computeDependencies)
     private val visibleInternals = storageManager.createLazyValue(computeModulesWhoseInternalsAreVisible)
+    private val implementingModules = storageManager.createLazyValue(computeImplementingModules)
 
     override val allDependencies: List<ModuleDescriptorImpl> get() = dependencies()
     override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl> get() = visibleInternals()
+    override val allImplementingModules: Set<ModuleDescriptorImpl> get() = implementingModules()
 }

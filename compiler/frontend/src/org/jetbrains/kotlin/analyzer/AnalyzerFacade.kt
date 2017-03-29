@@ -196,6 +196,12 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
             return module.modulesWhoseInternalsAreVisible().mapTo(LinkedHashSet()) { resolverForProject.descriptorForModule(it as M) }
         }
 
+        fun computeImplementingModules(module: M): Set<ModuleDescriptorImpl> =
+                if (modulePlatforms(module) != MultiTargetPlatform.Common) emptySet()
+                else modules
+                        .filter { modulePlatforms(it) != MultiTargetPlatform.Common && module in it.dependencies() }
+                        .mapTo(mutableSetOf(), resolverForProject::descriptorForModule)
+
         fun setupModuleDependencies() {
             modules.forEach {
                 module ->
@@ -203,7 +209,8 @@ abstract class AnalyzerFacade<in P : PlatformAnalysisParameters> {
                         LazyModuleDependencies(
                                 storageManager,
                                 { computeDependencyDescriptors(module) },
-                                { computeModulesWhoseInternalsAreVisible(module) }
+                                { computeModulesWhoseInternalsAreVisible(module) },
+                                { computeImplementingModules(module) }
                         )
                 )
             }
