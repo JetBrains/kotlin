@@ -109,7 +109,7 @@ static def configurePublishing(Project project) {
 
         task dist(type: Copy, dependsOn: assemble) {
             rename "-${java.util.regex.Pattern.quote(version)}", ''
-            rename { String fileName -> 'gradle-' + fileName }
+//            rename { String fileName -> 'gradle-' + fileName }
             into distDir
         }
 

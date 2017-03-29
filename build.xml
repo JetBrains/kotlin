@@ -1468,21 +1468,24 @@
             <arg line="${deployVersion}" />
             <arg line="${gradle.logging.level}" />
         </java>
+
+        <!-- legacy artifact, required for migration on teamcity -->
+        <jar destfile="${output}/kotlin-reflect-sources-for-maven.jar" />
     </target>
 
     <target name="runtime"
             depends="builtins,stdlib,kotlin-test,core,reflection,pack-runtime,pack-runtime-sources,script-runtime,mock-runtime-for-test"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler-fork,compiler-sources,ant-tools,gradle-runtime,runtime,kotlin-js-stdlib,android-extensions-compiler,allopen-compiler-plugin,noarg-compiler-plugin,sam-with-receiver-compiler-plugin,source-sections-compiler-plugin,annotation-processing-under-jdk8,daemon-client,kotlin-build-common-test"
+            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler-fork,compiler-sources,ant-tools,gradle-runtime,mock-runtime-for-test,android-extensions-compiler,allopen-compiler-plugin,noarg-compiler-plugin,sam-with-receiver-compiler-plugin,source-sections-compiler-plugin,annotation-processing-under-jdk8,daemon-client,compiler-client-embeddable,kotlin-build-common-test"
             description="Builds redistributables from sources"/>
 
     <target name="dist-no-fork"
-            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,ant-tools,gradle-runtime,runtime,kotlin-js-stdlib,android-extensions-compiler,allopen-compiler-plugin,noarg-compiler-plugin,sam-with-receiver-compiler-plugin,source-sections-compiler-plugin,annotation-processing-under-jdk8,daemon-client,compiler-client-embeddable,kotlin-build-common-test"
+            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,ant-tools,gradle-runtime,mock-runtime-for-test,android-extensions-compiler,allopen-compiler-plugin,noarg-compiler-plugin,sam-with-receiver-compiler-plugin,source-sections-compiler-plugin,annotation-processing-under-jdk8,daemon-client,compiler-client-embeddable,kotlin-build-common-test"
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler,allopen-compiler-plugin,noarg-compiler-plugin,sam-with-receiver-compiler-plugin,source-sections-compiler-plugin,annotation-processing-under-jdk8"
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,gradle-runtime,mock-runtime-for-test,android-extensions-compiler,allopen-compiler-plugin,noarg-compiler-plugin,sam-with-receiver-compiler-plugin,source-sections-compiler-plugin,annotation-processing-under-jdk8"
             description="Builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc"/>
 
     <target name="dist-quick-compiler-only"
@@ -1520,8 +1523,7 @@
                 <include name="dist/mock-runtime-src"/>
             </src>
             <class-path>
-                <pathelement path="${output}/classes/builtins"/>
-                <pathelement path="${output}/builtins"/>
+                <pathelement path="${output}/kotlinc/lib/kotlin-stdlib.jar" />
             </class-path>
         </new-kotlinc>
 
