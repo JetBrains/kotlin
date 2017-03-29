@@ -26,6 +26,12 @@ internal class OverriddenFunctionDescriptor(val descriptor: FunctionDescriptor, 
         get() = overriddenDescriptor.isOverridable
                 || DescriptorUtils.getAllOverriddenDeclarations(overriddenDescriptor).any { it.isOverridable }
 
+    val inheritsBridge: Boolean
+        get() {
+            return !descriptor.kind.isReal
+                    && OverridingUtil.overrides(descriptor.target, overriddenDescriptor)
+                    && descriptor.bridgeDirectionsTo(overriddenDescriptor).allNotNeeded()
+        }
 
     override fun toString(): String {
         return "(descriptor=$descriptor, overriddenDescriptor=$overriddenDescriptor)"

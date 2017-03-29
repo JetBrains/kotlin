@@ -81,6 +81,7 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
                         .map { OverriddenFunctionDescriptor(function, it) }
                         .filter { !it.bridgeDirections.allNotNeeded() }
                         .filter { it.canBeCalledVirtually }
+                        .filter { !it.inheritsBridge }
                         .distinctBy { it.bridgeDirections }
                         .forEach {
                             buildBridge(it, irClass)
