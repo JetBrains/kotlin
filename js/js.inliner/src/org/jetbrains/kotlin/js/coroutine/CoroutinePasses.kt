@@ -249,10 +249,10 @@ fun JsBlock.replaceLocalVariables(context: CoroutineTransformationContext, local
                 val wrapperFunction = JsFunction(x.scope.parent, JsBlock(), "")
                 val wrapperInvocation = JsInvocation(wrapperFunction)
                 wrapperFunction.body.statements += JsReturn(x)
-                val nameMap = freeVars.associate { it to wrapperFunction.scope.declareTemporaryName(it.ident) }
+                val nameMap = freeVars.associate { it to JsScope.declareTemporaryName(it.ident) }
                 for (freeVar in freeVars) {
                     wrapperFunction.parameters += JsParameter(nameMap[freeVar]!!)
-                    wrapperInvocation.arguments += JsNameRef(scope.getFieldName(freeVar), JsLiteral.THIS)
+                    wrapperInvocation.arguments += JsNameRef(context.getFieldName(freeVar), JsLiteral.THIS)
                 }
                 x.body = replaceNames(x.body, nameMap.mapValues { it.value.makeRef() })
                 ctx.replaceMe(wrapperInvocation)

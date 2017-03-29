@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.serialization.js
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -51,14 +52,17 @@ object KotlinJavascriptSerializationUtil {
         ))
     }
 
-    fun readScope(
-            metadata: Collection<ByteArray>,
+    fun readDescriptors(
+            metadata: PackagesWithHeaderMetadata,
             storageManager: StorageManager,
             module: ModuleDescriptor,
             configuration: DeserializationConfiguration
     ): PackageFragmentProvider {
-        val scopeProto = metadata.map { JsProtoBuf.Library.Part.parseFrom(it, JsSerializerProtocol.extensionRegistry) }
-        return createKotlinJavascriptPackageFragmentProvider(storageManager, module, scopeProto, configuration)
+        val scopeProto = metadata.packages.map {
+            ProtoBuf.PackageFragment.parseFrom(it, JsSerializerProtocol.extensionRegistry)
+        }
+        val headerProto = JsProtoBuf.Header.parseFrom(CodedInputStream.newInstance(metadata.header), JsSerializerProtocol.extensionRegistry)
+        return createKotlinJavascriptPackageFragmentProvider(storageManager, module, headerProto, scopeProto, configuration)
     }
 
     fun serializeMetadata(
@@ -94,18 +98,18 @@ object KotlinJavascriptSerializationUtil {
     fun metadataAsString(bindingContext: BindingContext, jsDescriptor: JsModuleDescriptor<ModuleDescriptor>): String =
             KotlinJavascriptMetadataUtils.formatMetadataAsString(jsDescriptor.name, jsDescriptor.serializeToBinaryMetadata(bindingContext))
 
-    fun serializePackage(bindingContext: BindingContext, module: ModuleDescriptor, fqName: FqName): JsProtoBuf.Library.Part {
+    fun serializePackageFragment(bindingContext: BindingContext, module: ModuleDescriptor, fqName: FqName): ProtoBuf.PackageFragment {
         val packageView = module.getPackage(fqName)
-        return serializeScope(bindingContext, module, packageView.memberScope.getContributedDescriptors(), fqName)
+        return serializeDescriptors(bindingContext, module, packageView.memberScope.getContributedDescriptors(), fqName)
     }
 
-    fun serializeScope(
+    fun serializeDescriptors(
             bindingContext: BindingContext,
             module: ModuleDescriptor,
             scope: Collection<DeclarationDescriptor>,
             fqName: FqName
-    ): JsProtoBuf.Library.Part {
-        val builder = JsProtoBuf.Library.Part.newBuilder()
+    ): ProtoBuf.PackageFragment {
+        val builder = ProtoBuf.PackageFragment.newBuilder()
 
         // TODO: ModuleDescriptor should be able to return the package only with the contents of that module, without dependencies
         val skip: (DeclarationDescriptor) -> Boolean = { DescriptorUtils.getContainingModule(it) != module || (it is MemberDescriptor && it.isHeader) }
@@ -195,7 +199,7 @@ object KotlinJavascriptSerializationUtil {
         return contentMap
     }
 
-    private fun serializeHeader(packageFqName: FqName?): JsProtoBuf.Header {
+    fun serializeHeader(packageFqName: FqName?): JsProtoBuf.Header {
         val header = JsProtoBuf.Header.newBuilder()
 
         if (packageFqName != null) {

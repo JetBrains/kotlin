@@ -49,6 +49,7 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
             private val importedModules: List<String>,
             private val moduleDescriptor: ModuleDescriptor,
             private val bindingContext: BindingContext,
+            val metadataHeader: ByteArray?,
             val fileTranslationResults: Map<KtFile, FileTranslationResult>
     ) : TranslationResult(diagnostics) {
         @Suppress("unused") // Used in kotlin-web-demo in WebDemoTranslatorFacade

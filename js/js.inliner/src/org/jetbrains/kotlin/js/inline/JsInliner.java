@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.config.JsConfig;
-import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor;
 import org.jetbrains.kotlin.js.inline.clean.RemoveUnusedFunctionDefinitionsKt;
 import org.jetbrains.kotlin.js.inline.clean.RemoveUnusedLocalFunctionDeclarationsKt;
@@ -76,7 +75,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
             accessorInvocationTransformer.accept(fragment.getDeclarationBlock());
             accessorInvocationTransformer.accept(fragment.getInitializerBlock());
         }
-        FunctionReader functionReader = new FunctionReader((LibrarySourcesConfig) config, currentModuleName, fragments);
+        FunctionReader functionReader = new FunctionReader(config, currentModuleName, fragments);
         JsInliner inliner = new JsInliner(functions, accessors, functionReader, trace);
         for (JsProgramFragment fragment : fragmentsToProcess) {
             inliner.inliningContexts.push(inliner.new JsInliningContext());

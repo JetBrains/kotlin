@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
+import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.inline.util.IdentitySet
 import org.jetbrains.kotlin.js.inline.util.isCallInvocation
 import org.jetbrains.kotlin.js.parser.parseFunction
@@ -46,7 +47,7 @@ private val JS_IDENTIFIER="[$JS_IDENTIFIER_START][$JS_IDENTIFIER_PART]*"
 private val DEFINE_MODULE_PATTERN = ("($JS_IDENTIFIER)\\.defineModule\\(\\s*(['\"])([^'\"]+)\\2\\s*,\\s*(\\w+)\\s*\\)").toRegex().toPattern()
 private val DEFINE_MODULE_FIND_PATTERN = ".defineModule("
 
-class FunctionReader(private val config: LibrarySourcesConfig, private val currentModuleName: JsName, fragments: List<JsProgramFragment>) {
+class FunctionReader(private val config: JsConfig, private val currentModuleName: JsName, fragments: List<JsProgramFragment>) {
     /**
      * fileContent: .js file content, that contains this module definition.
      *     One file can contain more than one module definition.

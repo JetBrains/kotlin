@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
-import org.jetbrains.kotlin.serialization.js.JsProtoBuf;
+import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil;
 import org.jetbrains.kotlin.serialization.js.ast.JsAstSerializer;
 
@@ -138,6 +138,7 @@ public final class K2JSTranslator {
 
         Map<KtFile, FileTranslationResult> fileMap = new HashMap<KtFile, FileTranslationResult>();
         JsAstSerializer serializer = new JsAstSerializer();
+        byte[] metadataHeader = null;
         boolean serializeFragments = config.getConfiguration().get(JSConfigurationKeys.SERIALIZE_FRAGMENTS, false);
         for (KtFile file : files) {
             List<DeclarationDescriptor> scope = translationResult.getFileMemberScopes().get(file);
@@ -152,13 +153,17 @@ public final class K2JSTranslator {
                 }
 
                 if (scope != null) {
-                    JsProtoBuf.Library.Part part = KotlinJavascriptSerializationUtil.INSTANCE.serializeScope(
+                    ProtoBuf.PackageFragment part = KotlinJavascriptSerializationUtil.INSTANCE.serializeDescriptors(
                             bindingTrace.getBindingContext(), moduleDescriptor, scope, file.getPackageFqName());
                     binaryMetadata = part.toByteArray();
                 }
             }
 
             fileMap.put(file, new FileTranslationResult(file, binaryMetadata, binaryAst));
+        }
+
+        if (serializeFragments) {
+            metadataHeader = KotlinJavascriptSerializationUtil.INSTANCE.serializeHeader(null).toByteArray();
         }
 
         ResolveTemporaryNamesKt.resolveTemporaryNames(translationResult.getProgram());
@@ -170,6 +175,6 @@ public final class K2JSTranslator {
             importedModules.add(module.getExternalName());
         }
         return new TranslationResult.Success(config, files, translationResult.getProgram(), diagnostics, importedModules,
-                                             moduleDescriptor, bindingTrace.getBindingContext(), fileMap);
+                                             moduleDescriptor, bindingTrace.getBindingContext(), metadataHeader, fileMap);
     }
 }

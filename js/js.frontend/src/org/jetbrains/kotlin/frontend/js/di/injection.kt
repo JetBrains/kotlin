@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ModuleContext
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.configureModule
@@ -34,13 +33,14 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
+import org.jetbrains.kotlin.serialization.js.PackagesWithHeaderMetadata
 
 fun createTopDownAnalyzerForJs(
         moduleContext: ModuleContext,
         bindingTrace: BindingTrace,
         declarationProviderFactory: DeclarationProviderFactory,
         languageVersionSettings: LanguageVersionSettings,
-        fallbackMetadata: List<ByteArray> = emptyList()
+        fallbackMetadata: PackagesWithHeaderMetadata? = null
 ): LazyTopDownAnalyzer {
     val storageComponentContainer = createContainer("TopDownAnalyzerForJs", JsPlatform) {
         configureModule(moduleContext, JsPlatform, TargetPlatformVersion.NoVersion, bindingTrace)
@@ -55,10 +55,10 @@ fun createTopDownAnalyzerForJs(
         useImpl<ResolveSession>()
         useImpl<LazyTopDownAnalyzer>()
     }.apply {
-        val packagePartProviders = mutableListOf<PackageFragmentProvider>(get<KotlinCodeAnalyzer>().packageFragmentProvider)
+        val packagePartProviders = mutableListOf(get<KotlinCodeAnalyzer>().packageFragmentProvider)
         val moduleDescriptor = get<ModuleDescriptorImpl>()
-        if (fallbackMetadata.isNotEmpty()) {
-            packagePartProviders += KotlinJavascriptSerializationUtil.readScope(
+        if (fallbackMetadata != null) {
+            packagePartProviders += KotlinJavascriptSerializationUtil.readDescriptors(
                     fallbackMetadata, moduleContext.storageManager, moduleDescriptor, DeserializationConfiguration.Default)
         }
         moduleDescriptor.initialize(CompositePackageFragmentProvider(packagePartProviders))

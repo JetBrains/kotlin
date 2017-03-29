@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.config;
 
 import org.jetbrains.kotlin.config.CompilerConfigurationKey;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
+import org.jetbrains.kotlin.serialization.js.PackagesWithHeaderMetadata;
 
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> TYPED_ARRAYS_ENABLED =
             CompilerConfigurationKey.create("TypedArrays enabled");
 
-    public static final CompilerConfigurationKey<List<byte[]>> FALLBACK_METADATA =
+    public static final CompilerConfigurationKey<PackagesWithHeaderMetadata> FALLBACK_METADATA =
             CompilerConfigurationKey.create("fallback metadata");
 
     public static final CompilerConfigurationKey<Boolean> SERIALIZE_FRAGMENTS = CompilerConfigurationKey.create("serialize fragments");

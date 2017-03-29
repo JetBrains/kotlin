@@ -58,7 +58,7 @@ object TopDownAnalyzerFacadeForJS {
                 moduleContext, trace,
                 FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
                 config.configuration.languageVersionSettings,
-                config.configuration[JSConfigurationKeys.FALLBACK_METADATA].orEmpty()
+                config.configuration[JSConfigurationKeys.FALLBACK_METADATA]
         )
         analyzerForJs.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
         return JsAnalysisResult.success(trace, moduleContext.module)
