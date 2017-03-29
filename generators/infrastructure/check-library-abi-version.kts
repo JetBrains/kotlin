@@ -47,8 +47,7 @@ fun loadClassVersions(bytes: ByteArray): Pair<List<Int>, List<Int>>? {
 }
 
 fun loadVersions(library: File): String {
-    val jarFile = JarFile(library)
-    try {
+    JarFile(library).use { jarFile ->
         for (entry in jarFile.entries()) {
             if (entry.name.endsWith(".class")) {
                 val classBytes = jarFile.getInputStream(entry).readBytes()
@@ -58,10 +57,6 @@ fun loadVersions(library: File): String {
                 }
             }
         }
-    }
-    finally {
-        // Yes, JarFile does not extend Closeable on JDK 6 so we can't use "use" here
-        jarFile.close()
     }
     
     error("No Kotlin classes were found in $library")

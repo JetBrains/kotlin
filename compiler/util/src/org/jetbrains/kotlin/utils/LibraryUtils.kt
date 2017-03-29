@@ -69,12 +69,8 @@ object LibraryUtils {
         if (!library.canRead()) return null
 
         try {
-            val jarFile = JarFile(library)
-            try {
+            JarFile(library).use { jarFile ->
                 return jarFile.manifest
-            }
-            finally {
-                jarFile.close()
             }
         }
         catch (ignored: IOException) {
