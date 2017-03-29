@@ -317,7 +317,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         List<String> versionStrings = ArraysKt.map(LanguageVersion.values(), new Function1<LanguageVersion, String>() {
             @Override
             public String invoke(LanguageVersion version) {
-                return version.getVersionString();
+                return version.getDescription();
             }
         });
         String message = "Unknown " + versionOf + " version: " + value + "\n" +

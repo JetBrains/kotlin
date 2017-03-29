@@ -30,7 +30,7 @@ open class DefaultValues(val defaultValue: String, val possibleValues: List<Stri
 
     object LanguageVersions : DefaultValues(
             "\"" + LanguageVersion.LATEST_STABLE.versionString + "\"",
-            LanguageVersion.values().map { "\"${it.versionString}\"" }
+            LanguageVersion.values().map { "\"${it.description}\"" }
     )
 
     object JvmTargetVersions : DefaultValues(
