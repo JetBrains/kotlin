@@ -13,13 +13,17 @@ import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import java.util.*
 import kotlin.reflect.KFunction
 
-
+// TODO: Don't use reflection?
 private fun maybeExecuteHelper(configuration: CompilerConfiguration) {
     try {
-        val kClass = Class.forName("org.jetbrains.kotlin.konan.CompilerHelper0").kotlin
+        val kClass = Class.forName("org.jetbrains.kotlin.konan.Helper0").kotlin
         val ctor = kClass.constructors.single() as KFunction<Runnable>
         val distribution = Distribution(configuration)
-        val result = ctor.call(distribution)
+        val result = ctor.call(
+                distribution.dependenciesDir,
+                distribution.properties.properties,
+                distribution.dependencies
+        )
         result.run()
     } catch (notFound: ClassNotFoundException) {
         // Just ignore, no helper.

@@ -15,11 +15,23 @@ buildscript {
     }
 }
 
+// Copied from backend.native project. =====
 repositories {
     maven {
         url 'http://oss.sonatype.org/content/repositories/snapshots'
     }
 }
+
+configurations.all {
+    // kotlin-compiler module includes Kotlin runtime bundled;
+    // make Gradle aware of this to avoid multiple Kotlin runtimes in classpath:
+    resolutionStrategy.dependencySubstitution {
+        substitute module('org.jetbrains.kotlin:kotlin-runtime') with module(kotlinCompilerModule)
+        substitute module('org.jetbrains.kotlin:kotlin-stdlib')  with module(kotlinCompilerModule)
+        substitute module('org.jetbrains.kotlin:kotlin-reflect') with module(kotlinCompilerModule)
+    }
+}
+// =========================================
 
 apply plugin: 'kotlin'
 apply plugin: NativeInteropPlugin
@@ -29,8 +41,10 @@ configurations {
 }
 
 dependencies {
-    compile project(path: ':backend.native', configuration: 'cli_bc')
+    compile "org.jetbrains.kotlin:kotlin-runtime:$kotlin_version"
+    // We need this configuration to test the helpers.
     cli_bc jar.outputs.files
+    cli_bc project(path: ':backend.native', configuration: 'cli_bc')
 }
 
 sourceSets {

@@ -117,11 +117,11 @@ private fun runCmd(command: Array<String>, workDir: File, verbose: Boolean = fal
                 .runExpectingSuccess()
 }
 
-private fun maybeExecuteHelper(dependenciesRoot: String, propertiesFile: String, dependencies: List<String>) {
+private fun maybeExecuteHelper(dependenciesRoot: String, properties: Properties, dependencies: List<String>) {
     try {
-        val kClass = Class.forName("org.jetbrains.kotlin.konan.InteropHelper0").kotlin
+        val kClass = Class.forName("org.jetbrains.kotlin.konan.Helper0").kotlin
         val ctor = kClass.constructors.single() as KFunction<Runnable>
-        val result = ctor.call(dependenciesRoot, propertiesFile, dependencies)
+        val result = ctor.call(dependenciesRoot, properties, dependencies)
         result.run()
     } catch (notFound: ClassNotFoundException) {
         // Just ignore, no helper.
@@ -130,7 +130,7 @@ private fun maybeExecuteHelper(dependenciesRoot: String, propertiesFile: String,
     }
 }
 
-private fun Properties.defaultCompilerOpts(target: String, dependencies: String, konanFileName: String): List<String> {
+private fun Properties.defaultCompilerOpts(target: String, dependencies: String): List<String> {
 
     val hostSysRootDir = this.getOsSpecific("sysRoot", target)!!
     val hostSysRoot = "$dependencies/$hostSysRootDir"
@@ -142,7 +142,7 @@ private fun Properties.defaultCompilerOpts(target: String, dependencies: String,
     val llvmVersion = this.getProperty("llvmVersion")!!
 
     val dependencyList = getOsSpecific("dependencies", target)?.split(' ') ?: listOf<String>()
-    maybeExecuteHelper(dependencies, konanFileName, dependencyList)
+    maybeExecuteHelper(dependencies, this, dependencyList)
 
     // StubGenerator passes the arguments to libclang which 
     // works not exactly the same way as the clang binary and 
@@ -259,7 +259,7 @@ private fun processLib(konanHome: String,
     val generateShims = args["-shims"].isTrue()
     val verbose = args["-verbose"].isTrue()
 
-    val defaultOpts = konanProperties.defaultCompilerOpts(target, dependencies, konanFileName)
+    val defaultOpts = konanProperties.defaultCompilerOpts(target, dependencies)
     val headerFiles = config.getSpaceSeparated("headers") + additionalHeaders
     val compilerOpts = 
         config.getSpaceSeparated("compilerOpts") +
