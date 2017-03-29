@@ -31,3 +31,11 @@ public abstract class Enum<E: Enum<E>>(public val name: String, public val ordin
         return name
     }
 }
+
+fun <T: Enum<T>> enumValueOf(name: String): T {
+    throw Exception("Call to this function should've been lowered")
+}
+
+fun <T: Enum<T>> enumValues(): Array<T> {
+    throw Exception("Call to this function should've been lowered")
+}

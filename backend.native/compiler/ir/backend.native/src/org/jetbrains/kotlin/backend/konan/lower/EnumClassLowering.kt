@@ -6,14 +6,24 @@ import org.jetbrains.kotlin.backend.common.lower.SimpleMemberScope
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.descriptors.createValueParameter
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.KonanBuiltIns
+import org.jetbrains.kotlin.backend.konan.LoweredEnum
+import org.jetbrains.kotlin.backend.konan.descriptors.contributedMethods
 import org.jetbrains.kotlin.backend.konan.descriptors.getKonanInternalFunctions
+import org.jetbrains.kotlin.backend.konan.descriptors.konanInternal
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.createArrayOfExpression
 import org.jetbrains.kotlin.backend.konan.ir.createSimpleDelegatingConstructor
 import org.jetbrains.kotlin.backend.konan.ir.createSimpleDelegatingConstructorDescriptor
+import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
@@ -24,15 +34,62 @@ import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.script.getFileContents
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
+internal class EnumSyntheticFunctionsBuilder(val context: Context) {
+    fun buildValuesExpression(startOffset: Int, endOffset: Int,
+                              enumClassDescriptor: ClassDescriptor): IrExpression {
+        val loweredEnum = context.specialDescriptorsFactory.getLoweredEnum(enumClassDescriptor)
+
+        val typeParameterT = genericValuesDescriptor.typeParameters[0]
+        val enumClassType = enumClassDescriptor.defaultType
+        val typeSubstitutor = TypeSubstitutor.create(mapOf(typeParameterT.typeConstructor to TypeProjectionImpl(enumClassType)))
+        val substitutedValueOf = genericValuesDescriptor.substitute(typeSubstitutor)!!
+
+        return IrCallImpl(startOffset, endOffset, substitutedValueOf, mapOf(typeParameterT to enumClassType))
+                .apply {
+                    val receiver = IrGetObjectValueImpl(startOffset, endOffset,
+                            loweredEnum.implObjectDescriptor.defaultType, loweredEnum.implObjectDescriptor)
+                    putValueArgument(0, IrGetFieldImpl(startOffset, endOffset, loweredEnum.valuesProperty, receiver))
+                }
+    }
+
+    fun buildValueOfExpression(startOffset: Int, endOffset: Int,
+                               enumClassDescriptor: ClassDescriptor,
+                               value: IrExpression): IrExpression {
+        val loweredEnum = context.specialDescriptorsFactory.getLoweredEnum(enumClassDescriptor)
+
+        val typeParameterT = genericValueOfDescriptor.typeParameters[0]
+        val enumClassType = enumClassDescriptor.defaultType
+        val typeSubstitutor = TypeSubstitutor.create(mapOf(typeParameterT.typeConstructor to TypeProjectionImpl(enumClassType)))
+        val substitutedValueOf = genericValueOfDescriptor.substitute(typeSubstitutor)!!
+
+        return IrCallImpl(startOffset, endOffset, substitutedValueOf, mapOf(typeParameterT to enumClassType))
+                .apply {
+                    putValueArgument(0, value)
+                    val receiver = IrGetObjectValueImpl(startOffset, endOffset,
+                            loweredEnum.implObjectDescriptor.defaultType, loweredEnum.implObjectDescriptor)
+                    putValueArgument(1, IrGetFieldImpl(startOffset, endOffset, loweredEnum.valuesProperty, receiver))
+                }
+    }
+
+    private val genericValueOfDescriptor = context.builtIns.getKonanInternalFunctions("valueOfForEnum").single()
+
+    private val genericValuesDescriptor = context.builtIns.getKonanInternalFunctions("valuesForEnum").single()
+}
+
 internal class EnumUsageLowering(val context: Context)
     : IrElementTransformerVoid(), FileLoweringPass {
+
+    private val enumSyntheticFunctionsBuilder = EnumSyntheticFunctionsBuilder(context)
 
     override fun lower(irFile: IrFile) {
         visitFile(irFile)
@@ -43,12 +100,40 @@ internal class EnumUsageLowering(val context: Context)
         return loadEnumEntry(expression.startOffset, expression.endOffset, enumClassDescriptor, expression.descriptor.name)
     }
 
+    // TODO: remove as soon IR is fixed (there should no be any enum get with GET_OBJECT operation).
     override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
         if (expression.descriptor.kind != ClassKind.ENUM_ENTRY)
             return super.visitGetObjectValue(expression)
         val enumClassDescriptor = expression.descriptor.containingDeclaration as ClassDescriptor
         return loadEnumEntry(expression.startOffset, expression.endOffset, enumClassDescriptor, expression.descriptor.name)
     }
+
+    override fun visitCall(expression: IrCall): IrExpression {
+        expression.transformChildrenVoid(this)
+        val descriptor = expression.descriptor as? FunctionDescriptor
+        if (descriptor == null) return expression
+        if (descriptor.original != enumValuesDescriptor && descriptor.original != enumValueOfDescriptor) return expression
+
+        val genericT = descriptor.original.typeParameters[0]
+        val substitutedT = expression.getTypeArgument(genericT)!!
+        val classDescriptor = substitutedT.constructor.declarationDescriptor as? ClassDescriptor
+        if (classDescriptor == null) return expression // Type parameter.
+
+        assert (classDescriptor.kind == ClassKind.ENUM_CLASS)
+
+        if (descriptor.original == enumValuesDescriptor) {
+            return enumSyntheticFunctionsBuilder.buildValuesExpression(expression.startOffset, expression.endOffset, classDescriptor)
+        } else {
+            val value = expression.getValueArgument(0)!!
+            return enumSyntheticFunctionsBuilder.buildValueOfExpression(expression.startOffset, expression.endOffset, classDescriptor, value)
+        }
+    }
+
+    private val kotlinPackageMemberScope = context.builtIns.builtInsModule.getPackage(FqName("kotlin")).memberScope
+    private val enumValueOfDescriptor = kotlinPackageMemberScope.getContributedFunctions(
+            Name.identifier("enumValueOf"), NoLookupLocation.FROM_BACKEND).single()
+    private val enumValuesDescriptor = kotlinPackageMemberScope.getContributedFunctions(
+            Name.identifier("enumValues"), NoLookupLocation.FROM_BACKEND).single()
 
     private fun loadEnumEntry(startOffset: Int, endOffset: Int, enumClassDescriptor: ClassDescriptor, name: Name): IrExpression {
         val loweredEnum = context.specialDescriptorsFactory.getLoweredEnum(enumClassDescriptor)
@@ -84,6 +169,7 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
         private val descriptorToIrConstructorWithDefaultArguments = mutableMapOf<ClassConstructorDescriptor, IrConstructor>()
         private val defaultEnumEntryConstructors = mutableMapOf<ClassConstructorDescriptor, ClassConstructorDescriptor>()
         private val loweredEnumConstructorParameters = mutableMapOf<ValueParameterDescriptor, ValueParameterDescriptor>()
+        private val enumSyntheticFunctionsBuilder = EnumSyntheticFunctionsBuilder(context)
 
         fun run() {
             insertInstanceInitializerCall()
@@ -257,50 +343,25 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
         private object DECLARATION_ORIGIN_ENUM :
                 IrDeclarationOriginImpl("ENUM")
 
-        private val genericValueOfFun = context.builtIns.getKonanInternalFunctions("valueOfForEnum").single()
-
-        private val genericValuesFun = context.builtIns.getKonanInternalFunctions("valuesForEnum").single()
-
         private fun createSyntheticValuesMethodBody(descriptor: FunctionDescriptor): IrBody {
             val startOffset = irClass.startOffset
             val endOffset = irClass.endOffset
-            val typeParameterT = genericValuesFun.typeParameters[0]
-            val enumClassType = irClass.descriptor.defaultType
-            val typeSubstitutor = TypeSubstitutor.create(mapOf(typeParameterT.typeConstructor to TypeProjectionImpl(enumClassType)))
-            val substitutedValueOf = genericValuesFun.substitute(typeSubstitutor)!!
+            val valuesExpression = enumSyntheticFunctionsBuilder.buildValuesExpression(startOffset, endOffset, irClass.descriptor)
 
-            val irValuesCall = IrCallImpl(startOffset, endOffset, substitutedValueOf, mapOf(typeParameterT to enumClassType))
-                    .apply {
-                        val receiver = IrGetObjectValueImpl(startOffset, endOffset,
-                                loweredEnum.implObjectDescriptor.defaultType, loweredEnum.implObjectDescriptor)
-                        putValueArgument(0, IrGetFieldImpl(startOffset, endOffset, loweredEnum.valuesProperty, receiver))
-                    }
-
-            return IrBlockBodyImpl(
-                    startOffset, endOffset,
-                    listOf(IrReturnImpl(startOffset, endOffset, descriptor, irValuesCall))
+            return IrBlockBodyImpl(startOffset, endOffset,
+                    listOf(IrReturnImpl(startOffset, endOffset, descriptor, valuesExpression))
             )
         }
 
         private fun createSyntheticValueOfMethodBody(descriptor: FunctionDescriptor): IrBody {
             val startOffset = irClass.startOffset
             val endOffset = irClass.endOffset
-            val typeParameterT = genericValueOfFun.typeParameters[0]
-            val enumClassType = irClass.descriptor.defaultType
-            val typeSubstitutor = TypeSubstitutor.create(mapOf(typeParameterT.typeConstructor to TypeProjectionImpl(enumClassType)))
-            val substitutedValueOf = genericValueOfFun.substitute(typeSubstitutor)!!
-
-            val irValueOfCall = IrCallImpl(startOffset, endOffset, substitutedValueOf, mapOf(typeParameterT to enumClassType))
-                    .apply {
-                        putValueArgument(0, IrGetValueImpl(startOffset, endOffset, descriptor.valueParameters[0]))
-                        val receiver = IrGetObjectValueImpl(startOffset, endOffset,
-                                loweredEnum.implObjectDescriptor.defaultType, loweredEnum.implObjectDescriptor)
-                        putValueArgument(1, IrGetFieldImpl(startOffset, endOffset, loweredEnum.valuesProperty, receiver))
-                    }
+            val value = IrGetValueImpl(startOffset, endOffset, descriptor.valueParameters[0])
+            val valueOfExpression = enumSyntheticFunctionsBuilder.buildValueOfExpression(startOffset, endOffset, irClass.descriptor, value)
 
             return IrBlockBodyImpl(
                     startOffset, endOffset,
-                    listOf(IrReturnImpl(startOffset, endOffset, descriptor, irValueOfCall))
+                    listOf(IrReturnImpl(startOffset, endOffset, descriptor, valueOfExpression))
             )
         }
 
