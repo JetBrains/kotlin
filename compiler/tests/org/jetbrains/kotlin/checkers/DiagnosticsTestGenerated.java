@@ -7561,6 +7561,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("noOverflowWithZero.kt")
+            public void testNoOverflowWithZero() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/evaluate/noOverflowWithZero.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("numberBinaryOperations.kt")
             public void testNumberBinaryOperations() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/evaluate/numberBinaryOperations.kt");

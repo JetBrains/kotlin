@@ -556,7 +556,7 @@ private class ConstantExpressionEvaluatorVisitor(
         assert(isIntegerType(receiver.value)) { "Only integer constants should be checked for overflow" }
         assert(name == "minus" || name == "unaryMinus") { "Only negation should be checked for overflow" }
 
-        if (receiver.value == result) {
+        if (receiver.value == result && !isZero(receiver.value)) {
             trace.report(Errors.INTEGER_OVERFLOW.on(callExpression.getStrictParentOfType<KtExpression>() ?: callExpression))
         }
         return result
@@ -598,15 +598,15 @@ private class ConstantExpressionEvaluatorVisitor(
             binaryOperations[BinaryOperationKey(receiver.ctcType, parameter.ctcType, name)]
 
     private fun isDivisionByZero(name: String, parameter: Any?): Boolean {
-        if (name in DIVISION_OPERATION_NAMES) {
-            if (isIntegerType(parameter)) {
-                return (parameter as Number).toLong() == 0.toLong()
-            }
-            else if (parameter is Float || parameter is Double) {
-                return (parameter as Number).toDouble() == 0.0
-            }
+        return name in DIVISION_OPERATION_NAMES && isZero(parameter)
+    }
+
+    private fun isZero(value: Any?): Boolean {
+        return when {
+            isIntegerType(value) -> (value as Number).toLong() == 0L
+            value is Float || value is Double -> (value as Number).toDouble() == 0.0
+            else -> false
         }
-        return false
     }
 
     override fun visitUnaryExpression(expression: KtUnaryExpression, expectedType: KotlinType?): CompileTimeConstant<*>? {
