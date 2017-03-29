@@ -61,5 +61,8 @@ class MultipleKotlinFacetEditor(
 
     override fun disposeUIResources() {
         helper.unbind()
+        // Reset tabs with selected "Use project settings" after switching off the multi-editor mode.
+        // Their settings might have changed to non-project one due to UI control binding
+        editors.map { it.tabEditor }.filter { it.useProjectSettingsCheckBox.isSelected }.forEach { it.updateCompilerConfigurable() }
     }
 }
