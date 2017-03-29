@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cli
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.util.ExecUtil
 import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
@@ -31,26 +32,31 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             vararg args: String,
             expectedStdout: String = "",
             expectedStderr: String = "",
-            expectedExitCode: ExitCode = ExitCode.OK
+            expectedExitCode: Int = 0,
+            workDirectory: File? = null
     ) {
         val executableFileName = if (SystemInfo.isWindows) "$executableName.bat" else executableName
         val launcherFile = File(PathUtil.getKotlinPathsForDistDirectory().homePath, "bin/$executableFileName")
         assertTrue("Launcher script not found, run 'ant dist': ${launcherFile.absolutePath}", launcherFile.exists())
 
-        val processOutput = ExecUtil.execAndGetOutput(GeneralCommandLine(launcherFile.absolutePath, *args))
-        val stdout = processOutput.stdout
-        val stderr = processOutput.stderr
+        val cmd = GeneralCommandLine(launcherFile.absolutePath, *args)
+        workDirectory?.let(cmd::withWorkDirectory)
+        val processOutput = ExecUtil.execAndGetOutput(cmd)
+        val stdout = StringUtil.convertLineSeparators(processOutput.stdout)
+        val stderr = StringUtil.convertLineSeparators(processOutput.stderr)
         val exitCode = processOutput.exitCode
 
         try {
             assertEquals(expectedStdout, stdout)
             assertEquals(expectedStderr, stderr)
-            assertEquals(expectedExitCode.code, exitCode)
+            assertEquals(expectedExitCode, exitCode)
         }
         catch (e: Throwable) {
             System.err.println("exit code $exitCode")
-            System.err.println("<stdout>$stdout</stdout>")
-            System.err.println("<stderr>$stderr</stderr>")
+            System.err.println("=== STDOUT ===")
+            System.err.println(stdout)
+            System.err.println("=== STDERR ===")
+            System.err.println(stderr)
             throw e
         }
     }
@@ -61,7 +67,6 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     fun testKotlincSimple() {
         runProcess(
                 "kotlinc",
-                "-Xskip-java-check",
                 "$testDataDirectory/helloWorld.kt",
                 "-d", tmpdir.path
         )
@@ -70,7 +75,6 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     fun testKotlincJvmSimple() {
         runProcess(
                 "kotlinc-jvm",
-                "-Xskip-java-check",
                 "$testDataDirectory/helloWorld.kt",
                 "-d", tmpdir.path
         )
@@ -79,7 +83,6 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     fun testKotlincJsSimple() {
         runProcess(
                 "kotlinc-js",
-                "-Xskip-java-check",
                 "$testDataDirectory/emptyMain.kt",
                 "-no-stdlib",
                 "-output", File(tmpdir, "out.js").path
@@ -89,7 +92,6 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     fun testKotlinNoReflect() {
         runProcess(
                 "kotlinc",
-                "-Xskip-java-check",
                 "$testDataDirectory/reflectionUsage.kt",
                 "-d", tmpdir.path
         )
@@ -100,6 +102,26 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
                 "-no-reflect",
                 "ReflectionUsageKt",
                 expectedStdout = "no reflection"
+        )
+    }
+
+    fun testDoNotAppendCurrentDirToNonEmptyClasspath() {
+        runProcess(
+                "kotlinc",
+                "$testDataDirectory/helloWorld.kt",
+                "-d", tmpdir.path
+        )
+
+        runProcess("kotlin", "test.HelloWorldKt", expectedStdout = "Hello!\n", workDirectory = tmpdir)
+
+        val emptyDir = KotlinTestUtils.tmpDirForTest(this)
+        runProcess(
+                "kotlin",
+                "-cp", emptyDir.path,
+                "test.HelloWorldKt",
+                expectedStderr = "error: could not find or load main class test.HelloWorldKt\n",
+                expectedExitCode = 1,
+                workDirectory = tmpdir
         )
     }
 }
