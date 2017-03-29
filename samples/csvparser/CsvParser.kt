@@ -3,7 +3,7 @@ import stdio.*
 
 fun parseLine(line: String, separator: Char) : List<String> {
     val result = mutableListOf<String>()
-    var builder = StringBuilder()
+    val builder = StringBuilder()
     var quotes = 0
     for (ch in line) {
         when {
@@ -14,7 +14,7 @@ fun parseLine(line: String, separator: Char) : List<String> {
             (ch == '\n') || (ch ==  '\r') -> {}
             (ch == separator) && (quotes % 2 == 0) -> {
                 result.add(builder.toString())
-                builder = StringBuilder()
+                builder.length = 0
             }
             else -> builder.append(ch)
         }
@@ -37,6 +37,8 @@ fun main(args: Array<String>) {
         return
     }
 
+    val keyValue = mutableMapOf<String, Int>()
+
     try {
         memScoped {
             val bufferLength = 64 * 1024
@@ -47,10 +49,16 @@ fun main(args: Array<String>) {
                 if (nextLine == null || nextLine.isEmpty()) break
 
                 val records = parseLine(nextLine, ',')
-                println(records[column])
+                val key = records[column]
+                val current = keyValue[key] ?: 0
+                keyValue[key] = current + 1
             }
         }
     } finally {
         fclose(file)
+    }
+
+    keyValue.forEach {
+        println("${it.key} -> ${it.value}")
     }
 }

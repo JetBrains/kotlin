@@ -13,9 +13,9 @@ class HashMap<K, V> private constructor(
     override var size: Int = 0
         private set
 
-    // private var keysView: HashSet<K>? = null
-    // private var valuesView: HashMapValues<V>? = null
-    // private var entriesView: HashMapEntrySet<K, V>? = null
+    private var keysView: HashSet<K>? = null
+    private var valuesView: HashMapValues<V>? = null
+    private var entriesView: HashMapEntrySet<K, V>? = null
 
     // ---------------------------- functions ----------------------------
 
@@ -90,45 +90,30 @@ class HashMap<K, V> private constructor(
     }
 
     override val keys: MutableSet<K> get() {
-        return HashSet(this)
-
-        // Caching creates a reference cycle and thus leads to memory leaks;
-        // TODO: fix and enable.
-
-        // val cur = keysView
-        // return if (cur == null) {
-        //     val new = HashSet(this)
-        //     keysView = new
-        //     new
-        // } else cur
+        val cur = keysView
+        return if (cur == null) {
+            val new = HashSet(this)
+            keysView = new
+            new
+        } else cur
     }
 
     override val values: MutableCollection<V> get() {
-        return HashMapValues(this)
-
-        // Caching creates a reference cycle and thus leads to memory leaks;
-        // TODO: fix and enable.
-
-        // val cur = valuesView
-        // return if (cur == null) {
-        //     val new = HashMapValues(this)
-        //     valuesView = new
-        //     new
-        // } else cur
+        val cur = valuesView
+        return if (cur == null) {
+            val new = HashMapValues(this)
+            valuesView = new
+            new
+        } else cur
     }
 
     override val entries: MutableSet<MutableMap.MutableEntry<K, V>> get() {
-        return HashMapEntrySet(this)
-
-        // Caching creates a reference cycle and thus leads to memory leaks;
-        // TODO: fix and enable.
-
-        // val cur = entriesView
-        // return if (cur == null) {
-        //     val new = HashMapEntrySet(this)
-        //     entriesView = new
-        //     return new
-        // } else cur
+        val cur = entriesView
+        return if (cur == null) {
+            val new = HashMapEntrySet(this)
+            entriesView = new
+            return new
+        } else cur
     }
 
     override fun equals(other: Any?): Boolean {
@@ -246,7 +231,7 @@ class HashMap<K, V> private constructor(
     private fun findKey(key: K): Int {
         var hash = hash(key)
         var probesLeft = maxProbeDistance
-        while (true)  {
+        while (true) {
             val index = hashArray[hash]
             if (index == 0) return TOMBSTONE
             if (index > 0 && keysArray[index - 1] == key) return index - 1
@@ -265,7 +250,7 @@ class HashMap<K, V> private constructor(
     }
 
     internal fun addKey(key: K): Int {
-            retry@ while (true) {
+        retry@ while (true) {
             var hash = hash(key)
             // put is allowed to grow maxProbeDistance with some limits (resize hash on reaching limits)
             val tentativeMaxProbeDistance = (maxProbeDistance * 2).coerceAtMost(hashSize / 2)

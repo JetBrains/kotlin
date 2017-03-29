@@ -417,14 +417,8 @@ public fun <K, V> Iterable<Pair<K, V>>.toMap(): Map<K, V> {
 /**
  * Populates and returns the [destination] mutable map with key-value pairs from the given collection of pairs.
  */
-@Fixme
-public fun <K, V, M : MutableMap<in K, in V>> Iterable<Pair<K, V>>.toMap(destination: M): M {
-    for (pair in this) {
-        destination.put(pair.first, pair.second)
-    }
-    return destination
-}
-//        = destination.apply { putAll(this@toMap) }
+public fun <K, V, M : MutableMap<in K, in V>> Iterable<Pair<K, V>>.toMap(destination: M): M
+        = destination.apply { putAll(this@toMap) }
 
 /**
  * Returns a new map containing all key-value pairs from the given array of pairs.
@@ -440,14 +434,8 @@ public fun <K, V> Array<out Pair<K, V>>.toMap(): Map<K, V> = when(size) {
 /**
  *  Populates and returns the [destination] mutable map with key-value pairs from the given array of pairs.
  */
-@Fixme
-public fun <K, V, M : MutableMap<in K, in V>> Array<out Pair<K, V>>.toMap(destination: M): M {
-//        = destination.apply { putAll(this@toMap) }
-    for (pair in this) {
-        destination.put(pair.first, pair.second)
-    }
-    return destination
-}
+public fun <K, V, M : MutableMap<in K, in V>> Array<out Pair<K, V>>.toMap(destination: M): M
+        = destination.apply { putAll(this@toMap) }
 
 /**
  * Returns a new map containing all key-value pairs from the given sequence of pairs.
@@ -459,14 +447,8 @@ public fun <K, V> Sequence<Pair<K, V>>.toMap(): Map<K, V> = toMap(HashMap<K, V>(
 /**
  * Populates and returns the [destination] mutable map with key-value pairs from the given sequence of pairs.
  */
-@Fixme
-public fun <K, V, M : MutableMap<in K, in V>> Sequence<Pair<K, V>>.toMap(destination: M): M {
-    for (pair in this) {
-        destination.put(pair.first, pair.second)
-    }
-    return destination
-}
-//        = destination.apply { putAll(this@toMap) }
+public fun <K, V, M : MutableMap<in K, in V>> Sequence<Pair<K, V>>.toMap(destination: M): M
+        = destination.apply { putAll(this@toMap) }
 
 /**
  * Returns a new read-only map containing all key-value pairs from the original map.
