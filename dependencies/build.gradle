@@ -30,7 +30,7 @@ abstract class NativeDep extends DefaultTask {
     }
 
     protected File getBaseOutDir() {
-        final File res = project.file("all")
+        final File res = project.rootProject.file("dist/dependencies")
         res.mkdirs()
         return res
     }
@@ -132,7 +132,7 @@ if (isLinux()) {
 }
 
 
-task update {
+task update(type: Copy) {
     dependsOn tasks.withType(NativeDep)
 }
 

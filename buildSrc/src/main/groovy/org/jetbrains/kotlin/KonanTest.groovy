@@ -59,7 +59,6 @@ abstract class KonanTest extends JavaExec {
     void setJvmArgs(Iterable<?> arguments) {
         super.setJvmArgs(arguments +
                 "-Dkonan.home=${dist.canonicalPath}" +
-                "-Dkonan.dependencies=${dependenciesDir.canonicalPath}" +
                 "-Djava.library.path=${dist.canonicalPath}/konan/nativelib")
     }
 

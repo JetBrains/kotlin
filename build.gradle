@@ -1,3 +1,6 @@
+import com.sun.tools.doclets.internal.toolkit.util.Util
+import groovy.io.FileType
+
 //ant.importBuild 'backend.native/kotlin-ir/build.xml'
 
 defaultTasks 'clean', 'demo'
@@ -284,7 +287,9 @@ task demo(type: Exec) {
 
 task clean {
     doLast {
-        delete 'dist'
+        file('dist').traverse(type: FileType.ANY, excludeNameFilter: "dependencies", maxDepth: 0) {
+            delete it
+        }
         delete bundle.outputs.files
     }
 }

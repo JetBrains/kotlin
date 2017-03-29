@@ -173,7 +173,6 @@ class NamedNativeInteropConfig implements Named {
                     new File(project.findProject(":Interop:Runtime").buildDir, "nativelibs")
             ).asPath
             systemProperties "konan.home": project.rootProject.file("dist")
-            systemProperties "konan.dependencies": project.findProject(":dependencies").file("all")
             environment "LIBCLANG_DISABLE_CRASH_RECOVERY": "1"
             environment "DYLD_LIBRARY_PATH": "${project.llvmDir}/lib"
             environment "LD_LIBRARY_PATH": "${project.llvmDir}/lib"

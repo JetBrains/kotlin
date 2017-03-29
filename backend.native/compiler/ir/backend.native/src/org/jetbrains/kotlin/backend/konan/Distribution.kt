@@ -24,8 +24,7 @@ class Distribution(val config: CompilerConfiguration) {
 
     val lib = "$konanHome/lib/$target"
 
-    // We can override dependency directory using konan.dependencies system property.
-    val dependenciesDir = System.getProperty("konan.dependencies", "$konanHome/dependencies")
+    val dependenciesDir = "$konanHome/dependencies"
     val dependencies = properties.propertyList("dependencies.$suffix")
 
     val stdlib = "$lib/stdlib.kt.bc"
