@@ -127,7 +127,8 @@ List<String> llvmLinkerOpts() {
             '-lLLVMMC',
             '-lLLVMCore',
             '-lLLVMSupport',
-            '-lLLVMDebugInfoCodeView'
+            '-lLLVMDebugInfoCodeView',
+            '-lLLVMLinker'
     ]
 
     final List<String> res = new ArrayList<>()

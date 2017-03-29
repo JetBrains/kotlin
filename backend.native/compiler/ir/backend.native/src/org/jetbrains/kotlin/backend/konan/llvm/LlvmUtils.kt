@@ -217,3 +217,27 @@ fun getStructElements(type: LLVMTypeRef): List<LLVMTypeRef> {
         LLVMStructGetTypeAtIndex(type, it)!!
     }
 }
+
+fun parseBitcodeFile(path: String): LLVMModuleRef = memScoped {
+    val bufRef = alloc<LLVMMemoryBufferRefVar>()
+    val errorRef = allocPointerTo<CInt8Var>()
+
+    val res = LLVMCreateMemoryBufferWithContentsOfFile(path, bufRef.ptr, errorRef.ptr)
+    if (res != 0) {
+        throw Error(errorRef.value?.toKString())
+    }
+
+    val memoryBuffer = bufRef.value
+    try {
+
+        val moduleRef = alloc<LLVMModuleRefVar>()
+        val parseRes = LLVMParseBitcode2(memoryBuffer, moduleRef.ptr)
+        if (parseRes != 0) {
+            throw Error(parseRes.toString())
+        }
+
+        moduleRef.value!!
+    } finally {
+        LLVMDisposeMemoryBuffer(memoryBuffer)
+    }
+}

@@ -26,29 +26,8 @@ interface RuntimeAware {
     val runtime: Runtime
 }
 
-class Runtime(private val bitcodeFile: String) {
-    val llvmModule: LLVMModuleRef
-
-    init {
-        llvmModule = memScoped {
-
-            val bufRef = alloc<LLVMMemoryBufferRefVar>()
-            val errorRef = allocPointerTo<CInt8Var>()
-
-            val res = LLVMCreateMemoryBufferWithContentsOfFile(bitcodeFile, bufRef.ptr, errorRef.ptr)
-            if (res != 0) {
-                throw Error(errorRef.value?.toKString())
-            }
-
-            val moduleRef = alloc<LLVMModuleRefVar>()
-            val parseRes = LLVMParseBitcode2(bufRef.value, moduleRef.ptr)
-            if (parseRes != 0) {
-                throw Error(parseRes.toString())
-            }
-
-            moduleRef.value!!
-        }
-    }
+class Runtime(bitcodeFile: String) {
+    val llvmModule: LLVMModuleRef = parseBitcodeFile(bitcodeFile)
 
     private fun getStructType(name: String) = LLVMGetTypeByName(llvmModule, "struct.$name")!!
 

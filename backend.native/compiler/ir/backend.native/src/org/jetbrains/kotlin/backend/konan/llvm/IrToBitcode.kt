@@ -76,6 +76,16 @@ internal fun emitLLVM(context: Context) {
             irModule.acceptVoid(MetadatorVisitor(context))
         }
 
+        phaser.phase(KonanPhase.BITCODE_LINKER) {
+            for (library in context.config.nativeLibraries) {
+                val libraryModule = parseBitcodeFile(library)
+                val failed = LLVMLinkModules2(llvmModule, libraryModule)
+                if (failed != 0) {
+                    throw Error("failed to link $library") // TODO: retrieve error message from LLVM.
+                }
+            }
+        }
+
         val outFile = context.config.configuration.get(KonanConfigKeys.BITCODE_FILE)!!
         LLVMWriteBitcodeToFile(llvmModule, outFile)
 }
