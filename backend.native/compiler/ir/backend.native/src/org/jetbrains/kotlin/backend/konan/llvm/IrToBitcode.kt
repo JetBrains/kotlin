@@ -327,8 +327,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     //-------------------------------------------------------------------------//
 
     private inner class LoopScope(val loop: IrLoop) : InnerScopeImpl() {
-        val loopExit  = codegen.basicBlock()
-        val loopCheck = codegen.basicBlock()
+        val loopExit  = codegen.basicBlock("loop_exit")
+        val loopCheck = codegen.basicBlock("loop_check")
 
         override fun genBreak(destination: IrBreak) {
             if (destination.loop == loop)
@@ -1033,8 +1033,8 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         // "When" has exit block if:
         //      its type is not Nothing - we must place phi in the exit block
         //      or it doesn't cover all cases - we may fall through all of them and must create exit block to continue.
-        if (!isNothing || !coverAllCases)             // If "when" has "exit".
-            bbExit = codegen.basicBlock()             // Create basic block to process "exit".
+        if (!isNothing || !coverAllCases)                       // If "when" has "exit".
+            bbExit = codegen.basicBlock("when_exit")            // Create basic block to process "exit".
 
         val llvmType = codegen.getLLVMType(expression.type)
         val resultPhi = if (isUnit || isNothing || !coverAllCases) null else
@@ -1045,7 +1045,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         expression.branches.forEach {                           // Iterate through "when" branches (clauses).
             var bbNext = bbExit                                 // For last clause bbNext coincides with bbExit.
             if (it != expression.branches.last())               // If it is not last clause.
-                bbNext = codegen.basicBlock()                   // Create new basic block for next clause.
+                bbNext = codegen.basicBlock("when_next")        // Create new basic block for next clause.
             generateWhenCase(resultPhi, it, bbNext, bbExit)     // Generate code for current clause.
         }
 
@@ -1063,7 +1063,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateWhileLoop(loop: IrWhileLoop): LLVMValueRef {
         val loopScope = LoopScope(loop)
         using(loopScope) {
-            val loopBody  = codegen.basicBlock()
+            val loopBody  = codegen.basicBlock("while_loop")
             codegen.br(loopScope.loopCheck)
 
             codegen.positionAtEnd(loopScope.loopCheck)
@@ -1087,7 +1087,7 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
     private fun evaluateDoWhileLoop(loop: IrDoWhileLoop): LLVMValueRef {
         val loopScope = LoopScope(loop)
         using(loopScope) {
-            val loopBody = codegen.basicBlock()
+            val loopBody = codegen.basicBlock("do_while_loop")
             codegen.br(loopBody)
 
             codegen.positionAtEnd(loopBody)
@@ -1210,9 +1210,9 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val type     = value.typeOperand
         val srcArg   = evaluateExpression(value.argument)     // Evaluate src expression.
 
-        val bbExit       = codegen.basicBlock()
-        val bbInstanceOf = codegen.basicBlock()
-        val bbNull       = codegen.basicBlock()
+        val bbExit       = codegen.basicBlock("instance_of_exit")
+        val bbInstanceOf = codegen.basicBlock("instance_of_notnull")
+        val bbNull       = codegen.basicBlock("instance_of_null")
 
         val condition = codegen.icmpEq(srcArg, codegen.kNullObjHeaderPtr)
         codegen.condBr(condition, bbNull, bbInstanceOf)
@@ -1773,10 +1773,10 @@ internal class CodeGeneratorVisitor(val context: Context) : IrElementVisitorVoid
         val brResult = if (isUnconditional(branch)) {                                // It is the "else" clause.
             evaluateExpression(branchResult)                                         // Generate clause body.
         } else {                                                                     // It is conditional clause.
-            val bbCurr = codegen.basicBlock()                                        // Create block for clause body.
+            val bbCase = codegen.basicBlock("when_case")                             // Create block for clause body.
             val condition = evaluateExpression(branch.condition)                     // Generate cmp instruction.
-            codegen.condBr(condition, bbCurr, bbNext)                                // Conditional branch depending on cmp result.
-            codegen.positionAtEnd(bbCurr)                                            // Switch generation to block for clause body.
+            codegen.condBr(condition, bbCase, bbNext)                                // Conditional branch depending on cmp result.
+            codegen.positionAtEnd(bbCase)                                            // Switch generation to block for clause body.
             evaluateExpression(branch.result)                                        // Generate clause body.
         }
         if (!codegen.isAfterTerminator()) {

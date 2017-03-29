@@ -292,7 +292,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
                 throw IllegalArgumentException(message)
             }
 
-            val success = basicBlock()
+            val success = basicBlock("call_success")
             val result = LLVMBuildInvoke(builder, llvmFunction, rargs, args.size, success, landingpad, "")!!
             positionAtEnd(success)
             return result
