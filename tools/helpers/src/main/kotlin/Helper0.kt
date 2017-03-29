@@ -8,6 +8,10 @@ class Helper0(val dependenciesDir: String,
               val dependencies: List<String>): Runnable {
 
     override fun run() {
-        DependencyDownloader(File(dependenciesDir), properties, dependencies).run()
+        DependencyDownloader(
+                File(dependenciesDir),
+                properties.getProperty("dependenciesUrl", "https://download.jetbrains.com/kotlin/native"),
+                dependencies
+        ).run()
     }
 }

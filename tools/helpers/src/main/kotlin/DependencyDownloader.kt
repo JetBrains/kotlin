@@ -6,7 +6,7 @@ import java.util.Properties
 import kotlin.concurrent.thread
 
 // TODO: Try to use some dependency management system (Ivy?)
-class DependencyDownloader(dependenciesRoot: File, val properties: Properties, val dependencies: List<String>) {
+class DependencyDownloader(dependenciesRoot: File, val dependenciesUrl: String, val dependencies: List<String>) {
 
     val dependenciesDirectory = dependenciesRoot.apply { mkdirs() }
     val cacheDirectory = System.getProperty("user.home")?.let {
@@ -14,9 +14,6 @@ class DependencyDownloader(dependenciesRoot: File, val properties: Properties, v
     } ?: dependenciesRoot
 
     val lockFile = File(cacheDirectory, ".lock").apply { if (!exists()) createNewFile() }
-
-    val dependenciesUrl: String =
-            properties.getProperty("dependenciesUrl", "https://jetbrains.bintray.com/kotlin-native-dependencies")
 
     var isInfoShown = false
 

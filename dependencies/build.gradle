@@ -26,7 +26,11 @@ abstract class NativeDep extends DefaultTask {
     abstract String getFileName()
 
     protected String getUrl() {
-        return "https://jetbrains.bintray.com/kotlin-native-dependencies/$fileName"
+        return "$baseUrl/$fileName"
+    }
+
+    protected String getBaseUrl() {
+        return "https://jetbrains.bintray.com/kotlin-native-dependencies"
     }
 
     protected File getBaseOutDir() {
@@ -88,9 +92,7 @@ class HelperNativeDep extends TgzNativeDep {
             main = "org.jetbrains.kotlin.konan.MainKt"
             classpath += project.findProject(':tools:helpers').getConfigurations().getByName("runtime")
             classpath += project.findProject(':tools:helpers').getConfigurations().getByName("runtime").artifacts.files
-                    args baseOutDir.canonicalPath,
-                    project.findProject(":backend.native").file("konan.properties").canonicalPath,
-                    baseName
+            args baseOutDir.canonicalPath, baseUrl, baseName
         }
     }
 }
