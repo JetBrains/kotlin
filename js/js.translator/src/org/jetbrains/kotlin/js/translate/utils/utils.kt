@@ -42,9 +42,8 @@ fun generateDelegateCall(
         fromDescriptor: FunctionDescriptor,
         toDescriptor: FunctionDescriptor,
         thisObject: JsExpression,
-        context: TranslationContext,
-        consumer: (JsStatement) -> Unit
-) {
+        context: TranslationContext
+): JsStatement {
     val overriddenMemberFunctionName = context.getNameForDescriptor(toDescriptor)
     val overriddenMemberFunctionRef = JsNameRef(overriddenMemberFunctionName, thisObject)
 
@@ -75,7 +74,7 @@ fun generateDelegateCall(
     val functionObject = simpleReturnFunction(context.getScopeForDescriptor(fromDescriptor), invocation)
     functionObject.parameters.addAll(parameters)
 
-    context.addFunctionToPrototype(classDescriptor, fromDescriptor, functionObject, consumer)
+    return context.addFunctionToPrototype(classDescriptor, fromDescriptor, functionObject)
 }
 
 fun <T, S> List<T>.splitToRanges(classifier: (T) -> S): List<Pair<List<T>, S>> {
@@ -123,12 +122,11 @@ fun getReferenceToJsClass(type: KotlinType, context: TranslationContext): JsExpr
 fun TranslationContext.addFunctionToPrototype(
         classDescriptor: ClassDescriptor,
         descriptor: FunctionDescriptor,
-        function: JsExpression,
-        consumer: (JsStatement) -> Unit
-) {
+        function: JsExpression
+): JsStatement {
     val prototypeRef = JsAstUtils.prototypeOf(getInnerReference(classDescriptor))
     val functionRef = JsNameRef(getNameForDescriptor(descriptor), prototypeRef)
-    consumer(JsAstUtils.assignment(functionRef, function).makeStmt())
+    return JsAstUtils.assignment(functionRef, function).makeStmt()
 }
 
 fun TranslationContext.addAccessorsToPrototype(

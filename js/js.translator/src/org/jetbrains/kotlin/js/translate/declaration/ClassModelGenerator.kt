@@ -192,9 +192,7 @@ class ClassModelGenerator(val context: StaticContext) {
             val sourceName = context.getNameForDescriptor(key).ident
             val targetName = context.getNameForDescriptor(value).ident
             if (sourceName != targetName) {
-                generateDelegateCall(descriptor, key, value, JsLiteral.THIS, translationContext) {
-                    model.postDeclarationBlock.statements += it
-                }
+                model.postDeclarationBlock.statements += generateDelegateCall(descriptor, key, value, JsLiteral.THIS, translationContext)
             }
         }
     }
@@ -229,9 +227,8 @@ class ClassModelGenerator(val context: StaticContext) {
         }
 
         val translationContext = TranslationContext.rootContext(context)
-        generateDelegateCall(descriptor, fromDescriptor, toDescriptor, JsLiteral.THIS, translationContext) {
-            model.postDeclarationBlock.statements += it
-        }
+        model.postDeclarationBlock.statements += generateDelegateCall(descriptor, fromDescriptor, toDescriptor, JsLiteral.THIS,
+                                                                      translationContext)
     }
 
     private fun copyMethod(
