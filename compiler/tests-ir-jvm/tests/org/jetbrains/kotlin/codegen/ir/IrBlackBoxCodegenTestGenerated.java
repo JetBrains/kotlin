@@ -2040,6 +2040,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                     doTest(fileName);
                 }
 
+                @TestMetadata("equalsHashCode.kt")
+                public void testEqualsHashCode() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/local/equalsHashCode.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("extension.kt")
                 public void testExtension() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/callableReference/function/local/extension.kt");

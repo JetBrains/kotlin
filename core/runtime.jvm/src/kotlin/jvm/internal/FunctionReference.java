@@ -86,7 +86,7 @@ public class FunctionReference extends CallableReference implements FunctionBase
         if (obj instanceof FunctionReference) {
             FunctionReference other = (FunctionReference) obj;
 
-            return getOwner().equals(other.getOwner()) &&
+            return (getOwner() == null ? other.getOwner() == null : getOwner().equals(other.getOwner())) &&
                    getName().equals(other.getName()) &&
                    getSignature().equals(other.getSignature()) &&
                    Intrinsics.areEqual(getBoundReceiver(), other.getBoundReceiver());
@@ -99,7 +99,7 @@ public class FunctionReference extends CallableReference implements FunctionBase
 
     @Override
     public int hashCode() {
-        return (getOwner().hashCode() * 31 + getName().hashCode()) * 31 + getSignature().hashCode();
+        return ((getOwner() == null ? 0 : getOwner().hashCode() * 31) + getName().hashCode()) * 31 + getSignature().hashCode();
     }
 
     @Override
