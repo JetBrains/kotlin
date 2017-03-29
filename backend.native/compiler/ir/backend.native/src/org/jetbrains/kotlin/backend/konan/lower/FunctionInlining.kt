@@ -240,7 +240,9 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
             val operandTypeDescriptor = newExpression.typeOperand.constructor.declarationDescriptor
             if (operandTypeDescriptor !is TypeParameterDescriptor) return newExpression        // It is not TypeParameter - do nothing
 
-            val typeNew         = typeArgsMap[operandTypeDescriptor]!!
+            var typeNew         = typeArgsMap[operandTypeDescriptor]!!
+            if (newExpression.typeOperand.isMarkedNullable)
+                typeNew = typeNew.makeNullable()
             val startOffset     = newExpression.startOffset
             val endOffset       = newExpression.endOffset
             val operator        = newExpression.operator
