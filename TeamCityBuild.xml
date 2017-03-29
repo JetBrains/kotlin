@@ -17,6 +17,7 @@
     <property name="compiler.version.java.bk" value="${version_substitute_dir}/KotlinCompilerVersion.java.bk"/>
     <property name="compiler.version.java.versioned" value="${compiler.version.java}.versioned"/>
     <property name="compiler.version.number" value="${build.number}"/>
+    <property name="compiler.ant.fork.jvmargs" value="-Xmx1024m"/>
 
     <property name="plugin.zip" value="${artifact.output.path}/kotlin-plugin-${build.number}.zip"/>
 

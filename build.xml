@@ -27,11 +27,12 @@
     <property name="protobuf.jar" value="${basedir}/dependencies/protobuf-2.6.1.jar"/>
     <property name="protobuf-lite.jar" value="${basedir}/dependencies/protobuf-2.6.1-lite.jar"/>
     <property name="javax.inject.jar" value="${basedir}/lib/javax.inject.jar"/>
+    <property name="gradle.logging.level" value=""/>
 
     <property name="java.target" value="1.8"/>
     <property name="java.target.1.6" value="1.6"/>
 
-    <condition property="bootstrap.or.local.build" value="true">
+    <condition property="bootstrap.or.local.build" value="true" else="false">
         <or>
             <istrue value="${bootstrap.build.no.tests}"/>
             <not>
@@ -630,6 +631,29 @@
         </copy>
         <delete file="${kotlin-home}/lib/kotlin-compiler.jar"/>
         <pack-compiler jarfile="${kotlin-home}/lib/kotlin-compiler.jar" compress="false"/>
+    </target>
+
+    <target name="compiler-fork">
+        <local name="jvmargs" />
+        <condition property="jvmargs" value="${compiler.ant.fork.jvmargs}" else="">
+            <isset property="compiler.ant.fork.jvmargs" />
+        </condition>
+
+        <java classname="org.apache.tools.ant.launch.Launcher"
+              fork="true"
+              failonerror="true"
+              timeout="4000000"
+              taskname="ant-fork">
+            <jvmarg line="${jvmargs}" />
+            <classpath>
+                <pathelement location="${ant.home}/lib/ant-launcher.jar"/>
+            </classpath>
+            <arg line="-Dbootstrap.or.local.build=${bootstrap.or.local.build}" />
+            <arg line="-Dbuild.number=${build.number}" />
+            <arg line="-f" />
+            <arg line="build.xml" />
+            <arg line="compiler" />
+        </java>
     </target>
 
     <target name="compiler">
@@ -1421,11 +1445,40 @@
         </pack-runtime-jar>
     </target>
 
+    <target name="gradle-runtime">
+        <local name="deployVersion" />
+        <condition property="deployVersion" value="" else="-PdeployVersion=${build.number}">
+            <equals arg1="${build.number}" arg2="snapshot" />
+        </condition>
+
+        <java classname="org.gradle.wrapper.GradleWrapperMain"
+              fork="true"
+              dir="${basedir}/libraries"
+              failonerror="true"
+              timeout="4000000"
+              maxmemory="400m"
+              taskname="gradle-runtime">
+            <classpath>
+                <pathelement location="${basedir}/libraries/gradle/wrapper/gradle-wrapper.jar"/>
+            </classpath>
+            <arg line="clean" />
+            <arg line="dist" />
+            <arg line="publish" />
+            <arg line="--no-daemon -Dkotlin.daemon.jvm.options=-Xmx700m -Dkotlin.daemon.verbose=true" />
+            <arg line="${deployVersion}" />
+            <arg line="${gradle.logging.level}" />
+        </java>
+    </target>
+
     <target name="runtime"
             depends="builtins,stdlib,kotlin-test,core,reflection,pack-runtime,pack-runtime-sources,script-runtime,mock-runtime-for-test"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,ant-tools,runtime,kotlin-js-stdlib,android-extensions-compiler,allopen-compiler-plugin,noarg-compiler-plugin,sam-with-receiver-compiler-plugin,source-sections-compiler-plugin,annotation-processing-under-jdk8,daemon-client,compiler-client-embeddable,kotlin-build-common-test"
+            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler-fork,compiler-sources,ant-tools,gradle-runtime,runtime,kotlin-js-stdlib,android-extensions-compiler,allopen-compiler-plugin,noarg-compiler-plugin,sam-with-receiver-compiler-plugin,source-sections-compiler-plugin,annotation-processing-under-jdk8,daemon-client,kotlin-build-common-test"
+            description="Builds redistributables from sources"/>
+
+    <target name="dist-no-fork"
+            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,ant-tools,gradle-runtime,runtime,kotlin-js-stdlib,android-extensions-compiler,allopen-compiler-plugin,noarg-compiler-plugin,sam-with-receiver-compiler-plugin,source-sections-compiler-plugin,annotation-processing-under-jdk8,daemon-client,compiler-client-embeddable,kotlin-build-common-test"
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"
