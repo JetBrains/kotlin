@@ -59,4 +59,13 @@ class KotlinGradlePluginMultiVersionIT : BaseMultiGradleVersionIT() {
             assertNotContains("None of the classes needs to be compiled!")
         }
     }
+
+    @Test fun testApplyPluginFromBuildSrc() {
+        val project = Project("kotlinProjectWithBuildSrc", gradleVersion)
+        project.setupWorkingDir()
+        File(project.projectDir, "buildSrc/build.gradle").modify { it.replace("\$kotlin_version", KOTLIN_VERSION) }
+        project.build("build") {
+            assertSuccessful()
+        }
+    }
 }

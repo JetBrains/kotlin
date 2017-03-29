@@ -33,7 +33,7 @@ import javax.inject.Inject
 
 abstract class KotlinBasePluginWrapper(protected val fileResolver: FileResolver): Plugin<Project> {
     private val log = Logging.getLogger(this.javaClass)
-    protected val kotlinPluginVersion = loadKotlinVersionFromResource(log)
+    val kotlinPluginVersion = loadKotlinVersionFromResource(log)
 
     override fun apply(project: Project) {
         // TODO: consider only set if if daemon or parallel compilation are enabled, though this way it should be safe too
