@@ -2,6 +2,8 @@ package org.jetbrains.kotlin.konan
 
 import java.io.*
 import java.net.URL
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import java.util.Properties
 import kotlin.concurrent.thread
 
@@ -44,7 +46,6 @@ class DependencyDownloader(dependenciesRoot: File, val dependenciesUrl: String, 
         val depDir = File(dependenciesDirectory, dependency)
         val depName = depDir.name
 
-        val cachedDependencies = DependencyFile(cacheDirectory, ".cached")
         val extractedDependencies = DependencyFile(dependenciesDirectory, ".extracted")
         if (extractedDependencies.contains(depName) &&
                 depDir.exists() &&
@@ -59,9 +60,8 @@ class DependencyDownloader(dependenciesRoot: File, val dependenciesUrl: String, 
         }
 
         val archive = File(cacheDirectory.canonicalPath, "$depName.tar.gz")
-        if (!cachedDependencies.contains(depName) || !archive.exists()) {
+        if (!archive.exists()) {
             download(depName, archive)
-            cachedDependencies.addWithSave(depName)
         }
         extract(archive, dependenciesDirectory)
         extractedDependencies.addWithSave(depName)
@@ -97,44 +97,49 @@ class DependencyDownloader(dependenciesRoot: File, val dependenciesUrl: String, 
     }
 
     private fun download(dependencyName: String, outputFile: File) {
-        if (!outputFile.exists()) {
-            val url = URL("$dependenciesUrl/$dependencyName.tar.gz")
-            val connection = url.openConnection()
-            val totalBytes = connection.contentLengthLong
+        val tmpFile = File("${outputFile.canonicalPath}.part")
+        val url = URL("$dependenciesUrl/$dependencyName.tar.gz")
+        val connection = url.openConnection()
+        val totalBytes = connection.contentLengthLong
 
-            var currentBytes = 0L
-            var done = false
-            var downloadError: Throwable? = null
+        var currentBytes = 0L
+        var done = false
+        var downloadError: Throwable? = null
 
-            thread {
-                try {
-                    url.openStream().use { from ->
-                        outputFile.outputStream().use { to ->
-                            val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
-                            var read = from.read(buffer)
-                            while (read != -1) {
-                                to.write(buffer, 0, read)
-                                currentBytes += read
-                                read = from.read(buffer)
-                            }
+        thread {
+            try {
+                url.openStream().use { from ->
+                    FileOutputStream(tmpFile, false).use { to ->
+                        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+                        var read = from.read(buffer)
+                        while (read != -1) {
+                            to.write(buffer, 0, read)
+                            currentBytes += read
+                            read = from.read(buffer)
                         }
                     }
-                } catch (e: Throwable) {
-                    downloadError = e
                 }
-                done = true
+            } catch (e: Throwable) {
+                downloadError = e
             }
-
-            // TODO: Improve console logging
-            while (!done) {
-                Thread.sleep(1000) // We can use condition variable here.
-                updateProgressMsg(url.toString(), currentBytes, totalBytes)
-            }
-            println("Done.")
-            if (downloadError != null) {
-                throw RuntimeException("Cannot download dependency: $url", downloadError)
-            }
+            done = true
         }
+
+        // TODO: Improve console logging
+        while (!done) {
+            Thread.sleep(1000) // We can use condition variable here.
+            updateProgressMsg(url.toString(), currentBytes, totalBytes)
+        }
+        println("Done.")
+        if (downloadError != null) {
+            tmpFile.delete()
+            throw RuntimeException("Cannot download dependency: $url", downloadError)
+        }
+        Files.move(
+                tmpFile.toPath(),
+                outputFile.toPath(),
+                StandardCopyOption.REPLACE_EXISTING
+        )
     }
 
     fun run() {
