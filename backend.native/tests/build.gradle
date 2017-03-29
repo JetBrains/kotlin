@@ -398,12 +398,12 @@ task enum1(type: RunKonanTest) {
 }
 
 task enum_valueOf(type: RunKonanTest) {
-    goldValue = "E1\nE2\nE3\n"
+    goldValue = "E1\nE2\nE3\nE1\nE2\nE3\n"
     source = "codegen/enum/valueOf.kt"
 }
 
 task enum_values(type: RunKonanTest) {
-    goldValue = "E3\nE1\nE2\n"
+    goldValue = "E3\nE1\nE2\nE3\nE1\nE2\n"
     source = "codegen/enum/values.kt"
 }
 
