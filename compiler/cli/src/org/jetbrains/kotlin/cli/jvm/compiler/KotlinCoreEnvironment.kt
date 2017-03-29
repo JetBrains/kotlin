@@ -307,15 +307,8 @@ class KotlinCoreEnvironment private constructor(
     internal fun findLocalDirectory(absolutePath: String): VirtualFile? =
             applicationEnvironment.localFileSystem.findFileByPath(absolutePath)
 
-    private fun findJarRoot(root: JvmClasspathRoot): VirtualFile? {
-        val path = root.file
-        val jarFile = applicationEnvironment.jarFileSystem.findFileByPath("$path${URLUtil.JAR_SEPARATOR}")
-        if (jarFile == null) {
-            report(STRONG_WARNING, "Classpath entry points to a file that is not a JAR archive: $path")
-            return null
-        }
-        return jarFile
-    }
+    private fun findJarRoot(root: JvmClasspathRoot): VirtualFile? =
+            applicationEnvironment.jarFileSystem.findFileByPath("${root.file}${URLUtil.JAR_SEPARATOR}")
 
     private fun getSourceRootsCheckingForDuplicates(): Collection<String> {
         val uniqueSourceRoots = Sets.newLinkedHashSet<String>()
