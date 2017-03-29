@@ -31,3 +31,9 @@ if (typeof String.prototype.endsWith === "undefined") {
         return lastIndex !== -1 && lastIndex === position;
     };
 }
+// For HtmlUnit and PhantomJs
+if (typeof ArrayBuffer.isView === "undefined") {
+    ArrayBuffer.isView = function(a) {
+        return a != null && a.__proto__ != null && a.__proto__.__proto__ === Int8Array.prototype.__proto__;
+    };
+}
