@@ -447,7 +447,7 @@ object KotlinCompilerClient {
             if (daemonOptions.runFilesPath.isNotEmpty()) {
                 val succeeded = isEchoRead.tryAcquire(daemonStartupTimeout, TimeUnit.MILLISECONDS)
                 if (!isProcessAlive(daemon))
-                    throw Exception("Daemon terminated unexpectedly")
+                    throw Exception("Daemon terminated unexpectedly with error code: ${daemon.exitValue()}")
                 if (!succeeded)
                     throw Exception("Unable to get response from daemon in $daemonStartupTimeout ms")
             }
@@ -461,6 +461,7 @@ object KotlinCompilerClient {
                 // TODO: find better method to stop the thread, but seems it will require asynchronous consuming of the stream
                 stdoutThread.stop()
             }
+            reportingTargets.out?.flush()
         }
     }
 }
