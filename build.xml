@@ -801,7 +801,7 @@
     </target>
 
     <target name="compiler-client-embeddable">
-        <cleandir dir="${output}/classes/android-extensions/compiler-client-embeddable"/>
+        <cleandir dir="${output}/classes/compiler-client-embeddable"/>
         <javac2 destdir="${output}/classes/compiler-client-embeddable" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
             <withKotlin modulename="compiler-deps">
                 <compilerarg value="-version"/>
@@ -832,6 +832,20 @@
                 <attribute name="Class-Path" value="kotlin-stdlib.jar"/>
             </manifest>
         </jarjar>
+
+        <jar jarfile="${output}/kotlin-compiler-client-embeddable-sources.jar">
+            <fileset dir="compiler/cli/cli-common/src"/>
+            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+            <zipfileset src="${output}/kotlin-daemon-client-sources.jar"/>
+
+            <manifest>
+                <attribute name="Built-By" value="${manifest.impl.vendor}"/>
+
+                <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
+                <attribute name="Implementation-Title" value="${manifest.impl.title.kotlin.compiler.client.embeddable.sources}"/>
+                <attribute name="Implementation-Version" value="${build.number}"/>
+            </manifest>
+        </jar>
     </target>
 
     <target name="android-extensions-compiler">

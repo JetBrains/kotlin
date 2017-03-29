@@ -24,21 +24,33 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.6</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.7</version>
                 <executions>
                     <execution>
-                        <id>empty-sources-jar</id>
-                        <phase>package</phase>
+                        <id>attach-artifacts</id>
+                        <phase>compile</phase>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>attach-artifact</goal>
                         </goals>
                         <configuration>
-                            <skipIfEmpty>false</skipIfEmpty>
-                            <classifier>sources</classifier>
-                            <classesDirectory>${basedir}/sources</classesDirectory>
+                            <artifacts>
+                                <artifact>
+                                    <file>${kotlin-dist}/kotlin-compiler-client-embeddable-sources.jar</file>
+                                    <type>jar</type>
+                                    <classifier>sources</classifier>
+                                </artifact>
+                            </artifacts>
                         </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>attach-empty-javadoc</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
