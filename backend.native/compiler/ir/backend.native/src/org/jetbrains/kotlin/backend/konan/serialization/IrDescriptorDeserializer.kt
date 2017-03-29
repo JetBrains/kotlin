@@ -124,6 +124,7 @@ internal class IrDescriptorDeserializer(val context: Context,
             KonanIr.KotlinDescriptor.Kind.VARIABLE ->
                 descriptorIndex[index]!!
 
+            KonanIr.KotlinDescriptor.Kind.CLASS,
             KonanIr.KotlinDescriptor.Kind.CONSTRUCTOR,
             KonanIr.KotlinDescriptor.Kind.FUNCTION,
             KonanIr.KotlinDescriptor.Kind.ACCESSOR -> {

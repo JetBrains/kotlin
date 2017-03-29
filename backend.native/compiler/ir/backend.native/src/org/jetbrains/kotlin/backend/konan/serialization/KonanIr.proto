@@ -72,6 +72,13 @@ message IrBlock {
     repeated IrStatement statement = 2; 
 }
 
+message MemberAccessCommon {
+    required TypeMap type_map = 3;
+    optional IrExpression dispatch_receiver = 5;
+    optional IrExpression extension_receiver = 6;
+    repeated IrExpression value_argument = 7;
+}
+
 message IrCall {
     enum Primitive {
         NOT_PRIMITIVE = 1;
@@ -81,17 +88,13 @@ message IrCall {
     }
     required Primitive kind = 1;
     required KotlinDescriptor descriptor = 2;
-    required TypeMap type_map = 3;
+    required MemberAccessCommon member_access = 3;
     optional KotlinDescriptor super = 4;
-    optional IrExpression dispatch_receiver = 5;
-    optional IrExpression extension_receiver = 6;
-    repeated IrExpression value_argument = 7;
 }
 
 message IrCallableReference {
     required KotlinDescriptor descriptor = 1;
     required TypeMap type_map = 2;
-    //required int32 value_parameters_size = 3;
 }
 
 message IrConst {
@@ -111,8 +114,17 @@ message IrConst {
 
 message IrDelegatingConstructorCall {
     required KotlinDescriptor descriptor = 1;
-    required TypeMap type_map = 2;
-    repeated IrExpression value_argument = 3;
+    required MemberAccessCommon member_access = 3;
+}
+
+message IrEnumConstructorCall {
+    required KotlinDescriptor descriptor = 2;
+    required MemberAccessCommon member_access = 3;
+}
+
+message IrGetEnumValue {
+    required KotlinType type = 1;
+    required KotlinDescriptor descriptor = 2;
 }
 
 message IrGetValue {
@@ -180,18 +192,21 @@ message IrOperation {
         IrCallableReference callable_reference = 4;
         IrConst const = 5;
         IrDelegatingConstructorCall delegating_constructor_call = 6;
-        IrGetValue get_value = 7;
-        IrGetObject get_object = 8;
-        IrInstanceInitializerCall instance_initializer_call = 9;
-        IrReturn return = 10;
-        IrSetVariable set_variable = 11;
-        IrStringConcat string_concat = 12;
-        IrThrow throw = 13;
-        IrTry try = 14;
-        IrTypeOp type_op = 15;
-        IrVararg vararg = 16;
-        IrWhen when = 17;
-        IrWhile while = 18;
+        //IrEnumEntry enum_entry = 7;
+        IrEnumConstructorCall enum_constructor_call = 8;
+        IrGetEnumValue get_enum_value = 9;
+        IrGetValue get_value = 10;
+        IrGetObject get_object = 11;
+        IrInstanceInitializerCall instance_initializer_call = 12;
+        IrReturn return = 13;
+        IrSetVariable set_variable = 14;
+        IrStringConcat string_concat = 15;
+        IrThrow throw = 16;
+        IrTry try = 17;
+        IrTypeOp type_op = 18;
+        IrVararg vararg = 19;
+        IrWhen when = 20;
+        IrWhile while = 21;
     }
 }
 
@@ -226,11 +241,16 @@ message IrClass {
     repeated IrDeclaration member = 1;
 }
 
+message IrEnumEntry {
+    optional IrExpression initializer = 1;
+}
+
 message IrDeclarator {
     oneof symbol {
         IrVar variable = 1;
         IrFunc function = 2;
         IrClass ir_class = 3;
+        IrEnumEntry ir_enum_entry = 4;
     }
 }
 
