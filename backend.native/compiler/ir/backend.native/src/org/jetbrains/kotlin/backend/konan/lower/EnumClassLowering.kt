@@ -266,10 +266,39 @@ internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
                 }
             }
 
-            val memberScope = SimpleMemberScope(irClass.descriptor.unsubstitutedMemberScope.getContributedDescriptors().toList())
-            defaultClassDescriptor.initialize(memberScope, constructors, null)
+            val contributedDescriptors = irClass.descriptor.unsubstitutedMemberScope
+                    .getContributedDescriptors()
+                    .map { createFakeOverrideDescriptor(defaultClassDescriptor, it) }
+                    .filterNotNull()
+                    .toList()
+            defaultClassDescriptor.initialize(SimpleMemberScope(contributedDescriptors), constructors, null)
 
             return defaultClass
+        }
+
+        private fun createFakeOverrideDescriptor(owner: ClassDescriptor, descriptor: DeclarationDescriptor): DeclarationDescriptor? {
+            // We need to copy descriptors for vtable building, thus take only functions and properties.
+            return when (descriptor) {
+                is FunctionDescriptor ->
+                    descriptor
+                            .newCopyBuilder()
+                            .setOwner(owner)
+                            .setKind(CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
+                            .setCopyOverrides(true)
+                            .build()!!.apply {
+                        overriddenDescriptors += descriptor
+                    }
+                is PropertyDescriptor ->
+                        descriptor.copy(
+                                /* newOwner      = */ owner,
+                                /* modality      = */ descriptor.modality,
+                                /* visibility    = */ descriptor.visibility,
+                                /* kind          = */ CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
+                                /* copyOverrides = */ true).apply {
+                            overriddenDescriptors += descriptor
+                        }
+                else -> null
+            }
         }
 
         private fun createImplObject() {
