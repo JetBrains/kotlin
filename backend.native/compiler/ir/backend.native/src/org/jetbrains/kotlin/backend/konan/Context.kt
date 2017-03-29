@@ -214,7 +214,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     // right after the frontend.
     // But we have to wait until the code generation phase,
     // to dump this information into generated file.
-    lateinit var serializedLinkData: String
+    var serializedLinkData: String? = null
 
     // TODO: make lateinit?
     var irModule: IrModuleFragment? = null

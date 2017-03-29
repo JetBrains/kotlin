@@ -149,10 +149,12 @@ internal class MetadataGenerator(override val context: Context): ContextUtils {
     }
 
     private fun addLinkData(module: IrModuleFragment) {
+        val moduleAsString = context.serializedLinkData
+        if (moduleAsString == null) return
+
         val abiVersion = context.config.configuration.get(KonanConfigKeys.ABI_VERSION)
         val abiNode = metadataString("$abiVersion")
         val moduleName = metadataString(module.descriptor.name.asString())
-        val moduleAsString = context.serializedLinkData
         val dataNode = metadataString(moduleAsString)
 
         val kmetadataArg  = metadataNode(listOf(abiNode, moduleName, dataNode))

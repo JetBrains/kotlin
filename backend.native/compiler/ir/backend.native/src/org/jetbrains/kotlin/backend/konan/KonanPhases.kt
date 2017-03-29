@@ -57,8 +57,11 @@ object KonanPhases {
         with (config.configuration) { with (KonanConfigKeys) { 
 
             // We disable inline IR deserialization
-            // until we have enough test passes
+            // until we have enough test passes.
             KonanPhase.DESERIALIZER.enabled = false
+
+            // Don't serialize anything to a final executable.
+            KonanPhase.SERIALIZER.enabled = getBoolean(NOLINK)
 
             val disabled = get(DISABLED_PHASES)
             disabled?.forEach { phases[known(it)]!!.enabled = false }
