@@ -21,21 +21,32 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.validateIrFile
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 internal class KonanLower(val context: Context) {
 
     fun lower() {
+        // Phases to run against whole module.
+        lowerModule(context.irModule!!)
+
+        // Phases to run against a file.
         context.irModule!!.files.forEach {
-            lower(it)
+            lowerFile(it)
         }
     }
 
-    fun lower(irFile: IrFile) {
+    fun lowerModule(irModule: IrModuleFragment) {
         val phaser = PhaseManager(context)
 
+        // Inlining must be run before other phases.
         phaser.phase(KonanPhase.LOWER_INLINE) {
-            FunctionInlining(context).inline(irFile)
+            FunctionInlining(context).inline(irModule)
         }
+    }
+
+    fun lowerFile(irFile: IrFile) {
+        val phaser = PhaseManager(context)
+
         phaser.phase(KonanPhase.LOWER_STRING_CONCAT) {
             StringConcatenationLowering(context).lower(irFile)
         }
