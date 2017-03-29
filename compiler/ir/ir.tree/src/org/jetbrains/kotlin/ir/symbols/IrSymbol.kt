@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 interface IrSymbol {
     val owner : IrSymbolOwner
     val descriptor: DeclarationDescriptor
+    val isBound: Boolean
 }
 
 interface IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolOwner> : IrSymbol {

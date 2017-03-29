@@ -34,6 +34,9 @@ abstract class IrBindableSymbolBase<out D : DeclarationDescriptor, B : IrSymbolO
         else
             throw IllegalStateException("Symbol for $descriptor is already bound")
     }
+
+    override val isBound: Boolean
+        get() = _owner != null
 }
 
 class IrFileSymbolImpl(descriptor: PackageFragmentDescriptor) :
