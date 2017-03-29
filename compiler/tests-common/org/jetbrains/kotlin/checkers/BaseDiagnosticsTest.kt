@@ -279,7 +279,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         )
 
         val LANGUAGE_DIRECTIVE = "LANGUAGE"
-        val LANGUAGE_VERSION = "LANGUAGE_VERSION"
         private val LANGUAGE_PATTERN = Pattern.compile("(\\+|\\-|warn:)(\\w+)\\s*")
 
         val DEFAULT_DIAGNOSTIC_TESTS_FEATURES = mapOf(
@@ -311,17 +310,14 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         private fun parseLanguageVersionSettings(directiveMap: Map<String, String>): LanguageVersionSettings? {
             val apiVersionString = directiveMap[API_VERSION_DIRECTIVE]
             val directives = directiveMap[LANGUAGE_DIRECTIVE]
-            val languageVersionDirective = directiveMap[LANGUAGE_VERSION]
-            if (apiVersionString == null && directives == null && languageVersionDirective == null) return null
+            if (apiVersionString == null && directives == null) return null
 
             val apiVersion = (if (apiVersionString != null) ApiVersion.parse(apiVersionString) else ApiVersion.LATEST_STABLE)
                              ?: error("Unknown API version: $apiVersionString")
 
             val languageFeatures = directives?.let(this::collectLanguageFeatureMap).orEmpty()
 
-            val languageVersion: LanguageVersion = languageVersionDirective?.let { LanguageVersion.fromVersionString(it) } ?: LanguageVersion.LATEST_STABLE
-
-            return DiagnosticTestLanguageVersionSettings(languageFeatures, apiVersion, languageVersion)
+            return DiagnosticTestLanguageVersionSettings(languageFeatures, apiVersion, LanguageVersion.LATEST_STABLE)
         }
 
         private fun collectLanguageFeatureMap(directives: String): Map<LanguageFeature, LanguageFeature.State> {
