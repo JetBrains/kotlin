@@ -63,5 +63,6 @@
     <orderEntry type="module" module-name="descriptors" />
     <orderEntry type="module" module-name="kotlin-gradle-tooling" />
     <orderEntry type="module" module-name="build-common" />
+    <orderEntry type="library" name="kotlinx-coroutines-core" level="project" />
   </component>
 </module>

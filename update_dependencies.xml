@@ -33,6 +33,8 @@
 
     <property name="uast.version" value="1.0.12"/>
 
+    <property name="kotlinx.coroutines.version" value="0.14.1"/>
+
     <property name="generators" value="${basedir}/generators"/>
 
     <property name="idea.dir" value="ideaSDK"/>
@@ -239,6 +241,11 @@
         <get-maven-library prefix="org/jetbrains/uast" lib="uast-common" version="${uast.version}" target.jar.name.base="uast-common" server="${uast.server}"/>
         <get-maven-library prefix="org/jetbrains/uast" lib="uast-java" version="${uast.version}" target.jar.name.base="uast-java" server="${uast.server}"/>
         <get-maven-library prefix="org/jetbrains/uast" lib="uast-tests" version="${uast.version}" target.jar.name.base="uast-tests" server="${uast.server}"/>
+
+
+        <!-- kotlinx.coroutines -->
+        <get-maven-library prefix="org/jetbrains/kotlinx" lib="kotlinx-coroutines-core" version="${kotlinx.coroutines.version}"
+                           target.jar.name.base="kotlinx-coroutines-core" server="http://dl.bintray.com/kotlin/kotlinx/"/>
 
         <!-- Closure Compiler -->
         <!-- A download url taken from http://code.google.com/p/closure-compiler/wiki/BinaryDownloads -->
