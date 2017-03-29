@@ -66,7 +66,7 @@ class NoErrorsInStdlibTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        return object : KotlinJdkAndLibraryProjectDescriptor(File("dist/classes/builtins")) {
+        return object : KotlinJdkAndLibraryProjectDescriptor(File("libraries/stdlib/build/classes/builtins")) {
             override fun getSdk(): Sdk? = PluginTestCaseBase.fullJdk()
         }
     }

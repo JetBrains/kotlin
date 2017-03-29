@@ -188,7 +188,7 @@ public final class RhinoUtils {
         try {
             runFileWithRhino(DIST_DIR_JS_PATH + "../../js/js.translator/testData/rhino-polyfills.js", context, scope);
             runFileWithRhino(DIST_DIR_JS_PATH + "kotlin.js", context, scope);
-            runFileWithRhino(DIST_DIR_JS_PATH + "../classes/kotlin-test-js/kotlin-test.js", context, scope);
+            runFileWithRhino(DIST_DIR_JS_PATH + "kotlin-test.js", context, scope);
 
             //runFileWithRhino(pathToTestFilesRoot() + "jshint.js", context, scope);
             for (String jsLibrary : jsLibraries) {

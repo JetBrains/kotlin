@@ -167,11 +167,16 @@ task relocatedSourcesJar(type: Jar) {
     from "${core}/reflection.jvm/src"
 }
 
-artifacts {
-    def artifactJar = [file: file(outputJarPath), builtBy: proguard, name: archivesBaseName]
+def artifactJar = [file: file(outputJarPath), builtBy: proguard, name: archivesBaseName]
 
+artifacts {
     runtime artifactJar
     archives artifactJar
     archives relocatedSourcesJar
     archives javadocJar
+}
+
+dist {
+    from(proguard)
+    from(relocatedSourcesJar)
 }

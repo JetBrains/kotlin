@@ -6,6 +6,17 @@ configureJvmProject(project)
 configurePublishing(project)
 
 sourceSets {
+    annotations {
+        if(!System.properties.'idea.active') {
+            java {
+                srcDir "${rootDir}/../core/runtime.jvm/src"
+                include 'org/jetbrains/annotations/**'
+            }
+            kotlin {
+                exclude '**/*'
+            }
+        }
+    }
     builtins {
         java {
             srcDir "${rootDir}/../core/builtins/src"
@@ -49,6 +60,16 @@ jar {
     from sourceSets.builtins.output
 }
 
+task distJar(type: Jar) {
+    baseName = 'dist-kotlin-stdlib'
+    version = null
+    manifestAttributes(manifest, project, 'Main')
+    from("${rootDir}/../dist/builtins")
+    from sourceSets.annotations.output
+    from sourceSets.builtins.output
+    from sourceSets.main.output
+}
+
 sourcesJar {
     from "${rootDir}/../core/builtins/native"
     from sourceSets.builtins.kotlin
@@ -57,6 +78,22 @@ sourcesJar {
 artifacts {
     archives sourcesJar
     archives javadocJar
+}
+
+dist {
+    [distJar, sourcesJar].forEach {
+        from(it) {
+            rename('dist-', '')
+        }
+        // legacy
+        from(it) {
+            rename('dist-', '')
+            rename('kotlin-stdlib', 'kotlin-runtime')
+        }
+    }
+    from (configurations.compile) {
+        include 'annotations*.jar'
+    }
 }
 
 compileBuiltinsKotlin {

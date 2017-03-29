@@ -41,3 +41,10 @@ artifacts {
     archives sourcesJar
     archives javadocJar
 }
+
+dist {
+    from (jar, sourcesJar)
+    from(compileKotlin2Js.kotlinOptions.outputFile) {
+        into '../../js'
+    }
+}

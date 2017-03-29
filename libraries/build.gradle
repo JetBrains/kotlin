@@ -14,7 +14,8 @@ buildscript {
 ext.JDK_16 = System.getenv("JDK_16")
 ext.JDK_17 = System.getenv("JDK_17")
 ext.JDK_18 = System.getenv("JDK_18")
-ext.bootstrapCompilerFile = project.file("${rootDir}/../dist/kotlinc/lib/kotlin-compiler.jar")
+ext.distDir = project.file("${rootDir}/../dist/kotlinc/lib")
+ext.bootstrapCompilerFile = project.file("${rootDir}/../dist/kotlin-compiler-for-maven.jar")
 
 allprojects {
     group = 'org.jetbrains.kotlin'
@@ -44,6 +45,12 @@ subprojects {
         classifier = 'javadoc'
     }
 
+}
+
+task clean {
+    doLast {
+        delete "${buildDir}/repo"
+    }
 }
 
 static def configureJvmProject(Project project) {
@@ -98,6 +105,12 @@ static def configurePublishing(Project project) {
 
         signArchives {
             enabled signing.required
+        }
+
+        task dist(type: Copy, dependsOn: assemble) {
+            rename "-${java.util.regex.Pattern.quote(version)}", ''
+            rename { String fileName -> 'gradle-' + fileName }
+            into distDir
         }
 
         uploadArchives {

@@ -23,6 +23,7 @@ compileTestKotlin {
 
 test {
     dependsOn cleanCompileTestKotlin
+    dependsOn(':kotlin-runtime:jar')
     dependsOn(':kotlin-stdlib:originalStdlibJar')
 
     systemProperties['overwrite.output'] = System.getProperty("overwrite.output", "false")

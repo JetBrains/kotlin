@@ -228,6 +228,20 @@ artifacts {
 }
 
 
+dist {
+    [mergedJar, sourcesJar].forEach {
+        from(it)
+        // legacy
+        from(it) {
+            rename("kotlin-stdlib-js", 'kotlin-jslib')
+        }
+    }
+    from(compileJs) {
+        into '../../js'
+    }
+}
+
+
 karma {
     dependencies(['qunitjs@1.23.1', 'karma-teamcity-reporter@0.1.2'])
 

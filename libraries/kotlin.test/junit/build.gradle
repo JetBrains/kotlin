@@ -21,6 +21,10 @@ artifacts {
     archives javadocJar
 }
 
+dist {
+    from (jar, sourcesJar)
+}
+
 compileKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", project.name]
 }

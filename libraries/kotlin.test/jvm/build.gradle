@@ -24,6 +24,10 @@ artifacts {
     archives javadocJar
 }
 
+dist {
+    from (jar, sourcesJar)
+}
+
 compileKotlin {
     // TODO: Why "-Xmulti-platfrom" ?
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform", "-module-name", project.archivesBaseName]

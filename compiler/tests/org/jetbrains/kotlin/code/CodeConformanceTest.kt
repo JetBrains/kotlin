@@ -29,6 +29,7 @@ class CodeConformanceTest : TestCase() {
         private val EXCLUDED_FILES_AND_DIRS = listOf(
                 "android.tests.dependencies",
                 "core/reflection.jvm/src/kotlin/reflect/jvm/internal/pcollections",
+                "libraries/tools/kotlin-reflect/build",
                 "libraries/tools/kotlin-reflect/target/copied-sources",
                 "libraries/tools/binary-compatibility-validator/src/main/kotlin/org.jetbrains.kotlin.tools",
                 "dependencies",

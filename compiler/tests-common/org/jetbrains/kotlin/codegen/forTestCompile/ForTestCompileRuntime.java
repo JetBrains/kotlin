@@ -65,7 +65,7 @@ public class ForTestCompileRuntime {
     @NotNull
     @Deprecated
     public static File[] runtimeClassesForTests() {
-        return new File[] { assertExists(new File("dist/builtins")), assertExists(new File("dist/classes/builtins")), assertExists(new File("dist/classes/stdlib")) };
+        return new File[] { assertExists(new File("dist/builtins")), assertExists(new File("libraries/stdlib/build/classes/builtins")), assertExists(new File("libraries/stdlib/build/classes/main")) };
     }
 
     @NotNull

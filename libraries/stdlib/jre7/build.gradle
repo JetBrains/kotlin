@@ -35,6 +35,10 @@ artifacts {
     archives javadocJar
 }
 
+dist {
+    from (jar, sourcesJar)
+}
+
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
     kotlinOptions.jdkHome = JDK_17
