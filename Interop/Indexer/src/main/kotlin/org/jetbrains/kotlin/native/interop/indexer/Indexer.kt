@@ -285,6 +285,11 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
                 getStructDeclAt(cursor)
             }
 
+            CXIdxEntity_Typedef -> {
+                val type = clang_getCursorType(cursor)
+                getTypedef(type)
+            }
+
             CXIdxEntity_Function -> {
                 val name = entityName!!
                 val returnType = convertType(clang_getCursorResultType(cursor))
