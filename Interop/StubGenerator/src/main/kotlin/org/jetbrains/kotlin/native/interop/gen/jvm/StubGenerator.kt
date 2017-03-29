@@ -378,9 +378,12 @@ class StubGenerator(
 
         is PointerType -> {
             val pointeeType = type.pointeeType
-            if (pointeeType.unwrapTypedefs() is VoidType) {
+            val unwrappedPointeeType = pointeeType.unwrapTypedefs()
+            if (unwrappedPointeeType is VoidType) {
                 val info = TypeInfo.Pointer("COpaque")
                 TypeMirror.ByValue("COpaquePointerVar", info, "COpaquePointer")
+            } else if (unwrappedPointeeType is ArrayType) {
+                mirror(pointeeType)
             } else {
                 val pointeeMirror = mirror(pointeeType)
                 val info = TypeInfo.Pointer(pointeeMirror.pointedTypeName)
@@ -392,9 +395,13 @@ class StubGenerator(
         is ArrayType -> {
             // TODO: array type doesn't exactly correspond neither to pointer nor to value.
             val elemTypeMirror = mirror(type.elemType)
-            val info = TypeInfo.Pointer(elemTypeMirror.pointedTypeName)
-            TypeMirror.ByValue("CArrayPointerVar<${elemTypeMirror.pointedTypeName}>", info,
-                    "CArrayPointer<${elemTypeMirror.pointedTypeName}>")
+            if (type.elemType.unwrapTypedefs() is ArrayType) {
+                elemTypeMirror
+            } else {
+                val info = TypeInfo.Pointer(elemTypeMirror.pointedTypeName)
+                TypeMirror.ByValue("CArrayPointerVar<${elemTypeMirror.pointedTypeName}>", info,
+                        "CArrayPointer<${elemTypeMirror.pointedTypeName}>")
+            }
         }
 
         is FunctionType -> byRefTypeMirror("CFunction<${type.kotlinName}>")
@@ -440,11 +447,6 @@ class StubGenerator(
      * Constructs [OutValueBinding] for the value of given C type.
      */
     fun getOutValueBinding(type: Type): OutValueBinding {
-        if (type.unwrapTypedefs() is ArrayType) {
-            // array-typed C function argument or return value is actually a pointer to array.
-            return getOutValueBinding(PointerType(type))
-        }
-
         val mirror = mirror(type)
 
         return OutValueBinding(
@@ -465,6 +467,10 @@ class StubGenerator(
         if (unwrappedPointeeType is VoidType || unwrappedPointeeType is FunctionType) {
             // Passing `void`s or function by value is not very sane:
             return null
+        }
+
+        if (unwrappedPointeeType is ArrayType) {
+            return representCFunctionParameterAsValuesRef(pointeeType)
         }
 
         return pointeeType
@@ -525,11 +531,6 @@ class StubGenerator(
      * Constructs [InValueBinding] for the value of given C type.
      */
     fun getInValueBinding(type: Type): InValueBinding  {
-        if (type.unwrapTypedefs() is ArrayType) {
-            // array-typed C function argument or return value is actually a pointer to array.
-            return getInValueBinding(PointerType(type))
-        }
-
         val mirror = mirror(type)
 
         return InValueBinding(
