@@ -101,6 +101,13 @@ val TargetPlatformKind<*>.mavenLibraryIds: List<String>
         is TargetPlatformKind.Common -> listOf(MAVEN_COMMON_STDLIB_ID)
     }
 
+val mavenLibraryIdToPlatform: Map<String, TargetPlatformKind<*>> by lazy {
+    TargetPlatformKind.ALL_PLATFORMS
+            .flatMap { platform -> platform.mavenLibraryIds.map { it to platform } }
+            .sortedByDescending { it.first.length }
+            .toMap()
+}
+
 fun Module.getOrCreateFacet(modelsProvider: IdeModifiableModelsProvider, useProjectSettings: Boolean): KotlinFacet {
     val facetModel = modelsProvider.getModifiableFacetModel(this)
 

@@ -44,7 +44,10 @@ class PlatformAndroidGradleDetector : KotlinPlatformGradleDetector {
                 .flatMap { it.data.jarLibraryDependencies.asSequence() }
                 .forEach {
                     val libraryName = it.name
-                    if (libraryName.substringBeforeLast("-") in libraryIds) return libraryName.substringAfterLast("-")
+                    for (libraryId in libraryIds) {
+                        val prefix = "$libraryId-"
+                        if (libraryName.startsWith(prefix)) return libraryName.substringAfter(prefix)
+                    }
                 }
         return null
     }

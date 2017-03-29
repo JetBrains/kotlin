@@ -91,12 +91,12 @@ class GradleFacetImportTest_3_3 : GradleImportingTestCase() {
                 repositories {
                     mavenCentral()
                     maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
+                        url 'http://dl.bintray.com/kotlin/kotlin-dev'
                     }
                 }
 
                 dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0")
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.2-eap-44")
                 }
             }
 
