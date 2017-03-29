@@ -52,8 +52,8 @@ private class TypeOperatorTransformer(val context: Context, val function: Functi
 
     private val builder = context.createIrBuilder(function)
 
-    val throwClassCastException by lazy {
-        context.builtIns.getKonanInternalFunctions("ThrowClassCastException").single()
+    val throwTypeCastException by lazy {
+        context.builtIns.getKonanInternalFunctions("ThrowTypeCastException").single()
     }
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
@@ -101,7 +101,7 @@ private class TypeOperatorTransformer(val context: Context, val function: Functi
                                 thenPart = if (typeOperand.isMarkedNullable)
                                     irNull()
                                 else
-                                    irCall(throwClassCastException),
+                                    irCall(throwTypeCastException),
 
                                 elsePart = irAs(irGet(argument), typeOperand.makeNotNullable())
                         )

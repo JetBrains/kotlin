@@ -31,6 +31,10 @@ fun ThrowClassCastException(): Nothing {
     throw ClassCastException()
 }
 
+fun ThrowTypeCastException(): Nothing {
+    throw TypeCastException()
+}
+
 @ExportForCppRuntime
 internal fun ThrowArithmeticException() : Nothing {
     throw ArithmeticException()
