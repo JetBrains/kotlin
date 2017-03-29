@@ -2,6 +2,8 @@ description = 'Kotlin Common Standard Library'
 
 apply plugin: 'kotlin-platform-common'
 
+configurePublishing(project)
+
 ext.commonSrcDir = "${buildDir}/common-sources"
 
 sourceSets {

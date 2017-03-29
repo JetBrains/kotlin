@@ -6,6 +6,9 @@ description = 'Kotlin Standard Library for JS'
 
 apply plugin: 'kotlin2js'
 
+configurePublishing(project)
+
+
 def builtinsSrcDir = "${buildDir}/builtin-sources"
 def commonSrcDir = "${buildDir}/common-sources"
 def commonTestSrcDir = "${buildDir}/common-test-sources"

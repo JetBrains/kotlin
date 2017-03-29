@@ -10,13 +10,14 @@ buildscript {
     }
 }
 
+apply plugin: 'base'
 apply plugin: 'com.github.johnrengelman.shadow'
 
-
 def protobufVersion = "2.6.1"
-def outputJarPath = "$buildDir/libs/${archivesBaseName}-${protobufVersion}.jar"
-
 version = protobufVersion
+
+def outputJarPath = "${libsDir}/${archivesBaseName}-${protobufVersion}.jar"
+
 
 configurations {
     protobuf

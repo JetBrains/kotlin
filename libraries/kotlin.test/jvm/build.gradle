@@ -4,6 +4,7 @@ description = 'Kotlin Test'
 apply plugin: 'kotlin-platform-jvm'
 
 configureJvmProject(project)
+configurePublishing(project)
 
 dependencies {
     implement project(':kotlin-test:kotlin-test-common')

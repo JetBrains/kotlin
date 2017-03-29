@@ -1,4 +1,3 @@
-
 buildscript {
     ext.kotlin_version = "1.1-SNAPSHOT"
     ext.kotlin_language_version = "1.1"
@@ -17,14 +16,12 @@ ext.JDK_17 = System.getenv("JDK_17")
 ext.JDK_18 = System.getenv("JDK_18")
 ext.bootstrapCompilerFile = project.file("${rootDir}/../dist/kotlinc/lib/kotlin-compiler.jar")
 
-allprojects  {
+allprojects {
     group = 'org.jetbrains.kotlin'
     version = "$kotlin_version"
 }
 
 subprojects {
-    apply plugin: 'maven'
-    apply plugin: 'signing'
 
     repositories {
         mavenCentral()
@@ -47,25 +44,6 @@ subprojects {
         classifier = 'javadoc'
     }
 
-    signing {
-        required { project.ext.has('signing.keyId') }
-        sign configurations.archives
-    }
-
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                repository(url: "file://${rootDir}/localRepo")
-                uniqueVersion = false
-                pom.version = kotlin_version
-                pom.project {
-                    groupId = project.group
-                    artifactId = project.name
-                    version = project.version
-                }
-            }
-        }
-    }
 }
 
 static def configureJvmProject(Project project) {
@@ -106,6 +84,64 @@ static def manifestAttributes(Manifest manifest, Project project, String compone
                 'Kotlin-Version': project.kotlin_language_version
         }
     }
+}
+
+static def configurePublishing(Project project) {
+    project.configure(project) {
+        apply plugin: 'maven'
+        apply plugin: 'signing'
+
+        signing {
+            required { (project.properties["signingRequired"] ?: false) }
+            sign configurations.archives
+        }
+
+        signArchives {
+            enabled signing.required
+        }
+
+        uploadArchives {
+            repositories {
+                mavenDeployer {
+                    beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+                    repository(url: project.properties["deployRepoUrl"] ?: "file://${rootProject.buildDir}/repo") {
+                        authentication(
+                                userName: project.properties["deployRepoUsername"],
+                                password: project.properties["deployRepoPassword"]
+                        )
+                    }
+                    pom.project {
+                        name "${project.group}:${project.name}"
+                        packaging 'jar'
+                        // optionally artifactId can be defined here
+                        description project.description
+                        url 'https://kotlinlang.org/'
+                        licenses {
+                            license {
+                                name 'The Apache License, Version 2.0'
+                                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            }
+                        }
+                        scm {
+                            url 'https://github.com/JetBrains/kotlin'
+                            connection 'scm:git:https://github.com/JetBrains/kotlin.git'
+                            developerConnection 'scm:git:https://github.com/JetBrains/kotlin.git'
+                        }
+                        developers {
+                            developer {
+                                name 'Kotlin Team'
+                                organization = 'JetBrains'
+                                organizationUrl 'https://www.jetbrains.com'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        task publish(dependsOn: uploadArchives)
+    }
+
 }
 
 def createPreprocessorTask(Project project, def name, def sourceDir, def targetDir, def profile = "JS") {

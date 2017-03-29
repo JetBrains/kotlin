@@ -2,6 +2,8 @@ description = 'Kotlin Test for JS'
 
 apply plugin: 'kotlin-platform-js'
 
+configurePublishing(project)
+
 dependencies {
     implement project(':kotlin-test:kotlin-test-common')
     compile project(':kotlin-stdlib-js')

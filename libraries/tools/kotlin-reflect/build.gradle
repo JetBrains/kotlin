@@ -16,6 +16,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'kotlin'
 
 configureJvmProject(project)
+configurePublishing(project)
 
 
 def core = "${rootDir}/../core"
@@ -99,7 +100,7 @@ task reflectShadowJar(type: ShadowJar) {
 createScriptTask(project, "stripMetadata") {
     dependsOn reflectShadowJar
     def inputJar = reflectShadowJar.archivePath
-    def outputJar = "${buildDir}/libs/kotlin-reflect-stripped.jar"
+    def outputJar = "${libsDir}/kotlin-reflect-stripped.jar"
     inputs.file(inputJar)
     outputs.file(outputJar)
     args += [
@@ -113,7 +114,7 @@ createScriptTask(project, "stripMetadata") {
 
 
 def mainArchiveName = "${archivesBaseName}-${project.version}.jar"
-def outputJarPath = "${buildDir}/libs/${mainArchiveName}"
+def outputJarPath = "${libsDir}/${mainArchiveName}"
 def rtJar = ['jre/lib/rt.jar', '../Classes/classes.jar'].collect { new File(JDK_16, it) }.find { it.isFile() }
 
 task proguard(type: proguard.gradle.ProGuardTask) {

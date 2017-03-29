@@ -3,6 +3,7 @@ description = 'Kotlin Standard Library'
 apply plugin: 'kotlin'
 
 configureJvmProject(project)
+configurePublishing(project)
 
 sourceSets {
     builtins {

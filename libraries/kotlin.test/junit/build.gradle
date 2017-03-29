@@ -3,6 +3,8 @@ description = 'Kotlin Test JUnit'
 apply plugin: 'kotlin'
 
 configureJvmProject(project)
+configurePublishing(project)
+
 
 dependencies {
     compile project(':kotlin-test:kotlin-test-jvm')

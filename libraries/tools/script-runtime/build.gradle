@@ -3,6 +3,7 @@ description 'Kotlin Script Runtime'
 apply plugin: 'kotlin'
 
 configureJvmProject(project)
+configurePublishing(project)
 
 dependencies {
     compileOnly project(':kotlin-stdlib')
