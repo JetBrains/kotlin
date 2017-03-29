@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ModuleContext
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.configureModule
@@ -40,7 +41,7 @@ fun createTopDownAnalyzerForJs(
         bindingTrace: BindingTrace,
         declarationProviderFactory: DeclarationProviderFactory,
         languageVersionSettings: LanguageVersionSettings,
-        fallbackMetadata: PackagesWithHeaderMetadata? = null
+        fallbackPackage: PackageFragmentProvider?
 ): LazyTopDownAnalyzer {
     val storageComponentContainer = createContainer("TopDownAnalyzerForJs", JsPlatform) {
         configureModule(moduleContext, JsPlatform, TargetPlatformVersion.NoVersion, bindingTrace)
@@ -57,10 +58,7 @@ fun createTopDownAnalyzerForJs(
     }.apply {
         val packagePartProviders = mutableListOf(get<KotlinCodeAnalyzer>().packageFragmentProvider)
         val moduleDescriptor = get<ModuleDescriptorImpl>()
-        if (fallbackMetadata != null) {
-            packagePartProviders += KotlinJavascriptSerializationUtil.readDescriptors(
-                    fallbackMetadata, moduleContext.storageManager, moduleDescriptor, DeserializationConfiguration.Default)
-        }
+        fallbackPackage?.let { packagePartProviders += it }
         moduleDescriptor.initialize(CompositePackageFragmentProvider(packagePartProviders))
     }
     return storageComponentContainer.get<LazyTopDownAnalyzer>()

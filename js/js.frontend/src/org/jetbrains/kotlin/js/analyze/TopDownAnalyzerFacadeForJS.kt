@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
+import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 
 object TopDownAnalyzerFacadeForJS {
     @JvmStatic
@@ -54,11 +56,15 @@ object TopDownAnalyzerFacadeForJS {
             moduleContext: ModuleContext,
             config: JsConfig
     ): JsAnalysisResult {
+        val packageFragment = config.configuration[JSConfigurationKeys.FALLBACK_METADATA]?.let {
+            KotlinJavascriptSerializationUtil.readDescriptors(it, moduleContext.storageManager, moduleContext.module,
+                                                              DeserializationConfiguration.Default)
+        }
         val analyzerForJs = createTopDownAnalyzerForJs(
                 moduleContext, trace,
                 FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
                 config.configuration.languageVersionSettings,
-                config.configuration[JSConfigurationKeys.FALLBACK_METADATA]
+                packageFragment
         )
         analyzerForJs.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
         return JsAnalysisResult.success(trace, moduleContext.module)
