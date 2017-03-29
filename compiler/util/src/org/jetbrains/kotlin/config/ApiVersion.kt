@@ -17,11 +17,18 @@
 package org.jetbrains.kotlin.config
 
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.SinceKotlinInfo
+import org.jetbrains.kotlin.utils.DescriptionAware
 
 class ApiVersion private constructor(
         val version: MavenComparableVersion,
         val versionString: String
-) : Comparable<ApiVersion> {
+) : Comparable<ApiVersion>, DescriptionAware {
+    val isStable: Boolean
+        get() = this <= ApiVersion.LATEST_STABLE
+
+    override val description: String
+        get() = if (isStable) versionString else "$versionString (EXPERIMENTAL)"
+
     override fun compareTo(other: ApiVersion): Int =
             version.compareTo(other.version)
 

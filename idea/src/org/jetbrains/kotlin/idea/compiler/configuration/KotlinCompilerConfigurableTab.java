@@ -272,8 +272,13 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         return jvmVersion != null ? jvmVersion : JvmTarget.DEFAULT.getDescription();
     }
 
-    private static String getLanguageVersionOrDefault(@Nullable String languageVersion) {
-        return languageVersion != null ? languageVersion : LanguageVersion.LATEST_STABLE.getVersionString();
+    private static LanguageVersion getLanguageVersionOrDefault(@Nullable String languageVersion) {
+        LanguageVersion version = LanguageVersion.fromVersionString(languageVersion);
+        return version != null ? version : LanguageVersion.LATEST_STABLE;
+    }
+
+    private static ApiVersion getApiVersionOrDefault(@Nullable String apiVersion) {
+        return apiVersion != null ? ApiVersion.Companion.parse(apiVersion) : ApiVersion.LATEST_STABLE;
     }
 
     private static void setupFileChooser(
@@ -302,15 +307,15 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
 
     @SuppressWarnings("unchecked")
     private void restrictAPIVersions() {
-        String selectedAPIVersion = getSelectedAPIVersion();
-        final String selectedLanguageVersion = getSelectedLanguageVersion();
-        List<String> permittedAPIVersions = ArraysKt.mapNotNull(
+        ApiVersion selectedAPIVersion = getSelectedAPIVersion();
+        final LanguageVersion selectedLanguageVersion = getSelectedLanguageVersion();
+        List<ApiVersion> permittedAPIVersions = ArraysKt.mapNotNull(
                 LanguageVersion.values(),
-                new Function1<LanguageVersion, String>() {
+                new Function1<LanguageVersion, ApiVersion>() {
                     @Override
-                    public String invoke(LanguageVersion version) {
-                        return VersionComparatorUtil.compare(version.getVersionString(), selectedLanguageVersion) <= 0
-                               ? version.getVersionString()
+                    public ApiVersion invoke(LanguageVersion version) {
+                        return VersionComparatorUtil.compare(version.getVersionString(), selectedLanguageVersion.getVersionString()) <= 0
+                               ? ApiVersion.createByLanguageVersion(version)
                                : null;
                     }
                 }
@@ -319,7 +324,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                 new DefaultComboBoxModel(permittedAPIVersions.toArray())
         );
         apiVersionComboBox.setSelectedItem(
-                VersionComparatorUtil.compare(selectedAPIVersion, selectedLanguageVersion) <= 0
+                VersionComparatorUtil.compare(selectedAPIVersion.getVersionString(), selectedLanguageVersion.getVersionString()) <= 0
                 ? selectedAPIVersion
                 : selectedLanguageVersion
         );
@@ -339,9 +344,11 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
                 continue;
             }
 
-            languageVersionComboBox.addItem(version.getDescription());
-            apiVersionComboBox.addItem(version.getDescription());
+            languageVersionComboBox.addItem(version);
+            apiVersionComboBox.addItem(ApiVersion.createByLanguageVersion(version));
         }
+        languageVersionComboBox.setRenderer(new DescriptionListCellRenderer());
+        apiVersionComboBox.setRenderer(new DescriptionListCellRenderer());
     }
 
     @SuppressWarnings("unchecked")
@@ -392,7 +399,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     public boolean isModified() {
         return ComparingUtils.isModified(reportWarningsCheckBox, !commonCompilerArguments.suppressWarnings) ||
                !getSelectedLanguageVersion().equals(getLanguageVersionOrDefault(commonCompilerArguments.languageVersion)) ||
-               !getSelectedAPIVersion().equals(getLanguageVersionOrDefault(commonCompilerArguments.apiVersion)) ||
+               !getSelectedAPIVersion().equals(getApiVersionOrDefault(commonCompilerArguments.apiVersion)) ||
                !coroutineSupportComboBox.getSelectedItem().equals(CoroutineSupport.byCompilerArguments(commonCompilerArguments)) ||
                ComparingUtils.isModified(additionalArgsOptionsField, compilerSettings.additionalArguments) ||
                ComparingUtils.isModified(scriptTemplatesField, compilerSettings.scriptTemplates) ||
@@ -423,13 +430,15 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     }
 
     @NotNull
-    private String getSelectedLanguageVersion() {
-        return getLanguageVersionOrDefault((String) languageVersionComboBox.getSelectedItem());
+    private LanguageVersion getSelectedLanguageVersion() {
+        Object item = languageVersionComboBox.getSelectedItem();
+        return item != null ? (LanguageVersion) item : LanguageVersion.LATEST_STABLE;
     }
 
     @NotNull
-    private String getSelectedAPIVersion() {
-        return getLanguageVersionOrDefault((String) apiVersionComboBox.getSelectedItem());
+    private ApiVersion getSelectedAPIVersion() {
+        Object item = apiVersionComboBox.getSelectedItem();
+        return item != null ? (ApiVersion) item : ApiVersion.LATEST_STABLE;
     }
 
     public void applyTo(
@@ -440,8 +449,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     ) throws ConfigurationException {
         if (isProjectSettings) {
             boolean shouldInvalidateCaches =
-                    commonCompilerArguments.languageVersion != getSelectedLanguageVersion() ||
-                    commonCompilerArguments.apiVersion != getSelectedAPIVersion() ||
+                    commonCompilerArguments.languageVersion != getSelectedLanguageVersion().getVersionString() ||
+                    commonCompilerArguments.apiVersion != getSelectedAPIVersion().getVersionString() ||
                     !coroutineSupportComboBox.getSelectedItem().equals(CoroutineSupport.byCompilerArguments(commonCompilerArguments));
 
             if (shouldInvalidateCaches) {
@@ -458,8 +467,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         }
 
         commonCompilerArguments.suppressWarnings = !reportWarningsCheckBox.isSelected();
-        commonCompilerArguments.languageVersion = getSelectedLanguageVersion();
-        commonCompilerArguments.apiVersion = getSelectedAPIVersion();
+        commonCompilerArguments.languageVersion = getSelectedLanguageVersion().getVersionString();
+        commonCompilerArguments.apiVersion = getSelectedAPIVersion().getVersionString();
         LanguageFeature.State coroutineSupport = (LanguageFeature.State) coroutineSupportComboBox.getSelectedItem();
         commonCompilerArguments.coroutinesEnable = coroutineSupport == LanguageFeature.State.ENABLED;
         commonCompilerArguments.coroutinesWarn = coroutineSupport == LanguageFeature.State.ENABLED_WITH_WARNING;
@@ -507,7 +516,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     public void reset() {
         reportWarningsCheckBox.setSelected(!commonCompilerArguments.suppressWarnings);
         languageVersionComboBox.setSelectedItem(getLanguageVersionOrDefault(commonCompilerArguments.languageVersion));
-        apiVersionComboBox.setSelectedItem(getLanguageVersionOrDefault(commonCompilerArguments.apiVersion));
+        apiVersionComboBox.setSelectedItem(getApiVersionOrDefault(commonCompilerArguments.apiVersion));
         restrictAPIVersions();
         coroutineSupportComboBox.setSelectedItem(CoroutineSupport.byCompilerArguments(commonCompilerArguments));
         additionalArgsOptionsField.setText(compilerSettings.additionalArguments);

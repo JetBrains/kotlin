@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -150,13 +150,15 @@ class KotlinFacetEditorGeneralTab(
 
     inner class VersionValidator : FacetEditorValidator() {
         override fun check(): ValidationResult {
-            val apiLevel = editor.compilerConfigurable.apiVersionComboBox.selectedItem as? LanguageVersion?
+            val apiLevel = editor.compilerConfigurable.apiVersionComboBox.selectedItem as? ApiVersion?
                            ?: return ValidationResult.OK
             val languageLevel = editor.compilerConfigurable.languageVersionComboBox.selectedItem as? LanguageVersion?
                                 ?: return ValidationResult.OK
             val targetPlatform = editor.targetPlatformComboBox.selectedItem as TargetPlatformKind<*>?
             val libraryLevel = getLibraryLanguageLevel(editorContext.module, editorContext.rootModel, targetPlatform)
-            if (languageLevel < apiLevel || libraryLevel < apiLevel) {
+
+            val apiLevelVersion = LanguageVersion.fromVersionString(apiLevel.versionString) ?: return ValidationResult.OK
+            if (languageLevel < apiLevelVersion || libraryLevel < apiLevelVersion) {
                 return ValidationResult("Language version/Runtime version may not be less than API version", null)
             }
             return ValidationResult.OK
