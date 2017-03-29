@@ -4,15 +4,14 @@ import java.net.URL
 import java.util.jar.Attributes
 import java.util.jar.Manifest
 
-// "Kotlin Reflect" and "Kotlin Script Runtime" are different because unlike other libraries which are built with Maven, they're copied from dist
 val LIBRARIES = listOf(
         "kotlin-runtime",
         "kotlin-stdlib",
         "kotlin-stdlib-common",
         "kotlin-stdlib-jre7",
         "kotlin-stdlib-jre8",
-        "Kotlin Reflect",
-        "Kotlin Script Runtime"
+        "kotlin-reflect",
+        "kotlin-script-runtime"
 )
 
 const val KOTLIN_VERSION = "Kotlin-Version"

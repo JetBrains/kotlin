@@ -84,28 +84,28 @@
         <module>tools/kotlin-build-common-test</module>
         <module>tools/kotlin-maven-plugin</module>
 
-        <module>tools/runtime</module>
-        <module>tools/script-runtime</module>
-        <module>kotlin.test</module>
-        <module>stdlib/common</module>
-        <module>stdlib</module>
-        <module>stdlib/jre7</module>
-        <module>stdlib/jre8</module>
-        <module>stdlib/samples</module>
-        <module>tools/kotlin-reflect</module>
+        <!--<module>tools/runtime</module>-->
+        <!--<module>tools/script-runtime</module>-->
+        <!--<module>kotlin.test</module>-->
+        <!--<module>stdlib/common</module>-->
+        <!--<module>stdlib</module>-->
+        <!--<module>stdlib/jre7</module>-->
+        <!--<module>stdlib/jre8</module>-->
+        <!--<module>stdlib/samples</module>-->
+        <!--<module>tools/kotlin-reflect</module>-->
         <module>tools/kotlin-osgi-bundle</module>
 
         <module>tools/maven-archetypes</module>
 
-        <module>tools/binary-compatibility-validator</module>
+        <!--<module>tools/binary-compatibility-validator</module>-->
 
         <!--NB! kotlin-js-library should be built before kotlin-gradle-plugin-integration-tests-->
         <!--because it is used in tests but cannot be added as test-dependency-->
         <!--(kotlin-gradle-plugin module will be recognized as kotlin-js module)-->
         <module>tools/idl2k</module>
-        <module>tools/kotlin-js-library</module>
-        <module>tools/kotlin-js-tests</module>
-        <module>tools/kotlin-js-tests-junit</module>
+        <!--<module>tools/kotlin-js-library</module>-->
+        <!--<module>tools/kotlin-js-tests</module>-->
+        <!--<module>tools/kotlin-js-tests-junit</module>-->
         <module>tools/kotlin-annotation-processing</module>
         <module>tools/kotlin-annotation-processing-maven</module>
         <module>tools/kotlin-allopen</module>

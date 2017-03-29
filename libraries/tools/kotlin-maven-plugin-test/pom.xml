@@ -125,6 +125,7 @@
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-plugin:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-allopen:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-noarg:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-runtime:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-script-runtime:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-common:${project.version}</artifact>
@@ -132,7 +133,6 @@
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-jre7:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-jre8:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-reflect:${project.version}</artifact>
-                                <artifact>org.jetbrains.kotlin:kotlin-test-parent:${project.version}:pom</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test-common:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test-js:${project.version}</artifact>
