@@ -245,7 +245,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
     }
 
     @NotNull
-    private static String getModuleKindDescription(@NotNull String moduleKind) {
+    private static String getModuleKindDescription(@Nullable String moduleKind) {
+        if (moduleKind == null) return "";
         String result = moduleKindDescriptions.get(moduleKind);
         assert result != null : "Module kind " + moduleKind + " was not added to combobox, therefore it should not be here";
         return result;
