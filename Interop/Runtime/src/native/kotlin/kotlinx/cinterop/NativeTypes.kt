@@ -5,7 +5,7 @@ import konan.internal.Intrinsic
 class NativePtr private constructor() {
     @Intrinsic external operator fun plus(offset: Long): NativePtr
 
-    @Intrinsic private external fun toLong(): Long
+    @Intrinsic external fun toLong(): Long
 
     override fun equals(other: Any?) = (other is NativePtr) && konan.internal.areEqualByValue(this, other)
 
