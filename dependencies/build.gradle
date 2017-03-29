@@ -101,7 +101,7 @@ task hostLibffi(type: HelperNativeDep) {
 }
 
 task llvm(type: HelperNativeDep) {
-    baseName = "clang+llvm-$llvmVersion-$host"
+    baseName = "clang-llvm-$llvmVersion-$host"
 }
 
 if (isLinux()) {
