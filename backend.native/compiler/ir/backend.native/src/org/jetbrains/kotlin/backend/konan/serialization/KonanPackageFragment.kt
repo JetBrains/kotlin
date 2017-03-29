@@ -25,15 +25,25 @@ import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 
-class KonanPackageFragment( val proto: KonanLinkData.PackageFragment,
+class KonanPackageFragment(fqNameString: String,
+    packageLoader: (String)->KonanLinkData.PackageFragment,
     storageManager: StorageManager, module: ModuleDescriptor) : 
-    DeserializedPackageFragment(FqName(proto.getFqName()), 
+    DeserializedPackageFragment(FqName(fqNameString), 
         storageManager, module) {
 
-    private val nameResolver = 
-        NameResolverImpl(proto.getStringTable(), proto.getNameTable())
+    // The proto field is lazy so that we can load only needed
+    // packages from the library.
+    val proto: KonanLinkData.PackageFragment by lazy {
+        packageLoader(fqNameString)
+    }
 
-    override val classDataFinder = KonanClassDataFinder(proto, nameResolver)
+    private val nameResolver by lazy {
+        NameResolverImpl(proto.getStringTable(), proto.getNameTable())
+    }
+
+    override val classDataFinder by lazy {
+        KonanClassDataFinder(proto, nameResolver)
+    }
 
     override fun computeMemberScope(): DeserializedPackageMemberScope {
         val packageProto = proto.getPackage()

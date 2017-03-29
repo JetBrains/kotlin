@@ -35,33 +35,44 @@ fun loadMetadata(configuration: CompilerConfiguration, file: File): ModuleDescri
     var moduleName: String? = null
     val currentAbiVersion = configuration.get(KonanConfigKeys.ABI_VERSION)
 
-    reader.use {
-        val (nodeCount, kmetadataNodeArg) = reader.namedMetadataNode("kmetadata")
+    val (nodeCount, kmetadataNodeArg) = reader.namedMetadataNode("kmetadata")
 
-        if (nodeCount != 1) {
-            throw Error("Unknown metadata format. The 'kmetadata' node has ${nodeCount} arguments. Don't know what to do.")
-        }
-
-        val operands = reader.metadataNodeOperands(kmetadataNodeArg)
-
-        val abiNode = operands[0]
-        val nameNode = operands[1]
-        val dataNode = operands[2]
-
-        val abiVersion = reader.string(abiNode).toInt()
-
-        if (abiVersion != currentAbiVersion) {
-            throw Error("Expected ABI version ${currentAbiVersion}, but the binary is ${abiVersion}")
-        }
-        moduleName = reader.string(nameNode)
-
-        metadataAsString = reader.string(dataNode)
+    if (nodeCount != 1) {
+        throw Error("Unknown metadata format. The 'kmetadata' node has ${nodeCount} arguments. Don't know what to do.")
     }
 
+    val operands = reader.metadataNodeOperands(kmetadataNodeArg)
+
+    val abiNode = operands[0]
+    val nameNode = operands[1]
+    val dataNode = operands[2]
+
+    val abiVersion = reader.string(abiNode).toInt()
+
+    if (abiVersion != currentAbiVersion) {
+        throw Error("Expected ABI version ${currentAbiVersion}, but the binary is ${abiVersion}")
+    }
+    moduleName = reader.string(nameNode)
+
+    val tableOfContentsAsString = reader.string(dataNode)
+
     val moduleDescriptor = 
-        deserializeModule(configuration, metadataAsString!!, moduleName!!)
+        deserializeModule(configuration, {it->loadPackageFragment(reader, it)}, tableOfContentsAsString!!, moduleName!!)
 
     return moduleDescriptor
+}
+
+fun loadPackageFragment(reader: MetadataReader, fqName: String): String {
+    val (nodeCount, kpackageNodeArg) = reader.namedMetadataNode("kpackage:$fqName")
+
+    if (nodeCount != 1) {
+        throw Error("The 'kpackage:$fqName' node has ${nodeCount} arguments.")
+    }
+
+    val operands = reader.metadataNodeOperands(kpackageNodeArg)
+    val dataNode = operands[0]
+    val base64 =  reader.string(dataNode)
+    return base64
 }
 
 class MetadataReader(file: File) : Closeable {
@@ -165,16 +176,26 @@ internal class MetadataGenerator(override val context: Context): ContextUtils {
     }
 
     private fun addLinkData(module: IrModuleFragment) {
-        val moduleAsString = context.serializedLinkData
-        if (moduleAsString == null) return
+        val linkData = context.serializedLinkData
+        if (linkData == null) return
 
         val abiVersion = context.config.configuration.get(KonanConfigKeys.ABI_VERSION)
         val abiNode = metadataString("$abiVersion")
         val moduleName = metadataString(module.descriptor.name.asString())
-        val dataNode = metadataString(moduleAsString)
+        val module = linkData.module
+        val fragments = linkData.fragments
+        val fragmentNames = linkData.fragmentNames
+        val dataNode = metadataString(module)
 
         val kmetadataArg  = metadataNode(listOf(abiNode, moduleName, dataNode))
         emitModuleMetadata("kmetadata", kmetadataArg)
+
+        fragments.forEachIndexed { index, it ->
+            val name = fragmentNames.get(index)
+            val dataNode = metadataString(it)
+            val kpackageArg = metadataNode(listOf(dataNode))
+            emitModuleMetadata("kpackage:$name", kpackageArg)
+        }
     }
 
     internal fun endModule(module: IrModuleFragment) {

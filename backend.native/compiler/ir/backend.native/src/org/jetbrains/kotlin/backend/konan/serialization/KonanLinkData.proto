@@ -107,6 +107,6 @@ message Classes {
 }
 
 message Library {
-    repeated PackageFragment package_fragment = 2;
+    repeated string package_fragment_name = 1;
 }
 

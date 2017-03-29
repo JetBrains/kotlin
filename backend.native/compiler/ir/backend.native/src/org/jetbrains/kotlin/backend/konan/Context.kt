@@ -58,6 +58,11 @@ import java.util.*
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KProperty
 
+internal class LinkData(
+    val module: String,
+    val fragments: List<String>,
+    val fragmentNames: List<String> )
+
 internal class SpecialDescriptorsFactory(val context: Context) {
     private val enumSpecialDescriptorsFactory by lazy { EnumSpecialDescriptorsFactory(context) }
     private val outerThisDescriptors = mutableMapOf<ClassDescriptor, PropertyDescriptor>()
@@ -230,7 +235,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     // right after the frontend.
     // But we have to wait until the code generation phase,
     // to dump this information into generated file.
-    var serializedLinkData: String? = null
+    var serializedLinkData: LinkData? = null
 
     // TODO: make lateinit?
     var irModule: IrModuleFragment? = null
