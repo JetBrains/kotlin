@@ -314,14 +314,14 @@ private fun processLib(konanHome: String,
     val language = Language.C
     val excludeSystemLibs = config.getProperty("excludeSystemLibs")?.toBoolean() ?: false
 
-    val entryPoint = config.getSpaceSeparated("entryPoint").singleOrNull()
+    val entryPoint = config.getSpaceSeparated("entryPoint").atMostOne()
     val linkerOpts = 
         config.getSpaceSeparated("linkerOpts").toTypedArray() +
         defaultOpts + additionalLinkerOpts 
-    val linker = args["-linker"]?.singleOrNull() ?: config.getProperty("linker") ?: "clang"
+    val linker = args["-linker"]?.atMostOne() ?: config.getProperty("linker") ?: "clang"
     val excludedFunctions = config.getSpaceSeparated("excludedFunctions").toSet()
 
-    val fqParts = args["-pkg"]?.singleOrNull()?.let {
+    val fqParts = args["-pkg"]?.atMostOne()?.let {
         it.split('.')
     } ?: defFile!!.name.split('.').reversed().drop(1)
 
