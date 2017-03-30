@@ -22,16 +22,14 @@ import java.lang.invoke.*
 import java.lang.reflect.Method
 import kotlin.jvm.internal.cache.SmallArrayCache
 
-class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, type: MethodType, private val callableName: String, private val callableType: MethodType) {
-    private val CACHE_SIZE = 5
-
-    private val indyCache = SmallArrayCache<Class<*>, MethodHandle>(CACHE_SIZE)
-    private var reflectCache = SmallArrayCache<Class<*>, Method>(CACHE_SIZE)
+class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, type: MethodType, private val callableName: String, private val callableType: MethodType, cacheSize: Int) {
+    private val indyCache = SmallArrayCache<Class<*>, MethodHandle>(cacheSize)
+    private var reflectCache = SmallArrayCache<Class<*>, Method>(cacheSize)
 
     companion object {
         @JvmStatic
-        fun getBootstrap(lookup: MethodHandles.Lookup, name: String, type: MethodType, callableName: String, callableType: MethodType): CallSite {
-            val instance = ProtocolCallSite(lookup, name, type, callableName, callableType)
+        fun getBootstrap(lookup: MethodHandles.Lookup, name: String, type: MethodType, callableName: String, callableType: MethodType, cacheSize: Int): CallSite {
+            val instance = ProtocolCallSite(lookup, name, type, callableName, callableType, cacheSize)
             return ConstantCallSite(MethodHandles.constant(ProtocolCallSite::class.java, instance))
         }
     }
@@ -142,4 +140,3 @@ class ProtocolCallSite(private val lookup: MethodHandles.Lookup, name: String, t
     }
 
 }
-

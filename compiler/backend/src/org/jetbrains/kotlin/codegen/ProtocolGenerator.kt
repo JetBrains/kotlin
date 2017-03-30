@@ -35,6 +35,8 @@ import java.lang.reflect.Method
 abstract class ProtocolGenerator(protected val codegen: ExpressionCodegen) {
     private var last = 0
 
+    protected val CACHE_SIZE = 20
+
     fun putInvokerAndGenerateIfNeeded(method: CallableMethod, call: ResolvedCall<*>) {
         val candidate = call.candidateDescriptor
         val name = "proto$$last$${candidate.containingDeclaration.name}$${candidate.name}$${candidate.valueParameters.joinToString { it.type.toString() }}"
@@ -88,12 +90,13 @@ class IndyProtocolGenerator(codegen: ExpressionCodegen) : ProtocolGenerator(code
                 Type.getType(String::class.java),
                 Type.getType(MethodType::class.java),
                 Type.getType(String::class.java),
-                Type.getType(MethodType::class.java))
+                Type.getType(MethodType::class.java),
+                Type.getType(Int::class.javaPrimitiveType))
         val bootstrap = Handle(H_INVOKESTATIC, callSite, "getBootstrap", bootstrapDescriptor, true)
 
         // Review type mapper
         val signature = codegen.typeMapper.mapAsmMethod(call.resultingDescriptor as FunctionDescriptor)
-        mv.visitInvokeDynamicInsn("apply", "()L$callSite;", bootstrap, methodName.asString(), Type.getType(signature.descriptor))
+        mv.visitInvokeDynamicInsn("apply", "()L$callSite;", bootstrap, methodName.asString(), Type.getType(signature.descriptor), CACHE_SIZE)
 
         mv.visitVarInsn(ALOAD, 0)
 
@@ -147,9 +150,10 @@ class ReflectionProtocolGenerator(codegen: ExpressionCodegen) : ProtocolGenerato
                                        Type.getType(String::class.java),
                                        Type.getType(MethodType::class.java),
                                        Type.getType(String::class.java),
-                                       Type.getType(MethodType::class.java)), true)
+                                       Type.getType(MethodType::class.java),
+                                       Type.getType(Int::class.javaPrimitiveType)), true)
 
-        mv.visitInvokeDynamicInsn("apply", "()L$callSite;", bootstrap, methodName.asString(), Type.getType(method.getAsmMethod().descriptor))
+        mv.visitInvokeDynamicInsn("apply", "()L$callSite;", bootstrap, methodName.asString(), Type.getType(method.getAsmMethod().descriptor), CACHE_SIZE)
 
         mv.visitVarInsn(ALOAD, 0)
         mv.visitMethodInsn(INVOKEVIRTUAL, callSite, "getReflectMethod",

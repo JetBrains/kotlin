@@ -2235,10 +2235,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             v.aconst(null);
             v.athrow();
         }
-
-        if (returnType != null && state.getProtocolsBackend() == ProtocolsBackend.REFLECTION) {
-            StackValue.coerce(OBJECT_TYPE, asmType(returnType), v);
-        }
     }
 
     private void putReceiverAndInlineMarkerIfNeeded(
