@@ -186,7 +186,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
     private fun createInlineFunctionBody(functionDeclaration: IrFunction): IrInlineFunctionBody? {
 
-        val originBlockBody = functionDeclaration.body!!
+        val originBlockBody = functionDeclaration.body
         if (originBlockBody == null) return null                                            // TODO workaround
 
         val copyBlockBody = originBlockBody.accept(InlineCopyIr(), null) as IrBlockBody     // Create copy of original function body.

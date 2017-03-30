@@ -81,8 +81,13 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, val
             val constructors = oldDescriptor.constructors.map {
                 descriptorSubstituteMap[it] as ClassConstructorDescriptor
             }.toSet()
-            val oldPrimaryConstructor = oldDescriptor.unsubstitutedPrimaryConstructor!!
-            val primaryConstructor = descriptorSubstituteMap[oldPrimaryConstructor] as ClassConstructorDescriptor
+
+            var primaryConstructor: ClassConstructorDescriptor? = null
+            val oldPrimaryConstructor = oldDescriptor.unsubstitutedPrimaryConstructor
+            if (oldPrimaryConstructor != null) {
+                primaryConstructor = descriptorSubstituteMap[oldPrimaryConstructor] as ClassConstructorDescriptor
+            }
+
             newDescriptor.initialize(
                 oldDescriptor.unsubstitutedMemberScope,
                 constructors,
@@ -145,7 +150,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, val
                 oldDescriptor.source
             ).apply { isTailrec = oldDescriptor.isTailrec }
 
-            val newDispatchReceiverParameter = null
+            val newDispatchReceiverParameter = null                                         // TODO
             val newTypeParameters = oldDescriptor.typeParameters
             val newValueParameters = copyValueParameters(oldDescriptor.valueParameters, memberOwner)
 
@@ -197,7 +202,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, val
                 generateName(oldDescriptor.name),
                 oldDescriptor.modality,
                 oldDescriptor.kind,
-                listOf(context.builtIns.anyType),
+                listOf(context.builtIns.anyType),                                   // TODO get list of real supertypes
                 oldDescriptor.source,
                 oldDescriptor.isExternal
             )
@@ -249,11 +254,21 @@ internal class DeepCopyIrTreeWithDescriptors(val targetFunction: IrFunction, val
         override fun visitCall(expression: IrCall): IrExpression {
 
             val irCall = super.visitCall(expression) as IrCall
-            if (irCall !is IrCallImpl) return irCall
+            if (irCall !is IrCallImpl) return irCall                                        // TODO what other kinds of call can we meet?
 
-            val descriptor = descriptorSubstituteMap.getOrDefault(irCall.descriptor, irCall.descriptor) as FunctionDescriptor
-            return IrCallImpl(irCall.startOffset, irCall.endOffset, irCall.type, descriptor,
-                irCall.typeArguments, irCall.origin, irCall.superQualifier).apply {
+            val oldDescriptor = irCall.descriptor
+            val newDescriptor = descriptorSubstituteMap.getOrDefault(oldDescriptor,
+                oldDescriptor) as FunctionDescriptor
+
+            val oldSuperQualifier = irCall.superQualifier
+            var newSuperQualifier: ClassDescriptor? = oldSuperQualifier
+            if (newSuperQualifier != null) {
+                newSuperQualifier = descriptorSubstituteMap.getOrDefault(newSuperQualifier,
+                    newSuperQualifier) as ClassDescriptor
+            }
+
+            return IrCallImpl(irCall.startOffset, irCall.endOffset, irCall.type, newDescriptor,
+                irCall.typeArguments, irCall.origin, newSuperQualifier).apply {
                 irCall.descriptor.valueParameters.forEach {
                     val valueArgument = irCall.getValueArgument(it)
                     putValueArgument(it.index, valueArgument)
