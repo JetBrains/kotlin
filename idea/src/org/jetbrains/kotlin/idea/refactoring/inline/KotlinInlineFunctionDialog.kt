@@ -44,8 +44,6 @@ class KotlinInlineFunctionDialog(
         init()
     }
 
-    override fun allowInlineAll() = true
-
     override fun getNameLabelText(): String {
         val occurrencesString =
                 if (occurrencesNumber > -1) " - $occurrencesNumber occurrence${if (occurrencesNumber == 1) "" else "s"}"
@@ -64,15 +62,11 @@ class KotlinInlineFunctionDialog(
             if (function.isWritable) "Inline all and remove the function"
             else "All invocations in project"
 
-    override fun getKeepTheDeclarationText(): String? =
-            if (function.isWritable) "Inline all and keep the function"
-            else super.getKeepTheDeclarationText()
-
     public override fun doAction() {
         invokeRefactoring(
                 KotlinInlineCallableProcessor(project, replacementStrategy, function, reference,
                                               inlineThisOnly = isInlineThisOnly || allowInlineThisOnly,
-                                              deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration && !allowInlineThisOnly)
+                                              deleteAfter = !isInlineThisOnly && !allowInlineThisOnly)
         )
 
         val settings = JavaRefactoringSettings.getInstance()
