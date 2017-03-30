@@ -19,6 +19,9 @@
 #include <stdint.h>
 #include <ffi.h>
 
+#include "Memory.h"
+#include "Types.h"
+
 namespace {
 
 typedef int FfiTypeKind;
@@ -51,7 +54,7 @@ ffi_type* convertFfiTypeKindToType(FfiTypeKind typeKind) {
 
 extern "C" {
 
-void callWithVarargs(void* codePtr, void* returnValuePtr, FfiTypeKind returnTypeKind,
+void Kotlin_Interop_callWithVarargs(void* codePtr, void* returnValuePtr, FfiTypeKind returnTypeKind,
                      void** arguments, intptr_t* argumentTypeKinds,
                      int fixedArgumentsNumber, int totalArgumentsNumber) {
 
@@ -68,6 +71,21 @@ void callWithVarargs(void* codePtr, void* returnValuePtr, FfiTypeKind returnType
                      convertFfiTypeKindToType(returnTypeKind), argumentTypes);
 
     ffi_call(&cif, (void (*)())codePtr, returnValuePtr, arguments);
+}
+
+void* Kotlin_Interop_createStablePointer(KRef any) {
+    ::AddRef(any->container());
+    return reinterpret_cast<void*>(any);
+}
+
+void Kotlin_Interop_disposeStablePointer(void* pointer) {
+    KRef ref = reinterpret_cast<KRef>(pointer);
+    ::Release(ref->container());
+}
+
+OBJ_GETTER(Kotlin_Interop_derefStablePointer, void* pointer) {
+    KRef ref = reinterpret_cast<KRef>(pointer);
+    RETURN_OBJ(ref);
 }
 
 }

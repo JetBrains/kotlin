@@ -107,7 +107,7 @@ fun callWithVarargs(codePtr: NativePtr, returnValuePtr: NativePtr, returnTypeKin
             fixedArguments.size, totalArgumentsNumber)
 }
 
-@SymbolName("callWithVarargs")
+@SymbolName("Kotlin_Interop_callWithVarargs")
 private external fun callWithVarargs(codePtr: NativePtr, returnValuePtr: NativePtr, returnTypeKind: FfiTypeKind,
                                      arguments: NativePtr, argumentTypeKinds: NativePtr,
                                      fixedArgumentsNumber: Int, totalArgumentsNumber: Int)

@@ -261,6 +261,43 @@ Note that some function types are not supported currently. For example,
 it is not possible to get pointer to function that receives or returns structs
 by value.
 
+#### Passing user data to callbacks ####
+
+Often C APIs allow passing some user data to callbacks. Such data is usually
+provided by user when configuring the callback. It is passed to some C function
+(or written to the struct) as e.g. `void*`.
+However references to Kotlin objects can't be directly passed to C.
+So they require wrapping before configuring callback and then unwrapping in
+the callback itself, to safely swim from Kotlin to Kotlin through the C world.
+Such wrapping is possible with `StableObjPtr` class.
+
+To wrap the reference:
+```
+val stablePtr = StableObjPtr.create(kotlinReference)
+val voidPtr = stablePtr.value
+```
+where the `voidPtr` is `COpaquePointer` and can be passed to the C function.
+
+To unwrap the reference:
+
+```
+val stablePtr = StableObjPtr.fromValue(voidPtr)
+val kotlinReference = stablePtr.get()
+```
+where `kotlinReference` is the original wrapped reference (however it's type is
+`Any` so it may require casting).
+
+The created `StableObjPtr` should eventually be manually disposed using
+`.dispose()` method to prevent memory leaks:
+
+```
+stablePtr.dispose()
+```
+
+After that it becomes invalid, so `voidPtr` can't be unwrapped anymore.
+
+See `samples/libcurl` for more details.
+
 ### Definition file hints ###
 
 The `.def` file supports several options for adjusting generated bindings.
