@@ -285,6 +285,9 @@ task bundle(type: Tar) {
     }
     from(project.rootDir) {
         include 'samples/**'
+        include 'README.md'
+        include 'INTEROP.md'
+        include 'RELEASE_NOTES.md'
         into baseName
     }
     destinationDir = file('.')
