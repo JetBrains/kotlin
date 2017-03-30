@@ -288,6 +288,16 @@ task bundle(type: Tar) {
         include 'README.md'
         include 'INTEROP.md'
         include 'RELEASE_NOTES.md'
+        exclude '**/gradle.properties'
+        exclude '**/build'
+        exclude '**/.gradle'
+        rename { String fileName ->
+            if (fileName == "gradle.properties.for_bundle") {
+                return "gradle.properties"
+            } else {
+                return fileName
+            }
+        }
         into baseName
     }
     destinationDir = file('.')

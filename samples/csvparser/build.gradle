@@ -1,0 +1,36 @@
+buildscript {
+    ext.kotlin_version = '1.1.1'
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath files('../gradle-plugin.jar')
+        classpath "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    }
+}
+
+apply plugin: 'konan'
+
+konanInterop {
+    stdio {
+        defFile 'stdio.def'
+    }
+}
+
+konanArtifacts {
+    CsvParser {
+        inputFiles project.file('CsvParser.kt')
+        useInterop 'stdio'
+    }
+}
+
+
+build {
+    doLast {
+        copy {
+            from compileKonanCsvParser.artifactPath
+            into projectDir.canonicalPath
+        }
+    }
+}

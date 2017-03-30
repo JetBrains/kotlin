@@ -1,0 +1,44 @@
+buildscript {
+    ext.kotlin_version = '1.1.1'
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath files('../gradle-plugin.jar')
+        classpath "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    }
+}
+
+apply plugin: 'konan'
+
+konanInterop {
+    opengl {
+        defFile 'opengl.def'
+    }
+}
+
+
+konanArtifacts {
+    openGlTeapot {
+        inputFiles project.file("OpenGlTeapot.kt")
+        useInterop 'opengl'
+        def osName = System.getProperty("os.name")
+        if (osName.equals("Mac OS X")) {
+            linkerOpts "-framework OpenGL -framework GLUT"
+        }
+        if (osName.equals("Linux")) {
+            linkerOpts "-L/usr/lib/x86_64-linux-gnu -lglut -lGL -lGLU"
+        }
+    }
+}
+
+
+build {
+    doLast {
+        copy {
+            from compileKonanOpenGlTeapot.artifactPath
+            into projectDir.canonicalPath
+        }
+    }
+}

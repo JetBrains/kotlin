@@ -1,0 +1,38 @@
+buildscript {
+    ext.kotlin_version = '1.1.1'
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath files('../gradle-plugin.jar')
+        classpath "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    }
+}
+
+apply plugin: 'konan'
+
+konanInterop {
+    libcurl {
+        defFile 'libcurl.def'
+        includeDirs '/usr/include', '/opt/local/include', '/usr/local/opt/curl/include'
+    }
+}
+
+konanArtifacts {
+    Curl {
+        inputFiles project.fileTree('src')
+        useInterop 'libcurl'
+        linkerOpts "-L/opt/local/lib -L/usr/lib/x86_64-linux-gnu -L/usr/local/opt/curl/lib -lcurl"
+    }
+}
+
+
+build {
+    doLast {
+        copy {
+            from compileKonanCurl.artifactPath
+            into projectDir.canonicalPath
+        }
+    }
+}

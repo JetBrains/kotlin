@@ -1,0 +1,35 @@
+buildscript {
+    ext.kotlin_version = '1.1.1'
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath files('../gradle-plugin.jar')
+        classpath "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    }
+}
+
+apply plugin: 'konan'
+
+konanInterop {
+    sockets {
+        defFile "sockets.def"
+    }
+}
+
+konanArtifacts {
+    echoServer {
+        inputFiles project.file("EchoServer.kt")
+        useInterop "sockets"
+    }
+}
+
+build {
+    doLast {
+        copy {
+            from compileKonanEchoServer.artifactPath
+            into projectDir.canonicalPath
+        }
+    }
+}

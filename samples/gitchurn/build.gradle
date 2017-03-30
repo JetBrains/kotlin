@@ -1,0 +1,39 @@
+buildscript {
+    ext.kotlin_version = '1.1.1'
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath files('../gradle-plugin.jar')
+        classpath "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    }
+}
+
+apply plugin: 'konan'
+
+
+konanInterop {
+    libgit2 {
+        defFile 'libgit2.def'
+        includeDirs '/opt/local/include', '/usr/include', '/usr/local/include'
+    }
+}
+
+konanArtifacts {
+    gitchurn {
+        inputFiles project.fileTree('src')
+        useInterop 'libgit2'
+        linkerOpts "-L/opt/local/lib -L/usr/lib/x86_64-linux-gnu -L/usr/local/lib -lgit2"
+    }
+}
+
+
+build {
+    doLast {
+        copy {
+            from compileKonanGitchurn.artifactPath
+            into projectDir.canonicalPath
+        }
+    }
+}
