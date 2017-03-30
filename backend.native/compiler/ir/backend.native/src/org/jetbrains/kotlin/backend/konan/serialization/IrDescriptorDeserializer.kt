@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.contributedMethods
 import org.jetbrains.kotlin.backend.konan.llvm.base64Decode
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -323,6 +324,14 @@ internal class IrDescriptorDeserializer(val context: Context,
         val name = proto.name
 
         when (proto.kind) {
+            KotlinDescriptor.Kind.CLASS -> {
+                val parentScope = 
+                    parentMemberScopeByFqNameIndex(classOrPackage)
+                val clazz =  parentScope.getContributedClassifier(
+                    Name.identifier(name), NoLookupLocation.FROM_BACKEND)
+                return listOf(clazz!!)
+
+            }
             KotlinDescriptor.Kind.CONSTRUCTOR -> {
                 val parent = parentByFqNameIndex(classOrPackage)
                 assert(parent is ClassDescriptor)
@@ -332,9 +341,9 @@ internal class IrDescriptorDeserializer(val context: Context,
             KotlinDescriptor.Kind.FUNCTION -> {
                 val parentScope = 
                     parentMemberScopeByFqNameIndex(classOrPackage)
-                    return parentScope.contributedMethods.filter{
-                        it.name == Name.guessByFirstCharacter(name)
-                    }
+                return parentScope.contributedMethods.filter{
+                    it.name == Name.guessByFirstCharacter(name)
+                }
             }
             else -> TODO("Can't find matching names for ${proto.kind}")
         }
@@ -394,6 +403,8 @@ internal class IrDescriptorDeserializer(val context: Context,
                 selectAccessor(matching, proto)
             KotlinDescriptor.Kind.CONSTRUCTOR -> 
                 selectConstructor(matching, proto)
+            KotlinDescriptor.Kind.CLASS ->
+                matching.single()
             else -> TODO("don't know how to select ${proto.kind}")
         }
     }
@@ -416,6 +427,11 @@ internal class IrDescriptorDeserializer(val context: Context,
                 substituteAccessor(proto, originalDescriptor)
             is ClassConstructorDescriptor ->
                 substituteConstructor(proto, originalDescriptor)
+            is ClassDescriptor ->
+                // TODO: do we really need to ever substitute
+                // class descriptors here?
+                //substituteClass(proto, originalDescriptor)
+                originalDescriptor
             else -> error("unexpected type of public function")
         }
     }
