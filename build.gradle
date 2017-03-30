@@ -277,19 +277,18 @@ task cross_dist {
 
 task bundle(type: Tar) {
     dependsOn('cross_dist')
+    baseName = "kotlin-native-${simpleOsName()}-${project.konanVersion}"
     from("$project.rootDir/dist") {
         include '**'
         exclude 'dependencies'
-        into 'kotlin-native'
+        into baseName
     }
     from(project.rootDir) {
         include 'samples/**'
-        into 'kotlin-native'
+        into baseName
     }
-    baseName = 'kotlin-native'
-    appendix = simpleOsName()
     destinationDir = file('.')
-    extension = 'tgz'
+    extension = 'tar.gz'
     compression = Compression.GZIP
 }
 
