@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.hasBody
 
 abstract class KtLightMemberImpl<out D : PsiMember>(
         computeRealDelegate: () -> D,
@@ -104,17 +105,23 @@ class KtLightModifierList(
     private val clsDelegate by lazyPub { owner.clsDelegate.modifierList!! }
     private val _annotations by lazyPub { computeAnnotations(this, clsDelegate) }
 
-    override fun hasModifierProperty(name: String): Boolean {
-        if (dummyDelegate != null) {
-            if (name in visibilityModifiers) {
-                if (owner.kotlinOrigin?.hasModifier(KtTokens.OVERRIDE_KEYWORD) ?: false) {
-                    return clsDelegate.hasModifierProperty(name)
-                }
+    override fun hasModifierProperty(name: String) = when {
+        name == PsiModifier.ABSTRACT && isImplementationInInterface() -> false
+        name == PsiModifier.DEFAULT && isImplementationInInterface() -> true
+        dummyDelegate != null -> {
+            when {
+                name in visibilityModifiers && isOverride() ->
+                    clsDelegate.hasModifierProperty(name)
+                else -> dummyDelegate.hasModifierProperty(name)
             }
-            return dummyDelegate.hasModifierProperty(name)
         }
-        return clsDelegate.hasModifierProperty(name)
+        else -> clsDelegate.hasModifierProperty(name)
     }
+
+    private fun isOverride() = owner.kotlinOrigin?.hasModifier(KtTokens.OVERRIDE_KEYWORD) ?: false
+
+    private fun isImplementationInInterface()
+            = owner.containingClass.isInterface && owner is KtLightMethod && owner.kotlinOrigin?.hasBody() ?: false
 
     override fun hasExplicitModifier(name: String) = hasModifierProperty(name)
 

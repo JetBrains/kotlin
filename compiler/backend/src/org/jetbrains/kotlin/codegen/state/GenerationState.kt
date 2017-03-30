@@ -44,6 +44,8 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import java.io.File
 
@@ -177,8 +179,10 @@ class GenerationState @JvmOverloads constructor(
                     { OptimizationClassBuilderFactory(it, configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false)) },
                     ::CoroutineTransformerClassBuilderFactory,
                     { BuilderFactoryForDuplicateSignatureDiagnostics(
-                            it, this.bindingContext, diagnostics, fileClassesProvider, this.moduleName
-                      ).apply { duplicateSignatureFactory = this } },
+                            it, this.bindingContext, diagnostics,
+                            fileClassesProvider, this.moduleName,
+                            shouldGenerate = { !shouldOnlyCollectSignatures(it) }
+                    ).apply { duplicateSignatureFactory = this } },
                     { BuilderFactoryForDuplicateClassNameDiagnostics(it, diagnostics) },
                     { configuration.get(JVMConfigurationKeys.DECLARATIONS_JSON_PATH)
                               ?.let { destination -> SignatureDumpingBuilderFactory(it, File(destination)) } ?: it }
@@ -209,6 +213,9 @@ class GenerationState @JvmOverloads constructor(
     fun destroy() {
         interceptedBuilderFactory.close()
     }
+
+    private fun shouldOnlyCollectSignatures(origin: JvmDeclarationOrigin)
+            = classBuilderMode == ClassBuilderMode.LIGHT_CLASSES && origin.originKind == CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL
 }
 
 private class LazyJvmDiagnostics(compute: () -> Diagnostics): Diagnostics {

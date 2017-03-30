@@ -66,9 +66,21 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         doTest(fileName);
     }
 
+    @TestMetadata("ExtendingInterfaceWithDefaultImpls.kt")
+    public void testExtendingInterfaceWithDefaultImpls() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/ExtendingInterfaceWithDefaultImpls.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("HiddenDeprecated.kt")
     public void testHiddenDeprecated() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/HiddenDeprecated.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("InheritingInterfaceDefaultImpls.kt")
+    public void testInheritingInterfaceDefaultImpls() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/InheritingInterfaceDefaultImpls.kt");
         doTest(fileName);
     }
 
