@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
+import org.jetbrains.kotlin.backend.common.DeepCopyIrTreeWithDescriptors
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
 import org.jetbrains.kotlin.backend.konan.ir.DeserializerDriver
@@ -31,19 +32,24 @@ import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 //-----------------------------------------------------------------------------//
 
 internal class FunctionInlining(val context: Context): IrElementTransformerVoid() {
 
-    private var currentFile     : IrFile?     = null
-    private var currentFunction : IrFunction? = null
-    private var currentScope    : Scope?      = null
+    private var currentFile        : IrFile?                        = null
+    private var currentFunction    : IrFunction?                    = null
+    private var currentScope       : Scope?                         = null
+    private var copyWithDescriptors: DeepCopyIrTreeWithDescriptors? = null
+
+    private val deserializer = DeserializerDriver(context)
 
     //-------------------------------------------------------------------------//
-    private val deserializer = DeserializerDriver(context)
 
     fun inline(irModule: IrModuleFragment) = irModule.accept(this, null)
 
@@ -68,8 +74,9 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     //-------------------------------------------------------------------------//
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
-        currentFunction = declaration
-        currentScope    = Scope(declaration.descriptor)
+        currentFunction     = declaration
+        currentScope        = Scope(declaration.descriptor)
+        copyWithDescriptors = DeepCopyIrTreeWithDescriptors(currentFunction!!, context)
         return super.visitFunction(declaration)
     }
 
@@ -80,14 +87,12 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
         val fqName = currentFile!!.packageFragmentDescriptor.fqName.asString()              // TODO to be removed after stdlib compilation
         if(fqName.contains("kotlin")) return super.visitCall(expression)                    // TODO to be removed after stdlib compilation
 
-        val functionDescriptor = expression.descriptor as FunctionDescriptor
-        if (functionDescriptor.isInline) {
-            val inlineFunctionBody = inlineFunction(expression)
-            inlineFunctionBody.transformChildrenVoid(this)
-            return inlineFunctionBody                                                       // Return newly created IrInlineBody instead of IrCall.
-        }
+        val irCall = super.visitCall(expression) as IrCall
 
-        return super.visitCall(expression)
+        val functionDescriptor = irCall.descriptor as FunctionDescriptor
+        if (functionDescriptor.isInline)  return inlineFunction(irCall)                     // Return newly created IrInlineBody instead of IrCall.
+
+        return irCall
     }
 
     //---------------------------------------------------------------------//
@@ -166,26 +171,48 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
     }
 
     //-------------------------------------------------------------------------//
-    private fun inlineFunction(irCall: IrCall): IrExpression {
+
+    private fun getFunctionDeclaration(irCall: IrCall): IrDeclaration? {
+
         val functionDescriptor = irCall.descriptor as FunctionDescriptor
         val originalDescriptor = functionDescriptor.original
-        val functionDeclaration = 
-            context.ir.originalModuleIndex.functions[originalDescriptor] ?:                 // Function is declared in the current module.
-            deserializer.deserializeInlineBody(originalDescriptor)                          // Function is declared in another module.
-        if (functionDeclaration == null) return super.visitCall(irCall)   
-        val copyFuncDeclaration = functionDeclaration.accept(InlineCopyIr(),                // Create copy of the function.
-            null) as IrFunction
+        val functionDeclaration =
+            (context.ir.originalModuleIndex.functions[originalDescriptor] ?:                // Function is declared in the current module.
+                deserializer.deserializeInlineBody(originalDescriptor))                     // Function is declared in another module.
+        return functionDeclaration
+    }
 
-        val startOffset = copyFuncDeclaration.startOffset
-        val endOffset   = copyFuncDeclaration.endOffset
-        val returnType  = copyFuncDeclaration.descriptor.returnType!!
+    //-------------------------------------------------------------------------//
 
-        if (copyFuncDeclaration.body == null) return irCall                                 // TODO workaround
-        val blockBody   = copyFuncDeclaration.body!! as IrBlockBody
-        val statements  = blockBody.statements
-        val inlineBody  = IrInlineFunctionBody(startOffset, endOffset, returnType, originalDescriptor, null, statements)
+    private fun createInlineFunctionBody(functionDeclaration: IrFunction): IrInlineFunctionBody? {
 
-        val parametersOld = getArguments(irCall, copyFuncDeclaration)                                          // Create map call_site_argument -> inline_function_parameter.
+        val originBlockBody = functionDeclaration.body!!
+        if (originBlockBody == null) return null                                            // TODO workaround
+
+        val copyBlockBody = originBlockBody.accept(InlineCopyIr(), null) as IrBlockBody     // Create copy of original function body.
+        val functionName = functionDeclaration.descriptor.name.toString()
+        copyWithDescriptors!!.copy(copyBlockBody, functionName)                             // TODO merge DeepCopyIrTreeWithDescriptors with InlineCopyIr
+
+        val originalDescriptor = functionDeclaration.descriptor.original
+        val startOffset = functionDeclaration.startOffset
+        val endOffset   = functionDeclaration.endOffset
+        val returnType  = functionDeclaration.descriptor.returnType!!
+
+        return IrInlineFunctionBody(startOffset, endOffset, returnType, originalDescriptor, null, copyBlockBody.statements)
+    }
+
+    //-------------------------------------------------------------------------//
+
+    private fun inlineFunction(irCall: IrCall): IrExpression {
+
+        val irDeclaration = getFunctionDeclaration(irCall)
+        if (irDeclaration == null) return irCall
+
+        val functionDeclaration = irDeclaration as IrFunction
+        val inlineBody = createInlineFunctionBody(functionDeclaration)
+        if (inlineBody == null) return irCall
+
+        val parametersOld = getArguments(irCall, functionDeclaration)                       // Create map call_site_argument -> inline_function_parameter.
         val evaluatedParameters = evaluateParameters(parametersOld)
         val parameterToArgument = evaluatedParameters.parameters
         val evaluationStatements = evaluatedParameters.statements
@@ -300,20 +327,21 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
         //---------------------------------------------------------------------//
 
-        override fun visitCall(expression: IrCall): IrExpression {
+        private fun createTypeSubstitutor(): TypeSubstitutor {
 
-            val irCall = super.visitCall(expression) as IrCall
-            if (irCall !is IrCallImpl) return irCall
+            val substitutionContext = typeArgsMap!!.entries.associate {
+                (typeParameter, typeArgument) ->
+                typeParameter.typeConstructor to TypeProjectionImpl(typeArgument)
+            }
+            return TypeSubstitutor.create(substitutionContext)
+        }
+
+        //---------------------------------------------------------------------//
+
+        private fun substituteTypeArguments(irCall: IrCall, typeSubstitutor: TypeSubstitutor): Map <TypeParameterDescriptor, KotlinType>? {
 
             val oldTypeArguments = (irCall as IrMemberAccessExpressionBase).typeArguments
-            if (typeArgsMap      == null) return irCall
-            if (oldTypeArguments == null) return irCall
-
-            val substitutionContext = typeArgsMap.entries.associate {
-                    (typeParameter, typeArgument) ->
-                    typeParameter.typeConstructor to TypeProjectionImpl(typeArgument)
-                }
-            val typeSubstitutor = TypeSubstitutor.create(substitutionContext)
+            if (oldTypeArguments == null) return null
 
             val newTypeArguments = oldTypeArguments.map {
                 val typeParameterDescriptor = it.key
@@ -322,16 +350,24 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
                 typeParameterDescriptor to newTypeArgument
             }.toMap()
 
-            val descriptor      = irCall.descriptor
-            val type            = typeSubstitutor.substitute(irCall.type, Variance.INVARIANT) ?: irCall.type
-            val startOffset     = irCall.startOffset
-            val endOffset       = irCall.endOffset
-            val origin          = irCall.origin
-            val superQualifier  = irCall.superQualifier
+            return newTypeArguments
+        }
 
-            return IrCallImpl(startOffset, endOffset, type, descriptor, newTypeArguments, origin, superQualifier)
-                .apply {
-                    descriptor.valueParameters.forEach {
+        //---------------------------------------------------------------------//
+
+        override fun visitCall(expression: IrCall): IrExpression {
+
+            val irCall = super.visitCall(expression) as IrCall
+            if (irCall !is IrCallImpl) return irCall
+            if (typeArgsMap == null)   return irCall
+
+            val typeSubstitutor = createTypeSubstitutor()
+            val typeArguments   = substituteTypeArguments(irCall, typeSubstitutor)
+            val returnType = typeSubstitutor.substitute(irCall.type, Variance.INVARIANT) ?: irCall.type
+
+            return IrCallImpl(irCall.startOffset, irCall.endOffset, returnType, irCall.descriptor,
+                typeArguments, irCall.origin, irCall.superQualifier).apply {
+                    irCall.descriptor.valueParameters.forEach {
                         val valueArgument = irCall.getValueArgument(it)
                         putValueArgument(it.index, valueArgument)
                     }
@@ -425,6 +461,8 @@ internal class FunctionInlining(val context: Context): IrElementTransformerVoid(
 
             val copyLambdaFunction = lambdaFunction.accept(InlineCopyIr(),                  // Create copy of the function.
                 null) as IrFunction
+            copyWithDescriptors!!.copy(copyLambdaFunction, "lambda")                        // TODO merge DeepCopyIrTreeWithDescriptors with InlineCopyIr
+
             val lambdaStatements = (copyLambdaFunction.body as IrBlockBody).statements
             val lambdaReturnType = copyLambdaFunction.descriptor.returnType!!
             val inlineBody       = IrInlineFunctionBody(0, 0, lambdaReturnType, lambdaFunction.descriptor, null, lambdaStatements)
