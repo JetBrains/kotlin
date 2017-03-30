@@ -24,6 +24,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.*
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesHandler
+import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.MoveHandler
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.idea.codeInsight.shorten.addDelayedImportRequest
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 import org.jetbrains.kotlin.idea.refactoring.isInJavaSourceRoot
+import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveFilesWithDeclarationsProcessor
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinAwareMoveFilesOrDirectoriesDialog
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
@@ -406,12 +408,81 @@ fun postProcessMoveUsages(usages: Collection<UsageInfo>,
 
 var KtFile.updatePackageDirective: Boolean? by UserDataProperty(Key.create("UPDATE_PACKAGE_DIRECTIVE"))
 
+fun invokeMoveFilesOrDirectoriesRefactoring(
+        moveDialog: KotlinAwareMoveFilesOrDirectoriesDialog?,
+        project: Project,
+        elements: Array<out PsiElement>,
+        initialTargetDirectory: PsiDirectory?,
+        moveCallback: MoveCallback?
+) {
+    fun closeDialog() {
+        moveDialog?.close(DialogWrapper.CANCEL_EXIT_CODE)
+    }
+
+    project.executeCommand(MoveHandler.REFACTORING_NAME) {
+        val selectedDir = if (moveDialog != null) moveDialog.targetDirectory else initialTargetDirectory
+        val updatePackageDirective = (moveDialog as? KotlinAwareMoveFilesOrDirectoriesDialog)?.updatePackageDirective
+
+        try {
+            val choice = if (elements.size > 1 || elements[0] is PsiDirectory) intArrayOf(-1) else null
+            val elementsToMove = elements.filterNot {
+                it is PsiFile
+                && runWriteAction { CopyFilesOrDirectoriesHandler.checkFileExist(selectedDir, choice, it, it.name, "Move") }
+            }
+
+            elementsToMove.forEach {
+                MoveFilesOrDirectoriesUtil.checkMove(it, selectedDir!!)
+                if (it is KtFile && it.isInJavaSourceRoot()) {
+                    it.updatePackageDirective = updatePackageDirective
+                }
+            }
+
+            val enableSearchReferences = elements.any { ProjectRootsUtil.isInProjectSource(it) }
+
+            if (elementsToMove.isNotEmpty()) {
+                @Suppress("UNCHECKED_CAST")
+                val processor = if (elementsToMove.all { it is KtFile } && selectedDir != null) {
+                    MoveFilesWithDeclarationsProcessor(
+                            project,
+                            elementsToMove as List<KtFile>,
+                            selectedDir,
+                            null,
+                            false,
+                            false,
+                            moveCallback,
+                            Runnable(::closeDialog)
+                    )
+                }
+                else {
+                    MoveFilesOrDirectoriesProcessor(
+                            project,
+                            elementsToMove.toTypedArray(),
+                            selectedDir,
+                            enableSearchReferences,
+                            false,
+                            false,
+                            moveCallback,
+                            Runnable(::closeDialog)
+                    )
+                }
+                processor.run()
+            }
+            else {
+                closeDialog()
+            }
+        }
+        catch (e: IncorrectOperationException) {
+            CommonRefactoringUtil.showErrorMessage(RefactoringBundle.message("error.title"), e.message, "refactoring.moveFile", project)
+        }
+    }
+}
+
 // Mostly copied from MoveFilesOrDirectoriesUtil.doMove()
 fun moveFilesOrDirectories(
         project: Project,
         elements: Array<PsiElement>,
         targetElement: PsiElement?,
-        moveCallback: (() -> Unit)? = null
+        moveCallback: MoveCallback? = null
 ) {
     elements.forEach { if (it !is PsiFile && it !is PsiDirectory) throw IllegalArgumentException("unexpected element type: " + it) }
 
@@ -421,50 +492,7 @@ fun moveFilesOrDirectories(
     val initialTargetDirectory = MoveFilesOrDirectoriesUtil.getInitialTargetDirectory(targetDirectory, elements)
 
     fun doRun(moveDialog: KotlinAwareMoveFilesOrDirectoriesDialog?) {
-        fun closeDialog() {
-            moveDialog?.close(DialogWrapper.CANCEL_EXIT_CODE)
-        }
-
-        project.executeCommand(MoveHandler.REFACTORING_NAME) {
-            val selectedDir = if (moveDialog != null) moveDialog.targetDirectory else initialTargetDirectory
-            val updatePackageDirective = (moveDialog as? KotlinAwareMoveFilesOrDirectoriesDialog)?.updatePackageDirective
-
-            try {
-                val choice = if (elements.size > 1 || elements[0] is PsiDirectory) intArrayOf(-1) else null
-                val elementsToMove = elements.filterNot {
-                    it is PsiFile
-                    && runWriteAction { CopyFilesOrDirectoriesHandler.checkFileExist(selectedDir, choice, it, it.name, "Move") }
-                }
-
-                elementsToMove.forEach {
-                    MoveFilesOrDirectoriesUtil.checkMove(it, selectedDir!!)
-                    if (it is KtFile && it.isInJavaSourceRoot()) {
-                        it.updatePackageDirective = updatePackageDirective
-                    }
-                }
-
-                val enableSearchReferences = elements.any { ProjectRootsUtil.isInProjectSource(it) }
-
-                if (elementsToMove.isNotEmpty()) {
-                    MoveFilesOrDirectoriesProcessor(
-                            project,
-                            elementsToMove.toTypedArray(),
-                            selectedDir,
-                            enableSearchReferences,
-                            false,
-                            false,
-                            moveCallback,
-                            ::closeDialog
-                    ).run()
-                }
-                else {
-                    closeDialog()
-                }
-            }
-            catch (e: IncorrectOperationException) {
-                CommonRefactoringUtil.showErrorMessage(RefactoringBundle.message("error.title"), e.message, "refactoring.moveFile", project)
-            }
-        }
+        invokeMoveFilesOrDirectoriesRefactoring(moveDialog, project, elements, initialTargetDirectory, moveCallback)
     }
 
     if (ApplicationManager.getApplication().isUnitTestMode) {

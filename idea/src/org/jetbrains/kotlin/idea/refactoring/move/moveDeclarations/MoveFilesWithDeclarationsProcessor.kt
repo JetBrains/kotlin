@@ -30,14 +30,15 @@ import com.intellij.util.containers.MultiMap
 import com.intellij.util.text.UniqueNameGenerator
 import org.jetbrains.kotlin.psi.KtFile
 
-class MoveFilesWithDeclarationsProcessor(
+class MoveFilesWithDeclarationsProcessor @JvmOverloads constructor (
         project: Project,
         private val sourceFiles: List<KtFile>,
         private val targetDirectory: PsiDirectory,
         private val targetFileName: String?,
         searchInComments: Boolean,
         searchInNonJavaFiles: Boolean,
-        moveCallback: MoveCallback?
+        moveCallback: MoveCallback?,
+        prepareSuccessfulCallback: Runnable = EmptyRunnable.INSTANCE
 ) : MoveFilesOrDirectoriesProcessor(project,
                                     sourceFiles.toTypedArray<PsiElement>(),
                                     targetDirectory,
@@ -45,7 +46,7 @@ class MoveFilesWithDeclarationsProcessor(
                                     searchInComments,
                                     searchInNonJavaFiles,
                                     moveCallback,
-                                    EmptyRunnable.INSTANCE) {
+                                    prepareSuccessfulCallback) {
     override fun getCommandName(): String {
         return if (targetFileName != null) "Move " + sourceFiles.single().name else "Move"
     }

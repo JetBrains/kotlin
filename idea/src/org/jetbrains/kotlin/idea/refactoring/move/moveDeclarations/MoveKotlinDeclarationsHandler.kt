@@ -29,10 +29,13 @@ import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.MoveHandlerDelegate
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesImpl
+import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.refactoring.move.invokeMoveFilesOrDirectoriesRefactoring
+import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinAwareMoveFilesOrDirectoriesDialog
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinSelectNestedClassRefactoringDialog
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinNestedClassesDialog
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
@@ -97,6 +100,22 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
         if (elementsToSearch.any { it is KtEnumEntry }) {
             val message = RefactoringBundle.getCannotRefactorMessage("Move declaration is not supported for enum entries")
             CommonRefactoringUtil.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
+            return true
+        }
+
+        if (elements.all { it is KtFile }) {
+            val initialTargetElement = when {
+                targetContainer is PsiPackage || targetContainer is PsiDirectory -> targetContainer
+                container is PsiPackage || container is PsiDirectory -> container
+                else -> null
+            }
+            val initialTargetDirectory = MoveFilesOrDirectoriesUtil.resolveToDirectory(project, initialTargetElement)
+            val dialog = KotlinAwareMoveFilesOrDirectoriesDialog(project) {
+                invokeMoveFilesOrDirectoriesRefactoring(it, project, elements, initialTargetDirectory, callback)
+            }
+            dialog.setData(elements, initialTargetDirectory, "refactoring.moveFile")
+            dialog.show()
+
             return true
         }
 

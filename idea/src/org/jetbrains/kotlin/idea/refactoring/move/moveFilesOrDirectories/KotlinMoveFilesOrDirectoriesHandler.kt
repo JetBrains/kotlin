@@ -54,9 +54,12 @@ class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandler() {
     override fun doMove(project: Project, elements: Array<out PsiElement>, targetContainer: PsiElement?, callback: MoveCallback?) {
         if (!(targetContainer == null || targetContainer is PsiDirectory || targetContainer is PsiDirectoryContainer)) return
 
-        moveFilesOrDirectories(project, adjustForMove(project, elements, targetContainer) ?: return, targetContainer) {
-            callback?.refactoringCompleted()
-        }
+        moveFilesOrDirectories(
+                project,
+                adjustForMove(project, elements, targetContainer) ?: return,
+                targetContainer,
+                callback?.let { MoveCallback { it.refactoringCompleted() } }
+        )
     }
 
     override fun tryToMove(element: PsiElement, project: Project, dataContext: DataContext?, reference: PsiReference?, editor: Editor?): Boolean {
