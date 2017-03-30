@@ -5,6 +5,12 @@ package org.jetbrains.kotlin.gradle.dsl
 interface KotlinJsOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions {
 
     /**
+     * Disable internal declaration export
+     * Default value: false
+     */
+     var friendModulesDisabled: kotlin.Boolean
+
+    /**
      * Whether a main function should be called
      * Possible values: "call", "noCall"
      * Default value: "call"

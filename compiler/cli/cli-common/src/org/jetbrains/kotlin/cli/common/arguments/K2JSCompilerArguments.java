@@ -79,8 +79,19 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
     // Advanced options
 
     @GradleOption(DefaultValues.BooleanFalseDefault.class)
-    @Argument(value = "-Xtypedarrays", description = "Translate primitive arrays to JS typed arrays")
+    @Argument(value = "-Xtyped-arrays", description = "Translate primitive arrays to JS typed arrays")
     public boolean typedArrays;
+
+    @GradleOption(DefaultValues.BooleanFalseDefault.class)
+    @Argument(value = "-Xfriend-modules-disabled", description = "Disable internal declaration export")
+    public boolean friendModulesDisabled;
+
+    @Argument(
+            value = "-Xfriend-modules",
+            valueDescription = "<path>",
+            description = "Paths to friend modules"
+    )
+    public String friendModules;
 
     @NotNull
     public static K2JSCompilerArguments createDefaultInstance() {

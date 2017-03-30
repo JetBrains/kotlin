@@ -106,13 +106,6 @@
                     <plugin>
                         <artifactId>maven-invoker-plugin</artifactId>
                         <version>1.9</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.mozilla</groupId>
-                                <artifactId>rhino</artifactId>
-                                <version>1.7.7.1</version>
-                            </dependency>
-                        </dependencies>
                         <configuration>
                             <projectsDirectory>src/it</projectsDirectory>
                             <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>

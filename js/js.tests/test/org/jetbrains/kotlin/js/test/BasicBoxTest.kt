@@ -96,9 +96,10 @@ abstract class BasicBoxTest(
 
             val generatedJsFiles = orderedModules.asReversed().mapNotNull { module ->
                 val dependencies = module.dependencies.mapNotNull { modules[it]?.outputFileName(outputDir) + ".meta.js" }
+                val friends = module.friends.mapNotNull { modules[it]?.outputFileName(outputDir) + ".meta.js" }
 
                 val outputFileName = module.outputFileName(outputDir) + ".js"
-                generateJavaScriptFile(file.parent, module, outputFileName, dependencies, modules.size > 1,
+                generateJavaScriptFile(file.parent, module, outputFileName, dependencies, friends, modules.size > 1,
                                        outputPrefixFile, outputPostfixFile, mainCallParameters)
 
                 if (!module.name.endsWith(OLD_MODULE_SUFFIX)) outputFileName else null
@@ -222,6 +223,7 @@ abstract class BasicBoxTest(
             module: TestModule,
             outputFileName: String,
             dependencies: List<String>,
+            friends: List<String>,
             multiModule: Boolean,
             outputPrefixFile: File?,
             outputPostfixFile: File?,
@@ -239,7 +241,7 @@ abstract class BasicBoxTest(
         val additionalFiles = globalCommonFiles + localCommonFiles + additionalCommonFiles
         val psiFiles = createPsiFiles(testFiles + additionalFiles)
 
-        val config = createConfig(module, dependencies, multiModule, additionalMetadata = null)
+        val config = createConfig(module, dependencies, friends, multiModule, additionalMetadata = null)
         val outputFile = File(outputFileName)
 
         translateFiles(psiFiles.map(TranslationUnit::SourceFile), outputFile, config, outputPrefixFile, outputPostfixFile, mainCallParameters)
@@ -263,7 +265,7 @@ abstract class BasicBoxTest(
             }
 
             val headerFile = File(incrementalDir, HEADER_FILE)
-            val recompiledConfig = createConfig(module, dependencies, multiModule, Pair(headerFile,serializedMetadata))
+            val recompiledConfig = createConfig(module, dependencies, friends, multiModule, Pair(headerFile,serializedMetadata))
             val recompiledOutputFile = File(outputFile.parentFile, outputFile.nameWithoutExtension + "-recompiled.js")
 
             translateFiles(allTranslationUnits, recompiledOutputFile, recompiledConfig, outputPrefixFile, outputPostfixFile,
@@ -357,7 +359,7 @@ abstract class BasicBoxTest(
     private fun createPsiFiles(fileNames: List<String>): List<KtFile> = fileNames.map(this::createPsiFile)
 
     private fun createConfig(
-            module: TestModule, dependencies: List<String>, multiModule: Boolean, additionalMetadata: Pair<File, List<File>>?
+            module: TestModule, dependencies: List<String>, friends: List<String>, multiModule: Boolean, additionalMetadata: Pair<File, List<File>>?
     ): JsConfig {
         val configuration = environment.configuration.copy()
 
@@ -368,6 +370,7 @@ abstract class BasicBoxTest(
         }
 
         configuration.put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST + dependencies)
+        configuration.put(JSConfigurationKeys.FRIEND_PATHS, friends)
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, module.name.removeSuffix(OLD_MODULE_SUFFIX))
         configuration.put(JSConfigurationKeys.MODULE_KIND, module.moduleKind)
@@ -397,7 +400,7 @@ abstract class BasicBoxTest(
     private inner class TestFileFactoryImpl : TestFileFactory<TestModule, TestFile>, Closeable {
         var testPackage: String? = null
         val tmpDir = KotlinTestUtils.tmpDir("js-tests")
-        val defaultModule = TestModule(TEST_MODULE, emptyList())
+        val defaultModule = TestModule(TEST_MODULE, emptyList(), emptyList())
 
         override fun createFile(module: TestModule?, fileName: String, text: String, directives: Map<String, String>): TestFile? {
             val currentModule = module ?: defaultModule
@@ -433,8 +436,8 @@ abstract class BasicBoxTest(
             return TestFile(temporaryFile.absolutePath, currentModule, recompile = RECOMPILE_PATTERN.matcher(text).find())
         }
 
-        override fun createModule(name: String, dependencies: List<String>): TestModule? {
-            return TestModule(name, dependencies)
+        override fun createModule(name: String, dependencies: List<String>, friends: List<String>): TestModule? {
+            return TestModule(name, dependencies, friends)
         }
 
         override fun close() {
@@ -450,9 +453,11 @@ abstract class BasicBoxTest(
 
     private class TestModule(
             val name: String,
-            dependencies: List<String>
+            dependencies: List<String>,
+            friends: List<String>
     ) {
         val dependencies = dependencies.toMutableList()
+        val friends = friends.toMutableList()
         var moduleKind = ModuleKind.PLAIN
         var inliningDisabled = false
         val files = mutableListOf<TestFile>()

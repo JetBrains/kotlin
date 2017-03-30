@@ -274,11 +274,19 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             ContainerUtil.addAll(libraries, ArraysKt.filterNot(arguments.libraries.split(File.pathSeparator), String::isEmpty));
         }
 
+        configuration.put(JSConfigurationKeys.LIBRARIES, libraries);
+
+
         if (arguments.typedArrays) {
             configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, true);
         }
 
-        configuration.put(JSConfigurationKeys.LIBRARIES, libraries);
+        configuration.put(JSConfigurationKeys.FRIEND_PATHS_DISABLED, arguments.friendModulesDisabled);
+
+        if (!arguments.friendModulesDisabled && arguments.friendModules != null) {
+            List<String> friendPaths = ArraysKt.filterNot(arguments.friendModules.split(File.pathSeparator), String::isEmpty);
+            configuration.put(JSConfigurationKeys.FRIEND_PATHS, friendPaths);
+        }
 
         String moduleKindName = arguments.moduleKind;
         ModuleKind moduleKind = moduleKindName != null ? moduleKindMap.get(moduleKindName) : ModuleKind.PLAIN;

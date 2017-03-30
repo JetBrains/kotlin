@@ -34,9 +34,11 @@ import org.jetbrains.kotlin.js.JavaScript;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.Map;
+import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -109,15 +111,11 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
 
         arguments.sourceMap = sourceMap;
 
-        Set<String> collector = getOutputDirectoriesCollector();
-
         if (outputFile != null) {
-            collector.add(new File(outputFile).getParent());
-        }
-        if (metaInfo) {
-            String output = com.google.common.base.Objects.firstNonNull(outputFile, ""); // fqname here because of J8 compatibility issues
-            String metaFile = StringsKt.substringBeforeLast(output, JavaScript.DOT_EXTENSION, output) + KotlinJavascriptMetadataUtils.META_JS_SUFFIX;
-            collector.add(new File(metaFile).getParent());
+            ConcurrentMap<String, List<String>> collector = getOutputDirectoriesCollector();
+            String key = project.getArtifactId();
+            List<String> paths = collector.computeIfAbsent(key, k -> Collections.synchronizedList(new ArrayList<String>()));
+            paths.add(new File(outputFile).getParent());
         }
     }
 
@@ -145,14 +143,16 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
             }
         }
 
-        for (String path : getOutputDirectoriesCollector()) {
-            File file = new File(path);
+        for (List<String> paths : getOutputDirectoriesCollector().values()) {
+            for (String path : paths) {
+                File file = new File(path);
 
-            if (file.exists() && LibraryUtils.isKotlinJavascriptLibrary(file)) {
-                libraries.add(file.getAbsolutePath());
-            }
-            else {
-                getLog().debug("JS output directory missing: " + file);
+                if (file.exists() && LibraryUtils.isKotlinJavascriptLibrary(file)) {
+                    libraries.add(file.getAbsolutePath());
+                }
+                else {
+                    getLog().debug("JS output directory missing: " + file);
+                }
             }
         }
 
@@ -177,12 +177,12 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
     }
 
     @SuppressWarnings("unchecked")
-    private Set<String> getOutputDirectoriesCollector() {
+    protected ConcurrentMap<String, List<String>> getOutputDirectoriesCollector() {
         lock.lock();
         try {
-            Set<String> collector = (Set<String>) getPluginContext().get(OUTPUT_DIRECTORIES_COLLECTOR_PROPERTY_NAME);
+            ConcurrentMap<String, List<String>> collector = (ConcurrentMap<String, List<String>>) getPluginContext().get(OUTPUT_DIRECTORIES_COLLECTOR_PROPERTY_NAME);
             if (collector == null) {
-                collector = new ConcurrentSkipListSet<String>();
+                collector = new ConcurrentSkipListMap<String, List<String>>();
                 getPluginContext().put(OUTPUT_DIRECTORIES_COLLECTOR_PROPERTY_NAME, collector);
             }
 

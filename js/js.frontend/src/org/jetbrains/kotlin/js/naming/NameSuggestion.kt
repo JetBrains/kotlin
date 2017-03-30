@@ -273,38 +273,40 @@ class NameSuggestion {
             }
 
             fun mangledAndStable() = NameAndStability(getStableMangledName(baseName, encodeSignature(descriptor)), true)
+            fun mangledInternal() = NameAndStability(getInternalMangledName(baseName, encodeSignature(descriptor)), true)
             fun mangledPrivate() = NameAndStability(getPrivateMangledName(baseName, descriptor), false)
 
             val effectiveVisibility = descriptor.ownEffectiveVisibility
 
             val containingDeclaration = descriptor.containingDeclaration
             return when (containingDeclaration) {
-                is PackageFragmentDescriptor -> if (effectiveVisibility.isPublicAPI) mangledAndStable() else regularAndUnstable()
-                is ClassDescriptor -> {
+                is PackageFragmentDescriptor -> when {
+                    effectiveVisibility.isPublicAPI -> mangledAndStable()
+
+                    effectiveVisibility == Visibilities.INTERNAL -> mangledInternal()
+
+                    else -> regularAndUnstable()
+                }
+                is ClassDescriptor -> when {
                     // valueOf() is created in the library with a mangled name for every enum class
-                    if (descriptor is FunctionDescriptor && descriptor.isEnumValueOfMethod()) return mangledAndStable()
+                    descriptor is FunctionDescriptor && descriptor.isEnumValueOfMethod() -> mangledAndStable()
 
                     // Make all public declarations stable
-                    if (effectiveVisibility == Visibilities.PUBLIC) {
-                        return mangledAndStable()
-                    }
+                    effectiveVisibility == Visibilities.PUBLIC -> mangledAndStable()
 
-                    if (descriptor is CallableMemberDescriptor && descriptor.isOverridableOrOverrides) return mangledAndStable()
+                    descriptor is CallableMemberDescriptor && descriptor.isOverridableOrOverrides -> mangledAndStable()
 
                     // Make all protected declarations of non-final public classes stable
-                    if (effectiveVisibility == Visibilities.PROTECTED &&
+                    effectiveVisibility == Visibilities.PROTECTED &&
                         !containingDeclaration.isFinalClass &&
-                        containingDeclaration.visibility.isPublicAPI
-                    ) {
-                        return mangledAndStable()
-                    }
+                        containingDeclaration.visibility.isPublicAPI -> mangledAndStable()
+
+                    effectiveVisibility == Visibilities.INTERNAL -> mangledInternal()
 
                     // Mangle (but make unstable) all non-public API of public classes
-                    if (containingDeclaration.visibility.isPublicAPI && !containingDeclaration.isFinalClass) {
-                        return mangledPrivate()
-                    }
+                    containingDeclaration.visibility.isPublicAPI && !containingDeclaration.isFinalClass -> mangledPrivate()
 
-                    regularAndUnstable()
+                    else -> regularAndUnstable()
                 }
                 else -> {
                     assert(containingDeclaration is CallableMemberDescriptor) {
@@ -321,6 +323,11 @@ class NameSuggestion {
         @JvmStatic fun getPrivateMangledName(baseName: String, descriptor: CallableDescriptor): String {
             val ownerName = descriptor.containingDeclaration.fqNameUnsafe.asString()
             return getStableMangledName(baseName, ownerName + ":" + encodeSignature(descriptor))
+        }
+
+        fun getInternalMangledName(suggestedName: String, forCalculateId: String): String {
+            val suffix = "_${mangledId("internal:" + forCalculateId)}\$"
+            return suggestedName + suffix
         }
 
         @JvmStatic fun getStableMangledName(suggestedName: String, forCalculateId: String): String {

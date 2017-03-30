@@ -1,0 +1,50 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin2js'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+    compile "org.mozilla:rhino:1.7.7.1"
+}
+
+task runRhino(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    workingDir = "${buildDir}/classes/"
+    main = 'org.mozilla.javascript.tools.shell.Main'
+    args = ["-opt", "-1", "-f", "kotlin.js", "-f", "main/kotlin2JsInternalTest_main.js", "-f", "test/kotlin2JsInternalTest_test.js", "-f", "check.js"]
+}
+
+build.doLast {
+    configurations.compile.each { File file ->
+        copy {
+            includeEmptyDirs = false
+
+            from zipTree(file.absolutePath)
+            into "${buildDir}/classes/"
+            include { fileTreeElement ->
+                def path = fileTreeElement.path
+                path.endsWith(".js") && (path.startsWith("META-INF/resources/") || !path.startsWith("META-INF/"))
+            }
+        }
+    }
+    copy {
+        from "."
+        include "check.js"
+        into "${buildDir}/classes/"
+    }
+}
+
+runRhino.dependsOn build

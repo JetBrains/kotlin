@@ -1,6 +1,8 @@
 Usage: kotlinc-js <options> <source files>
 where advanced options include:
-  -Xtypedarrays              Translate primitive arrays to JS typed arrays
+  -Xtyped-arrays             Translate primitive arrays to JS typed arrays
+  -Xfriend-modules-disabled  Disable internal declaration export
+  -Xfriend-modules=<path>    Paths to friend modules
   -Xno-inline                Disable method inlining
   -Xrepeat=<count>           Repeat compilation (for performance analysis)
   -Xskip-metadata-version-check Load classes with bad metadata version anyway (incl. pre-release classes)
