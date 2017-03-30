@@ -927,7 +927,7 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
                             SDL_SCANCODE_LEFT -> commands.add(UserCommand.LEFT)
                             SDL_SCANCODE_RIGHT -> commands.add(UserCommand.RIGHT)
                             SDL_SCANCODE_DOWN -> commands.add(UserCommand.DOWN)
-                            SDL_SCANCODE_Z -> commands.add(UserCommand.ROTATE)
+                            SDL_SCANCODE_Z, SDL_SCANCODE_SPACE -> commands.add(UserCommand.ROTATE)
                             SDL_SCANCODE_UP -> commands.add(UserCommand.DROP)
                             SDL_SCANCODE_ESCAPE -> commands.add(UserCommand.EXIT)
                         }

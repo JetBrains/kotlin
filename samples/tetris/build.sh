@@ -4,11 +4,11 @@ PATH=../../dist/bin:../../bin:$PATH
 DIR=.
 DEPS=$(dirname `type -p konanc`)/../dependencies
 
-CFLAGS_macbook=-I/Library/Frameworks/SDL2.framework/Headers
-LINKER_ARGS_macbook="-F /Library/Frameworks -framework SDL2"
+CFLAGS_macbook=-I$HOME/Library/Frameworks/SDL2.framework/Headers
+LINKER_ARGS_macbook="-F $HOME/Library/Frameworks -framework SDL2"
 COMPILER_ARGS_macbook=
-CFLAGS_macbook=-I/opt/local/include/SDL2
-LINKER_ARGS_macbook="-L/opt/local/lib -lSDL2"
+#CFLAGS_macbook=-I/opt/local/include/SDL2
+#LINKER_ARGS_macbook="-L/opt/local/lib -lSDL2"
 
 CFLAGS_linux=-I/usr/include/SDL2
 LINKER_ARGS_linux="-L/usr/lib/x86_64-linux-gnu -lSDL2"
@@ -39,6 +39,6 @@ LINKER_ARGS=${!var}
 var=COMPILER_ARGS_${TARGET}
 COMPILER_ARGS=${!var} # add -opt for an optimized build.
 
-interop -def:$DIR/sdl.def -copt:"$CFLAGS" -target:$TARGET -o:sdl.kt.bc || exit 1
+cinterop -def:$DIR/sdl.def -copt:"$CFLAGS" -target:$TARGET -o:sdl.kt.bc || exit 1
 konanc $COMPILER_ARGS -target $TARGET $DIR/Tetris.kt -library sdl.kt.bc -linkerArgs "$LINKER_ARGS" -o Tetris.kexe || exit 1
 #strip Tetris.kexe

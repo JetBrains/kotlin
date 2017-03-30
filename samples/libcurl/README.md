@@ -5,6 +5,6 @@ To build use `./build.sh` script without arguments (or specify `TARGET` variable
 
 To run use
 
-    ./Curl.kexe https://jetbrains.com
+    ./Curl.kexe https://www.jetbrains.com
 
 It will perform HTTP get and print out the data obtained.

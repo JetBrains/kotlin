@@ -25,6 +25,7 @@ declare -a java_args
 declare -a interop_args
 
 OUTPUT_FILE_NAME=nativelib.kt.bc
+TARGET=host
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -40,13 +41,16 @@ while [ $# -gt 0 ]; do
       OUTPUT_FILE_NAME="${1:3}"
       shift
       ;;
+    -target:*)
+      TARGET="${1:8}"
+      shift
+      ;;
      *)
       interop_args=("${interop_args[@]}" "$1")
       shift
       ;;
   esac
 done
-
 
 findHome() {
     local source="${BASH_SOURCE[0]}"
@@ -87,11 +91,11 @@ $JAVACMD $JAVA_OPTS ${java_args[@]} \
     -cp $INTEROP_CLASSPATH \
     $INTEROP_TOOL \
     "$GENERATED_ARG" "$NATIVES_ARG" "$CSTUBSNAME_ARG" \
-    $FLAVOR_ARG "${interop_args[@]}" \
+    $FLAVOR_ARG -target:$TARGET "${interop_args[@]}" \
     || exit 1
 
 # Stubs may be rather big, so we may need more heap space.
 XMX_ARG=-J-Xmx3G
 
 $KONAN_HOME/bin/konanc $XMX_ARG "$GENERATED_DIR" -nolink -nativelibrary "$NATIVES_DIR/$CSTUBSNAME.bc" \
-    -o "$OUTPUT_FILE_NAME"
+    -o "$OUTPUT_FILE_NAME" -target "$TARGET"

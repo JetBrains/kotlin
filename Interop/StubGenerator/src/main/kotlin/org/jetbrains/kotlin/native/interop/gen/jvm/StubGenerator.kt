@@ -1352,8 +1352,9 @@ class StubGenerator(
         if (entryPoint != null) {
             out("extern int Konan_main(int argc, char** argv);")
             out("")
-            out("int $entryPoint(int argc, char** argv) {")
-            out("  return  Konan_main(argc, argv);")
+            out("__attribute__((__used__))")
+            out("int $entryPoint(int argc, char** argv)  {")
+            out("  return Konan_main(argc, argv);")
             out("}")
         }
     }

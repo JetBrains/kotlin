@@ -1,10 +1,9 @@
-# Kotlin N  #
+# Kotlin/Native  #
 
-Kotlin Native backend, codenamed _Kotlin N_, is a LLVM backend for the Kotlin
-compiler, runtime implementation and native code generation facility
-using LLVM toolchain.
+_Kotlin/Native_ is a LLVM backend for the Kotlin compiler, runtime
+implementation and native code generation facility using LLVM toolchain.
 
- _Kotlin N_ is primarily designed to allow compilation for platforms where
+ _Kotlin/Native_ is primarily designed to allow compilation for platforms where
 virtual machines are not desirable or possible (such as iOS, embedded targets),
 or where developer is willing to produce reasonably-sized self-contained program
 without need to ship an additional execution runtime.
@@ -38,8 +37,8 @@ For some tests, use:
 	./gradlew backend.native:tests:run
 
 To generate interoperability stubs create library definition file
-(take a look on `samples/tetris/tetris.sdl`) and run `interop` tool like this:
+(take a look on `samples/tetris/tetris.sdl`) and run `cinterop` tool like this:
 
-    interop -def:lib.def
+    cinterop -def:lib.def
 
 See provided samples and `INTEROP.md` for more details.

@@ -23,5 +23,5 @@ LINKER_ARGS=${!var}
 var=COMPILER_ARGS_${TARGET}
 COMPILER_ARGS=${!var} # add -opt for an optimized build.
 
-interop -copt:"$CFLAGS" -copt:-I. -def:$DIR/libcurl.def -target:$TARGET || exit 1
-konanc -target $TARGET src libcurl -nativelibrary libcurlstubs.bc -linkerArgs "$LINKER_ARGS" -o Curl.kexe || exit 1
+cinterop -copt:"$CFLAGS" -copt:-I. -def:$DIR/libcurl.def -target:$TARGET -o:libcurl.bc || exit 1
+konanc -target $TARGET src -library libcurl.bc -linkerArgs "$LINKER_ARGS" -o Curl.kexe || exit 1
