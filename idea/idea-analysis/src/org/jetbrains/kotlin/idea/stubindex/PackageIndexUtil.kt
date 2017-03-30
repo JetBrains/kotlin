@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 
+
 object PackageIndexUtil {
     @JvmStatic fun getSubPackageFqNames(
             packageFqName: FqName,
@@ -48,6 +49,7 @@ object PackageIndexUtil {
             searchScope: GlobalSearchScope,
             project: Project
     ): Boolean {
+
         val subpackagesIndex = SubpackagesIndexService.getInstance(project)
         if (!subpackagesIndex.packageExists(packageFqName)) {
             return false

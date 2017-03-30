@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.stubindex.resolve
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
@@ -30,7 +31,8 @@ class PluginDeclarationProviderFactoryService : DeclarationProviderFactoryServic
             project: Project,
             storageManager: StorageManager,
             syntheticFiles: Collection<KtFile>,
-            filesScope: GlobalSearchScope
+            filesScope: GlobalSearchScope,
+            moduleInfo: ModuleInfo
     ): DeclarationProviderFactory =
-        PluginDeclarationProviderFactory(project, KotlinSourceFilterScope.sources(filesScope, project), storageManager, syntheticFiles)
+        PluginDeclarationProviderFactory(project, KotlinSourceFilterScope.sources(filesScope, project), storageManager, syntheticFiles, moduleInfo)
 }

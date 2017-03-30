@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.storage.StorageManager
 import java.util.*
@@ -31,7 +32,8 @@ abstract class DeclarationProviderFactoryService {
             project: Project,
             storageManager: StorageManager,
             syntheticFiles: Collection<KtFile>,
-            filesScope: GlobalSearchScope
+            filesScope: GlobalSearchScope,
+            moduleInfo: ModuleInfo
     ): DeclarationProviderFactory
 
     companion object {
@@ -39,10 +41,11 @@ abstract class DeclarationProviderFactoryService {
                 project: Project,
                 storageManager: StorageManager,
                 syntheticFiles: Collection<KtFile>,
-                filesScope: GlobalSearchScope
+                filesScope: GlobalSearchScope,
+                moduleInfo: ModuleInfo
         ): DeclarationProviderFactory {
             return ServiceManager.getService(project, DeclarationProviderFactoryService::class.java)!!
-                    .create(project, storageManager, syntheticFiles, filteringScope(syntheticFiles, filesScope))
+                    .create(project, storageManager, syntheticFiles, filteringScope(syntheticFiles, filesScope), moduleInfo)
         }
 
         private fun filteringScope(syntheticFiles: Collection<KtFile>, baseScope: GlobalSearchScope): GlobalSearchScope {

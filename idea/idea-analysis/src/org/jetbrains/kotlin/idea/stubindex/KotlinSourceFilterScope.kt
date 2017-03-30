@@ -53,6 +53,32 @@ class KotlinSourceFilterScope private constructor(
                "cls=$includeClassFiles script=$includeScriptDependencies)"
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+        if (!super.equals(other)) return false
+
+        other as KotlinSourceFilterScope
+
+        if (includeProjectSourceFiles != other.includeProjectSourceFiles) return false
+        if (includeLibrarySourceFiles != other.includeLibrarySourceFiles) return false
+        if (includeClassFiles != other.includeClassFiles) return false
+        if (includeScriptDependencies != other.includeScriptDependencies) return false
+        if (project != other.project) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + includeProjectSourceFiles.hashCode()
+        result = 31 * result + includeLibrarySourceFiles.hashCode()
+        result = 31 * result + includeClassFiles.hashCode()
+        result = 31 * result + includeScriptDependencies.hashCode()
+        result = 31 * result + project.hashCode()
+        return result
+    }
+
     companion object {
         @JvmStatic
         fun sourcesAndLibraries(delegate: GlobalSearchScope, project: Project) = create(delegate, true, true, true, true, project)

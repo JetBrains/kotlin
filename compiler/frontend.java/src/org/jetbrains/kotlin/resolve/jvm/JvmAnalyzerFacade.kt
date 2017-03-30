@@ -58,7 +58,8 @@ object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
         val project = moduleContext.project
         val declarationProviderFactory = DeclarationProviderFactoryService.createDeclarationProviderFactory(
                 project, moduleContext.storageManager, syntheticFiles,
-                if (moduleInfo.isLibrary) GlobalSearchScope.EMPTY_SCOPE else moduleContentScope
+                if (moduleInfo.isLibrary) GlobalSearchScope.EMPTY_SCOPE else moduleContentScope,
+                moduleInfo
         )
 
         val moduleClassResolver = ModuleClassResolverImpl { javaClass ->
