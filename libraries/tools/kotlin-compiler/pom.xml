@@ -42,23 +42,7 @@
                                     <type>jar</type>
                                     <classifier>sources</classifier>
                                 </artifact>
-                                <artifact>
-                                    <file>${kotlin-dist}/kotlin-compiler-javadoc.jar</file>
-                                    <type>jar</type>
-                                    <classifier>javadoc</classifier>
-                                </artifact>
                             </artifacts>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>attach-empty-javadoc</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>attach-artifact</goal>
-                        </goals>
-                        <configuration>
-                            <skipAttach>true</skipAttach>
                         </configuration>
                     </execution>
 
