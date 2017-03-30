@@ -5,7 +5,7 @@ import java.util.HashMap
 
 public inline fun <K,V1, V: V1> Map<K,V>.getOrElse1(key: K, defaultValue: ()-> V1) : V1 {
     if (this.containsKey(key)) {
-        return this.get(key) as V
+        return <!UNCHECKED_CAST!>this.get(key) as V<!>
     } else {
         return defaultValue()
     }

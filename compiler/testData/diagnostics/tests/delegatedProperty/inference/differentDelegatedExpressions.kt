@@ -25,7 +25,7 @@ class MyProperty<R, T> {
 
     operator fun getValue(thisRef: R, desc: KProperty<*>): T {
         println("get $thisRef ${desc.name}")
-        return null as T
+        return <!UNCHECKED_CAST!>null as T<!>
     }
 
     operator fun setValue(thisRef: R, desc: KProperty<*>, value: T) {

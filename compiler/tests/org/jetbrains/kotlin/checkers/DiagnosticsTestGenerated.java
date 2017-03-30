@@ -2914,6 +2914,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("IsErasedUpcastToNonReified.kt")
+            public void testIsErasedUpcastToNonReified() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/IsErasedUpcastToNonReified.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("IsForTypeWithComplexUpperBound.kt")
             public void testIsForTypeWithComplexUpperBound() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/cast/IsForTypeWithComplexUpperBound.kt");
