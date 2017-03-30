@@ -102,8 +102,6 @@ private fun dropPrefix(arg: String): String {
 }
 
 private fun ProcessBuilder.runExpectingSuccess() {
-    println(this.command().joinToString(" "))
-
     val res = this.start().waitFor()
     if (res != 0) {
         throw Error("Process finished with non-zero exit code: $res")
@@ -126,11 +124,35 @@ private fun List<String>?.isTrue(): Boolean {
 }
 
 private fun runCmd(command: Array<String>, workDir: File, verbose: Boolean = false) {
-        if (verbose) println(command)
-        ProcessBuilder(*command)
-                .directory(workDir)
-                .inheritIO()
-                .runExpectingSuccess()
+    val builder = ProcessBuilder(*command)
+            .directory(workDir)
+
+    val logFile: File?
+
+    if (verbose) {
+        println(command.joinToString(" "))
+        builder.inheritIO()
+        logFile = null
+    } else {
+        logFile = createTempFile(suffix = ".log")
+        logFile.deleteOnExit()
+
+        builder.redirectOutput(ProcessBuilder.Redirect.to(logFile))
+                .redirectErrorStream(true)
+    }
+
+    try {
+        builder.runExpectingSuccess()
+    } catch (e: Throwable) {
+        if (!verbose) {
+            println(command.joinToString(" "))
+            logFile!!.useLines {
+                it.forEach { println(it) }
+            }
+        }
+
+        throw e
+    }
 }
 
 private fun maybeExecuteHelper(dependenciesRoot: String, properties: Properties, dependencies: List<String>) {
@@ -314,7 +336,7 @@ private fun processLib(konanHome: String,
 
     val nativeIndex = buildNativeIndex(library)
 
-    val gen = StubGenerator(nativeIndex, configuration, libName, generateShims, flavor)
+    val gen = StubGenerator(nativeIndex, configuration, libName, generateShims, verbose, flavor)
 
     outKtFile.parentFile.mkdirs()
     outKtFile.bufferedWriter().use { out ->

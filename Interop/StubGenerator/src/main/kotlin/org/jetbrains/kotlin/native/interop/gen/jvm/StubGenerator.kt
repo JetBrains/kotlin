@@ -31,7 +31,14 @@ class StubGenerator(
         val configuration: InteropConfiguration,
         val libName: String,
         val dumpShims: Boolean,
+        val verbose: Boolean = false,
         val platform: KotlinPlatform = KotlinPlatform.JVM) {
+
+    private fun log(message: String) {
+        if (verbose) {
+            println(message)
+        }
+    }
 
     val pkgName: String
         get() = configuration.pkgName
@@ -620,7 +627,7 @@ class StubGenerator(
                     }
                     out("")
                 } catch (e: Throwable) {
-                    println("Warning: cannot generate definition for field ${decl.kotlinName}.${field.name}")
+                    log("Warning: cannot generate definition for field ${decl.kotlinName}.${field.name}")
                 }
             }
         }
@@ -1028,7 +1035,7 @@ class StubGenerator(
                     type.parameterTypes.map { getArgFfiType(it) }
 
         } catch (e: Throwable) {
-            println("Warning: cannot generate definition for function type $name")
+            log("Warning: cannot generate definition for function type $name")
             out("object $name : CFunctionType {}")
             return
         }
@@ -1210,7 +1217,7 @@ class StubGenerator(
                     out("")
                 }
             } catch (e: Throwable) {
-                println("Warning: cannot generate binding definition for function ${it.name}")
+                log("Warning: cannot generate binding definition for function ${it.name}")
             }
         }
 
@@ -1226,7 +1233,7 @@ class StubGenerator(
                     out("")
                 }
             } catch (e: Throwable) {
-                println("Warning: cannot generate definition for struct ${s.kotlinName}")
+                log("Warning: cannot generate definition for struct ${s.kotlinName}")
             }
         }
 
@@ -1242,7 +1249,7 @@ class StubGenerator(
                     out("")
                 }
             } catch (e: Throwable) {
-                println("Warning: cannot generate typedef ${t.name}")
+                log("Warning: cannot generate typedef ${t.name}")
             }
         }
 
@@ -1264,7 +1271,7 @@ class StubGenerator(
                         out("")
                     }
                 } catch (e: Throwable) {
-                    println("Warning: cannot generate external definition for function ${it.name}")
+                    log("Warning: cannot generate external definition for function ${it.name}")
                 }
             }
         }
@@ -1278,7 +1285,7 @@ class StubGenerator(
                     }
                 }
             } catch (e: Throwable) {
-                println("Warning: cannot generate external definition for function ${it.name}")
+                log("Warning: cannot generate external definition for function ${it.name}")
             }
         }
     }
@@ -1338,7 +1345,7 @@ class StubGenerator(
                     generateCJniFunction(func)
                 }
             } catch (e: Throwable) {
-                System.err.println("Warning: cannot generate C JNI function definition ${func.name}")
+                log("Warning: cannot generate C JNI function definition ${func.name}")
             }
         }
 
