@@ -42,7 +42,7 @@ class KotlinInlineFunctionProcessor(
         private val deleteAfter: Boolean
 ) : BaseRefactoringProcessor(project) {
 
-    private val commandName = RefactoringBundle.message("inline.method.command", DescriptiveNameUtil.getDescriptiveName(function))
+    private val commandName = "Inlining function ${DescriptiveNameUtil.getDescriptiveName(function)}"
 
     override fun findUsages(): Array<UsageInfo> {
         if (inlineThisOnly && reference != null) return arrayOf(UsageInfo(reference))
@@ -75,8 +75,7 @@ class KotlinInlineFunctionProcessor(
 
             override fun getElements() = arrayOf(function)
 
-            override fun getProcessedElementsHeader(): String =
-                    RefactoringBundle.message("inline.method.elements.header")
+            override fun getProcessedElementsHeader() = "Function to inline"
         }
     }
 }

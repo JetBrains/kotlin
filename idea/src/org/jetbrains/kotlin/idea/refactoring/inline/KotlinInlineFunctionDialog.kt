@@ -41,7 +41,7 @@ class KotlinInlineFunctionDialog(
 
     init {
         myInvokedOnReference = reference != null
-        title = RefactoringBundle.message("inline.method.title")
+        title = "Inline function"
         init()
     }
 
@@ -51,23 +51,22 @@ class KotlinInlineFunctionDialog(
         val occurrencesString =
                 if (occurrencesNumber > -1) " - $occurrencesNumber occurrence${if (occurrencesNumber == 1) "" else "s"}"
                 else ""
-        val methodText = "${function.nameAsSafeName}" + function.valueParameters.joinToString(prefix = "(", postfix = ")") {
+        val functionText = "${function.nameAsSafeName}" + function.valueParameters.joinToString(prefix = "(", postfix = ")") {
                              "${it.nameAsSafeName}: ${it.typeReference?.text}"
                          } + (function.getReturnTypeReference()?.let { ": " + it.text } ?: "")
-        return RefactoringBundle.message("inline.method.method.label", methodText, occurrencesString)
+        return "Function $functionText $occurrencesString"
     }
 
-    override fun getBorderTitle(): String = RefactoringBundle.message("inline.method.border.title")
+    override fun getBorderTitle() = "Inline"
 
-    override fun getInlineThisText(): String = RefactoringBundle.message("this.invocation.only.and.keep.the.method")
+    override fun getInlineThisText() = "Inline this only and keep the function"
 
-    override fun getInlineAllText(): String = RefactoringBundle.message(
-            if (function.isWritable) "all.invocations.and.remove.the.method"
-            else "all.invocations.in.project"
-    )
+    override fun getInlineAllText() =
+            if (function.isWritable) "Inline all and remove the function"
+            else "All invocations in project"
 
     override fun getKeepTheDeclarationText(): String =
-            if (function.isWritable) RefactoringBundle.message("all.invocations.keep.the.method")
+            if (function.isWritable) "Inline all and keep the function"
             else super.getKeepTheDeclarationText()
 
     public override fun doAction() {
