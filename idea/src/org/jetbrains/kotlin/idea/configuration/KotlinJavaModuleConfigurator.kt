@@ -14,106 +14,75 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.configuration;
+package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.impl.scopes.LibraryScope;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription;
-import org.jetbrains.kotlin.idea.framework.KotlinLibraryUtilKt;
-import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt;
-import org.jetbrains.kotlin.resolve.TargetPlatform;
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
-import org.jetbrains.kotlin.utils.KotlinPaths;
-import org.jetbrains.kotlin.utils.PathUtil;
+import com.intellij.openapi.extensions.Extensions
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.impl.scopes.LibraryScope
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.libraries.Library
+import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription
+import org.jetbrains.kotlin.idea.framework.getRuntimeJar
+import org.jetbrains.kotlin.idea.versions.getKotlinJvmRuntimeMarkerClass
+import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.utils.PathUtil
 
-public class KotlinJavaModuleConfigurator extends KotlinWithLibraryConfigurator {
-    public static final String NAME = "java";
+open class KotlinJavaModuleConfigurator internal constructor() : KotlinWithLibraryConfigurator() {
 
-    @Override
-    public boolean isConfigured(@NotNull Module module) {
-        return ConfigureKotlinInProjectUtilsKt.hasKotlinJvmRuntimeInScope(module);
+    override fun isConfigured(module: Module): Boolean {
+        return hasKotlinJvmRuntimeInScope(module)
     }
 
-    @NotNull
-    @Override
-    protected String getLibraryName() {
-        return JavaRuntimeLibraryDescription.LIBRARY_NAME;
-    }
+    override val libraryName: String
+        get() = JavaRuntimeLibraryDescription.LIBRARY_NAME
 
-    @NotNull
-    @Override
-    protected String getDialogTitle() {
-        return JavaRuntimeLibraryDescription.DIALOG_TITLE;
-    }
+    override val dialogTitle: String
+        get() = JavaRuntimeLibraryDescription.DIALOG_TITLE
 
-    @NotNull
-    @Override
-    protected String getLibraryCaption() {
-        return JavaRuntimeLibraryDescription.LIBRARY_CAPTION;
-    }
+    override val libraryCaption: String
+        get() = JavaRuntimeLibraryDescription.LIBRARY_CAPTION
 
-    @NotNull
-    @Override
-    protected String getMessageForOverrideDialog() {
-        return JavaRuntimeLibraryDescription.JAVA_RUNTIME_LIBRARY_CREATION;
-    }
+    override val messageForOverrideDialog: String
+        get() = JavaRuntimeLibraryDescription.JAVA_RUNTIME_LIBRARY_CREATION
 
-    @NotNull
-    @Override
-    public String getPresentableText() {
-        return "Java";
-    }
+    override val presentableText: String
+        get() = "Java"
 
-    @NotNull
-    @Override
-    public String getName() {
-        return NAME;
-    }
+    override val name: String
+        get() = NAME
 
-    @NotNull
-    @Override
-    public TargetPlatform getTargetPlatform() {
-        return JvmPlatform.INSTANCE;
-    }
+    override val targetPlatform: TargetPlatform
+        get() = JvmPlatform
 
-    @NotNull
-    @Override
-    public RuntimeLibraryFiles getExistingJarFiles() {
-        KotlinPaths paths = PathUtil.getKotlinPathsForIdeaPlugin();
-        return new RuntimeLibraryFiles(
-                assertFileExists(paths.getRuntimePath()),
-                assertFileExists(paths.getReflectPath()),
-                assertFileExists(paths.getRuntimeSourcesPath())
-        );
-    }
-
-    @Nullable
-    @Override
-    protected String getOldSourceRootUrl(@NotNull Library library) {
-        VirtualFile runtimeJarPath = KotlinLibraryUtilKt.getRuntimeJar(library);
-        return runtimeJarPath != null ? runtimeJarPath.getUrl() + "src" : null;
-    }
-
-    @Override
-    protected boolean isKotlinLibrary(@NotNull Project project, @NotNull Library library) {
-        if (super.isKotlinLibrary(project, library)) {
-            return true;
+    override val existingJarFiles: RuntimeLibraryFiles
+        get() {
+            val paths = PathUtil.getKotlinPathsForIdeaPlugin()
+            return RuntimeLibraryFiles(
+                    assertFileExists(paths.runtimePath),
+                    assertFileExists(paths.reflectPath),
+                    assertFileExists(paths.runtimeSourcesPath)
+            )
         }
 
-        LibraryScope scope = new LibraryScope(project, library);
-        return KotlinRuntimeLibraryUtilKt.getKotlinJvmRuntimeMarkerClass(project, scope) != null;
+    override fun getOldSourceRootUrl(library: Library): String? {
+        val runtimeJarPath = getRuntimeJar(library)
+        return if (runtimeJarPath != null) runtimeJarPath.url + "src" else null
     }
 
-    KotlinJavaModuleConfigurator() {
+    override fun isKotlinLibrary(project: Project, library: Library): Boolean {
+        if (super.isKotlinLibrary(project, library)) {
+            return true
+        }
+
+        val scope = LibraryScope(project, library)
+        return getKotlinJvmRuntimeMarkerClass(project, scope) != null
     }
 
-    public static KotlinJavaModuleConfigurator getInstance() {
-        return Extensions.findExtension(KotlinProjectConfigurator.Companion.getEP_NAME(), KotlinJavaModuleConfigurator.class);
+    companion object {
+        val NAME = "java"
+
+        val instance: KotlinJavaModuleConfigurator
+            get() = Extensions.findExtension(KotlinProjectConfigurator.EP_NAME, KotlinJavaModuleConfigurator::class.java)
     }
 }

@@ -37,6 +37,6 @@ public class JavaRuntimeLibraryDescription extends CustomLibraryDescriptorWithDe
      * @param project null when project doesn't exist yet (called from project wizard)
      */
     public JavaRuntimeLibraryDescription(@Nullable Project project) {
-        super(project, KotlinJavaModuleConfigurator.NAME, LIBRARY_NAME, DIALOG_TITLE, LIBRARY_CAPTION, KOTLIN_JAVA_RUNTIME_KIND, SUITABLE_LIBRARY_KINDS);
+        super(project, KotlinJavaModuleConfigurator.Companion.getNAME(), LIBRARY_NAME, DIALOG_TITLE, LIBRARY_CAPTION, KOTLIN_JAVA_RUNTIME_KIND, SUITABLE_LIBRARY_KINDS);
     }
 }
