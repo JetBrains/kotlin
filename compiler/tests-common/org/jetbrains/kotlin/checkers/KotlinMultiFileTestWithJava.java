@@ -46,10 +46,12 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KotlinTestWithEn
     public class ModuleAndDependencies {
         final M module;
         final List<String> dependencies;
+        final List<String> friends;
 
-        ModuleAndDependencies(M module, List<String> dependencies) {
+        ModuleAndDependencies(M module, List<String> dependencies, List<String> friends) {
             this.module = module;
             this.dependencies = dependencies;
+            this.friends = friends;
         }
     }
 
@@ -129,9 +131,9 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KotlinTestWithEn
                     }
 
                     @Override
-                    public M createModule(@NotNull String name, @NotNull List<String> dependencies) {
+                    public M createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends) {
                         M module = createTestModule(name);
-                        ModuleAndDependencies oldValue = modules.put(name, new ModuleAndDependencies(module, dependencies));
+                        ModuleAndDependencies oldValue = modules.put(name, new ModuleAndDependencies(module, dependencies, friends));
                         assert oldValue == null : "Module " + name + " declared more than once";
 
                         return module;

@@ -14,9 +14,11 @@ fun test2(`p 1`: Int, `.p 2`: Int) = `+`(`p 1`, `.p 2`)
 fun test3(): String {
     val `#` = "K"
     class ` `(private val `::`: String) {
-        internal fun `@`() = `::` + `#`
+        private fun `@`() = `::` + `#`
+
+        operator fun invoke() = `@`()
     }
-    return ` `("O").`@`()
+    return ` `("O")()
 }
 
 fun test4(): String {

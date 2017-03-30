@@ -809,6 +809,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("internal.kt")
+        public void testInternal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/crossModuleRef/internal.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("lambda.kt")
         public void testLambda() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/box/crossModuleRef/lambda.kt");

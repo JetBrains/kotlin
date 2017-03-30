@@ -42,4 +42,10 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> TYPED_ARRAYS_ENABLED =
             CompilerConfigurationKey.create("TypedArrays enabled");
+
+    public static final CompilerConfigurationKey<Boolean> FRIEND_PATHS_DISABLED =
+            CompilerConfigurationKey.create("disable support for friend paths");
+
+    public static final CompilerConfigurationKey<List<String>> FRIEND_PATHS =
+            CompilerConfigurationKey.create("friend module paths");
 }

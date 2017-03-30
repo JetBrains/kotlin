@@ -114,7 +114,7 @@ public class KotlinTestUtils {
     private static final String MODULE_DELIMITER = ",\\s*";
 
     private static final Pattern FILE_OR_MODULE_PATTERN = Pattern.compile(
-            "(?://\\s*MODULE:\\s*([^()\\n]+)(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*)?" +
+            "(?://\\s*MODULE:\\s*([^()\\n]+)(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*)?" +
             "//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
     private static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*!([\\w_]+)(:\\s*(.*)$)?", Pattern.MULTILINE);
 
@@ -574,7 +574,7 @@ public class KotlinTestUtils {
 
     public interface TestFileFactory<M, F> {
         F createFile(@Nullable M module, @NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives);
-        M createModule(@NotNull String name, @NotNull List<String> dependencies);
+        M createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends);
     }
 
     public static abstract class TestFileFactoryNoModules<F> implements TestFileFactory<Void, F> {
@@ -592,7 +592,7 @@ public class KotlinTestUtils {
         public abstract F create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives);
 
         @Override
-        public Void createModule(@NotNull String name, @NotNull List<String> dependencies) {
+        public Void createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends) {
             return null;
         }
     }
@@ -615,12 +615,13 @@ public class KotlinTestUtils {
             while (true) {
                 String moduleName = matcher.group(1);
                 String moduleDependencies = matcher.group(2);
+                String moduleFriends = matcher.group(3);
                 if (moduleName != null) {
                     hasModules = true;
-                    module = factory.createModule(moduleName, parseDependencies(moduleDependencies));
+                    module = factory.createModule(moduleName, parseModuleList(moduleDependencies), parseModuleList(moduleFriends));
                 }
 
-                String fileName = matcher.group(3);
+                String fileName = matcher.group(4);
                 int start = processedChars;
 
                 boolean nextFileExists = matcher.find();
@@ -645,7 +646,7 @@ public class KotlinTestUtils {
         }
 
         if (isDirectiveDefined(expectedText, "WITH_COROUTINES")) {
-            M supportModule = hasModules ? factory.createModule("support", Collections.emptyList()) : null;
+            M supportModule = hasModules ? factory.createModule("support", Collections.emptyList(), Collections.emptyList()) : null;
             testFiles.add(factory.createFile(supportModule,
                                              "CoroutineUtil.kt",
                                              "import kotlin.coroutines.experimental.*\n" +
@@ -679,7 +680,7 @@ public class KotlinTestUtils {
         return testFiles;
     }
 
-    private static List<String> parseDependencies(@Nullable String dependencies) {
+    private static List<String> parseModuleList(@Nullable String dependencies) {
         if (dependencies == null) return Collections.emptyList();
         return StringsKt.split(dependencies, Pattern.compile(MODULE_DELIMITER), 0);
     }

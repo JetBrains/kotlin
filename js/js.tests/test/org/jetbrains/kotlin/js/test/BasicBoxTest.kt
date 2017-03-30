@@ -91,9 +91,10 @@ abstract class BasicBoxTest(
 
             val generatedJsFiles = orderedModules.asReversed().mapNotNull { module ->
                 val dependencies = module.dependencies.mapNotNull { modules[it]?.outputFileName(outputDir) + ".meta.js" }
+                val friends = module.friends.mapNotNull { modules[it]?.outputFileName(outputDir) + ".meta.js" }
 
                 val outputFileName = module.outputFileName(outputDir) + ".js"
-                generateJavaScriptFile(file.parent, module, outputFileName, dependencies, modules.size > 1)
+                generateJavaScriptFile(file.parent, module, outputFileName, dependencies, friends, modules.size > 1)
 
                 if (!module.name.endsWith(OLD_MODULE_SUFFIX)) outputFileName else null
             }
@@ -202,6 +203,7 @@ abstract class BasicBoxTest(
             module: TestModule,
             outputFileName: String,
             dependencies: List<String>,
+            friends: List<String>,
             multiModule: Boolean
     ) {
         val testFiles = module.files.map { it.fileName }.filter { it.endsWith(".kt") }
@@ -214,7 +216,7 @@ abstract class BasicBoxTest(
         }
         val psiFiles = createPsiFiles(testFiles + globalCommonFiles + localCommonFiles + additionalCommonFiles)
 
-        val config = createConfig(module, dependencies, multiModule)
+        val config = createConfig(module, dependencies, friends, multiModule)
         val outputFile = File(outputFileName)
 
         translateFiles(psiFiles, outputFile, config)
@@ -268,7 +270,7 @@ abstract class BasicBoxTest(
         return fileNames.map { fileName -> psiManager.findFile(fileSystem.findFileByPath(fileName)!!) as KtFile }
     }
 
-    private fun createConfig(module: TestModule, dependencies: List<String>, multiModule: Boolean): JsConfig {
+    private fun createConfig(module: TestModule, dependencies: List<String>, friends: List<String>, multiModule: Boolean): JsConfig {
         val configuration = environment.configuration.copy()
 
         configuration.put(CommonConfigurationKeys.DISABLE_INLINE, module.inliningDisabled)
@@ -278,6 +280,7 @@ abstract class BasicBoxTest(
         }
 
         configuration.put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST + dependencies)
+        configuration.put(JSConfigurationKeys.FRIEND_PATHS, friends)
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, module.name.removeSuffix(OLD_MODULE_SUFFIX))
         configuration.put(JSConfigurationKeys.MODULE_KIND, module.moduleKind)
@@ -296,7 +299,7 @@ abstract class BasicBoxTest(
     private inner class TestFileFactoryImpl : TestFileFactory<TestModule, TestFile>, Closeable {
         var testPackage: String? = null
         val tmpDir = KotlinTestUtils.tmpDir("js-tests")
-        val defaultModule = TestModule(TEST_MODULE, emptyList())
+        val defaultModule = TestModule(TEST_MODULE, emptyList(), emptyList())
 
         override fun createFile(module: TestModule?, fileName: String, text: String, directives: Map<String, String>): TestFile? {
             val currentModule = module ?: defaultModule
@@ -332,8 +335,8 @@ abstract class BasicBoxTest(
             return TestFile(temporaryFile.absolutePath, currentModule)
         }
 
-        override fun createModule(name: String, dependencies: List<String>): TestModule? {
-            return TestModule(name, dependencies)
+        override fun createModule(name: String, dependencies: List<String>, friends: List<String>): TestModule? {
+            return TestModule(name, dependencies, friends)
         }
 
         override fun close() {
@@ -349,9 +352,11 @@ abstract class BasicBoxTest(
 
     private class TestModule(
             val name: String,
-            dependencies: List<String>
+            dependencies: List<String>,
+            friends: List<String>
     ) {
         val dependencies = dependencies.toMutableList()
+        val friends = friends.toMutableList()
         var moduleKind = ModuleKind.PLAIN
         var inliningDisabled = false
         val files = mutableListOf<TestFile>()

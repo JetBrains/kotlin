@@ -97,6 +97,10 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         setDependencies(ModuleDependenciesImpl(descriptors, emptySet()))
     }
 
+    fun setDependencies(descriptors: List<ModuleDescriptorImpl>, friends: Set<ModuleDescriptorImpl>) {
+        setDependencies(ModuleDependenciesImpl(descriptors, friends))
+    }
+
     override fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean {
         return this == targetModule || targetModule in dependencies!!.modulesWhoseInternalsAreVisible
     }

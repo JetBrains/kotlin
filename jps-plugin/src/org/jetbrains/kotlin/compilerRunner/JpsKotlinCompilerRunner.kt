@@ -83,6 +83,7 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
             environment: JpsCompilerEnvironment,
             sourceFiles: Collection<File>,
             libraries: List<String>,
+            friendModules: List<String>,
             outputFile: File
     ) {
         log.debug("K2JS: common arguments: " + ArgumentUtils.convertArgumentsToStringList(commonArguments))
@@ -91,7 +92,7 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
         val arguments = mergeBeans(commonArguments, XmlSerializerUtil.createCopy(k2jsArguments))
         log.debug("K2JS: merged arguments: " + ArgumentUtils.convertArgumentsToStringList(arguments))
 
-        setupK2JsArguments(outputFile, sourceFiles, libraries, arguments)
+        setupK2JsArguments(outputFile, sourceFiles, libraries, friendModules, arguments)
         log.debug("K2JS: arguments after setup" + ArgumentUtils.convertArgumentsToStringList(arguments))
 
         withCompilerSettings(compilerSettings) {
@@ -204,13 +205,14 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
         }
     }
 
-    private fun setupK2JsArguments(_outputFile: File, sourceFiles: Collection<File>, _libraries: List<String>, settings: K2JSCompilerArguments) {
+    private fun setupK2JsArguments(_outputFile: File, sourceFiles: Collection<File>, _libraries: List<String>, _friendModules: List<String>, settings: K2JSCompilerArguments) {
         with(settings) {
             noStdlib = true
             freeArgs = sourceFiles.map { it.path }
             outputFile = _outputFile.path
             metaInfo = true
             libraries = _libraries.joinToString(File.pathSeparator)
+            friendModules = _friendModules.joinToString(File.pathSeparator)
         }
     }
 

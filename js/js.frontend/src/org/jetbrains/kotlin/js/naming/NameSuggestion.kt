@@ -267,13 +267,24 @@ class NameSuggestion {
             }
 
             fun mangledAndStable() = NameAndStability(getStableMangledName(baseName, encodeSignature(descriptor)), true)
+            fun mangledInternal() = NameAndStability(getInternalMangledName(baseName, encodeSignature(descriptor)), true)
             fun mangledPrivate() = NameAndStability(getPrivateMangledName(baseName, descriptor), false)
 
             val effectiveVisibility = descriptor.ownEffectiveVisibility
 
             val containingDeclaration = descriptor.containingDeclaration
             return when (containingDeclaration) {
-                is PackageFragmentDescriptor -> if (effectiveVisibility.isPublicAPI) mangledAndStable() else regularAndUnstable()
+                is PackageFragmentDescriptor -> {
+                    if (effectiveVisibility.isPublicAPI) {
+                        mangledAndStable()
+                    }
+                    else if (effectiveVisibility == Visibilities.INTERNAL) {
+                        mangledInternal()
+                    }
+                    else {
+                        regularAndUnstable()
+                    }
+                }
                 is ClassDescriptor -> {
                     // valueOf() is created in the library with a mangled name for every enum class
                     if (descriptor is FunctionDescriptor && descriptor.isEnumValueOfMethod()) return mangledAndStable()
@@ -281,6 +292,10 @@ class NameSuggestion {
                     // Make all public declarations stable
                     if (effectiveVisibility == Visibilities.PUBLIC) {
                         return mangledAndStable()
+                    }
+
+                    if (effectiveVisibility == Visibilities.INTERNAL) {
+                        return mangledInternal()
                     }
 
                     if (descriptor is CallableMemberDescriptor && descriptor.isOverridableOrOverrides) return mangledAndStable()
@@ -315,6 +330,11 @@ class NameSuggestion {
         @JvmStatic fun getPrivateMangledName(baseName: String, descriptor: CallableDescriptor): String {
             val ownerName = descriptor.containingDeclaration.fqNameUnsafe.asString()
             return getStableMangledName(baseName, ownerName + ":" + encodeSignature(descriptor))
+        }
+
+        fun getInternalMangledName(suggestedName: String, forCalculateId: String): String {
+            val suffix = "_${mangledId("internal:" + forCalculateId)}\$"
+            return suggestedName + suffix
         }
 
         @JvmStatic fun getStableMangledName(suggestedName: String, forCalculateId: String): String {

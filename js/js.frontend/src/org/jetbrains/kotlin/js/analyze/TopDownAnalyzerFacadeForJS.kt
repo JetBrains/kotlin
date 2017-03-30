@@ -36,10 +36,11 @@ object TopDownAnalyzerFacadeForJS {
         val context = ContextForNewModule(
                 ProjectContext(config.project), Name.special("<${config.moduleId}>"), JsPlatform.builtIns, null
         )
-        context.setDependencies(
+        context.module.setDependencies(
                 listOf(context.module) +
                 config.moduleDescriptors.map { it.data } +
-                listOf(JsPlatform.builtIns.builtInsModule)
+                listOf(JsPlatform.builtIns.builtInsModule),
+                config.friendModuleDescriptors.map { it.data }.toSet()
         )
         val trace = BindingTraceContext()
         trace.record(MODULE_KIND, context.module, config.moduleKind)

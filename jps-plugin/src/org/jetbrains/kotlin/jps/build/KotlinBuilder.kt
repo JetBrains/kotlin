@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
+import org.jetbrains.kotlin.jps.build.JpsJsModuleUtils.getOutputMetaFile
 import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
@@ -661,8 +662,13 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(representativeModule)
         val k2JsArguments = JpsKotlinCompilerSettings.getK2JsCompilerArguments(representativeModule)
 
+        val friendPaths = KotlinBuilderModuleScriptGenerator.getProductionModulesWhichInternalsAreVisible(representativeTarget).mapNotNull {
+            val file = getOutputMetaFile(it, false)
+            if (file.exists()) file.absolutePath.toString() else null
+        }
+
         val compilerRunner = JpsKotlinCompilerRunner()
-        compilerRunner.runK2JsCompiler(commonArguments, k2JsArguments, compilerSettings, environment, sourceFiles, libraries, outputFile)
+        compilerRunner.runK2JsCompiler(commonArguments, k2JsArguments, compilerSettings, environment, sourceFiles, libraries, friendPaths, outputFile)
         return environment.outputItemsCollector
     }
 

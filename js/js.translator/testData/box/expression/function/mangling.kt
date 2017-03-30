@@ -214,6 +214,7 @@ val SIMPLE = "baz"
 val SIMPLE0 = "${SIMPLE}_0"
 val NATIVE = SIMPLE
 val STABLE = "baz_za3lpa$"
+val INTERNAL = "baz_kcn2v3$"
 
 fun box(): String {
     testGroup = "Top Level"
@@ -225,7 +226,7 @@ fun box(): String {
     testGroup = "Public Class"
     test(STABLE) { PublicClass().public_baz(0) }
     test(NATIVE) { PublicClass().public_baz("native") }
-    test(SIMPLE0) { PublicClass().internal_baz(0) }
+    test(INTERNAL) { PublicClass().internal_baz(0) }
     test(NATIVE) { PublicClass().internal_baz("native") }
     test(SIMPLE0, PublicClass().call_private_baz)
     test(NATIVE, PublicClass().call_private_native_baz)
@@ -233,7 +234,7 @@ fun box(): String {
     testGroup = "Internal Class"
     test(STABLE) { InternalClass().public_baz(0) }
     test(NATIVE) { InternalClass().public_baz("native") }
-    test(SIMPLE0) { InternalClass().internal_baz(0) }
+    test(INTERNAL) { InternalClass().internal_baz(0) }
     test(NATIVE) { InternalClass().internal_baz("native") }
     test(SIMPLE0, InternalClass().call_private_baz)
     test(NATIVE, InternalClass().call_private_native_baz)
@@ -241,7 +242,7 @@ fun box(): String {
     testGroup = "Private Class"
     test(STABLE) { PrivateClass().public_baz(0) }
     test(NATIVE) { PrivateClass().public_baz("native") }
-    test(SIMPLE0) { PrivateClass().internal_baz(0) }
+    test(INTERNAL) { PrivateClass().internal_baz(0) }
     test(NATIVE) { PrivateClass().internal_baz("native") }
     test(SIMPLE0, PrivateClass().call_private_baz)
     test(NATIVE, PrivateClass().call_private_native_baz)
@@ -249,7 +250,7 @@ fun box(): String {
     testGroup = "Open Public Class"
     test(STABLE) { OpenPublicClass().public_baz(0) }
     test(NATIVE) { OpenPublicClass().public_baz("native") }
-    testMangledPrivate { OpenPublicClass().internal_baz(0) }
+    test(INTERNAL) { OpenPublicClass().internal_baz(0) }
     test(NATIVE) { OpenPublicClass().internal_baz("native") }
     testMangledPrivate(OpenPublicClass().call_private_baz)
     test(NATIVE, OpenPublicClass().call_private_native_baz)
@@ -257,7 +258,7 @@ fun box(): String {
     testGroup = "Open Internal Class"
     test(STABLE) { OpenInternalClass().public_baz(0) }
     test(NATIVE) { OpenInternalClass().public_baz("native") }
-    test(SIMPLE0) { OpenInternalClass().internal_baz(0) }
+    test(INTERNAL) { OpenInternalClass().internal_baz(0) }
     test(NATIVE) { OpenInternalClass().internal_baz("native") }
     test(SIMPLE0, OpenInternalClass().call_private_baz)
     test(NATIVE, OpenInternalClass().call_private_native_baz)
@@ -265,7 +266,7 @@ fun box(): String {
     testGroup = "Open Private Class"
     test(STABLE) { OpenPrivateClass().public_baz(0) }
     test(NATIVE) { OpenPrivateClass().public_baz("native") }
-    test(SIMPLE0) { OpenPrivateClass().internal_baz(0) }
+    test(INTERNAL) { OpenPrivateClass().internal_baz(0) }
     test(NATIVE) { OpenPrivateClass().internal_baz("native") }
     test(SIMPLE0, OpenPrivateClass().call_private_baz)
     test(NATIVE, OpenPrivateClass().call_private_native_baz)
