@@ -372,6 +372,18 @@ internal class IrSerializer(val context: Context,
         return proto.build()
     }
 
+    fun serializeContinue(expression: IrContinue): KonanIr.IrContinue {
+        val proto = KonanIr.IrContinue.newBuilder()
+        val label = expression.label
+        if (label != null) {
+            proto.setLabel(label)
+        }
+        val loopId = loopIndex[expression.loop!!]!!
+        proto.setLoopId(loopId)
+
+        return proto.build()
+    }
+
     fun serializeExpression(expression: IrExpression): KonanIr.IrExpression {
         context.log("### serializing Expression: ${ir2string(expression)}")
 
@@ -389,6 +401,7 @@ internal class IrSerializer(val context: Context,
             is IrCallableReference
                              -> operationProto.setCallableReference(serializeCallableReference(expression))
             is IrConst<*>    -> operationProto.setConst(serializeConst(expression))
+            is IrContinue    -> operationProto.setContinue(serializeContinue(expression))
             is IrDelegatingConstructorCall
                              -> operationProto.setDelegatingConstructorCall(serializeDelegatingConstructorCall(expression))
             is IrGetValue    -> operationProto.setGetValue(serializeGetValue(expression))
@@ -728,7 +741,6 @@ internal class IrDeserializer(val context: Context,
         return IrInstanceInitializerCallImpl(start, end, descriptor)
     }
 
-
     fun deserializeReturn(proto: KonanIr.IrReturn, start: Int, end: Int, type: KotlinType): IrReturn {
         val descriptor = 
             deserializeDescriptor(proto.getReturnTarget()) as CallableDescriptor
@@ -841,6 +853,16 @@ internal class IrDeserializer(val context: Context,
         return irBreak
     }
 
+    fun deserializeContinue(proto: KonanIr.IrContinue, start: Int, end: Int, type: KotlinType): IrContinue {
+        val label = if(proto.hasLabel()) proto.getLabel() else null
+        val loopId = proto.getLoopId()
+        val loop = loopIndex[loopId]!!
+        val irContinue = IrContinueImpl(start, end, type, loop)
+        irContinue.label = label
+
+        return irContinue
+    }
+
     fun deserializeConst(proto: KonanIr.IrConst, start: Int, end: Int, type: KotlinType): IrExpression {
 
         when  {
@@ -872,6 +894,8 @@ internal class IrDeserializer(val context: Context,
                 -> return deserializeCallableReference(proto.getCallableReference(), start, end, type)
             proto.hasConst()
                 -> return deserializeConst(proto.getConst(), start, end, type)
+            proto.hasContinue()
+                -> return deserializeContinue(proto.getContinue(), start, end, type)
             proto.hasDelegatingConstructorCall()
                 -> return deserializeDelegatingConstructorCall(proto.getDelegatingConstructorCall(), start, end, type)
             proto.hasGetValue()

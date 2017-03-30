@@ -112,6 +112,11 @@ message IrConst {
     }
 }
 
+message IrContinue {
+    required int32 loop_id = 1;
+    optional string label = 2;
+}
+
 message IrDelegatingConstructorCall {
     required KotlinDescriptor descriptor = 1;
     required MemberAccessCommon member_access = 2;
@@ -191,21 +196,22 @@ message IrOperation {
         IrCall call = 3;
         IrCallableReference callable_reference = 4;
         IrConst const = 5;
-        IrDelegatingConstructorCall delegating_constructor_call = 6;
-        IrEnumConstructorCall enum_constructor_call = 7;
-        IrGetEnumValue get_enum_value = 8;
-        IrGetValue get_value = 9;
-        IrGetObject get_object = 10;
-        IrInstanceInitializerCall instance_initializer_call = 11;
-        IrReturn return = 12;
-        IrSetVariable set_variable = 13;
-        IrStringConcat string_concat = 14;
-        IrThrow throw = 15;
-        IrTry try = 16;
-        IrTypeOp type_op = 17;
-        IrVararg vararg = 18;
-        IrWhen when = 19;
-        IrWhile while = 20;
+        IrContinue continue = 6;
+        IrDelegatingConstructorCall delegating_constructor_call = 7;
+        IrEnumConstructorCall enum_constructor_call = 8;
+        IrGetEnumValue get_enum_value = 9;
+        IrGetValue get_value = 10;
+        IrGetObject get_object = 11;
+        IrInstanceInitializerCall instance_initializer_call = 12;
+        IrReturn return = 13;
+        IrSetVariable set_variable = 14;
+        IrStringConcat string_concat = 15;
+        IrThrow throw = 16;
+        IrTry try = 17;
+        IrTypeOp type_op = 18;
+        IrVararg vararg = 19;
+        IrWhen when = 20;
+        IrWhile while = 21;
     }
 }
 
