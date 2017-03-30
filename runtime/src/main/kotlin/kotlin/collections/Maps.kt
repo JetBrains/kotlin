@@ -38,6 +38,7 @@ private object EmptyMap : Map<Any?, Nothing> {
  * Returns an empty read-only map of specified type. The returned map is serializable (JVM).
  * @sample samples.collections.Maps.Instantiation.emptyReadOnlyMap
  */
+@Suppress("UNCHECKED_CAST")
 public fun <K, V> emptyMap(): Map<K, V> = EmptyMap as Map<K, V>
 
 /**
@@ -162,6 +163,7 @@ public inline fun <@kotlin.internal.OnlyInputTypes K> Map<out K, *>.containsKey(
  * Allows to overcome type-safety restriction of `containsValue` that requires to pass a value of type `V`.
  */
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline fun <K, @kotlin.internal.OnlyInputTypes V> Map<K, V>.containsValue(value: V): Boolean = this.containsValue(value)
 
 

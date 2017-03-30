@@ -2583,56 +2583,67 @@ public inline fun <reified T> Collection<T>.toTypedArray(): Array<T> {
     val result = arrayOfNulls<T>(size)
     var index = 0
     for (element in this) result[index++] = element
+    @Suppress("UNCHECKED_CAST")
     return result as Array<T>
 }
 
 /**
  * Returns an array containing the specified elements.
  */
+@Suppress("UNCHECKED_CAST")
 public inline fun <reified @PureReifiable T> arrayOf(vararg elements: T): Array<T> = elements as Array<T>
 
 private val kEmptyArray = arrayOf<Any>()
 
+@Suppress("UNCHECKED_CAST")
 public fun <T> emptyArray() = kEmptyArray as Array<T>
 
 /**
  * Returns an array containing the specified [Double] numbers.
  */
+@Suppress("NOTHING_TO_INLINE")
 public inline fun doubleArrayOf(vararg elements: Double) = elements
 
 /**
  * Returns an array containing the specified [Float] numbers.
  */
+@Suppress("NOTHING_TO_INLINE")
 public inline fun floatArrayOf(vararg elements: Float) = elements
 
 /**
  * Returns an array containing the specified [Long] numbers.
  */
+@Suppress("NOTHING_TO_INLINE")
 public inline fun longArrayOf(vararg elements: Long) = elements
 
 /**
  * Returns an array containing the specified [Int] numbers.
  */
+@Suppress("NOTHING_TO_INLINE")
 public inline fun intArrayOf(vararg elements: Int) = elements
 
 /**
  * Returns an array containing the specified characters.
  */
+@Suppress("NOTHING_TO_INLINE")
 public inline fun charArrayOf(vararg elements: Char) = elements
 
 /**
  * Returns an array containing the specified [Short] numbers.
  */
+@Suppress("NOTHING_TO_INLINE")
 public inline fun shortArrayOf(vararg elements: Short) = elements
 
 /**
  * Returns an array containing the specified [Byte] numbers.
  */
+@Suppress("NOTHING_TO_INLINE")
 public inline fun byteArrayOf(vararg elements: Byte) = elements
 
 /**
  * Returns an array containing the specified boolean values.
  */
+@Suppress("NOTHING_TO_INLINE")
 public inline fun booleanArrayOf(vararg elements: Boolean) = elements
 
 /**

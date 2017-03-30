@@ -154,22 +154,22 @@ public final class Byte : Number(), Comparable<Byte> {
 
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Byte_mod_Byte")
-    external public operator fun mod(other: Byte): Int
+    external public operator fun rem(other: Byte): Int
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Byte_mod_Short")
-    external public operator fun mod(other: Short): Int
+    external public operator fun rem(other: Short): Int
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Byte_mod_Int")
-    external public operator fun mod(other: Int): Int
+    external public operator fun rem(other: Int): Int
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Byte_mod_Long")
-    external public operator fun mod(other: Long): Long
+    external public operator fun rem(other: Long): Long
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Byte_mod_Float")
-    external public operator fun mod(other: Float): Float
+    external public operator fun rem(other: Float): Float
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Byte_mod_Double")
-    external public operator fun mod(other: Double): Double
+    external public operator fun rem(other: Double): Double
 
     /** Increments this value. */
     @SymbolName("Kotlin_Byte_inc")
@@ -381,22 +381,22 @@ public final class Short : Number(), Comparable<Short> {
 
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Short_mod_Byte")
-    external public operator fun mod(other: Byte): Int
+    external public operator fun rem(other: Byte): Int
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Short_mod_Short")
-    external public operator fun mod(other: Short): Int
+    external public operator fun rem(other: Short): Int
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Short_mod_Int")
-    external public operator fun mod(other: Int): Int
+    external public operator fun rem(other: Int): Int
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Short_mod_Long")
-    external public operator fun mod(other: Long): Long
+    external public operator fun rem(other: Long): Long
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Short_mod_Float")
-    external public operator fun mod(other: Float): Float
+    external public operator fun rem(other: Float): Float
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Short_mod_Double")
-    external public operator fun mod(other: Double): Double
+    external public operator fun rem(other: Double): Double
 
     /** Increments this value. */
     @SymbolName("Kotlin_Short_inc")
@@ -608,22 +608,22 @@ public final class Int : Number(), Comparable<Int> {
 
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Int_mod_Byte")
-    external public operator fun mod(other: Byte): Int
+    external public operator fun rem(other: Byte): Int
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Int_mod_Short")
-    external public operator fun mod(other: Short): Int
+    external public operator fun rem(other: Short): Int
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Int_mod_Int")
-    external public operator fun mod(other: Int): Int
+    external public operator fun rem(other: Int): Int
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Int_mod_Long")
-    external public operator fun mod(other: Long): Long
+    external public operator fun rem(other: Long): Long
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Int_mod_Float")
-    external public operator fun mod(other: Float): Float
+    external public operator fun rem(other: Float): Float
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Int_mod_Double")
-    external public operator fun mod(other: Double): Double
+    external public operator fun rem(other: Double): Double
 
     /** Increments this value. */
     @SymbolName("Kotlin_Int_inc")
@@ -703,33 +703,6 @@ public final class Int : Number(), Comparable<Int> {
 
     public override fun hashCode(): Int {
         return this
-    }
-
-    // TODO: make extensions.
-    fun highestOneBit() : Int {
-        var index = 31
-
-        while (index >= 0) {
-            var mask = (1 shl index)
-            if ((mask and this) != 0) {
-                return mask
-            }
-            index--
-        }
-        return 0
-    }
-
-    fun numberOfLeadingZeros() : Int {
-        var index = 31
-
-        while (index >= 0) {
-            var mask = (1 shl index)
-            if ((mask and this) != 0) {
-                return 31 - index
-            }
-            index--
-        }
-        return 0
     }
 }
 
@@ -871,22 +844,22 @@ public final class Long : Number(), Comparable<Long> {
 
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Long_mod_Byte")
-    external public operator fun mod(other: Byte): Long
+    external public operator fun rem(other: Byte): Long
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Long_mod_Short")
-    external public operator fun mod(other: Short): Long
+    external public operator fun rem(other: Short): Long
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Long_mod_Int")
-    external public operator fun mod(other: Int): Long
+    external public operator fun rem(other: Int): Long
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Long_mod_Long")
-    external public operator fun mod(other: Long): Long
+    external public operator fun rem(other: Long): Long
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Long_mod_Float")
-    external public operator fun mod(other: Float): Float
+    external public operator fun rem(other: Float): Float
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Long_mod_Double")
-    external public operator fun mod(other: Double): Double
+    external public operator fun rem(other: Double): Double
 
     /** Increments this value. */
     @SymbolName("Kotlin_Long_inc")
@@ -988,16 +961,19 @@ public final class Float : Number(), Comparable<Float> {
         /**
          * A constant holding the positive infinity value of Float.
          */
+        @Suppress("DIVISION_BY_ZERO")
         public val POSITIVE_INFINITY: Float = 1.0f / 0.0f
 
         /**
          * A constant holding the negative infinity value of Float.
          */
+        @Suppress("DIVISION_BY_ZERO")
         public val NEGATIVE_INFINITY: Float = -1.0f / 0.0f
 
         /**
          * A constant holding the "not a number" value of Float.
          */
+        @Suppress("DIVISION_BY_ZERO")
         public val NaN: Float = 0.0f / 0.0f
     }
 
@@ -1122,22 +1098,22 @@ public final class Float : Number(), Comparable<Float> {
 
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Float_mod_Byte")
-    external public operator fun mod(other: Byte): Float
+    external public operator fun rem(other: Byte): Float
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Float_mod_Short")
-    external public operator fun mod(other: Short): Float
+    external public operator fun rem(other: Short): Float
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Float_mod_Int")
-    external public operator fun mod(other: Int): Float
+    external public operator fun rem(other: Int): Float
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Float_mod_Long")
-    external public operator fun mod(other: Long): Float
+    external public operator fun rem(other: Long): Float
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Float_mod_Float")
-    external public operator fun mod(other: Float): Float
+    external public operator fun rem(other: Float): Float
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Float_mod_Double")
-    external public operator fun mod(other: Double): Double
+    external public operator fun rem(other: Double): Double
 
     /** Increments this value. */
     @SymbolName("Kotlin_Float_inc")
@@ -1205,16 +1181,19 @@ public final class Double : Number(), Comparable<Double> {
         /**
          * A constant holding the positive infinity value of Double.
          */
+        @Suppress("DIVISION_BY_ZERO")
         public val POSITIVE_INFINITY: Double = 1.0 / 0.0
 
         /**
          * A constant holding the negative infinity value of Double.
          */
+        @Suppress("DIVISION_BY_ZERO")
         public val NEGATIVE_INFINITY: Double = -1.0 / 0.0
 
         /**
          * A constant holding the "not a number" value of Double.
          */
+        @Suppress("DIVISION_BY_ZERO")
         public val NaN: Double = 0.0 / 0.0
     }
 
@@ -1339,22 +1318,22 @@ public final class Double : Number(), Comparable<Double> {
 
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Double_mod_Byte")
-    external public operator fun mod(other: Byte): Double
+    external public operator fun rem(other: Byte): Double
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Double_mod_Short")
-    external public operator fun mod(other: Short): Double
+    external public operator fun rem(other: Short): Double
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Double_mod_Int")
-    external public operator fun mod(other: Int): Double
+    external public operator fun rem(other: Int): Double
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Double_mod_Long")
-    external public operator fun mod(other: Long): Double
+    external public operator fun rem(other: Long): Double
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Double_mod_Float")
-    external public operator fun mod(other: Float): Double
+    external public operator fun rem(other: Float): Double
     /** Calculates the remainder of dividing this value by the other value. */
     @SymbolName("Kotlin_Double_mod_Double")
-    external public operator fun mod(other: Double): Double
+    external public operator fun rem(other: Double): Double
 
     /** Increments this value. */
     @SymbolName("Kotlin_Double_inc")

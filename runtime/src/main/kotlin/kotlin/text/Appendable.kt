@@ -52,7 +52,7 @@ public fun StringBuilder.append(vararg value: Any?): StringBuilder {
 internal fun <T> Appendable.appendElement(element: T, transform: ((T) -> CharSequence)?) {
     when {
         transform != null -> append(transform(element))
-        element is CharSequence? -> append(element)
+        element is CharSequence -> append(element)
         element is Char -> append(element)
         else -> append(element.toString())
     }

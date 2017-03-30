@@ -20,6 +20,7 @@ package kotlin
  * Throws an [AssertionError] if the [value] is false
  * and runtime assertions have been enabled during compilation.
  */
+@Suppress("NOTHING_TO_INLINE")
 public inline fun assert(value: Boolean) {
     assert(value) { "Assertion failed" }
 }

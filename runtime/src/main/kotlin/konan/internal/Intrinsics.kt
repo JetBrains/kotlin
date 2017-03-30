@@ -33,6 +33,7 @@ import kotlinx.cinterop.NativePtr
 @Intrinsic external fun areEqualByValue(first: NativePointed?, second: NativePointed?): Boolean
 @Intrinsic external fun areEqualByValue(first: CPointer<*>?, second: CPointer<*>?): Boolean
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun areEqual(first: Any?, second: Any?): Boolean {
     return if (first == null) second == null else first.equals(second)
 }

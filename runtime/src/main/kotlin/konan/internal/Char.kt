@@ -33,10 +33,13 @@ public inline operator fun Char.plus(other: String) : String = this.toString() +
  *   - Applying the method [toLowerCase] to each character produces the same result
  */
 public fun Char.equals(other: Char, ignoreCase: Boolean = false): Boolean {
+    @Suppress("DEPRECATED_IDENTITY_EQUALS")
     if (this === other) return true
     if (!ignoreCase) return false
 
+    @Suppress("DEPRECATED_IDENTITY_EQUALS")
     if (this.toUpperCase() === other.toUpperCase()) return true
+    @Suppress("DEPRECATED_IDENTITY_EQUALS")
     if (this.toLowerCase() === other.toLowerCase()) return true
     return false
 }

@@ -169,6 +169,7 @@ external public fun String.toUpperCase(): String
  * Returns a copy of this string converted to lower case using the rules of the default locale.
  */
 @SymbolName("Kotlin_String_toLowerCase")
+@Suppress("NOTHING_TO_INLINE")
 external public inline fun String.toLowerCase(): String
 
 /**

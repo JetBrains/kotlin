@@ -83,6 +83,7 @@ public fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> =
  * Also this behavior can be changed in the future.
  */
 @FixmeConcurrency
+@Suppress("UNUSED_PARAMETER")
 public fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = TODO()//SynchronizedLazyImpl(initializer, lock)
 
 /**

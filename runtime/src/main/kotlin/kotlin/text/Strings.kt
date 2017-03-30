@@ -304,6 +304,7 @@ public fun CharSequence.subSequence(range: IntRange): CharSequence = subSequence
  */
 @kotlin.internal.InlineOnly
 @Deprecated("Use parameters named startIndex and endIndex.", ReplaceWith("subSequence(startIndex = start, endIndex = end)"))
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline fun String.subSequence(start: Int, end: Int): CharSequence = subSequence(start, end)
 
 /**
@@ -714,7 +715,7 @@ public fun CharSequence.endsWith(char: Char, ignoreCase: Boolean = false): Boole
  */
 public fun CharSequence.startsWith(prefix: CharSequence, ignoreCase: Boolean = false): Boolean {
     if (!ignoreCase && this is String && prefix is String)
-        return (this as String).startsWith(prefix)
+        return this.startsWith(prefix)
     else
         return regionMatchesImpl(0, prefix, 0, prefix.length, ignoreCase)
 }
@@ -724,7 +725,7 @@ public fun CharSequence.startsWith(prefix: CharSequence, ignoreCase: Boolean = f
  */
 public fun CharSequence.startsWith(prefix: CharSequence, startIndex: Int, ignoreCase: Boolean = false): Boolean {
     if (!ignoreCase && this is String && prefix is String)
-        return (this as String).startsWith(prefix, startIndex)
+        return this.startsWith(prefix, startIndex)
     else
         return regionMatchesImpl(startIndex, prefix, 0, prefix.length, ignoreCase)
 }
@@ -734,7 +735,7 @@ public fun CharSequence.startsWith(prefix: CharSequence, startIndex: Int, ignore
  */
 public fun CharSequence.endsWith(suffix: CharSequence, ignoreCase: Boolean = false): Boolean {
     if (!ignoreCase && this is String && suffix is String)
-        return (this as String).endsWith(suffix)
+        return this.endsWith(suffix)
     else
         return regionMatchesImpl(length - suffix.length, suffix, 0, suffix.length, ignoreCase)
 }

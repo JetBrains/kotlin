@@ -77,5 +77,6 @@ fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T>
     val result = Array<T?>(values.size)
     for (value in values)
         result[value.ordinal] = value
+    @Suppress("UNCHECKED_CAST")
     return result as Array<T>
 }

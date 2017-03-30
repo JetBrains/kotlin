@@ -128,6 +128,7 @@ public inline fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
  * Allows to overcome type-safety restriction of `containsAll` that requires to pass a collection of type `Collection<E>`.
  */
 @kotlin.internal.InlineOnly
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public inline fun <@kotlin.internal.OnlyInputTypes T> Collection<T>.containsAll(
         elements: Collection<T>): Boolean = this.containsAll(elements)
 
@@ -555,6 +556,7 @@ public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.indexOf(element: T): 
 /**
  * Returns first index of [element], or -1 if the list does not contain element.
  */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public fun <@kotlin.internal.OnlyInputTypes T> List<T>.indexOf(element: T): Int {
     return indexOf(element)
 }
@@ -674,6 +676,7 @@ public inline fun <T> List<T>.last(predicate: (T) -> Boolean): T {
 /**
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.lastIndexOf(element: T): Int {
     if (this is List) return this.lastIndexOf(element)
     var lastIndex = -1
@@ -689,6 +692,7 @@ public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.lastIndexOf(element: 
 /**
  * Returns last index of [element], or -1 if the list does not contain element.
  */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public fun <@kotlin.internal.OnlyInputTypes T> List<T>.lastIndexOf(element: T): Int {
     return lastIndexOf(element)
 }
@@ -2192,6 +2196,7 @@ public infix fun <T, R> Iterable<T>.zip(other: Array<out R>): List<Pair<T, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
 }
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun min(x1: Int, x2: Int) = if (x1 < x2) x1 else x2
 
 /**

@@ -22,6 +22,7 @@ import kotlin.comparisons.*
 private fun <T> partition(array: Array<T>, left: Int, right: Int): Int {
     var i = left
     var j = right
+    @Suppress("UNCHECKED_CAST")
     val pivot = array[(left + right) / 2] as Comparable<T>
     while (i <= j) {
         while (pivot.compareTo(array[i]) > 0) {
@@ -81,9 +82,11 @@ private fun <T> quickSort(
 
 internal fun <T> sortArrayWith(
         array: Array<out T>, fromIndex: Int, toIndex: Int, comparator: Comparator<T>) {
+    @Suppress("UNCHECKED_CAST")
     quickSort(array as Array<T>, fromIndex, toIndex, comparator)
 }
 
 internal fun <T> sortArrayComparable(array: Array<out T>) {
+    @Suppress("UNCHECKED_CAST")
     quickSort(array as Array<T>, 0, array.size - 1)
 }

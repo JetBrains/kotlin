@@ -51,6 +51,7 @@ external public fun Char.isIdentifierIgnorable(): Boolean
  * Returns `true` if this character is an ISO control character.
  */
 @SymbolName("Kotlin_Char_isISOControl")
+@Suppress("NOTHING_TO_INLINE")
 external public inline fun Char.isISOControl(): Boolean
 
 /**

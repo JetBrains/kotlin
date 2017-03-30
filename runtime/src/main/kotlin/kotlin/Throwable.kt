@@ -42,6 +42,7 @@ public open class Throwable(open val message: String?, open val cause: Throwable
         this.cause?.printEnclosedStackTrace(this)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun printEnclosedStackTrace(enclosing: Throwable) {
         // TODO: should skip common stack frames
         print("Caused by: ")

@@ -34,7 +34,7 @@ open class KProperty0Impl<out R>(override val name: String, val getter: () -> R)
     }
 
     override fun equals(other: Any?): Boolean {
-        val otherKProperty = other as? KProperty0Impl<R>
+        val otherKProperty = other as? KProperty0Impl<*>
         if (otherKProperty == null) return false
         return name == otherKProperty.name && getter == otherKProperty.getter
     }
@@ -58,7 +58,7 @@ open class KProperty1Impl<T, out R>(override val name: String, val getter: (T) -
     }
 
     override fun equals(other: Any?): Boolean {
-        val otherKProperty = other as? KProperty1Impl<T, R>
+        val otherKProperty = other as? KProperty1Impl<*, *>
         if (otherKProperty == null) return false
         return name == otherKProperty.name && getter == otherKProperty.getter
     }
@@ -82,7 +82,7 @@ open class KProperty2Impl<T1, T2, out R>(override val name: String, val getter: 
     }
 
     override fun equals(other: Any?): Boolean {
-        val otherKProperty = other as? KProperty2Impl<T1, T2, R>
+        val otherKProperty = other as? KProperty2Impl<*, *, *>
         if (otherKProperty == null) return false
         return name == otherKProperty.name && getter == otherKProperty.getter
     }
@@ -104,7 +104,7 @@ class KMutableProperty0Impl<R>(name: String, getter: () -> R, val setter: (R) ->
     }
 
     override fun equals(other: Any?): Boolean {
-        val otherKProperty = other as? KMutableProperty0Impl<R>
+        val otherKProperty = other as? KMutableProperty0Impl<*>
         if (otherKProperty == null) return false
         return name == otherKProperty.name && getter == otherKProperty.getter && setter == otherKProperty.setter
     }
@@ -126,7 +126,7 @@ class KMutableProperty1Impl<T, R>(name: String, getter: (T) -> R, val setter: (T
     }
 
     override fun equals(other: Any?): Boolean {
-        val otherKProperty = other as? KMutableProperty1Impl<T, R>
+        val otherKProperty = other as? KMutableProperty1Impl<*, *>
         if (otherKProperty == null) return false
         return name == otherKProperty.name && getter == otherKProperty.getter && setter == otherKProperty.setter
     }
@@ -148,7 +148,7 @@ class KMutableProperty2Impl<T1, T2, R>(name: String, getter: (T1, T2) -> R, val 
     }
 
     override fun equals(other: Any?): Boolean {
-        val otherKProperty = other as? KMutableProperty2Impl<T1, T2, R>
+        val otherKProperty = other as? KMutableProperty2Impl<* ,*, *>
         if (otherKProperty == null) return false
         return name == otherKProperty.name && getter == otherKProperty.getter && setter == otherKProperty.setter
     }
