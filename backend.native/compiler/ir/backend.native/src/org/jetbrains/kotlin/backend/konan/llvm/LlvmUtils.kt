@@ -171,7 +171,7 @@ internal fun RuntimeAware.isObjectType(type: LLVMTypeRef): Boolean {
 /**
  * Reads [size] bytes contained in this array.
  */
-internal fun CArrayPointer<CInt8Var>.getBytes(size: Long) =
+internal fun CArrayPointer<ByteVar>.getBytes(size: Long) =
         (0 .. size-1).map { this[it].value }.toByteArray()
 
 internal fun getFunctionType(ptrToFunction: LLVMValueRef): LLVMTypeRef {
@@ -220,7 +220,7 @@ fun getStructElements(type: LLVMTypeRef): List<LLVMTypeRef> {
 
 fun parseBitcodeFile(path: String): LLVMModuleRef = memScoped {
     val bufRef = alloc<LLVMMemoryBufferRefVar>()
-    val errorRef = allocPointerTo<CInt8Var>()
+    val errorRef = allocPointerTo<ByteVar>()
 
     val res = LLVMCreateMemoryBufferWithContentsOfFile(path, bufRef.ptr, errorRef.ptr)
     if (res != 0) {

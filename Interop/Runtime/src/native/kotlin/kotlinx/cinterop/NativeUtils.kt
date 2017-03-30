@@ -28,3 +28,7 @@ external fun <R : Number> Number.signExtend(): R
 
 @Intrinsic
 external fun <R : Number> Number.narrow(): R
+
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FILE)
+@Retention(AnnotationRetention.SOURCE)
+internal annotation class JvmName(val name: String)

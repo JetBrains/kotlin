@@ -28,7 +28,7 @@ fun main(args: Array<String>) {
     memScoped {
 
         val bufferLength = 100L
-        val buffer = allocArray<CInt8Var>(bufferLength)
+        val buffer = allocArray<ByteVar>(bufferLength)
         val serverAddr = alloc<sockaddr_in>()
 
         val listenFd = socket(AF_INET, SOCK_STREAM, 0)
@@ -36,9 +36,9 @@ fun main(args: Array<String>) {
 
         with(serverAddr) {
             memset(this.ptr, 0, sockaddr_in.size)
-            sin_family.value = AF_INET.narrow()
-            sin_addr.s_addr.value = htons(0).toInt()
-            sin_port.value = htons(port)
+            sin_family = AF_INET.narrow()
+            sin_addr.s_addr = htons(0).toInt()
+            sin_port = htons(port)
         }
 
         bind(listenFd, serverAddr.ptr.reinterpret(), sockaddr_in.size.toInt())

@@ -32,25 +32,25 @@ object nativeMemUtils {
 
     // TODO: optimize
     fun getByteArray(source: NativePointed, dest: ByteArray, length: Int) {
-        val sourceArray = source.reinterpret<CInt8Var>().ptr
+        val sourceArray = source.reinterpret<ByteVar>().ptr
         for (index in 0 .. length - 1) {
-            dest[index] = sourceArray[index].value
+            dest[index] = sourceArray[index]
         }
     }
 
     // TODO: optimize
     fun putByteArray(source: ByteArray, dest: NativePointed, length: Int) {
-        val destArray = dest.reinterpret<CInt8Var>().ptr
+        val destArray = dest.reinterpret<ByteVar>().ptr
         for (index in 0 .. length - 1) {
-            destArray[index].value = source[index]
+            destArray[index] = source[index]
         }
     }
 
     // TODO: optimize
     fun zeroMemory(dest: NativePointed, length: Int): Unit {
-        val destArray = dest.reinterpret<CInt8Var>().ptr
+        val destArray = dest.reinterpret<ByteVar>().ptr
         for (index in 0 .. length - 1) {
-            destArray[index].value = 0
+            destArray[index] = 0
         }
     }
 

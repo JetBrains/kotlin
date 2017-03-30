@@ -40,5 +40,5 @@ fun Int.errorCheck() {
 
 class GitException : Exception(run {
     val err = giterr_last()
-    err!!.pointed.message.value!!.toKString()
+    err!!.pointed.message!!.toKString()
 })

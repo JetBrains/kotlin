@@ -544,34 +544,34 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
             val x = (width - moveButtonsWidth - ROTATE_BUTTON_SIZE) / 2 - MOVE_BUTTON_SIZE
             val y2 = (gamePadHeight - 2 * MOVE_BUTTON_SIZE - BUTTONS_MARGIN) / 2
             leftRect = arena.alloc<SDL_Rect>()
-            leftRect.w.value = MOVE_BUTTON_SIZE
-            leftRect.h.value = MOVE_BUTTON_SIZE
-            leftRect.x.value = x
-            leftRect.y.value = height - gamePadHeight + y2 + MOVE_BUTTON_SIZE + BUTTONS_MARGIN
+            leftRect.w = MOVE_BUTTON_SIZE
+            leftRect.h = MOVE_BUTTON_SIZE
+            leftRect.x = x
+            leftRect.y = height - gamePadHeight + y2 + MOVE_BUTTON_SIZE + BUTTONS_MARGIN
 
             downRect = arena.alloc<SDL_Rect>()
-            downRect.w.value = MOVE_BUTTON_SIZE
-            downRect.h.value = MOVE_BUTTON_SIZE
-            downRect.x.value = x + MOVE_BUTTON_SIZE + BUTTONS_MARGIN
-            downRect.y.value = leftRect.y.value
+            downRect.w = MOVE_BUTTON_SIZE
+            downRect.h = MOVE_BUTTON_SIZE
+            downRect.x = x + MOVE_BUTTON_SIZE + BUTTONS_MARGIN
+            downRect.y = leftRect.y
 
             dropRect = arena.alloc<SDL_Rect>()
-            dropRect.w.value = MOVE_BUTTON_SIZE
-            dropRect.h.value = MOVE_BUTTON_SIZE
-            dropRect.x.value = downRect.x.value
-            dropRect.y.value = height - gamePadHeight + y2
+            dropRect.w = MOVE_BUTTON_SIZE
+            dropRect.h = MOVE_BUTTON_SIZE
+            dropRect.x = downRect.x
+            dropRect.y = height - gamePadHeight + y2
 
             rightRect = arena.alloc<SDL_Rect>()
-            rightRect.w.value = MOVE_BUTTON_SIZE
-            rightRect.h.value = MOVE_BUTTON_SIZE
-            rightRect.x.value = x + 2 * MOVE_BUTTON_SIZE + 2 * BUTTONS_MARGIN
-            rightRect.y.value = height - gamePadHeight + y2 + MOVE_BUTTON_SIZE + BUTTONS_MARGIN
+            rightRect.w = MOVE_BUTTON_SIZE
+            rightRect.h = MOVE_BUTTON_SIZE
+            rightRect.x = x + 2 * MOVE_BUTTON_SIZE + 2 * BUTTONS_MARGIN
+            rightRect.y = height - gamePadHeight + y2 + MOVE_BUTTON_SIZE + BUTTONS_MARGIN
 
             rotateRect = arena.alloc<SDL_Rect>()
-            rotateRect.w.value = ROTATE_BUTTON_SIZE
-            rotateRect.h.value = ROTATE_BUTTON_SIZE
-            rotateRect.x.value = x + moveButtonsWidth
-            rotateRect.y.value = height - gamePadHeight + y2 - BUTTONS_MARGIN
+            rotateRect.w = ROTATE_BUTTON_SIZE
+            rotateRect.h = ROTATE_BUTTON_SIZE
+            rotateRect.x = x + moveButtonsWidth
+            rotateRect.y = height - gamePadHeight + y2 - BUTTONS_MARGIN
         }
 
         fun getCommandAt(x: Int, y: Int): UserCommand? {
@@ -586,8 +586,8 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
         }
 
         private fun inside(rect: SDL_Rect, x: Int, y: Int): Boolean {
-            return x >= stretch(rect.x.value) && x <= stretch(rect.x.value + rect.w.value)
-                   && y >= stretch(rect.y.value) && y <= stretch(rect.y.value + rect.h.value)
+            return x >= stretch(rect.x) && x <= stretch(rect.x + rect.w)
+                   && y >= stretch(rect.y) && y <= stretch(rect.y + rect.h)
         }
 
         fun destroy() {
@@ -629,8 +629,8 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
                 SDL_Quit()
                 throw Error()
             }
-            displayWidth = displayMode.w.value
-            displayHeight = displayMode.h.value
+            displayWidth = displayMode.w
+            displayHeight = displayMode.h
         }
         fieldWidth = width * (CELL_SIZE + MARGIN) + MARGIN + BORDER_WIDTH * 2
         fieldHeight = height * (CELL_SIZE + MARGIN) + MARGIN + BORDER_WIDTH * 2
@@ -889,10 +889,10 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
     private fun fillRect(rect: SDL_Rect) {
         memScoped {
             val stretchedRect = alloc<SDL_Rect>()
-            stretchedRect.w.value = stretch(rect.w.value)
-            stretchedRect.h.value = stretch(rect.h.value)
-            stretchedRect.x.value = stretch(rect.x.value)
-            stretchedRect.y.value = stretch(rect.y.value)
+            stretchedRect.w = stretch(rect.w)
+            stretchedRect.h = stretch(rect.h)
+            stretchedRect.x = stretch(rect.x)
+            stretchedRect.y = stretch(rect.y)
             SDL_RenderFillRect(renderer, stretchedRect.ptr.reinterpret())
         }
     }
@@ -901,14 +901,14 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
         memScoped {
             val srcRect = alloc<SDL_Rect>()
             val destRect = alloc<SDL_Rect>()
-            srcRect.w.value = width
-            srcRect.h.value = height
-            srcRect.x.value = srcX
-            srcRect.y.value = srcY
-            destRect.w.value = stretch(width)
-            destRect.h.value = stretch(height)
-            destRect.x.value = stretch(destX)
-            destRect.y.value = stretch(destY)
+            srcRect.w = width
+            srcRect.h = height
+            srcRect.x = srcX
+            srcRect.y = srcY
+            destRect.w = stretch(width)
+            destRect.h = stretch(height)
+            destRect.x = stretch(destX)
+            destRect.y = stretch(destY)
             SDL_RenderCopy(renderer, texture, srcRect.ptr.reinterpret(), destRect.ptr.reinterpret())
         }
     }
@@ -918,12 +918,12 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
         memScoped {
             val event = alloc<SDL_Event>()
             while (SDL_PollEvent(event.ptr.reinterpret()) != 0) {
-                val eventType = event.type.value
+                val eventType = event.type
                 when (eventType) {
                     SDL_QUIT -> commands.add(UserCommand.EXIT)
                     SDL_KEYDOWN -> {
                         val keyboardEvent = event.ptr.reinterpret<SDL_KeyboardEvent>().pointed
-                        when (keyboardEvent.keysym.scancode.value) {
+                        when (keyboardEvent.keysym.scancode) {
                             SDL_SCANCODE_LEFT -> commands.add(UserCommand.LEFT)
                             SDL_SCANCODE_RIGHT -> commands.add(UserCommand.RIGHT)
                             SDL_SCANCODE_DOWN -> commands.add(UserCommand.DOWN)
@@ -934,8 +934,8 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
                     }
                     SDL_MOUSEBUTTONDOWN -> if (gamePadButtons != null) {
                         val mouseEvent = event.ptr.reinterpret<SDL_MouseButtonEvent>().pointed
-                        val x = mouseEvent.x.value
-                        val y = mouseEvent.y.value
+                        val x = mouseEvent.x
+                        val y = mouseEvent.y
                         val command = gamePadButtons.getCommandAt(x, y)
                         if (command != null)
                             commands.add(command)

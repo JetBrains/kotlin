@@ -92,7 +92,7 @@ internal fun emitLLVM(context: Context) {
 
 internal fun verifyModule(llvmModule: LLVMModuleRef, current: String = "") {
     memScoped {
-        val errorRef = allocPointerTo<CInt8Var>()
+        val errorRef = allocPointerTo<ByteVar>()
         // TODO: use LLVMDisposeMessage() on errorRef, once possible in interop.
         if (LLVMVerifyModule(
                 llvmModule, LLVMVerifierFailureAction.LLVMPrintMessageAction, errorRef.ptr) == 1) {

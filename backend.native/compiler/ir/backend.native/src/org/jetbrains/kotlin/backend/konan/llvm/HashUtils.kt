@@ -40,7 +40,7 @@ internal fun globalHash(data: ByteArray, retValPlacement: NativePlacement): Glob
 public fun base64Encode(data: ByteArray): String {
     memScoped {
         val resultSize = 4 * data.size / 3 + 3 + 1
-        val result = allocArray<CInt8Var>(resultSize)
+        val result = allocArray<ByteVar>(resultSize)
         val bytes = allocArrayOf(data)
         EncodeBase64(bytes, data.size, result, resultSize)
         // TODO: any better way to do that without two copies?
@@ -51,14 +51,14 @@ public fun base64Encode(data: ByteArray): String {
 public fun base64Decode(encoded: String): ByteArray {
     memScoped {
         val bufferSize: Int = 3 * encoded.length / 4
-        val result = allocArray<CInt8Var>(bufferSize)
+        val result = allocArray<ByteVar>(bufferSize)
         val resultSize = allocArray<uint32_tVar>(1)
-        resultSize[0].value = bufferSize
+        resultSize[0] = bufferSize
         val errorCode = DecodeBase64(encoded, encoded.length, result, resultSize)
         if (errorCode != 0) throw Error("Non-zero exit code of DecodeBase64: ${errorCode}")
-        val realSize = resultSize[0].value!!
+        val realSize = resultSize[0]
         val bytes = ByteArray(realSize)
-        nativeMemUtils.getByteArray(result[0], bytes, realSize)
+        nativeMemUtils.getByteArray(result.pointed, bytes, realSize)
         return bytes
     }
 }

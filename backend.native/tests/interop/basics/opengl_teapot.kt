@@ -83,7 +83,7 @@ fun initialize() {
 fun main(args: Array<String>) {
     // initialize and run program
     memScoped {
-        val argc = alloc<CInt32Var>().apply { value = 0 }
+        val argc = alloc<IntVar>().apply { value = 0 }
         glutInit(argc.ptr, null) // TODO: pass real args
     }
 

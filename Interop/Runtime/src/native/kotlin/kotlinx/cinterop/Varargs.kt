@@ -15,52 +15,52 @@ const val FFI_TYPE_KIND_DOUBLE: FfiTypeKind = 6
 const val FFI_TYPE_KIND_POINTER: FfiTypeKind = 7
 
 private tailrec fun convertArgument(
-        argument: Any?, isVariadic: Boolean, location: NativePointed,
+        argument: Any?, isVariadic: Boolean, location: COpaquePointer,
         additionalPlacement: NativePlacement
 ): FfiTypeKind = when (argument) {
     is CValuesRef<*>? -> {
-        location.reinterpret<CPointerVar<*>>().value = argument?.getPointer(additionalPlacement)
+        location.reinterpret<CPointerVar<*>>()[0] = argument?.getPointer(additionalPlacement)
         FFI_TYPE_KIND_POINTER
     }
 
     is String -> {
-        location.reinterpret<CPointerVar<*>>().value = argument.cstr.getPointer(additionalPlacement)
+        location.reinterpret<CPointerVar<*>>()[0] = argument.cstr.getPointer(additionalPlacement)
         FFI_TYPE_KIND_POINTER
     }
 
     is Int -> {
-        location.reinterpret<CInt32Var>().value = argument
+        location.reinterpret<IntVar>()[0] = argument
         FFI_TYPE_KIND_SINT32
     }
 
     is Long -> {
-        location.reinterpret<CInt64Var>().value = argument
+        location.reinterpret<LongVar>()[0] = argument
         FFI_TYPE_KIND_SINT64
     }
 
     is Byte -> if (isVariadic) {
         convertArgument(argument.toInt(), isVariadic, location, additionalPlacement)
     } else {
-        location.reinterpret<CInt8Var>().value = argument
+        location.reinterpret<ByteVar>()[0] = argument
         FFI_TYPE_KIND_SINT8
     }
 
     is Short -> if (isVariadic) {
         convertArgument(argument.toInt(), isVariadic, location, additionalPlacement)
     } else {
-        location.reinterpret<CInt16Var>().value = argument
+        location.reinterpret<ShortVar>()[0] = argument
         FFI_TYPE_KIND_SINT16
     }
 
     is Double -> {
-        location.reinterpret<CFloat64Var>().value = argument
+        location.reinterpret<DoubleVar>()[0] = argument
         FFI_TYPE_KIND_DOUBLE
     }
 
     is Float -> if (isVariadic) {
         convertArgument(argument.toDouble(), isVariadic, location, additionalPlacement)
     } else {
-        location.reinterpret<CFloat32Var>().value = argument
+        location.reinterpret<FloatVar>()[0] = argument
         FFI_TYPE_KIND_FLOAT
     }
 
@@ -76,19 +76,19 @@ fun callWithVarargs(codePtr: NativePtr, returnValuePtr: NativePtr, returnTypeKin
     val totalArgumentsNumber = fixedArguments.size + variadicArguments.size
 
     // All supported arguments take at most 8 bytes each:
-    val argumentsStorage = argumentsPlacement.allocArray<CInt64Var>(totalArgumentsNumber)
+    val argumentsStorage = argumentsPlacement.allocArray<LongVar>(totalArgumentsNumber)
     val arguments = argumentsPlacement.allocArray<CPointerVar<*>>(totalArgumentsNumber)
     val types = argumentsPlacement.allocArray<CPointerVar<*>>(totalArgumentsNumber)
 
     var index = 0
 
     inline fun addArgument(argument: Any?, isVariadic: Boolean) {
-        val storage = argumentsStorage[index]
+        val storage = (argumentsStorage + index)!!
         val typeKind = convertArgument(argument, isVariadic = isVariadic,
                 location = storage, additionalPlacement = argumentsPlacement)
 
-        types[index].value = interpretCPointer<COpaque>(nativeNullPtr + typeKind.toLong())
-        arguments[index].value = storage.ptr
+        types[index] = interpretCPointer<COpaque>(nativeNullPtr + typeKind.toLong())
+        arguments[index] = storage
 
         ++index
     }

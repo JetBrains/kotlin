@@ -35,11 +35,11 @@ class GitRepository(val location: String) {
     fun remotes(): List<GitRemote> = memScoped {
         val remoteList = alloc<git_strarray>()
         git_remote_list(remoteList.ptr, handle).errorCheck()
-        val size = remoteList.count.value.toInt()
+        val size = remoteList.count.toInt()
         val list = ArrayList<GitRemote>(size)
         for (index in 0..size - 1) {
-            val array = remoteList.strings.value!!
-            val name = array[index].value!!.toKString()
+            val array = remoteList.strings!!
+            val name = array[index]!!.toKString()
             val remotePtr = allocPointerTo<git_remote>()
             git_remote_lookup(remotePtr.ptr, handle, name).errorCheck()
             list.add(GitRemote(this@GitRepository, remotePtr.value!!))

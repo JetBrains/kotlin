@@ -6,8 +6,8 @@ fun main(args: Array<String>) {
             "a", "b".cstr, (-1).toByte(), 2.toShort(), 3, Long.MAX_VALUE, 0.1.toFloat(), 0.2)
 
     memScoped {
-        val aVar = alloc<CInt32Var>()
-        val bVar = alloc<CInt32Var>()
+        val aVar = alloc<IntVar>()
+        val bVar = alloc<IntVar>()
         val sscanfResult = sscanf("42", "%d%d", aVar.ptr, bVar.ptr)
         printf("%d %d\n", sscanfResult, aVar.value)
     }

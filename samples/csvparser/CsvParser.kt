@@ -58,7 +58,7 @@ fun main(args: Array<String>) {
     try {
         memScoped {
             val bufferLength = 64 * 1024
-            val buffer = allocArray<CInt8Var>(bufferLength)
+            val buffer = allocArray<ByteVar>(bufferLength)
 
             for (i in 1..count) {
                 val nextLine = fgets(buffer, bufferLength, file)?.toKString()

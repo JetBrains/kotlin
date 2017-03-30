@@ -38,9 +38,9 @@ class GitDiff(val repository: GitRepository, val handle: CPointer<git_diff>) {
 
 class GifDiffDelta(val diff: GitDiff, val handle: CPointer<git_diff_delta>) {
 
-    val status get() = handle.pointed.status.value
-    val newPath get() = handle.pointed.new_file.path.value!!.toKString()
-    val oldPath get() = handle.pointed.old_file.path.value!!.toKString()
+    val status get() = handle.pointed.status
+    val newPath get() = handle.pointed.new_file.path!!.toKString()
+    val oldPath get() = handle.pointed.old_file.path!!.toKString()
 
     fun status(): String {
         return when (status) {

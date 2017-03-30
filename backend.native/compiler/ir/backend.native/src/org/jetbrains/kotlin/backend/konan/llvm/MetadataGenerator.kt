@@ -83,7 +83,7 @@ class MetadataReader(file: File) : Closeable {
     init {
         memScoped {
             val bufRef = alloc<LLVMMemoryBufferRefVar>()
-            val errorRef = allocPointerTo<CInt8Var>()
+            val errorRef = allocPointerTo<ByteVar>()
             val res = LLVMCreateMemoryBufferWithContentsOfFile(file.toString(), bufRef.ptr, errorRef.ptr)
             if (res != 0) {
                 throw Error(errorRef.value?.toKString())
@@ -103,7 +103,7 @@ class MetadataReader(file: File) : Closeable {
 
     fun string(node: LLVMValueRef): String {
         memScoped { 
-            val len = alloc<CInt32Var>()
+            val len = alloc<IntVar>()
             val str1 = LLVMGetMDString(node, len.ptr)!!
             val str = str1.toKString()
             return str
@@ -121,7 +121,7 @@ class MetadataReader(file: File) : Closeable {
 
             //return Pair(nodeCount, nodeArray[0].value!!)
             for (index in 0..nodeCount-1) {
-                result.add(nodeArray[index].value!!)
+                result.add(nodeArray[index]!!)
             }
         }
         return result.toTypedArray<LLVMValueRef>()
@@ -134,7 +134,7 @@ class MetadataReader(file: File) : Closeable {
 
             LLVMGetNamedMetadataOperands(llvmModule, name, nodeArray)
 
-            return Pair(nodeCount, nodeArray[0].value!!)
+            return Pair(nodeCount, nodeArray[0]!!)
         }
     }
 
@@ -145,7 +145,7 @@ class MetadataReader(file: File) : Closeable {
 
             LLVMGetMDNodeOperands(metadataNode, operandArray)
 
-            return Array(operandCount, {index -> operandArray[index].value!!})
+            return Array(operandCount, {index -> operandArray[index]!!})
         }
     }
 

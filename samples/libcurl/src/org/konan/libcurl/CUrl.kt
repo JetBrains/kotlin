@@ -40,13 +40,13 @@ class CUrl(val url: String)  {
     }
 }
 
-fun CPointer<CInt8Var>.toKString(length: Int): String {
+fun CPointer<ByteVar>.toKString(length: Int): String {
     val bytes = ByteArray(length)
     nativeMemUtils.getByteArray(pointed, bytes, length)
     return kotlin.text.fromUtf8Array(bytes, 0, bytes.size)
 }
 
-fun header_callback(buffer: CPointer<CInt8Var>?, size: size_t, nitems: size_t, userdata: COpaquePointer?): size_t {
+fun header_callback(buffer: CPointer<ByteVar>?, size: size_t, nitems: size_t, userdata: COpaquePointer?): size_t {
     if (buffer == null) return 0
     val header = buffer.toKString((size * nitems).toInt()).trim()
     if (userdata != null) {

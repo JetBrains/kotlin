@@ -80,11 +80,11 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
     val interpretCPointer = packageScope.getContributedFunctions("interpretCPointer").single()
 
     val arrayGetByIntIndex = packageScope.getContributedFunctions("get").single {
-        KotlinBuiltIns.isInt(it.valueParameters.single().type)
+        KotlinBuiltIns.isInt(it.valueParameters.single().type) && it.isInline
     }
 
     val arrayGetByLongIndex = packageScope.getContributedFunctions("get").single {
-        KotlinBuiltIns.isLong(it.valueParameters.single().type)
+        KotlinBuiltIns.isLong(it.valueParameters.single().type) && it.isInline
     }
 
     val allocUninitializedArrayWithIntLength = packageScope.getContributedFunctions("allocArray").single {
