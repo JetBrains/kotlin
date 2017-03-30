@@ -137,7 +137,7 @@ class DebuggerClassNameProvider(val myDebugProcess: DebugProcess, val scopes: Li
             }
             element is KtAnonymousInitializer -> {
                 // Class-object initializer
-                if (elementOfClassName is KtObjectDeclaration && elementOfClassName.isCompanion()) {
+                if (elementOfClassName is KtObjectDeclaration && runReadAction { elementOfClassName.isCompanion() }) {
                     return CachedClassNames(classNamesForPosition(elementOfClassName.parent, withInlines))
                 }
                 return CachedClassNames(classNamesForPosition(elementOfClassName, withInlines))
