@@ -99,8 +99,7 @@ sealed class LazyLightClassDataHolder(
 
                 val fieldName = dummyField.name!!
                 KtLightFieldImpl.lazy(dummyField, fieldOrigin, containingClass) {
-                    clsDelegate.findFieldByName(fieldName, false)?.apply { assert(this.memberIndex!! == dummyField.memberIndex!!) }
-                    ?: throw LazyLightClassMemberMatchingError(dummyField, containingClass)
+                    clsDelegate.findFieldByName(fieldName, false).assertMatches(dummyField, containingClass)
                 }
             }
         }
@@ -127,8 +126,7 @@ sealed class LazyLightClassDataHolder(
                     */
                     val exactDelegateMethod = clsDelegate.findMethodsByName(dummyMethod.name, false).firstOrNull(byMemberIndex)
                                               ?: clsDelegate.methods.firstOrNull(byMemberIndex)
-                    exactDelegateMethod?.apply { assert(this.parameterList.parametersCount == dummyMethod.parameterList.parametersCount) }
-                    ?: throw LazyLightClassMemberMatchingError(dummyMethod, containingClass)
+                    exactDelegateMethod.assertMatches(dummyMethod, containingClass)
                 }
             }
         }
@@ -136,6 +134,18 @@ sealed class LazyLightClassDataHolder(
         override val supertypes: Array<PsiClassType>
             get() = if (relyOnDummySupertypes && dummyDelegate != null) dummyDelegate!!.superTypes else clsDelegate.superTypes
 
+    }
+
+    private fun <T : PsiMember> T?.assertMatches(dummyMember: T, containingClass: KtLightClass): T {
+        if (this == null) throw LazyLightClassMemberMatchingError.NoMatch(dummyMember, containingClass)
+
+        val parameterCountMatches = (this as? PsiMethod)?.parameterList?.parametersCount ?: 0 ==
+                                    (dummyMember as? PsiMethod)?.parameterList?.parametersCount ?: 0
+        if (this.memberIndex != dummyMember.memberIndex || !parameterCountMatches) {
+            throw LazyLightClassMemberMatchingError.WrongMatch(this, dummyMember, containingClass)
+        }
+
+        return this
     }
 }
 
@@ -162,5 +172,17 @@ private fun anyInternalMembersWithThisName(name: String, project: Project): Bool
     return result
 }
 
-private class LazyLightClassMemberMatchingError(dummyMember: PsiMember, containingClass: KtLightClass)
-    : AssertionError("Error matching ${dummyMember::class.simpleName}:${dummyMember.name} created for $containingClass")
+private sealed class LazyLightClassMemberMatchingError(message: String)
+    : AssertionError(message) {
+
+    class NoMatch(dummyMember: PsiMember, containingClass: KtLightClass) : LazyLightClassMemberMatchingError(
+            "Couldn't match ${dummyMember.debugName} in $containingClass"
+    )
+
+    class WrongMatch(realMember: PsiMember, dummyMember: PsiMember, containingClass: KtLightClass) : LazyLightClassMemberMatchingError(
+            "Matched ${dummyMember.debugName} to ${realMember.debugName} in $containingClass"
+    )
+}
+
+private val PsiMember.debugName
+    get() = "${this::class.simpleName}:${this.name} ${this.memberIndex}" + if (this is PsiMethod) " (with ${parameterList.parametersCount} parameters)" else ""
