@@ -1,3 +1,0 @@
-[submodule "third-party/ios/libffi"]
-	path = third-party/ios/libffi
-	url = https://github.com/ksjogo/libffi
