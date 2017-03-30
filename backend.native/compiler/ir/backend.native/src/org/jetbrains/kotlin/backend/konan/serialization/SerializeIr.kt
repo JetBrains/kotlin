@@ -493,6 +493,10 @@ internal class IrSerializer(val context: Context,
         if (initializer != null) {
             proto.setInitializer(serializeExpression(initializer))
         }
+        val correspondingClass = enumEntry.correspondingClass
+        if (correspondingClass != null) {
+            proto.setCorrespondingClass(serializeDeclaration(correspondingClass))
+        }
         return proto.build()
     }
 
@@ -984,9 +988,12 @@ internal class IrDeserializer(val context: Context,
         start: Int, end: Int, origin: IrDeclarationOrigin): IrEnumEntry {
 
         val enumEntry = IrEnumEntryImpl(start, end, origin, descriptor)
-        // TODO: we need to pass down the enclosing declaration.
-        //enumEntry.correspondingClass = ???
-        enumEntry.initializerExpression = deserializeExpression(proto.initializer)
+        if (proto.hasCorrespondingClass()) {
+            enumEntry.correspondingClass = deserializeDeclaration(proto.correspondingClass) as IrClass
+        }
+        if (proto.hasInitializer()) {
+            enumEntry.initializerExpression = deserializeExpression(proto.initializer)
+        }
 
         return enumEntry
     }

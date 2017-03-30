@@ -253,6 +253,7 @@ message IrClass {
 
 message IrEnumEntry {
     optional IrExpression initializer = 1;
+    optional IrDeclaration corresponding_class = 2;
 }
 
 message IrDeclarator {
