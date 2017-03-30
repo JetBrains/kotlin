@@ -4,7 +4,7 @@ class O : Function2<Int, String, Unit> {
 }
 
 fun test() {
-    val a = fun(<!UNUSED_PARAMETER!>o<!>: O) {
+    val a = fun(<!UNUSED_ANONYMOUS_PARAMETER!>o<!>: O) {
     }
     a <!TYPE_MISMATCH!>{}<!>
 }

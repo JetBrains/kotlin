@@ -40,9 +40,9 @@ fun bar() {
         _ checkType { _<String>() }
     }
 
-    foo { <!REDECLARATION, REDECLARATION, UNUSED_PARAMETER!>`_`<!>, <!REDECLARATION, REDECLARATION!>`_`<!> ->
+    foo { <!REDECLARATION, REDECLARATION, UNUSED_ANONYMOUS_PARAMETER!>`_`<!>, <!REDECLARATION, REDECLARATION!>`_`<!> ->
         _ checkType { _<String>() }
     }
 
-    foo(fun(<!UNUSED_PARAMETER!>x<!>: Int, _: String) {})
+    foo(fun(<!UNUSED_ANONYMOUS_PARAMETER!>x<!>: Int, _: String) {})
 }

@@ -8,7 +8,7 @@ enum class SomeEnum {
 
 // Doesn't work
 fun Iterable<Int>.some() {
-    this.fold(SomeEnum.FIRST, {res : SomeEnum, <!UNUSED_PARAMETER!>value<!> ->
+    this.fold(SomeEnum.FIRST, {res : SomeEnum, <!UNUSED_ANONYMOUS_PARAMETER!>value<!> ->
         if (res == SomeEnum.FIRST) SomeEnum.FIRST else SomeEnum.SECOND
     })
 }
@@ -19,7 +19,7 @@ fun tempFun() : SomeEnum {
 
 // Doesn't work
 fun Iterable<Int>.someSimpleWithFun() {
-    this.fold(SomeEnum.FIRST, {<!UNUSED_PARAMETER!>res<!> : SomeEnum, <!UNUSED_PARAMETER!>value<!> ->
+    this.fold(SomeEnum.FIRST, {<!UNUSED_ANONYMOUS_PARAMETER!>res<!> : SomeEnum, <!UNUSED_ANONYMOUS_PARAMETER!>value<!> ->
         tempFun()
     })
 }
@@ -27,14 +27,14 @@ fun Iterable<Int>.someSimpleWithFun() {
 
 // Works
 fun Iterable<Int>.someSimple() {
-    this.fold(SomeEnum.FIRST, {<!UNUSED_PARAMETER!>res<!> : SomeEnum, <!UNUSED_PARAMETER!>value<!> ->
+    this.fold(SomeEnum.FIRST, {<!UNUSED_ANONYMOUS_PARAMETER!>res<!> : SomeEnum, <!UNUSED_ANONYMOUS_PARAMETER!>value<!> ->
         SomeEnum.FIRST
     })
 }
 
 // Works
 fun Iterable<Int>.someInt() {
-    this.fold(0, {res : Int, <!UNUSED_PARAMETER!>value<!> ->
+    this.fold(0, {res : Int, <!UNUSED_ANONYMOUS_PARAMETER!>value<!> ->
         if (res == 0) 1 else 0
     })
 }

@@ -1,0 +1,4 @@
+package
+
+public fun someApi(/*0*/ f: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public fun test(): kotlin.Unit

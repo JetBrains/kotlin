@@ -4,7 +4,7 @@ fun text() {
     "direct:a" on {it -> it.body == "<hello/>"} to "mock:a"
     bar <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>{<!>1}
     bar <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>{<!><!UNRESOLVED_REFERENCE!>it<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>+<!> 1}
-    bar {it, <!UNUSED_PARAMETER!>it1<!> -> it}
+    bar {it, <!UNUSED_ANONYMOUS_PARAMETER!>it1<!> -> it}
 
     bar1 {1}
     bar1 {it + 1}

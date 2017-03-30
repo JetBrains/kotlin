@@ -239,11 +239,16 @@ private class ElementAnnotator(private val element: PsiElement,
 
                 AnnotationPresentationInfo(
                         ranges,
-                        textAttributes = if (factory == Errors.DEPRECATION) CodeInsightColors.DEPRECATED_ATTRIBUTES else null,
-                        highlightType = if (factory in Errors.UNUSED_ELEMENT_DIAGNOSTICS)
-                            ProblemHighlightType.LIKE_UNUSED_SYMBOL
-                        else
-                            null
+                        textAttributes = when (factory) {
+                            Errors.DEPRECATION -> CodeInsightColors.DEPRECATED_ATTRIBUTES
+                            Errors.UNUSED_ANONYMOUS_PARAMETER -> CodeInsightColors.WEAK_WARNING_ATTRIBUTES
+                            else -> null
+                        },
+                        highlightType = when (factory) {
+                            in Errors.UNUSED_ELEMENT_DIAGNOSTICS -> ProblemHighlightType.LIKE_UNUSED_SYMBOL
+                            Errors.UNUSED_ANONYMOUS_PARAMETER -> ProblemHighlightType.WEAK_WARNING
+                            else -> null
+                        }
                 )
             }
             Severity.INFO -> return // Do nothing
@@ -278,14 +283,22 @@ private class AnnotationPresentationInfo(
         val ranges: List<TextRange>,
         val nonDefaultMessage: String? = null,
         val highlightType: ProblemHighlightType? = null,
-        val textAttributes: TextAttributesKey? = null) {
+        val textAttributes: TextAttributesKey? = null
+) {
 
     fun create(diagnostic: Diagnostic, range: TextRange, holder: AnnotationHolder): Annotation {
         val defaultMessage = nonDefaultMessage ?: getDefaultMessage(diagnostic)
 
         val annotation = when (diagnostic.severity) {
             Severity.ERROR -> holder.createErrorAnnotation(range, defaultMessage)
-            Severity.WARNING -> holder.createWarningAnnotation(range, defaultMessage)
+            Severity.WARNING -> {
+                if (highlightType == ProblemHighlightType.WEAK_WARNING) {
+                    holder.createWeakWarningAnnotation(range, defaultMessage)
+                }
+                else {
+                    holder.createWarningAnnotation(range, defaultMessage)
+                }
+            }
             else -> throw IllegalArgumentException("Only ERROR and WARNING diagnostics are supported")
         }
 
