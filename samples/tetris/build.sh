@@ -22,7 +22,7 @@ COMPILER_ARGS_iphone=-nomain
 
 CFLAGS_raspberrypi=-I$DEPS/target-sysroot-1-raspberrypi/usr/include/SDL2
 LINKER_ARGS_raspberrypi="-lSDL2"
-COMPILER_ARGS_raspberrypi=-nomain
+COMPILER_ARGS_raspberrypi=
 
 if [ x$TARGET == x ]; then
 case "$OSTYPE" in
