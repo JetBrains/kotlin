@@ -459,7 +459,7 @@ public class KotlinTestUtils {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, findAndroidApiJar());
         }
         else if (jdkKind == TestJdkKind.FULL_JDK_6) {
-            JvmContentRootsKt.addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRoots(System.getenv("JDK_16")));
+            JvmContentRootsKt.addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRoots(getJre6Home()));
         }
         else {
             JvmContentRootsKt.addJvmClasspathRoots(configuration, PathUtil.getJdkClassesRoots());
@@ -481,6 +481,15 @@ public class KotlinTestUtils {
         JvmContentRootsKt.addJvmClasspathRoots(configuration, classpath);
 
         return configuration;
+    }
+
+    @NotNull
+    private static String getJre6Home() {
+        String home = System.getenv("JDK_16");
+        if (home == null) throw new AssertionError("Environment variable JDK_16 is not set");
+
+        File jre = new File(home, "jre");
+        return jre.isDirectory() ? jre.getPath() : home;
     }
 
     public static void resolveAllKotlinFiles(KotlinCoreEnvironment environment) throws IOException {
