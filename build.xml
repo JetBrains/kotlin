@@ -584,7 +584,18 @@
                 </fileset>
 
                 <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
-                <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar" excludes="util.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/annotations.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/asm-all.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/guava-19.0.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/intellij-core.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/jdom.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/jna.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/log4j.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/picocontainer.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/snappy-in-java-0.5.1.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/trove4j.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/xpp3-1.1.4-min.jar"/>
+                <zipfileset src="${basedir}/ideaSDK/core/xstream-1.4.8.jar"/>
                 <zipfileset src="${idea.sdk}/lib/jna-platform.jar"/>
                 <zipfileset src="${idea.sdk}/lib/oromatcher.jar"/>
                 <zipfileset src="${idea.sdk}/jps/jps-model.jar"/>
