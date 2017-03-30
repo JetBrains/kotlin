@@ -30,6 +30,7 @@ object LightClassTestCommon {
 
     @JvmOverloads
     fun testLightClass(
+            expectedFile: File,
             testDataFile: File,
             findLightClass: (String) -> PsiClass?,
             normalizeText: (String) -> String = { it }
@@ -42,7 +43,7 @@ object LightClassTestCommon {
         val lightClass = findLightClass(fqName)
 
         val actual = actualText(fqName, lightClass, normalizeText)
-        KotlinTestUtils.assertEqualsToFile(KotlinTestUtils.replaceExtension(testDataFile, "java"), actual)
+        KotlinTestUtils.assertEqualsToFile(expectedFile, actual)
     }
 
     private fun actualText(fqName: String?, lightClass: PsiClass?, normalizeText: (String) -> String): String {

@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 private val EXTERNAL_SOURCES_KINDS = arrayOf(
-        JvmDeclarationOriginKind.DELEGATION_TO_DEFAULT_IMPLS,
+        JvmDeclarationOriginKind.CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL,
         JvmDeclarationOriginKind.DELEGATION,
         JvmDeclarationOriginKind.BRIDGE
 )
@@ -58,8 +58,9 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
         bindingContext: BindingContext,
         private val diagnostics: DiagnosticSink,
         fileClassesProvider: JvmFileClassesProvider,
-        moduleName: String
-) : SignatureCollectingClassBuilderFactory(builderFactory) {
+        moduleName: String,
+        shouldGenerate: (JvmDeclarationOrigin) -> Boolean
+) : SignatureCollectingClassBuilderFactory(builderFactory, shouldGenerate) {
 
     // Avoid errors when some classes are not loaded for some reason
     private val typeMapper = KotlinTypeMapper(

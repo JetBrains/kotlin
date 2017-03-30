@@ -54,7 +54,8 @@ public abstract class AbstractCompilerLightClassTest extends KotlinMultiFileTest
 
     @Override
     protected void doMultiFileTest(File file, Map<String, ModuleAndDependencies> modules, List<Void> files) throws IOException {
-        LightClassTestCommon.INSTANCE.testLightClass(file, new Function1<String, PsiClass>() {
+        File expectedFile = KotlinTestUtils.replaceExtension(file, "java");
+        LightClassTestCommon.INSTANCE.testLightClass(expectedFile, file, new Function1<String, PsiClass>() {
             @Override
             public PsiClass invoke(String s) {
                 try {

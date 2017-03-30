@@ -4,8 +4,7 @@ interface <lineMarker descr="*">SkipSupport</lineMarker> {
 }
 
 public interface <lineMarker descr="*">SkipSupportWithDefaults</lineMarker> : SkipSupport {
-    // TODO: should be "Is overriden in SkipSupportImpl"
-    override fun <lineMarker descr="<html><body>Is implemented in <br>&nbsp;&nbsp;&nbsp;&nbsp;SkipSupportImpl</body></html>"><lineMarker descr="Implements function in 'SkipSupport'">skip</lineMarker></lineMarker>(why: String) {}
+    override fun <lineMarker descr="<html><body>Is overridden in <br>&nbsp;&nbsp;&nbsp;&nbsp;SkipSupportImpl</body></html>"><lineMarker descr="Implements function in 'SkipSupport'">skip</lineMarker></lineMarker>(why: String) {}
 
     override fun <lineMarker descr="Implements function in 'SkipSupport'">skip</lineMarker>() {
         skip("not given")

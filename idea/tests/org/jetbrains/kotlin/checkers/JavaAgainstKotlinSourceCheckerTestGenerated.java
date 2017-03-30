@@ -74,6 +74,24 @@ public class JavaAgainstKotlinSourceCheckerTestGenerated extends AbstractJavaAga
             doTest(fileName);
         }
 
+        @TestMetadata("ExtendClassWithDefaultImplementationComplex.kt")
+        public void testExtendClassWithDefaultImplementationComplex() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ExtendClassWithDefaultImplementationComplex.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtendClassWithDefaultImplementation_1_6.kt")
+        public void testExtendClassWithDefaultImplementation_1_6() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ExtendClassWithDefaultImplementation_1_6.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ExtendClassWithDefaultImplementation_1_8.kt")
+        public void testExtendClassWithDefaultImplementation_1_8() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ExtendClassWithDefaultImplementation_1_8.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("FunctionInNestedClassInDataFlowInspection.kt")
         public void testFunctionInNestedClassInDataFlowInspection() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/FunctionInNestedClassInDataFlowInspection.kt");

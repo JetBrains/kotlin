@@ -32,7 +32,8 @@ enum class JvmDeclarationOriginKind {
     OTHER,
     PACKAGE_PART,
     INTERFACE_DEFAULT_IMPL,
-    DELEGATION_TO_DEFAULT_IMPLS,
+    CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL,
+    DEFAULT_IMPL_DELEGATION_TO_SUPERINTERFACE_DEFAULT_IMPL,
     DELEGATION,
     SAM_DELEGATION,
     BRIDGE,
@@ -84,8 +85,6 @@ fun MultifileClassPart(file: KtFile, descriptor: PackageFragmentDescriptor): Jvm
         JvmDeclarationOrigin(MULTIFILE_CLASS_PART, file, descriptor)
 
 fun DefaultImpls(element: PsiElement?, descriptor: ClassDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(INTERFACE_DEFAULT_IMPL, element, descriptor)
-fun DelegationToDefaultImpls(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclarationOrigin =
-        JvmDeclarationOrigin(DELEGATION_TO_DEFAULT_IMPLS, element, descriptor)
 
 fun Delegation(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(DELEGATION, element, descriptor)
 

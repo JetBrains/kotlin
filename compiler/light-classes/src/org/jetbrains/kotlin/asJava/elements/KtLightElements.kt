@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.asJava.elements
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiVariableEx
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
@@ -33,6 +34,8 @@ interface KtLightDeclaration<out T : KtDeclaration, out D : PsiElement> : KtLigh
 
 interface KtLightMember<out D : PsiMember> : PsiMember, KtLightDeclaration<KtDeclaration, D>, PsiNameIdentifierOwner, PsiDocCommentOwner {
     val lightMemberOrigin: LightMemberOrigin?
+
+    override fun getContainingClass(): KtLightClass
 }
 
 interface KtLightField : PsiField, KtLightMember<PsiField>, PsiVariableEx
@@ -40,5 +43,5 @@ interface KtLightField : PsiField, KtLightMember<PsiField>, PsiVariableEx
 interface KtLightMethod : PsiAnnotationMethod, KtLightMember<PsiMethod> {
     val isDelegated: Boolean
         get() = lightMemberOrigin?.originKind == JvmDeclarationOriginKind.DELEGATION
-                || lightMemberOrigin?.originKind == JvmDeclarationOriginKind.DELEGATION_TO_DEFAULT_IMPLS
+                || lightMemberOrigin?.originKind == JvmDeclarationOriginKind.CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL
 }

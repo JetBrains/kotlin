@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.DelegationToDefaultImpls
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.org.objectweb.asm.MethodVisitor
@@ -113,7 +113,10 @@ class InterfaceImplBodyCodegen(
         if (delegateTo is JavaMethodDescriptor) return
 
         functionCodegen.generateMethod(
-                DelegationToDefaultImpls(DescriptorToSourceUtils.descriptorToDeclaration(descriptor), descriptor),
+                JvmDeclarationOrigin(
+                        JvmDeclarationOriginKind.DEFAULT_IMPL_DELEGATION_TO_SUPERINTERFACE_DEFAULT_IMPL,
+                        DescriptorToSourceUtils.descriptorToDeclaration(descriptor), descriptor
+                ),
                 descriptor,
                 object : FunctionGenerationStrategy.CodegenBased(state) {
                     override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {

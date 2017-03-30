@@ -3,7 +3,7 @@ interface <lineMarker descr="*">SkipSupport</lineMarker> {
 }
 
 public interface <lineMarker descr="*">SkipSupportWithDefaults</lineMarker> : SkipSupport {
-    override fun <lineMarker descr="<html><body>Is implemented in <br>&nbsp;&nbsp;&nbsp;&nbsp;SkipSupportImpl1</body></html>"><lineMarker descr="Implements function in 'SkipSupport'">skip</lineMarker></lineMarker>() {}
+    override fun <lineMarker descr="<html><body>Is overridden in <br>&nbsp;&nbsp;&nbsp;&nbsp;SkipSupportImpl1</body></html>"><lineMarker descr="Implements function in 'SkipSupport'">skip</lineMarker></lineMarker>() {}
 }
 
 public interface SkipSupportImpl1 : SkipSupportWithDefaults {

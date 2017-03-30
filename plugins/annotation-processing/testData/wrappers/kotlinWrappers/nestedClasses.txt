@@ -44,7 +44,7 @@ public final class MyClass {
     public static abstract interface InnerInterface {
         public abstract void innerInterfaceFun()
     
-        public abstract int innerInterfaceFunWithImpl()
+        public default int innerInterfaceFunWithImpl()
     
         public static final class DefaultImpls {
             public static int innerInterfaceFunWithImpl(MyClass.InnerInterface $this)

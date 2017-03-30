@@ -1,11 +1,9 @@
 interface <lineMarker descr="*">A</lineMarker> {
-    fun <lineMarker descr="<html><body>Is implemented in <br>&nbsp;&nbsp;&nbsp;&nbsp;C</body></html>">foo</lineMarker>(): String = "A"
+    fun <lineMarker descr="<html><body>Is overridden in <br>&nbsp;&nbsp;&nbsp;&nbsp;C</body></html>">foo</lineMarker>(): String = "A"
 
-    // TODO: B shoudn't be mentioned
-    val <lineMarker descr="<html><body>Is implemented in <br/>&nbsp;&nbsp;&nbsp;&nbsp;B<br>&nbsp;&nbsp;&nbsp;&nbsp;C</body></html>">some</lineMarker>: String? get() = null
+    val <lineMarker descr="<html><body>Is implemented in <br/>&nbsp;&nbsp;&nbsp;&nbsp;C</body></html>">some</lineMarker>: String? get() = null
 
-    // TODO: B shoudn't be mentioned
-    var <lineMarker descr="<html><body>Is implemented in <br/>&nbsp;&nbsp;&nbsp;&nbsp;B<br>&nbsp;&nbsp;&nbsp;&nbsp;C</body></html>">other</lineMarker>: String?
+    var <lineMarker descr="<html><body>Is implemented in <br/>&nbsp;&nbsp;&nbsp;&nbsp;C</body></html>">other</lineMarker>: String?
         get() = null
         set(value) {}
 }
