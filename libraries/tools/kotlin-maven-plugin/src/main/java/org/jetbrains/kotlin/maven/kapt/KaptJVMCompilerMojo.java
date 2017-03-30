@@ -180,4 +180,9 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
 
         return result;
     }
+
+    @Override
+    protected boolean isIncremental() {
+        return false;
+    }
 }

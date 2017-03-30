@@ -20,13 +20,17 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.cli.common.CLICompiler;
+import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
+import org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerKt;
+import org.jetbrains.kotlin.maven.incremental.MavenICReporter;
 import org.jetbrains.kotlin.maven.kapt.AnnotationProcessingManager;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static com.intellij.openapi.util.text.StringUtil.join;
 import static org.jetbrains.kotlin.maven.Util.filterClassPath;
@@ -64,6 +68,26 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
     @Parameter(property = "kotlin.compiler.scriptTemplates", required = false, readonly = false)
     protected List<String> scriptTemplates;
+
+    @Parameter(property = "kotlin.compiler.incremental", defaultValue = "false", required = false, readonly = false)
+    private boolean myIncremental;
+
+    @Parameter(property = "kotlin.compiler.incremental.cache.root", defaultValue = "${project.build.directory}/kotlin-ic", required = false, readonly = false)
+    public String incrementalCachesRoot;
+
+    @NotNull
+    private File getCachesDir() {
+        return new File(incrementalCachesRoot, getSourceSetName());
+    }
+
+    protected boolean isIncremental() {
+        return myIncremental;
+    }
+
+    private boolean isIncrementalSystemProperty() {
+        String value = System.getProperty("kotlin.incremental");
+        return value != null && value.equals("true");
+    }
 
     @Override
     protected List<String> getRelatedSourceRoots(MavenProject project) {
@@ -139,6 +163,52 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
         if (scriptTemplates != null && !scriptTemplates.isEmpty()) {
             arguments.scriptTemplates = scriptTemplates.toArray(new String[0]);
+        }
+    }
+
+    @Override
+    protected ExitCode execCompiler(
+            CLICompiler<K2JVMCompilerArguments> compiler,
+            MessageCollector messageCollector,
+            K2JVMCompilerArguments arguments,
+            List<File> sourceRoots
+    ) throws MojoExecutionException {
+        if (isIncremental()) {
+            return runIncrementalCompiler(messageCollector, arguments, sourceRoots);
+        }
+
+        return super.execCompiler(compiler, messageCollector, arguments, sourceRoots);
+    }
+
+    @NotNull
+    private ExitCode runIncrementalCompiler(
+            MessageCollector messageCollector,
+            K2JVMCompilerArguments arguments,
+            List<File> sourceRoots
+    ) throws MojoExecutionException {
+        getLog().warn("Using experimental Kotlin incremental compilation");
+        File cachesDir = getCachesDir();
+        //noinspection ResultOfMethodCallIgnored
+        cachesDir.mkdirs();
+
+        MavenICReporter icReporter = MavenICReporter.get(getLog());
+
+        try {
+            IncrementalJvmCompilerRunnerKt.makeIncrementally(cachesDir, sourceRoots, arguments, messageCollector, icReporter);
+
+            int compiledKtFilesCount = icReporter.getCompiledKotlinFiles().size();
+            getLog().info("Compiled " + icReporter.getCompiledKotlinFiles().size() + " Kotlin files using incremental compiler");
+        }
+        catch (Throwable t) {
+            t.printStackTrace();
+            return ExitCode.INTERNAL_ERROR;
+        }
+
+        if (messageCollector.hasErrors()) {
+            return ExitCode.COMPILATION_ERROR;
+        }
+        else {
+            return ExitCode.OK;
         }
     }
 }
