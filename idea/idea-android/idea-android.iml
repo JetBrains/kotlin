@@ -22,6 +22,7 @@
     <orderEntry type="module" module-name="idea-core" />
     <orderEntry type="module" module-name="lint-idea" scope="TEST" />
     <orderEntry type="library" name="uast-java" level="project" />
+    <orderEntry type="library" name="junit-plugin" level="project" />
     <orderEntry type="library" name="kotlin-reflect" level="project" />
     <orderEntry type="module" module-name="light-classes" />
   </component>
