@@ -1192,7 +1192,7 @@ class StubGenerator(
      * Produces to [out] the contents of file with Kotlin bindings.
      */
     fun generateKotlinFile() {
-        out("@file:Suppress(\"UNUSED_EXPRESSION\")")
+        out("@file:Suppress(\"UNUSED_EXPRESSION\", \"UNUSED_VARIABLE\")")
         if (pkgName != "") {
             out("package $pkgName")
             out("")

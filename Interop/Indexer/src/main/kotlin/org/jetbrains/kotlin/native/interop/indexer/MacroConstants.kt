@@ -139,7 +139,7 @@ private fun processCodeSnippet(
     var longValue: Long? = null
     var doubleValue: Double? = null
 
-    val visitor: CursorVisitor = { cursor, parent ->
+    val visitor: CursorVisitor = { cursor, _ ->
         val kind = cursor.kind
         when {
             state == VisitorState.EXPECT_VARIABLE && kind == CXCursorKind.CXCursor_VarDecl -> {
@@ -216,7 +216,7 @@ private fun collectMacroConstantsNames(library: NativeLibrary): List<String> {
 
         val translationUnit = library.parse(index, options).ensureNoCompileErrors()
         try {
-            visitChildren(translationUnit) { cursor, parent ->
+            visitChildren(translationUnit) { cursor, _ ->
                 if (cursor.kind == CXCursorKind.CXCursor_MacroDefinition &&
                         library.includesDeclaration(cursor) &&
                         canMacroBeConstant(cursor))

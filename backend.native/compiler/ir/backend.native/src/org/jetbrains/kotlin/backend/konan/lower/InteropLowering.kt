@@ -106,6 +106,7 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
         return alignOf(typeObject)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun IrBuilderWithScope.interpretPointed(expression: IrCall, type: KotlinType): IrExpression =
             irCall(interop.interpretNullablePointed).apply {
                 putValueArgument(0, expression)
@@ -149,6 +150,7 @@ private class InteropTransformer(val context: Context, val irFile: IrFile) : IrB
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun IrBuilderWithScope.nativePointedToCPointer(
             expression: IrExpression, pointeeType: KotlinType
     ): IrExpression = irCall(interop.interpretCPointer).apply {

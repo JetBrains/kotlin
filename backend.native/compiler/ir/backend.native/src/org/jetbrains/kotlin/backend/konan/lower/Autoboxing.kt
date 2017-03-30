@@ -188,6 +188,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     /**
      * Casts this expression to `type` without changing its representation in generated code.
      */
+    @Suppress("UNUSED_PARAMETER")
     private fun IrExpression.uncheckedCast(type: KotlinType): IrExpression {
         // TODO: apply some cast if types are incompatible; not required currently.
         return this

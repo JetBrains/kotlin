@@ -237,26 +237,32 @@ abstract class CEnumVar : CPrimitiveVar()
 // generics below are used for typedef support
 // these classes are not supposed to be used directly, instead the typealiases are provided.
 
+@Suppress("FINAL_UPPER_BOUND")
 class CInt8VarWithValueMappedTo<T : Byte>(override val rawPtr: NativePtr) : CPrimitiveVar() {
     companion object : Type(1)
 }
 
+@Suppress("FINAL_UPPER_BOUND")
 class CInt16VarWithValueMappedTo<T : Short>(override val rawPtr: NativePtr) : CPrimitiveVar() {
     companion object : Type(2)
 }
 
+@Suppress("FINAL_UPPER_BOUND")
 class CInt32VarWithValueMappedTo<T : Int>(override val rawPtr: NativePtr) : CPrimitiveVar() {
     companion object : Type(4)
 }
 
+@Suppress("FINAL_UPPER_BOUND")
 class CInt64VarWithValueMappedTo<T : Long>(override val rawPtr: NativePtr) : CPrimitiveVar() {
     companion object : Type(8)
 }
 
+@Suppress("FINAL_UPPER_BOUND")
 class CFloat32VarWithValueMappedTo<T : Float>(override val rawPtr: NativePtr) : CPrimitiveVar() {
     companion object : Type(4)
 }
 
+@Suppress("FINAL_UPPER_BOUND")
 class CFloat64VarWithValueMappedTo<T : Double>(override val rawPtr: NativePtr) : CPrimitiveVar() {
     companion object : Type(8)
 }
@@ -268,28 +274,34 @@ typealias CInt64Var = CInt64VarWithValueMappedTo<Long>
 typealias CFloat32Var = CFloat32VarWithValueMappedTo<Float>
 typealias CFloat64Var = CFloat64VarWithValueMappedTo<Double>
 
+@Suppress("FINAL_UPPER_BOUND", "UNCHECKED_CAST")
 var <T : Byte> CInt8VarWithValueMappedTo<T>.value: T
     get() = nativeMemUtils.getByte(this) as T
     set(value) = nativeMemUtils.putByte(this, value)
 
+@Suppress("FINAL_UPPER_BOUND", "UNCHECKED_CAST")
 var <T : Short> CInt16VarWithValueMappedTo<T>.value: T
     get() = nativeMemUtils.getShort(this) as T
     set(value) = nativeMemUtils.putShort(this, value)
 
+@Suppress("FINAL_UPPER_BOUND", "UNCHECKED_CAST")
 var <T : Int> CInt32VarWithValueMappedTo<T>.value: T
     get() = nativeMemUtils.getInt(this) as T
     set(value) = nativeMemUtils.putInt(this, value)
 
+@Suppress("FINAL_UPPER_BOUND", "UNCHECKED_CAST")
 var <T : Long> CInt64VarWithValueMappedTo<T>.value: T
     get() = nativeMemUtils.getLong(this) as T
     set(value) = nativeMemUtils.putLong(this, value)
 
 // TODO: ensure native floats have the appropriate binary representation
 
+@Suppress("FINAL_UPPER_BOUND", "UNCHECKED_CAST")
 var <T : Float> CFloat32VarWithValueMappedTo<T>.value: T
     get() = nativeMemUtils.getFloat(this) as T
     set(value) = nativeMemUtils.putFloat(this, value)
 
+@Suppress("FINAL_UPPER_BOUND", "UNCHECKED_CAST")
 var <T : Double> CFloat64VarWithValueMappedTo<T>.value: T
     get() = nativeMemUtils.getDouble(this) as T
     set(value) = nativeMemUtils.putDouble(this, value)
@@ -307,6 +319,7 @@ typealias CPointerVar<T> = CPointerVarWithValueMappedTo<CPointer<T>>
 /**
  * The value of this variable.
  */
+@Suppress("UNCHECKED_CAST")
 inline var <P : CPointer<*>> CPointerVarWithValueMappedTo<P>.value: P?
     get() = interpretCPointer<CPointed>(nativeMemUtils.getNativePtr(this)) as P?
     set(value) = nativeMemUtils.putNativePtr(this, value.rawValue)

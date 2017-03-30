@@ -42,7 +42,10 @@ fun validateIrModule(context: BackendContext, irModule: IrModuleFragment) {
     irModule.acceptVoid(visitor)
 
     // TODO: investigate and re-enable
-    return
+    val ENABLE_EXTENDED_VALIDATION = false
+    if (!ENABLE_EXTENDED_VALIDATION) {
+        return
+    }
 
     val moduleDeclarations = visitor.foundDeclarations
 

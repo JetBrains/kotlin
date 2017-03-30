@@ -136,6 +136,7 @@ private fun runCmd(command: Array<String>, workDir: File, verbose: Boolean = fal
 private fun maybeExecuteHelper(dependenciesRoot: String, properties: Properties, dependencies: List<String>) {
     try {
         val kClass = Class.forName("org.jetbrains.kotlin.konan.Helper0").kotlin
+        @Suppress("UNCHECKED_CAST")
         val ctor = kClass.constructors.single() as KFunction<Runnable>
         val result = ctor.call(dependenciesRoot, properties, dependencies)
         result.run()

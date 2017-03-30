@@ -117,6 +117,7 @@ internal fun visitChildren(parent: CValue<CXCursor>, visitor: CursorVisitor) {
     val visitorPtr = StableObjPtr.create(visitor)
     val clientData = visitorPtr.value
     clang_visitChildren(parent, staticCFunction { cursor, parent, clientData ->
+        @Suppress("NAME_SHADOWING", "UNCHECKED_CAST")
         val visitor = StableObjPtr.fromValue(clientData!!).get() as CursorVisitor
         visitor(cursor.readValue(), parent.readValue())
     }, clientData)

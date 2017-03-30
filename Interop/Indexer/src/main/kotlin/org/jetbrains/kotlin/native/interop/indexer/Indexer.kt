@@ -203,18 +203,17 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
 
             CXCursorKind.CXCursor_UnionDecl -> return false
 
-            CXCursorKind.CXCursor_StructDecl -> memScoped {
-                val hasAttributes = memScope.alloc<CInt32Var>()
-                hasAttributes.value = 0
-                clang_visitChildren(structDefCursor, staticCFunction { cursor, parent, clientData ->
-                    if (clang_isAttribute(cursor.kind.value) != 0) {
-                        val hasAttributes = clientData!!.reinterpret<CInt32Var>().pointed
-                        hasAttributes.value = 1
+            CXCursorKind.CXCursor_StructDecl -> {
+                var hasAttributes = false
+
+                visitChildren(structDefCursor) { cursor, _ ->
+                    if (clang_isAttribute(cursor.kind) != 0) {
+                        hasAttributes = true
                     }
                     CXChildVisitResult.CXChildVisit_Continue
-                }, hasAttributes.ptr)
+                }
 
-                return hasAttributes.value == 0
+                return !hasAttributes
             }
 
             else -> throw IllegalArgumentException(defKind.toString())
@@ -332,6 +331,10 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
             CXIdxEntity_Enum -> {
                 getEnumDefAt(cursor)
             }
+
+            else -> {
+                // Ignore declaration.
+            }
         }
     }
 
@@ -365,6 +368,7 @@ private fun indexDeclarations(library: NativeLibrary, nativeIndex: NativeIndexIm
                         importedASTFile.value = null
                         startedTranslationUnit.value = null
                         indexDeclaration.value = staticCFunction { clientData, info ->
+                            @Suppress("NAME_SHADOWING")
                             val nativeIndex = StableObjPtr.fromValue(clientData!!).get() as NativeIndexImpl
                             nativeIndex.indexDeclaration(info!!.pointed)
                         }

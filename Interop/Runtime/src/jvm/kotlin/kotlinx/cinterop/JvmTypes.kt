@@ -16,8 +16,8 @@
 
 package kotlinx.cinterop
 
-import kotlin.reflect.companionObjectInstance
-import kotlin.reflect.primaryConstructor
+import kotlin.reflect.full.companionObjectInstance
+import kotlin.reflect.full.primaryConstructor
 
 typealias NativePtr = Long
 val nativeNullPtr: NativePtr = 0L
@@ -40,6 +40,7 @@ inline fun <reified T : NativePointed> interpretNullablePointed(ptr: NativePtr):
         if (primaryConstructor == null) {
             throw IllegalArgumentException("${kClass.simpleName} doesn't have a constructor")
         }
+        @Suppress("UNCHECKED_CAST")
         return (primaryConstructor as (NativePtr) -> T)(ptr)
     }
 }

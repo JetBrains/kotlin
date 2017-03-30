@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("UNUSED_EXPRESSION")
+@file:Suppress("UNUSED_EXPRESSION", "UNUSED_VARIABLE")
 package clang
 
 import kotlinx.cinterop.*

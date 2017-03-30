@@ -233,9 +233,10 @@ private fun ffiCreateCif(returnType: ffi_type, paramTypes: List<ffi_type>): ffi_
     return interpretPointed(res)
 }
 
+@Suppress("UNUSED_PARAMETER")
 private fun ffiFunImpl0(ffiCif: Long, ret: Long, args: Long, userData: Any) {
-    ffiFunImpl(interpretPointed(ffiCif),
-            interpretCPointer(ret)!!,
+    @Suppress("UNCHECKED_CAST")
+    ffiFunImpl(interpretCPointer(ret)!!,
             interpretCPointer(args)!!,
             userData as UserData)
 }
@@ -246,8 +247,7 @@ private fun ffiFunImpl0(ffiCif: Long, ret: Long, args: Long, userData: Any) {
  * @param ret pointer to memory to be filled with return value of the invoked native function
  * @param args pointer to array of pointers to arguments passed to the invoked native function
  */
-private fun ffiFunImpl(ffiCif: ffi_cif, ret: COpaquePointer, args: CArrayPointer<COpaquePointerVar>,
-                       userData: UserData) {
+private fun ffiFunImpl(ret: COpaquePointer, args: CArrayPointer<COpaquePointerVar>, userData: UserData) {
 
     userData.invoke(ret, args)
 }
