@@ -646,8 +646,8 @@ class ControlFlowInformationProvider private constructor(
                 }
             }
             is KtFunction -> {
-                if (owner is KtFunctionLiteral &&
-                    !languageVersionSettings.supportsFeature(LanguageFeature.SingleUnderscoreForParameterName)) {
+                val anonymous = owner is KtFunctionLiteral || owner is KtNamedFunction && owner.name == null
+                if (anonymous && !languageVersionSettings.supportsFeature(LanguageFeature.SingleUnderscoreForParameterName)) {
                     return
                 }
                 val mainFunctionDetector = MainFunctionDetector(trace.bindingContext)
@@ -666,7 +666,12 @@ class ControlFlowInformationProvider private constructor(
                     || OperatorNameConventions.PROVIDE_DELEGATE == functionName) {
                     return
                 }
-                report(UNUSED_PARAMETER.on(element, variableDescriptor), ctxt)
+                if (anonymous) {
+                    report(UNUSED_ANONYMOUS_PARAMETER.on(element, variableDescriptor), ctxt)
+                }
+                else {
+                    report(UNUSED_PARAMETER.on(element, variableDescriptor), ctxt)
+                }
             }
         }
     }
@@ -1121,6 +1126,7 @@ class ControlFlowInformationProvider private constructor(
         private fun mustBeReportedOnAllCopies(diagnosticFactory: DiagnosticFactory<*>) =
                 diagnosticFactory === UNUSED_VARIABLE
                 || diagnosticFactory === UNUSED_PARAMETER
+                || diagnosticFactory === UNUSED_ANONYMOUS_PARAMETER
                 || diagnosticFactory === UNUSED_CHANGED_VALUE
     }
 }

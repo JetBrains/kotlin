@@ -14,7 +14,7 @@ fun <!UNDERSCORE_IS_RESERVED!>__<!>(<!UNDERSCORE_IS_RESERVED!>___<!>: Int, y: <!
     // in backquotes: allowed
     val `_` = <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>__________<!>
 
-    val q = fun(_: Int, <!UNDERSCORE_IS_RESERVED, UNUSED_PARAMETER!>__<!>: Int) {}
+    val q = fun(_: Int, <!UNDERSCORE_IS_RESERVED, UNUSED_ANONYMOUS_PARAMETER!>__<!>: Int) {}
     q(1, 2)
 
     val <!UNDERSCORE_IS_RESERVED!>_<!> = 56

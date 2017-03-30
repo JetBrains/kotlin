@@ -288,6 +288,7 @@ public class DefaultErrorMessages {
         MAP.put(UNINITIALIZED_ENUM_COMPANION, "Companion object of enum class ''{0}'' is uninitialized here", NAME);
         MAP.put(UNUSED_VARIABLE, "Variable ''{0}'' is never used", NAME);
         MAP.put(UNUSED_PARAMETER, "Parameter ''{0}'' is never used", NAME);
+        MAP.put(UNUSED_ANONYMOUS_PARAMETER, "Parameter ''{0}'' is never used, could be renamed to _", NAME);
         MAP.put(UNUSED_DESTRUCTURED_PARAMETER_ENTRY, "Destructured parameter ''{0}'' is never used", NAME);
         MAP.put(ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE, "Variable ''{0}'' is assigned but never accessed", NAME);
         MAP.put(VARIABLE_WITH_REDUNDANT_INITIALIZER, "Variable ''{0}'' initializer is redundant", NAME);

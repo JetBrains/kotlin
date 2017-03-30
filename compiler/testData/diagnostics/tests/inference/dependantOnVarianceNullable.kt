@@ -5,7 +5,7 @@ import java.util.*
 import java.util.Collections.*
 
 fun foo(list: List<String>) : String {
-    val w : String = max(list, comparator<String?> {<!UNUSED_PARAMETER!>o1<!>, <!UNUSED_PARAMETER!>o2<!> -> 1
+    val w : String = max(list, comparator<String?> {<!UNUSED_ANONYMOUS_PARAMETER!>o1<!>, <!UNUSED_ANONYMOUS_PARAMETER!>o2<!> -> 1
     })
     return w
 }

@@ -1,5 +1,5 @@
 // !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
 data class A(val x: Int, val y: String)
 data class B(val u: Double, val w: Short)
 

@@ -36,8 +36,8 @@ fun main(args : Array<String>) {
     foo2()({})
     foo2()<!TOO_MANY_ARGUMENTS!>{}<!>
     (foo2()){}
-    (foo2()){<!EXPECTED_PARAMETERS_NUMBER_MISMATCH, CANNOT_INFER_PARAMETER_TYPE, UNUSED_PARAMETER!>x<!> -> }
-    foo2()({<!EXPECTED_PARAMETERS_NUMBER_MISMATCH, CANNOT_INFER_PARAMETER_TYPE, UNUSED_PARAMETER!>x<!> -> })
+    (foo2()){<!EXPECTED_PARAMETERS_NUMBER_MISMATCH, CANNOT_INFER_PARAMETER_TYPE, UNUSED_ANONYMOUS_PARAMETER!>x<!> -> }
+    foo2()({<!EXPECTED_PARAMETERS_NUMBER_MISMATCH, CANNOT_INFER_PARAMETER_TYPE, UNUSED_ANONYMOUS_PARAMETER!>x<!> -> })
 
     val a = fooT1(1)()
     checkSubtype<Int>(a)
@@ -72,7 +72,7 @@ fun main1() {
 }
 
 fun test() {
-    {<!UNUSED_PARAMETER!>x<!> : Int -> 1}(<!NO_VALUE_FOR_PARAMETER!>)<!>;
+    {<!UNUSED_ANONYMOUS_PARAMETER!>x<!> : Int -> 1}(<!NO_VALUE_FOR_PARAMETER!>)<!>;
     (fun Int.() = 1)(<!NO_VALUE_FOR_PARAMETER!>)<!>
     <!TYPE_MISMATCH!>"sd"<!>.(fun Int.() = 1)()
     val i : Int? = null

@@ -33,8 +33,8 @@ private val STRING = CompileTimeType<String>()
 private val ANY = CompileTimeType<Any>()
 
 
-private val emptyBinaryFun: Function2<BigInteger, BigInteger, BigInteger> = { <!UNUSED_PARAMETER!>a<!>, <!UNUSED_PARAMETER!>b<!> -> BigInteger("0") }
-private val emptyUnaryFun: Function1<Long, Long> = { <!UNUSED_PARAMETER!>a<!> -> 1.toLong() }
+private val emptyBinaryFun: Function2<BigInteger, BigInteger, BigInteger> = { <!UNUSED_ANONYMOUS_PARAMETER!>a<!>, <!UNUSED_ANONYMOUS_PARAMETER!>b<!> -> BigInteger("0") }
+private val emptyUnaryFun: Function1<Long, Long> = { <!UNUSED_ANONYMOUS_PARAMETER!>a<!> -> 1.toLong() }
 
 private val unaryOperations: HashMap<UnaryOperationKey<*>, Pair<Function1<Any?, Any>, Function1<Long, Long>>>
         = hashMapOf<UnaryOperationKey<*>, Pair<Function1<Any?, Any>, Function1<Long, Long>>>(
